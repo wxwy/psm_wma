@@ -1,0 +1,55 @@
+{
+  "formal_root": "9cb8b60dccf4ac2520f8d862b723d7bc94fe3813",
+  "files": [
+    {
+      "path": "scripts/robocasa_episode_resume/model_identity.py",
+      "sha256": "65438cb4fb89199b86bfa78145210e692e77b3eefe86659fb9f08879de0216aa",
+      "git_blob": "087a3c586b1433c9526c7a1298ab1aa1dc026706"
+    },
+    {
+      "path": "scripts/robocasa_resume_store.py",
+      "sha256": "d03639eb4393d56d8ae329eceaf4f16c5404e93d617677e17f1bd3ebc3ef8dab",
+      "git_blob": "1d14aaa2f63c460f7073027b6ebd58a9f98ac69c"
+    },
+    {
+      "path": "scripts/robocasa_resume_cli.py",
+      "sha256": "df8f5a29c6a546c8faf91a43c70eea8854d933e5cecbc2b9bab6de437fe3c90a",
+      "git_blob": "8791039c31d1d8b474f3074579e1360eea7cf435"
+    },
+    {
+      "path": "scripts/robocasa_input_verification.py",
+      "sha256": "9593a93ac5ea9d8f52569aa0950ccd9ffee181021e54a97b9870cf500c0e300e",
+      "git_blob": "ad5e40e707d6aadaa9b6d04969643c814560050a"
+    },
+    {
+      "path": "scripts/v3_evaluation_identity.py",
+      "sha256": "ab8543c1c5c45398bfe1374393924a50a4230909cdcc06a34e89ac7b1be03add",
+      "git_blob": "c6f97cb43e17dac5b9039cd8594325000ac8b51f"
+    },
+    {
+      "path": "tools/v3/robocasa_input_verification_test.py",
+      "sha256": "dc3427a2d4eba6187029fb2abfff3c15cf27a6ea748ec5f5f95f784253c080c2",
+      "git_blob": "3fca3c404499a20189d78d9a1e5e9c24f7362f76"
+    },
+    {
+      "path": "tools/v3/robocasa_input_verification_cli_test.py",
+      "sha256": "995bf8885fda03c44cbf14b578523c96365bebcdc0370f7e3b96bcbdefaf3780",
+      "git_blob": "0f97ac17b4d86769bd57b80612d6fddbaedd7684"
+    },
+    {
+      "path": "tools/v3/robocasa_resume_store_test.py",
+      "sha256": "767ad0b5e4bc6d0294c553786f13b658253e431cbc98503e0eda7dc6b7322368",
+      "git_blob": "16a012e44719185b43e276aa03e1d9042e195035"
+    },
+    {
+      "path": "tools/v3/robocasa_resume_components_test.py",
+      "sha256": "fd656348d6e395ff083d5c46731d201512cec67f757b16c3f43deab573fda523",
+      "git_blob": "420cfeda8c08839a87b7a0cd57a07d10349cc8d4"
+    },
+    {
+      "path": "tools/v3/robocasa_eval_config_test.py",
+      "sha256": "a8bf616d2a63b8635e89cc5df96886c51c8d888b79ed1cc69aba382836376779",
+      "git_blob": "7756e412d584fec74e2742e6efee66691edc0a7b"
+    }
+  ]
+}

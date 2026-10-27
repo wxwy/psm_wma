@@ -1,0 +1,1404 @@
+CACHE_IO_WITNESS {"cold_bytes": 188, "cold_hash_calls": [".metadata", "__0_0.distcp"], "warm_bytes": 0, "strong_digest": "0e997160036eae8a29d3ad553f07f78fb58419f0aa9d53c5da636e67b158252c"}
+..............................................model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.00026157498359680176, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+RESUME RESULT reused=0 executed=0 excluded=0 remaining=6 actual_seeds=[] flags=[] status=PARTIAL; summary=/tmp/pytest-of-agent/pytest-58/test_real_cli_cold_and_warm_pe0/run/_invocations/1793079523729880183_503030_8b7d25f2/snapshots/000001.json
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+model input verification 1: {"bytes_read": 0, "cache_hit": true, "elapsed_seconds": 0.0002584290341474116, "files_checked": 2, "files_read": 0, "metadata_bytes_read": 0, "model_payload_bytes_read": 0, "scope": "trusted_readonly_stat_cache_reuse_of_stored_SHA_not_fresh_payload_hash", "shard_bytes_read": 0}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[0, 1, 2]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[0, 1, 2]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+RESUME RESULT reused=0 executed=0 excluded=0 remaining=6 actual_seeds=[] flags=[] status=PARTIAL; summary=/tmp/pytest-of-agent/pytest-58/test_real_cli_cold_and_warm_pe0/run/_invocations/1793079523742809943_503030_77fa2426/snapshots/000001.json
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+.model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.00033072399673983455, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+RESUME RESULT reused=0 executed=0 excluded=0 remaining=6 actual_seeds=[] flags=[] status=PARTIAL; summary=/tmp/pytest-of-agent/pytest-58/test_real_cli_mutation_guard_s0/run/_invocations/1793079523765040156_503030_fbbdd680/snapshots/000001.json
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+.model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.00045366695849224925, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+RESUME RESULT reused=0 executed=0 excluded=0 remaining=6 actual_seeds=[] flags=[] status=PARTIAL; summary=/tmp/pytest-of-agent/pytest-58/test_real_cli_mutation_guard_s1/run/_invocations/1793079523777882131_503030_6d54fa62/snapshots/000001.json
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+.model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.0002897449885495007, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+RESUME RESULT reused=0 executed=0 excluded=0 remaining=6 actual_seeds=[] flags=[] status=PARTIAL; summary=/tmp/pytest-of-agent/pytest-58/test_real_cli_mutation_guard_s2/run/_invocations/1793079523791526323_503030_9d3920e3/snapshots/000001.json
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+.model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.0002687709638848901, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+{
+  "mode": "CPU_READ_ONLY_PREVIEW",
+  "resolved_config": {
+    "synthetic": true
+  },
+  "output_dir": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run",
+  "resume_plan": {
+    "schema": "psm_episode_resume_plan_v1",
+    "invocation_id": "1793079523806867548_503030_490a96fb",
+    "requested_seed": 0,
+    "requested_episodes_per_task": 3,
+    "selected_tasks": [
+      "CloseFridge",
+      "NavigateKitchen"
+    ],
+    "requested_media": {
+      "save_rollout_mp4": false,
+      "save_generated_video": "none",
+      "save_init_png": false
+    },
+    "execution": {
+      "gpus": [
+        "0",
+        "1"
+      ],
+      "base_port": 8880,
+      "timeouts": {
+        "server_start_s": 10,
+        "predict_request_s": 10,
+        "episode_wall_s": 10,
+        "task_wall_s": 10,
+        "terminate_grace_s": 1
+      }
+    },
+    "tasks": {
+      "CloseFridge": {
+        "requested": 3,
+        "previous_completed": 0,
+        "reused": 0,
+        "new": 3,
+        "excluded": 0,
+        "reused_sources": [],
+        "excluded_sources": [],
+        "new_episodes": [
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "CloseFridge",
+            "logical_episode_index": 0,
+            "attempt_nonce": "1793079523806867548_503030_490a96fb",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 0,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 0,
+              "source_episode": 0,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "CloseFridge",
+            "logical_episode_index": 1,
+            "attempt_nonce": "1793079523806867548_503030_490a96fb",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 1,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 1,
+              "source_episode": 1,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "CloseFridge",
+            "logical_episode_index": 2,
+            "attempt_nonce": "1793079523806867548_503030_490a96fb",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 2,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 2,
+              "source_episode": 2,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+          }
+        ],
+        "sampling_mode": "fresh_task_stream",
+        "execution_batches": [
+          {
+            "batch_index": 0,
+            "sampling_mode": "fresh_task_stream",
+            "effective_seed": 0,
+            "environment_constructions": 1,
+            "public_reset_calls": 3,
+            "episodes": [
+              {
+                "logical_episode_index": 0,
+                "source_episode": 0
+              },
+              {
+                "logical_episode_index": 1,
+                "source_episode": 1
+              },
+              {
+                "logical_episode_index": 2,
+                "source_episode": 2
+              }
+            ]
+          }
+        ],
+        "pending_recovery": {
+          "pending_slots": [],
+          "next_slot_floor": 0,
+          "diagnostics": [],
+          "reservation_identities": {},
+          "authority": {
+            "protocol": "CONTINUOUS_LOGICAL_IDS_FROM_ZERO",
+            "source_refs": [],
+            "completed_slots": [],
+            "observed_slots": [],
+            "requested_episodes": 3,
+            "pending_is_not_filtered_by_current_demand": true,
+            "observation_scope": "UPSTREAM_VERIFIED_EPISODES_AND_READONLY_PERSISTENT_MAPPING_OR_PROGRESS"
+          }
+        }
+      },
+      "NavigateKitchen": {
+        "requested": 3,
+        "previous_completed": 0,
+        "reused": 0,
+        "new": 3,
+        "excluded": 0,
+        "reused_sources": [],
+        "excluded_sources": [],
+        "new_episodes": [
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "NavigateKitchen",
+            "logical_episode_index": 0,
+            "attempt_nonce": "1793079523806867548_503030_490a96fb",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 0,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 0,
+              "source_episode": 0,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "NavigateKitchen",
+            "logical_episode_index": 1,
+            "attempt_nonce": "1793079523806867548_503030_490a96fb",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 1,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 1,
+              "source_episode": 1,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "NavigateKitchen",
+            "logical_episode_index": 2,
+            "attempt_nonce": "1793079523806867548_503030_490a96fb",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 2,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 2,
+              "source_episode": 2,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+          }
+        ],
+        "sampling_mode": "fresh_task_stream",
+        "execution_batches": [
+          {
+            "batch_index": 0,
+            "sampling_mode": "fresh_task_stream",
+            "effective_seed": 0,
+            "environment_constructions": 1,
+            "public_reset_calls": 3,
+            "episodes": [
+              {
+                "logical_episode_index": 0,
+                "source_episode": 0
+              },
+              {
+                "logical_episode_index": 1,
+                "source_episode": 1
+              },
+              {
+                "logical_episode_index": 2,
+                "source_episode": 2
+              }
+            ]
+          }
+        ],
+        "pending_recovery": {
+          "pending_slots": [],
+          "next_slot_floor": 0,
+          "diagnostics": [],
+          "reservation_identities": {},
+          "authority": {
+            "protocol": "CONTINUOUS_LOGICAL_IDS_FROM_ZERO",
+            "source_refs": [],
+            "completed_slots": [],
+            "observed_slots": [],
+            "requested_episodes": 3,
+            "pending_is_not_filtered_by_current_demand": true,
+            "observation_scope": "UPSTREAM_VERIFIED_EPISODES_AND_READONLY_PERSISTENT_MAPPING_OR_PROGRESS"
+          }
+        }
+      }
+    },
+    "diagnostics": [],
+    "warnings": [],
+    "production_wired": true,
+    "planned_conditions": {
+      "effective_seeds": [
+        0
+      ],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"
+      ],
+      "flags": [],
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED"
+    },
+    "historical_missing_requested_media": 0,
+    "view_producer": {
+      "source_root": "1111111111111111111111111111111111111111",
+      "source_child": "2222222222222222222222222222222222222222",
+      "runtime_probed": true,
+      "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+      "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+      "task_metadata_by_task": {
+        "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+        "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+      }
+    },
+    "checkpoint_reads": [
+      {
+        "bytes_read": 188,
+        "metadata_bytes_read": 28,
+        "shard_bytes_read": 160,
+        "files_read": 2,
+        "expected_bytes": 188,
+        "elapsed_seconds": 0.0002687709638848901,
+        "scope": "new_full_byte_read_not_a_historical_payload_hash",
+        "cache_hit": false,
+        "model_payload_bytes_read": 188,
+        "reason": "INVALID_DOCUMENT"
+      }
+    ]
+  },
+  "model_identity": {
+    "schema": "psm_eval_model_identity_v1",
+    "parameters": {
+      "checkpoint": {
+        "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/checkpoint",
+        "scope": "full_model_sha256_v1",
+        "metadata_sha256": "ff5439d688165652b7adc7a31e41457bf6fb3c0977e117075a52012310aaa49d",
+        "shards": [
+          {
+            "name": "__0_0.distcp",
+            "bytes": 160,
+            "sha256": "d289c7d3689f152520de95e41b36510f40155031e064740f6165e3bfe14d03bf"
+          }
+        ]
+      },
+      "num_steps": 30,
+      "action_horizon": 16,
+      "guidance": 1.0
+    },
+    "digest": "2eb0bfa45320fb6ea50d64d3ac07223adf984ae6bd99d63c60d08be8be936769",
+    "observed_checkpoint_stats": [
+      [
+        "__0_0.distcp",
+        160,
+        1793079523805713956,
+        1793079523805713956
+      ]
+    ],
+    "validation_scope": "full_byte_hash_plus_nonexecuting_headers_not_tensor_load_or_DCP_completeness",
+    "observed_model_files": {
+      ".metadata": [
+        34,
+        378373,
+        28,
+        1793079523805656492,
+        1793079523805656492
+      ],
+      "__0_0.distcp": [
+        34,
+        378374,
+        160,
+        1793079523805713956,
+        1793079523805713956
+      ]
+    },
+    "observed_model_directory_entries": [
+      ".metadata",
+      "__0_0.distcp"
+    ],
+    "checkpoint_read_telemetry": {
+      "bytes_read": 188,
+      "metadata_bytes_read": 28,
+      "shard_bytes_read": 160,
+      "files_read": 2,
+      "expected_bytes": 188,
+      "elapsed_seconds": 0.0002687709638848901,
+      "scope": "new_full_byte_read_not_a_historical_payload_hash"
+    }
+  },
+  "manifest": {
+    "identity": {
+      "schema": "psm_v3_eval_identity_vendor_v1",
+      "root_sha": "1111111111111111111111111111111111111111",
+      "child_sha": "2222222222222222222222222222222222222222",
+      "checkpoint": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/checkpoint",
+      "model_metadata_sha256": "ff5439d688165652b7adc7a31e41457bf6fb3c0977e117075a52012310aaa49d",
+      "model_shard_stat_witnesses": [
+        [
+          "__0_0.distcp",
+          160,
+          1793079523805713956,
+          1793079523805713956
+        ]
+      ],
+      "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+      "tasks": [
+        {
+          "task": "CloseFridge",
+          "dataset_dir": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/datasets/CloseFridge",
+          "env_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+        },
+        {
+          "task": "NavigateKitchen",
+          "dataset_dir": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/datasets/NavigateKitchen",
+          "env_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+        }
+      ],
+      "protocol": {
+        "seed": 0,
+        "R": 16,
+        "H_pred": 16,
+        "server_action_chunk_size": 16,
+        "raw_action_dim": 15,
+        "max_action_dim": 64,
+        "policy_seed": 0,
+        "num_steps": 30,
+        "guidance": 1.0,
+        "trials": 3,
+        "fps": 20,
+        "camera_set": "left_wrist",
+        "use_state": true,
+        "base_encoding": "raw",
+        "local_memory_mode": "required",
+        "image_size": 256,
+        "cam_size": 256,
+        "success_latch": 1,
+        "manual_schema": "psm_wma_robocasa_eval_v1",
+        "gpu_ids": [
+          "0",
+          "1"
+        ],
+        "slots_per_gpu": 1,
+        "base_port": 8880,
+        "server_python": "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "save_rollout_mp4": false,
+        "save_generated_video": "none",
+        "save_init_png": false,
+        "save_action_jsonl": true,
+        "save_prediction_jsonl": true,
+        "server_lifecycle": "per_task",
+        "on_infrastructure_error": "stop",
+        "timeouts": {
+          "server_start_s": 10,
+          "predict_request_s": 10,
+          "episode_wall_s": 10,
+          "task_wall_s": 10,
+          "terminate_grace_s": 1
+        }
+      },
+      "evaluation_runtime": {
+        "schema": "psm_robocasa_runtime_v1",
+        "synthetic": true,
+        "digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"
+      }
+    },
+    "digest": "ad493acb40eebefbb55f35ec21627154ca94f445855755ad796394d0cbdd7479"
+  },
+  "commands": [
+    {
+      "task": "CloseFridge",
+      "sampling_mode": "fresh_task_stream",
+      "server": [
+        "not-executed-server"
+      ],
+      "simulator": [
+        "not-executed-simulator"
+      ]
+    },
+    {
+      "task": "NavigateKitchen",
+      "sampling_mode": "fresh_task_stream",
+      "server": [
+        "not-executed-server"
+      ],
+      "simulator": [
+        "not-executed-simulator"
+      ]
+    }
+  ]
+}
+model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.00024503597524017096, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+RESUME RESULT reused=0 executed=0 excluded=0 remaining=6 actual_seeds=[] flags=[] status=PARTIAL; summary=/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/snapshots/000001.json
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+video browsing export: status=NO_SYNTHETIC_MEDIA index=None
+model input verification 1: {"bytes_read": 0, "cache_hit": true, "elapsed_seconds": 0.0002577530103735626, "files_checked": 2, "files_read": 0, "metadata_bytes_read": 0, "model_payload_bytes_read": 0, "scope": "trusted_readonly_stat_cache_reuse_of_stored_SHA_not_fresh_payload_hash", "shard_bytes_read": 0}
+RESUME PLAN requested_seed=0 tasks=['CloseFridge', 'NavigateKitchen']
+CloseFridge requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[0, 1, 2]
+NavigateKitchen requested=3 previous_completed=0 reused=0 new=3 excluded=0 sampling_mode=fresh_task_stream pending=[0, 1, 2]
+{"conditions": {"benchmark_qualification": "SOURCE_CONDITIONS_RECORDED", "effective_seeds": [0], "flags": [], "requested_seed_families": [0], "runtime_digests": ["c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"]}, "warnings": []}
+{
+  "mode": "CPU_READ_ONLY_PREVIEW",
+  "resolved_config": {
+    "synthetic": true
+  },
+  "output_dir": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run",
+  "resume_plan": {
+    "schema": "psm_episode_resume_plan_v1",
+    "invocation_id": "1793079523822769094_503030_97c38962",
+    "requested_seed": 0,
+    "requested_episodes_per_task": 3,
+    "selected_tasks": [
+      "CloseFridge",
+      "NavigateKitchen"
+    ],
+    "requested_media": {
+      "save_rollout_mp4": false,
+      "save_generated_video": "none",
+      "save_init_png": false
+    },
+    "execution": {
+      "gpus": [
+        "0",
+        "1"
+      ],
+      "base_port": 8880,
+      "timeouts": {
+        "server_start_s": 10,
+        "predict_request_s": 10,
+        "episode_wall_s": 10,
+        "task_wall_s": 10,
+        "terminate_grace_s": 1
+      }
+    },
+    "tasks": {
+      "CloseFridge": {
+        "requested": 3,
+        "previous_completed": 0,
+        "reused": 0,
+        "new": 3,
+        "excluded": 0,
+        "reused_sources": [],
+        "excluded_sources": [],
+        "new_episodes": [
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "CloseFridge",
+            "logical_episode_index": 0,
+            "attempt_nonce": "1793079523822769094_503030_97c38962",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 0,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 0,
+              "source_episode": 0,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "CloseFridge",
+            "logical_episode_index": 1,
+            "attempt_nonce": "1793079523822769094_503030_97c38962",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 1,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 1,
+              "source_episode": 1,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "CloseFridge",
+            "logical_episode_index": 2,
+            "attempt_nonce": "1793079523822769094_503030_97c38962",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 2,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 2,
+              "source_episode": 2,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+          }
+        ],
+        "sampling_mode": "fresh_task_stream",
+        "execution_batches": [
+          {
+            "batch_index": 0,
+            "sampling_mode": "fresh_task_stream",
+            "effective_seed": 0,
+            "environment_constructions": 1,
+            "public_reset_calls": 3,
+            "episodes": [
+              {
+                "logical_episode_index": 0,
+                "source_episode": 0
+              },
+              {
+                "logical_episode_index": 1,
+                "source_episode": 1
+              },
+              {
+                "logical_episode_index": 2,
+                "source_episode": 2
+              }
+            ]
+          }
+        ],
+        "pending_recovery": {
+          "pending_slots": [
+            0,
+            1,
+            2
+          ],
+          "next_slot_floor": 3,
+          "diagnostics": [
+            {
+              "code": "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS",
+              "task": "CloseFridge",
+              "logical_episode_index": 0,
+              "source_refs": [
+                {
+                  "original_digest": "02d47064e96920414599fdffac48ef9a807766b8e345d298cfe229a9b896ca83",
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json"
+                },
+                {
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json",
+                  "sha256": "1eba6abdc458827c5f9db979c4f5b9a4a04d4749897b40dba83bd5bed83a07e3"
+                }
+              ]
+            },
+            {
+              "code": "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS",
+              "task": "CloseFridge",
+              "logical_episode_index": 1,
+              "source_refs": [
+                {
+                  "original_digest": "02d47064e96920414599fdffac48ef9a807766b8e345d298cfe229a9b896ca83",
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json"
+                },
+                {
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json",
+                  "sha256": "1eba6abdc458827c5f9db979c4f5b9a4a04d4749897b40dba83bd5bed83a07e3"
+                }
+              ]
+            },
+            {
+              "code": "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS",
+              "task": "CloseFridge",
+              "logical_episode_index": 2,
+              "source_refs": [
+                {
+                  "original_digest": "02d47064e96920414599fdffac48ef9a807766b8e345d298cfe229a9b896ca83",
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json"
+                },
+                {
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json",
+                  "sha256": "1eba6abdc458827c5f9db979c4f5b9a4a04d4749897b40dba83bd5bed83a07e3"
+                }
+              ]
+            }
+          ],
+          "reservation_identities": {
+            "0": {
+              "stable_identity": {
+                "task": "CloseFridge",
+                "logical_episode_index": 0
+              },
+              "reservation_id": "825be08498e459a7245a07dce84f28017854a645ea3b190360f3baced3f22430",
+              "pending": true
+            },
+            "1": {
+              "stable_identity": {
+                "task": "CloseFridge",
+                "logical_episode_index": 1
+              },
+              "reservation_id": "f84ab7fb5badcefa6758be7f9ed0f3f102d391556295997d896b18aaa8130479",
+              "pending": true
+            },
+            "2": {
+              "stable_identity": {
+                "task": "CloseFridge",
+                "logical_episode_index": 2
+              },
+              "reservation_id": "1f5a1f450cc24539b2a1389e9c3801df3d772f5f1bd614092d90ea8a828d4450",
+              "pending": true
+            }
+          },
+          "authority": {
+            "protocol": "CONTINUOUS_LOGICAL_IDS_FROM_ZERO",
+            "source_refs": [
+              {
+                "original_digest": "02d47064e96920414599fdffac48ef9a807766b8e345d298cfe229a9b896ca83",
+                "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json"
+              },
+              {
+                "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18.json",
+                "sha256": "1eba6abdc458827c5f9db979c4f5b9a4a04d4749897b40dba83bd5bed83a07e3"
+              }
+            ],
+            "completed_slots": [],
+            "observed_slots": [
+              0,
+              1,
+              2
+            ],
+            "requested_episodes": 3,
+            "pending_is_not_filtered_by_current_demand": true,
+            "observation_scope": "UPSTREAM_VERIFIED_EPISODES_AND_READONLY_PERSISTENT_MAPPING_OR_PROGRESS"
+          }
+        }
+      },
+      "NavigateKitchen": {
+        "requested": 3,
+        "previous_completed": 0,
+        "reused": 0,
+        "new": 3,
+        "excluded": 0,
+        "reused_sources": [],
+        "excluded_sources": [],
+        "new_episodes": [
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "NavigateKitchen",
+            "logical_episode_index": 0,
+            "attempt_nonce": "1793079523822769094_503030_97c38962",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 0,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 0,
+              "source_episode": 0,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "NavigateKitchen",
+            "logical_episode_index": 1,
+            "attempt_nonce": "1793079523822769094_503030_97c38962",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 1,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 1,
+              "source_episode": 1,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+          },
+          {
+            "requested_seed": 0,
+            "seed_family": {
+              "requested_seed": 0,
+              "sampler_version": "legacy_task_stream"
+            },
+            "effective_seed": 0,
+            "seed_material_sha256": null,
+            "task": "NavigateKitchen",
+            "logical_episode_index": 2,
+            "attempt_nonce": "1793079523822769094_503030_97c38962",
+            "sampling_mode": "fresh_task_stream",
+            "source_episode": 2,
+            "execution_batch": 0,
+            "reset_plan": {
+              "environment_lifecycle": "shared_task_environment_continuous_resets",
+              "constructor_seed_argument": "effective_seed",
+              "public_reset_calls": 1,
+              "public_reset_ordinal": 2,
+              "source_episode": 2,
+              "constructor_rng_draws": "UNOBSERVED",
+              "local_memory": "fresh_episode_session_begin_end",
+              "historical_rng_state_restored": false
+            },
+            "source_root": "1111111111111111111111111111111111111111",
+            "source_child": "2222222222222222222222222222222222222222",
+            "runtime_probed": true,
+            "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+            "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+            "task_metadata_by_task": {
+              "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+              "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+            },
+            "sampling_protocol": "legacy_task_stream",
+            "task_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+          }
+        ],
+        "sampling_mode": "fresh_task_stream",
+        "execution_batches": [
+          {
+            "batch_index": 0,
+            "sampling_mode": "fresh_task_stream",
+            "effective_seed": 0,
+            "environment_constructions": 1,
+            "public_reset_calls": 3,
+            "episodes": [
+              {
+                "logical_episode_index": 0,
+                "source_episode": 0
+              },
+              {
+                "logical_episode_index": 1,
+                "source_episode": 1
+              },
+              {
+                "logical_episode_index": 2,
+                "source_episode": 2
+              }
+            ]
+          }
+        ],
+        "pending_recovery": {
+          "pending_slots": [
+            0,
+            1,
+            2
+          ],
+          "next_slot_floor": 3,
+          "diagnostics": [
+            {
+              "code": "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS",
+              "task": "NavigateKitchen",
+              "logical_episode_index": 0,
+              "source_refs": [
+                {
+                  "original_digest": "5ae82cf9bd815a91c14366b61b7ad12fa73b02e33456bc2ab00d567228452356",
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json"
+                },
+                {
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json",
+                  "sha256": "655ae6f1fd07226aeeedcec2b7067dd00314718f6b13192752071a6f4aae43d8"
+                }
+              ]
+            },
+            {
+              "code": "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS",
+              "task": "NavigateKitchen",
+              "logical_episode_index": 1,
+              "source_refs": [
+                {
+                  "original_digest": "5ae82cf9bd815a91c14366b61b7ad12fa73b02e33456bc2ab00d567228452356",
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json"
+                },
+                {
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json",
+                  "sha256": "655ae6f1fd07226aeeedcec2b7067dd00314718f6b13192752071a6f4aae43d8"
+                }
+              ]
+            },
+            {
+              "code": "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS",
+              "task": "NavigateKitchen",
+              "logical_episode_index": 2,
+              "source_refs": [
+                {
+                  "original_digest": "5ae82cf9bd815a91c14366b61b7ad12fa73b02e33456bc2ab00d567228452356",
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json"
+                },
+                {
+                  "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json",
+                  "sha256": "655ae6f1fd07226aeeedcec2b7067dd00314718f6b13192752071a6f4aae43d8"
+                }
+              ]
+            }
+          ],
+          "reservation_identities": {
+            "0": {
+              "stable_identity": {
+                "task": "NavigateKitchen",
+                "logical_episode_index": 0
+              },
+              "reservation_id": "f832d49f0444a4fdf2f767b4342791178868d3b7613d44513c1a22e239ef65bf",
+              "pending": true
+            },
+            "1": {
+              "stable_identity": {
+                "task": "NavigateKitchen",
+                "logical_episode_index": 1
+              },
+              "reservation_id": "b55fc15af90a26ec4cf3843283b739cf056186a2127089c01a834434ba4d6540",
+              "pending": true
+            },
+            "2": {
+              "stable_identity": {
+                "task": "NavigateKitchen",
+                "logical_episode_index": 2
+              },
+              "reservation_id": "22eeb9bab3279354b009f9ab8ee5bcfaac047ee3b5dffe61c4fdc6b359a9cd03",
+              "pending": true
+            }
+          },
+          "authority": {
+            "protocol": "CONTINUOUS_LOGICAL_IDS_FROM_ZERO",
+            "source_refs": [
+              {
+                "original_digest": "5ae82cf9bd815a91c14366b61b7ad12fa73b02e33456bc2ab00d567228452356",
+                "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json"
+              },
+              {
+                "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/reservations/batch_800c16f26098416cb99bcc226407b3b0.json",
+                "sha256": "655ae6f1fd07226aeeedcec2b7067dd00314718f6b13192752071a6f4aae43d8"
+              }
+            ],
+            "completed_slots": [],
+            "observed_slots": [
+              0,
+              1,
+              2
+            ],
+            "requested_episodes": 3,
+            "pending_is_not_filtered_by_current_demand": true,
+            "observation_scope": "UPSTREAM_VERIFIED_EPISODES_AND_READONLY_PERSISTENT_MAPPING_OR_PROGRESS"
+          }
+        }
+      }
+    },
+    "diagnostics": [
+      {
+        "code": "CORRUPT_ATTEMPT_EVIDENCE",
+        "task": "NavigateKitchen",
+        "attempt": "attempt_0001",
+        "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/sources/NavigateKitchen/batch_800c16f26098416cb99bcc226407b3b0/NavigateKitchen/attempt_0001",
+        "message": "[Errno 2] No such file or directory: '/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/sources/NavigateKitchen/batch_800c16f26098416cb99bcc226407b3b0/NavigateKitchen/attempt_0001/episode_progress.jsonl'"
+      },
+      {
+        "code": "CORRUPT_ATTEMPT_EVIDENCE",
+        "task": "CloseFridge",
+        "attempt": "attempt_0001",
+        "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/sources/CloseFridge/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18/CloseFridge/attempt_0001",
+        "message": "[Errno 2] No such file or directory: '/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/run/_invocations/1793079523808916166_503030_8912bc69/sources/CloseFridge/batch_e5c0e53ed4ac48cf9ccb9ca7b7accc18/CloseFridge/attempt_0001/episode_progress.jsonl'"
+      }
+    ],
+    "warnings": [],
+    "production_wired": true,
+    "planned_conditions": {
+      "effective_seeds": [
+        0
+      ],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"
+      ],
+      "flags": [],
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED"
+    },
+    "historical_missing_requested_media": 0,
+    "view_producer": {
+      "source_root": "1111111111111111111111111111111111111111",
+      "source_child": "2222222222222222222222222222222222222222",
+      "runtime_probed": true,
+      "runtime_digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f",
+      "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+      "task_metadata_by_task": {
+        "CloseFridge": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba",
+        "NavigateKitchen": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+      }
+    },
+    "checkpoint_reads": [
+      {
+        "cache_hit": true,
+        "bytes_read": 0,
+        "model_payload_bytes_read": 0,
+        "metadata_bytes_read": 0,
+        "shard_bytes_read": 0,
+        "files_read": 0,
+        "files_checked": 2,
+        "elapsed_seconds": 0.0002577530103735626,
+        "scope": "trusted_readonly_stat_cache_reuse_of_stored_SHA_not_fresh_payload_hash"
+      }
+    ]
+  },
+  "model_identity": {
+    "checkpoint_read_telemetry": {
+      "cache_hit": true,
+      "bytes_read": 0,
+      "model_payload_bytes_read": 0,
+      "metadata_bytes_read": 0,
+      "shard_bytes_read": 0,
+      "files_read": 0,
+      "files_checked": 2,
+      "elapsed_seconds": 0.0002577530103735626,
+      "scope": "trusted_readonly_stat_cache_reuse_of_stored_SHA_not_fresh_payload_hash"
+    },
+    "digest": "2eb0bfa45320fb6ea50d64d3ac07223adf984ae6bd99d63c60d08be8be936769",
+    "observed_checkpoint_stats": [
+      [
+        "__0_0.distcp",
+        160,
+        1793079523805713956,
+        1793079523805713956
+      ]
+    ],
+    "observed_model_directory_entries": [
+      ".metadata",
+      "__0_0.distcp"
+    ],
+    "observed_model_files": {
+      ".metadata": [
+        34,
+        378373,
+        28,
+        1793079523805656492,
+        1793079523805656492
+      ],
+      "__0_0.distcp": [
+        34,
+        378374,
+        160,
+        1793079523805713956,
+        1793079523805713956
+      ]
+    },
+    "parameters": {
+      "action_horizon": 16,
+      "checkpoint": {
+        "metadata_sha256": "ff5439d688165652b7adc7a31e41457bf6fb3c0977e117075a52012310aaa49d",
+        "path": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/checkpoint",
+        "scope": "full_model_sha256_v1",
+        "shards": [
+          {
+            "bytes": 160,
+            "name": "__0_0.distcp",
+            "sha256": "d289c7d3689f152520de95e41b36510f40155031e064740f6165e3bfe14d03bf"
+          }
+        ]
+      },
+      "guidance": 1.0,
+      "num_steps": 30
+    },
+    "schema": "psm_eval_model_identity_v1",
+    "validation_scope": "full_byte_hash_plus_nonexecuting_headers_not_tensor_load_or_DCP_completeness"
+  },
+  "manifest": {
+    "identity": {
+      "schema": "psm_v3_eval_identity_vendor_v1",
+      "root_sha": "1111111111111111111111111111111111111111",
+      "child_sha": "2222222222222222222222222222222222222222",
+      "checkpoint": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/checkpoint",
+      "model_metadata_sha256": "ff5439d688165652b7adc7a31e41457bf6fb3c0977e117075a52012310aaa49d",
+      "model_shard_stat_witnesses": [
+        [
+          "__0_0.distcp",
+          160,
+          1793079523805713956,
+          1793079523805713956
+        ]
+      ],
+      "config_sha256": "f8bfc4d904e77ece3679784ae2d9541360e54d782f5ee6cd573a765ac4ca3263",
+      "tasks": [
+        {
+          "task": "CloseFridge",
+          "dataset_dir": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/datasets/CloseFridge",
+          "env_metadata_sha256": "ccc4fed03416e9c7d9153719e10f234e1d683588cde6d9e99bd2af88937adbba"
+        },
+        {
+          "task": "NavigateKitchen",
+          "dataset_dir": "/tmp/pytest-of-agent/pytest-58/test_real_cli_readonly_cold_an0/datasets/NavigateKitchen",
+          "env_metadata_sha256": "86dc5716552596c1222b67b507a9c94c41f81d80dd9ca081e404d664132769a2"
+        }
+      ],
+      "protocol": {
+        "seed": 0,
+        "R": 16,
+        "H_pred": 16,
+        "server_action_chunk_size": 16,
+        "raw_action_dim": 15,
+        "max_action_dim": 64,
+        "policy_seed": 0,
+        "num_steps": 30,
+        "guidance": 1.0,
+        "trials": 3,
+        "fps": 20,
+        "camera_set": "left_wrist",
+        "use_state": true,
+        "base_encoding": "raw",
+        "local_memory_mode": "required",
+        "image_size": 256,
+        "cam_size": 256,
+        "success_latch": 1,
+        "manual_schema": "psm_wma_robocasa_eval_v1",
+        "gpu_ids": [
+          "0",
+          "1"
+        ],
+        "slots_per_gpu": 1,
+        "base_port": 8880,
+        "server_python": "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "save_rollout_mp4": false,
+        "save_generated_video": "none",
+        "save_init_png": false,
+        "save_action_jsonl": true,
+        "save_prediction_jsonl": true,
+        "server_lifecycle": "per_task",
+        "on_infrastructure_error": "stop",
+        "timeouts": {
+          "server_start_s": 10,
+          "predict_request_s": 10,
+          "episode_wall_s": 10,
+          "task_wall_s": 10,
+          "terminate_grace_s": 1
+        }
+      },
+      "evaluation_runtime": {
+        "schema": "psm_robocasa_runtime_v1",
+        "synthetic": true,
+        "digest": "c0a002bb8e28e9d2749d7ae29cae513050c9c4f059c91851f3fef5e3014fbc1f"
+      }
+    },
+    "digest": "ad493acb40eebefbb55f35ec21627154ca94f445855755ad796394d0cbdd7479"
+  },
+  "commands": [
+    {
+      "task": "CloseFridge",
+      "sampling_mode": "fresh_task_stream",
+      "server": [
+        "not-executed-server"
+      ],
+      "simulator": [
+        "not-executed-simulator"
+      ]
+    },
+    {
+      "task": "NavigateKitchen",
+      "sampling_mode": "fresh_task_stream",
+      "server": [
+        "not-executed-server"
+      ],
+      "simulator": [
+        "not-executed-simulator"
+      ]
+    }
+  ]
+}
+..model input verification 1: {"bytes_read": 188, "cache_hit": false, "elapsed_seconds": 0.00026249000802636147, "expected_bytes": 188, "files_read": 2, "metadata_bytes_read": 28, "model_payload_bytes_read": 188, "reason": "INVALID_DOCUMENT", "scope": "new_full_byte_read_not_a_historical_payload_hash", "shard_bytes_read": 160}
+.............................................................................................................................................................................usage: __main__.py [-h] [--config CONFIG] [--list-tasks] [--dry-run]
+                   [--checkpoint CHECKPOINT] [--dataset-root DATASET_ROOT]
+                   [--config-file CONFIG_FILE] [--server-python SERVER_PYTHON]
+                   [--sim-python SIM_PYTHON] [--output-root OUTPUT_ROOT]
+                   [--output-dir OUTPUT_DIR] [--run-name RUN_NAME]
+                   [--vendor-lock VENDOR_LOCK]
+                   [--asset-manifest ASSET_MANIFEST] [--tasks TASKS]
+                   [--gpus GPU_IDS] [--episodes EPISODES_PER_TASK]
+                   [--slots-per-gpu SLOTS_PER_GPU] [--base-port BASE_PORT]
+                   [--expected-tasks EXPECTED_TASKS] [--seed SEED]
+                   [--prediction-steps PREDICTION_STEPS]
+                   [--action-horizon ACTION_HORIZON] [--fps FPS]
+                   [--guidance GUIDANCE]
+                   [--progress-interval-s PROGRESS_INTERVAL_S]
+                   [--timeout TIMEOUT]
+                   [--server-start-timeout-s SERVER_START_TIMEOUT_S]
+                   [--predict-request-timeout-s PREDICT_REQUEST_TIMEOUT_S]
+                   [--episode-wall-timeout-s EPISODE_WALL_TIMEOUT_S]
+                   [--task-wall-timeout-s TASK_WALL_TIMEOUT_S]
+                   [--terminate-grace-s TERMINATE_GRACE_S]
+                   [--local-memory-mode LOCAL_MEMORY_MODE]
+                   [--server-lifecycle SERVER_LIFECYCLE]
+                   [--on-infrastructure-error ON_INFRASTRUCTURE_ERROR]
+                   [--save-generated-video SAVE_GENERATED_VIDEO]
+                   [--resume | --no-resume]
+                   [--allow-relocated-legacy-checkpoint | --no-allow-relocated-legacy-checkpoint]
+                   [--save-rollout-mp4 | --no-save-rollout-mp4]
+                   [--save-init-png | --no-save-init-png]
+                   [--save-action-jsonl | --no-save-action-jsonl]
+                   [--save-prediction-jsonl | --no-save-prediction-jsonl]
+                   [--progress | --no-progress]
+__main__.py: error: unrecognized arguments: --ignore-errors
+..
+227 passed in 4.05s
