@@ -135,7 +135,7 @@ def scan(store):
     return store.discover_history(sim_python=Path(sys.executable), requested_media=MEDIA)
 
 
-def test_fresh_preview_and_inside_lease_hash_exactly_twice_and_release(checkpoint, tmp_path):
+def test_fresh_preview_one_hash_and_inside_lease_stat_guard_and_release(checkpoint, tmp_path):
     calls = []
 
     def observed():
@@ -145,7 +145,7 @@ def test_fresh_preview_and_inside_lease_hash_exactly_twice_and_release(checkpoin
     store = RunStore(tmp_path / "run", current_identity_reader=observed)
     assert store.preview()["status"] == "FRESH"
     with store.locked():
-        assert len(calls) == 2
+        assert len(calls) == 1
         assert scan(store)["records"] == []
         invocation = store.begin_invocation(plan([]), {"fake": True})
         assert invocation.is_dir()
@@ -241,9 +241,7 @@ def test_explicit_owner_legacy_relocation_resumes_without_rewriting_original_epi
     migrated = read(root / "_resume_v2/legacy_migration.json")
     assert migrated["decision"]["owner_accepted_relocated_legacy_checkpoint"] is True
     assert migrated["decision"]["historical_payload_sha256"] is None
-    assert read(root / "_resume_v2/model_identity.json")["parameters"]["checkpoint"]["path"] == str(
-        relocated.resolve()
-    )
+    assert read(root / "_resume_v2/model_identity.json")["parameters"]["checkpoint"]["path"] == str(relocated.resolve())
     for old_path, old_witness in original.items():
         assert (old_path.read_bytes(), old_path.stat().st_mtime_ns) == old_witness
     # New strong anchor must function without repeatedly needing relocation override.

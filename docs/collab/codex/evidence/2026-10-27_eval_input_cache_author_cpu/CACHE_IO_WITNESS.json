@@ -1,0 +1,17 @@
+{
+  "synthetic_only": true,
+  "measurements": [
+    {
+      "cold_bytes": 188,
+      "cold_hash_calls": [
+        ".metadata",
+        "__0_0.distcp"
+      ],
+      "warm_bytes": 0,
+      "strong_digest": "0e997160036eae8a29d3ad553f07f78fb58419f0aa9d53c5da636e67b158252c"
+    }
+  ],
+  "full_model_hash_passes_cold": 1,
+  "warm_read_hash_calls": 0,
+  "not_a_GPU_or_large_model_benchmark": true
+}

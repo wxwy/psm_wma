@@ -45,7 +45,9 @@ def validate_root_source_status(porcelain: str) -> None:
             raise ValueError(f"evaluation Root has uncommitted source changes: {row}")
 
 
-def build_evaluation_identity(*, root: Path, checkpoint: Path, config_file: Path, tasks, protocol: dict) -> dict:
+def build_evaluation_identity(
+    *, root: Path, checkpoint: Path, config_file: Path, tasks, protocol: dict, verified_model_identity=None
+) -> dict:
     root = root.resolve()
     child = root / "cosmos-framework"
     root_sha, child_sha = _git(root, "rev-parse", "HEAD"), _git(child, "rev-parse", "HEAD")
@@ -60,6 +62,18 @@ def build_evaluation_identity(*, root: Path, checkpoint: Path, config_file: Path
     )
     validate_root_source_status(root_status)
     checkpoint = checkpoint.resolve()
+    if verified_model_identity is not None:
+        from robocasa_episode_resume.model_identity import verify_model_observation
+
+        verify_model_observation(verified_model_identity)
+        parameters = verified_model_identity["parameters"]
+        if (
+            parameters["checkpoint"]["path"] != str(checkpoint)
+            or parameters["num_steps"] != protocol["num_steps"]
+            or parameters["action_horizon"] != protocol["R"]
+            or parameters["guidance"] != protocol["guidance"]
+        ):
+            raise ValueError("verified model observation differs from evaluation protocol")
     model_dir = checkpoint / "model"
     metadata = model_dir / ".metadata"
     if (
@@ -91,7 +105,11 @@ def build_evaluation_identity(*, root: Path, checkpoint: Path, config_file: Path
         "root_sha": root_sha,
         "child_sha": child_sha,
         "checkpoint": str(checkpoint),
-        "model_metadata_sha256": sha256_file(metadata),
+        "model_metadata_sha256": (
+            verified_model_identity["parameters"]["checkpoint"]["metadata_sha256"]
+            if verified_model_identity is not None
+            else sha256_file(metadata)
+        ),
         "model_shard_stat_witnesses": shards,
         "checkpoint_identity_scope": "metadata_hash_and_shard_stats_not_full_payload_hash",
         "config_sha256": sha256_file(config_file.resolve()),

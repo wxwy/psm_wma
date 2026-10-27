@@ -22,6 +22,8 @@ from pathlib import Path
 SCHEMA = "psm_eval_model_identity_v1"
 LEGACY_SCHEMAS = {"psm_v3_eval_identity_v1", "psm_v3_eval_identity_vendor_v1"}
 PARAMETERS = {"checkpoint", "num_steps", "action_horizon", "guidance"}
+VERIFICATION_SCHEMA = "psm_eval_verified_model_cache_v1"
+VERIFICATION_MAX_AGE_NS = 30 * 24 * 60 * 60 * 1_000_000_000
 _SHA = re.compile(r"[0-9a-f]{64}\Z")
 
 
@@ -64,6 +66,9 @@ def _stat_witness(value):
 def _snapshot(model: Path) -> dict:
     if any(path.is_symlink() for path in (model, *model.parents)):
         raise IdentityInputError("CHECKPOINT_INPUT_INVALID", "model path must not contain symlinks")
+    for path in model.iterdir():
+        if not stat.S_ISREG(path.lstat().st_mode):
+            raise IdentityInputError("CHECKPOINT_INPUT_INVALID", f"nonordinary model directory entry: {path}")
     paths = [model / ".metadata", *sorted(model.glob("*.distcp"))]
     if len(paths) < 2:
         raise IdentityInputError("CHECKPOINT_INPUT_INVALID", "checkpoint model has no shard")
@@ -221,11 +226,11 @@ def build_model_identity(
 
 
 def verify_model_observation(identity: dict) -> dict:
-    """Stat-only guard for an invocation's freshly full-hashed observation.
+    """Stat-only guard for a full-hashed or validated trusted-cache observation.
 
     This does not establish payload hashes from historical/stat-only input.
-    Callers still full-hash before and inside the invocation lease; use this
-    bounded-I/O guard around each model load and Episode commit.
+    Trusted-cache reuse is not a fresh cryptographic proof of model bytes. Use
+    this bounded-I/O guard inside the lease and around loads/Episode commits.
     """
     started = time.monotonic()
     parameters = _checked(identity)
@@ -260,6 +265,75 @@ def verify_model_observation(identity: dict) -> dict:
         "elapsed_seconds": time.monotonic() - started,
         "scope": "stat_recheck_of_current_full_hash_observation_not_a_new_payload_hash",
     }
+
+
+def verification_record(identity, *, run_root, anchor_sha256):
+    """Serialize only after admission, under the original run lease (caller)."""
+    _checked(identity)
+    verify_model_observation(identity)
+    body = {
+        "schema": VERIFICATION_SCHEMA,
+        "run_root": str(Path(run_root).absolute()),
+        "anchor_sha256": anchor_sha256,
+        "verified_at_ns": time.time_ns(),
+        "identity": copy.deepcopy(identity),
+    }
+    return {**body, "integrity_sha256": _digest(body)}
+
+
+def reuse_verification_record(record, *, anchor, anchor_sha256, run_root, requested):
+    """Reuse an admitted SHA with fresh stat checks on trusted immutable storage.
+
+    The unkeyed checksum detects damaged records, not malicious replacement.
+    Cache files are bounded/non-symlink JSON read by RunStore; ordinary-file
+    witness and inventory checks still execute on every lookup.
+    """
+    started = time.monotonic()
+    if not isinstance(record, dict) or set(record) != {
+        "schema",
+        "run_root",
+        "anchor_sha256",
+        "verified_at_ns",
+        "identity",
+        "integrity_sha256",
+    }:
+        raise IdentityInputError("VERIFICATION_CACHE_INVALID", "unknown/incomplete verification record")
+    body = {key: value for key, value in record.items() if key != "integrity_sha256"}
+    if (
+        record["schema"] != VERIFICATION_SCHEMA
+        or record["integrity_sha256"] != _digest(body)
+        or record["run_root"] != str(Path(run_root).absolute())
+        or record["anchor_sha256"] != anchor_sha256
+        or type(record["verified_at_ns"]) is not int
+        or not 0 <= time.time_ns() - record["verified_at_ns"] <= VERIFICATION_MAX_AGE_NS
+    ):
+        raise IdentityInputError("VERIFICATION_CACHE_INVALID", "damaged/foreign/expired verification record")
+    identity = record["identity"]
+    parameters = _checked(identity)
+    if compare_model_identity(anchor, identity)["status"] != "MATCH":
+        raise IdentityInputError("VERIFICATION_CACHE_INVALID", "cache differs from original strong anchor")
+    request = {
+        "checkpoint": str(Path(requested["checkpoint"]).resolve(strict=True)),
+        **_scalar_parameters(requested["num_steps"], requested["action_horizon"], requested["guidance"]),
+    }
+    if parameters["checkpoint"]["path"] != request.pop("checkpoint") or any(
+        parameters[key] != value for key, value in request.items()
+    ):
+        raise IdentityInputError("VERIFICATION_CACHE_MISS", "checkpoint path or model parameters changed")
+    observation = verify_model_observation(identity)
+    identity = copy.deepcopy(identity)
+    identity["checkpoint_read_telemetry"] = {
+        "cache_hit": True,
+        "bytes_read": 0,
+        "model_payload_bytes_read": 0,
+        "metadata_bytes_read": 0,
+        "shard_bytes_read": 0,
+        "files_read": 0,
+        "files_checked": observation["files_checked"],
+        "elapsed_seconds": time.monotonic() - started,
+        "scope": "trusted_readonly_stat_cache_reuse_of_stored_SHA_not_fresh_payload_hash",
+    }
+    return identity
 
 
 def _checked(identity: dict) -> dict:

@@ -1,0 +1,12 @@
+M	SESSION.md
+M	TODO.md
+A	docs/collab/codex/designs/2026-10-27_V3_RoboCasa_eval_input_verification_cache.md
+M	scripts/robocasa_episode_resume/model_identity.py
+A	scripts/robocasa_input_verification.py
+M	scripts/robocasa_resume_cli.py
+M	scripts/robocasa_resume_store.py
+M	scripts/v3_evaluation_identity.py
+A	tools/v3/robocasa_input_verification_cli_test.py
+A	tools/v3/robocasa_input_verification_test.py
+M	tools/v3/robocasa_resume_components_test.py
+M	tools/v3/robocasa_resume_store_test.py

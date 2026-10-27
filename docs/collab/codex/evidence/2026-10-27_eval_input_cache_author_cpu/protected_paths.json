@@ -1,0 +1,19 @@
+{
+  "baseline": "49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9",
+  "formal_root": "9cb8b60dccf4ac2520f8d862b723d7bc94fe3813",
+  "unchanged_child_gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "paths_zero_diff": [
+    "cosmos-framework",
+    "configs",
+    "third_party",
+    "scripts/eval_robocasa_18task_queue.py",
+    "scripts/robocasa_eval_results.py",
+    "scripts/robocasa_resume_execution.py",
+    "scripts/robocasa_episode_resume/episode_evidence.py",
+    "scripts/robocasa_episode_resume/scene_sampling.py",
+    "scripts/robocasa_episode_resume/plan.py",
+    "scripts/robocasa_vendor.py",
+    "scripts/train_v3_packed128_staged.sh",
+    "scripts/train_v3_matched_no_ttt_4gpu.sh"
+  ]
+}

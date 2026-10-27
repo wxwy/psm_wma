@@ -1,0 +1,77 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "--version"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_0.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "scripts/robocasa_episode_resume/model_identity.py",
+        "scripts/robocasa_resume_store.py",
+        "scripts/robocasa_resume_cli.py",
+        "scripts/robocasa_input_verification.py",
+        "scripts/v3_evaluation_identity.py",
+        "tools/v3/robocasa_resume_store_test.py",
+        "tools/v3/robocasa_resume_components_test.py",
+        "tools/v3/robocasa_input_verification_test.py",
+        "tools/v3/robocasa_input_verification_cli_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_1.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "--check",
+        "scripts/robocasa_episode_resume/model_identity.py",
+        "scripts/robocasa_resume_store.py",
+        "scripts/robocasa_resume_cli.py",
+        "scripts/robocasa_input_verification.py",
+        "scripts/v3_evaluation_identity.py",
+        "tools/v3/robocasa_resume_store_test.py",
+        "tools/v3/robocasa_resume_components_test.py",
+        "tools/v3/robocasa_input_verification_test.py",
+        "tools/v3/robocasa_input_verification_cli_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_2.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_3.log"
+    }
+  ],
+  "syntax_files": [
+    "scripts/robocasa_episode_resume/model_identity.py",
+    "scripts/robocasa_resume_store.py",
+    "scripts/robocasa_resume_cli.py",
+    "scripts/robocasa_input_verification.py",
+    "scripts/v3_evaluation_identity.py",
+    "tools/v3/robocasa_resume_store_test.py",
+    "tools/v3/robocasa_resume_components_test.py",
+    "tools/v3/robocasa_input_verification_test.py",
+    "tools/v3/robocasa_input_verification_cli_test.py"
+  ],
+  "syntax": "PASS",
+  "frozen_sources_unchanged": true
+}

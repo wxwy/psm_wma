@@ -1,0 +1,37 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "-s",
+    "-x",
+    "tools/v3/robocasa_input_verification_test.py",
+    "tools/v3/robocasa_input_verification_cli_test.py",
+    "tools/v3/robocasa_resume_store_test.py",
+    "tools/v3/robocasa_resume_components_test.py",
+    "tools/v3/robocasa_eval_config_test.py",
+    "--junitxml=/tmp/psm-v3-eval-cache-20261027/final/junit.xml"
+  ],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "HF_HOME": "/tmp/psm-v3-eval-cache-20261027/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-v3-eval-cache-20261027/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-v3-eval-cache-20261027/cache",
+    "PYTHONPATH": "/workspace/psm_wma/scripts:/workspace/psm_wma"
+  }
+}
