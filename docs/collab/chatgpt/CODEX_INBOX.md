@@ -156,3 +156,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **GPT独立证据审核/下一步**：`docs/collab/chatgpt/reviews/2026-10-27_V3_G1_NoTTT_CPU_Performance_Evidence_Review.md`。后续 DS 实测：No-TTT source_read=4.78s、parent Transform=16.72s、raw_wait≈0.26s；G1历史 data_prepare 4.57s/≈250，No-TTT 17.6s/≈497。共同热点为 Dense全零视频占位的 CPU Reflect Padding；G1历史Torch线程数96尚无实际Rank证据；绝不引用“6–7s 完整 Step”做承诺。
 - **已有可用优化**：`PSM_V3_COMPACT_CACHED_VIDEO=1` 的 shape proxy + CachedGeometryResize + move_cached_native_batch 已在 Child 源码实现（默认0）。禁止直接改变原始视频 shape/ABI，或盲增 nw。下一步**仅**在隔离CPU环境完成 Compact0/1 同 Consumer/Token/Action/Latent/SequencePlan/RNG/Frontier等价与Transform计时；GPU Forward/Loss/Gradient parity及正式 Job 的受控Checkpoint边界切换须后续单独授权。
 - **当前状态**：REPORTS_PERSISTED / NO_TTT_PERF_CAUSE_SUPPORTED / COMPACT_PARITY_PENDING / NO_PRODUCTION_CHANGE。原 No-TTT Job/Checkpoint、G1及真实训练服务器均未被本次归档操作更改。
+
+
+## 2026-10-27 — No-TTT Compact Cached Video 0/1 CPU 等价性与耗时 Evidence Gate
+
+- **Scope / formal source**：Root 实验报告对象 `083a4914aa8785f445ccf7ee9fab13d87c39c761`；Child/Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`（本次 Root 更新为 evidence/bookkeeping，不是新的 No-TTT 生产实现）。
+- **DS_PRO 原始报告**：`docs/collab/chatgpt/DS_PRO_2026-10-27_V3_Compact_Cached_Video_CPU_Parity.md`；4个全局Consumer实测 Compact0/1 输出字段及 Python/Torch RNG 等价，8线程 Transform median Dense 12.646–13.661ms→Compact 0.455–0.661ms，20.6–28.7×（**只代表单样本CPU Transform，非完整 Step Wall加速**）；用户报告原始 `/tmp/compact_parity.py/results.json/log` 未由 GPT 独立取得。
+- **GPT Evidence Review（持久化）**：`docs/collab/chatgpt/reviews/2026-10-27_V3_Compact_Cached_Video_CPU_Parity_Evidence_Review.md`。**REQUEST_CHANGES（Evidence-only）**：A. `CONSUMERS=[0,N//2,N//3,N-1]` 未证明真正的 terminal partial（要求 `training_stream_end=True` 且 `valid_count<16`）；B. 缺真实 `NoTTTCpuLoader→SegmentBatch→MatchedNoTTTWindow.pack→collate_grouped_native_batch` CPU同输入对照。生产实现无当前新 blocker，**formal pair未变不得重新审核代码**。
+- **历史基准纠偏**：此前 Pad说明给出 `480×832`，本次相同模型真实报告 Canvas为 `192×320`、`image_size=[192,320,160,320]`，实际源码含resize+pad，不能继续引用旧几何和“只有reflect pad”断言。
+- **Next Gate**：只补冻结 Planner 请求中的满长/terminal partial Segment及完整CPU Packed Batch等价，归档最小脚本/结果；通过后再单独申请真实模型 Loss/Gradient parity。**禁止停止/切换当前 No-TTT 正式训练、修改Checkpoint/Job、触发未经授权GPU/DCP实验。**
+- **Status**：SAMPLED_CPU_PARITY_PASS / CPU_PACKED_GATE_REQUEST_CHANGES / MODEL_GPU_PARITY_PENDING / NO_PRODUCTION_CHANGE。
