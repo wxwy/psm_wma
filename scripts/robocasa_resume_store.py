@@ -21,7 +21,14 @@ from pathlib import Path
 
 from robocasa_episode_resume import MAX_RECOVERY_BYTES, bounded_episode_count, bounded_episode_index, bounded_records
 from robocasa_episode_resume.episode_evidence import _completed_progress, scan_legacy_run
-from robocasa_episode_resume.model_identity import compare_model_identity, legacy_ingest
+from robocasa_episode_resume.model_identity import (
+    IdentityInputError,
+    compare_model_identity,
+    legacy_ingest,
+    reuse_verification_record,
+    verification_record,
+    verify_model_observation,
+)
 from robocasa_episode_resume.plan import source_key, verified_scan_records
 from robocasa_episode_resume.scene_sampling import SAMPLER_VERSION
 from robocasa_eval_results import _marker
@@ -184,6 +191,7 @@ class RunStore:
         resume=False,
         current_provenance=None,
         allow_relocated_legacy_checkpoint=False,
+        model_identity_request=None,
     ):
         if not callable(current_identity_reader):
             raise TypeError("current_identity_reader is required")
@@ -197,6 +205,14 @@ class RunStore:
         self.resume = resume
         self.current_provenance = current_provenance
         self.allow_relocated_legacy_checkpoint = allow_relocated_legacy_checkpoint
+        if model_identity_request is not None and (
+            not isinstance(model_identity_request, dict)
+            or set(model_identity_request) != {"checkpoint", "num_steps", "action_horizon", "guidance"}
+        ):
+            raise TypeError("model_identity_request requires exactly the four model parameters")
+        self.model_identity_request = copy.deepcopy(model_identity_request)
+        self.verification_events = []
+        self._cache_hit = False
         self.current_identity = None
         self._preview_identity = None
         self._held = False
@@ -205,6 +221,51 @@ class RunStore:
         self._legacy_manifest_hash = None
         self._reports = {}
         self._owned_invocations = set()
+
+    def _full_identity(self, reason):
+        self._cache_hit = False
+        identity = self.current_identity_reader()
+        telemetry = copy.deepcopy(identity.get("checkpoint_read_telemetry", {}))
+        telemetry.update(cache_hit=False, model_payload_bytes_read=telemetry.get("bytes_read"), reason=reason)
+        self.verification_events.append(telemetry)
+        return identity
+
+    def _read_current_identity(self):
+        # A cache is never sufficient without the original independently admitted
+        # strong anchor; old runs conservatively establish it through full reads.
+        if self.model_identity_request is not None:
+            try:
+                record, _ = _read(self.control / "input_verification.json")
+                anchor, anchor_sha = _read(self.control / "model_identity.json")
+                identity = reuse_verification_record(
+                    record,
+                    anchor=anchor,
+                    anchor_sha256=anchor_sha,
+                    run_root=self.root,
+                    requested=self.model_identity_request,
+                )
+            except (OSError, IdentityInputError, ResumeStoreError) as error:
+                reason = getattr(error, "code", type(error).__name__)
+            else:
+                self._cache_hit = True
+                self.verification_events.append(copy.deepcopy(identity["checkpoint_read_telemetry"]))
+                return identity
+        else:
+            reason = "CACHE_NOT_CONFIGURED"
+        return self._full_identity(reason)
+
+    def _persist_verification(self):
+        self._require_lease()
+        if self.model_identity_request is None or self._cache_hit:
+            return
+        anchor = self.control / "model_identity.json"
+        if not anchor.exists():
+            return  # Fresh/legacy anchor publication belongs to begin_invocation.
+        stored, anchor_sha = _read(anchor)
+        self._match(stored)
+        record = verification_record(self.current_identity, run_root=self.root, anchor_sha256=anchor_sha)
+        _write(self.control / "input_verification.json", record, replace=True)
+        self._cache_hit = True
 
     def _match(self, old):
         result = compare_model_identity(old, self.current_identity)
@@ -268,7 +329,7 @@ class RunStore:
 
     def preview(self):
         """Read-only admission. The next lease reuses this outside hash once."""
-        self.current_identity = self.current_identity_reader()
+        self.current_identity = self._read_current_identity()
         result = self._admit()
         self._preview_identity = self.current_identity
         return result
@@ -277,7 +338,7 @@ class RunStore:
     def locked(self):
         if self._held:
             raise RuntimeError("nested evaluation lease is unsupported")
-        self.current_identity = self._preview_identity or self.current_identity_reader()
+        self.current_identity = self._preview_identity or self._read_current_identity()
         self._preview_identity = None
         self._admit()
         outside_identity = self.current_identity
@@ -305,7 +366,12 @@ class RunStore:
             if fresh:
                 os.fsync(fd)
                 _fsync_dir(self.root)
-            self.current_identity = self.current_identity_reader()
+            try:
+                verify_model_observation(outside_identity)
+            except IdentityInputError:
+                # A real race requires another full read, then the SAME strict
+                # comparison. Stable cold inputs are not hashed twice.
+                self.current_identity = self._full_identity("INPUT_CHANGED_BEFORE_LEASE")
             self._match(outside_identity)
             self._admit(own_fresh=fresh)
             self._held = True
@@ -548,6 +614,7 @@ class RunStore:
             _write(anchor, self.current_identity)
         else:
             self._match(_read(anchor)[0])
+        self._persist_verification()
         if initial_manifest is not None and not (self.root / "evaluation_manifest.json").exists():
             manifest = copy.deepcopy(initial_manifest)
             manifest["identity"]["model_identity"] = copy.deepcopy(self.current_identity)

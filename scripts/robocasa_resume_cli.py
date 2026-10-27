@@ -17,6 +17,7 @@ from robocasa_episode_resume import MAX_RECOVERY_BYTES, bounded_episode_count, b
 from robocasa_episode_resume.model_identity import build_model_identity, verify_model_observation
 from robocasa_episode_resume.plan import build_plan, build_report, render_plan, source_key
 from robocasa_eval_results import _unique_object
+from robocasa_input_verification import InvocationInputGuard, snapshot_inputs
 from robocasa_resume_execution import execute_planned_batches
 from robocasa_resume_store import RunStore
 
@@ -299,28 +300,28 @@ def prepare_resume(args, cache, *, queue_api):
     for protected in (checkpoint, config_file.resolve(), args.dataset_root.resolve()):
         if destination == protected or destination.is_relative_to(protected) or protected.is_relative_to(destination):
             raise ValueError(f"evaluation output overlaps a read-only input: {protected}")
-    model_reads = []
 
     def read_model():
-        identity = build_model_identity(
+        return build_model_identity(
             checkpoint=checkpoint, num_steps=args.num_steps, action_horizon=args.action_horizon, guidance=args.guidance
         )
-        telemetry = identity.get("checkpoint_read_telemetry", {})
-        model_reads.append(telemetry)
-        print(f"model identity read {len(model_reads)}: {json.dumps(telemetry, sort_keys=True)}", flush=True)
-        return identity
 
     store = RunStore(
         output_root,
         current_identity_reader=read_model,
         resume=args.resume,
         allow_relocated_legacy_checkpoint=args.allow_relocated_legacy_checkpoint,
+        model_identity_request=dict(
+            checkpoint=checkpoint, num_steps=args.num_steps, action_horizon=args.action_horizon, guidance=args.guidance
+        ),
     )
     output_root = store.root
     simulation_env = queue_api.launch_environment(cache)
     invocation_id = f"{time.time_ns()}_{os.getpid()}_{uuid.uuid4().hex[:8]}"
 
     def admitted(*, readonly):
+        for index, telemetry in enumerate(store.verification_events, 1):
+            print(f"model input verification {index}: {json.dumps(telemetry, sort_keys=True)}", flush=True)
         history = store.discover_history(sim_python=args.sim_python, requested_media=_media(args))
         provenance = _view_provenance(queue_api)
 
@@ -341,9 +342,11 @@ def prepare_resume(args, cache, *, queue_api):
 
         plan = make_plan()
         bundle = None
+        input_guard = None
         if any(row["new"] for row in plan["tasks"].values()):
             if not config_file.is_file():
                 raise ValueError(f"config file missing: {config_file}")
+            before_inputs = snapshot_inputs(config_file, tasks)
             bundle = queue_api.build_verified_evaluation_identity(
                 sim_python=args.sim_python,
                 lock_path=args.vendor_lock,
@@ -354,13 +357,15 @@ def prepare_resume(args, cache, *, queue_api):
                 config_file=config_file,
                 tasks=tasks,
                 protocol=_protocol(args, gpus),
+                verified_model_identity=store.current_identity,
             )
+            input_guard = InvocationInputGuard(config_file, bundle["manifest"], before_inputs)
             provenance.update(_provenance(bundle["manifest"]))
             provenance["runtime_probed"] = True
             plan = make_plan()
         store.current_provenance = copy.deepcopy(provenance)
         plan["view_producer"] = copy.deepcopy(provenance)
-        plan["checkpoint_reads"] = copy.deepcopy(model_reads)
+        plan["checkpoint_reads"] = copy.deepcopy(store.verification_events)
         print(render_plan(plan), flush=True)
         if readonly:
             preview = {
@@ -459,12 +464,7 @@ def prepare_resume(args, cache, *, queue_api):
 
         def verify_inputs(job, phase):
             verify_model_observation(store.current_identity)
-            if queue_api.sha256_file(config_file) != job["source_manifest"]["identity"]["config_sha256"]:
-                raise ValueError(f"action server config file changed during {phase}")
-            for item in job["source_manifest"]["identity"]["tasks"]:
-                metadata = Path(item["dataset_dir"]) / "extras/dataset_meta.json"
-                if queue_api.sha256_file(metadata) != item["env_metadata_sha256"]:
-                    raise ValueError(f"task metadata changed during {phase}: {item['task']}")
+            input_guard.verify(job["source_manifest"], phase)
 
         result = execute_planned_batches(
             args=args,
@@ -489,6 +489,8 @@ def prepare_resume(args, cache, *, queue_api):
         ]
         try:
             verify_model_observation(store.current_identity)
+            if input_guard is not None:
+                input_guard.verify(bundle["manifest"], "final_input_verification")
         except Exception as error:
             final_errors.append({"stage": "final_input_verification", "error": f"{type(error).__name__}: {error}"})
         final_plan = _revalidate_selected_sources(plan, final_history["records"], final_errors)
@@ -504,7 +506,12 @@ def prepare_resume(args, cache, *, queue_api):
             execution_result=result,
         )
         report["diagnostics"].extend(row for row in final_history["diagnostics"] if row not in report["diagnostics"])
-        report["checkpoint_reads"] = copy.deepcopy(model_reads)
+        report["checkpoint_reads"] = copy.deepcopy(store.verification_events)
+        report["invocation_input_verification"] = {
+            "subsequent_guard_checks": input_guard.checks if input_guard else 0,
+            "subsequent_bytes_read": 0,
+            "initial_full_config_task_verification": bundle is not None,
+        }
         diagnostic_media = {"rollout_mp4s": [], "generated_mp4s": []}
         for job in jobs:
             for kind, paths in queue_api.task_video_files(job["attempt_dir"]).items():

@@ -155,7 +155,10 @@ def test_legacy_bridge_keeps_original_sha_scope_and_never_rehashes_per_episode(c
     before = copy.deepcopy(manifest)
     monkeypatch.setattr(model_identity, "_read_hash", Mock(side_effect=AssertionError("extra full read forbidden")))
     decision = model_identity.legacy_ingest(manifest, current)
-    assert decision == approved_identity.legacy_ingest(manifest, current)
+    assert decision == {
+        **approved_identity.legacy_ingest(manifest, current),
+        "owner_accepted_relocated_legacy_checkpoint": False,
+    }
     assert decision["historical_payload_sha256"] is None and manifest == before
     assert decision["status"] == "LEGACY_STAT_BRIDGE_MATCH"
 
