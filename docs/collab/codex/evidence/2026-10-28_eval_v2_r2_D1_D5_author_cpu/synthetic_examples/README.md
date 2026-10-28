@@ -1,0 +1,1 @@
+DESIGN PROTOTYPE ONLY. All records/environments/model starts/EGL lifetimes are synthetic mocks. No robot action, inference, GPU, simulation, historical431 or native writer artifacts. Archive is the actual final test-created new namespace, not hand-authored rollout evidence. Do not import into production.

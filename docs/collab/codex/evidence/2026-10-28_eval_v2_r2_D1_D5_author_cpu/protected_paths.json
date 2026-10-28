@@ -1,0 +1,12 @@
+{
+  "base": "b59d1faf486765271295a00ee5e20e4d239e0163",
+  "prior_r1": "dc750f8e258d10a33e7a195cf907926b1c98bd7f",
+  "formal_root": "1fd3ad42075032bd0137ac9a76306169aaa45032",
+  "child_gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "zero_diff_paths": [
+    "scripts",
+    "configs",
+    "third_party",
+    "cosmos-framework"
+  ]
+}

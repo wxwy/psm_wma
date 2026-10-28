@@ -1,0 +1,18 @@
+{
+  "python": "3.12.14",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "packages": {
+    "torch": "2.10.0+cpu",
+    "numpy": "2.2.6",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7"
+  },
+  "method": "CPU Python importlib.metadata; no model/runtime imports",
+  "cpu_python": "/workspace/.venvs/psm-wma-cpu/bin/python",
+  "Torch": "2.10.0+cpu",
+  "NumPy": "2.2.6",
+  "pytest": "9.0.2",
+  "ruff": "0.12.7",
+  "all_data_synthetic": true,
+  "CUDA_initialized": false
+}

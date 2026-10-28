@@ -1,0 +1,16 @@
+{
+  "tasks": 18,
+  "episodes": 900,
+  "success": 450,
+  "failure": 450,
+  "sr": 0.5,
+  "prototype_only": true,
+  "actual_scheduler_dispatch": 900,
+  "round_barriers": 50,
+  "mock_model_loads": {
+    "GPU4": 1,
+    "GPU5": 1,
+    "GPU6": 1
+  },
+  "mock_env_builds": 18
+}

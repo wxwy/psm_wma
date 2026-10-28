@@ -1,0 +1,83 @@
+[
+  {
+    "name": "initial",
+    "exit": {
+      "exit_code": 1,
+      "wall_seconds": 7.334241144999396,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "retry01",
+    "exit": {
+      "exit_code": 0,
+      "wall_seconds": 8.938516008000079,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "full01",
+    "exit": {
+      "exit_code": 1,
+      "wall_seconds": 139.054897435999,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "d5focused",
+    "exit": {
+      "exit_code": 0,
+      "wall_seconds": 11.693660130998978,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "non900",
+    "exit": {
+      "exit_code": 1,
+      "wall_seconds": 71.68399516800127,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "fixes01",
+    "exit": {
+      "exit_code": 1,
+      "wall_seconds": 1.9201695419997122,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "fixes02",
+    "exit": {
+      "exit_code": 0,
+      "wall_seconds": 1.8696160760009661,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "final01",
+    "exit": {
+      "exit_code": 0,
+      "wall_seconds": 246.3009959480005,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  },
+  {
+    "name": "report_bound_red",
+    "exit": {
+      "exit_code": 1,
+      "wall_seconds": 36.76270302600096,
+      "frozen_sources": true
+    },
+    "not_aggregated": true
+  }
+]

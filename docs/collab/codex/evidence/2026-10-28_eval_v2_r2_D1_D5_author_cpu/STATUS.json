@@ -1,0 +1,44 @@
+{
+  "gate": "DESIGN_PLUS_ISOLATED_CPU_PROTOTYPE_ONLY",
+  "formal_design_root": "1fd3ad42075032bd0137ac9a76306169aaa45032",
+  "child_gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "prior_r1_root": "dc750f8e258d10a33e7a195cf907926b1c98bd7f",
+  "canonical_contract_V3": "b59d1faf486765271295a00ee5e20e4d239e0163",
+  "candidate_branch": "v3-eval-v2-design-r2-20261028",
+  "requirements": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "D5"
+  ],
+  "counts": {
+    "tests": 104,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "seconds": 287.051,
+  "python_files": 10,
+  "static": "Ruff0.12.7 check/format/AST/frozen-source PASS",
+  "production_zero_diff": true,
+  "prototype_only": true,
+  "runtime_gate_approved": false,
+  "DS_independent_CPU": "NOT_RUN",
+  "GPU_or_native_execution": "NOT_RUN",
+  "historical431": "UNTOUCHED",
+  "source_changes_after_ACK": true,
+  "new_concrete_design_choices": [
+    "32 initialization samples per slot Owner authorization round",
+    "16MiB derived summary limit; Core/ledger256KiB unchanged",
+    "3 checked resident model servers +18 resident Task env processes/6 EGL contexts per GPU proposed; actual resource gate pending"
+  ],
+  "remaining_native_work": [
+    "production launcher/native actions/prediction/Local evidence adapter",
+    "real ownership/PID/session/runtime probes; bounded model/env/EGL resources",
+    "media encoder/spool independent and bounded",
+    "real scene admission/raw15-env12/Local chronology",
+    "DS independent CPU and separately authorized Canary/900"
+  ],
+  "stop": "GPT fresh incremental Design Review only, no V3 merge or Stage2 automatically"
+}

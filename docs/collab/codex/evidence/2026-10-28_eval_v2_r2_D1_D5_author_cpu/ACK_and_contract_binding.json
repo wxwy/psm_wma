@@ -1,0 +1,11 @@
+{
+  "contract_V3": "b59d1faf486765271295a00ee5e20e4d239e0163",
+  "contract_path": "docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md",
+  "contract_blob": "fc9b175837a309d45515cc160d340358acaf7b50",
+  "ACK_roots_before_formal_changes": [
+    "bfbcdcf90cece0e2e80648dd100124c5003c14fb",
+    "5ae38125484be51954da46606de6a60ba3880b91"
+  ],
+  "Issue7_comment_posted": false,
+  "Issue_API": "Forbidden; allowed handoff+Inbox ACK used"
+}
