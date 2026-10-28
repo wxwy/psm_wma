@@ -281,6 +281,34 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **No repeat audit on bookkeeping commits**：下一次技术审核只在新的Formal Root/Child实现或设计SHA出现时进行；本轮V3只新增Review和Inbox，Child未变。Codex如收到新任务先读取此入口，不要把`APPROVE_DESIGN`当`APPROVE_PRODUCTION`。
 
 
+## 2026-10-28 — NoTTT Compact=1 第二套共存 Job S0/S1 DS_PRO 证据审核
+
+- **Source仍冻结**：运行时Root`4cf90fb486db9c8e2a4b93aaa7d9f5438296f642`，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`，目前NoTTT formal实现没有变更；Root之后只是其它评测Review/Inbox文档提交。**只增量审核新 Evidence，禁止因bookkeeping重新审生产代码。**
+- **DS报告级证据**：`docs/collab/chatgpt/evidence/2026-10-28_nott_compact_corerun_s0_s1_reported.md`。S0 GPU4–7共存投影余量5205/10377/9789/10457MiB、CPU/RAM有余；S1`Compact=1`独立新Job`no_ttt_compact1_corerun_20261028_world4_ga4`真实`fresh 1`、report`optimizer_committed`、finite loss14.9375/missing0/nonfinite0、rank0峰值29.84GiB、iter1独立DCP报告存在；旧Job继续4828→4858正常推进。
+- **正式Evidence verdict=`REQUEST_CHANGES`（仅E1/E2）**：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_Coresident_S0_S1_Evidence_Review.md`。远端尚缺DS自称的`2026-10-28_nott_compact_corerun_s0_s1.{json,md}`与直接rank logs；S1仅Rank0显存、未提供四Rank峰值/新Job DCP meta+sidecar与旧Job同时段直接证据。**不重跑S1**，只传已有原始文件与补最小只读清单。
+- **数值更正**：GPU4以29.84GiB=约30556MiB估算后，剩余约12.53GiB，不是原报告的“13.5GiB”。旧Dense稳定段data_prepare17.5s vs新Compact首Step8.63s不能宣称稳态51%加速；旧Job前后健康不等于zero slowdown。
+- **S2硬阻断**：/mnt/data用量99%、新独立iter1 DCP约24GiB后只剩约74GiB；正式旧Job仍会持续写入。任何 `resume10/100/30000`前必须有由Owner批准的存储/retention/回退安排与安全余量；不能删除原Job checkpoint。优先进行同权重/同Batch GPU数学Parity（本共存Smoke不能替代）。
+- **状态**：S0_REPORTED_PASS / S1_REPORTED_PASS_CANDIDATE / S1_EVIDENCE_REQUEST_CHANGES / S2_NOT_AUTHORIZED_DISK_BLOCKED / NO_PRODUCTION_CHANGE。
+
+
+## 2026-10-28 — NoTTT Compact S0/S1 E1/E2 补证复审及 R1 Checkpoint数学纠偏
+
+- 上轮正式`REQUEST_CHANGES`后，DS上报E1/E2补证全文已保存：`docs/collab/chatgpt/evidence/2026-10-28_nott_compact_corerun_s0_s1_remediation_user_paste.md`；对应独立增量Review：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_Coresident_S0_S1_Remediation_Incremental_Review.md`。本次Root后续文档账本变化不改变正式NoTTT Root/Child代码target，Child/Gitlink仍`746c5cf2f2324104a62fb71510343aa40d3976c5`；不重审生产实现。
+- **S1 REPORT_SUPPORTED**：launch报告fresh/execution_until1、`rank0.optimizer_committed`、loss14.9374676、Compact true、rank0peak29.8398438GiB，DCP`complete=true`/各模块/4Sidecar大小与旧Job4826–4928连续成功日志。`rank1–3 peak=NOT_MEASURED`不可补造。
+- **原始工件仍待提交**：远端GitHub V3未见DS称的原生`s0_s1.{md,json}`；粘贴“complete.v1.json（完整）”中`rank3 sha`为`read_from_complete_v1_json`占位，不能替代真实rank3 witness。补交已有文件/Manifest内容即可，不重跑GPU/S1或对24GB DCP重Hash。
+- **R1 HIGH数学修正**：`30000/1000=30`份整千Checkpoint，单份按文件byte合计≈`23.17GiB`，保留30份≈`695GiB(0.679TiB)`，**不是300份/7.2T**；仍超过/mnt/data空闲97G，且旧NoTTT也在增加整千DCP。inode只有5.68%用量。
+- **自动Cleaner授权与风险**：现有`nottt_ckpt_cleaner_loop.sh`据DS称每30分钟删除旧Job非整千已完成Checkpoint，已删iter4700/4800释放47G；当前缺Owner授权和实际脚本审核。不得默许或擅停，需Owner确认旧/新两Job各自恢复点保护及删除权限。
+- `S1_EVIDENCE_REQUEST_CHANGES`（仅source provenance）`/R1_HIGH_OPEN/S2_NOT_AUTHORIZED`。下一步提交现有原生JSON/MD/complete.v1以及Owner定Checkpoint保留与磁盘容量，之后才考虑新Job Resume10/100/30000与独立GPU数学Parity。
+
+
+## 2026-10-28 — Owner Override：No-TTT存储和Checkpoint清理不作为GPT Gate
+
+- Owner最新决定：**磁盘容量、Checkpoint保留与定期清理由Owner本地监控程序管理；GPT/DS不审核Cleaner、不干涉或操作其运行，磁盘99%/历史R1 HIGH不能再作为S2独立阻塞项。** 正式 Override：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_Owner_Storage_Retention_Override.md`；StagePlan顶部已加新Owner优先级提示。旧评审保留作为历史证据，不再表示当前执行权限。
+- **冻结Checkpoint频率 `save_iter=100`**（避免中断浪费），不批准改成1000；`max_iter=30000/warmup=500`不变，不擅删/移/覆盖任何DCP。
+- 仍须验证Checkpoint真实完整性（如`complete.v1.json`/rank sidecars）、训练/Resume语义及Compact0/1数值Parity；Owner只接管存储管理，不代替模型技术Gate。旧正式Job保持不动，新Job不得自动`resume10/100/30000`；继续启动需另行授权。
+- **当前Status**：`R1_OWNER_MANAGED_NOT_GPT_BLOCKER` / `SAVE_ITER_100_FROZEN` / `S1_EVIDENCE_ONLY_OPEN` / `GPU_PARITY_NOT_RUN` / `S2_PENDING_NON_STORAGE_AUTHORIZATION`；本次仅文档修改，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`未变。
+
+
 
 
 

@@ -1,3 +1,5 @@
+> ****2026-10-28 Owner override — Storage/Checkpoint retention delegated**** — 最新指令见 [Owner Storage/Checkpoint Override](../reviews/2026-10-28_V3_NoTTT_Compact_Owner_Storage_Retention_Override.md)。Owner 将磁盘与Checkpoint保留/清理交由本地监控，GPT/DS不得以磁盘剩余量、Cleaner审查或保留策略阻断S2；`save_iter=100` 不变。下文历史磁盘/retention约束在冲突处已由该决定覆盖。其它GPU共存安全、真实数值等价、Checkpoint结构完整性及S2单独启动授权仍有效。
+
 # Owner 更新：V3 GPU4–7 共存第二套完整 No-TTT Compact=1 — 受控分阶段方案
 
 - 日期：2026-10-28。
