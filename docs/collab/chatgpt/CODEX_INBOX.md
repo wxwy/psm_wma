@@ -220,3 +220,8 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - DS_PRO报告旧Run `seed=695376856` 的 NavigateKitchen Drawer→Microwave 场景 `env.reset()` 后即 `_check_success()==True`，base-target XY 0.1336m（阈0.20m）、朝向 cos1.0（阈0.98）；零动作 Step 可记Success。GPT未接触服务器原始探针，但核对 Child reset→step→check 顺序与公开RoboCasa成功判据；这是起始场景退化，并非策略掌握导航的证据。
 - **新 D4（下一 r2 Design Gate 验收）**：V2 在reset后、Model/Action/Local-TTT调用前做严格 initial-success precheck；已成功则记录 `DEGENERATE_INITIAL_SUCCESS` 并有上限地重新采样，**不占用50个有效Episode、不计算Success/Failure**；成功谓词异常不可吞；正常行为失败不重试；记录拒绝场景与实际采样来源，报告采样过滤率，版本化新评测协议。**不要修改Vendor或增加未经批准的距离阈值**。
 - 完整 Evidence / acceptance：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_NavigateKitchen_Reset_Already_Success_Evidence_Design_Addendum.md`。先前 Owner 最新决定仍是 **Episode级 Resume 且不要求复现原场景**，D1/D2/D3仍Open。当前r1 formal pair `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` **未变，不重复技术审核、不改变 REQUEST_CHANGES**。只要求下一新 formal design SHA 纳入 D4；未授权生产代码/仿真GPU/旧431更改。
+
+
+## 2026-10-28 — Owner scene reproduction clarification supersedes earlier D3 sampling requirement
+
+- **Owner原话**：“Episode 37 中断 就应该从 Episode 37 重新测”，“如何保证 Episode 37 的场景采样可复现？**不用复现**”。此较新决定取代 `2026-10-28_V3_EvalV2_Owner_Override_Episode_Level_Resume.md` §2 提出的固定每集 Seed / 全RNG快照 A/B 二选一要求；**不得把精确旧场景复现作为 Design Gate 强制前提**。正常 Task 可持续Reset；仅无有效 Core Result 的逻辑 Episode 重测/重新采样新场景，保留前缀及有效 behavioral_failure；实际新Seed/stream/resume边界照实记录，不假冒单一连续 RNG 流。见 `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Owner_Clarification_No_Scene_Reproduction.md`。本条修正 D3 需求，不改变 r1 formal pair 的 REQUEST_CHANGES；D4 initial-success scene admission 应与该恢复口径一致。
