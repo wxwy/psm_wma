@@ -51,6 +51,10 @@ def record(m, state, episode, *, success=True, invalid=False):
         instruction="close the fridge / 实际指令",
         replans=1,
         elapsed_seconds=0.5,
+        attempt_id=state.get("attempt_id", "0" * 32),
+        worker_id=state.get("worker_id", "0" * 32),
+        seed=state.get("seed", m["seed"]),
+        reset_index=state.get("reset_index", episode),
     )
 
 
@@ -127,9 +131,9 @@ def test_complete_result_cannot_contradict_authority_or_identity(bad):
             "outcome": "failure",
             "environment_success": False,
             "steps": True,
-            "seed": 8,
+            "seed": -1,
             "completion": "official_horizon",
-            "reset_index": 1,
+            "reset_index": -1,
             "manifest_digest": "0" * 64,
         }[bad]
     with pytest.raises(ValueError):

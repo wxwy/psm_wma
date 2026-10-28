@@ -10,9 +10,9 @@ import re
 import sys
 from dataclasses import dataclass, field
 
-SCHEMA = "psm_eval_v2_design_prototype_v1"
-SAMPLING = "literal_seed_continuous_task_reset_v1"
-RESUME = "restart_incomplete_task_from_literal_seed_v1"
+SCHEMA = "psm_eval_v2_design_prototype_v2"
+SAMPLING = "continuous_reset_with_explicit_resume_stream_v2"
+RESUME = "retry_missing_episode_no_scene_reproduction_v2"
 _SHA = re.compile(r"[0-9a-f]{64}\Z")
 
 
@@ -31,7 +31,7 @@ def integer(value, minimum, maximum, name):
 
 
 def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False):
-    tasks = sorted(tasks)
+    tasks = list(tasks)
     if (
         not tasks
         or len(tasks) > 18
@@ -63,6 +63,7 @@ def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False)
         "schema": SCHEMA,
         "prototype_only": True,
         "tasks": tasks,
+        "task_order": tasks,
         "episodes_per_task": episodes,
         "seed": seed,
         "horizons": horizons,
@@ -70,8 +71,13 @@ def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False)
         "scope": "formal900_design" if formal else "canary_design",
         "protocol": {
             "sampling": SAMPLING,
+            "schedule": "episode_major_frozen_order_round_barrier_v1",
             "resume": RESUME,
             "success_latch": 1,
+            "scene_admission": "reject_initial_success_bounded_v1",
+            "admission_limit": 32,
+            "consecutive_init_errors_to_skip": 4,
+            "skipped_retry": "explicit_owner_authorization_only",
             "raw_action_dim": 15,
             "state_dim": 15,
             "action_chunk_size": 16,
@@ -152,7 +158,20 @@ class EnvironmentOutcome:
 
 
 def result_record(
-    manifest, *, task, episode, generation, stream_id, observation, instruction, replans, elapsed_seconds
+    manifest,
+    *,
+    task,
+    episode,
+    generation,
+    stream_id,
+    observation,
+    instruction,
+    replans,
+    elapsed_seconds,
+    attempt_id="0" * 32,
+    worker_id="0" * 32,
+    seed=None,
+    reset_index=None,
 ):
     validate_manifest(manifest)
     if task not in manifest["tasks"]:
@@ -174,9 +193,11 @@ def result_record(
         "episode": episode,
         "generation": generation,
         "stream_id": stream_id,
-        "seed": manifest["seed"],
+        "seed": manifest["seed"] if seed is None else seed,
         "sampling_mode": SAMPLING,
-        "reset_index": episode,
+        "reset_index": episode if reset_index is None else reset_index,
+        "attempt_id": attempt_id,
+        "worker_id": worker_id,
         "instruction": instruction,
         "replans": replans,
         "elapsed_seconds": elapsed_seconds,
@@ -194,6 +215,8 @@ def validate_result(manifest, row):
         "task",
         "episode",
         "generation",
+        "attempt_id",
+        "worker_id",
         "stream_id",
         "seed",
         "sampling_mode",
@@ -223,14 +246,15 @@ def validate_result(manifest, row):
     integer(row["replans"], 0, 100000, "replans")
     if (
         row["sampling_mode"] != SAMPLING
-        or row["seed"] != manifest["seed"]
         or type(row["seed"]) is not int
-        or row["reset_index"] != row["episode"]
+        or not 0 <= row["seed"] < 2**32
         or type(row["reset_index"]) is not int
+        or not 0 <= row["reset_index"] <= 100000
     ):
         raise ValueError("scene stream/seed mismatch")
-    if not isinstance(row["stream_id"], str) or not re.fullmatch(r"[0-9a-f]{32}", row["stream_id"]):
-        raise ValueError("bad stream identity")
+    for key in ("stream_id", "attempt_id", "worker_id"):
+        if not isinstance(row[key], str) or not re.fullmatch(r"[0-9a-f]{32}", row[key]):
+            raise ValueError("bad attempt/worker/stream identity")
     if (
         not isinstance(row["instruction"], str)
         or len(row["instruction"]) > 16384

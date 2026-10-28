@@ -481,3 +481,5 @@
 
 
 - **V3-EVAL-V2-R2-D1-D4-20261028** — IN_PROGRESS; Codex; latest canonical9858e70b read+ACK first. Revise isolated prototype/design for scoped fault resolution, crash-safe init/commit, sparse Episode-only Resume/no oldscene reproduction, scene admission +4error SKIP/manual retry. New formalRoot/unchangedChild+CPU evidence then STOP GPT review; no production/native/GPU/history/V3 merge.
+
+- **V3-EVAL-V2-R2-D1-D4-20261028** — REVIEW; expanded latest Owner D1–D5 (ACK9858/b59before edits). Final104PASS/0skip/full5modules, static10/frozen10PASS; scoped error resolution, crash-safe init/commit, sparse Episode-only resume, D4admission/4strikes/manual retry, true Episode-major coordinator/threeasyncworkers/barriers. NewdesignRoot/unchanged746Child +rawJUnit/r1diff+ACKthenGPTDesignReview; STOP, no production/V3merge/Native/GPU/history.

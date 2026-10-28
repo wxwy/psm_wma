@@ -1,334 +1,466 @@
-"""New900 storage/state-machine CPU tests; no legacy evaluation files are inputs."""
+"""r2 D1/D2/D3 CPU tests. Superseded r1 Task-replay assertions are replaced."""
 
-import json
+import hashlib
 import os
 import subprocess
 import sys
-from pathlib import Path
-from unittest.mock import Mock
 
 import pytest
 
-from tools.v3.episode_eval_v2_prototype import store as module
-from tools.v3.episode_eval_v2_prototype.contract import canonical, try_media
+from tools.v3.episode_eval_v2_prototype.contract import try_media
 from tools.v3.episode_eval_v2_prototype.contract_test import manifest, record
-from tools.v3.episode_eval_v2_prototype.store import Store, read
+from tools.v3.episode_eval_v2_prototype.store import Store, save
 
 
-def fresh(tmp_path, *, tasks=("CloseFridge",), episodes=3):
-    m = manifest(tasks, episodes)
-    value = Store(tmp_path / "new-run", m)
+class Crash(BaseException):
+    pass
+
+
+def fresh(tmp_path, *, tasks=("CloseFridge",), episodes=3, formal=False):
+    m = manifest(tasks, episodes, formal)
+    value = Store(tmp_path / "new900", m)
     value.create()
     return value
 
 
-def read_index(root):
-    return [json.loads(line) for line in (root / "episodes.jsonl").read_text().splitlines()]
+def cleaned(_):
+    return {"probe_id": "CPU mock ownership/local probe", "owned_processes_gone": True, "local_sessions_closed": True}
 
 
-def test_900_logical_results_and_per_task_statistics_are_unique_and_reconstructible(tmp_path):
-    tasks = tuple(f"Task{i:02d}" for i in range(18))
-    m = manifest(tasks, 50, formal=True)
-    value = Store(tmp_path / "new900", m)
-    value.create()
-    with value.locked():
-        for task in tasks:
-            state = value.begin_task(task)
-            for ep in range(50):
-                value.commit(record(m, state, ep, success=ep % 2 == 0))
-        report = value.publish_views()
-    assert report["expected"] == report["valid"] == 900
-    assert report["success"] == report["failure"] == 450 and report["sr"] == 0.5
-    assert report["results_qualified"] and report["prototype_only"] and not report["runtime_gate_approved"]
-    rows = read_index(value.root)
-    assert len(rows) == len({(r["task"], r["episode"]) for r in rows}) == 900
-    assert all(info["expected"] == 50 and info["sr"] == 0.5 for info in report["tasks"].values())
-    # Derived views are not authority and can always be rebuilt from small commits.
-    (value.root / "summary.json").write_text("broken")
-    (value.root / "episodes.jsonl").write_text('{"duplicate":true}\n' * 3)
-    with value.locked():
-        assert value.publish_views() == report
-    assert len(read_index(value.root)) == 900
-    print(
-        "V2_DESIGN_WITNESS "
-        + json.dumps(
-            {"tasks": 18, "episodes": 900, "success": 450, "failure": 450, "sr": report["sr"], "prototype_only": True}
-        ),
-        flush=True,
+def healthy(_):
+    return {"probe_id": "CPU mock new worker health", "healthy": True}
+
+
+def close_streams(value, task):
+    for s in value._streams(task):
+        value.cleanup_stream(task, s["stream_id"], cleaned)
+
+
+def admitted(value, a):
+    value.begin_initialization(a)
+    assert value.initialization_outcome(a, initial_success=False)["status"] == "admitted"
+    return a
+
+
+def valid(value, a, *, success=True, invalid=False):
+    event = value.events(a)[-1]
+    row = record(
+        value.manifest,
+        {**a, "reset_index": event["data"]["reset_index"]},
+        a["episode"],
+        success=success,
+        invalid=invalid,
     )
+    value.commit(row)
+    return row
 
 
-def test_invalid_pending_partial_SR_never_silently_drop_from_official_plan(tmp_path):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, state, 0))
-        value.commit(record(value.manifest, state, 1, invalid=True))
-        report = value.publish_views()
-    assert (report["success"], report["invalid"], report["pending"]) == (1, 1, 1)
-    assert report["sr"] is None and report["partial_sr_valid_only"] == 1.0
-    assert not report["results_qualified"]
-    assert [r["outcome"] for r in read_index(value.root)] == ["success", "invalid", "pending"]
+def complete(value, task, ep, *, success=True):
+    a = admitted(value, value.begin_episode(task, ep))
+    return valid(value, a, success=success)
 
 
-def test_late_process_error_preserves_environment_results_but_blocks_qualification(tmp_path):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        for ep in range(3):
-            value.commit(record(value.manifest, state, ep))
-        original = (value.root / "tasks/CloseFridge/episodes/ep_000/result.json").read_bytes()
-        value.record_process_error(
-            task="CloseFridge", stage="worker_exit", message="post-result process exited nonzero"
-        )
-        report = value.publish_views()
-    assert report["sr"] == 1.0 and report["status"] == "complete_with_process_errors"
-    assert not report["results_qualified"]
-    assert (value.root / "tasks/CloseFridge/episodes/ep_000/result.json").read_bytes() == original
+def bytes_of_results(value):
+    return {
+        str(p.relative_to(value.root)): (p.read_bytes(), p.stat().st_ino)
+        for p in value.root.glob("tasks/*/episodes/ep_*/result.json")
+    }
 
 
-def test_task_restart_moves_partial_bytes_once_never_mixes_scene_streams_or_copies_videos(tmp_path):
-    value = fresh(tmp_path, tasks=("CloseFridge", "OpenCabinet"))
-    with value.locked():
-        first = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, first, 0))
-        media = value.root / "tasks/CloseFridge/episodes/ep_000/media/rollout.mp4"
+def inject(stage):
+    def fault(at):
+        if at == stage:
+            raise Crash(stage)
+
+    return fault
+
+
+@pytest.mark.parametrize("boundary", ["before_core_commit", "after_core_commit"])
+def test_episode37_commit_crash_retries_only_uncommitted_slot_and_keeps_prefix_bytes(tmp_path, boundary):
+    value = fresh(tmp_path, episodes=50)
+    with pytest.raises(Crash), value.locked():
+        value.begin_task("CloseFridge")
+        for ep in range(37):
+            complete(value, "CloseFridge", ep, success=ep % 2 == 0)
+        original = bytes_of_results(value)
+        media = value._slot("CloseFridge", 0) / "media/rollout.mp4"
         media.parent.mkdir()
-        media.write_bytes(b"diagnostic MP4, never decoded")
+        media.write_bytes(b"one original diagnostic video")
         inode = media.stat().st_ino
-        done = value.begin_task("OpenCabinet")
-        for ep in range(3):
-            value.commit(record(value.manifest, done, ep))
+        a = admitted(value, value.begin_episode("CloseFridge", 37))
+        value.fault = inject(boundary)
+        valid(value, a)
     resumed = Store(value.root, value.manifest)
     with resumed.locked():
-        assert resumed.begin_task("OpenCabinet")["action"] == "reuse_complete_task"
-        second = resumed.begin_task("CloseFridge")
-        assert second["action"] == "restart_full_task" and second["generation"] == 1
-        assert second["stream_id"] != first["stream_id"]
-        assert resumed.rows("CloseFridge") == []
-        with pytest.raises(ValueError, match="stale producer"):
-            resumed.commit(record(value.manifest, first, 0))
-        for ep in range(3):
-            resumed.commit(record(value.manifest, second, ep))
-        assert resumed.publish_views()["valid"] == 6
-    archived = list((value.root / "_internal/abandoned/CloseFridge").glob("*/ep_000/media/rollout.mp4"))
-    assert len(archived) == 1 and archived[0].stat().st_ino == inode
-    assert archived[0].read_bytes() == b"diagnostic MP4, never decoded"
-    assert not (value.root / "videos_view").exists()
-
-
-@pytest.mark.parametrize("boundary", ["before_move", "after_move", "before_state", "after_state"])
-def test_restart_journal_recovery_is_bounded_and_preserves_partial_evidence(tmp_path, monkeypatch, boundary):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, state, 0))
-    original = (value.root / "tasks/CloseFridge/episodes/ep_000/result.json").read_bytes()
-    renamed, written = os.rename, module.write
-
-    def rename(src, dst):
-        if boundary == "before_move":
-            raise OSError("injected before move")
-        renamed(src, dst)
-        if boundary == "after_move":
-            raise OSError("injected after move")
-
-    def write_state(path, payload, **kwargs):
-        is_state = Path(path) == value._state_path("CloseFridge")
-        if is_state and boundary == "before_state":
-            raise OSError("injected before state")
-        written(path, payload, **kwargs)
-        if is_state and boundary == "after_state":
-            raise OSError("injected after state")
-
-    with monkeypatch.context() as scoped:
-        scoped.setattr(os, "rename", rename)
-        scoped.setattr(module, "write", write_state)
-        with pytest.raises(OSError, match="injected"):
-            with Store(value.root, value.manifest).locked() as failed:
-                failed.begin_task("CloseFridge")
-    with Store(value.root, value.manifest).locked() as recovered:
-        state = recovered.begin_task("CloseFridge")
-        assert state["generation"] == 1 and state["action"] == "restart_full_task"
-        assert not recovered._journal("CloseFridge").exists()
-        assert recovered.rows("CloseFridge") == []
-        recovered.commit(record(value.manifest, state, 0))
-    archives = list((value.root / "_internal/abandoned").glob("**/result.json"))
-    assert len(archives) == 1 and archives[0].read_bytes() == original
-
-
-@pytest.mark.parametrize("mode", ["duplicate", "out_of_order", "post_invalid", "unclaimed"])
-def test_episode_dedup_order_and_stream_owner_are_strict(tmp_path, mode):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        if mode == "unclaimed":
-            value.active_tasks.clear()
-            with pytest.raises(RuntimeError):
-                value.commit(record(value.manifest, state, 0))
-        elif mode == "out_of_order":
-            with pytest.raises(ValueError):
-                value.commit(record(value.manifest, state, 1))
+        close_streams(resumed, "CloseFridge")
+        state = resumed.begin_task("CloseFridge", seed=90210)
+        assert state["kind"] == "resume_new_stream_no_scene_reproduction"
+        if boundary == "after_core_commit":
+            with pytest.raises(ValueError, match="immutable"):
+                resumed.begin_episode("CloseFridge", 37)
+            first = 38
         else:
-            value.commit(record(value.manifest, state, 0, invalid=mode == "post_invalid"))
-            with pytest.raises(ValueError):
-                value.commit(record(value.manifest, state, 0 if mode == "duplicate" else 1))
+            first = 37
+        for ep in range(first, 50):
+            row = complete(resumed, "CloseFridge", ep)
+            assert row["seed"] == 90210 and row["reset_index"] == ep - first
+        after = bytes_of_results(resumed)
+        assert all(after[k] == v for k, v in original.items())
+        assert media.stat().st_ino == inode
+        assert not (resumed.root / "videos_view").exists()
+        assert resumed.summary()[0]["valid"] == 50
 
 
-def test_commit_failure_never_creates_a_complete_episode_and_partial_files_are_not_authority(tmp_path, monkeypatch):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        with monkeypatch.context() as scoped:
-            scoped.setattr(os, "link", Mock(side_effect=OSError("commit failed")))
-            with pytest.raises(OSError):
-                value.commit(record(value.manifest, state, 0))
-        directory = value.root / "tasks/CloseFridge/episodes/ep_000"
-        (directory / "actions.jsonl").write_text('{"step":0}\n')
-        assert value.rows("CloseFridge") == []
-        assert value.publish_views()["pending"] == 3
-        assert not list(directory.glob(".pending-*"))
-
-
-@pytest.mark.parametrize("change", ["checksum", "wrong_stream", "wrong_reset", "bad_utf8", "symlink", "oversized"])
-def test_corrupt_result_never_becomes_complete_or_silently_reruns(tmp_path, change):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, state, 0))
-        path = value.root / "tasks/CloseFridge/episodes/ep_000/result.json"
-        if change == "bad_utf8":
-            path.write_bytes(b"\xff")
-        elif change == "oversized":
-            path.write_bytes(b"x" * (module.MAX_JSON + 1))
-        elif change == "symlink":
-            target = value.root / "outside.json"
-            path.rename(target)
-            path.symlink_to(target)
-        else:
-            row = read(path)
-            if change == "checksum":
-                row["outcome"] = "failure"
-            else:
-                row["stream_id" if change == "wrong_stream" else "reset_index"] = (
-                    "b" * 32 if change == "wrong_stream" else 1
-                )
-                row["commit_sha256"] = module.digest({k: v for k, v in row.items() if k != "commit_sha256"})
-            path.write_bytes(canonical(row))
-        with pytest.raises((ValueError, UnicodeError)):
-            value.publish_views()
-
-
-@pytest.mark.parametrize("kind", ["old431", "empty", "foreign_manifest", "unsafe_symlink"])
-def test_new_namespace_never_adopts_or_edits_historical_outputs(tmp_path, kind):
-    root = tmp_path / "existing"
-    root.mkdir()
-    original = root / "431_diagnostic.txt"
-    original.write_text("never migrate or rewrite")
-    if kind == "foreign_manifest":
-        (root / "manifest.json").write_text('{"schema":"old"}')
-    if kind == "unsafe_symlink":
-        alias = tmp_path / "alias"
-        alias.symlink_to(root, target_is_directory=True)
-        with pytest.raises(ValueError):
-            Store(alias, manifest())
-    else:
-        with pytest.raises(FileExistsError):
-            Store(root, manifest()).create()
-    assert original.read_text() == "never migrate or rewrite"
-
-
-def test_readonly_summary_never_changes_results_or_recreates_views(tmp_path):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, state, 0))
-    before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in value.root.rglob("*") if p.is_file()}
-    report, rows = value.summary()
-    assert report["sr"] is None and len(rows) == 3
-    assert before == {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in value.root.rglob("*") if p.is_file()}
-
-
-def test_distinct_cpu_process_cannot_take_the_original_run_lease(tmp_path):
-    value = fresh(tmp_path)
-    code = """import json,sys
-from tools.v3.episode_eval_v2_prototype.store import Store
-store=Store(sys.argv[1],json.loads(sys.argv[2]))
-try:
- with store.locked(): raise AssertionError('double owner')
-except BlockingIOError: print('RUN_LOCKED')
-"""
-    with value.locked():
-        p = subprocess.run(
-            [sys.executable, "-c", code, str(value.root), json.dumps(value.manifest)],
-            text=True,
-            capture_output=True,
-            timeout=20,
-        )
-        assert p.returncode == 0 and "RUN_LOCKED" in p.stdout
-
-
-def test_media_corruption_missing_files_and_encoder_errors_never_enter_SR_validation(tmp_path, monkeypatch):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        for ep in range(3):
-            value.commit(record(value.manifest, state, ep, success=ep != 1))
-        media = value.root / "tasks/CloseFridge/episodes/ep_000/media"
-        media.mkdir()
-        (media / "rollout.mp4").write_bytes(b"intentionally unplayable")
-        diagnostic = try_media(lambda: (_ for _ in ()).throw(OSError("video failed")))
-        assert diagnostic["status"] == "error"
-        monkeypatch.setattr(subprocess, "run", Mock(side_effect=AssertionError("decoder/export forbidden")))
-        assert value.publish_views()["sr"] == pytest.approx(2 / 3)
-        assert not (value.root / "videos_view").exists()
-
-
-def test_pending_task_summary_is_not_stream_authority_and_can_be_claimed_later(tmp_path):
+@pytest.mark.parametrize("boundary", ["before_intent", "after_intent", "after_directory", "after_ready"])
+@pytest.mark.parametrize("is_slot", [False, True])
+def test_task_and_episode_initialization_transaction_recovers_every_boundary(tmp_path, boundary, is_slot):
     value = fresh(tmp_path, tasks=("CloseFridge", "OpenCabinet"))
     with value.locked():
-        assert value.publish_views()["pending"] == 6
-        assert value.publish_views()["pending"] == 6
-        state = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, state, 0))
-        assert value.publish_views()["pending"] == 5
-
-
-def test_corrupt_restart_journal_cannot_move_or_create_paths_outside_archive(tmp_path):
-    value = fresh(tmp_path)
-    with value.locked():
-        state = value.begin_task("CloseFridge")
-        value.commit(record(value.manifest, state, 0))
-    old = {k: state[k] for k in ("task", "generation", "stream_id", "manifest_digest")}
-    old["stream_id"] = "../../escape"
-    new = dict(old, generation=1, stream_id="b" * 32)
-    module.write(value._journal("CloseFridge"), {"old": old, "new": new})
-    before = (value.root / "tasks/CloseFridge/episodes/ep_000/result.json").read_bytes()
-    with Store(value.root, value.manifest).locked() as resumed:
-        with pytest.raises(ValueError, match="stream state"):
-            resumed.begin_task("CloseFridge")
-    assert not (value.root / "_internal/abandoned").exists()
-    assert (value.root / "tasks/CloseFridge/episodes/ep_000/result.json").read_bytes() == before
-
-
-def test_old431_or_new_canary_manifest_is_never_accepted_as_another_experiment(tmp_path):
-    value = fresh(tmp_path)
-    before = (value.root / "manifest.json").read_bytes()
-    different = manifest(episodes=4)
-    with pytest.raises(ValueError, match="identity mismatch"):
-        with Store(value.root, different).locked():
-            pytest.fail("changed experimental plan adopted")
-    assert (value.root / "manifest.json").read_bytes() == before
-
-
-def test_initial_claim_interruption_is_explicitly_blocked_not_silent_missing_data(tmp_path):
-    value = fresh(tmp_path)
-    # This is an unsupported half-initialized task, never proof that no old data existed.
-    module.write(
-        value._state_path("CloseFridge"),
-        {"task": "CloseFridge", "generation": 0, "stream_id": "a" * 32, "manifest_digest": value.manifest["digest"]},
-    )
-    with value.locked():
-        with pytest.raises(ValueError, match="missing active"):
+        value.begin_task("OpenCabinet")
+        complete(value, "OpenCabinet", 0)
+        close_streams(value, "OpenCabinet")
+        untouched = bytes_of_results(value)
+        if is_slot:
             value.begin_task("CloseFridge")
-    assert not (value.root / "tasks/CloseFridge/episodes").exists()
+        value.fault = inject(boundary)
+        with pytest.raises(Crash):
+            if is_slot:
+                value.begin_episode("CloseFridge", 0)
+            else:
+                value.begin_task("CloseFridge")
+    with Store(value.root, value.manifest).locked() as resumed:
+        close_streams(resumed, "CloseFridge")
+        resumed.begin_task("CloseFridge")
+        complete(resumed, "CloseFridge", 0)
+        after = bytes_of_results(resumed)
+        assert all(after[k] == v for k, v in untouched.items())
+        assert resumed.rows("CloseFridge")[0]["episode"] == 0
+
+
+@pytest.mark.parametrize("boundary", ["after_stream", "after_attempt_claim"])
+def test_crash_after_claim_requires_cleanup_then_new_leased_producer(tmp_path, boundary):
+    value = fresh(tmp_path)
+    with pytest.raises(Crash), value.locked():
+        if boundary == "after_stream":
+            value.fault = inject(boundary)
+        value.begin_task("CloseFridge")
+        value.fault = inject(boundary)
+        value.begin_episode("CloseFridge", 0)
+    with Store(value.root, value.manifest).locked() as resumed:
+        with pytest.raises(ValueError, match="not cleaned"):
+            resumed.begin_task("CloseFridge")
+        close_streams(resumed, "CloseFridge")
+        resumed.begin_task("CloseFridge")
+        complete(resumed, "CloseFridge", 0)
+        attempts = resumed._attempts("CloseFridge", 0)
+        assert len(attempts) == (2 if boundary == "after_attempt_claim" else 1)
+
+
+@pytest.mark.parametrize("is_slot", [False, True])
+def test_ambiguous_unready_producer_data_is_not_erased_or_adopted(tmp_path, is_slot):
+    value = fresh(tmp_path)
+    with value.locked():
+        if is_slot:
+            value.begin_task("CloseFridge")
+        value.fault = inject("after_directory")
+        with pytest.raises(Crash):
+            value._initialize("CloseFridge", 0 if is_slot else None)
+        public = value._slot("CloseFridge", 0) if is_slot else value._task("CloseFridge") / "episodes"
+        bad = public / "unowned.bin"
+        bad.write_bytes(b"preserve me")
+        value.fault = lambda _: None
+        with pytest.raises(ValueError, match="ambiguous"):
+            value._initialize("CloseFridge", 0 if is_slot else None)
+        assert bad.read_bytes() == b"preserve me"
+
+
+def test_ready_directory_loss_is_ambiguous_not_silently_recreated(tmp_path):
+    value = fresh(tmp_path)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        (value._task("CloseFridge") / "episodes").rmdir()
+        with pytest.raises(ValueError, match="lost ready"):
+            value._initialize("CloseFridge")
+
+
+def test_old_fault_valid_retry_can_resolve_without_losing_history_or_polluting_other_task(tmp_path):
+    value = fresh(tmp_path, tasks=("CloseFridge", "OpenCabinet"), episodes=1)
+    with value.locked():
+        old = value.begin_task("CloseFridge")
+        a = admitted(value, value.begin_episode("CloseFridge", 0))
+        value.finish_invalid(a, "Local cleanup failed")
+        fault = value.errors("CloseFridge")[0]
+        fault_path = value._internal("CloseFridge") / "errors" / f"{fault['id']}.json"
+        preserved = fault_path.read_bytes()
+        value.begin_task("OpenCabinet")
+        complete(value, "OpenCabinet", 0)
+        close_streams(value, "OpenCabinet")
+        assert value.summary()[0]["tasks"]["OpenCabinet"]["results_qualified"]
+        with pytest.raises(ValueError, match="current process fault"):
+            value.begin_episode("CloseFridge", 0)
+        value.cleanup_stream("CloseFridge", old["stream_id"], cleaned)
+        value.begin_task("CloseFridge", seed=18)
+        cert = value.certify_recovery("CloseFridge", old["stream_id"], healthy)
+        with pytest.raises(ValueError, match="valid retry"):
+            value.resolve_error("CloseFridge", fault["id"], cert)
+        replacement = complete(value, "CloseFridge", 0, success=False)
+        assert not value.summary()[0]["results_qualified"]
+        value.resolve_error("CloseFridge", fault["id"], cert, replacement=replacement)
+        close_streams(value, "CloseFridge")
+        report = value.publish_views()
+        assert report["results_qualified"] and report["resolved_process_errors"] == 1
+        assert report["sr"] == 0.5 and fault_path.read_bytes() == preserved
+        assert fault["attempt"]["attempt_id"] != replacement["attempt_id"]
+        value.begin_task("CloseFridge", recovery_only=True)
+        value.record_process_error("CloseFridge", "late", "new stream failure")
+        assert not value.summary()[0]["results_qualified"]
+
+
+def test_late_fault_keeps_numeric_SR_needs_explicit_execution_recovery_no_retest(tmp_path):
+    value = fresh(tmp_path, episodes=1)
+    with value.locked():
+        old = value.begin_task("CloseFridge")
+        a = admitted(value, value.begin_episode("CloseFridge", 0))
+        valid(value, a)
+        before = bytes_of_results(value)
+        fault = value.record_process_error("CloseFridge", "worker_exit", "post-last-result exit nonzero", attempt=a)
+        report = value.publish_views()
+        assert report["sr"] == 1.0 and not report["results_qualified"]
+        assert report["status"] == "complete_with_process_errors"
+        with pytest.raises(ValueError, match="unsafe cleanup"):
+            value.cleanup_stream(
+                "CloseFridge", old["stream_id"], lambda _: dict(cleaned(_), owned_processes_gone=False)
+            )
+        assert value.errors("CloseFridge")[0]["resolution"] is None
+        value.cleanup_stream("CloseFridge", old["stream_id"], cleaned)
+        value.begin_task("CloseFridge", recovery_only=True)
+        cert = value.certify_recovery("CloseFridge", old["stream_id"], healthy)
+        value.resolve_error("CloseFridge", fault["id"], cert)
+        close_streams(value, "CloseFridge")
+        assert value.summary()[0]["results_qualified"] and bytes_of_results(value) == before
+        with pytest.raises(ValueError, match="immutable"):
+            value.begin_episode("CloseFridge", 0)
+
+
+def test_wrong_task_certificate_or_unhealthy_probe_cannot_clear_error(tmp_path):
+    value = fresh(tmp_path, tasks=("CloseFridge", "OpenCabinet"), episodes=1)
+    with value.locked():
+        old = value.begin_task("CloseFridge")
+        fault = value.record_process_error("CloseFridge", "worker", "owned worker failed")
+        other = value.begin_task("OpenCabinet")
+        close_streams(value, "OpenCabinet")
+        value.begin_task("OpenCabinet")
+        cert = value.certify_recovery("OpenCabinet", other["stream_id"], healthy)
+        with pytest.raises((ValueError, FileNotFoundError)):
+            value.resolve_error("CloseFridge", fault["id"], cert)
+        close_streams(value, "CloseFridge")
+        value.begin_task("CloseFridge")
+        with pytest.raises(ValueError, match="health proof"):
+            value.certify_recovery("CloseFridge", old["stream_id"], lambda _: {"probe_id": "bad", "healthy": False})
+        assert value.summary()[0]["unresolved_process_errors"] == 1
+
+
+@pytest.mark.parametrize(
+    "field", ["worker_id", "attempt_id", "episode", "stream_id", "seed", "generation", "reset_index"]
+)
+def test_misrouted_async_or_wrong_attempt_response_cannot_commit(tmp_path, field):
+    value = fresh(tmp_path)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        a = admitted(value, value.begin_episode("CloseFridge", 0))
+        row = record(value.manifest, {**a, "reset_index": 0}, 0)
+        row[field] = "f" * 32 if field.endswith("_id") else 1
+        with pytest.raises(ValueError):
+            value.commit(row)
+        assert not value.rows("CloseFridge")
+
+
+def test_stale_coordinator_duplicate_commit_and_behavioral_failure_never_retried(tmp_path):
+    value = fresh(tmp_path)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        a = admitted(value, value.begin_episode("CloseFridge", 0))
+        row = valid(value, a, success=False)
+        with pytest.raises(ValueError):
+            value.commit(row)
+        with pytest.raises(ValueError, match="immutable"):
+            value.begin_episode("CloseFridge", 0)
+    with Store(value.root, value.manifest).locked() as resumed:
+        close_streams(resumed, "CloseFridge")
+        resumed.begin_task("CloseFridge")
+        with pytest.raises(ValueError):
+            resumed.commit(row)
+        with pytest.raises(ValueError, match="immutable"):
+            resumed.begin_episode("CloseFridge", 0)
+        assert resumed.rows("CloseFridge")[0]["outcome"] == "failure"
+
+
+@pytest.mark.parametrize(
+    "payload", [b"\xff", b'{"a":1,"a":2}', b"NaN", b"x" * (256 * 1024 + 1), b'{"body": {}, "sha256": "wrong"}']
+)
+def test_corrupt_Core_record_cannot_be_reused(tmp_path, payload):
+    value = fresh(tmp_path)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        complete(value, "CloseFridge", 0)
+        (value._slot("CloseFridge", 0) / "result.json").write_bytes(payload)
+        with pytest.raises((ValueError, UnicodeError)):
+            value.summary()
+
+
+def test_media_failures_never_change_Core_or_trigger_retry(tmp_path):
+    value = fresh(tmp_path, episodes=1)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        complete(value, "CloseFridge", 0)
+        before = bytes_of_results(value)
+        assert try_media(lambda: (_ for _ in ()).throw(OSError("bad encoder")))["status"] == "error"
+        close_streams(value, "CloseFridge")
+        assert value.publish_views()["results_qualified"]
+        with pytest.raises(ValueError, match="immutable"):
+            value.begin_episode("CloseFridge", 0)
+        assert bytes_of_results(value) == before
+
+
+def test_lease_competing_cpu_process_readonly_summary_and_existing_namespace_refusal(tmp_path):
+    value = fresh(tmp_path)
+    with pytest.raises(FileExistsError):
+        value.create()
+    with value.locked():
+        code = "from pathlib import Path; from tools.v3.episode_eval_v2_prototype.store_test import *; m=manifest(); s=Store(Path(sys.argv[1]),m);\nwith s.locked(): pass"
+        child = subprocess.run(
+            [sys.executable, "-c", code, str(value.root)], capture_output=True, text=True, timeout=10
+        )
+        assert child.returncode != 0 and "BlockingIOError" in child.stderr
+        with pytest.raises(RuntimeError):
+            with value.locked():
+                pass
+    before = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in value.root.rglob("*") if p.is_file()}
+    assert value.summary()[0]["pending"] == 3
+    after = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in value.root.rglob("*") if p.is_file()}
+    assert before == after
+
+
+def test_atomic_write_failure_keeps_prior_record_and_does_not_publish_partial(tmp_path, monkeypatch):
+    path = tmp_path / "atomic.json"
+    save(path, {"old": True})
+    old = path.read_bytes()
+    with pytest.raises(FileExistsError):
+        save(path, {"new": True})
+    assert path.read_bytes() == old
+
+    def fail(*args, **kwargs):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(os, "link", fail)
+    with pytest.raises(OSError):
+        save(tmp_path / "missing.json", {"new": True})
+    assert not (tmp_path / "missing.json").exists()
+
+
+def test_unknown_task_out_of_bounds_and_symlinks_fail_closed(tmp_path):
+    value = fresh(tmp_path)
+    with value.locked():
+        with pytest.raises(ValueError):
+            value.begin_task("Unknown")
+        value.begin_task("CloseFridge")
+        with pytest.raises(ValueError):
+            value.begin_episode("CloseFridge", 50)
+        foreign = tmp_path / "foreign"
+        foreign.mkdir()
+        (value._task("CloseFridge") / "episodes/ep_000").symlink_to(foreign, target_is_directory=True)
+        with pytest.raises(ValueError):
+            value.rows("CloseFridge")
+
+
+@pytest.mark.parametrize("scope", ["task", "slot"])
+@pytest.mark.parametrize("lost", ["init_intent.json", "ready.json"])
+def test_lost_published_init_authority_never_reconstructed_over_producer_ledger(tmp_path, scope, lost):
+    value = fresh(tmp_path)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        value.begin_episode("CloseFridge", 0)
+        ledger = value._internal("CloseFridge") if scope == "task" else value._ledger("CloseFridge", 0)
+        (ledger / lost).unlink()
+        with pytest.raises(ValueError, match="intent lost|producer ledger"):
+            value._initialize("CloseFridge", None if scope == "task" else 0)
+
+
+@pytest.mark.parametrize("kind", ["unsafe", "invalid"])
+def test_critical_process_fault_persisted_before_terminal_event_and_crash_does_not_hide_it(tmp_path, kind):
+    value = fresh(tmp_path, episodes=1)
+    with pytest.raises(Crash), value.locked():
+        old = value.begin_task("CloseFridge")
+        a = value.begin_episode("CloseFridge", 0)
+        if kind == "unsafe":
+            value.begin_initialization(a)
+            value.fault = inject("after_unsafe_fault_before_event")
+            value.initialization_outcome(a, error=RuntimeError("EGL"), stage="reset", safe_to_retry=False)
+        else:
+            admitted(value, a)
+            value.fault = inject("after_invalid_fault_before_event")
+            value.finish_invalid(a, "Local cleanup failed")
+    with Store(value.root, value.manifest).locked() as resumed:
+        report = resumed.summary()[0]
+        assert report["unresolved_process_errors"] == 1 and not report["results_qualified"]
+        assert report["sr"] is None
+        fault = resumed.errors("CloseFridge")[0]
+        close_streams(resumed, "CloseFridge")
+        resumed.begin_task("CloseFridge")
+        cert = resumed.certify_recovery("CloseFridge", old["stream_id"], healthy)
+        replacement = complete(resumed, "CloseFridge", 0)
+        resumed.resolve_error("CloseFridge", fault["id"], cert, replacement=replacement)
+        close_streams(resumed, "CloseFridge")
+        assert resumed.summary()[0]["results_qualified"]
+
+
+def test_valid_numeric_SR_is_provisional_until_owned_worker_cleanup(tmp_path):
+    value = fresh(tmp_path, episodes=1)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        complete(value, "CloseFridge", 0)
+        report = value.publish_views()
+        assert report["sr"] == 1.0 and not report["results_qualified"]
+        assert report["status"] == "complete_awaiting_worker_cleanup"
+        close_streams(value, "CloseFridge")
+        assert value.summary()[0]["results_qualified"]
+
+
+def test_resolution_is_revalidated_not_trusted_as_a_clear_flag(tmp_path):
+    from tools.v3.episode_eval_v2_prototype.store import load, sealed, write
+
+    value = fresh(tmp_path, episodes=1)
+    with value.locked():
+        old = value.begin_task("CloseFridge")
+        complete(value, "CloseFridge", 0)
+        fault = value.record_process_error("CloseFridge", "exit", "failed worker exit")
+        close_streams(value, "CloseFridge")
+        value.begin_task("CloseFridge", recovery_only=True)
+        cert = value.certify_recovery("CloseFridge", old["stream_id"], healthy)
+        value.resolve_error("CloseFridge", fault["id"], cert)
+        path = value._internal("CloseFridge") / "resolutions" / f"{fault['id']}.json"
+        corrupted = load(path)
+        corrupted["mode"] = "forget_error"
+        write(path, sealed(corrupted), replace=True)
+        with pytest.raises(ValueError, match="requires valid retry"):
+            value.summary()
+
+
+def test_report_bound_does_not_relax_Core_limits_and_contradictory_admission_is_rejected(tmp_path):
+    from tools.v3.episode_eval_v2_prototype.store import load, sealed, write, write_report
+
+    with pytest.raises(ValueError, match="oversized"):
+        save(tmp_path / "too_large_core.json", {"payload": "x" * (256 * 1024)})
+    with pytest.raises(ValueError, match="cannot be used"):
+        write_report(tmp_path / "result.json", {})
+    value = fresh(tmp_path)
+    with value.locked():
+        value.begin_task("CloseFridge")
+        a = admitted(value, value.begin_episode("CloseFridge", 0))
+        valid(value, a)
+        event = value._ledger("CloseFridge", 0) / "events" / a["attempt_id"] / "000000.json"
+        changed = load(event)
+        changed["data"]["reset_index"] = 99
+        write(event, sealed(changed), replace=True)
+        with pytest.raises(ValueError, match="contradicts reset"):
+            value.summary()
