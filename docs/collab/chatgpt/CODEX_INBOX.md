@@ -261,3 +261,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **Formal NoTTT源不变**：报告Source snapshot Root`5c1d78cbaa9d4449a471ce587afe89375292dc27`，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`。此后V3 Root仅其它评测文档和Inbox更新，不含NoTTT实现/Gitlink变更；此前CPU证据Gate继续CLOSED。
 - **流程偏离**：DS在S0“只读”预检中执行`git reset --hard origin/V3`并用`-c http.sslVerify=false`绕过代理证书；即使无现时数据损失证据，也不应再次执行此类工作树更改或TLS验证关闭。记录为非资源判定blocker的流程问题。
 - **下一步**：四张明确空闲GPU后重新做**新鲜S0**，否则保持`BLOCKED_RESOURCE`。若需要受控停止NoTTT释放GPU4–7，须Owner单独明确授权及committed checkpoint边界，不得自动安排重试或后台轮询。
+
+
+## 2026-10-28 — Owner 可接受 GPU4–7 上第二套完整 No-TTT Compact=1 共存训练（受控分阶段）
+
+- Owner新增允许方案：**在保持旧正式`no_ttt_packed128_droid_fresh_30k_world4_ga4`训练不动的前提下，可考虑于GPU4–7共存运行第二套独立完整NoTTT Compact=1训练**；这是新的任选路径，非命令已执行，GPU0–3不可使用。
+- 已冻结精确阶段执行令：`docs/collab/chatgpt/requests/2026-10-28_V3_NoTTT_Compact_Coresident_Second_Job_StagePlan.md`。当前Child/Gitlink为`746c5cf2f2324104a62fb71510343aa40d3976c5`，本次只增加Owner决策与请求文档，无NoTTT生产代码改动。原独占 GPU Parity `BLOCKED_RESOURCE` 记录仍合法不变。
+- S0：只读双任务资源准入，按NVML初步双副本显存估算最紧GPU4只余约5GiB，存在显存/计算竞争风险。检查RAM/IO/旧Job健康；任何保护条件未满足返回`BLOCKED_CORESIDENCY`。
+- S1：只有准入成功时，使用全新`JOB_NAME=no_ttt_compact1_corerun_20261028_world4_ga4` + `PSM_V3_COMPACT_CACHED_VIDEO=1`，真实4卡FSDP2、GA4/128、`NOTTT_LOADER_WORKERS=0`，执行 `bash scripts/train_v3_matched_no_ttt_4gpu.sh fresh 1`；仅新Job DCP可写，完成或失败立刻交Evidence给GPT，**不得自动延伸10/100/30k**。
+- S1成功只能证明完整训练一Step可执行，**不能替代同权重/同随机数的GPU Loss/Grad parity**，亦不授权原Job Compact切换。继续新Job长训需另做严谨资源/数值审查及独立授权。禁止 reset --hard、SSL验证关闭、碰旧Job和GPU0–3。
