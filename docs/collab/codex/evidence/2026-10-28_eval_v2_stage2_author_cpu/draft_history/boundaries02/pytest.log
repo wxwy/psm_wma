@@ -1,0 +1,41 @@
+...............[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+.....{"prototype_only": false, "manifest_digest": "107bfbbecadab02de1faa99a54d655bc2c1da6a444b29508e67ef31e0d853dca", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "13492e9a5c0649fd8d33e3a186d8a242", "worker_id": "f6aca12a4beb44a4a05a93cc91c6ea30", "actual_seed": 0, "kind": "initial_continuous_reset"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "107bfbbecadab02de1faa99a54d655bc2c1da6a444b29508e67ef31e0d853dca", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "13492e9a5c0649fd8d33e3a186d8a242", "worker_id": "f6aca12a4beb44a4a05a93cc91c6ea30", "actual_seed": 0, "kind": "initial_continuous_reset"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+..{"owner_released": [["CloseFridge", 0]], "no_execution": true}
+.{"prototype_only": false, "manifest_digest": "4db4e7facfa6e214a559c350fde8c4ec8fa9140e3428cbca050e6718325e6570", "status": "partial", "success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "results_qualified": false, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [], "clean_execution": true, "results_qualified": false, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 0, "initialization_errors": 0}}}
+[eval-v2] stopped: RuntimeError('CPU synthetic resource gate failure')
+..F
+=================================== FAILURES ===================================
+___ test_real_preflight_cache_warm_zero_model_reads_and_config_drift_refused ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-20/test_real_preflight_cache_warm0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f12f551a330>
+
+    def test_real_preflight_cache_warm_zero_model_reads_and_config_drift_refused(tmp_path, monkeypatch):
+        from robocasa_episode_resume.model_identity import verification_record
+        from robocasa_eval_v2 import identity
+    
+        path, cfg = config(tmp_path)
+        _, cfg = resolve(["fresh", "--config", str(path)])
+        monkeypatch.setattr(identity, "verify_source", lambda *a: ("a" * 40, "b" * 40, "a" * 40))
+        monkeypatch.setattr(
+            identity,
+            "collect_runtime",
+            lambda **kw: {
+                "evaluation_runtime": {"digest": "3" * 64, "protocol": {"official_horizons": {"CloseFridge": 2}}},
+                "runtime_probe_evidence": {},
+            },
+        )
+        m, inputs, env = identity.prepare(cfg, cache=tmp_path / "cache")
+        s = Store(Path(cfg["output_dir"]), m)
+        s.create()
+        with s.locked():
+>           write(s.root / "_internal/run_inputs.json", inputs)
+            ^^^^^
+E           NameError: name 'write' is not defined
+
+tools/v3/eval_v2_production_tests/entry_test.py:221: NameError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/entry_test.py::test_real_preflight_cache_warm_zero_model_reads_and_config_drift_refused
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 25 passed in 5.84s

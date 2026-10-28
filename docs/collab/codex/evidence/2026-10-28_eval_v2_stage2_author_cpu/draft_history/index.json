@@ -1,0 +1,98 @@
+[
+  {
+    "run": "boundaries01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 1.7233328689981136,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "boundaries02",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 6.441807760002121,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "boundaries03",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 8.388141175000783,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "boundaries04",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 8.338398251999024,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "core01",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 16.460746914999618,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "core02",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 40.6716705380004,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "entry01",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 0.815857263001817,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "entry02",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 1.2167300260007323,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "final_cpu01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 87.74444674800179,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "native01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 4.52576086100089,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "production_full01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 84.83746919500118,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "runtime01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 3.072246465999342,
+      "frozen_source_match": true
+    }
+  }
+]

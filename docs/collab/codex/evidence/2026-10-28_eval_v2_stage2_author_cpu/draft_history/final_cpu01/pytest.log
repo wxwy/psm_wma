@@ -1,0 +1,45 @@
+..............................................{"prototype_only": false, "manifest_digest": "22d22811659c96523a68788b452f559ddbb044a07d40b5135256cd87be77cfb1", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "bdffc83c3c504bc0913cd4bf75f1f778", "worker_id": "6264a0cb2dd84fbca340f168a9720706", "actual_seed": 0, "kind": "initial_continuous_reset"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "22d22811659c96523a68788b452f559ddbb044a07d40b5135256cd87be77cfb1", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "bdffc83c3c504bc0913cd4bf75f1f778", "worker_id": "6264a0cb2dd84fbca340f168a9720706", "actual_seed": 0, "kind": "initial_continuous_reset"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+..{"owner_released": [["CloseFridge", 0]], "no_execution": true}
+.{"prototype_only": false, "manifest_digest": "e8f94436398d22e4e949d33aee5d619cf8f61b70064740e0dcf10e7b5da461ce", "status": "partial", "success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "results_qualified": false, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [], "clean_execution": true, "results_qualified": false, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 0, "initialization_errors": 0}}}
+[eval-v2] stopped: RuntimeError('CPU synthetic resource gate failure')
+..........[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+............[eval-v2] {"task": "TaskB", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU5", "task": "TaskA", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "TaskC", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "TaskC", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "TaskA", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "TaskB", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "TaskA", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "TaskC", "episode": 1, "outcome": "success"}
+..[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+....V2_PRODUCTION_COORDINATION_METRICS {"coordination": {"scheduler_lock_wait": {"count": 2703, "failed": 0, "sample_count": 2703, "p50_ms": 0.0007609996828250587, "p95_ms": 0.0013719982234761119, "max_ms": 0.04606700167641975}, "claim": {"count": 900, "failed": 0, "sample_count": 900, "p50_ms": 15.776545002154307, "p95_ms": 27.478862000862136, "max_ms": 30.332400998304365}, "core_commit": {"count": 900, "failed": 0, "sample_count": 900, "p50_ms": 3.329802999360254, "p95_ms": 3.7807080007041804, "max_ms": 7.577577998745255}, "rebuild_views": {"count": 2, "failed": 0, "sample_count": 2, "p50_ms": 2922.8208329986956, "p95_ms": 2922.8208329986956, "max_ms": 2982.124523001403}}, "record_io": {"disk_reads": 8223, "cache_hits": 86814}}
+V2_R2_SYNTHETIC_WITNESS {"tasks": 18, "episodes": 900, "success": 450, "failure": 450, "sr": 0.5, "prototype_only": false, "actual_scheduler_dispatch": 900, "round_barriers": 50, "mock_model_loads": {"GPU4": 1, "GPU5": 1, "GPU6": 1}, "mock_env_builds": 18}
+.............................................................................[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+.[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+..[eval] partial-video failure: RuntimeError: encoder failed
+.[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+.[eval] partial-video failure: RuntimeError: encoder failed
+[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+...........................[eval] official protocol: rollouts=2 seed=None
+[eval] CloseFridge: official horizon 3
+[train-scene] server ready at http://127.0.0.1:8912 local_memory=off
+[eval] rollout 00 outcome=behavioral_failure steps=3 error=None
+[eval] rollout 01 outcome=behavioral_failure steps=3 error=None
+
+CloseFridge: 0/2 successful rollouts
+.[eval] official protocol: rollouts=2 seed=None
+[eval] CloseFridge: official horizon 3
+[train-scene] server ready at http://127.0.0.1:8912 local_memory=off
+[eval] rollout 00 outcome=behavioral_failure steps=3 error=None
+[eval] rollout 01 outcome=behavioral_failure steps=3 error=None
+
+CloseFridge: 0/2 successful rollouts
+............
+=============================== warnings summary ===============================
+tools/v3/eval_v2_production_tests/contract_test.py::test_media_preserves_already_loaded_torch_cpu_rng_without_cuda[False]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+199 passed, 1 warning in 86.46s (0:01:26)

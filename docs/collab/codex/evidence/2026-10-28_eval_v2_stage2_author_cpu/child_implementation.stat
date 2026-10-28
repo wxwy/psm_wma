@@ -1,0 +1,14 @@
+ .../evaluation/robocasa_v2/__init__.py             |    1 +
+ .../evaluation/robocasa_v2/admission.py            |   45 +
+ .../evaluation/robocasa_v2/contract.py             |  302 +++++
+ .../evaluation/robocasa_v2/evidence.py             |  111 ++
+ .../evaluation/robocasa_v2/ffmpeg_guard.py         |   17 +
+ cosmos_framework/evaluation/robocasa_v2/media.py   |  166 +++
+ .../evaluation/robocasa_v2/scheduler.py            |  183 ++++
+ cosmos_framework/evaluation/robocasa_v2/store.py   | 1152 ++++++++++++++++++++
+ cosmos_framework/evaluation/robocasa_v2/wire.py    |   33 +
+ .../simulation/robocasa/closed_loop_eval.py        |   32 +-
+ cosmos_framework/simulation/robocasa/eval_utils.py |    7 +-
+ .../simulation/robocasa/eval_v2_adapter.py         |  207 ++++
+ .../simulation/robocasa/eval_v2_worker.py          |  134 +++
+ 13 files changed, 2380 insertions(+), 10 deletions(-)

@@ -1,0 +1,187 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "HF_HOME": "/tmp/psm-eval-v2-stage2-20261028/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-v2-stage2-20261028/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-v2-stage2-20261028/cache/xdg",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "00.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/__init__.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/admission.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/ffmpeg_guard.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/media.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/scheduler.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+        "scripts/robocasa_eval_v2/__init__.py",
+        "scripts/robocasa_eval_v2/cli.py",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/identity.py",
+        "scripts/robocasa_eval_v2/resources.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "scripts/robocasa_eval_v2_child.py",
+        "scripts/robocasa_eval_v2_cli.py",
+        "scripts/robocasa_eval_v2_processes.py",
+        "tools/v3/eval_v2_production_tests/__init__.py",
+        "tools/v3/eval_v2_production_tests/admission_test.py",
+        "tools/v3/eval_v2_production_tests/contract_test.py",
+        "tools/v3/eval_v2_production_tests/entry_test.py",
+        "tools/v3/eval_v2_production_tests/media_test.py",
+        "tools/v3/eval_v2_production_tests/native_test.py",
+        "tools/v3/eval_v2_production_tests/process_test.py",
+        "tools/v3/eval_v2_production_tests/runtime_test.py",
+        "tools/v3/eval_v2_production_tests/scene_test.py",
+        "tools/v3/eval_v2_production_tests/scheduler_test.py",
+        "tools/v3/eval_v2_production_tests/store_test.py",
+        "tools/v3/eval_v2_production_tests/worker_test.py"
+      ],
+      "exit_code": 0,
+      "log": "01.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/__init__.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/admission.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/ffmpeg_guard.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/media.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/scheduler.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+        "scripts/robocasa_eval_v2/__init__.py",
+        "scripts/robocasa_eval_v2/cli.py",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/identity.py",
+        "scripts/robocasa_eval_v2/resources.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "scripts/robocasa_eval_v2_child.py",
+        "scripts/robocasa_eval_v2_cli.py",
+        "scripts/robocasa_eval_v2_processes.py",
+        "tools/v3/eval_v2_production_tests/__init__.py",
+        "tools/v3/eval_v2_production_tests/admission_test.py",
+        "tools/v3/eval_v2_production_tests/contract_test.py",
+        "tools/v3/eval_v2_production_tests/entry_test.py",
+        "tools/v3/eval_v2_production_tests/media_test.py",
+        "tools/v3/eval_v2_production_tests/native_test.py",
+        "tools/v3/eval_v2_production_tests/process_test.py",
+        "tools/v3/eval_v2_production_tests/runtime_test.py",
+        "tools/v3/eval_v2_production_tests/scene_test.py",
+        "tools/v3/eval_v2_production_tests/scheduler_test.py",
+        "tools/v3/eval_v2_production_tests/store_test.py",
+        "tools/v3/eval_v2_production_tests/worker_test.py"
+      ],
+      "exit_code": 0,
+      "log": "02.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/run_robocasa_eval_v2.sh"
+      ],
+      "exit_code": 0,
+      "log": "03.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/run_robocasa_eval_v2.sh",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "04.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "05.log"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "cosmos-framework",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "06.log"
+    }
+  ],
+  "ast_parse_passed": 34,
+  "source_sha256": {
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/__init__.py": "aae85e76952048eef305f518f716e2c6896ce4e1cb4f83a13c3bf6e574cc6a59",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/admission.py": "13027ca0a63eb3a13dcd2ef050a8e4570e4c6a054eb8c92c54da9b040caa9bf4",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py": "6f1219bcd99b786bce38389beda32504e78803924c564a9103c83c0781da7fee",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py": "dce4e159d89663d8ecd18ff630ac241198b360a22564c2fe03fa22e5b5f8a98c",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/ffmpeg_guard.py": "25acb77d6ddbaa5820dea62ff0396028edd37bc2fcfe9d5f4f6abbd150d266bc",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/media.py": "70b30aa5fd271f7da74933609ddc3f6378b10a997a46ee4e5d9c2fa6c856aaca",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/scheduler.py": "4d1f9c29eb1d78b72a94eceb223683ad005ec285d3967b761cb2572eefe218a2",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": "139a2789d37ebbc2754e9e09a88a7258ad989aa9262db7619bf2db9bb3a6dae5",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py": "86ce78357031eb06d50d9c7ad8ec6a514a9be35c4c0502e1e2b782e88e1491b3",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "f5d66ab2b0a70b19d2fcbfa6d3d10cfc25c5bb928e7bdd2c9a7fdb743f58af56",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py": "244a8cabecaaea60ac1fdf154361c19207f5629c92282f469d8151c6531cfa18",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py": "dbd70be2dbcd035d4a67a203490e415c2b3f8d41d62ccff25e145df0b034cc42",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py": "4b218be4ec797fadb700e626d253ba929b60fe7d35ecaebe422a3aa301f73cdb",
+    "scripts/robocasa_eval_v2/__init__.py": "d59410eac8b8f5042db9d4817020f1a3cd66186c7d626071dc0d051cd698c683",
+    "scripts/robocasa_eval_v2/cli.py": "50c5d4d3ef7054753db8e180bf38de656ba80a8b7a037943923ec17072a4bd9b",
+    "scripts/robocasa_eval_v2/config.py": "ab2b4c4c56abbc12f645437412755220cd82c65e0c744f6212be22c702bb217f",
+    "scripts/robocasa_eval_v2/identity.py": "c44091f1fb08d51a68d34047951fe2beae1f1adae61b262a3d54d3dd3078add3",
+    "scripts/robocasa_eval_v2/resources.py": "daa3176d378afe0849456a8ae5e6d0c18be3378a98ddded42abc75440f510461",
+    "scripts/robocasa_eval_v2/runtime.py": "04252d9961287afc0ccd09c45f0ee59eda632d6fafe797eddc514b0f975b762c",
+    "scripts/robocasa_eval_v2_child.py": "205acbecfb795aa29f25afd5761d237aa1c06c26afd18b9b998777c4f5c4e243",
+    "scripts/robocasa_eval_v2_cli.py": "0e1ccbcea9bde0908249871ea2a614f0082695e81f3d1f1bb2250d359d42e4fb",
+    "scripts/robocasa_eval_v2_processes.py": "bed949af3e016632554a7120271072587002031dc4ecbdf69397e9b3498a9240",
+    "tools/v3/eval_v2_production_tests/__init__.py": "62b979c4227799ddf731ea15f9b678b4e1a4665647fdcf287497d5c30547510b",
+    "tools/v3/eval_v2_production_tests/admission_test.py": "377cc3bd1a5b445645fdc5057e8da33d2f36fb23792f721d58e16534361f7106",
+    "tools/v3/eval_v2_production_tests/contract_test.py": "14c6e4b94c10c43b4a7e2b906fd3d8379d352ae2929014b5a0ab2989ad1a156c",
+    "tools/v3/eval_v2_production_tests/entry_test.py": "1401d3f9042eda391905b019133ee5e3af187941bc99be491c2e2f013cc5db32",
+    "tools/v3/eval_v2_production_tests/media_test.py": "780435904bf163cce3588c375cb607c29ba7fc9e5466c8101d3b11b4baad1294",
+    "tools/v3/eval_v2_production_tests/native_test.py": "ea9b0fc395c4f76ded3f04b6865eeb9ffcb9a3dff07dc7ed3cca04b3fd0a9389",
+    "tools/v3/eval_v2_production_tests/process_test.py": "5f96989b9674a1cd9490bbd30961786bc4d5c24ce26162ae3435aca1f4c9fe02",
+    "tools/v3/eval_v2_production_tests/runtime_test.py": "194fefde9b7d96fac4078e339c90343a580d90d789abc3ba82fa5f2e63ea0e86",
+    "tools/v3/eval_v2_production_tests/scene_test.py": "ac728b1ea164ad63477df126ef5dbdf606fb717e165023d2d56b2b1bb944ea55",
+    "tools/v3/eval_v2_production_tests/scheduler_test.py": "78426cdf4d7de5420e8f1309568392fa6fd2f16315973d5b9a46ac1ae444d6d8",
+    "tools/v3/eval_v2_production_tests/store_test.py": "75c88f731fe41952ff0ec45d7411f9c0660e40fbbb2e508ae60821e9712b1829",
+    "tools/v3/eval_v2_production_tests/worker_test.py": "8fbe4bf3a5654bf4436d6b3c0176befeaddcf051e20674153a81c050dd9f8eea"
+  },
+  "prototype_import_found": false,
+  "passed": true
+}

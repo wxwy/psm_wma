@@ -1,0 +1,19 @@
+usage: robocasa_eval_v2_cli.py [-h] --config CONFIG
+                               [--owner-decision OWNER_DECISION] [--gpus GPUS]
+                               [--tasks TASKS] [--episodes EPISODES]
+                               [--output-dir OUTPUT_DIR]
+                               {fresh,resume,dry-run,authorize}
+
+Independent RoboCasa Evaluation V2 (requires approved runtime Gate)
+
+positional arguments:
+  {fresh,resume,dry-run,authorize}
+
+options:
+  -h, --help            show this help message and exit
+  --config CONFIG
+  --owner-decision OWNER_DECISION
+  --gpus GPUS
+  --tasks TASKS
+  --episodes EPISODES
+  --output-dir OUTPUT_DIR

@@ -1,0 +1,42 @@
+.{"prototype_only": false, "manifest_digest": "abdbd2828b16e80cc9854c9f74e327b58a6d0780015d3ebabeb4f6185f36e953", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "5426197b245640cdae6dc734c2a5adc9", "worker_id": "a030c4f23e3c41ce802592cca4391a6f", "actual_seed": 0, "kind": "initial_continuous_reset"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "abdbd2828b16e80cc9854c9f74e327b58a6d0780015d3ebabeb4f6185f36e953", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "5426197b245640cdae6dc734c2a5adc9", "worker_id": "a030c4f23e3c41ce802592cca4391a6f", "actual_seed": 0, "kind": "initial_continuous_reset"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+..F
+=================================== FAILURES ===================================
+_______ test_owner_skip_release_is_separate_explicit_command_not_resume ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-16/test_owner_skip_release_is_sep0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f89ea987020>
+
+    def test_owner_skip_release_is_separate_explicit_command_not_resume(tmp_path, capsys):
+        path, cfg = config(tmp_path)
+>       m, inputs, env = fake_prepare(cfg, cache=tmp_path)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/entry_test.py:145: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_production_tests/entry_test.py:55: in fake_prepare
+    tasks = discover(cfg)
+            ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cfg = {'checkpoint': '/tmp/pytest-of-agent/pytest-16/test_owner_skip_release_is_sep0/inputs/checkpoint', 'config_file': '/tm...et_root': '/tmp/pytest-of-agent/pytest-16/test_owner_skip_release_is_sep0/inputs/dataset', 'episodes_per_task': 2, ...}
+
+    def discover(cfg):
+        mapping = dict(discover_task_datasets(Path(cfg["dataset_root"]), None))
+        order = sorted(mapping) if cfg["tasks"] == "all" else list(cfg["tasks"])
+        if any(t not in mapping for t in order):
+            raise ValueError("unknown Task class")
+        if cfg["tasks"] == "all" and len(order) != 18:
+            raise ValueError("all requires18 atomic Tasks")
+>       if len(order) > cfg["max_resident_envs"] or any(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+            sum(i % len(cfg["gpu_ids"]) == w for i in range(len(order))) > cfg["max_contexts_per_gpu"]
+            for w in range(len(cfg["gpu_ids"]))
+        ):
+E       KeyError: 'max_resident_envs'
+
+scripts/robocasa_eval_v2/identity.py:48: KeyError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/entry_test.py::test_owner_skip_release_is_separate_explicit_command_not_resume
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 3 passed in 0.29s

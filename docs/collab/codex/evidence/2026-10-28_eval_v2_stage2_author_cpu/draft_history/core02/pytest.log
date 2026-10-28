@@ -1,0 +1,9 @@
+.................................................[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+.............................................................
+=============================== warnings summary ===============================
+tools/v3/eval_v2_production_tests/contract_test.py::test_media_preserves_already_loaded_torch_cpu_rng_without_cuda[False]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+110 passed, 1 deselected, 1 warning in 39.28s

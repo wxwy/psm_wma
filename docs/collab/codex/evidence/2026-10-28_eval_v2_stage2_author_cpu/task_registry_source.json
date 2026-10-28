@@ -1,0 +1,6 @@
+{
+  "read_only_reference": "https://raw.githubusercontent.com/robocasa/robocasa/6f90063c0ec2b9916bbd977368b54c98d9c2d908/robocasa/utils/dataset_registry.py",
+  "sha256": "23e8e31bb56bae80de86c34eafadfe32dd1e1eba6608376152ba9fdda5532a4b",
+  "bytes": 94640,
+  "use": "AST literal-only ATOMIC_TASKS provenance, never imported/executed"
+}
