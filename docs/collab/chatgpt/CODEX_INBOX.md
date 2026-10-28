@@ -244,3 +244,11 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **其他冻结原则**：新18×50 Run；RoboCasa环境后Step成功判据是SR权威，正常行为失败计分母；C方案视频媒体不影响SR、不做最终/Resume自动ffmpeg、不默认copy `videos_view`；支持中间跳过Slot而后续结果有效提交；没有900合法Core结果正式SR=null（允许清楚标注的partial有效样本SR）。不迁移/触碰旧431。
 - **明确撤销并禁止误用**：①此前 GPT 审核建议的全 Task 重跑；②旧 Owner Override §2 强制固定每集SHA Seed / 恢复原场景或整个RNG；③视频必须通过ffmpeg严格解码才算Episode完成；④`SKIPPED_INIT_ERROR` 无Owner批准自动Resume。老文档是审计历史，不可覆盖最新Owner澄清。
 - **当前 r1 Formal Pair不变**：Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`；此前正式判定 `REQUEST_CHANGES`。作者65 CPU passed 是Synthetic Design Gate，不是Production Gate。Codex下一步仅产出 **r2 Design+isolated CPU Prototype+New formal SHA/Evidence**，提交后STOP供GPT D1–D4增量审核。禁止合并V3、真实GPU/DCP/仿真900、改模型/训练/历史431。Codex请在 [Issue #7](https://github.com/wxwy/psm_wma/issues/7) 或 handoff 显式ACK确认读到本统一文件，不能把“已发布”当成“已阅读”。
+
+
+## 2026-10-28 — Owner D5 (MANDATORY): Episode-major Round-Robin + Resume skip already tested
+
+- **Owner明确排序**：`Task1/Ep1 → Task2/Ep1 → … → Task18/Ep1 → Task1/Ep2 → … → Task18/Ep50`（内部0..49索引）。V3生产是Task-major，不符合目标；Eval V2必须新建真正的 Episode-major **Round-Robin 调度器**：按Frozen Task Order同轮派发，3 GPU可并发同轮不同Task，但Round k所有槽位完成/明确延期后才派发Round k+1。完成时间可乱序，不能用Task-major FIFO伪装调度顺序。
+- **Owner新增Resume硬条件**：“从这个排序中，如果测试过了，就跳过。”每次Resume按同一900槽位排序检查权威**有效Core原子Commit**；`success`和`behavioral_failure`都视为有效完成、必须跳过且数据原样保留；`PENDING/INTERRUPTED/INVALID`按安全条件重试对应logical slot；`SKIPPED_INIT_ERROR`与Scene Admission Exhausted **普通Resume先跳过并等待Owner明确放行**，不能自动补；已提交的后续ep38等也不得重复。媒体文件/目录存在不代表有效完成。
+- **下一r2 Design/CPU测试补D5**：900槽位严格排序/round barrier/3个异步Worker/任意点Crash再Resume skip/跳过中间Ep37而保留Ep38/双GPU竞争同槽拒绝；记录每次resume的新Scene/Stream/Seed但**不强制旧场景复现**；必须提出避免每Episode重载13GB模型/重建EGL的资源有界架构，不能默默破坏模型/Local-TTT或声称跨轮连续50次reset的旧采样协议。
+- **现在必须读的唯一最新合同**：`docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md` 已升级为 **D1–D5**；具体D5补充 `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D5_Owner_Episode_Major_RoundRobin_Resume_Skip.md`；[Codex Issue #7](https://github.com/wxwy/psm_wma/issues/7) 已同步。此前所有r1与D1–D4要求在冲突处以**本次最新D1–D5**为准。Formal r1 Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` 未改、状态仍REQUEST_CHANGES；无生产接线、GPU/900测试或V3候选合并授权。Codex下一次ACK须包含D5而非旧D1–D4。
