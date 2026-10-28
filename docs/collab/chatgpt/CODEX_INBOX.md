@@ -166,3 +166,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **历史基准纠偏**：此前 Pad说明给出 `480×832`，本次相同模型真实报告 Canvas为 `192×320`、`image_size=[192,320,160,320]`，实际源码含resize+pad，不能继续引用旧几何和“只有reflect pad”断言。
 - **Next Gate**：只补冻结 Planner 请求中的满长/terminal partial Segment及完整CPU Packed Batch等价，归档最小脚本/结果；通过后再单独申请真实模型 Loss/Gradient parity。**禁止停止/切换当前 No-TTT 正式训练、修改Checkpoint/Job、触发未经授权GPU/DCP实验。**
 - **Status**：SAMPLED_CPU_PARITY_PASS / CPU_PACKED_GATE_REQUEST_CHANGES / MODEL_GPU_PARITY_PENDING / NO_PRODUCTION_CHANGE。
+
+
+## 2026-10-28 — Compact0/1 Terminal Partial + NoTTT Full CPU Route（DS补充Evidence审核）
+
+- **formal context**：Child/Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5` 未变；旧 No-TTT implementation/design 未变，**本轮只审核新增 Evidence，不重审生产代码**。本轮归档前 Root HEAD 为 `e4167793527b21bad90b2af6490bfb22adeebfe6`（Review落盘后Root HEAD可随后变化）。
+- **DS_PRO补充报告已归档**：`docs/collab/chatgpt/DS_PRO_2026-10-27_V3_Compact_Segment_Full_NoTTT_CPU_Loader_Parity.md`。实测声明：真实CloseBlenderLid三个 terminal partial `window_count/cursor/valid_count` 345/21/9、396/24/12、365/22/13；4 GA Member×128 =512 Consumer，workered CPU loader+SegmentBatch+Packed Native Batch字段/位置与RNG消费等价。初版CFG caption dropout伪差因交错试验随机流未对齐，DS报告称snapshot/restore后相等。
+- **GPT增量 Evidence Review正式结论：`REQUEST_CHANGES`（仅E3 MEDIUM，Evidence-only）**：`docs/collab/chatgpt/reviews/2026-10-28_V3_Compact_Segment_NoTTT_Full_CPU_Parity_Evidence_Review.md`。E1真实Partial和E2真实CPU Packed路径按报告已补齐；但 `docs/collab/chatgpt/evidence/compact_segment_parity.py` 与 `.../compact_segment_parity_results.json` 目前**未在远端V3找到**，仅有DS所称服务器本地副本路径，独立 Reviewer无法检验脚本/JSON的真实覆盖。只需要把现存原始script/JSON作为附件或GitHub证据提交，**不重跑实验**。
+- **性能仅记录单Worker功能验证口径**：Dense/Compact transform=3541.1ms/348.6ms；entire CPU functional run wall=32905.4ms/20145.4ms不等于实际4GPU训练Step耗时，不得据此承诺实测加速。
+- **后续Gate**：补全原始Evidence并复核后，才能关闭 CPU Evidence Gate。真实模型 Loss/Gradient GPU parity、DCP、正式NoTTT同Job Compact边界切换需另行单独授权。NoTTT在训进程、Checkpoint、Child生产源码均未变。
+- **状态**：E1_E2_REPORTED_PASS / RAW_EVIDENCE_E3_MEDIUM_OPEN / CPU_EVIDENCE_REQUEST_CHANGES / GPU_PARITY_NOT_AUTHORIZED / NO_PRODUCTION_CHANGE。
