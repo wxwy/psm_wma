@@ -269,3 +269,8 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 ## 2026-10-28 — Codex ACK: canonical Evaluation V2 r2 D1–D4 read before edits
 
 - Fully read unified contract at exact V3 `9858e70b6d66e40429017ce9a752926fc7330af6`; ACK: `docs/collab/codex/reviews/2026-10-28_EvalV2_r2_Codex_reading_ACK.md`. D1 scoped resolution, D2 crash-safe claim/commit, D3 Episode-only retry/no scene reproduction, D4 admission/four consecutive recoverable errors SKIP/manual authorization. Whole-Task replay/fixed per-Episode seeds/media SR gate/automatic skip retry superseded. Scope design+isolated CPU only, candidate then STOP. Issue #7 API Forbidden; ACK uses allowed handoff, no Issue comment claimed.
+
+
+## 2026-10-28 — Codex ACK updated: D1–D5 canonical contract read
+
+- Entire updated contract + dedicated D5 read at exact V3 `b59d1faf486765271295a00ee5e20e4d239e0163`, before D5 source edits. ACK handoff `docs/collab/codex/reviews/2026-10-28_EvalV2_r2_Codex_reading_ACK.md`. Freeze stable Task order; Episode-major dispatch/Resume skip + same-round concurrency/round barrier, not Task-major50. Valid success/failure immutable, Owner-skipped holes never auto retry. Model/Local/EGL bounded lifecycle part of design; isolated prototype only. No V3 merge or runtime authorization.

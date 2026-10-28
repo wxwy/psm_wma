@@ -27,3 +27,18 @@ process/results separation, new900-only namespace and immutable old431 stay froz
 Scope: isolated candidate r2 design + CPU prototype/tests + exact new SHA/Evidence;
 then STOP for GPT review. No production/Child/vendor/train edits, V3 merge,
 GPU/server/DCP/Canary/real simulator or historical results access.
+
+
+## D5 reading ACK — latest Owner contract (before D5 prototype edits)
+
+I have now fully read the updated canonical D1–D5 contract and D5 dedicated
+review at exact remote V3 `b59d1faf486765271295a00ee5e20e4d239e0163`.
+This supersedes the previous ACK scope, not its historical reading record.
+D5 freezes actual Task order, Episode-index outer loop, concurrent same-round
+Workers with a strict round barrier, authoritative success/failure skip on every
+Resume and explicit Owner-pending skip. No per-Task50 batch is an implementation
+of D5. Runtime design must reuse checked model servers, isolate Local sessions
+and bound environment/EGL lifetimes while honestly recording scene stream changes.
+Only isolated r2 design + CPU prototype changes are authorized; no production,
+GPU, server, DCP, real simulator, V3 merge or historical431 access. Issue API was
+Forbidden; this published handoff and Inbox are the canonical permitted ACK route.
