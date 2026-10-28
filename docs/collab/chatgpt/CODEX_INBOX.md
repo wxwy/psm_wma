@@ -233,3 +233,14 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - 退化场景 `initial_success==True` 单独记 `DEGENERATE_INITIAL_SUCCESS` 并有上限重采，**非初始化异常**；一次成功初始化/前置判据检查打断连续错误计数。媒体错误与已开始策略执行后的正常 `behavioral_failure` 均不计初始化错误，也不得借机重跑。进程不安全故障不能按安全 reset 自动吞掉。
 - **重要架构变更**：`ep37` 被跳过仍可评测 `ep38..49`；r1 prototype `Store.rows()` 要求连续前缀的限制必须在 r2 设计为 slot 独立状态 + 重试记录/唯一 Core Commit，任何跳过不计Success或Failure、正式SR保持null、未完成不能报COMPLETE；后续 Owner 授权仅补真正缺口。不得重跑此前有效 ep0..36，也不要求复现原场景。
 - 详细 Design Addendum：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D4_Owner_Init_Error_4_Strikes_Skip_Report.md`。r1 Formal Design Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` 不变；原 REQUEST_CHANGES 仍有效，D1/D2/D3/D4 r2 Design Gate 待审。无生产修改、Git合并、GPU重跑授权。
+
+
+## 2026-10-28 — ACTIONABLE LATEST: Codex Eval V2 r2 single-source D1–D4 (Issue #7)
+
+**这条是 Evaluation V2 r2 最新唯一执行入口。Codex 请先完整读取，旧Review和此前散落各节的冲突内容以此处所链接的 Owner 最后决定为准。**
+
+- **唯一完整新冻结需求**：`docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md`（V3）— [GitHub](https://github.com/wxwy/psm_wma/blob/V3/docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md)。直接 Codex 跟踪入口：**[Issue #7](https://github.com/wxwy/psm_wma/issues/7)**。这两处是新的同步入口；不是授权任何生产或GPU执行，Issue登记不会自动启动 Codex Agent。
+- **D1** 错误作用域及合法重试后解除旧 Attempt 的不相关资格阻塞、保留不可变诊断；**D2** Task/Episode 首次Claim + Core Commit Crash-safe；**D3** `ep_037` 中断只续测37，前0–36不可重跑、无需旧Scene/RNG复现；**D4** reset后 initial `_check_success()` 退化场景拒绝并有界重采；reset/初始谓词错误 `>3` 连续时即第4次 `SKIPPED_INIT_ERROR`，仅在安全前提下继续38–49、记录并等Owner手动决策补测。
+- **其他冻结原则**：新18×50 Run；RoboCasa环境后Step成功判据是SR权威，正常行为失败计分母；C方案视频媒体不影响SR、不做最终/Resume自动ffmpeg、不默认copy `videos_view`；支持中间跳过Slot而后续结果有效提交；没有900合法Core结果正式SR=null（允许清楚标注的partial有效样本SR）。不迁移/触碰旧431。
+- **明确撤销并禁止误用**：①此前 GPT 审核建议的全 Task 重跑；②旧 Owner Override §2 强制固定每集SHA Seed / 恢复原场景或整个RNG；③视频必须通过ffmpeg严格解码才算Episode完成；④`SKIPPED_INIT_ERROR` 无Owner批准自动Resume。老文档是审计历史，不可覆盖最新Owner澄清。
+- **当前 r1 Formal Pair不变**：Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`；此前正式判定 `REQUEST_CHANGES`。作者65 CPU passed 是Synthetic Design Gate，不是Production Gate。Codex下一步仅产出 **r2 Design+isolated CPU Prototype+New formal SHA/Evidence**，提交后STOP供GPT D1–D4增量审核。禁止合并V3、真实GPU/DCP/仿真900、改模型/训练/历史431。Codex请在 [Issue #7](https://github.com/wxwy/psm_wma/issues/7) 或 handoff 显式ACK确认读到本统一文件，不能把“已发布”当成“已阅读”。
