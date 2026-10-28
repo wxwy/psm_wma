@@ -309,6 +309,53 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **当前Status**：`R1_OWNER_MANAGED_NOT_GPT_BLOCKER` / `SAVE_ITER_100_FROZEN` / `S1_EVIDENCE_ONLY_OPEN` / `GPU_PARITY_NOT_RUN` / `S2_PENDING_NON_STORAGE_AUTHORIZATION`；本次仅文档修改，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`未变。
 
 
+## 2026-10-28 — GPT Stage2 Eval V2 4769d711/2d4a4259 Code Gate REQUEST_CHANGES (D1 HIGH-F1)
+
+- **精确 Formal Implementation pair**：Root `4769d711777c20a72dd7a3f6071a96f08ad8abb0` / Child+Gitlink `2d4a42590fead00ea16f6ae5902e2bc8382b07e2`；作者 Evidence/Handoff `089e083c266d1768d0a6154023d75249d500f039` 为后续文档提交，不取代Formal代码。候选 `v3-eval-v2-stage2-20261028`。Stage1 Design `APPROVE_DESIGN` 保持有效，**本次 Stage2 新生产 Code Gate = `REQUEST_CHANGES`**，不得将设计通过等价于生产放行。
+- **详细GPT独立代码审核落盘**：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Stage2_4769d711_2d4a4259_Code_Gate.md`。根仓直接父节点Diff仅新的V2生产入口/配置/进程/测试和Gitlink；Child仅新eval模块与两个窄Native optional hooks。作者正式原始JUnit **200 passed/0失败错误跳过/86.725s**（142生产CPU +58旧回归）；GPT从Formal Root/Child独立获取并核对**34/34 Git Blob匹配**作者冻结绑定；Ruff0.12.7/format/AST/Shell均为作者原始日志PASS，GPT/DS没有重跑CPU/GPU或真RoboCasa。
+- **唯一阻断 HIGH-F1（D1 并发 Core Commit vs 故障分类竞态）**：Root `scripts/robocasa_eval_v2/runtime.py:605–615` 任一Worker失败时，协调器在另一个Worker仍可能提交Core期间记录其 `coordinator_stop`，没有通过Scheduler/Store同一原子临界区序列化。Child `cosmos_framework/evaluation/robocasa_v2/store.py:793–833` commit早期healthy检查后仍可继续 `os.replace`；`:849–866` 故障在当时未见Core时冻结 `core_committed_at_fault=False`；`:895–918` 对同Attempt后来已经成功提交的不可变Core既不允许执行型恢复又不允许不同Attempt重测，导致可能**永久Clean Qualification不可解除**。这是源码级可达竞态，未声称实机复现；违反已测即跳过与D1恢复要求。
+- **Codex最小整改**：在同一个协调器/Store线性化边界序列化 Core 发布和故障登记（或设计可追溯同Attempt在途提交的完整恢复），保证“Fault先于Commit则不能后提交该旧Attempt；Commit先于Fault则标记后提交故障，旧有效Core保留并可通过正面清理+新Stream健康证明结案”。增加**确定性的多Worker CPU交错测试**：TaskB暂停在healthy检查后/原子发布前，TaskA故障记录，TaskB继续，验证不会出现有效Core与无法结案的pre-Core错误；反向顺序也要验证。包括正常BehavioralFailure、Resume、旧Core字节/inode与clean qualification。提交**新Formal Root/Child SHA + focused CPU Evidence**，再STOP申请GPT F1增量Code Gate。
+- **正向路径非阻断**：D2原子Core+证据、D3稀疏Episode Resume、D4初始成功过滤/四连错Owner跳过、D5 Episode-major同轮多GPU/严格barrier，以及真实HTTP/Local/媒体解耦已在生产源和作者CPU证据看到实现；本次不要求重新设计D1–D5。另真实3常驻模型+18 Task/EGL资源、GPU/Local/媒体饱和、物理算力与真Canary尚未验证，保留独立后续Gate。
+- **权限冻结**：当前只允许在独立候选修复Code Gate F1及对应CPU负例；不得合并V3/Child正式分支、启动真实GPU/Simulator/DCP/Canary/900、修改训练、checkpoint、Vendor或历史431结果。尚不授权DS真实运行及Owner新900测试。仅V3审核文档更新不是新Formal代码版本。
+
+
+## 2026-10-28 — FINAL GPT Stage2 Eval V2 4769d711/2d4a4259 Code Gate APPROVE_CODE (F1 withdrawn)
+
+- **最新、正式、优先级最高的 Code Gate 决议：`APPROVE_CODE`，只限 Stage2 生产代码源码Gate**。精确 Formal Root `4769d711777c20a72dd7a3f6071a96f08ad8abb0` / Formal Child+Gitlink `2d4a42590fead00ea16f6ae5902e2bc8382b07e2` 未变；作者 Evidence/Handoff `089e083c266d1768d0a6154023d75249d500f039` 不作为新Formal SHA。新详细更正审查：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Stage2_4769d711_2d4a4259_F1_Correction_FINAL_Code_Gate.md`。**本条完整撤销/取代本Inbox此前的 `REQUEST_CHANGES`/F1 阻断，不再要求Codex按F1改生产代码**；旧Review `2026-10-28_V3_EvalV2_Stage2_4769d711_2d4a4259_Code_Gate.md` 保留为审核纠错历史，而非有效技术Gate。
+- **F1撤销的精确事实**：Root `scripts/robocasa_eval_v2/runtime.py:605–615` 在记录所有Task的`coordinator_stop`故障**之前**，先调用 `scheduler.cancel()`；Child `cosmos_framework/evaluation/robocasa_v2/scheduler.py:154–160,171–179` 的 `scheduler.commit` 和 `cancel` 共用同一把 `_lock`。因此Core Commit若先持锁完成则故障登记看到有效Core，若取消先持锁则后续Commit被拒；我此前提出的“同Attempt有效Core+错误预标False永久污染”竞态被锁的先后关系排除，不成立。Task自身`run_slot`的异常只登记该Task，不是跨Task提前登记。停止将该错误F1当HIGH blocker。
+- **本次已核实的证据**：直接父节点Root生产Diff27文件、Child生产Diff13文件；GPT从Formal Root/Child独立回读冻结作者source binding中的**34/34 GitBlob一致**；原始最终JUnit `200 passed/0失败错误跳过/86.725s`（142新生产CPU+58旧回归）。Ruff0.12.7/format/AST34/shell检查来自作者冻结日志PASS，**GPT未自行重跑CPU，DS_PRO独立CPU尚未验收**；作者900条/50barrier为CPU合成数据，不是实机SR。
+- **D1～D5 生产源码正向实现获 `APPROVE_CODE`（仅源码）**：Episode-major round屏障/多GPU同轮、已提交Success与正常BehavioralFailure跳过，Ep37只补缺无需旧场景复现，init已成功拒收与第4次连续可恢复错跳过并等Owner授权，Task/Slot/Core原子提交与Local/Action/Prediction证据、process健康/恢复、媒体与SR解耦均接入真实Root+Child生产模块。未证实新的源码级blocking issue。
+- **下一步不是GPU、不是合并**：授权路径仍需Owner另行决定；DS_PRO可按独立CPU Gate请求在**隔离、精确 Formal Pair 只读工作树**复现200项测试，推荐额外做一次 `cancel vs in-flight Core Commit` 的确定性CPU顺序验证作为**非阻断Coverage**（不要求Codex改代码）。之后GPT复核DS Evidence，再等待Owner独立授权的真实Cosmos/RoboCasa/EGL/Local-TTT/media/Resume Canary。18常驻Task进程/每GPU6 EGL上下文从未真机验收。严禁未经单独授权合并V3、启动真GPU/DCP/仿真/900、改训练/Checkpoint/Vendor或碰历史431。
+- **保留历史且最新意见优先**：Stage1 `APPROVE_DESIGN` 不受本次纠错影响；本轮V3只归档Review/Inbox，不更改精确生产Formal代码；不得再依旧Review安排“修复F1”的虚假工作。
+
+
+## 2026-10-28 — NoTTT Compact0/1 GPU 3×Fresh1报告 Evidence审核（Scalar Loss支持，Gradient未验收）
+
+- 冻结源NoTTT historicalRoot`49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9`/Child+Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`不变；本次仍为 Evidence-only 增量审核，不重审已通过CPU Gate或生产代码。DS称本地Root`8c3d0562` 3 Evidence commits领先origin，但远端不可取得该SHA，未视作正式implementation身份。
+- DS报告原始转录：`docs/collab/chatgpt/evidence/2026-10-28_DS_PRO_NoTTT_Compact_GPU_Three_Fresh1_Report.md`。3个world4/FSDP2`fresh1` A Compact1、B Compact0、C Compact1复跑，rank0标量`outer/action/vision loss`逐值相同（outer14.937467575073242、action1.2275960445404053、vision0.2661505937576294），rank0`actual_consumer_identity_sha256`短写相同，缺梯度0/非有限0；rank0 grad_norm A3.706259/B3.707674/C3.708688，仅差0.038% vs同模式0.065%，**仅能证明范数接近，不是逐参数gradient parity**。
+- GPT正式详细Review：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_GPU_Forward_Loss_Gradient_Parity_Evidence_Review.md`；**`REQUEST_CHANGES`（Evidence-only）**。F1 HIGH=所有4 Rank所有选中FSDP梯度Shard无逐参数`allclose(rtol1e-3,atol1e-5)`；F2 MEDIUM=三套不同Fresh1+Optimizer/DCP并非同初始权重/冻结RNG的无OptimizerA/B harness；F3 MEDIUM=DCP Complete marker的`metadata.sha256`不是模型/优化器Tensor数值hash，不能用其不同判断“权重噪声”；F4 LOW=缺原始四Rank日志/可审核ParityJSON。
+- **仅留一项窄范围Remediation**：4GPU可共存条件下一次Frozen Native Harness，Compact0/1在同权重/Buffer/Batch/逐RankRNG、无Optimizer、无Checkpoint的Forward/Loss/Backward paired比对，逐参数/全部4Rank输出NoneMask、shape、dtype、allclose、maxabs/relativeL2/worst10/group。只在必要时一次Dense/Dense控制；不要再新增三套Fresh1。
+- 本轮不管磁盘/Checkpoint保留策略（Owner本地监管），CPU Gate仍CLOSED。`GPU_PARITY=REQUEST_CHANGES`，`S2_NOT_AUTHORIZED_BY_THIS_GATE`，无生产代码改动；旧NoTTT继续，不得擅切Compact或自动恢复。
+
+
+## 2026-10-28 — DS_PRO One-Round：Compact GPU Paired Grad Parity + 3Fresh速度抽取 + S2静态预检
+
+- **Owner目标**：减少DS/GPT交流次数，将互不依赖任务合为一次执行/一次Evidence/一次GPT审核。精确单轮合同：`docs/collab/chatgpt/requests/2026-10-28_V3_NoTTT_Compact_OneRound_GPU_Parity_Perf_S2_Readiness_DS_PRO.md`。不新增新的production implementation/design target；historicalNoTTT Root`49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9`/Child+Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`不变。
+- A（无GPU）：从以前Compact1/0/1三次`fresh1` monitor提取同口径`step_wall/data_prepare/forward/backward/memory`和真实身份，观察速度差，不追加训练、非稳态Benchmark结论。
+- B（仅GPU4–7，可与旧NoTTT共存）：**唯一新增GPU实验**真实4Rank FSDP2无Optimizer无DCP **Dense0↔Compact1同权重/冻结Batch/逐RankRNG配对Forward/Loss/全部选中梯度分片逐元素`allclose(rtol1e-3,atol1e-5)`**；对不上仅一次Dense/Dense控制。不调用三套Fresh1或正式trainer.train。
+- C（无GPU）：只读核实新Compact1 `no_ttt_compact1_corerun_20261028_world4_ga4` 的`iter1`完整Marker/4RankSidecar/identity及`save_iter=100`；未存则`CHECKPOINT_NOT_PRESENT`，不去干涉Owner本地保留/清理。
+- A/C与B**相互独立执行**；B资源/构建失败仍交付A/C。统一`summary.md/json+Harness代码+最少原始日志`，DS本轮只回报一次。旧`GPU_PARITY=REQUEST_CHANGES`不因指令发布自动关闭，CPU Gate仍CLOSED，S2`resume10/100/30000`仍需独立授权。禁止改旧/新Job生产模型、训练、Checkpoint或生产代码。
+
+
+## 2026-10-28 — Owner NEW Eval V2 implementation directive: dynamic Sim Slots → multi-Session Local-TTT true Batch
+
+- **New canonical Owner request (implementation authorization, NOT review verdict):** `docs/collab/chatgpt/requests/2026-10-28_V3_EvalV2_Dynamic_SimSlots_LocalTTT_Batch_Owner_Implementation_Directive.md`; [Codex task Issue #8](https://github.com/wxwy/psm_wma/issues/8). **This replaces the old fixed Task→permanent Sim/18 resident env assumption ONLY**, not D1–D5 scientific authority. Old Stage2 FINAL `APPROVE_CODE` remains valid on its exact source pair, but that legacy resource arrangement is NOT the Owner's target architecture and the old 18-EGL-actors Canary is not the next authorized action.
+- **Frozen code baseline (NOT V3 HEAD):** Formal Root `4769d711777c20a72dd7a3f6071a96f08ad8abb0` / Child+Gitlink `2d4a42590fead00ea16f6ae5902e2bc8382b07e2`; former Stage2 Evidence HEAD `089e083c266d1768d0a6154023d75249d500f039` is only docs, no new Code Gate. Prior D1 F1 alleged race was explicitly **withdrawn** by FINAL review, do not fix that phantom defect.
+- **Owner AUTHORIZES Codex Phase A implementation NOW:** dynamic selected GPU count G and Atomic Task count N; each GPU keeps exactly one resident Policy Server and **one reusable physical Sim Slot** for Phase A (M=1/B=1). Slot claims Task/Episode/Attempt from global D5 Episode-major RoundScheduler, no permanent Task-affinity; Task change requires previous Local Session reset ACK → env.close → make_env(new Task) → env.reset/precheck → NEW Episode Session from W0; same Task next Episode also env.reset and NEW Fast Weight Session. Positive cleanup/fail-closed quarantine, seed-stream diversity/provenance across environment rebuilds, Round barriers, skip valid success and behavioral failure, keep D1–D5 Core/source/media/Resume unchanged. Cover G=1/2/3/4/8 and N=1/2/4/7/18 plus synthetic 900 and state-machine fault tests. **Isolated root+Child candidates, CPU author tests only; deliver new precise Formal Pair + Evidence and STOP for GPT new-pair Code Gate / later independent DS CPU**.
+- **Phase B agreement, NOT yet production edit authorization:** following Phase A Gate, design multi Sim Slots per GPU (M>1), independent session-keyed Fast Weight per Episode, truly dynamic microbatch (`B`, bounded wait) + ONE actual batched model-generation call for B>1, correct per-sample Local Prefix, transactional commit/abort/reset and ID-stable result dispatch; Phase B new Design Gate BEFORE production code; a mere `max_sessions=6` or repeated serial forwards does not meet Owner objective.
+- **Hard boundary:** no V3/Child merge, no real GPU/native Cosmos/RoboCasa/900/Canary, no DCP/checkpoint/training/Vendor modifications, and no access/migration/deletion of old431. Codex must ACK actual reading in Issue #8 or its handoff; GitHub issue/bookkeeping alone is not proof a Codex session has started.
+
+
 
 
 
