@@ -299,3 +299,11 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **R1 HIGH数学修正**：`30000/1000=30`份整千Checkpoint，单份按文件byte合计≈`23.17GiB`，保留30份≈`695GiB(0.679TiB)`，**不是300份/7.2T**；仍超过/mnt/data空闲97G，且旧NoTTT也在增加整千DCP。inode只有5.68%用量。
 - **自动Cleaner授权与风险**：现有`nottt_ckpt_cleaner_loop.sh`据DS称每30分钟删除旧Job非整千已完成Checkpoint，已删iter4700/4800释放47G；当前缺Owner授权和实际脚本审核。不得默许或擅停，需Owner确认旧/新两Job各自恢复点保护及删除权限。
 - `S1_EVIDENCE_REQUEST_CHANGES`（仅source provenance）`/R1_HIGH_OPEN/S2_NOT_AUTHORIZED`。下一步提交现有原生JSON/MD/complete.v1以及Owner定Checkpoint保留与磁盘容量，之后才考虑新Job Resume10/100/30000与独立GPU数学Parity。
+
+
+## 2026-10-28 — Owner Override：No-TTT存储和Checkpoint清理不作为GPT Gate
+
+- Owner最新决定：**磁盘容量、Checkpoint保留与定期清理由Owner本地监控程序管理；GPT/DS不审核Cleaner、不干涉或操作其运行，磁盘99%/历史R1 HIGH不能再作为S2独立阻塞项。** 正式 Override：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_Owner_Storage_Retention_Override.md`；StagePlan顶部已加新Owner优先级提示。旧评审保留作为历史证据，不再表示当前执行权限。
+- **冻结Checkpoint频率 `save_iter=100`**（避免中断浪费），不批准改成1000；`max_iter=30000/warmup=500`不变，不擅删/移/覆盖任何DCP。
+- 仍须验证Checkpoint真实完整性（如`complete.v1.json`/rank sidecars）、训练/Resume语义及Compact0/1数值Parity；Owner只接管存储管理，不代替模型技术Gate。旧正式Job保持不动，新Job不得自动`resume10/100/30000`；继续启动需另行授权。
+- **当前Status**：`R1_OWNER_MANAGED_NOT_GPT_BLOCKER` / `SAVE_ITER_100_FROZEN` / `S1_EVIDENCE_ONLY_OPEN` / `GPU_PARITY_NOT_RUN` / `S2_PENDING_NON_STORAGE_AUTHORIZATION`；本次仅文档修改，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`未变。
