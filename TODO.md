@@ -478,3 +478,6 @@
 - **V3-EVAL-V2-DESIGN-20261028** — IN_PROGRESS;Codex; Ownernew900design/prototype scope, baselineRoot5c1d78cb/Child746c5cf2. New design + isolatedCPU outcome/store/Taskrestartprototype; existing431/no migration, media-independent envSR, immutableEpisode/results, derivedindexes, all900valid+processclean qualification, explicit continuousReset semantics. Submit designRoot/unchangedChild+authorCPU evidence for GPTDesignGate,STOP beforeproductionwiring/Canary.
 
 - **V3-EVAL-V2-DESIGN-20261028** — REVIEW; r1Design + isolatedtoolsprototype, author65PASS/0skip/static6/frozen6. Environment-authority/nullSRinvalidpending/mediaindependence,900fakeuniqueindexes,transactionalwholeTaskrestart+no-copyretention andstrictidentity; proposedconservativeprocesserror/initialclaimblocks surfaced forDesignGate. No productionentry/nativewiring yet. PublishDesignRoot/unchanged746Child+rawCPUthenGPTDesignReview,STOPbeforeStage2/Canary/merge/real eval.
+
+
+- **V3-EVAL-V2-R2-D1-D4-20261028** — IN_PROGRESS; Codex; latest canonical9858e70b read+ACK first. Revise isolated prototype/design for scoped fault resolution, crash-safe init/commit, sparse Episode-only Resume/no oldscene reproduction, scene admission +4error SKIP/manual retry. New formalRoot/unchangedChild+CPU evidence then STOP GPT review; no production/native/GPU/history/V3 merge.
