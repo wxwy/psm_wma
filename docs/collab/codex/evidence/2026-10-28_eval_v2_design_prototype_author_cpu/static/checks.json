@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "cwd": "/workspace/psm_wma",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "check_0.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "tools/v3/episode_eval_v2_prototype/__init__.py",
+        "tools/v3/episode_eval_v2_prototype/contract.py",
+        "tools/v3/episode_eval_v2_prototype/contract_test.py",
+        "tools/v3/episode_eval_v2_prototype/scene_test.py",
+        "tools/v3/episode_eval_v2_prototype/store.py",
+        "tools/v3/episode_eval_v2_prototype/store_test.py"
+      ],
+      "exit_code": 0,
+      "log": "check_1.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "--check",
+        "tools/v3/episode_eval_v2_prototype/__init__.py",
+        "tools/v3/episode_eval_v2_prototype/contract.py",
+        "tools/v3/episode_eval_v2_prototype/contract_test.py",
+        "tools/v3/episode_eval_v2_prototype/scene_test.py",
+        "tools/v3/episode_eval_v2_prototype/store.py",
+        "tools/v3/episode_eval_v2_prototype/store_test.py"
+      ],
+      "exit_code": 0,
+      "log": "check_2.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "check_3.log"
+    }
+  ],
+  "syntax_files": [
+    "tools/v3/episode_eval_v2_prototype/__init__.py",
+    "tools/v3/episode_eval_v2_prototype/contract.py",
+    "tools/v3/episode_eval_v2_prototype/contract_test.py",
+    "tools/v3/episode_eval_v2_prototype/scene_test.py",
+    "tools/v3/episode_eval_v2_prototype/store.py",
+    "tools/v3/episode_eval_v2_prototype/store_test.py"
+  ],
+  "syntax": "PASS",
+  "frozen_source_sha256_match": true
+}

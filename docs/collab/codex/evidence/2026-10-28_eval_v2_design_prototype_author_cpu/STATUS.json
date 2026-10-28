@@ -1,0 +1,38 @@
+{
+  "gate": "DESIGN_PLUS_ISOLATED_PROTOTYPE_AUTHOR_CPU_ONLY",
+  "design_root": "dc750f8e258d10a33e7a195cf907926b1c98bd7f",
+  "child_gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "baseline_root": "5c1d78cbaa9d4449a471ce587afe89375292dc27",
+  "candidate_branch": "v3-eval-v2-design-20261028",
+  "passed": 65,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 9.15,
+  "static_files": 6,
+  "test_modules": 3,
+  "synthetic_result_records": 900,
+  "synthetic_success": 450,
+  "synthetic_failure": 450,
+  "synthetic_sr": 0.5,
+  "production_zero_diff": true,
+  "Child_changed": false,
+  "runtime_gate_approved": false,
+  "prototype_only": true,
+  "proposed_resume": "reuse complete Task, incomplete Task archive by rename/restart0..N-1 same literalSeed newstream",
+  "conservative_open_dispositions": [
+    "process fault records retained as qualification blockers until separate reviewed execution-resolution policy",
+    "missing initial Task Episode directory blocks, no silent reconstruction"
+  ],
+  "NOT_IMPLEMENTED_OR_EXECUTED": [
+    "production launcher/Child adapter",
+    "real Cosmos inference/ABI/Local wiring",
+    "real RoboCasa scenes/RNG/reset equivalence",
+    "bounded media encoder process pipeline",
+    "actual GPU/server/Kitchen/realDCP",
+    "DS independent CPU",
+    "Canary or900realepisodes",
+    "431legacy migration or IO"
+  ],
+  "next_gate": "GPT new Design Gate only; do not mergeV3 or startStage2/Canary automatically"
+}

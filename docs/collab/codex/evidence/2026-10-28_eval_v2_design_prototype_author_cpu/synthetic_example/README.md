@@ -1,0 +1,1 @@
+Actual final CPU fake-environment test output:900 synthetic result records only. Not900 real rollouts or model/runtime evidence. Archive preserves prototype_only and runtime_gate_approved=false. Stage2 actions/predictions/Local/scene/media writers and native launcher are not implemented. Never import as production evaluation.

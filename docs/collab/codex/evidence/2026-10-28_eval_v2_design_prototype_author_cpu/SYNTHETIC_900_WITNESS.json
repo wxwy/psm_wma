@@ -1,0 +1,10 @@
+[
+  {
+    "tasks": 18,
+    "episodes": 900,
+    "success": 450,
+    "failure": 450,
+    "sr": 0.5,
+    "prototype_only": true
+  }
+]

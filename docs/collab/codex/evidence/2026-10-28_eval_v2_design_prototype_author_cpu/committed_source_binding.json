@@ -1,0 +1,35 @@
+{
+  "design_root": "dc750f8e258d10a33e7a195cf907926b1c98bd7f",
+  "files": [
+    {
+      "path": "tools/v3/episode_eval_v2_prototype/__init__.py",
+      "sha256": "1c849f2d3db1065caae2f2920072658265c84250c119f85b6cc64762a0dad075",
+      "git_blob": "588d134d6e50435fcbaaf0d7126c142b59b5a9ee"
+    },
+    {
+      "path": "tools/v3/episode_eval_v2_prototype/contract.py",
+      "sha256": "d9289273d0230710b1a5bdefa9de8684dab4b85e9d225edb3ea36b3968b72463",
+      "git_blob": "8ba93077b98727525dd9bccb5652ac8f0459798b"
+    },
+    {
+      "path": "tools/v3/episode_eval_v2_prototype/contract_test.py",
+      "sha256": "9503cd2eed7e7f2f34f5ffc081a41965d5754a78cb718164e5f8c5516af60e2b",
+      "git_blob": "4c43139c676c9c6f2fa32c3ba8cb6bb4e2a95392"
+    },
+    {
+      "path": "tools/v3/episode_eval_v2_prototype/scene_test.py",
+      "sha256": "bd78f2cab45fb73d2801677bb4dad3db857722591ab1eaf5080d8e954ac3c2a0",
+      "git_blob": "295c54f95a2e3501b2a8b0bf96ff4f5bcfb6c775"
+    },
+    {
+      "path": "tools/v3/episode_eval_v2_prototype/store.py",
+      "sha256": "4a6cc209c17212fb1cee0a2b80f71f1309935c6a940ca09c927c935819354fae",
+      "git_blob": "8e1ef1295d71f11838d9d614fd58b10f9a77e6e4"
+    },
+    {
+      "path": "tools/v3/episode_eval_v2_prototype/store_test.py",
+      "sha256": "4397e706acfd62765cdd8d841b7d7f69dd1249b2adf9a07e41bd5c40e68c26f8",
+      "git_blob": "f856b768810f530268f8027a7f9110195ce4975a"
+    }
+  ]
+}

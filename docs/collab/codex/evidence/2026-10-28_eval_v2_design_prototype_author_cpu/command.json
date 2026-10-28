@@ -1,0 +1,33 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "-s",
+    "-x",
+    "tools/v3/episode_eval_v2_prototype",
+    "--junitxml=/tmp/psm-v3-eval-v2-20261028/final02/junit.xml"
+  ],
+  "env": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/workspace/psm_wma",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-v3-eval-v2-20261028/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-v3-eval-v2-20261028/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-v3-eval-v2-20261028/cache"
+  }
+}

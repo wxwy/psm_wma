@@ -1,0 +1,9 @@
+M	SESSION.md
+M	TODO.md
+A	docs/build/PSM-WMA_V3_RoboCasa_Evaluation_V2_design_r1_2026-10-28.md
+A	tools/v3/episode_eval_v2_prototype/__init__.py
+A	tools/v3/episode_eval_v2_prototype/contract.py
+A	tools/v3/episode_eval_v2_prototype/contract_test.py
+A	tools/v3/episode_eval_v2_prototype/scene_test.py
+A	tools/v3/episode_eval_v2_prototype/store.py
+A	tools/v3/episode_eval_v2_prototype/store_test.py

@@ -1,0 +1,11 @@
+{
+  "baseline": "5c1d78cbaa9d4449a471ce587afe89375292dc27",
+  "design_root": "dc750f8e258d10a33e7a195cf907926b1c98bd7f",
+  "child_gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "zero_diff_paths": [
+    "scripts",
+    "configs",
+    "third_party",
+    "cosmos-framework"
+  ]
+}

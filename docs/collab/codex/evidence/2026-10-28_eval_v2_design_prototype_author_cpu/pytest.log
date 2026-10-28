@@ -1,0 +1,9 @@
+...................................V2_DESIGN_WITNESS {"tasks": 18, "episodes": 900, "success": 450, "failure": 450, "sr": 0.5, "prototype_only": true}
+..............................
+=============================== warnings summary ===============================
+tools/v3/episode_eval_v2_prototype/contract_test.py::test_media_preserves_already_loaded_torch_cpu_rng_without_cuda[False]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+65 passed, 1 warning in 9.15s
