@@ -1,0 +1,83 @@
+diff --git a/SESSION.md b/SESSION.md
+index 4ace0c14..376fed55 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1696,3 +1696,9 @@ Read full Owner directive2026-10-28_V3_EvalV2_Dynamic_SimSlots_LocalTTT_Batch_Ow
+ - 900actualproductionRuntime/Scheduler/SimSlotCPUtest87.781s;900dispatch/50barriers/3physicalSlots/3mockModelLoads/900fakeenvrebuilds/450success450failure. Claimp95~78.27ms/Corecommit~30.92ms/lockwait~62.66ms/rebuildmax~3.03s;10023JSONreads/118677cachehits. WholeCPUtestchildru_maxrss348272KiB(~340.11MiB),user125.01s/system51.80s; notnativeGPU/robocasaRAMcapacity. No speedupcomparisontoold lighter900test.
+ - Draftfailuresretained: matrixledgerfixturepath; transportmetadatamismatchcorrectlyrefused; hardcodedephemeral-rangeport55004conflict; transportsetupwithoutStorelease. Finalsourcepreservesproductionchecks/assertions, fixesfixturesratherthanweakeningadmission. Staticrerunoutputdirectorycollisioncorrectedoutsideprojectsource; finalsourcehash/static37matchverified.
+ - Newarchitecturedesignnote docs/build/PSM-WMA_V3_EvalV2_PhaseA_Dynamic_SimSlots_2026-10-28.md. NewFormalRoot+Childdiff/rawEvidence/GitBlobs/candidateInboxhandoff→GPTnewpairCodeGateSTOP, thenDSindependentCPU. NoPhaseBdesign/codeyet,noV3merge, realGPU/model/ActionServer/RoboCasa/DCP/900/history431/trainingoperation.
++
++### Phase A final delivery boundary correction — author final255 PASS
++
++- Pre-final implementation1ac82af40a95587dd3f5e016dbc6a7e73ebeb9c2(254authorPASS) had not been submitted for review. Delivery audit found an actual NEW-architecture edge: Slot exits0 after lastCore, no inflightclaims, coordinator_stop scope omitted the current physical Slot. Preserve source sameScheduler.cancel/commit lock; add currentphysicalSlotassignments to post-cancel affectedscope, never historical switched-out Taskstreams. This is distinct from withdrawn Stage2phantomF1.
++- CounterfactualRED (restore ONLY Runtime.run from1ac82af4 intoCPU memory) failsnew late-zero-exit assertion; currentGREEN test passes. OriginalCore staysbyte-identical; explicitResume freshhealthresolveslatefaultwithoutinference/retest. RawREDandGREENandprevious254sourceEvidence retained, no workspace source rewind. Pre-final untrackedEvidencepackagemovedbyte-preservingto/workspace/phase_a_pre_finalize_1ac82af4_package.
++- Final full03 frozen37source +static03 PASS:255passed(197production+58legacy),0failure/error/skip,pytest178.04s. All25G/Nmatrix/defaultRootWorkerIPC/900realRuntime-Scheduler-SimSlotCPU path and legacyregressions retained. FinalFormalRootnextcommit supersedes1ac82af4 asrequesttarget; Childremainsexactd2c1bda62880dbeee196f70945e5bc430b73f4b6. FullPhaseAreviewrangeisACK4292905a→finalRoot (includesinitial1ac82af4 +thisfinalscopeclosure), NOTjustthelastsmallcommit. NoGPU/DS/V3merge/PhaseB.
+diff --git a/TODO.md b/TODO.md
+index ef5e1070..dede54d8 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -495,3 +495,5 @@
+ - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — IN_PROGRESS; Codex, OwnerIssue8authorization; baseline4769d711/2d4a4259. ReusablephysicalSlotM1/B1,dynamicG/N,strictlifecycle,samplingprovenance,D1-D5CPU;newisolatedFormalPair+Evidence→GPTCodeGateSTOP. NoGPU/native/merge/PhaseB.
+ 
+ - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — REVIEW; actualimplementation+authorCPU254PASS/0skip/static37PASS onnewisolatedcandidate. Childd2c1bda62880dbeee196f70945e5bc430b73f4b6, newRootnext. Full25G/Nmatrix/M1B1/realWorkerIPC/defaultRootpool/900CPU/lifecycle/seed/grant/sparseResume/quarantine-recovery; doc/Evidence/formalpairthenGPTCodeGateSTOP. NoautomaticPhaseB,DSjob,merge,GPU/native/DCP/history/trainoperation.
++
++- **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — REVIEW final255PASS/0skip/static37; includesconfirmedlate-zero-exitqualificationclosure+counterfactualRED/GREEN. NewRootformal follows; Childd2c1bda6unchanged. RequestfullPhaseA4292905a→newRootagainstapproved4769baseline, thenSTOPGPTCodeGate.
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index efedda89..1d037d6a 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -683,6 +683,11 @@ class Runtime:
+             # Keep the approved commit/cancel serialization. A switched-out Task
+             # has no in-flight producer merely because its logical stream is open.
+             affected = {c["task"] for c in scheduler.inflight.values()}
++            affected.update(
++                self.slot_claim_tasks[w]
++                for w in self.actors
++                if w in self.slot_claim_tasks
++            )
+             for task in affected:
+                 self.store.record_process_error(
+                     task,
+diff --git a/tools/v3/eval_v2_production_tests/runtime_test.py b/tools/v3/eval_v2_production_tests/runtime_test.py
+index 8f12f38d..486efc2d 100644
+--- a/tools/v3/eval_v2_production_tests/runtime_test.py
++++ b/tools/v3/eval_v2_production_tests/runtime_test.py
+@@ -254,3 +254,38 @@ def test_runtime_quarantine_then_explicit_resume_uses_new_slot_session_and_proof
+             and not payload["evidence"]
+         )
+         assert old.slot_ids != new.slot_ids
++
++
++def test_late_zero_exit_after_valid_core_blocks_clean_without_retesting(
++    tmp_path, monkeypatch
++):
++    prepare_monkey(monkeypatch)
++    value = fresh(tmp_path, episodes=1)
++
++    class LateExit(CpuSlotRuntime):
++        def _actor(self, claim):
++            actor = super()._actor(claim)
++            actor.owned.proc.poll = lambda: 0 if actor.slot.state == "CLEAN" else None
++            return actor
++
++    with server() as (url, calls), value.locked():
++        report, error = LateExit(value, cfg(1, 1), url, []).run()
++        assert error is not None and report["valid"] == 1 and report["sr"] == 1.0
++        assert not report["clean_execution"] and not report["results_qualified"]
++        faults = value.errors("CloseFridge")
++        assert faults and all(e["core_committed_at_fault"] for e in faults)
++        original = (value._slot("CloseFridge", 0) / "result.json").read_bytes()
++    with (
++        server() as (url, calls),
++        Store(value.root, value.manifest).locked() as resumed,
++    ):
++        report, error = CpuSlotRuntime(resumed, cfg(1, 1), url, []).run()
++        assert (
++            error is None
++            and report["results_qualified"]
++            and report["resolved_process_errors"]
++        )
++        assert not calls  # execution-only fresh health, never repeat a valid Episode.
++        assert (
++            resumed._slot("CloseFridge", 0) / "result.json"
++        ).read_bytes() == original

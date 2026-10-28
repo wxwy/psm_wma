@@ -1,0 +1,54 @@
+{
+  "label": "CPU SYNTHETIC production scheduler/store; no model or RoboCasa execution",
+  "metrics": {
+    "coordination": {
+      "scheduler_lock_wait": {
+        "count": 2851,
+        "failed": 0,
+        "sample_count": 2851,
+        "p50_ms": 17.515667001134716,
+        "p95_ms": 65.53971699759131,
+        "max_ms": 122.14898299862398
+      },
+      "claim": {
+        "count": 900,
+        "failed": 0,
+        "sample_count": 900,
+        "p50_ms": 45.26769900257932,
+        "p95_ms": 76.89298500190489,
+        "max_ms": 104.67916199559113
+      },
+      "core_commit": {
+        "count": 900,
+        "failed": 0,
+        "sample_count": 900,
+        "p50_ms": 16.475793003337458,
+        "p95_ms": 27.143582999997307,
+        "max_ms": 51.107646999298595
+      },
+      "rebuild_views": {
+        "count": 2,
+        "failed": 0,
+        "sample_count": 2,
+        "p50_ms": 2908.406251000997,
+        "p95_ms": 2908.406251000997,
+        "max_ms": 3000.483309995616
+      }
+    },
+    "record_io": {
+      "disk_reads": 10023,
+      "cache_hits": 118688
+    }
+  },
+  "witness": {
+    "episodes": 900,
+    "dispatches": 900,
+    "round_barriers": 50,
+    "success": 450,
+    "failure": 450,
+    "physical_slots": 3,
+    "mock_model_loads": 3,
+    "environment_creations": 900,
+    "synthetic_only": true
+  }
+}

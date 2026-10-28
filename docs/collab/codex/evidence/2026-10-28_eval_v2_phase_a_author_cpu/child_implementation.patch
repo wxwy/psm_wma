@@ -1,0 +1,635 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/contract.py b/cosmos_framework/evaluation/robocasa_v2/contract.py
+index 165bde3..e633766 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/contract.py
++++ b/cosmos_framework/evaluation/robocasa_v2/contract.py
+@@ -11,7 +11,7 @@ import sys
+ from dataclasses import dataclass, field
+ 
+ SCHEMA = "psm_robocasa_eval_v2"
+-SAMPLING = "continuous_reset_with_explicit_resume_stream_v2"
++SAMPLING = "dynamic_slot_environment_seed_then_continuous_reset_v3"
+ RESUME = "retry_missing_episode_no_scene_reproduction_v2"
+ _SHA = re.compile(r"[0-9a-f]{64}\Z")
+ 
+@@ -71,6 +71,8 @@ def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False)
+         "scope": "formal900" if formal else "subset",
+         "protocol": {
+             "sampling": SAMPLING,
++            "resource_architecture": "one_reusable_sim_slot_per_gpu_phase_a",
++            "seed_field": "logical_task_stream; actual environment seed in sampling provenance",
+             "schedule": "episode_major_frozen_order_round_barrier_v1",
+             "resume": RESUME,
+             "success_latch": 1,
+@@ -172,6 +174,7 @@ def result_record(
+     worker_id="0" * 32,
+     seed=None,
+     reset_index=None,
++    sampling=None,
+ ):
+     validate_manifest(manifest)
+     if task not in manifest["tasks"]:
+@@ -203,6 +206,8 @@ def result_record(
+         "elapsed_seconds": elapsed_seconds,
+         **observation,
+     }
++    if sampling is not None:
++        row["sampling"] = sampling
+     validate_result(manifest, row)
+     return row
+ 
+@@ -234,13 +239,27 @@ def validate_result(manifest, row):
+     }
+     if (
+         not isinstance(row, dict)
+-        or set(row) != base_keys
++        or set(row) not in (base_keys, base_keys | {"sampling"})
+         or row["schema"] != SCHEMA
+         or row["prototype_only"] is not False
+         or row["manifest_digest"] != manifest["digest"]
+         or row["task"] not in manifest["tasks"]
+     ):
+         raise ValueError("invalid Episode identity/schema")
++    if "sampling" in row:
++        sample = row["sampling"]
++        if (
++            not isinstance(sample, dict)
++            or set(sample)
++            != {"environment_id", "actual_seed", "environment_reset_index", "physical_slot_id", "protocol"}
++            or sample["protocol"] != SAMPLING
++        ):
++            raise ValueError("invalid native environment sampling provenance")
++        for name in ("environment_id", "physical_slot_id"):
++            if not isinstance(sample[name], str) or not re.fullmatch(r"[0-9a-f]{32}", sample[name]):
++                raise ValueError("invalid physical environment/Slot identity")
++        integer(sample["actual_seed"], 0, 2**32 - 1, "environment seed")
++        integer(sample["environment_reset_index"], 0, 100000, "environment reset index")
+     integer(row["episode"], 0, manifest["episodes_per_task"] - 1, "episode")
+     integer(row["generation"], 0, 100000, "generation")
+     integer(row["replans"], 0, 100000, "replans")
+diff --git a/cosmos_framework/evaluation/robocasa_v2/evidence.py b/cosmos_framework/evaluation/robocasa_v2/evidence.py
+index 20bf1dd..4f1473a 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/evidence.py
++++ b/cosmos_framework/evaluation/robocasa_v2/evidence.py
+@@ -97,6 +97,8 @@ def validate(directory, row):
+     for k in ("task", "episode", "attempt_id", "stream_id", "seed", "reset_index", "manifest_digest"):
+         if scene.get(k) != row[k]:
+             raise ValueError("scene source identity mismatch")
++    if "sampling" in row and scene.get("sampling") != row["sampling"]:
++        raise ValueError("native sampling provenance contradicts Core result")
+     if scene.get("initial_success") is not False:
+         raise ValueError("scene not admitted")
+     result = {}
+diff --git a/cosmos_framework/evaluation/robocasa_v2/scheduler.py b/cosmos_framework/evaluation/robocasa_v2/scheduler.py
+index 0677f65..332c648 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/scheduler.py
++++ b/cosmos_framework/evaluation/robocasa_v2/scheduler.py
+@@ -105,11 +105,8 @@ class RoundScheduler:
+                         self.resume_scan.append((task, ep, disposition))
+                         self.cursor += 1
+                         continue
+-                    # Sticky task/env ownership avoids serializing all work onto
+-                    # one GPU or recreating task contexts for every round.
+-                    target = self.workers[self.cursor % len(self.workers)]
+-                    if worker != target:
+-                        return None
++                    # Any idle physical Slot may consume the next logical item.
++                    # Task environments are switched by the bounded Slot owner.
+                     if task not in self.store.active_tasks:
+                         self.store.begin_task(task)
+                     ticket = uuid.uuid4().hex
+diff --git a/cosmos_framework/evaluation/robocasa_v2/store.py b/cosmos_framework/evaluation/robocasa_v2/store.py
+index 6efb77e..85ea11d 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/store.py
++++ b/cosmos_framework/evaluation/robocasa_v2/store.py
+@@ -351,7 +351,7 @@ class Store:
+                 set(v) != {"task", "stream_id", "worker_id", "lease_id", "seed", "manifest_digest", "kind", "time_ns"}
+                 or v["task"] != task
+                 or v["manifest_digest"] != self.manifest["digest"]
+-                or v["kind"] not in ("initial_continuous_reset", "resume_new_stream_no_scene_reproduction")
++                or v["kind"] not in ("initial_dynamic_slot_stream", "resume_dynamic_slot_stream")
+             ):
+                 raise ValueError("foreign stream")
+             for key in ("stream_id", "worker_id", "lease_id"):
+@@ -404,6 +404,64 @@ class Store:
+             raise ValueError("invalid cleanup receipt")
+         return value
+ 
++    def allocate_environment(self, task, physical_slot_id):
++        """Durable per-Task environment seed sequence, including Resume rebuilds.
++
++        Called under the coordinator's Slot startup lock. A claimed but unused
++        grant is retained and consumes its seed, so crashes never reuse it.
++        """
++        self._lease()
++        identifier(physical_slot_id)
++        self._healthy_stream(task)
++        directory = self._internal(task) / "environments"
++        prior = records(directory)
++        ordinals = [v["ordinal"] for v in prior]
++        if sorted(ordinals) != list(range(len(prior))):
++            raise ValueError("environment grant sequence damaged")
++        ordinal = len(prior)
++        if ordinal >= 2**32:
++            raise ValueError("environment seed space exhausted")
++        value = {
++            "task": task,
++            "environment_id": uuid.uuid4().hex,
++            "physical_slot_id": physical_slot_id,
++            "ordinal": ordinal,
++            "seed": (self.manifest["seed"] + ordinal) % 2**32,
++            "manifest_digest": self.manifest["digest"],
++        }
++        save(directory / f"{value['environment_id']}.json", value)
++        return value
++
++    def _check_sampling(self, a, sampling):
++        grant = load(self._internal(a["task"]) / "environments" / f"{identifier(sampling['environment_id'])}.json")
++        if (
++            grant["task"] != a["task"]
++            or grant["manifest_digest"] != self.manifest["digest"]
++            or grant["seed"] != sampling["actual_seed"]
++            or grant["physical_slot_id"] != sampling["physical_slot_id"]
++        ):
++            raise ValueError("scene sampling contradicts durable environment seed grant")
++
++    def bind_sampling(self, a, sampling):
++        self._lease()
++        self._attempt(a)
++        if self.active_attempts.get((a["task"], a["episode"])) != a or self.events(a)[-1]["kind"] != "ADMITTED":
++            raise ValueError("owned admitted scene required for sampling binding")
++        self._check_sampling(a, sampling)
++        save(
++            self._ledger(a["task"], a["episode"]) / "sampling" / f"{a['attempt_id']}.json",
++            {"attempt": a, "sampling": sampling},
++        )
++
++    def _validate_sampling(self, a, row):
++        if "sampling" in row:
++            self._check_sampling(a, row["sampling"])
++            if load(self._ledger(a["task"], a["episode"]) / "sampling" / f"{a['attempt_id']}.json") != {
++                "attempt": a,
++                "sampling": row["sampling"],
++            }:
++                raise ValueError("Core sampling is not the admitted scene")
++
+     def begin_task(self, task, *, seed=None, recovery_only=False):
+         self._lease()
+         if task in self.active_tasks:
+@@ -421,7 +479,7 @@ class Store:
+             "lease_id": self.lease_id,
+             "seed": self.manifest["seed"] if not previous else secrets.randbits(32),
+             "manifest_digest": self.manifest["digest"],
+-            "kind": "initial_continuous_reset" if not previous else "resume_new_stream_no_scene_reproduction",
++            "kind": "initial_dynamic_slot_stream" if not previous else "resume_dynamic_slot_stream",
+             "time_ns": time.time_ns(),
+         }
+         if seed is not None:
+@@ -606,6 +664,7 @@ class Store:
+         events = self.events(a)
+         if not events or events[-1]["kind"] != "ADMITTED" or row["reset_index"] != events[-1]["data"]["reset_index"]:
+             raise ValueError("Core result lacks admitted scene")
++        self._validate_sampling(a, row)
+         if row["outcome"] not in ("success", "failure"):
+             raise ValueError("only valid environment outcomes can Core Commit")
+         return row
+@@ -817,6 +876,7 @@ class Store:
+         work = self._ledger(*key) / "work" / a["attempt_id"]
+         if staging != work or not staging.is_dir():
+             raise ValueError("owned attempt staging required")
++        self._validate_sampling(a, row)
+         inventory = validate(staging, row)
+         save(staging / "core_inventory.json", {"row_digest": digest(row), "files": inventory})
+         save(staging / "result.json", row)
+@@ -1075,7 +1135,7 @@ class Store:
+                     {
+                         "stream_id": s["stream_id"],
+                         "worker_id": s["worker_id"],
+-                        "actual_seed": s["seed"],
++                        "logical_stream_seed": s["seed"],
+                         "kind": s["kind"],
+                     }
+                     for s in self._streams(task)
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+index cff368a..596d6d0 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+@@ -69,7 +69,7 @@ class NativeEpisode:
+                 "resource_proof": proof,
+             }
+ 
+-    def execute(self, attempt, *, reset_index, directory):
++    def execute(self, attempt, *, reset_index, directory, sampling=None, phase_callback=None):
+         if not self.admitted or self.observation is None:
+             raise ValueError("scene must be admitted before policy/Local")
+         self.admitted = False
+@@ -77,6 +77,8 @@ class NativeEpisode:
+         directory.mkdir(parents=True, exist_ok=False)
+         scene = {k: attempt[k] for k in ("task", "episode", "attempt_id", "stream_id", "seed", "manifest_digest")}
+         scene.update(initial_success=False, reset_index=reset_index)
++        if sampling is not None:
++            scene["sampling"] = sampling
+         metadata = self.env.get_ep_meta()
+         instruction = metadata.get("lang")
+         if not isinstance(instruction, str) or not instruction.strip():
+@@ -92,6 +94,7 @@ class NativeEpisode:
+         outcome = EnvironmentOutcome(self.settings["horizon"])
+         replans = 0
+         cleanup = None
++        first_local = None
+         media_errors = []
+         try:
+             sink = self.media_factory(
+@@ -126,7 +129,7 @@ class NativeEpisode:
+                 actions.flush()
+ 
+             def prediction(result, latency):
+-                nonlocal replans
++                nonlocal replans, first_local
+                 if not isinstance(result.get("action"), list) or len(result["action"]) != 16:
+                     raise ValueError("Action Server must return exactly16 raw15 actions")
+                 value = {
+@@ -136,6 +139,8 @@ class NativeEpisode:
+                     "local_memory": result.get("local_memory"),
+                     "latency_ms": latency,
+                 }
++                if first_local is None:
++                    first_local = value["local_memory"]
+                 predictions.write(json.dumps(value, allow_nan=False) + "\n")
+                 predictions.flush()
+                 media_call("prediction", replans, result)
+@@ -147,6 +152,8 @@ class NativeEpisode:
+                 atomic_json(directory / "local_memory.json", value)
+ 
+             def progress(value):
++                if phase_callback is not None:
++                    phase_callback(value.get("stage"))
+                 # Rate-limit non-authoritative UI writes; Core actions/predictions
+                 # are flushed independently and never inferred from UI state.
+                 now = time.monotonic()
+@@ -198,6 +205,12 @@ class NativeEpisode:
+                 except OSError:
+                     pass
+         return {
++            "local_session": {
++                "session_id": cleanup["session_id"],
++                "episode_id": first_local["episode_id"],
++                "start_frontier": first_local["consumer_step"],
++                "reset_ack": cleanup["reset_ok"],
++            },
+             "observation": observation,
+             "instruction": prompt,
+             "replans": replans,
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_slot.py b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+new file mode 100644
+index 0000000..2cebd48
+--- /dev/null
++++ b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+@@ -0,0 +1,214 @@
++"""One reusable physical Sim Slot; logical Task/stream/session are independent."""
++
++from __future__ import annotations
++
++import hashlib
++from pathlib import Path
++
++from cosmos_framework.evaluation.robocasa_v2.contract import SAMPLING
++from cosmos_framework.evaluation.robocasa_v2.store import identifier, load
++from cosmos_framework.simulation.robocasa import closed_loop_eval as native
++from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
++
++
++class SimSlot:
++    def __init__(self, cfg, *, factory=None):
++        self.cfg, self.factory = cfg, factory
++        self.state = "IDLE"
++        self.history = [self.state]
++        self.task = self.env = self.engine = self.attempt = self.grant = None
++        self.reset_index = -1
++        self.used_attempts, self.used_sessions, self.used_episodes = set(), set(), set()
++
++    def _state(self, value):
++        self.state = value
++        self.history.append(value)
++        self.history = self.history[-64:]
++
++    def _ordinary_task(self, task):
++        if task not in self.cfg["tasks"]:
++            raise ValueError("Task outside attested Slot allowlist")
++        spec = self.cfg["tasks"][task]
++        path = Path(spec["dataset_dir"]) / "extras/dataset_meta.json"
++        if hashlib.sha256(path.read_bytes()).hexdigest() != spec["metadata_sha256"]:
++            raise ValueError("Task metadata changed before environment construction")
++        return spec
++
++    def _make(self, task, grant):
++        spec = self._ordinary_task(task)
++        identifier(grant["environment_id"])
++        path = Path(self.cfg["task_root"]) / task / "environments" / f"{grant['environment_id']}.json"
++        if (
++            load(path) != grant
++            or grant["task"] != task
++            or grant["physical_slot_id"] != self.cfg["physical_slot_id"]
++            or grant["manifest_digest"] != self.cfg["manifest_digest"]
++            or type(grant["seed"]) is not int
++            or not 0 <= grant["seed"] < 2**32
++        ):
++            raise ValueError("foreign/uncommitted environment seed grant")
++        self.env = (
++            self.factory(task, spec, grant)
++            if self.factory
++            else native.make_env(
++                spec["dataset_dir"],
++                256,
++                obj_split="target",
++                layout_style=native.ATOMIC_SEEN_LAYOUT_STYLE,
++                seed=grant["seed"],
++            )
++        )
++        settings = dict(self.cfg["settings"], horizon=spec["horizon"])
++        self.engine = NativeEpisode(self.env, settings)
++        self.grant, self.reset_index, self.task = grant, -1, task
++
++    def _claim(self, attempt, health_only):
++        if attempt["lease_id"] != self.cfg["coordinator_lease_id"]:
++            raise ValueError("stale coordinator lease")
++        task = attempt["task"]
++        stream = load(Path(self.cfg["task_root"]) / task / "streams" / f"{identifier(attempt['stream_id'])}.json")
++        if any(attempt[k] != stream[k] for k in ("worker_id", "seed", "lease_id", "manifest_digest")):
++            raise ValueError("foreign logical stream")
++        if not health_only:
++            from cosmos_framework.evaluation.robocasa_v2.contract import integer
++
++            ep = integer(attempt["episode"], 0, self.cfg["episodes_per_task"] - 1, "Episode")
++            generation = integer(attempt["generation"], 0, 100000, "attempt generation")
++            path = Path(self.cfg["task_root"]) / task / "slots" / f"ep_{ep:03d}" / "attempts" / f"{generation:06d}.json"
++            if load(path) != attempt:
++                raise ValueError("uncommitted/foreign Episode claim")
++
++    def switch_task(self, task, grant):
++        """Fenced subtransition; requests cannot freely supply an env path/config."""
++        if self.state != "CLAIMED" or self._desired_task != task:
++            raise RuntimeError("Task switch requires an owned idle Slot claim")
++        self._state("TASK_SWITCH")
++        if self.env is not None:
++            self.env.close()
++            self.env = self.engine = None
++        if grant is None:
++            raise ValueError("new Task environment requires durable seed grant")
++        self._make(task, grant)
++
++    def start_episode(self, attempt, *, grant=None, health_only=False):
++        if self.state not in ("IDLE", "CLEAN"):
++            raise RuntimeError("Slot not clean; quarantine/process recovery required")
++        if attempt["manifest_digest"] != self.cfg["manifest_digest"]:
++            raise ValueError("foreign manifest/attempt")
++        task = attempt["task"]
++        self._ordinary_task(task)
++        self._claim(attempt, health_only)
++        if not health_only:
++            token = identifier(attempt["attempt_id"])
++            if token in self.used_attempts:
++                raise ValueError("stale/duplicate Episode claim")
++            self.used_attempts.add(token)
++        self.history = [self.state]
++        self._state("CLAIMED")
++        try:
++            self._desired_task = task
++            if self.task != task or self.env is None:
++                self.switch_task(task, grant)
++            elif grant is not None:
++                raise ValueError("same-Task environment must not be silently reseeded")
++            self.attempt = dict(attempt)
++            self._state("ENV_READY")
++            if health_only:
++                self._state("CLEAN")  # No Session/inference opened by a health-only assignment.
++            return {
++                "task": task,
++                "physical_slot_id": self.cfg["physical_slot_id"],
++                "environment_id": self.grant["environment_id"],
++                "actual_seed": self.grant["seed"],
++                "state": self.state,
++                "attempt_id": attempt.get("attempt_id"),
++            }
++        except BaseException:
++            self._state("FAILED_QUARANTINED")
++            raise
++
++    def initialize(self):
++        if self.state not in ("ENV_READY", "ADMISSION"):
++            raise RuntimeError("Slot cannot reset with an open/unowned Episode")
++        self._state("RESETTING")
++        self.reset_index += 1  # Includes failed and initially successful scene samples.
++        value = self.engine.initialize()
++        self._state("FAILED_QUARANTINED" if value.get("error") and not value.get("safe_to_retry") else "ADMISSION")
++        return dict(value, sampling=self.sampling())
++
++    def sampling(self):
++        return {
++            "environment_id": self.grant["environment_id"],
++            "actual_seed": self.grant["seed"],
++            "environment_reset_index": self.reset_index,
++            "physical_slot_id": self.cfg["physical_slot_id"],
++            "protocol": SAMPLING,
++        }
++
++    def finish_without_session(self):
++        if self.state != "ADMISSION" or self.engine.admitted:
++            raise RuntimeError("only rejected/unadmitted scenes can release without a Session")
++        self._state("CLEAN")
++        return {"state": self.state, "session_opened": False}
++
++    def execute(self, attempt, *, reset_index, directory):
++        if self.state != "ADMISSION" or not self.engine.admitted or attempt != self.attempt:
++            raise ValueError("unadmitted/stale/cross-Slot Episode")
++        expected = (
++            Path(self.cfg["task_root"]).resolve()
++            / attempt["task"]
++            / "slots"
++            / f"ep_{attempt['episode']:03d}"
++            / "work"
++            / attempt["attempt_id"]
++        )
++        if Path(directory).resolve() != expected:
++            raise ValueError("output outside owned attempt staging")
++        self._state("SESSION_OPEN")
++        try:
++
++            def phase(name):
++                if name == "executing":
++                    self._state("EXECUTING")
++                elif name == "local_cleanup":
++                    self._state("SESSION_CLOSING")
++
++            response = self.engine.execute(
++                attempt, reset_index=reset_index, directory=directory, sampling=self.sampling(), phase_callback=phase
++            )
++            session = response["local_session"]
++            if (
++                not session["reset_ack"]
++                or session["session_id"] in self.used_sessions
++                or session["episode_id"] in self.used_episodes
++            ):
++                raise RuntimeError("unproven cleanup or reused Local Session; Slot quarantined")
++            self.used_sessions.add(session["session_id"])
++            self.used_episodes.add(session["episode_id"])
++            self._state("FAILED_QUARANTINED" if response.get("media_process_fault") else "CLEAN")
++            from cosmos_framework.utils.rollout_evidence import atomic_json
++
++            try:
++                atomic_json(
++                    Path(directory) / "slot_lifecycle.json",
++                    {
++                        "physical_slot_id": self.cfg["physical_slot_id"],
++                        "attempt_id": attempt["attempt_id"],
++                        "task": attempt["task"],
++                        "states": self.history,
++                    },
++                )
++            except OSError:
++                pass  # Non-authoritative UI diagnostic cannot replace a valid Core.
++            return dict(response, slot_state=self.state, sampling=self.sampling())
++        except BaseException:
++            self._state("FAILED_QUARANTINED")
++            raise
++
++    def close(self):
++        was_clean = self.state in ("IDLE", "CLEAN")
++        self._state("PROCESS_RECOVERY" if not was_clean else "CLEAN")
++        if self.env is not None:
++            self.env.close()
++            self.env = self.engine = None
++        return {"closed": True, "clean": was_clean}
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index ac2f34a..9d911fc 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -15,11 +15,12 @@ from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
+ 
+ 
+ def serve(channel, cfg, *, factory=None):
+-    # Optional factory is for CPU tests; production CLI cannot select/import one.
++    # Factory is a Python CPU test boundary, never selectable via production CLI.
+     from cosmos_framework.simulation.robocasa import closed_loop_eval as native
+     from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
++    from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
+ 
+-    env = None
++    slot = None
+     os.set_inheritable(channel.fileno(), False)
+     try:
+         if factory is None:
+@@ -33,42 +34,31 @@ def serve(channel, cfg, *, factory=None):
+                 "worker": Path(__file__),
+                 "native": Path(native.__file__),
+                 "adapter": Path(sys.modules[NativeEpisode.__module__].__file__),
++                "slot": Path(sys.modules[SimSlot.__module__].__file__),
+             }
+-            expected = cfg["source_files"]
+-            if set(expected) != set(modules):
++            if set(cfg["source_files"]) != set(modules):
+                 raise ValueError("incomplete native source witnesses")
+             for name, file in modules.items():
++                expected = cfg["source_files"][name]
+                 if (
+-                    str(file.resolve()) != expected[name]["path"]
+-                    or hashlib.sha256(file.read_bytes()).hexdigest() != expected[name]["sha256"]
++                    str(file.resolve()) != expected["path"]
++                    or hashlib.sha256(file.read_bytes()).hexdigest() != expected["sha256"]
+                 ):
+                     raise ValueError("native import origin/source mismatch")
+-            runtime = native.verify_runtime(SimpleNamespace(**cfg["runtime_args"]), cfg["task"])
+-            if runtime is None or runtime["protocol"]["official_horizons"][cfg["task"]] != cfg["settings"]["horizon"]:
+-                raise ValueError("missing/incorrect authoritative runtime horizon")
+-            if (
+-                hashlib.sha256((Path(cfg["dataset_dir"]) / "extras/dataset_meta.json").read_bytes()).hexdigest()
+-                != cfg["metadata_sha256"]
++            runtime = native.verify_runtime(SimpleNamespace(**cfg["runtime_args"]), next(iter(cfg["tasks"])))
++            if runtime is None or any(
++                runtime["protocol"]["official_horizons"][task] != spec["horizon"] for task, spec in cfg["tasks"].items()
+             ):
+-                raise ValueError("Task metadata changed before environment construction")
+-            env = native.make_env(
+-                cfg["dataset_dir"],
+-                256,
+-                obj_split="target",
+-                layout_style=native.ATOMIC_SEEN_LAYOUT_STYLE,
+-                seed=cfg["seed"],
+-            )
+-        else:
+-            env = factory()
+-        adapter = NativeEpisode(env, cfg["settings"])
++                raise ValueError("missing/incorrect authoritative runtime horizons")
++        slot = SimSlot(cfg, factory=factory)
+         send(
+             channel,
+             {
+                 "kind": "READY",
+                 "nonce": cfg["nonce"],
+                 "pid": os.getpid(),
+-                "task": cfg["task"],
+-                "stream_id": cfg["stream_id"],
++                "physical_slot_id": cfg["physical_slot_id"],
++                "state": slot.state,
+                 "runtime_digest": runtime["digest"] if factory is None else "CPU_TEST_FACTORY",
+             },
+         )
+@@ -78,33 +68,29 @@ def serve(channel, cfg, *, factory=None):
+                 raise ValueError("actor request identity mismatch")
+             op = message.get("op")
+             response = {"request_id": message["request_id"], "nonce": cfg["nonce"]}
+-            if op == "initialize":
+-                response.update(adapter.initialize())
++            if op == "start_episode":
++                response.update(
++                    slot.start_episode(
++                        message["attempt"], grant=message.get("grant"), health_only=message.get("health_only", False)
++                    )
++                )
++            elif op == "initialize":
++                response.update(slot.initialize())
++            elif op == "finish_without_session":
++                response.update(slot.finish_without_session())
+             elif op == "execute":
+-                attempt = message["attempt"]
+-                if (
+-                    attempt["task"] != cfg["task"]
+-                    or attempt["stream_id"] != cfg["stream_id"]
+-                    or attempt["seed"] != cfg["seed"]
+-                ):
+-                    raise ValueError("foreign Episode attempt")
+-                directory = Path(message["directory"]).resolve()
+-                expected = (
+-                    Path(cfg["work_root"]).resolve() / f"ep_{attempt['episode']:03d}" / "work" / attempt["attempt_id"]
++                response.update(
++                    slot.execute(message["attempt"], reset_index=message["reset_index"], directory=message["directory"])
+                 )
+-                if directory != expected:
+-                    raise ValueError("output outside owned work area")
+-                response.update(adapter.execute(attempt, reset_index=message["reset_index"], directory=directory))
+             elif op == "close":
+-                env.close()
+-                env = None
+-                send(channel, dict(response, closed=True))
++                response.update(slot.close())
++                send(channel, response)
+                 return
+             else:
+                 raise ValueError("unknown actor operation")
+             send(channel, response)
+     except EOFError:
+-        pass  # Coordinator died; no new work. Native env is closed below.
++        pass
+     except BaseException as error:
+         try:
+             send(channel, {"kind": "FATAL", "nonce": cfg["nonce"], "error": f"{type(error).__name__}: {error}"})
+@@ -112,8 +98,8 @@ def serve(channel, cfg, *, factory=None):
+             pass
+         raise
+     finally:
+-        if env is not None:
+-            env.close()
++        if slot is not None:
++            slot.close()
+         channel.close()
+ 
+ 

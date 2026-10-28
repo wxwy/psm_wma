@@ -1,0 +1,229 @@
+..............................................{"prototype_only": false, "manifest_digest": "8774b17988001d5c6a41b90ad8658fd3cc540ae9e340e9d7a4dc0dc3a1955937", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "944a73001fec43f4a9dfedaed4758f85", "worker_id": "c121256d3c8e4321b142278912222e1d", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "8774b17988001d5c6a41b90ad8658fd3cc540ae9e340e9d7a4dc0dc3a1955937", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "944a73001fec43f4a9dfedaed4758f85", "worker_id": "c121256d3c8e4321b142278912222e1d", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+..{"owner_released": [["CloseFridge", 0]], "no_execution": true}
+.{"prototype_only": false, "manifest_digest": "a59d54878260827d9030c7802adcf426481a92ff5b7ca7b412dc575360934928", "status": "partial", "success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "results_qualified": false, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [], "clean_execution": true, "results_qualified": false, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 0, "initialization_errors": 0}}}
+[eval-v2] stopped: RuntimeError('CPU synthetic resource gate failure')
+.{"prototype_only": false, "manifest_digest": "5eb61c0226e246dcf9cec1c8b06becf631394f194d41efa25c44b21d647df0df", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "2c403133cdec48e1ac5468d85fa01974", "worker_id": "e9c4ec4a5bb6470ebec46a6e7a4c7f4d", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+................[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+............[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0", "task": "Task0", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.F
+=================================== FAILURES ===================================
+__ test_dynamic_GPU_Task_matrix_runs_actual_runtime_Slot_and_native_code[7-8] __
+
+ports = [55000, 55001, 55002, 55003, 55004, 55005, ...]
+
+    def require_free_ports(ports: list[int]) -> None:
+        """Check every requested IPv4 bind before claiming output or launching a model."""
+        with ExitStack() as stack:
+            for port in ports:
+                if type(port) is not int or not 1 <= port <= 65535:
+                    raise ValueError(f"invalid action server port: {port}")
+                listener = stack.enter_context(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+                # Match ThreadingHTTPServer: a stopped owned server can leave
+                # TIME_WAIT sockets. This never permits binding an active listener.
+                listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                try:
+>                   listener.bind(("0.0.0.0", port))
+E                   OSError: [Errno 98] Address already in use
+
+scripts/eval_robocasa_18task_queue.py:86: OSError
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-31/test_dynamic_GPU_Task_matrix_r19')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcd1908d160>, g = 8
+n = 7
+
+    @pytest.mark.parametrize("g", [1, 2, 3, 4, 8])
+    @pytest.mark.parametrize("n", [1, 2, 4, 7, 18])
+    def test_dynamic_GPU_Task_matrix_runs_actual_runtime_Slot_and_native_code(
+        tmp_path, monkeypatch, g, n
+    ):
+        prepare_monkey(monkeypatch)
+        value = fresh(tmp_path, tasks=tuple(f"Task{i}" for i in range(n)), episodes=2)
+        events = []
+        with server() as (url, calls), value.locked():
+            runtime = CpuSlotRuntime(value, cfg(g), url, events)
+>           report, error = runtime.run()
+                            ^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/runtime_test.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/robocasa_eval_v2/runtime.py:564: in run
+    require_free_ports(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+ports = [55000, 55001, 55002, 55003, 55004, 55005, ...]
+
+    def require_free_ports(ports: list[int]) -> None:
+        """Check every requested IPv4 bind before claiming output or launching a model."""
+        with ExitStack() as stack:
+            for port in ports:
+                if type(port) is not int or not 1 <= port <= 65535:
+                    raise ValueError(f"invalid action server port: {port}")
+                listener = stack.enter_context(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+                # Match ThreadingHTTPServer: a stopped owned server can leave
+                # TIME_WAIT sockets. This never permits binding an active listener.
+                listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                try:
+                    listener.bind(("0.0.0.0", port))
+                    listener.listen(1)
+                except OSError as error:
+>                   raise RuntimeError(f"action server port {port} unavailable: {error}") from error
+E                   RuntimeError: action server port 55004 unavailable: [Errno 98] Address already in use
+
+scripts/eval_robocasa_18task_queue.py:89: RuntimeError
+=============================== warnings summary ===============================
+tools/v3/eval_v2_production_tests/contract_test.py::test_media_preserves_already_loaded_torch_cpu_rng_without_cuda[False]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/runtime_test.py::test_dynamic_GPU_Task_matrix_runs_actual_runtime_Slot_and_native_code[7-8]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 97 passed, 1 warning in 41.79s

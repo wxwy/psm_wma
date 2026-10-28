@@ -1,0 +1,4 @@
+[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 2, "workers": []}
+.
+1 passed, 30 deselected in 1.56s

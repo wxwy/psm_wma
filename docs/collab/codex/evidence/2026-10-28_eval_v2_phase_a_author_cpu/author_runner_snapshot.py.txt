@@ -1,0 +1,16 @@
+import os,sys,json,hashlib,subprocess,time,resource
+from pathlib import Path
+root=Path('/workspace/psm_wma');base=Path('/tmp/psm-eval-v2-slots-a-20261028');out=base/sys.argv[1];out.mkdir(exist_ok=False)
+patterns=['scripts/robocasa_eval_v2/*.py','scripts/robocasa_eval_v2*.py','cosmos-framework/cosmos_framework/evaluation/robocasa_v2/*.py','cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2*.py','cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py','cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py','tools/v3/eval_v2_production_tests/*.py']
+files=sorted(set(p for pattern in patterns for p in root.glob(pattern)))
+sha=lambda:{str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+source=sha();(out/'source_sha256.json').write_text(json.dumps(source,indent=2))
+env=os.environ.copy();env.update(CUDA_VISIBLE_DEVICES='',COSMOS_DEVICE='cpu',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTHONDONTWRITEBYTECODE='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',PYTHONPATH=os.pathsep.join(map(str,[root,root/'cosmos-framework',root/'scripts'])),HF_HOME=str(base/'cache/hf'),MPLCONFIGDIR=str(base/'cache/mpl'),XDG_CACHE_HOME=str(base/'cache/xdg'))
+argv=['/workspace/.venvs/psm-wma-cpu/bin/python','-m','pytest','--noconftest','-c','/dev/null','--rootdir='+str(root),'-p','no:cacheprovider','-q','-s','-x',*sys.argv[2:],'--junitxml='+str(out/'junit.xml')]
+(out/'command.json').write_text(json.dumps({'argv':argv,'cwd':str(root),'timeout_s':600,'environment':{k:env[k] for k in ['CUDA_VISIBLE_DEVICES','COSMOS_DEVICE','HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE','PYTHONDONTWRITEBYTECODE','OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS','PYTHONPATH','HF_HOME','MPLCONFIGDIR','XDG_CACHE_HOME']}},indent=2))
+t=time.monotonic()
+with (out/'pytest.log').open('w') as f:
+ try:code=subprocess.run(argv,cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=600).returncode
+ except subprocess.TimeoutExpired:code=124
+usage=resource.getrusage(resource.RUSAGE_CHILDREN)
+result={'resource_usage':{'max_rss_kib':usage.ru_maxrss,'user_cpu_s':usage.ru_utime,'system_cpu_s':usage.ru_stime,'voluntary_switches':usage.ru_nvcsw,'involuntary_switches':usage.ru_nivcsw},'exit_code':code,'seconds':time.monotonic()-t,'frozen_source_match':sha()==source};(out/'exit.json').write_text(json.dumps(result));print(json.dumps(result));print((out/'pytest.log').read_text()[-11000:]);sys.exit(code)

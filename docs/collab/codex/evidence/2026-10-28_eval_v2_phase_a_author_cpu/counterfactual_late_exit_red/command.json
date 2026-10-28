@@ -1,0 +1,30 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-eval-v2-slots-a-20261028/late_exit_counterfactual.py",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "-s",
+    "tools/v3/eval_v2_production_tests/runtime_test.py",
+    "-k",
+    "late_zero_exit",
+    "--junitxml=/tmp/psm-eval-v2-slots-a-20261028/late_exit_red/junit.xml"
+  ],
+  "explicit_environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "/workspace/psm_wma:/workspace/psm_wma/cosmos-framework:/workspace/psm_wma/scripts"
+  },
+  "expected_exit": 1,
+  "actual_exit": 1,
+  "source_files_modified": false
+}

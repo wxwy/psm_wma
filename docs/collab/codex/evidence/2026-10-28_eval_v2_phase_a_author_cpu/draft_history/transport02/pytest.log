@@ -1,0 +1,18 @@
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+..[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+.........................
+27 passed, 1 deselected in 14.41s

@@ -1,0 +1,11 @@
+{
+  "purpose": "counterfactual RED for newly introduced Phase A late-zero-exit fault scope, not withdrawn Stage2 F1",
+  "expected_pytest_exit": 1,
+  "observed_failure_count": 1,
+  "baseline_root": "1ac82af40a95587dd3f5e016dbc6a7e73ebeb9c2",
+  "baseline_runtime_blob": "efedda89e574e6bc94fd06eff29bf53bacf3f4f6",
+  "baseline_runtime_sha256": "272e4c7ec6cf0fbe92329bae013168014d40a24eec4d1d9b3092e769a693018c",
+  "method_override": "only in-memory Runtime.run AST; working files unchanged",
+  "green_run": "../late_exit01/",
+  "test": "runtime_test.py::test_late_zero_exit_after_valid_core_blocks_clean_without_retesting"
+}

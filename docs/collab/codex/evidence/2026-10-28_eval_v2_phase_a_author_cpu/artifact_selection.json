@@ -1,0 +1,21 @@
+{
+  "pytest_base": "/tmp/pytest-of-agent/pytest-37",
+  "selected": [
+    "test_900_exact_episode_major_d0",
+    "test_actual_runtime_four_init_0",
+    "test_default_root_pool_and_wor0",
+    "test_episode_deadline_is_share0",
+    "test_fresh_preflight_import_ca0",
+    "test_fresh_session_starts_W0_t0",
+    "test_late_zero_exit_after_vali0",
+    "test_native_http_Local_two_rep0",
+    "test_protected_child_dies_when0",
+    "test_real_cpu_stream_encoder_w0",
+    "test_real_preflight_cache_warm0",
+    "test_reusable_slot_switch_orde0",
+    "test_runtime_quarantine_then_e0",
+    "test_simulator_library_drift_i0",
+    "test_stalled_actor_request_is_0"
+  ],
+  "synthetic_only": true
+}

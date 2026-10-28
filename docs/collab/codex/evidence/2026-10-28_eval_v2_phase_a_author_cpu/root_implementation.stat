@@ -1,0 +1,18 @@
+ SESSION.md                                         |  15 +
+ TODO.md                                            |   4 +
+ configs/eval/robocasa_eval_v2.example.yaml         |   4 +-
+ cosmos-framework                                   |   2 +-
+ ...V3_EvalV2_PhaseA_Dynamic_SimSlots_2026-10-28.md |  59 +++
+ scripts/robocasa_eval_v2/config.py                 |  18 +-
+ scripts/robocasa_eval_v2/identity.py               |   8 -
+ scripts/robocasa_eval_v2/runtime.py                | 168 +++++--
+ scripts/robocasa_eval_v2_processes.py              |   4 +-
+ tools/v3/eval_v2_production_tests/entry_test.py    |  11 +
+ tools/v3/eval_v2_production_tests/runtime_test.py  | 347 ++++++++-----
+ tools/v3/eval_v2_production_tests/scene_test.py    |   2 +-
+ .../v3/eval_v2_production_tests/scheduler_test.py  | 194 +++++---
+ tools/v3/eval_v2_production_tests/slot_test.py     | 549 +++++++++++++++++++++
+ .../slot_transport_test.py                         | 137 +++++
+ tools/v3/eval_v2_production_tests/store_test.py    |   2 +-
+ tools/v3/eval_v2_production_tests/worker_test.py   |  36 +-
+ 17 files changed, 1297 insertions(+), 263 deletions(-)

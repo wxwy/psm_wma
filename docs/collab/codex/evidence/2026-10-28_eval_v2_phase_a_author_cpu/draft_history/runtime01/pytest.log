@@ -1,0 +1,54 @@
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": []}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+F
+=================================== FAILURES ===================================
+__ test_dynamic_GPU_Task_matrix_runs_actual_runtime_Slot_and_native_code[1-1] __
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-27/test_dynamic_GPU_Task_matrix_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff3f0c057c0>, g = 1
+n = 1
+
+    @pytest.mark.parametrize("g", [1, 2, 3, 4, 8])
+    @pytest.mark.parametrize("n", [1, 2, 4, 7, 18])
+    def test_dynamic_GPU_Task_matrix_runs_actual_runtime_Slot_and_native_code(
+        tmp_path, monkeypatch, g, n
+    ):
+        prepare_monkey(monkeypatch)
+        value = fresh(tmp_path, tasks=tuple(f"Task{i}" for i in range(n)), episodes=2)
+        events = []
+        with server() as (url, calls), value.locked():
+            runtime = CpuSlotRuntime(value, cfg(g), url, events)
+            report, error = runtime.run()
+            assert (
+                error is None and report["valid"] == n * 2 and report["results_qualified"]
+            )
+            assert (
+                runtime.max_actors <= min(g, n)
+                and len(runtime.server_loads) == runtime.max_actors
+            )
+>           ledger = records(value.root / "_internal/scheduler")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/runtime_test.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+directory = PosixPath('/tmp/pytest-of-agent/pytest-27/test_dynamic_GPU_Task_matrix_r0/new900/_internal/scheduler')
+
+    def records(directory):
+        directory = safe(directory)
+        if not directory.exists():
+            return []
+        result = []
+        for path in sorted(directory.iterdir()):
+            if path.name.startswith(".pending-"):
+                continue  # Never published; retained for diagnosis, not authority.
+            if path.suffix != ".json":
+>               raise ValueError("unexpected ledger artifact")
+E               ValueError: unexpected ledger artifact
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:174: ValueError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/runtime_test.py::test_dynamic_GPU_Task_matrix_runs_actual_runtime_Slot_and_native_code[1-1]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 1.07s

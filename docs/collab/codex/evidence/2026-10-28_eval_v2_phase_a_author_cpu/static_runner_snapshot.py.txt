@@ -1,0 +1,14 @@
+import ast,hashlib,json,os,subprocess,sys
+from pathlib import Path
+root=Path('/workspace/psm_wma');out=Path('/tmp/psm-eval-v2-slots-a-20261028/static_final03');out.mkdir(exist_ok=False)
+patterns=['scripts/robocasa_eval_v2/*.py','scripts/robocasa_eval_v2*.py','cosmos-framework/cosmos_framework/evaluation/robocasa_v2/*.py','cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2*.py','cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py','cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py','tools/v3/eval_v2_production_tests/*.py']
+files=sorted({str(p.relative_to(root)) for pattern in patterns for p in root.glob(pattern)}); py='/workspace/.venvs/psm-wma-cpu/bin/python';ruff='/workspace/.venvs/psm-wma-cpu/bin/ruff'
+env=os.environ.copy();env.update(CUDA_VISIBLE_DEVICES='',COSMOS_DEVICE='cpu',PYTHONDONTWRITEBYTECODE='1',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',HF_HOME='/tmp/psm-eval-v2-slots-a-20261028/cache/hf',MPLCONFIGDIR='/tmp/psm-eval-v2-slots-a-20261028/cache/mpl',XDG_CACHE_HOME='/tmp/psm-eval-v2-slots-a-20261028/cache/xdg',PYTHON=py)
+commands=[[ruff,'--version'],[ruff,'check',*files],[ruff,'format','--check',*files],['bash','-n','scripts/run_robocasa_eval_v2.sh'],['bash','scripts/run_robocasa_eval_v2.sh','--help'],['git','diff','--check'],['git','-C','cosmos-framework','diff','--check']]
+results=[]
+for i,command in enumerate(commands):
+ r=subprocess.run(command,cwd=root,env=env,capture_output=True,text=True,timeout=60);(out/f'{i:02d}.log').write_text(r.stdout+r.stderr);results.append({'argv':command,'exit_code':r.returncode,'log':f'{i:02d}.log'})
+for file in files:ast.parse((root/file).read_bytes(),filename=file)
+hashes={f:hashlib.sha256((root/f).read_bytes()).hexdigest() for f in files}
+record={'cwd':str(root),'environment':{k:env[k] for k in ['CUDA_VISIBLE_DEVICES','COSMOS_DEVICE','HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE','PYTHONDONTWRITEBYTECODE','HF_HOME','MPLCONFIGDIR','XDG_CACHE_HOME','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS']},'commands':results,'ast_parse_passed':len(files),'source_sha256':hashes,'prototype_import_found':any('tools.v3.eval_v2_prototype' in (root/f).read_text() for f in files),'passed':all(x['exit_code']==0 for x in results)}
+(out/'static.json').write_text(json.dumps(record,indent=2));print(json.dumps({k:record[k] for k in ['ast_parse_passed','prototype_import_found','passed']}));sys.exit(0 if record['passed'] else 1)

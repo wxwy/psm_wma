@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.083" timestamp="2026-10-28T15:34:11.135335+00:00" hostname="4dc91cf49e12"><testcase classname="tools.v3.eval_v2_production_tests.slot_transport_test" name="test_default_root_pool_and_worker_transport_reuse_only_G_actors" time="0.505"><failure message="AssertionError: assert (RuntimeError('cancelled before runtime startup') is None)">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-29/test_default_root_pool_and_wor0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f17bfdd2a20&gt;
+
+    def test_default_root_pool_and_worker_transport_reuse_only_G_actors(
+        tmp_path, monkeypatch
+    ):
+        prepare_monkey(monkeypatch)
+        monkeypatch.setattr(
+            "robocasa_eval_v2.runtime.group_members", lambda pgid: {os.getpid(): "S"}
+        )
+        value = fresh(tmp_path, tasks=tuple(f"Task{i}" for i in range(7)), episodes=2)
+        events = []
+        with server() as (url, calls), value.locked():
+            template = slot_config(value, "1" * 32, url)
+            inputs = {
+                "tasks": {t: s["dataset_dir"] for t, s in template["tasks"].items()},
+                "runtime": {"digest": "CPU_TEST_FACTORY"},
+                "simulation_libraries": {},
+            }
+            config = dict(
+                cfg(3),
+                episode_wall_s=5,
+                request_timeout_s=2,
+                save_rollout_mp4=False,
+                save_generated_video="none",
+                encoder_grace_s=0.1,
+                sim_python="CPU_PYTHON",
+                vendor_lock="CPU_vendor_lock",
+            )
+    
+            class Bridge(Runtime):
+                def _server(self, worker):
+                    if worker not in self.servers:
+                        proc = SimpleNamespace(pid=os.getpid(), poll=lambda: None)
+                        self.servers[worker] = (
+                            SimpleNamespace(proc=proc, pgid=os.getpid()),
+                            {"kind": "CPU_model"},
+                            urlparse(url).port,
+                        )
+                    return self.servers[worker]
+    
+            runtime = Bridge(
+                value, config, inputs, {}, resource_probe=lambda *a, **kw: None
+            )
+            registry = BridgeRegistry(events)
+            runtime.registry = registry
+            report, error = runtime.run()
+&gt;           assert error is None and report["valid"] == 14 and report["results_qualified"]
+E           AssertionError: assert (RuntimeError('cancelled before runtime startup') is None)
+
+tools/v3/eval_v2_production_tests/slot_transport_test.py:115: AssertionError</failure></testcase></testsuite></testsuites>

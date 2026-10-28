@@ -1,0 +1,249 @@
+ SESSION.md                                         |   69 +
+ TODO.md                                            |   23 +
+ configs/eval/robocasa_eval_v2.example.yaml         |   27 +
+ cosmos-framework                                   |    2 +-
+ ...V3_EvalV2_PhaseA_Dynamic_SimSlots_2026-10-28.md |   59 +
+ ..._V2_Stage2_implementation_runbook_2026-10-28.md |   96 +
+ ..._RoboCasa_Evaluation_V2_design_r1_2026-10-28.md |  116 +
+ ..._RoboCasa_Evaluation_V2_design_r2_2026-10-28.md |  116 +
+ docs/collab/chatgpt/CODEX_INBOX.md                 |   49 +
+ .../SHA256SUMS.json                                |   36 +
+ .../STATUS.json                                    |   38 +
+ .../SYNTHETIC_900_WITNESS.json                     |   10 +
+ .../command.json                                   |   33 +
+ .../committed_source_binding.json                  |   35 +
+ .../design.patch.gz                                |  Bin 0 -> 23338 bytes
+ .../design_diff_names.txt                          |    9 +
+ .../environment.json                               |   12 +
+ .../exit.json                                      |    1 +
+ .../junit.xml                                      |    1 +
+ .../prior_pass_iterations/final_command.json.gz    |  Bin 0 -> 409 bytes
+ .../prior_pass_iterations/final_exit.json.gz       |  Bin 0 -> 69 bytes
+ .../prior_pass_iterations/final_junit.xml.gz       |  Bin 0 -> 1570 bytes
+ .../prior_pass_iterations/final_pytest.log.gz      |  Bin 0 -> 143 bytes
+ .../final_source_sha256.json.gz                    |  Bin 0 -> 359 bytes
+ .../prior_pass_iterations/initial_command.json.gz  |  Bin 0 -> 410 bytes
+ .../prior_pass_iterations/initial_exit.json.gz     |  Bin 0 -> 69 bytes
+ .../prior_pass_iterations/initial_junit.xml.gz     |  Bin 0 -> 1446 bytes
+ .../prior_pass_iterations/initial_pytest.log.gz    |  Bin 0 -> 143 bytes
+ .../initial_source_sha256.json.gz                  |  Bin 0 -> 359 bytes
+ .../protected_paths.json                           |   11 +
+ .../pytest.log                                     |    9 +
+ .../run_cpu.py                                     |    9 +
+ .../source_sha256.json                             |    8 +
+ .../static.py                                      |   11 +
+ .../static/check_0.log                             |    1 +
+ .../static/check_1.log                             |    1 +
+ .../static/check_2.log                             |    1 +
+ .../static/check_3.log                             |    0
+ .../static/checks.json                             |   68 +
+ .../synthetic_example/README.md                    |    1 +
+ .../synthetic_example/episodes.jsonl.gz            |  Bin 0 -> 6102 bytes
+ .../synthetic_example/manifest.json                |    1 +
+ .../synthetic_example/new900_design_only.tar.gz    |  Bin 0 -> 95481 bytes
+ .../synthetic_example/summary.json                 |    1 +
+ .../ACK_and_contract_binding.json                  |   11 +
+ .../SHA256SUMS.json                                |   75 +
+ .../STATUS.json                                    |   44 +
+ .../SYNTHETIC_900_WITNESS.json                     |   16 +
+ .../command.json                                   |   34 +
+ .../committed_source_binding.json                  |   56 +
+ .../environment.json                               |   18 +
+ .../exit.json                                      |    1 +
+ .../junit.xml                                      |    1 +
+ .../prior_iterations.json                          |   83 +
+ .../prior_iterations/d5focused/command.json.gz     |  Bin 0 -> 461 bytes
+ .../prior_iterations/d5focused/exit.json.gz        |  Bin 0 -> 102 bytes
+ .../prior_iterations/d5focused/junit.xml.gz        |  Bin 0 -> 552 bytes
+ .../prior_iterations/d5focused/pytest.log.gz       |  Bin 0 -> 69 bytes
+ .../d5focused/source_sha256.json.gz                |  Bin 0 -> 555 bytes
+ .../prior_iterations/final01/command.json.gz       |  Bin 0 -> 451 bytes
+ .../prior_iterations/final01/exit.json.gz          |  Bin 0 -> 101 bytes
+ .../prior_iterations/final01/junit.xml.gz          |  Bin 0 -> 3386 bytes
+ .../prior_iterations/final01/pytest.log.gz         |  Bin 0 -> 587 bytes
+ .../prior_iterations/final01/source_sha256.json.gz |  Bin 0 -> 554 bytes
+ .../prior_iterations/fixes01/command.json.gz       |  Bin 0 -> 484 bytes
+ .../prior_iterations/fixes01/exit.json.gz          |  Bin 0 -> 101 bytes
+ .../prior_iterations/fixes01/junit.xml.gz          |  Bin 0 -> 1085 bytes
+ .../prior_iterations/fixes01/pytest.log.gz         |  Bin 0 -> 619 bytes
+ .../prior_iterations/fixes01/source_sha256.json.gz |  Bin 0 -> 553 bytes
+ .../prior_iterations/fixes02/command.json.gz       |  Bin 0 -> 484 bytes
+ .../prior_iterations/fixes02/exit.json.gz          |  Bin 0 -> 102 bytes
+ .../prior_iterations/fixes02/junit.xml.gz          |  Bin 0 -> 671 bytes
+ .../prior_iterations/fixes02/pytest.log.gz         |  Bin 0 -> 69 bytes
+ .../prior_iterations/fixes02/source_sha256.json.gz |  Bin 0 -> 554 bytes
+ .../prior_iterations/full01/command.json.gz        |  Bin 0 -> 431 bytes
+ .../prior_iterations/full01/exit.json.gz           |  Bin 0 -> 99 bytes
+ .../prior_iterations/full01/junit.xml.gz           |  Bin 0 -> 3385 bytes
+ .../prior_iterations/full01/pytest.log.gz          |  Bin 0 -> 1113 bytes
+ .../prior_iterations/full01/source_sha256.json.gz  |  Bin 0 -> 466 bytes
+ .../prior_iterations/initial/command.json.gz       |  Bin 0 -> 431 bytes
+ .../prior_iterations/initial/exit.json.gz          |  Bin 0 -> 101 bytes
+ .../prior_iterations/initial/junit.xml.gz          |  Bin 0 -> 1408 bytes
+ .../prior_iterations/initial/pytest.log.gz         |  Bin 0 -> 1233 bytes
+ .../prior_iterations/initial/source_sha256.json.gz |  Bin 0 -> 465 bytes
+ .../prior_iterations/non900/command.json.gz        |  Bin 0 -> 442 bytes
+ .../prior_iterations/non900/exit.json.gz           |  Bin 0 -> 101 bytes
+ .../prior_iterations/non900/junit.xml.gz           |  Bin 0 -> 2970 bytes
+ .../prior_iterations/non900/pytest.log.gz          |  Bin 0 -> 1450 bytes
+ .../prior_iterations/non900/source_sha256.json.gz  |  Bin 0 -> 552 bytes
+ .../report_bound_red/command.json.gz               |  Bin 0 -> 483 bytes
+ .../prior_iterations/report_bound_red/exit.json.gz |  Bin 0 -> 101 bytes
+ .../prior_iterations/report_bound_red/junit.xml.gz |  Bin 0 -> 876 bytes
+ .../report_bound_red/pytest.log.gz                 |  Bin 0 -> 777 bytes
+ .../report_bound_red/source_sha256.json.gz         |  Bin 0 -> 553 bytes
+ .../prior_iterations/retry01/command.json.gz       |  Bin 0 -> 448 bytes
+ .../prior_iterations/retry01/exit.json.gz          |  Bin 0 -> 99 bytes
+ .../prior_iterations/retry01/junit.xml.gz          |  Bin 0 -> 703 bytes
+ .../prior_iterations/retry01/pytest.log.gz         |  Bin 0 -> 54 bytes
+ .../prior_iterations/retry01/source_sha256.json.gz |  Bin 0 -> 466 bytes
+ .../protected_paths.json                           |   12 +
+ .../pytest.log                                     |    9 +
+ .../r1_to_r2_diff_names.txt                        |   60 +
+ .../r1_to_r2_full.patch.gz                         |  Bin 0 -> 202553 bytes
+ .../r1_to_r2_prototype.patch.gz                    |  Bin 0 -> 39267 bytes
+ .../run_cpu.py                                     |   15 +
+ .../source_sha256.json                             |   12 +
+ .../static.py                                      |   13 +
+ .../static/check_0.log                             |    1 +
+ .../static/check_1.log                             |    1 +
+ .../static/check_2.log                             |    1 +
+ .../static/check_3.log                             |    0
+ .../static/checks.json                             |   92 +
+ .../50_skipped_long_diagnostics_summary.json.gz    |  Bin 0 -> 7258 bytes
+ .../synthetic_examples/900_episodes.jsonl.gz       |  Bin 0 -> 26138 bytes
+ .../synthetic_examples/900_manifest.json.gz        |  Bin 0 -> 773 bytes
+ .../synthetic_examples/900_summary.json.gz         |  Bin 0 -> 1375 bytes
+ .../synthetic_examples/README.md                   |    1 +
+ .../actual_new900_prototype_only.tar.gz            |  Bin 0 -> 857476 bytes
+ .../CPU_SYNTHETIC_runtime_artifacts.tar.gz         |  Bin 0 -> 1095243 bytes
+ .../2026-10-28_eval_v2_stage2_author_cpu/README.md |   42 +
+ .../STATUS.json                                    |   34 +
+ .../artifact_selection.json                        |   15 +
+ .../artifact_sha256.json                           |   92 +
+ .../author_runner_snapshot.py.txt                  |   15 +
+ .../child_implementation.patch                     | 2528 +++++++++++
+ .../child_implementation.stat                      |   14 +
+ .../draft_history/boundaries01/command.json        |   35 +
+ .../draft_history/boundaries01/exit.json           |    1 +
+ .../draft_history/boundaries01/junit.xml           |    1 +
+ .../draft_history/boundaries01/pytest.log          |    2 +
+ .../draft_history/boundaries01/source_sha256.json  |   33 +
+ .../draft_history/boundaries02/command.json        |   39 +
+ .../draft_history/boundaries02/exit.json           |    1 +
+ .../draft_history/boundaries02/junit.xml           |   27 +
+ .../draft_history/boundaries02/pytest.log          |   41 +
+ .../draft_history/boundaries02/source_sha256.json  |   35 +
+ .../draft_history/boundaries03/command.json        |   39 +
+ .../draft_history/boundaries03/exit.json           |    1 +
+ .../draft_history/boundaries03/junit.xml           |    1 +
+ .../draft_history/boundaries03/pytest.log          |   15 +
+ .../draft_history/boundaries03/source_sha256.json  |   36 +
+ .../draft_history/boundaries04/command.json        |   39 +
+ .../draft_history/boundaries04/exit.json           |    1 +
+ .../draft_history/boundaries04/junit.xml           |    1 +
+ .../draft_history/boundaries04/pytest.log          |   15 +
+ .../draft_history/boundaries04/source_sha256.json  |   36 +
+ .../draft_history/core01/command.json              |   36 +
+ .../draft_history/core01/exit.json                 |    1 +
+ .../draft_history/core01/junit.xml                 |   10 +
+ .../draft_history/core01/pytest.log                |   18 +
+ .../draft_history/core01/source_sha256.json        |   27 +
+ .../draft_history/core02/command.json              |   36 +
+ .../draft_history/core02/exit.json                 |    1 +
+ .../draft_history/core02/junit.xml                 |    1 +
+ .../draft_history/core02/pytest.log                |    9 +
+ .../draft_history/core02/source_sha256.json        |   28 +
+ .../draft_history/entry01/command.json             |   35 +
+ .../draft_history/entry01/exit.json                |    1 +
+ .../draft_history/entry01/junit.xml                |   32 +
+ .../draft_history/entry01/pytest.log               |   42 +
+ .../draft_history/entry01/source_sha256.json       |   30 +
+ .../draft_history/entry02/command.json             |   35 +
+ .../draft_history/entry02/exit.json                |    1 +
+ .../draft_history/entry02/junit.xml                |    1 +
+ .../draft_history/entry02/pytest.log               |    5 +
+ .../draft_history/entry02/source_sha256.json       |   30 +
+ .../draft_history/final_cpu01/command.json         |   40 +
+ .../draft_history/final_cpu01/exit.json            |    1 +
+ .../draft_history/final_cpu01/junit.xml            |    1 +
+ .../draft_history/final_cpu01/pytest.log           |   45 +
+ .../draft_history/final_cpu01/source_sha256.json   |   36 +
+ .../draft_history/index.json                       |   98 +
+ .../draft_history/native01/command.json            |   34 +
+ .../draft_history/native01/exit.json               |    1 +
+ .../draft_history/native01/junit.xml               |    1 +
+ .../draft_history/native01/pytest.log              |    3 +
+ .../draft_history/native01/source_sha256.json      |   28 +
+ .../draft_history/production_full01/command.json   |   34 +
+ .../draft_history/production_full01/exit.json      |    1 +
+ .../draft_history/production_full01/junit.xml      |    1 +
+ .../draft_history/production_full01/pytest.log     |   25 +
+ .../production_full01/source_sha256.json           |   36 +
+ .../draft_history/runtime01/command.json           |   35 +
+ .../draft_history/runtime01/exit.json              |    1 +
+ .../draft_history/runtime01/junit.xml              |    1 +
+ .../draft_history/runtime01/pytest.log             |   13 +
+ .../draft_history/runtime01/source_sha256.json     |   31 +
+ .../environment.json                               |   17 +
+ .../final_cpu02/command.json                       |   40 +
+ .../final_cpu02/exit.json                          |    1 +
+ .../final_cpu02/junit.xml                          |    1 +
+ .../final_cpu02/pytest.log                         |   46 +
+ .../final_cpu02/source_sha256.json                 |   36 +
+ .../formal_source_bindings.json                    |  394 ++
+ .../post_commit_identity.json                      |    8 +
+ .../root_implementation.patch                      | 4736 ++++++++++++++++++++
+ .../root_implementation.stat                       |   28 +
+ .../root_vs_canonical.stat                         |  153 +
+ .../static_final/00.log                            |    1 +
+ .../static_final/01.log                            |    1 +
+ .../static_final/02.log                            |    1 +
+ .../static_final/03.log                            |    0
+ .../static_final/04.log                            |   19 +
+ .../static_final/05.log                            |    0
+ .../static_final/06.log                            |    0
+ .../static_final/static.json                       |  187 +
+ .../static_runner_snapshot.py.txt                  |   14 +
+ .../synthetic_900_metrics.json                     |   59 +
+ .../task_registry_source.json                      |    6 +
+ .../2026-10-28_EvalV2_r2_Codex_reading_ACK.md      |   44 +
+ .../2026-10-28_V3_EvalV2_Stage2_author_handoff.md  |   40 +
+ ...3_EvalV2_Stage2_remote_publication_receipt.json |   18 +
+ ...2026-10-28_V3_EvalV2_r2_D1_D5_author_handoff.md |   66 +
+ ...V3_RoboCasa_Eval_V2_design_r1_author_handoff.md |   56 +
+ scripts/robocasa_eval_v2/__init__.py               |    1 +
+ scripts/robocasa_eval_v2/cli.py                    |  187 +
+ scripts/robocasa_eval_v2/config.py                 |  168 +
+ scripts/robocasa_eval_v2/identity.py               |  238 +
+ scripts/robocasa_eval_v2/resources.py              |   58 +
+ scripts/robocasa_eval_v2/runtime.py                |  727 +++
+ scripts/robocasa_eval_v2_child.py                  |   19 +
+ scripts/robocasa_eval_v2_cli.py                    |   11 +
+ scripts/robocasa_eval_v2_processes.py              |  200 +
+ scripts/run_robocasa_eval_v2.sh                    |    5 +
+ tools/v3/episode_eval_v2_prototype/__init__.py     |    1 +
+ tools/v3/episode_eval_v2_prototype/admission.py    |   45 +
+ .../v3/episode_eval_v2_prototype/admission_test.py |  264 ++
+ tools/v3/episode_eval_v2_prototype/contract.py     |  302 ++
+ .../v3/episode_eval_v2_prototype/contract_test.py  |  218 +
+ tools/v3/episode_eval_v2_prototype/scene_test.py   |  115 +
+ tools/v3/episode_eval_v2_prototype/scheduler.py    |  164 +
+ .../v3/episode_eval_v2_prototype/scheduler_test.py |  303 ++
+ tools/v3/episode_eval_v2_prototype/store.py        | 1016 +++++
+ tools/v3/episode_eval_v2_prototype/store_test.py   |  466 ++
+ tools/v3/eval_v2_production_tests/__init__.py      |    1 +
+ .../v3/eval_v2_production_tests/admission_test.py  |  352 ++
+ tools/v3/eval_v2_production_tests/contract_test.py |  238 +
+ tools/v3/eval_v2_production_tests/entry_test.py    |  348 ++
+ tools/v3/eval_v2_production_tests/media_test.py    |   49 +
+ tools/v3/eval_v2_production_tests/native_test.py   |  280 ++
+ tools/v3/eval_v2_production_tests/process_test.py  |  170 +
+ tools/v3/eval_v2_production_tests/runtime_test.py  |  291 ++
+ tools/v3/eval_v2_production_tests/scene_test.py    |  135 +
+ .../v3/eval_v2_production_tests/scheduler_test.py  |  429 ++
+ tools/v3/eval_v2_production_tests/slot_test.py     |  549 +++
+ .../slot_transport_test.py                         |  137 +
+ tools/v3/eval_v2_production_tests/store_test.py    |  646 +++
+ tools/v3/eval_v2_production_tests/worker_test.py   |  152 +
+ 248 files changed, 19650 insertions(+), 1 deletion(-)

@@ -1,0 +1,17 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "selected_packages": {
+    "torch": "2.10.0+cpu",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "Pillow": "11.3.0",
+    "requests": "2.32.5",
+    "PyYAML": "6.0.3",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7",
+    "imageio": "2.37.0",
+    "imageio-ffmpeg": "0.6.0"
+  },
+  "note": "CPU dependency versions are NOT certification of pinned simulator environment. CUDA hidden, offline model flags; real vendor probe is mocked in CPU tests."
+}

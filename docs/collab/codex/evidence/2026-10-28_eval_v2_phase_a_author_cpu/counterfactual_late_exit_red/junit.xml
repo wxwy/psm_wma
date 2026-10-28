@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.073" timestamp="2026-10-28T16:06:29.753906+00:00" hostname="4dc91cf49e12"><testcase classname="tools.v3.eval_v2_production_tests.runtime_test" name="test_late_zero_exit_after_valid_core_blocks_clean_without_retesting" time="0.580"><failure message="assert (not True)">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-36/test_late_zero_exit_after_vali0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f49db0382f0&gt;
+
+    def test_late_zero_exit_after_valid_core_blocks_clean_without_retesting(
+        tmp_path, monkeypatch
+    ):
+        prepare_monkey(monkeypatch)
+        value = fresh(tmp_path, episodes=1)
+    
+        class LateExit(CpuSlotRuntime):
+            def _actor(self, claim):
+                actor = super()._actor(claim)
+                actor.owned.proc.poll = lambda: 0 if actor.slot.state == "CLEAN" else None
+                return actor
+    
+        with server() as (url, calls), value.locked():
+            report, error = LateExit(value, cfg(1, 1), url, []).run()
+            assert error is not None and report["valid"] == 1 and report["sr"] == 1.0
+&gt;           assert not report["clean_execution"] and not report["results_qualified"]
+E           assert (not True)
+
+tools/v3/eval_v2_production_tests/runtime_test.py:274: AssertionError</failure></testcase></testsuite></testsuites>

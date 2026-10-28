@@ -1,0 +1,10 @@
+import ast,subprocess,sys
+import pytest
+import robocasa_eval_v2.runtime as runtime
+source=subprocess.check_output(['git','show','1ac82af40a95587dd3f5e016dbc6a7e73ebeb9c2:scripts/robocasa_eval_v2/runtime.py'])
+klass=next(n for n in ast.parse(source).body if isinstance(n,ast.ClassDef) and n.name=='Runtime')
+method=next(n for n in klass.body if isinstance(n,ast.FunctionDef) and n.name=='run')
+namespace=dict(vars(runtime));exec(compile(ast.fix_missing_locations(ast.Module(body=[method],type_ignores=[])),'1ac82af4_counterfactual_run','exec'),namespace)
+runtime.Runtime.run=namespace['run']
+print('COUNTERFACTUAL RED: only in-memory Runtime.run restored from Root1ac82af4; no workspace source changed',flush=True)
+sys.exit(pytest.main(sys.argv[1:]))

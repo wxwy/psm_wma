@@ -1,0 +1,96 @@
+[
+  {
+    "run": "boundaries01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 3.6753518039986375,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "final01",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 176.23820111100213,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "final02",
+    "exit": {
+      "resource_usage": {
+        "max_rss_kib": 348272,
+        "user_cpu_s": 125.012818,
+        "system_cpu_s": 51.801356,
+        "voluntary_switches": 4063002,
+        "involuntary_switches": 15992
+      },
+      "exit_code": 0,
+      "seconds": 177.67969572799484,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "full01",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 42.998680832999526,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "full02",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 164.73995933600236,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "late_exit01",
+    "exit": {
+      "resource_usage": {
+        "max_rss_kib": 87972,
+        "user_cpu_s": 1.242425,
+        "system_cpu_s": 0.261336,
+        "voluntary_switches": 156,
+        "involuntary_switches": 145
+      },
+      "exit_code": 0,
+      "seconds": 2.421426644003077,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "runtime01",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 1.8684944809938315,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "runtime02",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 38.83508763599821,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "transport01",
+    "exit": {
+      "exit_code": 1,
+      "seconds": 1.7184309189979103,
+      "frozen_source_match": true
+    }
+  },
+  {
+    "run": "transport02",
+    "exit": {
+      "exit_code": 0,
+      "seconds": 14.999940387999231,
+      "frozen_source_match": true
+    }
+  }
+]
