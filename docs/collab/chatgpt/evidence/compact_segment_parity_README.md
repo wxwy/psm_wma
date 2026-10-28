@@ -1,0 +1,9 @@
+# Compact 0/1 No-TTT CPU Parity — reconstructed evidence from user paste
+
+- 2026-10-28 review intake: user provided a single merged UTF-8 attachment `粘贴的文本 (1)(20261028-035610).txt` containing a fenced Python script and complete JSON output.
+- The two files in this directory were **extracted from that attachment**, not fetched from the training server. The copy/paste used U+00A0 non-breaking spaces in indentation; these were converted to ASCII spaces so the Python script and JSON are syntactically valid. No statements, algorithm, numbers, or JSON values were otherwise edited; a final newline was added.
+- Script: `compact_segment_parity.py` (354 Python lines). JSON: `compact_segment_parity_results.json`, `threads=8`, 3 partial episodes, 4 members × 128 consumers.
+- Uploaded evidence bound to related formal implementation source: Child/Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5` and historical Root `49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9`. This evidence-only Root commit does not change production implementation or the child Gitlink.
+- The review verified Python syntax, parsed the complete JSON, inspected the script's construction/comparisons, and checked all recorded Task1/Task2 booleans. It did **not** replay the script against source/cache/GPU or prove byte-for-byte identity with files claimed to exist on the training server.
+- Note: Task2's final `rng_after_eq` snapshots the same RNG state twice and is not independent evidence. The per-member `rng_consumed_eq` is meaningful because it snapshots the initial state, runs Dense, restores the state, then runs Compact and compares their after-states; all 4 members report True.
+- This is **CPU evidence only**. It does not authorize GPU Forward/Loss/Gradient Parity, DCP Resume, changing the ongoing No-TTT job, or switching Compact on a production checkpoint.
