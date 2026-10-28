@@ -327,3 +327,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **D1～D5 生产源码正向实现获 `APPROVE_CODE`（仅源码）**：Episode-major round屏障/多GPU同轮、已提交Success与正常BehavioralFailure跳过，Ep37只补缺无需旧场景复现，init已成功拒收与第4次连续可恢复错跳过并等Owner授权，Task/Slot/Core原子提交与Local/Action/Prediction证据、process健康/恢复、媒体与SR解耦均接入真实Root+Child生产模块。未证实新的源码级blocking issue。
 - **下一步不是GPU、不是合并**：授权路径仍需Owner另行决定；DS_PRO可按独立CPU Gate请求在**隔离、精确 Formal Pair 只读工作树**复现200项测试，推荐额外做一次 `cancel vs in-flight Core Commit` 的确定性CPU顺序验证作为**非阻断Coverage**（不要求Codex改代码）。之后GPT复核DS Evidence，再等待Owner独立授权的真实Cosmos/RoboCasa/EGL/Local-TTT/media/Resume Canary。18常驻Task进程/每GPU6 EGL上下文从未真机验收。严禁未经单独授权合并V3、启动真GPU/DCP/仿真/900、改训练/Checkpoint/Vendor或碰历史431。
 - **保留历史且最新意见优先**：Stage1 `APPROVE_DESIGN` 不受本次纠错影响；本轮V3只归档Review/Inbox，不更改精确生产Formal代码；不得再依旧Review安排“修复F1”的虚假工作。
+
+
+## 2026-10-28 — NoTTT Compact0/1 GPU 3×Fresh1报告 Evidence审核（Scalar Loss支持，Gradient未验收）
+
+- 冻结源NoTTT historicalRoot`49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9`/Child+Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`不变；本次仍为 Evidence-only 增量审核，不重审已通过CPU Gate或生产代码。DS称本地Root`8c3d0562` 3 Evidence commits领先origin，但远端不可取得该SHA，未视作正式implementation身份。
+- DS报告原始转录：`docs/collab/chatgpt/evidence/2026-10-28_DS_PRO_NoTTT_Compact_GPU_Three_Fresh1_Report.md`。3个world4/FSDP2`fresh1` A Compact1、B Compact0、C Compact1复跑，rank0标量`outer/action/vision loss`逐值相同（outer14.937467575073242、action1.2275960445404053、vision0.2661505937576294），rank0`actual_consumer_identity_sha256`短写相同，缺梯度0/非有限0；rank0 grad_norm A3.706259/B3.707674/C3.708688，仅差0.038% vs同模式0.065%，**仅能证明范数接近，不是逐参数gradient parity**。
+- GPT正式详细Review：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_GPU_Forward_Loss_Gradient_Parity_Evidence_Review.md`；**`REQUEST_CHANGES`（Evidence-only）**。F1 HIGH=所有4 Rank所有选中FSDP梯度Shard无逐参数`allclose(rtol1e-3,atol1e-5)`；F2 MEDIUM=三套不同Fresh1+Optimizer/DCP并非同初始权重/冻结RNG的无OptimizerA/B harness；F3 MEDIUM=DCP Complete marker的`metadata.sha256`不是模型/优化器Tensor数值hash，不能用其不同判断“权重噪声”；F4 LOW=缺原始四Rank日志/可审核ParityJSON。
+- **仅留一项窄范围Remediation**：4GPU可共存条件下一次Frozen Native Harness，Compact0/1在同权重/Buffer/Batch/逐RankRNG、无Optimizer、无Checkpoint的Forward/Loss/Backward paired比对，逐参数/全部4Rank输出NoneMask、shape、dtype、allclose、maxabs/relativeL2/worst10/group。只在必要时一次Dense/Dense控制；不要再新增三套Fresh1。
+- 本轮不管磁盘/Checkpoint保留策略（Owner本地监管），CPU Gate仍CLOSED。`GPU_PARITY=REQUEST_CHANGES`，`S2_NOT_AUTHORIZED_BY_THIS_GATE`，无生产代码改动；旧NoTTT继续，不得擅切Compact或自动恢复。
