@@ -197,6 +197,56 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - DS仅出 isolated Python/JSON/日志和`PASS_CANDIDATE`/FAIL/BLOCKED供GPT独立审核，**本轮不批准正式训练切换Compact=1**。
 
 
+## 2026-10-28 — GPT Evaluation V2 r1 dc750f8e/746c5cf2 Design Gate REQUEST_CHANGES
+
+- **Formal pair**：Design/isolated CPU prototype Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`; V3 base `5c1d78cbaa9d4449a471ce587afe89375292dc27`. Candidate Evidence/docs HEAD `23f2d3a1fda08b9c8214c22b12fbb0592c578dcd` is not formal target; no V3 production merge.
+- **GPT independent Design Gate `REQUEST_CHANGES`**. Detailed review: `docs/collab/chatgpt/reviews/2026-10-28_V3_RoboCasa_EvalV2_r1_dc750f8e_746c5cf2_design_review.md`. Source diff includes only 116-line design + six isolated CPU prototype modules and SESSION/TODO; scripts/configs/vendor/entire Child unchanged. Direct author JUnit inspected **65 passed / 0 failures,0 errors,0 skips,9.147s**; 6/6 formal Git Blob vs author binding independently verified. Synthetic900=450 success/450 failure SR0.5, not real physical rollouts or DS independent tests.
+- **Accepted directional contract**：Env `_check_success` is scientific success authority, horizon failure vs Invalid, media/video/ffmpeg independent of SR, Task/Episode public outputs, immutable source, no legacy431 migration. **Specifically endorse proposed Task-level restart** (archive incomplete generation by rename, new literalSeed env+policy RNG stream, full Task 0..49 replay; completed Tasks untouched), given native continuous50 reset protocol; worst-case repeats49 Episodes per Task, not bit-exact scene proof. Do not invent historical RNG continuity or silently switch to per-Episode seeds.
+- **Open DESIGN blockers:** **D1 HIGH** `tools/v3/episode_eval_v2_prototype/store.py:323-375` unscoped permanent `process_errors` mean clean restarted900 can never qualify; define immutable error history plus scoped/current generation resolved vs unresolved, and tests for clean full replacement/current error/late error/cross-Task. **D2 MEDIUM** `store.py:180-190,274-305` publish initial Task state before Episode directory, crash leaves permanent BLOCKED even with no commits; add an idempotent start-claim transaction/verified recovery + fault injection, preserve ambiguities and old Tasks.
+- **Next**：Codex narrow r2 **design/prototype** remediation and new formal SHA, GPT fresh incremental D1/D2 review, then separate production implementation and DS_PRO CPU/real Canary Gates. **Not authorized** to merge V3 candidate, touch old431/real checkpoint, start GPU/server/RoboCasa/900 Episode or modify running training. Legacy No-TTT/Issue6 Gates unchanged.
+
+
+## 2026-10-28 — Owner Override: Eval V2 Episode37-only Resume (Task rerun WITHDRAWN)
+
+- **Owner direct correction:** “Episode 37 中断 就应该从 Episode 37 重新测”。已生效的恢复目标：只重试无有效 Core Result 的 `ep_037`，**必须原封不动保留 `ep_000～ep_036` 已提交的有效 success/failure**，后续执行 `ep_038～ep_049`；有效行为失败不得重试求成功；视频错误不影响SR或触发重跑。上一条 GPT r1 `REQUEST_CHANGES` 中认可的 **whole-Task restart 决策正式撤回 / SUPERSEDED**，不能再让 Codex 只修D1/D2后依 r1 继续生产接线。
+- **Frozen Owner Addendum:** `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Owner_Override_Episode_Level_Resume.md`；保留原 r1 Review 不改历史。Formal Design Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5` **未变，因此本轮是 Owner requirement override，不是新的 Code/Design verdict，之前 REQUEST_CHANGES 仍然有效**。
+- **New D3 HIGH**：当前 r1 `contract.py:14-15` / `store.py:223-321` / Design§6 采取 archive 整项 Task 50 Episodes，与 Owner 明确的 Episode Resume 口径冲突。Codex 下一版 r2 必须实现 immutable valid prefix + per-Episode retry slot/attempt ledger/atomic result identity，Episode37 crash before/after commit、重复故障、Media-only / Local-invalid / Worker error、跨 GPU/Restart不重复和不静默丢失；同时修 D1 scoped process-error resolution、D2 crash-safe initialization。
+- **Scene/RNG 技术约束**：旧 native 一 Task `seed0` + 50连续 `env.reset` 的运行中，无法靠新 env(seed0) 一次 reset 或只跳过 reset 证明复现 Episode37。推荐新 fresh900 从 ep0 就统一采用 `SHA256(base_seed,Task,index,sampler_version)` 固定的**独立 Episode 场景计划**，实际 RoboCasa Seed/Reset 需有实证、必要时每 Episode 新 Env；此为**新基准采样版本，禁止冒称等价原连续 Reset**。若要求保留原连续 Seed 采样，则需经真实 Canaries 证明完整 Env/Simulator/Policy RNG 边界快照及恢复。两种方案不允许在同一900结果里静默混用。冻结样本方案仍待新 r2 Design Gate 核查。
+- **No runtime authorization**：不合入 V3 Candidate、不启动真实 DCP/GPU/Server/RoboCasa/900集，不修改旧431或训练。Codex 下一步交独立新 Formal r2 SHA，GPT只对 D1/D2/D3 增量评审。
+
+
+## 2026-10-28 — NavigateKitchen reset-already-success: Eval V2 D4 scene admission
+
+- DS_PRO报告旧Run `seed=695376856` 的 NavigateKitchen Drawer→Microwave 场景 `env.reset()` 后即 `_check_success()==True`，base-target XY 0.1336m（阈0.20m）、朝向 cos1.0（阈0.98）；零动作 Step 可记Success。GPT未接触服务器原始探针，但核对 Child reset→step→check 顺序与公开RoboCasa成功判据；这是起始场景退化，并非策略掌握导航的证据。
+- **新 D4（下一 r2 Design Gate 验收）**：V2 在reset后、Model/Action/Local-TTT调用前做严格 initial-success precheck；已成功则记录 `DEGENERATE_INITIAL_SUCCESS` 并有上限地重新采样，**不占用50个有效Episode、不计算Success/Failure**；成功谓词异常不可吞；正常行为失败不重试；记录拒绝场景与实际采样来源，报告采样过滤率，版本化新评测协议。**不要修改Vendor或增加未经批准的距离阈值**。
+- 完整 Evidence / acceptance：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_NavigateKitchen_Reset_Already_Success_Evidence_Design_Addendum.md`。先前 Owner 最新决定仍是 **Episode级 Resume 且不要求复现原场景**，D1/D2/D3仍Open。当前r1 formal pair `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` **未变，不重复技术审核、不改变 REQUEST_CHANGES**。只要求下一新 formal design SHA 纳入 D4；未授权生产代码/仿真GPU/旧431更改。
+
+
+## 2026-10-28 — Owner scene reproduction clarification supersedes earlier D3 sampling requirement
+
+- **Owner原话**：“Episode 37 中断 就应该从 Episode 37 重新测”，“如何保证 Episode 37 的场景采样可复现？**不用复现**”。此较新决定取代 `2026-10-28_V3_EvalV2_Owner_Override_Episode_Level_Resume.md` §2 提出的固定每集 Seed / 全RNG快照 A/B 二选一要求；**不得把精确旧场景复现作为 Design Gate 强制前提**。正常 Task 可持续Reset；仅无有效 Core Result 的逻辑 Episode 重测/重新采样新场景，保留前缀及有效 behavioral_failure；实际新Seed/stream/resume边界照实记录，不假冒单一连续 RNG 流。见 `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Owner_Clarification_No_Scene_Reproduction.md`。本条修正 D3 需求，不改变 r1 formal pair 的 REQUEST_CHANGES；D4 initial-success scene admission 应与该恢复口径一致。
+
+
+## 2026-10-28 — Owner D4: 4 consecutive Episode initialization errors → SKIP and REPORT
+
+- **Owner 决定**：初始化 `env.reset()` 或初始 `_check_success()` 严格校验异常时，记录后安全重新初始化；同一 logical Episode **连续初始化错误超过3次，即第4次报错**，标记 `SKIPPED_INIT_ERROR` 并跳过该 Episode、在安全条件下继续后续 Episode。记录全部错误，汇总跳过的 Task/Episode ID、尝试次数/Seed/Stream/重启边界；**不自动补测，报告 Owner 决策是否 Resume**。
+- 退化场景 `initial_success==True` 单独记 `DEGENERATE_INITIAL_SUCCESS` 并有上限重采，**非初始化异常**；一次成功初始化/前置判据检查打断连续错误计数。媒体错误与已开始策略执行后的正常 `behavioral_failure` 均不计初始化错误，也不得借机重跑。进程不安全故障不能按安全 reset 自动吞掉。
+- **重要架构变更**：`ep37` 被跳过仍可评测 `ep38..49`；r1 prototype `Store.rows()` 要求连续前缀的限制必须在 r2 设计为 slot 独立状态 + 重试记录/唯一 Core Commit，任何跳过不计Success或Failure、正式SR保持null、未完成不能报COMPLETE；后续 Owner 授权仅补真正缺口。不得重跑此前有效 ep0..36，也不要求复现原场景。
+- 详细 Design Addendum：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D4_Owner_Init_Error_4_Strikes_Skip_Report.md`。r1 Formal Design Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` 不变；原 REQUEST_CHANGES 仍有效，D1/D2/D3/D4 r2 Design Gate 待审。无生产修改、Git合并、GPU重跑授权。
+
+
+## 2026-10-28 — ACTIONABLE LATEST: Codex Eval V2 r2 single-source D1–D4 (Issue #7)
+
+**这条是 Evaluation V2 r2 最新唯一执行入口。Codex 请先完整读取，旧Review和此前散落各节的冲突内容以此处所链接的 Owner 最后决定为准。**
+
+- **唯一完整新冻结需求**：`docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md`（V3）— [GitHub](https://github.com/wxwy/psm_wma/blob/V3/docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md)。直接 Codex 跟踪入口：**[Issue #7](https://github.com/wxwy/psm_wma/issues/7)**。这两处是新的同步入口；不是授权任何生产或GPU执行，Issue登记不会自动启动 Codex Agent。
+- **D1** 错误作用域及合法重试后解除旧 Attempt 的不相关资格阻塞、保留不可变诊断；**D2** Task/Episode 首次Claim + Core Commit Crash-safe；**D3** `ep_037` 中断只续测37，前0–36不可重跑、无需旧Scene/RNG复现；**D4** reset后 initial `_check_success()` 退化场景拒绝并有界重采；reset/初始谓词错误 `>3` 连续时即第4次 `SKIPPED_INIT_ERROR`，仅在安全前提下继续38–49、记录并等Owner手动决策补测。
+- **其他冻结原则**：新18×50 Run；RoboCasa环境后Step成功判据是SR权威，正常行为失败计分母；C方案视频媒体不影响SR、不做最终/Resume自动ffmpeg、不默认copy `videos_view`；支持中间跳过Slot而后续结果有效提交；没有900合法Core结果正式SR=null（允许清楚标注的partial有效样本SR）。不迁移/触碰旧431。
+- **明确撤销并禁止误用**：①此前 GPT 审核建议的全 Task 重跑；②旧 Owner Override §2 强制固定每集SHA Seed / 恢复原场景或整个RNG；③视频必须通过ffmpeg严格解码才算Episode完成；④`SKIPPED_INIT_ERROR` 无Owner批准自动Resume。老文档是审计历史，不可覆盖最新Owner澄清。
+- **当前 r1 Formal Pair不变**：Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`；此前正式判定 `REQUEST_CHANGES`。作者65 CPU passed 是Synthetic Design Gate，不是Production Gate。Codex下一步仅产出 **r2 Design+isolated CPU Prototype+New formal SHA/Evidence**，提交后STOP供GPT D1–D4增量审核。禁止合并V3、真实GPU/DCP/仿真900、改模型/训练/历史431。Codex请在 [Issue #7](https://github.com/wxwy/psm_wma/issues/7) 或 handoff 显式ACK确认读到本统一文件，不能把“已发布”当成“已阅读”。
+
+
+
 ## 2026-10-28 — Evaluation V2 fresh900 r1 Design + isolated CPU prototype — REVIEW
 
 - Owner requests new18Task×50 framework: environment-authoritative SR, media-independent/noautomaticffmpeg, flatTask/Episode, process/resultseparation, originalvideoonecopy; no431migration/compatibility/recovery. Current production untouched.
