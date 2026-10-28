@@ -1,4 +1,4 @@
-# Codex / Evaluation V2 r2 — 最新统一 Owner Contract（D1–D4）
+# Codex / Evaluation V2 r2 — 最新统一 Owner Contract（D1–D5）
 
 **更新：2026-10-28。请 Codex 在开始 r2 设计与 CPU 原型整改前，先读本文件全文并回复已读取的版本、取代关系和整改范围。本文件是最新需求的唯一汇总入口；早期讨论与 Review 保留证据/来源，但与本文冲突时以本文为准。**
 
@@ -53,13 +53,24 @@
 - 原生进程崩溃、清理异常、EGL 上下文失控或硬件不可安全恢复故障不允许简单伪装成普通可重试 reset Exception；必须安全停机并记录 Process Error。失败4次只触发可恢复初始化的单 Episode Skip，不意味着忽略真正资源损坏。
 - CPU 必须覆盖 3次报错后成功、4次连续错误 SKIP 并继续 ep38..49、合法 precheck 打断连续错误、初始已完成场景反复重采直到上限、初始化期间 Crash/重试 Ledger 重启复核、正常行为失败不重试、Skip 时正式 SR=null、经 Owner 单独批准后仅补测缺口且之前已完成其他 Index 的内容不变。
 
-## 6. 当前未授权及交付要求
+## 6. D5 — HIGH：Episode-major Round-Robin 调度 + Resume 已测槽位跳过（最新 Owner）
 
-1. Codex 在隔离候选分支修改 **r2 Design / isolated CPU Prototype only**，按 D1–D4 更新 Acceptance Matrix；不能因上一轮65个 CPU PASS 就绕过新 D3/D4。新提交标出**新的 Formal Design Root SHA / Child Gitlink SHA**、与 r1 `dc750f8e` 的真实 diff、Ruff、JUnit/Test，测试脚本和冻结 Evidence；然后 **STOP for GPT incremental review**。
+- **Owner 要求的全局调度顺序**：冻结18 Task的稳定任务序号；外层 `episode_index=0..49`，内层 `task_order_index=0..17`，即 `Task1/Ep1 → Task2/Ep1 → … → Task18/Ep1 → Task1/Ep2 → … → Task18/Ep50`，总共900个逻辑槽位。**原V3按Task运行50集的Task-major FIFO不是此要求**，V2 r1设计/原型亦尚未落实D5。
+- **轮次屏障**：在Round k 的全部18个Task槽位有明确处理结果之前，不能向任意GPU派发Round k+1。GPU4/5/6可并行执行同一轮不同Task，Task按冻结顺序**派发**，实际完成时间不要求依序；若需要取消全局执行，持久记录当前轮状态，下一次Resume再从相同排序扫描。
+- **Resume从头按同一逻辑顺序扫描、对每槽位判断**：只有经过原子提交、核验身份的有效Core Result（`success` 或正常 `behavioral_failure`）算“已经测试过”，**必须直接跳过且绝不重复推理、仿真、改写原结果**。未提交的`PENDING/INTERRUPTED/INVALID` 按安全条件安排同一逻辑Episode重试；不能靠MP4、目录、`RUNNING`标签或Convenience Summary推断已完成。
+- **跳过但未完成**：`SKIPPED_INIT_ERROR`（初始化连续4次异常）与有界退化场景耗尽的Owner-Pending缺口，普通Resume也要跳过并列入报告，**仅在Owner明确指定后才补测**。这类跳过不占合法Episode成功/失败，不构成正式SR完整覆盖；不阻止其他Task和后续轮次正常测试。
+- **中间缺口与重复执行保护**：Task3的Ep1若已完成，无论Task1的Ep2是否已完成都按冻结排序扫描并跳过；TaskX的Ep37被Skip以后，已经提交的Ep38不能再测试。存储层支持非连续合法索引和并发多GPU的原子Slot Claim / stale-worker拒绝。
+- **同一Task运行流与资源**：D5禁止默默继续Task-major50集Batch来“优化效率”。3GPU×18Task不一定能长期同时保有18个Env和Server；Codex必须在r2设计中解释资源有界的Round调度、模型Server复用与Local-TTT Session隔离、EGL Context寿命、跨轮Task Scene RNG/Seed与实际Stream记录，避免朴素的每Episode一次加载13GB模型或900次不必要EGL重建。Owner已明确**Resume无需重现原Scene**，也不强制为900集创建固定Per-Episode Seed；但如果新轮次使Task的Env/Seed序列不连续，报告不能宣称仍是旧的一Task50次连续Reset流，且Benchmark与此前Task-major采样协议的可比性须标注。
+- **CPU设计验收**：900槽位排序Exact；3个异步Worker的Round barrier；在任意轮次/任意slot中断，Resume扫描跳过前后所有已合法完成槽位，只有缺口执行；已完成Behavioral Failure不得重试；Task1/ep37 `SKIPPED_INIT_ERROR`而ep38有效时，普通Resume仅跳过ep37且不重测ep38；第4次初始化错误不能悄然算Success；双GPU抢同一逻辑Slot拒绝；取消/进程故障与Core Commit原子性。
+- **完整原始决策与测试基准**：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D5_Owner_Episode_Major_RoundRobin_Resume_Skip.md`。这条是新Owner约束，与D1–D4同等必须整改，不改变此前r1 formal pair的`REQUEST_CHANGES`。
+
+## 7. 当前未授权及交付要求
+
+1. Codex 在隔离候选分支修改 **r2 Design / isolated CPU Prototype only**，按 D1–D5 更新 Acceptance Matrix；不能因上一轮65个 CPU PASS 就绕过新 D3/D4。新提交标出**新的 Formal Design Root SHA / Child Gitlink SHA**、与 r1 `dc750f8e` 的真实 diff、Ruff、JUnit/Test，测试脚本和冻结 Evidence；然后 **STOP for GPT incremental review**。
 2. 真实生产接线、DS_PRO 独立 CPU、真实 RoboCasa Canary、900集正式测试、合并 V3 均需后续独立授权。任何模型/训练/Vendor/历史431无权改动。
-3. 请 Codex 回写交接记录明确 **已读取本文件**、标识 D1/D2/D3/D4 与以上 superseded decisions，避免从本地旧分支设计继续按已经废弃的 Task-level restart 或 fixed Scene Seed 开发。
+3. 请 Codex 回写交接记录明确 **已读取本文件**、标识 D1/D2/D3/D4/D5 与以上 superseded decisions，避免从本地旧分支设计继续按已经废弃的 Task-level restart 或 fixed Scene Seed 开发。
 
-## 7. 旧文档取代关系（请勿误读）
+## 8. 旧文档取代关系（请勿误读）
 
 下列旧版本 Review / Owner 补充仍保留可追溯记录，但**以此文的最新要求为准**：
 
@@ -68,3 +79,5 @@
 - `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Owner_Clarification_No_Scene_Reproduction.md`：无需场景精确复现，仍有效。
 - `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_NavigateKitchen_Reset_Already_Success_Evidence_Design_Addendum.md`：reset初始即成功的退化场景过滤仍有效。
 - `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D4_Owner_Init_Error_4_Strikes_Skip_Report.md`：**第4次连续初始化错误跳过**、报告Owner、不自动补测；这是最新D4异常处理，优先于早期泛化的fail-closed初始化描述。
+
+- `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D5_Owner_Episode_Major_RoundRobin_Resume_Skip.md`：全局 Episode-major Round-Robin + Resume 基于有效 Core 提交的跳过，普通 Resume 不补 Owner-skipped。
