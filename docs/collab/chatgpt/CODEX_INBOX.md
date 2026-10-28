@@ -176,3 +176,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **性能仅记录单Worker功能验证口径**：Dense/Compact transform=3541.1ms/348.6ms；entire CPU functional run wall=32905.4ms/20145.4ms不等于实际4GPU训练Step耗时，不得据此承诺实测加速。
 - **后续Gate**：补全原始Evidence并复核后，才能关闭 CPU Evidence Gate。真实模型 Loss/Gradient GPU parity、DCP、正式NoTTT同Job Compact边界切换需另行单独授权。NoTTT在训进程、Checkpoint、Child生产源码均未变。
 - **状态**：E1_E2_REPORTED_PASS / RAW_EVIDENCE_E3_MEDIUM_OPEN / CPU_EVIDENCE_REQUEST_CHANGES / GPU_PARITY_NOT_AUTHORIZED / NO_PRODUCTION_CHANGE。
+
+
+## 2026-10-28 — Compact0/1 CPU Evidence E3 Closure（原始代码/JSON已补齐）
+
+- **formal source scope**：No-TTT relevant Child/Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5` 未变；Root本轮为归档 commit，不重审相同的implementation/design SHA。
+- **以前 E3 MEDIUM Evidence blocker 已关闭**：从用户合并附件直接提取并归档 `docs/collab/chatgpt/evidence/compact_segment_parity.py`、`compact_segment_parity_results.json`、`compact_segment_parity_README.md`，含来源 / U+00A0 空格规范化说明。已做 Python syntax、JSON parse和所有关键信息的字段逐项验证，非声称真实CPU/GPU重跑。
+- **详细 Evidence closure Review**：`docs/collab/chatgpt/reviews/2026-10-28_V3_Compact_Segment_NoTTT_CPU_Evidence_Closure.md`。结论：**E1 CLOSED、E2 CLOSED、E3 CLOSED；Compact0/1 CPU Evidence Gate CLOSED（只限CPU证据）**。
+- **E1**：3个 CloseBlenderLid terminal partial Episode valid_count=9/12/13, 34 valid Consumers，Payload/Segment/RNG所有记录比较通过；**E2**：4个 GA Member×128=512，同一Frozen Planner/Native Packed Batch payload/collate/positions/逐Member RNG比较全部通过。
+- **LOW nonblocking**：Task2最终 `rng_after_eq` 是连续快照，没有验证价值；真正有效证明为4个Member的 `mem_state→Dense→restore→Compact` 的 `rng_consumed_eq`。不要援引前者作为证据。
+- **Boundary**：尚未授权真实模型GPU Forward/Loss/Gradient/H2D parity、FSDP、DCP Resume、正式Job checkpoint切换或训练加速验收；正式 No-TTT Job、Child生产代码、Checkpoint均未改动。
