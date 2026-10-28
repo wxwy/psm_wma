@@ -279,3 +279,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **D1 CLOSED(Design)**：旧进程错误持久留证 + 正面清理/健康/同槽成功重试或已提交结果的执行型恢复；当前不安全故障仍阻止 Clean Qualification。**D2 CLOSED(Design)**：Task/Slot首次claim Intent→Directory→Ready + 原子Core Commit、Crash恢复与模糊状态拒绝。**D3 CLOSED(Design)**：Episode37未有效提交只补37；0～36及其他已完成有效Success/BehavioralFailure字节不变；原Scene/RNG无需复现；跳过缺口后有效38也不得复测。**D4 CLOSED(Design)**：reset后初始`_check_success`为True拒收退化场景；初始化连续第4次安全可恢复错误则 `SKIPPED_INIT_ERROR`，后续Task可继续但非自动补测，Owner批准才释放；32次总admission上限为作者提议的版本化有界默认。**D5 CLOSED(Design)**：冻结Task顺序，`Episode-major`全900槽位排序，同轮多GPU异步派发、严格轮次屏障、每次Resume跳过已有有效Core，跳过Owner-Pending孔洞。保持视频媒体与SR解耦、无自动ffmpeg、Task→Episode输出、不读旧431。
 - **独立运行时 Gate 仍未通过，也尚未进入**：r2原型只执行CPU假环境；拟议3常驻Action Server +18常驻Task环境/每GPU6 EGL上下文为**未测容量假设**；真实模型Local-TTT重置/Session端到端、媒体隔离、严格初始成功检查、进程PID/PGID/Server监听所有权及EGL重建、完整900数据CPU索引开销均待下一阶段验收。作者104测试中900-slot fake测试~178s，不是端到端性能指标。Owner放行后才可在独立分支启动Stage2生产候选，提交新Formal SHA并先走Code Gate → DS独立CPU → Owner单独授权的真实Canary/900；**本审核不授权生产接线、V3合并、真DCP/GPU/仿真/900测试、训练切换或旧431变更**。
 - **No repeat audit on bookkeeping commits**：下一次技术审核只在新的Formal Root/Child实现或设计SHA出现时进行；本轮V3只新增Review和Inbox，Child未变。Codex如收到新任务先读取此入口，不要把`APPROVE_DESIGN`当`APPROVE_PRODUCTION`。
+
+
+## 2026-10-28 — NoTTT Compact=1 第二套共存 Job S0/S1 DS_PRO 证据审核
+
+- **Source仍冻结**：运行时Root`4cf90fb486db9c8e2a4b93aaa7d9f5438296f642`，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`，目前NoTTT formal实现没有变更；Root之后只是其它评测Review/Inbox文档提交。**只增量审核新 Evidence，禁止因bookkeeping重新审生产代码。**
+- **DS报告级证据**：`docs/collab/chatgpt/evidence/2026-10-28_nott_compact_corerun_s0_s1_reported.md`。S0 GPU4–7共存投影余量5205/10377/9789/10457MiB、CPU/RAM有余；S1`Compact=1`独立新Job`no_ttt_compact1_corerun_20261028_world4_ga4`真实`fresh 1`、report`optimizer_committed`、finite loss14.9375/missing0/nonfinite0、rank0峰值29.84GiB、iter1独立DCP报告存在；旧Job继续4828→4858正常推进。
+- **正式Evidence verdict=`REQUEST_CHANGES`（仅E1/E2）**：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_Coresident_S0_S1_Evidence_Review.md`。远端尚缺DS自称的`2026-10-28_nott_compact_corerun_s0_s1.{json,md}`与直接rank logs；S1仅Rank0显存、未提供四Rank峰值/新Job DCP meta+sidecar与旧Job同时段直接证据。**不重跑S1**，只传已有原始文件与补最小只读清单。
+- **数值更正**：GPU4以29.84GiB=约30556MiB估算后，剩余约12.53GiB，不是原报告的“13.5GiB”。旧Dense稳定段data_prepare17.5s vs新Compact首Step8.63s不能宣称稳态51%加速；旧Job前后健康不等于zero slowdown。
+- **S2硬阻断**：/mnt/data用量99%、新独立iter1 DCP约24GiB后只剩约74GiB；正式旧Job仍会持续写入。任何 `resume10/100/30000`前必须有由Owner批准的存储/retention/回退安排与安全余量；不能删除原Job checkpoint。优先进行同权重/同Batch GPU数学Parity（本共存Smoke不能替代）。
+- **状态**：S0_REPORTED_PASS / S1_REPORTED_PASS_CANDIDATE / S1_EVIDENCE_REQUEST_CHANGES / S2_NOT_AUTHORIZED_DISK_BLOCKED / NO_PRODUCTION_CHANGE。
