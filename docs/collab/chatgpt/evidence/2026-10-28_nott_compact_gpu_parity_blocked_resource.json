@@ -1,0 +1,95 @@
+{
+  "gate": "V3_NOTTT_COMPACT_0_VS_1_NATIVE_GPU_PARITY",
+  "status": "BLOCKED_RESOURCE",
+  "source": {
+    "root_head_actual": "5c1d78cbaa9d4449a471ce587afe89375292dc27",
+    "child_gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+    "formal_root": "49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9"
+  },
+  "resources": {
+    "preflight_command": [
+      "nvidia-smi --query-gpu=index,uuid,memory.used,memory.total,utilization.gpu --format=csv,noheader",
+      "nvidia-smi --query-compute-apps=gpu_uuid,pid,used_gpu_memory --format=csv,noheader"
+    ],
+    "gpu_status": [
+      {
+        "index": 0,
+        "uuid": "GPU-b74e7a4e-50e9-beee-9fdf-b594b64b5993",
+        "memory_used_mib": 62253,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 807309,
+        "owner": "wzy"
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-35f6d857-b7ad-1c66-72eb-b10f1a07067a",
+        "memory_used_mib": 62253,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 807310,
+        "owner": "wzy"
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-21e6c782-72b0-4c91-870e-708980a8ed7a",
+        "memory_used_mib": 62253,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 807311,
+        "owner": "wzy"
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-0ac66da8-b75d-1c81-17a9-4c174cc2173b",
+        "memory_used_mib": 62253,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 807312,
+        "owner": "wzy"
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-545d3c6f-e60e-dad5-cb58-b0fd6aceb33b",
+        "memory_used_mib": 38177,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 1202529,
+        "owner": "robo-sh (formal No-TTT training)"
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-c5a7406e-2a40-cc73-c08f-17fada72cf03",
+        "memory_used_mib": 35591,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 1202530,
+        "owner": "robo-sh (formal No-TTT training)"
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-a785be7c-17dc-117c-c6fa-de6ded5c135b",
+        "memory_used_mib": 35885,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 1202531,
+        "owner": "robo-sh (formal No-TTT training)"
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-be29641b-a769-f36d-648b-116b43626bd6",
+        "memory_used_mib": 35551,
+        "memory_total_mib": 81559,
+        "utilization_gpu_pct": 100,
+        "compute_pid": 1202532,
+        "owner": "robo-sh (formal No-TTT training)"
+      }
+    ],
+    "idle_gpu_count": 0,
+    "required_idle_gpu_count": 4,
+    "preflight_process_count": 8,
+    "safe_to_launch": false,
+    "block_reason": "No idle GPU: all 8 GPUs at 100% utilization. GPU0-3 owned by external wzy task (PIDs 807309-807312, 62253MiB each); GPU4-7 owned by current formal No-TTT training (PIDs 1202529-1202532, 35.6-38.2GiB each). Execution order forbids preempting/pausing/reducing existing workloads and running on the current No-TTT devices."
+  },
+  "notes": "Per execution order section 0, with fewer than 4 clearly idle GPUs the only legal delivery is BLOCKED_RESOURCE + occupancy summary. No model/torchrun/CUDA launched, no background wait/poll, no preemption. Read-only preflight only."
+}

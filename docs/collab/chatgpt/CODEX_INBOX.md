@@ -254,6 +254,16 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **现在必须读的唯一最新合同**：`docs/collab/chatgpt/requests/2026-10-28_V3_RoboCasa_EvalV2_r2_CANONICAL_LATEST_OWNER_CONTRACT.md` 已升级为 **D1–D5**；具体D5补充 `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D5_Owner_Episode_Major_RoundRobin_Resume_Skip.md`；[Codex Issue #7](https://github.com/wxwy/psm_wma/issues/7) 已同步。此前所有r1与D1–D4要求在冲突处以**本次最新D1–D5**为准。Formal r1 Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` 未改、状态仍REQUEST_CHANGES；无生产接线、GPU/900测试或V3候选合并授权。Codex下一次ACK须包含D5而非旧D1–D4。
 
 
+## 2026-10-28 — No-TTT Compact GPU Parity S0 BLOCKED_RESOURCE（DS_PRO占用证据）
+
+- **S0 Evidence-only review**: `docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_GPU_S0_BLOCKED_RESOURCE_Evidence_Review.md`；DS_PRO交付原文及8GPU进程占用：`docs/collab/chatgpt/evidence/2026-10-28_nott_compact_gpu_parity_blocked_resource.md`；结构化JSON：`docs/collab/chatgpt/evidence/2026-10-28_nott_compact_gpu_parity_blocked_resource.json`（均由用户提供的DS文本归档，非GPT亲自运行nvidia-smi）。
+- **Status=BLOCKED_RESOURCE，资源检查按执行令正确停止**：GPU0–3外部wzy任务GPU利用率100%/约62.3GiB，GPU4–7现有NoTTT训练GPU利用率100%/约35.6–38.2GiB；可用空闲卡0<所需4。无GPU Native Forward/Loss/Gradient parity执行，不能报PASS/FAIL，不授权生产Compact切换/训练停启/Checkpoint改动。
+- **Formal NoTTT源不变**：报告Source snapshot Root`5c1d78cbaa9d4449a471ce587afe89375292dc27`，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`。此后V3 Root仅其它评测文档和Inbox更新，不含NoTTT实现/Gitlink变更；此前CPU证据Gate继续CLOSED。
+- **流程偏离**：DS在S0“只读”预检中执行`git reset --hard origin/V3`并用`-c http.sslVerify=false`绕过代理证书；即使无现时数据损失证据，也不应再次执行此类工作树更改或TLS验证关闭。记录为非资源判定blocker的流程问题。
+- **下一步**：四张明确空闲GPU后重新做**新鲜S0**，否则保持`BLOCKED_RESOURCE`。若需要受控停止NoTTT释放GPU4–7，须Owner单独明确授权及committed checkpoint边界，不得自动安排重试或后台轮询。
+
+
+
 
 
 ## 2026-10-28 — Evaluation V2 fresh900 r1 Design + isolated CPU prototype — REVIEW
