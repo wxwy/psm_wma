@@ -131,7 +131,7 @@ def test_episode37_commit_crash_retries_only_uncommitted_slot_and_keeps_prefix_b
     with resumed.locked():
         close_streams(resumed, "CloseFridge")
         state = resumed.begin_task("CloseFridge", seed=90210)
-        assert state["kind"] == "resume_new_stream_no_scene_reproduction"
+        assert state["kind"] == "resume_dynamic_slot_stream"
         if boundary == "after_core_commit":
             with pytest.raises(ValueError, match="immutable"):
                 resumed.begin_episode("CloseFridge", 37)

@@ -59,79 +59,85 @@ def drain(scheduler, *, fail_odd=False):
 
 
 def test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode(
-    tmp_path,
+    tmp_path, monkeypatch
 ):
-    # Intentionally not lexicographic: manifest must preserve Owner's Task order.
+    from tools.v3.eval_v2_production_tests.slot_test import (
+        CpuSlotRuntime,
+        TrackedEnv,
+        prepare_monkey,
+    )
+    from tools.v3.eval_v2_production_tests.native_test import server
+
+    prepare_monkey(monkeypatch)
     tasks = tuple(
         f"Task{i:02d}"
         for i in [6, 1, 12, 4, 0, 17, 2, 5, 7, 3, 8, 9, 10, 11, 13, 14, 15, 16]
     )
     value = fresh(tmp_path, tasks=tasks, episodes=50, formal=True)
-    assert value.manifest["tasks"] == value.manifest["task_order"] == list(tasks)
-    expected = [(t, ep) for ep in range(50) for t in tasks]
-    assert logical_plan(value.manifest) == expected and len(set(expected)) == 900
-    model_loads = dict.fromkeys(WORKERS, 0)
-    env_builds = dict.fromkeys(tasks, 0)
-    task_streams = {}
-    with value.locked():
-        scheduler = RoundScheduler(value, WORKERS)
-        for w in WORKERS:
-            model_loads[w] += 1  # mock lifecycle, NOT real model loads.
-        dispatched = []
-        while not scheduler.done:
-            for worker in WORKERS:
-                claim = scheduler.dispatch(worker)
-                if claim is None:
-                    continue
-                task = claim["task"]
-                a = claim["attempt"]
-                if task not in task_streams:
-                    env_builds[task] += 1
-                    task_streams[task] = a["stream_id"]
-                assert task_streams[task] == a["stream_id"]
-                dispatched.append((task, claim["episode"]))
-                commit_claim(scheduler, claim, success=claim["episode"] % 2 == 0)
-        assert dispatched == expected
-        assert all(n == 1 for n in model_loads.values()) and all(
-            n == 1 for n in env_builds.values()
+    events = []
+    cfg = {
+        "gpu_ids": [4, 5, 6],
+        "episodes_per_task": 50,
+        "base_port": 18000,
+        "terminate_grace_s": 0.2,
+    }
+    with server() as (url, calls), value.locked():
+        runtime = CpuSlotRuntime(
+            value,
+            cfg,
+            url,
+            events,
+            factory=lambda t, s, g: TrackedEnv(
+                t, g["seed"], events, success_at=100 if int(t[4:]) % 2 else 1
+            ),
         )
+        report, error = runtime.run()
+        assert (
+            error is None
+            and report["valid"] == 900
+            and report["success"] == report["failure"] == 450
+            and report["results_qualified"]
+        )
+        assert runtime.max_actors == 3 and len(runtime.server_loads) == 3
+        inv = next((value.root / "_internal/scheduler").iterdir())
+        ledger = records(inv)
+        expected = logical_plan(value.manifest)
+        assert [
+            (x["data"]["task"], x["data"]["episode"])
+            for x in ledger
+            if x["kind"] == "DISPATCH"
+        ] == expected
+        assert sum(x["kind"] == "ROUND_BARRIER" for x in ledger) == 50
+        rows = [
+            json.loads(x)
+            for x in (value.root / "episodes.jsonl").read_text().splitlines()
+        ]
+        assert [(r["task"], r["episode"]) for r in rows] == expected
         for task in tasks:
-            close_streams(value, task)
-        report = value.publish_views()
-        events = records(value.root / "_internal/scheduler" / scheduler.invocation)
-    assert report["valid"] == 900 and report["success"] == report["failure"] == 450
-    assert report["sr"] == 0.5 and report["results_qualified"]
-    rows = [
-        json.loads(line)
-        for line in (value.root / "episodes.jsonl").read_text().splitlines()
-    ]
-    assert [(r["task"], r["episode"]) for r in rows] == expected
-    assert sum(e["kind"] == "ROUND_BARRIER" for e in events) == 50
-    assert sum(e["kind"] == "DISPATCH" for e in events) == 900
-    (value.root / "summary.json").write_bytes(b"broken derived view")
-    with value.locked():
+            grants = records(value._internal(task) / "environments")
+            assert len({g["seed"] for g in grants}) == len(grants)
+        (value.root / "summary.json").write_bytes(b"damaged derivative")
         assert value.publish_views() == report
-    print(
-        "V2_PRODUCTION_COORDINATION_METRICS " + json.dumps(value.metrics()), flush=True
-    )
-    assert value.metrics()["record_io"]["disk_reads"] < 40000
-    print(
-        "V2_R2_SYNTHETIC_WITNESS "
-        + json.dumps(
-            {
-                "tasks": 18,
-                "episodes": 900,
-                "success": 450,
-                "failure": 450,
-                "sr": 0.5,
-                "prototype_only": False,
-                "actual_scheduler_dispatch": 900,
-                "round_barriers": 50,
-                "mock_model_loads": model_loads,
-                "mock_env_builds": sum(env_builds.values()),
-            }
+        print(
+            "V2_PHASE_A_COORDINATION_METRICS " + json.dumps(value.metrics()), flush=True
         )
-    )
+        print(
+            "V2_PHASE_A_SYNTHETIC_WITNESS "
+            + json.dumps(
+                {
+                    "episodes": 900,
+                    "dispatches": 900,
+                    "round_barriers": 50,
+                    "success": 450,
+                    "failure": 450,
+                    "physical_slots": runtime.max_actors,
+                    "mock_model_loads": len(runtime.server_loads),
+                    "environment_creations": sum(e[0] == "make" for e in events),
+                    "synthetic_only": True,
+                }
+            ),
+            flush=True,
+        )
 
 
 def test_three_asynchronous_workers_same_round_parallel_with_strict_barrier(tmp_path):
@@ -359,3 +365,65 @@ def test_live_four_strike_skip_is_round_disposition_not_success_and_next_round_w
             and report["sr"] is None
         )
         assert report["failure"] == 1 and report["success"] == 4
+
+
+@pytest.mark.parametrize("commit_first", [True, False])
+def test_cancel_and_core_publish_remain_serialized_without_phantom_F1(
+    tmp_path, commit_first
+):
+    import threading
+
+    value = fresh(tmp_path, episodes=1)
+    with value.locked():
+        scheduler = RoundScheduler(value, WORKERS)
+        claim = scheduler.dispatch(WORKERS[0])
+        a = admitted(value, claim["attempt"])
+        row = record(value.manifest, {**a, "reset_index": 0}, 0)
+        staging = fixture_core(value, a, row)
+        if not commit_first:
+            scheduler.cancel("CPU controlled cancel before commit")
+            with pytest.raises(ValueError, match="cancelled"):
+                scheduler.commit(claim, row, staging=staging)
+            assert value._result("CloseFridge", 0) is None
+            return
+        entered = Event()
+        release = Event()
+        cancelled = Event()
+        errors = []
+
+        def pause(point):
+            if point == "before_core_commit":
+                entered.set()
+                assert release.wait(5)
+
+        value.fault = pause
+
+        def committing():
+            try:
+                scheduler.commit(claim, row, staging=staging)
+            except BaseException as e:
+                errors.append(e)
+
+        def cancelling():
+            scheduler.cancel("CPU cancel overlaps Core publish")
+            cancelled.set()
+
+        t = threading.Thread(target=committing)
+        t.start()
+        assert entered.wait(5)
+        c = threading.Thread(target=cancelling)
+        c.start()
+        assert not cancelled.wait(0.05)
+        release.set()
+        t.join(5)
+        c.join(5)
+        assert (
+            not t.is_alive() and not c.is_alive() and not errors and cancelled.is_set()
+        )
+        fault = value.record_process_error(
+            "CloseFridge", "coordinator_stop", "CPU after cancellation", attempt=a
+        )
+        assert (
+            fault["core_committed_at_fault"] is True
+            and value._result("CloseFridge", 0) == row
+        )

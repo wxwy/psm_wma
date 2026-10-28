@@ -335,3 +335,14 @@ def test_real_preflight_cache_warm_zero_model_reads_and_config_drift_refused(
         Path(cfg["config_file"]).write_text("raw_action_dim: 32\n")
         with pytest.raises(ValueError, match="identity changed"):
             identity.prepare(cfg, cache=tmp_path / "cache", anchor=inputs, manifest=m)
+
+
+@pytest.mark.parametrize("flag", ["--sims-per-gpu", "--max-infer-batch-size"])
+@pytest.mark.parametrize("count", [0, 2, 4])
+def test_phase_a_rejects_unsupported_multisim_or_batch_before_runtime(
+    tmp_path, flag, count
+):
+    path, cfg = config(tmp_path)
+    with pytest.raises(ValueError):
+        resolve(["fresh", "--config", str(path), flag, str(count)])
+    assert not Path(cfg["output_dir"]).exists()

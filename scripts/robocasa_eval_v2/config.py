@@ -23,8 +23,8 @@ DEFAULTS = {
     "request_timeout_s": 600.0,
     "terminate_grace_s": 10.0,
     "encoder_grace_s": 2.0,
-    "max_resident_envs": 18,
-    "max_contexts_per_gpu": 6,
+    "sims_per_gpu": 1,
+    "max_infer_batch_size": 1,
     "max_gpu_fraction": 0.85,
     "max_rss_bytes": 128 * 1024**3,
 }
@@ -48,6 +48,8 @@ def resolve(argv=None):
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--owner-decision", type=Path)
     p.add_argument("--gpus")
+    p.add_argument("--sims-per-gpu", type=int)
+    p.add_argument("--max-infer-batch-size", type=int)
     p.add_argument("--tasks")
     p.add_argument("--episodes", type=int)
     p.add_argument("--output-dir", type=Path)
@@ -73,6 +75,10 @@ def resolve(argv=None):
     cfg = {**DEFAULTS, **data}
     if cfg["schema"] != DEFAULTS["schema"]:
         raise ValueError("new V2 config schema required")
+    if a.sims_per_gpu is not None:
+        cfg["sims_per_gpu"] = a.sims_per_gpu
+    if a.max_infer_batch_size is not None:
+        cfg["max_infer_batch_size"] = a.max_infer_batch_size
     if a.gpus is not None:
         cfg["gpu_ids"] = [int(x) for x in a.gpus.split(",")]
     if a.tasks is not None:
@@ -98,8 +104,8 @@ def resolve(argv=None):
         "episodes_per_task",
         "base_port",
         "prediction_steps",
-        "max_resident_envs",
-        "max_contexts_per_gpu",
+        "sims_per_gpu",
+        "max_infer_batch_size",
         "max_rss_bytes",
     ]:
         if type(cfg[key]) is not int or cfg[key] <= 0:
@@ -109,6 +115,10 @@ def resolve(argv=None):
         or cfg["base_port"] + len(cfg["gpu_ids"]) - 1 > 65535
     ):
         raise ValueError("plan/port range")
+    if cfg["sims_per_gpu"] != 1 or cfg["max_infer_batch_size"] != 1:
+        raise ValueError(
+            "Phase A supports only sims_per_gpu=1 and max_infer_batch_size=1"
+        )
     if type(cfg["seed"]) is not int or not 0 <= cfg["seed"] < 2**32:
         raise ValueError("invalid seed")
     for key in [

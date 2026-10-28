@@ -104,7 +104,7 @@ def test_episode37_resume_new_scene_no_replay_and_no_continuous_stream_claim(tmp
         assert env.reset_calls == 13
         assert (
             second["stream_id"] != first["stream_id"]
-            and second["kind"] == "resume_new_stream_no_scene_reproduction"
+            and second["kind"] == "resume_dynamic_slot_stream"
         )
         after = bytes_of_results(resumed)
         assert all((after[k] == v for k, v in before.items()))

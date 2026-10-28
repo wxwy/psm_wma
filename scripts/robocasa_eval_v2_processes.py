@@ -189,7 +189,9 @@ class Actor:
         try:
             if self.owned.proc.poll() is None:
                 self.timeout = min(self.timeout, self.registry.grace)
-                self.request("close")
+                response = self.request("close")
+                if response.get("clean") is False:
+                    error = "Slot closed from quarantined/non-clean state"
         except Exception as e:
             error = repr(e)
         finally:

@@ -45,7 +45,11 @@ class Runtime:
         self.stop = threading.Event()
         self.registry = Registry(store.root, cfg["terminate_grace_s"])
         self.servers = {}
-        self.actors = {}
+        self.actors = {}  # physical worker -> single reusable Sim process
+        self.actor_tasks = {}
+        self.slot_claim_tasks = {}
+        self.slot_environments = {}
+        self.slot_ids = {f"GPU{g}": uuid.uuid4().hex for g in cfg["gpu_ids"]}
         self.logs = []
         self.resource_probe = resource_probe
         self.setup_lock = threading.Lock()
@@ -53,7 +57,9 @@ class Runtime:
         self.latest_attempts = {}
         self.phases = {}
         self.closed = False
-        self.workers = [f"GPU{g}" for g in cfg["gpu_ids"]]
+        self.workers = [
+            f"GPU{g}" for g in cfg["gpu_ids"][: len(store.manifest["task_order"])]
+        ]
 
     def _proof(self, kind, data):
         name = f"{kind}_{uuid.uuid4().hex}.json"
@@ -170,26 +176,34 @@ class Runtime:
 
     def _actor(self, claim):
         task = claim["task"]
-        if task in self.actors:
-            return self.actors[task]
+        worker = claim["physical_worker"]
         with self.setup_lock:
             if self.stop.is_set():
                 raise RuntimeError("cancelled before runtime startup")
             server, server_rec, port = self._server(claim["physical_worker"])
             self.phases[claim["physical_worker"]] = "environment_initialization"
-            a = claim["attempt"]
+            if worker in self.actors:
+                return self._start_assignment(claim, self.actors[worker], server_rec)
             nonce = uuid.uuid4().hex
-            work_root = self.store._internal(task) / "slots"
             cfg = {
-                "task": task,
                 "nonce": nonce,
-                "stream_id": a["stream_id"],
-                "seed": a["seed"],
-                "dataset_dir": self.inputs["tasks"][task],
-                "metadata_sha256": self.store.manifest["experiment"]["task_metadata"][
-                    task
-                ],
-                "work_root": str(work_root),
+                "manifest_digest": self.store.manifest["digest"],
+                "coordinator_lease_id": self.store.lease_id,
+                "episodes_per_task": self.store.manifest["episodes_per_task"],
+                "physical_slot_id": self.slot_ids[worker],
+                "physical_worker": worker,
+                "gpu_id": self.cfg["gpu_ids"][self.workers.index(worker)],
+                "task_root": str(self.store.root / "_internal/tasks"),
+                "tasks": {
+                    name: {
+                        "dataset_dir": directory,
+                        "metadata_sha256": self.store.manifest["experiment"][
+                            "task_metadata"
+                        ][name],
+                        "horizon": self.store.manifest["horizons"][name],
+                    }
+                    for name, directory in self.inputs["tasks"].items()
+                },
                 "source_files": {
                     key: {
                         "path": str(CHILD / path),
@@ -201,6 +215,7 @@ class Runtime:
                         "worker": "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
                         "native": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
                         "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+                        "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
                     }.items()
                 },
                 "settings": {
@@ -229,7 +244,7 @@ class Runtime:
                 CUDA_VISIBLE_DEVICES=str(gpu),
                 MUJOCO_EGL_DEVICE_ID=str(gpu),
             )
-            log = (self.store.root / "logs" / f"{task}_simulator.log").open("ab")
+            log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
             self.logs.append(log)
             command = [
                 self.cfg["sim_python"],
@@ -246,7 +261,7 @@ class Runtime:
             try:
                 owned, rec = self.registry.start(
                     command,
-                    kind=f"simulator:{task}:{a['stream_id']}",
+                    kind=f"simulator_slot:{self.slot_ids[worker]}",
                     env=env,
                     cwd=CHILD,
                     pass_fds=(child.fileno(),),
@@ -268,38 +283,76 @@ class Runtime:
                 server.proc,
                 self.cfg["episode_wall_s"],
             )
-            self.actors[task] = actor
+            self.actors[worker] = actor
             ready = actor._receive()
             if (
                 ready.get("kind") != "READY"
                 or ready.get("pid") != owned.proc.pid
-                or ready.get("task") != task
-                or ready.get("stream_id") != a["stream_id"]
+                or ready.get("physical_slot_id") != self.slot_ids[worker]
+                or ready.get("state") != "IDLE"
                 or ready.get("runtime_digest") != self.inputs["runtime"]["digest"]
             ):
                 raise RuntimeError("native Worker handshake mismatch")
-            proof = self._proof(
-                "native_worker_health",
-                {"actor": rec, "ready": ready, "server": server_rec},
-            )
-            for error in self.store.errors(task):
-                if error["resolution"] is None and error["stream_id"] != a["stream_id"]:
-                    self.certificates[error["id"]] = self.store.certify_recovery(
-                        task,
-                        error["stream_id"],
-                        lambda _, p=proof: {"probe_id": p, "healthy": True},
-                    )
             self.resource_probe(
                 self.cfg,
                 [v[0] for v in self.servers.values()]
                 + [x.owned for x in self.actors.values()],
             )
-            return actor
+            return self._start_assignment(claim, actor, server_rec)
+
+    def _start_assignment(self, claim, actor, server_record):
+        worker, task, a = claim["physical_worker"], claim["task"], claim["attempt"]
+        self.slot_claim_tasks[worker] = task
+        grant = None
+        if self.actor_tasks.get(worker) != task:
+            grant = self.store.allocate_environment(task, self.slot_ids[worker])
+        ready = actor.request(
+            "start_episode", attempt=a, grant=grant, health_only="attempt_id" not in a
+        )
+        if (
+            ready.get("task") != task
+            or ready.get("physical_slot_id") != self.slot_ids[worker]
+            or ready.get("attempt_id") != a.get("attempt_id")
+            or ready.get("state") not in ("ENV_READY", "CLEAN")
+        ):
+            raise RuntimeError("Slot assignment acknowledgement mismatch")
+        expected = grant if grant is not None else self.slot_environments[worker]
+        if (
+            ready.get("environment_id") != expected["environment_id"]
+            or ready.get("actual_seed") != expected["seed"]
+        ):
+            raise ValueError("Slot environment seed grant acknowledgement mismatch")
+        self.slot_environments[worker] = expected
+        self.actor_tasks[worker] = task
+        proof = self._proof(
+            "native_slot_health",
+            {
+                "physical_worker": worker,
+                "gpu_id": self.cfg["gpu_ids"][self.workers.index(worker)],
+                "actor": actor.record,
+                "ready": ready,
+                "server": server_record,
+            },
+        )
+        self.resource_probe(
+            self.cfg,
+            [v[0] for v in self.servers.values()]
+            + [x.owned for x in self.actors.values()],
+        )
+        for error in self.store.errors(task):
+            if error["resolution"] is None and error["stream_id"] != a["stream_id"]:
+                self.certificates[error["id"]] = self.store.certify_recovery(
+                    task,
+                    error["stream_id"],
+                    lambda _, p=proof: {"probe_id": p, "healthy": True},
+                )
+        return actor
 
     def run_slot(self, scheduler, claim):
         a = claim["attempt"]
         task = a["task"]
         self.latest_attempts[task] = a
+        self.slot_claim_tasks[claim["physical_worker"]] = task
         try:
             identity.guard(self.cfg, self.store.manifest, self.inputs, source=False)
             actor = self._actor(claim)
@@ -335,11 +388,32 @@ class Runtime:
                         a, error=remote, stage=response["stage"], safe_to_retry=safe
                     )
                 if state["status"] == "admitted":
+                    admitted_sampling = response["sampling"]
+                    expected = self.slot_environments[claim["physical_worker"]]
+                    if (
+                        admitted_sampling["environment_id"]
+                        != expected["environment_id"]
+                        or admitted_sampling["actual_seed"] != expected["seed"]
+                        or admitted_sampling["physical_slot_id"]
+                        != self.slot_ids[claim["physical_worker"]]
+                    ):
+                        raise ValueError(
+                            "admitted scene has foreign environment provenance"
+                        )
+                    self.store.bind_sampling(a, admitted_sampling)
                     break
                 if state["status"] in (
                     "skipped_init_error",
                     "scene_admission_exhausted",
                 ):
+                    released = actor.request(
+                        "finish_without_session", deadline=deadline
+                    )
+                    if (
+                        released.get("state") != "CLEAN"
+                        or released.get("session_opened") is not False
+                    ):
+                        raise RuntimeError("unproven no-Session Slot release")
                     scheduler.finish(claim)
                     return {
                         "task": task,
@@ -359,6 +433,9 @@ class Runtime:
                 directory=str(directory),
                 deadline=deadline,
             )
+            sampling = response["sampling"]
+            if sampling != admitted_sampling:
+                raise ValueError("foreign physical Slot evidence")
             row = result_record(
                 self.store.manifest,
                 task=task,
@@ -373,6 +450,7 @@ class Runtime:
                 instruction=response["instruction"],
                 replans=response["replans"],
                 elapsed_seconds=response["elapsed_seconds"],
+                sampling=sampling,
             )
             self.phases[claim["physical_worker"]] = "result_validation"
             scheduler.commit(claim, row, staging=directory)
@@ -439,14 +517,16 @@ class Runtime:
         if self.closed:
             return
         errors = []
-        for task, actor in list(self.actors.items()):
+        for worker, actor in list(self.actors.items()):
+            task = self.slot_claim_tasks.get(worker, self.actor_tasks.get(worker))
             try:
                 was = actor.owned.proc.poll()
                 proof = actor.close()
                 if proof["close_error"] or was not in (None, 0):
                     raise RuntimeError(str(proof))
             except Exception as e:
-                errors.append((task, repr(e)))
+                if task in self.store.active_tasks:
+                    errors.append((task, repr(e)))
         for worker, (owned, record, port) in self.servers.items():
             try:
                 was = owned.proc.poll()
@@ -454,15 +534,9 @@ class Runtime:
                 if was is not None:
                     raise RuntimeError(f"Action Server unexpectedly exited {was}")
             except Exception as e:
-                for task in self.store.active_tasks:
-                    if (
-                        self.workers[
-                            self.store.manifest["task_order"].index(task)
-                            % len(self.workers)
-                        ]
-                        == worker
-                    ):
-                        errors.append((task, repr(e)))
+                task = self.slot_claim_tasks.get(worker, self.actor_tasks.get(worker))
+                if task in self.store.active_tasks:
+                    errors.append((task, repr(e)))
         for task, message in errors:
             self.store.record_process_error(
                 task, "process_cleanup", message, attempt=self.latest_attempts.get(task)
@@ -606,7 +680,10 @@ class Runtime:
             original = e
             self.stop.set()
             scheduler.cancel(repr(e))
-            for task in list(self.store.active_tasks):
+            # Keep the approved commit/cancel serialization. A switched-out Task
+            # has no in-flight producer merely because its logical stream is open.
+            affected = {c["task"] for c in scheduler.inflight.values()}
+            for task in affected:
                 self.store.record_process_error(
                     task,
                     "coordinator_stop",

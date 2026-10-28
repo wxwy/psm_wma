@@ -16,8 +16,8 @@ prediction_steps: 30
 guidance: 1.0
 save_rollout_mp4: true
 save_generated_video: first
-max_resident_envs: 18
-max_contexts_per_gpu: 6
+sims_per_gpu: 1
+max_infer_batch_size: 1
 max_gpu_fraction: 0.85
 max_rss_bytes: 137438953472
 server_start_s: 900

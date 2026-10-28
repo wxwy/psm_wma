@@ -72,14 +72,6 @@ def discover(cfg):
         raise ValueError("unknown Task class")
     if cfg["tasks"] == "all" and set(order) != set(ATOMIC_TASKS):
         raise ValueError("all requires18 atomic Tasks")
-    if len(order) > cfg["max_resident_envs"] or any(
-        sum(i % len(cfg["gpu_ids"]) == w for i in range(len(order)))
-        > cfg["max_contexts_per_gpu"]
-        for w in range(len(cfg["gpu_ids"]))
-    ):
-        raise ValueError(
-            "BLOCKED_RESOURCE: declared resident environment/context capacity insufficient"
-        )
     return [(t, mapping[t]) for t in order]
 
 
