@@ -1,0 +1,18 @@
+{
+  "checked_at_utc": "2026-10-28T10:18:19.365100+00:00",
+  "formal_root": "4769d711777c20a72dd7a3f6071a96f08ad8abb0",
+  "child_gitlink": "2d4a42590fead00ea16f6ae5902e2bc8382b07e2",
+  "verified_remote_evidence_head": "891c69c907e9620de6231c7ae37e2be3c77ee255",
+  "candidate_branch": "v3-eval-v2-stage2-20261028",
+  "canonical_v3_observed": "4c9990f5bfab4544fe9edc69ba7227a07ef1ed8e",
+  "canonical_child_advertised": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "fetched_child_head": "2d4a42590fead00ea16f6ae5902e2bc8382b07e2",
+  "gitlink": "2d4a42590fead00ea16f6ae5902e2bc8382b07e2",
+  "remote_artifact_blobs_verified": 90,
+  "code_identical_formal_to_evidence_head": true,
+  "root_and_child_clean_before_receipt": true,
+  "production_diff_whitespace_checks": "PASS; exact Formal Root direct-parent and Child baseline diffs",
+  "raw_evidence_whitespace": "Raw patch context and failure traceback logs intentionally preserve original whitespace. Artifact commit whitespace diagnostics are not production lint failures; original artifact bytes were not rewritten.",
+  "no_canonical_push": true,
+  "no_gpu_or_native_execution": true
+}
