@@ -683,6 +683,11 @@ class Runtime:
             # Keep the approved commit/cancel serialization. A switched-out Task
             # has no in-flight producer merely because its logical stream is open.
             affected = {c["task"] for c in scheduler.inflight.values()}
+            affected.update(
+                self.slot_claim_tasks[w]
+                for w in self.actors
+                if w in self.slot_claim_tasks
+            )
             for task in affected:
                 self.store.record_process_error(
                     task,

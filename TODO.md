@@ -495,3 +495,5 @@
 - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — IN_PROGRESS; Codex, OwnerIssue8authorization; baseline4769d711/2d4a4259. ReusablephysicalSlotM1/B1,dynamicG/N,strictlifecycle,samplingprovenance,D1-D5CPU;newisolatedFormalPair+Evidence→GPTCodeGateSTOP. NoGPU/native/merge/PhaseB.
 
 - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — REVIEW; actualimplementation+authorCPU254PASS/0skip/static37PASS onnewisolatedcandidate. Childd2c1bda62880dbeee196f70945e5bc430b73f4b6, newRootnext. Full25G/Nmatrix/M1B1/realWorkerIPC/defaultRootpool/900CPU/lifecycle/seed/grant/sparseResume/quarantine-recovery; doc/Evidence/formalpairthenGPTCodeGateSTOP. NoautomaticPhaseB,DSjob,merge,GPU/native/DCP/history/trainoperation.
+
+- **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — REVIEW final255PASS/0skip/static37; includesconfirmedlate-zero-exitqualificationclosure+counterfactualRED/GREEN. NewRootformal follows; Childd2c1bda6unchanged. RequestfullPhaseA4292905a→newRootagainstapproved4769baseline, thenSTOPGPTCodeGate.

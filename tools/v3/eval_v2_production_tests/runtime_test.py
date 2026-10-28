@@ -254,3 +254,38 @@ def test_runtime_quarantine_then_explicit_resume_uses_new_slot_session_and_proof
             and not payload["evidence"]
         )
         assert old.slot_ids != new.slot_ids
+
+
+def test_late_zero_exit_after_valid_core_blocks_clean_without_retesting(
+    tmp_path, monkeypatch
+):
+    prepare_monkey(monkeypatch)
+    value = fresh(tmp_path, episodes=1)
+
+    class LateExit(CpuSlotRuntime):
+        def _actor(self, claim):
+            actor = super()._actor(claim)
+            actor.owned.proc.poll = lambda: 0 if actor.slot.state == "CLEAN" else None
+            return actor
+
+    with server() as (url, calls), value.locked():
+        report, error = LateExit(value, cfg(1, 1), url, []).run()
+        assert error is not None and report["valid"] == 1 and report["sr"] == 1.0
+        assert not report["clean_execution"] and not report["results_qualified"]
+        faults = value.errors("CloseFridge")
+        assert faults and all(e["core_committed_at_fault"] for e in faults)
+        original = (value._slot("CloseFridge", 0) / "result.json").read_bytes()
+    with (
+        server() as (url, calls),
+        Store(value.root, value.manifest).locked() as resumed,
+    ):
+        report, error = CpuSlotRuntime(resumed, cfg(1, 1), url, []).run()
+        assert (
+            error is None
+            and report["results_qualified"]
+            and report["resolved_process_errors"]
+        )
+        assert not calls  # execution-only fresh health, never repeat a valid Episode.
+        assert (
+            resumed._slot("CloseFridge", 0) / "result.json"
+        ).read_bytes() == original
