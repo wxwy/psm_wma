@@ -336,3 +336,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - GPT正式详细Review：`docs/collab/chatgpt/reviews/2026-10-28_V3_NoTTT_Compact_GPU_Forward_Loss_Gradient_Parity_Evidence_Review.md`；**`REQUEST_CHANGES`（Evidence-only）**。F1 HIGH=所有4 Rank所有选中FSDP梯度Shard无逐参数`allclose(rtol1e-3,atol1e-5)`；F2 MEDIUM=三套不同Fresh1+Optimizer/DCP并非同初始权重/冻结RNG的无OptimizerA/B harness；F3 MEDIUM=DCP Complete marker的`metadata.sha256`不是模型/优化器Tensor数值hash，不能用其不同判断“权重噪声”；F4 LOW=缺原始四Rank日志/可审核ParityJSON。
 - **仅留一项窄范围Remediation**：4GPU可共存条件下一次Frozen Native Harness，Compact0/1在同权重/Buffer/Batch/逐RankRNG、无Optimizer、无Checkpoint的Forward/Loss/Backward paired比对，逐参数/全部4Rank输出NoneMask、shape、dtype、allclose、maxabs/relativeL2/worst10/group。只在必要时一次Dense/Dense控制；不要再新增三套Fresh1。
 - 本轮不管磁盘/Checkpoint保留策略（Owner本地监管），CPU Gate仍CLOSED。`GPU_PARITY=REQUEST_CHANGES`，`S2_NOT_AUTHORIZED_BY_THIS_GATE`，无生产代码改动；旧NoTTT继续，不得擅切Compact或自动恢复。
+
+
+## 2026-10-28 — DS_PRO One-Round：Compact GPU Paired Grad Parity + 3Fresh速度抽取 + S2静态预检
+
+- **Owner目标**：减少DS/GPT交流次数，将互不依赖任务合为一次执行/一次Evidence/一次GPT审核。精确单轮合同：`docs/collab/chatgpt/requests/2026-10-28_V3_NoTTT_Compact_OneRound_GPU_Parity_Perf_S2_Readiness_DS_PRO.md`。不新增新的production implementation/design target；historicalNoTTT Root`49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9`/Child+Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`不变。
+- A（无GPU）：从以前Compact1/0/1三次`fresh1` monitor提取同口径`step_wall/data_prepare/forward/backward/memory`和真实身份，观察速度差，不追加训练、非稳态Benchmark结论。
+- B（仅GPU4–7，可与旧NoTTT共存）：**唯一新增GPU实验**真实4Rank FSDP2无Optimizer无DCP **Dense0↔Compact1同权重/冻结Batch/逐RankRNG配对Forward/Loss/全部选中梯度分片逐元素`allclose(rtol1e-3,atol1e-5)`**；对不上仅一次Dense/Dense控制。不调用三套Fresh1或正式trainer.train。
+- C（无GPU）：只读核实新Compact1 `no_ttt_compact1_corerun_20261028_world4_ga4` 的`iter1`完整Marker/4RankSidecar/identity及`save_iter=100`；未存则`CHECKPOINT_NOT_PRESENT`，不去干涉Owner本地保留/清理。
+- A/C与B**相互独立执行**；B资源/构建失败仍交付A/C。统一`summary.md/json+Harness代码+最少原始日志`，DS本轮只回报一次。旧`GPU_PARITY=REQUEST_CHANGES`不因指令发布自动关闭，CPU Gate仍CLOSED，S2`resume10/100/30000`仍需独立授权。禁止改旧/新Job生产模型、训练、Checkpoint或生产代码。
