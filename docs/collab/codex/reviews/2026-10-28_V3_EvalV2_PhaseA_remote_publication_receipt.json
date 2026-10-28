@@ -1,0 +1,19 @@
+{
+  "checked_at_utc": "2026-10-28T16:21:09.288695+00:00",
+  "formal_root": "fd7e43f6630a436ab3d83edcd3ce9d1516b342d1",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "full_phase_a_review_base": "4292905afcf6dfd0ce4f00e336c35a7c09e319b0",
+  "root_direct_parent": "1ac82af40a95587dd3f5e016dbc6a7e73ebeb9c2",
+  "verified_remote_evidence_head": "12cdc6af5bedcaf4fc2a17926272ddb58103de9f",
+  "candidate_branch": "v3-eval-v2-slots-a-20261028",
+  "canonical_v3_advertised": "0c424c830968cf447f5bd36c438d46325d12a557",
+  "canonical_child_advertised": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "prior_stage2_child_preserved": "2d4a42590fead00ea16f6ae5902e2bc8382b07e2",
+  "remote_artifacts_verified": 85,
+  "inbox_preserved_prefix": true,
+  "code_identical_formal_to_docs_head": true,
+  "root_child_clean_before_receipt": true,
+  "no_canonical_push": true,
+  "no_gpu_native_or_training_execution": true,
+  "new_code_gate_status": "REQUESTED; author CPU only, no verdict inherited"
+}
