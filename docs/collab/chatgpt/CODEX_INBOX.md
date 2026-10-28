@@ -307,3 +307,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **冻结Checkpoint频率 `save_iter=100`**（避免中断浪费），不批准改成1000；`max_iter=30000/warmup=500`不变，不擅删/移/覆盖任何DCP。
 - 仍须验证Checkpoint真实完整性（如`complete.v1.json`/rank sidecars）、训练/Resume语义及Compact0/1数值Parity；Owner只接管存储管理，不代替模型技术Gate。旧正式Job保持不动，新Job不得自动`resume10/100/30000`；继续启动需另行授权。
 - **当前Status**：`R1_OWNER_MANAGED_NOT_GPT_BLOCKER` / `SAVE_ITER_100_FROZEN` / `S1_EVIDENCE_ONLY_OPEN` / `GPU_PARITY_NOT_RUN` / `S2_PENDING_NON_STORAGE_AUTHORIZATION`；本次仅文档修改，Child/Gitlink`746c5cf2f2324104a62fb71510343aa40d3976c5`未变。
+
+
+## 2026-10-28 — GPT Stage2 Eval V2 4769d711/2d4a4259 Code Gate REQUEST_CHANGES (D1 HIGH-F1)
+
+- **精确 Formal Implementation pair**：Root `4769d711777c20a72dd7a3f6071a96f08ad8abb0` / Child+Gitlink `2d4a42590fead00ea16f6ae5902e2bc8382b07e2`；作者 Evidence/Handoff `089e083c266d1768d0a6154023d75249d500f039` 为后续文档提交，不取代Formal代码。候选 `v3-eval-v2-stage2-20261028`。Stage1 Design `APPROVE_DESIGN` 保持有效，**本次 Stage2 新生产 Code Gate = `REQUEST_CHANGES`**，不得将设计通过等价于生产放行。
+- **详细GPT独立代码审核落盘**：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Stage2_4769d711_2d4a4259_Code_Gate.md`。根仓直接父节点Diff仅新的V2生产入口/配置/进程/测试和Gitlink；Child仅新eval模块与两个窄Native optional hooks。作者正式原始JUnit **200 passed/0失败错误跳过/86.725s**（142生产CPU +58旧回归）；GPT从Formal Root/Child独立获取并核对**34/34 Git Blob匹配**作者冻结绑定；Ruff0.12.7/format/AST/Shell均为作者原始日志PASS，GPT/DS没有重跑CPU/GPU或真RoboCasa。
+- **唯一阻断 HIGH-F1（D1 并发 Core Commit vs 故障分类竞态）**：Root `scripts/robocasa_eval_v2/runtime.py:605–615` 任一Worker失败时，协调器在另一个Worker仍可能提交Core期间记录其 `coordinator_stop`，没有通过Scheduler/Store同一原子临界区序列化。Child `cosmos_framework/evaluation/robocasa_v2/store.py:793–833` commit早期healthy检查后仍可继续 `os.replace`；`:849–866` 故障在当时未见Core时冻结 `core_committed_at_fault=False`；`:895–918` 对同Attempt后来已经成功提交的不可变Core既不允许执行型恢复又不允许不同Attempt重测，导致可能**永久Clean Qualification不可解除**。这是源码级可达竞态，未声称实机复现；违反已测即跳过与D1恢复要求。
+- **Codex最小整改**：在同一个协调器/Store线性化边界序列化 Core 发布和故障登记（或设计可追溯同Attempt在途提交的完整恢复），保证“Fault先于Commit则不能后提交该旧Attempt；Commit先于Fault则标记后提交故障，旧有效Core保留并可通过正面清理+新Stream健康证明结案”。增加**确定性的多Worker CPU交错测试**：TaskB暂停在healthy检查后/原子发布前，TaskA故障记录，TaskB继续，验证不会出现有效Core与无法结案的pre-Core错误；反向顺序也要验证。包括正常BehavioralFailure、Resume、旧Core字节/inode与clean qualification。提交**新Formal Root/Child SHA + focused CPU Evidence**，再STOP申请GPT F1增量Code Gate。
+- **正向路径非阻断**：D2原子Core+证据、D3稀疏Episode Resume、D4初始成功过滤/四连错Owner跳过、D5 Episode-major同轮多GPU/严格barrier，以及真实HTTP/Local/媒体解耦已在生产源和作者CPU证据看到实现；本次不要求重新设计D1–D5。另真实3常驻模型+18 Task/EGL资源、GPU/Local/媒体饱和、物理算力与真Canary尚未验证，保留独立后续Gate。
+- **权限冻结**：当前只允许在独立候选修复Code Gate F1及对应CPU负例；不得合并V3/Child正式分支、启动真实GPU/Simulator/DCP/Canary/900、修改训练、checkpoint、Vendor或历史431结果。尚不授权DS真实运行及Owner新900测试。仅V3审核文档更新不是新Formal代码版本。
