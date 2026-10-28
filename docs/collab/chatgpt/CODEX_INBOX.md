@@ -263,6 +263,25 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **下一步**：四张明确空闲GPU后重新做**新鲜S0**，否则保持`BLOCKED_RESOURCE`。若需要受控停止NoTTT释放GPU4–7，须Owner单独明确授权及committed checkpoint边界，不得自动安排重试或后台轮询。
 
 
+## 2026-10-28 — Owner 可接受 GPU4–7 上第二套完整 No-TTT Compact=1 共存训练（受控分阶段）
+
+- Owner新增允许方案：**在保持旧正式`no_ttt_packed128_droid_fresh_30k_world4_ga4`训练不动的前提下，可考虑于GPU4–7共存运行第二套独立完整NoTTT Compact=1训练**；这是新的任选路径，非命令已执行，GPU0–3不可使用。
+- 已冻结精确阶段执行令：`docs/collab/chatgpt/requests/2026-10-28_V3_NoTTT_Compact_Coresident_Second_Job_StagePlan.md`。当前Child/Gitlink为`746c5cf2f2324104a62fb71510343aa40d3976c5`，本次只增加Owner决策与请求文档，无NoTTT生产代码改动。原独占 GPU Parity `BLOCKED_RESOURCE` 记录仍合法不变。
+- S0：只读双任务资源准入，按NVML初步双副本显存估算最紧GPU4只余约5GiB，存在显存/计算竞争风险。检查RAM/IO/旧Job健康；任何保护条件未满足返回`BLOCKED_CORESIDENCY`。
+- S1：只有准入成功时，使用全新`JOB_NAME=no_ttt_compact1_corerun_20261028_world4_ga4` + `PSM_V3_COMPACT_CACHED_VIDEO=1`，真实4卡FSDP2、GA4/128、`NOTTT_LOADER_WORKERS=0`，执行 `bash scripts/train_v3_matched_no_ttt_4gpu.sh fresh 1`；仅新Job DCP可写，完成或失败立刻交Evidence给GPT，**不得自动延伸10/100/30k**。
+- S1成功只能证明完整训练一Step可执行，**不能替代同权重/同随机数的GPU Loss/Grad parity**，亦不授权原Job Compact切换。继续新Job长训需另做严谨资源/数值审查及独立授权。禁止 reset --hard、SSL验证关闭、碰旧Job和GPU0–3。
+
+
+## 2026-10-28 — GPT Eval V2 r2 D1–D5 exact-pair Design Gate APPROVE_DESIGN
+
+- **Formal Design + isolated CPU prototype pair**：Root `1fd3ad42075032bd0137ac9a76306169aaa45032` / **unchanged Child/Gitlink** `746c5cf2f2324104a62fb71510343aa40d3976c5`. Prior r1 formal `dc750f8e258d10a33e7a195cf907926b1c98bd7f` 是 `REQUEST_CHANGES`; r2来源为独立候选 `v3-eval-v2-design-r2-20261028`，作者 handoff/Evidence `9e6968c9183beb365980afbf5db9d9097ec207c5` 不是 formal implementation SHA。
+- **GPT 直接源码+作者原始 Evidence 增量审核结果：`APPROVE_DESIGN`，仅关闭当前 D1～D5 的 Stage1 Design/isolated CPU prototype Gate**。详细报告：`docs/collab/chatgpt/reviews/2026-10-28_V3_RoboCasa_EvalV2_r2_D1_D5_1fd3ad42_746c5cf2_design_review.md`。原始 JUnit **104 passed / 0 failure / 0 error / 0 skip / 287.051s**，10/10冻结 Git Blob 与 Formal Root 实际文件一致，Ruff/format/syntax 为作者日志 PASS，非 GPT/DS CPU 再跑。900个 Episode 是合成记录，绝非真实仿真SR。
+- **D1 CLOSED(Design)**：旧进程错误持久留证 + 正面清理/健康/同槽成功重试或已提交结果的执行型恢复；当前不安全故障仍阻止 Clean Qualification。**D2 CLOSED(Design)**：Task/Slot首次claim Intent→Directory→Ready + 原子Core Commit、Crash恢复与模糊状态拒绝。**D3 CLOSED(Design)**：Episode37未有效提交只补37；0～36及其他已完成有效Success/BehavioralFailure字节不变；原Scene/RNG无需复现；跳过缺口后有效38也不得复测。**D4 CLOSED(Design)**：reset后初始`_check_success`为True拒收退化场景；初始化连续第4次安全可恢复错误则 `SKIPPED_INIT_ERROR`，后续Task可继续但非自动补测，Owner批准才释放；32次总admission上限为作者提议的版本化有界默认。**D5 CLOSED(Design)**：冻结Task顺序，`Episode-major`全900槽位排序，同轮多GPU异步派发、严格轮次屏障、每次Resume跳过已有有效Core，跳过Owner-Pending孔洞。保持视频媒体与SR解耦、无自动ffmpeg、Task→Episode输出、不读旧431。
+- **独立运行时 Gate 仍未通过，也尚未进入**：r2原型只执行CPU假环境；拟议3常驻Action Server +18常驻Task环境/每GPU6 EGL上下文为**未测容量假设**；真实模型Local-TTT重置/Session端到端、媒体隔离、严格初始成功检查、进程PID/PGID/Server监听所有权及EGL重建、完整900数据CPU索引开销均待下一阶段验收。作者104测试中900-slot fake测试~178s，不是端到端性能指标。Owner放行后才可在独立分支启动Stage2生产候选，提交新Formal SHA并先走Code Gate → DS独立CPU → Owner单独授权的真实Canary/900；**本审核不授权生产接线、V3合并、真DCP/GPU/仿真/900测试、训练切换或旧431变更**。
+- **No repeat audit on bookkeeping commits**：下一次技术审核只在新的Formal Root/Child实现或设计SHA出现时进行；本轮V3只新增Review和Inbox，Child未变。Codex如收到新任务先读取此入口，不要把`APPROVE_DESIGN`当`APPROVE_PRODUCTION`。
+
+
+
 
 
 
