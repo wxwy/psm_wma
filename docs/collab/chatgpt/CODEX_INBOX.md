@@ -213,3 +213,10 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **New D3 HIGH**：当前 r1 `contract.py:14-15` / `store.py:223-321` / Design§6 采取 archive 整项 Task 50 Episodes，与 Owner 明确的 Episode Resume 口径冲突。Codex 下一版 r2 必须实现 immutable valid prefix + per-Episode retry slot/attempt ledger/atomic result identity，Episode37 crash before/after commit、重复故障、Media-only / Local-invalid / Worker error、跨 GPU/Restart不重复和不静默丢失；同时修 D1 scoped process-error resolution、D2 crash-safe initialization。
 - **Scene/RNG 技术约束**：旧 native 一 Task `seed0` + 50连续 `env.reset` 的运行中，无法靠新 env(seed0) 一次 reset 或只跳过 reset 证明复现 Episode37。推荐新 fresh900 从 ep0 就统一采用 `SHA256(base_seed,Task,index,sampler_version)` 固定的**独立 Episode 场景计划**，实际 RoboCasa Seed/Reset 需有实证、必要时每 Episode 新 Env；此为**新基准采样版本，禁止冒称等价原连续 Reset**。若要求保留原连续 Seed 采样，则需经真实 Canaries 证明完整 Env/Simulator/Policy RNG 边界快照及恢复。两种方案不允许在同一900结果里静默混用。冻结样本方案仍待新 r2 Design Gate 核查。
 - **No runtime authorization**：不合入 V3 Candidate、不启动真实 DCP/GPU/Server/RoboCasa/900集，不修改旧431或训练。Codex 下一步交独立新 Formal r2 SHA，GPT只对 D1/D2/D3 增量评审。
+
+
+## 2026-10-28 — NavigateKitchen reset-already-success: Eval V2 D4 scene admission
+
+- DS_PRO报告旧Run `seed=695376856` 的 NavigateKitchen Drawer→Microwave 场景 `env.reset()` 后即 `_check_success()==True`，base-target XY 0.1336m（阈0.20m）、朝向 cos1.0（阈0.98）；零动作 Step 可记Success。GPT未接触服务器原始探针，但核对 Child reset→step→check 顺序与公开RoboCasa成功判据；这是起始场景退化，并非策略掌握导航的证据。
+- **新 D4（下一 r2 Design Gate 验收）**：V2 在reset后、Model/Action/Local-TTT调用前做严格 initial-success precheck；已成功则记录 `DEGENERATE_INITIAL_SUCCESS` 并有上限地重新采样，**不占用50个有效Episode、不计算Success/Failure**；成功谓词异常不可吞；正常行为失败不重试；记录拒绝场景与实际采样来源，报告采样过滤率，版本化新评测协议。**不要修改Vendor或增加未经批准的距离阈值**。
+- 完整 Evidence / acceptance：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_NavigateKitchen_Reset_Already_Success_Evidence_Design_Addendum.md`。先前 Owner 最新决定仍是 **Episode级 Resume 且不要求复现原场景**，D1/D2/D3仍Open。当前r1 formal pair `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` **未变，不重复技术审核、不改变 REQUEST_CHANGES**。只要求下一新 formal design SHA 纳入 D4；未授权生产代码/仿真GPU/旧431更改。
