@@ -225,3 +225,11 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 ## 2026-10-28 — Owner scene reproduction clarification supersedes earlier D3 sampling requirement
 
 - **Owner原话**：“Episode 37 中断 就应该从 Episode 37 重新测”，“如何保证 Episode 37 的场景采样可复现？**不用复现**”。此较新决定取代 `2026-10-28_V3_EvalV2_Owner_Override_Episode_Level_Resume.md` §2 提出的固定每集 Seed / 全RNG快照 A/B 二选一要求；**不得把精确旧场景复现作为 Design Gate 强制前提**。正常 Task 可持续Reset；仅无有效 Core Result 的逻辑 Episode 重测/重新采样新场景，保留前缀及有效 behavioral_failure；实际新Seed/stream/resume边界照实记录，不假冒单一连续 RNG 流。见 `docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_Owner_Clarification_No_Scene_Reproduction.md`。本条修正 D3 需求，不改变 r1 formal pair 的 REQUEST_CHANGES；D4 initial-success scene admission 应与该恢复口径一致。
+
+
+## 2026-10-28 — Owner D4: 4 consecutive Episode initialization errors → SKIP and REPORT
+
+- **Owner 决定**：初始化 `env.reset()` 或初始 `_check_success()` 严格校验异常时，记录后安全重新初始化；同一 logical Episode **连续初始化错误超过3次，即第4次报错**，标记 `SKIPPED_INIT_ERROR` 并跳过该 Episode、在安全条件下继续后续 Episode。记录全部错误，汇总跳过的 Task/Episode ID、尝试次数/Seed/Stream/重启边界；**不自动补测，报告 Owner 决策是否 Resume**。
+- 退化场景 `initial_success==True` 单独记 `DEGENERATE_INITIAL_SUCCESS` 并有上限重采，**非初始化异常**；一次成功初始化/前置判据检查打断连续错误计数。媒体错误与已开始策略执行后的正常 `behavioral_failure` 均不计初始化错误，也不得借机重跑。进程不安全故障不能按安全 reset 自动吞掉。
+- **重要架构变更**：`ep37` 被跳过仍可评测 `ep38..49`；r1 prototype `Store.rows()` 要求连续前缀的限制必须在 r2 设计为 slot 独立状态 + 重试记录/唯一 Core Commit，任何跳过不计Success或Failure、正式SR保持null、未完成不能报COMPLETE；后续 Owner 授权仅补真正缺口。不得重跑此前有效 ep0..36，也不要求复现原场景。
+- 详细 Design Addendum：`docs/collab/chatgpt/reviews/2026-10-28_V3_EvalV2_D4_Owner_Init_Error_4_Strikes_Skip_Report.md`。r1 Formal Design Root `dc750f8e258d10a33e7a195cf907926b1c98bd7f` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5` 不变；原 REQUEST_CHANGES 仍有效，D1/D2/D3/D4 r2 Design Gate 待审。无生产修改、Git合并、GPU重跑授权。
