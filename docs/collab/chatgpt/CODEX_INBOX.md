@@ -186,3 +186,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **E1**：3个 CloseBlenderLid terminal partial Episode valid_count=9/12/13, 34 valid Consumers，Payload/Segment/RNG所有记录比较通过；**E2**：4个 GA Member×128=512，同一Frozen Planner/Native Packed Batch payload/collate/positions/逐Member RNG比较全部通过。
 - **LOW nonblocking**：Task2最终 `rng_after_eq` 是连续快照，没有验证价值；真正有效证明为4个Member的 `mem_state→Dense→restore→Compact` 的 `rng_consumed_eq`。不要援引前者作为证据。
 - **Boundary**：尚未授权真实模型GPU Forward/Loss/Gradient/H2D parity、FSDP、DCP Resume、正式Job checkpoint切换或训练加速验收；正式 No-TTT Job、Child生产代码、Checkpoint均未改动。
+
+
+## 2026-10-28 — No-TTT Compact0/1 isolated Native GPU Forward/Loss/Gradient parity（DS_PRO execution request）
+
+- Owner在会话中明确同意**仅隔离GPU Native parity Gate**；GPT独立冻结精确执行边界：`docs/collab/chatgpt/requests/2026-10-28_V3_NoTTT_Compact_GPU_Native_Parity_DS_PRO.md`。对应先前关闭的CPU Gate：`docs/collab/chatgpt/reviews/2026-10-28_V3_Compact_Segment_NoTTT_CPU_Evidence_Closure.md`；勿重跑旧Evidence。
+- 当前 Child/Gitlink仍为 `746c5cf2f2324104a62fb71510343aa40d3976c5`；本次仅请求/Inbox记账，不产生新的No-TTT生产 formal pair或技术 verdict。
+- **第一条硬规则**：先只读检查物理GPU；少于4张空闲时交付`BLOCKED_RESOURCE`，不许启动torchrun/CUDA/模型、不许抢占正式NoTTT(历史GPU4-7)或其他用户(历史GPU0-3)任务、不得后台等待。
+- 有四张可用卡才用world4 FSDP2只读 Base DROID模型、Frozen rank-local GA member (B8×T16=128)、Compact0/1对照 native `move_cached_native_batch→training_step→weighted_backward`、Grad per selected Param Shard；禁止Optimizer/Scheduler Step、`trainer.train`、所有Checkpoint Save/Resume、正式Job写入。若无法按源语义只读构造则`BLOCKED_HARNESS`，不可冒用正式训练launcher。
+- DS仅出 isolated Python/JSON/日志和`PASS_CANDIDATE`/FAIL/BLOCKED供GPT独立审核，**本轮不批准正式训练切换Compact=1**。
