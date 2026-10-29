@@ -433,3 +433,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - 四Rank v2严格selected梯度`allclose(rtol1e-3,atol1e-5)`：Dense→Dense fail=139/149/140/154，Dense→Compact fail=135/142/148/156（分母294）。四Rank标量Loss三侧一致，报告`grad_none_mask_eq=true`、`grad_dtype_mismatch=0`、`weight_buffer_drift=0`，但严格数值仍`FAIL_PARITY`；“统计不可区分/纯bf16固有噪声”只是假设，不能预后修改Gate阈值。
 - **Verdict正式`REQUEST_CHANGES`（Evidence-only；生产NoTTT无新Bug结论）**。v1 F2“潜在伪PASS”运行上已有`formal_pass=false`见证，但仍需v2脚本源验证predicate。F3完整Native Input/Output值与Buffer范围、F4梯度dtype/finite/全参数元数据，只给了汇总/少量字段，未看到四Rank原始v2 JSON。GitHub V3当前缺 `gpu_paired_harness_v2_freeze_formalpass_fullwitness.py` 及`v3_gpu_parity_rank{0..3}_v2.json`；先一次性提交已有原始工件，**无需新GPU复测**。
 - A速度观察与C静态Resume状态不变：A=`RECORDED`、C=`READY_BY_STATIC_CHECKS`（真实DCP Restore未跑）。Owner本地管理磁盘/CKPT，`save_iter=100`，此处不阻断；旧NoTTT不动，新Compact1长训尚未从本Gate获得授权。实践性S2风险接受必须与严格FAIL的数学Gate分开。
+
+
+## 2026-10-29 — GPT Transaction/B1 增量复核更正：P1 WITHDRAWN，F1 OPEN，Code Gate 仍 REQUEST_CHANGES
+
+- **Formal Implementation Pair unchanged**：Root `9a3f88e55893491ea68d16b3f23680ae6941d106` / Child+Gitlink `1bece52ee419d12119c1b3d0b75e0ae5c5139ae9`。候选 Root HEAD `0f887a8c00f4514343e887da946136820e6cf16e`仅 Evidence/bookkeeping；Child仍原SHA，无新生产修复。详细增量更正：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_Transaction_B1_9a3f88e5_1bece52e_Recheck_P1_WITHDRAWN_F1_OPEN.md`。
+- **Verdict remains REQUEST_CHANGES；B1-F1 MEDIUM remains OPEN。** 本轮直接重读生产 Client→Dispatcher→Actor：client 第81行固定原始deadline；HTTP未传预算；actor第301行首次接收重新授予整段timeout，commit第424–425行只检查新deadline。即使两端时钟一致，t0客户端启动/1s预算、t0.8服务端首次收到、t1.2完成仍可能commit。显式End/device drain/重复POST不续期均不能补上首次传输耗时。继续最小整改统一预算及真实接口fake-clock负例；不是实测SR或跨Session污染结论。
+- **B1-P1 WITHDRAWN。** 前次报告忽略 `AGENTS.md:51–59` 与 `.codex/skills/psm-execution-governance/SKILL.md:31–39` 的既有128KiB rollover例外（自 `beb3f41a722169b63abb6e78561a909188cbc30a`，2026-09-03）。PhaseA/Formal/V3 AGENTS同Blob `3bdf0408...`。本次旧live130996B只余76B，archive与旧live同Blob `d702c44d...`，历史逐字节保全，新live保留连续性指针。本轮没有可核实的更晚Owner原文撤销该例外；撤销“rollover本身违规/必须恢复全文到live”的要求，不更改治理规则、不臆称取得Owner逐字授权。候选未来晋级仍须fresh-read无损保留双方新增协作记录和immutable archive。
+- **证据复核**：原始JUnit 67+255=322 testcase，0fail/error/skip；gate.json锁定精确Formal Pair，14/14源码Git Blob匹配。均为作者CPU；GPT本轮未重跑测试、未运行GPU/真实环境/DS。旧Review保留，P1和关联整改以本更正为准。
+- **下一步**：Codex仅继续隔离候选B1-F1整改与CPU证据，提交新精确Formal Root/Child再GPT Code Gate。PhaseA source APPROVE_CODE、PhaseB design APPROVE_DESIGN保持；第二批M>1/nativeB>1、V3/Child生产合并、DS执行、真实Canary/900仍未由本轮准入。
