@@ -500,3 +500,9 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **正式独立 Evidence verdict=`REQUEST_CHANGES`（Evidence-only），底层故障`BLOCKED_ENVIRONMENT`**。详细报告：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_B2_DS_PRO_CPU_Port_Conflict_Evidence_Review.md`。
 - **最小下一步**：建议Owner明确授权DS**同一精确Pair、全新外部Evidence目录、单次完整424统一CPU Gate重跑**，原FAIL证据不覆盖；随机端口无需等待正在运行训练释放固定44783。若再因相同问题失败才由Codex作仅夹具`127.0.0.1→0.0.0.0`改动及窄增量审核。未授权新的重跑/生产合并/GPU/Canary/900/训练操作，本轮不自行执行。
 
+
+## 2026-10-29 — Owner纠正 No-TTT 长训目标：旧正式 Job 原地 Resume，不是 Fresh10 新 Job→30k
+
+- 原独立 Fresh10→30k 提案 **SUPERSEDED_NOT_AUTHORIZED**；已在原提案顶部醒目标记，并新增 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Existing_FormalJob_Compact_NW8_Resume_Target_Correction.md`。
+- 目标为仍在训的 `no_ttt_packed128_droid_fresh_30k_world4_ga4`（Owner报 iter7600+），未来合法Checkpoint边界同Job Resume；明确关注 `NOTTT_LOADER_WORKERS`，历史 nw8 iter701–1590、Fresh10 实际 nw0。建议 nw8 作为 Compact1 的优先验收配置，当前7600+实时nw待只读核实。
+- 原Job不可停/热切/并发Resume。本次文档纠偏不授权 GPU/Resume/30k；旧严格梯度 FAIL、Compact归因 INCONCLUSIVE、Owner存储管理/save100不变。

@@ -1,3 +1,5 @@
+> **撤销 / SUPERSEDED — 2026-10-29 Owner 目标纠正**：本文件曾提议将独立 `no_ttt_compact1_corerun_fresh_20261029_world4_ga4` 从 iter10 继续训练至30k，**此路线不是 Owner 的最终目标，禁止使用以下命令安排 DS 续训**。Owner 最新澄清：目标是未来在合法停止/Checkpoint 边界，使用当前仍在训练（当时 iter7600+）的正式 `no_ttt_packed128_droid_fresh_30k_world4_ga4` **原 Job** 继续 Resume，并评估 `PSM_V3_COMPACT_CACHED_VIDEO=1` 与 `NOTTT_LOADER_WORKERS>0`。现有 nw8 历史可作候选，仍需针对 Compact+nw8 与原 Job 恢复行为做单独验收。见 [正确目标与执行边界](2026-10-29_V3_NoTTT_Existing_FormalJob_Compact_NW8_Resume_Target_Correction.md)。本次仅 docs 纠偏，**未授权停止、Resume 或长训**。
+
 # 独立 Compact Fresh Job Resume 至总30k — 待 Owner 扩大执行范围的提案
 
 - 日期：2026-10-29（Asia/Shanghai）。
