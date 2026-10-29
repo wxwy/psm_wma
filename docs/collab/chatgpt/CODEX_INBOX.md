@@ -482,3 +482,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **作者证据核对**：原始 JUnit 145+255+24=424，0 failure/error/skip；61/61 Formal GitBlob bindings 一致；旧99+255测试身份保留。真实 CPU owned OS/HTTP witness 支持 overlap/B>1/清理/完成后 Resume 无模型和 Sim 工作；421 中间 Pair 与 wrapper exit-code RED 单列，最终424绑定本 Pair。GPT仅独立源码/证据核查，未重跑测试；不等于DS或native验收。
 - **后续只保留既定三步**：一次DS完整候选CPU replay → 另行Owner授权1GPU/M2/B2真实Canary → 另行授权18×50。没有新增设计Gate、第三批架构、历史阶段重复验收或参数扫表。目标机器clock条件随真实启动核验。
 - 本轮仅发布Review及本append；未合并V3/Child生产、未派发DS、未执行GPU/RoboCasa/Canary/900/训练或改变其它项目Gate。Issue #8 回复引用该正式Review。
+
+
+## 2026-10-29 — Compact新Job Fresh10报告验收：接受连续训练结果，实际Resume仍未执行
+
+- **正式 verdict `ACCEPT_S2_FRESH10_REPORT`**；详细Review `docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_Compact_S2_Fresh10_Incremental_Review.md`。本轮为Owner粘贴DS报告的增量审阅，报告归档 `docs/collab/chatgpt/evidence/2026-10-29_V3_NoTTT_Compact_S2_Fresh10_DS_PRO_Submitted_Paste.md`；GPT未独立回读服务器原始日志/JSONL/checkpoint。当前连接设备Offline，本地4个未推送evidence提交未取得SHA/diff，不声称已合并。
+- Owner因清理S1 checkpoint明确授权fresh重建并指定 `no_ttt_compact1_corerun_fresh_20261029_world4_ga4`。接受 `PASS_FRESH_CONTINUOUS_10`：报告GPU4–7、FSDP2/GA4/B8/T16/Compact1、iter1–10连续10次optimizer_committed、rank0每步294梯度/0missing/0nonfinite、正常停10，iter10 checkpoint保存完成。原Resume仍`BLOCKED_BEFORE_RUN`；新Job的iter10实际恢复`NOT_EXECUTED`，不把fresh等同resume。
+- 报告十步均值wall20.32s/data_prepare5.54s；无同期Dense对照，不声称稳态1.87倍。rank0峰值32.17GiB与旧Job峰值35.66GiB不能外推每卡同时余量；报告CST与日志文件名Z需澄清口径，不因此重跑或判运行FAIL。
+- 历史No-TTT Root `49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5`供追溯；现场身份仍为DS报告的HEAD未核实占位值，Owner profile豁免继续生效。严格Gradient `FAIL_PARITY`、参照重复性FAIL、Compact归因`INCONCLUSIVE`与输入见证OPEN保持，不重跑CPU/Fresh1/Fresh10/旧paired。
+- 技术建议：同一新Job一次真实Resume进入原定30k，以restore与首个iter11作为同次续训早期检查，不增设11→20→100多轮Gate。具体提案 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Compact_FreshJob_Resume30k_Proposal.md` **`PROPOSED_NOT_AUTHORIZED`**；既有授权止于10，扩大范围待Owner明确决定。本轮无训练启动/执行消息，无生产代码/Gitlink/旧Job/Cleaner变更；save_iter100和Owner存储管理保持。
