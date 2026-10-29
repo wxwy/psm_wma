@@ -1,0 +1,19 @@
+{
+  "formal_implementation_root": "dc7757922d7273f50f3de23363d41e12e157a07f",
+  "child_gitlink": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "readback_evidence_head": "473c0435e819eaffff4368e7a8c0c2c41d4be4ab",
+  "root_child_candidate": "v3-eval-v2-transactions-b1-20261029",
+  "source_bindings_verified": 15,
+  "artifact_sha256_verified": 33,
+  "inbox_bytes": 18300,
+  "archive_blob_verified": "d702c44dd68529e93a491c5353e866ab7be92a07",
+  "remote_v3_at_readback": "e57f0263757c65521acac7a2c24e7fdbdaa78cfb",
+  "remote_canonical_child_unchanged": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "cpu": "354PASS_0FAIL_ERROR_SKIP",
+  "kernel_clock_preflight": "ACTUAL_CLOUD_BLOCKED_NO_TIMENS_FILE; CPU tests use explicit kernel byte-stream doubles",
+  "gpt_code_gate": "REQUESTED_NOT_APPROVED",
+  "second_increment": "NOT_STARTED",
+  "ds_gpu_native_model_sim_dcp_training_history": "NONE",
+  "recorded_utc": "2026-10-29T06:56:05.520206+00:00",
+  "note": "Receipt HEAD is bookkeeping, not Formal Implementation Root."
+}
