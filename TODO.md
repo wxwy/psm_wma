@@ -508,3 +508,5 @@
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R2** — IN_PROGRESS; Codex; exact r1 REQUEST_CHANGES b4cd955a/fac029c8+d2 verified. Only B-D1 cancel/end-ACK quiescence and B-D2 queued+inflight registry/credits with deterministic RED/GREEN, revised design and new formalDesignSHA. Preserve PhaseA/Child/prod; publish author CPU evidence and STOP GPT incremental Design Gate.
 
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R2** — REVIEW; narrow B-D1 deferred End ACK/owner quiescence and B-D2 unified queued+inflight Ticket credits complete in isolated design only. Frozen-r1 expectedRED3FAIL; final74PASS/0fail/error/skip, Ruff0.12.7/format/AST6/audit16 PASS. New DesignRoot+unchangedd2 Child next, then rawEvidence/canonicalrequest/candidatepublish/readback STOP; no production or native authorization.
+
+- **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R3** — IN_PROGRESS; Codex; exact r2 review70aebb5c matched8f94b67e/d2, B-D1/B-D2 closed, B-D3 only. Fix replay-aware submit before allocation and continuous post-ACK retry/R1/changed-payload/eviction CPU cases; preserve Registry/old74/frozen docs/evidence/prod. New DesignRoot+sameChild+rawCPU evidence, candidatepublish/readback thenSTOP GPT Design Gate.
