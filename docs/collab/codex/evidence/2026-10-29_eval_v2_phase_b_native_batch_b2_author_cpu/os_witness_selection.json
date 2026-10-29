@@ -1,0 +1,34 @@
+[
+  {
+    "label": "G1_N2_E2_owned_server_death",
+    "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_owned_Server_death_faults0/run",
+    "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+    "valid": 0,
+    "results_qualified": false,
+    "files": 14
+  },
+  {
+    "label": "G1_N2_E2_qualified",
+    "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run",
+    "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+    "valid": 4,
+    "results_qualified": true,
+    "files": 18
+  },
+  {
+    "label": "G2_N3_E1_qualified",
+    "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run",
+    "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+    "valid": 3,
+    "results_qualified": true,
+    "files": 24
+  },
+  {
+    "label": "G1_N3_E1_qualified",
+    "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run",
+    "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+    "valid": 3,
+    "results_qualified": true,
+    "files": 17
+  }
+]

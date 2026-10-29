@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.463" timestamp="2026-10-29T07:54:15.749767+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_native_32_step_loop_corrected_actions_two_replans_and_real_End_cleanup" time="0.073"><failure message="ValueError: Non-positive determinant (left-handed or null coordinate frame) in rotation matrix 0: [[0.57735026 0.38490018 0.        ]&#10; [0.57735026 0.38490018 0.        ]&#10; [0.57735026 0.38490018 0.        ]].">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-44/test_native_32_step_loop_corre0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0960e39130&gt;
+make_native = &lt;function make_native.&lt;locals&gt;.make at 0x7f0960cdc2c0&gt;
+
+    def test_native_32_step_loop_corrected_actions_two_replans_and_real_End_cleanup(tmp_path, monkeypatch, make_native):
+        obj, actor = make_native(1, 1)
+        lease = register(actor)
+    
+        def decode(value):
+            return torch.from_numpy(np.array(Image.open(io.BytesIO(base64.b64decode(value))), copy=True)).permute(2, 0, 1)
+    
+        obj.local_memory_adapter.decode_image = decode
+        assigned = facade(obj, actor, lease)
+        monkeypatch.setattr(adapter_module, "PolicyTransport", lambda *a: assigned, raising=False)
+        # Lazy import inside NativeEpisode; replace the actual module attribute.
+        from cosmos_framework.simulation.robocasa import eval_v2_transactions
+    
+        monkeypatch.setattr(eval_v2_transactions, "PolicyTransport", lambda *a: assigned)
+        monkeypatch.setattr(native, "build_state_token", lambda _: [0.0] * 15)
+        env = FakeEnv()
+        episode = adapter_module.NativeEpisode(env, settings())
+        assert episode.initialize()["initial_success"] is False
+        attempt = {
+            "task": "CloseFridge",
+            "episode": 0,
+            "attempt_id": "attempt-1",
+            "stream_id": "stream",
+            "seed": 0,
+            "manifest_digest": "a" * 64,
+        }
+&gt;       result = episode.execute(
+            attempt,
+            reset_index=0,
+            directory=tmp_path / "episode",
+            transaction_assignment={"lease": lease, "prediction_clock_domain": actor.clock_domain},
+            episode_deadline=time.monotonic() + 10,
+        )
+
+cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py:200: in execute
+    success, steps, prompt = self.policy(
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:396: in run_policy
+    env_action, canonical_raw15 = canonicalize_raw15_for_env(a, False)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py:119: in canonicalize_raw15_for_env
+    submitted = decode_15d_to_env12(predicted, gripper_flip)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py:106: in decode_15d_to_env12
+    env = decode_10d_to_env12(a15[5:15], gripper_flip)  # arm block reuses the 10D path
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py:35: in decode_10d_to_env12
+    rotvec = R.from_matrix(rot6d_to_matrix(a10[3:9])).as_rotvec()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+&gt;   ???
+E   ValueError: Non-positive determinant (left-handed or null coordinate frame) in rotation matrix 0: [[0.57735026 0.38490018 0.        ]
+E    [0.57735026 0.38490018 0.        ]
+E    [0.57735026 0.38490018 0.        ]].
+
+_rotation.pyx:1136: ValueError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,7 @@
+{
+  "owned_server_death_expected_cause_returncode": 23,
+  "owned_groups_all_closed": true,
+  "published_test_capability_values": "ABSENT",
+  "synthetic_token_files_checked": 5,
+  "boundary": "Synthetic CPU fixture only; no native environment/model/GPU proof"
+}

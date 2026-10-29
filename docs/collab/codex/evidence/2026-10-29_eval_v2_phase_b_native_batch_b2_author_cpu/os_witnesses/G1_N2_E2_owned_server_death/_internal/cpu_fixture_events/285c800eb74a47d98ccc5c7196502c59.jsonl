@@ -1,0 +1,3 @@
+{"kind": "make", "pid": 141697, "time": 101665.091580699, "task": "CloseFridge", "seed": 7}
+{"kind": "reset", "pid": 141697, "time": 101665.103196081, "task": "CloseFridge", "scene": 2029167941}
+{"kind": "execute_begin", "pid": 141697, "time": 101665.336684053, "task": "CloseFridge"}

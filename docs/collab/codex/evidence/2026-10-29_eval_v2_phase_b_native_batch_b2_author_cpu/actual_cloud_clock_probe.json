@@ -1,0 +1,12 @@
+{
+  "scope": "actual cloud only, no fixture or model/GPU",
+  "paths": {
+    "/proc/self/timens_offsets": false,
+    "/proc/self/ns/time": false,
+    "/proc/self/ns/time_for_children": false
+  },
+  "status": "BLOCKED_KERNEL_IDENTITY_UNAVAILABLE",
+  "error_type": "FileNotFoundError",
+  "error": "[Errno 2] No such file or directory: '/proc/self/timens_offsets'",
+  "production_bypass": false
+}

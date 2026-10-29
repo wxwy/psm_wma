@@ -1,0 +1,12 @@
+M	cosmos_framework/evaluation/robocasa_v2/contract.py
+A	cosmos_framework/inference/robocasa_batch_transactions.py
+A	cosmos_framework/inference/robocasa_batch_transactions_test.py
+M	cosmos_framework/inference/robocasa_local_memory_policy.py
+M	cosmos_framework/inference/robocasa_session_transactions.py
+M	cosmos_framework/inference/robocasa_transaction_client.py
+M	cosmos_framework/scripts/action_policy_server_robocasa.py
+M	cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+M	cosmos_framework/simulation/robocasa/eval_v2_slot.py
+A	cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+A	cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py
+M	cosmos_framework/simulation/robocasa/eval_v2_worker.py

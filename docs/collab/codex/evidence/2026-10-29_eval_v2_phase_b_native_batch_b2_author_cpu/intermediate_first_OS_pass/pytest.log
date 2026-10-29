@@ -1,0 +1,15 @@
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}]}
+[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "OpenCabinet", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "CloseFridge", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "OpenCabinet", "episode": 1, "outcome": "success"}
+B2_CPU_OS_WITNESS {"G": 1, "N": 2, "M": 2, "B": 2, "models": 1, "sim_processes": 2, "physics_overlap": true, "native_batch_histogram": {"1": 2, "2": 3}, "valid": 4, "synthetic_only": true}
+.
+=============================== warnings summary ===============================
+../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 1 warning in 14.22s

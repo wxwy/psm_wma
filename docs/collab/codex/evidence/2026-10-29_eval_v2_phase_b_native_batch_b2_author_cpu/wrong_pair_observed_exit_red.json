@@ -1,0 +1,9 @@
+{
+  "root": "cd538b0d82d8b4d099bd36c1ad9ac03ba5bc0a08",
+  "child": "774c2edb93ec5a6ba85ba1124757064d7cc779a5",
+  "gate_status": "BLOCKED",
+  "subprocess_returncode": 0,
+  "expected_returncode": 1,
+  "issue": "thin wrapper ignored main() return code; final421 actual tests were PASS",
+  "fix": "raise SystemExit(main(...)); Child production unchanged"
+}

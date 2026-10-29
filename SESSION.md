@@ -1835,3 +1835,9 @@ Read full Owner directive2026-10-28_V3_EvalV2_Dynamic_SimSlots_LocalTTT_Batch_Ow
 
 - First cleanPair cd538b0d82d8b4d099bd36c1ad9ac03ba5bc0a08/774c2edb93ec5a6ba85ba1124757064d7cc779a5 actually421PASS=145+255+21/static28/sourcebefore-afterPASS. Prepublication wrong-pair negative wrote correctBLOCKED but new thinwrapper ignoredmainreturncode and exited0. Retained redconsole/gate and observedExitJSON; no false claim that failed tests passed.
 - Only Root CPUentry now raisesSystemExit(main(...)); new3tests exercise actualwrongPair and0/1delegation. Childproduction/codeunchanged; newRootformal commit then rerun clean fullCPU Gate, keep421 as previousPairEvidence. No scope/authority expansion or native/DS action.
+
+### Phase B SECOND increment final author CPU / Code Gate request
+
+- FormalRoot323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728/Child-Gitlink774c2edb93ec5a6ba85ba1124757064d7cc779a5: final424PASS=145inference+255PhaseA+24newruntime,0fail/error/skip. StaticRuff0.12.7check/format/AST29/import/sourcebefore-afterPASS. Existing99+255identitiespreserved;61sourcebindings/133artifacthashes, rawallgroups/diff/protectedsourceproofs and4syntheticOSwitnesses. Serverdeath actualreturn23 and5testcapabilityvalues absence verified. Owner/DS/native roles retained.
+- Privatecandidate firstactual421PASS and exitstatusRED retained separately; finalRoot fixeswrapper/3tests, Childunchanged. ActualcloudnativeclockpreflightBLOCKED/no bypass. No nativeGPU/modelweights/realRoboCasa/EGL/DCP/900/training/history action. Peer9cc37557 docs-only import preservesfull2085-byteTail andcandidatehistory; unrelatedCompactS2 authorization notconsumed.
+- Newauthorhandoff/runbook/sample/replay/rawEvidence andcanonical B2 CodeGate request packaged. TaskREVIEW, publicationChild→Root thenfreshremote/source/hashreadback STOP. Neither GPTnewCode nor DSCPU nor nativeCanary approvedbyselftests. CandidateevidenceHEAD bookkeeping notFormalRoot.

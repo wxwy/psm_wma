@@ -1,0 +1,9 @@
+{
+  "prior_inference": 99,
+  "current_inference": 145,
+  "prior_phase_a": 255,
+  "current_phase_a": 255,
+  "new_runtime_tests": 24,
+  "missing_prior_tests": [],
+  "assertions": "old test sources unchanged; new B1 profile numerical reference also uses rtol0/atol0"
+}

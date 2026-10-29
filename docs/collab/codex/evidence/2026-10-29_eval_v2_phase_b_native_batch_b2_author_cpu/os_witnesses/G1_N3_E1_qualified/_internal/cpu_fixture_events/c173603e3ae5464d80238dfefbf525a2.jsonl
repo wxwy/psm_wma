@@ -1,0 +1,10 @@
+{"kind": "make", "pid": 141615, "time": 101656.366734835, "task": "CloseFridge", "seed": 7}
+{"kind": "reset", "pid": 141615, "time": 101656.380262015, "task": "CloseFridge", "scene": 2029167941}
+{"kind": "execute_begin", "pid": 141615, "time": 101656.633894826, "task": "CloseFridge"}
+{"kind": "execute_end", "pid": 141615, "time": 101657.207126685, "task": "CloseFridge"}
+{"kind": "close", "pid": 141615, "time": 101657.237214501, "task": "CloseFridge"}
+{"kind": "make", "pid": 141615, "time": 101657.237733965, "task": "OpenDrawer", "seed": 7}
+{"kind": "reset", "pid": 141615, "time": 101657.245679371, "task": "OpenDrawer", "scene": 2029167941}
+{"kind": "execute_begin", "pid": 141615, "time": 101657.372465033, "task": "OpenDrawer"}
+{"kind": "execute_end", "pid": 141615, "time": 101657.830039398, "task": "OpenDrawer"}
+{"kind": "close", "pid": 141615, "time": 101657.854279231, "task": "OpenDrawer"}

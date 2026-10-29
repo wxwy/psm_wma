@@ -1,0 +1,2108 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/contract.py b/cosmos_framework/evaluation/robocasa_v2/contract.py
+index e633766..b41244f 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/contract.py
++++ b/cosmos_framework/evaluation/robocasa_v2/contract.py
+@@ -30,7 +30,7 @@ def integer(value, minimum, maximum, name):
+     return value
+ 
+ 
+-def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False):
++def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False, execution=None):
+     tasks = list(tasks)
+     if (
+         not tasks
+@@ -91,6 +91,28 @@ def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False)
+             "media_participates_in_SR": False,
+         },
+     }
++    if execution is not None:
++        if (
++            not isinstance(execution, dict)
++            or set(execution)
++            != {"profile", "gpu_ids", "sims_per_gpu", "max_infer_batch_size", "batch_wait_ms", "noise"}
++            or execution["profile"] != "phase_b_native_batch_v1"
++            or execution["noise"] != "literal_cfg_seed_per_sample_v1"
++        ):
++            raise ValueError("exact native batch execution identity required")
++        integer(execution["sims_per_gpu"], 1, 8, "M")
++        integer(execution["max_infer_batch_size"], 1, 8, "B")
++        integer(execution["batch_wait_ms"], 1, 1000, "batch_wait_ms")
++        gpus = execution["gpu_ids"]
++        if (
++            not isinstance(gpus, list)
++            or not gpus
++            or len(set(gpus)) != len(gpus)
++            or any(type(g) is not int or g < 0 for g in gpus)
++        ):
++            raise ValueError("distinct physical GPUs required")
++        body["execution"] = execution
++        body["protocol"]["resource_architecture"] = "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b"
+     return json.loads(canonical({**body, "digest": digest(body)}))
+ 
+ 
+@@ -104,6 +126,7 @@ def validate_manifest(value):
+         horizons=value["horizons"],
+         experiment=value["experiment"],
+         formal=value["scope"] == "formal900",
++        execution=value.get("execution"),
+     )
+     if value != expected:
+         raise ValueError("invalid immutable manifest or protocol")
+diff --git a/cosmos_framework/inference/robocasa_batch_transactions.py b/cosmos_framework/inference/robocasa_batch_transactions.py
+new file mode 100644
+index 0000000..5c1d92e
+--- /dev/null
++++ b/cosmos_framework/inference/robocasa_batch_transactions.py
+@@ -0,0 +1,411 @@
++"""Multi-Session native inference on the existing transaction owner/executor.
++
++Only Local preparation may iterate. Each sealed microbatch invokes generate_many
++once and publishes all Fast/Visual/Response entries in one snapshot. Media is
++bounded CPU spool, decoded on the SAME executor only when inference is idle.
++"""
++
++from __future__ import annotations
++
++import logging
++import math
++import time
++import traceback
++import uuid
++from collections import Counter
++from dataclasses import dataclass
++
++from cosmos_framework.inference.local_memory_state import CachedMemoryResponse
++from cosmos_framework.inference.robocasa_session_transactions import (
++    MAX_BODY,
++    MAX_RESPONSE,
++    PROTOCOL,
++    Reply,
++    SessionTransactions,
++    json_bytes,
++)
++
++
++@dataclass(frozen=True)
++class MediaCandidate:
++    value: object
++    size: int
++
++
++@dataclass(frozen=True)
++class BatchOutput:
++    actions: list
++    media: tuple = ()
++
++
++@dataclass(eq=False)
++class _Media:
++    ticket: object
++    candidate: MediaCandidate | None
++    deadline: float
++    state: str = "QUEUED"
++    body: bytes | None = None
++    cancelled: bool = False
++
++
++class BatchedSessionTransactions(SessionTransactions):
++    def __init__(
++        self, adapter, generate_many, quiesce, *, max_batch_size=2, batch_wait_ms=20, decode_media=None, **kwargs
++    ):
++        if type(max_batch_size) is not int or not 1 <= max_batch_size <= 8:
++            raise ValueError("native batch cap must be1..8")
++        if (
++            type(batch_wait_ms) not in (int, float)
++            or not math.isfinite(batch_wait_ms)
++            or not 1 <= batch_wait_ms <= 1000
++        ):
++            raise ValueError("bounded batch wait1..1000ms required")
++        super().__init__(adapter, None, quiesce, **kwargs)
++        self.generate_many, self.decode_media = generate_many, decode_media
++        self.max_batch_size, self.wait_s = max_batch_size, batch_wait_ms / 1000
++        self._queue, self._enqueued, self._media = [], {}, {}
++        self._pumping = False
++        self._batch_histogram = Counter()
++        self._batches = 0
++        self._queue_high_water = 0
++
++    def info(self):
++        with self._lock:
++            return {
++                **super().info(),
++                "execution_profile": "session_native_batch_v1",
++                "max_native_batch": self.max_batch_size,
++                "batch_wait_ms": self.wait_s * 1000,
++                "batches": self._batches,
++                "batch_histogram": dict(self._batch_histogram),
++                "queued": len(self._queue),
++                "queue_high_water": self._queue_high_water,
++                "media_jobs": len(self._media),
++                "media_cpu_bytes": sum(
++                    j.candidate.size if j.candidate else len(j.body or b"") for j in self._media.values()
++                ),
++                "generated_media": "bounded_cpu_spool_same_model_executor",
++            }
++
++    def media_room(self):
++        with self._lock:
++            used = self.info()["media_cpu_bytes"]
++            return max(0, 2 - len(self._media)), max(0, 128 * 1024**2 - used)
++
++    def submit(self, proof, payload, *, budget):
++        # Independent malformed requests must fail before sealing valid peers.
++        if not isinstance(payload, dict):
++            raise ValueError("policy object required")
++        state = payload.get("state")
++        if (
++            not isinstance(state, list)
++            or len(state) != 15
++            or any(type(v) not in (int, float) or not math.isfinite(v) for v in state)
++        ):
++            raise ValueError("finite state15 required")
++        if (
++            payload.get("image_size") != 256
++            or not isinstance(payload.get("image"), str)
++            or not isinstance(payload.get("prompt"), str)
++            or payload.get("domain_name") != "robocasa"
++        ):
++            raise ValueError("native batch requires corrected RoboCasa H16/profile")
++        return super().submit(proof, payload, budget=budget)
++
++    def _payload_keys_valid(self, payload):
++        if "media" not in payload:
++            return super()._payload_keys_valid(payload)
++        media = payload["media"]
++        return (
++            set(payload) == {"image", "prompt", "domain_name", "image_size", "state", "local_memory", "media"}
++            and isinstance(media, dict)
++            and set(media) == {"replan"}
++            and type(media["replan"]) is int
++            and 0 <= media["replan"] <= 100000
++        )
++
++    def _schedule(self, ticket):
++        self._queue.append(ticket)
++        self._enqueued[ticket.key] = time.monotonic()
++        ticket.queued_at = self._enqueued[ticket.key]
++        self._queue_high_water = max(self._queue_high_water, len(self._queue))
++        self._changed.notify_all()
++        if not self._pumping:
++            self._pumping = True
++            try:
++                self._executor.submit(self._pump)
++            except BaseException:
++                self._queue.remove(ticket)
++                self._enqueued.pop(ticket.key)
++                self._pumping = False
++                raise
++
++    def _pump(self):
++        while True:
++            with self._changed:
++                if self._queue:
++                    oldest = self._queue[0]
++                    remaining = min(
++                        self.wait_s - (time.monotonic() - self._enqueued[oldest.key]), oldest.deadline - self.clock()
++                    )
++                    if (
++                        not oldest.cancelled
++                        and len(self._queue) < min(self.max_batch_size, len(self.slot_ids))
++                        and remaining > 0
++                        and not self._stopping
++                    ):
++                        self._changed.wait(remaining)
++                        continue
++                    # Pre-seal expiry/cancel faults only that independent queued member.
++                    stale = next(
++                        (
++                            t
++                            for t in self._queue
++                            if t.cancelled or self.clock() >= t.deadline or t.lease.slot_id in self._closing
++                        ),
++                        None,
++                    )
++                    members = [stale] if stale else self._queue[: self.max_batch_size]
++                    for ticket in members:
++                        self._queue.remove(ticket)
++                        self._enqueued.pop(ticket.key, None)
++                    job = None
++                else:
++                    members = None
++                    job = next((j for j in self._media.values() if j.state == "QUEUED"), None)
++                    if job is None:
++                        self._pumping = False
++                        return
++                    job.state = "DECODING"
++                    self._busy = True  # Reserve media ownership before releasing admission lock.
++            if members:
++                self._execute_many(members)
++            else:
++                self._decode(job)
++            with self._lock:
++                if self._quarantined:
++                    self._pumping = False
++                    return
++
++    def _execute_many(self, members):
++        committed, drained, abort_failed = False, False, False
++        batch_id = uuid.uuid4().hex
++        with self._model_lock:
++            try:
++                with self._lock:
++                    self._busy = True
++                    for t in members:
++                        t.state = "SEALED"
++                        self._fence(t)
++                prepare_start = time.monotonic()
++                for t in members:
++                    t.update = self.adapter.prepare(t.payload)
++                    t.state = "PREPARED"
++                with self._lock:
++                    for t in members:
++                        self._fence(t)
++                        t.state = "GENERATING"
++                prepared = time.monotonic()
++                output = self.generate_many([t.payload for t in members], [t.update for t in members])
++                generated = time.monotonic()
++                if not isinstance(output, BatchOutput) or len(output.actions) != len(members):
++                    raise ValueError("native batch output cardinality mismatch")
++                media_candidates = output.media if len(output.media) == len(members) else ()
++                caches, new_jobs = [], {}
++                room, byte_room = self.media_room()
++                for i, (t, action) in enumerate(zip(members, output.actions, strict=True)):
++                    if (
++                        not isinstance(action, list)
++                        or len(action) != 16
++                        or any(
++                            not isinstance(r, list)
++                            or len(r) != 15
++                            or any(type(v) not in (int, float) or not math.isfinite(v) for v in r)
++                            for r in action
++                        )
++                    ):
++                        raise ValueError("native batch requires finite [16,15] per member")
++                    candidate = media_candidates[i] if media_candidates else None
++                    media = {"status": "disabled"}
++                    if t.payload.get("media"):
++                        media = {"status": "dropped", "reason": "bounded_spool_unavailable"}
++                        if (
++                            candidate is not None
++                            and room > 0
++                            and 0 < candidate.size <= byte_room
++                            and self.decode_media is not None
++                        ):
++                            new_jobs[t.key] = _Media(t, candidate, min(t.deadline, self.clock() + self.timeout_s))
++                            room -= 1
++                            byte_room -= candidate.size
++                            media = {"status": "pending", "ticket": t.key}
++                    body = json_bytes(
++                        {
++                            "protocol": PROTOCOL,
++                            "request_key": t.key,
++                            "payload_sha256": t.payload_sha256,
++                            "assignment": t.lease.identity(),
++                            "frontier": t.payload["local_memory"]["consumer_step"],
++                            "action": action,
++                            "local_memory": self.adapter.status(t.update),
++                            "native_batch": {"id": batch_id, "size": len(members), "index": i},
++                            "timing": {
++                                "queue_ms": max(0, prepare_start - t.queued_at) * 1000,
++                                "batch_prepare_ms": (prepared - prepare_start) * 1000,
++                                "native_generation_ms": (generated - prepared) * 1000,
++                            },
++                            "media": media,
++                        }
++                    )
++                    if len(body) > MAX_RESPONSE:
++                        raise ValueError("bounded batch response exceeded")
++                    caches.append(CachedMemoryResponse(t.key, t.payload_sha256, body))
++                self.quiesce()
++                drained = True
++                with self._lock:
++                    for t in members:
++                        t.state = "VALIDATED"
++                        self._fence(t)
++                    histogram = self._batch_histogram.copy()
++                    histogram[len(members)] += 1
++                    batches = self._batches + 1
++                    jobs = {**self._media, **new_jobs}  # Respect End/ACK removals while generating.
++                    self.adapter.commit_many(tuple((t.update, c) for t, c in zip(members, caches, strict=True)))
++                    committed = True
++                    self._media = jobs
++                    self._batches = batches
++                    self._batch_histogram = histogram
++                    for t in members:
++                        t.state = "COMMITTED"
++            except BaseException as error:
++                for t in members:
++                    stage = t.state
++                    if not committed:
++                        try:
++                            self.adapter.abort(t.update)
++                        except BaseException:
++                            abort_failed = True
++                    with self._lock:
++                        self._failed[t.lease.slot_id] = {
++                            "request_key": t.key,
++                            "payload_sha256": t.payload_sha256,
++                            "state": "QUARANTINED" if abort_failed else "ABORTED",
++                            "failed_stage": stage,
++                            "error_type": type(error).__name__,
++                            "error": str(error)[:2048],
++                            "traceback": traceback.format_exc()[-16384:],
++                        }
++                        if not committed:
++                            t.state = "ABORTED"
++                logging.getLogger(__name__).exception("Native batch %s aborted", batch_id)
++            finally:
++                if not drained:
++                    try:
++                        self.quiesce()
++                        drained = True
++                    except BaseException:
++                        logging.getLogger(__name__).exception("Native batch drain unproven")
++        with self._lock:
++            if not drained or abort_failed:
++                self._quarantined = True
++                for t in members:
++                    if t.lease.slot_id in self._failed:
++                        self._failed[t.lease.slot_id].update(state="QUARANTINED", quiescent=False)
++                self._changed.notify_all()
++                return
++            self._busy = False
++            for t in members:
++                t.quiescent, t.update = True, None
++                if t.lease.slot_id in self._failed:
++                    self._failed[t.lease.slot_id]["quiescent"] = True
++                if not committed:
++                    self._release(t)
++            self._changed.notify_all()
++
++    def _decode(self, job):
++        drained = False
++        with self._model_lock:
++            with self._lock:
++                self._busy = True
++                job.state = "DECODING"
++            try:
++                if job.cancelled or self.clock() >= job.deadline:
++                    value = {"status": "expired"}
++                else:
++                    video = self.decode_media(job.candidate.value)
++                    value = {"status": "ready", "video": video}
++                body = json_bytes(
++                    {"request_key": job.ticket.key, "payload_sha256": job.ticket.payload_sha256, "media": value}
++                )
++                if len(body) > MAX_BODY:
++                    raise ValueError("bounded media response exceeded")
++            except Exception as error:
++                body = json_bytes(
++                    {
++                        "request_key": job.ticket.key,
++                        "payload_sha256": job.ticket.payload_sha256,
++                        "media": {"status": "error", "error": str(error)[:1024]},
++                    }
++                )
++            finally:
++                try:
++                    self.quiesce()
++                    drained = True
++                except BaseException:
++                    logging.getLogger(__name__).exception("Optional decoder device drain unproven")
++        with self._lock:
++            if not drained:
++                self._quarantined = True
++            elif job.cancelled or self.clock() >= job.deadline or self._stopping:
++                self._media.pop(job.ticket.key, None)
++            else:
++                job.body, job.candidate, job.state = body, None, "READY"
++            self._busy = not drained
++            self._changed.notify_all()
++
++    def media_result(self, proof, key, sha):
++        with self._lock:
++            lease = self._lease(proof)
++            job = self._media.get(key)
++            if job is None:
++                return self._reply(200, {"request_key": key, "payload_sha256": sha, "media": {"status": "unavailable"}})
++            if job.ticket.lease != lease or job.ticket.payload_sha256 != sha:
++                raise ValueError("foreign media identity")
++            if self.clock() >= job.deadline and job.state != "DECODING":
++                self._media.pop(key, None)
++                return self._reply(200, {"request_key": key, "payload_sha256": sha, "media": {"status": "expired"}})
++            return (
++                Reply(200, job.body)
++                if job.body
++                else self._reply(202, {"request_key": key, "payload_sha256": sha, "media": {"status": "pending"}})
++            )
++
++    def media_ack(self, proof, key, sha):
++        with self._lock:
++            self._lease(proof)
++            if key in self._media:
++                job = self._media[key]
++                if job.ticket.lease != self._lease(proof) or job.ticket.payload_sha256 != sha or job.state != "READY":
++                    raise ValueError("invalid media ACK")
++                del self._media[key]
++            return self._reply(200, {"acknowledged": True, "request_key": key})
++
++    def _cancel_media(self, lease=None):
++        for key, job in list(self._media.items()):
++            if lease is None or job.ticket.lease == lease:
++                job.cancelled = True
++                if job.state != "DECODING":
++                    del self._media[key]
++
++    def end(self, proof):
++        with self._lock:
++            lease = self._lease(proof, closed=True)
++            self._cancel_media(lease)
++            self._changed.notify_all()
++            return super().end(proof)
++
++    def close(self, timeout_s=10):
++        with self._lock:
++            self._cancel_media()
++            self._changed.notify_all()
++        return super().close(timeout_s)
+diff --git a/cosmos_framework/inference/robocasa_batch_transactions_test.py b/cosmos_framework/inference/robocasa_batch_transactions_test.py
+new file mode 100644
+index 0000000..b12750c
+--- /dev/null
++++ b/cosmos_framework/inference/robocasa_batch_transactions_test.py
+@@ -0,0 +1,539 @@
++"""Real CPU Local state/native carriers; diffusion, device and HTTP boundaries doubled."""
++
++from __future__ import annotations
++
++import threading
++import time
++from concurrent.futures import ThreadPoolExecutor
++from dataclasses import replace
++
++import pytest
++import torch
++
++from cosmos_framework.inference import robocasa_batch_transactions as module
++from cosmos_framework.inference.robocasa_batch_transactions import BatchedSessionTransactions
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    ack,
++    make_adapter,
++    payload,
++    register,
++    submit,
++    wait_result,
++)
++from cosmos_framework.inference.robocasa_session_transactions_test import clock_kernel as clock_kernel
++from cosmos_framework.inference.robocasa_transaction_client import TransactionPolicyClient
++from cosmos_framework.model.generator.mot.memory_prefix import attach_local_prefixes, build_memory_prefix_context
++from cosmos_framework.model.generator.utils.data_and_condition import GenerationDataClean
++from cosmos_framework.scripts.robocasa_transactions_b1_test import DirectTransport, service
++
++
++@pytest.fixture
++def make_native(monkeypatch):
++    actors = []
++
++    def make(slots=3, cap=3, wait=80):
++        obj = service(monkeypatch)
++        obj.local_memory_adapter, obj.model = make_adapter(slots)
++        obj.model.eval()
++        obj.native_calls = []
++
++        def generation(batch, **kwargs):
++            n = len(batch["prompt"])
++            prefixes = kwargs["_local_memory_prefixes"]
++            plans, clean = attach_local_prefixes(batch["sequence_plan"], GenerationDataClean(n, False), prefixes)
++            projector = torch.nn.Linear(32, 6, bias=False)
++            context = build_memory_prefix_context(prefixes, projector, torch.zeros(6), target_dtype=torch.float32)
++            obj.native_calls.append(
++                {
++                    "batch": batch,
++                    "kwargs": kwargs,
++                    "has_local": [p.has_local_memory for p in plans],
++                    "compact": clean.x0_tokens_local_memory,
++                    "context": context,
++                }
++            )
++            actions = []
++            for i, token in enumerate(prefixes):
++                offset = 0 if token is None else float(token.square().sum()) * 0.0001
++                value = float(batch["action"][i][0][0, 0]) + offset
++                actions.append(torch.full((1, 17, 64), value))
++            return {"action": actions, "vision": [torch.zeros(1, 3, 1, 8, 8) for _ in range(n)]}
++
++        obj.model.generate_samples_from_batch = generation
++        actor = BatchedSessionTransactions(
++            obj.local_memory_adapter,
++            obj._transaction_batch,
++            lambda: None,
++            decode_media=obj._transaction_decode_media,
++            max_batch_size=cap,
++            batch_wait_ms=wait,
++            owner_token="cpu-owner",
++            run_lease="run",
++            manifest_digest="a" * 64,
++            slot_ids=tuple(f"slot{i}" for i in range(slots)),
++            model_lock=obj._lock,
++            timeout_s=5,
++        )
++        obj.transactions = actor
++        actors.append(actor)
++        return obj, actor
++
++    yield make
++    for actor in actors:
++        if actor.info()["quarantined"]:
++            assert actor.close() is False  # Never pretend unknown device cleanup succeeded.
++            actor._executor.shutdown(wait=True)
++        else:
++            assert actor.close()
++
++
++def group(actor, leases, requests):
++    pending = [submit(actor, lease, request) for lease, request in zip(leases, requests, strict=True)]
++    return [wait_result(actor, lease, p) for lease, p in zip(leases, pending, strict=True)]
++
++
++@pytest.mark.parametrize("n,cap", [(1, 1), (2, 2), (3, 3), (2, 8), (1, 4), (3, 2)])
++def test_one_native_call_per_full_or_partial_batch_mapping_and_carriers(make_native, n, cap):
++    obj, actor = make_native(n, cap)
++    leases = [register(actor, f"slot{i}") for i in range(n)]
++    reqs = [payload(l) for l in leases]
++    for i, r in enumerate(reqs):
++        r["state"][0] = i * 0.1
++        r["prompt"] = f"real instruction {i}"
++    results = group(actor, leases, reqs)
++    assert len(obj.native_calls) == (n + cap - 1) // cap
++    assert [r.json()["assignment"]["session_id"] for r in results] == [l["session_id"] for l in leases]
++    for call in obj.native_calls:
++        size = len(call["batch"]["prompt"])
++        assert size <= cap and call["kwargs"]["seed"] == [7] * size
++        assert len(call["batch"]["sequence_plan"]) == size
++        assert all(a[0].shape == (17, 64) for a in call["batch"]["action"])
++        assert call["has_local"] == [False] * size and call["context"] is None
++    for lease, result in zip(leases, results, strict=True):
++        ack(actor, lease, result)
++    assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
++    assert actor.info()["batches"] == len(obj.native_calls)
++
++
++def test_mixed_hot_cold_hot_native_prefix_offsets_and_fast_state_reset_isolation(make_native):
++    obj, actor = make_native()
++    leases = [register(actor, f"slot{i}") for i in range(3)]
++    slow = {k: p.detach().clone() for k, p in obj.model.named_parameters()}
++    for i in (0, 2):
++        r = wait_result(actor, leases[i], submit(actor, leases[i], payload(leases[i])))
++        ack(actor, leases[i], r)
++    results = group(actor, leases, [payload(leases[0], 2, 0, 1), payload(leases[1]), payload(leases[2], 2, 0, 9)])
++    call = obj.native_calls[-1]
++    assert call["has_local"] == [True, False, True]
++    assert len(call["compact"]) == 2
++    assert call["context"].sample_offsets.tolist() == [0, 4, 4, 8]
++    assert call["context"].present.tolist() == [True, False, True]
++    a = obj.local_memory_adapter.snapshot.fast[leases[0]["session_id"]]
++    b = obj.local_memory_adapter.snapshot.fast[leases[2]["session_id"]]
++    assert any(not torch.equal(x, y) for x, y in zip(a.state, b.state, strict=True))
++    assert all(x.data_ptr() != y.data_ptr() for x, y in zip(a.state, b.state, strict=True))
++    for k, p in obj.model.named_parameters():
++        torch.testing.assert_close(p, slow[k], rtol=0, atol=0)
++        assert p.grad is None
++    for lease, result in zip(leases, results, strict=True):
++        ack(actor, lease, result)
++    assert actor.end(leases[0]).json()["acknowledged"]
++    assert obj.local_memory_adapter.snapshot.fast[leases[2]["session_id"]] is b
++    fresh = register(actor, generation=2)
++    cold = wait_result(actor, fresh, submit(actor, fresh, payload(fresh)))
++    assert cold.json()["local_memory"]["prefix_present"] is False
++
++
++@pytest.mark.parametrize(
++    "fault", ["prepare0", "prepare1", "generate", "cardinality", "nan", "shape", "serialize", "publication", "drain"]
++)
++def test_sealed_member_failures_abort_entire_bundle_without_partial_state(make_native, monkeypatch, fault):
++    obj, actor = make_native(2, 2)
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    cold = group(actor, leases, [payload(l) for l in leases])
++    for l, r in zip(leases, cold, strict=True):
++        ack(actor, l, r)
++    before = obj.local_memory_adapter.snapshot
++    original = actor.generate_many
++    if fault.startswith("prepare"):
++        prepare = actor.adapter.prepare
++        fail_at = int(fault[-1])
++        count = [0]
++
++        def broken(req):
++            current = count[0]
++            count[0] += 1
++            if current == fail_at:
++                raise RuntimeError("injected member prepare failure")
++            return prepare(req)
++
++        monkeypatch.setattr(actor.adapter, "prepare", broken)
++    elif fault in ("generate", "cardinality", "nan", "shape"):
++
++        def bad(reqs, updates):
++            if fault == "generate":
++                raise RuntimeError("injected native Generation failure")
++            out = original(reqs, updates)
++            if fault == "cardinality":
++                return replace(out, actions=out.actions[:1])
++            if fault == "nan":
++                out.actions[1][0][0] = float("nan")
++            else:
++                out.actions[1].pop()
++            return out
++
++        actor.generate_many = bad
++    elif fault == "serialize":
++        encode = module.json_bytes
++        count = [0]
++
++        def fail_second(value):
++            if "native_batch" in value:
++                count[0] += 1
++                if count[0] == 2:
++                    raise ValueError("injected serialization failure")
++            return encode(value)
++
++        monkeypatch.setattr(module, "json_bytes", fail_second)
++    elif fault == "publication":
++        monkeypatch.setattr(
++            actor.adapter, "commit_many", lambda _: (_ for _ in ()).throw(MemoryError("allocation failure"))
++        )
++    else:
++        actor.quiesce = lambda: (_ for _ in ()).throw(RuntimeError("unproven device drain"))
++    pending = [submit(actor, l, payload(l, 1, 0, 1 + i)) for i, l in enumerate(leases)]
++    for l, p in zip(leases, pending, strict=True):
++        reply = wait_result(actor, l, p, expected=409)
++        assert reply.status == 409 and reply.json()["error_type"]
++    assert obj.local_memory_adapter.snapshot is before
++    if fault != "drain":
++        assert not actor.adapter._visual_pending and not actor.adapter.memory._pending
++        assert actor.info()["tickets"] == 0
++    else:
++        assert actor.info()["quarantined"] and actor.info()["tickets"] == 2
++        assert actor.end(leases[0]).json()["acknowledged"] is False
++
++
++def test_atomic_publication_validates_all_pending_capabilities_before_any_write(make_native):
++    obj, actor = make_native(2, 2)
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    updates = [obj.local_memory_adapter.prepare(payload(l)) for l in leases]
++    before = obj.local_memory_adapter.snapshot
++    obj.local_memory_adapter.abort(updates[1])
++    with pytest.raises(RuntimeError, match="pending capability"):
++        obj.local_memory_adapter.commit_many([(updates[0], None), (updates[1], None)])
++    assert obj.local_memory_adapter.snapshot is before
++    obj.local_memory_adapter.abort(updates[0])
++
++
++def test_End_during_sealed_generation_aborts_all_members_and_waits_for_executor(make_native):
++    obj, actor = make_native(2, 2)
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    entered, release = threading.Event(), threading.Event()
++    original = actor.generate_many
++
++    def blocked(reqs, updates):
++        entered.set()
++        assert release.wait(5)
++        return original(reqs, updates)
++
++    actor.generate_many = blocked
++    before = obj.local_memory_adapter.snapshot
++    pending = [submit(actor, l, payload(l)) for l in leases]
++    try:
++        assert entered.wait(5)
++        assert actor.end(leases[0]).json()["acknowledged"] is False
++        assert actor.info()["tickets"] == 2
++    finally:
++        release.set()
++    for l, p in zip(leases, pending, strict=True):
++        wait_result(actor, l, p, expected=409)
++    assert obj.local_memory_adapter.snapshot is before
++    assert actor.end(leases[0]).json()["acknowledged"] is True
++
++
++def test_original_deadline_failure_after_shared_generation_aborts_every_member(make_native):
++    obj, actor = make_native(2, 2)
++    clock = [0.0]
++    actor.clock = lambda: clock[0]
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    original = actor.generate_many
++
++    def late(reqs, updates):
++        value = original(reqs, updates)
++        clock[0] = 6.0
++        return value
++
++    actor.generate_many = late
++    before = obj.local_memory_adapter.snapshot
++    pending = [submit(actor, l, payload(l)) for l in leases]
++    for l, p in zip(leases, pending, strict=True):
++        wait_result(actor, l, p, expected=409)
++    assert len(obj.native_calls) == 1 and obj.local_memory_adapter.snapshot is before
++
++
++@pytest.mark.parametrize("drop", ["/v2/inference", "/v2/inference/ack"])
++def test_real_client_dispatch_B2_replay_and_delivery_loss_never_regenerates(make_native, drop):
++    obj, actor = make_native(2, 2)
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    clients = []
++    for lease in leases:
++        c = TransactionPolicyClient(
++            "http://cpu", timeout_s=5, transport=DirectTransport(obj, (drop,)), batch_profile=True, max_batch_size=2
++        )
++        c.bind_assignment({"lease": lease, "prediction_clock_domain": actor.clock_domain})
++        clients.append(c)
++    with ThreadPoolExecutor(2) as pool:
++        results = list(pool.map(lambda pair: pair[0].predict(payload(pair[1])), zip(clients, leases, strict=True)))
++    assert len(obj.native_calls) == 1 and actor.info()["tickets"] == 0
++    assert results[0]["native_batch"]["id"] == results[1]["native_batch"]["id"]
++    assert sorted(r["native_batch"]["index"] for r in results) == [0, 1]
++    for c, l, r in zip(clients, leases, results, strict=True):
++        snapshot = obj.local_memory_adapter.snapshot
++        assert c.predict(payload(l)) == r
++        assert obj.local_memory_adapter.snapshot is snapshot
++        c.end()
++    assert len(obj.native_calls) == 1
++
++
++@pytest.mark.parametrize("fault", ["decode", "spool", "none"])
++def test_optional_media_cannot_block_action_commit_or_SR_and_is_bounded(make_native, monkeypatch, fault):
++    obj, actor = make_native(3, 3)
++    leases = [register(actor, f"slot{i}") for i in range(3)]
++    if fault == "decode":
++        actor.decode_media = lambda _: (_ for _ in ()).throw(ValueError("bad video"))
++    elif fault == "spool":
++        actor.decode_media = None
++    else:
++        actor.decode_media = lambda _: ["synthetic-png-diagnostic"]
++    reqs = [{**payload(l), "media": {"replan": 0}} for l in leases]
++    results = group(actor, leases, reqs)
++    assert len(obj.native_calls) == 1 and all(r.status == 200 for r in results)
++    assert actor.info()["media_jobs"] <= 2 and actor.info()["media_cpu_bytes"] <= 128 * 1024**2
++    for l, r in zip(leases, results, strict=True):
++        ack(actor, l, r)
++        data = r.json()
++        if data["media"]["status"] == "pending":
++            limit = time.monotonic() + 5
++            while time.monotonic() < limit:
++                media = actor.media_result(l, data["request_key"], data["payload_sha256"])
++                if media.status == 200:
++                    break
++                time.sleep(0.005)
++            assert media.json()["media"]["status"] == ("error" if fault == "decode" else "ready")
++        assert actor.end(l).json()["acknowledged"] is True
++    assert actor.info()["media_jobs"] == 0
++
++
++def test_new_batch_profile_B1_matches_existing_legacy_action_and_fast_state(make_native):
++    modern, actor = make_native(1, 1)
++    legacy, _ = make_native(1, 1)
++    legacy.transactions = None
++    legacy.model.decode = lambda _: torch.zeros(1, 3, 1, 16, 16)
++    lease = register(actor)
++    for request in (payload(lease), payload(lease, 2, 0, 7)):
++        current = wait_result(actor, lease, submit(actor, lease, request))
++        reference = legacy.predict_policy(request)
++        torch.testing.assert_close(
++            torch.tensor(current.json()["action"]), torch.tensor(reference["action"]), rtol=0, atol=0
++        )
++        a = modern.local_memory_adapter.snapshot.fast[lease["session_id"]]
++        b = legacy.local_memory_adapter.snapshot.fast[lease["session_id"]]
++        if a.state is not None:
++            for left, right in zip(a.state, b.state, strict=True):
++                torch.testing.assert_close(left, right, rtol=0, atol=0)
++        ack(actor, lease, current)
++
++
++@pytest.mark.parametrize("short_member", [0, 1])
++def test_one_member_deadline_expires_and_other_live_member_still_rolls_back_atomically(make_native, short_member):
++    obj, actor = make_native(2, 2)
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    clock = [0.0]
++    actor.clock = lambda: clock[0]
++    original = actor.generate_many
++
++    def later(reqs, updates):
++        output = original(reqs, updates)
++        clock[0] = 1.0
++        return output
++
++    actor.generate_many = later
++    before = obj.local_memory_adapter.snapshot
++    pending = [
++        actor.submit(
++            l,
++            payload(l),
++            budget={"clock_domain": actor.clock_domain, "started_at": 0, "deadline": 0.5 if i == short_member else 5.0},
++        )
++        for i, l in enumerate(leases)
++    ]
++    for l, p in zip(leases, pending, strict=True):
++        wait_result(actor, l, p, expected=409)
++    assert obj.local_memory_adapter.snapshot is before and len(obj.native_calls) == 1
++
++
++def test_End_before_seal_faults_only_queued_assignment_and_preserves_peer(make_native):
++    obj, actor = make_native(2, 2, wait=200)
++    a, b = register(actor), register(actor, "slot1")
++    p = submit(actor, a, payload(a))
++    assert actor.end(a).json()["acknowledged"] is False
++    q = submit(actor, b, payload(b))
++    wait_result(actor, a, p, expected=409)
++    good = wait_result(actor, b, q)
++    assert good.status == 200 and len(obj.native_calls) == 1
++    assert a["session_id"] not in obj.local_memory_adapter.snapshot.fast
++    assert actor.end(a).json()["acknowledged"] is True
++    ack(actor, b, good)
++
++
++@pytest.mark.parametrize("field,value", [("index", 8), ("size", 9), ("id", "wrong-batch"), ("size", True)])
++def test_client_rejects_malformed_batch_mapping_before_delivery_ack(make_native, field, value):
++    from cosmos_framework.inference.robocasa_session_transactions import Reply, json_bytes
++    from cosmos_framework.scripts.robocasa_transactions_b1_test import Response
++
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++
++    class WrongMapping(DirectTransport):
++        def request(self, *a, **k):
++            r = super().request(*a, **k)
++            body = r.json()
++            if "native_batch" in body:
++                body["native_batch"][field] = value
++                return Response(Reply(r.status_code, json_bytes(body)))
++            return r
++
++    client = TransactionPolicyClient(
++        "http://cpu", timeout_s=5, transport=WrongMapping(obj), batch_profile=True, max_batch_size=1
++    )
++    client.bind_assignment({"lease": lease, "prediction_clock_domain": actor.clock_domain})
++    with pytest.raises(ValueError, match="action/Local status"):
++        client.predict(payload(lease))
++    assert actor.info()["tickets"] == 1
++    client.end()
++
++
++def test_real_optional_decoder_runs_after_atomic_action_commit_and_outputs_bounded_PNG(make_native, monkeypatch):
++    import base64
++    import io
++
++    from PIL import Image
++
++    from cosmos_framework.scripts.robocasa_transactions_b1_test import server
++
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++
++    def decode(value):
++        assert lease["session_id"] in obj.local_memory_adapter.snapshot.responses
++        return torch.zeros(1, 3, 2, 8, 8)
++
++    obj.model.decode = decode
++    monkeypatch.setattr(server, "_video_tensor_to_pil_images", lambda _: [Image.new("RGB", (8, 8))] * 2)
++    current = wait_result(actor, lease, submit(actor, lease, {**payload(lease), "media": {"replan": 0}}))
++    ack(actor, lease, current)
++    data = current.json()
++    limit = time.monotonic() + 5
++    while time.monotonic() < limit:
++        reply = actor.media_result(lease, data["request_key"], data["payload_sha256"])
++        if reply.status == 200:
++            break
++        time.sleep(0.005)
++    assert reply.json()["media"]["status"] == "ready"
++    frames = reply.json()["media"]["video"]
++    assert len(frames) == 2 and Image.open(io.BytesIO(base64.b64decode(frames[0]))).size == (8, 8)
++    before = obj.local_memory_adapter.snapshot
++    assert actor.media_result(lease, data["request_key"], data["payload_sha256"]).body == reply.body
++    actor.media_ack(lease, data["request_key"], data["payload_sha256"])
++    actor.media_ack(lease, data["request_key"], data["payload_sha256"])
++    assert actor.info()["media_jobs"] == 0 and obj.local_memory_adapter.snapshot is before
++
++
++def test_End_waits_until_optional_decoder_releases_model_ownership(make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    entered, release = threading.Event(), threading.Event()
++
++    def decode(value):
++        entered.set()
++        assert release.wait(5)
++        return ["diagnostic"]
++
++    actor.decode_media = decode
++    current = wait_result(actor, lease, submit(actor, lease, {**payload(lease), "media": {"replan": 0}}))
++    ack(actor, lease, current)
++    try:
++        assert entered.wait(5)
++        assert actor.end(lease).json()["acknowledged"] is False
++        assert lease["session_id"] in obj.local_memory_adapter.snapshot.fast
++    finally:
++        release.set()
++    limit = time.monotonic() + 5
++    while time.monotonic() < limit and actor.info()["busy"]:
++        time.sleep(0.005)
++    assert actor.end(lease).json()["acknowledged"] is True
++    assert actor.info()["media_jobs"] == 0
++
++
++@pytest.mark.parametrize("fault", ["spool_bytes", "spool_copy", "media_mapping"])
++def test_optional_spool_failure_or_mapping_error_preserves_valid_actions(make_native, fault):
++    from dataclasses import replace
++
++    obj, actor = make_native(2, 2)
++    leases = [register(actor, f"slot{i}") for i in range(2)]
++    generate = obj.model.generate_samples_from_batch
++
++    class Unavailable:
++        def numel(self):
++            return 128 * 1024**2 if fault == "spool_bytes" else 1
++
++        def element_size(self):
++            return 4
++
++        def detach(self):
++            raise OSError("injected CPU spool copy failure")
++
++    def broken(batch, **kwargs):
++        out = generate(batch, **kwargs)
++        out["vision"] = [Unavailable(), Unavailable()]
++        return out
++
++    if fault != "media_mapping":
++        obj.model.generate_samples_from_batch = broken
++    else:
++        native = actor.generate_many
++        actor.generate_many = lambda r, u: replace(native(r, u), media=(None,))
++    results = group(actor, leases, [{**payload(l), "media": {"replan": 0}} for l in leases])
++    assert len(obj.native_calls) == 1 and all(r.status == 200 for r in results)
++    assert all(r.json()["media"]["status"] == "dropped" for r in results)
++    assert actor.info()["media_jobs"] == 0
++
++
++def test_batch_options_cannot_be_ignored_by_legacy_or_B1_preflight(tmp_path):
++    from types import SimpleNamespace
++
++    from cosmos_framework.scripts.robocasa_transactions_b1_test import server
++
++    token = tmp_path / "owner"
++    token.write_text("cpu-owner")
++    token.chmod(0o600)
++    args = SimpleNamespace(
++        transaction_profile="batch",
++        transaction_owner_token_file=token,
++        transaction_run_lease="run",
++        transaction_manifest_digest="a" * 64,
++        transaction_slot_id=None,
++        transaction_slot_ids="a,b",
++        transaction_max_batch_size=2,
++        transaction_batch_wait_ms=20,
++        local_memory_mode="required",
++        local_memory_max_sessions=2,
++        action_chunk_size=16,
++    )
++    options = server._transaction_options(args)
++    assert options["slot_ids"] == ("a", "b") and options["max_batch_size"] == 2
++    for profile in ("b1", "legacy"):
++        args.transaction_profile = profile
++        with pytest.raises(ValueError):
++            server._transaction_options(args)
+diff --git a/cosmos_framework/inference/robocasa_local_memory_policy.py b/cosmos_framework/inference/robocasa_local_memory_policy.py
+index 5e2b406..dec79dd 100644
+--- a/cosmos_framework/inference/robocasa_local_memory_policy.py
++++ b/cosmos_framework/inference/robocasa_local_memory_policy.py
+@@ -215,25 +215,35 @@ class RoboCasaLocalMemoryPolicyAdapter:
+     def commit(self, update: _PreparedUpdate | None, response: CachedMemoryResponse | None = None) -> None:
+         if update is None:
+             return
++        self.commit_many(((update, response),))
++
++    def commit_many(self, members) -> None:
++        """Prevalidate/allocate every participant, then publish ONE snapshot."""
+         assert self.memory is not None
+-        session_id = update.memory.session_id
++        members = tuple(members)
++        if not members:
++            raise ValueError("nonempty Local batch commit required")
+         with self._lock:
+-            if self._visual_pending.get(session_id) is not update:
+-                raise RuntimeError("Local-TTT visual commit requires exact pending capability")
+-            self.memory.validate_commit(update.memory)
++            sessions = [update.memory.session_id for update, _ in members]
++            if len(set(sessions)) != len(sessions):
++                raise ValueError("duplicate Session in atomic batch")
++            for update, _ in members:
++                if self._visual_pending.get(update.memory.session_id) is not update:
++                    raise RuntimeError("Local-TTT visual commit requires exact pending capability")
++                self.memory.validate_commit(update.memory)
+             snapshot = self.snapshot
+-            responses = dict(snapshot.responses)
+-            responses.pop(session_id, None)
+-            if response is not None:
+-                responses[session_id] = response
+-            replacement = MemorySnapshot.build(
+-                {**snapshot.fast, session_id: update.memory.replacement},
+-                {**snapshot.visual, session_id: update.visual_replacement},
+-                responses,
+-            )
++            fast, visual, responses = dict(snapshot.fast), dict(snapshot.visual), dict(snapshot.responses)
++            for update, response in members:
++                session_id = update.memory.session_id
++                fast[session_id], visual[session_id] = update.memory.replacement, update.visual_replacement
++                responses.pop(session_id, None)
++                if response is not None:
++                    responses[session_id] = response
++            replacement = MemorySnapshot.build(fast, visual, responses)
+             self.memory.store.snapshot = replacement
+-            del self.memory._pending[session_id]
+-            del self._visual_pending[session_id]
++            for session_id in sessions:
++                del self.memory._pending[session_id]
++                del self._visual_pending[session_id]
+ 
+     def abort(self, update: _PreparedUpdate | None) -> None:
+         if update is None:
+diff --git a/cosmos_framework/inference/robocasa_session_transactions.py b/cosmos_framework/inference/robocasa_session_transactions.py
+index a86b9f8..0bfc9f8 100644
+--- a/cosmos_framework/inference/robocasa_session_transactions.py
++++ b/cosmos_framework/inference/robocasa_session_transactions.py
+@@ -311,7 +311,7 @@ class SessionTransactions:
+         if len(raw) > MAX_BODY:
+             raise ValueError("encoded inference item exceeds bound")
+         payload = strict_json(raw)  # Freeze caller-owned structures before admission.
+-        if set(payload) != {"image", "prompt", "domain_name", "image_size", "state", "local_memory"}:
++        if not self._payload_keys_valid(payload):
+             raise ValueError("B1 policy payload requires observation/state/local evidence; media must be off")
+         local = payload["local_memory"]
+         if not isinstance(local, dict) or type(local.get("consumer_step")) is not int:
+@@ -353,12 +353,18 @@ class SessionTransactions:
+             ticket = _Ticket(key, payload_sha, lease, payload, len(raw), deadline)
+             self._tickets[key] = ticket
+             try:
+-                self._executor.submit(self._execute, ticket)
++                self._schedule(ticket)
+             except BaseException:
+                 del self._tickets[key]
+                 raise
+             return self._pending(ticket)
+ 
++    def _payload_keys_valid(self, payload):
++        return set(payload) == {"image", "prompt", "domain_name", "image_size", "state", "local_memory"}
++
++    def _schedule(self, ticket):
++        self._executor.submit(self._execute, ticket)
++
+     def _pending(self, ticket):
+         return self._reply(
+             202,
+diff --git a/cosmos_framework/inference/robocasa_transaction_client.py b/cosmos_framework/inference/robocasa_transaction_client.py
+index 2567db9..436266a 100644
+--- a/cosmos_framework/inference/robocasa_transaction_client.py
++++ b/cosmos_framework/inference/robocasa_transaction_client.py
+@@ -25,11 +25,16 @@ class TransactionPolicyClient:
+         *,
+         timeout_s=600.0,
+         transport=None,
++        batch_profile=False,
++        max_batch_size=1,
+         clock=time.monotonic,
+         pause: Callable[[float], None] = time.sleep,
+     ):
+         if not math.isfinite(timeout_s) or timeout_s <= 0:
+             raise ValueError("positive client deadline required")
++        if type(max_batch_size) is not int or not 1 <= max_batch_size <= 8:
++            raise ValueError("bounded native batch cap required")
++        self.batch_profile, self.max_batch_size = batch_profile, max_batch_size
+         self.base_url, self.timeout_s = base_url.rstrip("/"), timeout_s
+         self.transport = transport if transport is not None else requests.Session()
+         self.clock, self.pause = clock, pause
+@@ -44,6 +49,9 @@ class TransactionPolicyClient:
+                 raise TimeoutError("original transaction deadline exhausted")
+             try:
+                 response = self.transport.request(method, self.base_url + path, timeout=remaining, **kwargs)
++                if response.status_code in (429, 503):
++                    self.pause(min(0.02, max(0, deadline - self.clock())))
++                    continue
+                 break
+             except (requests.Timeout, requests.ConnectionError):
+                 self.pause(min(0.02, max(0, deadline - self.clock())))
+@@ -79,6 +87,35 @@ class TransactionPolicyClient:
+         self._registration_pending = False
+         return dict(lease)
+ 
++    def bind_assignment(self, ack):
++        """Adopt only the coordinator's exact registration ACK, never auto-register."""
++        from cosmos_framework.inference.robocasa_session_transactions import SessionLease
++
++        if self.lease is not None or self._registration_pending:
++            raise RuntimeError("previous assignment unresolved")
++        if not isinstance(ack, dict) or ack.get("prediction_clock_domain") != self.clock_domain:
++            raise ValueError("assignment clock domain mismatch")
++        lease = ack.get("lease")
++        if not isinstance(lease, dict) or set(lease) != set(SessionLease.__dataclass_fields__):
++            raise ValueError("exact coordinator assignment required")
++        self.lease = json.loads(json_bytes(lease))
++        return dict(self.lease)
++
++    def _batch_valid(self, batch):
++        if not self.batch_profile:
++            return batch == {"size": 1, "index": 0}
++        return (
++            isinstance(batch, dict)
++            and set(batch) == {"id", "size", "index"}
++            and isinstance(batch["id"], str)
++            and len(batch["id"]) == 32
++            and all(c in "0123456789abcdef" for c in batch["id"])
++            and type(batch["size"]) is int
++            and 1 <= batch["size"] <= self.max_batch_size
++            and type(batch["index"]) is int
++            and 0 <= batch["index"] < batch["size"]
++        )
++
+     def predict(self, payload: dict):
+         # Freeze before encoding/upload; retries reuse these exact absolute values.
+         started_at = self.clock()
+@@ -125,7 +162,7 @@ class TransactionPolicyClient:
+             local.get("session_id") != self.lease["session_id"]
+             or local.get("episode_id") != self.lease["episode_id"]
+             or local.get("consumer_step") != frontier
+-            or result.get("native_batch") != {"size": 1, "index": 0}
++            or not self._batch_valid(result.get("native_batch"))
+             or not isinstance(action, list)
+             or len(action) != 16
+             or any(not isinstance(row, list) or len(row) != 15 for row in action)
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index 025322c..fc67a70 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -83,6 +83,11 @@ from cosmos_framework.inference.common.args import CheckpointOverrides, ConfigFi
+ from cosmos_framework.inference.common.config import deserialize_config_dict
+ from cosmos_framework.inference.common.init import init_output_dir
+ from cosmos_framework.inference.inference import OmniInference
++from cosmos_framework.inference.robocasa_batch_transactions import (
++    BatchedSessionTransactions,
++    BatchOutput,
++    MediaCandidate,
++)
+ from cosmos_framework.inference.robocasa_composite_visual import prepare_robocasa_composite_frame
+ from cosmos_framework.inference.robocasa_local_memory_policy import RoboCasaLocalMemoryPolicyAdapter
+ from cosmos_framework.inference.robocasa_session_transactions import (
+@@ -528,13 +533,16 @@ class ActionServerArgs(pydantic.BaseModel):
+     """Online V3 Local-TTT mode. Formal Local-TTT evaluation must use ``required``."""
+     local_memory_max_sessions: int = 64
+     """Maximum concurrent online Local-TTT episode sessions."""
+-    transaction_profile: Literal["legacy", "b1"] = "legacy"
++    transaction_profile: Literal["legacy", "b1", "batch"] = "legacy"
+     """Opt-in Phase B transaction/B1 API. Does not enable multi-Sim or B>1."""
+     transaction_owner_token_file: Path | None = None
+     transaction_run_lease: str | None = None
+     transaction_manifest_digest: str | None = None
+     transaction_slot_id: str | None = None
+     transaction_timeout_s: float = 600.0
++    transaction_slot_ids: str | None = None
++    transaction_max_batch_size: int = 1
++    transaction_batch_wait_ms: float = 20.0
+ 
+     # ----- prompt format ------------------------------------------------------
+     format_prompt_as_json: bool | None = None
+@@ -613,24 +621,45 @@ class ActionServerConfig:
+ 
+ 
+ def _transaction_options(args):
++    batch = args.transaction_profile == "batch"
++    slot_text = getattr(args, "transaction_slot_ids", None)
+     fields = (
+         args.transaction_owner_token_file,
+         args.transaction_run_lease,
+         args.transaction_manifest_digest,
+-        args.transaction_slot_id,
++        slot_text if batch else args.transaction_slot_id,
+     )
+     if args.transaction_profile == "legacy":
+-        if any(value is not None for value in fields):
+-            raise ValueError("transaction identity options require explicit transaction_profile=b1")
++        if (
++            any(value is not None for value in fields)
++            or slot_text is not None
++            or getattr(args, "transaction_max_batch_size", 1) != 1
++            or getattr(args, "transaction_batch_wait_ms", 20) != 20
++        ):
++            raise ValueError("transaction identity options require explicit transaction_profile=b1/batch")
+         return None
++    if batch:
++        if args.transaction_slot_id is not None or not isinstance(slot_text, str):
++            raise ValueError("batch profile requires exact physical Slot list")
++        slots = tuple(slot_text.split(","))
++    else:
++        if (
++            slot_text is not None
++            or getattr(args, "transaction_max_batch_size", 1) != 1
++            or getattr(args, "transaction_batch_wait_ms", 20) != 20
++        ):
++            raise ValueError("multi-Slot/batch options require explicit batch profile")
++        slots = (args.transaction_slot_id,)
+     if (
+         args.local_memory_mode != "required"
+-        or args.local_memory_max_sessions != 1
++        or args.local_memory_max_sessions != len(slots)
++        or not 1 <= len(slots) <= 8
++        or len(set(slots)) != len(slots)
+         or args.action_chunk_size != 16
+-        or any(value is None for value in fields)
++        or any(v is None for v in fields)
+     ):
+         raise ValueError(
+-            "B1 transaction profile requires required Local-TTT, one Slot, explicit H16 and complete identity"
++            "B1 transaction profile requires required Local-TTT, exact Slots, explicit H16 and complete identity"
+         )
+     token_path = Path(args.transaction_owner_token_file)
+     if token_path.stat().st_mode & 0o077 or token_path.stat().st_size > 256:
+@@ -646,14 +675,21 @@ def _transaction_options(args):
+     timeout = getattr(args, "transaction_timeout_s", 600.0)
+     if not 0 < timeout <= 6000:
+         raise ValueError("finite bounded transaction timeout required")
+-    monotonic_clock_domain()  # Fail before native model initialization if comparability is unproven.
+-    return dict(
++    monotonic_clock_domain()
++    options = dict(
+         owner_token=identifier(token_path.read_text().strip(), limit=256),
+         run_lease=identifier(args.transaction_run_lease),
+         manifest_digest=args.transaction_manifest_digest,
+-        slot_ids=(identifier(args.transaction_slot_id, limit=64),),
++        slot_ids=tuple(identifier(slot, limit=64) for slot in slots),
+         timeout_s=timeout,
+     )
++    if batch:
++        cap = getattr(args, "transaction_max_batch_size", 1)
++        wait = getattr(args, "transaction_batch_wait_ms", 20.0)
++        if type(cap) is not int or not 1 <= cap <= 8 or type(wait) not in (int, float) or not 1 <= wait <= 1000:
++            raise ValueError("bounded native batch/wait required")
++        options.update(max_batch_size=cap, batch_wait_ms=wait)
++    return options
+ 
+ 
+ def transaction_dispatch(service, method, path, record=None, headers=None) -> Reply:
+@@ -667,16 +703,27 @@ def transaction_dispatch(service, method, path, record=None, headers=None) -> Re
+         return actor.submit(record["lease"], record["payload"], budget=record["budget"])
+     if method == "POST" and path == "/v2/inference/ack" and set(record) == {"lease", "request_key", "payload_sha256"}:
+         return actor.acknowledge(record["lease"], record["request_key"], record["payload_sha256"])
++    if (
++        method == "POST"
++        and path == "/v2/media/ack"
++        and set(record) == {"lease", "request_key", "payload_sha256"}
++        and hasattr(actor, "media_ack")
++    ):
++        return actor.media_ack(record["lease"], record["request_key"], record["payload_sha256"])
+     if method == "POST" and path == "/v2/session/end" and set(record) == {"lease"}:
+         return actor.end(record["lease"])
+-    if method == "GET" and path.startswith("/v2/inference/"):
+-        key = path.removeprefix("/v2/inference/")
++    if method == "GET" and (path.startswith("/v2/inference/") or path.startswith("/v2/media/")):
++        key = path.rsplit("/", 1)[-1]
+         assignment = headers.get("X-Cosmos-Assignment", "")
+         sha = headers.get("X-Cosmos-Payload-SHA256", "")
+         if len(assignment) > 4096 or any(
+             len(v) != 64 or any(c not in "0123456789abcdef" for c in v) for v in (key, sha)
+         ):
+             raise ValueError("bounded assignment and exact inference digests required")
++        if path.startswith("/v2/media/"):
++            if not hasattr(actor, "media_result"):
++                raise ValueError("media unsupported by this profile")
++            return actor.media_result(strict_json(assignment.encode()), key, sha)
+         return actor.result(strict_json(assignment.encode()), key, sha)
+     raise ValueError("unsupported transaction operation/schema")
+ 
+@@ -865,13 +912,23 @@ class ActionModelService:
+                 or self.local_memory_adapter.info()["local_dim"] != 32
+             ):
+                 raise ValueError("B1 transaction profile requires resolved raw15/state15/H16/K4/local32")
+-            self.transactions = SessionTransactions(
+-                self.local_memory_adapter,
+-                self._transaction_action,
+-                self._transaction_quiesce,
+-                model_lock=self._lock,
+-                **transaction_options,
+-            )
++            if args.transaction_profile == "batch":
++                self.transactions = BatchedSessionTransactions(
++                    self.local_memory_adapter,
++                    self._transaction_batch,
++                    self._transaction_quiesce,
++                    decode_media=self._transaction_decode_media,
++                    model_lock=self._lock,
++                    **transaction_options,
++                )
++            else:
++                self.transactions = SessionTransactions(
++                    self.local_memory_adapter,
++                    self._transaction_action,
++                    self._transaction_quiesce,
++                    model_lock=self._lock,
++                    **transaction_options,
++                )
+ 
+         if args.run_validation:
+             self._run_developer_validation()
+@@ -1171,6 +1228,85 @@ class ActionModelService:
+             action = action[1:]
+         return action.detach().cpu().tolist()
+ 
++    def _transaction_batch(self, reqs, updates):
++        preps = [self._prep_policy_item(r) for r in reqs]
++        n = len(preps)
++        if n != len(updates) or not n:
++            raise ValueError("native batch request/prefix cardinality mismatch")
++        batch = {
++            self._input_video_key(): [[p["video_padded"]] for p in preps],
++            **make_batched_action_processing_fields(
++                ActionProcessingRecord(raw_action_dim=self.raw_action_dim, action_normalizer=None), batch_size=n
++            ),
++            "action": [[self._build_action_input(p["state_token"])] for p in preps],
++            "mode": ["wam"] * n,
++            "ai_caption": [p["augmented_prompt"] for p in preps],
++            "prompt": [p["augmented_prompt"] for p in preps],
++            "conditioning_fps": [torch.tensor(self.cfg.fps, dtype=torch.long) for _ in preps],
++            "image_size": torch.stack([p["padded_image_size"] for p in preps]).to(device="cuda"),
++            "domain_id": [torch.tensor(get_domain_id(p["domain_name"]), dtype=torch.long) for p in preps],
++            "sequence_plan": [p["sequence_plan"] for p in preps],
++        }
++        with torch.inference_mode():
++            samples = self.model.generate_samples_from_batch(
++                batch,
++                guidance=self.cfg.guidance,
++                seed=[self.cfg.seed] * n,
++                num_steps=self.cfg.num_steps,
++                has_negative_prompt=False,
++                _local_memory_prefixes=tuple(self.local_memory_adapter.prefixes(u)[0] for u in updates),
++            )
++        if len(samples["action"]) != n:
++            raise ValueError("native batch action cardinality mismatch")
++        actions = []
++        for prep, value in zip(preps, samples["action"], strict=True):
++            value = self._denormalize_action(value.float().squeeze(0))
++            if prep["state_token"] is not None:
++                value = value[1:]
++            actions.append(value.detach().cpu().tolist())
++        room, byte_room = self.transactions.media_room()
++        media = []
++        for i, (req, prep) in enumerate(zip(reqs, preps, strict=True)):
++            candidate = None
++            if req.get("media") and room:
++                try:
++                    latent = samples["vision"][i]
++                    size = (
++                        latent.numel() * latent.element_size()
++                        + prep["padded_image_size"].numel() * prep["padded_image_size"].element_size()
++                    )
++                    if 0 < size <= byte_room:
++                        candidate = MediaCandidate(
++                            (latent.detach().cpu().clone(), prep["padded_image_size"].detach().cpu().clone()), size
++                        )
++                        room -= 1
++                        byte_room -= size
++                except Exception as error:
++                    log.warning("Optional media spool dropped: %s", type(error).__name__)
++            media.append(candidate)
++        return BatchOutput(actions, tuple(media))
++
++    def _transaction_decode_media(self, value):
++        latent, padded = value
++        with torch.inference_mode():
++            video = self.model.decode(latent.to(device="cuda")).squeeze(0)
++            video = remove_reflection_padding(video, padded)
++        if video.ndim != 4 or video.shape[1] > 65 or video.shape[-1] * video.shape[-2] > 2 * 1024**2:
++            raise ValueError("bounded optional video dimensions required")
++        encoded = []
++        total = 0
++        for frame in _video_tensor_to_pil_images(video):
++            buf = io.BytesIO()
++            frame.save(buf, format="PNG")
++            item = base64.b64encode(buf.getvalue()).decode("ascii")
++            total += len(item)
++            if total > 32 * 1024**2:
++                raise ValueError("bounded optional video payload exceeded")
++            encoded.append(item)
++        if not encoded:
++            raise ValueError("empty optional generated video")
++        return encoded
++
+     def _transaction_quiesce(self):
+         # This service is constructed only with one GPU. Device loss must raise,
+         # not silently turn an unproven drain into positive Session cleanup.
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+index 596d6d0..92de0e9 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+@@ -69,7 +69,17 @@ class NativeEpisode:
+                 "resource_proof": proof,
+             }
+ 
+-    def execute(self, attempt, *, reset_index, directory, sampling=None, phase_callback=None):
++    def execute(
++        self,
++        attempt,
++        *,
++        reset_index,
++        directory,
++        sampling=None,
++        phase_callback=None,
++        transaction_assignment=None,
++        episode_deadline=None,
++    ):
+         if not self.admitted or self.observation is None:
+             raise ValueError("scene must be admitted before policy/Local")
+         self.admitted = False
+@@ -96,6 +106,18 @@ class NativeEpisode:
+         cleanup = None
+         first_local = None
+         media_errors = []
++        transactional = None
++        if self.settings.get("execution_profile") == "phase_b":
++            from cosmos_framework.simulation.robocasa.eval_v2_transactions import PolicyTransport
++
++            transactional = PolicyTransport(self.settings, transaction_assignment, episode_deadline)
++            client, http_client = transactional.local, transactional
++        else:
++            if transaction_assignment is not None:
++                raise ValueError("legacy path cannot accept transactional assignment")
++            client = RoboCasaLocalMemoryClient(enabled=True)
++            http_client = requests.Session()
++            http_client.trust_env = False
+         try:
+             sink = self.media_factory(
+                 directory / "media",
+@@ -115,9 +137,6 @@ class NativeEpisode:
+                 if len(media_errors) < 16:
+                     media_errors.append(repr(error))
+ 
+-        client = RoboCasaLocalMemoryClient(enabled=True)
+-        http_client = requests.Session()
+-        http_client.trust_env = False
+         start = time.monotonic()
+         with (
+             (directory / "actions.jsonl").open("x") as actions,
+@@ -139,11 +158,29 @@ class NativeEpisode:
+                     "local_memory": result.get("local_memory"),
+                     "latency_ms": latency,
+                 }
++                if transactional is not None:
++                    value["transaction"] = {
++                        k: result[k]
++                        for k in (
++                            "protocol",
++                            "request_key",
++                            "payload_sha256",
++                            "assignment",
++                            "frontier",
++                            "native_batch",
++                            "media",
++                        )
++                    }
++                if transactional is not None and "timing" in result:
++                    value["transaction"]["timing"] = result["timing"]
+                 if first_local is None:
+                     first_local = value["local_memory"]
+                 predictions.write(json.dumps(value, allow_nan=False) + "\n")
+                 predictions.flush()
+-                media_call("prediction", replans, result)
++                if transactional is None:
++                    media_call("prediction", replans, result)
++                else:
++                    transactional.media(result, replans, lambda i, r: media_call("prediction", i, r))
+                 replans += 1
+ 
+             def cleaned(value):
+@@ -189,7 +226,14 @@ class NativeEpisode:
+                     raise RuntimeError("Local cleanup did not acknowledge reset")
+                 observation = outcome.finish(normal=True, cleanup_ok=True)
+             finally:
+-                http_client.close()
++                close_error = None
++                try:
++                    http_client.close()
++                except BaseException as error:
++                    close_error = error
++                finally:
++                    if transactional is not None:
++                        media_errors.extend(transactional.media_diagnostics()["errors"])
+                 # Native loop has already attempted end+reset. Media cannot delay
+                 # that cleanup or replace a valid scientific outcome.
+                 for f in (actions, predictions):
+@@ -200,10 +244,14 @@ class NativeEpisode:
+                 except Exception as e:
+                     media = {"errors": [repr(e)], "forced_encoder_cleanup": True}
+                 media["parent_errors"] = media_errors
++                if transactional is not None:
++                    media["transaction_fetch"] = transactional.media_diagnostics()
+                 try:
+                     atomic_json(directory / "media_diagnostics.json", media)
+                 except OSError:
+                     pass
++                if close_error is not None:
++                    raise close_error
+         return {
+             "local_session": {
+                 "session_id": cleanup["session_id"],
+@@ -215,6 +263,7 @@ class NativeEpisode:
+             "instruction": prompt,
+             "replans": replans,
+             "elapsed_seconds": time.monotonic() - start,
+-            "media_process_fault": media.get("forced_encoder_cleanup", False),
++            "media_process_fault": media.get("forced_encoder_cleanup", False)
++            or (transactional is not None and transactional.media_process_fault),
+             "media_helper_pids": media.get("helper_pids", []),
+         }
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_slot.py b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+index 2cebd48..aab7078 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_slot.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+@@ -151,7 +151,7 @@ class SimSlot:
+         self._state("CLEAN")
+         return {"state": self.state, "session_opened": False}
+ 
+-    def execute(self, attempt, *, reset_index, directory):
++    def execute(self, attempt, *, reset_index, directory, transaction_assignment=None, episode_deadline=None):
+         if self.state != "ADMISSION" or not self.engine.admitted or attempt != self.attempt:
+             raise ValueError("unadmitted/stale/cross-Slot Episode")
+         expected = (
+@@ -173,8 +173,31 @@ class SimSlot:
+                 elif name == "local_cleanup":
+                     self._state("SESSION_CLOSING")
+ 
++            extra = {}
++            if self.cfg["settings"].get("execution_profile") == "phase_b":
++                lease = transaction_assignment["lease"]
++                if any(
++                    lease.get(k) != v
++                    for k, v in {
++                        "run_lease": self.cfg["coordinator_lease_id"],
++                        "manifest_digest": self.cfg["manifest_digest"],
++                        "slot_id": self.cfg["physical_slot_id"],
++                        "task": attempt["task"],
++                        "episode_index": attempt["episode"],
++                        "attempt_id": attempt["attempt_id"],
++                    }.items()
++                ):
++                    raise ValueError("foreign coordinator transactional assignment")
++                extra = dict(transaction_assignment=transaction_assignment, episode_deadline=episode_deadline)
++            elif transaction_assignment is not None:
++                raise ValueError("legacy Slot cannot use transactional assignment")
+             response = self.engine.execute(
+-                attempt, reset_index=reset_index, directory=directory, sampling=self.sampling(), phase_callback=phase
++                attempt,
++                reset_index=reset_index,
++                directory=directory,
++                sampling=self.sampling(),
++                phase_callback=phase,
++                **extra,
+             )
+             session = response["local_session"]
+             if (
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+new file mode 100644
+index 0000000..281392d
+--- /dev/null
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+@@ -0,0 +1,231 @@
++"""Phase B facade for the unchanged native action/evidence loop.
++
++Only the coordinator can register. A Sim binds that admitted assignment once;
++HTTP retry is internal to one prediction budget, never an outer Episode retry.
++Optional media has a bounded queue and a delivery fence before sink shutdown.
++"""
++
++from __future__ import annotations
++
++import math
++import threading
++import time
++from collections import deque
++from urllib.parse import urlsplit
++
++import requests
++
++from cosmos_framework.inference.robocasa_session_transactions import json_bytes
++from cosmos_framework.inference.robocasa_transaction_client import TransactionPolicyClient
++from cosmos_framework.simulation.robocasa.local_memory_client import RoboCasaLocalMemoryClient
++
++
++class AssignedLocalMemoryClient(RoboCasaLocalMemoryClient):
++    def __init__(self, lease):
++        super().__init__(enabled=True, max_evidence_steps=16)
++        self.lease, self.begun = dict(lease), False
++
++    def begin(self, slot=0, **kwargs):
++        if slot != 0 or self.begun:
++            raise ValueError("one admitted assignment per Sim Episode required")
++        super().begin(slot, **kwargs)
++        episode = self._get(slot)
++        episode.session_id, episode.episode_id = self.lease["session_id"], self.lease["episode_id"]
++        self.begun = True
++
++
++class _Response:
++    def __init__(self, value):
++        self.value = value
++
++    def raise_for_status(self):
++        return None
++
++    def json(self):
++        return self.value
++
++
++class PolicyTransport:
++    def __init__(self, settings, assignment, episode_deadline, *, transport=None, media_transport=None):
++        if not isinstance(episode_deadline, (int, float)) or not math.isfinite(episode_deadline):
++            raise ValueError("bounded coordinator Episode deadline required")
++        self.settings, self.episode_deadline = settings, episode_deadline
++        self.base = settings["server_url"].rstrip("/")
++        self.http = transport if transport is not None else requests.Session()
++        self.media_http = media_transport if media_transport is not None else requests.Session()
++        if hasattr(self.http, "trust_env"):
++            self.http.trust_env = False
++        if hasattr(self.media_http, "trust_env"):
++            self.media_http.trust_env = False
++        self.client = TransactionPolicyClient(
++            self.base,
++            timeout_s=settings["predict_timeout_s"],
++            transport=self.http,
++            batch_profile=True,
++            max_batch_size=settings["max_infer_batch_size"],
++        )
++        self.lease = self.client.bind_assignment(assignment)
++        self.local = AssignedLocalMemoryClient(self.lease)
++        self._failed, self._ended, self.replan = False, False, 0
++        self._last_delivered = -1
++        self._stop = threading.Event()
++        self._changed = threading.Condition()
++        self._delivery = threading.Lock()
++        self._pending = deque()
++        self._thread = None
++        self.errors = []
++        self.media_status = {}
++
++    def _error(self, error):
++        if len(self.errors) < 16:
++            self.errors.append(str(error)[:1024])
++
++    def post(self, url, *, json, timeout, **kwargs):
++        if urlsplit(url).path != "/predict" or url.rstrip("/") != self.base + "/predict":
++            raise ValueError("native facade cannot redirect assignment to another Server")
++        if json.get("_local_memory_command") == "reset":
++            if json.get("session_id") != self.lease["session_id"]:
++                raise ValueError("foreign Session reset")
++            self.end()
++            return _Response({"local_memory": {"status": "reset", "session_id": self.lease["session_id"]}})
++        if self._failed or self._ended:
++            raise RuntimeError("failed/closed Episode requires explicit End and new Attempt")
++        frontier = json.get("local_memory", {}).get("consumer_step")
++        if type(frontier) is not int or frontier <= self._last_delivered:
++            self._failed = True
++            raise ValueError("native Episode cannot execute a delivered frontier twice")
++        remaining = self.episode_deadline - time.monotonic()
++        if remaining <= 0:
++            self._failed = True
++            raise TimeoutError("original Episode deadline exhausted")
++        self.client.timeout_s = min(timeout, self.settings["predict_timeout_s"], remaining)
++        record = dict(json)
++        mode = self.settings.get("save_generated_video", "none")
++        if mode == "all" or (mode == "first" and self.replan == 0):
++            record["media"] = {"replan": self.replan}
++        try:
++            result = self.client.predict(record)
++            self._last_delivered = frontier
++            self.replan += 1
++            return _Response(result)
++        except BaseException:
++            self._failed = True
++            raise
++
++    def media(self, result, index, deliver):
++        media = result.get("media", {})
++        if media.get("status") != "disabled" and len(self.media_status) < 6250:
++            with self._changed:
++                self.media_status[index] = {
++                    "status": media.get("status", "unavailable"),
++                    "ticket": result.get("request_key"),
++                }
++        if media.get("status") != "pending":
++            if media.get("status") not in ("disabled", None):
++                self._error("generated media " + str(media))
++            return
++        if media.get("ticket") != result["request_key"]:
++            self._error("foreign optional media ticket")
++            self.media_status[index] = {"status": "invalid_media_binding"}
++            return
++        with self._changed:
++            if self._stop.is_set() or len(self._pending) >= 2:
++                self._error("bounded optional media fetch dropped")
++                self.media_status[index] = {"status": "dropped_fetch_capacity"}
++                return
++            self._pending.append((result["request_key"], result["payload_sha256"], index, deliver))
++            if self._thread is None:
++                self._thread = threading.Thread(target=self._media_loop, name="eval-v2-optional-media", daemon=True)
++                self._thread.start()
++            self._changed.notify_all()
++
++    def _media_loop(self):
++        while not self._stop.is_set():
++            with self._changed:
++                self._changed.wait_for(lambda: self._pending or self._stop.is_set(), timeout=0.2)
++                if self._stop.is_set():
++                    return
++                if not self._pending:
++                    continue
++                key, sha, index, deliver = self._pending.popleft()
++            headers = {"X-Cosmos-Assignment": json_bytes(self.lease).decode(), "X-Cosmos-Payload-SHA256": sha}
++            try:
++                while not self._stop.is_set() and time.monotonic() < self.episode_deadline:
++                    reply = self.media_http.request("GET", self.base + "/v2/media/" + key, headers=headers, timeout=0.5)
++                    value = reply.json()
++                    if (
++                        reply.status_code not in (200, 202)
++                        or value.get("request_key") != key
++                        or value.get("payload_sha256") != sha
++                    ):
++                        raise ValueError("optional media response binding mismatch")
++                    if reply.status_code == 202:
++                        self._stop.wait(0.05)
++                        continue
++                    status = value.get("media", {})
++                    if status.get("status") == "ready":
++                        with self._delivery:
++                            if not self._stop.is_set():
++                                deliver(index, {"video": status.get("video")})
++                                with self._changed:
++                                    self.media_status[index] = {"status": "fetched_to_optional_sink", "ticket": key}
++                        self.media_http.request(
++                            "POST",
++                            self.base + "/v2/media/ack",
++                            timeout=0.5,
++                            json={"lease": self.lease, "request_key": key, "payload_sha256": sha},
++                        )
++                    else:
++                        self._error("optional media " + str(status.get("status")))
++                        with self._changed:
++                            self.media_status[index] = {"status": str(status.get("status")), "ticket": key}
++                    break
++            except Exception as error:
++                self._error("optional media fetch: " + repr(error))
++                with self._changed:
++                    self.media_status[index] = {"status": "fetch_error", "ticket": key, "error": repr(error)[:1024]}
++
++    def end(self):
++        if self._ended:
++            return
++        self.close_media()
++        # Cleanup has its own bounded budget; never revives inference work.
++        self.client.timeout_s = self.settings["predict_timeout_s"]
++        self.client.end()
++        self._ended = True
++
++    def close_media(self):
++        with self._delivery:
++            self._stop.set()
++        with self._changed:
++            for index, status in list(self.media_status.items()):
++                if status["status"] == "pending":
++                    self.media_status[index] = {**status, "status": "cancelled_at_episode_end"}
++            self._changed.notify_all()
++            self._pending.clear()
++        if self._thread is not None:
++            self._thread.join(self.settings.get("encoder_grace_s", 2.0))
++            if self._thread.is_alive():
++                self._error("optional media fetch thread unquiesced")
++
++    def media_diagnostics(self):
++        with self._changed:
++            return {
++                "predictions": {str(k): dict(v) for k, v in self.media_status.items()},
++                "errors": list(self.errors),
++                "unquiesced": self.media_process_fault,
++            }
++
++    @property
++    def media_process_fault(self):
++        return self._thread is not None and self._thread.is_alive()
++
++    def close(self):
++        try:
++            self.end()
++        finally:
++            self.close_media()
++            if hasattr(self.http, "close"):
++                self.http.close()
++            if not self.media_process_fault and hasattr(self.media_http, "close"):
++                self.media_http.close()
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py
+new file mode 100644
+index 0000000..d22ee1c
+--- /dev/null
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py
+@@ -0,0 +1,232 @@
++"""Actual native loop and transaction facade with CPU Local state/fake physics."""
++
++from __future__ import annotations
++
++import base64
++import io
++import json
++import threading
++import time
++
++import numpy as np
++import pytest
++import torch
++from PIL import Image
++
++from cosmos_framework.inference.robocasa_batch_transactions_test import make_native as make_native
++from cosmos_framework.inference.robocasa_session_transactions import Reply, json_bytes
++from cosmos_framework.inference.robocasa_session_transactions_test import clock_kernel as clock_kernel
++from cosmos_framework.inference.robocasa_session_transactions_test import payload, register
++from cosmos_framework.scripts.robocasa_transactions_b1_test import DirectTransport, Response
++from cosmos_framework.simulation.robocasa import closed_loop_eval as native
++from cosmos_framework.simulation.robocasa import eval_v2_adapter as adapter_module
++from cosmos_framework.simulation.robocasa.eval_v2_transactions import PolicyTransport
++
++
++class FakeEnv:
++    def __init__(self):
++        self.steps = 0
++        self.actions = []
++        self.obs = {f"{cam}_image": np.zeros((256, 256, 3), np.uint8) for cam in native.CAMS}
++
++    def reset(self):
++        self.steps = 0
++        return self.obs
++
++    def _check_success(self):
++        return self.steps >= 32
++
++    def step(self, action):
++        self.actions.append(action.copy())
++        self.steps += 1
++        return self.obs, 0.0, False, {}
++
++    def get_ep_meta(self):
++        return {"lang": "Actual Episode instruction / 关闭冰箱"}
++
++
++def settings(mode="none"):
++    return dict(
++        server_url="http://cpu",
++        predict_timeout_s=5,
++        max_infer_batch_size=1,
++        execution_profile="phase_b",
++        save_generated_video=mode,
++        save_rollout_mp4=False,
++        encoder_grace_s=0.05,
++        horizon=32,
++    )
++
++
++def facade(obj, actor, lease, *, mode="none", deadline=None, drop=(), media_transport=None):
++    return PolicyTransport(
++        settings(mode),
++        {"lease": lease, "prediction_clock_domain": actor.clock_domain},
++        time.monotonic() + 10 if deadline is None else deadline,
++        transport=DirectTransport(obj, drop),
++        media_transport=media_transport or DirectTransport(obj),
++    )
++
++
++def test_native_32_step_loop_corrected_actions_two_replans_and_real_End_cleanup(tmp_path, monkeypatch, make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++
++    def decode(value):
++        return torch.from_numpy(np.array(Image.open(io.BytesIO(base64.b64decode(value))), copy=True)).permute(2, 0, 1)
++
++    obj.local_memory_adapter.decode_image = decode
++    generate = obj.model.generate_samples_from_batch
++
++    def valid_actions(batch, **kwargs):
++        samples = generate(batch, **kwargs)
++        raw = [0.2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5]
++        action = torch.zeros(1, 17, 64)
++        action[:, 1:, :15] = torch.tensor(raw) * 2 - 1
++        samples["action"] = [action.clone() for _ in batch["prompt"]]
++        return samples
++
++    obj.model.generate_samples_from_batch = valid_actions
++    assigned = facade(obj, actor, lease)
++    # Inject only transport construction; the actual facade and native loop run.
++    from cosmos_framework.simulation.robocasa import eval_v2_transactions
++
++    monkeypatch.setattr(eval_v2_transactions, "PolicyTransport", lambda *a: assigned)
++    monkeypatch.setattr(native, "build_state_token", lambda _: [0.0] * 15)
++    env = FakeEnv()
++    episode = adapter_module.NativeEpisode(env, settings())
++    assert episode.initialize()["initial_success"] is False
++    attempt = {
++        "task": "CloseFridge",
++        "episode": 0,
++        "attempt_id": "attempt-1",
++        "stream_id": "stream",
++        "seed": 0,
++        "manifest_digest": "a" * 64,
++    }
++    result = episode.execute(
++        attempt,
++        reset_index=0,
++        directory=tmp_path / "episode",
++        transaction_assignment={"lease": lease, "prediction_clock_domain": actor.clock_domain},
++        episode_deadline=time.monotonic() + 10,
++    )
++    assert result["observation"]["environment_success"] is True and len(env.actions) == 32
++    assert result["local_session"]["reset_ack"] is True and actor.info()["sessions"] == 0
++    rows = [json.loads(x) for x in (tmp_path / "episode/predictions.jsonl").read_text().splitlines()]
++    assert [r["source_step"] for r in rows] == [0, 16]
++    assert [r["local_memory"]["prefix_present"] for r in rows] == [False, True]
++    assert all(r["transaction"]["assignment"]["session_id"] == lease["session_id"] for r in rows)
++    assert len(obj.native_calls) == 2
++
++
++@pytest.mark.parametrize("lost", [False, True])
++def test_one_successful_native_frontier_is_never_delivered_twice(make_native, lost):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    client = facade(obj, actor, lease, drop=("/v2/inference",) if lost else ())
++    request = payload(lease)
++    client.post("http://cpu/predict", json=request, timeout=5)
++    with pytest.raises(ValueError, match="frontier twice"):
++        client.post("http://cpu/predict", json=request, timeout=5)
++    assert len(obj.native_calls) == 1
++    client.close()
++
++
++def test_expired_Episode_cannot_mint_another_prediction_budget(make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    client = facade(obj, actor, lease, deadline=time.monotonic() - 1)
++    with pytest.raises(TimeoutError, match="Episode deadline"):
++        client.post("http://cpu/predict", json=payload(lease), timeout=5)
++    with pytest.raises(RuntimeError, match="new Attempt"):
++        client.post("http://cpu/predict", json=payload(lease), timeout=5)
++    assert not obj.native_calls
++    client.close()
++
++
++def test_failed_generation_poisoned_facade_cannot_retry_as_new_predict(make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    client = facade(obj, actor, lease)
++    actor.generate_many = lambda *a: (_ for _ in ()).throw(RuntimeError("injected native failure"))
++    with pytest.raises(RuntimeError, match="transaction API rejected"):
++        client.post("http://cpu/predict", json=payload(lease), timeout=5)
++    with pytest.raises(RuntimeError, match="new Attempt"):
++        client.post("http://cpu/predict", json=payload(lease, 1, 0), timeout=5)
++    client.close()
++    assert actor.info()["sessions"] == 0
++
++
++def test_media_response_after_sink_fence_cannot_write_or_resurrect_directory(make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    entered, release = threading.Event(), threading.Event()
++    key, sha = "b" * 64, "c" * 64
++
++    class LateMedia:
++        def request(self, *a, **k):
++            entered.set()
++            assert release.wait(3)
++            return Response(
++                Reply(
++                    200,
++                    json_bytes(
++                        {"request_key": key, "payload_sha256": sha, "media": {"status": "ready", "video": ["x"]}}
++                    ),
++                )
++            )
++
++    client = facade(obj, actor, lease, media_transport=LateMedia())
++    delivered = []
++    client.media(
++        {"media": {"status": "pending", "ticket": key}, "request_key": key, "payload_sha256": sha},
++        0,
++        lambda *a: delivered.append(a),
++    )
++    try:
++        assert entered.wait(3)
++        client.close_media()
++        assert client.media_process_fault
++    finally:
++        release.set()
++        client._thread.join(3)
++    assert not client.media_process_fault and not delivered
++    client.close()
++
++
++def test_End_ACK_timeout_cannot_be_reported_as_reset_success(make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    client = facade(obj, actor, lease)
++    now = [0.0]
++    client.settings["predict_timeout_s"] = 0.1
++    client.client.clock = lambda: now[0]
++    client.client.pause = lambda n: now.__setitem__(0, now[0] + n)
++    end = actor.end
++    actor.end = lambda proof: Reply(202, json_bytes({"acknowledged": False}))
++    try:
++        with pytest.raises(TimeoutError, match="original transaction deadline"):
++            client.post(
++                "http://cpu/predict",
++                json={"_local_memory_command": "reset", "session_id": lease["session_id"]},
++                timeout=5,
++            )
++        assert client._ended is False and client.client.lease is not None
++    finally:
++        actor.end = end
++        client.close()
++
++
++def test_foreign_optional_media_is_diagnostic_and_never_invalidates_actions(make_native):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    client = facade(obj, actor, lease)
++    delivered = []
++    client.media(
++        {"request_key": "b" * 64, "payload_sha256": "c" * 64, "media": {"status": "pending", "ticket": "d" * 64}},
++        0,
++        lambda *a: delivered.append(a),
++    )
++    assert not delivered and client.media_diagnostics()["predictions"]["0"]["status"] == "invalid_media_binding"
++    client.close()
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index 9d911fc..23a940d 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -36,6 +36,10 @@ def serve(channel, cfg, *, factory=None):
+                 "adapter": Path(sys.modules[NativeEpisode.__module__].__file__),
+                 "slot": Path(sys.modules[SimSlot.__module__].__file__),
+             }
++            if cfg["settings"].get("execution_profile") == "phase_b":
++                from cosmos_framework.simulation.robocasa import eval_v2_transactions
++
++                modules["transactions"] = Path(eval_v2_transactions.__file__)
+             if set(cfg["source_files"]) != set(modules):
+                 raise ValueError("incomplete native source witnesses")
+             for name, file in modules.items():
+@@ -80,7 +84,13 @@ def serve(channel, cfg, *, factory=None):
+                 response.update(slot.finish_without_session())
+             elif op == "execute":
+                 response.update(
+-                    slot.execute(message["attempt"], reset_index=message["reset_index"], directory=message["directory"])
++                    slot.execute(
++                        message["attempt"],
++                        reset_index=message["reset_index"],
++                        directory=message["directory"],
++                        transaction_assignment=message.get("transaction_assignment"),
++                        episode_deadline=message.get("episode_deadline"),
++                    )
+                 )
+             elif op == "close":
+                 response.update(slot.close())

@@ -1,0 +1,11 @@
+{
+  "root": "323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728",
+  "child": "774c2edb93ec5a6ba85ba1124757064d7cc779a5",
+  "gitlink": "774c2edb93ec5a6ba85ba1124757064d7cc779a5",
+  "branch": "v3-eval-v2-batch-b2-20261029",
+  "approved_b1_root": "dc7757922d7273f50f3de23363d41e12e157a07f",
+  "approved_b1_child": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "approved_b1_verdict_docs": "66a5b99c0a23312525ccbdc0fadb4655bc7d0b19",
+  "approved_design_root": "b9c7cf1607ffd38f6e3349bdde0b35703a6d7684",
+  "scope": "SECOND production increment: multiSim/multiSession/nativeBatch, no canonical merge/native authorization"
+}

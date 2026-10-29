@@ -1,0 +1,87 @@
+{
+  "gate": "PHASE_B_B2_AUTHOR_CPU_ONLY",
+  "implementation_root": "323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728",
+  "child_gitlink": "774c2edb93ec5a6ba85ba1124757064d7cc779a5",
+  "author_cpu": "PASS",
+  "junit": {
+    "tests": 424,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "inference": {
+    "tests": 145,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase_a_regression": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase_b_runtime": {
+    "tests": 24,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "static_ruff": "0.12.7_CHECK_FORMAT_PASS",
+  "syntax_files": 29,
+  "source_unchanged": true,
+  "source_bindings": 61,
+  "os_witnesses": [
+    {
+      "label": "G1_N2_E2_owned_server_death",
+      "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_owned_Server_death_faults0/run",
+      "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+      "valid": 0,
+      "results_qualified": false,
+      "files": 14
+    },
+    {
+      "label": "G1_N2_E2_qualified",
+      "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run",
+      "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+      "valid": 4,
+      "results_qualified": true,
+      "files": 18
+    },
+    {
+      "label": "G2_N3_E1_qualified",
+      "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run",
+      "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+      "valid": 3,
+      "results_qualified": true,
+      "files": 24
+    },
+    {
+      "label": "G1_N3_E1_qualified",
+      "source": "/tmp/psm-eval-v2-batch-b2-20261029/locked02/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run",
+      "scope": "CPU_ONLY fake physics/diffusion/kernel-file evidence, real owned OS/HTTP/Runtime/Core",
+      "valid": 3,
+      "results_qualified": true,
+      "files": 17
+    }
+  ],
+  "prior421": "actual tests PASS on cd538b0d; wrapper ignored failure exit, fixed in final Root; separate raw history retained",
+  "actual_cloud_clock": "BLOCKED_KERNEL_IDENTITY_UNAVAILABLE; no bypass",
+  "gpt_code_gate": "REQUESTED_NOT_APPROVED",
+  "independent_ds_cpu": "NOT_RUN; consolidate once on final candidate",
+  "gpu_full_model_robocasa_egl_dcp_900_training_history": "NOT_RUN_OR_MODIFIED",
+  "canonical_v3_child_merge": "NOT_DONE",
+  "limits": [
+    "real CPU Local math/carriers and owned OS/HTTP, fake physics/diffusion/kernel bytes",
+    "no native batch CUDA correctness, EGL capacity, memory or speed claim",
+    "normal exec/no in-process namespace changes; actual host must pass read-only preflight",
+    "optional media missing/error does not change SR; unknown device/process cleanup remains infrastructure fault"
+  ],
+  "os_qualification": {
+    "owned_server_death_expected_cause_returncode": 23,
+    "owned_groups_all_closed": true,
+    "published_test_capability_values": "ABSENT",
+    "synthetic_token_files_checked": 5,
+    "boundary": "Synthetic CPU fixture only; no native environment/model/GPU proof"
+  }
+}

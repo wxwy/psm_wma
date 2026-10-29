@@ -1,0 +1,26 @@
+{
+  "proofs": {
+    "monotonic_clock_domain": "AST_IDENTICAL_TO_APPROVED_B1",
+    "original_deadline": "AST_IDENTICAL_TO_APPROVED_B1",
+    "cosmos_framework/evaluation/robocasa_v2/store.py": "BYTE_IDENTICAL_TO_APPROVED_BASELINE",
+    "cosmos_framework/evaluation/robocasa_v2/scheduler.py": "BYTE_IDENTICAL_TO_APPROVED_BASELINE",
+    "cosmos_framework/evaluation/robocasa_v2/admission.py": "BYTE_IDENTICAL_TO_APPROVED_BASELINE",
+    "cosmos_framework/evaluation/robocasa_v2/evidence.py": "BYTE_IDENTICAL_TO_APPROVED_BASELINE"
+  },
+  "child_model_training_dcp_optimizer_data_vendor": "UNCHANGED",
+  "root_old_eval_queue_vendor_and_PhaseA_tests": "UNCHANGED",
+  "production_child_delta_files": [
+    "cosmos_framework/evaluation/robocasa_v2/contract.py",
+    "cosmos_framework/inference/robocasa_batch_transactions.py",
+    "cosmos_framework/inference/robocasa_batch_transactions_test.py",
+    "cosmos_framework/inference/robocasa_local_memory_policy.py",
+    "cosmos_framework/inference/robocasa_session_transactions.py",
+    "cosmos_framework/inference/robocasa_transaction_client.py",
+    "cosmos_framework/scripts/action_policy_server_robocasa.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_worker.py"
+  ]
+}
