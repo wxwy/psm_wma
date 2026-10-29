@@ -1,0 +1,1994 @@
+diff --git a/cosmos_framework/inference/local_memory_online.py b/cosmos_framework/inference/local_memory_online.py
+index 925def9..b95d3b1 100644
+--- a/cosmos_framework/inference/local_memory_online.py
++++ b/cosmos_framework/inference/local_memory_online.py
+@@ -9,12 +9,12 @@ from __future__ import annotations
+ 
+ import hashlib
+ import json
+-import threading
+ from collections.abc import Callable
+ from dataclasses import dataclass
+ 
+ import torch
+ 
++from cosmos_framework.inference.local_memory_state import MemorySnapshot, MemoryStateStore
+ from cosmos_framework.model.generator.mot.local_evidence import (
+     CANONICAL_EVIDENCE_FEATURE_CONFIG,
+     ContinualTTTFastState,
+@@ -85,9 +85,14 @@ class OnlineLocalMemory:
+         self.action_dim = action_dim
+         self.max_sessions = int(max_sessions)
+         self.max_evidence_steps = int(max_evidence_steps)
+-        self._records: dict[str, _Record] = {}
++        self.store = MemoryStateStore()
++        self.paired = False
+         self._pending: dict[str, OnlineMemoryUpdate] = {}
+-        self._lock = threading.RLock()
++        self._lock = self.store.lock
++
++    @property
++    def _records(self):
++        return self.store.snapshot.fast
+ 
+     @staticmethod
+     def _detach_state(state: ContinualTTTFastState) -> ContinualTTTFastState:
+@@ -178,8 +183,8 @@ class OnlineLocalMemory:
+                     raise ValueError("completed Local-TTT evidence must be contiguous and exactly-once")
+                 visual = visual.to(device)
+                 action = action.to(device)
+-                state = previous.state
+-                token = previous.token
++                state = None if previous.state is None else self._detach_state(previous.state)
++                token = None if previous.token is None else previous.token.detach().clone()
+                 self.core.reset_telemetry()
+                 if self.scan_local_memory is not None:
+                     for start in range(0, len(expected), self.core.ttt_tbptt_steps):
+@@ -249,15 +254,24 @@ class OnlineLocalMemory:
+ 
+     def commit(self, update: OnlineMemoryUpdate) -> None:
+         with self._lock:
+-            if (
+-                update.owner is not self
+-                or self._pending.get(update.session_id) is not update
+-                or self._records.get(update.session_id) is not update.previous
+-            ):
+-                raise RuntimeError("online Local-TTT commit requires exact pending capability")
+-            self._records[update.session_id] = update.replacement
++            if self.paired:
++                raise RuntimeError("paired Local-TTT must commit through its visual transaction owner")
++            self.validate_commit(update)
++            snapshot = self.store.snapshot
++            replacement = MemorySnapshot.build(
++                {**snapshot.fast, update.session_id: update.replacement}, snapshot.visual, snapshot.responses
++            )
++            self.store.snapshot = replacement
+             del self._pending[update.session_id]
+ 
++    def validate_commit(self, update: OnlineMemoryUpdate) -> None:
++        if (
++            update.owner is not self
++            or self._pending.get(update.session_id) is not update
++            or self._records.get(update.session_id) is not update.previous
++        ):
++            raise RuntimeError("online Local-TTT commit requires exact pending capability")
++
+     def abort(self, update: OnlineMemoryUpdate) -> None:
+         with self._lock:
+             if update.owner is self and self._pending.get(update.session_id) is update:
+@@ -265,9 +279,11 @@ class OnlineLocalMemory:
+ 
+     def reset_session(self, session_id: str) -> None:
+         with self._lock:
++            if self.paired:
++                raise RuntimeError("paired Local-TTT must reset through its visual transaction owner")
+             if session_id in self._pending:
+                 raise RuntimeError("cannot reset Local-TTT during pending generation")
+-            self._records.pop(session_id, None)
++            self.store.snapshot = self.store.snapshot.without(session_id)
+ 
+     def info(self) -> dict[str, object]:
+         with self._lock:
+diff --git a/cosmos_framework/inference/local_memory_state.py b/cosmos_framework/inference/local_memory_state.py
+new file mode 100644
+index 0000000..8cff755
+--- /dev/null
++++ b/cosmos_framework/inference/local_memory_state.py
+@@ -0,0 +1,45 @@
++"""One immutable publication for inference fast state, visual cache and response.
++
++Records are prepared off to the side. The adapter owns publication under the
++shared lock; readers retain a coherent snapshot, never three mutable dictionaries.
++"""
++
++from __future__ import annotations
++
++import threading
++from collections.abc import Mapping
++from dataclasses import dataclass
++from types import MappingProxyType
++from typing import Any
++
++
++@dataclass(frozen=True)
++class CachedMemoryResponse:
++    request_key: str
++    payload_sha256: str
++    body: bytes
++
++
++@dataclass(frozen=True)
++class MemorySnapshot:
++    fast: Mapping[str, Any]
++    visual: Mapping[str, Any]
++    responses: Mapping[str, CachedMemoryResponse]
++
++    @classmethod
++    def build(cls, fast=(), visual=(), responses=()) -> MemorySnapshot:
++        return cls(*(MappingProxyType(dict(value)) for value in (fast, visual, responses)))
++
++    def without(self, session_id: str) -> MemorySnapshot:
++        return self.build(
++            *(
++                {key: value for key, value in values.items() if key != session_id}
++                for values in (self.fast, self.visual, self.responses)
++            )
++        )
++
++
++class MemoryStateStore:
++    def __init__(self) -> None:
++        self.lock = threading.RLock()
++        self.snapshot = MemorySnapshot.build()
+diff --git a/cosmos_framework/inference/robocasa_local_memory_policy.py b/cosmos_framework/inference/robocasa_local_memory_policy.py
+index 1f0ecc4..5e2b406 100644
+--- a/cosmos_framework/inference/robocasa_local_memory_policy.py
++++ b/cosmos_framework/inference/robocasa_local_memory_policy.py
+@@ -14,6 +14,7 @@ import torch
+ from torch.distributed.tensor import DTensor
+ 
+ from cosmos_framework.inference.local_memory_online import OnlineLocalMemory, OnlineMemoryRequest, OnlineMemoryUpdate
++from cosmos_framework.inference.local_memory_state import CachedMemoryResponse, MemorySnapshot
+ from cosmos_framework.inference.robocasa_composite_visual import (
+     encode_current_composite_visual96,
+     prepare_robocasa_composite_frame,
+@@ -67,7 +68,6 @@ class RoboCasaLocalMemoryPolicyAdapter:
+         if mode not in ("off", "required"):
+             raise ValueError("V3 Local Memory mode must be off or required")
+         self.service, self.mode, self.decode_image = service, mode, decode_image
+-        self._visual_records: dict[str, _VisualRecord] = {}
+         self._visual_pending: dict[str, _PreparedUpdate] = {}
+         self._lock = threading.RLock()
+         self.memory: OnlineLocalMemory | None = None
+@@ -94,6 +94,18 @@ class RoboCasaLocalMemoryPolicyAdapter:
+                 max_sessions=max_sessions,
+                 max_evidence_steps=max_evidence_steps,
+             )
++            self.memory.paired = True
++            self._lock = self.memory.store.lock
++
++    @property
++    def snapshot(self) -> MemorySnapshot:
++        if self.memory is None:
++            raise RuntimeError("Local-TTT is off")
++        return self.memory.store.snapshot
++
++    @property
++    def _visual_records(self):
++        return self.snapshot.visual
+ 
+     def _row(self, row: Any, expected: int) -> tuple[torch.Tensor, torch.Tensor]:
+         if not isinstance(row, dict) or set(row) != {"source_step", "composite_image", "executed_action"}:
+@@ -200,7 +212,7 @@ class RoboCasaLocalMemoryPolicyAdapter:
+             self._visual_pending[request.session_id] = update
+             return update
+ 
+-    def commit(self, update: _PreparedUpdate | None) -> None:
++    def commit(self, update: _PreparedUpdate | None, response: CachedMemoryResponse | None = None) -> None:
+         if update is None:
+             return
+         assert self.memory is not None
+@@ -208,8 +220,19 @@ class RoboCasaLocalMemoryPolicyAdapter:
+         with self._lock:
+             if self._visual_pending.get(session_id) is not update:
+                 raise RuntimeError("Local-TTT visual commit requires exact pending capability")
+-            self.memory.commit(update.memory)
+-            self._visual_records[session_id] = update.visual_replacement
++            self.memory.validate_commit(update.memory)
++            snapshot = self.snapshot
++            responses = dict(snapshot.responses)
++            responses.pop(session_id, None)
++            if response is not None:
++                responses[session_id] = response
++            replacement = MemorySnapshot.build(
++                {**snapshot.fast, session_id: update.memory.replacement},
++                {**snapshot.visual, session_id: update.visual_replacement},
++                responses,
++            )
++            self.memory.store.snapshot = replacement
++            del self.memory._pending[session_id]
+             del self._visual_pending[session_id]
+ 
+     def abort(self, update: _PreparedUpdate | None) -> None:
+@@ -225,10 +248,9 @@ class RoboCasaLocalMemoryPolicyAdapter:
+         if self.memory is None:
+             return
+         with self._lock:
+-            if session_id in self._visual_pending:
++            if session_id in self._visual_pending or session_id in self.memory._pending:
+                 raise RuntimeError("cannot reset Local-TTT visual session during pending generation")
+-            self.memory.reset_session(session_id)
+-            self._visual_records.pop(session_id, None)
++            self.memory.store.snapshot = self.snapshot.without(session_id)
+ 
+     def prefixes(self, update: _PreparedUpdate | None) -> tuple[torch.Tensor | None, ...] | None:
+         return None if update is None else (update.memory.token,)
+diff --git a/cosmos_framework/inference/robocasa_session_transactions.py b/cosmos_framework/inference/robocasa_session_transactions.py
+new file mode 100644
+index 0000000..9605dc9
+--- /dev/null
++++ b/cosmos_framework/inference/robocasa_session_transactions.py
+@@ -0,0 +1,496 @@
++"""Opt-in B=1 inference actor with owned Sessions and replay-aware admission.
++
++One executor serializes model-owned encode/scan/generation. HTTP threads only
++validate/queue/cancel; only executor quiescence permits resource release or End
++ACK. This module does not create simulators or enable native batching.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import logging
++import math
++import secrets
++import threading
++import time
++import traceback
++import uuid
++from concurrent.futures import ThreadPoolExecutor
++from dataclasses import asdict, dataclass
++from typing import Any, Callable
++
++from cosmos_framework.inference.local_memory_state import CachedMemoryResponse
++
++PROTOCOL = "robocasa.session-transactions.b1.v1"
++MAX_BODY = 32 * 1024**2
++MAX_RESPONSE = 1024**2
++
++
++def json_bytes(value: Any) -> bytes:
++    return json.dumps(value, sort_keys=True, allow_nan=False, ensure_ascii=False, separators=(",", ":")).encode()
++
++
++def strict_json(raw: bytes) -> dict:
++    def pairs(items):
++        result = {}
++        for key, value in items:
++            if key in result:
++                raise ValueError("duplicate JSON field")
++            result[key] = value
++        return result
++
++    def invalid(_):
++        raise ValueError("non-finite JSON constant")
++
++    value = json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_constant=invalid)
++    if not isinstance(value, dict):
++        raise ValueError("JSON object required")
++    return value
++
++
++def identifier(value: Any, *, limit=128) -> str:
++    if not isinstance(value, str) or not value or len(value) > limit or any(ord(c) < 32 for c in value):
++        raise ValueError("nonempty bounded identifier required")
++    return value
++
++
++def digest(value: Any) -> str:
++    return hashlib.sha256(json_bytes(value)).hexdigest()
++
++
++@dataclass(frozen=True)
++class SessionLease:
++    server_epoch: str
++    run_lease: str
++    manifest_digest: str
++    slot_id: str
++    generation: int
++    task: str
++    episode_index: int
++    attempt_id: str
++    session_id: str
++    episode_id: str
++    capability: str
++
++    def identity(self) -> dict:
++        return {key: value for key, value in asdict(self).items() if key != "capability"}
++
++
++@dataclass(frozen=True)
++class Reply:
++    status: int
++    body: bytes
++
++    def json(self) -> dict:
++        return strict_json(self.body)
++
++
++@dataclass(eq=False)
++class _Ticket:
++    key: str
++    payload_sha256: str
++    lease: SessionLease
++    payload: dict
++    size: int
++    deadline: float
++    state: str = "QUEUED"
++    cancelled: bool = False
++    quiescent: bool = False
++    update: Any = None
++
++
++class SessionTransactions:
++    def __init__(
++        self,
++        adapter,
++        generate: Callable[[dict, Any], list],
++        quiesce: Callable[[], None],
++        *,
++        owner_token: str,
++        run_lease: str,
++        manifest_digest: str,
++        slot_ids: tuple[str, ...],
++        model_lock=None,
++        timeout_s=600.0,
++        max_bytes=128 * 1024**2,
++        clock=time.monotonic,
++    ):
++        if adapter.mode != "required" or adapter.memory is None:
++            raise ValueError("Session transactions require real required-mode Local-TTT")
++        if not 1 <= len(slot_ids) <= 8 or len(set(slot_ids)) != len(slot_ids):
++            raise ValueError("one to eight distinct bounded physical Slot identities required")
++        if not math.isfinite(timeout_s) or timeout_s <= 0 or type(max_bytes) is not int or max_bytes <= 0:
++            raise ValueError("positive finite transaction bounds required")
++        if len(manifest_digest) != 64 or any(c not in "0123456789abcdef" for c in manifest_digest):
++            raise ValueError("manifest SHA256 required")
++        self.adapter, self.generate, self.quiesce = adapter, generate, quiesce
++        self.owner_token = identifier(owner_token, limit=256)
++        self.run_lease, self.manifest_digest = identifier(run_lease), manifest_digest
++        self.slot_ids = tuple(identifier(slot, limit=64) for slot in slot_ids)
++        self.timeout_s, self.max_bytes, self.clock = timeout_s, max_bytes, clock
++        self.server_epoch = uuid.uuid4().hex
++        self._lock = threading.RLock()
++        self._model_lock = model_lock if model_lock is not None else threading.Lock()
++        self._changed = threading.Condition(self._lock)
++        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="local-ttt-b1")
++        self._leases: dict[str, SessionLease] = {}
++        self._closed: dict[str, SessionLease] = {}
++        self._generations = dict.fromkeys(self.slot_ids, 0)
++        self._closing: set[str] = set()
++        self._failed: dict[str, dict] = {}
++        self._tickets: dict[str, _Ticket] = {}
++        self._busy = False
++        self._quarantined = False
++        self._stopping = False
++        self.http_slots = threading.BoundedSemaphore(len(self.slot_ids) + 1)
++
++    def _reply(self, status, value):
++        return Reply(status, json_bytes(value))
++
++    def info(self) -> dict:
++        with self._lock:
++            return {
++                "enabled": True,
++                "profile": PROTOCOL,
++                "server_epoch": self.server_epoch,
++                "run_lease": self.run_lease,
++                "manifest_digest": self.manifest_digest,
++                "slot_ids": list(self.slot_ids),
++                "max_native_batch": 1,
++                "sessions": len(self._leases),
++                "tickets": len(self._tickets),
++                "encoded_bytes": sum(ticket.size for ticket in self._tickets.values()),
++                "busy": self._busy,
++                "quarantined": self._quarantined,
++                "stopping": self._stopping,
++                "generated_media": "unsupported_in_b1_increment",
++                "timeout_s": self.timeout_s,
++                "max_encoded_bytes": self.max_bytes,
++                "max_item_bytes": MAX_BODY,
++                "max_http_requests": len(self.slot_ids) + 1,
++            }
++
++    def _healthy(self):
++        if self._quarantined or self._stopping:
++            raise RuntimeError("transaction actor unavailable; owned Server recovery required")
++
++    def register(self, record: dict, owner_token: str) -> Reply:
++        if not secrets.compare_digest(owner_token, self.owner_token):
++            raise ValueError("registration requires coordinator capability")
++        if set(record) != {
++            "run_lease",
++            "manifest_digest",
++            "slot_id",
++            "generation",
++            "task",
++            "episode_index",
++            "attempt_id",
++        }:
++            raise ValueError("exact registration identity required")
++        if (record["run_lease"], record["manifest_digest"]) != (self.run_lease, self.manifest_digest):
++            raise ValueError("foreign run/manifest registration")
++        slot = record["slot_id"]
++        if slot not in self.slot_ids or type(record["generation"]) is not int or not 1 <= record["generation"] < 2**63:
++            raise ValueError("invalid physical Slot/generation")
++        if type(record["episode_index"]) is not int or record["episode_index"] < 0:
++            raise ValueError("invalid logical Episode")
++        identifier(record["task"])
++        identifier(record["attempt_id"])
++        with self._lock:
++            self._healthy()
++            current = self._leases.get(slot)
++            if current is not None:
++                expected = {key: getattr(current, key) for key in record}
++                if record == expected:
++                    return self._reply(200, {"lease": asdict(current)})
++                raise ValueError("previous physical Slot assignment has not received End ACK")
++            if record["generation"] <= self._generations[slot]:
++                raise ValueError("stale Slot generation")
++            unique = f"{self.server_epoch}:{slot}:{record['generation']}:{uuid.uuid4().hex}"
++            lease = SessionLease(
++                self.server_epoch,
++                **record,
++                session_id=unique,
++                episode_id=uuid.uuid4().hex,
++                capability=secrets.token_urlsafe(32),
++            )
++            self._generations[slot] = lease.generation
++            self._leases[slot] = lease
++            self._failed.pop(slot, None)
++            return self._reply(200, {"lease": asdict(lease)})
++
++    def _lease(self, proof: dict, *, closed=False) -> SessionLease:
++        if not isinstance(proof, dict) or set(proof) != set(SessionLease.__dataclass_fields__):
++            raise ValueError("exact assignment proof required")
++        lease = self._leases.get(proof["slot_id"])
++        if lease is None and closed:
++            lease = self._closed.get(proof["slot_id"])
++        if (
++            lease is None
++            or type(proof["generation"]) is not int
++            or type(proof["episode_index"]) is not int
++            or not isinstance(proof["capability"], str)
++            or not secrets.compare_digest(proof["capability"], lease.capability)
++            or {k: v for k, v in proof.items() if k != "capability"} != lease.identity()
++        ):
++            raise ValueError("stale or foreign assignment")
++        return lease
++
++    def _usable(self, lease):
++        self._healthy()
++        if lease.slot_id in self._closing or lease.slot_id in self._failed:
++            raise RuntimeError("Episode closing/failed; explicit End and a new Attempt required")
++
++    def _expire(self, ticket):
++        if self.clock() >= ticket.deadline:
++            ticket.cancelled = True
++        if ticket.cancelled:
++            raise RuntimeError("inference cancelled/expired; cleanup is not yet proven")
++
++    def _release(self, ticket):
++        if not ticket.quiescent or ticket.state not in ("COMMITTED", "ABORTED"):
++            raise RuntimeError("cannot release unquiesced inference ownership")
++        if self._tickets.get(ticket.key) is ticket:
++            del self._tickets[ticket.key]
++            ticket.payload, ticket.update = {}, None
++            self._changed.notify_all()
++
++    def submit(self, proof: dict, payload: dict) -> Reply:
++        raw = json_bytes(payload)
++        if len(raw) > MAX_BODY:
++            raise ValueError("encoded inference item exceeds bound")
++        payload = strict_json(raw)  # Freeze caller-owned structures before admission.
++        if set(payload) != {"image", "prompt", "domain_name", "image_size", "state", "local_memory"}:
++            raise ValueError("B1 policy payload requires observation/state/local evidence; media must be off")
++        local = payload["local_memory"]
++        if not isinstance(local, dict) or type(local.get("consumer_step")) is not int:
++            raise ValueError("integer Local consumer frontier required")
++        frontier = local["consumer_step"]
++        if frontier < 0 or not isinstance(local.get("evidence"), list) or len(local["evidence"]) > 16:
++            raise ValueError("completed evidence must be bounded by H16")
++        payload_sha = hashlib.sha256(raw).hexdigest()
++        with self._lock:
++            lease = self._lease(proof)
++            if (local.get("session_id"), local.get("episode_id")) != (lease.session_id, lease.episode_id):
++                raise ValueError("Local evidence belongs to another assignment")
++            key = digest({"protocol": PROTOCOL, **lease.identity(), "frontier": frontier})
++            cached = self.adapter.snapshot.responses.get(lease.session_id)
++            if cached is not None and cached.request_key == key and cached.payload_sha256 != payload_sha:
++                raise ValueError("request identity reused with changed payload")
++            ticket = self._tickets.get(key)
++            if ticket is not None:
++                if ticket.lease != lease or ticket.payload_sha256 != payload_sha:
++                    raise ValueError("inflight request identity reused with changed payload")
++                return self._result(lease, key, payload_sha)
++            self._usable(lease)
++            if cached is not None and cached.request_key == key:
++                return Reply(200, cached.body)  # Post-ACK replay never creates a new Ticket.
++            previous = self.adapter.snapshot.fast.get(lease.session_id)
++            if previous is not None and frontier <= previous.consumer_step:
++                raise ValueError("stale or evicted evidence frontier")
++            if previous is None:
++                if frontier != 0 or local["evidence"]:
++                    raise ValueError("fresh Episode must start at frontier0 without evidence")
++            elif frontier - previous.consumer_step != len(local["evidence"]):
++                raise ValueError("bounded contiguous completed evidence required")
++            if any(item.lease.slot_id == lease.slot_id for item in self._tickets.values()):
++                raise ValueError("one queued/inflight/undelivered request per physical Slot")
++            if sum(item.size for item in self._tickets.values()) + len(raw) > self.max_bytes:
++                raise RuntimeError("bounded encoded-request capacity exhausted")
++            ticket = _Ticket(key, payload_sha, lease, payload, len(raw), self.clock() + self.timeout_s)
++            self._tickets[key] = ticket
++            try:
++                self._executor.submit(self._execute, ticket)
++            except BaseException:
++                del self._tickets[key]
++                raise
++            return self._pending(ticket)
++
++    def _pending(self, ticket):
++        return self._reply(
++            202,
++            {
++                "request_key": ticket.key,
++                "payload_sha256": ticket.payload_sha256,
++                "state": ticket.state,
++                "server_epoch": self.server_epoch,
++            },
++        )
++
++    def _result(self, lease, key, payload_sha):
++        failure = self._failed.get(lease.slot_id)
++        if failure is not None and failure["request_key"] == key:
++            if failure["payload_sha256"] != payload_sha:
++                raise ValueError("failed request payload mismatch")
++            return self._reply(409, failure)
++        self._usable(lease)
++        ticket = self._tickets.get(key)
++        if ticket is not None:
++            if ticket.lease != lease or ticket.payload_sha256 != payload_sha:
++                raise ValueError("wrong inference Ticket binding")
++            self._expire(ticket)
++            if not ticket.quiescent:
++                return self._pending(ticket)
++        cached = self.adapter.snapshot.responses.get(lease.session_id)
++        if cached is None or cached.request_key != key:
++            raise ValueError("no retained committed response for this inference")
++        if cached.payload_sha256 != payload_sha:
++            raise ValueError("response replay payload mismatch")
++        return Reply(200, cached.body)
++
++    def result(self, proof, key, payload_sha):
++        with self._lock:
++            return self._result(self._lease(proof), key, payload_sha)
++
++    def acknowledge(self, proof, key, payload_sha):
++        with self._lock:
++            lease = self._lease(proof)
++            result = self._result(lease, key, payload_sha)
++            if result.status != 200:
++                raise RuntimeError("cannot acknowledge an unfinished inference")
++            ticket = self._tickets.get(key)
++            if ticket is not None:
++                self._release(ticket)
++            return self._reply(200, {"acknowledged": True, "request_key": key})
++
++    def end(self, proof):
++        with self._lock:
++            lease = self._lease(proof, closed=True)
++            if self._leases.get(lease.slot_id) is None:
++                return self._reply(200, {"acknowledged": True, **lease.identity()})
++            self._closing.add(lease.slot_id)
++            owned = [ticket for ticket in self._tickets.values() if ticket.lease == lease]
++            for ticket in owned:
++                ticket.cancelled = True
++            if self._busy or self._quarantined or any(not ticket.quiescent for ticket in owned):
++                return self._reply(202, {"acknowledged": False, "state": "draining", **lease.identity()})
++            for ticket in owned:
++                self._release(ticket)
++            self.adapter.reset(lease.session_id)
++            del self._leases[lease.slot_id]
++            self._closed[lease.slot_id] = lease
++            self._closing.remove(lease.slot_id)
++            return self._reply(200, {"acknowledged": True, **lease.identity()})
++
++    def _fence(self, ticket):
++        self._usable(ticket.lease)
++        self._lease(asdict(ticket.lease))
++        self._expire(ticket)
++
++    def _execute(self, ticket):
++        committed, drained, abort_failed = False, False, False
++        # Quiescence is published only AFTER releasing the model-owner mutex.
++        with self._model_lock:
++            try:
++                with self._lock:
++                    self._busy = True
++                    ticket.state = "SEALED"
++                    self._fence(ticket)
++                ticket.update = self.adapter.prepare(ticket.payload)
++                with self._lock:
++                    ticket.state = "PREPARED"
++                    self._fence(ticket)
++                    ticket.state = "GENERATING"
++                action = self.generate(ticket.payload, ticket.update)
++                if (
++                    not isinstance(action, list)
++                    or len(action) != 16
++                    or any(not isinstance(row, list) or len(row) != 15 for row in action)
++                    or any(type(v) not in (float, int) or not math.isfinite(v) for row in action for v in row)
++                ):
++                    raise ValueError("generation must return finite [16,15] raw actions")
++                status = self.adapter.status(ticket.update)
++                body = json_bytes(
++                    {
++                        "protocol": PROTOCOL,
++                        "request_key": ticket.key,
++                        "payload_sha256": ticket.payload_sha256,
++                        "assignment": ticket.lease.identity(),
++                        "frontier": ticket.payload["local_memory"]["consumer_step"],
++                        "action": action,
++                        "local_memory": status,
++                        "native_batch": {"size": 1, "index": 0},
++                        "media": {"status": "disabled"},
++                    }
++                )
++                if len(body) > MAX_RESPONSE:
++                    raise ValueError("bounded serialized response exceeded")
++                cached = CachedMemoryResponse(ticket.key, ticket.payload_sha256, body)
++                self.quiesce()  # Device work must complete BEFORE state publication.
++                drained = True
++                with self._lock:
++                    ticket.state = "VALIDATED"
++                    self._fence(ticket)
++                    self.adapter.commit(ticket.update, cached)
++                    committed = True
++                    ticket.state = "COMMITTED"
++            except BaseException as error:
++                stage = ticket.state
++                if not committed:
++                    try:
++                        self.adapter.abort(ticket.update)
++                    except BaseException:
++                        abort_failed = True
++                with self._lock:
++                    self._failed[ticket.lease.slot_id] = {
++                        "request_key": ticket.key,
++                        "payload_sha256": ticket.payload_sha256,
++                        "state": "QUARANTINED" if abort_failed else "ABORTED",
++                        "failed_stage": stage,
++                        "error_type": type(error).__name__,
++                        "error": str(error)[:2048],
++                        "traceback": traceback.format_exc()[-16384:],
++                    }
++                    if not committed:
++                        ticket.state = "ABORTED"
++                logging.getLogger(__name__).exception("Session inference failed at %s key=%s", stage, ticket.key)
++            finally:
++                if not drained:
++                    try:
++                        self.quiesce()
++                        drained = True
++                    except BaseException:
++                        logging.getLogger(__name__).exception("Model quiescence unproven; Server quarantined")
++        with self._lock:
++            if not drained or abort_failed:
++                self._quarantined = True
++                if ticket.lease.slot_id in self._failed:
++                    self._failed[ticket.lease.slot_id].update(state="QUARANTINED", quiescent=False)
++                self._changed.notify_all()
++                return  # Retain unresolved ownership/candidates until Server decommission.
++            ticket.quiescent = True
++            if ticket.lease.slot_id in self._failed:
++                self._failed[ticket.lease.slot_id]["quiescent"] = True
++            self._busy = False
++            ticket.update = None
++            if not committed:
++                self._release(ticket)
++            self._changed.notify_all()
++
++    def close(self, timeout_s=10.0) -> bool:
++        deadline = time.monotonic() + timeout_s
++        with self._lock:
++            self._stopping = True
++            for ticket in self._tickets.values():
++                ticket.cancelled = True
++            while (self._busy or any(not t.quiescent for t in self._tickets.values())) and not self._quarantined:
++                remaining = deadline - time.monotonic()
++                if remaining <= 0:
++                    break
++                self._changed.wait(remaining)
++            safe = not self._busy and all(t.quiescent for t in self._tickets.values()) and not self._quarantined
++            if safe:
++                try:
++                    for ticket in tuple(self._tickets.values()):
++                        self._release(ticket)
++                    for lease in tuple(self._leases.values()):
++                        self.adapter.reset(lease.session_id)
++                        self._closed[lease.slot_id] = lease
++                    self._leases.clear()
++                    self._closing.clear()
++                except BaseException:
++                    self._quarantined = True
++                    safe = False
++        self._executor.shutdown(wait=False, cancel_futures=False)
++        return safe
+diff --git a/cosmos_framework/inference/robocasa_session_transactions_test.py b/cosmos_framework/inference/robocasa_session_transactions_test.py
+new file mode 100644
+index 0000000..f2ee4e8
+--- /dev/null
++++ b/cosmos_framework/inference/robocasa_session_transactions_test.py
+@@ -0,0 +1,508 @@
++from __future__ import annotations
++
++import threading
++import time
++from copy import deepcopy
++from types import SimpleNamespace
++
++import pytest
++import torch
++from torch import nn
++
++from cosmos_framework.inference.local_memory_state import CachedMemoryResponse, MemorySnapshot
++from cosmos_framework.inference.robocasa_local_memory_contract import (
++    EVIDENCE_FORMAT,
++    EVIDENCE_VERSION,
++    PREPROCESS_PROFILE,
++)
++from cosmos_framework.inference.robocasa_local_memory_policy import RoboCasaLocalMemoryPolicyAdapter
++from cosmos_framework.inference.robocasa_session_transactions import SessionTransactions, json_bytes, strict_json
++from cosmos_framework.model.generator.mot.memory_prefix import LocalMemoryRuntime
++
++
++class RealLocalModel(nn.Module):
++    """Actual CPU Local encoder/core/scan; only Wan/diffusion boundaries are doubles."""
++
++    def __init__(self):
++        super().__init__()
++        self.net = nn.Module()
++        self.net.local_memory_runtime = LocalMemoryRuntime(
++            evidence_dim=16, local_dim=32, ttt_dim=8, fast_hidden_dim=16, k_local=4
++        )
++        self.scan_calls = 0
++
++        def scan(visual, action, valid, state, *, create_graph=False):
++            self.scan_calls += 1
++            runtime = self.net.local_memory_runtime
++            return runtime.core.scan_segment_masked_encoded_many(
++                runtime.encoder, visual, action, valid, state, create_graph=create_graph
++            )
++
++        self.net.scan_local_memory = scan
++        self.encoded = 0
++
++        def encode(value):
++            self.encoded += 1
++            return torch.ones(1, 48, 1, 12, 20) * value.float().mean()
++
++        self.tokenizer_vision_gen = SimpleNamespace(
++            encode=encode,
++            model=SimpleNamespace(model=nn.Linear(1, 1)),
++            use_streaming_encode=False,
++            _keep_encoder_cache=False,
++        )
++
++
++def make_adapter(slots=2):
++    torch.manual_seed(19)
++    model = RealLocalModel()
++    adapter = RoboCasaLocalMemoryPolicyAdapter(
++        SimpleNamespace(model=model),
++        mode="required",
++        max_sessions=slots,
++        decode_image=lambda value: torch.full((3, 256, 512), int(value), dtype=torch.uint8),
++    )
++    return adapter, model
++
++
++def registration(slot="slot0", generation=1, **changes):
++    return {
++        "run_lease": "run",
++        "manifest_digest": "a" * 64,
++        "slot_id": slot,
++        "generation": generation,
++        "task": "CloseFridge",
++        "episode_index": 0,
++        "attempt_id": f"attempt-{generation}",
++        **changes,
++    }
++
++
++def register(actor, slot="slot0", generation=1, **changes):
++    return actor.register(registration(slot, generation, **changes), "cpu-owner").json()["lease"]
++
++
++def payload(lease, step=0, start=0, value=1):
++    return {
++        "image": "0",
++        "prompt": "close the fridge",
++        "domain_name": "robocasa",
++        "image_size": 256,
++        "state": [0.0] * 15,
++        "local_memory": {
++            "session_id": lease["session_id"],
++            "episode_id": lease["episode_id"],
++            "consumer_step": step,
++            "reset": step == 0,
++            "image_size": 256,
++            "preprocess_profile": PREPROCESS_PROFILE,
++            "evidence_version": EVIDENCE_VERSION,
++            "evidence_format": EVIDENCE_FORMAT,
++            "evidence": [
++                {"source_step": i, "composite_image": str(value), "executed_action": [value * 0.01] * 15}
++                for i in range(start, step)
++            ],
++        },
++    }
++
++
++def wait_result(actor, lease, pending, *, expected=200):
++    value = pending.json()
++    if pending.status == 200:
++        return pending
++    deadline = time.monotonic() + 10
++    while time.monotonic() < deadline:
++        try:
++            result = actor.result(lease, value["request_key"], value["payload_sha256"])
++        except RuntimeError:
++            if expected != 409:
++                raise
++            time.sleep(0.005)
++            continue
++        if result.status != 202:
++            if result.status == 409 and not result.json().get("quiescent") and not actor.info()["quarantined"]:
++                time.sleep(0.005)
++                continue
++            assert result.status == expected, result.json()
++            return result
++        time.sleep(0.005)
++    raise AssertionError(f"bounded CPU actor did not finish: {actor.info()}")
++
++
++def ack(actor, lease, result):
++    value = result.json()
++    return actor.acknowledge(lease, value["request_key"], value["payload_sha256"])
++
++
++@pytest.fixture
++def runtime():
++    adapter, model = make_adapter()
++    calls = []
++
++    def generate(request, update):
++        calls.append((request, adapter.prefixes(update)))
++        token = adapter.prefixes(update)[0]
++        value = 0.0 if token is None else float(token.sum())
++        return [[value] * 15 for _ in range(16)]
++
++    actor = SessionTransactions(
++        adapter,
++        generate,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0", "slot1"),
++    )
++    yield actor, adapter, model, calls
++    assert actor.close(), actor.info()
++
++
++def test_real_fast_weights_isolated_w0_readonly_reset_a_preserves_b(runtime):
++    actor, adapter, model, calls = runtime
++    slow = {key: value.detach().clone() for key, value in model.net.named_parameters()}
++    a, b = register(actor), register(actor, "slot1")
++    for lease in (a, b):
++        result = wait_result(actor, lease, actor.submit(lease, payload(lease)))
++        assert result.json()["local_memory"]["prefix_present"] is False
++        ack(actor, lease, result)
++    for lease, value in ((a, 1), (b, 7)):
++        result = wait_result(actor, lease, actor.submit(lease, payload(lease, 2, 0, value)))
++        assert result.json()["local_memory"]["prefix_present"] is True
++        ack(actor, lease, result)
++    snapshot = adapter.snapshot
++    wa, wb = (snapshot.fast[lease["session_id"]].state for lease in (a, b))
++    assert any(not torch.equal(x, y) for x, y in zip(wa, wb, strict=True))
++    assert all(x.data_ptr() != y.data_ptr() for x, y in zip(wa, wb, strict=True))
++    for key, parameter in model.net.named_parameters():
++        torch.testing.assert_close(parameter, slow[key], rtol=0, atol=0)
++        assert parameter.grad is None
++    assert actor.end(a).json()["acknowledged"] is True
++    assert adapter.snapshot.fast[b["session_id"]] is snapshot.fast[b["session_id"]]
++    assert adapter.snapshot.visual[b["session_id"]] is snapshot.visual[b["session_id"]]
++    assert adapter.snapshot.responses[b["session_id"]] is snapshot.responses[b["session_id"]]
++    fresh = register(actor, generation=2)
++    assert fresh["session_id"] != a["session_id"]
++    result = wait_result(actor, fresh, actor.submit(fresh, payload(fresh)))
++    assert result.json()["local_memory"]["prefix_present"] is False
++    assert adapter.snapshot.fast[fresh["session_id"]].state is None
++    assert len(calls) == 5 and model.scan_calls == 2
++
++
++def test_response_replay_before_after_ack_never_reserves_or_generates_twice(runtime):
++    actor, adapter, model, calls = runtime
++    lease = register(actor)
++    request = payload(lease)
++    result = wait_result(actor, lease, actor.submit(lease, request))
++    size = actor.info()["encoded_bytes"]
++    assert size > 0
++    assert actor.submit(lease, request).body == result.body
++    assert actor.info()["encoded_bytes"] == size
++    ack(actor, lease, result)
++    assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
++    assert actor.submit(lease, request).body == result.body
++    ack(actor, lease, result)
++    assert len(calls) == 1 and model.scan_calls == 0
++    changed = deepcopy(request)
++    changed["prompt"] = "different instruction"
++    with pytest.raises(ValueError, match="changed payload"):
++        actor.submit(lease, changed)
++    assert actor.info()["tickets"] == 0
++    next_result = wait_result(actor, lease, actor.submit(lease, payload(lease, 1, 0)))
++    with pytest.raises(ValueError, match="stale or evicted"):
++        actor.submit(lease, request)
++    assert len(calls) == 2 and adapter.snapshot.fast[lease["session_id"]].consumer_step == 1
++    ack(actor, lease, next_result)
++
++
++@pytest.mark.parametrize("fault", ["generation", "nan", "shape", "serialize", "publication"])
++def test_failures_do_not_publish_partial_fast_visual_response(runtime, monkeypatch, fault):
++    actor, adapter, _, _ = runtime
++    lease = register(actor)
++    cold = wait_result(actor, lease, actor.submit(lease, payload(lease)))
++    ack(actor, lease, cold)
++    original = adapter.snapshot
++    if fault == "generation":
++
++        def broken(*_):
++            raise RuntimeError("injected generation failure")
++
++        actor.generate = broken
++    elif fault == "nan":
++        actor.generate = lambda *_: [[float("nan")] * 15 for _ in range(16)]
++    elif fault == "shape":
++        actor.generate = lambda *_: [[0.0] * 15] * 15
++    elif fault == "serialize":
++        monkeypatch.setattr(adapter, "status", lambda _: {"invalid": object()})
++    else:
++        original_build = MemorySnapshot.build
++        monkeypatch.setattr(MemorySnapshot, "build", lambda *_, **__: (_ for _ in ()).throw(MemoryError("publish")))
++    pending = actor.submit(lease, payload(lease, 1, 0))
++    result = wait_result(actor, lease, pending, expected=409)
++    assert result.json()["error_type"] in {"RuntimeError", "ValueError", "TypeError", "MemoryError"}
++    assert result.json()["traceback"] and adapter.snapshot is original
++    assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
++    assert not adapter.memory._pending and not adapter._visual_pending
++    with pytest.raises(RuntimeError, match="failed"):
++        actor.submit(lease, payload(lease, 1, 0))
++    if fault == "publication":
++        monkeypatch.setattr(MemorySnapshot, "build", original_build)
++    assert actor.end(lease).json()["acknowledged"] is True
++
++
++@pytest.mark.parametrize("during", ["generation", "quiescence"])
++def test_end_waits_for_owned_executor_and_releases_only_after_drain(runtime, during):
++    actor, adapter, _, _ = runtime
++    lease = register(actor)
++    entered, release = threading.Event(), threading.Event()
++    original_generate = actor.generate
++
++    def barrier():
++        entered.set()
++        assert release.wait(5), "test barrier must be released"
++
++    if during == "generation":
++        actor.generate = lambda *args: (barrier(), original_generate(*args))[1]
++    else:
++        actor.quiesce = barrier
++    original = adapter.snapshot
++    pending = actor.submit(lease, payload(lease))
++    try:
++        assert entered.wait(5)
++        assert actor.end(lease).status == 202
++        assert actor.end(lease).json()["acknowledged"] is False
++        assert actor.info()["encoded_bytes"] > 0
++        with pytest.raises(ValueError, match="previous physical Slot"):
++            register(actor, generation=2)
++        assert adapter.snapshot is original
++    finally:
++        release.set()
++    wait_result(actor, lease, pending, expected=409)
++    deadline = time.monotonic() + 5
++    while actor.info()["busy"] and time.monotonic() < deadline:
++        time.sleep(0.005)
++    assert actor.end(lease).json()["acknowledged"] is True
++    assert actor.end(lease).json()["acknowledged"] is True
++    fresh = register(actor, generation=2)
++    with pytest.raises(ValueError, match="stale"):
++        actor.end(lease)
++    assert fresh["session_id"] != lease["session_id"]
++
++
++def test_unproven_gpu_drain_quarantines_without_state_commit_or_end_ack():
++    adapter, _ = make_adapter(1)
++
++    def no_drain():
++        raise RuntimeError("unproven device drain")
++
++    actor = SessionTransactions(
++        adapter,
++        lambda *_: [[0.0] * 15] * 16,
++        no_drain,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++    )
++    lease = register(actor)
++    original = adapter.snapshot
++    pending = actor.submit(lease, payload(lease))
++    wait_result(actor, lease, pending, expected=409)
++    deadline = time.monotonic() + 5
++    while not actor.info()["quarantined"] and time.monotonic() < deadline:
++        time.sleep(0.005)
++    assert actor.info()["quarantined"]
++    assert actor.end(lease).json()["acknowledged"] is False
++    assert actor.info()["tickets"] == 1 and actor.info()["encoded_bytes"] > 0
++    assert adapter.snapshot is original
++    assert actor.close(timeout_s=0.01) is False
++
++
++def test_pair_owner_prevents_fast_only_commit_reset_and_snapshot_is_coherent(runtime):
++    actor, adapter, _, _ = runtime
++    lease = register(actor)
++    update = adapter.prepare(payload(lease))
++    with pytest.raises(RuntimeError, match="transaction owner"):
++        adapter.memory.commit(update.memory)
++    with pytest.raises(RuntimeError, match="transaction owner"):
++        adapter.memory.reset_session(lease["session_id"])
++    old = adapter.snapshot
++    record = CachedMemoryResponse("key", "sha", b"{}")
++    adapter.commit(update, record)
++    assert old.fast == old.visual == old.responses == {}
++    assert set(adapter.snapshot.fast) == set(adapter.snapshot.visual) == set(adapter.snapshot.responses)
++    assert adapter.snapshot.responses[lease["session_id"]] is record
++
++
++@pytest.mark.parametrize("kind", ["owner", "run", "manifest", "slot", "generation", "frontier", "payload", "json"])
++def test_identity_and_input_negatives_do_not_create_tickets(runtime, kind):
++    actor, _, _, calls = runtime
++    if kind == "owner":
++        with pytest.raises(ValueError):
++            actor.register(registration(), "wrong-owner")
++        return
++    if kind in ("run", "manifest", "slot", "generation"):
++        change = {
++            "run": {"run_lease": "other"},
++            "manifest": {"manifest_digest": "b" * 64},
++            "slot": {"slot_id": "foreign"},
++            "generation": {"generation": True},
++        }[kind]
++        with pytest.raises(ValueError):
++            actor.register(registration(**change), "cpu-owner")
++        return
++    lease = register(actor)
++    request = payload(lease)
++    if kind == "frontier":
++        request["local_memory"]["consumer_step"] = True
++    elif kind == "payload":
++        request["items"] = [request.copy()]
++    else:
++        request["state"][0] = float("nan")
++    with pytest.raises(ValueError):
++        actor.submit(lease, request)
++    assert actor.info()["tickets"] == 0 and not calls
++
++
++def test_strict_json_rejects_duplicates_invalid_utf8_and_nonfinite():
++    for raw in (b'{"a":1,"a":2}', b"\xff", b'{"a":NaN}'):
++        with pytest.raises((ValueError, UnicodeError)):
++            strict_json(raw)
++    assert strict_json(json_bytes({"instruction": "关冰箱"})) == {"instruction": "关冰箱"}
++
++
++def test_inflight_bytes_stay_reserved_through_commit_until_delivery_ack(runtime):
++    actor, _, _, _ = runtime
++    a, b = register(actor), register(actor, "slot1")
++    first, second = payload(a), payload(b)
++    actor.max_bytes = len(json_bytes(first)) + len(json_bytes(second)) - 1
++    result = wait_result(actor, a, actor.submit(a, first))
++    before = actor.info()["encoded_bytes"]
++    with pytest.raises(RuntimeError, match="capacity exhausted"):
++        actor.submit(b, second)
++    assert actor.info()["tickets"] == 1 and actor.info()["encoded_bytes"] == before
++    ack(actor, a, result)
++    wait_result(actor, b, actor.submit(b, second))
++
++
++def test_deadline_and_mutable_caller_input_cannot_change_owned_work(runtime):
++    actor, adapter, _, calls = runtime
++    lease = register(actor)
++    clock = [0.0]
++    actor.clock, actor.timeout_s = lambda: clock[0], 1.0
++    entered, release = threading.Event(), threading.Event()
++    original_generate = actor.generate
++    seen = []
++
++    def generate(request, update):
++        seen.append(request["prompt"])
++        entered.set()
++        assert release.wait(5)
++        return original_generate(request, update)
++
++    actor.generate = generate
++    request = payload(lease)
++    original = adapter.snapshot
++    pending = actor.submit(lease, request)
++    try:
++        assert entered.wait(5)
++        request["prompt"] = "mutation after admission"
++        clock[0] = 2.0
++        with pytest.raises(RuntimeError, match="cancelled/expired"):
++            actor.result(lease, pending.json()["request_key"], pending.json()["payload_sha256"])
++        assert actor.end(lease).json()["acknowledged"] is False
++        assert actor.info()["encoded_bytes"] > 0 and adapter.snapshot is original
++    finally:
++        release.set()
++    wait_result(actor, lease, pending, expected=409)
++    assert seen == ["close the fridge"] and len(calls) == 1
++    assert adapter.snapshot is original and actor.info()["encoded_bytes"] == 0
++    assert actor.end(lease).json()["acknowledged"] is True
++
++
++def test_model_scan_receives_clones_not_committed_fast_storage(runtime):
++    actor, adapter, _, _ = runtime
++    lease = register(actor)
++    for request in (payload(lease), payload(lease, 1, 0)):
++        result = wait_result(actor, lease, actor.submit(lease, request))
++        ack(actor, lease, result)
++    original = adapter.snapshot
++    saved = [value.clone() for value in original.fast[lease["session_id"]].state]
++    scan = adapter.memory.scan_local_memory
++
++    def mutate_then_fail(visual, action, valid, state, **kwargs):
++        state[0].add_(100)
++        raise RuntimeError("injected scan failure after in-place candidate modification")
++
++    adapter.memory.scan_local_memory = mutate_then_fail
++    try:
++        with pytest.raises(RuntimeError, match="candidate modification"):
++            adapter.prepare(payload(lease, 2, 1))
++    finally:
++        adapter.memory.scan_local_memory = scan
++    assert adapter.snapshot is original
++    for actual, expected in zip(original.fast[lease["session_id"]].state, saved, strict=True):
++        torch.testing.assert_close(actual, expected, rtol=0, atol=0)
++
++
++def test_prior_response_replay_and_ack_do_not_release_new_inflight_frontier(runtime):
++    actor, _, _, calls = runtime
++    lease = register(actor)
++    first_request = payload(lease)
++    old = wait_result(actor, lease, actor.submit(lease, first_request))
++    ack(actor, lease, old)
++    entered, release = threading.Event(), threading.Event()
++    original_generate = actor.generate
++
++    def held(request, update):
++        entered.set()
++        assert release.wait(5)
++        return original_generate(request, update)
++
++    actor.generate = held
++    next_request = payload(lease, 1, 0)
++    next_pending = actor.submit(lease, next_request)
++    try:
++        assert entered.wait(5)
++        owned_bytes = actor.info()["encoded_bytes"]
++        assert actor.submit(lease, first_request).body == old.body
++        ack(actor, lease, old)
++        assert actor.info()["tickets"] == 1 and actor.info()["encoded_bytes"] == owned_bytes
++    finally:
++        release.set()
++    latest = wait_result(actor, lease, next_pending)
++    ack(actor, lease, latest)
++    assert len(calls) == 2
++
++
++def test_abort_cleanup_failure_cannot_be_reported_as_clean(monkeypatch):
++    adapter, _ = make_adapter(1)
++    actor = SessionTransactions(
++        adapter,
++        lambda *_: [[float("nan")] * 15] * 16,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++    )
++    lease = register(actor)
++    monkeypatch.setattr(adapter, "abort", lambda _: (_ for _ in ()).throw(RuntimeError("abort failed")))
++    pending = actor.submit(lease, payload(lease))
++    result = wait_result(actor, lease, pending, expected=409)
++    assert result.json()["state"] == "QUARANTINED"
++    assert actor.end(lease).json()["acknowledged"] is False
++    assert actor.info()["tickets"] == 1
++    assert actor.close(timeout_s=0.01) is False
++
++
++def test_huge_frontier_gap_rejected_before_adapter_range_materialization(runtime):
++    actor, _, model, _ = runtime
++    lease = register(actor)
++    cold = wait_result(actor, lease, actor.submit(lease, payload(lease)))
++    ack(actor, lease, cold)
++    bad = payload(lease, 1, 0)
++    bad["local_memory"]["consumer_step"] = 10**18
++    with pytest.raises(ValueError, match="bounded contiguous"):
++        actor.submit(lease, bad)
++    assert actor.info()["tickets"] == 0 and model.scan_calls == model.encoded == 0
+diff --git a/cosmos_framework/inference/robocasa_transaction_client.py b/cosmos_framework/inference/robocasa_transaction_client.py
+new file mode 100644
+index 0000000..c766c39
+--- /dev/null
++++ b/cosmos_framework/inference/robocasa_transaction_client.py
+@@ -0,0 +1,143 @@
++"""Bounded client for the opt-in B=1 Session transaction API, not a simulator."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import math
++import time
++from typing import Callable
++
++import requests
++
++from cosmos_framework.inference.robocasa_session_transactions import PROTOCOL, digest, json_bytes
++
++
++class TransactionPolicyClient:
++    def __init__(
++        self,
++        base_url: str,
++        *,
++        timeout_s=600.0,
++        transport=None,
++        clock=time.monotonic,
++        pause: Callable[[float], None] = time.sleep,
++    ):
++        if not math.isfinite(timeout_s) or timeout_s <= 0:
++            raise ValueError("positive client deadline required")
++        self.base_url, self.timeout_s = base_url.rstrip("/"), timeout_s
++        self.transport = transport if transport is not None else requests.Session()
++        self.clock, self.pause = clock, pause
++        self.lease = None
++        self._registration_pending = False
++
++    def _call(self, method, path, deadline, **kwargs):
++        while True:
++            remaining = deadline - self.clock()
++            if remaining <= 0:
++                raise TimeoutError("original transaction deadline exhausted")
++            try:
++                response = self.transport.request(method, self.base_url + path, timeout=remaining, **kwargs)
++                break
++            except (requests.Timeout, requests.ConnectionError):
++                self.pause(min(0.02, max(0, deadline - self.clock())))
++        if response.status_code not in (200, 202):
++            self.last_error = response.json()
++            raise RuntimeError(f"transaction API rejected request: HTTP {response.status_code}: {self.last_error}")
++        value = response.json()
++        if not isinstance(value, dict):
++            raise ValueError("transaction JSON object required")
++        return response.status_code, value
++
++    def register(self, registration: dict, owner_token: str):
++        if self.lease is not None or self._registration_pending:
++            raise RuntimeError("prior Session has not received End ACK")
++        self._registration_pending = True
++        _, value = self._call(
++            "POST",
++            "/v2/session/register",
++            self.clock() + self.timeout_s,
++            json=registration,
++            headers={"X-Cosmos-Owner": owner_token},
++        )
++        lease = value.get("lease")
++        if not isinstance(lease, dict) or any(lease.get(k) != v for k, v in registration.items()):
++            raise ValueError("registration ACK identity mismatch")
++        self.lease = lease
++        self._registration_pending = False
++        return dict(lease)
++
++    def predict(self, payload: dict):
++        if self.lease is None:
++            raise RuntimeError("register a fresh admitted Episode first")
++        raw = json_bytes(payload)
++        # Frozen bytes prevent retry/ACK from binding a later-mutated caller object.
++        payload = json.loads(raw)
++        frontier = payload["local_memory"]["consumer_step"]
++        expected_key = digest(
++            {"protocol": PROTOCOL, **{k: v for k, v in self.lease.items() if k != "capability"}, "frontier": frontier}
++        )
++        expected_sha = hashlib.sha256(raw).hexdigest()
++        deadline = self.clock() + self.timeout_s
++        status, result = self._call("POST", "/v2/inference", deadline, json={"lease": self.lease, "payload": payload})
++        while status == 202:
++            if result.get("request_key") != expected_key or result.get("payload_sha256") != expected_sha:
++                raise ValueError("inference Ticket binding mismatch")
++            self.pause(min(0.02, max(0, deadline - self.clock())))
++            status, result = self._call(
++                "GET",
++                f"/v2/inference/{expected_key}",
++                deadline,
++                headers={
++                    "X-Cosmos-Assignment": json_bytes(self.lease).decode(),
++                    "X-Cosmos-Payload-SHA256": expected_sha,
++                },
++            )
++        identity = {k: v for k, v in self.lease.items() if k != "capability"}
++        if (
++            result.get("protocol") != PROTOCOL
++            or result.get("request_key") != expected_key
++            or result.get("payload_sha256") != expected_sha
++            or result.get("assignment") != identity
++            or result.get("frontier") != frontier
++        ):
++            raise ValueError("committed inference identity mismatch")
++        local = result.get("local_memory", {})
++        action = result.get("action")
++        if (
++            local.get("session_id") != self.lease["session_id"]
++            or local.get("episode_id") != self.lease["episode_id"]
++            or local.get("consumer_step") != frontier
++            or result.get("native_batch") != {"size": 1, "index": 0}
++            or not isinstance(action, list)
++            or len(action) != 16
++            or any(not isinstance(row, list) or len(row) != 15 for row in action)
++            or any(type(v) not in (float, int) or not math.isfinite(v) for row in action for v in row)
++        ):
++            raise ValueError("committed action/Local status contract mismatch")
++        _, ack = self._call(
++            "POST",
++            "/v2/inference/ack",
++            deadline,
++            json={"lease": self.lease, "request_key": expected_key, "payload_sha256": expected_sha},
++        )
++        if ack.get("acknowledged") is not True or ack.get("request_key") != expected_key:
++            raise ValueError("delivery ACK mismatch")
++        return result
++
++    def end(self):
++        if self.lease is None:
++            if self._registration_pending:
++                raise RuntimeError("registration ownership unresolved; owned Server recovery required")
++            return
++        deadline = self.clock() + self.timeout_s
++        while True:
++            status, reply = self._call("POST", "/v2/session/end", deadline, json={"lease": self.lease})
++            if reply.get("acknowledged") is True:
++                if status != 200 or any(reply.get(k) != v for k, v in self.lease.items() if k != "capability"):
++                    raise ValueError("Session End ACK identity mismatch")
++                self.lease = None
++                return
++            if status != 202 or reply.get("acknowledged") is not False:
++                raise ValueError("invalid deferred Session End reply")
++            self.pause(min(0.02, max(0, deadline - self.clock())))
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index dc7757a..249bd56 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -85,6 +85,14 @@ from cosmos_framework.inference.common.init import init_output_dir
+ from cosmos_framework.inference.inference import OmniInference
+ from cosmos_framework.inference.robocasa_composite_visual import prepare_robocasa_composite_frame
+ from cosmos_framework.inference.robocasa_local_memory_policy import RoboCasaLocalMemoryPolicyAdapter
++from cosmos_framework.inference.robocasa_session_transactions import (
++    MAX_BODY,
++    Reply,
++    SessionTransactions,
++    identifier,
++    json_bytes,
++    strict_json,
++)
+ from cosmos_framework.scripts.action_policy_server_utils import (
+     DEFAULT_FALLBACK_OUTPUT_DIR,
+     disable_runtime_ema_for_frozen_config,
+@@ -519,6 +527,13 @@ class ActionServerArgs(pydantic.BaseModel):
+     """Online V3 Local-TTT mode. Formal Local-TTT evaluation must use ``required``."""
+     local_memory_max_sessions: int = 64
+     """Maximum concurrent online Local-TTT episode sessions."""
++    transaction_profile: Literal["legacy", "b1"] = "legacy"
++    """Opt-in Phase B transaction/B1 API. Does not enable multi-Sim or B>1."""
++    transaction_owner_token_file: Path | None = None
++    transaction_run_lease: str | None = None
++    transaction_manifest_digest: str | None = None
++    transaction_slot_id: str | None = None
++    transaction_timeout_s: float = 600.0
+ 
+     # ----- prompt format ------------------------------------------------------
+     format_prompt_as_json: bool | None = None
+@@ -596,15 +611,89 @@ class ActionServerConfig:
+     checkpoint_dir: str
+ 
+ 
++def _transaction_options(args):
++    fields = (
++        args.transaction_owner_token_file,
++        args.transaction_run_lease,
++        args.transaction_manifest_digest,
++        args.transaction_slot_id,
++    )
++    if args.transaction_profile == "legacy":
++        if any(value is not None for value in fields):
++            raise ValueError("transaction identity options require explicit transaction_profile=b1")
++        return None
++    if (
++        args.local_memory_mode != "required"
++        or args.local_memory_max_sessions != 1
++        or args.action_chunk_size != 16
++        or any(value is None for value in fields)
++    ):
++        raise ValueError(
++            "B1 transaction profile requires required Local-TTT, one Slot, explicit H16 and complete identity"
++        )
++    token_path = Path(args.transaction_owner_token_file)
++    if token_path.stat().st_mode & 0o077 or token_path.stat().st_size > 256:
++        raise ValueError("transaction owner capability file must be private and bounded")
++    if getattr(args, "run_validation", False):
++        raise ValueError("transaction profile cannot execute training/developer validation")
++    if (
++        not isinstance(args.transaction_manifest_digest, str)
++        or len(args.transaction_manifest_digest) != 64
++        or any(c not in "0123456789abcdef" for c in args.transaction_manifest_digest)
++    ):
++        raise ValueError("transaction manifest SHA256 required before model initialization")
++    timeout = getattr(args, "transaction_timeout_s", 600.0)
++    if not 0 < timeout <= 6000:
++        raise ValueError("finite bounded transaction timeout required")
++    return dict(
++        owner_token=identifier(token_path.read_text().strip(), limit=256),
++        run_lease=identifier(args.transaction_run_lease),
++        manifest_digest=args.transaction_manifest_digest,
++        slot_ids=(identifier(args.transaction_slot_id, limit=64),),
++        timeout_s=timeout,
++    )
++
++
++def transaction_dispatch(service, method, path, record=None, headers=None) -> Reply:
++    actor = getattr(service, "transactions", None)
++    if actor is None:
++        return Reply(404, json_bytes({"error": "transaction profile not enabled"}))
++    record, headers = ({} if record is None else record), ({} if headers is None else headers)
++    if method == "POST" and path == "/v2/session/register":
++        return actor.register(record, headers.get("X-Cosmos-Owner", ""))
++    if method == "POST" and path == "/v2/inference" and set(record) == {"lease", "payload"}:
++        return actor.submit(record["lease"], record["payload"])
++    if method == "POST" and path == "/v2/inference/ack" and set(record) == {"lease", "request_key", "payload_sha256"}:
++        return actor.acknowledge(record["lease"], record["request_key"], record["payload_sha256"])
++    if method == "POST" and path == "/v2/session/end" and set(record) == {"lease"}:
++        return actor.end(record["lease"])
++    if method == "GET" and path.startswith("/v2/inference/"):
++        key = path.removeprefix("/v2/inference/")
++        assignment = headers.get("X-Cosmos-Assignment", "")
++        sha = headers.get("X-Cosmos-Payload-SHA256", "")
++        if len(assignment) > 4096 or any(
++            len(v) != 64 or any(c not in "0123456789abcdef" for c in v) for v in (key, sha)
++        ):
++            raise ValueError("bounded assignment and exact inference digests required")
++        return actor.result(strict_json(assignment.encode()), key, sha)
++    raise ValueError("unsupported transaction operation/schema")
++
++
+ class ActionModelService:
+     def __init__(self, args: ActionServerArgs) -> None:
++        transaction_options = _transaction_options(args)
++        self.transactions = None
+         if not torch.cuda.is_available():
+             raise RuntimeError("CUDA is required for OmniMoTModel inference in this repo.")
++        if transaction_options is not None and torch.cuda.device_count() != 1:
++            raise ValueError("B1 transaction increment requires exactly one visible model GPU")
+ 
+         # OmniInference internally calls into FSDP / DTensor parallelize utilities
+         # that expect a process group; create a single-rank PG when not under
+         # torchrun (init_script() only inits the PG when WORLD_SIZE>1).
+         maybe_init_distributed()
++        if transaction_options is not None and torch.distributed.get_world_size() != 1:
++            raise ValueError("B1 transaction increment requires a single-rank model owner")
+ 
+         setup_overrides = args.build_setup_overrides()
+         setup_args = setup_overrides.build_setup()
+@@ -765,6 +854,22 @@ class ActionModelService:
+             max_sessions=int(args.local_memory_max_sessions),
+         )
+         log.info(f"[action-server] local_memory={self.local_memory_adapter.info()}")
++        if transaction_options is not None:
++            if (
++                self.cfg.action_chunk_size != 16
++                or self.raw_action_dim != 15
++                or not self.requires_state
++                or self.local_memory_adapter.info()["k_local"] != 4
++                or self.local_memory_adapter.info()["local_dim"] != 32
++            ):
++                raise ValueError("B1 transaction profile requires resolved raw15/state15/H16/K4/local32")
++            self.transactions = SessionTransactions(
++                self.local_memory_adapter,
++                self._transaction_action,
++                self._transaction_quiesce,
++                model_lock=self._lock,
++                **transaction_options,
++            )
+ 
+         if args.run_validation:
+             self._run_developer_validation()
+@@ -894,6 +999,11 @@ class ActionModelService:
+         params.json without needing to know CLI flags.
+         """
+         return {
++            "session_transactions": (
++                self.transactions.info()
++                if getattr(self, "transactions", None) is not None
++                else {"enabled": False, "profile": "legacy"}
++            ),
+             "run_name": self.cfg.experiment_name,
+             "checkpoint": self.cfg.checkpoint_dir,
+             "config_file": str(self.setup_args.config_file),
+@@ -1025,6 +1135,45 @@ class ActionModelService:
+             action_t_d[0, : state_token.shape[0]] = state_token
+         return action_t_d
+ 
++    def _single_policy_batch(self, prep):
++        return {
++            self._input_video_key(): [[prep["video_padded"]]],
++            **make_batched_action_processing_fields(
++                ActionProcessingRecord(raw_action_dim=self.raw_action_dim, action_normalizer=None), batch_size=1
++            ),
++            "action": [[self._build_action_input(prep["state_token"])]],
++            "mode": ["wam"],
++            "ai_caption": [prep["augmented_prompt"]],
++            "prompt": [prep["augmented_prompt"]],
++            "conditioning_fps": [torch.tensor(self.cfg.fps, dtype=torch.long)],
++            "image_size": prep["padded_image_size"].unsqueeze(0).to(device="cuda"),
++            "domain_id": [torch.tensor(get_domain_id(prep["domain_name"]), dtype=torch.long)],
++            "sequence_plan": [prep["sequence_plan"]],
++        }
++
++    def _transaction_action(self, req, update):
++        prep = self._prep_policy_item(req)
++        with torch.inference_mode():
++            samples = self.model.generate_samples_from_batch(
++                self._single_policy_batch(prep),
++                guidance=self.cfg.guidance,
++                seed=[self.cfg.seed],
++                num_steps=self.cfg.num_steps,
++                has_negative_prompt=False,
++                _local_memory_prefixes=self.local_memory_adapter.prefixes(update),
++            )
++        if len(samples["action"]) != 1:
++            raise ValueError("B1 native output cardinality mismatch")
++        action = self._denormalize_action(samples["action"][0].float().squeeze(0))
++        if prep["state_token"] is not None:
++            action = action[1:]
++        return action.detach().cpu().tolist()
++
++    def _transaction_quiesce(self):
++        # This service is constructed only with one GPU. Device loss must raise,
++        # not silently turn an unproven drain into positive Session cleanup.
++        torch.cuda.synchronize()
++
+     def predict_policy_batch(self, reqs: list[dict[str, Any]]) -> dict[str, Any]:
+         """Batched policy inference: N requests -> ONE diffusion forward (batch_size=N).
+ 
+@@ -1098,6 +1247,8 @@ class ActionModelService:
+ 
+         All action dimensions are returned. Video is the decoded predicted rollout as base64 PNGs.
+         """
++        if getattr(self, "transactions", None) is not None:
++            raise ValueError("use the owned /v2 Session API; legacy /predict cannot bypass transaction ownership")
+         t0 = time.monotonic()
+         command = req.get("_local_memory_command")
+         if command is not None:
+@@ -1334,7 +1485,9 @@ class _ActionHandler(BaseHTTPRequestHandler):
+     server: ThreadingHTTPServer  # type: ignore[assignment]
+ 
+     def _send_json(self, status_code: int, payload: dict[str, Any]) -> None:
+-        body = json.dumps(payload).encode("utf-8")
++        self._send_bytes(status_code, json.dumps(payload).encode("utf-8"))
++
++    def _send_bytes(self, status_code: int, body: bytes) -> None:
+         self.send_response(status_code)
+         self.send_header("Content-Type", "application/json")
+         # Avoid caches/proxies returning stale results.
+@@ -1348,8 +1501,52 @@ class _ActionHandler(BaseHTTPRequestHandler):
+             # Avoid noisy tracebacks; nothing to do server-side.
+             return
+ 
++    def _transaction(self, method):
++        service = getattr(self.server, "service")
++        if getattr(service, "transactions", None) is None:
++            self._send_json(404, {"error": "transaction profile not enabled"})
++            return
++        if not service.transactions.http_slots.acquire(blocking=False):
++            self._send_json(503, {"error": "bounded transaction HTTP capacity exhausted"})
++            return
++        try:
++            self._transaction_owned(method, service)
++        finally:
++            service.transactions.http_slots.release()
++
++    def _transaction_owned(self, method, service):
++        try:
++            record = None
++            if method == "POST":
++                if (self.headers.get("Content-Type") or "").split(";", 1)[0].strip().lower() != "application/json":
++                    self._send_json(415, {"error": "Content-Type must be application/json"})
++                    return
++                length = int(self.headers.get("Content-Length") or "0")
++                if not 0 < length <= MAX_BODY + 8192:
++                    self._send_json(413, {"error": "bounded transaction body required"})
++                    return
++                self.connection.settimeout(min(30.0, service.transactions.timeout_s))
++                raw = self.rfile.read(length)
++                if len(raw) != length:
++                    raise ValueError("truncated transaction body")
++                record = strict_json(raw)
++            reply = transaction_dispatch(service, method, self.path, record, self.headers)
++        except (ValueError, TypeError, KeyError) as error:
++            self._send_json(400, {"error": str(error)})
++            return
++        except RuntimeError as error:
++            self._send_json(409, {"error": str(error)})
++            return
++        except Exception:
++            log.exception("transaction HTTP operation failed")
++            self._send_json(500, {"error": "transaction HTTP operation failed"})
++            return
++        self._send_bytes(reply.status, reply.body)
++
+     def do_GET(self) -> None:  # noqa: N802
+-        if self.path == "/info":
++        if self.path.startswith("/v2/"):
++            self._transaction("GET")
++        elif self.path == "/info":
+             service: ActionModelService = getattr(self.server, "service")  # type: ignore[attr-defined]
+             self._send_json(200, service.get_info())
+         elif self.path == "/":
+@@ -1358,6 +1555,9 @@ class _ActionHandler(BaseHTTPRequestHandler):
+             self._send_json(404, {"error": "Not found"})
+ 
+     def do_POST(self) -> None:  # noqa: N802
++        if self.path.startswith("/v2/"):
++            self._transaction("POST")
++            return
+         if self.path not in ("/", "/predict", "/predict_batch"):
+             self._send_json(404, {"error": "Not found"})
+             return
+@@ -1476,7 +1676,15 @@ def serve(args: ActionServerArgs) -> None:
+ 
+     httpd: ThreadingHTTPServer = ThreadingHTTPServer((args.host, int(args.port)), _ActionHandler)
+     setattr(httpd, "service", service)
+-    httpd.serve_forever()
++    if service.transactions is None:
++        httpd.serve_forever()
++        return
++    try:
++        httpd.serve_forever()
++    finally:
++        httpd.server_close()
++        if service.transactions is not None and not service.transactions.close():
++            log.error("Session actor cleanup unproven; owned-process decommission is required")
+ 
+ 
+ def main() -> None:
+diff --git a/cosmos_framework/scripts/robocasa_transactions_b1_test.py b/cosmos_framework/scripts/robocasa_transactions_b1_test.py
+new file mode 100644
+index 0000000..4e60d5b
+--- /dev/null
++++ b/cosmos_framework/scripts/robocasa_transactions_b1_test.py
+@@ -0,0 +1,293 @@
++from __future__ import annotations
++
++import io
++import json
++import sys
++import threading
++from types import SimpleNamespace
++from unittest.mock import patch
++from urllib.parse import urlsplit
++
++import pytest
++import requests
++import torch
++
++from cosmos_framework.inference.robocasa_session_transactions import SessionTransactions
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    ack,
++    make_adapter,
++    payload,
++    register,
++    registration,
++    wait_result,
++)
++from cosmos_framework.inference.robocasa_transaction_client import TransactionPolicyClient
++
++with patch("cosmos_framework.inference.common.init._init_script", lambda **kwargs: None):
++    sys.modules.pop("cosmos_framework.scripts.action_policy_server_robocasa", None)
++    from cosmos_framework.scripts import action_policy_server_robocasa as server
++
++
++def service(monkeypatch):
++    obj = server.ActionModelService.__new__(server.ActionModelService)
++    obj.cfg = SimpleNamespace(
++        action_chunk_size=16, max_action_dim=64, fps=20, guidance=1.0, seed=7, num_steps=2, dump_dir=None, dump_every=1
++    )
++    obj.requires_state, obj.raw_action_dim = True, 15
++    obj._prompt_json_formatter = None
++    obj.append_duration_fps = obj.append_resolution_info = False
++    obj._lock, obj._req_id_lock, obj._req_id = threading.Lock(), threading.Lock(), 0
++    obj._input_video_key = lambda: "video"
++    obj.action_normalization, obj.action_min, obj.action_range = "minmax", torch.zeros(15), torch.ones(15)
++    obj._should_dump = lambda _: False
++    obj.local_memory_adapter, obj.model = make_adapter(1)
++    obj.model.eval()
++    obj.native_calls = []
++
++    def generate(batch, **kwargs):
++        obj.native_calls.append((batch, kwargs))
++        prefix = kwargs["_local_memory_prefixes"][0]
++        offset = 0.0 if prefix is None else float(prefix.square().sum()) * 0.001
++        action = torch.arange(17 * 64).reshape(1, 17, 64).float() * 0.0001 + offset
++        return {"action": [action], "vision": [torch.empty(0)]}
++
++    obj.model.generate_samples_from_batch = generate
++    obj.model.decode = lambda _: torch.zeros(1, 3, 1, 16, 16)
++    monkeypatch.setattr(
++        server, "_decode_base64_png_to_rgb_uint8", lambda _: torch.zeros(3, 256, 512, dtype=torch.uint8)
++    )
++    monkeypatch.setattr(server, "remove_reflection_padding", lambda video, _: video)
++    monkeypatch.setattr(server, "_video_tensor_to_pil_images", lambda _: [])
++    original_to = torch.Tensor.to
++
++    def cpu_to(tensor, *args, **kwargs):
++        if kwargs.get("device") == "cuda":
++            kwargs["device"] = "cpu"
++        return original_to(tensor, *args, **kwargs)
++
++    monkeypatch.setattr(torch.Tensor, "to", cpu_to)
++    obj.transactions = None
++    return obj
++
++
++def test_native_b1_action_and_real_fast_state_match_legacy_inputs(monkeypatch):
++    modern, legacy = service(monkeypatch), service(monkeypatch)
++    actor = SessionTransactions(
++        modern.local_memory_adapter,
++        modern._transaction_action,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++        model_lock=modern._lock,
++    )
++    modern.transactions = actor
++    try:
++        lease = register(actor)
++        for request in (payload(lease), payload(lease, 2, 0, 7)):
++            current = wait_result(actor, lease, actor.submit(lease, request))
++            reference = legacy.predict_policy(request)
++            torch.testing.assert_close(
++                torch.tensor(current.json()["action"]), torch.tensor(reference["action"]), rtol=0, atol=0
++            )
++            actual, expected = modern.native_calls[-1], legacy.native_calls[-1]
++            assert actual[1]["seed"] == expected[1]["seed"] == [7]
++            assert actual[1]["num_steps"] == expected[1]["num_steps"] == 2
++            torch.testing.assert_close(actual[0]["action"][0][0], expected[0]["action"][0][0], rtol=0, atol=0)
++            assert actual[0]["action"][0][0].shape == (17, 64)
++            assert actual[0]["video"][0][0].shape[1] == 17
++            assert actual[0]["sequence_plan"] == expected[0]["sequence_plan"]
++            modern_state = modern.local_memory_adapter.snapshot.fast[lease["session_id"]]
++            legacy_state = legacy.local_memory_adapter.snapshot.fast[lease["session_id"]]
++            if modern_state.state is not None:
++                for left, right in zip(modern_state.state, legacy_state.state, strict=True):
++                    torch.testing.assert_close(left, right, rtol=0, atol=0)
++                assert actual[1]["_local_memory_prefixes"][0].shape == (4, 32)
++            ack(actor, lease, current)
++        assert len(modern.native_calls) == len(legacy.native_calls) == 2
++        with pytest.raises(ValueError, match="owned /v2"):
++            modern.predict_policy(payload(lease))
++        with pytest.raises(ValueError, match="serial /predict only"):
++            modern.predict_policy_batch([payload(lease), payload(lease)])
++    finally:
++        assert actor.close()
++
++
++class Response:
++    def __init__(self, reply):
++        self.status_code, self.body = reply.status, reply.body
++
++    def json(self):
++        return json.loads(self.body)
++
++
++class DirectTransport:
++    """Actual production dispatcher/client; no socket, server process or model load."""
++
++    def __init__(self, obj, drop=()):
++        self.obj, self.drop, self.dropped = obj, set(drop), set()
++        self.calls = []
++
++    def request(self, method, url, *, timeout, json=None, headers=None):
++        path = urlsplit(url).path
++        self.calls.append((method, path, timeout))
++        reply = server.transaction_dispatch(self.obj, method, path, record=json, headers=headers)
++        if path in self.drop and path not in self.dropped:
++            self.dropped.add(path)
++            raise requests.ConnectionError("injected lost HTTP response after server operation")
++        return Response(reply)
++
++
++@pytest.mark.parametrize("drop", ["/v2/session/register", "/v2/inference", "/v2/inference/ack", "/v2/session/end"])
++def test_real_dispatch_client_retries_lost_response_without_double_generation(monkeypatch, drop):
++    obj = service(monkeypatch)
++    actor = SessionTransactions(
++        obj.local_memory_adapter,
++        obj._transaction_action,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++        model_lock=obj._lock,
++    )
++    obj.transactions = actor
++    transport = DirectTransport(obj, (drop,))
++    client = TransactionPolicyClient("http://cpu", timeout_s=5, transport=transport)
++    try:
++        lease = client.register(registration(), "cpu-owner")
++        result = client.predict(payload(lease))
++        assert result["local_memory"]["session_id"] == lease["session_id"]
++        assert actor.info()["tickets"] == 0
++        # Re-POST after ACK traverses production admission, not only cached().
++        replay = client.predict(payload(lease))
++        assert replay == result and actor.info()["tickets"] == 0
++        assert len(obj.native_calls) == 1
++        client.end()
++        assert client.lease is None and actor.info()["sessions"] == 0
++        assert drop in transport.dropped
++    finally:
++        assert actor.close()
++
++
++def test_client_retry_deadline_is_absolute_not_reset():
++    now, remaining = [0.0], []
++
++    class AlwaysLost:
++        def request(self, *_, timeout, **__):
++            remaining.append(timeout)
++            raise requests.ConnectionError("lost")
++
++    client = TransactionPolicyClient(
++        "http://cpu",
++        timeout_s=0.05,
++        transport=AlwaysLost(),
++        clock=lambda: now[0],
++        pause=lambda amount: now.__setitem__(0, now[0] + amount),
++    )
++    with pytest.raises(TimeoutError, match="original transaction deadline"):
++        client.register(registration(), "synthetic-owner")
++    assert 2 <= len(remaining) <= 4 and remaining == sorted(remaining, reverse=True)
++    assert now[0] == pytest.approx(0.05)
++    with pytest.raises(RuntimeError, match="ownership unresolved"):
++        client.end()
++
++
++@pytest.mark.parametrize(
++    "change", ["mode", "sessions", "horizon", "missing", "permissions", "manifest", "developer", "timeout"]
++)
++def test_transaction_profile_fail_closed_preflight_before_model_load(tmp_path, change):
++    path = tmp_path / "capability"
++    path.write_text("synthetic-test-owner")
++    path.chmod(0o600)
++    args = SimpleNamespace(
++        transaction_profile="b1",
++        local_memory_mode="required",
++        local_memory_max_sessions=1,
++        action_chunk_size=16,
++        transaction_owner_token_file=path,
++        transaction_run_lease="run",
++        transaction_manifest_digest="a" * 64,
++        transaction_slot_id="slot0",
++    )
++    assert server._transaction_options(args)["slot_ids"] == ("slot0",)
++    if change == "mode":
++        args.local_memory_mode = "off"
++    elif change == "sessions":
++        args.local_memory_max_sessions = 2
++    elif change == "horizon":
++        args.action_chunk_size = 32
++    elif change == "missing":
++        args.transaction_run_lease = None
++    elif change == "permissions":
++        path.chmod(0o644)
++    elif change == "manifest":
++        args.transaction_manifest_digest = "not-a-digest"
++    elif change == "developer":
++        args.run_validation = True
++    else:
++        args.transaction_timeout_s = float("nan")
++    with pytest.raises(ValueError):
++        server._transaction_options(args)
++
++
++@pytest.mark.parametrize(
++    "body,content_type,length,status",
++    [
++        (b"{}", "text/plain", "2", 415),
++        (b"{}", "application/json", "0", 413),
++        (b"{}", "application/json", str(33 * 1024**2), 413),
++        (b"{}", "application/json", "3", 400),
++        (b'{"lease":1,"lease":2}', "application/json", None, 400),
++        (b"\xff", "application/json", "1", 400),
++    ],
++)
++def test_actual_http_handler_bounds_and_strict_json_without_binding_socket(body, content_type, length, status):
++    handler = server._ActionHandler.__new__(server._ActionHandler)
++    handler.server = SimpleNamespace(
++        service=SimpleNamespace(transactions=SimpleNamespace(timeout_s=600, http_slots=threading.BoundedSemaphore(2)))
++    )
++    handler.path = "/v2/inference"
++    handler.headers = {"Content-Type": content_type, "Content-Length": str(len(body)) if length is None else length}
++    handler.rfile = io.BytesIO(body)
++    handler.connection = SimpleNamespace(settimeout=lambda _: None)
++    replies = []
++    handler._send_json = lambda code, value: replies.append((code, value))
++    handler.do_POST()
++    assert replies[0][0] == status
++
++
++def test_v2_legacy_profile_and_numeric_request_id_do_not_bypass_identity():
++    assert server.transaction_dispatch(SimpleNamespace(transactions=None), "POST", "/v2/inference").status == 404
++    actor = SimpleNamespace(timeout_s=600)
++    service_obj = SimpleNamespace(transactions=actor)
++    with pytest.raises(ValueError, match="operation/schema"):
++        server.transaction_dispatch(service_obj, "POST", "/v2/inference", {"items": [{}, {}]})
++
++
++def test_http_capacity_refusal_does_not_parse_or_schedule():
++    guard = threading.BoundedSemaphore(1)
++    guard.acquire()
++    handler = server._ActionHandler.__new__(server._ActionHandler)
++    handler.server = SimpleNamespace(service=SimpleNamespace(transactions=SimpleNamespace(http_slots=guard)))
++    handler.path = "/v2/inference"
++    replies = []
++    handler._send_json = lambda code, value: replies.append((code, value))
++    handler.do_POST()
++    assert replies[0][0] == 503
++
++
++def test_lost_device_cannot_skip_required_gpu_quiescence(monkeypatch):
++    obj = server.ActionModelService.__new__(server.ActionModelService)
++    called = []
++    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
++
++    def failed_drain():
++        called.append(True)
++        raise RuntimeError("injected lost-device drain failure")
++
++    monkeypatch.setattr(torch.cuda, "synchronize", failed_drain)
++    with pytest.raises(RuntimeError, match="lost-device drain failure"):
++        obj._transaction_quiesce()
++    assert called == [True]

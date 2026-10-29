@@ -1,0 +1,18 @@
+{
+  "root_scripts_configs_third_party": "UNCHANGED_FROM_PHASE_A",
+  "child_changed_files": [
+    "cosmos_framework/inference/local_memory_online.py",
+    "cosmos_framework/inference/local_memory_state.py",
+    "cosmos_framework/inference/robocasa_local_memory_policy.py",
+    "cosmos_framework/inference/robocasa_session_transactions.py",
+    "cosmos_framework/inference/robocasa_session_transactions_test.py",
+    "cosmos_framework/inference/robocasa_transaction_client.py",
+    "cosmos_framework/scripts/action_policy_server_robocasa.py",
+    "cosmos_framework/scripts/robocasa_transactions_b1_test.py"
+  ],
+  "child_model_train_optimizer_dcp_sim_vendor_data": "UNCHANGED",
+  "root_eval_launcher_runtime_config": "UNCHANGED; still PhaseA legacy M1/B1 default",
+  "new_optin_service": "one Slot / one native sample; generated media off",
+  "inbox_rollover_archive_bytes": 130996,
+  "inbox_rollover_archive_blob": "d702c44dd68529e93a491c5353e866ab7be92a07"
+}

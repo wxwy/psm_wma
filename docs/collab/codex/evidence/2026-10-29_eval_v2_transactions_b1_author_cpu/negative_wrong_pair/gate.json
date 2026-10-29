@@ -1,0 +1,6 @@
+{
+  "gate": "TRANSACTION_B1_AUTHOR_OR_DS_CPU_ONLY",
+  "status": "BLOCKED",
+  "steps": [],
+  "error": "ValueError: exact-pair mismatch: {'root': 'a3ca1b2f45c43dfd2f0125598b487944294626b9', 'child': 'd0ce64f3bed894d4f323b41fb838ad4a0d1f87c1', 'gitlink': 'd0ce64f3bed894d4f323b41fb838ad4a0d1f87c1'}"
+}

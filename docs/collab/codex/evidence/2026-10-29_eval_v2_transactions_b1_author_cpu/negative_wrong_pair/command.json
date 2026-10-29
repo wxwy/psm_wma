@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "tools/v3/run_eval_v2_transactions_b1_cpu_gate.py",
+    "--root-worktree",
+    "/workspace/psm_wma",
+    "--expected-root",
+    "0000000000000000000000000000000000000000",
+    "--expected-child",
+    "d0ce64f3bed894d4f323b41fb838ad4a0d1f87c1",
+    "--evidence-dir",
+    "/tmp/psm-eval-v2-b1-transactions-20261029/negative_wrong_pair"
+  ],
+  "expected_exit": 1,
+  "actual_exit": 1,
+  "stdout": "{\n  \"gate\": \"TRANSACTION_B1_AUTHOR_OR_DS_CPU_ONLY\",\n  \"status\": \"BLOCKED\",\n  \"steps\": [],\n  \"error\": \"ValueError: exact-pair mismatch: {'root': 'a3ca1b2f45c43dfd2f0125598b487944294626b9', 'child': 'd0ce64f3bed894d4f323b41fb838ad4a0d1f87c1', 'gitlink': 'd0ce64f3bed894d4f323b41fb838ad4a0d1f87c1'}\"\n}\n",
+  "stderr": ""
+}

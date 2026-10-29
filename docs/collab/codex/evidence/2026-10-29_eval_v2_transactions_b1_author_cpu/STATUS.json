@@ -1,0 +1,44 @@
+{
+  "gate": "PHASE_B_TRANSACTION_B1_AUTHOR_CPU_ONLY",
+  "implementation_root": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+  "child_gitlink": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "author_cpu": "PASS",
+  "junit": {
+    "tests": 322,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "inference": {
+    "tests": 67,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase_a_regression": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "static_ruff": "0.12.7_CHECK_FORMAT_PASS",
+  "syntax_files": 9,
+  "source_unchanged_during_gate": true,
+  "formal_source_bindings": 14,
+  "device_loss_counterexample": "intermediate d0ce64f RED1 then current explicit sync GREEN1; mocked CPU only",
+  "wrong_pair_negative": "BLOCKED before tests",
+  "intermediate_locked01": "321PASS on older a3ca1b2f/d0ce64f, not final",
+  "gpt_code_gate": "REQUESTED_NOT_APPROVED",
+  "independent_ds_cpu": "NOT_RUN",
+  "phase_a_independent_ds_cpu": "STILL_PENDING",
+  "phase_b_second_increment": "NOT_STARTED",
+  "native_gpu_full_cosmos_dcp_robocasa_egl_900_training_history": "NOT_RUN_OR_MODIFIED",
+  "v3_child_canonical_merge": "NOT_DONE",
+  "limitations": [
+    "actual CPU Local encoder/core/FastState; Wan/diffusion/transport boundary doubles",
+    "B1 action/FastState exact comparison is CPU fixture parity, not real GPU numeric validation",
+    "255 PhaseA regressions include fake environment/server/OS synthetic scheduling, not benchmark SR",
+    "new profile is an opt-in service/client foundation, not integrated Eval Launcher or M>1/native B>1/media",
+    "all tests are author environment; no DS/GPT independent execution claim"
+  ]
+}

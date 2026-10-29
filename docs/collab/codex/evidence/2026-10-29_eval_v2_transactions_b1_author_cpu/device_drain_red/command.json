@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py::test_lost_device_cannot_skip_required_gpu_quiescence",
+    "--junitxml=/tmp/psm-eval-v2-b1-transactions-20261029/device_drain_red/junit.xml"
+  ],
+  "expected": "RED on intermediate Child d0ce64f3",
+  "exit_code": 1,
+  "junit": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  }
+}

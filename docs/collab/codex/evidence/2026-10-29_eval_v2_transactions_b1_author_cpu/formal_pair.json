@@ -1,0 +1,12 @@
+{
+  "root": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+  "child": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "gitlink": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "source_branch": "v3-eval-v2-transactions-b1-20261029",
+  "approved_design_root": "b9c7cf1607ffd38f6e3349bdde0b35703a6d7684",
+  "approved_design_child": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "baseline_phase_a_root": "fd7e43f6630a436ab3d83edcd3ce9d1516b342d1",
+  "baseline_phase_a_child": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "scope": "FIRST production transaction/FastState/B1 increment only",
+  "review_range": "FULL baseline-to-final Child delta and Root technical delta, not only last commit"
+}

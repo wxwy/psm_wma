@@ -1,0 +1,17 @@
+{
+  "CUDA_VISIBLE_DEVICES": "",
+  "COSMOS_DEVICE": "cpu",
+  "HF_HUB_OFFLINE": "1",
+  "TRANSFORMERS_OFFLINE": "1",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "HF_HOME": "/tmp/psm-eval-v2-b1-transactions-20261029/locked02/cache/hf",
+  "MPLCONFIGDIR": "/tmp/psm-eval-v2-b1-transactions-20261029/locked02/cache/mpl",
+  "XDG_CACHE_HOME": "/tmp/psm-eval-v2-b1-transactions-20261029/locked02/cache/xdg",
+  "RUFF_CACHE_DIR": "/tmp/psm-eval-v2-b1-transactions-20261029/locked02/cache/ruff",
+  "TRITON_CACHE_DIR": "/tmp/psm-eval-v2-b1-transactions-20261029/locked02/cache/triton",
+  "PYTEST_ADDOPTS": "",
+  "PYTHONPATH": "/workspace/psm_wma:/workspace/psm_wma/cosmos-framework:/workspace/psm_wma/scripts"
+}

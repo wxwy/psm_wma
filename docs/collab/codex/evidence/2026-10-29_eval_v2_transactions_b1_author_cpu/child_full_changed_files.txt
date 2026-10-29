@@ -1,0 +1,8 @@
+M	cosmos_framework/inference/local_memory_online.py
+A	cosmos_framework/inference/local_memory_state.py
+M	cosmos_framework/inference/robocasa_local_memory_policy.py
+A	cosmos_framework/inference/robocasa_session_transactions.py
+A	cosmos_framework/inference/robocasa_session_transactions_test.py
+A	cosmos_framework/inference/robocasa_transaction_client.py
+M	cosmos_framework/scripts/action_policy_server_robocasa.py
+A	cosmos_framework/scripts/robocasa_transactions_b1_test.py

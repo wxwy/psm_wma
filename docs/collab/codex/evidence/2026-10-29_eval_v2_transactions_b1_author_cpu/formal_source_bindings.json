@@ -1,0 +1,104 @@
+{
+  "root": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+  "child_gitlink": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "bindings": [
+    {
+      "repository": "root",
+      "commit": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+      "path": "tools/v3/run_eval_v2_transactions_b1_cpu_gate.py",
+      "git_blob_sha": "255888854866e61638954918d14b09e0542173fc",
+      "sha256": "06096eb986a900ae2d9d6b9772a17a659bbeb1725d727fb9c887cd8dc313acbe"
+    },
+    {
+      "repository": "root",
+      "commit": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+      "path": "docs/build/PSM-WMA_V3_EvalV2_PhaseB_Transaction_B1_Implementation_2026-10-29.md",
+      "git_blob_sha": "3f0ab488f200cf7c220c555bbace36dadc094d0e",
+      "sha256": "00355a5ac58afc46f93e1b0b07ad3f2342e41de9a5a6b8c252b034450af431cd"
+    },
+    {
+      "repository": "root",
+      "commit": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+      "path": "SESSION.md",
+      "git_blob_sha": "e1b22b30c55a95306cc9d4bf3df8d1ea275837a9",
+      "sha256": "0dc6d313f84361352b4e06700e5969ed23c2283d3c374163771c7456cbd89faf"
+    },
+    {
+      "repository": "root",
+      "commit": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+      "path": "TODO.md",
+      "git_blob_sha": "af44a12b02478bbfcc17c6f6314ec5a06a07befd",
+      "sha256": "31c6f9f3566730eb871056d0a3008d1579a658e6cff3a49f8713cf810266c24a"
+    },
+    {
+      "repository": "root",
+      "commit": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "git_blob_sha": "a094c010814394a304bdae55784f1d4a42ceaf23",
+      "sha256": "ff9f95b9dfbc420781006036740207446fab90d3fe0d79658b79fc504e1024d9"
+    },
+    {
+      "repository": "root",
+      "commit": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+      "path": "docs/collab/chatgpt/archive/CODEX_INBOX_20261029_PHASEB_APPROVED_9f66f53e.md",
+      "git_blob_sha": "d702c44dd68529e93a491c5353e866ab7be92a07",
+      "sha256": "e93b9ab397b4dafc860d9a6df102ef6e4b4d759d758d164e2274ee0a047dc452"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/inference/local_memory_online.py",
+      "git_blob_sha": "b95d3b1ce1463d3b1cad6d2a4c97403b0acd7997",
+      "sha256": "f102a278b95b9097de75bae6d59ab6bb8f44abf3fdfc7713e80d19cd19ac8c2a"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/inference/local_memory_state.py",
+      "git_blob_sha": "8cff7550646d4467c05dea7d4fe0e72d182928ec",
+      "sha256": "b5ecc52a79d80611c06b17e575bdd0d559a954a3b0b192d2497b14cade991ac1"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/inference/robocasa_local_memory_policy.py",
+      "git_blob_sha": "5e2b406a92eea997359dfbe830cb6d08897d2798",
+      "sha256": "446e4c01c7c238191e579bf364c72c353480be6dd276885a079124ee5cc8e3b5"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/inference/robocasa_session_transactions.py",
+      "git_blob_sha": "9605dc916c2ceb42534800ec7c43efaa0ae6a5b8",
+      "sha256": "f5934c05d843c6662cdbab6a2cb111482111f4ef0985acfd361c5c6dada39262"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/inference/robocasa_session_transactions_test.py",
+      "git_blob_sha": "f2ee4e83ecb9bc5a2096666b050f30c32bf6588f",
+      "sha256": "92dd095b1ee82fbb0c037da920cac6e89de944802fc06ca293eba105ae4994bc"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/inference/robocasa_transaction_client.py",
+      "git_blob_sha": "c766c39b886198d8b8a560931ce000ed15495f1e",
+      "sha256": "86183d12099ef9e3c8291611b85e2c36233113be448465575becf22c7652faab"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "git_blob_sha": "249bd56a53cdc8d1a1f99716876341461e62db99",
+      "sha256": "afd0f45d49965dbdc9d8dbac4dc3045eeed83a72d5e905919003b78acd25db65"
+    },
+    {
+      "repository": "child",
+      "commit": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+      "path": "cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+      "git_blob_sha": "4e60d5b20aea955fd08ad95e3f6909d70743b22a",
+      "sha256": "9905f392a6b857b032630c262015cd6223790f4099b967fb57ab5995db3c6903"
+    }
+  ]
+}
