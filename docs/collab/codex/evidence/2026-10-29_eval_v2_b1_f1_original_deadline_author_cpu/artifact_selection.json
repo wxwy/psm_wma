@@ -1,0 +1,52 @@
+{
+  "locked": {
+    "files": [
+      "environment.json",
+      "environment_overrides.json",
+      "gate.json",
+      "import_origin.log",
+      "inference.log",
+      "inference.xml",
+      "junit.xml",
+      "phase_a_regression.log",
+      "phase_a_regression.xml",
+      "ruff_check.log",
+      "ruff_format.log",
+      "source_sha256.json"
+    ],
+    "raw_external_path": "/tmp/psm-eval-v2-b1-f1-20261029/locked",
+    "pytest_temp_and_caches": "retained externally, not copied"
+  },
+  "red": {
+    "files": [
+      "junit.xml",
+      "pytest.log"
+    ],
+    "raw_external_path": "/tmp/psm-eval-v2-b1-f1-20261029/red",
+    "pytest_temp_and_caches": "retained externally, not copied"
+  },
+  "focused": {
+    "files": [
+      "junit.xml",
+      "pytest.log"
+    ],
+    "raw_external_path": "/tmp/psm-eval-v2-b1-f1-20261029/focused",
+    "pytest_temp_and_caches": "retained externally, not copied"
+  },
+  "focused02": {
+    "files": [
+      "junit.xml",
+      "pytest.log"
+    ],
+    "raw_external_path": "/tmp/psm-eval-v2-b1-f1-20261029/focused02",
+    "pytest_temp_and_caches": "retained externally, not copied"
+  },
+  "kernel_cases": {
+    "files": [
+      "junit.xml",
+      "pytest.log"
+    ],
+    "raw_external_path": "/tmp/psm-eval-v2-b1-f1-20261029/kernel_cases",
+    "pytest_temp_and_caches": "retained externally, not copied"
+  }
+}

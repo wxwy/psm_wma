@@ -1,0 +1,11 @@
+{
+  "root": "dc7757922d7273f50f3de23363d41e12e157a07f",
+  "child": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "gitlink": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "source_branch": "v3-eval-v2-transactions-b1-20261029",
+  "prior_root": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+  "prior_child": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "effective_review": "e57f0263757c65521acac7a2c24e7fdbdaa78cfb",
+  "finding": "B1-F1 only",
+  "B1_P1": "WITHDRAWN"
+}

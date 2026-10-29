@@ -1,0 +1,148 @@
+{
+  "gate": "TRANSACTION_B1_AUTHOR_OR_DS_CPU_ONLY",
+  "status": "PASS",
+  "steps": [
+    {
+      "name": "import_origin",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import cosmos_framework,pathlib; assert pathlib.Path(cosmos_framework.__file__).resolve().is_relative_to(pathlib.Path('/workspace/psm_wma/cosmos-framework')); print(cosmos_framework.__file__)"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06427590799285099
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/inference/local_memory_state.py",
+        "cosmos-framework/cosmos_framework/inference/local_memory_online.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "tools/v3/run_eval_v2_transactions_b1_cpu_gate.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06425029000092763
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/inference/local_memory_state.py",
+        "cosmos-framework/cosmos_framework/inference/local_memory_online.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "tools/v3/run_eval_v2_transactions_b1_cpu_gate.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06426580100378487
+    },
+    {
+      "name": "inference",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "--rootdir=/workspace/psm_wma",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-s",
+        "-x",
+        "cosmos-framework/cosmos_framework/inference/local_memory_online_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa_phase6_test.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "--basetemp=/tmp/psm-eval-v2-b1-f1-20261029/locked/inference_tmp",
+        "--junitxml=/tmp/psm-eval-v2-b1-f1-20261029/locked/inference.xml"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "timeout_s": 1200,
+      "exit_code": 0,
+      "seconds": 10.448487399000442
+    },
+    {
+      "name": "phase_a_regression",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "--rootdir=/workspace/psm_wma",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "-s",
+        "-x",
+        "tools/v3/eval_v2_production_tests",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_contract_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_manual_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_phase6_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/local_memory_client_test.py",
+        "--basetemp=/tmp/psm-eval-v2-b1-f1-20261029/locked/phase_a_regression_tmp",
+        "--junitxml=/tmp/psm-eval-v2-b1-f1-20261029/locked/phase_a_regression.xml"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "timeout_s": 1200,
+      "exit_code": 0,
+      "seconds": 186.10141427800409
+    }
+  ],
+  "identities": {
+    "root": "dc7757922d7273f50f3de23363d41e12e157a07f",
+    "child": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+    "gitlink": "4a938e41b0c335baca1c1d8f1caabc433b0e2001"
+  },
+  "syntax_files": 9,
+  "inference": {
+    "tests": 99,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase_a_regression": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "junit": {
+    "tests": 354,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "gpu_native_model_simulation_dcp_training": "NOT_RUN",
+  "independent_ds": "caller_role_not_inferred"
+}

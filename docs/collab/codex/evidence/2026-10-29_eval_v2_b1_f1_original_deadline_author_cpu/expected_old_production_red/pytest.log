@@ -1,0 +1,141 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.7.0
+rootdir: /dev
+configfile: null
+plugins: anyio-4.15.1, hydra-core-1.3.7, platformdirs-4.13.5, typeguard-4.6.0
+collected 25 items / 23 deselected / 2 selected
+
+../../../dev FF                                                          [100%]
+
+=================================== FAILURES ===================================
+_ test_original_budget_delayed_upload_cannot_commit_after_client_timeout[False] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa9e1634a70>
+hot = False
+
+    @pytest.mark.parametrize("hot", [False, True])
+    def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        original_generate = obj._transaction_action
+        delayed = [False]
+    
+        def generate(request, update):
+            if delayed[0]:
+                entered.set()
+                assert release.wait(5)
+                clock.now = 1.2
+            return original_generate(request, update)
+    
+        actor = SessionTransactions(
+            obj.local_memory_adapter, generate, lambda: None, owner_token="cpu-owner", run_lease="run",
+            manifest_digest="a" * 64, slot_ids=("slot0",), model_lock=obj._lock, timeout_s=1, clock=clock,
+        )
+        obj.transactions = actor
+    
+        class DelayedUpload(DirectTransport):
+            def request(self, method, url, *, timeout, json=None, headers=None):
+                path = urlsplit(url).path
+                if delayed[0] and path == "/v2/inference":
+                    clock.now = 0.8
+                reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
+                if path == "/v2/inference":
+                    if delayed[0]:
+                        assert entered.wait(5)
+                        clock.now = 1.0
+                    else:
+                        settled(actor)
+                return reply
+    
+        client = TransactionPolicyClient("http://cpu", timeout_s=1, clock=clock, pause=clock.pause,
+                                         transport=DelayedUpload(obj))
+        try:
+            lease = client.register(registration(), "cpu-owner")
+            if hot:
+                client.predict(payload(lease))
+                clock.now = 0.0
+            before = obj.local_memory_adapter.snapshot
+            delayed[0] = True
+            try:
+                with pytest.raises(TimeoutError, match="original transaction deadline"):
+                    client.predict(payload(lease, 1, 0) if hot else payload(lease))
+            finally:
+                release.set()
+                settled(actor)
+>           assert obj.local_memory_adapter.snapshot is before
+E           assert MemorySnapshot(fast=mappingproxy({'9595d0bb916c4ea89c1a2dd81850dd36:slot0:1:87f503b1d11d46bdbe3d1d61b25aba1b': _Record...casa.session-transactions.b1.v1","request_key":"1d9efbcbec2baf34bc1a872f26378cb151ce141037444bdf02c00a73aecd9714"}')})) is MemorySnapshot(fast=mappingproxy({}), visual=mappingproxy({}), responses=mappingproxy({}))
+E            +  where MemorySnapshot(fast=mappingproxy({'9595d0bb916c4ea89c1a2dd81850dd36:slot0:1:87f503b1d11d46bdbe3d1d61b25aba1b': _Record...casa.session-transactions.b1.v1","request_key":"1d9efbcbec2baf34bc1a872f26378cb151ce141037444bdf02c00a73aecd9714"}')})) = <cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7faa43845e50>.snapshot
+E            +    where <cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7faa43845e50> = <cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7fa9e1634860>.local_memory_adapter
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:363: AssertionError
+_ test_original_budget_delayed_upload_cannot_commit_after_client_timeout[True] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa9e1635610>
+hot = True
+
+    @pytest.mark.parametrize("hot", [False, True])
+    def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        original_generate = obj._transaction_action
+        delayed = [False]
+    
+        def generate(request, update):
+            if delayed[0]:
+                entered.set()
+                assert release.wait(5)
+                clock.now = 1.2
+            return original_generate(request, update)
+    
+        actor = SessionTransactions(
+            obj.local_memory_adapter, generate, lambda: None, owner_token="cpu-owner", run_lease="run",
+            manifest_digest="a" * 64, slot_ids=("slot0",), model_lock=obj._lock, timeout_s=1, clock=clock,
+        )
+        obj.transactions = actor
+    
+        class DelayedUpload(DirectTransport):
+            def request(self, method, url, *, timeout, json=None, headers=None):
+                path = urlsplit(url).path
+                if delayed[0] and path == "/v2/inference":
+                    clock.now = 0.8
+                reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
+                if path == "/v2/inference":
+                    if delayed[0]:
+                        assert entered.wait(5)
+                        clock.now = 1.0
+                    else:
+                        settled(actor)
+                return reply
+    
+        client = TransactionPolicyClient("http://cpu", timeout_s=1, clock=clock, pause=clock.pause,
+                                         transport=DelayedUpload(obj))
+        try:
+            lease = client.register(registration(), "cpu-owner")
+            if hot:
+                client.predict(payload(lease))
+                clock.now = 0.0
+            before = obj.local_memory_adapter.snapshot
+            delayed[0] = True
+            try:
+                with pytest.raises(TimeoutError, match="original transaction deadline"):
+                    client.predict(payload(lease, 1, 0) if hot else payload(lease))
+            finally:
+                release.set()
+                settled(actor)
+>           assert obj.local_memory_adapter.snapshot is before
+E           assert MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1","request_key":"364b72128f05a93fc08eaf5ed8d7612a3423005ce6f3f384ce91d9eab56dfc6c"}')})) is MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1","request_key":"73c97e7dcb0f5ef6928d6818d563f35c1ab5e6c49b5bef31a3e1e3534a86b125"}')}))
+E            +  where MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1","request_key":"364b72128f05a93fc08eaf5ed8d7612a3423005ce6f3f384ce91d9eab56dfc6c"}')})) = <cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7fa9e1635e80>.snapshot
+E            +    where <cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7fa9e1635e80> = <cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7fa9e1635b50>.local_memory_adapter
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:363: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+------ generated xml file: /tmp/psm-eval-v2-b1-f1-20261029/red/junit.xml -------
+=========================== short test summary info ============================
+FAILED ../../../dev::test_original_budget_delayed_upload_cannot_commit_after_client_timeout[False]
+FAILED ../../../dev::test_original_budget_delayed_upload_cannot_commit_after_client_timeout[True]
+================= 2 failed, 23 deselected, 1 warning in 7.03s ==================

@@ -1,0 +1,953 @@
+diff --git a/cosmos_framework/inference/robocasa_session_transactions.py b/cosmos_framework/inference/robocasa_session_transactions.py
+index 9605dc9..a86b9f8 100644
+--- a/cosmos_framework/inference/robocasa_session_transactions.py
++++ b/cosmos_framework/inference/robocasa_session_transactions.py
+@@ -12,12 +12,14 @@ import json
+ import logging
+ import math
+ import secrets
++import sys
+ import threading
+ import time
+ import traceback
+ import uuid
+ from concurrent.futures import ThreadPoolExecutor
+ from dataclasses import asdict, dataclass
++from pathlib import Path
+ from typing import Any, Callable
+ 
+ from cosmos_framework.inference.local_memory_state import CachedMemoryResponse
+@@ -59,6 +61,51 @@ def digest(value: Any) -> str:
+     return hashlib.sha256(json_bytes(value)).hexdigest()
+ 
+ 
++def monotonic_clock_domain() -> str:
++    """Prove Linux same-boot/same-monotonic-offset comparability, including containers.
++
++    Arbitrary remote monotonic clocks are unsupported. Missing kernel evidence is
++    an error, never a wall-clock or receive-time budget fallback.
++    """
++    info = time.get_clock_info("monotonic")
++    if sys.platform != "linux" or not info.monotonic or info.implementation != "clock_gettime(CLOCK_MONOTONIC)":
++        raise ValueError("proven Linux CLOCK_MONOTONIC domain required")
++
++    def read(path):
++        with Path(path).open("rb") as stream:
++            raw = stream.read(4097)
++        if len(raw) > 4096:
++            raise ValueError("bounded kernel clock identity required")
++        return raw.decode("ascii")
++
++    boot = str(uuid.UUID(read("/proc/sys/kernel/random/boot_id").strip()))
++    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
++    offsets = [row for row in rows if row and row[0] == "monotonic"]
++    if len(offsets) != 1 or len(offsets[0]) != 3:
++        raise ValueError("kernel monotonic namespace offset required")
++    seconds, nanos = map(int, offsets[0][1:])
++    if not 0 <= nanos < 10**9:
++        raise ValueError("invalid kernel monotonic offset")
++    return digest({"clock": "linux.CLOCK_MONOTONIC", "boot_id": boot, "offset_ns": seconds * 10**9 + nanos})
++
++
++def original_deadline(budget: dict, domain: str, now: float, timeout_s: float) -> float:
++    if not isinstance(budget, dict) or set(budget) != {"clock_domain", "started_at", "deadline"}:
++        raise ValueError("exact original prediction budget required")
++    if budget["clock_domain"] != domain:
++        raise ValueError("prediction clock domain mismatch")
++    start, end = budget["started_at"], budget["deadline"]
++    if any(
++        type(value) not in (int, float) or abs(value) > 10**15 or not math.isfinite(value) for value in (start, end)
++    ):
++        raise ValueError("finite original prediction budget required")
++    if start < 0 or start > now or end <= start or end > start + timeout_s:
++        raise ValueError("invalid original prediction budget or exceeds Server cap")
++    if end <= now:
++        raise TimeoutError("original prediction deadline exhausted before admission")
++    return end
++
++
+ @dataclass(frozen=True)
+ class SessionLease:
+     server_epoch: str
+@@ -129,6 +176,7 @@ class SessionTransactions:
+         self.run_lease, self.manifest_digest = identifier(run_lease), manifest_digest
+         self.slot_ids = tuple(identifier(slot, limit=64) for slot in slot_ids)
+         self.timeout_s, self.max_bytes, self.clock = timeout_s, max_bytes, clock
++        self.clock_domain = monotonic_clock_domain()
+         self.server_epoch = uuid.uuid4().hex
+         self._lock = threading.RLock()
+         self._model_lock = model_lock if model_lock is not None else threading.Lock()
+@@ -166,6 +214,7 @@ class SessionTransactions:
+                 "stopping": self._stopping,
+                 "generated_media": "unsupported_in_b1_increment",
+                 "timeout_s": self.timeout_s,
++                "prediction_clock_domain": self.clock_domain,
+                 "max_encoded_bytes": self.max_bytes,
+                 "max_item_bytes": MAX_BODY,
+                 "max_http_requests": len(self.slot_ids) + 1,
+@@ -203,7 +252,7 @@ class SessionTransactions:
+             if current is not None:
+                 expected = {key: getattr(current, key) for key in record}
+                 if record == expected:
+-                    return self._reply(200, {"lease": asdict(current)})
++                    return self._reply(200, {"lease": asdict(current), "prediction_clock_domain": self.clock_domain})
+                 raise ValueError("previous physical Slot assignment has not received End ACK")
+             if record["generation"] <= self._generations[slot]:
+                 raise ValueError("stale Slot generation")
+@@ -218,7 +267,7 @@ class SessionTransactions:
+             self._generations[slot] = lease.generation
+             self._leases[slot] = lease
+             self._failed.pop(slot, None)
+-            return self._reply(200, {"lease": asdict(lease)})
++            return self._reply(200, {"lease": asdict(lease), "prediction_clock_domain": self.clock_domain})
+ 
+     def _lease(self, proof: dict, *, closed=False) -> SessionLease:
+         if not isinstance(proof, dict) or set(proof) != set(SessionLease.__dataclass_fields__):
+@@ -256,7 +305,8 @@ class SessionTransactions:
+             ticket.payload, ticket.update = {}, None
+             self._changed.notify_all()
+ 
+-    def submit(self, proof: dict, payload: dict) -> Reply:
++    def submit(self, proof: dict, payload: dict, *, budget: dict) -> Reply:
++        deadline = original_deadline(budget, self.clock_domain, self.clock(), self.timeout_s)
+         raw = json_bytes(payload)
+         if len(raw) > MAX_BODY:
+             raise ValueError("encoded inference item exceeds bound")
+@@ -298,7 +348,9 @@ class SessionTransactions:
+                 raise ValueError("one queued/inflight/undelivered request per physical Slot")
+             if sum(item.size for item in self._tickets.values()) + len(raw) > self.max_bytes:
+                 raise RuntimeError("bounded encoded-request capacity exhausted")
+-            ticket = _Ticket(key, payload_sha, lease, payload, len(raw), self.clock() + self.timeout_s)
++            # Include body validation/serialization/lock wait in the SAME original budget.
++            original_deadline(budget, self.clock_domain, self.clock(), self.timeout_s)
++            ticket = _Ticket(key, payload_sha, lease, payload, len(raw), deadline)
+             self._tickets[key] = ticket
+             try:
+                 self._executor.submit(self._execute, ticket)
+diff --git a/cosmos_framework/inference/robocasa_session_transactions_test.py b/cosmos_framework/inference/robocasa_session_transactions_test.py
+index f2ee4e8..70e955e 100644
+--- a/cosmos_framework/inference/robocasa_session_transactions_test.py
++++ b/cosmos_framework/inference/robocasa_session_transactions_test.py
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import io
+ import threading
+ import time
+ from copy import deepcopy
+@@ -20,6 +21,29 @@ from cosmos_framework.inference.robocasa_session_transactions import SessionTran
+ from cosmos_framework.model.generator.mot.memory_prefix import LocalMemoryRuntime
+ 
+ 
++@pytest.fixture(autouse=True)
++def clock_kernel(monkeypatch):
++    """Explicit kernel-identity double: this CPU cloud lacks timens proc entries.
++
++    Exercise the production parser/handshake, not a replacement clock-domain
++    function. Native host evidence is a separate deployment preflight.
++    """
++    from cosmos_framework.inference import robocasa_session_transactions as module
++
++    original = module.Path.open
++    records = {
++        "/proc/sys/kernel/random/boot_id": b"432a2285-71d7-4fe4-aad4-aa191c149381\n",
++        "/proc/self/timens_offsets": b"monotonic 0 0\nboottime 0 0\n",
++    }
++
++    def kernel_open(path, *args, **kwargs):
++        if str(path) in records:
++            return io.BytesIO(records[str(path)])
++        return original(path, *args, **kwargs)
++
++    monkeypatch.setattr(module.Path, "open", kernel_open)
++
++
+ class RealLocalModel(nn.Module):
+     """Actual CPU Local encoder/core/scan; only Wan/diffusion boundaries are doubles."""
+ 
+@@ -106,6 +130,20 @@ def payload(lease, step=0, start=0, value=1):
+     }
+ 
+ 
++def submit(actor, lease, request):
++    """Actor-only tests supply an original budget; HTTP tests use the real client."""
++    now = actor.clock()
++    return actor.submit(
++        lease,
++        request,
++        budget={
++            "clock_domain": actor.clock_domain,
++            "started_at": now,
++            "deadline": now + actor.timeout_s,
++        },
++    )
++
++
+ def wait_result(actor, lease, pending, *, expected=200):
+     value = pending.json()
+     if pending.status == 200:
+@@ -163,11 +201,11 @@ def test_real_fast_weights_isolated_w0_readonly_reset_a_preserves_b(runtime):
+     slow = {key: value.detach().clone() for key, value in model.net.named_parameters()}
+     a, b = register(actor), register(actor, "slot1")
+     for lease in (a, b):
+-        result = wait_result(actor, lease, actor.submit(lease, payload(lease)))
++        result = wait_result(actor, lease, submit(actor, lease, payload(lease)))
+         assert result.json()["local_memory"]["prefix_present"] is False
+         ack(actor, lease, result)
+     for lease, value in ((a, 1), (b, 7)):
+-        result = wait_result(actor, lease, actor.submit(lease, payload(lease, 2, 0, value)))
++        result = wait_result(actor, lease, submit(actor, lease, payload(lease, 2, 0, value)))
+         assert result.json()["local_memory"]["prefix_present"] is True
+         ack(actor, lease, result)
+     snapshot = adapter.snapshot
+@@ -183,7 +221,7 @@ def test_real_fast_weights_isolated_w0_readonly_reset_a_preserves_b(runtime):
+     assert adapter.snapshot.responses[b["session_id"]] is snapshot.responses[b["session_id"]]
+     fresh = register(actor, generation=2)
+     assert fresh["session_id"] != a["session_id"]
+-    result = wait_result(actor, fresh, actor.submit(fresh, payload(fresh)))
++    result = wait_result(actor, fresh, submit(actor, fresh, payload(fresh)))
+     assert result.json()["local_memory"]["prefix_present"] is False
+     assert adapter.snapshot.fast[fresh["session_id"]].state is None
+     assert len(calls) == 5 and model.scan_calls == 2
+@@ -193,24 +231,24 @@ def test_response_replay_before_after_ack_never_reserves_or_generates_twice(runt
+     actor, adapter, model, calls = runtime
+     lease = register(actor)
+     request = payload(lease)
+-    result = wait_result(actor, lease, actor.submit(lease, request))
++    result = wait_result(actor, lease, submit(actor, lease, request))
+     size = actor.info()["encoded_bytes"]
+     assert size > 0
+-    assert actor.submit(lease, request).body == result.body
++    assert submit(actor, lease, request).body == result.body
+     assert actor.info()["encoded_bytes"] == size
+     ack(actor, lease, result)
+     assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
+-    assert actor.submit(lease, request).body == result.body
++    assert submit(actor, lease, request).body == result.body
+     ack(actor, lease, result)
+     assert len(calls) == 1 and model.scan_calls == 0
+     changed = deepcopy(request)
+     changed["prompt"] = "different instruction"
+     with pytest.raises(ValueError, match="changed payload"):
+-        actor.submit(lease, changed)
++        submit(actor, lease, changed)
+     assert actor.info()["tickets"] == 0
+-    next_result = wait_result(actor, lease, actor.submit(lease, payload(lease, 1, 0)))
++    next_result = wait_result(actor, lease, submit(actor, lease, payload(lease, 1, 0)))
+     with pytest.raises(ValueError, match="stale or evicted"):
+-        actor.submit(lease, request)
++        submit(actor, lease, request)
+     assert len(calls) == 2 and adapter.snapshot.fast[lease["session_id"]].consumer_step == 1
+     ack(actor, lease, next_result)
+ 
+@@ -219,7 +257,7 @@ def test_response_replay_before_after_ack_never_reserves_or_generates_twice(runt
+ def test_failures_do_not_publish_partial_fast_visual_response(runtime, monkeypatch, fault):
+     actor, adapter, _, _ = runtime
+     lease = register(actor)
+-    cold = wait_result(actor, lease, actor.submit(lease, payload(lease)))
++    cold = wait_result(actor, lease, submit(actor, lease, payload(lease)))
+     ack(actor, lease, cold)
+     original = adapter.snapshot
+     if fault == "generation":
+@@ -237,14 +275,14 @@ def test_failures_do_not_publish_partial_fast_visual_response(runtime, monkeypat
+     else:
+         original_build = MemorySnapshot.build
+         monkeypatch.setattr(MemorySnapshot, "build", lambda *_, **__: (_ for _ in ()).throw(MemoryError("publish")))
+-    pending = actor.submit(lease, payload(lease, 1, 0))
++    pending = submit(actor, lease, payload(lease, 1, 0))
+     result = wait_result(actor, lease, pending, expected=409)
+     assert result.json()["error_type"] in {"RuntimeError", "ValueError", "TypeError", "MemoryError"}
+     assert result.json()["traceback"] and adapter.snapshot is original
+     assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
+     assert not adapter.memory._pending and not adapter._visual_pending
+     with pytest.raises(RuntimeError, match="failed"):
+-        actor.submit(lease, payload(lease, 1, 0))
++        submit(actor, lease, payload(lease, 1, 0))
+     if fault == "publication":
+         monkeypatch.setattr(MemorySnapshot, "build", original_build)
+     assert actor.end(lease).json()["acknowledged"] is True
+@@ -266,7 +304,7 @@ def test_end_waits_for_owned_executor_and_releases_only_after_drain(runtime, dur
+     else:
+         actor.quiesce = barrier
+     original = adapter.snapshot
+-    pending = actor.submit(lease, payload(lease))
++    pending = submit(actor, lease, payload(lease))
+     try:
+         assert entered.wait(5)
+         assert actor.end(lease).status == 202
+@@ -306,7 +344,7 @@ def test_unproven_gpu_drain_quarantines_without_state_commit_or_end_ack():
+     )
+     lease = register(actor)
+     original = adapter.snapshot
+-    pending = actor.submit(lease, payload(lease))
++    pending = submit(actor, lease, payload(lease))
+     wait_result(actor, lease, pending, expected=409)
+     deadline = time.monotonic() + 5
+     while not actor.info()["quarantined"] and time.monotonic() < deadline:
+@@ -360,7 +398,7 @@ def test_identity_and_input_negatives_do_not_create_tickets(runtime, kind):
+     else:
+         request["state"][0] = float("nan")
+     with pytest.raises(ValueError):
+-        actor.submit(lease, request)
++        submit(actor, lease, request)
+     assert actor.info()["tickets"] == 0 and not calls
+ 
+ 
+@@ -376,13 +414,13 @@ def test_inflight_bytes_stay_reserved_through_commit_until_delivery_ack(runtime)
+     a, b = register(actor), register(actor, "slot1")
+     first, second = payload(a), payload(b)
+     actor.max_bytes = len(json_bytes(first)) + len(json_bytes(second)) - 1
+-    result = wait_result(actor, a, actor.submit(a, first))
++    result = wait_result(actor, a, submit(actor, a, first))
+     before = actor.info()["encoded_bytes"]
+     with pytest.raises(RuntimeError, match="capacity exhausted"):
+-        actor.submit(b, second)
++        submit(actor, b, second)
+     assert actor.info()["tickets"] == 1 and actor.info()["encoded_bytes"] == before
+     ack(actor, a, result)
+-    wait_result(actor, b, actor.submit(b, second))
++    wait_result(actor, b, submit(actor, b, second))
+ 
+ 
+ def test_deadline_and_mutable_caller_input_cannot_change_owned_work(runtime):
+@@ -403,7 +441,7 @@ def test_deadline_and_mutable_caller_input_cannot_change_owned_work(runtime):
+     actor.generate = generate
+     request = payload(lease)
+     original = adapter.snapshot
+-    pending = actor.submit(lease, request)
++    pending = submit(actor, lease, request)
+     try:
+         assert entered.wait(5)
+         request["prompt"] = "mutation after admission"
+@@ -424,7 +462,7 @@ def test_model_scan_receives_clones_not_committed_fast_storage(runtime):
+     actor, adapter, _, _ = runtime
+     lease = register(actor)
+     for request in (payload(lease), payload(lease, 1, 0)):
+-        result = wait_result(actor, lease, actor.submit(lease, request))
++        result = wait_result(actor, lease, submit(actor, lease, request))
+         ack(actor, lease, result)
+     original = adapter.snapshot
+     saved = [value.clone() for value in original.fast[lease["session_id"]].state]
+@@ -449,7 +487,7 @@ def test_prior_response_replay_and_ack_do_not_release_new_inflight_frontier(runt
+     actor, _, _, calls = runtime
+     lease = register(actor)
+     first_request = payload(lease)
+-    old = wait_result(actor, lease, actor.submit(lease, first_request))
++    old = wait_result(actor, lease, submit(actor, lease, first_request))
+     ack(actor, lease, old)
+     entered, release = threading.Event(), threading.Event()
+     original_generate = actor.generate
+@@ -461,11 +499,11 @@ def test_prior_response_replay_and_ack_do_not_release_new_inflight_frontier(runt
+ 
+     actor.generate = held
+     next_request = payload(lease, 1, 0)
+-    next_pending = actor.submit(lease, next_request)
++    next_pending = submit(actor, lease, next_request)
+     try:
+         assert entered.wait(5)
+         owned_bytes = actor.info()["encoded_bytes"]
+-        assert actor.submit(lease, first_request).body == old.body
++        assert submit(actor, lease, first_request).body == old.body
+         ack(actor, lease, old)
+         assert actor.info()["tickets"] == 1 and actor.info()["encoded_bytes"] == owned_bytes
+     finally:
+@@ -488,7 +526,7 @@ def test_abort_cleanup_failure_cannot_be_reported_as_clean(monkeypatch):
+     )
+     lease = register(actor)
+     monkeypatch.setattr(adapter, "abort", lambda _: (_ for _ in ()).throw(RuntimeError("abort failed")))
+-    pending = actor.submit(lease, payload(lease))
++    pending = submit(actor, lease, payload(lease))
+     result = wait_result(actor, lease, pending, expected=409)
+     assert result.json()["state"] == "QUARANTINED"
+     assert actor.end(lease).json()["acknowledged"] is False
+@@ -499,10 +537,10 @@ def test_abort_cleanup_failure_cannot_be_reported_as_clean(monkeypatch):
+ def test_huge_frontier_gap_rejected_before_adapter_range_materialization(runtime):
+     actor, _, model, _ = runtime
+     lease = register(actor)
+-    cold = wait_result(actor, lease, actor.submit(lease, payload(lease)))
++    cold = wait_result(actor, lease, submit(actor, lease, payload(lease)))
+     ack(actor, lease, cold)
+     bad = payload(lease, 1, 0)
+     bad["local_memory"]["consumer_step"] = 10**18
+     with pytest.raises(ValueError, match="bounded contiguous"):
+-        actor.submit(lease, bad)
++        submit(actor, lease, bad)
+     assert actor.info()["tickets"] == 0 and model.scan_calls == model.encoded == 0
+diff --git a/cosmos_framework/inference/robocasa_transaction_client.py b/cosmos_framework/inference/robocasa_transaction_client.py
+index c766c39..2567db9 100644
+--- a/cosmos_framework/inference/robocasa_transaction_client.py
++++ b/cosmos_framework/inference/robocasa_transaction_client.py
+@@ -10,7 +10,12 @@ from typing import Callable
+ 
+ import requests
+ 
+-from cosmos_framework.inference.robocasa_session_transactions import PROTOCOL, digest, json_bytes
++from cosmos_framework.inference.robocasa_session_transactions import (
++    PROTOCOL,
++    digest,
++    json_bytes,
++    monotonic_clock_domain,
++)
+ 
+ 
+ class TransactionPolicyClient:
+@@ -28,6 +33,7 @@ class TransactionPolicyClient:
+         self.base_url, self.timeout_s = base_url.rstrip("/"), timeout_s
+         self.transport = transport if transport is not None else requests.Session()
+         self.clock, self.pause = clock, pause
++        self.clock_domain = monotonic_clock_domain()
+         self.lease = None
+         self._registration_pending = False
+ 
+@@ -41,10 +47,14 @@ class TransactionPolicyClient:
+                 break
+             except (requests.Timeout, requests.ConnectionError):
+                 self.pause(min(0.02, max(0, deadline - self.clock())))
++        if self.clock() >= deadline:
++            raise TimeoutError("original transaction deadline exhausted during transport")
+         if response.status_code not in (200, 202):
+             self.last_error = response.json()
+             raise RuntimeError(f"transaction API rejected request: HTTP {response.status_code}: {self.last_error}")
+         value = response.json()
++        if self.clock() >= deadline:
++            raise TimeoutError("original transaction deadline exhausted during response decoding")
+         if not isinstance(value, dict):
+             raise ValueError("transaction JSON object required")
+         return response.status_code, value
+@@ -60,6 +70,8 @@ class TransactionPolicyClient:
+             json=registration,
+             headers={"X-Cosmos-Owner": owner_token},
+         )
++        if value.get("prediction_clock_domain") != self.clock_domain:
++            raise ValueError("registration prediction clock domain mismatch")
+         lease = value.get("lease")
+         if not isinstance(lease, dict) or any(lease.get(k) != v for k, v in registration.items()):
+             raise ValueError("registration ACK identity mismatch")
+@@ -68,6 +80,10 @@ class TransactionPolicyClient:
+         return dict(lease)
+ 
+     def predict(self, payload: dict):
++        # Freeze before encoding/upload; retries reuse these exact absolute values.
++        started_at = self.clock()
++        deadline = started_at + self.timeout_s
++        budget = {"clock_domain": self.clock_domain, "started_at": started_at, "deadline": deadline}
+         if self.lease is None:
+             raise RuntimeError("register a fresh admitted Episode first")
+         raw = json_bytes(payload)
+@@ -78,8 +94,9 @@ class TransactionPolicyClient:
+             {"protocol": PROTOCOL, **{k: v for k, v in self.lease.items() if k != "capability"}, "frontier": frontier}
+         )
+         expected_sha = hashlib.sha256(raw).hexdigest()
+-        deadline = self.clock() + self.timeout_s
+-        status, result = self._call("POST", "/v2/inference", deadline, json={"lease": self.lease, "payload": payload})
++        status, result = self._call(
++            "POST", "/v2/inference", deadline, json={"lease": self.lease, "payload": payload, "budget": budget}
++        )
+         while status == 202:
+             if result.get("request_key") != expected_key or result.get("payload_sha256") != expected_sha:
+                 raise ValueError("inference Ticket binding mismatch")
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index 249bd56..025322c 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -91,6 +91,7 @@ from cosmos_framework.inference.robocasa_session_transactions import (
+     SessionTransactions,
+     identifier,
+     json_bytes,
++    monotonic_clock_domain,
+     strict_json,
+ )
+ from cosmos_framework.scripts.action_policy_server_utils import (
+@@ -645,6 +646,7 @@ def _transaction_options(args):
+     timeout = getattr(args, "transaction_timeout_s", 600.0)
+     if not 0 < timeout <= 6000:
+         raise ValueError("finite bounded transaction timeout required")
++    monotonic_clock_domain()  # Fail before native model initialization if comparability is unproven.
+     return dict(
+         owner_token=identifier(token_path.read_text().strip(), limit=256),
+         run_lease=identifier(args.transaction_run_lease),
+@@ -661,8 +663,8 @@ def transaction_dispatch(service, method, path, record=None, headers=None) -> Re
+     record, headers = ({} if record is None else record), ({} if headers is None else headers)
+     if method == "POST" and path == "/v2/session/register":
+         return actor.register(record, headers.get("X-Cosmos-Owner", ""))
+-    if method == "POST" and path == "/v2/inference" and set(record) == {"lease", "payload"}:
+-        return actor.submit(record["lease"], record["payload"])
++    if method == "POST" and path == "/v2/inference" and set(record) == {"lease", "payload", "budget"}:
++        return actor.submit(record["lease"], record["payload"], budget=record["budget"])
+     if method == "POST" and path == "/v2/inference/ack" and set(record) == {"lease", "request_key", "payload_sha256"}:
+         return actor.acknowledge(record["lease"], record["request_key"], record["payload_sha256"])
+     if method == "POST" and path == "/v2/session/end" and set(record) == {"lease"}:
+@@ -1534,6 +1536,9 @@ class _ActionHandler(BaseHTTPRequestHandler):
+         except (ValueError, TypeError, KeyError) as error:
+             self._send_json(400, {"error": str(error)})
+             return
++        except TimeoutError as error:
++            self._send_json(408, {"error": str(error)})
++            return
+         except RuntimeError as error:
+             self._send_json(409, {"error": str(error)})
+             return
+diff --git a/cosmos_framework/scripts/robocasa_transactions_b1_test.py b/cosmos_framework/scripts/robocasa_transactions_b1_test.py
+index 4e60d5b..d8deec8 100644
+--- a/cosmos_framework/scripts/robocasa_transactions_b1_test.py
++++ b/cosmos_framework/scripts/robocasa_transactions_b1_test.py
+@@ -4,6 +4,7 @@ import io
+ import json
+ import sys
+ import threading
++from copy import deepcopy
+ from types import SimpleNamespace
+ from unittest.mock import patch
+ from urllib.parse import urlsplit
+@@ -15,10 +16,12 @@ import torch
+ from cosmos_framework.inference.robocasa_session_transactions import SessionTransactions
+ from cosmos_framework.inference.robocasa_session_transactions_test import (
+     ack,
++    clock_kernel,  # noqa: F401 - shared explicit kernel fixture used by pytest
+     make_adapter,
+     payload,
+     register,
+     registration,
++    submit,
+     wait_result,
+ )
+ from cosmos_framework.inference.robocasa_transaction_client import TransactionPolicyClient
+@@ -86,7 +89,7 @@ def test_native_b1_action_and_real_fast_state_match_legacy_inputs(monkeypatch):
+     try:
+         lease = register(actor)
+         for request in (payload(lease), payload(lease, 2, 0, 7)):
+-            current = wait_result(actor, lease, actor.submit(lease, request))
++            current = wait_result(actor, lease, submit(actor, lease, request))
+             reference = legacy.predict_policy(request)
+             torch.testing.assert_close(
+                 torch.tensor(current.json()["action"]), torch.tensor(reference["action"]), rtol=0, atol=0
+@@ -291,3 +294,429 @@ def test_lost_device_cannot_skip_required_gpu_quiescence(monkeypatch):
+     with pytest.raises(RuntimeError, match="lost-device drain failure"):
+         obj._transaction_quiesce()
+     assert called == [True]
++
++
++class BudgetClock:
++    def __init__(self):
++        self.now = 0.0
++
++    def __call__(self):
++        return self.now
++
++    def pause(self, amount):
++        self.now += amount
++
++
++def settled(actor):
++    with actor._changed:
++        assert actor._changed.wait_for(
++            lambda: not actor._busy and all(t.quiescent for t in actor._tickets.values()), timeout=5
++        ), actor.info()
++
++
++@pytest.mark.parametrize("hot", [False, True])
++def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
++    obj, clock = service(monkeypatch), BudgetClock()
++    entered, release = threading.Event(), threading.Event()
++    original_generate = obj._transaction_action
++    delayed = [False]
++
++    def generate(request, update):
++        if delayed[0]:
++            entered.set()
++            assert release.wait(5)
++            clock.now = 1.2
++        return original_generate(request, update)
++
++    actor = SessionTransactions(
++        obj.local_memory_adapter,
++        generate,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++        model_lock=obj._lock,
++        timeout_s=1,
++        clock=clock,
++    )
++    obj.transactions = actor
++
++    class DelayedUpload(DirectTransport):
++        def request(self, method, url, *, timeout, json=None, headers=None):
++            path = urlsplit(url).path
++            if delayed[0] and path == "/v2/inference":
++                clock.now = 0.8
++            reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
++            if path == "/v2/inference":
++                if delayed[0]:
++                    assert entered.wait(5)
++                    clock.now = 1.0
++                else:
++                    settled(actor)
++            return reply
++
++    client = TransactionPolicyClient(
++        "http://cpu", timeout_s=1, clock=clock, pause=clock.pause, transport=DelayedUpload(obj)
++    )
++    try:
++        lease = client.register(registration(), "cpu-owner")
++        if hot:
++            client.predict(payload(lease))
++            clock.now = 0.0
++        before = obj.local_memory_adapter.snapshot
++        delayed[0] = True
++        try:
++            with pytest.raises(TimeoutError, match="original transaction deadline"):
++                client.predict(payload(lease, 1, 0) if hot else payload(lease))
++        finally:
++            release.set()
++            settled(actor)
++        assert obj.local_memory_adapter.snapshot is before
++        assert actor.info()["tickets"] == 0 and actor.info()["encoded_bytes"] == 0
++        assert actor._failed["slot0"]["error_type"] == "RuntimeError"
++        client.end()
++        assert client.lease is None
++    finally:
++        release.set()
++        assert actor.close()
++
++
++@pytest.fixture
++def budget_rig(monkeypatch):
++    obj, clock = service(monkeypatch), BudgetClock()
++    actor = SessionTransactions(
++        obj.local_memory_adapter,
++        obj._transaction_action,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++        model_lock=obj._lock,
++        timeout_s=1,
++        clock=clock,
++    )
++    obj.transactions = actor
++
++    class Transport(DirectTransport):
++        before = None
++        after = None
++
++        def __init__(self):
++            super().__init__(obj)
++            self.records = []
++
++        def request(self, method, url, *, timeout, json=None, headers=None):
++            path = urlsplit(url).path
++            # Preserve the actual wire envelope, not references to mutable kwargs.
++            self.records.append((path, deepcopy(json)))
++            if self.before:
++                self.before(path, json)
++            try:
++                reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
++            finally:
++                if path == "/v2/inference":
++                    settled(actor)
++            if self.after:
++                self.after(path, reply)
++            return reply
++
++    transport = Transport()
++    client = TransactionPolicyClient("http://cpu", timeout_s=1, clock=clock, pause=clock.pause, transport=transport)
++    lease = client.register(registration(), "cpu-owner")
++    yield obj, actor, clock, transport, client, lease
++    assert actor.close()
++
++
++@pytest.mark.parametrize("lost", ["before_accept", "after_accept", "ack", "none"])
++def test_original_budget_delay_retry_ack_and_postack_replay(budget_rig, lost):
++    obj, actor, clock, transport, client, lease = budget_rig
++    seen = []
++
++    def before(path, body):
++        if path == "/v2/inference" and not seen:
++            seen.append(body["budget"].copy())
++            clock.now += 0.25
++            if lost == "before_accept":
++                raise requests.ConnectionError("injected request lost before first arrival")
++
++    transport.before = before
++    if lost in ("after_accept", "ack"):
++        transport.drop.add("/v2/inference" if lost == "after_accept" else "/v2/inference/ack")
++    result = client.predict(payload(lease))
++    assert 0.25 <= clock.now < 1
++    posted = [body["budget"] for path, body in transport.records if path == "/v2/inference"]
++    assert posted and all(b == seen[0] for b in posted)
++    assert seen[0] == {"clock_domain": actor.clock_domain, "started_at": 0.0, "deadline": 1.0}
++    assert len(obj.native_calls) == 1 and actor.info()["tickets"] == 0
++    snapshot = obj.local_memory_adapter.snapshot
++    clock.now = 3  # A NEW read budget permits replay, never new execution/commit.
++    assert client.predict(payload(lease)) == result
++    assert obj.local_memory_adapter.snapshot is snapshot
++    assert len(obj.native_calls) == 1 and actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
++    client.end()
++
++
++@pytest.mark.parametrize("stage", ["upload", "generation", "device_drain"])
++def test_original_budget_exhaustion_rejects_before_publication(budget_rig, stage):
++    obj, actor, clock, transport, client, lease = budget_rig
++    snapshot = obj.local_memory_adapter.snapshot
++    if stage == "upload":
++        transport.before = lambda path, body: setattr(clock, "now", 1.1) if path == "/v2/inference" else None
++    elif stage == "generation":
++        original = actor.generate
++
++        def late_generation(request, update):
++            value = original(request, update)
++            clock.now = 1.1
++            return value
++
++        actor.generate = late_generation
++    else:
++        actor.quiesce = lambda: setattr(clock, "now", 1.1)
++    with pytest.raises(TimeoutError, match="original .*deadline"):
++        client.predict(payload(lease))
++    assert obj.local_memory_adapter.snapshot is snapshot
++    assert len(obj.native_calls) == (0 if stage == "upload" else 1)
++    assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
++    assert actor.info()["quarantined"] is False
++    client.end()
++
++
++@pytest.mark.parametrize("stage", ["response", "ack"])
++def test_response_or_ack_after_original_deadline_is_not_client_success(budget_rig, stage):
++    obj, actor, clock, transport, client, lease = budget_rig
++
++    def delay(path, reply):
++        if path == ("/v2/inference" if stage == "response" else "/v2/inference/ack"):
++            clock.now = 1.1
++
++    transport.after = delay
++    with pytest.raises(TimeoutError, match="original transaction deadline"):
++        client.predict(payload(lease))
++    assert len(obj.native_calls) == 1  # Commit happened in budget; do not fake rollback of a committed result.
++    snapshot = obj.local_memory_adapter.snapshot
++    transport.after = None
++    clock.now = 2
++    if stage == "ack":
++        client.predict(payload(lease))  # ACK already released Ticket; cached replay is a new read budget.
++        assert actor.info()["tickets"] == 0
++    else:
++        # Undelivered expired work cannot be renewed by a new predict call.
++        with pytest.raises(RuntimeError, match="cancelled/expired"):
++            client.predict(payload(lease))
++    assert obj.local_memory_adapter.snapshot is snapshot and len(obj.native_calls) == 1
++    client.end()
++
++
++@pytest.mark.parametrize(
++    "change", ["missing", "domain", "future", "expired", "nonfinite", "huge_int", "bool", "too_large", "extra"]
++)
++def test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation(budget_rig, change):
++    obj, actor, clock, transport, client, lease = budget_rig
++    record = {
++        "lease": lease,
++        "payload": payload(lease),
++        "budget": {
++            "clock_domain": actor.clock_domain,
++            "started_at": 0,
++            "deadline": 1,
++        },
++    }
++    if change == "missing":
++        del record["budget"]
++    elif change == "domain":
++        record["budget"]["clock_domain"] = "foreign-boot-or-time-namespace"
++    elif change == "future":
++        record["budget"]["started_at"] = 0.5
++    elif change == "expired":
++        clock.now = 1
++    elif change == "nonfinite":
++        record["budget"]["deadline"] = float("nan")
++    elif change == "huge_int":
++        record["budget"]["deadline"] = 10**1000
++    elif change == "bool":
++        record["budget"]["deadline"] = True
++    elif change == "too_large":
++        record["budget"]["deadline"] = 2
++    else:
++        record["budget"]["remaining_timeout"] = 1
++    snapshot = obj.local_memory_adapter.snapshot
++    with pytest.raises((ValueError, TimeoutError)):
++        server.transaction_dispatch(obj, "POST", "/v2/inference", record)
++    assert obj.local_memory_adapter.snapshot is snapshot and len(obj.native_calls) == 0
++    assert actor.info()["tickets"] == actor.info()["encoded_bytes"] == 0
++
++
++def test_registration_foreign_clock_domain_cannot_be_used_for_prediction(budget_rig):
++    obj, actor, clock, transport, client, lease = budget_rig
++    client.end()
++    client.clock_domain = "foreign-host"
++    with pytest.raises(ValueError, match="clock domain mismatch"):
++        client.register(registration(generation=2), "cpu-owner")
++    assert not obj.native_calls
++    with pytest.raises(RuntimeError, match="ownership unresolved"):
++        client.end()
++
++
++@pytest.mark.parametrize("which", ["boot", "offset", "clock"])
++def test_missing_clock_comparability_evidence_fails_closed(monkeypatch, which):
++    from cosmos_framework.inference import robocasa_session_transactions as module
++
++    if which == "clock":
++        monkeypatch.setattr(
++            module.time, "get_clock_info", lambda _: SimpleNamespace(monotonic=True, implementation="other")
++        )
++    else:
++        original = module.Path.open
++
++        def missing(path, *args, **kwargs):
++            if (which == "boot" and path.name == "boot_id") or (which == "offset" and path.name == "timens_offsets"):
++                raise OSError("kernel clock identity unavailable")
++            return original(path, *args, **kwargs)
++
++        monkeypatch.setattr(module.Path, "open", missing)
++    with pytest.raises((ValueError, OSError)):
++        module.monotonic_clock_domain()
++
++
++def test_encoding_time_is_part_of_original_prediction_budget(budget_rig, monkeypatch):
++    from cosmos_framework.inference import robocasa_transaction_client as module
++
++    obj, actor, clock, transport, client, lease = budget_rig
++    encode = module.json_bytes
++
++    def slow_encode(value):
++        if "image" in value:
++            clock.now += 0.8
++        return encode(value)
++
++    monkeypatch.setattr(module, "json_bytes", slow_encode)
++    client.predict(payload(lease))
++    posted = [body["budget"] for path, body in transport.records if path == "/v2/inference"]
++    assert posted == [{"clock_domain": actor.clock_domain, "started_at": 0, "deadline": 1}]
++    assert len(obj.native_calls) == 1
++    client.end()
++
++
++def test_expired_original_budget_has_explicit_http_408(budget_rig):
++    obj, actor, clock, transport, client, lease = budget_rig
++    body = json.dumps(
++        {
++            "lease": lease,
++            "payload": payload(lease),
++            "budget": {
++                "clock_domain": actor.clock_domain,
++                "started_at": 0,
++                "deadline": 1,
++            },
++        }
++    ).encode()
++    clock.now = 1.1
++    handler = server._ActionHandler.__new__(server._ActionHandler)
++    handler.server = SimpleNamespace(service=obj)
++    handler.path = "/v2/inference"
++    handler.headers = {"Content-Type": "application/json", "Content-Length": str(len(body))}
++    handler.rfile = io.BytesIO(body)
++    handler.connection = SimpleNamespace(settimeout=lambda _: None)
++    replies = []
++    handler._send_json = lambda code, value: replies.append((code, value))
++    handler.do_POST()
++    assert len(replies) == 1 and replies[0][0] == 408
++    assert "original prediction deadline" in replies[0][1]["error"]
++    assert actor.info()["tickets"] == 0 and not obj.native_calls
++
++
++def test_lost_first_response_inflight_retry_retains_original_ticket_deadline(monkeypatch):
++    obj, clock = service(monkeypatch), BudgetClock()
++    entered, release = threading.Event(), threading.Event()
++    native = obj._transaction_action
++
++    def generate(request, update):
++        entered.set()
++        assert release.wait(5)
++        clock.now = 1.1
++        return native(request, update)
++
++    actor = SessionTransactions(
++        obj.local_memory_adapter,
++        generate,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=("slot0",),
++        model_lock=obj._lock,
++        timeout_s=1,
++        clock=clock,
++    )
++    obj.transactions = actor
++    budgets, original_ticket = [], []
++
++    class LostInflight(DirectTransport):
++        def request(self, method, url, *, timeout, json=None, headers=None):
++            path = urlsplit(url).path
++            if path == "/v2/inference":
++                budgets.append(deepcopy(json["budget"]))
++                if len(budgets) == 1:
++                    clock.now = 0.4
++                    super().request(method, url, timeout=timeout, json=json, headers=headers)
++                    assert entered.wait(5)
++                    with actor._lock:
++                        original_ticket.append(next(iter(actor._tickets.values())))
++                    raise requests.ConnectionError("first response lost while Generation inflight")
++                reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
++                with actor._lock:
++                    assert next(iter(actor._tickets.values())) is original_ticket[0]
++                    assert original_ticket[0].deadline == 1.0
++                release.set()
++                settled(actor)
++                return reply
++            return super().request(method, url, timeout=timeout, json=json, headers=headers)
++
++    client = TransactionPolicyClient(
++        "http://cpu", timeout_s=1, clock=clock, pause=clock.pause, transport=LostInflight(obj)
++    )
++    try:
++        lease = client.register(registration(), "cpu-owner")
++        before = obj.local_memory_adapter.snapshot
++        with pytest.raises(TimeoutError, match="original transaction deadline"):
++            client.predict(payload(lease))
++        assert len(budgets) == 2 and budgets[0] == budgets[1]
++        assert obj.local_memory_adapter.snapshot is before
++        assert len(obj.native_calls) == 1 and actor.info()["tickets"] == 0
++        client.end()
++    finally:
++        release.set()
++        assert actor.close()
++
++
++@pytest.mark.parametrize("change", ["boot", "offset", "malformed_boot", "duplicate_offset", "bad_nanos"])
++def test_clock_identity_distinguishes_host_and_namespace_and_rejects_invalid_kernel_records(monkeypatch, change):
++    from cosmos_framework.inference import robocasa_session_transactions as module
++
++    baseline = module.monotonic_clock_domain()
++    original = module.Path.open
++
++    def changed(path, *args, **kwargs):
++        if path.name == "boot_id":
++            if change == "boot":
++                return io.BytesIO(b"2cad22db-2388-4a3d-a652-785ed624fb60\n")
++            if change == "malformed_boot":
++                return io.BytesIO(b"invalid\n")
++        if path.name == "timens_offsets":
++            if change == "offset":
++                return io.BytesIO(b"monotonic 10 0\nboottime 0 0\n")
++            if change == "duplicate_offset":
++                return io.BytesIO(b"monotonic 0 0\nmonotonic 0 0\n")
++            if change == "bad_nanos":
++                return io.BytesIO(b"monotonic 0 1000000000\n")
++        return original(path, *args, **kwargs)
++
++    monkeypatch.setattr(module.Path, "open", changed)
++    if change in ("boot", "offset"):
++        assert module.monotonic_clock_domain() != baseline
++    else:
++        with pytest.raises(ValueError):
++            module.monotonic_clock_domain()

@@ -1,0 +1,111 @@
+{
+  "root": "dc7757922d7273f50f3de23363d41e12e157a07f",
+  "child_gitlink": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "bindings": [
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "tools/v3/run_eval_v2_transactions_b1_cpu_gate.py",
+      "git_blob_sha": "255888854866e61638954918d14b09e0542173fc",
+      "sha256": "06096eb986a900ae2d9d6b9772a17a659bbeb1725d727fb9c887cd8dc313acbe"
+    },
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "docs/build/PSM-WMA_V3_EvalV2_PhaseB_Transaction_B1_Implementation_2026-10-29.md",
+      "git_blob_sha": "3f0ab488f200cf7c220c555bbace36dadc094d0e",
+      "sha256": "00355a5ac58afc46f93e1b0b07ad3f2342e41de9a5a6b8c252b034450af431cd"
+    },
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "docs/build/PSM-WMA_V3_EvalV2_PhaseB_B1_F1_Original_Deadline_Addendum_2026-10-29.md",
+      "git_blob_sha": "fabfa98896cfe682a32eba5e761d1bd1df77687c",
+      "sha256": "744008c1fed024fe5eee57d9f0612cea82a64ede74bef977685f9d50b5158c44"
+    },
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "SESSION.md",
+      "git_blob_sha": "d1e3ac7a2a7b61c2d0d331bda3939720df5a9682",
+      "sha256": "7a2be4bc25e509ca2c4e18562e664db715efaaae7bd75b6acb6ad56b36c5e733"
+    },
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "TODO.md",
+      "git_blob_sha": "b720aede4ec850fa10843c5df5865b35b568066e",
+      "sha256": "385933df4ee90df508c559f2eee3bcf1fdc550aea827b397425f0cbb101782cb"
+    },
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "git_blob_sha": "e465583fde18d07c7d8f4d71b2ee8cd6b085f9c0",
+      "sha256": "7e8e1b8570e41b3129c0fbfba891b134a090bf6e8f43f54659841489a2328fd0"
+    },
+    {
+      "repository": "root",
+      "commit": "dc7757922d7273f50f3de23363d41e12e157a07f",
+      "path": "docs/collab/chatgpt/archive/CODEX_INBOX_20261029_PHASEB_APPROVED_9f66f53e.md",
+      "git_blob_sha": "d702c44dd68529e93a491c5353e866ab7be92a07",
+      "sha256": "e93b9ab397b4dafc860d9a6df102ef6e4b4d759d758d164e2274ee0a047dc452"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/inference/local_memory_online.py",
+      "git_blob_sha": "b95d3b1ce1463d3b1cad6d2a4c97403b0acd7997",
+      "sha256": "f102a278b95b9097de75bae6d59ab6bb8f44abf3fdfc7713e80d19cd19ac8c2a"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/inference/local_memory_state.py",
+      "git_blob_sha": "8cff7550646d4467c05dea7d4fe0e72d182928ec",
+      "sha256": "b5ecc52a79d80611c06b17e575bdd0d559a954a3b0b192d2497b14cade991ac1"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/inference/robocasa_local_memory_policy.py",
+      "git_blob_sha": "5e2b406a92eea997359dfbe830cb6d08897d2798",
+      "sha256": "446e4c01c7c238191e579bf364c72c353480be6dd276885a079124ee5cc8e3b5"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/inference/robocasa_session_transactions.py",
+      "git_blob_sha": "a86b9f85bbf370fe9b255959fdab6674b0ba6251",
+      "sha256": "1b30227b337e6c054051e7588bb4678636557a437695d45f6c1665b26d184e29"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/inference/robocasa_session_transactions_test.py",
+      "git_blob_sha": "70e955e3d52f5fff672e0dec7142fd994aae6ad6",
+      "sha256": "1c4d3380ffb02b49bffeedfa32591141cb9d3478fcecab26b8de70f3c3610cb8"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/inference/robocasa_transaction_client.py",
+      "git_blob_sha": "2567db9fb12977d7c33cdd496c506c0d6b347834",
+      "sha256": "7e366e4f45224ad4e5fd463dfe915d839ee43c2b25b062571adc63983767f2d1"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "git_blob_sha": "025322c3328143968262cf390758a842fcd1af7e",
+      "sha256": "a03c26249c99970edb4ddcecb523073d198777f86eee5693c8f8790f93277e88"
+    },
+    {
+      "repository": "child",
+      "commit": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+      "path": "cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+      "git_blob_sha": "d8deec889e27f169f7a4a57e4392344634494d86",
+      "sha256": "c0950fbdce46f3c8d12c5aaa134d45e27ca7d1f42b2cec1848be5e3998da99b1"
+    }
+  ]
+}

@@ -1,0 +1,2807 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.7.0
+rootdir: /dev
+configfile: null
+plugins: anyio-4.15.1, hydra-core-1.3.7, platformdirs-4.13.5, typeguard-4.6.0
+collected 75 items
+
+../../../dev EEEEEEEEEFEEEEEEEEE.EEEEFEFFFFFF.................FFEEEEEEEE [ 78%]
+EEEEEEEEEE...EEF                                                         [100%]
+
+==================================== ERRORS ====================================
+_ ERROR at setup of test_real_fast_weights_isolated_w0_readonly_reset_a_preserves_b _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_response_replay_before_after_ack_never_reserves_or_generates_twice _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_failures_do_not_publish_partial_fast_visual_response[generation] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_failures_do_not_publish_partial_fast_visual_response[nan] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_failures_do_not_publish_partial_fast_visual_response[shape] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_failures_do_not_publish_partial_fast_visual_response[serialize] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_failures_do_not_publish_partial_fast_visual_response[publication] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_end_waits_for_owned_executor_and_releases_only_after_drain[generation] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_end_waits_for_owned_executor_and_releases_only_after_drain[quiescence] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_pair_owner_prevents_fast_only_commit_reset_and_snapshot_is_coherent _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[owner] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[run] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[manifest] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[slot] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[generation] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[frontier] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[payload] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_identity_and_input_negatives_do_not_create_tickets[json] _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_inflight_bytes_stay_reserved_through_commit_until_delivery_ack _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_deadline_and_mutable_caller_input_cannot_change_owned_work _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_model_scan_receives_clones_not_committed_fast_storage _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_prior_response_replay_and_ack_do_not_release_new_inflight_frontier _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_huge_frontier_gap_rejected_before_adapter_range_materialization _
+
+    @pytest.fixture
+    def runtime():
+        adapter, model = make_adapter()
+        calls = []
+    
+        def generate(request, update):
+            calls.append((request, adapter.prefixes(update)))
+            token = adapter.prefixes(update)[0]
+            value = 0.0 if token is None else float(token.sum())
+            return [[value] * 15 for _ in range(16)]
+    
+>       actor = SessionTransactions(
+            adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0", "slot1"),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_delay_retry_ack_and_postack_replay[before_accept] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53ea9ca0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_delay_retry_ack_and_postack_replay[after_accept] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eab4a0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_delay_retry_ack_and_postack_replay[ack] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eec6e0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_delay_retry_ack_and_postack_replay[none] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eabaa0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_exhaustion_rejects_before_publication[upload] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eee780>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_exhaustion_rejects_before_publication[generation] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eee270>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_original_budget_exhaustion_rejects_before_publication[device_drain] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eef110>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_response_or_ack_after_original_deadline_is_not_client_success[response] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eec9e0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_response_or_ack_after_original_deadline_is_not_client_success[ack] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eaa4e0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[missing] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e4c6e0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[domain] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e4e900>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[future] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eaaa50>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[expired] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eec440>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[nonfinite] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e4e1b0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[bool] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53f2af30>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[too_large] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e4f7d0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[extra] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eec950>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ ERROR at setup of test_registration_foreign_clock_domain_cannot_be_used_for_prediction _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53f2ad20>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+__ ERROR at setup of test_encoding_time_is_part_of_original_prediction_budget __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53f2b110>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_____ ERROR at setup of test_expired_original_budget_has_explicit_http_408 _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53eaa2d0>
+
+    @pytest.fixture
+    def budget_rig(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=================================== FAILURES ===================================
+_____ test_unproven_gpu_drain_quarantines_without_state_commit_or_end_ack ______
+
+    def test_unproven_gpu_drain_quarantines_without_state_commit_or_end_ack():
+        adapter, _ = make_adapter(1)
+    
+        def no_drain():
+            raise RuntimeError("unproven device drain")
+    
+>       actor = SessionTransactions(
+            adapter,
+            lambda *_: [[0.0] * 15] * 16,
+            no_drain,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:312: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+____________ test_abort_cleanup_failure_cannot_be_reported_as_clean ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e826c0>
+
+    def test_abort_cleanup_failure_cannot_be_reported_as_clean(monkeypatch):
+        adapter, _ = make_adapter(1)
+>       actor = SessionTransactions(
+            adapter,
+            lambda *_: [[float("nan")] * 15] * 16,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+        )
+
+cosmos_framework/inference/robocasa_session_transactions_test.py:494: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+________ test_native_b1_action_and_real_fast_state_match_legacy_inputs _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53fca420>
+
+    def test_native_b1_action_and_real_fast_state_match_legacy_inputs(monkeypatch):
+        modern, legacy = service(monkeypatch), service(monkeypatch)
+>       actor = SessionTransactions(
+            modern.local_memory_adapter,
+            modern._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=modern._lock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:77: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/session/register] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e827e0>
+drop = '/v2/session/register'
+
+    @pytest.mark.parametrize("drop", ["/v2/session/register", "/v2/inference", "/v2/inference/ack", "/v2/session/end"])
+    def test_real_dispatch_client_retries_lost_response_without_double_generation(monkeypatch, drop):
+        obj = service(monkeypatch)
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/inference] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53ef7e30>
+drop = '/v2/inference'
+
+    @pytest.mark.parametrize("drop", ["/v2/session/register", "/v2/inference", "/v2/inference/ack", "/v2/session/end"])
+    def test_real_dispatch_client_retries_lost_response_without_double_generation(monkeypatch, drop):
+        obj = service(monkeypatch)
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/inference/ack] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53ef7170>
+drop = '/v2/inference/ack'
+
+    @pytest.mark.parametrize("drop", ["/v2/session/register", "/v2/inference", "/v2/inference/ack", "/v2/session/end"])
+    def test_real_dispatch_client_retries_lost_response_without_double_generation(monkeypatch, drop):
+        obj = service(monkeypatch)
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/session/end] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba55646cc0>
+drop = '/v2/session/end'
+
+    @pytest.mark.parametrize("drop", ["/v2/session/register", "/v2/inference", "/v2/inference/ack", "/v2/session/end"])
+    def test_real_dispatch_client_retries_lost_response_without_double_generation(monkeypatch, drop):
+        obj = service(monkeypatch)
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            obj._transaction_action,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_______________ test_client_retry_deadline_is_absolute_not_reset _______________
+
+    def test_client_retry_deadline_is_absolute_not_reset():
+        now, remaining = [0.0], []
+    
+        class AlwaysLost:
+            def request(self, *_, timeout, **__):
+                remaining.append(timeout)
+                raise requests.ConnectionError("lost")
+    
+>       client = TransactionPolicyClient(
+            "http://cpu",
+            timeout_s=0.05,
+            transport=AlwaysLost(),
+            clock=lambda: now[0],
+            pause=lambda amount: now.__setitem__(0, now[0] + amount),
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_transaction_client.py:36: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_original_budget_delayed_upload_cannot_commit_after_client_timeout[False] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53ef7dd0>
+hot = False
+
+    @pytest.mark.parametrize("hot", [False, True])
+    def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        original_generate = obj._transaction_action
+        delayed = [False]
+    
+        def generate(request, update):
+            if delayed[0]:
+                entered.set()
+                assert release.wait(5)
+                clock.now = 1.2
+            return original_generate(request, update)
+    
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:330: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_original_budget_delayed_upload_cannot_commit_after_client_timeout[True] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba53e82840>
+hot = True
+
+    @pytest.mark.parametrize("hot", [False, True])
+    def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        original_generate = obj._transaction_action
+        delayed = [False]
+    
+        def generate(request, update):
+            if delayed[0]:
+                entered.set()
+                assert release.wait(5)
+                clock.now = 1.2
+            return original_generate(request, update)
+    
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:330: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+___ test_lost_first_response_inflight_retry_retains_original_ticket_deadline ___
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fba54147950>
+
+    def test_lost_first_response_inflight_retry_retains_original_ticket_deadline(monkeypatch):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        native = obj._transaction_action
+    
+        def generate(request, update):
+            entered.set()
+            assert release.wait(5)
+            clock.now = 1.1
+            return native(request, update)
+    
+>       actor = SessionTransactions(
+            obj.local_memory_adapter,
+            generate,
+            lambda: None,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=("slot0",),
+            model_lock=obj._lock,
+            timeout_s=1,
+            clock=clock,
+        )
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:634: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/inference/robocasa_session_transactions.py:177: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:82: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/inference/robocasa_session_transactions.py:75: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+---- generated xml file: /tmp/psm-eval-v2-b1-f1-20261029/focused/junit.xml -----
+=========================== short test summary info ============================
+FAILED ../../../dev::test_unproven_gpu_drain_quarantines_without_state_commit_or_end_ack
+FAILED ../../../dev::test_abort_cleanup_failure_cannot_be_reported_as_clean
+FAILED ../../../dev::test_native_b1_action_and_real_fast_state_match_legacy_inputs
+FAILED ../../../dev::test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/session/register]
+FAILED ../../../dev::test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/inference]
+FAILED ../../../dev::test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/inference/ack]
+FAILED ../../../dev::test_real_dispatch_client_retries_lost_response_without_double_generation[/v2/session/end]
+FAILED ../../../dev::test_client_retry_deadline_is_absolute_not_reset - FileN...
+FAILED ../../../dev::test_original_budget_delayed_upload_cannot_commit_after_client_timeout[False]
+FAILED ../../../dev::test_original_budget_delayed_upload_cannot_commit_after_client_timeout[True]
+FAILED ../../../dev::test_lost_first_response_inflight_retry_retains_original_ticket_deadline
+ERROR ../../../dev::test_real_fast_weights_isolated_w0_readonly_reset_a_preserves_b
+ERROR ../../../dev::test_response_replay_before_after_ack_never_reserves_or_generates_twice
+ERROR ../../../dev::test_failures_do_not_publish_partial_fast_visual_response[generation]
+ERROR ../../../dev::test_failures_do_not_publish_partial_fast_visual_response[nan]
+ERROR ../../../dev::test_failures_do_not_publish_partial_fast_visual_response[shape]
+ERROR ../../../dev::test_failures_do_not_publish_partial_fast_visual_response[serialize]
+ERROR ../../../dev::test_failures_do_not_publish_partial_fast_visual_response[publication]
+ERROR ../../../dev::test_end_waits_for_owned_executor_and_releases_only_after_drain[generation]
+ERROR ../../../dev::test_end_waits_for_owned_executor_and_releases_only_after_drain[quiescence]
+ERROR ../../../dev::test_pair_owner_prevents_fast_only_commit_reset_and_snapshot_is_coherent
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[owner]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[run]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[manifest]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[slot]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[generation]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[frontier]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[payload]
+ERROR ../../../dev::test_identity_and_input_negatives_do_not_create_tickets[json]
+ERROR ../../../dev::test_inflight_bytes_stay_reserved_through_commit_until_delivery_ack
+ERROR ../../../dev::test_deadline_and_mutable_caller_input_cannot_change_owned_work
+ERROR ../../../dev::test_model_scan_receives_clones_not_committed_fast_storage
+ERROR ../../../dev::test_prior_response_replay_and_ack_do_not_release_new_inflight_frontier
+ERROR ../../../dev::test_huge_frontier_gap_rejected_before_adapter_range_materialization
+ERROR ../../../dev::test_original_budget_delay_retry_ack_and_postack_replay[before_accept]
+ERROR ../../../dev::test_original_budget_delay_retry_ack_and_postack_replay[after_accept]
+ERROR ../../../dev::test_original_budget_delay_retry_ack_and_postack_replay[ack]
+ERROR ../../../dev::test_original_budget_delay_retry_ack_and_postack_replay[none]
+ERROR ../../../dev::test_original_budget_exhaustion_rejects_before_publication[upload]
+ERROR ../../../dev::test_original_budget_exhaustion_rejects_before_publication[generation]
+ERROR ../../../dev::test_original_budget_exhaustion_rejects_before_publication[device_drain]
+ERROR ../../../dev::test_response_or_ack_after_original_deadline_is_not_client_success[response]
+ERROR ../../../dev::test_response_or_ack_after_original_deadline_is_not_client_success[ack]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[missing]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[domain]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[future]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[expired]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[nonfinite]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[bool]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[too_large]
+ERROR ../../../dev::test_dispatcher_rejects_missing_or_invalid_original_budget_without_allocation[extra]
+ERROR ../../../dev::test_registration_foreign_clock_domain_cannot_be_used_for_prediction
+ERROR ../../../dev::test_encoding_time_is_part_of_original_prediction_budget
+ERROR ../../../dev::test_expired_original_budget_has_explicit_http_408 - File...
+============= 11 failed, 21 passed, 1 warning, 43 errors in 8.99s ==============

@@ -1,0 +1,36 @@
+{
+  "scope": "B1_F1_AUTHOR_CPU_ONLY",
+  "implementation_root": "dc7757922d7273f50f3de23363d41e12e157a07f",
+  "child_gitlink": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "author_cpu": "PASS",
+  "junit": {
+    "tests": 354,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "inference": {
+    "tests": 99,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase_a_regression": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "static": "Ruff0.12.7_CHECK_FORMAT_AST9_PASS",
+  "old_production_counterexample": "EXPECTED_RED2",
+  "actual_cloud_clock_preflight": "BLOCKED: timens_offsets absent; no bypass",
+  "test_clock_identity": "explicit byte-stream doubles through actual production parser",
+  "native_host_same_clock_domain": "NOT_VERIFIED; mandatory CPU-only deployment preflight on both client/server",
+  "gpt_code_gate": "REQUESTED_NOT_APPROVED",
+  "independent_ds_cpu": "NOT_RUN",
+  "phase_a_ds_cpu": "PENDING",
+  "second_increment": "NOT_STARTED",
+  "canonical_merge_gpu_model_dcp_robocasa_egl_900_training_history": "NONE",
+  "frozen_source_bindings": 15
+}

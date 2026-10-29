@@ -1,0 +1,11 @@
+{
+  "scope": "actual CPU cloud kernel only; no fixtures, model or GPU",
+  "kernel_paths": {
+    "/proc/sys/kernel/random/boot_id": true,
+    "/proc/self/timens_offsets": false
+  },
+  "status": "BLOCKED_KERNEL_IDENTITY_UNAVAILABLE",
+  "error_type": "FileNotFoundError",
+  "error": "[Errno 2] No such file or directory: '/proc/self/timens_offsets'",
+  "production_bypass": false
+}

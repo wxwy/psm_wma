@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="7.026" timestamp="2026-10-29T06:45:46.249542+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_original_budget_delayed_upload_cannot_commit_after_client_timeout[False]" time="0.016"><failure message="assert MemorySnapshot(fast=mappingproxy({'9595d0bb916c4ea89c1a2dd81850dd36:slot0:1:87f503b1d11d46bdbe3d1d61b25aba1b': _Record...casa.session-transactions.b1.v1&quot;,&quot;request_key&quot;:&quot;1d9efbcbec2baf34bc1a872f26378cb151ce141037444bdf02c00a73aecd9714&quot;}')})) is MemorySnapshot(fast=mappingproxy({}), visual=mappingproxy({}), responses=mappingproxy({}))&#10; +  where MemorySnapshot(fast=mappingproxy({'9595d0bb916c4ea89c1a2dd81850dd36:slot0:1:87f503b1d11d46bdbe3d1d61b25aba1b': _Record...casa.session-transactions.b1.v1&quot;,&quot;request_key&quot;:&quot;1d9efbcbec2baf34bc1a872f26378cb151ce141037444bdf02c00a73aecd9714&quot;}')})) = &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7faa43845e50&gt;.snapshot&#10; +    where &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7faa43845e50&gt; = &lt;cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7fa9e1634860&gt;.local_memory_adapter">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fa9e1634a70&gt;
+hot = False
+
+    @pytest.mark.parametrize("hot", [False, True])
+    def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        original_generate = obj._transaction_action
+        delayed = [False]
+    
+        def generate(request, update):
+            if delayed[0]:
+                entered.set()
+                assert release.wait(5)
+                clock.now = 1.2
+            return original_generate(request, update)
+    
+        actor = SessionTransactions(
+            obj.local_memory_adapter, generate, lambda: None, owner_token="cpu-owner", run_lease="run",
+            manifest_digest="a" * 64, slot_ids=("slot0",), model_lock=obj._lock, timeout_s=1, clock=clock,
+        )
+        obj.transactions = actor
+    
+        class DelayedUpload(DirectTransport):
+            def request(self, method, url, *, timeout, json=None, headers=None):
+                path = urlsplit(url).path
+                if delayed[0] and path == "/v2/inference":
+                    clock.now = 0.8
+                reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
+                if path == "/v2/inference":
+                    if delayed[0]:
+                        assert entered.wait(5)
+                        clock.now = 1.0
+                    else:
+                        settled(actor)
+                return reply
+    
+        client = TransactionPolicyClient("http://cpu", timeout_s=1, clock=clock, pause=clock.pause,
+                                         transport=DelayedUpload(obj))
+        try:
+            lease = client.register(registration(), "cpu-owner")
+            if hot:
+                client.predict(payload(lease))
+                clock.now = 0.0
+            before = obj.local_memory_adapter.snapshot
+            delayed[0] = True
+            try:
+                with pytest.raises(TimeoutError, match="original transaction deadline"):
+                    client.predict(payload(lease, 1, 0) if hot else payload(lease))
+            finally:
+                release.set()
+                settled(actor)
+&gt;           assert obj.local_memory_adapter.snapshot is before
+E           assert MemorySnapshot(fast=mappingproxy({'9595d0bb916c4ea89c1a2dd81850dd36:slot0:1:87f503b1d11d46bdbe3d1d61b25aba1b': _Record...casa.session-transactions.b1.v1","request_key":"1d9efbcbec2baf34bc1a872f26378cb151ce141037444bdf02c00a73aecd9714"}')})) is MemorySnapshot(fast=mappingproxy({}), visual=mappingproxy({}), responses=mappingproxy({}))
+E            +  where MemorySnapshot(fast=mappingproxy({'9595d0bb916c4ea89c1a2dd81850dd36:slot0:1:87f503b1d11d46bdbe3d1d61b25aba1b': _Record...casa.session-transactions.b1.v1","request_key":"1d9efbcbec2baf34bc1a872f26378cb151ce141037444bdf02c00a73aecd9714"}')})) = &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7faa43845e50&gt;.snapshot
+E            +    where &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7faa43845e50&gt; = &lt;cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7fa9e1634860&gt;.local_memory_adapter
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:363: AssertionError</failure></testcase><testcase classname="" name="test_original_budget_delayed_upload_cannot_commit_after_client_timeout[True]" time="0.038"><failure message="assert MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1&quot;,&quot;request_key&quot;:&quot;364b72128f05a93fc08eaf5ed8d7612a3423005ce6f3f384ce91d9eab56dfc6c&quot;}')})) is MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1&quot;,&quot;request_key&quot;:&quot;73c97e7dcb0f5ef6928d6818d563f35c1ab5e6c49b5bef31a3e1e3534a86b125&quot;}')}))&#10; +  where MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1&quot;,&quot;request_key&quot;:&quot;364b72128f05a93fc08eaf5ed8d7612a3423005ce6f3f384ce91d9eab56dfc6c&quot;}')})) = &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7fa9e1635e80&gt;.snapshot&#10; +    where &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7fa9e1635e80&gt; = &lt;cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7fa9e1635b50&gt;.local_memory_adapter">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fa9e1635610&gt;
+hot = True
+
+    @pytest.mark.parametrize("hot", [False, True])
+    def test_original_budget_delayed_upload_cannot_commit_after_client_timeout(monkeypatch, hot):
+        obj, clock = service(monkeypatch), BudgetClock()
+        entered, release = threading.Event(), threading.Event()
+        original_generate = obj._transaction_action
+        delayed = [False]
+    
+        def generate(request, update):
+            if delayed[0]:
+                entered.set()
+                assert release.wait(5)
+                clock.now = 1.2
+            return original_generate(request, update)
+    
+        actor = SessionTransactions(
+            obj.local_memory_adapter, generate, lambda: None, owner_token="cpu-owner", run_lease="run",
+            manifest_digest="a" * 64, slot_ids=("slot0",), model_lock=obj._lock, timeout_s=1, clock=clock,
+        )
+        obj.transactions = actor
+    
+        class DelayedUpload(DirectTransport):
+            def request(self, method, url, *, timeout, json=None, headers=None):
+                path = urlsplit(url).path
+                if delayed[0] and path == "/v2/inference":
+                    clock.now = 0.8
+                reply = super().request(method, url, timeout=timeout, json=json, headers=headers)
+                if path == "/v2/inference":
+                    if delayed[0]:
+                        assert entered.wait(5)
+                        clock.now = 1.0
+                    else:
+                        settled(actor)
+                return reply
+    
+        client = TransactionPolicyClient("http://cpu", timeout_s=1, clock=clock, pause=clock.pause,
+                                         transport=DelayedUpload(obj))
+        try:
+            lease = client.register(registration(), "cpu-owner")
+            if hot:
+                client.predict(payload(lease))
+                clock.now = 0.0
+            before = obj.local_memory_adapter.snapshot
+            delayed[0] = True
+            try:
+                with pytest.raises(TimeoutError, match="original transaction deadline"):
+                    client.predict(payload(lease, 1, 0) if hot else payload(lease))
+            finally:
+                release.set()
+                settled(actor)
+&gt;           assert obj.local_memory_adapter.snapshot is before
+E           assert MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1","request_key":"364b72128f05a93fc08eaf5ed8d7612a3423005ce6f3f384ce91d9eab56dfc6c"}')})) is MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1","request_key":"73c97e7dcb0f5ef6928d6818d563f35c1ab5e6c49b5bef31a3e1e3534a86b125"}')}))
+E            +  where MemorySnapshot(fast=mappingproxy({'785cb8ee02f64109a30078e4129ee031:slot0:1:20abd36be67f4d368841b1008916bd08': _Record...casa.session-transactions.b1.v1","request_key":"364b72128f05a93fc08eaf5ed8d7612a3423005ce6f3f384ce91d9eab56dfc6c"}')})) = &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7fa9e1635e80&gt;.snapshot
+E            +    where &lt;cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7fa9e1635e80&gt; = &lt;cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7fa9e1635b50&gt;.local_memory_adapter
+
+cosmos_framework/scripts/robocasa_transactions_b1_test.py:363: AssertionError</failure></testcase></testsuite></testsuites>

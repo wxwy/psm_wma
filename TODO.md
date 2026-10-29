@@ -525,3 +525,5 @@
 - **V3-EVAL-V2-B1-F1** — IN_PROGRESS; Codex; exact9a3f/1be REQUEST_CHANGES verified e57f0263. Unify original Client→Dispatcher→Actor timeout using proven clock domain; deterministic production-path RED/GREEN delayed-first-arrival/retry/latecommit/ACK/replay tests; preserve322 regressions. New Child/Root exactPair + authorCPU evidence → GPTCodeGate STOP. B1-P1 WITHDRAWN; no second increment/DS/GPU/merge.
 
 - **V3-EVAL-V2-B1-F1** — IN_PROGRESS sourcefreeze; Child4a938e41b0c335baca1c1d8f1caabc433b0e2001. OldRED2/focused75/followup14 retained separately; final clean Pair replay pending. Samehost kernel proof required; cloud kernel entry absent, tests explicit doubles only. Publish newRoot/Child/Evidence thenGPTCodeGateSTOP.
+
+- **V3-EVAL-V2-B1-F1** — REVIEW; formalRootdc7757922d7273f50f3de23363d41e12e157a07f/Child4a938e41b0c335baca1c1d8f1caabc433b0e2001. Final354authorCPU/0skip/static9/sourcebinding15PASS; oldRED2 and actualcloudkernelBLOCKED retained. CandidateChild→Root publish/readback thenGPTfreshCodeGateSTOP. No secondincrement/canonicalmerge/native/DS.

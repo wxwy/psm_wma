@@ -1,0 +1,14 @@
+{
+  "root_eval_scripts_configs_vendor_gate": "UNCHANGED",
+  "child_incremental_changed_files": [
+    "cosmos_framework/inference/robocasa_session_transactions.py",
+    "cosmos_framework/inference/robocasa_session_transactions_test.py",
+    "cosmos_framework/inference/robocasa_transaction_client.py",
+    "cosmos_framework/scripts/action_policy_server_robocasa.py",
+    "cosmos_framework/scripts/robocasa_transactions_b1_test.py"
+  ],
+  "child_model_optimizer_training_checkpoint_rng_data_sim_vendor": "UNCHANGED",
+  "state_owner_local_memory_online_policy": "UNCHANGED_FROM_PRIOR_B1",
+  "inbox_archive_blob": "d702c44dd68529e93a491c5353e866ab7be92a07",
+  "second_increment": "NOT_STARTED"
+}

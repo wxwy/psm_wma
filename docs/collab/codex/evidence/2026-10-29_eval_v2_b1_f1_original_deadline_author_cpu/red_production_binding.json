@@ -1,0 +1,15 @@
+{
+  "production_child": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "production_root": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+  "expected_outcome": "2FAIL at snapshot-is-before assertions, cold and hot; actual run before production edits",
+  "regression_functions": [
+    "test_original_budget_delayed_upload_cannot_commit_after_client_timeout[False]",
+    "test_original_budget_delayed_upload_cannot_commit_after_client_timeout[True]"
+  ],
+  "test_file_state": "new uncommitted regression appended to old tests before first run; no pre-run byte hash captured",
+  "production_blobs": {
+    "cosmos_framework/inference/robocasa_session_transactions.py": "9605dc916c2ceb42534800ec7c43efaa0ae6a5b8",
+    "cosmos_framework/inference/robocasa_transaction_client.py": "c766c39b886198d8b8a560931ce000ed15495f1e",
+    "cosmos_framework/scripts/action_policy_server_robocasa.py": "249bd56a53cdc8d1a1f99716876341461e62db99"
+  }
+}

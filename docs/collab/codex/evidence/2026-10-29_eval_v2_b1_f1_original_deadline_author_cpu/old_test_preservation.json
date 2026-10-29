@@ -1,0 +1,6 @@
+{
+  "previous_tests": 67,
+  "new_tests": 99,
+  "missing_previous_tests": [],
+  "proof": "all prior JUnit class/name identities retained; assertions not relaxed"
+}
