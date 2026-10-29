@@ -1,0 +1,69 @@
+# Phase B first increment — B1-F1 original prediction deadline correction
+
+Date: 2026-10-29. Isolated candidate only; request new exact-pair GPT Code Gate.
+
+## Authority, scope and status
+
+The effective review is `docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_Transaction_B1_9a3f88e5_1bece52e_Recheck_P1_WITHDRAWN_F1_OPEN.md`, fetched at V3 `e57f0263757c65521acac7a2c24e7fdbdaa78cfb`. Prior implementation Root `9a3f88e55893491ea68d16b3f23680ae6941d106` / Child `1bece52ee419d12119c1b3d0b75e0ae5c5139ae9` is REQUEST_CHANGES for B1-F1 only. B1-P1 is WITHDRAWN: preserve the byte-identical Inbox archive and all live additions, without restoring the oversized old Inbox.
+
+This addendum implements the already-approved original-budget contract; it does not reopen Phase B design or Phase A. No Fast update formula, state owner, model, training, checkpoint, Vendor, Root scheduler/Sim, or historical result changes. Native B>1 and multiple Sim integration remain the second increment, not started. New exact SHAs, raw evidence and review request are bound in the author handoff after commits; document HEAD never substitutes for the implementation Pair.
+
+## Shared clock authority
+
+B1 supports cooperating Client and Action Server on the same Linux kernel boot and the same CLOCK_MONOTONIC offset. It deliberately does not support arbitrary cross-host monotonic values or silently convert receive-time remaining_timeout into a fresh budget.
+
+Production `monotonic_clock_domain()` verifies Linux and CPython's `clock_gettime(CLOCK_MONOTONIC)` clock implementation, reads bounded ASCII `/proc/sys/kernel/random/boot_id` and `/proc/self/timens_offsets`, validates the boot UUID and unique monotonic seconds/nanoseconds offset, and hashes this identity. Different boot IDs or monotonic namespace offsets have different domains. Missing/unreadable/malformed evidence is an error, not an assumption of zero offset. Containers may communicate when this actual domain matches. This is kernel-clock comparability for trusted lease holders, not authentication of arbitrary hostile clients.
+
+The client computes its domain before registration; Server B1 option validation checks kernel evidence before model initialization, and the actor stores its domain. Register and duplicate register replies advertise `prediction_clock_domain`; the client must match its local kernel evidence before using the lease. A lost or rejected registration remains unresolved ownership and cannot fabricate End ACK. `/info` also advertises the domain. Legacy profile does not read these files and is unchanged.
+
+## Wire and transaction behavior
+
+The mandatory `/v2/inference` JSON envelope is now:
+
+```json
+{
+  "lease": {"...": "existing exact assignment/capability"},
+  "payload": {"...": "unchanged policy payload"},
+  "budget": {
+    "clock_domain": "64 hexadecimal characters from kernel evidence",
+    "started_at": 12345.0,
+    "deadline": 12945.0
+  }
+}
+```
+
+1. `predict()` freezes started_at/deadline at entry, **before** JSON freezing/hashing/upload. Its HTTP retries carry this identical budget. Polling and delivery ACK use the same client deadline. Neither lost responses nor retries reset it.
+2. Dispatcher requires the exact envelope and passes the budget to actor.submit; no legacy two-field envelope fallback.
+3. Actor validates matching domain, finite numeric times (reject bool/NaN/Inf/oversized integers), nonnegative start no later than receipt, end after start, original duration no greater than the configured Server cap, and deadline still in the future. Missing or invalid authority fails before reservation or model work. Expiry maps to explicit HTTP408. Configure client timeout no greater than Server transaction_timeout_s.
+4. Admission rechecks the original budget after payload validation/serialization and lock wait. Ticket.deadline is the original transmitted absolute value, **never receive_clock + timeout**. Existing queued/inflight Ticket is reused without changing its deadline; incoming retries cannot renew it.
+5. Existing executor fences (before prepare, before Generation, after mandatory device drain and immediately before atomic Fast/Visual/Response publication) check that stored original deadline. Expired uncommitted work aborts, preserves the exact old snapshot, releases only after proven quiescence, and retains failure diagnostics. Abort/drain failures retain quarantine semantics.
+6. Client also rejects transport/response decoding that returns after its original deadline. This cannot undo a commit that genuinely occurred before the deadline. Unacknowledged expired Tickets require explicit End; a new prediction budget cannot revive their execution. End has its own bounded cleanup budget and still requires executor quiescence.
+7. In-budget lost POST/ACK retries and post-ACK committed replay preserve identical response bytes, no new encode/scan/generation or Fast update, and no new Ticket. A later new read of an ACKed retained response has its own delivery budget but never changes the committed inference. Stale/evicted/payload-mismatch rules are unchanged.
+
+The opt-in B1 API has not passed production Code Gate; older unapproved B1 clients without the mandatory domain/budget fail closed. Existing legacy `/predict` API and Phase A Sim/launcher remain unchanged.
+
+## CPU acceptance and deployment boundary
+
+Tests exercise the actual production Client → transaction_dispatch → actor, actual CPU Local encoder/scan/Fast state and snapshot publication. Wan/diffusion, transport and kernel identity are explicit doubles; no real Action Server binding, model weights, GPU, RoboCasa/EGL or DCP. The test kernel fixture is necessary because this cloud exposes boot_id but lacks timens_offsets; it supplies two bounded kernel-file byte streams **to the real parser**, not a replacement domain function. Missing evidence and different boot/offset still have negative tests. A separate actual cloud kernel probe must be retained as BLOCKED here, never reported as native readiness.
+
+Required scenarios: delayed first upload with cold and hot Local state; request lost before first acceptance; response lost during inflight Generation; identical retry budget/Ticket/deadline; post-original-deadline Generation or device drain; already-expired upload without reservation; JSON encoding charged to the original budget; in-budget success; lost delivery ACK; post-ACK replay and later frontier regression; late response/ACK not client success; missing/invalid/foreign budget; actual HTTP408; invalid/missing kernel evidence and different boot/namespace. Existing Local isolation, legacy B1 numerical and Phase A CPU regressions remain required, without skips/xfails/relaxed assertions.
+
+Author/DS exact-pair CPU replay uses the unchanged gate:
+
+```bash
+python tools/v3/run_eval_v2_transactions_b1_cpu_gate.py \
+  --root-worktree '<EXACT_CLEAN_ROOT>' \
+  --expected-root '<NEW_FULL_IMPLEMENTATION_ROOT>' \
+  --expected-child '<NEW_FULL_CHILD>' \
+  --evidence-dir '<NEW_EXTERNAL_EVIDENCE_DIR>'
+```
+
+Before any separately authorized native execution, DS must also check the actual Client and Server runtime environments with the new Child import (CPU-only):
+
+```bash
+python -c 'from cosmos_framework.inference.robocasa_session_transactions import monotonic_clock_domain; print(monotonic_clock_domain())'
+```
+
+Both processes must produce the same domain, with actual kernel files and no test fixture or mocked clock. Unsupported kernels/containers or different domains are BLOCKED; do not bypass validation. This read-only prerequisite is not authorization to start GPU, model, Sim, or DS jobs.
+
+Publish new Child then Root Gitlink on the isolated candidate, archive distinct expected-RED, intermediate and final clean exact-pair evidence, request GPT incremental Code Gate for B1-F1 only, and STOP. Phase A independent DS CPU remains pending. No second increment, V3/v3-local merge, GPU/native Canary or 900 evaluation is implied by author CPU PASS.
