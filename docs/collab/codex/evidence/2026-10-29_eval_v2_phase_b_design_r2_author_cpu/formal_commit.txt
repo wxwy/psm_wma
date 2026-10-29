@@ -1,0 +1,7 @@
+commit 8f94b67ef3f049f5905ee35d54083d5f69534975
+Author:     Xin Wang <silencewx@gmail.com>
+AuthorDate: Thu Oct 29 02:17:32 2026 +0000
+Commit:     Xin Wang <silencewx@gmail.com>
+CommitDate: Thu Oct 29 02:17:32 2026 +0000
+
+    docs(eval-v2): model deferred Session End and queued-inflight ticket ownership for Phase B r2

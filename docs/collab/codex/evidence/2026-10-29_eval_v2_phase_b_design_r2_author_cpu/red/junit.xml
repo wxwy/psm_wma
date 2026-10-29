@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="0.058" timestamp="2026-10-29T02:13:15.416448+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_b_d1_no_positive_ack_before_batch_quiescence" time="0.001"><failure message="AssertionError: assert {'end_ack_whi..._abort': True} == {'end_ack_whi...abort': False}&#10;  &#10;  Differing items:&#10;  {'end_ack_while_batch_owned': True} != {'end_ack_while_batch_owned': False}&#10;  {'slot_reused_before_abort': True} != {'slot_reused_before_abort': False}&#10;  Use -v to get more diff">def test_b_d1_no_positive_ack_before_batch_quiescence():
+        model = old.ProtocolModel(2)
+        leases = tuple(old.Lease(model.epoch, f'slot{i}', 1, f'session{i}', f'ep{i}') for i in range(2))
+        for lease in leases:
+            model.open(lease)
+        requests = tuple(old.Request(lease, 0) for lease in leases)
+        witness = {}
+    
+        def before_publish():
+            witness['end_ack_while_batch_owned'] = model.reset(leases[0])
+            new = replace(leases[0], generation=2, session='new-session', episode='new-ep')
+            try:
+                model.open(new)
+                witness['slot_reused_before_abort'] = True
+            except ValueError:
+                witness['slot_reused_before_abort'] = False
+    
+        def generate(prepared):
+            return tuple(old.Response(p.request.key, (0.0,)) for p in prepared)
+    
+        with pytest.raises(ValueError):
+            model.execute(requests, generate, before_publish)
+&gt;       assert witness == {'end_ack_while_batch_owned': False, 'slot_reused_before_abort': False}
+E       AssertionError: assert {'end_ack_whi..._abort': True} == {'end_ack_whi...abort': False}
+E         
+E         Differing items:
+E         {'end_ack_while_batch_owned': True} != {'end_ack_while_batch_owned': False}
+E         {'slot_reused_before_abort': True} != {'slot_reused_before_abort': False}
+E         Use -v to get more diff
+
+/tmp/psm-eval-v2-phase-b-r2-20261029/red/counterexamples_test.py:39: AssertionError</failure></testcase><testcase classname="" name="test_b_d2_pop_must_retain_inflight_slot_ticket[duplicate]" time="0.001"><failure message="AssertionError: assert True is False&#10; +  where True = add(Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='ep0'), frontier=0, evidence=(), noise_seed=123, compatibility='raw15-state15-h16'), 0.01, 1, size=2)&#10; +    where add = &lt;frozen_phase_b_r1.BatchQueue object at 0x7fcd82f049b0&gt;.add">kind = 'duplicate'
+
+    @pytest.mark.parametrize('kind', ['duplicate', 'new_frontier'])
+    def test_b_d2_pop_must_retain_inflight_slot_ticket(kind):
+        lease = old.Lease('server-1', 'slot0', 1, 'session0', 'ep0')
+        request = old.Request(lease, 0)
+        queue = old.BatchQueue(slots=1, batch=1)
+        assert queue.add(request, 0, 1, size=2)
+        assert queue.pop(0) == (request,)
+        if kind == 'duplicate':
+&gt;           assert queue.add(request, 0.01, 1, size=2) is False
+E           AssertionError: assert True is False
+E            +  where True = add(Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='ep0'), frontier=0, evidence=(), noise_seed=123, compatibility='raw15-state15-h16'), 0.01, 1, size=2)
+E            +    where add = &lt;frozen_phase_b_r1.BatchQueue object at 0x7fcd82f049b0&gt;.add
+
+/tmp/psm-eval-v2-phase-b-r2-20261029/red/counterexamples_test.py:50: AssertionError</failure></testcase><testcase classname="" name="test_b_d2_pop_must_retain_inflight_slot_ticket[new_frontier]" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">kind = 'new_frontier'
+
+    @pytest.mark.parametrize('kind', ['duplicate', 'new_frontier'])
+    def test_b_d2_pop_must_retain_inflight_slot_ticket(kind):
+        lease = old.Lease('server-1', 'slot0', 1, 'session0', 'ep0')
+        request = old.Request(lease, 0)
+        queue = old.BatchQueue(slots=1, batch=1)
+        assert queue.add(request, 0, 1, size=2)
+        assert queue.pop(0) == (request,)
+        if kind == 'duplicate':
+            assert queue.add(request, 0.01, 1, size=2) is False
+        else:
+&gt;           with pytest.raises(ValueError, match='one pending'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+/tmp/psm-eval-v2-phase-b-r2-20261029/red/counterexamples_test.py:52: Failed</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,25 @@
+{
+  "scope": "EXPECTED RED ON FROZEN R1 SYMBOLIC MODEL ONLY",
+  "frozen_design_root": "fac029c83eb94fdafcc26d030ca5942542d740a3",
+  "source_sha256": "11d0795fcde4c220ac115ddcd89918e4684a072f42975448b7cfa197b5190bee",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "/tmp/psm-eval-v2-phase-b-r2-20261029/red/counterexamples_test.py",
+    "--junitxml=/tmp/psm-eval-v2-phase-b-r2-20261029/red/junit.xml"
+  ],
+  "exit_code": 1,
+  "junit": {
+    "tests": 3,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0
+  }
+}

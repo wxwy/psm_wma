@@ -1,0 +1,57 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "HF_HOME": "/tmp/psm-eval-v2-phase-b-r2-20261029/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-v2-phase-b-r2-20261029/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-v2-phase-b-r2-20261029/cache/xdg"
+  },
+  "final_pytest_argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "tools/v3/eval_v2_batch_design",
+    "--junitxml=/tmp/psm-eval-v2-phase-b-r2-20261029/final/junit.xml"
+  ],
+  "ruff_check_argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "ruff",
+    "check",
+    "tools/v3/eval_v2_batch_design"
+  ],
+  "ruff_format_check_argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "ruff",
+    "format",
+    "--check",
+    "tools/v3/eval_v2_batch_design"
+  ],
+  "syntax": "AST parse of all6 isolated Python files; no production imports",
+  "red_argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "/tmp/psm-eval-v2-phase-b-r2-20261029/red/counterexamples_test.py",
+    "--junitxml=/tmp/psm-eval-v2-phase-b-r2-20261029/red/junit.xml"
+  ],
+  "model_dataset_checkpoint_input": null,
+  "native_or_gpu_execution": false
+}

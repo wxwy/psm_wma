@@ -1,0 +1,46 @@
+{
+  "design_root": "8f94b67ef3f049f5905ee35d54083d5f69534975",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "files": [
+    {
+      "path": "SESSION.md",
+      "git_blob_sha": "ed6c6a2e41345f76e3ea4b28dcd1100161a96ed1",
+      "sha256": "e3e0cc1c853e41500a0ec49d280e06a28eb4f98f954326a66f5b69931c7861e6"
+    },
+    {
+      "path": "TODO.md",
+      "git_blob_sha": "5b4252e5a4fe47db58d1bfd423a662ef288a1684",
+      "sha256": "f8e3c6b9ccdef8038962128b0fe0e7dadd875b563fca91509d4f6c70cdcd461c"
+    },
+    {
+      "path": "docs/build/PSM-WMA_V3_EvalV2_PhaseB_Design_r2_Ticket_Quiescence_2026-10-29.md",
+      "git_blob_sha": "1824a597caf54ca07bcd6b333b8deaeed7591b5d",
+      "sha256": "0edce53c763b81c2a445d89f1cf3cd75034719bb713926e1ee66de0235a8a332"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/lifecycle_test.py",
+      "git_blob_sha": "6f7da8df9b8b917468c647e067668b817787c0fd",
+      "sha256": "9428a81525300a56ae9d0c8d8a8c9e5f770c756992192c23702d4717e02577ca"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model.py",
+      "git_blob_sha": "b0890dfe8b8f550ce29b8fc65662a83dd6c29b04",
+      "sha256": "fcd6e5cfa0f81671c5414c83d39687f6638f31420dadbc95182a997477dea16e"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model_test.py",
+      "git_blob_sha": "2267b2df96313c546cedc054c59c18f60a97c406",
+      "sha256": "73af60d1a6f04fe9c3b880b65fbb1bfa6714489f93a36bdd2f319d163377c5fb"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/ticket_registry.py",
+      "git_blob_sha": "725ccfcf0caa2986dc73d80a7634329ec9e6853b",
+      "sha256": "3520070b490977b73dd38c92c867636a79cdf8f940e5e7cdca3c2c67c3b1b94c"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/ticket_registry_test.py",
+      "git_blob_sha": "0cc56eeef6338c91f219315c8d45c83dd035fd0f",
+      "sha256": "d02e3c891cd3243d8fe6a5edef62ec3185447ff1e1e2fbe77fbca5bd3fe2a321"
+    }
+  ]
+}

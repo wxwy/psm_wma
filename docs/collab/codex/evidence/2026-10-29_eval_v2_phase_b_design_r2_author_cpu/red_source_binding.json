@@ -1,0 +1,7 @@
+{
+  "design_root": "fac029c83eb94fdafcc26d030ca5942542d740a3",
+  "path": "tools/v3/eval_v2_batch_design/protocol_model.py",
+  "git_blob_sha": "6f7667a7dbb17bd4ad11f5b70a2848368ea46739",
+  "sha256": "11d0795fcde4c220ac115ddcd89918e4684a072f42975448b7cfa197b5190bee",
+  "expected_failure_only": true
+}
