@@ -793,7 +793,9 @@ class Runtime:
                     from cosmos_framework.evaluation.robocasa_v2.store import read
 
                     statuses = []
-                    for worker, claim in scheduler.inflight.items():
+                    with scheduler._lock:
+                        inflight_snapshot = tuple(scheduler.inflight.items())
+                    for worker, claim in inflight_snapshot:
                         directory = (
                             self.store._ledger(claim["task"], claim["episode"])
                             / "work"
