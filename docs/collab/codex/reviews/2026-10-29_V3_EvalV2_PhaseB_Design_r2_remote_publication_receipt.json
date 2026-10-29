@@ -1,0 +1,28 @@
+{
+  "design_root": "8f94b67ef3f049f5905ee35d54083d5f69534975",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "reviewed_r1_design": "fac029c83eb94fdafcc26d030ca5942542d740a3",
+  "frozen_production_root": "fd7e43f6630a436ab3d83edcd3ce9d1516b342d1",
+  "readback_evidence_head": "e956d0eebb200ea0df272c28626a1fe4f60e7f1e",
+  "root_advertised_refs": {
+    "refs/heads/V3": "b4cd955ab5b139ce344afd5e9a34750db215ca6d",
+    "refs/heads/v3-eval-v2-batch-b-design-20261029": "e956d0eebb200ea0df272c28626a1fe4f60e7f1e",
+    "refs/heads/v3-eval-v2-slots-a-20261028": "711ee8be40311d3cade19946cee4e23e508c3727"
+  },
+  "child_advertised_refs": {
+    "refs/heads/v3-eval-v2-slots-a-20261028": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+    "refs/heads/v3-local-ttt": "746c5cf2f2324104a62fb71510343aa40d3976c5"
+  },
+  "artifacts_rehashed": 23,
+  "formal_design_bindings_verified": 8,
+  "production_diff": "ZERO",
+  "author_final": "74PASS_0FAIL_ERROR_SKIP",
+  "expected_red_frozen_r1": "3_expected_failures",
+  "phase_b_design_verdict": "REQUESTED_NOT_APPROVED",
+  "candidate_inbox_request_readback": true,
+  "v3_child_updated_by_codex": false,
+  "phase_a_ds_cpu": "PENDING",
+  "phase_b_production_native_gpu_model_dcp_simulation_training_history_operations": "NONE",
+  "recorded_utc": "2026-10-29T02:20:11.144936+00:00",
+  "note": "Subsequent receipt commit is bookkeeping, not the Formal Design Root. Raw failing-r1 traceback whitespace is preserved unchanged."
+}
