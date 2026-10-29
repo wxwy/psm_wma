@@ -512,3 +512,17 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - Codex [#9](https://github.com/wxwy/psm_wma/issues/9) 接收新实现指令：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Data_GPU_Overlap_Codex_Implementation_Directive.md`。源码实际 `NoTTTCpuLoader.begin` 主进程同步 Source Snapshot，`materialize` 主进程同步 Transform；旧 nw8 仅部分 GA 内 RAW overlap、未满足跨Window overlap。任务仅隔离代码+作者CPU，待新pair GPT Code Gate。
 - DS_PRO [#10](https://github.com/wxwy/psm_wma/issues/10) 只读 S0：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Overlap_DS_PRO_Readonly_S0.md`，核对现正式Job当前真实nw、进度与已有日志；不准停训/GPU或改代码。设备当前Offline，任务登记不表示已执行。
 - Owner唯一最终Resume目标仍为正在训的 `no_ttt_packed128_droid_fresh_30k_world4_ga4`；原独立Fresh10→30k提案已废弃。正式任务不受本次文档提交影响；历史Gradient FAIL/Compact Inconclusive不改写。
+
+## 2026-10-29 — EvalV2 PhaseB B2 DS CPU retry1：test-only R2-E1/E2，REQUEST_CHANGES
+
+- 正式 Pair仍为 Root `323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728` / Child `774c2edb93ec5a6ba85ba1124757064d7cc779a5`，前序 `APPROVE_CODE` 不变，不重审实现。DS首次因端口冲突FAIL；一次授权重跑 inference145+PhaseA255 PASS，OS参数 `[1-2-2]` PASS且B2出现，`[2-3-1]` 合法仅B1，硬断言B2导致 FAIL，未达到独立CPU Gate；原证据仍在DS服务器。
+- GPT实际核查 test `free_ports` 的127.0.0.1 vs生产0.0.0.0、参数化每例都要求B2、Child per-server bounded queue；认定测试夹具口径/时序问题，**无确证生产Bug**。正式 DS Evidence `REQUEST_CHANGES`（test-only）；报告 `docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_B2_DS_CPU_retry1_TestFixture_Only_Disposition.md`。
+- Codex只做隔离候选Root test小修：free_ports改用0.0.0.0及负例；G1/N2/E2正面 OS B2保持，G2/N3等不强制随机时间窗必现B2但保留全部PID/路由/D5/Resume/Cleanup断言；不能删B2能力断言或改Child/生产/训练。新FormalRoot→GPT窄增量→DS完整独立CPU，未批准V3生产合并/GPU/900。
+
+## 2026-10-29 — GPT B2 CPU Fixture 新 Test-only Formal Pair `c724cb8b/774c2edb` 增量源码Gate：APPROVE_CODE
+
+- **正式 Root `c724cb8b1ac74c8b1748bdaac95450fb0635a095` / Child+Gitlink `774c2edb93ec5a6ba85ba1124757064d7cc779a5`**，分支 `v3-eval-v2-cpu-fixture-20261029`；相对直接父节点仅改 `tools/v3/eval_v2_batch_tests/{runtime_test.py,os_fixture.py}` 两个测试文件。第二批生产代码未改。详细 Review：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_B2_CpuFixture_c724cb8b_774c2edb_TestOnly_Incremental_Code_Gate_APPROVE_CODE.md`。
+- **test-only `APPROVE_CODE`，先前 F1端口 probe、F2跨GPU需随机合B2、F3故障注入依赖B2 三项源码层面CLOSED**：wildcard probe +两个不同loopback真实negative；仅G1/N2/E2保留真B2强断言，其他拓扑不降级任何D5/Route/Resume/Process evidence；B1第一成员GENERATING+另一Slot QUEUED两个真实Ticket后才Server exit23，测试严格核验owner/cleanup/foreign isolation。无确认新源码阻断。
+- **作者报告**聚焦26 PASS、Ruff/format/AST29 PASS；新Root commit只含两测试源码，**原始26项JUnit/log未随此次commit发布，GPT未独立重跑或核查原始执行字节**；`145+255+26=426`仍待DS独立CPU验收。既有DS Evidence Gate依旧`REQUEST_CHANGES`至完整426与OS证据通过。
+- 下一步DS在**此精确全新干净Pair**及全新外部Evidence目录仅跑一次统一Gate，核对三组145/255/26、exit0、gate PASS/source unchanged、真B2及owned cleanup/Resume；不要复用旧失败环境工件。无生产候选合并V3/Child、无GPU/RoboCasa/900/训练授权。只做本轮 docs-only Review/Inbox 追加。
+
