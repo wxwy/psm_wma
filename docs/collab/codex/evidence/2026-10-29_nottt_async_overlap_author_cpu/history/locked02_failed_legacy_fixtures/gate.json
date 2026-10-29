@@ -1,0 +1,133 @@
+{
+  "status": "FAIL",
+  "gate": "NOTTT_ASYNC_AUTHOR_OR_DS_CPU_ONLY",
+  "steps": [
+    {
+      "name": "import_origin",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import pathlib,cosmos_framework; assert pathlib.Path(cosmos_framework.__file__).resolve().is_relative_to(pathlib.Path('/workspace/psm-wma-nottt-async/cosmos-framework')); print(cosmos_framework.__file__)"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06398613599594682
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+        "tools/v3/run_no_ttt_async_cpu_gate.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06403668101120275
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+        "tools/v3/run_no_ttt_async_cpu_gate.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06402924700523727
+    },
+    {
+      "name": "async",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-async",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "--basetemp=/tmp/psm-nottt-async-overlap-20261029/locked02/async_tmp",
+        "--junitxml=/tmp/psm-nottt-async-overlap-20261029/locked02/async.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 1800,
+      "exit_code": 0,
+      "seconds": 408.3614074210054
+    },
+    {
+      "name": "regression",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-async",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py",
+        "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py",
+        "tools/v3/matched_no_ttt_entry_test.py",
+        "--basetemp=/tmp/psm-nottt-async-overlap-20261029/locked02/regression_tmp",
+        "--junitxml=/tmp/psm-nottt-async-overlap-20261029/locked02/regression.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 1800,
+      "exit_code": 1,
+      "seconds": 335.3481260989938
+    }
+  ],
+  "real_gpu": false,
+  "real_dcp_resume": false,
+  "identities": {
+    "root": "e8c49c074a05632bed9f566665712d26fe1a1e1b",
+    "child": "d64e5c1d8541341b26f6ef0557822fe76d8dd52d",
+    "gitlink": "d64e5c1d8541341b26f6ef0557822fe76d8dd52d"
+  },
+  "syntax_files": 11,
+  "error": "RuntimeError: regression failed; see regression.log"
+}

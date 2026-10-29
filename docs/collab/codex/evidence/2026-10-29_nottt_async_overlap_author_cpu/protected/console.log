@@ -1,0 +1,17 @@
+{
+  "status": "PASS_STATIC_SCOPE",
+  "output": "/tmp/psm-nottt-async-overlap-20261029/protected_audit_release/audit.json",
+  "summary": {
+    "equality_checks": 51,
+    "protected_child_files": 14,
+    "protected_root_files": 5,
+    "unchanged_old_resume_test_functions": 3,
+    "unchanged_old_resume_assert_statements": 14,
+    "fixture_corrected_old_modules": 2,
+    "fixture_corrected_modules_old_test_functions": 25,
+    "fixture_corrected_modules_unchanged_old_assert_statements": 88,
+    "production_files_byte_identical_d64_to_release": 5,
+    "all_other_child_git_objects_identical_d64_to_release": 1244
+  },
+  "error": null
+}

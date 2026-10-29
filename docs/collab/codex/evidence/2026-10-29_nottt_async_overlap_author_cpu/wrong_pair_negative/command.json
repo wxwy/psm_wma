@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "tools/v3/run_no_ttt_async_cpu_gate.py",
+    "--root-worktree",
+    "/workspace/psm-wma-nottt-async",
+    "--expected-root",
+    "0000000000000000000000000000000000000000",
+    "--expected-child",
+    "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+    "--evidence-dir",
+    "/tmp/psm-nottt-async-overlap-20261029/wrong_pair_negative"
+  ],
+  "exit_code": 1,
+  "stdout": ""
+}

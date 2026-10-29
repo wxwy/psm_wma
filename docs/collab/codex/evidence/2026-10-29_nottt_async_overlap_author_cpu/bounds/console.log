@@ -1,0 +1,128 @@
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/data/dataloader.py:424: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 5, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  self.check_worker_number_rationality()
+/workspace/psm-wma-nottt-async/cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader.py:357: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 5, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  self.check_worker_number_rationality()
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+{
+  "schema": "nottt_async_cpu_bounds_author_probe_v1",
+  "real_gpu": false,
+  "real_assets": false,
+  "profile": {
+    "schema": "nottt_cpu_async_dataloader_v1",
+    "start_method": "spawn",
+    "pin_memory": false,
+    "source_reader": "worker_offline_verified_source",
+    "transform": "worker_conditioned_parent_ordered_cfg_selection",
+    "source_packet_limit_bytes": 1048576,
+    "workers": 8,
+    "prefetch_factor": 1,
+    "persistent_workers": true,
+    "timeout_s": 120,
+    "max_packet_bytes": 33554432,
+    "max_cache_bytes": 2147483648,
+    "max_prepared_windows": 2,
+    "max_inflight_packets": 8,
+    "max_inflight_encoded_bytes": 268435456,
+    "rank_mmap_budget_bytes": 17179869184,
+    "worker_mmap_budget_bytes": 2147483648
+  },
+  "worker_pids": [
+    164781,
+    164782,
+    164783,
+    164784,
+    164785,
+    164786,
+    164787,
+    164788
+  ],
+  "worker_cache_last": {
+    "164781": {
+      "worker_maxrss_kib": 503148,
+      "cache_mapped_bytes": 0
+    },
+    "164782": {
+      "worker_maxrss_kib": 503156,
+      "cache_mapped_bytes": 0
+    },
+    "164783": {
+      "worker_maxrss_kib": 503280,
+      "cache_mapped_bytes": 0
+    },
+    "164784": {
+      "worker_maxrss_kib": 503264,
+      "cache_mapped_bytes": 0
+    },
+    "164785": {
+      "worker_maxrss_kib": 503212,
+      "cache_mapped_bytes": 0
+    },
+    "164786": {
+      "worker_maxrss_kib": 503036,
+      "cache_mapped_bytes": 0
+    },
+    "164787": {
+      "worker_maxrss_kib": 503236,
+      "cache_mapped_bytes": 0
+    },
+    "164788": {
+      "worker_maxrss_kib": 503048,
+      "cache_mapped_bytes": 0
+    }
+  },
+  "last_cleanup": [
+    {
+      "pid": 164781,
+      "exitcode": 0
+    },
+    {
+      "pid": 164782,
+      "exitcode": 0
+    },
+    {
+      "pid": 164783,
+      "exitcode": 0
+    },
+    {
+      "pid": 164784,
+      "exitcode": 0
+    },
+    {
+      "pid": 164785,
+      "exitcode": 0
+    },
+    {
+      "pid": 164786,
+      "exitcode": 0
+    },
+    {
+      "pid": 164787,
+      "exitcode": 0
+    },
+    {
+      "pid": 164788,
+      "exitcode": 0
+    }
+  ],
+  "observed_one_sample_packet_bytes": 271437,
+  "native_ram_qualification": "NOT_RUN; synthetic RSS is not a world4 native memory prediction",
+  "formal_root": "e0fe911dfb9fd34957234828195cf051713f6c3d",
+  "child_gitlink": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7"
+}

@@ -1,0 +1,742 @@
+diff --git a/SESSION.md b/SESSION.md
+index 2913c1c6..a3b01124 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,19 @@
++# 2026-10-29 — Issue #9 final synthetic CPU selection and fixture corrections
++
++Pair e8c49c074a05632bed9f566665712d26fe1a1e1b/d64e5c1d8541341b26f6ef0557822fe76d8dd52d: newasync72PASS; regression122PASS/1FAIL/1SKIP before -x. Existing identity test used unsupportedSimpleNamespace andmissing receipt; fixedfixture tosupportedstructured records+temporaryreceipt, productionserializerunchanged. A secondoldRootfixture incorrectlyexpectedstrictidentityrejection forOwner-exempt existingformalJob; nowtargetsordinarystrictJobwithsameassertions. Focused109PASS. Explicitlydeselectoneforbiddenrealassetdebugnode (testretained), strictsyntheticGatehasnoskipallowance. NoNoTTTproductionchangessince d64; finalChildaddsfixtureonly. NewRootformal/cleanGate pending; allrawattemptsretained.
++
++# 2026-10-29 — Issue #9 locked01 stopped at new fixture assertion; corrected replay pending
++
++First Pair66986d5fa77bbf58f2e79e0d3345d89adae27b9b/5124a2b7a9bbb3b9f84de16a5546f3ba6e147e3d: staticPASS, 55asyncPASS/1FAIL, stoppedbeforelegacygroup. New per-GA assertion incorrectly usedinitialfrontier beforelazyResume applied; fixture nowderivesbefore frompending restoredfrontier andkeeps allassertions. Rawlocked01 failure retained. Source additionallyfreezes resolvedcache/source/index roots beforeworker spawn; alias-retargetnegative+correctedResume2PASS. CPUfake trace nowuses identicalcompute budget forsync/async andreportswall. NewChildcommitstaged; newRootformal/cleanunifiedGate willsupersedeinitialPair, notrelabelfailedrun. NoGPU/realDCP/liveJob/canonicalmerge.
++
++# 2026-10-29 — Issue #9 isolated source ready, locked CPU replay pending
++
++Child source committed on v3-nottt-async-overlap-20261029; Root Gitlink is staged with implementation/runbook and unified read-only CPU gate. Initial 18 recipe, 16 loader, 24 trainer and focused negative passes are exploratory, not final exact-Pair evidence. Final source adds pre-clone compact transport bound, per-request source/cache stat checks, owned-PID/order fences and uncommitted parent RNG restoration; final replay still PENDING. No canonical branches or active Job touched. Once final exact Pair passes author CPU, publish Child then Root and STOP GPT incremental Code Gate.
++
++# 2026-10-29 — Issue #9 actual ACK and isolated implementation
++
++Read AGENTS/SESSION/canonical Inbox/TODO/decisions, full new Owner directive and actual source. Root origin/V3 advertised/tracking 3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7; exact Child/Gitlink746c5cf2f2324104a62fb71510343aa40d3976c5. Separate worktree /workspace/psm-wma-nottt-async, Root/Child branchv3-nottt-async-overlap-20261029. Previous EvalV2 candidate and training directories untouched. Task IN_PROGRESS. Stage/Owner/RNG plan: docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Stage_Owner_RNG_Plan_2026-10-29.md, with planned files and explicit original-CFG consumption. No production edits yet; uncommitted plan/claim. Author CPU only; no GPU, data/model/DCP, liveJob, DS dispatch, canonical merge. Latest EvalV2 B2 exact approved323f/774c Review read independently; its separate Evidence blocker does not become this task.
++
+ # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
+ 
+ - Gate `V3-CORRECTED-PHASE3-CACHED-SFT-CACHE-HIT` 进入 REVIEW。authority：Phase3 v1.0 design root `78ff45375cecc3783ec3d219af23c4be5902b9da` 与 `/tmp/CX_PHASE3_CACHED_LATENT_SFT_CACHE_HIT.md`；baseline child `ce07cb6f4a3f7792d85b7583ff6c8bda0bfa0cb0`。复用 Phase1A cache catalog/reader、Phase1B source/index、Phase2 official raw15/state15 adapter、官方 ActionSFTDataset/ActionTransformPipeline 与 PackingDataLoader；本轮 child 只新增 `robocasa_exact_window_cached_sft.py`、`robocasa_exact_window_cached_sft_test.py`、`omni_mot_cached_vision_test.py`，并仅在 `omni_mot_model.py:get_data_and_condition` 加 optional cache-hit vision preparation。raw sample 附 `cached_latent_required=True`，model 对哨兵缺 latent/反向缺哨兵及不合法 packed ABI fail-closed；constructor 校验 VideoResize `192×320` canvas 与 fixed Wan factor16 对应 latent `12×20`，cache-hit保留 native crop 与 temporal helper，VAE/collective调用为0，off-mode 保持原路。
+diff --git a/TODO.md b/TODO.md
+index 9b9a86a6..c7c2b290 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,3 +1,9 @@
++# Active isolated task — 2026-10-29
++
++| ID | Status | Owner | Preconditions | Acceptance |
++| --- | --- | --- | --- | --- |
++| V3-NOTTT-ASYNC-OVERLAP-NWPOS-20261029 | IN_PROGRESS | Codex | Owner Issue #9; baseline 3d5806a2 / 746c5cf2 | Isolated Source+Transform+next-Window overlap; exact RNG/frontier/Resume CPU evidence; new Pair then STOP GPT Code Gate |
++
+ # PSM-WMA 任务队列
+ 
+ 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
+diff --git a/cosmos-framework b/cosmos-framework
+index 746c5cf2..f6a92d47 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 746c5cf2f2324104a62fb71510343aa40d3976c5
++Subproject commit f6a92d47b6dac7998ddc58b3da26ef93f8068dc7
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Implementation_2026-10-29.md b/docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Implementation_2026-10-29.md
+new file mode 100644
+index 00000000..4dc3569e
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Implementation_2026-10-29.md
+@@ -0,0 +1,138 @@
++# No-TTT asynchronous data preparation — isolated candidate
++
++Authority: Owner Issue #9 and
++`2026-10-29_V3_NoTTT_Async_Data_GPU_Overlap_Codex_Implementation_Directive.md`.
++Baseline Root `3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7`, Child
++`746c5cf2f2324104a62fb71510343aa40d3976c5`. Branch
++`v3-nottt-async-overlap-20261029`; not merged into canonical branches.
++
++## Actual execution path
++
++`NOTTT_LOADER_WORKERS=0` retains the original `producer.produce` / native
++Packed128 path. Defaults, job identity/digest, frontier format, Generation-only
++optimizer and original native losses are unchanged. The cached-SFT builder only
++retains constructor metadata; it executes the same transform operations.
++
++Positive worker counts instantiate `NoTTTAsyncLoader` through the actual matched
++trainer. One persistent official PyTorch DataLoader pool per rank owns local
++Source Reader, mmap Cache Reader, tokenizer and deterministic full Transform.
++The recipe contains paths and lazy configuration, never a live model, HF Dataset,
++producer or tokenizer. Only the already staged local processor directory is
++reopened; worker reconstruction does not invoke HF CLI downloads.
++
++At Window begin, the main process freezes current requests and previews exactly
++one next plan from the current candidate frontier. This is metadata planning and
++two stat witnesses/request, not synchronous source payload reads. The sampler
++contains at most 64 B8/GA4 request records; official DataLoader credits bound
++in-flight work to `workers * prefetch_factor`. It returns in consumer order even
++when workers complete out of order. Consuming a Member dispatches later work
++before native forward/backward. At successful optimizer completion only the
++active frontier is published. The next `begin` checks that the actual plan
++equals the speculative plan before admitting another preview.
++
++The explicit `persistent_workers=False` option remains supported: it discards
++neutral speculative work and reopens the pool next Window. Default persistent
++mode reuses prepared next-Window packages. Nonpersistent mode has no promised
++cross-step throughput benefit and is not the preferred performance profile.
++
++## RNG and data equivalence
++
++The accepted production capability is the exact JSON `ActionTransformPipeline`,
++ordinary single-caption `TextTokenizerTransform`, known local Edge processor,
++and `legacy_global` RNG mode. Constructor fields, prompt formatting, resize,
++ActionProcessor and tokenizer reconstruction metadata are checked. Unsupported
++or mutated pipelines fail closed; no fallback is used for production nw>0.
++
++JSON formatting disables the separate stochastic idle-text augmentation. Each
++consumer's sole Transform random operation is the original CFG Python draw.
++Workers run its conditioned Transform with CFG decision disabled, and prepare
++the same processor's empty-caption tokens. Both Source and Transform must be
++Python/NumPy/Torch CPU RNG-neutral in the worker. The trainer draws the original
++`random.random()` at each original consumer position and, when selected, replaces
++exactly caption and tokens with the precomputed empty branch. No future training
++RNG is predicted or consumed, and model/callback draws may interleave normally.
++
++Uncommitted Window failure restores its parent Python/NumPy/Torch CPU RNG
++snapshot and, if already initialized, the rank's current CUDA RNG snapshot.
++Successful `finish` releases that snapshot without restoring it. The failed
++trainer remains poisoned: this is not an optimizer/model rollback or permission
++to reuse it; recovery restores all state from a legal persistent checkpoint.
++CPU tests exercise CPU RNG restoration; actual CUDA restoration awaits the
++separately authorized native gate.
++
++## Bounded memory, identity, failures and checkpoint
++
++- Recipes: <=1 MiB production metadata (outer generic injection cap 64 MiB).
++- Encoded segment packet: default <=32 MiB; conservative budget checked before
++  cloning and exact encoded length checked afterward. Zero video geometry is
++  transported as scalar storage without first expanding a dense pixel tensor.
++- Default in-flight encoded cap: nw8/prefetch1 = 256 MiB/rank, plus current
++  Member/native batch, worker preparation and PyTorch queue overhead.
++- Mmap cache preserves the previous **per-worker** cap (default 2 GiB), with at
++  most `max(1,8/workers)` Episodes/worker. Thus nw8 has <=16 GiB mapped-file cap
++  per rank and <=8 cached Episodes. Mapped bytes are not a measured RSS bound;
++  worker max RSS/mapped bytes are reported and actual world4 RAM remains a
++  deployment measurement. Shrinking each worker to 256 MiB would newly reject
++  valid previously accepted large Episode files, so is not done.
++- Request token, generation, Window, actual owned worker PID, exact Segment
++  chronology/provenance/shape and original CFG metadata are checked before RNG
++  consumption. Source/Cache file dev/inode/size/mtime/ctime are frozen at admit,
++  checked around worker work, and checked again before consumption. Original
++  exact-window row, cache, action and latent checks remain in the real producer.
++- Worker startup hides CUDA and rank variables before imports; it limits CPU
++  threads and uses offline readers. No optimizer/frontier or model enters IPC.
++- Worker errors, death, timeout, invalid packets and cancellation close the pool
++  with the existing bounded terminate/kill/reap implementation. No implicit
++  serial retry can masquerade as successful asynchronous execution.
++- Checkpoint records only the original committed frontier format/bindings;
++  active work is forbidden. Neutral speculative queues remain bounded and are
++  never serialized. The callback does not alter RNG after DCP has captured it.
++
++Runtime metrics report Source/Transform worker sums, parent wait/decode/CFG,
++collate, worker RSS and queue/mmap limits. Full monotonic traces are sampled for
++the first three Windows after pool creation and every 1000 Windows; inexpensive
++aggregates continue each Window. These are host intervals, not measured CUDA
++idle time. Compact-video and worker overlap benefits are not conflated.
++
++## CPU replay and evidence contract
++
++After freezing a clean exact Pair:
++
++```bash
++python tools/v3/run_no_ttt_async_cpu_gate.py \
++  --root-worktree /workspace/psm-wma-nottt-async \
++  --expected-root <FULL_FORMAL_ROOT> \
++  --expected-child <FULL_FORMAL_CHILD> \
++  --evidence-dir <NEW_EXTERNAL_DIRECTORY>
++```
++
++The runner sets CUDA hidden, CPU/offline execution and external Hugging Face,
++Matplotlib and other caches. It records exact commands/env/source hashes, Ruff
++0.12.7 check/format, syntax, raw JUnit/logs and unchanged source before/after.
++Nonzero exit, skips, no tests, dirty source or identity mismatch prevent PASS.
++
++New CPU tests use real spawn, production Loader/Trainer/Producer/Transform,
++native Packed collator, temporary synthetic Source/Cache and a lightweight text
++processor/model. They cover nw0/1/2/4/8, four logical ranks, GA4/T16 full/partial,
++interleaved three-stream RNG, 0→8/8→0/8→8 full CPU state recovery, faults and
++neutral checkpoint preview. Timeline requires actual next-Member and next-Window
++Source **and** Transform overlap with a CPU fake-compute callback over three
++Windows. An unchanged old RAW backend is recorded as expected RED for this goal.
++
++Existing generic RAW worker/three-RNG Transform tests remain as regression tests.
++Their reduced-B1 Resume fixture explicitly injects the old RAW backend because
++an arbitrary stochastic transform is not the production JSON capability. Its
++assertions are retained; it is not counted as evidence of the new async path.
++The new full-B8 Trainer tests directly cover that path with noisy model RNG and
++CFG-dependent losses. Frozen checkpoint schemas and old test assertions are not
++relaxed.
++
++## Stop boundary
++
++Final CPU result and Formal Pair are supplied by the subsequent author handoff;
++this implementation document does not claim an unexecuted PASS. Submit Child
++then Root candidate and STOP for GPT fresh incremental Code Gate. Then DS
++independent CPU, Owner-authorized isolated real DCP/GPU performance comparison,
++and only later legal checkpoint-boundary switch of the existing formal Job.
++No real Source/model/DCP/GPU, current Job change, fresh training, evaluation,
++canonical merge or historical evidence operation is authorized here.
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Stage_Owner_RNG_Plan_2026-10-29.md b/docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Stage_Owner_RNG_Plan_2026-10-29.md
+new file mode 100644
+index 00000000..c123b1f1
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Stage_Owner_RNG_Plan_2026-10-29.md
+@@ -0,0 +1,49 @@
++# No-TTT asynchronous preparation: Stage / Owner / RNG plan
++
++Task `V3-NOTTT-ASYNC-OVERLAP-NWPOS-20261029`, Issue #9. Owner authorization is
++isolated implementation and synthetic CPU evidence only. Baseline Root
++`3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7`, Child/Gitlink
++`746c5cf2f2324104a62fb71510343aa40d3976c5`.
++
++| Stage | Owner | RNG / frontier contract |
++| --- | --- | --- |
++| Preview current + next Window | Trainer | Pure planner over committed/candidate frontier; never promotes speculative data |
++| Source / Cache / full deterministic Transform | Spawned CPU DataLoader workers | Local offline readers and bounded mmap; no CUDA/model/optimizer; no global training RNG |
++| Conditional + empty-caption token preparation | Same workers | Exact existing JSON ActionTransformPipeline; no stochastic choice yet |
++| Ordered consumption and CFG choice | Trainer | Original `random.random()` at each original consumer position; no reseeding, no advance from prefetch |
++| Pack / Collate / H2D / native compute | Trainer | Existing native outer loss and GA normalization; workers prepare later Members/Window concurrently |
++| Optimizer / Frontier commit | Trainer | Only after all GA backward and successful optimizer; speculative plan must match actual predecessor |
++| Checkpoint | Trainer | Original rank frontier schema; speculative packages excluded; no RNG changes in checkpoint callback |
++| Failure / cancel | Trainer | Discard all unconsumed packages, bounded reap owned workers; never silently switch to synchronous execution |
++
++The actual cached SFT JSON configuration has one stochastic operation per
++consumer: CFG caption dropout. JSON formatting disables the separate idle-text
++augmentor. The worker prepares the conditioned payload and the same processor's
++empty-caption tokens. Main-process selection changes exactly the caption and
++token fields which the original tokenizer changes. This preserves arbitrary
++model/callback Python, NumPy and Torch RNG draws between Members without trying
++to predict future RNG states. Unknown transforms/configurations fail closed.
++The explicitly injected legacy synthetic raw recipe remains a regression seam,
++not the production async implementation.
++
++Bounded ownership: one active Window and one next-window preview; DataLoader's
++worker/prefetch credits bound transported segment packages. Recipe metadata and
++encoded packets have explicit byte caps; the original per-worker mmap cap is
++retained (rank cap = workers × that cap, at most eight mapped Episodes/rank),
++so nw8 does not newly reject valid Episodes by shrinking the per-file bound.
++Parent consumption retains only the current Member plus bounded
++DataLoader results. At optimizer completion the consumed plan is released before
++another preview is admitted. No new fields enter training identity or frontier.
++
++Planned files: Child `trainer/no_ttt_async_recipe.py`,
++`trainer/no_ttt_async_loader.py`, `trainer/matched_no_ttt.py`, necessary
++`trainer/no_ttt_cpu_loader.py` factory/seams, adjacent synthetic tests,
++`utils/no_ttt_loader_profile.py`, and cached-SFT builder recipe metadata. Root
++adds an exact-pair CPU gate, this plan, evidence/handoff and ledger entries.
++No generic Trainer, DCP, RNG restoration, Local-TTT, model, optimizer, launcher
++defaults, active Job or historical results are changed.
++
++CPU evidence will compare workers 0/1/2/4/8, four ranks, GA4, partial/full and
++three consecutive Windows; real Source/Transform intervals must overlap a fake
++compute interval for both a later Member and next Window. Real GPU overlap,
++throughput and real DCP Resume are NOT validated by synthetic CPU tests.
+diff --git a/tools/v3/no_ttt_workers_entry_test.py b/tools/v3/no_ttt_workers_entry_test.py
+index 07229550..983a95a8 100644
+--- a/tools/v3/no_ttt_workers_entry_test.py
++++ b/tools/v3/no_ttt_workers_entry_test.py
+@@ -12,9 +12,9 @@ import pytest
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ sys.path.insert(0, str(ROOT / "cosmos-framework"))
+-from cosmos_framework.utils.no_ttt_loader_profile import profile_from_args
+-from examples import psm_wma_robocasa_corrected_phase5 as phase5
+-from examples.psm_wma_robocasa_phase5_f0_test import Serializer, _args, _config, _report
++from cosmos_framework.utils.no_ttt_loader_profile import profile_from_args  # noqa: E402 - explicit worktree bootstrap
++from examples import psm_wma_robocasa_corrected_phase5 as phase5  # noqa: E402
++from examples.psm_wma_robocasa_phase5_f0_test import Serializer, _args, _config, _report  # noqa: E402
+ 
+ 
+ def setup(tmp_path):
+@@ -22,7 +22,9 @@ def setup(tmp_path):
+     (root / "scripts").mkdir(parents=True)
+     child = root / "cosmos-framework"
+     (child / "examples").mkdir(parents=True)
+-    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("# not executed\n")
++    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text(
++        "# not executed\n"
++    )
+     script = root / "scripts/train_v3_matched_no_ttt_4gpu.sh"
+     script.write_bytes((ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh").read_bytes())
+     fake = tmp_path / "fake-python"
+@@ -33,7 +35,8 @@ def setup(tmp_path):
+     env = {
+         key: value
+         for key, value in os.environ.items()
+-        if not key.startswith("NOTTT_") and key not in ("JOB_NAME", "CUDA_VISIBLE_DEVICES")
++        if not key.startswith("NOTTT_")
++        and key not in ("JOB_NAME", "CUDA_VISIBLE_DEVICES")
+     }
+     env["PYTHON"] = str(fake)
+     for key in (
+@@ -50,31 +53,53 @@ def setup(tmp_path):
+ 
+ 
+ @pytest.mark.parametrize("workers", [0, 1, 2, 4, 8])
+-def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path, workers):
++def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(
++    tmp_path, workers
++):
+     script, env = setup(tmp_path)
+     env["NOTTT_LOADER_WORKERS"] = str(workers)
+     result = subprocess.run(
+-        ["bash", str(script), "fresh", "100"], env=env, text=True, capture_output=True, check=True, timeout=10
++        ["bash", str(script), "fresh", "100"],
++        env=env,
++        text=True,
++        capture_output=True,
++        check=True,
++        timeout=10,
+     )
+     payload = json.loads(result.stdout)
+     argv = payload["argv"]
+     assert "--expected-root" not in argv and "--expected-child" not in argv
+-    assert argv[argv.index("--ga") + 1] == "4" and argv[argv.index("--world-size") + 1] == "4"
++    assert (
++        argv[argv.index("--ga") + 1] == "4"
++        and argv[argv.index("--world-size") + 1] == "4"
++    )
+     assert argv[argv.index("--num-workers") + 1] == "0"
+     if workers:
+         assert argv[argv.index("--no-ttt-loader-workers") + 1] == str(workers)
+-        assert argv[argv.index("--job-name") + 1] == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
++        assert (
++            argv[argv.index("--job-name") + 1]
++            == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
++        )
+         parsed = phase5.parser().parse_args(argv[argv.index("--no-ttt") :])
+         assert profile_from_args(parsed).persistent_workers is True
+     else:
+         assert "--no-ttt-loader-workers" not in argv
+         baseline = subprocess.check_output(
+-            ["git", "show", "e6ae2084305a8c24d763d82b517984660cc73c30:scripts/train_v3_matched_no_ttt_4gpu.sh"],
++            [
++                "git",
++                "show",
++                "e6ae2084305a8c24d763d82b517984660cc73c30:scripts/train_v3_matched_no_ttt_4gpu.sh",
++            ],
+             cwd=ROOT,
+         )
+         script.write_bytes(baseline)
+         old = subprocess.run(
+-            ["bash", str(script), "fresh", "100"], env=env, text=True, capture_output=True, check=True, timeout=10
++            ["bash", str(script), "fresh", "100"],
++            env=env,
++            text=True,
++            capture_output=True,
++            check=True,
++            timeout=10,
+         )
+         assert json.loads(old.stdout) == payload
+ 
+@@ -91,11 +116,19 @@ def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path
+         {"NOTTT_LOADER_WORKERS": "1", "NOTTT_PERSISTENT_WORKERS": "bad"},
+     ],
+ )
+-def test_invalid_loader_or_non_nott_job_options_rejected_before_python(tmp_path, change):
++def test_invalid_loader_or_non_nott_job_options_rejected_before_python(
++    tmp_path, change
++):
+     script, env = setup(tmp_path)
+     env.update(change)
+     env["PYTHON"] = "/must/not/run"
+-    result = subprocess.run(["bash", str(script), "resume", "500"], env=env, text=True, capture_output=True, timeout=10)
++    result = subprocess.run(
++        ["bash", str(script), "resume", "500"],
++        env=env,
++        text=True,
++        capture_output=True,
++        timeout=10,
++    )
+     assert result.returncode == 2
+ 
+ 
+@@ -103,6 +136,8 @@ def test_invalid_loader_or_non_nott_job_options_rejected_before_python(tmp_path,
+ def test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_semantics(
+     tmp_path, original_workers
+ ):
++    # Exercise an ordinary strict Job. The historical formal Job has an
++    # explicit Owner identity exemption, independently covered by Phase5 tests.
+     args = _args(
+         tmp_path,
+         "--no-ttt",
+@@ -111,9 +146,12 @@ def test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_seman
+         "--ga",
+         "4",
+         "--job-name",
+-        "no_ttt_packed128_droid_fresh_30k_world4_ga4",
++        "no_ttt_worker_runtime_contract_world4_ga4",
+     )
+-    semantic = {"training_profile": "matched_no_ttt_v1", "contract": {"world_size": 4, "ga": 4}}
++    semantic = {
++        "training_profile": "matched_no_ttt_v1",
++        "contract": {"world_size": 4, "ga": 4},
++    }
+     args.no_ttt_loader_workers = original_workers
+     args.no_ttt_prefetch_factor = 1 if original_workers else None
+     args.no_ttt_persistent_workers = True if original_workers else None
+@@ -140,19 +178,31 @@ def test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_seman
+         assert phase5.check_job_namespace(args, semantic)["semantic"] == semantic
+ 
+     assert {str(p): p.read_bytes() for p in path.rglob("*") if p.is_file()} == before
+-    assert phase5._expected_source_identity(args) == ("nottt_world4_ga4_source_head_not_verified",) * 2
+-    wrong = {"training_profile": "matched_no_ttt_v1", "contract": {"world_size": 8, "ga": 4}}
++    assert (
++        phase5._expected_source_identity(args)
++        == ("nottt_world4_ga4_source_head_not_verified",) * 2
++    )
++    wrong = {
++        "training_profile": "matched_no_ttt_v1",
++        "contract": {"world_size": 8, "ga": 4},
++    }
+     with pytest.raises(ValueError, match="semantic"):
+         phase5.check_job_namespace(args, wrong)
+ 
+ 
+ @pytest.mark.parametrize("from_workers,to_workers", [(0, 8), (8, 0), (2, 4), (8, 1)])
+-def test_launcher_resume_same_job_with_different_worker_count(tmp_path, from_workers, to_workers):
++def test_launcher_resume_same_job_with_different_worker_count(
++    tmp_path, from_workers, to_workers
++):
+     script, env = setup(tmp_path)
+ 
+     def invoke(workers, phase):
+         settings = dict(env, NOTTT_LOADER_WORKERS=str(workers))
+-        for key in ("NOTTT_PREFETCH_FACTOR", "NOTTT_PERSISTENT_WORKERS", "NOTTT_LOADER_TIMEOUT_S"):
++        for key in (
++            "NOTTT_PREFETCH_FACTOR",
++            "NOTTT_PERSISTENT_WORKERS",
++            "NOTTT_LOADER_TIMEOUT_S",
++        ):
+             settings.pop(key, None)
+         result = subprocess.run(
+             ["bash", str(script), phase, "500"],
+@@ -168,22 +218,39 @@ def test_launcher_resume_same_job_with_different_worker_count(tmp_path, from_wor
+     fresh, original_job = invoke(from_workers, "fresh")
+     resumed, resumed_job = invoke(to_workers, "resume")
+     assert original_job == resumed_job == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
+-    assert fresh[fresh.index("--num-workers") + 1] == resumed[resumed.index("--num-workers") + 1] == "0"
++    assert (
++        fresh[fresh.index("--num-workers") + 1]
++        == resumed[resumed.index("--num-workers") + 1]
++        == "0"
++    )
+     if to_workers:
+         assert resumed[resumed.index("--no-ttt-loader-workers") + 1] == str(to_workers)
+     else:
+         assert "--no-ttt-loader-workers" not in resumed
+ 
++
+ def test_explicit_prefetch_and_nonpersistent_cli_are_real_profile_options(tmp_path):
+     script, env = setup(tmp_path)
+     env.update(
+-        NOTTT_LOADER_WORKERS="2", NOTTT_PREFETCH_FACTOR="2", NOTTT_PERSISTENT_WORKERS="0", NOTTT_LOADER_TIMEOUT_S="30"
++        NOTTT_LOADER_WORKERS="2",
++        NOTTT_PREFETCH_FACTOR="2",
++        NOTTT_PERSISTENT_WORKERS="0",
++        NOTTT_LOADER_TIMEOUT_S="30",
+     )
+     result = subprocess.run(
+-        ["bash", str(script), "fresh", "100"], env=env, text=True, capture_output=True, check=True, timeout=10
++        ["bash", str(script), "fresh", "100"],
++        env=env,
++        text=True,
++        capture_output=True,
++        check=True,
++        timeout=10,
+     )
+     argv = json.loads(result.stdout)["argv"]
+     args = phase5.parser().parse_args(argv[argv.index("--no-ttt") :])
+     profile = profile_from_args(args)
+-    assert profile.workers == 2 and profile.prefetch_factor == 2 and profile.persistent_workers is False
++    assert (
++        profile.workers == 2
++        and profile.prefetch_factor == 2
++        and profile.persistent_workers is False
++    )
+     assert profile.timeout_s == 30
+diff --git a/tools/v3/run_no_ttt_async_cpu_gate.py b/tools/v3/run_no_ttt_async_cpu_gate.py
+new file mode 100644
+index 00000000..77179917
+--- /dev/null
++++ b/tools/v3/run_no_ttt_async_cpu_gate.py
+@@ -0,0 +1,268 @@
++"""Read-only exact-pair No-TTT async CPU replay. No model, dataset or GPU input."""
++
++from __future__ import annotations
++
++import argparse
++import ast
++import hashlib
++import importlib.metadata
++import json
++import os
++import signal
++import subprocess
++import sys
++import time
++import xml.etree.ElementTree as ET
++from pathlib import Path
++
++CHILD = "cosmos-framework"
++ASYNC = [
++    f"{CHILD}/cosmos_framework/trainer/{name}.py"
++    for name in (
++        "no_ttt_async_recipe_test",
++        "no_ttt_async_loader_test",
++        "no_ttt_async_trainer_test",
++    )
++]
++REGRESSION = [
++    f"{CHILD}/cosmos_framework/trainer/{name}.py"
++    for name in (
++        "no_ttt_cpu_loader_test",
++        "no_ttt_cpu_loader_resume_test",
++        "matched_no_ttt_test",
++    )
++] + [
++    f"{CHILD}/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py",
++    f"{CHILD}/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py",
++    f"{CHILD}/examples/psm_wma_robocasa_matched_no_ttt_test.py",
++    "tools/v3/no_ttt_workers_entry_test.py",
++    "tools/v3/matched_no_ttt_entry_test.py",
++]
++STATIC = [
++    f"{CHILD}/cosmos_framework/trainer/{name}.py"
++    for name in (
++        "no_ttt_async_recipe",
++        "no_ttt_async_loader",
++        "no_ttt_async_test_support",
++        "matched_no_ttt",
++        "no_ttt_cpu_loader_resume_test",
++        "no_ttt_async_recipe_test",
++        "no_ttt_async_loader_test",
++        "no_ttt_async_trainer_test",
++    )
++] + [
++    f"{CHILD}/cosmos_framework/utils/no_ttt_loader_profile.py",
++    f"{CHILD}/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
++    f"{CHILD}/examples/psm_wma_robocasa_matched_no_ttt_test.py",
++    "tools/v3/run_no_ttt_async_cpu_gate.py",
++    "tools/v3/no_ttt_workers_entry_test.py",
++]
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--root-worktree", required=True, type=Path)
++    parser.add_argument("--expected-root", required=True)
++    parser.add_argument("--expected-child", required=True)
++    parser.add_argument("--evidence-dir", required=True, type=Path)
++    args = parser.parse_args()
++    root, out = args.root_worktree.resolve(), args.evidence_dir.resolve()
++    if out.exists() or out.is_relative_to(root):
++        parser.error("NEW external evidence directory required")
++    out.mkdir(parents=True)
++    state = {
++        "status": "BLOCKED",
++        "gate": "NOTTT_ASYNC_AUTHOR_OR_DS_CPU_ONLY",
++        "steps": [],
++        "real_gpu": False,
++        "real_dcp_resume": False,
++        "excluded_real_data_nodes": [
++            f"{CHILD}/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke"
++        ],
++        "exclusion_reason": "Owner authorizes synthetic CPU only; real asset execution is forbidden, not a skipped CPU requirement",
++    }
++
++    def save(name, value):
++        (out / name).write_text(json.dumps(value, indent=2) + "\n")
++
++    def git(directory, *words):
++        return subprocess.check_output(
++            ["git", "-C", str(directory), *words], text=True
++        ).strip()
++
++    try:
++        child = root / CHILD
++        observed = {
++            "root": git(root, "rev-parse", "HEAD"),
++            "child": git(child, "rev-parse", "HEAD"),
++            "gitlink": git(root, "rev-parse", f"HEAD:{CHILD}"),
++        }
++        state["identities"] = observed
++        if observed != {
++            "root": args.expected_root,
++            "child": args.expected_child,
++            "gitlink": args.expected_child,
++        }:
++            raise ValueError("exact Root/Child/Gitlink mismatch")
++        if any(
++            git(directory, "status", "--porcelain=v1", "--untracked-files=all")
++            for directory in (root, child)
++        ):
++            raise ValueError("clean worktrees required")
++        if importlib.metadata.version("ruff") != "0.12.7":
++            raise ValueError("Ruff0.12.7 required")
++        watched = sorted(set(STATIC + ASYNC + REGRESSION))
++
++        def hashes():
++            return {
++                name: hashlib.sha256((root / name).read_bytes()).hexdigest()
++                for name in watched
++            }
++
++        before = hashes()
++        save("source_sha256.json", before)
++        overrides = {
++            "CUDA_VISIBLE_DEVICES": "",
++            "COSMOS_DEVICE": "cpu",
++            "HF_HUB_OFFLINE": "1",
++            "TRANSFORMERS_OFFLINE": "1",
++            "PYTHONDONTWRITEBYTECODE": "1",
++            "PYTEST_ADDOPTS": "",
++            "OMP_NUM_THREADS": "1",
++            "MKL_NUM_THREADS": "1",
++            "OPENBLAS_NUM_THREADS": "1",
++            "HF_HOME": str(out / "cache/hf"),
++            "MPLCONFIGDIR": str(out / "cache/mpl"),
++            "XDG_CACHE_HOME": str(out / "cache/xdg"),
++            "RUFF_CACHE_DIR": str(out / "cache/ruff"),
++            "PYTHONPATH": os.pathsep.join(map(str, (root, child, root / "scripts"))),
++            "PSM_NOTTT_ASYNC_EVIDENCE": str(out / "timelines"),
++        }
++        env = {**os.environ, **overrides}
++        for key in (
++            "RANK",
++            "WORLD_SIZE",
++            "LOCAL_RANK",
++            "LOCAL_WORLD_SIZE",
++            "MASTER_ADDR",
++            "MASTER_PORT",
++            "PSM_PHASE4A_CACHE_ROOT",
++            "PSM_PHASE4A_SOURCE_ROOT",
++        ):
++            env.pop(key, None)
++        save(
++            "environment.json",
++            {
++                "python": sys.version,
++                "overrides": overrides,
++                "versions": {
++                    k: importlib.metadata.version(k)
++                    for k in ("torch", "pytest", "ruff")
++                },
++            },
++        )
++
++        def run(name, argv, timeout=1800):
++            step = {"name": name, "argv": argv, "cwd": str(root), "timeout_s": timeout}
++            state["steps"].append(step)
++            state["status"] = "RUNNING"
++            save("gate.json", state)
++            print(f"[NoTTT async CPU Gate] {name}", flush=True)
++            started = time.monotonic()
++            with (out / f"{name}.log").open("w") as stream:
++                process = subprocess.Popen(
++                    argv,
++                    cwd=root,
++                    env=env,
++                    stdout=stream,
++                    stderr=subprocess.STDOUT,
++                    start_new_session=True,
++                )
++                try:
++                    code = process.wait(timeout=timeout)
++                except subprocess.TimeoutExpired:
++                    # Only the new, owned test session is targeted. Never let
++                    # an outer watchdog leave spawned CPU workers behind.
++                    os.killpg(process.pid, signal.SIGKILL)
++                    process.wait(timeout=10)
++                    raise
++            step.update(exit_code=code, seconds=time.monotonic() - started)
++            if code:
++                raise RuntimeError(f"{name} failed; see {name}.log")
++
++        run(
++            "import_origin",
++            [
++                sys.executable,
++                "-c",
++                "import pathlib,cosmos_framework; "
++                f"assert pathlib.Path(cosmos_framework.__file__).resolve().is_relative_to(pathlib.Path({str(child)!r})); "
++                "print(cosmos_framework.__file__)",
++            ],
++            60,
++        )
++        run("ruff_check", [sys.executable, "-m", "ruff", "check", *STATIC], 60)
++        run(
++            "ruff_format",
++            [sys.executable, "-m", "ruff", "format", "--check", *STATIC],
++            60,
++        )
++        for name in STATIC:
++            ast.parse((root / name).read_text(), filename=name)
++        state["syntax_files"] = len(STATIC)
++        totals = dict(tests=0, failures=0, errors=0, skipped=0)
++        combined = ET.Element("testsuites")
++        for name, tests in (("async", ASYNC), ("regression", REGRESSION)):
++            run(
++                name,
++                [
++                    sys.executable,
++                    "-m",
++                    "pytest",
++                    "--noconftest",
++                    "-c",
++                    "/dev/null",
++                    "-q",
++                    "-s",
++                    "-x",
++                    f"--deselect={CHILD}/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke",
++                    "-p",
++                    "no:cacheprovider",
++                    f"--rootdir={root}",
++                    *tests,
++                    f"--basetemp={out / (name + '_tmp')}",
++                    f"--junitxml={out / (name + '.xml')}",
++                ],
++            )
++            suites = list(ET.parse(out / f"{name}.xml").getroot().iter("testsuite"))
++            counts = {
++                key: sum(int(s.attrib.get(key, 0)) for s in suites) for key in totals
++            }
++            if not counts["tests"] or any(
++                counts[k] for k in ("failures", "errors", "skipped")
++            ):
++                raise RuntimeError(
++                    f"{name}: zero tests or failed/error/skipped testcase"
++                )
++            for suite in suites:
++                combined.append(suite)
++            for key in totals:
++                totals[key] += counts[key]
++        ET.ElementTree(combined).write(out / "junit.xml", encoding="unicode")
++        state["totals"] = totals
++        state["source_unchanged"] = hashes() == before
++        if not state["source_unchanged"] or any(
++            git(d, "status", "--porcelain=v1") for d in (root, child)
++        ):
++            raise ValueError("source/working tree changed during CPU replay")
++        state["status"] = "PASS"
++    except Exception as exc:
++        state["error"] = f"{type(exc).__name__}: {exc}"
++        if state["status"] == "RUNNING":
++            state["status"] = "FAIL"
++    save("gate.json", state)
++    return 0 if state["status"] == "PASS" else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

@@ -1,0 +1,149 @@
+{
+  "status": "PASS",
+  "gate": "NOTTT_ASYNC_AUTHOR_OR_DS_CPU_ONLY",
+  "steps": [
+    {
+      "name": "import_origin",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import pathlib,cosmos_framework; assert pathlib.Path(cosmos_framework.__file__).resolve().is_relative_to(pathlib.Path('/workspace/psm-wma-nottt-async/cosmos-framework')); print(cosmos_framework.__file__)"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06399012800829951
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "tools/v3/run_no_ttt_async_cpu_gate.py",
+        "tools/v3/no_ttt_workers_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06431916401197668
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "tools/v3/run_no_ttt_async_cpu_gate.py",
+        "tools/v3/no_ttt_workers_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06440723000559956
+    },
+    {
+      "name": "async",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "--deselect=cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-async",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "--basetemp=/tmp/psm-nottt-async-overlap-20261029/locked03/async_tmp",
+        "--junitxml=/tmp/psm-nottt-async-overlap-20261029/locked03/async.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 1800,
+      "exit_code": 0,
+      "seconds": 413.07271438899625
+    },
+    {
+      "name": "regression",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "--deselect=cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-async",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py",
+        "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py",
+        "tools/v3/matched_no_ttt_entry_test.py",
+        "--basetemp=/tmp/psm-nottt-async-overlap-20261029/locked03/regression_tmp",
+        "--junitxml=/tmp/psm-nottt-async-overlap-20261029/locked03/regression.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 1800,
+      "exit_code": 0,
+      "seconds": 341.61624458000006
+    }
+  ],
+  "real_gpu": false,
+  "real_dcp_resume": false,
+  "excluded_real_data_nodes": [
+    "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke"
+  ],
+  "exclusion_reason": "Owner authorizes synthetic CPU only; real asset execution is forbidden, not a skipped CPU requirement",
+  "identities": {
+    "root": "e0fe911dfb9fd34957234828195cf051713f6c3d",
+    "child": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+    "gitlink": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7"
+  },
+  "syntax_files": 13,
+  "totals": {
+    "tests": 301,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true
+}

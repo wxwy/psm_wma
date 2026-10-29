@@ -1,0 +1,8 @@
+{
+  "root": "e0fe911dfb9fd34957234828195cf051713f6c3d",
+  "child": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+  "gitlink": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+  "baseline_root": "3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7",
+  "baseline_child": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "branch": "v3-nottt-async-overlap-20261029"
+}

@@ -1,0 +1,17 @@
+{
+  "status": "BLOCKED",
+  "gate": "NOTTT_ASYNC_AUTHOR_OR_DS_CPU_ONLY",
+  "steps": [],
+  "real_gpu": false,
+  "real_dcp_resume": false,
+  "excluded_real_data_nodes": [
+    "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke"
+  ],
+  "exclusion_reason": "Owner authorizes synthetic CPU only; real asset execution is forbidden, not a skipped CPU requirement",
+  "identities": {
+    "root": "873863b3d562bc7bf1f0fdbe7af3cead36688f6c",
+    "child": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+    "gitlink": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7"
+  },
+  "error": "ValueError: exact Root/Child/Gitlink mismatch"
+}

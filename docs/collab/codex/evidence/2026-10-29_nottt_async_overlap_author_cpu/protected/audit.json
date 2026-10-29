@@ -1,0 +1,1094 @@
+{
+  "schema": "nottt_async_protected_static_audit_v2",
+  "audit_kind": "INTERNAL_AUTHOR_READONLY_STATIC_AUDIT_NOT_GPT_CODE_GATE",
+  "status": "PASS_STATIC_SCOPE",
+  "created_at_utc": "2026-10-29T12:12:51.363229+00:00",
+  "baseline": {
+    "root": "3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7",
+    "child": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+    "gitlink": "746c5cf2f2324104a62fb71510343aa40d3976c5"
+  },
+  "formal": {
+    "root": "e0fe911dfb9fd34957234828195cf051713f6c3d",
+    "child": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+    "gitlink": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7"
+  },
+  "last_production_child_before_fixture_only_fix": "d64e5c1d8541341b26f6ef0557822fe76d8dd52d",
+  "probe_sha256": "f5c3a4a7b0e9693b4eb36b636d1fcbdeb6686c2450ea7c0f8842444c92db16a2",
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-nottt-async-overlap-20261029/protected_audit_release/probe.py",
+    "--root-worktree",
+    "/workspace/psm-wma-nottt-async",
+    "--output",
+    "/tmp/psm-nottt-async-overlap-20261029/protected_audit_release/audit.json"
+  ],
+  "limitations": [
+    "Static Git-object/AST checks only; no project modules imported or project code executed.",
+    "No independent GPT/DS verdict, actual GPU overlap, CUDA RNG restoration or native DCP Resume qualification.",
+    "The old reduced-B1 arbitrary-stochastic-transform Resume fixture explicitly injects the legacy RAW backend; its unchanged assertions do not prove the new async backend.",
+    "Functions with permitted additions are compared only after the exact documented normalization; originals remain bound by Git Blob and SHA256."
+  ],
+  "working_tree_observation_before": {
+    "root": "",
+    "child": ""
+  },
+  "trainer_source": [
+    {
+      "path": "cosmos_framework/trainer/matched_no_ttt.py",
+      "baseline_blob": "3e56f65d860f3c761cfe2dd02e78d6369ac5e1a2",
+      "formal_blob": "b335958182e9b3e00069dbcb29628259f8ed5639",
+      "baseline_sha256": "6abd5a2a043c35fdf425e79f77399693b7a15da26ef17ba92e7adbe370c34f32",
+      "formal_sha256": "711e6e5ca8eece67fe1440b60fa30a12de6c142d5a5a3cd0aa4e24183906512d",
+      "baseline_bytes": 18214,
+      "formal_bytes": 18331,
+      "equal": false
+    }
+  ],
+  "callback_normalization": {
+    "removed_statement": "if loader is not None and hasattr(loader, 'checkpoint_boundary'):\n    loader.checkpoint_boundary()",
+    "removed_count": 1
+  },
+  "worker_zero_normalization": {
+    "removed_baseline_positive_branch": "if loader_profile is not None and loader_profile.workers:\n    from cosmos_framework.trainer.no_ttt_cpu_loader import NoTTTCpuLoader\n    self._no_ttt_loader = NoTTTCpuLoader(producer, loader_profile)",
+    "removed_formal_positive_branch": "if loader_profile is not None and loader_profile.workers:\n    self._no_ttt_loader = NoTTTAsyncLoader(producer, loader_profile, planner)",
+    "removed_count_each": 1
+  },
+  "exact_and_normalized_ast_checks": [
+    {
+      "scope": "FrontierState",
+      "baseline_ast_sha256": "a55dc9cf65e8e1ed821a7b45d4a52ae843acb5c0b98a1e7455c5b02f962ab291",
+      "formal_ast_sha256": "a55dc9cf65e8e1ed821a7b45d4a52ae843acb5c0b98a1e7455c5b02f962ab291",
+      "equal": true
+    },
+    {
+      "scope": "MatchedNoTTTWindow",
+      "baseline_ast_sha256": "98c24275c6099136ea2d6d4d2f853ada067bafe4aec605ab57149566f195234f",
+      "formal_ast_sha256": "98c24275c6099136ea2d6d4d2f853ada067bafe4aec605ab57149566f195234f",
+      "equal": true
+    },
+    {
+      "scope": "_binding",
+      "baseline_ast_sha256": "28f94760a7c1ec0ba6dcdd76a3f9d0e21887d65983b82e8e3a9c2fe37ce819a8",
+      "formal_ast_sha256": "28f94760a7c1ec0ba6dcdd76a3f9d0e21887d65983b82e8e3a9c2fe37ce819a8",
+      "equal": true
+    },
+    {
+      "scope": "restore_no_ttt_frontier",
+      "baseline_ast_sha256": "5df4b96d2c29f4c5e977c016d32aac74baf47fe66b583a7abf82a05a1105a53a",
+      "formal_ast_sha256": "5df4b96d2c29f4c5e977c016d32aac74baf47fe66b583a7abf82a05a1105a53a",
+      "equal": true
+    },
+    {
+      "scope": "MatchedNoTTTTrainer.training_step",
+      "baseline_ast_sha256": "9912e5467f7a419d623f44fb64c86695344984f075c3d1146efeeccc3542a887",
+      "formal_ast_sha256": "9912e5467f7a419d623f44fb64c86695344984f075c3d1146efeeccc3542a887",
+      "equal": true
+    },
+    {
+      "scope": "MatchedNoTTTTrainer.train",
+      "baseline_ast_sha256": "d35f69a675a28bce04ebdd5b315d73c7b0cd5e499480cdd43158c5243bb9262c",
+      "formal_ast_sha256": "d35f69a675a28bce04ebdd5b315d73c7b0cd5e499480cdd43158c5243bb9262c",
+      "equal": true
+    },
+    {
+      "scope": "NoTTTFrontierCallback.load_state_dict",
+      "baseline_ast_sha256": "bb56f2842731fe1be2371212462bb7841d3adbd2c29f3abedaa6774a9438f15b",
+      "formal_ast_sha256": "bb56f2842731fe1be2371212462bb7841d3adbd2c29f3abedaa6774a9438f15b",
+      "equal": true
+    },
+    {
+      "scope": "frontier_callback_return_schema",
+      "baseline_ast_sha256": "1db49d2e702e2ecfc54f068fe6b671124b041168bdd1784b14ffb9316e373f32",
+      "formal_ast_sha256": "1db49d2e702e2ecfc54f068fe6b671124b041168bdd1784b14ffb9316e373f32",
+      "equal": true
+    },
+    {
+      "scope": "frontier_callback_all_old_guards_and_validation",
+      "baseline_ast_sha256": "ac8ddf0e0c1066f6e2dc0ae5048e01f0d781a8bf9bb9636abcdcc1f71c597e58",
+      "formal_ast_sha256": "ac8ddf0e0c1066f6e2dc0ae5048e01f0d781a8bf9bb9636abcdcc1f71c597e58",
+      "equal": true
+    },
+    {
+      "scope": "worker_zero_bind_all_other_code",
+      "baseline_ast_sha256": "2ef3da3781b4ed7c8bf9ee3013cc1e3458934a5ef7a181ba8cb5aea03e13481d",
+      "formal_ast_sha256": "2ef3da3781b4ed7c8bf9ee3013cc1e3458934a5ef7a181ba8cb5aea03e13481d",
+      "equal": true
+    },
+    {
+      "scope": "LoaderProfile.__post_init__",
+      "baseline_ast_sha256": "c09d6dd63287b8a12601a201a36de9bb00c28d09e78e6f4aa91b1414d714bf67",
+      "formal_ast_sha256": "c09d6dd63287b8a12601a201a36de9bb00c28d09e78e6f4aa91b1414d714bf67",
+      "equal": true
+    },
+    {
+      "scope": "LoaderProfile.identity",
+      "baseline_ast_sha256": "89c8b8608c2707655c3f7786d05a1a8f15775306137a67490e875b09557da532",
+      "formal_ast_sha256": "89c8b8608c2707655c3f7786d05a1a8f15775306137a67490e875b09557da532",
+      "equal": true
+    },
+    {
+      "scope": "profile_from_args",
+      "baseline_ast_sha256": "76be519c3b232d14112a36daecee1459d79f2406ffe2f58d558eee3f464ed858",
+      "formal_ast_sha256": "76be519c3b232d14112a36daecee1459d79f2406ffe2f58d558eee3f464ed858",
+      "equal": true
+    }
+  ],
+  "protected_child_bytes": [
+    {
+      "path": "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+      "baseline_blob": "2d608415e5f669d9005fc0ad903f0e9e799588c9",
+      "formal_blob": "2d608415e5f669d9005fc0ad903f0e9e799588c9",
+      "baseline_sha256": "e250623b9d9d71c3a1b89e96c7f7ae2e9c9dacf617fed6750e2e760b99f88e6a",
+      "formal_sha256": "e250623b9d9d71c3a1b89e96c7f7ae2e9c9dacf617fed6750e2e760b99f88e6a",
+      "baseline_bytes": 23388,
+      "formal_bytes": 23388,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/model/generator/mot/robocasa_exact_window_local.py",
+      "baseline_blob": "911b73172cd2526bd2b8d82b4cea3e47c04d684c",
+      "formal_blob": "911b73172cd2526bd2b8d82b4cea3e47c04d684c",
+      "baseline_sha256": "fe4dcc1832c8ada2c2db935472bc10ac6097d870036e5e13162b8babe8e899aa",
+      "formal_sha256": "fe4dcc1832c8ada2c2db935472bc10ac6097d870036e5e13162b8babe8e899aa",
+      "baseline_bytes": 22091,
+      "formal_bytes": 22091,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/checkpoint/dcp.py",
+      "baseline_blob": "cb0b790e4e9c605c671d411182a66e3606d2f9aa",
+      "formal_blob": "cb0b790e4e9c605c671d411182a66e3606d2f9aa",
+      "baseline_sha256": "e3bbe253876a4b1d1e73086f556f479c9edf1318ca62ea7011f984a2ab8276d9",
+      "formal_sha256": "e3bbe253876a4b1d1e73086f556f479c9edf1318ca62ea7011f984a2ab8276d9",
+      "baseline_bytes": 82256,
+      "formal_bytes": 82256,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/__init__.py",
+      "baseline_blob": "4066f5cf6f8d0a0cebdb850e7330b87a6cca9018",
+      "formal_blob": "4066f5cf6f8d0a0cebdb850e7330b87a6cca9018",
+      "baseline_sha256": "80012a0550db83e85264eb9d338ed0937f7301925ba70017c00e520a1cacb572",
+      "formal_sha256": "80012a0550db83e85264eb9d338ed0937f7301925ba70017c00e520a1cacb572",
+      "baseline_bytes": 31210,
+      "formal_bytes": 31210,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/local_memory_grouped.py",
+      "baseline_blob": "17b22595a5a9667b598985b30b4fe2df37a1be16",
+      "formal_blob": "17b22595a5a9667b598985b30b4fe2df37a1be16",
+      "baseline_sha256": "18be72fe6d37e1487c8553e19a0c0f70e1e3f8b895d880b718a7f8f38a6cacb1",
+      "formal_sha256": "18be72fe6d37e1487c8553e19a0c0f70e1e3f8b895d880b718a7f8f38a6cacb1",
+      "baseline_bytes": 18928,
+      "formal_bytes": 18928,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/data/generator/action/utils/transforms.py",
+      "baseline_blob": "1aacafb20046d2789bbfdca8c0ac614ea97f8425",
+      "formal_blob": "1aacafb20046d2789bbfdca8c0ac614ea97f8425",
+      "baseline_sha256": "184367dc5516e2cfb590144a02f115b86fbd2363141ee4a30c38dc9c825a0bb1",
+      "formal_sha256": "184367dc5516e2cfb590144a02f115b86fbd2363141ee4a30c38dc9c825a0bb1",
+      "baseline_bytes": 39786,
+      "formal_bytes": 39786,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/data/generator/augmentors/text_tokenizer.py",
+      "baseline_blob": "289d433e7cd2d17e0011110af217d24f4d288b02",
+      "formal_blob": "289d433e7cd2d17e0011110af217d24f4d288b02",
+      "baseline_sha256": "e8d2be552b4de9004700d5294ee0a8eb088ce9361d27c0998f6786001d08137f",
+      "formal_sha256": "e8d2be552b4de9004700d5294ee0a8eb088ce9361d27c0998f6786001d08137f",
+      "baseline_bytes": 10555,
+      "formal_bytes": 10555,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/data/generator/action/utils/transform_random.py",
+      "baseline_blob": "c51a3834f4a252ba90a798b6a8ac50baf71ce140",
+      "formal_blob": "c51a3834f4a252ba90a798b6a8ac50baf71ce140",
+      "baseline_sha256": "01a9675dbfc20b5da2b29a63700db59017b9cfeb2a4a9ae53a3a3c319b821dd6",
+      "formal_sha256": "01a9675dbfc20b5da2b29a63700db59017b9cfeb2a4a9ae53a3a3c319b821dd6",
+      "baseline_bytes": 1105,
+      "formal_bytes": 1105,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/utils/generator/optimizer.py",
+      "baseline_blob": "ca6b02d21f6826627c75005ed59943bc1d98bc41",
+      "formal_blob": "ca6b02d21f6826627c75005ed59943bc1d98bc41",
+      "baseline_sha256": "a2386c0c86e4588b229422e1b9f2d23a33f16507c6290dfa2d1145012b152171",
+      "formal_sha256": "a2386c0c86e4588b229422e1b9f2d23a33f16507c6290dfa2d1145012b152171",
+      "baseline_bytes": 46422,
+      "formal_bytes": 46422,
+      "equal": true
+    },
+    {
+      "path": "examples/psm_wma_robocasa_matched_no_ttt.py",
+      "baseline_blob": "25ac0def8ba0b53fcccec3e2d74f66f3787d90bd",
+      "formal_blob": "25ac0def8ba0b53fcccec3e2d74f66f3787d90bd",
+      "baseline_sha256": "23bf06219720df878d3123aab70faea33aea58c62e12ba6fb8638884f6166c09",
+      "formal_sha256": "23bf06219720df878d3123aab70faea33aea58c62e12ba6fb8638884f6166c09",
+      "baseline_bytes": 577,
+      "formal_bytes": 577,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+      "baseline_blob": "8e9c446e986cc05fef664bba7469394da5d3c12c",
+      "formal_blob": "8e9c446e986cc05fef664bba7469394da5d3c12c",
+      "baseline_sha256": "9c20f5aab53a30be7710d8d26d5ddca670d16cebdb439262ae86fc1abd5b5f47",
+      "formal_sha256": "9c20f5aab53a30be7710d8d26d5ddca670d16cebdb439262ae86fc1abd5b5f47",
+      "baseline_bytes": 17977,
+      "formal_bytes": 17977,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/matched_no_ttt_test.py",
+      "baseline_blob": "d8f7d31fb77136e211b0440d416db1397337d802",
+      "formal_blob": "d8f7d31fb77136e211b0440d416db1397337d802",
+      "baseline_sha256": "90d24efc8967e4c8f43e943dd7fff4d38b8155e96f8bfc7fce43834d3678be5f",
+      "formal_sha256": "90d24efc8967e4c8f43e943dd7fff4d38b8155e96f8bfc7fce43834d3678be5f",
+      "baseline_bytes": 15755,
+      "formal_bytes": 15755,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py",
+      "baseline_blob": "9c38f562d2ed3a68ad54446f7a8e9d09401bf5f4",
+      "formal_blob": "9c38f562d2ed3a68ad54446f7a8e9d09401bf5f4",
+      "baseline_sha256": "7bfb364e115d02b8632d7e35673c3b1da71a8aa14d76fa4e373a7a67ce7cf680",
+      "formal_sha256": "7bfb364e115d02b8632d7e35673c3b1da71a8aa14d76fa4e373a7a67ce7cf680",
+      "baseline_bytes": 16480,
+      "formal_bytes": 16480,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py",
+      "baseline_blob": "7a023395066399433e6019e953e0abc44e0085f6",
+      "formal_blob": "7a023395066399433e6019e953e0abc44e0085f6",
+      "baseline_sha256": "11524ff5f79f5fb9ab77a8b2c1cf087c9b1a2680240d339fc429bf40eaa982df",
+      "formal_sha256": "11524ff5f79f5fb9ab77a8b2c1cf087c9b1a2680240d339fc429bf40eaa982df",
+      "baseline_bytes": 14371,
+      "formal_bytes": 14371,
+      "equal": true
+    }
+  ],
+  "protected_root_bytes": [
+    {
+      "path": "scripts/train_v3_matched_no_ttt.sh",
+      "baseline_blob": "085b54c971e99384f99fae9f19011914ddceb0c5",
+      "formal_blob": "085b54c971e99384f99fae9f19011914ddceb0c5",
+      "baseline_sha256": "6b0e2d29a6ca46f73bfa034019775d53242d1b414f88d0c33bedba0cd60b1edc",
+      "formal_sha256": "6b0e2d29a6ca46f73bfa034019775d53242d1b414f88d0c33bedba0cd60b1edc",
+      "baseline_bytes": 1744,
+      "formal_bytes": 1744,
+      "equal": true
+    },
+    {
+      "path": "scripts/train_v3_matched_no_ttt_4gpu.sh",
+      "baseline_blob": "dd786c9938826124caf6ef01b48ea7805754bb84",
+      "formal_blob": "dd786c9938826124caf6ef01b48ea7805754bb84",
+      "baseline_sha256": "eb267261eef4cd1180f9a5ea49f90297ba2f1f63b4c3188e06359eea8e974ef7",
+      "formal_sha256": "eb267261eef4cd1180f9a5ea49f90297ba2f1f63b4c3188e06359eea8e974ef7",
+      "baseline_bytes": 3621,
+      "formal_bytes": 3621,
+      "equal": true
+    },
+    {
+      "path": "scripts/serve_v3_matched_no_ttt.py",
+      "baseline_blob": "e11d963fcdf3b4c7f9fce988bab0dc85eb334455",
+      "formal_blob": "e11d963fcdf3b4c7f9fce988bab0dc85eb334455",
+      "baseline_sha256": "26e21ba3605545a001b09366d332bad594c66af4f3bc310f6bad3ebb8616eb12",
+      "formal_sha256": "26e21ba3605545a001b09366d332bad594c66af4f3bc310f6bad3ebb8616eb12",
+      "baseline_bytes": 6980,
+      "formal_bytes": 6980,
+      "equal": true
+    },
+    {
+      "path": "configs/eval/robocasa_matched_no_ttt.example.yaml",
+      "baseline_blob": "4887dfa1ae5a3cc81004dd95bbd476e8257d3b0d",
+      "formal_blob": "4887dfa1ae5a3cc81004dd95bbd476e8257d3b0d",
+      "baseline_sha256": "b3b31a01816a0a619292de71f7c1389ebd91de631bdfe2c6888d6a0183acb8e2",
+      "formal_sha256": "b3b31a01816a0a619292de71f7c1389ebd91de631bdfe2c6888d6a0183acb8e2",
+      "baseline_bytes": 461,
+      "formal_bytes": 461,
+      "equal": true
+    },
+    {
+      "path": "tools/v3/matched_no_ttt_entry_test.py",
+      "baseline_blob": "f1d9f9d134ed56bbb9808ed0d72534d4bda279a9",
+      "formal_blob": "f1d9f9d134ed56bbb9808ed0d72534d4bda279a9",
+      "baseline_sha256": "a42cd0e481ca9dff2cb037c4fa331c851943bf4c3f8e9c69e301ee489165a900",
+      "formal_sha256": "a42cd0e481ca9dff2cb037c4fa331c851943bf4c3f8e9c69e301ee489165a900",
+      "baseline_bytes": 17096,
+      "formal_bytes": 17096,
+      "equal": true
+    }
+  ],
+  "protected_subtrees": [
+    {
+      "repository": "root",
+      "path": "scripts",
+      "baseline_tree": "82fd88153403c827cdaed69d1d175be0bbbc39ca",
+      "formal_tree": "82fd88153403c827cdaed69d1d175be0bbbc39ca",
+      "equal": true
+    },
+    {
+      "repository": "root",
+      "path": "configs",
+      "baseline_tree": "1e98ac96f4ddd6090734013a80f46745dbaffb85",
+      "formal_tree": "1e98ac96f4ddd6090734013a80f46745dbaffb85",
+      "equal": true
+    },
+    {
+      "repository": "root",
+      "path": "third_party",
+      "baseline_tree": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "formal_tree": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "equal": true
+    },
+    {
+      "repository": "child",
+      "path": "cosmos_framework/model",
+      "baseline_tree": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+      "formal_tree": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+      "equal": true
+    },
+    {
+      "repository": "child",
+      "path": "cosmos_framework/checkpoint",
+      "baseline_tree": "a544d735bb95024eacca51fb3527955aad91616c",
+      "formal_tree": "a544d735bb95024eacca51fb3527955aad91616c",
+      "equal": true
+    },
+    {
+      "repository": "child",
+      "path": "cosmos_framework/callbacks",
+      "baseline_tree": "babfa872c5431dedf2b1ffb40070f581815d023c",
+      "formal_tree": "babfa872c5431dedf2b1ffb40070f581815d023c",
+      "equal": true
+    },
+    {
+      "repository": "child",
+      "path": "cosmos_framework/configs",
+      "baseline_tree": "e24a02df6fa009c6f206bccb18925d9d0facf6aa",
+      "formal_tree": "e24a02df6fa009c6f206bccb18925d9d0facf6aa",
+      "equal": true
+    }
+  ],
+  "old_resume_test_functions": [
+    {
+      "scope": "test_four_logical_ranks_full_cpu_state_100_resume101_500",
+      "baseline_ast_sha256": "7ebf3489cf037812d17fad37766b8e4fd624c26fc4f74bde8fc3cc9e1fbddc93",
+      "formal_ast_sha256": "7ebf3489cf037812d17fad37766b8e4fd624c26fc4f74bde8fc3cc9e1fbddc93",
+      "equal": true,
+      "baseline_assertion_ast_sha256": [
+        "49eed2e987786dafd842a23d9efefb3c0a00040e4fadd6808445ba590bb0641b",
+        "958d2ee419129329e01e05325788ac5078c12889f8fe40aef3cecdea0284b8bf",
+        "1da291216a99c8dc31bedabbf5172aece67989c58725bcbd654e83ed40eba26e",
+        "30565dfbba0205edb47dc803d244496f85582464e8de462059357f115d16da3c",
+        "0c824e404c8f07930cda133673f68c11cdb421b073ff0fd10bf10989643cd269"
+      ],
+      "formal_assertion_ast_sha256": [
+        "49eed2e987786dafd842a23d9efefb3c0a00040e4fadd6808445ba590bb0641b",
+        "958d2ee419129329e01e05325788ac5078c12889f8fe40aef3cecdea0284b8bf",
+        "1da291216a99c8dc31bedabbf5172aece67989c58725bcbd654e83ed40eba26e",
+        "30565dfbba0205edb47dc803d244496f85582464e8de462059357f115d16da3c",
+        "0c824e404c8f07930cda133673f68c11cdb421b073ff0fd10bf10989643cd269"
+      ]
+    },
+    {
+      "scope": "test_worker_count_changes_resume_same_committed_state_without_changing_training",
+      "baseline_ast_sha256": "eaea8de254ea74f774d429d1d6c42f13c9a35d21faf3121bbd585384f0d80710",
+      "formal_ast_sha256": "eaea8de254ea74f774d429d1d6c42f13c9a35d21faf3121bbd585384f0d80710",
+      "equal": true,
+      "baseline_assertion_ast_sha256": [
+        "49eed2e987786dafd842a23d9efefb3c0a00040e4fadd6808445ba590bb0641b",
+        "cbb588377ed93201f0926894e8dc181a4df753be311a2db031de0d63be44dc16",
+        "661fd7bcfb3587487de223de6ba88a03e8c3d14a8c2e915a576debd4f8aa88a4",
+        "ebe6809e620c2e9fba389c82d9f3bd717ca09ad5781126cbf16908ba0f3ca0a5",
+        "4349a3391ec83ca04e53147c0337785590dd41d362245f3b7ef74db100baa6d0",
+        "2c03db84721d12654de003ecb3d0bce2719ad01a7498c1fbf22dc36a29197683",
+        "c2a1f1949ba8cc44933769c02f6f4bec6f96e4267b3395d91b87f9c41122e4bf",
+        "8a884fc026fd2401b9ab0a0d9ec320e83c4ac9944c19cf1827903c7aff5f7025"
+      ],
+      "formal_assertion_ast_sha256": [
+        "49eed2e987786dafd842a23d9efefb3c0a00040e4fadd6808445ba590bb0641b",
+        "cbb588377ed93201f0926894e8dc181a4df753be311a2db031de0d63be44dc16",
+        "661fd7bcfb3587487de223de6ba88a03e8c3d14a8c2e915a576debd4f8aa88a4",
+        "ebe6809e620c2e9fba389c82d9f3bd717ca09ad5781126cbf16908ba0f3ca0a5",
+        "4349a3391ec83ca04e53147c0337785590dd41d362245f3b7ef74db100baa6d0",
+        "2c03db84721d12654de003ecb3d0bce2719ad01a7498c1fbf22dc36a29197683",
+        "c2a1f1949ba8cc44933769c02f6f4bec6f96e4267b3395d91b87f9c41122e4bf",
+        "8a884fc026fd2401b9ab0a0d9ec320e83c4ac9944c19cf1827903c7aff5f7025"
+      ]
+    },
+    {
+      "scope": "test_wrong_checkpoint_profile_never_starts_workers_or_native_model",
+      "baseline_ast_sha256": "44374f7f3530c94c5ab96a064ac406b6887f9492a8d6f62062d6a10115185b56",
+      "formal_ast_sha256": "44374f7f3530c94c5ab96a064ac406b6887f9492a8d6f62062d6a10115185b56",
+      "equal": true,
+      "baseline_assertion_ast_sha256": [
+        "b82dbf0caa4cfeceea835f6c9bc91c21aec088455167dcc4515b37b8b962f97c"
+      ],
+      "formal_assertion_ast_sha256": [
+        "b82dbf0caa4cfeceea835f6c9bc91c21aec088455167dcc4515b37b8b962f97c"
+      ]
+    }
+  ],
+  "old_resume_test_file": {
+    "path": "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+    "baseline_blob": "84a18ecae529793cd6b628d681feb2b42b6b2025",
+    "formal_blob": "a357485140d465a99faf080a92c94d42ec568d5b",
+    "baseline_sha256": "ab81f59525622a464dcd5ea5d221e85004c44dba49698014387057b4c3cd67bb",
+    "formal_sha256": "27ad8f7535c361b5522fb41d1988b6703fab567eb6b12deef851d22953f08de5",
+    "baseline_bytes": 10623,
+    "formal_bytes": 11018,
+    "equal": false,
+    "byte_difference_expected": "exact fixture backend injection plus formatter-only whitespace; normalized whole-module AST checked below"
+  },
+  "old_resume_fixture_normalization": {
+    "removed_statement": "monkeypatch.setattr(trainer_module, 'NoTTTAsyncLoader', lambda producer, profile, planner: loader_module.NoTTTCpuLoader(producer, profile))",
+    "removed_count": 1
+  },
+  "old_resume_normalized_whole_module": {
+    "scope": "old_resume_module_excluding_exact_fixture_injection",
+    "baseline_ast_sha256": "7dbd13c920951942398445104817a18826342d708b5cc7d69c931dfec29e4f69",
+    "formal_ast_sha256": "7dbd13c920951942398445104817a18826342d708b5cc7d69c931dfec29e4f69",
+    "equal": true
+  },
+  "corrected_old_fixture_modules": [
+    {
+      "path": "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+      "source_bytes": {
+        "path": "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "baseline_blob": "7b9dfda1d5ed3c35e0fd2da293fa84aea292aa55",
+        "formal_blob": "c0fc5756b19fc96e788b5f6384cf4b638332ba85",
+        "baseline_sha256": "96acc954d1d3c01a3102cd5c21699393a326ae5db68b4648779ad337342c3be1",
+        "formal_sha256": "a97a68c80e3edb1ed4c9e7f2a7cde7e07c23aafbb328183e7896b749151f799b",
+        "baseline_bytes": 23212,
+        "formal_bytes": 24040,
+        "equal": false
+      },
+      "test_functions": [
+        {
+          "test_function": "test_overlay_only_removes_local_and_keeps_data_loss_optimizer_schedule",
+          "baseline_full_function_ast_sha256": "b1ff58f434b79872ef2809f4b4af62fc8bde77bb8c30ebbb27ec09348112b0ca",
+          "formal_full_function_ast_sha256": "b1ff58f434b79872ef2809f4b4af62fc8bde77bb8c30ebbb27ec09348112b0ca",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "99fca49f6425199ef8b6ccfd4cd4417bf301e4f050c0bb31c589bb6836d6aaf6",
+            "96a4ad668d2e33db01f16f614019d4467f1eddd41ac9d38078a8c79370736bc3",
+            "647faf98584c66a238b784a877f3e1383a690fa5942819be67a0130cfc0f4379",
+            "65e0cdf958d2d7f497d917bcb839a785bd864eaafbf6a21413236e3662caa4e7",
+            "569e9202bfd917a0fb59f1d26a8fb0121d68d6b03dc223eb1c8ed1287bff34d4",
+            "aafb0c5d721ded104ad53181deb2e5d86e2f819d1bf66fe35997f712bee689ba",
+            "db0f2c11a080e6ab7d352fb4d8669fae54561ce0c7b35c05d4d87a3b880b7275",
+            "06000806e951c0af1545dfc6ea31dcf30b97cf3910406588945709cff839c70b",
+            "83003489cc712f7e911426cfbfd00f6dd3e4686d96a516cfa2913240be388a30",
+            "61307d0c42e9da8a8da67b7f505b8af36025b8deb5e6b826a9188ae42fa515d0",
+            "12685c4ede4f50905a9aa5e9cb9db1d8ecc3799f9824ebb02e29d27723702648",
+            "1273922c4952bc6b3c0d5a442a9c9fb61790ab0acf624bbaabefb5e82c56d075",
+            "342ce4f21ce97b99b226b616beccd62181d65d57e8bcd4598f2f2b67b05b968d",
+            "cabbb2cdd9d1bbc23c21c8f8dff006fe5f65cf57af5351d43fa3565c67b7ad44",
+            "8d4b1abcbe5d06f98e8a6d2eeadf8d8e0558e3fc671d6bb896b445078831809f"
+          ],
+          "formal_assertion_ast_sha256": [
+            "99fca49f6425199ef8b6ccfd4cd4417bf301e4f050c0bb31c589bb6836d6aaf6",
+            "96a4ad668d2e33db01f16f614019d4467f1eddd41ac9d38078a8c79370736bc3",
+            "647faf98584c66a238b784a877f3e1383a690fa5942819be67a0130cfc0f4379",
+            "65e0cdf958d2d7f497d917bcb839a785bd864eaafbf6a21413236e3662caa4e7",
+            "569e9202bfd917a0fb59f1d26a8fb0121d68d6b03dc223eb1c8ed1287bff34d4",
+            "aafb0c5d721ded104ad53181deb2e5d86e2f819d1bf66fe35997f712bee689ba",
+            "db0f2c11a080e6ab7d352fb4d8669fae54561ce0c7b35c05d4d87a3b880b7275",
+            "06000806e951c0af1545dfc6ea31dcf30b97cf3910406588945709cff839c70b",
+            "83003489cc712f7e911426cfbfd00f6dd3e4686d96a516cfa2913240be388a30",
+            "61307d0c42e9da8a8da67b7f505b8af36025b8deb5e6b826a9188ae42fa515d0",
+            "12685c4ede4f50905a9aa5e9cb9db1d8ecc3799f9824ebb02e29d27723702648",
+            "1273922c4952bc6b3c0d5a442a9c9fb61790ab0acf624bbaabefb5e82c56d075",
+            "342ce4f21ce97b99b226b616beccd62181d65d57e8bcd4598f2f2b67b05b968d",
+            "cabbb2cdd9d1bbc23c21c8f8dff006fe5f65cf57af5351d43fa3565c67b7ad44",
+            "8d4b1abcbe5d06f98e8a6d2eeadf8d8e0558e3fc671d6bb896b445078831809f"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_digest_separates_no_ttt_but_preserves_legacy_identity_when_absent",
+          "baseline_full_function_ast_sha256": "c48ba5635bbf40b8eab5cf8bf1ee73dfdc87b87ed193302801cd9f4be47dafd3",
+          "formal_full_function_ast_sha256": "c48ba5635bbf40b8eab5cf8bf1ee73dfdc87b87ed193302801cd9f4be47dafd3",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "40baec1d5195cd4b89bea9a1c9d7ba9cb815ba71e8a3100014e5fc50fe0428c1",
+            "842363bc5946dd671b55489fafb7ac55a12cb4e0159b4e030443edd86cd45d90",
+            "585c9d58fce715c30306dc74b824b08a42808112d92c880b1591d9c6fa3b2a88"
+          ],
+          "formal_assertion_ast_sha256": [
+            "40baec1d5195cd4b89bea9a1c9d7ba9cb815ba71e8a3100014e5fc50fe0428c1",
+            "842363bc5946dd671b55489fafb7ac55a12cb4e0159b4e030443edd86cd45d90",
+            "585c9d58fce715c30306dc74b824b08a42808112d92c880b1591d9c6fa3b2a88"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_all_worker_counts_share_strict_training_and_config_identity",
+          "baseline_full_function_ast_sha256": "9a5f14bd48cdc66fd03c8ccae639d657e3cb86c6ea74dfca00b1b371d3f7f4e6",
+          "formal_full_function_ast_sha256": "0223f4f6a3235c0d9dc3be8d233aaacf48313f01d1385a36640c55f3e0ba3f22",
+          "full_function_ast_equal_before_normalization": false,
+          "baseline_assertion_ast_sha256": [
+            "0e2479222d81723a5151ade9ef269168f6f6cb1b423615d95f6e3fee2cf75105",
+            "a49fa3da44e81b6202c9884385d497871fdb3fe7fef2085cfe8eed655fd7dafa",
+            "22af242b1bd0721b7651f78826ef6159cfd069a8c22cbba294a8d87f51473a0d",
+            "ebc234c22d51656eb40fb91d20ba6407b6689ba6187f880e7ff60e42ab8cb432"
+          ],
+          "formal_assertion_ast_sha256": [
+            "0e2479222d81723a5151ade9ef269168f6f6cb1b423615d95f6e3fee2cf75105",
+            "a49fa3da44e81b6202c9884385d497871fdb3fe7fef2085cfe8eed655fd7dafa",
+            "22af242b1bd0721b7651f78826ef6159cfd069a8c22cbba294a8d87f51473a0d",
+            "ebc234c22d51656eb40fb91d20ba6407b6689ba6187f880e7ff60e42ab8cb432"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_no_ttt_namespace_resume_rejects_mode_switch_without_touching_assets",
+          "baseline_full_function_ast_sha256": "05a9fea685463ae778b3ab56f4e83fc75fa11121190339b1b3a992f8906838a0",
+          "formal_full_function_ast_sha256": "05a9fea685463ae778b3ab56f4e83fc75fa11121190339b1b3a992f8906838a0",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "5f65f89dcf4b3dba2e5ff5b8a4f2b75aebaed3bc3ef6fb0b1efbdd43caa6c040"
+          ],
+          "formal_assertion_ast_sha256": [
+            "5f65f89dcf4b3dba2e5ff5b8a4f2b75aebaed3bc3ef6fb0b1efbdd43caa6c040"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace",
+          "baseline_full_function_ast_sha256": "261adfdbcecb135cc99ee948c627fcda294c3503cc6b04d717e134519a833f5a",
+          "formal_full_function_ast_sha256": "261adfdbcecb135cc99ee948c627fcda294c3503cc6b04d717e134519a833f5a",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "0fc6cd6af3ea8f0561d7a74e5ca7e707efed773515d5dde8152722689c2fdc9d"
+          ],
+          "formal_assertion_ast_sha256": [
+            "0fc6cd6af3ea8f0561d7a74e5ca7e707efed773515d5dde8152722689c2fdc9d"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_g1_owner_override_cannot_enable_no_ttt",
+          "baseline_full_function_ast_sha256": "34fa8dcc6e09a0eeda8306fca5caaa00b50e604d7f2935215451885c2b1c061a",
+          "formal_full_function_ast_sha256": "34fa8dcc6e09a0eeda8306fca5caaa00b50e604d7f2935215451885c2b1c061a",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [],
+          "formal_assertion_ast_sha256": [],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_mismatched_no_ttt_geometry_rejected_before_runtime",
+          "baseline_full_function_ast_sha256": "ac5fe011dc64e802ecea4a0deeebda80095211f71722678ebe06a7151174a413",
+          "formal_full_function_ast_sha256": "ac5fe011dc64e802ecea4a0deeebda80095211f71722678ebe06a7151174a413",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [],
+          "formal_assertion_ast_sha256": [],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_both_matched_no_ttt_profiles_pass_geometry_gate_before_real_assets",
+          "baseline_full_function_ast_sha256": "a6c506dfa4c89a319a2ebddc144d91883d320f69be16100e6075b3b350d2332a",
+          "formal_full_function_ast_sha256": "a6c506dfa4c89a319a2ebddc144d91883d320f69be16100e6075b3b350d2332a",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [],
+          "formal_assertion_ast_sha256": [],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_no_ttt_rejects_unreviewed_world_ga_pairs_before_runtime",
+          "baseline_full_function_ast_sha256": "7b867f3e43236bdeab06bbe2461fda9e6f7427a855a6d5cdcda7d30bc1e564d1",
+          "formal_full_function_ast_sha256": "7b867f3e43236bdeab06bbe2461fda9e6f7427a855a6d5cdcda7d30bc1e564d1",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [],
+          "formal_assertion_ast_sha256": [],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_nottt4_root_and_child_git_checks_are_fully_skipped_on_preflight",
+          "baseline_full_function_ast_sha256": "245d89a130434ed783831537d9ca298d98a0cf31b8eb28e8767d977c2ceb2df6",
+          "formal_full_function_ast_sha256": "245d89a130434ed783831537d9ca298d98a0cf31b8eb28e8767d977c2ceb2df6",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "2f40d005856b5d1ba62a0581cb2bc2efc034ede0b71cd1cf981c75bbede6d93e",
+            "6a857104900df0ad1ad7f0520b93978456a32cfdeba4a0371f4fa7d23e034a27",
+            "9a66cb1808dce59459b7a9aeda7e32af06960a4bf3a06e35b7abafb475f3dcfd",
+            "26973850a6ad8ef585dee0652050168b96d9a2151e90eed7862d17258cb0c631"
+          ],
+          "formal_assertion_ast_sha256": [
+            "2f40d005856b5d1ba62a0581cb2bc2efc034ede0b71cd1cf981c75bbede6d93e",
+            "6a857104900df0ad1ad7f0520b93978456a32cfdeba4a0371f4fa7d23e034a27",
+            "9a66cb1808dce59459b7a9aeda7e32af06960a4bf3a06e35b7abafb475f3dcfd",
+            "26973850a6ad8ef585dee0652050168b96d9a2151e90eed7862d17258cb0c631"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_nottt4_source_check_bypass_never_leaks_to_other_jobs_or_profiles",
+          "baseline_full_function_ast_sha256": "ee55039b6d3f451cb3948adf31ed809b2361488a01a0624ced0915bfb124d58d",
+          "formal_full_function_ast_sha256": "ee55039b6d3f451cb3948adf31ed809b2361488a01a0624ced0915bfb124d58d",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "450e8495d14f8b914ad1157ecf50c4cd1f652ba1891d2a23deb37ec256f14aa0",
+            "e20174f4a4461d16a6772b908ff2dcac3243f9e7fcf8615003a77017b247a677",
+            "6f9ffb602ba66589882a4fea954901689cc1381034bb786353c0d5b8eae41cce"
+          ],
+          "formal_assertion_ast_sha256": [
+            "450e8495d14f8b914ad1157ecf50c4cd1f652ba1891d2a23deb37ec256f14aa0",
+            "e20174f4a4461d16a6772b908ff2dcac3243f9e7fcf8615003a77017b247a677",
+            "6f9ffb602ba66589882a4fea954901689cc1381034bb786353c0d5b8eae41cce"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_other_nottt4_job_retains_strict_identity_validation",
+          "baseline_full_function_ast_sha256": "aed16229795a6b02d14528ecf56b2051020983e792f73a793357fa8ba742f7dd",
+          "formal_full_function_ast_sha256": "aed16229795a6b02d14528ecf56b2051020983e792f73a793357fa8ba742f7dd",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "c2e629c58d2351a4dceb480ec7bbd9a1327cdc724e29e0e295f1d618e519742b",
+            "4114e102387e6672243f9609d18c3ef8b7660d2879e842f23ad51b3a03c95cc2"
+          ],
+          "formal_assertion_ast_sha256": [
+            "c2e629c58d2351a4dceb480ec7bbd9a1327cdc724e29e0e295f1d618e519742b",
+            "4114e102387e6672243f9609d18c3ef8b7660d2879e842f23ad51b3a03c95cc2"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_existing_formal_nottt4_resume_skips_job_identity_without_rewriting_checkpoint",
+          "baseline_full_function_ast_sha256": "fb6baf33f37f15f8abca22afff098b368035ba39f05336e1ce98f17cd91c3657",
+          "formal_full_function_ast_sha256": "fb6baf33f37f15f8abca22afff098b368035ba39f05336e1ce98f17cd91c3657",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "7f5dbfd8ad67731ae625b285ec5297a929d904795fef1e2c19e248518cf84a87",
+            "77b83d8005ddc2258c97cdb448bb70de0f01eb3a46b65fe4bfd9c19f3e3e489e",
+            "4b35710fd9f4d8fe91dfc78aa030cba66019e0a0ddd1d6ec299269ac9a3942ed",
+            "f8bacb51b78160287a54469f954b6e25e7813614b6c2fa43407e88ad977eb014",
+            "8c8b551a62585d2cc6c465dd9e7242230e074f4f7d34025a91a16a96f42a856b",
+            "ee1bb5f5752c8791ec73c8eca0fece4fe6c749d65003a43b4d6be6d5ef7f0020"
+          ],
+          "formal_assertion_ast_sha256": [
+            "7f5dbfd8ad67731ae625b285ec5297a929d904795fef1e2c19e248518cf84a87",
+            "77b83d8005ddc2258c97cdb448bb70de0f01eb3a46b65fe4bfd9c19f3e3e489e",
+            "4b35710fd9f4d8fe91dfc78aa030cba66019e0a0ddd1d6ec299269ac9a3942ed",
+            "f8bacb51b78160287a54469f954b6e25e7813614b6c2fa43407e88ad977eb014",
+            "8c8b551a62585d2cc6c465dd9e7242230e074f4f7d34025a91a16a96f42a856b",
+            "ee1bb5f5752c8791ec73c8eca0fece4fe6c749d65003a43b4d6be6d5ef7f0020"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_formal_nottt4_resume_only_requires_readable_frozen_semantic",
+          "baseline_full_function_ast_sha256": "2b361358306d1800a6d29b51e7b147662f543091fa3765a4e6fa2565984a3fd7",
+          "formal_full_function_ast_sha256": "2b361358306d1800a6d29b51e7b147662f543091fa3765a4e6fa2565984a3fd7",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "ccec0aa1dfdd4d2e75331c75f7fd331d8ec3c43d09facf9c9376b1d98e6f3aa2"
+          ],
+          "formal_assertion_ast_sha256": [
+            "ccec0aa1dfdd4d2e75331c75f7fd331d8ec3c43d09facf9c9376b1d98e6f3aa2"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_four_gpu_ga4_overlay_keeps_generation_optimizer_and_2048_global_budget",
+          "baseline_full_function_ast_sha256": "1c7a2f9de6672df77487a0bdc2471dfb436d380453984a681fb33a521ab3df96",
+          "formal_full_function_ast_sha256": "1c7a2f9de6672df77487a0bdc2471dfb436d380453984a681fb33a521ab3df96",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "6554bb376875c5cf03ac03148db300dc5c48ee5caf9eb12c8870c194ab327c87",
+            "fa6c707d948c90d759f252bb29daffedf95bae4da0c7c6765887044beb669077",
+            "49f184000a6a643080d76bd3056ac419c93e970c980584708dc25956391ce3f6",
+            "fc38957ab43d85a079bb61a9ec6d19272f13c19209044a2bf8a07cba463b97ec",
+            "acf71a103135eca8d5e3de5792ab6793e609fc80db272789f677fb0dbeb76dfc",
+            "47fccea889222db97796e84574b12853e8f309b4056315d05e153da843162fec",
+            "0e70b648f074a32d4b1acc06651431a7a41a7d93c68584c85cc6a1d8ed88db12",
+            "91dace2cc4ae3e6839f6c2777b4b6ef703c6e95089acf47dda9afe4d5a416043",
+            "400a5dd7268acb2165bd4c4671941b302eb79f180b24bc4e629bfcf4850751ca",
+            "e106ecbfd0f897e41cb361496de2f429d3bb5c580c63003ee8a85ce6b249dcc1",
+            "dad876cfe1c05ffadc558b876806826bdfac545004b961509ddff7dd746316ed",
+            "947aaaca1477f9b1c38b0d9b448983e8d9f7108f09629ddc440efa10bd6a56be",
+            "aa61b2e18908372579cb48f31105911730b2f1c5c4e2a0356a204d2da0c4b6bb"
+          ],
+          "formal_assertion_ast_sha256": [
+            "6554bb376875c5cf03ac03148db300dc5c48ee5caf9eb12c8870c194ab327c87",
+            "fa6c707d948c90d759f252bb29daffedf95bae4da0c7c6765887044beb669077",
+            "49f184000a6a643080d76bd3056ac419c93e970c980584708dc25956391ce3f6",
+            "fc38957ab43d85a079bb61a9ec6d19272f13c19209044a2bf8a07cba463b97ec",
+            "acf71a103135eca8d5e3de5792ab6793e609fc80db272789f677fb0dbeb76dfc",
+            "47fccea889222db97796e84574b12853e8f309b4056315d05e153da843162fec",
+            "0e70b648f074a32d4b1acc06651431a7a41a7d93c68584c85cc6a1d8ed88db12",
+            "91dace2cc4ae3e6839f6c2777b4b6ef703c6e95089acf47dda9afe4d5a416043",
+            "400a5dd7268acb2165bd4c4671941b302eb79f180b24bc4e629bfcf4850751ca",
+            "e106ecbfd0f897e41cb361496de2f429d3bb5c580c63003ee8a85ce6b249dcc1",
+            "dad876cfe1c05ffadc558b876806826bdfac545004b961509ddff7dd746316ed",
+            "947aaaca1477f9b1c38b0d9b448983e8d9f7108f09629ddc440efa10bd6a56be",
+            "aa61b2e18908372579cb48f31105911730b2f1c5c4e2a0356a204d2da0c4b6bb"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_missing_index_retains_original_value_error",
+          "baseline_full_function_ast_sha256": "2292c0a171b63810f3cec42e068157357c3ff40aa99da55eed227b14fa41b847",
+          "formal_full_function_ast_sha256": "2292c0a171b63810f3cec42e068157357c3ff40aa99da55eed227b14fa41b847",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [],
+          "formal_assertion_ast_sha256": [],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_optimizer_inventory_generation_only_and_frozen_understanding",
+          "baseline_full_function_ast_sha256": "1503dbd5e3405baed5d3235e9df2cc48b44b80eb0bfca89ffec0235cc640dc6c",
+          "formal_full_function_ast_sha256": "1503dbd5e3405baed5d3235e9df2cc48b44b80eb0bfca89ffec0235cc640dc6c",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "23536671ab6512fe23d90975be170c994d0452e3b1e06719eb0cdb4b15eeb0b3",
+            "f6b469485c987c9497d8656f81d7c45e37519df59fb06e21cc78617257bca7de"
+          ],
+          "formal_assertion_ast_sha256": [
+            "23536671ab6512fe23d90975be170c994d0452e3b1e06719eb0cdb4b15eeb0b3",
+            "f6b469485c987c9497d8656f81d7c45e37519df59fb06e21cc78617257bca7de"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_no_ttt_metadata_describes_real_producer_and_no_fast_state",
+          "baseline_full_function_ast_sha256": "d7f859eb55ee08cd243f9ac455b8b340d059bc3b3a08decb7ae2f4d45045d656",
+          "formal_full_function_ast_sha256": "d7f859eb55ee08cd243f9ac455b8b340d059bc3b3a08decb7ae2f4d45045d656",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "fa8c60fd804b623a6f49f85c97c96be07f9a1960f05cd02b10fb592b11d7d81e",
+            "60bcbd7c613ff501022f4200b519559b736a9f1eb4b2c6005607635703e8e365",
+            "a85b78d69e6e511048a9ee1e7ec927cf63060a16eaf784ed8a5aa3bf04e784bb"
+          ],
+          "formal_assertion_ast_sha256": [
+            "fa8c60fd804b623a6f49f85c97c96be07f9a1960f05cd02b10fb592b11d7d81e",
+            "60bcbd7c613ff501022f4200b519559b736a9f1eb4b2c6005607635703e8e365",
+            "a85b78d69e6e511048a9ee1e7ec927cf63060a16eaf784ed8a5aa3bf04e784bb"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_real_composed_no_ttt_config_yaml_pickle_and_semantic_identity",
+          "baseline_full_function_ast_sha256": "065b9b64081863db8c1334453cd909b898a309cd17c90c0fbfe84d30925a31d3",
+          "formal_full_function_ast_sha256": "065b9b64081863db8c1334453cd909b898a309cd17c90c0fbfe84d30925a31d3",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "c7537b55aa2c7bf1b5093e95701d463ad2610e6455f708f8e535904b8d525f20",
+            "c6f8ef86efede259fad804ad2f18518261f47c32afbc5bc52ee072e6ef4b8911",
+            "3f5d22ca95311c381273d29bfefc2a8fee45ad67c46aa38188546640a53f11bd",
+            "02e584d2200a8f0da037e6ec000ca181268ecd16397aebb751081207a1d94606",
+            "77f1a563f08b39432ceb82aeecbe572ebb803a4be90978e09a1f2b8241893e73",
+            "95abbf6fffec48c63a2a1be5f4d8ffb27927b95935a0e67868218ccda682fc61",
+            "47690bcf911a29b214424d1e9bb7bb17ae4498f834eba5964241dddd692ac44b",
+            "a57ef16640a6b7d628ce9e70e37099f87e5d112f03b22863bdb1a564fcf7a050",
+            "0dc753bb76f0cef2d31ff74d9e8df5d5782a56b03128d3309ce883669ce3b295"
+          ],
+          "formal_assertion_ast_sha256": [
+            "c7537b55aa2c7bf1b5093e95701d463ad2610e6455f708f8e535904b8d525f20",
+            "c6f8ef86efede259fad804ad2f18518261f47c32afbc5bc52ee072e6ef4b8911",
+            "3f5d22ca95311c381273d29bfefc2a8fee45ad67c46aa38188546640a53f11bd",
+            "02e584d2200a8f0da037e6ec000ca181268ecd16397aebb751081207a1d94606",
+            "77f1a563f08b39432ceb82aeecbe572ebb803a4be90978e09a1f2b8241893e73",
+            "95abbf6fffec48c63a2a1be5f4d8ffb27927b95935a0e67868218ccda682fc61",
+            "47690bcf911a29b214424d1e9bb7bb17ae4498f834eba5964241dddd692ac44b",
+            "a57ef16640a6b7d628ce9e70e37099f87e5d112f03b22863bdb1a564fcf7a050",
+            "0dc753bb76f0cef2d31ff74d9e8df5d5782a56b03128d3309ce883669ce3b295"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_no_ttt_preflight_keeps_official_droid_gate_before_any_data_or_model",
+          "baseline_full_function_ast_sha256": "bcac900abcb831b0de140868ffded6fa17a784f1e2de8605eaaf6a2bc940240e",
+          "formal_full_function_ast_sha256": "bcac900abcb831b0de140868ffded6fa17a784f1e2de8605eaaf6a2bc940240e",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "1aef23862e4531d6a209d678af08dd0743add9e09ff04f394200d0a587f812f8",
+            "26973850a6ad8ef585dee0652050168b96d9a2151e90eed7862d17258cb0c631"
+          ],
+          "formal_assertion_ast_sha256": [
+            "1aef23862e4531d6a209d678af08dd0743add9e09ff04f394200d0a587f812f8",
+            "26973850a6ad8ef585dee0652050168b96d9a2151e90eed7862d17258cb0c631"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        }
+      ],
+      "assertion_count_entire_module": 69,
+      "all_old_assertion_ast_equal": true,
+      "all_untouched_function_ast_equal": true,
+      "normalization": {
+        "fixture_modified_test_functions": [
+          "test_all_worker_counts_share_strict_training_and_config_identity"
+        ],
+        "removed_exact_import": "from dataclasses import make_dataclass",
+        "removed_exact_helper": "def _structured_identity_fixture(value):\n    \"\"\"Use supported structured config records; never relax production identity.\"\"\"\n    if isinstance(value, SimpleNamespace):\n        values = {key: _structured_identity_fixture(item) for key, item in vars(value).items()}\n        record = make_dataclass('IdentityConfigFixture', [(key, object) for key in values])\n        return record(**values)\n    if isinstance(value, dict):\n        return {key: _structured_identity_fixture(item) for key, item in value.items()}\n    if isinstance(value, (list, tuple)):\n        return type(value)((_structured_identity_fixture(item) for item in value))\n    return value",
+        "removed_helper_ast_sha256": "9cefeea925ce141193a897c57668d3b007a98a353b8a7fe2dd2d8024e5bb91cf",
+        "removed_exact_fixture_statements": [
+          "config = _structured_identity_fixture(config)",
+          "args.dataset_index_root.mkdir(parents=True)",
+          "(args.dataset_index_root / 'receipt.json').write_text('{}')"
+        ],
+        "assertions_modified": false
+      },
+      "normalized_whole_module": {
+        "scope": "whole_module_after_exact_fixture_normalization:examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "baseline_ast_sha256": "752d5c53cf33d794b8fd1c11c82d5bf026480075cb54852a175199e658fa0dba",
+        "formal_ast_sha256": "752d5c53cf33d794b8fd1c11c82d5bf026480075cb54852a175199e658fa0dba",
+        "equal": true
+      }
+    },
+    {
+      "path": "tools/v3/no_ttt_workers_entry_test.py",
+      "source_bytes": {
+        "path": "tools/v3/no_ttt_workers_entry_test.py",
+        "baseline_blob": "07229550e0b0e5b8ee56d74847ac2291843867eb",
+        "formal_blob": "983a95a8294029b52f8cdc2e9f609854f3004630",
+        "baseline_sha256": "013159aa962ea6fed26286097e397e591a24186ad1bb1a669f2bb08f1d3a4778",
+        "formal_sha256": "0de56ee401729279c1d417c2f79a830a0db822ee879b8c2285bfe899318ecf45",
+        "baseline_bytes": 7836,
+        "formal_bytes": 8618,
+        "equal": false
+      },
+      "test_functions": [
+        {
+          "test_function": "test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher",
+          "baseline_full_function_ast_sha256": "96bbd2ee46fe65a57c42be58d0514394deb86bc63e85c4e9c53e8cf22fd7e374",
+          "formal_full_function_ast_sha256": "96bbd2ee46fe65a57c42be58d0514394deb86bc63e85c4e9c53e8cf22fd7e374",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "9980143231298ab7b17e4ef08a8fce22208b85fb300f1bb38f9f61852e6d018a",
+            "28e7a361f041b2d90b3381432920d442f099212a4c7ef09283d340a96cccb2ef",
+            "c1d97ed83056ef4843ace61c3c3a9ead48fd262a609fd9ae047db581bae0c728",
+            "b117de3538feefec36c431087d3da899deb37e5d13110f6fd5214c03437f6f27",
+            "81c18c0f928bb139d73b34a57c61731bf1dcbe8dca91d758fef154e8075f4bbc",
+            "26c566a4d4a8c9369df200f50c883b5ebb9d780a45d2ca651219d371cb662471",
+            "6c2dc106e09bae8b2d4bbea20ab143a0052496283d1bc6b36de8310bc589aec3",
+            "117f88f7e04cf1ed5e7765afe84e373394a52b672aff5d4814afe1fe6b890e39"
+          ],
+          "formal_assertion_ast_sha256": [
+            "9980143231298ab7b17e4ef08a8fce22208b85fb300f1bb38f9f61852e6d018a",
+            "28e7a361f041b2d90b3381432920d442f099212a4c7ef09283d340a96cccb2ef",
+            "c1d97ed83056ef4843ace61c3c3a9ead48fd262a609fd9ae047db581bae0c728",
+            "b117de3538feefec36c431087d3da899deb37e5d13110f6fd5214c03437f6f27",
+            "81c18c0f928bb139d73b34a57c61731bf1dcbe8dca91d758fef154e8075f4bbc",
+            "26c566a4d4a8c9369df200f50c883b5ebb9d780a45d2ca651219d371cb662471",
+            "6c2dc106e09bae8b2d4bbea20ab143a0052496283d1bc6b36de8310bc589aec3",
+            "117f88f7e04cf1ed5e7765afe84e373394a52b672aff5d4814afe1fe6b890e39"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_invalid_loader_or_non_nott_job_options_rejected_before_python",
+          "baseline_full_function_ast_sha256": "a5323865f9547fc1a904cf1586d30cd12090e0d92ae85e103dce9549513b5bba",
+          "formal_full_function_ast_sha256": "a5323865f9547fc1a904cf1586d30cd12090e0d92ae85e103dce9549513b5bba",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "b05fd5e0ecaa4e8f4a72914291100297af207c160ed80f6688926217ea46bc34"
+          ],
+          "formal_assertion_ast_sha256": [
+            "b05fd5e0ecaa4e8f4a72914291100297af207c160ed80f6688926217ea46bc34"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_semantics",
+          "baseline_full_function_ast_sha256": "69e17b5734d8b8469287e03e6b2334dfd72b2a4d5d1cb2133e622441897f1e29",
+          "formal_full_function_ast_sha256": "b235cad8b9903246dc1a89ccd8a48057f84fee5eac95f2f2c6796492a5d0e77b",
+          "full_function_ast_equal_before_normalization": false,
+          "baseline_assertion_ast_sha256": [
+            "81c4478bc77745ce15102988485c5603000e37546fc47289489cb186391b8bed",
+            "e04559f43718c21125ecbe8028cdbb09157cac226592cc13672dcd27b5a01056",
+            "9bb87aac15cf37700de8d06bd83a2f53600362147619cec59d7001c1d58b56c3",
+            "7a168e3ba48fd1c6681c626328d3b48b593ce625e07da2fdfae186af2a0938c3"
+          ],
+          "formal_assertion_ast_sha256": [
+            "81c4478bc77745ce15102988485c5603000e37546fc47289489cb186391b8bed",
+            "e04559f43718c21125ecbe8028cdbb09157cac226592cc13672dcd27b5a01056",
+            "9bb87aac15cf37700de8d06bd83a2f53600362147619cec59d7001c1d58b56c3",
+            "7a168e3ba48fd1c6681c626328d3b48b593ce625e07da2fdfae186af2a0938c3"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_launcher_resume_same_job_with_different_worker_count",
+          "baseline_full_function_ast_sha256": "6038eed032f8e25d6fafa70c808c6c6dc878f7c7f7e8cb129b7d360681c160f4",
+          "formal_full_function_ast_sha256": "6038eed032f8e25d6fafa70c808c6c6dc878f7c7f7e8cb129b7d360681c160f4",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "11573a19163ceb42d4039d304c2dc8d016c41c8bdce6576a7911afb1584f30eb",
+            "f5cd01d138d7fd6450ccf41ecb8073bb4a4b4ca928c6e33b375774e5cc064bbb",
+            "c671f6ed46c58ebacba05723227513b6583d6495ee3a2e2012d1134b079a5709",
+            "957d9ae65cc27d47c135143da0a040fa4ea4370aeab41d626726dcc78120a646"
+          ],
+          "formal_assertion_ast_sha256": [
+            "11573a19163ceb42d4039d304c2dc8d016c41c8bdce6576a7911afb1584f30eb",
+            "f5cd01d138d7fd6450ccf41ecb8073bb4a4b4ca928c6e33b375774e5cc064bbb",
+            "c671f6ed46c58ebacba05723227513b6583d6495ee3a2e2012d1134b079a5709",
+            "957d9ae65cc27d47c135143da0a040fa4ea4370aeab41d626726dcc78120a646"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        },
+        {
+          "test_function": "test_explicit_prefetch_and_nonpersistent_cli_are_real_profile_options",
+          "baseline_full_function_ast_sha256": "2bf5e87f82bdac833cd232938f0944f8ba78dbbda5250cc71e4a09a6b6ba22ed",
+          "formal_full_function_ast_sha256": "2bf5e87f82bdac833cd232938f0944f8ba78dbbda5250cc71e4a09a6b6ba22ed",
+          "full_function_ast_equal_before_normalization": true,
+          "baseline_assertion_ast_sha256": [
+            "a1466f29b47f2114933b830c07f4542f5560aa36ba79a2ad6e2d138b92dd0aad",
+            "47f3c9cf5ce8a79c192f9cc3eed706f476561386a8dd73298e02d65e6e9357e9"
+          ],
+          "formal_assertion_ast_sha256": [
+            "a1466f29b47f2114933b830c07f4542f5560aa36ba79a2ad6e2d138b92dd0aad",
+            "47f3c9cf5ce8a79c192f9cc3eed706f476561386a8dd73298e02d65e6e9357e9"
+          ],
+          "assertion_ast_equal": true,
+          "normalized_function_ast_equal": true
+        }
+      ],
+      "assertion_count_entire_module": 19,
+      "all_old_assertion_ast_equal": true,
+      "all_untouched_function_ast_equal": true,
+      "normalization": {
+        "fixture_modified_test_functions": [
+          "test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_semantics"
+        ],
+        "permitted_literal_change": {
+          "baseline": "no_ttt_packed128_droid_fresh_30k_world4_ga4",
+          "formal": "no_ttt_worker_runtime_contract_world4_ga4",
+          "count": 1,
+          "purpose": "exercise ordinary strict namespace rather than the existing Owner-exempt formal Job"
+        },
+        "assertions_modified": false
+      },
+      "normalized_whole_module": {
+        "scope": "whole_module_after_exact_fixture_normalization:tools/v3/no_ttt_workers_entry_test.py",
+        "baseline_ast_sha256": "934587279129f2d0ec5a1ce7c64a38f8f206549604004cd67e005b7e07f6683e",
+        "formal_ast_sha256": "934587279129f2d0ec5a1ce7c64a38f8f206549604004cd67e005b7e07f6683e",
+        "equal": true
+      }
+    }
+  ],
+  "production_release_bytes": [
+    {
+      "path": "cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+      "baseline_blob": "254b2be7dd95f129bf928436b98865c04c9a06fb",
+      "formal_blob": "254b2be7dd95f129bf928436b98865c04c9a06fb",
+      "baseline_sha256": "0eff3b15f86133af9c82379ed5930809b0ff6c461e3681516cdcff0f78b650ee",
+      "formal_sha256": "0eff3b15f86133af9c82379ed5930809b0ff6c461e3681516cdcff0f78b650ee",
+      "baseline_bytes": 10900,
+      "formal_bytes": 10900,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/matched_no_ttt.py",
+      "baseline_blob": "b335958182e9b3e00069dbcb29628259f8ed5639",
+      "formal_blob": "b335958182e9b3e00069dbcb29628259f8ed5639",
+      "baseline_sha256": "711e6e5ca8eece67fe1440b60fa30a12de6c142d5a5a3cd0aa4e24183906512d",
+      "formal_sha256": "711e6e5ca8eece67fe1440b60fa30a12de6c142d5a5a3cd0aa4e24183906512d",
+      "baseline_bytes": 18331,
+      "formal_bytes": 18331,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/no_ttt_async_loader.py",
+      "baseline_blob": "f5cbd2209e5f9a6643a503d5dd8b060abd441e67",
+      "formal_blob": "f5cbd2209e5f9a6643a503d5dd8b060abd441e67",
+      "baseline_sha256": "619a7d51cd441facbc4a351da5046095e169e9dfa447ed81df149d1070a340fb",
+      "formal_sha256": "619a7d51cd441facbc4a351da5046095e169e9dfa447ed81df149d1070a340fb",
+      "baseline_bytes": 18005,
+      "formal_bytes": 18005,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/trainer/no_ttt_async_recipe.py",
+      "baseline_blob": "f27aaf79eed56ab25e3b4fd23c550884c7e10e53",
+      "formal_blob": "f27aaf79eed56ab25e3b4fd23c550884c7e10e53",
+      "baseline_sha256": "081a0420c464f7ede3f402515c335c8302263862b6a7b92bd61c7e151a158841",
+      "formal_sha256": "081a0420c464f7ede3f402515c335c8302263862b6a7b92bd61c7e151a158841",
+      "baseline_bytes": 14496,
+      "formal_bytes": 14496,
+      "equal": true
+    },
+    {
+      "path": "cosmos_framework/utils/no_ttt_loader_profile.py",
+      "baseline_blob": "3db553361bcacda76e35800fffaa6ae9cc30ddf2",
+      "formal_blob": "3db553361bcacda76e35800fffaa6ae9cc30ddf2",
+      "baseline_sha256": "c2e23aab62931f4f36cf09b459eafd280d9c680777b09ae5ef0bfdb4419541d3",
+      "formal_sha256": "c2e23aab62931f4f36cf09b459eafd280d9c680777b09ae5ef0bfdb4419541d3",
+      "baseline_bytes": 3528,
+      "formal_bytes": 3528,
+      "equal": true
+    }
+  ],
+  "release_only_fixture_delta": {
+    "baseline": "d64e5c1d8541341b26f6ef0557822fe76d8dd52d",
+    "formal": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+    "formal_parent": "d64e5c1d8541341b26f6ef0557822fe76d8dd52d",
+    "excluded_exact_fixture_file": "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+    "excluded_baseline_object": "100644 blob 7b9dfda1d5ed3c35e0fd2da293fa84aea292aa55",
+    "excluded_formal_object": "100644 blob c0fc5756b19fc96e788b5f6384cf4b638332ba85",
+    "other_git_object_count": 1244,
+    "baseline_other_objects_sha256": "18c061d2eb6d52e405404545a0ac19ee79f80ca1b50c195e137446443df16f31",
+    "formal_other_objects_sha256": "18c061d2eb6d52e405404545a0ac19ee79f80ca1b50c195e137446443df16f31",
+    "equal": true
+  },
+  "optional_real_data_selection": {
+    "gate_blob": "77179917b493a451057bf446e2da9e6d0b807c56",
+    "gate_sha256": "1ab93028bcf7a79a12b538ac7c7e9c71647ddf2f1f7b3de4ba2b377ce236dd03",
+    "explicit_deselected_node": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke",
+    "deselection_count": 1,
+    "reason": "current task forbids real scientific assets; this optional pre-existing test is retained unchanged, not counted as an executed PASS",
+    "original_source_file_byte_equal": true
+  },
+  "working_tree_observation_after": {
+    "root": "",
+    "child": ""
+  },
+  "working_tree_status_unchanged": true,
+  "summary": {
+    "equality_checks": 51,
+    "protected_child_files": 14,
+    "protected_root_files": 5,
+    "unchanged_old_resume_test_functions": 3,
+    "unchanged_old_resume_assert_statements": 14,
+    "fixture_corrected_old_modules": 2,
+    "fixture_corrected_modules_old_test_functions": 25,
+    "fixture_corrected_modules_unchanged_old_assert_statements": 88,
+    "production_files_byte_identical_d64_to_release": 5,
+    "all_other_child_git_objects_identical_d64_to_release": 1244
+  }
+}

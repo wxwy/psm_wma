@@ -1,0 +1,20 @@
+{
+  "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py": "0eff3b15f86133af9c82379ed5930809b0ff6c461e3681516cdcff0f78b650ee",
+  "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py": "11524ff5f79f5fb9ab77a8b2c1cf087c9b1a2680240d339fc429bf40eaa982df",
+  "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py": "7bfb364e115d02b8632d7e35673c3b1da71a8aa14d76fa4e373a7a67ce7cf680",
+  "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py": "711e6e5ca8eece67fe1440b60fa30a12de6c142d5a5a3cd0aa4e24183906512d",
+  "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py": "90d24efc8967e4c8f43e943dd7fff4d38b8155e96f8bfc7fce43834d3678be5f",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py": "619a7d51cd441facbc4a351da5046095e169e9dfa447ed81df149d1070a340fb",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py": "c9ee3f6e16b56254427423ae4737faa3a4ecf9d882154c11433ba00f15077d1e",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py": "c606b4a8855c571d2f90da8dda8f7619840d1558b3cd98c73569c8f78147a6f9",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py": "1498763fcbc83b85997013deb85e3b94d307ec1452265f51dc83a0826928844b",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py": "dab38d6a80db5e529baa59bfa140db5c8ed25a360650211417e0578dbd5322c0",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py": "e5f918b6a49b2d37048fac86e87e9f3035e9c23f29a6e6c62ee17666b31932d2",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py": "27ad8f7535c361b5522fb41d1988b6703fab567eb6b12deef851d22953f08de5",
+  "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_test.py": "9c20f5aab53a30be7710d8d26d5ddca670d16cebdb439262ae86fc1abd5b5f47",
+  "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py": "c2e23aab62931f4f36cf09b459eafd280d9c680777b09ae5ef0bfdb4419541d3",
+  "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py": "96acc954d1d3c01a3102cd5c21699393a326ae5db68b4648779ad337342c3be1",
+  "tools/v3/matched_no_ttt_entry_test.py": "a42cd0e481ca9dff2cb037c4fa331c851943bf4c3f8e9c69e301ee489165a900",
+  "tools/v3/no_ttt_workers_entry_test.py": "013159aa962ea6fed26286097e397e591a24186ad1bb1a669f2bb08f1d3a4778",
+  "tools/v3/run_no_ttt_async_cpu_gate.py": "37476fcf9eb8c230b56106c41d51531152a7b6a666f72b2f115c3aeb41dc1577"
+}

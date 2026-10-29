@@ -1,0 +1,102 @@
+{
+  "status": "FAIL",
+  "gate": "NOTTT_ASYNC_AUTHOR_OR_DS_CPU_ONLY",
+  "steps": [
+    {
+      "name": "import_origin",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import pathlib,cosmos_framework; assert pathlib.Path(cosmos_framework.__file__).resolve().is_relative_to(pathlib.Path('/workspace/psm-wma-nottt-async/cosmos-framework')); print(cosmos_framework.__file__)"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06398499599890783
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+        "tools/v3/run_no_ttt_async_cpu_gate.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06395849699038081
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_test_support.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+        "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+        "tools/v3/run_no_ttt_async_cpu_gate.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06396713799040299
+    },
+    {
+      "name": "async",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-async",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py",
+        "--basetemp=/tmp/psm-nottt-async-overlap-20261029/locked01/async_tmp",
+        "--junitxml=/tmp/psm-nottt-async-overlap-20261029/locked01/async.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-async",
+      "timeout_s": 1800,
+      "exit_code": 1,
+      "seconds": 203.4577926750062
+    }
+  ],
+  "real_gpu": false,
+  "real_dcp_resume": false,
+  "identities": {
+    "root": "66986d5fa77bbf58f2e79e0d3345d89adae27b9b",
+    "child": "5124a2b7a9bbb3b9f84de16a5546f3ba6e147e3d",
+    "gitlink": "5124a2b7a9bbb3b9f84de16a5546f3ba6e147e3d"
+  },
+  "syntax_files": 11,
+  "error": "RuntimeError: async failed; see async.log"
+}

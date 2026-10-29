@@ -2,7 +2,7 @@
 
 | ID | Status | Owner | Preconditions | Acceptance |
 | --- | --- | --- | --- | --- |
-| V3-NOTTT-ASYNC-OVERLAP-NWPOS-20261029 | IN_PROGRESS | Codex | Owner Issue #9; baseline 3d5806a2 / 746c5cf2 | Isolated Source+Transform+next-Window overlap; exact RNG/frontier/Resume CPU evidence; new Pair then STOP GPT Code Gate |
+| V3-NOTTT-ASYNC-OVERLAP-NWPOS-20261029 | REVIEW | Codex | Owner Issue #9; baseline 3d5806a2 / 746c5cf2 | Isolated Source+Transform+next-Window overlap; exact RNG/frontier/Resume CPU evidence; new Pair then STOP GPT Code Gate |
 
 # PSM-WMA 任务队列
 

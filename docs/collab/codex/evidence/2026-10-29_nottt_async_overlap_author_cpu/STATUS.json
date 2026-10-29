@@ -1,0 +1,17 @@
+{
+  "author_cpu": "PASS",
+  "totals": {
+    "tests": 301,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "formal_root": "e0fe911dfb9fd34957234828195cf051713f6c3d",
+  "child_gitlink": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+  "code_gate": "REQUESTED_NOT_APPROVED",
+  "ds_cpu": "NOT_RUN",
+  "real_gpu": "NOT_RUN",
+  "real_dcp_resume": "NOT_RUN",
+  "active_job": "UNTOUCHED",
+  "canonical_merge": "NOT_PERFORMED"
+}
