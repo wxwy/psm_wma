@@ -512,3 +512,9 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - Codex [#9](https://github.com/wxwy/psm_wma/issues/9) 接收新实现指令：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Data_GPU_Overlap_Codex_Implementation_Directive.md`。源码实际 `NoTTTCpuLoader.begin` 主进程同步 Source Snapshot，`materialize` 主进程同步 Transform；旧 nw8 仅部分 GA 内 RAW overlap、未满足跨Window overlap。任务仅隔离代码+作者CPU，待新pair GPT Code Gate。
 - DS_PRO [#10](https://github.com/wxwy/psm_wma/issues/10) 只读 S0：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Overlap_DS_PRO_Readonly_S0.md`，核对现正式Job当前真实nw、进度与已有日志；不准停训/GPU或改代码。设备当前Offline，任务登记不表示已执行。
 - Owner唯一最终Resume目标仍为正在训的 `no_ttt_packed128_droid_fresh_30k_world4_ga4`；原独立Fresh10→30k提案已废弃。正式任务不受本次文档提交影响；历史Gradient FAIL/Compact Inconclusive不改写。
+
+## 2026-10-29 — EvalV2 PhaseB B2 DS CPU retry1：test-only R2-E1/E2，REQUEST_CHANGES
+
+- 正式 Pair仍为 Root `323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728` / Child `774c2edb93ec5a6ba85ba1124757064d7cc779a5`，前序 `APPROVE_CODE` 不变，不重审实现。DS首次因端口冲突FAIL；一次授权重跑 inference145+PhaseA255 PASS，OS参数 `[1-2-2]` PASS且B2出现，`[2-3-1]` 合法仅B1，硬断言B2导致 FAIL，未达到独立CPU Gate；原证据仍在DS服务器。
+- GPT实际核查 test `free_ports` 的127.0.0.1 vs生产0.0.0.0、参数化每例都要求B2、Child per-server bounded queue；认定测试夹具口径/时序问题，**无确证生产Bug**。正式 DS Evidence `REQUEST_CHANGES`（test-only）；报告 `docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_B2_DS_CPU_retry1_TestFixture_Only_Disposition.md`。
+- Codex只做隔离候选Root test小修：free_ports改用0.0.0.0及负例；G1/N2/E2正面 OS B2保持，G2/N3等不强制随机时间窗必现B2但保留全部PID/路由/D5/Resume/Cleanup断言；不能删B2能力断言或改Child/生产/训练。新FormalRoot→GPT窄增量→DS完整独立CPU，未批准V3生产合并/GPU/900。
