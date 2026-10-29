@@ -497,3 +497,6 @@
 - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — REVIEW; actualimplementation+authorCPU254PASS/0skip/static37PASS onnewisolatedcandidate. Childd2c1bda62880dbeee196f70945e5bc430b73f4b6, newRootnext. Full25G/Nmatrix/M1B1/realWorkerIPC/defaultRootpool/900CPU/lifecycle/seed/grant/sparseResume/quarantine-recovery; doc/Evidence/formalpairthenGPTCodeGateSTOP. NoautomaticPhaseB,DSjob,merge,GPU/native/DCP/history/trainoperation.
 
 - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — REVIEW final255PASS/0skip/static37; includesconfirmedlate-zero-exitqualificationclosure+counterfactualRED/GREEN. NewRootformal follows; Childd2c1bda6unchanged. RequestfullPhaseA4292905a→newRootagainstapproved4769baseline, thenSTOPGPTCodeGate.
+
+- **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — DONE sourceCodeGateONLY (fd7e43f6/d2c1bda6,GPTAPPROVE_CODE36a5f157). IndependentDSCPU/GPT evidence/nativeCanaryremainPENDING; do notreopenunchangedpairorclaimfullacceptance.
+- **V3-EVAL-V2-BATCH-PHASE-B-DESIGN** — IN_PROGRESS; Codex; OwnerdesignonlyafterPhaseAcodeapproval. Auditactualserver/session/prefix/generationcode, freezeM>1/Bdynamic/transaction/RNG/cancellation/Slot/D1-D5designandCPUmodelifneeded. Productionfrozenfd7/d2, noChilddiff; newDesignSHA+Evidence→GPTDesignGateSTOP.
