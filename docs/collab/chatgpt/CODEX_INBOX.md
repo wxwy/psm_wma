@@ -506,3 +506,9 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - 原独立 Fresh10→30k 提案 **SUPERSEDED_NOT_AUTHORIZED**；已在原提案顶部醒目标记，并新增 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Existing_FormalJob_Compact_NW8_Resume_Target_Correction.md`。
 - 目标为仍在训的 `no_ttt_packed128_droid_fresh_30k_world4_ga4`（Owner报 iter7600+），未来合法Checkpoint边界同Job Resume；明确关注 `NOTTT_LOADER_WORKERS`，历史 nw8 iter701–1590、Fresh10 实际 nw0。建议 nw8 作为 Compact1 的优先验收配置，当前7600+实时nw待只读核实。
 - 原Job不可停/热切/并发Resume。本次文档纠偏不授权 GPU/Resume/30k；旧严格梯度 FAIL、Compact归因 INCONCLUSIVE、Owner存储管理/save100不变。
+
+## 2026-10-29 — Owner 新目标：No-TTT nw>0 必须真异步 overlap（Codex #9 / DS S0 #10）
+
+- Codex [#9](https://github.com/wxwy/psm_wma/issues/9) 接收新实现指令：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Data_GPU_Overlap_Codex_Implementation_Directive.md`。源码实际 `NoTTTCpuLoader.begin` 主进程同步 Source Snapshot，`materialize` 主进程同步 Transform；旧 nw8 仅部分 GA 内 RAW overlap、未满足跨Window overlap。任务仅隔离代码+作者CPU，待新pair GPT Code Gate。
+- DS_PRO [#10](https://github.com/wxwy/psm_wma/issues/10) 只读 S0：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Overlap_DS_PRO_Readonly_S0.md`，核对现正式Job当前真实nw、进度与已有日志；不准停训/GPU或改代码。设备当前Offline，任务登记不表示已执行。
+- Owner唯一最终Resume目标仍为正在训的 `no_ttt_packed128_droid_fresh_30k_world4_ga4`；原独立Fresh10→30k提案已废弃。正式任务不受本次文档提交影响；历史Gradient FAIL/Compact Inconclusive不改写。
