@@ -453,3 +453,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **仍OPEN F3 MEDIUM**：上传Harness `input_fingerprint`对25个顶层batch字段只保存`"list"`等类型，未递归比较其中action/text_token_ids/video_latent；`output_fields`除3个标量外只存shape/dtype或截断repr，而且这两个Witness均未进入`formal_pass`。不能将标量Loss一致包装成完整Native Input/Output逐值等价。
 - **F4 PARTIAL OPEN MEDIUM**：`weight_buffer_invariance`是float32 cast后shape/abs_sum/abs_max的弱摘要而非逐Tensor全值比较，grad finite未显式检查，294项全量误差只输出Top50失败/Worst10；dtype/NoneMask/Selected组覆盖子项已CLOSED。**F5 LOW**：用户传的Harness有Markdown渲染损坏Python dunders，上传文本不能作为字节一致可执行原件，静态规范化AST通过。
 - 本轮不授权新GPU实验/生产代码变更/训练/Checkpoint切换。A单步性能观察≈1.87×（非稳态）、C静态Resume就绪不变；`save_iter=100`及Owner本地磁盘/CKPT策略不受影响。下一步若实践上推进Compact=1长训，应由Owner单独做S2风险授权并与严格数学FAIL分离；若要重测严格/噪声Gate，应先冻结新合同和test-only源码，避免后验放宽。
+
+
+## 2026-10-29 — GPT Phase B B1-F1 增量Code Gate APPROVE_CODE：dc775792 / 4a938e41
+
+- **Formal Implementation Root `dc7757922d7273f50f3de23363d41e12e157a07f` / Child+Gitlink `4a938e41b0c335baca1c1d8f1caabc433b0e2001`**；候选 `v3-eval-v2-transactions-b1-20261029`。Evidence `473c0435e819eaffff4368e7a8c0c2c41d4be4ab` / readback HEAD `0e4061005c691cb45b14948a52390f5c041848b9`均不是Formal Root。详细Review：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_B1_F1_dc775792_4a938e41_Incremental_Code_Gate_APPROVE_CODE.md`。
+- **正式 `APPROVE_CODE`，Phase B第一批Transaction/B1源码范围；B1-F1 CLOSED，B1-P1保持WITHDRAWN。** 独立读新3生产/2测试增量：Client predict入口编码前冻结原budget，Dispatcher强制传budget，Actor首次准入及编码/锁后验证并将原deadline直接存Ticket，已有Ticket重试不续期，prepare/generation/device-drain后的commit fence使用同一deadline；晚transport/JSON/ACK不能返回客户端成功。已ACK缓存新读取不分配/不执行，未ACK过期Ticket不可新budget续命。
+- **时钟域/环境边界**：仅当前同主机Linux经正常exec启动且进程内不重配time namespace的B1路径。kernel boot/offset证据缺失或不匹配failclosed，cloud实际缺timens_offsets明确BLOCKED，生产未绕过。上游timens_offsets读children namespace；当前exec建立active=children，任意pending/动态namespace embedding不在本次批准部署范围。后续launcher/native准入同时核实实际active/children身份与domain，作为已有环境准入的非阻断说明，不新增本轮Code blocker。
+- **原始作者Evidence核验**：99 inference +255 PhaseA=354 testcase，0failure/error/skip；旧67全部保留，新增32，无assert放宽；15/15 Formal Git Blob匹配，Ruff0.12.7/format/AST9/import/source锁定通过。旧RED cold/hot2FAIL与3旧生产Blob核对，但draft测试缺运行前hash的限制保留。GPT本轮未重跑项目CPU/DS/GPU/native，doubles不构成真实环境准备完成。
+- **下一步范围**：第一批Code Gate前置已满足，可按既有Owner Issue8授权在隔离候选推进第二批M>1/true nativeB>1生产代码+作者CPU；需新Formal Root/Child+Evidence并STOP第二批GPT Code Gate。本轮未实现/验收第二批、未派发DS、未合并V3/Child生产、未授权GPU/Canary/900/训练/历史操作。PhaseA独立CPU与native验收仍不可由作者354替代。
