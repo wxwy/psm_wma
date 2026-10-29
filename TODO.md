@@ -521,3 +521,5 @@
 - **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS finalfreeze; intermediate321PASS retained; mandatory device-loss drain self-checkRED1/GREEN1 fixed in Child1bece52ee419d12119c1b3d0b75e0ae5c5139ae9. New RootGitlink then final clean-pair CPU replay/Evidence/request required. No Code approval/DS/native inference yet.
 
 - **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — REVIEW; exactRoot9a3f88e55893491ea68d16b3f23680ae6941d106/Child1bece52ee419d12119c1b3d0b75e0ae5c5139ae9. Final322 authorCPU/0skip/static9/sourcebinding14 PASS; rawEvidence and candidate request packaged. Rootpublish/readback thenSTOP freshGPTCodeGate; independentDS/native/secondincrement/merge NOT authorized or started.
+
+- **V3-EVAL-V2-B1-F1** — IN_PROGRESS; Codex; exact9a3f/1be REQUEST_CHANGES verified e57f0263. Unify original Client→Dispatcher→Actor timeout using proven clock domain; deterministic production-path RED/GREEN delayed-first-arrival/retry/latecommit/ACK/replay tests; preserve322 regressions. New Child/Root exactPair + authorCPU evidence → GPTCodeGate STOP. B1-P1 WITHDRAWN; no second increment/DS/GPU/merge.
