@@ -500,3 +500,5 @@
 
 - **V3-EVAL-V2-DYNAMIC-SLOTS-PHASE-A** — DONE sourceCodeGateONLY (fd7e43f6/d2c1bda6,GPTAPPROVE_CODE36a5f157). IndependentDSCPU/GPT evidence/nativeCanaryremainPENDING; do notreopenunchangedpairorclaimfullacceptance.
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN** — IN_PROGRESS; Codex; OwnerdesignonlyafterPhaseAcodeapproval. Auditactualserver/session/prefix/generationcode, freezeM>1/Bdynamic/transaction/RNG/cancellation/Slot/D1-D5designandCPUmodelifneeded. Productionfrozenfd7/d2, noChilddiff; newDesignSHA+Evidence→GPTDesignGateSTOP.
+
+- **V3-EVAL-V2-BATCH-PHASE-B-DESIGN** — REVIEW; design r1/source audit and isolated symbolic protocol complete. Final29PASS/0fail/error/skip, Ruff0.12.7/format/AST3PASS,16 frozen source bindings, productionRoot/Child/Gitlink unchanged. New Design Root + same d2 Child, raw author Evidence and canonical request next; GPT APPROVE_DESIGN required before any Phase B production edit. This does not close Phase A DS CPU/native Gate or permit merge/real execution.
