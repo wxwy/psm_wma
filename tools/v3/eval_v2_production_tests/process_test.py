@@ -80,7 +80,9 @@ def test_stalled_actor_request_is_bounded_and_unrelated_process_survives(tmp_pat
     foreign = subprocess.Popen(
         [sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True
     )
-    value = actor(tmp_path, timeout=0.15)
+    # Allow Python startup/READY its own budget; stall still gets only 150ms.
+    value = actor(tmp_path, timeout=5.0)
+    value.timeout = 0.15
     start = time.monotonic()
     try:
         with pytest.raises((EOFError, OSError)):
