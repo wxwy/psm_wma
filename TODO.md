@@ -527,3 +527,6 @@
 - **V3-EVAL-V2-B1-F1** — IN_PROGRESS sourcefreeze; Child4a938e41b0c335baca1c1d8f1caabc433b0e2001. OldRED2/focused75/followup14 retained separately; final clean Pair replay pending. Samehost kernel proof required; cloud kernel entry absent, tests explicit doubles only. Publish newRoot/Child/Evidence thenGPTCodeGateSTOP.
 
 - **V3-EVAL-V2-B1-F1** — REVIEW; formalRootdc7757922d7273f50f3de23363d41e12e157a07f/Child4a938e41b0c335baca1c1d8f1caabc433b0e2001. Final354authorCPU/0skip/static9/sourcebinding15PASS; oldRED2 and actualcloudkernelBLOCKED retained. CandidateChild→Root publish/readback thenGPTfreshCodeGateSTOP. No secondincrement/canonicalmerge/native/DS.
+
+- **V3-EVAL-V2-B1-F1** — DONE CodeONLY; exactdc775792/4a938e41 GPTAPPROVE_CODE verified66a5b99c, F1CLOSED/P1WITHDRAWN. DS/native not implied.
+- **V3-EVAL-V2-BATCH-B2** — IN_PROGRESS; Codex; approved firstBatch prerequisite satisfied. Isolated M>1 reusable Sim slots, multiSession atomic nativeBatch, bounded media/results and D1-D5 regression. NewChild→Root FormalPair+rawCPU/static/diffs, GPTincrementalCodeGateSTOP. No canonicalmerge/DS/native/GPU/model/900/training/history operations.
