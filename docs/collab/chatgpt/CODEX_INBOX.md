@@ -462,3 +462,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **时钟域/环境边界**：仅当前同主机Linux经正常exec启动且进程内不重配time namespace的B1路径。kernel boot/offset证据缺失或不匹配failclosed，cloud实际缺timens_offsets明确BLOCKED，生产未绕过。上游timens_offsets读children namespace；当前exec建立active=children，任意pending/动态namespace embedding不在本次批准部署范围。后续launcher/native准入同时核实实际active/children身份与domain，作为已有环境准入的非阻断说明，不新增本轮Code blocker。
 - **原始作者Evidence核验**：99 inference +255 PhaseA=354 testcase，0failure/error/skip；旧67全部保留，新增32，无assert放宽；15/15 Formal Git Blob匹配，Ruff0.12.7/format/AST9/import/source锁定通过。旧RED cold/hot2FAIL与3旧生产Blob核对，但draft测试缺运行前hash的限制保留。GPT本轮未重跑项目CPU/DS/GPU/native，doubles不构成真实环境准备完成。
 - **下一步范围**：第一批Code Gate前置已满足，可按既有Owner Issue8授权在隔离候选推进第二批M>1/true nativeB>1生产代码+作者CPU；需新Formal Root/Child+Evidence并STOP第二批GPT Code Gate。本轮未实现/验收第二批、未派发DS、未合并V3/Child生产、未授权GPU/Canary/900/训练/历史操作。PhaseA独立CPU与native验收仍不可由作者354替代。
+
+
+## 2026-10-29 — Compact v2 原件核验／Gate分离：Owner授权独立S2至iter10
+
+- **本轮授权 verdict `APPROVE_S2_RESUME_TO_ITER10_ONLY`**：Owner在讨论参照重复性后明确“好，继续”。正式Review `docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_Compact_Parity_Disposition_and_S2_Resume10_Authorization.md`；DS冻结执行要求 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Compact_S2_Resume10_DS_PRO.md`。S2实际执行／结果待DS，本轮GPT未运行GPU、模型或训练。
+- 历史NoTTT Root `49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5` 不变；取证V3 HEAD `66a5b99c0a23312525ccbdc0fadb4655bc7d0b19`。不重审未变生产实现，不改其它EvalV2 Gate。
+- 四Rank完整v2 JSON已实际从V3读回，7344行／Rank及SHA256、Git blob均与原README/Tree相符；`RAW_V2_ARCHIVE_VERIFIED`，纠正会话总结“远端未归档”的过时记录。F1/F2维持CLOSED；F3/F4及F5provenance缺口如实保留，勿重交17附件或重跑CPU/Fresh1/旧paired GPU。
+- 离线脚本+结果 `docs/collab/chatgpt/evidence/2026-10-29_V3_NoTTT_Compact_v2_Offline_Analysis/`：记录max_abs跨模式未高于同模式，但有少数DD通过/DC失败的参数；仅前50failures/worst10且无原始梯度，不能宣称全量重算或统计等价。`GPU_STRICT_GRADIENT_PARITY=FAIL_PARITY`；`REFERENCE_REPEATABILITY=FAIL_AT_FROZEN_TOLERANCE`；`COMPACT_SPECIFIC_REGRESSION=INCONCLUSIVE`。
+- S2仅 `no_ttt_compact1_corerun_20261028_world4_ga4`、GPU4–7、FSDP2/GA4/B8/T16、Compact1、resume至总iter10。原iter1时新增9次commit；显式JOB_NAME防误落旧Job。max_iter30000/warmup500/save_iter100固定，不附加audit_missing_grads；关键入口输入见证并行补证，不是新的启动前置Gate。
+- 旧Job/GPU0–3/G1/Cleaner保持原状，存储归Owner管理；不新增磁盘Gate。completed iter与saved checkpoint分别报告，不强制iter10保存、不自动延伸100/30k。只在S2权限上取代历史NOT_AUTHORIZED，旧严格FAIL与证据缺口不改写。
