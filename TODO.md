@@ -534,3 +534,6 @@
 - **V3-EVAL-V2-BATCH-B2** — IN_PROGRESS sourcefreeze; Child774c2edb93ec5a6ba85ba1124757064d7cc779a5. NativeBatch/multiSim transaction transport, bounded optional media, frozenprofile and CPU/OS tests ready. NextRootsourceGitlink commit then clean unified authorCPU Gate (all prior+new), freshCodePair/Evidence/request/candidatepublish/readback STOP. DSfinalCPU/native/canonicalmerge not authorized by author tests.
 
 - **V3-EVAL-V2-BATCH-B2** — REVIEW; FormalRoot323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728/Child774c2edb93ec5a6ba85ba1124757064d7cc779a5. Final424authorCPU/0skip/static29/sourcebindings61/hashmanifest133PASS; realOS/HTTPsyntheticB2/cleanup/Resume witnesses, actualcloudclockBLOCKED/no nativeclaim. NewChild→Root candidatepublication/readback thenGPTincrementalCodeGateSTOP; DSfinalCPU/Canary/900/canonicalmerge remainseparatepending.
+
+
+- **V3-EVAL-V2-A1-E1-READY-STARTUP** — REVIEW; Codex; FormalRoot9657fb6ab590f228d760362e506d5dd1b626880a/Child0ae313e329d290fc6b8a50fda1112820fb7ac485. Raw657/0ae author XML proves READY initialization timeout. Single-file startup5s/request150ms split; focused8+probe1/static PASS. Prerequisite for full434: GPT narrow review approval. Then once author full CPU, then DS independently; zero fail/error/skip/source drift. No old F3 re-review/Issue#8 reply/V3 merge/GPU/training.

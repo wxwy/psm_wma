@@ -1,0 +1,44 @@
+{
+  "formal_root": "9657fb6ab590f228d760362e506d5dd1b626880a",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "candidate": "v3-eval-v2-ready-startup-20261029",
+  "narrow_review_request": "APPROVE_CODE or REQUEST_CHANGES for process_test.py READY budget split and exact raw author traceback only. Do not repeat F3 production review or Issue #8 replies.",
+  "focused": {
+    "process_test": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "delayed_READY_probe": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "static": {
+    "ruff": "0.12.7",
+    "check": "PASS",
+    "format": "PASS",
+    "diff_check": "PASS",
+    "AST_scope_proof": "PASS"
+  },
+  "full_author_434": "NOT_RUN on this new Pair: per current Owner instruction run once only after this test-only narrow review is approved.",
+  "independent_DS": "NOT_RUN on this Pair; follows a full author Gate PASS. Evidence Gate remains REQUEST_CHANGES.",
+  "next_gate_cwd": "/workspace/work/psm-wma-ready-startup-formal",
+  "next_gate_argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "tools/v3/run_eval_v2_batch_b2_cpu_gate.py",
+    "--root-worktree",
+    "/workspace/work/psm-wma-ready-startup-formal",
+    "--expected-root",
+    "9657fb6ab590f228d760362e506d5dd1b626880a",
+    "--expected-child",
+    "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "--evidence-dir",
+    "/workspace/work/ready-startup-evidence/author-full-after-review"
+  ],
+  "scope": "No production/Child/F1/F2/F3/Gate entry changes, no V3 merge/GPU/Canary/900/training action. Raw original author FAIL retained as FAIL.",
+  "review_authority": "V3 11e5162d: docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_StoreMkdir_657061e6_0ae313e3_Incremental_Code_Evidence_GATE.md plus current Owner instruction."
+}

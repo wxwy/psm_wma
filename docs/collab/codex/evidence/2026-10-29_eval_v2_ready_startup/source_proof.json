@@ -1,0 +1,26 @@
+{
+  "formal_root": "9657fb6ab590f228d760362e506d5dd1b626880a",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "previous_root": "657061e6893bd61e685685089a1cf1f61e9eb1fe",
+  "formal_diff": [
+    "tools/v3/eval_v2_production_tests/process_test.py"
+  ],
+  "child_clean": true,
+  "only_READY_startup_and_immediate_budget_reset_changed": true,
+  "remaining_process_test_AST_unchanged": true,
+  "protected_bytes_unchanged": [
+    "scripts/robocasa_eval_v2_processes.py",
+    "scripts/robocasa_processes.py",
+    "tools/v3/eval_v2_batch_tests/runtime_test.py",
+    "tools/v3/eval_v2_batch_tests/os_fixture.py",
+    "tools/v3/eval_v2_batch_tests/store_mkdir_test.py",
+    "tools/v3/run_eval_v2_batch_b2_cpu_gate.py",
+    "tools/v3/run_eval_v2_transactions_b1_cpu_gate.py"
+  ],
+  "test_names_and_collection_count_unchanged": true,
+  "source_binding": {
+    "path": "tools/v3/eval_v2_production_tests/process_test.py",
+    "git_blob_sha": "8f1ae2f0432a51e782d1c37c309c98de4f1772b3",
+    "sha256": "5a411b051db2b4c016b2ec067e826b9a65db952b6749aaf82708f4ec0919de0a"
+  }
+}

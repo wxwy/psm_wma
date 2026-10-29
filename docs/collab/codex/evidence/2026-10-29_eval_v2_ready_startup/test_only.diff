@@ -1,0 +1,15 @@
+diff --git a/tools/v3/eval_v2_production_tests/process_test.py b/tools/v3/eval_v2_production_tests/process_test.py
+index 540c78d7..8f1ae2f0 100644
+--- a/tools/v3/eval_v2_production_tests/process_test.py
++++ b/tools/v3/eval_v2_production_tests/process_test.py
+@@ -80,7 +80,9 @@ def test_stalled_actor_request_is_bounded_and_unrelated_process_survives(tmp_pat
+     foreign = subprocess.Popen(
+         [sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True
+     )
+-    value = actor(tmp_path, timeout=0.15)
++    # Allow Python startup/READY its own budget; stall still gets only 150ms.
++    value = actor(tmp_path, timeout=5.0)
++    value.timeout = 0.15
+     start = time.monotonic()
+     try:
+         with pytest.raises((EOFError, OSError)):

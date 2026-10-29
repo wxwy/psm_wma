@@ -1,0 +1,32 @@
+tmp_path = PosixPath('/workspace/work/store-mkdir-f3-evidence/unified/phase_a_regression_tmp/test_stalled_actor_request_is_0')
+
+    def test_stalled_actor_request_is_bounded_and_unrelated_process_survives(tmp_path):
+        foreign = subprocess.Popen(
+            [sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True
+        )
+>       value = actor(tmp_path, timeout=0.15)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/process_test.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_production_tests/process_test.py:49: in actor
+    assert value._receive()["kind"] == "READY"
+           ^^^^^^^^^^^^^^^^
+scripts/robocasa_eval_v2_processes.py:151: in _receive
+    result = receive(self.channel)
+             ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py:27: in receive
+    length = struct.unpack("!I", exact(4))[0]
+                                 ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+size = 4
+
+    def exact(size):
+        chunks = []
+        while size:
+>           chunk = sock.recv(size)
+                    ^^^^^^^^^^^^^^^
+E           TimeoutError: timed out
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py:20: TimeoutError

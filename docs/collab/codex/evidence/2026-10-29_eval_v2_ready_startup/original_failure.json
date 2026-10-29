@@ -1,0 +1,26 @@
+{
+  "role": "AUTHOR_GATE, not DS_PRO",
+  "formal_root": "657061e6893bd61e685685089a1cf1f61e9eb1fe",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "case": {
+    "classname": "tools.v3.eval_v2_production_tests.process_test",
+    "name": "test_stalled_actor_request_is_bounded_and_unrelated_process_survives",
+    "time": "0.161"
+  },
+  "failure": {
+    "message": "TimeoutError: timed out"
+  },
+  "xml_suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "1",
+    "skipped": "0",
+    "tests": "73",
+    "time": "55.813",
+    "timestamp": "2026-10-29T14:05:57.684754+00:00",
+    "hostname": "5213af2f39e9"
+  },
+  "original_directory": "/workspace/work/store-mkdir-f3-evidence/unified",
+  "traceback_extraction": "Exact XML failure text, unescaped by XML parser; complete raw XML/log copied byte-for-byte.",
+  "diagnosis": "READY receive in actor helper timed out before test request(stall); not an old F3 DS report."
+}

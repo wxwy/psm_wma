@@ -1,0 +1,53 @@
+..............................................{"prototype_only": false, "manifest_digest": "504f8ac3a329a337d5990d566fc37f28d0e00e1a060ff5d82e7e28ccfbca260c", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "a56a1b3d85a64c0ab4b38ce860a865b7", "worker_id": "7552f73a39cf444b8b863619d73658b7", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "504f8ac3a329a337d5990d566fc37f28d0e00e1a060ff5d82e7e28ccfbca260c", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "a56a1b3d85a64c0ab4b38ce860a865b7", "worker_id": "7552f73a39cf444b8b863619d73658b7", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+..{"owner_released": [["CloseFridge", 0]], "no_execution": true}
+.{"prototype_only": false, "manifest_digest": "1f2f47255ba8f8e069dd4af41cb8400751c6d4cdeffc31c59ce780c0238e4be8", "status": "partial", "success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "results_qualified": false, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [], "clean_execution": true, "results_qualified": false, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 0, "initialization_errors": 0}}}
+[eval-v2] stopped: RuntimeError('CPU synthetic resource gate failure')
+.{"prototype_only": false, "manifest_digest": "f0597bfc5bece0a8d20582b5064cbf853fd85b059982d44d8a3bbe331904fc1b", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "a333e7f7f15844ffa47d6c274494aad0", "worker_id": "fb748d0f99634f879ab1a83e0ef04647", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+................[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+......F
+=================================== FAILURES ===================================
+_____ test_stalled_actor_request_is_bounded_and_unrelated_process_survives _____
+
+tmp_path = PosixPath('/workspace/work/store-mkdir-f3-evidence/unified/phase_a_regression_tmp/test_stalled_actor_request_is_0')
+
+    def test_stalled_actor_request_is_bounded_and_unrelated_process_survives(tmp_path):
+        foreign = subprocess.Popen(
+            [sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True
+        )
+>       value = actor(tmp_path, timeout=0.15)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/process_test.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_production_tests/process_test.py:49: in actor
+    assert value._receive()["kind"] == "READY"
+           ^^^^^^^^^^^^^^^^
+scripts/robocasa_eval_v2_processes.py:151: in _receive
+    result = receive(self.channel)
+             ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py:27: in receive
+    length = struct.unpack("!I", exact(4))[0]
+                                 ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+size = 4
+
+    def exact(size):
+        chunks = []
+        while size:
+>           chunk = sock.recv(size)
+                    ^^^^^^^^^^^^^^^
+E           TimeoutError: timed out
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py:20: TimeoutError
+=============================== warnings summary ===============================
+tools/v3/eval_v2_production_tests/contract_test.py::test_media_preserves_already_loaded_torch_cpu_rng_without_cuda[False]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/process_test.py::test_stalled_actor_request_is_bounded_and_unrelated_process_survives
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 72 passed, 1 warning in 55.82s

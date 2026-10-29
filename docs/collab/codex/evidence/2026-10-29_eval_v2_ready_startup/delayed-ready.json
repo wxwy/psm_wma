@@ -1,0 +1,19 @@
+{
+  "exit_status": 0,
+  "events": [
+    {
+      "op": "READY",
+      "timeout_s": 5.0,
+      "receive_elapsed_s": 1.113839278001251,
+      "injected_child_delay_s": 0.4
+    },
+    {
+      "op": "stall",
+      "timeout_s": 0.15,
+      "raised": "TimeoutError",
+      "elapsed_s": 0.17230246899998747
+    }
+  ],
+  "real_OS_child_and_Actor": true,
+  "original_test_assertions_unchanged": true
+}
