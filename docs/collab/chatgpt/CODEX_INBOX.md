@@ -32,3 +32,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **Formal verdict=`REQUEST_CHANGES`（仅Evidence/A1-E1待确认）**：先要本次`phase_a_regression.xml/log`唯一首错与调用行；若确为startup READY，用仅PhaseA-test方式拆离启动timeout和实际150ms stall deadline，保持Actor生产不变；新Root时只审该增量。之后作者一次全CPU，DS再一次独立全CPU。不原样反复满跑/不新增架构。
 - 未合并V3生产、未授权GPU/Canary/900/DCP/训练，未触碰在训Job。此次只将新 Review 和本条append落盘。
 
+
+## 2026-10-29 — EvalV2 READY 原始失败修复 `9657fb6a/0ae313e3` Test-only Code Gate：APPROVE_CODE
+
+- **Formal Root** `9657fb6ab590f228d760362e506d5dd1b626880a`; **Child/Gitlink** `0ae313e329d290fc6b8a50fda1112820fb7ac485` 未变；前一Root `657061e6...`。单文件 `tools/v3/eval_v2_production_tests/process_test.py` +3/-1，test-only、没有任何生产代码/Child变更。另有作者证据 HEAD `bac28c293d4b7900e39030ca86575c8085667e28` 仅为bookkeeping，不替代Formal Pair。详细独立审核：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_READY_9657fb6a_0ae313e3_TestOnly_Incremental_Code_Gate_APPROVE_CODE.md`。
+- **READY 原因现由原始JUnit/traceback确认**：旧完整作者 Gate `phase_a_regression` 第73个test在`actor(...timeout=.15)` 等 `READY` 的`sock.recv(4)`先失败，未发 stall。新代码仅将初始化READY提高到5s，返回后立刻恢复Actor.timeout=.15再发stall，3秒上限和foreign/owned cleanup断言没动。
+- **作者聚焦证据真实已归档**：`process.xml` 8/8；`delayed.xml` 1/1，实子进程READY延迟400ms，观测READY预算5.0s、stall预算0.15s。GitBlob `8f1ae2f0...` 与`source_proof`一致。Ruff/format/diff-check为作者报告，GPT未在容器自跑，原始Full Gate FAIL保留。
+- **新 Formal Pair `APPROVE_CODE`仅限本test-only补丁，A1-E1源码/focused evidence CLOSED**；本次**未进行434作者完整CPU或DS独立CPU**，更大的Evidence Gate仍`REQUEST_CHANGES`。按既定顺序授权作者只跑**一次完整434统一CPU Gate**（145+255+34，零skip/error/fail，exit0/gate PASS/source unchanged），通过后GPT核验再交DS独立full replay。无V3生产合并、GPU、900、训练授权。
+
