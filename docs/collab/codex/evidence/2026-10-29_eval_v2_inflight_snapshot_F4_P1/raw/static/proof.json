@@ -1,0 +1,52 @@
+{
+  "formal_root": "a139b5a35877a79e0a56c2208f3002f731972b11",
+  "parent_root": "9657fb6ab590f228d760362e506d5dd1b626880a",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "changed_files": [
+    "scripts/robocasa_eval_v2/runtime.py",
+    "tools/v3/eval_v2_production_tests/runtime_progress_test.py"
+  ],
+  "only_runtime_ast_change": "same-lock tuple snapshot; original For target/body/else and all other runtime AST unchanged",
+  "ruff_and_diff": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_production_tests/runtime_progress_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_production_tests/runtime_progress_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "9657fb6ab590f228d760362e506d5dd1b626880a",
+        "a139b5a35877a79e0a56c2208f3002f731972b11"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "syntax_files": 2,
+  "source_bindings": {
+    "scripts/robocasa_eval_v2/runtime.py": {
+      "sha256": "019222460381ee96e02150d37b4703eaace90aa70f3be9431b14755fa1411790",
+      "git_blob": "d0184f4b41de3f4b1e33fa06b9c326d27bd00e85"
+    },
+    "tools/v3/eval_v2_production_tests/runtime_progress_test.py": {
+      "sha256": "e8a905f1829fbfa6f34136be8adcdd482002a0e14831bdf81b9ebf7e6c8cd73e",
+      "git_blob": "372e4a3aca2987debbe24d48f974860639b7ea72"
+    }
+  }
+}

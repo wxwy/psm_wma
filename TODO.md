@@ -534,3 +534,7 @@
 - **V3-EVAL-V2-BATCH-B2** — IN_PROGRESS sourcefreeze; Child774c2edb93ec5a6ba85ba1124757064d7cc779a5. NativeBatch/multiSim transaction transport, bounded optional media, frozenprofile and CPU/OS tests ready. NextRootsourceGitlink commit then clean unified authorCPU Gate (all prior+new), freshCodePair/Evidence/request/candidatepublish/readback STOP. DSfinalCPU/native/canonicalmerge not authorized by author tests.
 
 - **V3-EVAL-V2-BATCH-B2** — REVIEW; FormalRoot323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728/Child774c2edb93ec5a6ba85ba1124757064d7cc779a5. Final424authorCPU/0skip/static29/sourcebindings61/hashmanifest133PASS; realOS/HTTPsyntheticB2/cleanup/Resume witnesses, actualcloudclockBLOCKED/no nativeclaim. NewChild→Root candidatepublication/readback thenGPTincrementalCodeGateSTOP; DSfinalCPU/Canary/900/canonicalmerge remainseparatepending.
+
+- **V3-EVAL-V2-F4-P1** — IN_PROGRESS; Codex; Owner Root-only same-lock inflight snapshot+deterministic old-red/new-green regression. Expected files runtime.py/runtime_progress_test.py, Child0ae unchanged. Freeze newRoot then GPT narrowCodeGate; no900/fullGate/DS.
+
+- **V3-EVAL-V2-F4-P1** — REVIEW; Codex; FormalRoota139b5a35877a79e0a56c2208f3002f731972b11/Child0ae313e329d290fc6b8a50fda1112820fb7ac485; controlledRED1FAIL then exactPairGREEN3PASS/static/scopeproof PASS; evidence `docs/collab/codex/evidence/2026-10-29_eval_v2_inflight_snapshot_F4_P1/`. GPT narrowCodeGate prerequisite for one fullauthor CPU (expected435), then evidence review/DS. No fullGate/900/DS run or merge.

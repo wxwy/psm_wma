@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.269" timestamp="2026-10-29T15:38:08.463160+00:00" hostname="5213af2f39e9"><testcase classname="tools.v3.eval_v2_production_tests.runtime_progress_test" name="test_progress_snapshot_allows_real_finish_during_file_read" time="3.389"><failure message="RuntimeError: dictionary changed size during iteration">tmp_path = PosixPath('/workspace/work/inflight-snapshot-evidence/red-confirmed/tmp/test_progress_snapshot_allows_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fa557657a70&gt;
+
+    def test_progress_snapshot_allows_real_finish_during_file_read(tmp_path, monkeypatch):
+        prepare_monkey(monkeypatch)
+        value = fresh(tmp_path, tasks=("TaskA", "TaskB"), episodes=1)
+        rendezvous = Barrier(3, timeout=10)
+        ready, finished = Queue(), Queue()
+        snapshots, progress_reads, schedulers = [], [], []
+        original_finish = RoundScheduler.finish
+        original_read, original_wait = store_module.read, runtime_module.wait
+    
+        class ObservedScheduler(RoundScheduler):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                scheduler = self
+    
+                class Inflight(dict):
+                    def items(self):
+                        # Both writers are parked before finish, so only the reader
+                        # can hold this lock at the snapshot point.
+                        snapshots.append(scheduler._lock.lock.locked())
+                        return super().items()
+    
+                self.inflight = Inflight()
+                schedulers.append(self)
+    
+        def finish(scheduler, claim):
+            ready.put(claim["physical_worker"])
+            rendezvous.wait()
+            original_finish(scheduler, claim)
+            finished.put(claim["physical_worker"])
+    
+        first_wait = True
+    
+        def wait(*args, **kwargs):
+            nonlocal first_wait
+            if first_wait:
+                first_wait = False
+                assert len({ready.get(timeout=10) for _ in range(2)}) == 2
+            return original_wait(*args, **kwargs)
+    
+        def read(path):
+            if current_thread() is main_thread() and Path(path).name == "progress.json":
+                if not progress_reads:
+                    # Release both real finish/pop operations inside progress I/O.
+                    # If I/O holds the scheduler lock, these bounded waits fail.
+                    rendezvous.wait()
+                    progress_reads.extend(finished.get(timeout=10) for _ in range(2))
+                return original_read(path)
+            return original_read(path)
+    
+        monkeypatch.setattr(runtime_module, "RoundScheduler", ObservedScheduler)
+        monkeypatch.setattr(RoundScheduler, "finish", finish)
+        monkeypatch.setattr(runtime_module, "wait", wait)
+        monkeypatch.setattr(store_module, "read", read)
+        with server() as (url, _), value.locked():
+            runtime = CpuSlotRuntime(value, cfg(2, 1), url, [])
+            report, error = runtime.run()
+            print(
+                "V2_PROGRESS_SNAPSHOT_WITNESS "
+                + json.dumps(
+                    {
+                        "copy_held_writer_lock": snapshots,
+                        "finished_during_progress_read": sorted(progress_reads),
+                        "valid": report["valid"],
+                        "error": repr(error),
+                    }
+                ),
+                flush=True,
+            )
+            if error is not None:
+&gt;               raise error  # Keep the actual internal throw-site in a RED traceback.
+                ^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/runtime_progress_test.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;tools.v3.eval_v2_production_tests.slot_test.CpuSlotRuntime object at 0x7fa551ee4440&gt;
+
+    def run(self):
+        self.recover()
+        pending = any(
+            slot_disposition(self.store, t, i) == "execute"
+            for t in self.store.manifest["task_order"]
+            for i in range(self.store.manifest["episodes_per_task"])
+        )
+        faults = any(
+            e["resolution"] is None
+            for t in self.store.manifest["task_order"]
+            for e in self.store.errors(t)
+        )
+        if not pending and not faults:
+            return self.store.publish_views(), None
+        self.resource_probe(self.cfg, before_models=True)
+        require_free_ports(
+            [
+                self.cfg["base_port"] + self.cfg["gpu_ids"].index(g)
+                for g in set(self.worker_gpus.values())
+            ]
+        )
+        scheduler = RoundScheduler(self.store, self.workers)
+        pool = ThreadPoolExecutor(max_workers=len(self.workers))
+        futures = {}
+        original = None
+        last_round = -1
+        last_print = 0
+        try:
+            for task in self.store.manifest["task_order"]:
+                old_errors = [
+                    e for e in self.store.errors(task) if e["resolution"] is None
+                ]
+                rows = self.store.rows(task)
+                if len(rows) == self.cfg["episodes_per_task"] and old_errors:
+                    stream = self.store.begin_task(task, recovery_only=True)
+                    worker = self.workers[
+                        self.store.manifest["task_order"].index(task)
+                        % len(self.workers)
+                    ]
+                    self._actor(
+                        {"task": task, "physical_worker": worker, "attempt": stream}
+                    )
+                    for e in old_errors:
+                        cert = self.certificates[e["id"]]
+                        self.store.resolve_error(task, e["id"], cert)
+            while not scheduler.done:
+                for worker in self.workers:
+                    if worker not in scheduler.inflight:
+                        claim = scheduler.dispatch(worker)
+                        if claim:
+                            futures[pool.submit(self.run_slot, scheduler, claim)] = (
+                                claim
+                            )
+                if futures:
+                    done, _ = wait(futures, timeout=1, return_when=FIRST_COMPLETED)
+                    for f in done:
+                        claim = futures.pop(f)
+                        result = f.result()
+                        print("[eval-v2] " + json.dumps(result), flush=True)
+                if self.stop.is_set():
+                    raise RuntimeError("native Worker requested safe stop")
+                for task, actor in list(self.actors.items()):
+                    if actor.owned.proc.poll() is not None:
+                        raise RuntimeError(f"native Task Worker exited: {task}")
+                if scheduler.round != last_round:
+                    identity.guard(self.cfg, self.store.manifest, self.inputs)
+                    self.resource_probe(
+                        self.cfg,
+                        [v[0] for v in self.servers.values()]
+                        + [x.owned for x in self.actors.values()],
+                    )
+                    last_round = scheduler.round
+                if time.monotonic() - last_print &gt;= 5:
+                    from cosmos_framework.evaluation.robocasa_v2.store import read
+    
+                    statuses = []
+&gt;                   for worker, claim in scheduler.inflight.items():
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                   RuntimeError: dictionary changed size during iteration
+
+scripts/robocasa_eval_v2/runtime.py:796: RuntimeError</failure></testcase></testsuite></testsuites>

@@ -1843,3 +1843,16 @@ Read full Owner directive2026-10-28_V3_EvalV2_Dynamic_SimSlots_LocalTTT_Batch_Ow
 - Newauthorhandoff/runbook/sample/replay/rawEvidence andcanonical B2 CodeGate request packaged. TaskREVIEW, publicationChild→Root thenfreshremote/source/hashreadback STOP. Neither GPTnewCode nor DSCPU nor nativeCanary approvedbyselftests. CandidateevidenceHEAD bookkeeping notFormalRoot.
 
 - B2 publication readback complete: Child774c2edb93ec5a6ba85ba1124757064d7cc779a5 first, Root evidencee549a4f5e5d0b3f90a75cd37e047f006af90c94b fetched/advertised match; FormalRoot323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728 and candidate Gitlink774c2edb93ec5a6ba85ba1124757064d7cc779a5. Reverified133artifactSHA and61sourcebindings, immutablearchiveBlob andbothInboxadditions retained, protectedproductiondiffZERO. CanonicalRoot9cc37557/Child746c5cf2 andapprovedB1candidateRefs unchanged. SourceCodeGateREQUESTED notAPPROVED; author424/0skip/static29 only, actualcloudclockBLOCKED, DS/native/Canary/900notrun. Receipt saved; STOP for GPTincrementalCodeGate.
+
+
+## 2026-10-29 — F4-P1 inflight snapshot task claimed
+
+- Task V3-EVAL-V2-F4-P1 IN_PROGRESS / Codex. Owner authorizes minimal Root-only production synchronization and deterministic short regression after directly read Review ebbfbcece43942a548d838449594345df4e08540 (blob5a6a7b7309fec4cfb13505216461675cf25ed89e). Fresh origin/V3 fetch+advertised/tracking match ebbfbcec. Baseline Root9657fb6ab590f228d760362e506d5dd1b626880a/Child-Gitlink0ae313e329d290fc6b8a50fda1112820fb7ac485. Isolated branch v3-eval-v2-inflight-snapshot-20261029, prior formal/diagnostic worktrees preserved.
+- Intended formal files only: scripts/robocasa_eval_v2/runtime.py and new tools/v3/eval_v2_production_tests/runtime_progress_test.py. Scheduler existing lock protects only tuple copy; unchanged progress file reads/logs outside. Regression uses real Runtime/Slot/Store/RoundScheduler.finish and synthetic twoTask oneEpisode, bounded thread rendezvous, oldRED/newGREEN; no 900 or fullGate. Child/scheduler authority/Core/Batch unchanged.
+- Code task separately authorized by latest Owner instruction; old multi-review waits superseded by V3 roles. Original full434 Evidence REQUEST_CHANGES and single diagnostic INCONCLUSIVE remain distinct. New FormalRoot then narrow GPT CodeGate STOP; no fullCPU/DS/V3 merge/GPU/Canary/training or Issue reply. No code committed yet.
+
+
+## F4-P1 source frozen / focused evidence complete
+
+- NewFormalRoota139b5a35877a79e0a56c2208f3002f731972b11/unchangedChild-Gitlink0ae313e329d290fc6b8a50fda1112820fb7ac485, directparent9657fb6ab590f228d760362e506d5dd1b626880a; exacttwo-file scope runtime+3/-1 and new108-line regression. ControlledRED1FAIL/runtime796, exactPairGREEN3PASS/0skip, staticAST/ruff/format/syntax/diff PASS, clean54hashbeforeafter. Debugfixturepath error retained separately. Sourcefinding closure only, priorunknownthrow-site unresolved; original434 FAIL/single900 INCONCLUSIVE unchanged.
+- Evidence `docs/collab/codex/evidence/2026-10-29_eval_v2_inflight_snapshot_F4_P1/`, narrow GPTCodeGate requested. Task V3-EVAL-V2-F4-P1 REVIEW; isolatedcandidatepublication/readback then STOP. No fullCPU/DS/V3 merge/Childedit/GPU/Canary/900/training/Issue action.

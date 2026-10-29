@@ -1,0 +1,13 @@
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0", "task": "TaskA", "episode": 0, "episodes": 1, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU1", "task": "TaskB", "episode": 0, "episodes": 1, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "TaskB", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "TaskA", "episode": 0, "outcome": "failure"}
+V2_PROGRESS_SNAPSHOT_WITNESS {"copy_held_writer_lock": [true], "finished_during_progress_read": ["GPU0", "GPU1"], "valid": 2, "error": "None"}
+.[eval-v2] {"task": "TaskA", "episode": 0, "outcome": "failure"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0", "task": "TaskB", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "TaskB", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "TaskC", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "TaskB", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "TaskA", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "TaskC", "episode": 1, "outcome": "success"}
+..
+3 passed in 14.84s

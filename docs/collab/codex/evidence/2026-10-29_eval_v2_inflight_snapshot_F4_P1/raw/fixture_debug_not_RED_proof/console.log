@@ -1,0 +1,241 @@
+V2_PROGRESS_SNAPSHOT_WITNESS {"copy_held_writer_lock": [], "finished_during_progress_read": [], "valid": 0, "error": "AttributeError(\"'str' object has no attribute 'name'\")"}
+F
+=================================== FAILURES ===================================
+__________ test_progress_snapshot_allows_real_finish_during_file_read __________
+
+tmp_path = PosixPath('/workspace/work/inflight-snapshot-evidence/red/tmp/test_progress_snapshot_allows_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f908b446450>
+
+    def test_progress_snapshot_allows_real_finish_during_file_read(tmp_path, monkeypatch):
+        prepare_monkey(monkeypatch)
+        value = fresh(tmp_path, tasks=("TaskA", "TaskB"), episodes=1)
+        rendezvous = Barrier(3, timeout=10)
+        ready, finished = Queue(), Queue()
+        snapshots, progress_reads, schedulers = [], [], []
+        original_finish = RoundScheduler.finish
+        original_read, original_wait = store_module.read, runtime_module.wait
+    
+        class ObservedScheduler(RoundScheduler):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                scheduler = self
+    
+                class Inflight(dict):
+                    def items(self):
+                        # Both writers are parked before finish, so only the reader
+                        # can hold this lock at the snapshot point.
+                        snapshots.append(scheduler._lock.lock.locked())
+                        return super().items()
+    
+                self.inflight = Inflight()
+                schedulers.append(self)
+    
+        def finish(scheduler, claim):
+            ready.put(claim["physical_worker"])
+            rendezvous.wait()
+            original_finish(scheduler, claim)
+            finished.put(claim["physical_worker"])
+    
+        first_wait = True
+    
+        def wait(*args, **kwargs):
+            nonlocal first_wait
+            if first_wait:
+                first_wait = False
+                assert len({ready.get(timeout=10) for _ in range(2)}) == 2
+            return original_wait(*args, **kwargs)
+    
+        def read(path):
+            if current_thread() is main_thread() and path.name == "progress.json":
+                if not progress_reads:
+                    # Release both real finish/pop operations inside progress I/O.
+                    # If I/O holds the scheduler lock, these bounded waits fail.
+                    rendezvous.wait()
+                    progress_reads.extend(finished.get(timeout=10) for _ in range(2))
+                return original_read(path)
+            return original_read(path)
+    
+        monkeypatch.setattr(runtime_module, "RoundScheduler", ObservedScheduler)
+        monkeypatch.setattr(RoundScheduler, "finish", finish)
+        monkeypatch.setattr(runtime_module, "wait", wait)
+        monkeypatch.setattr(store_module, "read", read)
+        with server() as (url, _), value.locked():
+            runtime = CpuSlotRuntime(value, cfg(2, 1), url, [])
+            report, error = runtime.run()
+            print(
+                "V2_PROGRESS_SNAPSHOT_WITNESS "
+                + json.dumps(
+                    {
+                        "copy_held_writer_lock": snapshots,
+                        "finished_during_progress_read": sorted(progress_reads),
+                        "valid": report["valid"],
+                        "error": repr(error),
+                    }
+                ),
+                flush=True,
+            )
+            if error is not None:
+>               raise error  # Keep the actual internal throw-site in a RED traceback.
+                ^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/runtime_progress_test.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tools.v3.eval_v2_production_tests.slot_test.CpuSlotRuntime object at 0x7f907fea0260>
+
+    def run(self):
+        self.recover()
+        pending = any(
+            slot_disposition(self.store, t, i) == "execute"
+            for t in self.store.manifest["task_order"]
+            for i in range(self.store.manifest["episodes_per_task"])
+        )
+        faults = any(
+            e["resolution"] is None
+            for t in self.store.manifest["task_order"]
+            for e in self.store.errors(t)
+        )
+        if not pending and not faults:
+            return self.store.publish_views(), None
+        self.resource_probe(self.cfg, before_models=True)
+        require_free_ports(
+            [
+                self.cfg["base_port"] + self.cfg["gpu_ids"].index(g)
+                for g in set(self.worker_gpus.values())
+            ]
+        )
+        scheduler = RoundScheduler(self.store, self.workers)
+        pool = ThreadPoolExecutor(max_workers=len(self.workers))
+        futures = {}
+        original = None
+        last_round = -1
+        last_print = 0
+        try:
+            for task in self.store.manifest["task_order"]:
+                old_errors = [
+                    e for e in self.store.errors(task) if e["resolution"] is None
+                ]
+                rows = self.store.rows(task)
+                if len(rows) == self.cfg["episodes_per_task"] and old_errors:
+                    stream = self.store.begin_task(task, recovery_only=True)
+                    worker = self.workers[
+                        self.store.manifest["task_order"].index(task)
+                        % len(self.workers)
+                    ]
+                    self._actor(
+                        {"task": task, "physical_worker": worker, "attempt": stream}
+                    )
+                    for e in old_errors:
+                        cert = self.certificates[e["id"]]
+                        self.store.resolve_error(task, e["id"], cert)
+            while not scheduler.done:
+                for worker in self.workers:
+                    if worker not in scheduler.inflight:
+>                       claim = scheduler.dispatch(worker)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+scripts/robocasa_eval_v2/runtime.py:768: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <eval_v2_production_tests.runtime_progress_test.test_progress_snapshot_allows_real_finish_during_file_read.<locals>.ObservedScheduler object at 0x7f90863b96a0>
+worker = 'GPU0'
+
+    def dispatch(self, worker):
+        with self._lock:
+            self._check()
+            if worker not in self.workers:
+                raise ValueError("unknown physical worker")
+            if worker in self.inflight:
+                raise ValueError("worker already has a slot")
+            tasks = self.store.manifest["task_order"]
+            while self.round < self.store.manifest["episodes_per_task"]:
+                while self.cursor < len(tasks):
+                    task, ep = tasks[self.cursor], self.round
+                    disposition = self._disposition(task, ep)
+                    if disposition != "execute":
+                        self._record(disposition, {"task": task, "episode": ep})
+                        self.resume_scan.append((task, ep, disposition))
+                        self.cursor += 1
+                        continue
+                    # Any idle physical Slot may consume the next logical item.
+                    # Task environments are switched by the bounded Slot owner.
+                    if task not in self.store.active_tasks:
+>                       self.store.begin_task(task)
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/scheduler.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.evaluation.robocasa_v2.store.Store object at 0x7f907fa03710>
+task = 'TaskA'
+
+    def begin_task(self, task, *, seed=None, recovery_only=False):
+        self._lease()
+        if task in self.active_tasks:
+            raise RuntimeError("Task already scheduled")
+>       self._initialize(task)
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:475: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.evaluation.robocasa_v2.store.Store object at 0x7f907fa03710>
+task = 'TaskA', ep = None
+
+    def _initialize(self, task, ep=None):
+        """Intent -> directory -> ready; intent is never removed or overwritten.
+    
+        No producer token is issued before ready. Thus missing ready can recover
+        ONLY if the public subtree contains no producer evidence whatsoever.
+        """
+        self._lease()
+        public = self._task(task) / "episodes" if ep is None else self._slot(task, ep)
+        ledger = self._internal(task) if ep is None else self._ledger(task, ep)
+        intent, ready = ledger / "init_intent.json", ledger / "ready.json"
+        expected = self._claim(task, ep)
+        if not safe(intent).exists():
+            if safe(ready).exists():
+                raise ValueError("ready exists but init intent lost")
+            if public.exists() and any(public.iterdir()):
+                raise ValueError("ambiguous unclaimed public data")
+            self.fault("before_intent")
+            save(intent, expected)
+            self.fault("after_intent")
+>       if load(intent) != expected:
+           ^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:334: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/workspace/work/inflight-snapshot-evidence/red/tmp/test_progress_snapshot_allows_0/new900/_internal/tasks/TaskA/init_intent.json')
+
+    def load(path):
+        path = safe(path)
+        before = READ_METRICS["disk_reads"]
+>       value = _cached_document(str(path), witness(path))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/workspace/work/inflight-snapshot-evidence/red/tmp/test_progress_snapshot_allows_0/new900/_internal/tasks/TaskA/init_intent.json'
+stamp = (27, 1087174, 202, 1793288260751289027, 1793288260754268066)
+
+    @lru_cache(maxsize=32768)
+    def _cached_document(path, stamp):
+        READ_METRICS["disk_reads"] += 1
+>       doc = read(path)
+              ^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:145: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/workspace/work/inflight-snapshot-evidence/red/tmp/test_progress_snapshot_allows_0/new900/_internal/tasks/TaskA/init_intent.json'
+
+    def read(path):
+>       if current_thread() is main_thread() and path.name == "progress.json":
+                                                 ^^^^^^^^^
+E       AttributeError: 'str' object has no attribute 'name'
+
+tools/v3/eval_v2_production_tests/runtime_progress_test.py:61: AttributeError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/runtime_progress_test.py::test_progress_snapshot_allows_real_finish_during_file_read
+1 failed in 2.98s

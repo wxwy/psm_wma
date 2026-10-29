@@ -1,0 +1,35 @@
+{
+  "role": "FUTURE COMMAND ONLY; NOT EXECUTED",
+  "formal_root": "a139b5a35877a79e0a56c2208f3002f731972b11",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "cwd": "/workspace/work/psm-wma-inflight-snapshot-formal",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "tools/v3/run_eval_v2_batch_b2_cpu_gate.py",
+    "--root-worktree",
+    "/workspace/work/psm-wma-inflight-snapshot-formal",
+    "--expected-root",
+    "a139b5a35877a79e0a56c2208f3002f731972b11",
+    "--expected-child",
+    "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "--evidence-dir",
+    "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review"
+  ],
+  "evidence_dir": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review",
+  "requires": [
+    "GPT fresh narrow Code Gate approval for this exact Pair",
+    "Owner authorization for full author CPU",
+    "new absent evidence directory",
+    "clean exact Pair"
+  ],
+  "current_full_author_gate": "NOT_RUN for new Pair",
+  "expected_total": 435,
+  "actual_collection_authoritative": true,
+  "next_sequence": [
+    "GPT narrow Code Gate",
+    "one full author CPU Gate",
+    "review full author evidence",
+    "DS_PRO independent full CPU Gate"
+  ],
+  "extra_focused_source_coverage": "New regression has dedicated Ruff/format/AST/source SHA proof; existing unified Gate entry unchanged."
+}
