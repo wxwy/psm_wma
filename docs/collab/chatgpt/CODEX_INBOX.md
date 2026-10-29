@@ -40,3 +40,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **作者聚焦证据真实已归档**：`process.xml` 8/8；`delayed.xml` 1/1，实子进程READY延迟400ms，观测READY预算5.0s、stall预算0.15s。GitBlob `8f1ae2f0...` 与`source_proof`一致。Ruff/format/diff-check为作者报告，GPT未在容器自跑，原始Full Gate FAIL保留。
 - **新 Formal Pair `APPROVE_CODE`仅限本test-only补丁，A1-E1源码/focused evidence CLOSED**；本次**未进行434作者完整CPU或DS独立CPU**，更大的Evidence Gate仍`REQUEST_CHANGES`。按既定顺序授权作者只跑**一次完整434统一CPU Gate**（145+255+34，零skip/error/fail，exit0/gate PASS/source unchanged），通过后GPT核验再交DS独立full replay。无V3生产合并、GPU、900、训练授权。
 
+
+## 2026-10-29 — EvalV2 Full Author434 attempt1 旧FormalPair新增 Evidence FAIL（synthetic900）
+
+- Formal Source Pair **未变** Root `9657fb6ab590f228d760362e506d5dd1b626880a`, Child/Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`；作者证据 HEAD `f65ac07d3fc3e56117dd9192ba77e4b58b5c9934` 仅为后续 bookkeeping，勿替代Formal Pair。原 READY-only `APPROVE_CODE`不重审。本轮**Evidence verdict=`REQUEST_CHANGES`**，详见 `docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_Author434_9657fb6a_0ae313e3_900_Scheduler_RuntimeError_Evidence_Gate.md`。
+- GPT已独立回读远端原始`raw/gate.json`/JUnit/log/调度末尾4记录与`derived`哈希：`inference145 PASS`、`PhaseA112 PASS/1 FAIL`、PhaseB未执行 → 总**257 PASS+1 FAIL+176未执行**、shell1/gate FAIL；READY测试PASS，53 hashes事后相同且WT干净；原Gate无最终source_unchanged=true。
+- 唯一失败`scheduler_test.py:95` synthetic900，`Runtime.run()`返回`RuntimeError('dictionary changed size during iteration')`。208 valid(104/104)、692 pending，3 coordinator_stop；末尾FINISH×3后CANCEL，`inflight=[]`。原归档只有pytest外层assert栈及`repr(error)`，**内部抛错行未确认**，勿先改生产。
+- **HIGH-priority candidate**：Root`runtime.py:796`对`scheduler.inflight.items()`无锁遍历，工作线程Child`scheduler.py:165`可同时`pop`；代码层面可达race，但不冒称此次确证throw-site。
+- 仅建议Owner授权Codex**一次只跑原失败synthetic900用例的外置透明 traceback 捕获**，原样保留Runtime返回值和测试断言、不改生产/测试源码；若定位则只做目标生产snapshot窄修+确定性回归、新Pair窄fresh审核；若未复现报告INCONCLUSIVE。**暂不重跑完整434、不启动DS**。没有V3生产合并/GPU/RoboCasa/900真实/训练授权。
+
