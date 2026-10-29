@@ -53,7 +53,9 @@ STATIC = [
 ] + [
     f"{CHILD}/cosmos_framework/utils/no_ttt_loader_profile.py",
     f"{CHILD}/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+    f"{CHILD}/examples/psm_wma_robocasa_matched_no_ttt_test.py",
     "tools/v3/run_no_ttt_async_cpu_gate.py",
+    "tools/v3/no_ttt_workers_entry_test.py",
 ]
 
 
@@ -74,6 +76,10 @@ def main():
         "steps": [],
         "real_gpu": False,
         "real_dcp_resume": False,
+        "excluded_real_data_nodes": [
+            f"{CHILD}/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke"
+        ],
+        "exclusion_reason": "Owner authorizes synthetic CPU only; real asset execution is forbidden, not a skipped CPU requirement",
     }
 
     def save(name, value):
@@ -140,6 +146,8 @@ def main():
             "LOCAL_WORLD_SIZE",
             "MASTER_ADDR",
             "MASTER_PORT",
+            "PSM_PHASE4A_CACHE_ROOT",
+            "PSM_PHASE4A_SOURCE_ROOT",
         ):
             env.pop(key, None)
         save(
@@ -217,6 +225,7 @@ def main():
                     "-q",
                     "-s",
                     "-x",
+                    f"--deselect={CHILD}/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke",
                     "-p",
                     "no:cacheprovider",
                     f"--rootdir={root}",

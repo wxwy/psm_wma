@@ -1,3 +1,7 @@
+# 2026-10-29 — Issue #9 final synthetic CPU selection and fixture corrections
+
+Pair e8c49c074a05632bed9f566665712d26fe1a1e1b/d64e5c1d8541341b26f6ef0557822fe76d8dd52d: newasync72PASS; regression122PASS/1FAIL/1SKIP before -x. Existing identity test used unsupportedSimpleNamespace andmissing receipt; fixedfixture tosupportedstructured records+temporaryreceipt, productionserializerunchanged. A secondoldRootfixture incorrectlyexpectedstrictidentityrejection forOwner-exempt existingformalJob; nowtargetsordinarystrictJobwithsameassertions. Focused109PASS. Explicitlydeselectoneforbiddenrealassetdebugnode (testretained), strictsyntheticGatehasnoskipallowance. NoNoTTTproductionchangessince d64; finalChildaddsfixtureonly. NewRootformal/cleanGate pending; allrawattemptsretained.
+
 # 2026-10-29 — Issue #9 locked01 stopped at new fixture assertion; corrected replay pending
 
 First Pair66986d5fa77bbf58f2e79e0d3345d89adae27b9b/5124a2b7a9bbb3b9f84de16a5546f3ba6e147e3d: staticPASS, 55asyncPASS/1FAIL, stoppedbeforelegacygroup. New per-GA assertion incorrectly usedinitialfrontier beforelazyResume applied; fixture nowderivesbefore frompending restoredfrontier andkeeps allassertions. Rawlocked01 failure retained. Source additionallyfreezes resolvedcache/source/index roots beforeworker spawn; alias-retargetnegative+correctedResume2PASS. CPUfake trace nowuses identicalcompute budget forsync/async andreportswall. NewChildcommitstaged; newRootformal/cleanunifiedGate willsupersedeinitialPair, notrelabelfailedrun. NoGPU/realDCP/liveJob/canonicalmerge.
