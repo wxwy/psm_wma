@@ -58,3 +58,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **F4-P1 HIGH（源码可达生产风险，旧FAIL是否由此引发未确认）**：Root`scripts/robocasa_eval_v2/runtime.py:796`每5s诊断未加锁迭代`scheduler.inflight.items()`，Child `scheduler.py:165` Worker `finish()`在自己的锁里pop同一字典；诊断文件I/O期间可触发`dictionary changed size`导致评测不必要停止。建议Codex仅Root在**同一scheduler._lock保护下复制快照**，磁盘读在锁外，旧红新绿确定性测试，不重审调度架构、不再随机重跑单例。
 - Codex新Formal Root/Child不变→GPT窄增量→作者全CPU→DS独立全CPU；无V3生产合并/GPU/Canary/900/训练权限。
 
+
+## 2026-10-29 — Training/NoTTT Issue #11 DS independent301 CPU report Evidence Review
+
+- Exact Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，先前 Code Gate `APPROVE_CODE` 保持，禁止重复源码Gate。
+- DS已提供其独立运行报告：exact-pair, clean detached, async72+regression229=301全部PASS、gate PASS/exit0、source_unchanged true、CPU fake-compute Source/Transform跨Member/Window overlap，完整PID和RNG/Frontier/Resume synthetic覆盖。**本轮GPT只能审用户粘贴报告，服务器raw JUnit/trace未能直接读取；状态 `DS_CPU_PASS_REPORTED / REPORT_CONSISTENT / RAW_BYTES_NOT_YET_REVIEWED`，不得写成独立raw bytes验证PASS。** 详细Review `docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_AsyncOverlap_Issue11_DS301_Independent_CPU_Evidence_Review.md`。
+- 原正式Job `no_ttt_packed128_droid_fresh_30k_world4_ga4` DS现场报告已是 `NOTTT_LOADER_WORKERS=8`，用的仍是旧RAW loader，未引入新async/Compact；GPU仍占用中，绝不并行新Trainer。DS仅补现成raw文件，不重跑301。
+- 后续GPU/DCP资格方案 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_AsyncCompact_Real_DCP_GPU_Qualification_Proposal.md` **`PROPOSED_NOT_AUTHORIZED`**，拟同一旧正式DCP克隆A Compact1/nw0 vs B Compact1/nw8新async，需Owner提供独占GPU和另外授权；无正式Job停/Resume/GPU/合并许可。
