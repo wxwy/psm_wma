@@ -1,0 +1,483 @@
+{
+  "all_ranks_pass": false,
+  "compact0_catalog": {
+    "compact_flag": false,
+    "episodes": 9126
+  },
+  "compact1": {
+    "grad_params": 548,
+    "loss": 14.900200843811035,
+    "n_payloads": 128,
+    "weighted": 3.725050210952759
+  },
+  "compact1_catalog": {
+    "compact_flag": true,
+    "episodes": 9126
+  },
+  "compact_effect": {
+    "common_params": 548,
+    "failure_count": 229,
+    "failures": [
+      "net.action_modality_embed",
+      "net.language_model.model.embed_tokens.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.input_layernorm.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.mlp.up_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.post_attention_layernorm.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.k_norm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.k_proj_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.o_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.q_norm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.q_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.q_proj_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.v_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.v_proj_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp.up_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp_moe_gen.down_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp_moe_gen.up_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.post_attention_layernorm.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.k_norm_und_for_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.o_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.o_proj_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.q_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.v_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.mlp_moe_gen.down_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.mlp_moe_gen.up_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.k_norm_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.k_proj_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.q_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.q_proj_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.v_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.v_proj_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp.up_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp_moe_gen.down_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp_moe_gen.up_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.self_attn.k_proj_moe_gen.weight"
+    ],
+    "group_stats": {
+      "action2llm": {
+        "covered": 2,
+        "pass": 2
+      },
+      "action_modality_embed": {
+        "covered": 1,
+        "pass": 0
+      },
+      "llm2action": {
+        "covered": 2,
+        "pass": 2
+      },
+      "llm2vae": {
+        "covered": 2,
+        "pass": 2
+      },
+      "moe_gen": {
+        "covered": 281,
+        "pass": 150
+      },
+      "time_embedder": {
+        "covered": 4,
+        "pass": 0
+      },
+      "vae2llm": {
+        "covered": 2,
+        "pass": 0
+      }
+    },
+    "loss_a": 14.900200843811035,
+    "loss_b": 14.900200843811035,
+    "loss_eq": true,
+    "only_a": [],
+    "only_b": [],
+    "worst10": [
+      {
+        "allclose": false,
+        "max_abs": 0.0009765625,
+        "name": "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.003339021932333708
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.0009765625,
+        "name": "net.language_model.model.layers.9._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.006726542022079229
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp.down_proj.weight",
+        "rel_l2": 0.003569202031940222
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.003170957323163748
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.003510143607854843
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.24._checkpoint_wrapped_module.self_attn.k_proj.weight",
+        "rel_l2": 0.00131785508710891
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.0._checkpoint_wrapped_module.mlp.down_proj.weight",
+        "rel_l2": 0.0054315985180437565
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.10._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.005235865246504545
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.12._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.002690505003556609
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.15._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.0068426476791501045
+      }
+    ]
+  },
+  "compact_source_roots": {
+    "cache": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/datasets/robocasa365-target-atomic-left_wrist-exact_window",
+    "index": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/datasets/robocasa365-target-atomic-verified-index-r1",
+    "source": "/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic"
+  },
+  "cuda": "12.8",
+  "dcp_load": {
+    "missing_count": 0,
+    "missing_keys": [],
+    "path": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/models/Cosmos3-Edge-Policy-DROID-dcp",
+    "unexpected_count": 0,
+    "unexpected_keys": []
+  },
+  "dense0a": {
+    "grad_params": 548,
+    "loss": 14.900200843811035,
+    "n_payloads": 128,
+    "weighted": 3.725050210952759
+  },
+  "dense0b": {
+    "grad_params": 548,
+    "loss": 14.900200843811035,
+    "n_payloads": 128,
+    "weighted": 3.725050210952759
+  },
+  "device": "NVIDIA H100 80GB HBM3",
+  "diagnostic": {
+    "common_params": 548,
+    "compact_failures": 229,
+    "excess_positive_params": 99,
+    "intrinsic_failures": 227,
+    "ratio_max": 8,
+    "ratio_median": 1,
+    "worst_excess10": [
+      {
+        "compact_ok": false,
+        "d_compact": 0.00048828125,
+        "d_noise": 0.000244140625,
+        "excess": 0.000244140625,
+        "name": "net.language_model.model.layers.24._checkpoint_wrapped_module.self_attn.k_proj.weight",
+        "noise_ok": false,
+        "ratio": 2
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.000244140625,
+        "d_noise": 0.000030517578125,
+        "excess": 0.000213623046875,
+        "name": "net.language_model.model.layers.12._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "noise_ok": false,
+        "ratio": 8
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.000244140625,
+        "d_noise": 0.000030517578125,
+        "excess": 0.000213623046875,
+        "name": "net.language_model.model.layers.15._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "noise_ok": false,
+        "ratio": 8
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.000244140625,
+        "d_noise": 0.000030517578125,
+        "excess": 0.000213623046875,
+        "name": "net.language_model.model.layers.7._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+        "noise_ok": false,
+        "ratio": 8
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.000244140625,
+        "d_noise": 0.0001220703125,
+        "excess": 0.0001220703125,
+        "name": "net.language_model.model.layers.0._checkpoint_wrapped_module.mlp.down_proj.weight",
+        "noise_ok": false,
+        "ratio": 2
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.0001220703125,
+        "d_noise": 0.000030517578125,
+        "excess": 0.000091552734375,
+        "name": "net.language_model.model.layers.19._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "noise_ok": false,
+        "ratio": 4
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.0001220703125,
+        "d_noise": 0.00006103515625,
+        "excess": 0.00006103515625,
+        "name": "net.language_model.model.layers.11._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "noise_ok": false,
+        "ratio": 2
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.0001220703125,
+        "d_noise": 0.00006103515625,
+        "excess": 0.00006103515625,
+        "name": "net.language_model.model.layers.13._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "noise_ok": false,
+        "ratio": 2
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.0001220703125,
+        "d_noise": 0.00006103515625,
+        "excess": 0.00006103515625,
+        "name": "net.language_model.model.layers.22._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "noise_ok": false,
+        "ratio": 2
+      },
+      {
+        "compact_ok": false,
+        "d_compact": 0.00014495849609375,
+        "d_noise": 0.00008392333984375,
+        "excess": 0.00006103515625,
+        "name": "net.language_model.model.layers.5._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+        "noise_ok": false,
+        "ratio": 1.7272727272727273
+      }
+    ]
+  },
+  "finished_unix": 1793196661.1966178,
+  "intrinsic_noise": {
+    "common_params": 548,
+    "failure_count": 227,
+    "failures": [
+      "net.action_modality_embed",
+      "net.language_model.model.embed_tokens.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.input_layernorm.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.mlp.up_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.post_attention_layernorm.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.k_norm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.o_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.q_norm_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.q_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.q_proj_moe_gen.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.v_proj.weight",
+      "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.v_proj_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.input_layernorm.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp.up_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp_moe_gen.down_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp_moe_gen.up_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.post_attention_layernorm.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.o_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.o_proj_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.q_norm_moe_gen.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.q_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.v_proj.weight",
+      "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.v_proj_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.mlp_moe_gen.down_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.mlp_moe_gen.up_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.k_proj_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.q_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.q_proj_moe_gen.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.v_proj.weight",
+      "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.v_proj_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp.down_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp.up_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.mlp_moe_gen.up_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.self_attn.k_proj.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.self_attn.k_proj_moe_gen.weight",
+      "net.language_model.model.layers.11._checkpoint_wrapped_module.self_attn.q_proj_moe_gen.weight"
+    ],
+    "group_stats": {
+      "action2llm": {
+        "covered": 2,
+        "pass": 2
+      },
+      "action_modality_embed": {
+        "covered": 1,
+        "pass": 0
+      },
+      "llm2action": {
+        "covered": 2,
+        "pass": 2
+      },
+      "llm2vae": {
+        "covered": 2,
+        "pass": 2
+      },
+      "moe_gen": {
+        "covered": 281,
+        "pass": 149
+      },
+      "time_embedder": {
+        "covered": 4,
+        "pass": 0
+      },
+      "vae2llm": {
+        "covered": 2,
+        "pass": 0
+      }
+    },
+    "loss_a": 14.900200843811035,
+    "loss_b": 14.900200843811035,
+    "loss_eq": true,
+    "only_a": [],
+    "only_b": [],
+    "worst10": [
+      {
+        "allclose": false,
+        "max_abs": 0.0009765625,
+        "name": "net.language_model.model.layers.0._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.00331968255341053
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.0009765625,
+        "name": "net.language_model.model.layers.9._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.006710938178002834
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.1._checkpoint_wrapped_module.mlp.down_proj.weight",
+        "rel_l2": 0.003570649540051818
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.1._checkpoint_wrapped_module.post_attention_layernorm_moe_gen.weight",
+        "rel_l2": 0.005300465971231461
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.1._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.003398737870156765
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.00048828125,
+        "name": "net.language_model.model.layers.10._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.0036033261567354202
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.0003662109375,
+        "name": "net.language_model.model.layers.8._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.011030521243810654
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.0._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.004110781475901604
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.10._checkpoint_wrapped_module.input_layernorm_moe_gen.weight",
+        "rel_l2": 0.005352657288312912
+      },
+      {
+        "allclose": false,
+        "max_abs": 0.000244140625,
+        "name": "net.language_model.model.layers.23._checkpoint_wrapped_module.self_attn.v_proj.weight",
+        "rel_l2": 0.0014605437172576785
+      }
+    ]
+  },
+  "local_pass": false,
+  "local_rank": 2,
+  "plan": {
+    "member0_count": 8,
+    "member1_count": 8,
+    "member_counts0": [
+      128,
+      128,
+      128,
+      128
+    ],
+    "members_eq": true,
+    "n_window0": 512,
+    "n_window1": 512
+  },
+  "rank": 2,
+  "raw_allclose_pass": false,
+  "selected_params": {
+    "count": 294,
+    "groups": {
+      "action2llm": 2,
+      "action_modality_embed": 1,
+      "llm2action": 2,
+      "llm2vae": 2,
+      "moe_gen": 281,
+      "time_embedder": 4,
+      "vae2llm": 2
+    }
+  },
+  "started_unix": 1793196233.317686,
+  "torch": "2.10.0+cu128",
+  "verdict": "FAIL_PARITY",
+  "world_size": 4
+}

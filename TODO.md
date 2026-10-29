@@ -512,3 +512,6 @@
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R3** — IN_PROGRESS; Codex; exact r2 review70aebb5c matched8f94b67e/d2, B-D1/B-D2 closed, B-D3 only. Fix replay-aware submit before allocation and continuous post-ACK retry/R1/changed-payload/eviction CPU cases; preserve Registry/old74/frozen docs/evidence/prod. New DesignRoot+sameChild+rawCPU evidence, candidatepublish/readback thenSTOP GPT Design Gate.
 
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R3** — REVIEW; only public submit replay/stale preallocation guard +new16 tests/addendum complete. Frozenr2 expectedRED11FAIL+5PASS; targeted16PASS; final90PASS/0fail/error/skip, Ruff0.12.7/format/AST7/audit16 PASS. Existing74/Registry/End untouched, production unchanged. New DesignRoot+sameChild then evidence/publish/readback STOP for B-D3 incremental GPT Design Gate.
+
+- **V3-EVAL-V2-PHASE-B-DESIGN** — DONE designONLY; exact GPT APPROVE_DESIGN b9c7cf16/d2 verified at3f37df1f. B-D1/2/3 CLOSED, no source/native approval implied.
+- **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS; Codex; first isolated production transaction/FastState/B1 increment and author CPU only. New exact Child/Root+rawCPU thenGPTCodeGateSTOP. M>1/NativeBatch second increment deferred; no DS/GPU/native/merge/history/training operations.
