@@ -28,8 +28,10 @@ not the production async implementation.
 
 Bounded ownership: one active Window and one next-window preview; DataLoader's
 worker/prefetch credits bound transported segment packages. Recipe metadata and
-encoded packets have explicit byte caps; per-worker mmap capacity divides the
-rank budget. Parent consumption retains only the current Member plus bounded
+encoded packets have explicit byte caps; the original per-worker mmap cap is
+retained (rank cap = workers × that cap, at most eight mapped Episodes/rank),
+so nw8 does not newly reject valid Episodes by shrinking the per-file bound.
+Parent consumption retains only the current Member plus bounded
 DataLoader results. At optimizer completion the consumed plan is released before
 another preview is admitted. No new fields enter training identity or frontier.
 

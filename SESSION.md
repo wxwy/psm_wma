@@ -1,3 +1,7 @@
+# 2026-10-29 — Issue #9 isolated source ready, locked CPU replay pending
+
+Child source committed on v3-nottt-async-overlap-20261029; Root Gitlink is staged with implementation/runbook and unified read-only CPU gate. Initial 18 recipe, 16 loader, 24 trainer and focused negative passes are exploratory, not final exact-Pair evidence. Final source adds pre-clone compact transport bound, per-request source/cache stat checks, owned-PID/order fences and uncommitted parent RNG restoration; final replay still PENDING. No canonical branches or active Job touched. Once final exact Pair passes author CPU, publish Child then Root and STOP GPT incremental Code Gate.
+
 # 2026-10-29 — Issue #9 actual ACK and isolated implementation
 
 Read AGENTS/SESSION/canonical Inbox/TODO/decisions, full new Owner directive and actual source. Root origin/V3 advertised/tracking 3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7; exact Child/Gitlink746c5cf2f2324104a62fb71510343aa40d3976c5. Separate worktree /workspace/psm-wma-nottt-async, Root/Child branchv3-nottt-async-overlap-20261029. Previous EvalV2 candidate and training directories untouched. Task IN_PROGRESS. Stage/Owner/RNG plan: docs/build/PSM-WMA_V3_NoTTT_Async_Overlap_Stage_Owner_RNG_Plan_2026-10-29.md, with planned files and explicit original-CFG consumption. No production edits yet; uncommitted plan/claim. Author CPU only; no GPU, data/model/DCP, liveJob, DS dispatch, canonical merge. Latest EvalV2 B2 exact approved323f/774c Review read independently; its separate Evidence blocker does not become this task.
