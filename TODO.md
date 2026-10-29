@@ -502,3 +502,5 @@
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN** — IN_PROGRESS; Codex; OwnerdesignonlyafterPhaseAcodeapproval. Auditactualserver/session/prefix/generationcode, freezeM>1/Bdynamic/transaction/RNG/cancellation/Slot/D1-D5designandCPUmodelifneeded. Productionfrozenfd7/d2, noChilddiff; newDesignSHA+Evidence→GPTDesignGateSTOP.
 
 - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN** — REVIEW; design r1/source audit and isolated symbolic protocol complete. Final29PASS/0fail/error/skip, Ruff0.12.7/format/AST3PASS,16 frozen source bindings, productionRoot/Child/Gitlink unchanged. New Design Root + same d2 Child, raw author Evidence and canonical request next; GPT APPROVE_DESIGN required before any Phase B production edit. This does not close Phase A DS CPU/native Gate or permit merge/real execution.
+
+- **V3-EVAL-V2-BATCH-PHASE-B-DESIGN** — REVIEW formal DesignRootfac029c83eb94fdafcc26d030ca5942542d740a3/unchangedChildd2c1bda62880dbeee196f70945e5bc430b73f4b6; raw29symbolicCPU/0skip/static3/audit16 evidence and request packaged. Candidate publication/readback thenSTOP; awaiting fresh GPT Design Gate, no implementation or DS/native authorization.

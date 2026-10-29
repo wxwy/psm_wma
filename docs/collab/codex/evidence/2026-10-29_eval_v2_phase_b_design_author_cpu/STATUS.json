@@ -1,0 +1,36 @@
+{
+  "gate": "PHASE_B_DESIGN_AUTHOR_SYMBOLIC_CPU_ONLY",
+  "design_root": "fac029c83eb94fdafcc26d030ca5942542d740a3",
+  "frozen_production_root": "fd7e43f6630a436ab3d83edcd3ce9d1516b342d1",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "author_cpu": "PASS",
+  "junit": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "junit_seconds": 0.084,
+  "ruff": "0.12.7",
+  "ruff_check": "PASS",
+  "format_check": "PASS",
+  "syntax_files": 3,
+  "frozen_source_bindings": 16,
+  "production_source_diff": "ZERO",
+  "child_dirty": false,
+  "gpt_phase_b_design": "REQUESTED_NOT_APPROVED",
+  "phase_a_code": "APPROVE_CODE_EXACT_PAIR_ONLY",
+  "phase_a_independent_ds_cpu": "NOT_RUN_BY_CODEX_PENDING",
+  "native_gpu_simulation": "NOT_RUN",
+  "phase_b_production": "NOT_IMPLEMENTED",
+  "v3_merge": "NOT_DONE",
+  "recorded_utc": "2026-10-29T01:46:24.898006+00:00",
+  "limitations": [
+    "symbolic state is not real Local tensors",
+    "fake vector call is not native generation proof",
+    "fake clock has no threaded HTTP/OS/CUDA deadline proof",
+    "no D1-D5 production rerun",
+    "no media delivery, EGL, physics, resource capacity or throughput proof",
+    "draft_history initial28 is an earlier unfrozen draft, not final design evidence"
+  ]
+}

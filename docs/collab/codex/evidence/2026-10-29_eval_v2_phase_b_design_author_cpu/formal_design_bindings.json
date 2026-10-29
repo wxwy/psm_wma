@@ -1,0 +1,36 @@
+{
+  "design_root": "fac029c83eb94fdafcc26d030ca5942542d740a3",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "files": [
+    {
+      "path": "SESSION.md",
+      "git_blob_sha": "bfc29eb21bdca751c76ab9934907f52e9f491da1",
+      "sha256": "1f404ed3857575a306b6ec45c64b34d493cd41d2634ccf8467fb783168bd91c4"
+    },
+    {
+      "path": "TODO.md",
+      "git_blob_sha": "785252bca9de090e5c33138ee9162108447ce87c",
+      "sha256": "8104194086baaac81ec3d23b75d5252fc462841a572a4b2606e53d699475dc69"
+    },
+    {
+      "path": "docs/build/PSM-WMA_V3_EvalV2_PhaseB_MultiSim_Transactional_Batch_Design_r1_2026-10-29.md",
+      "git_blob_sha": "426b445be778d089942a9b1f217b006e30e713bf",
+      "sha256": "7447f16ae5328c00fce3195e74783098a0200000fee06aac1d3c20370fa39747"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/__init__.py",
+      "git_blob_sha": "a69147f01ade94c8a5b96384955c872a46b6d868",
+      "sha256": "b81fdc4b96525f630f808877f42f76b0eaeba4e6d8843fde3c117679ce41984f"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model.py",
+      "git_blob_sha": "6f7667a7dbb17bd4ad11f5b70a2848368ea46739",
+      "sha256": "11d0795fcde4c220ac115ddcd89918e4684a072f42975448b7cfa197b5190bee"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model_test.py",
+      "git_blob_sha": "88906c6ca7bb5842b233ea32d9fe99f2178cc485",
+      "sha256": "cf3933d05db0adce9094c805df730cbd242d64a9e73f0d3077a7c610405a26bd"
+    }
+  ]
+}

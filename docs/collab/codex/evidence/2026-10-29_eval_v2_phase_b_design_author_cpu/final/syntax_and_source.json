@@ -1,0 +1,17 @@
+{
+  "syntax": "PASS",
+  "files": [
+    {
+      "path": "tools/v3/eval_v2_batch_design/__init__.py",
+      "sha256": "b81fdc4b96525f630f808877f42f76b0eaeba4e6d8843fde3c117679ce41984f"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model.py",
+      "sha256": "11d0795fcde4c220ac115ddcd89918e4684a072f42975448b7cfa197b5190bee"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model_test.py",
+      "sha256": "cf3933d05db0adce9094c805df730cbd242d64a9e73f0d3077a7c610405a26bd"
+    }
+  ]
+}
