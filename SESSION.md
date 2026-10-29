@@ -1,3 +1,7 @@
+# 2026-10-29 — Issue #9 locked01 stopped at new fixture assertion; corrected replay pending
+
+First Pair66986d5fa77bbf58f2e79e0d3345d89adae27b9b/5124a2b7a9bbb3b9f84de16a5546f3ba6e147e3d: staticPASS, 55asyncPASS/1FAIL, stoppedbeforelegacygroup. New per-GA assertion incorrectly usedinitialfrontier beforelazyResume applied; fixture nowderivesbefore frompending restoredfrontier andkeeps allassertions. Rawlocked01 failure retained. Source additionallyfreezes resolvedcache/source/index roots beforeworker spawn; alias-retargetnegative+correctedResume2PASS. CPUfake trace nowuses identicalcompute budget forsync/async andreportswall. NewChildcommitstaged; newRootformal/cleanunifiedGate willsupersedeinitialPair, notrelabelfailedrun. NoGPU/realDCP/liveJob/canonicalmerge.
+
 # 2026-10-29 — Issue #9 isolated source ready, locked CPU replay pending
 
 Child source committed on v3-nottt-async-overlap-20261029; Root Gitlink is staged with implementation/runbook and unified read-only CPU gate. Initial 18 recipe, 16 loader, 24 trainer and focused negative passes are exploratory, not final exact-Pair evidence. Final source adds pre-clone compact transport bound, per-request source/cache stat checks, owned-PID/order fences and uncommitted parent RNG restoration; final replay still PENDING. No canonical branches or active Job touched. Once final exact Pair passes author CPU, publish Child then Root and STOP GPT incremental Code Gate.
