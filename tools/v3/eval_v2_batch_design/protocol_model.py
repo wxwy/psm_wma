@@ -128,9 +128,19 @@ class ProtocolModel:
             raise ValueError("Session closing or cancelled")
 
     def submit(self, request, now=0, deadline=1, size=1):
+        """Public admission: attach live Ticket or replay without new ownership."""
         self._owned(request)
-        if request.key not in self.registry.tickets:
-            self._available(request)
+        existing = self.bundle.responses.get(request.key)
+        if existing is not None and existing[0] != request:
+            raise ValueError("request key reused with different payload")
+        if request.key in self.registry.tickets:
+            return self.registry.submit(request, now, deadline, size)
+        self._available(request)
+        if existing is not None:
+            return self.cached(request)
+        old = self.bundle.states[request.lease.session]
+        if old.committed and request.frontier <= old.frontier:
+            raise ValueError("stale or evicted evidence frontier")
         return self.registry.submit(request, now, deadline, size)
 
     def request_cancel(self, lease):
