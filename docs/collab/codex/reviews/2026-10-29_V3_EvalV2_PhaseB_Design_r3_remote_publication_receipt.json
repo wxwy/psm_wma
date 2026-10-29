@@ -1,0 +1,31 @@
+{
+  "design_root": "b9c7cf1607ffd38f6e3349bdde0b35703a6d7684",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "reviewed_r2_design": "8f94b67ef3f049f5905ee35d54083d5f69534975",
+  "unchanged_production_root": "fd7e43f6630a436ab3d83edcd3ce9d1516b342d1",
+  "readback_evidence_head": "be01b5a992abd127b098984e233ec0696cc530dd",
+  "root_advertised_refs": {
+    "refs/heads/V3": "70aebb5cc69f9b2f65b20440d0fa093eb31bcbe8",
+    "refs/heads/v3-eval-v2-batch-b-design-20261029": "be01b5a992abd127b098984e233ec0696cc530dd",
+    "refs/heads/v3-eval-v2-slots-a-20261028": "711ee8be40311d3cade19946cee4e23e508c3727"
+  },
+  "child_advertised_refs": {
+    "refs/heads/v3-eval-v2-slots-a-20261028": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+    "refs/heads/v3-local-ttt": "746c5cf2f2324104a62fb71510343aa40d3976c5"
+  },
+  "raw_artifacts_rehashed": 22,
+  "formal_design_bindings_verified": 5,
+  "candidate_inbox_request_readback": true,
+  "inbox_bytes": 124498,
+  "production_diff": "ZERO",
+  "author_final": "90PASS_0FAIL_ERROR_SKIP",
+  "targeted_green": "16PASS",
+  "expected_frozen_r2_red": "11FAIL_5PASS",
+  "gpt_r3_design": "REQUESTED_NOT_APPROVED",
+  "phase_b_production": "NOT_IMPLEMENTED",
+  "v3_child_updated_by_codex": false,
+  "phase_a_ds_cpu": "PENDING",
+  "gpu_model_simulation_dcp_training_history_ds_operations": "NONE",
+  "recorded_utc": "2026-10-29T02:37:43.549226+00:00",
+  "note": "Receipt/evidence HEAD is bookkeeping, never the Formal Design Root; expected-RED trace whitespace preserved unchanged."
+}
