@@ -491,3 +491,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - 报告十步均值wall20.32s/data_prepare5.54s；无同期Dense对照，不声称稳态1.87倍。rank0峰值32.17GiB与旧Job峰值35.66GiB不能外推每卡同时余量；报告CST与日志文件名Z需澄清口径，不因此重跑或判运行FAIL。
 - 历史No-TTT Root `49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5`供追溯；现场身份仍为DS报告的HEAD未核实占位值，Owner profile豁免继续生效。严格Gradient `FAIL_PARITY`、参照重复性FAIL、Compact归因`INCONCLUSIVE`与输入见证OPEN保持，不重跑CPU/Fresh1/Fresh10/旧paired。
 - 技术建议：同一新Job一次真实Resume进入原定30k，以restore与首个iter11作为同次续训早期检查，不增设11→20→100多轮Gate。具体提案 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Compact_FreshJob_Resume30k_Proposal.md` **`PROPOSED_NOT_AUTHORIZED`**；既有授权止于10，扩大范围待Owner明确决定。本轮无训练启动/执行消息，无生产代码/Gitlink/旧Job/Cleaner变更；save_iter100和Owner存储管理保持。
+
+## 2026-10-29 — EvalV2 PhaseB B2 DS_PRO CPU 首轮证据审核：ENVIRONMENT-BLOCKED / EVIDENCE GATE OPEN
+
+- **Formal Root/Child未变**：`323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728` / `774c2edb93ec5a6ba85ba1124757064d7cc779a5`。GPT 上一轮 `APPROVE_CODE` 保持；这是新增 DS Evidence review，非技术 Code Gate 重审。
+- **DS独立 CPU 首轮报告**：inference145 PASS + PhaseA255 PASS + phase_b_runtime20 PASS/1 FAIL（`-x` 于第21项停止，OS集成后3项未执行）；总420 PASS/1 FAIL，Gate exit1、`gate.status=FAIL`、未得到`source_unchanged=true`，故独立 CPU Gate未关闭。原始记录只在DS服务器，本轮GPT未远程读取raw JUnit/`ss`，按DS现场报告审阅。
+- **E1 MEDIUM，test/Evidence-only**：`tools/v3/eval_v2_batch_tests/runtime_test.py:29–45` 用`127.0.0.1`探测随机端口，真实`require_free_ports`用`0.0.0.0`；DS报告训练PID监听`127.0.1.1:44783`，夹具误判而生产正确拒绝。20项已过的PhaseB runtime为17 config+3 gate，**不能称OS多Sim验证已完成**。生产源码没有新确认Bug，不改生产端口保护。
+- **正式独立 Evidence verdict=`REQUEST_CHANGES`（Evidence-only），底层故障`BLOCKED_ENVIRONMENT`**。详细报告：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_B2_DS_PRO_CPU_Port_Conflict_Evidence_Review.md`。
+- **最小下一步**：建议Owner明确授权DS**同一精确Pair、全新外部Evidence目录、单次完整424统一CPU Gate重跑**，原FAIL证据不覆盖；随机端口无需等待正在运行训练释放固定44783。若再因相同问题失败才由Codex作仅夹具`127.0.0.1→0.0.0.0`改动及窄增量审核。未授权新的重跑/生产合并/GPU/Canary/900/训练操作，本轮不自行执行。
+
