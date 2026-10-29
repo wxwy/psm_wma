@@ -515,3 +515,5 @@
 
 - **V3-EVAL-V2-PHASE-B-DESIGN** — DONE designONLY; exact GPT APPROVE_DESIGN b9c7cf16/d2 verified at3f37df1f. B-D1/2/3 CLOSED, no source/native approval implied.
 - **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS; Codex; first isolated production transaction/FastState/B1 increment and author CPU only. New exact Child/Root+rawCPU thenGPTCodeGateSTOP. M>1/NativeBatch second increment deferred; no DS/GPU/native/merge/history/training operations.
+
+- **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS source freeze: Childd0ce64f3bed894d4f323b41fb838ad4a0d1f87c1 published, RootGitlink/gate/runbook next; locked full author CPU pending. Focused56+44PASS earlier drafts (not sum/full claim). New CodePair+rawEvidence→GPTCodeGateSTOP, no second increment/DS/native/merge.
