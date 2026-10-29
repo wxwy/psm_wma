@@ -517,3 +517,5 @@
 - **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS; Codex; first isolated production transaction/FastState/B1 increment and author CPU only. New exact Child/Root+rawCPU thenGPTCodeGateSTOP. M>1/NativeBatch second increment deferred; no DS/GPU/native/merge/history/training operations.
 
 - **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS source freeze: Childd0ce64f3bed894d4f323b41fb838ad4a0d1f87c1 published, RootGitlink/gate/runbook next; locked full author CPU pending. Focused56+44PASS earlier drafts (not sum/full claim). New CodePair+rawEvidence→GPTCodeGateSTOP, no second increment/DS/native/merge.
+
+- **V3-EVAL-V2-PHASE-B-TRANSACTION-B1** — IN_PROGRESS finalfreeze; intermediate321PASS retained; mandatory device-loss drain self-checkRED1/GREEN1 fixed in Child1bece52ee419d12119c1b3d0b75e0ae5c5139ae9. New RootGitlink then final clean-pair CPU replay/Evidence/request required. No Code approval/DS/native inference yet.
