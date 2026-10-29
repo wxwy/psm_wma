@@ -442,3 +442,14 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - **B1-P1 WITHDRAWN。** 前次报告忽略 `AGENTS.md:51–59` 与 `.codex/skills/psm-execution-governance/SKILL.md:31–39` 的既有128KiB rollover例外（自 `beb3f41a722169b63abb6e78561a909188cbc30a`，2026-09-03）。PhaseA/Formal/V3 AGENTS同Blob `3bdf0408...`。本次旧live130996B只余76B，archive与旧live同Blob `d702c44d...`，历史逐字节保全，新live保留连续性指针。本轮没有可核实的更晚Owner原文撤销该例外；撤销“rollover本身违规/必须恢复全文到live”的要求，不更改治理规则、不臆称取得Owner逐字授权。候选未来晋级仍须fresh-read无损保留双方新增协作记录和immutable archive。
 - **证据复核**：原始JUnit 67+255=322 testcase，0fail/error/skip；gate.json锁定精确Formal Pair，14/14源码Git Blob匹配。均为作者CPU；GPT本轮未重跑测试、未运行GPU/真实环境/DS。旧Review保留，P1和关联整改以本更正为准。
 - **下一步**：Codex仅继续隔离候选B1-F1整改与CPU证据，提交新精确Formal Root/Child再GPT Code Gate。PhaseA source APPROVE_CODE、PhaseB design APPROVE_DESIGN保持；第二批M>1/nativeB>1、V3/Child生产合并、DS执行、真实Canary/900仍未由本轮准入。
+
+
+## 2026-10-29 — Compact GPU Parity v2 17份分片已完整重组：F1/F2 CLOSED, F3/F4 Evidence OPEN
+
+- Formal No-TTT implementation历史Root `49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9` / Child+Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`未变；新增文档/账本HEAD不构成重新审生产代码。
+- 用户新上传**17份文件**（一个573行v2 Harness+16段JSON），GPT按内容识别重复第5/6/10段与第14/15段、正确排序后重建**四个7,344行完整Rank JSON，均json.loads PASS**，源证据已保存 `docs/collab/chatgpt/evidence/2026-10-29_V3_NoTTT_Compact_GPU_v2_Reassembled/`，目录README含分片编号及每Rank SHA256；不再要求用户重复上传。
+- 最终独立Incremental Review：`docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_Compact_GPU_v2_17Parts_Reassembly_Independent_Review.md`，**formal `REQUEST_CHANGES`（tests/Evidence-only）**。四Rank每Rank真实Optimizer-selected§294、冻结255、实际grad294，`optimizer_inventory`通过；Dense→Dense严格allclose fail139/149/140/154，Dense→Compact fail135/142/148/156。严格 `GPU_PARITY=FAIL_PARITY` 不变，不得把同路径噪声解释改为PASS。
+- **CLOSED**：旧F1 HIGH生产冻结没复现→v2确实调用`model.init_optimizer_scheduler`及`validate_optimizer_inventory(no_ttt=True)`；旧F2 HIGH潜在伪PASS→v2正式`formal_pass`只受`failure_count==0`+结构条件驱动、所有4Rank正确FAIL；四Rank原始Evidence/294对照不再缺失。
+- **仍OPEN F3 MEDIUM**：上传Harness `input_fingerprint`对25个顶层batch字段只保存`"list"`等类型，未递归比较其中action/text_token_ids/video_latent；`output_fields`除3个标量外只存shape/dtype或截断repr，而且这两个Witness均未进入`formal_pass`。不能将标量Loss一致包装成完整Native Input/Output逐值等价。
+- **F4 PARTIAL OPEN MEDIUM**：`weight_buffer_invariance`是float32 cast后shape/abs_sum/abs_max的弱摘要而非逐Tensor全值比较，grad finite未显式检查，294项全量误差只输出Top50失败/Worst10；dtype/NoneMask/Selected组覆盖子项已CLOSED。**F5 LOW**：用户传的Harness有Markdown渲染损坏Python dunders，上传文本不能作为字节一致可执行原件，静态规范化AST通过。
+- 本轮不授权新GPU实验/生产代码变更/训练/Checkpoint切换。A单步性能观察≈1.87×（非稳态）、C静态Resume就绪不变；`save_iter=100`及Owner本地磁盘/CKPT策略不受影响。下一步若实践上推进Compact=1长训，应由Owner单独做S2风险授权并与严格数学FAIL分离；若要重测严格/噪声Gate，应先冻结新合同和test-only源码，避免后验放宽。
