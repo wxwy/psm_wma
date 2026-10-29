@@ -23,3 +23,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **Formal DS Evidence verdict=`REQUEST_CHANGES`，生产阻断HIGH**；之前`APPROVE_CODE`仍可追溯但不等于本次独立CPU验收通过。
 - **最小整改建议给Codex**：隔离候选只动Child Store`mkdir`目录并发容忍及必要确定性回归；保留 symlink/file拒绝、`safe()`/parent fsync、每次UUID独立故障记录和 F3 Server退出23/两Slot/owned cleanup/foreign isolation。Root只改新Gitlink及必要test。不改F1/F2/Batch/LocalTTT/训练；新精确Root+Child提交后GPT窄fresh增量审核，再由DS一次完整CPU；勿合并V3/启GPU/900/影响训练。
 
+
+## 2026-10-29 — EvalV2 F3 Store mkdir 新Pair `657061e6/0ae313e3` 窄增量审核：REQUEST_CHANGES（Evidence-only）
+
+- **精确 Formal Root `657061e6893bd61e685685089a1cf1f61e9eb1fe` / Child+Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`**；Root只改Gitlink +新增`tools/v3/eval_v2_batch_tests/store_mkdir_test.py`8项，Child只改`cosmos_framework/evaluation/robocasa_v2/store.py::mkdir` (+7/-1)。详细独立 Review：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_StoreMkdir_657061e6_0ae313e3_Incremental_Code_Evidence_GATE.md`。
+- **F3-P1 生产并发mkdir竞态：源码层面CLOSED，无发现新增生产Code blocker**：并发只容忍真实目录，拒绝file/symlink/parent-symlink，保留`safe`、parent fsync、EIO传播、不同UUID fault持久化。作者报告focused58 PASS、独立PhaseB34 PASS、static PASS；未获取作者原始JUnit。
+- **完整作者CPU未过**：inference145 PASS、PhaseA72 PASS/1 FAIL（`-x`），PhaseB未执行；整套期待434而非426。唯一称150ms READY超时；GPT从未改PhaseA`process_test.py`确认`actor(timeout=0.15)`把启动READY和stall请求超时耦合，但当前没有原始traceback，不能直接判环境或新Production Bug。
+- **Formal verdict=`REQUEST_CHANGES`（仅Evidence/A1-E1待确认）**：先要本次`phase_a_regression.xml/log`唯一首错与调用行；若确为startup READY，用仅PhaseA-test方式拆离启动timeout和实际150ms stall deadline，保持Actor生产不变；新Root时只审该增量。之后作者一次全CPU，DS再一次独立全CPU。不原样反复满跑/不新增架构。
+- 未合并V3生产、未授权GPU/Canary/900/DCP/训练，未触碰在训Job。此次只将新 Review 和本条append落盘。
+
