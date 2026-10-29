@@ -472,3 +472,13 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - 离线脚本+结果 `docs/collab/chatgpt/evidence/2026-10-29_V3_NoTTT_Compact_v2_Offline_Analysis/`：记录max_abs跨模式未高于同模式，但有少数DD通过/DC失败的参数；仅前50failures/worst10且无原始梯度，不能宣称全量重算或统计等价。`GPU_STRICT_GRADIENT_PARITY=FAIL_PARITY`；`REFERENCE_REPEATABILITY=FAIL_AT_FROZEN_TOLERANCE`；`COMPACT_SPECIFIC_REGRESSION=INCONCLUSIVE`。
 - S2仅 `no_ttt_compact1_corerun_20261028_world4_ga4`、GPU4–7、FSDP2/GA4/B8/T16、Compact1、resume至总iter10。原iter1时新增9次commit；显式JOB_NAME防误落旧Job。max_iter30000/warmup500/save_iter100固定，不附加audit_missing_grads；关键入口输入见证并行补证，不是新的启动前置Gate。
 - 旧Job/GPU0–3/G1/Cleaner保持原状，存储归Owner管理；不新增磁盘Gate。completed iter与saved checkpoint分别报告，不强制iter10保存、不自动延伸100/30k。只在S2权限上取代历史NOT_AUTHORIZED，旧严格FAIL与证据缺口不改写。
+
+
+## 2026-10-29 — Phase B 第二批 Native Batch / 多 Sim 增量 Code Gate：APPROVE_CODE
+
+- **正式 verdict：APPROVE_CODE（第二批源码）**。Formal Root `323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728` / Formal Child+Gitlink `774c2edb93ec5a6ba85ba1124757064d7cc779a5`；候选 `v3-eval-v2-batch-b2-20261029`，固定作者 Evidence ref `e549a4f5e5d0b3f90a75cd37e047f006af90c94b`。docs/回执 HEAD 不替代该 Pair。
+- **唯一详细 Review**：`docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_Native_Batch_B2_323f0b2a_774c2edb_Incremental_Code_Gate_APPROVE_CODE.md`。只审第一批 dc775792/4a938e41 之后的第二批增量与受影响接口；无新增阻断 finding。已批准 Phase A/设计/第一批维持原结论，B1-F1 CLOSED / B1-P1 WITHDRAWN 不重开。
+- **源码核查**：有用多 Sim Slots/每 GPU 一 Server、D4 后精确 assignment、一批一次实际 generate_samples_from_batch、独立 Local Prefix、一次 Fast/Visual/Frontier/Response snapshot、原始 deadline/ACK/replay、End quiescence 与正确分发已接通；D1–D5/冻结 profile/Resume 保留。
+- **作者证据核对**：原始 JUnit 145+255+24=424，0 failure/error/skip；61/61 Formal GitBlob bindings 一致；旧99+255测试身份保留。真实 CPU owned OS/HTTP witness 支持 overlap/B>1/清理/完成后 Resume 无模型和 Sim 工作；421 中间 Pair 与 wrapper exit-code RED 单列，最终424绑定本 Pair。GPT仅独立源码/证据核查，未重跑测试；不等于DS或native验收。
+- **后续只保留既定三步**：一次DS完整候选CPU replay → 另行Owner授权1GPU/M2/B2真实Canary → 另行授权18×50。没有新增设计Gate、第三批架构、历史阶段重复验收或参数扫表。目标机器clock条件随真实启动核验。
+- 本轮仅发布Review及本append；未合并V3/Child生产、未派发DS、未执行GPU/RoboCasa/Canary/900/训练或改变其它项目Gate。Issue #8 回复引用该正式Review。
