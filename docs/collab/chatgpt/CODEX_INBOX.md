@@ -65,3 +65,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - DS已提供其独立运行报告：exact-pair, clean detached, async72+regression229=301全部PASS、gate PASS/exit0、source_unchanged true、CPU fake-compute Source/Transform跨Member/Window overlap，完整PID和RNG/Frontier/Resume synthetic覆盖。**本轮GPT只能审用户粘贴报告，服务器raw JUnit/trace未能直接读取；状态 `DS_CPU_PASS_REPORTED / REPORT_CONSISTENT / RAW_BYTES_NOT_YET_REVIEWED`，不得写成独立raw bytes验证PASS。** 详细Review `docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_AsyncOverlap_Issue11_DS301_Independent_CPU_Evidence_Review.md`。
 - 原正式Job `no_ttt_packed128_droid_fresh_30k_world4_ga4` DS现场报告已是 `NOTTT_LOADER_WORKERS=8`，用的仍是旧RAW loader，未引入新async/Compact；GPU仍占用中，绝不并行新Trainer。DS仅补现成raw文件，不重跑301。
 - 后续GPU/DCP资格方案 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_AsyncCompact_Real_DCP_GPU_Qualification_Proposal.md` **`PROPOSED_NOT_AUTHORIZED`**，拟同一旧正式DCP克隆A Compact1/nw0 vs B Compact1/nw8新async，需Owner提供独占GPU和另外授权；无正式Job停/Resume/GPU/合并许可。
+
+## 2026-10-30 — EvalV2 F4-P1 同锁InFlight Snapshot 新FormalPair `a139b5a3/0ae313e3`：APPROVE_CODE
+
+- 新 **Formal Root `a139b5a35877a79e0a56c2208f3002f731972b11` + Child/Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`**，Parent Root `9657fb6ab590f228d760362e506d5dd1b626880a`，Child不变。相比上一Formal仅Root `scripts/robocasa_eval_v2/runtime.py` +3/-1与新增 `tools/v3/eval_v2_production_tests/runtime_progress_test.py` 108行；实际GitBlob和原始Evidence哈希绑定吻合。详细Review `docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_F4P1_InFlight_Snapshot_a139b5a3_0ae313e3_APPROVE_CODE.md`。
+- **F4-P1源码CLOSED，正式 `APPROVE_CODE`（仅此最小源/回归Gate）**：诊断持既有`scheduler._lock`复制tuple snapshot，然后锁外文件I/O，保留全部D5/Core/Resume/Batch约束。旧版相同回归受控RED 1FAIL真实`runtime.py:796`字典变化，新版GREEN3PASS(实际Core/round/cleanup证据)、静态Ruff/format/AST通过、54/54源码指纹新Pair前后清洁。旧RED worktree有未提交文档和同一新回归临时文件，不声称旧RED是clean完整Formal Gate；源与回归哈希可验证。
+- **旧作者434事故throw-site原始证据仍未知**（单例不复现 INCONCLUSIVE），本批准不自动关闭作者/DS CPU Evidence。新Pair完整作者Gate `NOT_RUN`，预计435=145 inference+256 PhaseA+34 PhaseB，实际收集为准；授权作者在干净新Pair且全新外部Evidence目录**只跑一次完整统一CPU**，作者PASS后GPT核证，再交DS_PRO独立完整CPU。**不合并V3生产、不启GPU/真实RoboCasa/900/训练**。
+
