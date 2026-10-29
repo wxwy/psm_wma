@@ -1,0 +1,7 @@
+commit b9c7cf1607ffd38f6e3349bdde0b35703a6d7684
+Author:     Xin Wang <silencewx@gmail.com>
+AuthorDate: Thu Oct 29 02:35:19 2026 +0000
+Commit:     Xin Wang <silencewx@gmail.com>
+CommitDate: Thu Oct 29 02:35:19 2026 +0000
+
+    docs(eval-v2): make Phase B r3 admission replay-aware after Delivery ACK

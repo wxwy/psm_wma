@@ -1,0 +1,301 @@
+diff --git a/SESSION.md b/SESSION.md
+index 581cb729..fd09b9f0 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1759,3 +1759,10 @@ Read full Owner directive2026-10-28_V3_EvalV2_Dynamic_SimSlots_LocalTTT_Batch_Ow
+ - Fresh before_head3e469d74322e737e20cab294bc8162579369b073; explicit originV3fetch+advertised/tracking70aebb5cc69f9b2f65b20440d0fa093eb31bcbe8 match. Two new docs commits5e1e6076/70aebb5c; read exact DetailedReview2026-10-29_V3_EvalV2_PhaseB_r2_8f94b67e_d2c1bda6_Incremental_Design_Gate_REQUEST_CHANGES.md and canonical Inbox. FormalDesignRoot8f94b67ef3f049f5905ee35d54083d5f69534975/Childd2c1bda62880dbeee196f70945e5bc430b73f4b6: REQUEST_CHANGES, B-D1/B-D2 CLOSED; new B-D3 MEDIUM post-ACK replay creates ghost queued reservation. PhaseA APPROVE_CODE unchanged, DSCPU pending.
+ - Imported review docs into same isolated candidate only. Inbox merge: candidate already preserves common-base lines with inserted prior candidate requests; verified line-opcodes only equal/insert, then appended full remote-only suffix to exact candidate bytes. No original bytes lost or rewritten; no production change. Existing Owner roles supersede obsolete Kimi/MM/tmux/wait rules; no subagents under current developer mode.
+ - Task V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R3 IN_PROGRESS (Codex), B-D3 only. Planned only protocol_model.py replay-aware public admission, new replay_admission_test.py, new r3 docs/build addendum, author evidence/handoff and SESSION/TODO/Inbox. Keep Registry/lifecycle/existing74 tests and frozen r1/r2 design/evidence unchanged. Before Ticket allocation validate bounded committed response/payload, return immutable exact replay without reservation, reject stale evicted Frontier without allocation. Frozen-r2 expectedRED then new tests/full isolated CPU/static/hash, new DesignRoot+unchangedChild then GPT incremental Design Gate STOP. No production/Child/Gitlink/V3merge/GPU/model/RoboCasa/realDCP/900/DS/training/history operations.
++
++### 2026-10-29 — Phase B r3 B-D3 author remediation complete
++
++- Public ProtocolModel.submit now validates retained committed payload before any allocation; unresolved exact duplicates still join original Ticket, released exact replay returns original immutable Response, stale/evicted evidence Frontier rejects before registry call. ACKed R0 no longer resurrects a QUEUED reservation; replay/ACK cannot release queued R1 or affect another Session. Only submit changed (12insertions/2deletions); all other model AST identical to r2; five previous nonmodel Python files (including original74 tests/Registry/lifecycle) byte-identical.
++- New replay_admission_test.py16 cases exercises continuous R0submit→generation→ACK→latePOST→sameReplay→ACK→R1, changed payload before allocation with/without queuedR1, stale/mutated evictedR0 before/after R1ACK, pending duplicate budget/epoch fences. Same tests SHA2560c5c4a34035222f42a2e7d65f59a10a390a9e75818dcdb5e8c00e0995b034d14 yielded frozenr2 expectedRED11FAIL+5PASS/0error/skip and targetedGREEN16PASS.
++- Final full isolated CPU90PASS (original74 unchanged+new16),0fail/error/skip,Junit0.246s/pytest0.25s. Ruff0.12.7check/format/AST7 PASS.16 frozen production source Blobs match; Rootproduction/Gitlink diffZERO, Child clean exactd2. No native/tensor/HTTP/GPU proof or PhaseA255 rerun. Raw records /tmp/psm-eval-v2-phase-b-r3-20261029/{red,targeted_green,final}; frozenr2 model Blob b0890dfe8b8f550ce29b8fc65662a83dd6c29b04 and source hash preserved.
++- New r3 docs/build addendum scopes only B-D3, preserves r1/r2 frozen docs/evidence and closed B-D1/B-D2. New FormalDesignRoot follows, separate raw evidence/handoff/canonical request and candidate push/readback, then STOP GPT incremental Design Gate. PhaseA APPROVE_CODE unchanged, independentDSCPU pending; no production/Child/V3merge/GPU/model/RoboCasa/DCP/900/DS/training/history action.
+diff --git a/TODO.md b/TODO.md
+index 1855f593..6255dd7f 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -510,3 +510,5 @@
+ - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R2** — REVIEW; narrow B-D1 deferred End ACK/owner quiescence and B-D2 unified queued+inflight Ticket credits complete in isolated design only. Frozen-r1 expectedRED3FAIL; final74PASS/0fail/error/skip, Ruff0.12.7/format/AST6/audit16 PASS. New DesignRoot+unchangedd2 Child next, then rawEvidence/canonicalrequest/candidatepublish/readback STOP; no production or native authorization.
+ 
+ - **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R3** — IN_PROGRESS; Codex; exact r2 review70aebb5c matched8f94b67e/d2, B-D1/B-D2 closed, B-D3 only. Fix replay-aware submit before allocation and continuous post-ACK retry/R1/changed-payload/eviction CPU cases; preserve Registry/old74/frozen docs/evidence/prod. New DesignRoot+sameChild+rawCPU evidence, candidatepublish/readback thenSTOP GPT Design Gate.
++
++- **V3-EVAL-V2-BATCH-PHASE-B-DESIGN-R3** — REVIEW; only public submit replay/stale preallocation guard +new16 tests/addendum complete. Frozenr2 expectedRED11FAIL+5PASS; targeted16PASS; final90PASS/0fail/error/skip, Ruff0.12.7/format/AST7/audit16 PASS. Existing74/Registry/End untouched, production unchanged. New DesignRoot+sameChild then evidence/publish/readback STOP for B-D3 incremental GPT Design Gate.
+diff --git a/docs/build/PSM-WMA_V3_EvalV2_PhaseB_Design_r3_PostACK_Replay_2026-10-29.md b/docs/build/PSM-WMA_V3_EvalV2_PhaseB_Design_r3_PostACK_Replay_2026-10-29.md
+new file mode 100644
+index 00000000..a12bfc47
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_EvalV2_PhaseB_Design_r3_PostACK_Replay_2026-10-29.md
+@@ -0,0 +1,52 @@
++# Evaluation V2 Phase B r3 — replay-aware admission after Delivery ACK
++
++Date: 2026-10-29. **DESIGN CANDIDATE; REQUEST B-D3 INCREMENTAL APPROVE_DESIGN.**
++
++## Scope and authority
++
++The exact r2 review of Design Root `8f94b67ef3f049f5905ee35d54083d5f69534975` / Child `d2c1bda62880dbeee196f70945e5bc430b73f4b6` closed B-D1 and B-D2 and raised only B-D3. Review: `docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_PhaseB_r2_8f94b67e_d2c1bda6_Incremental_Design_Gate_REQUEST_CHANGES.md`; freshly fetched canonical V3/inbox at `70aebb5cc69f9b2f65b20440d0fa093eb31bcbe8`.
++
++This addendum changes only the symbolic public admission sequence needed to fix B-D3. Frozen r1/r2 designs and evidence remain preserved and normative everywhere else. No TicketRegistry, End/quiescence, model algorithm, source layout, action ABI, D1–D5, media, sampling or training contract is redesigned. Source Phase A Root `fd7e43f6630a436ab3d83edcd3ce9d1516b342d1` and Child/Gitlink remain unchanged; production required-mode Batch stays unsupported. No production code is implemented or merged.
++
++## One replay-aware public admission authority
++
++`ProtocolModel.submit` models the complete public `POST /v2/inference` admission authority. Its result is one of:
++
++| Condition | Public result | Resource effect |
++| --- | --- | --- |
++| Wrong/closed/stale lease or Server epoch | Reject | No allocation |
++| Same committed identity, different payload in bounded cache | Reject before registry admission | No allocation or existing-ticket change |
++| Same identity/exact payload still has an unresolved Ticket | Same original Ticket, including committed-but-undelivered or draining | No new count/bytes; no deadline/size renewal; delivery still requires existing fences/quiescence |
++| Ticket released, exact committed response retained | Original immutable `Response` | No Ticket, batching, encode/scan/generation, credit or deadline change |
++| No retained response and requested Frontier <= committed Frontier | Reject stale/evicted evidence Frontier before admission | No ghost reservation or generation |
++| New eligible Frontier | Registry admission under existing bounds | One new Ticket; predecessor's unresolved Slot reservation still blocks it |
++
++The order is lease validation, committed-cache payload validation, existing-Ticket attachment, available-Session check, retained-response replay, stale-Frontier rejection, then new registry allocation. This preserves pending duplicates while a Session is closing without making an action response deliverable after cancellation. The existing `cached()/deliver()` readiness/cancellation checks are unchanged.
++
++Raw `TicketRegistry.submit/add` remain internal allocation primitives with no response-cache authority. A future production HTTP handler must use the complete replay-aware path; it may not expose a parallel queue-only admission bypass. An already-committed `Response` bypasses new queueing entirely. Existing `execute()` cached replay remains valid but is never used to settle a newly allocated replay Ticket, because that Ticket is no longer created.
++
++## ACK and bounded replay semantics
++
++Required continuous sequence: `submit(R0) -> execute(R0) -> DeliveryACK(R0) -> submit(R0) -> same cached response -> DeliveryACK(R0) -> submit(R1)`. R0's original Ticket is released once; all late matching POSTs within the retained response window return the same response. A second R0 ACK is idempotent and cannot release an R1 Ticket, including while R1 is QUEUED. A changed-payload R0 is rejected before calling the allocator, even while R1 owns the physical Slot.
++
++When R1 commits, the existing bounded last-response policy evicts R0. Identical or mutated old R0 POSTs are rejected from the committed Frontier before any registry call, both before and after R1's ACK. No old result is recreated. Outside that retained window, an old ACK still follows the prior r2 fail-closed behavior (`no committed response`) and cannot alter R1's ownership; this does not introduce an unbounded ACK/history store. A next valid R2 remains admissible. Valid retained replay never resets a request budget or delays another Session.
++
++All old End/deferred-ACK, cancelled-response, exact-release and Server-epoch fences remain in force. Response replay is not another action execution: the future native client must still perform the existing request/frontier checks and at-most-once action acceptance.
++
++## Evidence and regression scope
++
++Only `tools/v3/eval_v2_batch_design/protocol_model.py::submit` changes existing protocol code. New `replay_admission_test.py` exercises the full public operation, not a cache-helper-only shortcut:
++
++- ACKed R0 late POST returns identical response, repeated execute does not generate, ACK remains idempotent, and R1 then progresses.
++- R0 replay and ACK while R1 is queued leave R1 and another Session's state/response/Ticket/count/bytes unchanged.
++- Same-key changed noise/evidence/profile payload after R0 ACK is rejected before allocator invocation, both with and without R1 already queued.
++- Identical/mutated evicted R0 is rejected before allocation after R1 advancement, before and after R1 ACK; no obsolete ACK releases R1 and R2 can be admitted.
++- Existing unresolved duplicates attach at QUEUED/SEALED/GENERATING/COMMITTED without renewing budgets; closed/restarted leases cannot replay.
++
++The exact same16 new tests are first run against frozen r2 model bytes, yielding11 expected RED failures and5 passing controls, then against the narrow fix. Raw r2 source Blob/SHA256, unchanged test SHA256, commands, JUnit and traces are preserved. Final isolated suite also includes all74 prior tests unchanged. Counts, source SHA and final Design Root are bound in separate author evidence/handoff after committing this design. No existing test is skipped, removed or weakened.
++
++Author commands use `/workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null --rootdir=/workspace/psm_wma -p no:cacheprovider`, CUDA hidden and model network flags offline, with caches/logs/JUnit under `/tmp/psm-eval-v2-phase-b-r3-20261029`. Inputs are only symbolic tuples/fake clock/fake vector, not Checkpoints, models, datasets or physics. Ruff0.12.7 check/format, AST and protected-source/Gitlink checks remain required. Evidence: `docs/collab/codex/evidence/2026-10-29_eval_v2_phase_b_design_r3_author_cpu/`.
++
++## Gate request and STOP
++
++Request incremental `APPROVE_DESIGN / REQUEST_CHANGES` only for B-D3 on the new Formal Design Root and unchanged Child/Gitlink; do not reopen closed B-D1/B-D2 without new evidence. No symbolic result is native Local-TTT, HTTP, CUDA/EGL, capacity or throughput proof. Phase A source `APPROVE_CODE` remains exact-pair only and its independent DS CPU is pending. Codex stops after isolated candidate publication/readback; Phase B production implementation, V3/Child merge, GPU/model/RoboCasa/DCP/900, DS dispatch and training/history operations remain unauthorized.
+diff --git a/tools/v3/eval_v2_batch_design/protocol_model.py b/tools/v3/eval_v2_batch_design/protocol_model.py
+index b0890dfe..38c2ef01 100644
+--- a/tools/v3/eval_v2_batch_design/protocol_model.py
++++ b/tools/v3/eval_v2_batch_design/protocol_model.py
+@@ -128,9 +128,19 @@ class ProtocolModel:
+             raise ValueError("Session closing or cancelled")
+ 
+     def submit(self, request, now=0, deadline=1, size=1):
++        """Public admission: attach live Ticket or replay without new ownership."""
+         self._owned(request)
+-        if request.key not in self.registry.tickets:
+-            self._available(request)
++        existing = self.bundle.responses.get(request.key)
++        if existing is not None and existing[0] != request:
++            raise ValueError("request key reused with different payload")
++        if request.key in self.registry.tickets:
++            return self.registry.submit(request, now, deadline, size)
++        self._available(request)
++        if existing is not None:
++            return self.cached(request)
++        old = self.bundle.states[request.lease.session]
++        if old.committed and request.frontier <= old.frontier:
++            raise ValueError("stale or evicted evidence frontier")
+         return self.registry.submit(request, now, deadline, size)
+ 
+     def request_cancel(self, lease):
+diff --git a/tools/v3/eval_v2_batch_design/replay_admission_test.py b/tools/v3/eval_v2_batch_design/replay_admission_test.py
+new file mode 100644
+index 00000000..e7ba87ec
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_design/replay_admission_test.py
+@@ -0,0 +1,186 @@
++"""B-D3: actual public submit -> execute/replay -> ACK admission boundaries."""
++
++from dataclasses import replace
++
++import pytest
++
++from tools.v3.eval_v2_batch_design.protocol_model import (
++    Lease,
++    ProtocolModel,
++    Request,
++    Response,
++)
++
++
++class Vector:
++    def __init__(self):
++        self.calls = 0
++
++    def __call__(self, prepared):
++        self.calls += 1
++        return tuple(
++            Response(p.request.key, (float(p.request.frontier),)) for p in prepared
++        )
++
++
++def setup():
++    model, vector = ProtocolModel(2), Vector()
++    leases = tuple(
++        Lease(model.epoch, f"slot{i}", 1, f"session{i}", f"episode{i}")
++        for i in range(2)
++    )
++    for lease in leases:
++        model.open(lease)
++    r0, other = (Request(lease, 0) for lease in leases)
++    model.submit(r0, size=3)
++    model.submit(other, deadline=10, size=5)
++    replies = model.execute((r0, other), vector)
++    model.acknowledge(r0)
++    return model, vector, r0, other, replies
++
++
++def assert_other_unchanged(model, other, ticket, state, response):
++    assert model.registry.ticket(other) is ticket
++    assert ticket.size == 5 and ticket.state == "COMMITTED" and ticket.quiescent
++    assert model.bundle.states[other.lease.session] is state
++    assert model.bundle.responses[other.key] is response
++
++
++def test_ack_then_late_submit_replay_ack_then_next_frontier_has_no_ghost_ticket():
++    model, vector, r0, other, replies = setup()
++    original = model.bundle
++    other_ticket = model.registry.ticket(other)
++    assert model.registry.bytes_used == 5 and r0.key not in model.registry.tickets
++    # A retransmitted POST arrives after the original Ticket was fully released.
++    assert model.submit(r0, now=100, deadline=101, size=20) is replies[0]
++    assert model.registry.tickets == {other.key: other_ticket}
++    assert model.registry.bytes_used == 5 and model.bundle is original
++    assert model.execute((r0,), vector) == (replies[0],)
++    assert model.acknowledge(r0) is True
++    assert vector.calls == 1 and model.registry.bytes_used == 5
++    r1 = replace(r0, frontier=1, evidence=(7,))
++    ticket = model.submit(r1, size=4)
++    assert ticket.request == r1 and ticket.state == "QUEUED"
++    assert model.registry.bytes_used == 9
++    # Neither late R0 POST nor a second R0 ACK may release/change R1.
++    assert model.submit(r0) is replies[0]
++    assert model.acknowledge(r0) is True
++    assert model.registry.ticket(r1) is ticket and model.registry.bytes_used == 9
++    assert model.execute((r1,), vector)[0].key == r1.key
++    model.acknowledge(r1)
++    assert vector.calls == 2 and model.registry.bytes_used == 5
++    assert_other_unchanged(
++        model,
++        other,
++        other_ticket,
++        original.states[other.lease.session],
++        original.responses[other.key],
++    )
++
++
++@pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
++@pytest.mark.parametrize("next_queued", [False, True])
++def test_changed_payload_after_ack_rejected_before_any_allocation(
++    mutation, next_queued, monkeypatch
++):
++    model, vector, r0, other, _ = setup()
++    if next_queued:
++        model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
++    changed = {
++        "noise": replace(r0, noise_seed=99),
++        "evidence": replace(r0, evidence=(1,)),
++        "compatibility": replace(r0, compatibility="other-profile"),
++    }[mutation]
++    original = model.bundle
++    tickets = dict(model.registry.tickets)
++    allocations = []
++    allocate = model.registry.submit
++
++    def spy(*args, **kwargs):
++        allocations.append(args[0])
++        return allocate(*args, **kwargs)
++
++    monkeypatch.setattr(model.registry, "submit", spy)
++    with pytest.raises(ValueError, match="different payload"):
++        model.submit(changed)
++    assert not allocations and model.registry.tickets == tickets
++    assert model.registry.bytes_used == (9 if next_queued else 5)
++    assert model.bundle is original and vector.calls == 1
++    assert other.key in model.registry.tickets
++
++
++@pytest.mark.parametrize("mutated", [False, True])
++@pytest.mark.parametrize("current_acked", [False, True])
++def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
++    mutated, current_acked, monkeypatch
++):
++    model, vector, r0, other, _ = setup()
++    r1 = replace(r0, frontier=1, evidence=(7,))
++    model.submit(r1, size=4)
++    model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
++    if current_acked:
++        model.acknowledge(r1)
++    assert r0.key not in model.bundle.responses
++    old = replace(r0, noise_seed=99) if mutated else r0
++    original = model.bundle
++    tickets = dict(model.registry.tickets)
++    allocations = []
++    allocate = model.registry.submit
++
++    def spy(*args, **kwargs):
++        allocations.append(args[0])
++        return allocate(*args, **kwargs)
++
++    monkeypatch.setattr(model.registry, "submit", spy)
++    with pytest.raises(ValueError, match="stale|evicted"):
++        model.submit(old)
++    assert not allocations and model.registry.tickets == tickets
++    assert model.registry.bytes_used == (5 if current_acked else 9)
++    assert model.bundle is original
++    # A stale ACK outside the bounded replay window also cannot free R1.
++    with pytest.raises(ValueError, match="no committed response"):
++        model.acknowledge(old)
++    assert model.registry.tickets == tickets
++    model.acknowledge(r1)
++    r2 = replace(r1, frontier=2, evidence=(8,))
++    fresh = model.submit(r2, size=4)
++    assert fresh.request == r2 and model.registry.bytes_used == 9
++    assert vector.calls == 2 and other.key in model.registry.tickets
++
++
++@pytest.mark.parametrize("phase", ["QUEUED", "SEALED", "GENERATING", "COMMITTED"])
++def test_unresolved_duplicate_still_joins_original_ticket_without_renewal(phase):
++    model, vector = ProtocolModel(1), Vector()
++    lease = Lease(model.epoch, "slot", 1, "session", "episode")
++    model.open(lease)
++    request = Request(lease, 0)
++    ticket = model.submit(request, deadline=5, size=7)
++    observed = []
++
++    def check():
++        assert model.submit(request, now=1, deadline=100, size=30) is ticket
++        assert (ticket.arrived, ticket.deadline, ticket.size) == (0, 5, 7)
++        assert model.registry.bytes_used == 7 and len(model.registry.tickets) == 1
++        observed.append(phase)
++
++    if phase == "QUEUED":
++        check()
++    else:
++
++        def stage(name):
++            if name == phase:
++                check()
++
++        model.execute((request,), vector, on_stage=stage)
++    assert observed == [phase]
++
++
++def test_released_replay_cannot_bypass_closed_or_restarted_lease():
++    model, vector, r0, _, _ = setup()
++    model.request_end(r0.lease)
++    with pytest.raises(ValueError, match="stale"):
++        model.submit(r0)
++    restarted = ProtocolModel(2, epoch="server-2")
++    with pytest.raises(ValueError, match="stale"):
++        restarted.submit(r0)
++    assert vector.calls == 1 and restarted.registry.bytes_used == 0

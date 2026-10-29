@@ -1,0 +1,719 @@
+FFFFFFFFFFF.....                                                         [100%]
+=================================== FAILURES ===================================
+_ test_ack_then_late_submit_replay_ack_then_next_frontier_has_no_ghost_ticket __
+
+    def test_ack_then_late_submit_replay_ack_then_next_frontier_has_no_ghost_ticket():
+        model, vector, r0, other, replies = setup()
+        original = model.bundle
+        other_ticket = model.registry.ticket(other)
+        assert model.registry.bytes_used == 5 and r0.key not in model.registry.tickets
+        # A retransmitted POST arrives after the original Ticket was fully released.
+>       assert model.submit(r0, now=100, deadline=101, size=20) is replies[0]
+E       AssertionError: assert Ticket(request=Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0...ved=100, deadline=101, size=20, state='QUEUED', batch_id=None, cancel_requested=False, quiescent=False, released=False) is Response(key='a24aeb1cef85c3c22a9d51ed4185de320c5b82197d1d7186d801d78ab73f9f77', action=(0.0,))
+E        +  where Ticket(request=Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0...ved=100, deadline=101, size=20, state='QUEUED', batch_id=None, cancel_requested=False, quiescent=False, released=False) = submit(Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0'), frontier=0, evidence=(), noise_seed=123, compatibility='raw15-state15-h16'), now=100, deadline=101, size=20)
+E        +    where submit = <tools.v3.eval_v2_batch_design.protocol_model.ProtocolModel object at 0x7f9e72098770>.submit
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:55: AssertionError
+__ test_changed_payload_after_ack_rejected_before_any_allocation[False-noise] __
+
+mutation = 'noise', next_queued = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e72099220>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="different payload"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:104: Failed
+_ test_changed_payload_after_ack_rejected_before_any_allocation[False-evidence] _
+
+mutation = 'evidence', next_queued = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c0800>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="different payload"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:104: Failed
+_ test_changed_payload_after_ack_rejected_before_any_allocation[False-compatibility] _
+
+mutation = 'compatibility', next_queued = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c0c50>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="different payload"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:104: Failed
+__ test_changed_payload_after_ack_rejected_before_any_allocation[True-noise] ___
+
+mutation = 'noise', next_queued = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c1ac0>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+        with pytest.raises(ValueError, match="different payload"):
+>           model.submit(changed)
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_design/protocol_model.py:134: in submit
+    return self.registry.submit(request, now, deadline, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_design/replay_admission_test.py:101: in spy
+    return allocate(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tools.v3.eval_v2_batch_design.ticket_registry.TicketRegistry object at 0x7f9e720c1b50>
+request = Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0'), frontier=0, evidence=(), noise_seed=99, compatibility='raw15-state15-h16')
+now = 0, deadline = 1, size = 1
+
+    def submit(self, request, now, deadline, size=1):
+        self._epoch(request.lease)
+        if request.key in self.tickets:
+            # HTTP retries attach to the original immutable admission budget.
+            # They cannot renew deadline or alter its retained encoded size.
+            return self.ticket(request)
+        if (
+            not math.isfinite(now)
+            or not math.isfinite(deadline)
+            or deadline <= now
+            or type(size) is not int
+            or not 1 <= size <= self.item_cap
+        ):
+            raise ValueError("invalid size or deadline")
+        if any(
+            ticket.request.lease.slot == request.lease.slot
+            for ticket in self.tickets.values()
+        ):
+>           raise ValueError(
+                "one pending request per physical slot, including in-flight work"
+            )
+E           ValueError: one pending request per physical slot, including in-flight work
+
+tools/v3/eval_v2_batch_design/ticket_registry.py:110: ValueError
+
+During handling of the above exception, another exception occurred:
+
+mutation = 'noise', next_queued = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c1ac0>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="different payload"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'different payload'
+E         Actual message: 'one pending request per physical slot, including in-flight work'
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:104: AssertionError
+_ test_changed_payload_after_ack_rejected_before_any_allocation[True-evidence] _
+
+mutation = 'evidence', next_queued = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720bfe60>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+        with pytest.raises(ValueError, match="different payload"):
+>           model.submit(changed)
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_design/protocol_model.py:134: in submit
+    return self.registry.submit(request, now, deadline, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_design/replay_admission_test.py:101: in spy
+    return allocate(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tools.v3.eval_v2_batch_design.ticket_registry.TicketRegistry object at 0x7f9e720bffb0>
+request = Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0'), frontier=0, evidence=(1,), noise_seed=123, compatibility='raw15-state15-h16')
+now = 0, deadline = 1, size = 1
+
+    def submit(self, request, now, deadline, size=1):
+        self._epoch(request.lease)
+        if request.key in self.tickets:
+            # HTTP retries attach to the original immutable admission budget.
+            # They cannot renew deadline or alter its retained encoded size.
+            return self.ticket(request)
+        if (
+            not math.isfinite(now)
+            or not math.isfinite(deadline)
+            or deadline <= now
+            or type(size) is not int
+            or not 1 <= size <= self.item_cap
+        ):
+            raise ValueError("invalid size or deadline")
+        if any(
+            ticket.request.lease.slot == request.lease.slot
+            for ticket in self.tickets.values()
+        ):
+>           raise ValueError(
+                "one pending request per physical slot, including in-flight work"
+            )
+E           ValueError: one pending request per physical slot, including in-flight work
+
+tools/v3/eval_v2_batch_design/ticket_registry.py:110: ValueError
+
+During handling of the above exception, another exception occurred:
+
+mutation = 'evidence', next_queued = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720bfe60>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="different payload"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'different payload'
+E         Actual message: 'one pending request per physical slot, including in-flight work'
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:104: AssertionError
+_ test_changed_payload_after_ack_rejected_before_any_allocation[True-compatibility] _
+
+mutation = 'compatibility', next_queued = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c2ea0>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+        with pytest.raises(ValueError, match="different payload"):
+>           model.submit(changed)
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_design/protocol_model.py:134: in submit
+    return self.registry.submit(request, now, deadline, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_design/replay_admission_test.py:101: in spy
+    return allocate(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tools.v3.eval_v2_batch_design.ticket_registry.TicketRegistry object at 0x7f9e720c2ab0>
+request = Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0'), frontier=0, evidence=(), noise_seed=123, compatibility='other-profile')
+now = 0, deadline = 1, size = 1
+
+    def submit(self, request, now, deadline, size=1):
+        self._epoch(request.lease)
+        if request.key in self.tickets:
+            # HTTP retries attach to the original immutable admission budget.
+            # They cannot renew deadline or alter its retained encoded size.
+            return self.ticket(request)
+        if (
+            not math.isfinite(now)
+            or not math.isfinite(deadline)
+            or deadline <= now
+            or type(size) is not int
+            or not 1 <= size <= self.item_cap
+        ):
+            raise ValueError("invalid size or deadline")
+        if any(
+            ticket.request.lease.slot == request.lease.slot
+            for ticket in self.tickets.values()
+        ):
+>           raise ValueError(
+                "one pending request per physical slot, including in-flight work"
+            )
+E           ValueError: one pending request per physical slot, including in-flight work
+
+tools/v3/eval_v2_batch_design/ticket_registry.py:110: ValueError
+
+During handling of the above exception, another exception occurred:
+
+mutation = 'compatibility', next_queued = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c2ea0>
+
+    @pytest.mark.parametrize("mutation", ["noise", "evidence", "compatibility"])
+    @pytest.mark.parametrize("next_queued", [False, True])
+    def test_changed_payload_after_ack_rejected_before_any_allocation(
+        mutation, next_queued, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        if next_queued:
+            model.submit(replace(r0, frontier=1, evidence=(7,)), size=4)
+        changed = {
+            "noise": replace(r0, noise_seed=99),
+            "evidence": replace(r0, evidence=(1,)),
+            "compatibility": replace(r0, compatibility="other-profile"),
+        }[mutation]
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="different payload"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'different payload'
+E         Actual message: 'one pending request per physical slot, including in-flight work'
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:104: AssertionError
+_ test_evicted_frontier_cannot_allocate_or_block_current_frontier[False-False] _
+
+mutated = False, current_acked = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c04a0>
+
+    @pytest.mark.parametrize("mutated", [False, True])
+    @pytest.mark.parametrize("current_acked", [False, True])
+    def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
+        mutated, current_acked, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        r1 = replace(r0, frontier=1, evidence=(7,))
+        model.submit(r1, size=4)
+        model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
+        if current_acked:
+            model.acknowledge(r1)
+        assert r0.key not in model.bundle.responses
+        old = replace(r0, noise_seed=99) if mutated else r0
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+        with pytest.raises(ValueError, match="stale|evicted"):
+>           model.submit(old)
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_design/protocol_model.py:134: in submit
+    return self.registry.submit(request, now, deadline, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_design/replay_admission_test.py:132: in spy
+    return allocate(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tools.v3.eval_v2_batch_design.ticket_registry.TicketRegistry object at 0x7f9e720c30e0>
+request = Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0'), frontier=0, evidence=(), noise_seed=123, compatibility='raw15-state15-h16')
+now = 0, deadline = 1, size = 1
+
+    def submit(self, request, now, deadline, size=1):
+        self._epoch(request.lease)
+        if request.key in self.tickets:
+            # HTTP retries attach to the original immutable admission budget.
+            # They cannot renew deadline or alter its retained encoded size.
+            return self.ticket(request)
+        if (
+            not math.isfinite(now)
+            or not math.isfinite(deadline)
+            or deadline <= now
+            or type(size) is not int
+            or not 1 <= size <= self.item_cap
+        ):
+            raise ValueError("invalid size or deadline")
+        if any(
+            ticket.request.lease.slot == request.lease.slot
+            for ticket in self.tickets.values()
+        ):
+>           raise ValueError(
+                "one pending request per physical slot, including in-flight work"
+            )
+E           ValueError: one pending request per physical slot, including in-flight work
+
+tools/v3/eval_v2_batch_design/ticket_registry.py:110: ValueError
+
+During handling of the above exception, another exception occurred:
+
+mutated = False, current_acked = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c04a0>
+
+    @pytest.mark.parametrize("mutated", [False, True])
+    @pytest.mark.parametrize("current_acked", [False, True])
+    def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
+        mutated, current_acked, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        r1 = replace(r0, frontier=1, evidence=(7,))
+        model.submit(r1, size=4)
+        model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
+        if current_acked:
+            model.acknowledge(r1)
+        assert r0.key not in model.bundle.responses
+        old = replace(r0, noise_seed=99) if mutated else r0
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="stale|evicted"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'stale|evicted'
+E         Actual message: 'one pending request per physical slot, including in-flight work'
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:135: AssertionError
+_ test_evicted_frontier_cannot_allocate_or_block_current_frontier[False-True] __
+
+mutated = True, current_acked = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c3f50>
+
+    @pytest.mark.parametrize("mutated", [False, True])
+    @pytest.mark.parametrize("current_acked", [False, True])
+    def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
+        mutated, current_acked, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        r1 = replace(r0, frontier=1, evidence=(7,))
+        model.submit(r1, size=4)
+        model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
+        if current_acked:
+            model.acknowledge(r1)
+        assert r0.key not in model.bundle.responses
+        old = replace(r0, noise_seed=99) if mutated else r0
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+        with pytest.raises(ValueError, match="stale|evicted"):
+>           model.submit(old)
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_design/protocol_model.py:134: in submit
+    return self.registry.submit(request, now, deadline, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_design/replay_admission_test.py:132: in spy
+    return allocate(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tools.v3.eval_v2_batch_design.ticket_registry.TicketRegistry object at 0x7f9e720c36e0>
+request = Request(lease=Lease(epoch='server-1', slot='slot0', generation=1, session='session0', episode='episode0'), frontier=0, evidence=(), noise_seed=99, compatibility='raw15-state15-h16')
+now = 0, deadline = 1, size = 1
+
+    def submit(self, request, now, deadline, size=1):
+        self._epoch(request.lease)
+        if request.key in self.tickets:
+            # HTTP retries attach to the original immutable admission budget.
+            # They cannot renew deadline or alter its retained encoded size.
+            return self.ticket(request)
+        if (
+            not math.isfinite(now)
+            or not math.isfinite(deadline)
+            or deadline <= now
+            or type(size) is not int
+            or not 1 <= size <= self.item_cap
+        ):
+            raise ValueError("invalid size or deadline")
+        if any(
+            ticket.request.lease.slot == request.lease.slot
+            for ticket in self.tickets.values()
+        ):
+>           raise ValueError(
+                "one pending request per physical slot, including in-flight work"
+            )
+E           ValueError: one pending request per physical slot, including in-flight work
+
+tools/v3/eval_v2_batch_design/ticket_registry.py:110: ValueError
+
+During handling of the above exception, another exception occurred:
+
+mutated = True, current_acked = False
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c3f50>
+
+    @pytest.mark.parametrize("mutated", [False, True])
+    @pytest.mark.parametrize("current_acked", [False, True])
+    def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
+        mutated, current_acked, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        r1 = replace(r0, frontier=1, evidence=(7,))
+        model.submit(r1, size=4)
+        model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
+        if current_acked:
+            model.acknowledge(r1)
+        assert r0.key not in model.bundle.responses
+        old = replace(r0, noise_seed=99) if mutated else r0
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="stale|evicted"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'stale|evicted'
+E         Actual message: 'one pending request per physical slot, including in-flight work'
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:135: AssertionError
+_ test_evicted_frontier_cannot_allocate_or_block_current_frontier[True-False] __
+
+mutated = False, current_acked = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720c2120>
+
+    @pytest.mark.parametrize("mutated", [False, True])
+    @pytest.mark.parametrize("current_acked", [False, True])
+    def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
+        mutated, current_acked, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        r1 = replace(r0, frontier=1, evidence=(7,))
+        model.submit(r1, size=4)
+        model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
+        if current_acked:
+            model.acknowledge(r1)
+        assert r0.key not in model.bundle.responses
+        old = replace(r0, noise_seed=99) if mutated else r0
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="stale|evicted"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:135: Failed
+__ test_evicted_frontier_cannot_allocate_or_block_current_frontier[True-True] __
+
+mutated = True, current_acked = True
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9e720bf5f0>
+
+    @pytest.mark.parametrize("mutated", [False, True])
+    @pytest.mark.parametrize("current_acked", [False, True])
+    def test_evicted_frontier_cannot_allocate_or_block_current_frontier(
+        mutated, current_acked, monkeypatch
+    ):
+        model, vector, r0, other, _ = setup()
+        r1 = replace(r0, frontier=1, evidence=(7,))
+        model.submit(r1, size=4)
+        model.execute((r1,), vector)  # Evicts R0, while R1 still owns delivery credit.
+        if current_acked:
+            model.acknowledge(r1)
+        assert r0.key not in model.bundle.responses
+        old = replace(r0, noise_seed=99) if mutated else r0
+        original = model.bundle
+        tickets = dict(model.registry.tickets)
+        allocations = []
+        allocate = model.registry.submit
+    
+        def spy(*args, **kwargs):
+            allocations.append(args[0])
+            return allocate(*args, **kwargs)
+    
+        monkeypatch.setattr(model.registry, "submit", spy)
+>       with pytest.raises(ValueError, match="stale|evicted"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/v3/eval_v2_batch_design/replay_admission_test.py:135: Failed
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_ack_then_late_submit_replay_ack_then_next_frontier_has_no_ghost_ticket
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_changed_payload_after_ack_rejected_before_any_allocation[False-noise]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_changed_payload_after_ack_rejected_before_any_allocation[False-evidence]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_changed_payload_after_ack_rejected_before_any_allocation[False-compatibility]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_changed_payload_after_ack_rejected_before_any_allocation[True-noise]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_changed_payload_after_ack_rejected_before_any_allocation[True-evidence]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_changed_payload_after_ack_rejected_before_any_allocation[True-compatibility]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_evicted_frontier_cannot_allocate_or_block_current_frontier[False-False]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_evicted_frontier_cannot_allocate_or_block_current_frontier[False-True]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_evicted_frontier_cannot_allocate_or_block_current_frontier[True-False]
+FAILED tools/v3/eval_v2_batch_design/replay_admission_test.py::test_evicted_frontier_cannot_allocate_or_block_current_frontier[True-True]
+11 failed, 5 passed in 0.20s

@@ -1,0 +1,31 @@
+{
+  "design_root": "b9c7cf1607ffd38f6e3349bdde0b35703a6d7684",
+  "child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "files": [
+    {
+      "path": "SESSION.md",
+      "git_blob_sha": "fd09b9f09562c412c1ebd42a8c33d957ac0cb27e",
+      "sha256": "bdd6b442330fcd98dcf0ce3ca498047060664f3f043d00d3367a99c696406f14"
+    },
+    {
+      "path": "TODO.md",
+      "git_blob_sha": "6255dd7fe4582b1ff382f49624a85de4f9ee13f1",
+      "sha256": "88ada115296debe9dfeea77f7ff026eccb0efcd40e883d8823b9b8e2c1cc04bb"
+    },
+    {
+      "path": "docs/build/PSM-WMA_V3_EvalV2_PhaseB_Design_r3_PostACK_Replay_2026-10-29.md",
+      "git_blob_sha": "a12bfc477732d607a63823af27ee5481bee2bb48",
+      "sha256": "ec7d30d205225f01c9ca075d252d09b7e5e7b3353d21015858b228866434f819"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model.py",
+      "git_blob_sha": "38c2ef016d4fccb3f27776efc723d72d966ecbe6",
+      "sha256": "209e470eb63beda653a8b8f730a5df798c960da566b5c67e781a2a6669664320"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/replay_admission_test.py",
+      "git_blob_sha": "e7ba87ec37b0fa17d3a4cef7d0e0fc343f9dfb36",
+      "sha256": "0c5c4a34035222f42a2e7d65f59a10a390a9e75818dcdb5e8c00e0995b034d14"
+    }
+  ]
+}

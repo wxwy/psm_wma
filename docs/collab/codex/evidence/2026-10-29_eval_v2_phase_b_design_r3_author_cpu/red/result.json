@@ -1,0 +1,38 @@
+{
+  "scope": "EXPECTED RED ON FROZEN R2 PROTOCOL ONLY",
+  "frozen_design_root": "8f94b67ef3f049f5905ee35d54083d5f69534975",
+  "frozen_model_path": "tools/v3/eval_v2_batch_design/protocol_model.py",
+  "model_git_blob_sha": "b0890dfe8b8f550ce29b8fc65662a83dd6c29b04",
+  "model_sha256": "fcd6e5cfa0f81671c5414c83d39687f6638f31420dadbc95182a997477dea16e",
+  "test_sha256": "0c5c4a34035222f42a2e7d65f59a10a390a9e75818dcdb5e8c00e0995b034d14",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "tools/v3/eval_v2_batch_design/replay_admission_test.py",
+    "--junitxml=/tmp/psm-eval-v2-phase-b-r3-20261029/red/junit.xml"
+  ],
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "HF_HOME": "/tmp/psm-eval-v2-phase-b-r3-20261029/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-v2-phase-b-r3-20261029/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-v2-phase-b-r3-20261029/cache/xdg"
+  },
+  "exit_code": 1,
+  "junit": {
+    "tests": 16,
+    "failures": 11,
+    "errors": 0,
+    "skipped": 0
+  }
+}

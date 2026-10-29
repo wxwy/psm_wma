@@ -1,0 +1,28 @@
+{
+  "prior_nonmodel_files_unchanged": [
+    {
+      "path": "tools/v3/eval_v2_batch_design/__init__.py",
+      "sha256": "b81fdc4b96525f630f808877f42f76b0eaeba4e6d8843fde3c117679ce41984f"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/lifecycle_test.py",
+      "sha256": "9428a81525300a56ae9d0c8d8a8c9e5f770c756992192c23702d4717e02577ca"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/protocol_model_test.py",
+      "sha256": "73af60d1a6f04fe9c3b880b65fbb1bfa6714489f93a36bdd2f319d163377c5fb"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/ticket_registry.py",
+      "sha256": "3520070b490977b73dd38c92c867636a79cdf8f940e5e7cdca3c2c67c3b1b94c"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_design/ticket_registry_test.py",
+      "sha256": "d02e3c891cd3243d8fe6a5edef62ec3185447ff1e1e2fbe77fbca5bd3fe2a321"
+    }
+  ],
+  "model_non_submit_ast_unchanged": true,
+  "production_diff": "ZERO",
+  "child_clean": true,
+  "syntax_files": 7
+}
