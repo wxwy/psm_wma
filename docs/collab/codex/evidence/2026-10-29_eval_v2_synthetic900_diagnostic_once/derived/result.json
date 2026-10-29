@@ -1,0 +1,579 @@
+{
+  "role": "AUTHOR SINGLE-CASE DIAGNOSTIC; not a unified Gate or DS acceptance",
+  "formal_root": "9657fb6ab590f228d760362e506d5dd1b626880a",
+  "child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "authority_review_commit": "cb361421c2b3a545f8f17fce1fa0f1e6a5d3f423",
+  "diagnostic_invocations": 1,
+  "runtime_run_delegations": 1,
+  "diagnostic": "INCONCLUSIVE",
+  "pytest": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 1
+  },
+  "shell_exit": 0,
+  "error_type": null,
+  "error_repr": null,
+  "internal_frames": [],
+  "report": {
+    "prototype_only": false,
+    "manifest_digest": "d2fc20efd661a9a505cc60fccca1e3e9b609bb0abb986b34d7e9d41ce0badc8f",
+    "status": "complete",
+    "success": 450,
+    "failure": 450,
+    "invalid": 0,
+    "interrupted": 0,
+    "pending": 0,
+    "skipped_init_error": 0,
+    "scene_admission_exhausted": 0,
+    "valid": 900,
+    "expected": 900,
+    "sr": 0.5,
+    "partial_sr_valid_only": 0.5,
+    "results_qualified": true,
+    "clean_execution": true,
+    "process_errors": [],
+    "unresolved_process_errors": 0,
+    "resolved_process_errors": 0,
+    "tasks": {
+      "Task06": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "0be1d48cce0c48b0bdbc02e68b88b76e",
+            "worker_id": "ffedea247f9f40ee98cad9cf049bd021",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task01": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "75f5d573e90347ac8d1163cc6603e921",
+            "worker_id": "e449169793c348a392a4b899c36a5c50",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task12": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "5bec33da3e5d4fb097b6c563882e5acb",
+            "worker_id": "29f8fb6e89324da89c2280d646d49d0d",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task04": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "a0f8951257b34cfc933552cf46618944",
+            "worker_id": "e131ea2ea84f484896ae9bfae569fd6b",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task00": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "58189672e268445abecca91041471867",
+            "worker_id": "df26baee4eea453c825a2eca36b8f370",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task17": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "3c06f0ff2da7494cb12c75aec86b8804",
+            "worker_id": "0b34919a7bcf4d1a99c3c2d92156b975",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task02": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "efac493e15eb4822a13edf4dcdb9d27b",
+            "worker_id": "468fd7f07c40452eb780dc27929db977",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task05": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "e91e970e75974b86b81747e03a5eb278",
+            "worker_id": "3b1174e1466b4f9c9f849a5514d8d78f",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task07": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "2438caa91da741f39c05363550735ca6",
+            "worker_id": "50beec6247894584b4ba4966f2d01236",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task03": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "a5c30827d27a4a0e86ea60999e45de99",
+            "worker_id": "1e6650ae7ef54975b799f60f6e7f9f6f",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task08": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "dedd97c873914239bd30009f97174a40",
+            "worker_id": "ac0fe0dbc4314f22a5698efa746eb404",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task09": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "fea89459394a46b984befaf1ed9d5851",
+            "worker_id": "f2fcf559022b4affa62bfd4a81983900",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task10": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "45b22ca5f10b4c0faf9bcbaf82f64865",
+            "worker_id": "769b98e313c84a36bae9ca81888ebda5",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task11": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "56f529ab6d964b6a986caa2dbc3008c4",
+            "worker_id": "6bf874670d2d4679a3f8dae34be1acea",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task13": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "f814732e9370479082a12fa650be94b8",
+            "worker_id": "001803ef4cef41f1bfc9881153271d46",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task14": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "e91c2a4af24a46ef8e72bf68db6f4f1b",
+            "worker_id": "5e0e386176384ff598661dc21132a982",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task15": {
+        "success": 0,
+        "failure": 50,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 0.0,
+        "partial_sr_valid_only": 0.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "20a48aab149f4fb1b4187d2d19e62b64",
+            "worker_id": "6d3c20ce0fd043329d110d6df72fa2da",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      },
+      "Task16": {
+        "success": 50,
+        "failure": 0,
+        "invalid": 0,
+        "interrupted": 0,
+        "pending": 0,
+        "skipped_init_error": 0,
+        "scene_admission_exhausted": 0,
+        "valid": 50,
+        "expected": 50,
+        "sr": 1.0,
+        "partial_sr_valid_only": 1.0,
+        "unresolved_process_errors": 0,
+        "open_worker_streams": [],
+        "sampling_streams": [
+          {
+            "stream_id": "c7d043980fb7458b8e190912f44870e7",
+            "worker_id": "3bb81e6987d54f5ea38f27f33a6101f1",
+            "logical_stream_seed": 7,
+            "kind": "initial_dynamic_slot_stream"
+          }
+        ],
+        "clean_execution": true,
+        "results_qualified": true,
+        "missing_blocked_ids": [],
+        "admission_rejections": 0,
+        "admission_samples": 50,
+        "initialization_errors": 0
+      }
+    }
+  },
+  "source_unchanged": true,
+  "watched_hashes": 53,
+  "original_author_fail_top_level_artifacts_unchanged": true,
+  "actual_case": {
+    "classname": "tools.v3.eval_v2_production_tests.scheduler_test",
+    "name": "test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode",
+    "time": "293.310"
+  },
+  "source_changes": [],
+  "full_gate_retries": 0,
+  "ds_dispatched": false,
+  "unified_author_gate": "REQUEST_CHANGES; previous257pass/1fail/176notrun remains valid",
+  "next": "Report captured throw-site or INCONCLUSIVE; no automatic fix or retry."
+}

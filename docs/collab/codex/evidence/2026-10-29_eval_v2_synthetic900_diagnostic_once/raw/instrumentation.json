@@ -1,0 +1,10 @@
+{
+  "nodeid": "tools/v3/eval_v2_production_tests/scheduler_test.py::test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode",
+  "module_file": "/workspace/work/psm-wma-ready-startup-formal/scripts/robocasa_eval_v2/runtime.py",
+  "original_code_file": "/workspace/work/psm-wma-ready-startup-formal/scripts/robocasa_eval_v2/runtime.py",
+  "original_code_sha256": "230fadd591075b4879c3fd4ab1d86031c162ebd5cf3ec975baec9dc073082261",
+  "plugin_file": "/workspace/work/ready-startup-evidence/synthetic900-diagnostic-once/capture_runtime_traceback.py",
+  "plugin_sha256": "98027df053b8e05796be2cc91588d21b09070997dcd47b73ca1a5dd81c3a1d25",
+  "observes_only_after_run_returns_or_raises": true,
+  "traceback_includes_locals": false
+}

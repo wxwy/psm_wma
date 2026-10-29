@@ -541,3 +541,7 @@
 
 - **V3-EVAL-V2-A1-E1-READY-STARTUP** — DONE source-only; GPT APPROVE_CODE exact9657fb6ab590f228d760362e506d5dd1b626880a/0ae313e329d290fc6b8a50fda1112820fb7ac485, review2d71e362; originalREADYcasePASS in authorizedfullrun. NotCPUacceptanceclosure.
 - **V3-EVAL-V2-AUTHOR434-AFTER-READY** — REVIEW; Codex; exactlyoneauthorizedfullrunFAIL shell1,257pass/1fail/176notrun. New scheduler900syntheticcase dictionary-size error; actualthrowpoint unknown. Owner/GPT focusedEvidence disposition prerequisite for anynextprobe/fix/retry; DSrequiresauthorfullPASS. Rawartifactarchive published; no source/merge/GPU/training changes.
+
+- **V3-EVAL-V2-SYNTHETIC900-TRACE** — IN_PROGRESS; Codex; Owner single diagnostic authorization after cb361421 Evidence Review. Exactly one original synthetic900 case with external transparent traceback capture, frozen9657/0ae Pair, preserve original FAIL/source hashes; capture actual internal throw-site or INCONCLUSIVE, then report. No source changes/retry/full Gate/DS.
+
+- **V3-EVAL-V2-SYNTHETIC900-TRACE** — DONE single diagnostic/evidence; Codex; INCONCLUSIVE, Single original case: 1 PASS, 0 FAIL, 0 errors, 0 skipped; shell 0. Runtime.run once, source/old FAIL unchanged. Evidence `docs/collab/codex/evidence/2026-10-29_eval_v2_synthetic900_diagnostic_once/`; original author434 remains REVIEW/REQUEST_CHANGES, DS not started. No automatic retry/fix/full Gate.
