@@ -49,3 +49,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **HIGH-priority candidate**：Root`runtime.py:796`对`scheduler.inflight.items()`无锁遍历，工作线程Child`scheduler.py:165`可同时`pop`；代码层面可达race，但不冒称此次确证throw-site。
 - 仅建议Owner授权Codex**一次只跑原失败synthetic900用例的外置透明 traceback 捕获**，原样保留Runtime返回值和测试断言、不改生产/测试源码；若定位则只做目标生产snapshot窄修+确定性回归、新Pair窄fresh审核；若未复现报告INCONCLUSIVE。**暂不重跑完整434、不启动DS**。没有V3生产合并/GPU/RoboCasa/900真实/训练授权。
 
+
+## 2026-10-29 — EvalV2 synthetic900 单次诊断未复现：INCONCLUSIVE；生产无锁迭代F4-P1待修
+
+- **Formal Source Pair未变** Root `9657fb6ab590f228d760362e506d5dd1b626880a` / Child+Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`。单次新证据commit `f92adc66f3a5f41d5bb71f2c3260ac27ab74fb14`仅bookkeeping。GPT只增量审核新运行Evidence与直接相关源码，不重复 `APPROVE_CODE`。详细正式Review `docs/collab/chatgpt/reviews/2026-10-29_V3_EvalV2_Synthetic900_Once_INCONCLUSIVE_Concurrent_Inflight_Source_Finding.md`。
+- 实际远端raw：单合成900 CPU test 1 PASS、wall293.75s、shell exit0；`Runtime.run`原样调用一次，error=None，900 valid/450成功/450失败、wrapper恢复；53/53 watched SHA与旧FAIL证据哈希前后一致，Root/Child干净。**本轮无异常栈，精确原抛错行仍未证实：INCONCLUSIVE**。
+- **作者完整434 Gate仍为257 PASS/1 FAIL/176未执行，Evidence verdict=`REQUEST_CHANGES`**；DS未启动，不能拼接单用例PASS。绝不将 synthetic900 认定正式真实900。
+- **F4-P1 HIGH（源码可达生产风险，旧FAIL是否由此引发未确认）**：Root`scripts/robocasa_eval_v2/runtime.py:796`每5s诊断未加锁迭代`scheduler.inflight.items()`，Child `scheduler.py:165` Worker `finish()`在自己的锁里pop同一字典；诊断文件I/O期间可触发`dictionary changed size`导致评测不必要停止。建议Codex仅Root在**同一scheduler._lock保护下复制快照**，磁盘读在锁外，旧红新绿确定性测试，不重审调度架构、不再随机重跑单例。
+- Codex新Formal Root/Child不变→GPT窄增量→作者全CPU→DS独立全CPU；无V3生产合并/GPU/Canary/900/训练权限。
+
