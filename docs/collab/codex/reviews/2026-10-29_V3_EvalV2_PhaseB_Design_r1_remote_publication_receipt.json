@@ -1,0 +1,26 @@
+{
+  "design_root": "fac029c83eb94fdafcc26d030ca5942542d740a3",
+  "unchanged_child_gitlink": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+  "frozen_production_root": "fd7e43f6630a436ab3d83edcd3ce9d1516b342d1",
+  "readback_evidence_head": "32fa91323e6adffe8878b430eea497e19713a7d1",
+  "root_advertised_refs": {
+    "refs/heads/V3": "7e0b7d416e2de29fc93edd4a1084dea52e08fa9a",
+    "refs/heads/v3-eval-v2-batch-b-design-20261029": "32fa91323e6adffe8878b430eea497e19713a7d1",
+    "refs/heads/v3-eval-v2-slots-a-20261028": "711ee8be40311d3cade19946cee4e23e508c3727"
+  },
+  "child_advertised_refs": {
+    "refs/heads/v3-eval-v2-slots-a-20261028": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+    "refs/heads/v3-local-ttt": "746c5cf2f2324104a62fb71510343aa40d3976c5"
+  },
+  "canonical_v3_updated_by_codex": false,
+  "child_ref_updated_by_codex": false,
+  "formal_design_bindings_verified": 6,
+  "artifact_sha256_verified": 17,
+  "production_source_diff": "ZERO",
+  "candidate_inbox_request_readback": true,
+  "phase_b_design_verdict": "REQUESTED_NOT_APPROVED",
+  "phase_b_production": "NOT_IMPLEMENTED",
+  "gpu_model_simulation_dcp_training_history_operations": "NONE",
+  "recorded_utc": "2026-10-29T01:48:32.155154+00:00",
+  "note": "This receipt is a subsequent bookkeeping commit; it never replaces the Design Root. Evidence HEAD above is the actual fetched and rehashed publication."
+}
