@@ -27,6 +27,14 @@ class Vector:
         )
 
 
+def execute_acked(model, requests, generator, *args):
+    replies = model.execute(requests, generator, *args)
+    for request in requests:
+        model.deliver(request)
+        model.acknowledge(request)
+    return replies
+
+
 def setup(n=3):
     model, generator = ProtocolModel(n), Vector()
     leases = tuple(
@@ -42,7 +50,7 @@ def setup(n=3):
 @pytest.mark.parametrize("n", [1, 2, 3])
 def test_single_vector_call_and_cold_prefixes(n):
     model, generator, _, requests = setup(n)
-    replies = model.execute(requests, generator)
+    replies = execute_acked(model, requests, generator)
     assert len(generator.calls) == 1
     assert tuple(p.state.fast for p in generator.calls[0]) == (None,) * n
     assert tuple(reply.key for reply in replies) == tuple(r.key for r in requests)
@@ -50,11 +58,11 @@ def test_single_vector_call_and_cold_prefixes(n):
 
 def test_independent_evidence_w0_and_reset_ack():
     model, generator, leases, requests = setup(2)
-    model.execute(requests, generator)
+    execute_acked(model, requests, generator)
     updates = tuple(
         replace(r, frontier=2, evidence=(i + 1, i + 2)) for i, r in enumerate(requests)
     )
-    model.execute(updates, generator)
+    execute_acked(model, updates, generator)
     a, b = (model.bundle.states[lease.session] for lease in leases)
     assert a.fast != b.fast and a.fast is not b.fast
     assert a.visual != b.visual and model.w0 == (1, 2, 3, 4)
@@ -66,16 +74,16 @@ def test_independent_evidence_w0_and_reset_ack():
     with pytest.raises(ValueError, match="stale"):
         model.open(leases[0])
     with pytest.raises(ValueError, match="stale"):
-        model.execute((requests[0],), generator)
+        execute_acked(model, (requests[0],), generator)
 
 
 def test_mixed_cold_hot_prefixes_preserve_sample_positions():
     model, generator, _, requests = setup(3)
-    model.execute(requests[:2], generator)
+    execute_acked(model, requests[:2], generator)
     hot = tuple(
         replace(r, frontier=1, evidence=(i + 1,)) for i, r in enumerate(requests[:2])
     )
-    model.execute((hot[1], requests[2], hot[0]), generator)
+    execute_acked(model, (hot[1], requests[2], hot[0]), generator)
     states = tuple(p.state.fast for p in generator.calls[-1])
     assert states[0] is not None and states[1] is None and states[2] is not None
     assert states[0] != states[2]
@@ -103,26 +111,28 @@ def test_sealed_batch_failure_never_publishes_any_session(fault):
             raise MemoryError("response serialization/allocation failure")
 
     with pytest.raises((RuntimeError, ValueError, MemoryError)):
-        model.execute(requests, broken, allocation)
+        execute_acked(model, requests, broken, allocation)
     assert model.bundle is original and not model.bundle.responses
 
 
 def test_cancel_between_generation_and_publication_fences_whole_batch():
     model, generator, leases, requests = setup(2)
     b = model.bundle.states[leases[1].session]
-    with pytest.raises(ValueError, match="stale"):
-        model.execute(requests, generator, lambda: model.reset(leases[0]))
+    with pytest.raises(ValueError, match="cancellation"):
+        execute_acked(
+            model, requests, generator, lambda: model.request_cancel(leases[0])
+        )
     assert model.bundle.states[leases[1].session] is b
     assert not model.bundle.responses
 
 
 def test_lost_response_retry_is_identical_and_never_regenerates():
     model, generator, _, requests = setup(2)
-    replies = model.execute(requests, generator)
+    replies = execute_acked(model, requests, generator)
     original = model.bundle
     assert model.cached(requests[1]) is replies[1]  # HTTP completion order reversed.
     assert model.cached(requests[0]) is replies[0]
-    assert model.execute(requests, generator) == replies
+    assert execute_acked(model, requests, generator) == replies
     assert len(generator.calls) == 1 and model.bundle is original
     with pytest.raises(ValueError, match="different payload"):
         model.cached(replace(requests[0], noise_seed=99))
@@ -130,13 +140,13 @@ def test_lost_response_retry_is_identical_and_never_regenerates():
 
 def test_evicted_reply_cannot_restart_old_frontier():
     model, generator, _, requests = setup(1)
-    model.execute(requests, generator)
+    execute_acked(model, requests, generator)
     hot = replace(requests[0], frontier=1, evidence=(7,))
-    model.execute((hot,), generator)
+    execute_acked(model, (hot,), generator)
     assert len(model.bundle.responses) == 1
     assert model.cached(requests[0]) is None
     with pytest.raises(ValueError, match="evidence"):
-        model.execute(requests, generator)
+        execute_acked(model, requests, generator)
     assert len(generator.calls) == 2
 
 
@@ -154,7 +164,7 @@ def test_restarted_server_rejects_old_epoch():
     with pytest.raises(ValueError, match="stale"):
         restarted.open(leases[0])
     with pytest.raises(ValueError, match="stale"):
-        restarted.execute(requests, generator)
+        execute_acked(restarted, requests, generator)
     assert not generator.calls
 
 
@@ -172,7 +182,7 @@ def test_invalid_membership_rejected_before_generation(mutation):
         b = replace(b, frontier=1, evidence=(1,))
     original = model.bundle
     with pytest.raises(ValueError):
-        model.execute((a, b), generator)
+        execute_acked(model, (a, b), generator)
     assert not generator.calls and model.bundle is original
 
 
@@ -243,8 +253,8 @@ def test_end_ack_can_be_retried_but_cannot_close_a_new_assignment():
 def test_literal_noise_seed_is_not_changed_by_batch_position():
     batched, vector, _, requests = setup(3)
     requests = tuple(replace(r, noise_seed=10 + i) for i, r in enumerate(requests))
-    replies = batched.execute(requests[::-1], vector)
+    replies = execute_acked(batched, requests[::-1], vector)
     serial, reference, _, _ = setup(3)
-    expected = {r.key: serial.execute((r,), reference)[0] for r in requests}
+    expected = {r.key: execute_acked(serial, (r,), reference)[0] for r in requests}
     assert all(expected[reply.key] == reply for reply in replies)
     assert len(vector.calls) == 1 and len(reference.calls) == 3

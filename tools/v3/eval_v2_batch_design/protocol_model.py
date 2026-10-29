@@ -13,6 +13,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from types import MappingProxyType
 
+from tools.v3.eval_v2_batch_design.ticket_registry import TicketRegistry
+
 
 @dataclass(frozen=True)
 class Lease:
@@ -68,10 +70,19 @@ class Bundle:
         return cls(MappingProxyType(dict(states)), MappingProxyType(dict(responses)))
 
 
-class ProtocolModel:
-    """A single publication point for symbolic fast/visual state AND response cache."""
+@dataclass(frozen=True)
+class EndReply:
+    acknowledged: bool
+    lease: Lease
 
-    def __init__(self, capacity=3, epoch="server-1"):
+    def __bool__(self):
+        return self.acknowledged
+
+
+class ProtocolModel:
+    """One state publication point and SAME queue/executor/End lifecycle owner."""
+
+    def __init__(self, capacity=3, epoch="server-1", registry=None):
         if capacity < 1:
             raise ValueError("positive capacity required")
         self.capacity, self.epoch = capacity, epoch
@@ -79,6 +90,16 @@ class ProtocolModel:
         self.active: dict[str, Lease] = {}
         self.generations: dict[str, int] = {}
         self.closed: dict[str, Lease] = {}
+        self.closing: set[Lease] = set()
+        self.cancelled_sessions: set[Lease] = set()
+        self.registry = (
+            registry
+            if registry is not None
+            else TicketRegistry(slots=capacity, batch=capacity, epoch=epoch)
+        )
+        if self.registry.epoch != epoch or self.registry.slots != capacity:
+            raise ValueError("Session and queue require the SAME lifecycle authority")
+        self.executor_busy = False
         self.bundle = Bundle.of({}, {})
 
     def open(self, lease):
@@ -101,13 +122,50 @@ class ProtocolModel:
         if lease.epoch != self.epoch or self.active.get(lease.slot) != lease:
             raise ValueError("closed or stale assignment")
 
-    def reset(self, lease):
-        """Exact ACK only for an active owned lease; old generations stay fenced."""
-        if lease.slot not in self.active and self.closed.get(lease.slot) == lease:
-            return True  # Lost end ACK can be fetched without reopening the lease.
+    def _available(self, request):
+        self._owned(request)
+        if request.lease in self.closing or request.lease in self.cancelled_sessions:
+            raise ValueError("Session closing or cancelled")
+
+    def submit(self, request, now=0, deadline=1, size=1):
+        self._owned(request)
+        if request.key not in self.registry.tickets:
+            self._available(request)
+        return self.registry.submit(request, now, deadline, size)
+
+    def request_cancel(self, lease):
+        """Intent ONLY: never finishes work, frees credit or ACKs Session End."""
         self._owned(Request(lease, 0))
+        self.cancelled_sessions.add(lease)
+        self.registry.cancel(lease)
+
+    def request_end(self, lease):
+        """Nonblocking request; a draining response is explicitly NOT an ACK."""
+        if lease.slot not in self.active and self.closed.get(lease.slot) == lease:
+            return EndReply(True, lease)
+        self._owned(Request(lease, 0))
+        self.closing.add(lease)
+        self.request_cancel(lease)
+        return self.poll_end(lease)
+
+    def poll_end(self, lease):
+        if lease.slot not in self.active and self.closed.get(lease.slot) == lease:
+            return EndReply(True, lease)
+        self._owned(Request(lease, 0))
+        if lease not in self.closing:
+            raise ValueError("end was not requested")
+        owned = self.registry.outstanding(lease)
+        if self.executor_busy or any(not ticket.quiescent for ticket in owned):
+            return EndReply(False, lease)
+        # Only the executor can establish quiescence. End may then discard its
+        # undelivered response, without rolling back any committed co-member.
+        for ticket in owned:
+            reason = "discarded" if ticket.state == "COMMITTED" else "aborted"
+            self.registry.release(ticket, reason)
         del self.active[lease.slot]
         self.closed[lease.slot] = lease
+        self.closing.remove(lease)
+        self.cancelled_sessions.discard(lease)
         states = dict(self.bundle.states)
         states.pop(lease.session)
         responses = {
@@ -116,16 +174,46 @@ class ProtocolModel:
             if value[0].lease.session != lease.session
         }
         self.bundle = Bundle.of(states, responses)
-        return True
+        return EndReply(True, lease)
+
+    def reset(self, lease):
+        """Compatibility spelling; True means proven end, False means deferred."""
+        return self.request_end(lease).acknowledged
+
+    def drain_queued_cancellations(self):
+        """Executor event for work that never entered generation; no fake drain."""
+        for ticket in tuple(self.registry.tickets.values()):
+            if ticket.state == "QUEUED" and ticket.cancel_requested:
+                batch_id = self.registry.seal((ticket.request,))
+                self.registry.finish(batch_id, "ABORTED")
+                self.registry.release(ticket, "aborted")
 
     def cached(self, request):
-        self._owned(request)
+        self._available(request)
         existing = self.bundle.responses.get(request.key)
         if existing is None:
             return None
         if existing[0] != request:
             raise ValueError("request key reused with different payload")
+        ticket = self.registry.tickets.get(request.key)
+        if ticket is not None and ticket.cancel_requested:
+            raise ValueError("ticket cancelled; response cannot be delivered")
+        if ticket is not None and not ticket.quiescent:
+            raise ValueError("committed response not yet quiescent")
         return existing[1]
+
+    def deliver(self, request):
+        reply = self.cached(request)
+        if reply is None:
+            raise ValueError("no committed response")
+        return reply
+
+    def acknowledge(self, request):
+        """Client confirms the frozen response; release credit exactly once."""
+        self.deliver(request)
+        if request.key in self.registry.tickets:
+            self.registry.release(self.registry.ticket(request), "delivered")
+        return True
 
     def _prepare(self, request):
         self._owned(request)
@@ -146,9 +234,14 @@ class ProtocolModel:
         return Prepared(request, State(request.frontier, fast, request.evidence, True))
 
     def execute(
-        self, requests, generate, before_publish: Callable[[], None] = lambda: None
+        self,
+        requests,
+        generate,
+        before_publish: Callable[[], None] = lambda: None,
+        *,
+        on_stage: Callable[[str], None] = lambda stage: None,
     ):
-        """Only NEW tickets form a sealed batch; cached tickets bypass the queue."""
+        """Commit responses, but retain ticket credit until delivery ACK/discard."""
         if (
             not requests
             or len(requests) > self.capacity
@@ -157,82 +250,100 @@ class ProtocolModel:
             or len({r.compatibility for r in requests}) != 1
         ):
             raise ValueError("invalid sealed batch")
-        cached = [self.cached(r) for r in requests]
+        if self.executor_busy:
+            raise ValueError("single model executor already owns a batch")
+        # Cancelled popped work must still reach an executor-owned abort/drain.
+        cached = [
+            self.cached(r)
+            if r.lease not in self.closing and r.lease not in self.cancelled_sessions
+            else None
+            for r in requests
+        ]
         if all(reply is not None for reply in cached):
             return tuple(cached)
         if any(reply is not None for reply in cached):
             raise ValueError("route cached tickets before sealing a new batch")
-        original = self.bundle
-        prepared = tuple(self._prepare(r) for r in requests)
-        replies = tuple(generate(prepared))  # EXACTLY ONE vector call, no item loop.
-        if len(replies) != len(requests):
-            raise ValueError("output cardinality mismatch")
-        for request, reply in zip(requests, replies, strict=True):
-            if (
-                reply.key != request.key
-                or not reply.action
-                or not all(math.isfinite(x) for x in reply.action)
-            ):
-                raise ValueError("invalid or mis-correlated output")
-        states, responses = dict(original.states), dict(original.responses)
-        sessions = {r.lease.session for r in requests}
-        responses = {
-            k: v for k, v in responses.items() if v[0].lease.session not in sessions
-        }
-        for candidate, reply in zip(prepared, replies, strict=True):
-            states[candidate.request.lease.session] = candidate.state
-            responses[reply.key] = (candidate.request, reply)
-        replacement = Bundle.of(states, responses)  # All allocations before commit.
-        before_publish()  # Deterministic failure/cancel injection, not production API.
-        for request in requests:
-            self._owned(request)
-        if self.bundle is not original:
-            raise ValueError("ownership/state changed before publication")
-        self.bundle = replacement  # ONLY publication of all candidates and replies.
-        return replies
+        created = []
+        try:
+            for request in requests:
+                if request.key in self.registry.tickets:
+                    self.registry.ticket(request)
+                else:
+                    created.append(self.submit(request))
+            batch_id = self.registry.seal(requests)
+        except Exception:
+            for ticket in created:
+                batch_id = self.registry.seal((ticket.request,))
+                self.registry.finish(batch_id, "ABORTED")
+                self.registry.release(ticket, "aborted")
+            raise
+        tickets = tuple(self.registry.ticket(request) for request in requests)
+        original, committed = self.bundle, False
+        self.executor_busy = True
+
+        def fence():
+            if self.registry.cancelled(batch_id):
+                raise ValueError("batch cancellation requested; no action dispatched")
+            for request in requests:
+                self._owned(request)
+
+        try:
+            on_stage("SEALED")
+            fence()
+            prepared = []
+            for index, request in enumerate(requests):
+                prepared.append(self._prepare(request))
+                on_stage(f"PREPARED_ITEM_{index}")
+                fence()
+            prepared = tuple(prepared)
+            self.registry.advance(batch_id, "PREPARED")
+            on_stage("PREPARED")
+            fence()
+            self.registry.advance(batch_id, "GENERATING")
+            on_stage("GENERATING")
+            fence()
+            replies = tuple(generate(prepared))  # ONE vector call, no item loop.
+            self.registry.advance(batch_id, "GENERATED")
+            on_stage("GENERATED")
+            fence()
+            if len(replies) != len(requests):
+                raise ValueError("output cardinality mismatch")
+            for request, reply in zip(requests, replies, strict=True):
+                if (
+                    reply.key != request.key
+                    or not reply.action
+                    or not all(math.isfinite(x) for x in reply.action)
+                ):
+                    raise ValueError("invalid or mis-correlated output")
+            states, responses = dict(original.states), dict(original.responses)
+            sessions = {r.lease.session for r in requests}
+            responses = {
+                k: v for k, v in responses.items() if v[0].lease.session not in sessions
+            }
+            for candidate, reply in zip(prepared, replies, strict=True):
+                states[candidate.request.lease.session] = candidate.state
+                responses[reply.key] = (candidate.request, reply)
+            replacement = Bundle.of(states, responses)
+            self.registry.advance(batch_id, "VALIDATED")
+            on_stage("VALIDATED")
+            before_publish()
+            fence()
+            if self.bundle is not original:
+                raise ValueError("ownership/state changed before publication")
+            # Model-owner critical section: no observer callback in between.
+            self.registry.advance(batch_id, "COMMITTED")
+            self.bundle, committed = replacement, True
+            on_stage("COMMITTED")
+            return replies
+        finally:
+            # An EXECUTOR event, only after generate returns/raises/unwinds.
+            # Session End/HTTP timeout never supplies this quiescence proof.
+            self.registry.finish(batch_id, "COMMITTED" if committed else "ABORTED")
+            if not committed:
+                for ticket in tickets:
+                    self.registry.release(ticket, "aborted")
+            self.executor_busy = False
 
 
-class BatchQueue:
-    """Fake-clock bounded FIFO compatibility queue; not a threaded HTTP service."""
-
-    def __init__(self, slots=3, batch=2, wait=0.02, byte_cap=64, item_cap=32):
-        if min(slots, batch, wait, byte_cap, item_cap) <= 0:
-            raise ValueError("positive queue bounds required")
-        self.slots, self.batch, self.wait = slots, batch, wait
-        self.byte_cap, self.item_cap = byte_cap, item_cap
-        self.rows = []
-
-    def add(self, request, now, deadline, size=1):
-        if size < 1 or size > self.item_cap or deadline <= now:
-            raise ValueError("invalid size or deadline")
-        for existing, _, _, _ in self.rows:
-            if existing.key == request.key:
-                if existing != request:
-                    raise ValueError("pending key payload mismatch")
-                return False  # Duplicate HTTP submission attaches to same ticket.
-            if existing.lease.slot == request.lease.slot:
-                raise ValueError("one pending request per physical slot")
-        if (
-            len(self.rows) >= self.slots
-            or sum(row[3] for row in self.rows) + size > self.byte_cap
-        ):
-            raise OverflowError("bounded queue full")
-        self.rows.append((request, now, deadline, size))
-        return True
-
-    def pop(self, now):
-        if not self.rows:
-            return ()
-        if any(deadline <= now for _, _, deadline, _ in self.rows):
-            raise TimeoutError("expired queued request; coordinator must safe-stop")
-        head, arrived, deadline, _ = self.rows[0]
-        compatible = [
-            row for row in self.rows if row[0].compatibility == head.compatibility
-        ]
-        if len(compatible) < min(self.batch, self.slots) and now < min(
-            arrived + self.wait, deadline
-        ):
-            return ()
-        chosen = compatible[: self.batch]
-        self.rows = [row for row in self.rows if row not in chosen]
-        return tuple(row[0] for row in chosen)
+class BatchQueue(TicketRegistry):
+    """Compatibility name for the SAME queued+inflight lifecycle authority."""
