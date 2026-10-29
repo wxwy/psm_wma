@@ -1,0 +1,22 @@
+{
+  "formal_implementation_root": "323f0b2a3d4aa3b40d9d8f2eb0b94c9251299728",
+  "child_gitlink": "774c2edb93ec5a6ba85ba1124757064d7cc779a5",
+  "remote_evidence_head": "e549a4f5e5d0b3f90a75cd37e047f006af90c94b",
+  "candidate": "v3-eval-v2-batch-b2-20261029",
+  "artifact_hashes_reverified": 133,
+  "source_bindings_reverified": 61,
+  "inbox_bytes": 29942,
+  "archive_blob_verified": "d702c44dd68529e93a491c5353e866ab7be92a07",
+  "author_cpu": "424PASS_0FAIL_ERROR_SKIP",
+  "static": "Ruff0.12.7_CHECK_FORMAT_AST29_PASS",
+  "actual_cloud_clock": "BLOCKED_NO_KERNEL_EVIDENCE_NO_BYPASS",
+  "canonical_root_at_readback": "9cc37557a538d5c9df29923aa069c5c17400f119",
+  "canonical_child_unchanged": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "approved_b1_root_branch_unchanged": "0e4061005c691cb45b14948a52390f5c041848b9",
+  "approved_b1_child_branch_unchanged": "4a938e41b0c335baca1c1d8f1caabc433b0e2001",
+  "gpt_code_gate": "REQUESTED_NOT_APPROVED",
+  "ds_cpu_native_canary_formal900": "NOT_RUN",
+  "canonical_merge_gpu_model_dcp_training_history": "NONE",
+  "recorded_utc": "2026-10-29T08:48:28.514987+00:00",
+  "note": "Receipt commit is bookkeeping, not Formal Root."
+}
