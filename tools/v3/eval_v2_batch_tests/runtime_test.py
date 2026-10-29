@@ -12,13 +12,14 @@ from pathlib import Path
 import pytest
 from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
 from cosmos_framework.evaluation.robocasa_v2.scheduler import logical_plan
-from cosmos_framework.evaluation.robocasa_v2.store import Store, records
+from cosmos_framework.evaluation.robocasa_v2.store import Store, load, records
 from cosmos_framework.inference.robocasa_session_transactions_test import (
     clock_kernel as clock_kernel,
 )
 from robocasa_eval_v2 import runtime as module
 from robocasa_eval_v2.config import execution
 from robocasa_eval_v2_processes import Registry, process_identity
+from robocasa_processes import group_members
 from robocasa_eval_v2.runtime import Runtime
 
 from tools.v3.eval_v2_production_tests.contract_test import manifest
@@ -32,20 +33,50 @@ def free_ports(count):
         sockets = []
         try:
             first = socket.socket()
-            first.bind(("127.0.0.1", 0))
             sockets.append(first)
+            first.bind(("0.0.0.0", 0))
             port = first.getsockname()[1]
             for i in range(1, count):
                 s = socket.socket()
-                s.bind(("127.0.0.1", port + i))
                 sockets.append(s)
+                s.bind(("0.0.0.0", port + i))
             return port
         except OSError:
             pass
         finally:
             for s in sockets:
                 s.close()
-    raise RuntimeError("no CPU fixture loopback ports")
+    raise RuntimeError("no CPU fixture wildcard ports")
+
+
+@pytest.mark.parametrize("address", ["127.0.0.2", "127.0.0.3"])
+def test_free_ports_rejects_other_loopback_listener_and_closes_probes(
+    monkeypatch, address
+):
+    real_socket = socket.socket
+    with real_socket() as listener:
+        listener.bind((address, 0))
+        listener.listen()
+        occupied_port = listener.getsockname()[1]
+        # The old localhost-only probe accepts this occupied wildcard range.
+        with real_socket() as localhost:
+            localhost.bind(("127.0.0.1", occupied_port))
+        probes = []
+
+        class Probe(real_socket):
+            def __init__(self):
+                super().__init__()
+                probes.append(self)
+
+            def bind(self, endpoint):
+                host, port = endpoint
+                return super().bind((host, occupied_port if port == 0 else port))
+
+        monkeypatch.setattr(socket, "socket", Probe)
+        with pytest.raises(RuntimeError, match="no CPU fixture wildcard ports"):
+            free_ports(1)
+        assert len(probes) == 30
+        assert all(p.fileno() == -1 for p in probes)
 
 
 class CpuRegistry(Registry):
@@ -65,7 +96,8 @@ def cpu_run(tmp_path, monkeypatch, *, g=1, n=2, episodes=2, fail_server=False):
         execution_profile="phase_b",
         gpu_ids=list(range(g)),
         sims_per_gpu=2,
-        max_infer_batch_size=2,
+        # The death fixture must fire even when batching is impossible.
+        max_infer_batch_size=1 if fail_server else 2,
         batch_wait_ms=100,
         episodes_per_task=episodes,
         base_port=free_ports(g),
@@ -119,7 +151,7 @@ def cpu_run(tmp_path, monkeypatch, *, g=1, n=2, episodes=2, fail_server=False):
             str(FIXTURE),
             "server",
             *base[3:],
-            *(["--cpu-exit-on-batch2"] if fail_server else []),
+            *(["--cpu-exit-after-live-slots"] if fail_server else []),
         ]
 
     monkeypatch.setattr(module, "server_argv", cpu_command)
@@ -174,7 +206,11 @@ def test_real_OS_multisim_native_B2_delivery_D5_task_reuse_and_resume(
             for s in p.read_text().splitlines()
             if s.startswith("CPU_NATIVE_BATCH ")
         )
-    assert calls and any(c["size"] == 2 for c in calls)
+    assert calls and all(1 <= c["size"] <= 2 for c in calls)
+    # Only this same-Server positive case must demonstrate native B=2.
+    # A bounded wait window cannot guarantee batching across other layouts.
+    if (g, n, episodes) == (1, 2, 2):
+        assert any(c["size"] == 2 for c in calls)
     assert len({c["pid"] for c in calls}) == min(g, n)
     assert sum(c["size"] for c in calls) == 2 * n * episodes
     assert any(any(c["prefix_present"]) for c in calls)
@@ -270,21 +306,57 @@ def test_owned_Server_death_faults_all_live_Slots_and_reaps_only_owned_groups(
     import subprocess
 
     foreign = subprocess.Popen(
-        [sys.executable, "-c", "import time; time.sleep(60)"], start_new_session=True
+        [sys.executable, "-c", "import signal; signal.pause()"], start_new_session=True
     )
     try:
         value, cfg, runtime, report, error = cpu_run(
             tmp_path, monkeypatch, fail_server=True
         )
         assert error is not None and report["results_qualified"] is False
-        assert report["valid"] < 4
+        assert cfg["max_infer_batch_size"] == 1 and report["valid"] == 0
+        processes = records(value.root / "_internal/processes")
+        assert sum(p["kind"] == "server" for p in processes) == 1
+        assert sum(p["kind"].startswith("simulator_slot:") for p in processes) == 2
+        faults = [
+            json.loads(line[len("CPU_SERVER_FAULT ") :])
+            for path in (value.root / "logs").glob("*_server.log")
+            for line in path.read_text().splitlines()
+            if line.startswith("CPU_SERVER_FAULT ")
+        ]
+        assert len(faults) == 1
+        fault = faults[0]
+        server = next(p for p in processes if p["kind"] == "server")
+        assert fault["pid"] == server["identity"]["pid"]
+        assert fault["native_size"] == 1
+        tickets = fault["tickets"]
+        assert len(tickets) == 2
+        assert {t["state"] for t in tickets} == {"GENERATING", "QUEUED"}
+        assert {t["slot_id"] for t in tickets} == set(runtime.slot_ids.values())
+        assert len({t["session_id"] for t in tickets}) == 2
+        assert {t["task"] for t in tickets} == set(value.manifest["tasks"])
+        for ticket in tickets:
+            attempt = runtime.latest_attempts[ticket["task"]]
+            assert ticket["attempt_id"] == attempt["attempt_id"]
+            assert ticket["episode_index"] == attempt["episode"] == 0
+            assert ticket["run_lease"] == value.lease_id
+            assert ticket["manifest_digest"] == value.manifest["digest"]
         for task in value.manifest["tasks"]:
-            assert any(e["resolution"] is None for e in value.errors(task))
-        for p in records(value.root / "_internal/processes"):
-            assert (
-                value.root / "_internal/process_closed" / (p["id"] + ".json")
-            ).exists()
+            attempt = runtime.latest_attempts[task]
+            assert any(
+                e["resolution"] is None
+                and e["attempt"] is not None
+                and e["attempt"]["attempt_id"] == attempt["attempt_id"]
+                for e in value.errors(task)
+            )
+        for p in processes:
+            receipt = value.root / "_internal/process_closed" / (p["id"] + ".json")
+            assert receipt.exists()
+            cleanup = load(receipt)["cleanup"]
+            assert cleanup["live_group"] is False
+            if p["kind"] == "server":
+                assert cleanup["returncode"] == 23
             assert process_identity(p["identity"]["pid"]) is None
+            assert not group_members(p["identity"]["pgid"])
         assert foreign.poll() is None
     finally:
         foreign.terminate()

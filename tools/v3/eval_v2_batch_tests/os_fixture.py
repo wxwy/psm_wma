@@ -88,10 +88,36 @@ def run_server(argv):
         n = len(batch["prompt"])
         assert len(kwargs["_local_memory_prefixes"]) == n
         calls.append(n)
-        if n > 1 and "--cpu-exit-on-batch2" in argv:
-            os._exit(
-                23
-            )  # Test-owned Server death while all participants are uncommitted.
+        if "--cpu-exit-after-live-slots" in argv:
+            assert len(ids) == 2 and n == 1
+            # Hold the first real B=1 generation, allowing the other HTTP
+            # request to enqueue. Observe real leases/tickets without changing
+            # the production queue, batch wait, commit or cancellation path.
+            limit = time.monotonic() + 20
+            while True:
+                with obj.transactions._lock:
+                    live = [
+                        t
+                        for t in obj.transactions._tickets.values()
+                        if obj.transactions._leases.get(t.lease.slot_id) == t.lease
+                        and t.state in ("GENERATING", "QUEUED")
+                        and not t.cancelled
+                        and obj.transactions.clock() < t.deadline
+                    ]
+                    tickets = [{**t.lease.identity(), "state": t.state} for t in live]
+                if {t["slot_id"] for t in tickets} == set(ids):
+                    break
+                if time.monotonic() >= limit:
+                    raise TimeoutError("CPU Server fault needs two live Slot requests")
+                time.sleep(0.01)
+            print(
+                "CPU_SERVER_FAULT "
+                + json.dumps(
+                    {"pid": os.getpid(), "native_size": n, "tickets": tickets}
+                ),
+                flush=True,
+            )
+            os._exit(23)  # Both owned Slots are active and uncommitted.
         print(
             "CPU_NATIVE_BATCH "
             + json.dumps(
