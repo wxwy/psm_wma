@@ -1,0 +1,647 @@
+..............................................{"prototype_only": false, "manifest_digest": "0479b112504cc9a9de7818350cd2413cad3c4ebce4c6a4d44aacce6d82dc22e0", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "143bf8e76e0c4687ba0f94ed13ce24c4", "worker_id": "3b7cdf8f57e84083ab90cd702329cbcf", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "0479b112504cc9a9de7818350cd2413cad3c4ebce4c6a4d44aacce6d82dc22e0", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "143bf8e76e0c4687ba0f94ed13ce24c4", "worker_id": "3b7cdf8f57e84083ab90cd702329cbcf", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+..{"owner_released": [["CloseFridge", 0]], "no_execution": true}
+.{"prototype_only": false, "manifest_digest": "19eaf670d50246172ffa138b6318618072dd47a47ac5994f55834f795f2176a4", "status": "partial", "success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "results_qualified": false, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 0, "failure": 0, "invalid": 0, "interrupted": 0, "pending": 2, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [], "clean_execution": true, "results_qualified": false, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 0, "initialization_errors": 0}}}
+[eval-v2] stopped: RuntimeError('CPU synthetic resource gate failure')
+.{"prototype_only": false, "manifest_digest": "94fe884426b4005e0e0ce2fe952f7716b9de905f7a8ca9a50906e8556a70ddba", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "1763a326ae364d429f347063b2c5abbd", "worker_id": "a73b55a7e7574c1db356ad2ee33a2848", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+................[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+............[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0", "task": "Task0", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0", "task": "Task0", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"round": 2, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 1, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0", "task": "Task2", "episode": 1, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0", "task": "Task0", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU4", "task": "Task4", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU5", "task": "Task5", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task6", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "Task1", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU2", "task": "Task2", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "Task1", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU3", "task": "Task3", "episode": 0, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU4", "task": "Task4", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU5", "task": "Task5", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task6", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU7", "task": "Task7", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task7", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task0", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task1", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task2", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task8", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task4", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task7", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task9", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task5", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task6", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task3", "episode": 1, "outcome": "success"}
+[eval-v2] {"round": 2, "workers": [{"gpu": "GPU4", "task": "Task12", "episode": 1, "episodes": 2, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU5", "task": "Task13", "episode": 1, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task14", "episode": 1, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU7", "task": "Task15", "episode": 1, "episodes": 2, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task13", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 1, "outcome": "success"}
+.[eval-v2] {"task": "TaskB", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU1", "task": "TaskA", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "TaskA", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "TaskC", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "TaskA", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "TaskB", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "TaskC", "episode": 1, "outcome": "success"}
+..[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+.[eval-v2] {"task": "TaskA", "episode": 0, "outcome": "skipped_init_error"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+[eval-v2] {"task": "TaskB", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "TaskA", "episode": 1, "outcome": "skipped_init_error"}
+[eval-v2] {"task": "TaskB", "episode": 1, "outcome": "success"}
+.[eval] Local-TTT cleanup failure: RuntimeError: Local-TTT reset was not acknowledged by the server
+[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [], "native_batches": {}}
+.[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 2, "workers": [], "native_batches": {}}
+....[eval-v2] {"task": "Task06", "episode": 0, "outcome": "success"}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU5", "task": "Task01", "episode": 0, "episodes": 50, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task12", "episode": 0, "episodes": 50, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task01", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task04", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task11", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 0, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 1, "outcome": "failure"}
+[eval-v2] {"round": 2, "workers": [{"gpu": "GPU4", "task": "Task04", "episode": 1, "episodes": 50, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task00", "episode": 1, "episodes": 50, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task00", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task02", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task17", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task09", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 1, "outcome": "failure"}
+[eval-v2] {"task": "Task06", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 2, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 2, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 3, "outcome": "success"}
+[eval-v2] {"round": 4, "workers": [{"gpu": "GPU5", "task": "Task01", "episode": 3, "episodes": 50, "stage": "executing", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task12", "episode": 3, "episodes": 50, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task01", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task09", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task10", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 3, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 3, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task04", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 4, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 4, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 5, "outcome": "success"}
+[eval-v2] {"round": 6, "workers": [{"gpu": "GPU5", "task": "Task01", "episode": 5, "episodes": 50, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task12", "episode": 5, "episodes": 50, "stage": "executing", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task01", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 5, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 5, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 6, "outcome": "success"}
+[eval-v2] {"round": 7, "workers": [{"gpu": "GPU6", "task": "Task05", "episode": 6, "episodes": 50, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU4", "task": "Task08", "episode": 6, "episodes": 50, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task05", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task09", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task14", "episode": 6, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 6, "outcome": "failure"}
+[eval-v2] {"task": "Task06", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task02", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task05", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task03", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 7, "outcome": "failure"}
+[eval-v2] {"round": 8, "workers": [{"gpu": "GPU4", "task": "Task09", "episode": 7, "episodes": 50, "stage": "result_validation", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU5", "task": "Task11", "episode": 7, "episodes": 50, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task09", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task11", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 7, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 7, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task01", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task03", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task05", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task07", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task11", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task13", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task15", "episode": 8, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 8, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 9, "outcome": "success"}
+[eval-v2] {"round": 10, "workers": [{"gpu": "GPU5", "task": "Task01", "episode": 9, "episodes": 50, "stage": "executing", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU6", "task": "Task12", "episode": 9, "episodes": 50, "stage": "idle", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task01", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task17", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task15", "episode": 9, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task16", "episode": 9, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task12", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 10, "outcome": "success"}
+[eval-v2] {"round": 11, "workers": [{"gpu": "GPU6", "task": "Task17", "episode": 10, "episodes": 50, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU4", "task": "Task02", "episode": 10, "episodes": 50, "stage": "environment_initialization", "steps": 0, "horizon": 2, "predictions": 0, "last_prediction_ms": null}], "native_batches": {}}
+[eval-v2] {"task": "Task17", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task05", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task03", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task07", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task08", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task09", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task10", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task11", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task13", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task14", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task15", "episode": 10, "outcome": "failure"}
+[eval-v2] {"task": "Task16", "episode": 10, "outcome": "success"}
+[eval-v2] {"task": "Task06", "episode": 11, "outcome": "success"}
+[eval-v2] {"task": "Task12", "episode": 11, "outcome": "success"}
+[eval-v2] {"task": "Task04", "episode": 11, "outcome": "success"}
+[eval-v2] {"task": "Task00", "episode": 11, "outcome": "success"}
+[eval-v2] {"task": "Task01", "episode": 11, "outcome": "failure"}
+[eval-v2] {"task": "Task17", "episode": 11, "outcome": "failure"}
+[eval-v2] {"task": "Task02", "episode": 11, "outcome": "success"}
+[eval-v2] {"task": "Task07", "episode": 11, "outcome": "failure"}
+F
+=================================== FAILURES ===================================
+_ test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode _
+
+tmp_path = PosixPath('/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f98c43f0770>
+
+    def test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode(
+        tmp_path, monkeypatch
+    ):
+        from tools.v3.eval_v2_production_tests.slot_test import (
+            CpuSlotRuntime,
+            TrackedEnv,
+            prepare_monkey,
+        )
+        from tools.v3.eval_v2_production_tests.native_test import server
+    
+        prepare_monkey(monkeypatch)
+        tasks = tuple(
+            f"Task{i:02d}"
+            for i in [6, 1, 12, 4, 0, 17, 2, 5, 7, 3, 8, 9, 10, 11, 13, 14, 15, 16]
+        )
+        value = fresh(tmp_path, tasks=tasks, episodes=50, formal=True)
+        events = []
+        cfg = {
+            "gpu_ids": [4, 5, 6],
+            "episodes_per_task": 50,
+            "base_port": 18000,
+            "terminate_grace_s": 0.2,
+        }
+        with server() as (url, calls), value.locked():
+            runtime = CpuSlotRuntime(
+                value,
+                cfg,
+                url,
+                events,
+                factory=lambda t, s, g: TrackedEnv(
+                    t, g["seed"], events, success_at=100 if int(t[4:]) % 2 else 1
+                ),
+            )
+            report, error = runtime.run()
+>           assert (
+                error is None
+                and report["valid"] == 900
+                and report["success"] == report["failure"] == 450
+                and report["results_qualified"]
+            )
+E           AssertionError: assert (RuntimeError('dictionary changed size during iteration') is None)
+
+tools/v3/eval_v2_production_tests/scheduler_test.py:95: AssertionError
+=============================== warnings summary ===============================
+tools/v3/eval_v2_production_tests/contract_test.py::test_media_preserves_already_loaded_torch_cpu_rng_without_cuda[False]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_production_tests/scheduler_test.py::test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 112 passed, 1 warning in 199.73s (0:03:19)

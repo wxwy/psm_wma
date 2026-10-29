@@ -1,0 +1,46 @@
+tmp_path = PosixPath('/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f98c43f0770>
+
+    def test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode(
+        tmp_path, monkeypatch
+    ):
+        from tools.v3.eval_v2_production_tests.slot_test import (
+            CpuSlotRuntime,
+            TrackedEnv,
+            prepare_monkey,
+        )
+        from tools.v3.eval_v2_production_tests.native_test import server
+    
+        prepare_monkey(monkeypatch)
+        tasks = tuple(
+            f"Task{i:02d}"
+            for i in [6, 1, 12, 4, 0, 17, 2, 5, 7, 3, 8, 9, 10, 11, 13, 14, 15, 16]
+        )
+        value = fresh(tmp_path, tasks=tasks, episodes=50, formal=True)
+        events = []
+        cfg = {
+            "gpu_ids": [4, 5, 6],
+            "episodes_per_task": 50,
+            "base_port": 18000,
+            "terminate_grace_s": 0.2,
+        }
+        with server() as (url, calls), value.locked():
+            runtime = CpuSlotRuntime(
+                value,
+                cfg,
+                url,
+                events,
+                factory=lambda t, s, g: TrackedEnv(
+                    t, g["seed"], events, success_at=100 if int(t[4:]) % 2 else 1
+                ),
+            )
+            report, error = runtime.run()
+>           assert (
+                error is None
+                and report["valid"] == 900
+                and report["success"] == report["failure"] == 450
+                and report["results_qualified"]
+            )
+E           AssertionError: assert (RuntimeError('dictionary changed size during iteration') is None)
+
+tools/v3/eval_v2_production_tests/scheduler_test.py:95: AssertionError

@@ -1852,3 +1852,10 @@ Read full Owner directive2026-10-28_V3_EvalV2_Dynamic_SimSlots_LocalTTT_Batch_Ow
 - Original raw XML/log copied without change; failure is helper READY receive, before intentional stall. Focused process8 PASS; delayed real-child READY400ms probe1 PASS with actual startup5.0/request0.15; static PASS. Full434 new Pair NOT_RUN, explicitly gated on GPT narrow review per latest Owner order. DS remains separate REQUEST_CHANGES.
 - Evidence `docs/collab/codex/evidence/2026-10-29_eval_v2_ready_startup`: full original traceback/XML/log and original FAIL gate, focused raw XML/logs, budget probe, source proof, hashes, frozen next command. Bookkeeping commit adds these artifacts and review request only; formal code SHA above is immutable authority.
 - No old F3 Review or Issue#8 response generated. No V3/Child production merge, native/GPU/Canary/900/active training action. Old role/tmux multi-review waits are superseded by current V3 Owner roles; author-side independent check is not a GPT verdict.
+
+
+## 2026-10-29 — READY approved; one author434 Gate FAIL / raw evidence preserved
+
+- Authority: exactPair 9657fb6ab590f228d760362e506d5dd1b626880a/0ae313e329d290fc6b8a50fda1112820fb7ac485, GPTAPPROVE_CODE review2d71e362 plusOwner exactly-once command. READY source stageDONE; fullauthorAcceptance remainsREVIEW/FAIL. OneGate invocation, shell1; inference145PASS, PhaseA112PASS/1FAIL, PhaseB34notreached;176totalnotrun. Newfailure scheduler_test.py:95 receives dictionary-size RuntimeError; previousREADYcasePASS. No retry or sourcechanges.
+- Evidence docs/collab/codex/evidence/2026-10-29_eval_v2_author434_attempt1_FAIL/:23rawselected files, complete outertrace, originalFAILgate/env/hashes/JUnit/log/console/exit and publiccase records. Separate sourceafter check53equal/clean; no fabricatedGate source_unchanged. Internalthrowpoint unknown; readonlycandidate notverdict.
+- TaskV3-EVAL-V2-AUTHOR434-AFTER-READY REVIEW; requestEvidence-only disposition. DSnotdispatched becauseauthorPASS prerequisite unmet. FormalRoot/Child unchanged; thiscommit isbookkeeping only. No oldF3Review/Issue#8duplicate, V3/Childmerge/GPU/native/benchmark900/trainingaction.

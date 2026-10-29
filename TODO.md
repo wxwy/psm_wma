@@ -537,3 +537,7 @@
 
 
 - **V3-EVAL-V2-A1-E1-READY-STARTUP** — REVIEW; Codex; FormalRoot9657fb6ab590f228d760362e506d5dd1b626880a/Child0ae313e329d290fc6b8a50fda1112820fb7ac485. Raw657/0ae author XML proves READY initialization timeout. Single-file startup5s/request150ms split; focused8+probe1/static PASS. Prerequisite for full434: GPT narrow review approval. Then once author full CPU, then DS independently; zero fail/error/skip/source drift. No old F3 re-review/Issue#8 reply/V3 merge/GPU/training.
+
+
+- **V3-EVAL-V2-A1-E1-READY-STARTUP** — DONE source-only; GPT APPROVE_CODE exact9657fb6ab590f228d760362e506d5dd1b626880a/0ae313e329d290fc6b8a50fda1112820fb7ac485, review2d71e362; originalREADYcasePASS in authorizedfullrun. NotCPUacceptanceclosure.
+- **V3-EVAL-V2-AUTHOR434-AFTER-READY** — REVIEW; Codex; exactlyoneauthorizedfullrunFAIL shell1,257pass/1fail/176notrun. New scheduler900syntheticcase dictionary-size error; actualthrowpoint unknown. Owner/GPT focusedEvidence disposition prerequisite for anynextprobe/fix/retry; DSrequiresauthorfullPASS. Rawartifactarchive published; no source/merge/GPU/training changes.

@@ -1,0 +1,163 @@
+[
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/gate.json",
+    "published_path": "raw/gate.json",
+    "sha256": "b2adfc46c722eba616838f78e8ec269b68c7243edc0469a428e9603e2a7cb130",
+    "bytes": 8579,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/environment.json",
+    "published_path": "raw/environment.json",
+    "sha256": "53963f81bce4205220eb927792d1b5793b40adc88065675edba8f8675934f1e2",
+    "bytes": 217,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/environment_overrides.json",
+    "published_path": "raw/environment_overrides.json",
+    "sha256": "ed12e1693c37c6983dcc13607b1a0b565ee1904904837db7a874dc61b5ac3948",
+    "bytes": 916,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/source_sha256.json",
+    "published_path": "raw/source_sha256.json",
+    "sha256": "956b8aa266efa4a197b58ed4fc3ff81bf5331014bebe797e24a133bf1f439e65",
+    "bytes": 7074,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/import_origin.log",
+    "published_path": "raw/import_origin.log",
+    "sha256": "12975536468805ca2ab744b43547b3e8734e67b0045a307aea67cc99726a5867",
+    "bytes": 91,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/ruff_check.log",
+    "published_path": "raw/ruff_check.log",
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "bytes": 19,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/ruff_format.log",
+    "published_path": "raw/ruff_format.log",
+    "sha256": "5a29981aebe12cf610955c0455e62c60bdd53f693ac0d954a67db9c7f9e5042a",
+    "bytes": 27,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/inference.log",
+    "published_path": "raw/inference.log",
+    "sha256": "d10726ddb08cd107f49f2d8fe327f67cead0f083dcffe9d0dbca6d5801ef67c2",
+    "bytes": 5661,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/inference.xml",
+    "published_path": "raw/inference.xml",
+    "sha256": "04d1a8ab5714067b5ffe58bb01e919e21a3f7b203090a9fd2d6198cb816f7f74",
+    "bytes": 28092,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression.log",
+    "published_path": "raw/phase_a_regression.log",
+    "sha256": "03fee78cca00f8d8b108c9f83190f9414e6b72b9a8e00586f977477a9764598f",
+    "bytes": 54868,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression.xml",
+    "published_path": "raw/phase_a_regression.xml",
+    "sha256": "9f0062ebdcdb080767c2b505e630e7c07ce9e6ba82d83e6cb9d2ce3f2f70dca2",
+    "bytes": 20786,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review.console.log",
+    "published_path": "raw/console.log",
+    "sha256": "6f6566e7e00ada2310923fff8f16b5911d7a761a7a5c2d59078f6828b8d962e0",
+    "bytes": 8695,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review.shell-exit.txt",
+    "published_path": "raw/shell-exit.txt",
+    "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "bytes": 2,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/manifest.json",
+    "published_path": "raw/failed_case/manifest.json",
+    "sha256": "0171ea432e5bb4bfc9c24e9ad29eac736d67fb0a26ddcb7043df2080d7b83064",
+    "bytes": 3241,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/summary.json",
+    "published_path": "raw/failed_case/summary.json",
+    "sha256": "4c62ba0a8521b4c5d33f3762d400bd2168d925dc064076c659343a778e29b355",
+    "bytes": 11575,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/last_failure.json",
+    "published_path": "raw/failed_case/_internal/last_failure.json",
+    "sha256": "5c4560e413bf2a7c96511a047655cb4d1b700010c276f075c1d6ebd4f9432e37",
+    "bytes": 69,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000425.json",
+    "published_path": "raw/failed_case/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000425.json",
+    "sha256": "b2497eb036c5fac6ed00bab089b65187a2c2e5a5639f11ae91eafa80c75f5807",
+    "bytes": 829,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000426.json",
+    "published_path": "raw/failed_case/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000426.json",
+    "sha256": "059f9331a2fc134dc63e2255255522f3ca8736382ce732cf5772de7c8f25fed6",
+    "bytes": 829,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000427.json",
+    "published_path": "raw/failed_case/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000427.json",
+    "sha256": "525046c91a7d041985829d297233a3ae40b1e8c24a2eca0f7be3187647c1392d",
+    "bytes": 829,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000428.json",
+    "published_path": "raw/failed_case/_internal/scheduler/3f5cf5e027ac4a54b70b782fb91864fe/000428.json",
+    "sha256": "6f08917b1d514bbb1e23f74931a40ccc5a42d49910bc2dc1182506956a5156e0",
+    "bytes": 329,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/tasks/Task03/errors/5b86228b9f99472488840a18f1c508ae.json",
+    "published_path": "raw/failed_case/_internal/tasks/Task03/errors/5b86228b9f99472488840a18f1c508ae.json",
+    "sha256": "81916492566cc2fe17ceb9e271d0b433fe7fc8f82120e21469ab812aec029965",
+    "bytes": 783,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/tasks/Task05/errors/172338cf0b59472eb78270d7297424e1.json",
+    "published_path": "raw/failed_case/_internal/tasks/Task05/errors/172338cf0b59472eb78270d7297424e1.json",
+    "sha256": "7d441da6b210823c4ccd4bc22662fd739ef43629c14e8389787e2c9b8b2ca99c",
+    "bytes": 783,
+    "transformation": "none; byte-for-byte raw copy"
+  },
+  {
+    "original_path": "/workspace/work/ready-startup-evidence/author-full-after-review/phase_a_regression_tmp/test_900_exact_episode_major_d0/new900/_internal/tasks/Task07/errors/300298e856b44949952a3edee3670725.json",
+    "published_path": "raw/failed_case/_internal/tasks/Task07/errors/300298e856b44949952a3edee3670725.json",
+    "sha256": "a78a65075bdb355e08db1fca4438655b29d0b87fab35fe843558a4b859831911",
+    "bytes": 783,
+    "transformation": "none; byte-for-byte raw copy"
+  }
+]

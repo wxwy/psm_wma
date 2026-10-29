@@ -1,0 +1,19 @@
+{
+  "role": "READ_ONLY_DERIVED_ANALYSIS; not a confirmed throw-site or source review verdict",
+  "confirmed_from_raw_artifacts": [
+    "One unique failed case: scheduler_test.py::test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode",
+    "Outer assertion at scheduler_test.py:95 received RuntimeError('dictionary changed size during iteration').",
+    "READY stalled-actor test and all eight process_test.py cases PASS in this run.",
+    "Failure case final summary: valid208 = success104 + failure104; pending692; invalid0/interrupted0; unresolved faults3.",
+    "Task03/Task05/Task07 each persisted coordinator_stop with core_committed_at_fault=true; no evidence here of successful Core corruption.",
+    "Final scheduler records: three FINISH entries followed by CANCEL round11 with inflight=[] and the same exception repr.",
+    "Retained records contain no internal exception traceback; actual throw site is NOT_ESTABLISHED."
+  ],
+  "candidate_only": {
+    "reader": "scripts/robocasa_eval_v2/runtime.py:796 iterates scheduler.inflight.items() directly; reading progress.json in the body can release the GIL.",
+    "writer": "worker Runtime.run_slot:615 calls scheduler.finish; scheduler.py:165 can pop the same inflight dictionary under its own lock.",
+    "scope_of_inference": "A reachable concurrent-mutation window in the current source. This does not prove it produced this particular exception."
+  },
+  "narrow_next_evidence_option_requires_separate_disposition": "If authorized later, run only this failed case once with an external wrapper that prints traceback.format_exception(error) from the error returned by Runtime.run. No production change or full434 repeat is proposed without that disposition.",
+  "actions_taken": "Read existing source and artifacts only; no extra test execution, source edits or retry."
+}

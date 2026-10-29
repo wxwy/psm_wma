@@ -1,0 +1,58 @@
+{
+  "formal_root": "9657fb6ab590f228d760362e506d5dd1b626880a",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "approval": "2d71e3622ac52d2f5d5467f527b358b14c40e922: APPROVE_CODE for READY-only patch and exactly one author full CPU Gate",
+  "caller_role": "AUTHOR; not DS_PRO independent acceptance",
+  "authorized_full_gate_invocations": 1,
+  "actual_full_gate_invocations": 1,
+  "shell_exit": 1,
+  "gate_status": "FAIL",
+  "inference": {
+    "tests": 145,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase_a": {
+    "tests": 113,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "executed": {
+    "tests": 258,
+    "passed": 257,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "not_executed": {
+    "phase_a": 142,
+    "phase_b": 34,
+    "total": 176
+  },
+  "expected_complete_count": 434,
+  "READY_test": {
+    "case": {
+      "classname": "tools.v3.eval_v2_production_tests.process_test",
+      "name": "test_stalled_actor_request_is_bounded_and_unrelated_process_survives",
+      "time": "0.928"
+    },
+    "status": "PASS"
+  },
+  "failure": {
+    "case": {
+      "classname": "tools.v3.eval_v2_production_tests.scheduler_test",
+      "name": "test_900_exact_episode_major_dispatch_real_store_path_and_index_no_model_per_episode",
+      "time": "48.418"
+    },
+    "assertion_location": "tools/v3/eval_v2_production_tests/scheduler_test.py:95",
+    "runtime_error": "RuntimeError('dictionary changed size during iteration')",
+    "actual_throw_site": "NOT_ESTABLISHED; raw XML contains outer assertion only; retained runtime/CANCEL/fault records have repr only, not an internal traceback"
+  },
+  "original_gate_source_unchanged": "ABSENT due to early FAIL; original gate.json was not changed",
+  "independent_post_failure_source_check": "53 watched hashes unchanged, exact clean Root/Child worktrees",
+  "ds_dispatch": "NOT_TRIGGERED: author full PASS prerequisite not met",
+  "subsequent_actions": "No retries, supplemental tests or source changes. Preserve this failure and request evidence-only disposition; approved READY/Store/Batch source reviews are not reopened automatically.",
+  "scope": "No V3/Child merge, GPU/nativeCanary/900 benchmark, training or active-job action. Test named 900 is synthetic CPU only."
+}
