@@ -1,0 +1,30 @@
+# Isolated Phase B candidate. Fresh/Resume require Code + independent CPU + Owner native authorization.
+schema: psm_robocasa_eval_v2
+execution_profile: phase_b
+checkpoint: ${EVAL_CHECKPOINT}
+config_file: ${EVAL_MODEL_CONFIG}
+dataset_root: ${EVAL_DATASET_ROOT}
+output_dir: ${EVAL_OUTPUT_DIR}
+server_python: ${EVAL_SERVER_PYTHON}
+sim_python: ${EVAL_SIM_PYTHON}
+vendor_lock: third_party/robosuite_patches/vendor.lock.json
+# Initial CANARY-sized plan, not a formal900 authorization.
+tasks: [CloseFridge, OpenCabinet]
+episodes_per_task: 2
+gpu_ids: [4]
+sims_per_gpu: 2
+max_infer_batch_size: 2
+batch_wait_ms: 20
+base_port: 8912
+seed: 0
+prediction_steps: 30
+guidance: 1.0
+save_rollout_mp4: true
+save_generated_video: first
+server_start_s: 900
+episode_wall_s: 1800
+request_timeout_s: 600
+terminate_grace_s: 10
+encoder_grace_s: 2
+max_gpu_fraction: 0.85
+max_rss_bytes: 137438953472

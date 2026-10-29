@@ -19,9 +19,10 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
 )
 from robocasa_episode_resume.model_identity import verification_record
 
-from robocasa_eval_v2.config import resolve
+from robocasa_eval_v2.config import resolve, execution
 from robocasa_eval_v2.identity import discover, prepare, runtime_environment
 from robocasa_eval_v2.runtime import Runtime
+from robocasa_eval_v2.resources import physical_slots
 
 
 def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
@@ -36,6 +37,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             if (
                 manifest["task_order"] != [t for t, _ in tasks]
                 or manifest["episodes_per_task"] != cfg["episodes_per_task"]
+                or manifest.get("execution") != execution(cfg)
             ):
                 raise ValueError("dry-run scientific plan differs from frozen Run")
             for ep in range(cfg["episodes_per_task"]):
@@ -52,6 +54,8 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                     "mode": "CPU_PREVIEW_ONLY",
                     "resolved": cfg,
                     "task_order": [t for t, _ in tasks],
+                    "physical_slots": physical_slots(cfg, len(tasks)),
+                    "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
                     "slots": [
                         [t, ep]
                         for ep in range(cfg["episodes_per_task"])
@@ -140,7 +144,12 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
         write(root / "_internal/verification_cache.json", record, replace=True)
         save(
             root / "_internal/invocations" / f"{time.time_ns()}.json",
-            {"mode": args.mode, "resolved": cfg, "actual_root": inputs["actual_root"]},
+            {
+                "mode": args.mode,
+                "resolved": cfg,
+                "actual_root": inputs["actual_root"],
+                "clock_preflight": inputs.get("clock_preflight"),
+            },
         )
         runtime = runtime_type(store, cfg, inputs, environment)
         try:

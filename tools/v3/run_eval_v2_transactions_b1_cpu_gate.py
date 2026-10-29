@@ -50,7 +50,14 @@ PHASE_A_TESTS = [
 ]
 
 
-def main():
+def main(
+    *,
+    extra_production=(),
+    extra_inference=(),
+    extra_static=(),
+    extra_tests=None,
+    gate_name="TRANSACTION_B1_AUTHOR_OR_DS_CPU_ONLY",
+):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root-worktree", required=True, type=Path)
     parser.add_argument("--expected-root", required=True)
@@ -62,7 +69,7 @@ def main():
         parser.error("evidence must be a NEW directory outside the source worktree")
     out.mkdir(parents=True)
     state = {
-        "gate": "TRANSACTION_B1_AUTHOR_OR_DS_CPU_ONLY",
+        "gate": gate_name,
         "status": "BLOCKED",
         "steps": [],
     }
@@ -109,14 +116,19 @@ def main():
             raise ValueError("Ruff0.12.7 required")
         state["identities"] = identities
         save("environment.json", versions())
-        static = [f"{CHILD}/cosmos_framework/{name}" for name in PRODUCTION]
-        static += ["tools/v3/run_eval_v2_transactions_b1_cpu_gate.py"]
+        static = [
+            f"{CHILD}/cosmos_framework/{name}"
+            for name in [*PRODUCTION, *extra_production]
+        ]
+        static += ["tools/v3/run_eval_v2_transactions_b1_cpu_gate.py", *extra_static]
         tests = {
             "inference": [
-                f"{CHILD}/cosmos_framework/{name}" for name in INFERENCE_TESTS
+                f"{CHILD}/cosmos_framework/{name}"
+                for name in [*INFERENCE_TESTS, *extra_inference]
             ],
             "phase_a_regression": PHASE_A_TESTS,
         }
+        tests.update(extra_tests or {})
         watched = set(static)
         for group in tests.values():
             for name in group:

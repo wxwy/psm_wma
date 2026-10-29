@@ -9,6 +9,8 @@ from pathlib import Path
 
 DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
+    "execution_profile": "phase_a",
+    "batch_wait_ms": 20,
     "tasks": "all",
     "episodes_per_task": 50,
     "gpu_ids": [4, 5, 6],
@@ -48,6 +50,8 @@ def resolve(argv=None):
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--owner-decision", type=Path)
     p.add_argument("--gpus")
+    p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
+    p.add_argument("--batch-wait-ms", type=int)
     p.add_argument("--sims-per-gpu", type=int)
     p.add_argument("--max-infer-batch-size", type=int)
     p.add_argument("--tasks")
@@ -75,6 +79,9 @@ def resolve(argv=None):
     cfg = {**DEFAULTS, **data}
     if cfg["schema"] != DEFAULTS["schema"]:
         raise ValueError("new V2 config schema required")
+    for field in ("execution_profile", "batch_wait_ms"):
+        if getattr(a, field) is not None:
+            cfg[field] = getattr(a, field)
     if a.sims_per_gpu is not None:
         cfg["sims_per_gpu"] = a.sims_per_gpu
     if a.max_infer_batch_size is not None:
@@ -115,7 +122,18 @@ def resolve(argv=None):
         or cfg["base_port"] + len(cfg["gpu_ids"]) - 1 > 65535
     ):
         raise ValueError("plan/port range")
-    if cfg["sims_per_gpu"] != 1 or cfg["max_infer_batch_size"] != 1:
+    if cfg["execution_profile"] not in ("phase_a", "phase_b"):
+        raise ValueError("explicit execution profile required")
+    if (
+        cfg["sims_per_gpu"] > 8
+        or cfg["max_infer_batch_size"] > 8
+        or type(cfg["batch_wait_ms"]) is not int
+        or not 1 <= cfg["batch_wait_ms"] <= 1000
+    ):
+        raise ValueError("bounded M/B/wait required")
+    if cfg["execution_profile"] == "phase_a" and (
+        cfg["sims_per_gpu"] != 1 or cfg["max_infer_batch_size"] != 1
+    ):
         raise ValueError(
             "Phase A supports only sims_per_gpu=1 and max_infer_batch_size=1"
         )
@@ -136,6 +154,8 @@ def resolve(argv=None):
             or (key != "guidance" and cfg[key] <= 0)
         ):
             raise ValueError(f"invalid {key}")
+    if cfg["execution_profile"] == "phase_b" and cfg["request_timeout_s"] > 6000:
+        raise ValueError("transaction Server timeout cap exceeded")
     if (
         not 0 < cfg["max_gpu_fraction"] < 1
         or cfg["save_generated_video"] not in ("none", "first", "all")
@@ -166,3 +186,16 @@ def resolve(argv=None):
             "Owner permit is a separate authorize command, never automatic Resume"
         )
     return a, cfg
+
+
+def execution(cfg):
+    if cfg.get("execution_profile", "phase_a") == "phase_a":
+        return None
+    return {
+        "profile": "phase_b_native_batch_v1",
+        "gpu_ids": list(cfg["gpu_ids"]),
+        "sims_per_gpu": cfg["sims_per_gpu"],
+        "max_infer_batch_size": cfg["max_infer_batch_size"],
+        "batch_wait_ms": cfg["batch_wait_ms"],
+        "noise": "literal_cfg_seed_per_sample_v1",
+    }

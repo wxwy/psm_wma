@@ -56,3 +56,13 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
     if rss > cfg["max_rss_bytes"]:
         raise RuntimeError("BLOCKED_RESOURCE: owned process RSS budget")
     return {"gpus": devices, "owned_pids": sorted(allowed), "rss_bytes": rss}
+
+
+def physical_slots(cfg, task_count):
+    """Slot-major/GPU-minor useful identities; GPU count is not Session count."""
+    if cfg.get("execution_profile", "phase_a") == "phase_a":
+        return {f"GPU{g}": g for g in cfg["gpu_ids"][:task_count]}
+    pairs = [
+        (f"GPU{g}_S{s}", g) for s in range(cfg["sims_per_gpu"]) for g in cfg["gpu_ids"]
+    ]
+    return dict(pairs[:task_count])

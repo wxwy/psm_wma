@@ -15,9 +15,12 @@ from robocasa_episode_resume.model_identity import (
 )
 from robocasa_vendor import collect_runtime, dataset_provenance, sha256_file
 
+from robocasa_eval_v2.config import execution
+
 ROOT = Path(__file__).resolve().parents[2]
 CHILD = ROOT / "cosmos-framework"
 SOURCE_PATHS = ["scripts", "configs", "third_party", "cosmos-framework"]
+
 
 # robocasa1.0.1 /6f90063c TARGET_TASKS["atomic_seen"], read without importing a simulator.
 ATOMIC_TASKS = (
@@ -173,6 +176,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         seed=cfg["seed"],
         horizons=runtime["protocol"]["official_horizons"],
         formal=len(tasks) == 18 and cfg["episodes_per_task"] == 50,
+        execution=execution(cfg),
         experiment={
             "model_digest": model["digest"],
             "config_sha256": sha256_file(Path(cfg["config_file"])),
@@ -186,7 +190,16 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         raise ValueError(
             "immutable scientific protocol/config/Task/source identity changed"
         )
+    clock_preflight = {}
+    if execution(cfg) is not None:
+        clock_preflight = {
+            name: clock_environment(cfg[name], environment)
+            for name in ("server_python", "sim_python")
+        }
+        if len({v["domain"] for v in clock_preflight.values()}) != 1:
+            raise ValueError("Client/Server clock domains differ")
     inputs = {
+        "clock_preflight": clock_preflight,
         "model": model,
         "runtime": runtime,
         "simulation_libraries": sim_libraries,
@@ -236,3 +249,32 @@ def guard(cfg, manifest, inputs, *, source=True):
             if sha256_file(path) != expected or stamp() != before:
                 raise ValueError("configuration/Task input changed during Run")
             _INPUT_WITNESSES[key] = before
+
+
+def clock_environment(executable, environment):
+    """Normal exec, CPU-only deployment condition. No namespace reconfiguration."""
+    import json
+
+    code = (
+        "import os,json;from cosmos_framework.inference.robocasa_session_transactions import monotonic_clock_domain;"
+        "a=os.readlink('/proc/self/ns/time');b=os.readlink('/proc/self/ns/time_for_children');"
+        "assert a==b,'active/children time namespace mismatch';"
+        "print('PSM_CLOCK '+json.dumps(dict(domain=monotonic_clock_domain(),active=a,children=b,normal_exec=True)))"
+    )
+    value = subprocess.run(
+        [str(executable), "-B", "-c", code],
+        cwd=CHILD,
+        env=dict(environment, CUDA_VISIBLE_DEVICES="", MUJOCO_GL="disable"),
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=30,
+    )
+    rows = [
+        json.loads(line[len("PSM_CLOCK ") :])
+        for line in value.stdout.splitlines()
+        if line.startswith("PSM_CLOCK ")
+    ]
+    if len(rows) != 1:
+        raise ValueError("clock environment attestation missing")
+    return rows[0]

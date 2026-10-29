@@ -530,3 +530,5 @@
 
 - **V3-EVAL-V2-B1-F1** — DONE CodeONLY; exactdc775792/4a938e41 GPTAPPROVE_CODE verified66a5b99c, F1CLOSED/P1WITHDRAWN. DS/native not implied.
 - **V3-EVAL-V2-BATCH-B2** — IN_PROGRESS; Codex; approved firstBatch prerequisite satisfied. Isolated M>1 reusable Sim slots, multiSession atomic nativeBatch, bounded media/results and D1-D5 regression. NewChild→Root FormalPair+rawCPU/static/diffs, GPTincrementalCodeGateSTOP. No canonicalmerge/DS/native/GPU/model/900/training/history operations.
+
+- **V3-EVAL-V2-BATCH-B2** — IN_PROGRESS sourcefreeze; Child774c2edb93ec5a6ba85ba1124757064d7cc779a5. NativeBatch/multiSim transaction transport, bounded optional media, frozenprofile and CPU/OS tests ready. NextRootsourceGitlink commit then clean unified authorCPU Gate (all prior+new), freshCodePair/Evidence/request/candidatepublish/readback STOP. DSfinalCPU/native/canonicalmerge not authorized by author tests.

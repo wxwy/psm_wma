@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import secrets
 import re
 import socket
 import threading
@@ -30,6 +32,7 @@ from robocasa_eval_v2_processes import Actor, Registry, process_identity
 from robocasa_processes import group_members
 
 from robocasa_eval_v2 import identity, resources
+from robocasa_eval_v2.config import execution
 
 
 class Runtime:
@@ -42,6 +45,8 @@ class Runtime:
             inputs,
             environment,
         )
+        if store.manifest.get("execution") != execution(cfg):
+            raise ValueError("runtime execution profile differs from frozen manifest")
         self.stop = threading.Event()
         self.registry = Registry(store.root, cfg["terminate_grace_s"])
         self.servers = {}
@@ -49,7 +54,14 @@ class Runtime:
         self.actor_tasks = {}
         self.slot_claim_tasks = {}
         self.slot_environments = {}
-        self.slot_ids = {f"GPU{g}": uuid.uuid4().hex for g in cfg["gpu_ids"]}
+        self.worker_gpus = resources.physical_slots(
+            cfg, len(store.manifest["task_order"])
+        )
+        self.workers = list(self.worker_gpus)
+        self.batch_profile = cfg.get("execution_profile", "phase_a") == "phase_b"
+        self.slot_ids = {worker: uuid.uuid4().hex for worker in self.workers}
+        self.slot_generations = dict.fromkeys(self.workers, 0)
+        self.server_owners = {}
         self.logs = []
         self.resource_probe = resource_probe
         self.setup_lock = threading.Lock()
@@ -57,9 +69,6 @@ class Runtime:
         self.latest_attempts = {}
         self.phases = {}
         self.closed = False
-        self.workers = [
-            f"GPU{g}" for g in cfg["gpu_ids"][: len(store.manifest["task_order"])]
-        ]
 
     def _proof(self, kind, data):
         name = f"{kind}_{uuid.uuid4().hex}.json"
@@ -132,31 +141,68 @@ class Runtime:
                         break
 
     def _server(self, worker):
-        if worker in self.servers:
-            return self.servers[worker]
+        gpu = self.worker_gpus[worker]
+        key = f"GPU{gpu}" if self.batch_profile else worker
+        if key in self.servers:
+            return self.servers[key]
         self.phases[worker] = "model_loading"
-        index = self.workers.index(worker)
-        gpu = self.cfg["gpu_ids"][index]
+        index = self.cfg["gpu_ids"].index(gpu)
         port = self.cfg["base_port"] + index
         env = dict(self.environment, CUDA_VISIBLE_DEVICES=str(gpu))
-        log = (self.store.root / "logs" / f"{worker}_server.log").open("ab")
+        log = (self.store.root / "logs" / f"{key}_server.log").open("ab")
         self.logs.append(log)
         args = SimpleNamespace(
             server_python=self.cfg["server_python"],
             num_steps=self.cfg["prediction_steps"],
             guidance=self.cfg["guidance"],
         )
+        command = server_argv(
+            args, Path(self.cfg["checkpoint"]), Path(self.cfg["config_file"]), port
+        )
+        if self.batch_profile:
+            slots = [
+                self.slot_ids[w] for w in self.workers if self.worker_gpus[w] == gpu
+            ]
+            token = secrets.token_urlsafe(48)
+            secret = (
+                self.store.root
+                / "_internal/server_capabilities"
+                / f"{key}_{uuid.uuid4().hex}.txt"
+            )
+            secret.parent.mkdir(parents=True, exist_ok=True)
+            with os.fdopen(
+                os.open(secret, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "w"
+            ) as handle:
+                handle.write(token)
+            self.server_owners[key] = token
+            command[command.index("--local-memory-max-sessions") + 1] = str(len(slots))
+            command += [
+                "--transaction-profile",
+                "batch",
+                "--transaction-owner-token-file",
+                str(secret),
+                "--transaction-run-lease",
+                self.store.lease_id,
+                "--transaction-manifest-digest",
+                self.store.manifest["digest"],
+                "--transaction-slot-ids",
+                ",".join(slots),
+                "--transaction-max-batch-size",
+                str(self.cfg["max_infer_batch_size"]),
+                "--transaction-batch-wait-ms",
+                str(self.cfg["batch_wait_ms"]),
+                "--transaction-timeout-s",
+                str(self.cfg["request_timeout_s"]),
+            ]
         owned, rec = self.registry.start(
-            server_argv(
-                args, Path(self.cfg["checkpoint"]), Path(self.cfg["config_file"]), port
-            ),
+            command,
             kind="server",
             env=env,
             cwd=CHILD,
             stdout=log,
             stderr=log,
         )
-        self.servers[worker] = (owned, rec, port)
+        self.servers[key] = (owned, rec, port)
         try:
             info = wait_server(
                 owned.proc,
@@ -171,8 +217,23 @@ class Runtime:
         except BaseException:
             self.stop.set()
             raise
+        if self.batch_profile:
+            tx = info.get("session_transactions", {})
+            if any(
+                tx.get(k) != v
+                for k, v in {
+                    "enabled": True,
+                    "execution_profile": "session_native_batch_v1",
+                    "run_lease": self.store.lease_id,
+                    "manifest_digest": self.store.manifest["digest"],
+                    "slot_ids": slots,
+                    "max_native_batch": self.cfg["max_infer_batch_size"],
+                    "batch_wait_ms": self.cfg["batch_wait_ms"],
+                }.items()
+            ):
+                raise ValueError("transactional Server identity/profile mismatch")
         self._proof("server_identity", {"process": rec, "info": info})
-        return self.servers[worker]
+        return self.servers[key]
 
     def _actor(self, claim):
         task = claim["task"]
@@ -192,7 +253,7 @@ class Runtime:
                 "episodes_per_task": self.store.manifest["episodes_per_task"],
                 "physical_slot_id": self.slot_ids[worker],
                 "physical_worker": worker,
-                "gpu_id": self.cfg["gpu_ids"][self.workers.index(worker)],
+                "gpu_id": self.worker_gpus[worker],
                 "task_root": str(self.store.root / "_internal/tasks"),
                 "tasks": {
                     name: {
@@ -221,6 +282,8 @@ class Runtime:
                 "settings": {
                     "server_url": f"http://127.0.0.1:{port}",
                     "horizon": self.store.manifest["horizons"][task],
+                    "execution_profile": self.cfg.get("execution_profile", "phase_a"),
+                    "max_infer_batch_size": self.cfg.get("max_infer_batch_size", 1),
                     "predict_timeout_s": self.cfg["request_timeout_s"],
                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
                     "save_generated_video": self.cfg["save_generated_video"],
@@ -235,10 +298,19 @@ class Runtime:
                     "runtime_tasks": ",".join(self.store.manifest["task_order"]),
                 },
             }
+            if self.batch_profile:
+                file = (
+                    CHILD
+                    / "cosmos_framework/simulation/robocasa/eval_v2_transactions.py"
+                )
+                cfg["source_files"]["transactions"] = {
+                    "path": str(file),
+                    "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
+                }
             path = self.store.root / "_internal/actor_configs" / f"{nonce}.json"
             write(path, cfg)
             parent, child = socket.socketpair()
-            gpu = self.cfg["gpu_ids"][self.workers.index(claim["physical_worker"])]
+            gpu = self.worker_gpus[claim["physical_worker"]]
             env = dict(
                 self.environment,
                 CUDA_VISIBLE_DEVICES=str(gpu),
@@ -328,7 +400,7 @@ class Runtime:
             "native_slot_health",
             {
                 "physical_worker": worker,
-                "gpu_id": self.cfg["gpu_ids"][self.workers.index(worker)],
+                "gpu_id": self.worker_gpus[worker],
                 "actor": actor.record,
                 "ready": ready,
                 "server": server_record,
@@ -347,6 +419,43 @@ class Runtime:
                     lambda _, p=proof: {"probe_id": p, "healthy": True},
                 )
         return actor
+
+    def _register_assignment(self, claim, deadline):
+        import requests
+        from cosmos_framework.inference.robocasa_transaction_client import (
+            TransactionPolicyClient,
+        )
+
+        worker = claim["physical_worker"]
+        key = f"GPU{self.worker_gpus[worker]}"
+        _, _, port = self.servers[key]
+        self.slot_generations[worker] += 1
+        a = claim["attempt"]
+        with requests.Session() as transport:
+            transport.trust_env = False
+            client = TransactionPolicyClient(
+                f"http://127.0.0.1:{port}",
+                timeout_s=min(
+                    self.cfg["request_timeout_s"],
+                    max(0.000001, deadline - time.monotonic()),
+                ),
+                transport=transport,
+                batch_profile=True,
+                max_batch_size=self.cfg["max_infer_batch_size"],
+            )
+            lease = client.register(
+                {
+                    "run_lease": self.store.lease_id,
+                    "manifest_digest": self.store.manifest["digest"],
+                    "slot_id": self.slot_ids[worker],
+                    "generation": self.slot_generations[worker],
+                    "task": a["task"],
+                    "episode_index": a["episode"],
+                    "attempt_id": a["attempt_id"],
+                },
+                self.server_owners[key],
+            )
+            return {"lease": lease, "prediction_clock_domain": client.clock_domain}
 
     def run_slot(self, scheduler, claim):
         a = claim["attempt"]
@@ -426,12 +535,19 @@ class Runtime:
                 self.store._ledger(task, a["episode"]) / "work" / a["attempt_id"]
             )
             self.phases[claim["physical_worker"]] = "executing"
+            extra = {}
+            if self.batch_profile:
+                extra = dict(
+                    transaction_assignment=self._register_assignment(claim, deadline),
+                    episode_deadline=deadline,
+                )
             response = actor.request(
                 "execute",
                 attempt=a,
                 reset_index=sample["reset_index"],
                 directory=str(directory),
                 deadline=deadline,
+                **extra,
             )
             sampling = response["sampling"]
             if sampling != admitted_sampling:
@@ -534,9 +650,16 @@ class Runtime:
                 if was is not None:
                     raise RuntimeError(f"Action Server unexpectedly exited {was}")
             except Exception as e:
-                task = self.slot_claim_tasks.get(worker, self.actor_tasks.get(worker))
-                if task in self.store.active_tasks:
-                    errors.append((task, repr(e)))
+                affected = [
+                    w
+                    for w in self.workers
+                    if (f"GPU{self.worker_gpus[w]}" if self.batch_profile else w)
+                    == worker
+                ]
+                for w in affected:
+                    task = self.slot_claim_tasks.get(w, self.actor_tasks.get(w))
+                    if task in self.store.active_tasks:
+                        errors.append((task, repr(e)))
         for task, message in errors:
             self.store.record_process_error(
                 task, "process_cleanup", message, attempt=self.latest_attempts.get(task)
@@ -561,6 +684,39 @@ class Runtime:
             log.close()
         self.closed = True
 
+    def _batch_telemetry(self):
+        import requests
+
+        values = {}
+        for key, (owned, rec, port) in self.servers.items():
+            try:
+                with requests.Session() as transport:
+                    transport.trust_env = False
+                    info = transport.get(
+                        f"http://127.0.0.1:{port}/info", timeout=0.2
+                    ).json()["session_transactions"]
+                values[key] = {
+                    k: info.get(k)
+                    for k in (
+                        "batches",
+                        "batch_histogram",
+                        "queued",
+                        "encoded_bytes",
+                        "queue_high_water",
+                        "sessions",
+                        "media_jobs",
+                        "media_cpu_bytes",
+                        "quarantined",
+                    )
+                }
+            except Exception as error:
+                values[key] = {"diagnostic_error": type(error).__name__}
+        try:
+            save(self.store.root / "_internal/batch_status.json", values)
+        except OSError:
+            pass
+        return values
+
     def run(self):
         self.recover()
         pending = any(
@@ -577,7 +733,10 @@ class Runtime:
             return self.store.publish_views(), None
         self.resource_probe(self.cfg, before_models=True)
         require_free_ports(
-            [self.cfg["base_port"] + i for i in range(len(self.workers))]
+            [
+                self.cfg["base_port"] + self.cfg["gpu_ids"].index(g)
+                for g in set(self.worker_gpus.values())
+            ]
         )
         scheduler = RoundScheduler(self.store, self.workers)
         pool = ThreadPoolExecutor(max_workers=len(self.workers))
@@ -671,7 +830,13 @@ class Runtime:
                     print(
                         "[eval-v2] "
                         + json.dumps(
-                            {"round": scheduler.round + 1, "workers": statuses}
+                            {
+                                "round": scheduler.round + 1,
+                                "workers": statuses,
+                                "native_batches": self._batch_telemetry()
+                                if self.batch_profile
+                                else {},
+                            }
                         ),
                         flush=True,
                     )
