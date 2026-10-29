@@ -1,0 +1,31 @@
+{
+  "formal_implementation_root": "9a3f88e55893491ea68d16b3f23680ae6941d106",
+  "child_gitlink": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+  "readback_evidence_head": "b30616b8e10f4ec8c1a4567409365eb05626ff5b",
+  "root_advertised_refs": {
+    "refs/heads/V3": "3f37df1fdda858482387f0f5db2c50be65a2f695",
+    "refs/heads/v3-eval-v2-batch-b-design-20261029": "36defe8c0217e7a1c70b2812a3d7ef0e6dda5918",
+    "refs/heads/v3-eval-v2-slots-a-20261028": "711ee8be40311d3cade19946cee4e23e508c3727",
+    "refs/heads/v3-eval-v2-transactions-b1-20261029": "b30616b8e10f4ec8c1a4567409365eb05626ff5b"
+  },
+  "child_advertised_refs": {
+    "refs/heads/v3-eval-v2-slots-a-20261028": "d2c1bda62880dbeee196f70945e5bc430b73f4b6",
+    "refs/heads/v3-eval-v2-transactions-b1-20261029": "1bece52ee419d12119c1b3d0b75e0ae5c5139ae9",
+    "refs/heads/v3-local-ttt": "746c5cf2f2324104a62fb71510343aa40d3976c5"
+  },
+  "artifact_sha256_verified": 46,
+  "formal_source_bindings_verified": 14,
+  "candidate_inbox_readback": true,
+  "inbox_bytes": 5989,
+  "rollover_archive_blob_verified": "d702c44dd68529e93a491c5353e866ab7be92a07",
+  "root_production_eval_paths": "UNCHANGED",
+  "author_cpu": "322PASS_0FAIL_ERROR_SKIP",
+  "static": "Ruff0.12.7_CHECK_FORMAT_AST9_PASS",
+  "gpt_code_gate": "REQUESTED_NOT_APPROVED",
+  "second_increment": "NOT_STARTED",
+  "independent_ds_cpu": "NOT_RUN",
+  "canonical_v3_child_updated_by_codex": false,
+  "gpu_native_model_sim_dcp_training_history_operations": "NONE",
+  "recorded_utc": "2026-10-29T04:22:00.378080+00:00",
+  "note": "Receipt commit is bookkeeping, not new Implementation Root; old evidence and other branches preserved."
+}
