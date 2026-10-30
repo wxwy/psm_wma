@@ -210,3 +210,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - Owner明确纠正“传原始ZIP”为不可执行重复要求；用户已经提供完整v4代码、Diff、SHA与静态验证结论。正式新 Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_Probe_v4_TextComplete_Design_APPROVED_NoZip.md`，**覆盖**原v4因`ZIP未上传`的`REQUEST_CHANGES(EVIDENCE_ONLY)`。
 - **`SCRIPT_v4=APPROVE_SCRIPT_DESIGN`**：逻辑已满足计时拆分、公开Loader、异常清理、START/DONE及时日志、timeout/输出隔离和预热/代表请求边界；DS声称源码SHA `9f1996b01d76f33ad8b15d19e47c15ef46471781f35599d591b55b8e5f016c67` 标`REPORTED_NOT_INDEPENDENTLY_VERIFIED`，**不阻断**。不让DS继续v5/要求再次转ZIP。
 - **`REAL_DATA_CPU_EXECUTION=PENDING_OWNER_AUTHORIZATION`**：Owner批准后才能单次CPU-only真实数据探针；原生产Pair`e0fe911dfb9fd34957234828195cf051713f6c3d`/`f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`及CPU301 PASS、Issue12 B首包Timeout性能INCONCLUSIVE、正式Job未修改均保持。
+
+
+## 2026-10-30 — EvalV2 PhaseB NoTTT+LocalTTT 双模式新FormalPair增量 Code Gate：APPROVE_CODE
+
+- **Formal Root `d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163` / Child+Gitlink `2f7334c4ada6ace1d21185985aae90539052bf18`**，已从 GitHub Root GitTree 核实；相对已审F5 `7c74dc26/53c3c952` 为新 implementation，完成窄fresh review。作者 `4cdf611b` Evidence commit、本 Review/Inbox commit 均不替代 Formal Pair。
+- **正式 verdict=`APPROVE_CODE`（仅双模式增量 + 作者合成 CPU Evidence）。** 详细 Review：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_DualMode_d18b420c_2f7334c4_Incremental_Code_Gate_APPROVE_CODE.md`；之前F5-P1 bounded persistence `APPROVE_CODE`保留，不重审旧435。
+- 实际 diff：Root config/identity/runtime/legacy Queue少量接线，Child manifest/evidence/transaction/client/Native Sim与server mode支持。NoTTT `off` 的 Session request_index与公共response cache独立于Local memory、模型调用不注入prefix、不建fast snapshot；LocalTTT `required` 的真实prepare/commit/abort/reset、raw15/state15/H16/K4/local32严格合同保留。模式进入Manifest，config/net能力/DCP Local tensor inventory校验，握手/ACK与Core读写按mode验证，原有共享GPU/F5写入安全未动。
+- GPT从作者GitHub原始`raw/final/junit.xml`独立解析 **324 unique/324 PASS，0fail/error/skip**，对应 `console.log` 324 passed/14 warning、shell0和before/after clean；`raw/static-final/static.json` 的Ruff/format/compile/diff-check exit0，44项source绑定；CPU OS NoTTT G1N2M2B2得到4Core/8replan/histogram B1×4+B2×2，LocalTTT CPU旧多拓扑及F3故障回归正常。**均是合成CPU边界，不是假装真实GPU、真实DCP或真实仿真PASS。**
+- 下一步仅在Owner已确认的准确范围交DS进行 **NoTTT 与 LocalTTT 两模式独立真GPU Canary**：每模式各自同源完整Checkpoint+Config、clean exact Pair、新namespace，实测GPU4–7任选1×2Sim×B2、原指定CloseFridge/OpenCabinet各2Episode、MP4/VRAM/latency、Session状态/End/owned cleanup。**此Code verdict不自动授权由4 Episode增到8**，如需新增LocalTTT GPU执行先Owner明确确认；不合并V3/Child、不启动正式900、不触碰训练或活跃Job。
