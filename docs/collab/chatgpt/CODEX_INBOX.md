@@ -204,3 +204,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 纠错/需求记录：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_DualMode_NoTTT_LocalTTT_Owner_Requirement_Correction.md`。关联旧Formal Pair Root `7c74dc26ac4837f193727ecf847b9b64554c18b2` / Child+Gitlink `53c3c95202e14d3b72d236eee6899a80acf82989` 未改，不重复技术审核；既有F5-P1持久化APPROVE_CODE仍生效。
 - **双模式整改Gate OPEN/REQUEST_CHANGES**：NoTTT config显式`off`且不得要求/伪造fast权重、Local evidence/Prefix；LocalTTT config显式`required`仍严格K4/local32、evidence chronology及memory commit；两模式共用Sim/Scheduler/Lease/ACK/replay/timeout/NativeBatch，通用response cache属事务层，不依赖fast-state。模式纳入Manifest/Run身份，checkpoint/config不匹配fail-closed；不能仅删除启动`required`断言，原BatchTransaction/Simulator依赖Local状态须真实解耦。Codex最小改动实现，GPT对新formal Pair增量Code Gate审核。
 - 当前真实NoTTT Canary已被原required模型启动拒绝；LocalTTT Canary尚未有GPU通过证据。**最终真实验收必须分别覆盖NoTTT和LocalTTT**（稳定各自checkpoint、单GPU×2Sim、实测B2、Episode/MP4/显存/清理），不得用其中一次代表另一次；本条不自动授权额外GPU run或900 Episode、不修改训练和checkpoints、不merge生产候选。
+
+## 2026-10-30 — Training Issue#12 DS仓库外Probe v4文本充分，设计Gate APPROVED，不再索取ZIP
+
+- Owner明确纠正“传原始ZIP”为不可执行重复要求；用户已经提供完整v4代码、Diff、SHA与静态验证结论。正式新 Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_Probe_v4_TextComplete_Design_APPROVED_NoZip.md`，**覆盖**原v4因`ZIP未上传`的`REQUEST_CHANGES(EVIDENCE_ONLY)`。
+- **`SCRIPT_v4=APPROVE_SCRIPT_DESIGN`**：逻辑已满足计时拆分、公开Loader、异常清理、START/DONE及时日志、timeout/输出隔离和预热/代表请求边界；DS声称源码SHA `9f1996b01d76f33ad8b15d19e47c15ef46471781f35599d591b55b8e5f016c67` 标`REPORTED_NOT_INDEPENDENTLY_VERIFIED`，**不阻断**。不让DS继续v5/要求再次转ZIP。
+- **`REAL_DATA_CPU_EXECUTION=PENDING_OWNER_AUTHORIZATION`**：Owner批准后才能单次CPU-only真实数据探针；原生产Pair`e0fe911dfb9fd34957234828195cf051713f6c3d`/`f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`及CPU301 PASS、Issue12 B首包Timeout性能INCONCLUSIVE、正式Job未修改均保持。
