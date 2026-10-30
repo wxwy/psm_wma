@@ -1,0 +1,27 @@
+# Independent fresh namespace; actual launch requires reviewed pair and runtime authorization.
+schema: psm_robocasa_eval_v2
+checkpoint: /EDIT_READONLY/checkpoints/iter_000012000
+config_file: /EDIT_READONLY/config.yaml
+dataset_root: /EDIT_READONLY/robocasa365/target/atomic
+output_dir: /EDIT_NEW_OUTPUT/g1_iter12000_eval_v2
+server_python: /EDIT_SERVER_ENV/bin/python
+sim_python: /EDIT_SIM_ENV/bin/python
+vendor_lock: ${PSM_REPO}/third_party/robosuite_patches/vendor.lock.json
+tasks: all
+episodes_per_task: 50
+gpu_ids: [4, 5, 6]
+base_port: 8912
+seed: 0
+prediction_steps: 30
+guidance: 1.0
+save_rollout_mp4: true
+save_generated_video: first
+sims_per_gpu: 1
+max_infer_batch_size: 1
+max_gpu_fraction: 0.85
+max_rss_bytes: 137438953472
+server_start_s: 900
+episode_wall_s: 1800
+request_timeout_s: 600
+terminate_grace_s: 10
+encoder_grace_s: 2

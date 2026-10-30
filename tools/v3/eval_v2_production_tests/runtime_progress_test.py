@@ -1,0 +1,108 @@
+"""Deterministic progress snapshot race through the real runtime/finish path."""
+
+import json
+from pathlib import Path
+from queue import Queue
+from threading import Barrier, current_thread, main_thread
+
+from cosmos_framework.evaluation.robocasa_v2 import store as store_module
+from cosmos_framework.evaluation.robocasa_v2.scheduler import (
+    RoundScheduler,
+    logical_plan,
+)
+from cosmos_framework.evaluation.robocasa_v2.store import records
+from robocasa_eval_v2 import runtime as runtime_module
+
+from tools.v3.eval_v2_production_tests.native_test import server
+from tools.v3.eval_v2_production_tests.runtime_test import cfg
+from tools.v3.eval_v2_production_tests.slot_test import CpuSlotRuntime, prepare_monkey
+from tools.v3.eval_v2_production_tests.store_test import fresh
+
+
+def test_progress_snapshot_allows_real_finish_during_file_read(tmp_path, monkeypatch):
+    prepare_monkey(monkeypatch)
+    value = fresh(tmp_path, tasks=("TaskA", "TaskB"), episodes=1)
+    rendezvous = Barrier(3, timeout=10)
+    ready, finished = Queue(), Queue()
+    snapshots, progress_reads, schedulers = [], [], []
+    original_finish = RoundScheduler.finish
+    original_read, original_wait = store_module.read, runtime_module.wait
+
+    class ObservedScheduler(RoundScheduler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            scheduler = self
+
+            class Inflight(dict):
+                def items(self):
+                    # Both writers are parked before finish, so only the reader
+                    # can hold this lock at the snapshot point.
+                    snapshots.append(scheduler._lock.lock.locked())
+                    return super().items()
+
+            self.inflight = Inflight()
+            schedulers.append(self)
+
+    def finish(scheduler, claim):
+        ready.put(claim["physical_worker"])
+        rendezvous.wait()
+        original_finish(scheduler, claim)
+        finished.put(claim["physical_worker"])
+
+    first_wait = True
+
+    def wait(*args, **kwargs):
+        nonlocal first_wait
+        if first_wait:
+            first_wait = False
+            assert len({ready.get(timeout=10) for _ in range(2)}) == 2
+        return original_wait(*args, **kwargs)
+
+    def read(path):
+        if current_thread() is main_thread() and Path(path).name == "progress.json":
+            if not progress_reads:
+                # Release both real finish/pop operations inside progress I/O.
+                # If I/O holds the scheduler lock, these bounded waits fail.
+                rendezvous.wait()
+                progress_reads.extend(finished.get(timeout=10) for _ in range(2))
+            return original_read(path)
+        return original_read(path)
+
+    monkeypatch.setattr(runtime_module, "RoundScheduler", ObservedScheduler)
+    monkeypatch.setattr(RoundScheduler, "finish", finish)
+    monkeypatch.setattr(runtime_module, "wait", wait)
+    monkeypatch.setattr(store_module, "read", read)
+    with server() as (url, _), value.locked():
+        runtime = CpuSlotRuntime(value, cfg(2, 1), url, [])
+        report, error = runtime.run()
+        print(
+            "V2_PROGRESS_SNAPSHOT_WITNESS "
+            + json.dumps(
+                {
+                    "copy_held_writer_lock": snapshots,
+                    "finished_during_progress_read": sorted(progress_reads),
+                    "valid": report["valid"],
+                    "error": repr(error),
+                }
+            ),
+            flush=True,
+        )
+        if error is not None:
+            raise error  # Keep the actual internal throw-site in a RED traceback.
+        assert snapshots and all(snapshots)
+        assert len(set(progress_reads)) == 2
+        assert report["valid"] == 2 and report["results_qualified"]
+        assert runtime.closed and all(
+            a.slot.state == "CLEAN" for a in runtime.actors.values()
+        )
+        scheduler = schedulers[0]
+        assert scheduler.done and not scheduler.inflight and not scheduler.cancelled
+        ledger = records(value.root / "_internal/scheduler" / scheduler.invocation)
+        assert [
+            (e["data"]["task"], e["data"]["episode"])
+            for e in ledger
+            if e["kind"] == "DISPATCH"
+        ] == logical_plan(value.manifest)
+        assert sum(e["kind"] == "FINISH" for e in ledger) == 2
+        assert sum(e["kind"] == "ROUND_BARRIER" for e in ledger) == 1
+        assert not any(e["kind"] == "CANCEL" for e in ledger)
