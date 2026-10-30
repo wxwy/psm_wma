@@ -174,3 +174,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 生产 Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，之前生产APPROVE_CODE + Issue11 301CPU/6raw PASS不重审。新审对象为DS在服务器**仓库外**的v3脚本（自述SHA `5eea42983a88ca823b2419e69a18fa6d0016cdc0bc252942488c3eeaca68d9c4`，但上传大粘贴Markdown格式化破坏Python字节，不可独立检原.py SHA/compile），独立增量Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_v3_INCREMENTAL_REQUEST_CHANGES.md`。
 - 本轮关闭v2的publicAPI、只消费单请求不得finish、漏算begin-spawn时长；仍BLOCKER：P6卡在Scope A/B高成本构造/首包时PARTIAL只在Scope完成后更新，SIGTERM失去阶段定位（应增加flush start/done阶段日志）；P5命令虽`timeout1800`但缺kill-after、stderr/stdout持久化且输出仍在高占用/data1；P2真实Worker跑在ScopeA已重建/读取之后的warm状态，不能称严格cold。ScopeB需独立进程或明确降格辅助。
 - `SCRIPT_v3=REQUEST_CHANGES`，`REAL_DATA_CPU=NOT_AUTHORIZED`，DS仅修自己仓库外临时脚本并回传原始.py字节与精确SHA，不动仓库代码/正式训练/GPU/DCP。
+
+## 2026-10-30 — Training Issue12 DS仓库外Probe v4审阅：方案旧P2/P5/P6关闭，唯一SCRIPT原件Evidence缺件
+
+- Production Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`未变，不复审旧生产APPROVE_CODE/CPU301/6raw。用户v4大粘贴报原.py SHA `9f1996b01d76f33ad8b15d19e47c15ef46471781f35599d591b55b8e5f016c67`，但本次上传仅57,344 byte经Markdown转码的文本，`from **future**`等导致无法独立验证原脚本的字节/SHA/语法。正式增量Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_v4_EvidenceOnly_REQUEST_CHANGES.md`。
+- P2 Spawn/取数计时拆分、P3公开API/partialClose、P4 representative frontier标注、P5 timeout -k/独立日志、P6 START/DONE阶段持久化，经控制流审查均`CLOSED_AS_DESIGN`；ScopeB在ScopeA之后受预热，只能作warm单worker证据；原B4rank120s Timeout/0commit/性能INCONCLUSIVE未改变。
+- **SCRIPT正式Verdict `REQUEST_CHANGES`（EVIDENCE_ONLY：缺原始v4 .py/zip，不能绑定原SHA）**，不要求v5重构或重跑301。只让Owner上传DS已有原始ZIP，GPT复核bytes/hash/AST，之后Owner再单独授权CPU-only真实数据；本轮`REAL_DATA_CPU=NOT_AUTHORIZED`，无GPU/正式Job/Checkpoint操作。
