@@ -70,11 +70,22 @@ def run_server(argv):
     ):
         parser.add_argument("--" + name, required=True)
     args, _ = parser.parse_known_args(argv)
+    mode = argv[argv.index("--local-memory-mode") + 1]
     patch = pytest.MonkeyPatch()
     obj = service(patch)
     obj.cfg.seed = 0
     ids = tuple(args.transaction_slot_ids.split(","))
     obj.local_memory_adapter, obj.model = make_adapter(len(ids))
+    if mode == "off":
+        from cosmos_framework.inference.robocasa_local_memory_policy import (
+            RoboCasaLocalMemoryPolicyAdapter,
+        )
+
+        obj.model = torch.nn.Module()
+        obj.model.net = torch.nn.Module()
+        obj.local_memory_adapter = RoboCasaLocalMemoryPolicyAdapter(
+            obj, mode="off", decode_image=lambda _: None, max_sessions=len(ids)
+        )
 
     def decode(value):
         image = Image.open(io.BytesIO(base64.b64decode(value)))
@@ -86,7 +97,11 @@ def run_server(argv):
 
     def generate(batch, **kwargs):
         n = len(batch["prompt"])
-        assert len(kwargs["_local_memory_prefixes"]) == n
+        if mode == "required":
+            assert len(kwargs["_local_memory_prefixes"]) == n
+        else:
+            assert "_local_memory_prefixes" not in kwargs
+            assert obj.local_memory_adapter.memory is None
         calls.append(n)
         if "--cpu-exit-after-live-slots" in argv:
             assert len(ids) == 2 and n == 1
@@ -124,7 +139,7 @@ def run_server(argv):
                 {
                     "size": n,
                     "prefix_present": [
-                        p is not None for p in kwargs["_local_memory_prefixes"]
+                        p is not None for p in kwargs.get("_local_memory_prefixes", ())
                     ],
                     "pid": os.getpid(),
                     "model_loads": 1,
@@ -166,7 +181,7 @@ def run_server(argv):
         "fps": 20,
         "seed": 0,
         "requires_state": True,
-        "local_memory": {"enabled": True, "mode": "required", "action_dim": 15},
+        "local_memory": {"enabled": mode == "required", "mode": mode, "action_dim": 15},
         "session_transactions": obj.transactions.info(),
     }
     http = ThreadingHTTPServer(("127.0.0.1", int(args.port)), server._ActionHandler)

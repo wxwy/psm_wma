@@ -90,10 +90,20 @@ class CpuRegistry(Registry):
         return super().start(command, kind=kind, **kwargs)
 
 
-def cpu_run(tmp_path, monkeypatch, *, g=1, n=2, episodes=2, fail_server=False):
+def cpu_run(
+    tmp_path,
+    monkeypatch,
+    *,
+    g=1,
+    n=2,
+    episodes=2,
+    fail_server=False,
+    local_memory_mode="required",
+):
     tasks = ("CloseFridge", "OpenCabinet", "OpenDrawer")[:n]
     cfg = dict(
         execution_profile="phase_b",
+        local_memory_mode=local_memory_mode,
         gpu_ids=list(range(g)),
         sims_per_gpu=2,
         # The death fixture must fire even when batching is impossible.
@@ -137,6 +147,7 @@ def cpu_run(tmp_path, monkeypatch, *, g=1, n=2, episodes=2, fail_server=False):
         horizons={t: 32 for t in tasks},
         experiment=experiment,
         execution=execution(cfg),
+        local_memory=local_memory_mode,
     )
     value = Store(tmp_path / "run", m)
     value.create()

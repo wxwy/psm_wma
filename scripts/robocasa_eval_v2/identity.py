@@ -177,6 +177,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         horizons=runtime["protocol"]["official_horizons"],
         formal=len(tasks) == 18 and cfg["episodes_per_task"] == 50,
         execution=execution(cfg),
+        local_memory=cfg.get("local_memory_mode", "required"),
         experiment={
             "model_digest": model["digest"],
             "config_sha256": sha256_file(Path(cfg["config_file"])),

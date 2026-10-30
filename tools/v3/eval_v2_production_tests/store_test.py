@@ -596,12 +596,13 @@ def fixture_core(value, a, row):
     raw = [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
     env = [0.0] * 11 + [-1.0]
     session = "fixture_session_" + a["attempt_id"]
+    required = value.manifest["protocol"]["local_memory"] == "required"
     actions = [
         {
             "source_step": i,
             "evidence_completed": True,
             "predicted_raw15": raw,
-            "canonical_executed_raw15": raw,
+            "canonical_executed_raw15": raw if required else None,
             "submitted_env12": env,
         }
         for i in range(row["steps"])
@@ -615,7 +616,27 @@ def fixture_core(value, a, row):
                 "session_id": session,
                 "episode_id": "fixture_episode",
                 "consumer_step": 16 * i,
-            },
+            }
+            if required
+            else None,
+            **(
+                {}
+                if required
+                else {
+                    "transaction": {
+                        "protocol": "robocasa.session-transactions.no-ttt.v1",
+                        "frontier": i,
+                        "assignment": {
+                            "manifest_digest": row["manifest_digest"],
+                            "task": a["task"],
+                            "episode_index": a["episode"],
+                            "attempt_id": a["attempt_id"],
+                            "session_id": session,
+                            "episode_id": "fixture_episode",
+                        },
+                    }
+                }
+            ),
         }
         for i in range(row["replans"])
     ]
@@ -626,7 +647,18 @@ def fixture_core(value, a, row):
         "".join(json.dumps(x) + "\n" for x in predictions)
     )
     (directory / "local_memory.json").write_text(
-        json.dumps({"session_id": session, "reset_ok": True, "cleanup_error": None})
+        json.dumps(
+            {
+                "session_id": session,
+                "reset_ok": True,
+                "cleanup_error": None,
+                **(
+                    {}
+                    if required
+                    else {"local_memory_mode": "off", "local_state": "not_instantiated"}
+                ),
+            }
+        )
     )
     scene = {
         k: row[k]

@@ -47,6 +47,10 @@ class Runtime:
         )
         if store.manifest.get("execution") != execution(cfg):
             raise ValueError("runtime execution profile differs from frozen manifest")
+        if store.manifest["protocol"]["local_memory"] != cfg.get(
+            "local_memory_mode", "required"
+        ):
+            raise ValueError("runtime Local-TTT mode differs from frozen manifest")
         self.stop = threading.Event()
         self.registry = Registry(store.root, cfg["terminate_grace_s"])
         self.servers = {}
@@ -159,6 +163,9 @@ class Runtime:
         command = server_argv(
             args, Path(self.cfg["checkpoint"]), Path(self.cfg["config_file"]), port
         )
+        command[command.index("--local-memory-mode") + 1] = self.store.manifest[
+            "protocol"
+        ]["local_memory"]
         if self.batch_profile:
             slots = [
                 self.slot_ids[w] for w in self.workers if self.worker_gpus[w] == gpu
@@ -213,6 +220,7 @@ class Runtime:
                 num_steps=self.cfg["prediction_steps"],
                 guidance=self.cfg["guidance"],
                 stop=self.stop,
+                local_memory_mode=self.store.manifest["protocol"]["local_memory"],
             )
         except BaseException:
             self.stop.set()
@@ -223,6 +231,9 @@ class Runtime:
                 tx.get(k) != v
                 for k, v in {
                     "enabled": True,
+                    "local_memory_mode": self.store.manifest["protocol"][
+                        "local_memory"
+                    ],
                     "execution_profile": "session_native_batch_v1",
                     "run_lease": self.store.lease_id,
                     "manifest_digest": self.store.manifest["digest"],
@@ -284,6 +295,9 @@ class Runtime:
                     "horizon": self.store.manifest["horizons"][task],
                     "execution_profile": self.cfg.get("execution_profile", "phase_a"),
                     "max_infer_batch_size": self.cfg.get("max_infer_batch_size", 1),
+                    "local_memory_mode": self.store.manifest["protocol"][
+                        "local_memory"
+                    ],
                     "predict_timeout_s": self.cfg["request_timeout_s"],
                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
                     "save_generated_video": self.cfg["save_generated_video"],
@@ -363,6 +377,8 @@ class Runtime:
                 or ready.get("physical_slot_id") != self.slot_ids[worker]
                 or ready.get("state") != "IDLE"
                 or ready.get("runtime_digest") != self.inputs["runtime"]["digest"]
+                or ready.get("local_memory_mode")
+                != self.store.manifest["protocol"]["local_memory"]
             ):
                 raise RuntimeError("native Worker handshake mismatch")
             self.resource_probe(
@@ -442,6 +458,7 @@ class Runtime:
                 transport=transport,
                 batch_profile=True,
                 max_batch_size=self.cfg["max_infer_batch_size"],
+                local_memory_mode=self.store.manifest["protocol"]["local_memory"],
             )
             lease = client.register(
                 {
@@ -455,7 +472,12 @@ class Runtime:
                 },
                 self.server_owners[key],
             )
-            return {"lease": lease, "prediction_clock_domain": client.clock_domain}
+            return {
+                "lease": lease,
+                "prediction_clock_domain": client.clock_domain,
+                "local_memory_mode": client.mode,
+                "profile": client.protocol,
+            }
 
     def run_slot(self, scheduler, claim):
         a = claim["attempt"]
