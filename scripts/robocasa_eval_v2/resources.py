@@ -1,4 +1,4 @@
-"""Read-only resource admission. Never kill or change a foreign GPU process."""
+"""Read-only resource admission; allow GPU sharing without managing foreign processes."""
 
 from __future__ import annotations
 
@@ -22,24 +22,9 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
     allowed = set()
     for p in processes:
         allowed.update(group_members(p.pgid))
-    active = run(
-        [
-            "nvidia-smi",
-            "--query-compute-apps=gpu_uuid,pid",
-            "--format=csv,noheader,nounits",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
-        timeout=10,
-    ).stdout
     selected = {devices[g][0] for g in cfg["gpu_ids"] if g in devices}
     if len(selected) != len(cfg["gpu_ids"]):
         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
-    for line in active.splitlines():
-        uid, pid = [x.strip() for x in line.split(",")]
-        if uid in selected and int(pid) not in allowed:
-            raise RuntimeError("BLOCKED_RESOURCE: selected GPU has a foreign process")
     for g in cfg["gpu_ids"]:
         _, total, used = devices[g]
         reserve = 20 * 1024**3 if before_models else 0
