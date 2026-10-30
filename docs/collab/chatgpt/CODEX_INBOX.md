@@ -196,3 +196,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 正式纠错详细文件：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_NoTTT_Target_Owner_Correction_Erratum.md`。NoTTT场景当前 **`REQUEST_CHANGES / BLOCKED_NOTTT_PHASE_B_UNSUPPORTED`**，属于新目标下缺乏执行能力，而非NoTTT checkpoint选择错误。
 - Root `eval_robocasa_18task_queue.py:272` hardcode required；Child `action_policy_server_robocasa.py:654,910-912,1257`、`robocasa_session_transactions.py:166,328,339`、`robocasa_batch_transactions.py:201-273`、Sim `eval_v2_transactions.py:23-69` 的Session/fast state/prefix均耦合TTT。**不是仅把required换off**；应由Codex在新隔离候选实现明确NoTTT模式，把Slot/Lease/ACK/Deadline/native B2复用、response cache归事务状态、不生成fast-state、不注入Local prefix；原TTT模式严检不变、不同模式不同科学身份、NoTTT模型及原定4Episode真实验收不变。
 - 未授权在旧 SHA 上现场patch、用TTT模型替代目标、直接正式900、修改NoTTT训练。新精确Root+Child产出后GPT按增量Code Gate审核；本条仅文档勘误与正确路线登记。
+
+
+## 2026-10-30 — Owner最终澄清：EvalV2 仿真优化必须同时支持 NoTTT + LocalTTT（纠正两次单模式建议）
+
+- **Owner最新要求**：“仿真优化必须在nottt和localttt都能work”。最终不是选NoTTT或LocalTTT；一套RoboCasa EvalV2多Sim/NativeBatch/Session/Resume/视频/资源/clean-up复用，两种checkpoint均需真实可运行。该要求**优先覆盖**同日先前“只换TTT checkpoint”和随后“仅替换NoTTT链路”的单一模式建议；两份报告的精确源码观察及原生Canary失败原始事实仍保留。
+- 纠错/需求记录：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_DualMode_NoTTT_LocalTTT_Owner_Requirement_Correction.md`。关联旧Formal Pair Root `7c74dc26ac4837f193727ecf847b9b64554c18b2` / Child+Gitlink `53c3c95202e14d3b72d236eee6899a80acf82989` 未改，不重复技术审核；既有F5-P1持久化APPROVE_CODE仍生效。
+- **双模式整改Gate OPEN/REQUEST_CHANGES**：NoTTT config显式`off`且不得要求/伪造fast权重、Local evidence/Prefix；LocalTTT config显式`required`仍严格K4/local32、evidence chronology及memory commit；两模式共用Sim/Scheduler/Lease/ACK/replay/timeout/NativeBatch，通用response cache属事务层，不依赖fast-state。模式纳入Manifest/Run身份，checkpoint/config不匹配fail-closed；不能仅删除启动`required`断言，原BatchTransaction/Simulator依赖Local状态须真实解耦。Codex最小改动实现，GPT对新formal Pair增量Code Gate审核。
+- 当前真实NoTTT Canary已被原required模型启动拒绝；LocalTTT Canary尚未有GPU通过证据。**最终真实验收必须分别覆盖NoTTT和LocalTTT**（稳定各自checkpoint、单GPU×2Sim、实测B2、Episode/MP4/显存/清理），不得用其中一次代表另一次；本条不自动授权额外GPU run或900 Episode、不修改训练和checkpoints、不merge生产候选。
