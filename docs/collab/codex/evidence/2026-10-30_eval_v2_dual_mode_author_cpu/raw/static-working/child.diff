@@ -1,0 +1,797 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/contract.py b/cosmos_framework/evaluation/robocasa_v2/contract.py
+index b41244f..261e363 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/contract.py
++++ b/cosmos_framework/evaluation/robocasa_v2/contract.py
+@@ -30,7 +30,11 @@ def integer(value, minimum, maximum, name):
+     return value
+ 
+ 
+-def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False, execution=None):
++def build_manifest(
++    *, tasks, episodes, seed, horizons, experiment, formal=False, execution=None, local_memory="required"
++):
++    if local_memory not in ("off", "required"):
++        raise ValueError("explicit off|required Local-TTT mode required")
+     tasks = list(tasks)
+     if (
+         not tasks
+@@ -86,7 +90,7 @@ def build_manifest(*, tasks, episodes, seed, horizons, experiment, formal=False,
+             "observation_frames": 17,
+             "fps": 20,
+             "camera": "left_wrist",
+-            "local_memory": "required",
++            "local_memory": local_memory,
+             "success_authority": "env._check_success",
+             "media_participates_in_SR": False,
+         },
+@@ -127,6 +131,7 @@ def validate_manifest(value):
+         experiment=value["experiment"],
+         formal=value["scope"] == "formal900",
+         execution=value.get("execution"),
++        local_memory=value["protocol"]["local_memory"],
+     )
+     if value != expected:
+         raise ValueError("invalid immutable manifest or protocol")
+diff --git a/cosmos_framework/evaluation/robocasa_v2/evidence.py b/cosmos_framework/evaluation/robocasa_v2/evidence.py
+index 4f1473a..59e12dd 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/evidence.py
++++ b/cosmos_framework/evaluation/robocasa_v2/evidence.py
+@@ -49,8 +49,11 @@ def read_lines(path, count):
+     return values
+ 
+ 
+-def validate(directory, row):
++def validate(directory, row, *, local_memory="required"):
+     from cosmos_framework.evaluation.robocasa_v2.store import read
++    from cosmos_framework.inference.robocasa_session_transactions import protocol_for_mode
++
++    protocol = protocol_for_mode(local_memory)
+ 
+     directory = Path(directory)
+     actions = read_lines(directory / "actions.jsonl", row["steps"])
+@@ -60,27 +63,56 @@ def validate(directory, row):
+     session = None
+     for i, p in enumerate(predictions):
+         status = p.get("local_memory", {})
+-        if p.get("replan") != i or p.get("source_step") != i * 16 or not isinstance(status, dict):
++        if p.get("replan") != i or p.get("source_step") != i * 16:
+             raise ValueError("prediction frontier mismatch")
++        if local_memory == "off":
++            transaction = p.get("transaction", {})
++            assignment = transaction.get("assignment", {})
++            if (
++                status is not None
++                or transaction.get("protocol") != protocol
++                or transaction.get("frontier") != i
++                or any(
++                    assignment.get(key) != row[target]
++                    for key, target in (
++                        ("manifest_digest", "manifest_digest"),
++                        ("task", "task"),
++                        ("episode_index", "episode"),
++                        ("attempt_id", "attempt_id"),
++                    )
++                )
++                or not isinstance(assignment.get("session_id"), str)
++                or not isinstance(assignment.get("episode_id"), str)
++            ):
++                raise ValueError("No-TTT transaction acknowledgement mismatch")
++            current_session = assignment["session_id"]
++        else:
++            if not isinstance(status, dict):
++                raise ValueError("prediction frontier mismatch")
++            if status.get("consumer_step") != p["source_step"] or not isinstance(status.get("session_id"), str):
++                raise ValueError("Local acknowledgement mismatch")
++            current_session = status["session_id"]
+         if (
+             not isinstance(p.get("action"), list)
+             or len(p["action"]) != 16
+             or not all(finite_vector(x, 15) for x in p["action"])
+         ):
+             raise ValueError("prediction raw15 mismatch")
+-        if status.get("consumer_step") != p["source_step"] or not isinstance(status.get("session_id"), str):
+-            raise ValueError("Local acknowledgement mismatch")
+-        session = session or status["session_id"]
+-        if session != status["session_id"]:
+-            raise ValueError("cross-Episode Local session")
++        session = session or current_session
++        if session != current_session:
++            raise ValueError("cross-Episode inference session")
+     for i, a in enumerate(actions):
+         if (
+             a.get("source_step") != i
+             or a.get("evidence_completed") is not True
+             or not all(
+                 finite_vector(a.get(k), n)
+-                for k, n in [("predicted_raw15", 15), ("canonical_executed_raw15", 15), ("submitted_env12", 12)]
++                for k, n in (
++                    [("predicted_raw15", 15), ("submitted_env12", 12)]
++                    + ([("canonical_executed_raw15", 15)] if local_memory == "required" else [])
++                )
+             )
++            or (local_memory == "off" and a.get("canonical_executed_raw15") is not None)
+         ):
+             raise ValueError("completed raw15/env12 action evidence missing")
+         if a["predicted_raw15"] != predictions[i // 16]["action"][i % 16]:
+@@ -93,6 +125,10 @@ def validate(directory, row):
+         or cleanup.get("rollout_error") is not None
+     ):
+         raise ValueError("Local reset acknowledgement missing")
++    if local_memory == "off" and (
++        cleanup.get("local_memory_mode") != "off" or cleanup.get("local_state") != "not_instantiated"
++    ):
++        raise ValueError("No-TTT common Session End acknowledgement missing")
+     scene = read(directory / "scene_provenance.json")
+     for k in ("task", "episode", "attempt_id", "stream_id", "seed", "reset_index", "manifest_digest"):
+         if scene.get(k) != row[k]:
+diff --git a/cosmos_framework/evaluation/robocasa_v2/store.py b/cosmos_framework/evaluation/robocasa_v2/store.py
+index 1f9dd13..b423ad8 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/store.py
++++ b/cosmos_framework/evaluation/robocasa_v2/store.py
+@@ -702,7 +702,10 @@ class Store:
+             return copy.deepcopy(cached[1])
+         row = self._read_result(task, ep)
+         inventory = load(path.parent / "core_inventory.json")
+-        if inventory != {"row_digest": digest(row), "files": validate(path.parent, row)}:
++        if inventory != {
++            "row_digest": digest(row),
++            "files": validate(path.parent, row, local_memory=self.manifest["protocol"]["local_memory"]),
++        }:
+             raise ValueError("Core evidence inventory mismatch")
+         self._rowcache[(task, ep)] = (stamps, copy.deepcopy(row))
+         return row
+@@ -893,7 +896,7 @@ class Store:
+         if staging != work or not staging.is_dir():
+             raise ValueError("owned attempt staging required")
+         self._validate_sampling(a, row)
+-        inventory = validate(staging, row)
++        inventory = validate(staging, row, local_memory=self.manifest["protocol"]["local_memory"])
+         save(staging / "core_inventory.json", {"row_digest": digest(row), "files": inventory})
+         save(staging / "result.json", row)
+         sync_dir(staging)
+diff --git a/cosmos_framework/inference/robocasa_batch_transactions.py b/cosmos_framework/inference/robocasa_batch_transactions.py
+index 5c1d92e..fef6b39 100644
+--- a/cosmos_framework/inference/robocasa_batch_transactions.py
++++ b/cosmos_framework/inference/robocasa_batch_transactions.py
+@@ -19,10 +19,10 @@ from cosmos_framework.inference.local_memory_state import CachedMemoryResponse
+ from cosmos_framework.inference.robocasa_session_transactions import (
+     MAX_BODY,
+     MAX_RESPONSE,
+-    PROTOCOL,
+     Reply,
+     SessionTransactions,
+     json_bytes,
++    request_frontier,
+ )
+ 
+ 
+@@ -117,7 +117,7 @@ class BatchedSessionTransactions(SessionTransactions):
+             return super()._payload_keys_valid(payload)
+         media = payload["media"]
+         return (
+-            set(payload) == {"image", "prompt", "domain_name", "image_size", "state", "local_memory", "media"}
++            super()._payload_keys_valid({k: v for k, v in payload.items() if k != "media"})
+             and isinstance(media, dict)
+             and set(media) == {"replan"}
+             and type(media["replan"]) is int
+@@ -199,7 +199,8 @@ class BatchedSessionTransactions(SessionTransactions):
+                         self._fence(t)
+                 prepare_start = time.monotonic()
+                 for t in members:
+-                    t.update = self.adapter.prepare(t.payload)
++                    if self.mode == "required":
++                        t.update = self.adapter.prepare(t.payload)
+                     t.state = "PREPARED"
+                 with self._lock:
+                     for t in members:
+@@ -241,13 +242,14 @@ class BatchedSessionTransactions(SessionTransactions):
+                             media = {"status": "pending", "ticket": t.key}
+                     body = json_bytes(
+                         {
+-                            "protocol": PROTOCOL,
++                            "protocol": self.protocol,
++                            "local_memory_mode": self.mode,
+                             "request_key": t.key,
+                             "payload_sha256": t.payload_sha256,
+                             "assignment": t.lease.identity(),
+-                            "frontier": t.payload["local_memory"]["consumer_step"],
++                            "frontier": request_frontier(t.payload, self.mode),
+                             "action": action,
+-                            "local_memory": self.adapter.status(t.update),
++                            **self._response_local(t.update),
+                             "native_batch": {"id": batch_id, "size": len(members), "index": i},
+                             "timing": {
+                                 "queue_ms": max(0, prepare_start - t.queued_at) * 1000,
+@@ -270,7 +272,7 @@ class BatchedSessionTransactions(SessionTransactions):
+                     histogram[len(members)] += 1
+                     batches = self._batches + 1
+                     jobs = {**self._media, **new_jobs}  # Respect End/ACK removals while generating.
+-                    self.adapter.commit_many(tuple((t.update, c) for t, c in zip(members, caches, strict=True)))
++                    self._commit_responses(members, caches, batch=True)
+                     committed = True
+                     self._media = jobs
+                     self._batches = batches
+@@ -280,7 +282,7 @@ class BatchedSessionTransactions(SessionTransactions):
+             except BaseException as error:
+                 for t in members:
+                     stage = t.state
+-                    if not committed:
++                    if not committed and self.mode == "required":
+                         try:
+                             self.adapter.abort(t.update)
+                         except BaseException:
+diff --git a/cosmos_framework/inference/robocasa_session_transactions.py b/cosmos_framework/inference/robocasa_session_transactions.py
+index 0bfc9f8..7231dee 100644
+--- a/cosmos_framework/inference/robocasa_session_transactions.py
++++ b/cosmos_framework/inference/robocasa_session_transactions.py
+@@ -25,10 +25,40 @@ from typing import Any, Callable
+ from cosmos_framework.inference.local_memory_state import CachedMemoryResponse
+ 
+ PROTOCOL = "robocasa.session-transactions.b1.v1"
++NO_TTT_PROTOCOL = "robocasa.session-transactions.no-ttt.v1"
+ MAX_BODY = 32 * 1024**2
+ MAX_RESPONSE = 1024**2
+ 
+ 
++def protocol_for_mode(mode):
++    if mode not in ("off", "required"):
++        raise ValueError("explicit off|required Local-TTT mode required")
++    return PROTOCOL if mode == "required" else NO_TTT_PROTOCOL
++
++
++def request_frontier(payload, mode):
++    """No-TTT has a transaction sequence, never a fabricated Local frontier."""
++    if mode == "required":
++        local = payload.get("local_memory")
++        if not isinstance(local, dict):
++            raise ValueError("Local evidence object required")
++        value = local.get("consumer_step")
++    else:
++        inference = payload.get("inference")
++        if not isinstance(inference, dict) or set(inference) != {"session_id", "episode_id", "request_index"}:
++            raise ValueError("exact No-TTT inference identity required")
++        value = inference["request_index"]
++    if type(value) is not int or value < 0 or (mode == "off" and value > 100000):
++        raise ValueError("bounded integer inference frontier required")
++    return value
++
++
++@dataclass(frozen=True)
++class _CommittedResponse:
++    frontier: int
++    response: CachedMemoryResponse
++
++
+ def json_bytes(value: Any) -> bytes:
+     return json.dumps(value, sort_keys=True, allow_nan=False, ensure_ascii=False, separators=(",", ":")).encode()
+ 
+@@ -163,8 +193,10 @@ class SessionTransactions:
+         max_bytes=128 * 1024**2,
+         clock=time.monotonic,
+     ):
+-        if adapter.mode != "required" or adapter.memory is None:
+-            raise ValueError("Session transactions require real required-mode Local-TTT")
++        self.mode = adapter.mode
++        self.protocol = protocol_for_mode(self.mode)
++        if (adapter.memory is not None) != (self.mode == "required"):
++            raise ValueError("transaction mode must match actual Local-TTT capability")
+         if not 1 <= len(slot_ids) <= 8 or len(set(slot_ids)) != len(slot_ids):
+             raise ValueError("one to eight distinct bounded physical Slot identities required")
+         if not math.isfinite(timeout_s) or timeout_s <= 0 or type(max_bytes) is not int or max_bytes <= 0:
+@@ -188,6 +220,7 @@ class SessionTransactions:
+         self._closing: set[str] = set()
+         self._failed: dict[str, dict] = {}
+         self._tickets: dict[str, _Ticket] = {}
++        self._responses: dict[str, _CommittedResponse] = {}
+         self._busy = False
+         self._quarantined = False
+         self._stopping = False
+@@ -200,7 +233,8 @@ class SessionTransactions:
+         with self._lock:
+             return {
+                 "enabled": True,
+-                "profile": PROTOCOL,
++                "profile": self.protocol,
++                "local_memory_mode": self.mode,
+                 "server_epoch": self.server_epoch,
+                 "run_lease": self.run_lease,
+                 "manifest_digest": self.manifest_digest,
+@@ -224,6 +258,17 @@ class SessionTransactions:
+         if self._quarantined or self._stopping:
+             raise RuntimeError("transaction actor unavailable; owned Server recovery required")
+ 
++    def _registration_reply(self, lease):
++        return self._reply(
++            200,
++            {
++                "lease": asdict(lease),
++                "prediction_clock_domain": self.clock_domain,
++                "local_memory_mode": self.mode,
++                "profile": self.protocol,
++            },
++        )
++
+     def register(self, record: dict, owner_token: str) -> Reply:
+         if not secrets.compare_digest(owner_token, self.owner_token):
+             raise ValueError("registration requires coordinator capability")
+@@ -252,7 +297,7 @@ class SessionTransactions:
+             if current is not None:
+                 expected = {key: getattr(current, key) for key in record}
+                 if record == expected:
+-                    return self._reply(200, {"lease": asdict(current), "prediction_clock_domain": self.clock_domain})
++                    return self._registration_reply(current)
+                 raise ValueError("previous physical Slot assignment has not received End ACK")
+             if record["generation"] <= self._generations[slot]:
+                 raise ValueError("stale Slot generation")
+@@ -267,7 +312,7 @@ class SessionTransactions:
+             self._generations[slot] = lease.generation
+             self._leases[slot] = lease
+             self._failed.pop(slot, None)
+-            return self._reply(200, {"lease": asdict(lease), "prediction_clock_domain": self.clock_domain})
++            return self._registration_reply(lease)
+ 
+     def _lease(self, proof: dict, *, closed=False) -> SessionLease:
+         if not isinstance(proof, dict) or set(proof) != set(SessionLease.__dataclass_fields__):
+@@ -313,19 +358,18 @@ class SessionTransactions:
+         payload = strict_json(raw)  # Freeze caller-owned structures before admission.
+         if not self._payload_keys_valid(payload):
+             raise ValueError("B1 policy payload requires observation/state/local evidence; media must be off")
+-        local = payload["local_memory"]
+-        if not isinstance(local, dict) or type(local.get("consumer_step")) is not int:
+-            raise ValueError("integer Local consumer frontier required")
+-        frontier = local["consumer_step"]
+-        if frontier < 0 or not isinstance(local.get("evidence"), list) or len(local["evidence"]) > 16:
++        frontier = request_frontier(payload, self.mode)
++        local = payload["local_memory"] if self.mode == "required" else payload["inference"]
++        if self.mode == "required" and (not isinstance(local.get("evidence"), list) or len(local["evidence"]) > 16):
+             raise ValueError("completed evidence must be bounded by H16")
+         payload_sha = hashlib.sha256(raw).hexdigest()
+         with self._lock:
+             lease = self._lease(proof)
+             if (local.get("session_id"), local.get("episode_id")) != (lease.session_id, lease.episode_id):
+                 raise ValueError("Local evidence belongs to another assignment")
+-            key = digest({"protocol": PROTOCOL, **lease.identity(), "frontier": frontier})
+-            cached = self.adapter.snapshot.responses.get(lease.session_id)
++            key = digest({"protocol": self.protocol, **lease.identity(), "frontier": frontier})
++            previous = self._responses.get(lease.session_id)
++            cached = previous.response if previous else None
+             if cached is not None and cached.request_key == key and cached.payload_sha256 != payload_sha:
+                 raise ValueError("request identity reused with changed payload")
+             ticket = self._tickets.get(key)
+@@ -336,13 +380,12 @@ class SessionTransactions:
+             self._usable(lease)
+             if cached is not None and cached.request_key == key:
+                 return Reply(200, cached.body)  # Post-ACK replay never creates a new Ticket.
+-            previous = self.adapter.snapshot.fast.get(lease.session_id)
+-            if previous is not None and frontier <= previous.consumer_step:
++            if previous is not None and frontier <= previous.frontier:
+                 raise ValueError("stale or evicted evidence frontier")
+             if previous is None:
+-                if frontier != 0 or local["evidence"]:
++                if frontier != 0 or (self.mode == "required" and local["evidence"]):
+                     raise ValueError("fresh Episode must start at frontier0 without evidence")
+-            elif frontier - previous.consumer_step != len(local["evidence"]):
++            elif frontier - previous.frontier != (len(local["evidence"]) if self.mode == "required" else 1):
+                 raise ValueError("bounded contiguous completed evidence required")
+             if any(item.lease.slot_id == lease.slot_id for item in self._tickets.values()):
+                 raise ValueError("one queued/inflight/undelivered request per physical Slot")
+@@ -360,7 +403,31 @@ class SessionTransactions:
+             return self._pending(ticket)
+ 
+     def _payload_keys_valid(self, payload):
+-        return set(payload) == {"image", "prompt", "domain_name", "image_size", "state", "local_memory"}
++        state_key = "local_memory" if self.mode == "required" else "inference"
++        return set(payload) == {"image", "prompt", "domain_name", "image_size", "state", state_key}
++
++    def _commit_responses(self, members, caches, *, batch=False):
++        # Allocate the complete transaction publication BEFORE any Local commit.
++        # Readers/End/ACK use this same actor lock; no response is visible early.
++        replacement = dict(self._responses)
++        for ticket, cached in zip(members, caches, strict=True):
++            replacement[ticket.lease.session_id] = _CommittedResponse(
++                request_frontier(ticket.payload, self.mode), cached
++            )
++        if self.mode == "required":
++            if batch:
++                self.adapter.commit_many(tuple((t.update, c) for t, c in zip(members, caches, strict=True)))
++            else:
++                self.adapter.commit(members[0].update, caches[0])
++        self._responses = replacement
++
++    def _reset_session(self, session_id):
++        if self.mode == "required":
++            self.adapter.reset(session_id)
++        self._responses.pop(session_id, None)
++
++    def _response_local(self, update):
++        return {"local_memory": self.adapter.status(update)} if self.mode == "required" else {}
+ 
+     def _schedule(self, ticket):
+         self._executor.submit(self._execute, ticket)
+@@ -390,7 +457,8 @@ class SessionTransactions:
+             self._expire(ticket)
+             if not ticket.quiescent:
+                 return self._pending(ticket)
+-        cached = self.adapter.snapshot.responses.get(lease.session_id)
++        entry = self._responses.get(lease.session_id)
++        cached = entry.response if entry else None
+         if cached is None or cached.request_key != key:
+             raise ValueError("no retained committed response for this inference")
+         if cached.payload_sha256 != payload_sha:
+@@ -425,7 +493,7 @@ class SessionTransactions:
+                 return self._reply(202, {"acknowledged": False, "state": "draining", **lease.identity()})
+             for ticket in owned:
+                 self._release(ticket)
+-            self.adapter.reset(lease.session_id)
++            self._reset_session(lease.session_id)
+             del self._leases[lease.slot_id]
+             self._closed[lease.slot_id] = lease
+             self._closing.remove(lease.slot_id)
+@@ -445,7 +513,8 @@ class SessionTransactions:
+                     self._busy = True
+                     ticket.state = "SEALED"
+                     self._fence(ticket)
+-                ticket.update = self.adapter.prepare(ticket.payload)
++                if self.mode == "required":
++                    ticket.update = self.adapter.prepare(ticket.payload)
+                 with self._lock:
+                     ticket.state = "PREPARED"
+                     self._fence(ticket)
+@@ -458,16 +527,16 @@ class SessionTransactions:
+                     or any(type(v) not in (float, int) or not math.isfinite(v) for row in action for v in row)
+                 ):
+                     raise ValueError("generation must return finite [16,15] raw actions")
+-                status = self.adapter.status(ticket.update)
+                 body = json_bytes(
+                     {
+-                        "protocol": PROTOCOL,
++                        "protocol": self.protocol,
++                        "local_memory_mode": self.mode,
+                         "request_key": ticket.key,
+                         "payload_sha256": ticket.payload_sha256,
+                         "assignment": ticket.lease.identity(),
+-                        "frontier": ticket.payload["local_memory"]["consumer_step"],
++                        "frontier": request_frontier(ticket.payload, self.mode),
+                         "action": action,
+-                        "local_memory": status,
++                        **self._response_local(ticket.update),
+                         "native_batch": {"size": 1, "index": 0},
+                         "media": {"status": "disabled"},
+                     }
+@@ -480,12 +549,12 @@ class SessionTransactions:
+                 with self._lock:
+                     ticket.state = "VALIDATED"
+                     self._fence(ticket)
+-                    self.adapter.commit(ticket.update, cached)
++                    self._commit_responses([ticket], [cached])
+                     committed = True
+                     ticket.state = "COMMITTED"
+             except BaseException as error:
+                 stage = ticket.state
+-                if not committed:
++                if not committed and self.mode == "required":
+                     try:
+                         self.adapter.abort(ticket.update)
+                     except BaseException:
+@@ -543,7 +612,7 @@ class SessionTransactions:
+                     for ticket in tuple(self._tickets.values()):
+                         self._release(ticket)
+                     for lease in tuple(self._leases.values()):
+-                        self.adapter.reset(lease.session_id)
++                        self._reset_session(lease.session_id)
+                         self._closed[lease.slot_id] = lease
+                     self._leases.clear()
+                     self._closing.clear()
+diff --git a/cosmos_framework/inference/robocasa_transaction_client.py b/cosmos_framework/inference/robocasa_transaction_client.py
+index 436266a..75b654c 100644
+--- a/cosmos_framework/inference/robocasa_transaction_client.py
++++ b/cosmos_framework/inference/robocasa_transaction_client.py
+@@ -11,10 +11,11 @@ from typing import Callable
+ import requests
+ 
+ from cosmos_framework.inference.robocasa_session_transactions import (
+-    PROTOCOL,
+     digest,
+     json_bytes,
+     monotonic_clock_domain,
++    protocol_for_mode,
++    request_frontier,
+ )
+ 
+ 
+@@ -27,6 +28,7 @@ class TransactionPolicyClient:
+         transport=None,
+         batch_profile=False,
+         max_batch_size=1,
++        local_memory_mode="required",
+         clock=time.monotonic,
+         pause: Callable[[float], None] = time.sleep,
+     ):
+@@ -35,6 +37,8 @@ class TransactionPolicyClient:
+         if type(max_batch_size) is not int or not 1 <= max_batch_size <= 8:
+             raise ValueError("bounded native batch cap required")
+         self.batch_profile, self.max_batch_size = batch_profile, max_batch_size
++        self.mode = local_memory_mode
++        self.protocol = protocol_for_mode(self.mode)
+         self.base_url, self.timeout_s = base_url.rstrip("/"), timeout_s
+         self.transport = transport if transport is not None else requests.Session()
+         self.clock, self.pause = clock, pause
+@@ -80,6 +84,7 @@ class TransactionPolicyClient:
+         )
+         if value.get("prediction_clock_domain") != self.clock_domain:
+             raise ValueError("registration prediction clock domain mismatch")
++        self._check_mode(value)
+         lease = value.get("lease")
+         if not isinstance(lease, dict) or any(lease.get(k) != v for k, v in registration.items()):
+             raise ValueError("registration ACK identity mismatch")
+@@ -95,12 +100,24 @@ class TransactionPolicyClient:
+             raise RuntimeError("previous assignment unresolved")
+         if not isinstance(ack, dict) or ack.get("prediction_clock_domain") != self.clock_domain:
+             raise ValueError("assignment clock domain mismatch")
++        self._check_mode(ack)
+         lease = ack.get("lease")
+         if not isinstance(lease, dict) or set(lease) != set(SessionLease.__dataclass_fields__):
+             raise ValueError("exact coordinator assignment required")
+         self.lease = json.loads(json_bytes(lease))
+         return dict(self.lease)
+ 
++    def _check_mode(self, value):
++        # Existing required v1 ACKs remain readable. The new No-TTT protocol
++        # requires an explicit mode/profile, never an automatic fallback.
++        if self.mode == "off" and ("local_memory_mode" not in value or "profile" not in value):
++            raise ValueError("explicit No-TTT assignment mode/profile required")
++        if (value.get("local_memory_mode", "required"), value.get("profile", self.protocol)) != (
++            self.mode,
++            self.protocol,
++        ):
++            raise ValueError("assignment Local-TTT mode/profile mismatch")
++
+     def _batch_valid(self, batch):
+         if not self.batch_profile:
+             return batch == {"size": 1, "index": 0}
+@@ -126,9 +143,13 @@ class TransactionPolicyClient:
+         raw = json_bytes(payload)
+         # Frozen bytes prevent retry/ACK from binding a later-mutated caller object.
+         payload = json.loads(raw)
+-        frontier = payload["local_memory"]["consumer_step"]
++        frontier = request_frontier(payload, self.mode)
+         expected_key = digest(
+-            {"protocol": PROTOCOL, **{k: v for k, v in self.lease.items() if k != "capability"}, "frontier": frontier}
++            {
++                "protocol": self.protocol,
++                **{k: v for k, v in self.lease.items() if k != "capability"},
++                "frontier": frontier,
++            }
+         )
+         expected_sha = hashlib.sha256(raw).hexdigest()
+         status, result = self._call(
+@@ -149,7 +170,7 @@ class TransactionPolicyClient:
+             )
+         identity = {k: v for k, v in self.lease.items() if k != "capability"}
+         if (
+-            result.get("protocol") != PROTOCOL
++            result.get("protocol") != self.protocol
+             or result.get("request_key") != expected_key
+             or result.get("payload_sha256") != expected_sha
+             or result.get("assignment") != identity
+@@ -158,10 +179,17 @@ class TransactionPolicyClient:
+             raise ValueError("committed inference identity mismatch")
+         local = result.get("local_memory", {})
+         action = result.get("action")
++        local_valid = (
++            (
++                local.get("session_id") == self.lease["session_id"]
++                and local.get("episode_id") == self.lease["episode_id"]
++                and local.get("consumer_step") == frontier
++            )
++            if self.mode == "required"
++            else ("local_memory" not in result and result.get("local_memory_mode") == "off")
++        )
+         if (
+-            local.get("session_id") != self.lease["session_id"]
+-            or local.get("episode_id") != self.lease["episode_id"]
+-            or local.get("consumer_step") != frontier
++            not local_valid
+             or not self._batch_valid(result.get("native_batch"))
+             or not isinstance(action, list)
+             or len(action) != 16
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index fc67a70..b47e304 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -651,16 +651,14 @@ def _transaction_options(args):
+             raise ValueError("multi-Slot/batch options require explicit batch profile")
+         slots = (args.transaction_slot_id,)
+     if (
+-        args.local_memory_mode != "required"
++        args.local_memory_mode not in ("off", "required")
+         or args.local_memory_max_sessions != len(slots)
+         or not 1 <= len(slots) <= 8
+         or len(set(slots)) != len(slots)
+         or args.action_chunk_size != 16
+         or any(v is None for v in fields)
+     ):
+-        raise ValueError(
+-            "B1 transaction profile requires required Local-TTT, exact Slots, explicit H16 and complete identity"
+-        )
++        raise ValueError("transaction profile requires explicit mode, exact Slots, explicit H16 and complete identity")
+     token_path = Path(args.transaction_owner_token_file)
+     if token_path.stat().st_mode & 0o077 or token_path.stat().st_size > 256:
+         raise ValueError("transaction owner capability file must be private and bounded")
+@@ -774,6 +772,18 @@ class ActionModelService:
+         assert isinstance(pipe.setup_args, OmniSetupArgs)
+         self.setup_args: OmniSetupArgs = pipe.setup_args
+         self.experiment_config: dict = _load_introspection_config_dict(self.setup_args)
++        if transaction_options is not None:
++            from cosmos_framework.inference.robocasa_transaction_mode import validate_model_mode
++
++            validate_model_mode(
++                self.model,
++                self.experiment_config,
++                self.setup_args.checkpoint_path,
++                args.local_memory_mode,
++                use_ema_weights=(
++                    self.setup_args.config_file_type == ConfigFileType.MODULE and self.setup_args.use_ema_weights
++                ),
++            )
+ 
+         # Resolve action_chunk_size: CLI arg > experiment config > default.
+         if args.action_chunk_size is not None:
+@@ -908,8 +918,13 @@ class ActionModelService:
+                 self.cfg.action_chunk_size != 16
+                 or self.raw_action_dim != 15
+                 or not self.requires_state
+-                or self.local_memory_adapter.info()["k_local"] != 4
+-                or self.local_memory_adapter.info()["local_dim"] != 32
++                or (
++                    args.local_memory_mode == "required"
++                    and (
++                        self.local_memory_adapter.info()["k_local"] != 4
++                        or self.local_memory_adapter.info()["local_dim"] != 32
++                    )
++                )
+             ):
+                 raise ValueError("B1 transaction profile requires resolved raw15/state15/H16/K4/local32")
+             if args.transaction_profile == "batch":
+@@ -1212,6 +1227,7 @@ class ActionModelService:
+ 
+     def _transaction_action(self, req, update):
+         prep = self._prep_policy_item(req)
++        local_kwargs = self._transaction_prefixes([update], batch=False)
+         with torch.inference_mode():
+             samples = self.model.generate_samples_from_batch(
+                 self._single_policy_batch(prep),
+@@ -1219,7 +1235,7 @@ class ActionModelService:
+                 seed=[self.cfg.seed],
+                 num_steps=self.cfg.num_steps,
+                 has_negative_prompt=False,
+-                _local_memory_prefixes=self.local_memory_adapter.prefixes(update),
++                **local_kwargs,
+             )
+         if len(samples["action"]) != 1:
+             raise ValueError("B1 native output cardinality mismatch")
+@@ -1254,7 +1270,7 @@ class ActionModelService:
+                 seed=[self.cfg.seed] * n,
+                 num_steps=self.cfg.num_steps,
+                 has_negative_prompt=False,
+-                _local_memory_prefixes=tuple(self.local_memory_adapter.prefixes(u)[0] for u in updates),
++                **self._transaction_prefixes(updates, batch=True),
+             )
+         if len(samples["action"]) != n:
+             raise ValueError("native batch action cardinality mismatch")
+@@ -1286,6 +1302,14 @@ class ActionModelService:
+             media.append(candidate)
+         return BatchOutput(actions, tuple(media))
+ 
++    def _transaction_prefixes(self, updates, *, batch):
++        if self.local_memory_adapter.mode == "off":
++            if any(update is not None for update in updates):
++                raise ValueError("No-TTT cannot carry Local updates")
++            return {}  # Do not call prefixes or inject even an empty Local kwarg.
++        prefixes = tuple(self.local_memory_adapter.prefixes(u)[0] for u in updates)
++        return {"_local_memory_prefixes": prefixes}
++
+     def _transaction_decode_media(self, value):
+         latent, padded = value
+         with torch.inference_mode():
+diff --git a/cosmos_framework/scripts/robocasa_transactions_b1_test.py b/cosmos_framework/scripts/robocasa_transactions_b1_test.py
+index d8deec8..8710b77 100644
+--- a/cosmos_framework/scripts/robocasa_transactions_b1_test.py
++++ b/cosmos_framework/scripts/robocasa_transactions_b1_test.py
+@@ -216,7 +216,7 @@ def test_transaction_profile_fail_closed_preflight_before_model_load(tmp_path, c
+     )
+     assert server._transaction_options(args)["slot_ids"] == ("slot0",)
+     if change == "mode":
+-        args.local_memory_mode = "off"
++        args.local_memory_mode = "auto"
+     elif change == "sessions":
+         args.local_memory_max_sessions = 2
+     elif change == "horizon":
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+index 92de0e9..751c855 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+@@ -185,6 +185,17 @@ class NativeEpisode:
+ 
+             def cleaned(value):
+                 nonlocal cleanup
++                if transactional is not None and client is None:
++                    # Common Session End is mandatory even when no Local client
++                    # exists. Never turn a failed End into an episode success.
++                    transactional.end()
++                    value = {
++                        **value,
++                        "session_id": transactional.lease["session_id"],
++                        "reset_ok": True,
++                        "local_memory_mode": "off",
++                        "local_state": "not_instantiated",
++                    }
+                 cleanup = value
+                 atomic_json(directory / "local_memory.json", value)
+ 
+@@ -255,8 +266,8 @@ class NativeEpisode:
+         return {
+             "local_session": {
+                 "session_id": cleanup["session_id"],
+-                "episode_id": first_local["episode_id"],
+-                "start_frontier": first_local["consumer_step"],
++                "episode_id": first_local["episode_id"] if client is not None else transactional.lease["episode_id"],
++                "start_frontier": first_local["consumer_step"] if client is not None else 0,
+                 "reset_ack": cleanup["reset_ok"],
+             },
+             "observation": observation,
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+index 281392d..429547a 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+@@ -63,9 +63,10 @@ class PolicyTransport:
+             transport=self.http,
+             batch_profile=True,
+             max_batch_size=settings["max_infer_batch_size"],
++            local_memory_mode=settings.get("local_memory_mode", "required"),
+         )
+         self.lease = self.client.bind_assignment(assignment)
+-        self.local = AssignedLocalMemoryClient(self.lease)
++        self.local = AssignedLocalMemoryClient(self.lease) if self.client.mode == "required" else None
+         self._failed, self._ended, self.replan = False, False, 0
+         self._last_delivered = -1
+         self._stop = threading.Event()
+@@ -90,7 +91,12 @@ class PolicyTransport:
+             return _Response({"local_memory": {"status": "reset", "session_id": self.lease["session_id"]}})
+         if self._failed or self._ended:
+             raise RuntimeError("failed/closed Episode requires explicit End and new Attempt")
+-        frontier = json.get("local_memory", {}).get("consumer_step")
++        if self.client.mode == "off":
++            if "local_memory" in json or "inference" in json:
++                raise ValueError("No-TTT native payload cannot supply Local or transaction ownership")
++            frontier = self.replan
++        else:
++            frontier = json.get("local_memory", {}).get("consumer_step")
+         if type(frontier) is not int or frontier <= self._last_delivered:
+             self._failed = True
+             raise ValueError("native Episode cannot execute a delivered frontier twice")
+@@ -100,6 +106,12 @@ class PolicyTransport:
+             raise TimeoutError("original Episode deadline exhausted")
+         self.client.timeout_s = min(timeout, self.settings["predict_timeout_s"], remaining)
+         record = dict(json)
++        if self.client.mode == "off":
++            record["inference"] = {
++                "session_id": self.lease["session_id"],
++                "episode_id": self.lease["episode_id"],
++                "request_index": frontier,
++            }
+         mode = self.settings.get("save_generated_video", "none")
+         if mode == "all" or (mode == "first" and self.replan == 0):
+             record["media"] = {"replan": self.replan}
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index 23a940d..6151702 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -63,6 +63,7 @@ def serve(channel, cfg, *, factory=None):
+                 "pid": os.getpid(),
+                 "physical_slot_id": cfg["physical_slot_id"],
+                 "state": slot.state,
++                "local_memory_mode": cfg["settings"].get("local_memory_mode", "required"),
+                 "runtime_digest": runtime["digest"] if factory is None else "CPU_TEST_FACTORY",
+             },
+         )

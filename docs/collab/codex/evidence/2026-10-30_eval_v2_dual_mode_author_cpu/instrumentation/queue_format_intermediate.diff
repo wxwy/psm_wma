@@ -1,0 +1,255 @@
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index b7b1435e..17e11d4d 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -26,7 +26,9 @@ from robocasa_processes import (
+     EvaluationInterrupted,
+ )
+ from robocasa_processes import OwnedProcess as OwnedProcess
+-from robocasa_vendor import build_verified_evaluation_identity as build_verified_evaluation_identity
++from robocasa_vendor import (
++    build_verified_evaluation_identity as build_verified_evaluation_identity,
++)
+ from v3_evaluation_identity import (
+     sha256_file as sha256_file,
+ )
+@@ -45,17 +47,31 @@ def _read_json(url: str, timeout: float = 5.0) -> dict[str, Any]:
+         return json.loads(response.read().decode("utf-8"))
+ 
+ 
+-def discover_task_datasets(dataset_root: Path, expected_tasks: int | None = None) -> list[tuple[str, Path]]:
++def discover_task_datasets(
++    dataset_root: Path, expected_tasks: int | None = None
++) -> list[tuple[str, Path]]:
+     """Discover one eval LeRobot dir per underlying RoboCasa task via dataset_meta env_name."""
+     mapping: dict[str, Path] = {}
+     for meta in sorted(dataset_root.glob("**/extras/dataset_meta.json")):
+         try:
+             payload = json.loads(meta.read_text(encoding="utf-8"))
+             env_name = payload["env_args"]["env_name"]
+-            if not isinstance(env_name, str) or not env_name.isidentifier() or env_name == "all":
++            if (
++                not isinstance(env_name, str)
++                or not env_name.isidentifier()
++                or env_name == "all"
++            ):
+                 raise ValueError("invalid underlying task class")
+-        except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+-            raise ValueError(f"invalid RoboCasa dataset metadata: {meta}: {error}") from error
++        except (
++            OSError,
++            KeyError,
++            TypeError,
++            ValueError,
++            json.JSONDecodeError,
++        ) as error:
++            raise ValueError(
++                f"invalid RoboCasa dataset metadata: {meta}: {error}"
++            ) from error
+         lerobot = meta.parent.parent.resolve()
+         previous = mapping.get(env_name)
+         if previous is not None and previous != lerobot:
+@@ -78,7 +94,9 @@ def require_free_ports(ports: list[int]) -> None:
+         for port in ports:
+             if type(port) is not int or not 1 <= port <= 65535:
+                 raise ValueError(f"invalid action server port: {port}")
+-            listener = stack.enter_context(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
++            listener = stack.enter_context(
++                socket.socket(socket.AF_INET, socket.SOCK_STREAM)
++            )
+             # Match ThreadingHTTPServer: a stopped owned server can leave
+             # TIME_WAIT sockets. This never permits binding an active listener.
+             listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+@@ -86,38 +104,65 @@ def require_free_ports(ports: list[int]) -> None:
+                 listener.bind(("0.0.0.0", port))
+                 listener.listen(1)
+             except OSError as error:
+-                raise RuntimeError(f"action server port {port} unavailable: {error}") from error
++                raise RuntimeError(
++                    f"action server port {port} unavailable: {error}"
++                ) from error
+ 
+ 
+-def validate_server_info(info: Any, *, checkpoint: Path, config_file: Path, num_steps: int, guidance: float) -> None:
++def validate_server_info(
++    info: Any,
++    *,
++    checkpoint: Path,
++    config_file: Path,
++    num_steps: int,
++    guidance: float,
++    local_memory_mode="required",
++) -> None:
+     """Validate the effective server configuration, not just HTTP readiness."""
+     if not isinstance(info, dict):
+         raise ValueError("action server /info must be an object")
+     # CLI/manifest retain the requested root; the Child reports its selected model DCP.
+-    for name, expected in (("checkpoint", (checkpoint / "model").resolve()), ("config_file", config_file)):
++    for name, expected in (
++        ("checkpoint", (checkpoint / "model").resolve()),
++        ("config_file", config_file),
++    ):
+         value = info.get(name)
+-        if not isinstance(value, str) or not Path(value).is_absolute() or Path(value).resolve() != expected:
+-            raise ValueError(f"action server {name} mismatch: expected {expected}, got {value!r}")
++        if (
++            not isinstance(value, str)
++            or not Path(value).is_absolute()
++            or Path(value).resolve() != expected
++        ):
++            raise ValueError(
++                f"action server {name} mismatch: expected {expected}, got {value!r}"
++            )
+     for name, expected in (
+         ("raw_action_dim", 15),
+         ("action_chunk_size", 16),
+         ("max_action_dim", 64),
+         ("num_steps", num_steps),
+         ("fps", 20),
+-        ("seed", 0),  # Policy sampler default; --seed on this queue is the environment seed.
++        (
++            "seed",
++            0,
++        ),  # Policy sampler default; --seed on this queue is the environment seed.
+     ):
+         if type(info.get(name)) is not int or info[name] != expected:
+-            raise ValueError(f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}")
++            raise ValueError(
++                f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}"
++            )
+     if type(info.get("guidance")) not in (int, float) or info["guidance"] != guidance:
+         raise ValueError("action server guidance mismatch")
+     local = info.get("local_memory")
+     if (
+         info.get("requires_state") is not True
+         or not isinstance(local, dict)
+-        or local.get("enabled") is not True
+-        or local.get("mode") != "required"
+-        or type(local.get("action_dim")) is not int
+-        or local["action_dim"] != 15
++        or local_memory_mode not in ("off", "required")
++        or local.get("enabled") is not (local_memory_mode == "required")
++        or local.get("mode") != local_memory_mode
++        or (
++            local_memory_mode == "required"
++            and (type(local.get("action_dim")) is not int or local["action_dim"] != 15)
++        )
+     ):
+         raise ValueError("action server state/required Local-TTT protocol mismatch")
+ 
+@@ -147,7 +192,9 @@ def require_owned_listener(proc: subprocess.Popen, port: int) -> None:
+             ):
+                 return
+     except (OSError, ValueError, IndexError) as error:
+-        raise RuntimeError(f"cannot verify action server pid {proc.pid} owns port {port}: {error}") from error
++        raise RuntimeError(
++            f"cannot verify action server pid {proc.pid} owns port {port}: {error}"
++        ) from error
+     raise RuntimeError(f"action server pid {proc.pid} does not own port {port}")
+ 
+ 
+@@ -161,6 +208,7 @@ def wait_server(
+     num_steps: int,
+     guidance: float,
+     stop: threading.Event | None = None,
++    local_memory_mode="required",
+ ) -> dict[str, Any]:
+     deadline = time.monotonic() + timeout
+     url = f"http://127.0.0.1:{port}/info"
+@@ -169,9 +217,13 @@ def wait_server(
+         if stop is not None and stop.is_set():
+             raise EvaluationInterrupted("evaluation cancelled during server startup")
+         if proc.poll() is not None:
+-            raise RuntimeError(f"action server exited early with code {proc.returncode}")
++            raise RuntimeError(
++                f"action server exited early with code {proc.returncode}"
++            )
+         try:
+-            info = _read_json(url, timeout=min(5.0, max(0.001, deadline - time.monotonic())))
++            info = _read_json(
++                url, timeout=min(5.0, max(0.001, deadline - time.monotonic()))
++            )
+         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
+             last_error = error
+             time.sleep(min(0.1, max(0.0, deadline - time.monotonic())))
+@@ -182,17 +234,24 @@ def wait_server(
+             config_file=config_file,
+             num_steps=num_steps,
+             guidance=guidance,
++            local_memory_mode=local_memory_mode,
+         )
+         require_owned_listener(proc, port)
+         if proc.poll() is not None:
+-            raise RuntimeError(f"action server exited during identity verification with code {proc.returncode}")
++            raise RuntimeError(
++                f"action server exited during identity verification with code {proc.returncode}"
++            )
+         return info
+-    raise RuntimeError(f"action server {port} not ready before timeout; last_error={last_error!r}")
++    raise RuntimeError(
++        f"action server {port} not ready before timeout; last_error={last_error!r}"
++    )
+ 
+ 
+ def atomic_write_json(path: Path, value: Any) -> None:
+     temporary = path.with_suffix(path.suffix + ".tmp")
+-    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
++    temporary.write_text(
++        json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
++    )
+     os.replace(temporary, path)
+ 
+ 
+@@ -200,9 +259,13 @@ def task_video_files(output_dir: Path) -> dict[str, list[str]]:
+     """Classify actual artifacts, including partial videos without complete results."""
+     files = [path for path in output_dir.glob("rollout*.mp4") if path.is_file()]
+     return {
+-        "rollout_mp4s": sorted(str(path) for path in files if re.fullmatch(r"rollout\d+\.mp4", path.name)),
++        "rollout_mp4s": sorted(
++            str(path) for path in files if re.fullmatch(r"rollout\d+\.mp4", path.name)
++        ),
+         "generated_mp4s": sorted(
+-            str(path) for path in files if re.fullmatch(r"rollout\d+_generated(?:_replan\d+)?\.mp4", path.name)
++            str(path)
++            for path in files
++            if re.fullmatch(r"rollout\d+_generated(?:_replan\d+)?\.mp4", path.name)
+         ),
+     }
+ 
+@@ -243,7 +306,9 @@ def task_result(
+ 
+ def launch_environment(cache: Path) -> dict[str, str]:
+     env = os.environ.copy()
+-    env["PYTHONPATH"] = str(CHILD) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
++    env["PYTHONPATH"] = str(CHILD) + (
++        os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else ""
++    )
+     env["PYTHONDONTWRITEBYTECODE"] = "1"
+     env["MUJOCO_GL"] = env.get("MUJOCO_GL", "egl")
+     # Native JIT/controller imports must never write caches into locked vendors.
+@@ -285,7 +350,13 @@ def server_argv(args, checkpoint: Path, config_file: Path, port: int) -> list[st
+ 
+ 
+ def simulator_argv(
+-    args, dataset_dir: Path, task_out: Path, port: int, run_digest: str, runtime_digest: str, task_names: list[str]
++    args,
++    dataset_dir: Path,
++    task_out: Path,
++    port: int,
++    run_digest: str,
++    runtime_digest: str,
++    task_names: list[str],
+ ) -> list[str]:
+     command = [
+         str(args.sim_python),
+@@ -355,7 +426,9 @@ def prepare(cache: Path) -> int:
+     # A single production admission path; no fallback to strict whole-Task Resume.
+     from robocasa_resume_cli import prepare_resume
+ 
+-    return prepare_resume(resolve(root=ROOT), cache, queue_api=SimpleNamespace(**globals()))
++    return prepare_resume(
++        resolve(root=ROOT), cache, queue_api=SimpleNamespace(**globals())
++    )
+ 
+ 
+ if __name__ == "__main__":

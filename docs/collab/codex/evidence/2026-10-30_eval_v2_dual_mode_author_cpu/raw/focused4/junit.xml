@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="47" time="46.893" timestamp="2026-10-30T11:56:11.917028+00:00" hostname="68036c4fdbac"><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-False-off]" time="0.057" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-False-required]" time="0.110" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-True-off]" time="0.075" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-True-required]" time="0.038" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[2-True-off]" time="1.077" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[2-True-required]" time="1.158" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_client_B2_lost_delivery_ACK_and_strict_mode_handshake[off]" time="0.224" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_client_B2_lost_delivery_ACK_and_strict_mode_handshake[required]" time="0.180" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[timeout-off]" time="0.035" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[timeout-required]" time="0.022" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[end-off]" time="0.031" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[end-required]" time="0.044" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[generation-off]" time="0.012" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[generation-required]" time="0.011" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_no_ttt_native_32_step_loop_uses_no_Local_client_and_Ends_common_Session" time="0.777" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]" time="0.023" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_small_DCP_inventory_and_config_must_match_selected_mode[required]" time="0.009" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[None-False]" time="0.008" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[None-True]" time="0.007" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[missing-False]" time="0.006" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[missing-True]" time="0.011" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[shape-False]" time="0.007" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[shape-True]" time="0.011" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_response_allocation_failure_before_commit_leaves_both_sessions_unpublished[off]" time="0.021" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_response_allocation_failure_before_commit_leaves_both_sessions_unpublished[required]" time="0.032" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off]" time="0.021"><failure message="ValueError: B1 transaction profile requires resolved raw15/state15/H16/K4/local32">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f763763d130&gt;
+mode = 'off', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+        from cosmos_framework.inference.args import OmniSetupArgs
+        from cosmos_framework.inference.common.args import ConfigFileType
+        from cosmos_framework.inference.robocasa_session_transactions_test import RealLocalModel
+    
+        model = RealLocalModel() if mode == "required" else nn.Module()
+        if mode == "off":
+            model.net = nn.Module()
+            model.net.weight = nn.Parameter(torch.zeros(1))
+        model.net.config = SimpleNamespace(local_memory_enabled=mode == "required")
+        model.config = SimpleNamespace(max_action_dim=64)
+        checkpoint = tmp_path / "checkpoint"
+        state = model.state_dict()
+        if mismatch:
+            if mode == "off":
+                state["net.local_memory_runtime.weight"] = torch.zeros(1)
+            else:
+                state = {key: value for key, value in state.items() if "local_memory_runtime" not in key}
+        save(state, checkpoint_id=checkpoint / "model")
+        config = {"model": {"config": {"local_memory_enabled": mode == "required"}}, "use_state": True}
+        setup = OmniSetupArgs.model_construct(
+            checkpoint_path=str(checkpoint),
+            use_ema_weights=False,
+            experiment="CPU fixture",
+            output_dir=tmp_path / "loader-output",
+            config_file="CPU fixture config",
+            config_file_type=ConfigFileType.YAML,
+        )
+        monkeypatch.setattr(
+            server.ActionServerArgs, "build_setup_overrides", lambda _: SimpleNamespace(build_setup=lambda: setup)
+        )
+        monkeypatch.setattr(server, "init_output_dir", lambda _: None)
+        monkeypatch.setattr(server, "disable_runtime_ema_for_frozen_config", lambda value: value)
+        monkeypatch.setattr(server, "maybe_init_distributed", lambda: None)
+        monkeypatch.setattr(server.torch.cuda, "is_available", lambda: True)
+        monkeypatch.setattr(server.torch.cuda, "device_count", lambda: 1)
+        monkeypatch.setattr(server.torch.distributed, "get_world_size", lambda: 1)
+        monkeypatch.setattr(server.OmniInference, "create", lambda _: SimpleNamespace(model=model, setup_args=setup))
+        monkeypatch.setattr(server, "_load_introspection_config_dict", lambda _: config)
+        token = tmp_path / "capability"
+        token.write_text("cpu-owner")
+        token.chmod(0o600)
+        args = server.ActionServerArgs.model_construct(
+            local_memory_mode=mode,
+            raw_action_dim=15,
+            action_chunk_size=16,
+            transaction_profile="batch",
+            transaction_slot_ids="slot0,slot1",
+            local_memory_max_sessions=2,
+            transaction_max_batch_size=2,
+            transaction_owner_token_file=token,
+            transaction_run_lease="run",
+            transaction_manifest_digest="a" * 64,
+        )
+        if mismatch:
+            with pytest.raises(ValueError, match="inventory"):
+                server.ActionModelService(args)
+        else:
+&gt;           obj = server.ActionModelService(args)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:412: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7f763763d700&gt;
+args = ActionServerArgs(checkpoint=CheckpointOverrides(config_file='cosmos_framework/configs/base/config.py', config_file_typ...pt_as_json=None, dump_dir=None, dump_every=1, host='0.0.0.0', port=8000, http_400_on_error=False, run_validation=False)
+
+    def __init__(self, args: ActionServerArgs) -&gt; None:
+        transaction_options = _transaction_options(args)
+        self.transactions = None
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is required for OmniMoTModel inference in this repo.")
+        if transaction_options is not None and torch.cuda.device_count() != 1:
+            raise ValueError("B1 transaction increment requires exactly one visible model GPU")
+    
+        # OmniInference internally calls into FSDP / DTensor parallelize utilities
+        # that expect a process group; create a single-rank PG when not under
+        # torchrun (init_script() only inits the PG when WORLD_SIZE&gt;1).
+        maybe_init_distributed()
+        if transaction_options is not None and torch.distributed.get_world_size() != 1:
+            raise ValueError("B1 transaction increment requires a single-rank model owner")
+    
+        setup_overrides = args.build_setup_overrides()
+        setup_args = setup_overrides.build_setup()
+        init_output_dir(setup_args.output_dir)
+        setup_args = disable_runtime_ema_for_frozen_config(setup_args)
+    
+        # Surface the resolved max_action_dim into the experiment config when
+        # the user explicitly overrode it on the CLI; matches the previous
+        # ``experiment_opts=[f"model.config.max_action_dim={...}"]`` plumbing.
+        if args.max_action_dim is not None:
+            setup_args.experiment_overrides = [
+                *setup_args.experiment_overrides,
+                f"model.config.max_action_dim={int(args.max_action_dim)}",
+            ]
+    
+        log.info(
+            f"[action-server] loading model: config_file='{setup_args.config_file}' "
+            f"({setup_args.config_file_type}) experiment='{setup_args.experiment}' "
+            f"checkpoint_path='{setup_args.checkpoint_path}'"
+        )
+    
+        # OmniInference dispatches between MODULE (.py) and YAML/JSON loaders.
+        pipe = OmniInference.create(setup_args)
+        self.pipe: OmniInference = pipe
+        self.model = pipe.model
+        self.model.eval()
+        # OmniInference always uses OmniSetupArgs at runtime, but the base class
+        # types the attribute as the more general SetupArgs.
+        assert isinstance(pipe.setup_args, OmniSetupArgs)
+        self.setup_args: OmniSetupArgs = pipe.setup_args
+        self.experiment_config: dict = _load_introspection_config_dict(self.setup_args)
+        if transaction_options is not None:
+            from cosmos_framework.inference.robocasa_transaction_mode import validate_model_mode
+    
+            validate_model_mode(
+                self.model,
+                self.experiment_config,
+                self.setup_args.checkpoint_path,
+                args.local_memory_mode,
+                use_ema_weights=(
+                    self.setup_args.config_file_type == ConfigFileType.MODULE and self.setup_args.use_ema_weights
+                ),
+            )
+    
+        # Resolve action_chunk_size: CLI arg &gt; experiment config &gt; default.
+        if args.action_chunk_size is not None:
+            resolved_chunk_size = int(args.action_chunk_size)
+        else:
+            config_chunk = _extract_chunk_length_from_config(self.experiment_config)
+            if config_chunk is not None:
+                resolved_chunk_size = config_chunk
+                log.info(
+                    f"[action-server] --action-chunk-size not specified, "
+                    f"using chunk_length={resolved_chunk_size} from experiment config"
+                )
+            else:
+                resolved_chunk_size = _DEFAULT_ACTION_CHUNK_SIZE
+                log.info(
+                    f"[action-server] --action-chunk-size not specified and not found in experiment config, "
+                    f"using default={resolved_chunk_size}"
+                )
+    
+        # Resolve max_action_dim: CLI &gt; model config &gt; default (64).
+        if args.max_action_dim is not None:
+            resolved_max_action_dim = int(args.max_action_dim)
+        else:
+            model_max_action_dim = getattr(self.model.config, "max_action_dim", None)
+            if isinstance(model_max_action_dim, int):
+                resolved_max_action_dim = model_max_action_dim
+                log.info(
+                    f"[action-server] --max-action-dim not specified, "
+                    f"using max_action_dim={resolved_max_action_dim} from model config"
+                )
+            else:
+                resolved_max_action_dim = 64
+                log.info(
+                    f"[action-server] --max-action-dim not specified and not found in model config, "
+                    f"using default={resolved_max_action_dim}"
+                )
+    
+        self.cfg = ActionServerConfig(
+            seed=int(args.seed),
+            guidance=float(args.guidance),
+            num_steps=int(args.num_steps),
+            fps=int(args.fps),
+            action_chunk_size=resolved_chunk_size,
+            max_action_dim=resolved_max_action_dim,
+            raw_action_dim=int(args.raw_action_dim) if args.raw_action_dim is not None else None,
+            dump_dir=args.dump_dir,
+            dump_every=int(args.dump_every),
+            http_400_on_error=bool(args.http_400_on_error),
+            action_stats_path=args.action_stats_path,
+            action_normalization=args.action_normalization,
+            experiment_name=setup_args.experiment or "",
+            checkpoint_dir=setup_args.checkpoint_path,
+        )
+    
+        self._lock = threading.Lock()
+        self._req_id_lock = threading.Lock()
+        self._req_id = 0
+    
+        # Whether the checkpoint was trained with proprioception prepended as a clean
+        # conditioning action frame. A request must then carry "state": serving such a model
+        # without it does not raise anywhere downstream, it just drops a conditioning signal
+        # the policy depends on, so the mismatch is rejected explicitly in _prep_policy_item.
+        self.requires_state = _extract_bool_from_config(self.experiment_config, "use_state", default=False)
+        if self.requires_state:
+            log.info("[action-server] checkpoint trained with use_state=True; requests must carry 'state'")
+    
+        self.append_duration_fps = _extract_bool_from_config(
+            self.experiment_config, "append_duration_fps", default=True
+        )
+        self.append_resolution_info = _extract_bool_from_config(
+            self.experiment_config, "append_resolution_info", default=True
+        )
+        # When the experiment trains with format_prompt_as_json=True, the caption is a
+        # structured JSON dict (ActionPromptJsonFormatter) and the legacy string appenders
+        # are skipped. Mirror that at serve time so the prompt format matches training. The
+        # CLI flag overrides the config when the eval experiment differs from the checkpoint.
+        if args.format_prompt_as_json is not None:
+            self.format_prompt_as_json = bool(args.format_prompt_as_json)
+        else:
+            self.format_prompt_as_json = _extract_bool_from_config(
+                self.experiment_config, "format_prompt_as_json", default=False
+            )
+        self._prompt_json_formatter = (
+            ActionPromptJsonFormatter(caption_key="ai_caption") if self.format_prompt_as_json else None
+        )
+        log.info(
+            f"[action-server] prompt augmentation: "
+            f"append_duration_fps={self.append_duration_fps}, append_resolution_info={self.append_resolution_info}, "
+            f"format_prompt_as_json={self.format_prompt_as_json}"
+        )
+    
+        # Action denormalization stats.
+        self.action_min: torch.Tensor | None = None
+        self.action_range: torch.Tensor | None = None
+        self.action_mean: torch.Tensor | None = None
+        self.action_std: torch.Tensor | None = None
+        self.action_normalization: ResolvedActionNormalization = "minmax"
+        # Effective action width: --raw-action-dim &gt; action stats &gt; experiment config.
+        # There is no default: guessing a width silently produces a server whose
+        # /predict rejects every request from a correctly configured evaluator, and the
+        # error surfaces far from its cause.
+        self.raw_action_dim: int | None = self.cfg.raw_action_dim
+        self.raw_action_dim_source = "--raw-action-dim" if self.raw_action_dim is not None else ""
+        self._load_action_normalization_stats()
+        if self.raw_action_dim is not None and not self.raw_action_dim_source:
+            self.raw_action_dim_source = "action stats"
+        if self.raw_action_dim is None:
+            self.raw_action_dim = _extract_raw_action_dim_from_config(self.experiment_config)
+            self.raw_action_dim_source = "experiment config"
+        if self.raw_action_dim is None:
+            raise ValueError(
+                "could not determine the action width: the experiment config carries no RoboCasa "
+                "dataset node to read use_base_action/base_encoding from, and no action stats were "
+                "given. Pass --raw-action-dim explicitly (15 for the default recipe: "
+                "use_base_action=True, base_encoding='raw')."
+            )
+        log.info(f"[action-server] effective raw_action_dim={self.raw_action_dim} (from {self.raw_action_dim_source})")
+        if args.local_memory_mode == "required":
+            if self.raw_action_dim != 15:
+                raise ValueError("required V3 RoboCasa Local-TTT needs raw_action_dim=15")
+            if not self.requires_state:
+                raise ValueError("required V3 RoboCasa Local-TTT formal checkpoint must use_state=True")
+        self.local_memory_adapter = RoboCasaLocalMemoryPolicyAdapter(
+            self,
+            mode=args.local_memory_mode,
+            decode_image=lambda value: _decode_base64_png_to_rgb_uint8(value),
+            max_sessions=int(args.local_memory_max_sessions),
+        )
+        log.info(f"[action-server] local_memory={self.local_memory_adapter.info()}")
+        if transaction_options is not None:
+            if (
+                self.cfg.action_chunk_size != 16
+                or self.raw_action_dim != 15
+                or not self.requires_state
+                or (
+                    args.local_memory_mode == "required"
+                    and (
+                        self.local_memory_adapter.info()["k_local"] != 4
+                        or self.local_memory_adapter.info()["local_dim"] != 32
+                    )
+                )
+            ):
+&gt;               raise ValueError("B1 transaction profile requires resolved raw15/state15/H16/K4/local32")
+E               ValueError: B1 transaction profile requires resolved raw15/state15/H16/K4/local32
+
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:929: ValueError</failure></testcase><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required]" time="0.014"><failure message="ValueError: required V3 RoboCasa Local-TTT formal checkpoint must use_state=True">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f763750cce0&gt;
+mode = 'required', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+        from cosmos_framework.inference.args import OmniSetupArgs
+        from cosmos_framework.inference.common.args import ConfigFileType
+        from cosmos_framework.inference.robocasa_session_transactions_test import RealLocalModel
+    
+        model = RealLocalModel() if mode == "required" else nn.Module()
+        if mode == "off":
+            model.net = nn.Module()
+            model.net.weight = nn.Parameter(torch.zeros(1))
+        model.net.config = SimpleNamespace(local_memory_enabled=mode == "required")
+        model.config = SimpleNamespace(max_action_dim=64)
+        checkpoint = tmp_path / "checkpoint"
+        state = model.state_dict()
+        if mismatch:
+            if mode == "off":
+                state["net.local_memory_runtime.weight"] = torch.zeros(1)
+            else:
+                state = {key: value for key, value in state.items() if "local_memory_runtime" not in key}
+        save(state, checkpoint_id=checkpoint / "model")
+        config = {"model": {"config": {"local_memory_enabled": mode == "required"}}, "use_state": True}
+        setup = OmniSetupArgs.model_construct(
+            checkpoint_path=str(checkpoint),
+            use_ema_weights=False,
+            experiment="CPU fixture",
+            output_dir=tmp_path / "loader-output",
+            config_file="CPU fixture config",
+            config_file_type=ConfigFileType.YAML,
+        )
+        monkeypatch.setattr(
+            server.ActionServerArgs, "build_setup_overrides", lambda _: SimpleNamespace(build_setup=lambda: setup)
+        )
+        monkeypatch.setattr(server, "init_output_dir", lambda _: None)
+        monkeypatch.setattr(server, "disable_runtime_ema_for_frozen_config", lambda value: value)
+        monkeypatch.setattr(server, "maybe_init_distributed", lambda: None)
+        monkeypatch.setattr(server.torch.cuda, "is_available", lambda: True)
+        monkeypatch.setattr(server.torch.cuda, "device_count", lambda: 1)
+        monkeypatch.setattr(server.torch.distributed, "get_world_size", lambda: 1)
+        monkeypatch.setattr(server.OmniInference, "create", lambda _: SimpleNamespace(model=model, setup_args=setup))
+        monkeypatch.setattr(server, "_load_introspection_config_dict", lambda _: config)
+        token = tmp_path / "capability"
+        token.write_text("cpu-owner")
+        token.chmod(0o600)
+        args = server.ActionServerArgs.model_construct(
+            local_memory_mode=mode,
+            raw_action_dim=15,
+            action_chunk_size=16,
+            transaction_profile="batch",
+            transaction_slot_ids="slot0,slot1",
+            local_memory_max_sessions=2,
+            transaction_max_batch_size=2,
+            transaction_owner_token_file=token,
+            transaction_run_lease="run",
+            transaction_manifest_digest="a" * 64,
+        )
+        if mismatch:
+            with pytest.raises(ValueError, match="inventory"):
+                server.ActionModelService(args)
+        else:
+&gt;           obj = server.ActionModelService(args)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:412: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7f763760fd10&gt;
+args = ActionServerArgs(checkpoint=CheckpointOverrides(config_file='cosmos_framework/configs/base/config.py', config_file_typ...pt_as_json=None, dump_dir=None, dump_every=1, host='0.0.0.0', port=8000, http_400_on_error=False, run_validation=False)
+
+    def __init__(self, args: ActionServerArgs) -&gt; None:
+        transaction_options = _transaction_options(args)
+        self.transactions = None
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is required for OmniMoTModel inference in this repo.")
+        if transaction_options is not None and torch.cuda.device_count() != 1:
+            raise ValueError("B1 transaction increment requires exactly one visible model GPU")
+    
+        # OmniInference internally calls into FSDP / DTensor parallelize utilities
+        # that expect a process group; create a single-rank PG when not under
+        # torchrun (init_script() only inits the PG when WORLD_SIZE&gt;1).
+        maybe_init_distributed()
+        if transaction_options is not None and torch.distributed.get_world_size() != 1:
+            raise ValueError("B1 transaction increment requires a single-rank model owner")
+    
+        setup_overrides = args.build_setup_overrides()
+        setup_args = setup_overrides.build_setup()
+        init_output_dir(setup_args.output_dir)
+        setup_args = disable_runtime_ema_for_frozen_config(setup_args)
+    
+        # Surface the resolved max_action_dim into the experiment config when
+        # the user explicitly overrode it on the CLI; matches the previous
+        # ``experiment_opts=[f"model.config.max_action_dim={...}"]`` plumbing.
+        if args.max_action_dim is not None:
+            setup_args.experiment_overrides = [
+                *setup_args.experiment_overrides,
+                f"model.config.max_action_dim={int(args.max_action_dim)}",
+            ]
+    
+        log.info(
+            f"[action-server] loading model: config_file='{setup_args.config_file}' "
+            f"({setup_args.config_file_type}) experiment='{setup_args.experiment}' "
+            f"checkpoint_path='{setup_args.checkpoint_path}'"
+        )
+    
+        # OmniInference dispatches between MODULE (.py) and YAML/JSON loaders.
+        pipe = OmniInference.create(setup_args)
+        self.pipe: OmniInference = pipe
+        self.model = pipe.model
+        self.model.eval()
+        # OmniInference always uses OmniSetupArgs at runtime, but the base class
+        # types the attribute as the more general SetupArgs.
+        assert isinstance(pipe.setup_args, OmniSetupArgs)
+        self.setup_args: OmniSetupArgs = pipe.setup_args
+        self.experiment_config: dict = _load_introspection_config_dict(self.setup_args)
+        if transaction_options is not None:
+            from cosmos_framework.inference.robocasa_transaction_mode import validate_model_mode
+    
+            validate_model_mode(
+                self.model,
+                self.experiment_config,
+                self.setup_args.checkpoint_path,
+                args.local_memory_mode,
+                use_ema_weights=(
+                    self.setup_args.config_file_type == ConfigFileType.MODULE and self.setup_args.use_ema_weights
+                ),
+            )
+    
+        # Resolve action_chunk_size: CLI arg &gt; experiment config &gt; default.
+        if args.action_chunk_size is not None:
+            resolved_chunk_size = int(args.action_chunk_size)
+        else:
+            config_chunk = _extract_chunk_length_from_config(self.experiment_config)
+            if config_chunk is not None:
+                resolved_chunk_size = config_chunk
+                log.info(
+                    f"[action-server] --action-chunk-size not specified, "
+                    f"using chunk_length={resolved_chunk_size} from experiment config"
+                )
+            else:
+                resolved_chunk_size = _DEFAULT_ACTION_CHUNK_SIZE
+                log.info(
+                    f"[action-server] --action-chunk-size not specified and not found in experiment config, "
+                    f"using default={resolved_chunk_size}"
+                )
+    
+        # Resolve max_action_dim: CLI &gt; model config &gt; default (64).
+        if args.max_action_dim is not None:
+            resolved_max_action_dim = int(args.max_action_dim)
+        else:
+            model_max_action_dim = getattr(self.model.config, "max_action_dim", None)
+            if isinstance(model_max_action_dim, int):
+                resolved_max_action_dim = model_max_action_dim
+                log.info(
+                    f"[action-server] --max-action-dim not specified, "
+                    f"using max_action_dim={resolved_max_action_dim} from model config"
+                )
+            else:
+                resolved_max_action_dim = 64
+                log.info(
+                    f"[action-server] --max-action-dim not specified and not found in model config, "
+                    f"using default={resolved_max_action_dim}"
+                )
+    
+        self.cfg = ActionServerConfig(
+            seed=int(args.seed),
+            guidance=float(args.guidance),
+            num_steps=int(args.num_steps),
+            fps=int(args.fps),
+            action_chunk_size=resolved_chunk_size,
+            max_action_dim=resolved_max_action_dim,
+            raw_action_dim=int(args.raw_action_dim) if args.raw_action_dim is not None else None,
+            dump_dir=args.dump_dir,
+            dump_every=int(args.dump_every),
+            http_400_on_error=bool(args.http_400_on_error),
+            action_stats_path=args.action_stats_path,
+            action_normalization=args.action_normalization,
+            experiment_name=setup_args.experiment or "",
+            checkpoint_dir=setup_args.checkpoint_path,
+        )
+    
+        self._lock = threading.Lock()
+        self._req_id_lock = threading.Lock()
+        self._req_id = 0
+    
+        # Whether the checkpoint was trained with proprioception prepended as a clean
+        # conditioning action frame. A request must then carry "state": serving such a model
+        # without it does not raise anywhere downstream, it just drops a conditioning signal
+        # the policy depends on, so the mismatch is rejected explicitly in _prep_policy_item.
+        self.requires_state = _extract_bool_from_config(self.experiment_config, "use_state", default=False)
+        if self.requires_state:
+            log.info("[action-server] checkpoint trained with use_state=True; requests must carry 'state'")
+    
+        self.append_duration_fps = _extract_bool_from_config(
+            self.experiment_config, "append_duration_fps", default=True
+        )
+        self.append_resolution_info = _extract_bool_from_config(
+            self.experiment_config, "append_resolution_info", default=True
+        )
+        # When the experiment trains with format_prompt_as_json=True, the caption is a
+        # structured JSON dict (ActionPromptJsonFormatter) and the legacy string appenders
+        # are skipped. Mirror that at serve time so the prompt format matches training. The
+        # CLI flag overrides the config when the eval experiment differs from the checkpoint.
+        if args.format_prompt_as_json is not None:
+            self.format_prompt_as_json = bool(args.format_prompt_as_json)
+        else:
+            self.format_prompt_as_json = _extract_bool_from_config(
+                self.experiment_config, "format_prompt_as_json", default=False
+            )
+        self._prompt_json_formatter = (
+            ActionPromptJsonFormatter(caption_key="ai_caption") if self.format_prompt_as_json else None
+        )
+        log.info(
+            f"[action-server] prompt augmentation: "
+            f"append_duration_fps={self.append_duration_fps}, append_resolution_info={self.append_resolution_info}, "
+            f"format_prompt_as_json={self.format_prompt_as_json}"
+        )
+    
+        # Action denormalization stats.
+        self.action_min: torch.Tensor | None = None
+        self.action_range: torch.Tensor | None = None
+        self.action_mean: torch.Tensor | None = None
+        self.action_std: torch.Tensor | None = None
+        self.action_normalization: ResolvedActionNormalization = "minmax"
+        # Effective action width: --raw-action-dim &gt; action stats &gt; experiment config.
+        # There is no default: guessing a width silently produces a server whose
+        # /predict rejects every request from a correctly configured evaluator, and the
+        # error surfaces far from its cause.
+        self.raw_action_dim: int | None = self.cfg.raw_action_dim
+        self.raw_action_dim_source = "--raw-action-dim" if self.raw_action_dim is not None else ""
+        self._load_action_normalization_stats()
+        if self.raw_action_dim is not None and not self.raw_action_dim_source:
+            self.raw_action_dim_source = "action stats"
+        if self.raw_action_dim is None:
+            self.raw_action_dim = _extract_raw_action_dim_from_config(self.experiment_config)
+            self.raw_action_dim_source = "experiment config"
+        if self.raw_action_dim is None:
+            raise ValueError(
+                "could not determine the action width: the experiment config carries no RoboCasa "
+                "dataset node to read use_base_action/base_encoding from, and no action stats were "
+                "given. Pass --raw-action-dim explicitly (15 for the default recipe: "
+                "use_base_action=True, base_encoding='raw')."
+            )
+        log.info(f"[action-server] effective raw_action_dim={self.raw_action_dim} (from {self.raw_action_dim_source})")
+        if args.local_memory_mode == "required":
+            if self.raw_action_dim != 15:
+                raise ValueError("required V3 RoboCasa Local-TTT needs raw_action_dim=15")
+            if not self.requires_state:
+&gt;               raise ValueError("required V3 RoboCasa Local-TTT formal checkpoint must use_state=True")
+E               ValueError: required V3 RoboCasa Local-TTT formal checkpoint must use_state=True
+
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:908: ValueError</failure></testcase><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-off]" time="0.008" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-required]" time="0.010" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_required_Local_commit_validation_failure_cannot_publish_common_responses" time="0.024" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_NoTTT_public_admission_rejects_foreign_or_fake_Local_frontier[foreign_session]" time="0.002" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_NoTTT_public_admission_rejects_foreign_or_fake_Local_frontier[foreign_episode]" time="0.004" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_NoTTT_public_admission_rejects_foreign_or_fake_Local_frontier[gap]" time="0.005" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_NoTTT_public_admission_rejects_foreign_or_fake_Local_frontier[boolean]" time="0.006" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_NoTTT_public_admission_rejects_foreign_or_fake_Local_frontier[Local_payload]" time="0.010" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_public_CLI_Fresh_Resume_immutable_mode_identity[off]" time="0.590" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_public_CLI_Fresh_Resume_immutable_mode_identity[required]" time="0.664" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[None]" time="0.065" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[auto]" time="0.056" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[True]" time="0.065" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[none]" time="0.071" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup" time="20.698" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_NoTTT_Core_commit_and_read_reject_wrong_mode_or_unproven_Session[protocol]" time="0.118" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_NoTTT_Core_commit_and_read_reject_wrong_mode_or_unproven_Session[assignment]" time="0.102" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_NoTTT_Core_commit_and_read_reject_wrong_mode_or_unproven_Session[Local_status]" time="0.117" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_NoTTT_Core_commit_and_read_reject_wrong_mode_or_unproven_Session[Local_action]" time="0.112" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_NoTTT_Core_commit_and_read_reject_wrong_mode_or_unproven_Session[End]" time="0.103" /></testsuite></testsuites>

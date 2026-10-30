@@ -1,0 +1,222 @@
+{
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/__init__.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "18faa656ae020aeb3a871baa972821608c3ec491",
+    "sha256": "aae85e76952048eef305f518f716e2c6896ce4e1cb4f83a13c3bf6e574cc6a59"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/admission.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "207114b69b8358e0d2cd8835eb84728b8ad77c3f",
+    "sha256": "13027ca0a63eb3a13dcd2ef050a8e4570e4c6a054eb8c92c54da9b040caa9bf4"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "261e36365a4820c752806a3c57b7bce2101fe12a",
+    "sha256": "d3a82f2b2c325252172c820b99f55c5f89b81080673b6045ee89a250e5cf9baf"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "59e12dde8faf699a10df31f9508b78ebea0a9dc3",
+    "sha256": "a26ae95d7d342f4c6b7519dba8cc04538b2dc7bf53f094f818fc84d4977b3228"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/ffmpeg_guard.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "d13be2f3bc46b0bfd53d736508decf788f81d977",
+    "sha256": "25acb77d6ddbaa5820dea62ff0396028edd37bc2fcfe9d5f4f6abbd150d266bc"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/media.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "704039e490c9d9903b876ada278cbc1488d73622",
+    "sha256": "70b30aa5fd271f7da74933609ddc3f6378b10a997a46ee4e5d9c2fa6c856aaca"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/scheduler.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "332c648ffb9e5d9995bd097754f4edc434c90c84",
+    "sha256": "ca55b5ec1675b86af6f0cf1baa02d9a357c663a39eb6fb456aaca52ccbc2f975"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "b423ad8ffbd3711413e0a9f53dfb54e80f17e259",
+    "sha256": "509e88defff1709871ac15672089b92a8317b1f801e589d21608dc9e8acf32e9"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/wire.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "b280954dc94d852ab3c563d0c661d09851449109",
+    "sha256": "86ce78357031eb06d50d9c7ad8ec6a514a9be35c4c0502e1e2b782e88e1491b3"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "fef6b396bd85b1b64b4affffaaf23796c137781d",
+    "sha256": "ddc509a37bb783f646f62a8b54a0159227822d409c8d32b717add4f49ac34e75"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions_test.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "b12750c741adfe0ca265b13e6bf841f3d76e3656",
+    "sha256": "8b0d941067a763b0dbcc731afdb04af3cf90044f4b1193de1f73e4452bc4188c"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "f78ef0583663a3add229669b302b0485dbd1247c",
+    "sha256": "2d82af76b0991c54a7f37ba63bac8e4c6941f3d87f6d72036a2626e788b2b3f5"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "7231dee4a19135b15e25dbba89e8b3400e4f1cc8",
+    "sha256": "60d2886bdb061281993ce3439fea2afbf4739dc598f29467cefb36d43d293a74"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "70e955e3d52f5fff672e0dec7142fd994aae6ad6",
+    "sha256": "1c4d3380ffb02b49bffeedfa32591141cb9d3478fcecab26b8de70f3c3610cb8"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "75b654cf7fac15b828be91096319a7dd803644f9",
+    "sha256": "557725b4c8072f79f898e99e0e0a389019b893e5c08b182215b40dbd8444499e"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "2740e1bdd0cb15b3af59aeef6ce7c8aeaebec846",
+    "sha256": "28cf72ae308ec1fb126cf6982a21294a3796a8d90fb9c661e62729befbb1ae84"
+  },
+  "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "b47e30471f0bfaa95dba977fb247b8916cc9ebd8",
+    "sha256": "faa74bb9bbf93fe5e54a37c211259efc5b436c51ddd06c0df395b6b171d17007"
+  },
+  "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "8710b771d330b299e895c9d79b4bab71d49b6a19",
+    "sha256": "f1694c9ccd8f131af2146cd29e80159079682d4b652ed0ada81fdac06c073648"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "751c8551199ce7b6933c04542c74fb574e9ca38b",
+    "sha256": "76d697d5146f73f23f1e3b5d548887c770e897ba98bbe05e19a6d0aa8aa67d1b"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "429547a3c953606217f9209dad4dff1ec10523c0",
+    "sha256": "d568746d8550e647b3fc4c654276d4770f17a6a640dd58b83093b5fff46146c3"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "d22ee1c5043e6e1e19eafc2839376d522c99519e",
+    "sha256": "53cd4181ae01c7c7700ab0b258de6d9f0d8b970d2bb7e1f2f469f6851faf3f7e"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py": {
+    "commit": "2f7334c4ada6ace1d21185985aae90539052bf18",
+    "git_blob": "615170295f264f5def549f6116c3a9d40b494eee",
+    "sha256": "bcf8461aaf966b90def5a5e3e0b0e7105e823012dc1cbdc70294e52cb3367421"
+  },
+  "scripts/eval_robocasa_18task_queue.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "b69a860767cb9e6839281f661ff343a0c56012e1",
+    "sha256": "73724e8c96f82f597625792e4c0023552ae29fecdc83c61bf9728fbd4dec5fe9"
+  },
+  "scripts/robocasa_eval_v2/__init__.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "ce0fbb097d360a8214df58558cfe66f4aa47d467",
+    "sha256": "d59410eac8b8f5042db9d4817020f1a3cd66186c7d626071dc0d051cd698c683"
+  },
+  "scripts/robocasa_eval_v2/cli.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "8dded4895f63c2f9ef2ea48f9e3f2ae3f6c81ac4",
+    "sha256": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5"
+  },
+  "scripts/robocasa_eval_v2/config.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "714a76156c5542c846681c6bc31c91935e01c69e",
+    "sha256": "de1939d335c5df5d98d85fe253de7bec4e89702872531f33201845be788ecbb3"
+  },
+  "scripts/robocasa_eval_v2/identity.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "d1e471addba07ad413b6d947b1385ad54140b3c5",
+    "sha256": "826cc9ac307082b91f2979669ada9bbc4d17fc4f790f657fd73fc13fcd6301c0"
+  },
+  "scripts/robocasa_eval_v2/resources.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "b095a5367a48e474fb2dc57bbaea923b9ab91c2f",
+    "sha256": "622c97e741fef25850b9dcc6733e70dec690ac2ea3521e0114ec3e83ad4337dc"
+  },
+  "scripts/robocasa_eval_v2/runtime.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "a14987b65171a8ae958151bb4e0847c2970b0f08",
+    "sha256": "6277f268a88980b3f831fe027ae59becc6847e3c0d7ea6d1b3983b3a8731bced"
+  },
+  "tools/v3/eval_v2_batch_tests/__init__.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tools/v3/eval_v2_batch_tests/config_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "2159b26f13f00d05aec3af48e2990cb4513d8ec4",
+    "sha256": "1caa63bbd0a606886d7e6d874ee6bb8da37c92077b2eaaeb52cc5b74f6137db6"
+  },
+  "tools/v3/eval_v2_batch_tests/dual_mode_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "4ee4d76ed765351cee3dd6296e24f2cc1c180a89",
+    "sha256": "c908fccedaf5eeb1426a6a799e233f73de14e534de2772c0b585b2f1a1b59dc6"
+  },
+  "tools/v3/eval_v2_batch_tests/gate_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "5d910264fd36ddd35311d88d262df164b07ac95e",
+    "sha256": "e449edc6717c402cda988dc8b03eae58101060d563a3b97a8e28dd779bdda77a"
+  },
+  "tools/v3/eval_v2_batch_tests/os_fixture.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "f290c8bb5679807456f9b70163b6377de4e6be98",
+    "sha256": "d11d80ed9b07694a88b65e7ea0920f06749b7323634b64cd00763bffac64e0f3"
+  },
+  "tools/v3/eval_v2_batch_tests/runtime_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "3a5c82071d9ba7258962a236a93266253675a323",
+    "sha256": "71731881541654c8f7f1795504fdf91ee491935f78d7ef72a8117749e60cd8af"
+  },
+  "tools/v3/eval_v2_batch_tests/store_mkdir_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "a4e5a3d31ae740fd5ab1e379ea7dced8f4b41c64",
+    "sha256": "296897eb503ea53d66a4471e78acfebf0eb245332c1319c4174a5038b963f960"
+  },
+  "tools/v3/eval_v2_production_tests/contract_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "def93348b2058202963709cc6b94749e0653386f",
+    "sha256": "14c6e4b94c10c43b4a7e2b906fd3d8379d352ae2929014b5a0ab2989ad1a156c"
+  },
+  "tools/v3/eval_v2_production_tests/entry_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "5065d438cc020730b67d0dfbedd3067dc9e6dd52",
+    "sha256": "cec6b72766ffe9bf64ee119ee8b681a5420019ae2c0a1f624c8727bce689806c"
+  },
+  "tools/v3/eval_v2_production_tests/native_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "e85dd11d841084726952c24dd928b0af5af6779c",
+    "sha256": "ea9b0fc395c4f76ded3f04b6865eeb9ffcb9a3dff07dc7ed3cca04b3fd0a9389"
+  },
+  "tools/v3/eval_v2_production_tests/runtime_progress_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "372e4a3aca2987debbe24d48f974860639b7ea72",
+    "sha256": "e8a905f1829fbfa6f34136be8adcdd482002a0e14831bdf81b9ebf7e6c8cd73e"
+  },
+  "tools/v3/eval_v2_production_tests/slot_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "c2ad5702eb186340f5c9143345a282f1820edd2f",
+    "sha256": "b4aaf814751252356563836d7c878032e799a61a1d5890b8b20bdf1ad8931919"
+  },
+  "tools/v3/eval_v2_production_tests/slot_transport_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "5fc1e1f85ae191c4c1060adf23730948a57c959c",
+    "sha256": "7dcafd7598ce6fc14932b235324ad357ded019541413c98338858a1272f3e3b6"
+  },
+  "tools/v3/eval_v2_production_tests/store_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "7c9039ec8270b7dc69fa2120d1299a062322df67",
+    "sha256": "67e1157ef6d995cfd5b53ed7eceeed0e4b32aeee94a9ae5e2b65c5951ae49101"
+  },
+  "tools/v3/eval_v2_production_tests/worker_test.py": {
+    "commit": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "git_blob": "0f32641eff01cf50b48ad09b2a000574788ae591",
+    "sha256": "b8d9cd975d8166b916395a3a2636d4e6fd13f598b41ddfc7c34d7311ece7ec03"
+  }
+}

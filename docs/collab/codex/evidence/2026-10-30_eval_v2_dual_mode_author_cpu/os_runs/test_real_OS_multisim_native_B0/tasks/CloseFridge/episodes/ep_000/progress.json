@@ -1,0 +1,9 @@
+{
+  "event": "stage",
+  "stage": "predicting",
+  "max_steps": 32,
+  "steps": 16,
+  "predictions": 1,
+  "last_prediction_ms": 286.90156099764863,
+  "error": null
+}

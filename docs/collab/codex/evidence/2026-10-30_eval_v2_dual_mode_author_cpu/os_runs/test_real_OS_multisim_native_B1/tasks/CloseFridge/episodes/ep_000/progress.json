@@ -1,0 +1,9 @@
+{
+  "event": "stage",
+  "stage": "local_cleanup",
+  "max_steps": 32,
+  "steps": 32,
+  "predictions": 2,
+  "last_prediction_ms": 545.2184370005853,
+  "error": null
+}

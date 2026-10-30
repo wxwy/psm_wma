@@ -1,0 +1,13 @@
+{
+  "dropped": 0,
+  "errors": [],
+  "independent_of_SR": true,
+  "forced_encoder_cleanup": false,
+  "helper_pids": [],
+  "parent_errors": [],
+  "transaction_fetch": {
+    "predictions": {},
+    "errors": [],
+    "unquiesced": false
+  }
+}

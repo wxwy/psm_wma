@@ -1,0 +1,17 @@
+{
+  "physical_slot_id": "dcdfc6f7a0f641dea14919a6847181d6",
+  "attempt_id": "03eaeadadc25471bb166281799df5868",
+  "task": "CloseFridge",
+  "states": [
+    "CLEAN",
+    "CLAIMED",
+    "ENV_READY",
+    "RESETTING",
+    "ADMISSION",
+    "SESSION_OPEN",
+    "EXECUTING",
+    "EXECUTING",
+    "EXECUTING",
+    "CLEAN"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "task": "CloseFridge",
+  "episode": 0,
+  "attempt_id": "ae0c99157ded45ef94669e60657053a5",
+  "stream_id": "6bfb1e0f5b1d4da6854916fc594d75e9",
+  "seed": 7,
+  "manifest_digest": "9fad05a3ce364431e50878f3917a92e12e80f970db735c65de5c3c99832f57b7",
+  "initial_success": false,
+  "reset_index": 0,
+  "sampling": {
+    "environment_id": "ef68cc81e6f84450affd4ef560fb281a",
+    "actual_seed": 7,
+    "environment_reset_index": 0,
+    "physical_slot_id": "c9a93adc136e4df387edd0fff7c1ecc5",
+    "protocol": "dynamic_slot_environment_seed_then_continuous_reset_v3"
+  },
+  "episode_metadata": {
+    "lang": "actual CloseFridge",
+    "layout_id": 2029167941,
+    "cpu_synthetic": true
+  }
+}

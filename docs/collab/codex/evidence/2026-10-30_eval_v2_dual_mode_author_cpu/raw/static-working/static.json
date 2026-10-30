@@ -1,0 +1,160 @@
+{
+  "status": "PASS",
+  "syntax_files": 21,
+  "changed_paths": [
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+    "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+    "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+    "scripts/eval_robocasa_18task_queue.py",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/identity.py",
+    "scripts/robocasa_eval_v2/runtime.py",
+    "tools/v3/eval_v2_batch_tests/dual_mode_test.py",
+    "tools/v3/eval_v2_batch_tests/os_fixture.py",
+    "tools/v3/eval_v2_batch_tests/runtime_test.py",
+    "tools/v3/eval_v2_production_tests/store_test.py"
+  ],
+  "checks": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+        "scripts/eval_robocasa_18task_queue.py",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/identity.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_batch_tests/dual_mode_test.py",
+        "tools/v3/eval_v2_batch_tests/os_fixture.py",
+        "tools/v3/eval_v2_batch_tests/runtime_test.py",
+        "tools/v3/eval_v2_production_tests/store_test.py"
+      ],
+      "exit": 0,
+      "log": "check_0.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/identity.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_batch_tests/dual_mode_test.py",
+        "tools/v3/eval_v2_batch_tests/os_fixture.py",
+        "tools/v3/eval_v2_batch_tests/runtime_test.py",
+        "tools/v3/eval_v2_production_tests/store_test.py"
+      ],
+      "exit": 0,
+      "log": "check_1.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--range",
+        "92-133",
+        "scripts/eval_robocasa_18task_queue.py"
+      ],
+      "exit": 0,
+      "log": "check_2.log"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/work/psm-wma-dual-mode",
+        "diff",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/work/psm-wma-dual-mode/cosmos-framework",
+        "diff",
+        "--check"
+      ],
+      "exit": 0
+    }
+  ],
+  "protected_root_blobs": {
+    "scripts/robocasa_vendor.py": "cea8e84aee0ae05c5fe3b5d7947a0200a9e6ed16",
+    "scripts/robocasa_episode_resume/model_identity.py": "087a3c586b1433c9526c7a1298ab1aa1dc026706",
+    "scripts/robocasa_eval_v2/resources.py": "b095a5367a48e474fb2dc57bbaea923b9ab91c2f",
+    "scripts/robocasa_eval_v2/cli.py": "8dded4895f63c2f9ef2ea48f9e3f2ae3f6c81ac4",
+    "tools/v3/run_eval_v2_batch_b2_cpu_gate.py": "8bf1215f7c1b2193afe376f3f8f0b49b9a77d3c6"
+  },
+  "verify_source_AST_unchanged": true,
+  "Store_safe_mkdir_publish_small_JSON_F5_writer_AST_unchanged": true,
+  "legacy_queue_format_scope": "changed validation function range only; pre-existing unrelated formatting preserved",
+  "root": "608f55dccff6077e276e78644af6a578b4087781",
+  "child": "53c3c95202e14d3b72d236eee6899a80acf82989",
+  "source_sha256": {
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py": "d3a82f2b2c325252172c820b99f55c5f89b81080673b6045ee89a250e5cf9baf",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py": "a26ae95d7d342f4c6b7519dba8cc04538b2dc7bf53f094f818fc84d4977b3228",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": "509e88defff1709871ac15672089b92a8317b1f801e589d21608dc9e8acf32e9",
+    "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py": "ddc509a37bb783f646f62a8b54a0159227822d409c8d32b717add4f49ac34e75",
+    "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py": "2d82af76b0991c54a7f37ba63bac8e4c6941f3d87f6d72036a2626e788b2b3f5",
+    "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py": "60d2886bdb061281993ce3439fea2afbf4739dc598f29467cefb36d43d293a74",
+    "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py": "557725b4c8072f79f898e99e0e0a389019b893e5c08b182215b40dbd8444499e",
+    "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py": "28cf72ae308ec1fb126cf6982a21294a3796a8d90fb9c661e62729befbb1ae84",
+    "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py": "faa74bb9bbf93fe5e54a37c211259efc5b436c51ddd06c0df395b6b171d17007",
+    "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py": "f1694c9ccd8f131af2146cd29e80159079682d4b652ed0ada81fdac06c073648",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py": "76d697d5146f73f23f1e3b5d548887c770e897ba98bbe05e19a6d0aa8aa67d1b",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py": "d568746d8550e647b3fc4c654276d4770f17a6a640dd58b83093b5fff46146c3",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py": "bcf8461aaf966b90def5a5e3e0b0e7105e823012dc1cbdc70294e52cb3367421",
+    "scripts/eval_robocasa_18task_queue.py": "73724e8c96f82f597625792e4c0023552ae29fecdc83c61bf9728fbd4dec5fe9",
+    "scripts/robocasa_eval_v2/config.py": "de1939d335c5df5d98d85fe253de7bec4e89702872531f33201845be788ecbb3",
+    "scripts/robocasa_eval_v2/identity.py": "826cc9ac307082b91f2979669ada9bbc4d17fc4f790f657fd73fc13fcd6301c0",
+    "scripts/robocasa_eval_v2/runtime.py": "6277f268a88980b3f831fe027ae59becc6847e3c0d7ea6d1b3983b3a8731bced",
+    "tools/v3/eval_v2_batch_tests/dual_mode_test.py": "c908fccedaf5eeb1426a6a799e233f73de14e534de2772c0b585b2f1a1b59dc6",
+    "tools/v3/eval_v2_batch_tests/os_fixture.py": "d11d80ed9b07694a88b65e7ea0920f06749b7323634b64cd00763bffac64e0f3",
+    "tools/v3/eval_v2_batch_tests/runtime_test.py": "71731881541654c8f7f1795504fdf91ee491935f78d7ef72a8117749e60cd8af",
+    "tools/v3/eval_v2_production_tests/store_test.py": "67e1157ef6d995cfd5b53ed7eceeed0e4b32aeee94a9ae5e2b65c5951ae49101"
+  }
+}

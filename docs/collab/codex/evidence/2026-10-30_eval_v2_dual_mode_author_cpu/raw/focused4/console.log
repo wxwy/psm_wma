@@ -1,0 +1,586 @@
+.........................[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor0/checkpoint'
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:813:__init__] [action-server] --max-action-dim not specified, using max_action_dim=64 from model config
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:872:__init__] [action-server] prompt augmentation: append_duration_fps=True, append_resolution_info=True, format_prompt_as_json=False
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:903:__init__] [action-server] effective raw_action_dim=15 (from --raw-action-dim)
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:915:__init__] [action-server] local_memory={'enabled': False, 'mode': 'off'}
+F[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor1/checkpoint'
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:813:__init__] [action-server] --max-action-dim not specified, using max_action_dim=64 from model config
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:872:__init__] [action-server] prompt augmentation: append_duration_fps=True, append_resolution_info=True, format_prompt_as_json=False
+[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:903:__init__] [action-server] effective raw_action_dim=15 (from --raw-action-dim)
+F[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor2/checkpoint'
+.[10-30 11:56:35|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor3/checkpoint'
+.......{"prototype_only": false, "manifest_digest": "744d3e37f656b638430a01d436828d627c7c6673d1447c20f388168751680734", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "b401a2c9c3754ef9b4915d70ecb2a299", "worker_id": "4981a4c2fcef4071ab73c50fdfea6ddc", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "744d3e37f656b638430a01d436828d627c7c6673d1447c20f388168751680734", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "b401a2c9c3754ef9b4915d70ecb2a299", "worker_id": "4981a4c2fcef4071ab73c50fdfea6ddc", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+.{"prototype_only": false, "manifest_digest": "58a01746a913c62150ddbc861ee40fdc83ba2dbe45571a334d6e7e69dc8977f9", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "29f1e1b7d74340a7a96c900f7d55df04", "worker_id": "c7879bd47fd6416e9a254120e38485e9", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "58a01746a913c62150ddbc861ee40fdc83ba2dbe45571a334d6e7e69dc8977f9", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "29f1e1b7d74340a7a96c900f7d55df04", "worker_id": "c7879bd47fd6416e9a254120e38485e9", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+.....[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "OpenCabinet", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "CloseFridge", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "OpenCabinet", "episode": 1, "outcome": "success"}
+......
+=================================== FAILURES ===================================
+_ test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off] _
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f763763d130>
+mode = 'off', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+        from cosmos_framework.inference.args import OmniSetupArgs
+        from cosmos_framework.inference.common.args import ConfigFileType
+        from cosmos_framework.inference.robocasa_session_transactions_test import RealLocalModel
+    
+        model = RealLocalModel() if mode == "required" else nn.Module()
+        if mode == "off":
+            model.net = nn.Module()
+            model.net.weight = nn.Parameter(torch.zeros(1))
+        model.net.config = SimpleNamespace(local_memory_enabled=mode == "required")
+        model.config = SimpleNamespace(max_action_dim=64)
+        checkpoint = tmp_path / "checkpoint"
+        state = model.state_dict()
+        if mismatch:
+            if mode == "off":
+                state["net.local_memory_runtime.weight"] = torch.zeros(1)
+            else:
+                state = {key: value for key, value in state.items() if "local_memory_runtime" not in key}
+        save(state, checkpoint_id=checkpoint / "model")
+        config = {"model": {"config": {"local_memory_enabled": mode == "required"}}, "use_state": True}
+        setup = OmniSetupArgs.model_construct(
+            checkpoint_path=str(checkpoint),
+            use_ema_weights=False,
+            experiment="CPU fixture",
+            output_dir=tmp_path / "loader-output",
+            config_file="CPU fixture config",
+            config_file_type=ConfigFileType.YAML,
+        )
+        monkeypatch.setattr(
+            server.ActionServerArgs, "build_setup_overrides", lambda _: SimpleNamespace(build_setup=lambda: setup)
+        )
+        monkeypatch.setattr(server, "init_output_dir", lambda _: None)
+        monkeypatch.setattr(server, "disable_runtime_ema_for_frozen_config", lambda value: value)
+        monkeypatch.setattr(server, "maybe_init_distributed", lambda: None)
+        monkeypatch.setattr(server.torch.cuda, "is_available", lambda: True)
+        monkeypatch.setattr(server.torch.cuda, "device_count", lambda: 1)
+        monkeypatch.setattr(server.torch.distributed, "get_world_size", lambda: 1)
+        monkeypatch.setattr(server.OmniInference, "create", lambda _: SimpleNamespace(model=model, setup_args=setup))
+        monkeypatch.setattr(server, "_load_introspection_config_dict", lambda _: config)
+        token = tmp_path / "capability"
+        token.write_text("cpu-owner")
+        token.chmod(0o600)
+        args = server.ActionServerArgs.model_construct(
+            local_memory_mode=mode,
+            raw_action_dim=15,
+            action_chunk_size=16,
+            transaction_profile="batch",
+            transaction_slot_ids="slot0,slot1",
+            local_memory_max_sessions=2,
+            transaction_max_batch_size=2,
+            transaction_owner_token_file=token,
+            transaction_run_lease="run",
+            transaction_manifest_digest="a" * 64,
+        )
+        if mismatch:
+            with pytest.raises(ValueError, match="inventory"):
+                server.ActionModelService(args)
+        else:
+>           obj = server.ActionModelService(args)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:412: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7f763763d700>
+args = ActionServerArgs(checkpoint=CheckpointOverrides(config_file='cosmos_framework/configs/base/config.py', config_file_typ...pt_as_json=None, dump_dir=None, dump_every=1, host='0.0.0.0', port=8000, http_400_on_error=False, run_validation=False)
+
+    def __init__(self, args: ActionServerArgs) -> None:
+        transaction_options = _transaction_options(args)
+        self.transactions = None
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is required for OmniMoTModel inference in this repo.")
+        if transaction_options is not None and torch.cuda.device_count() != 1:
+            raise ValueError("B1 transaction increment requires exactly one visible model GPU")
+    
+        # OmniInference internally calls into FSDP / DTensor parallelize utilities
+        # that expect a process group; create a single-rank PG when not under
+        # torchrun (init_script() only inits the PG when WORLD_SIZE>1).
+        maybe_init_distributed()
+        if transaction_options is not None and torch.distributed.get_world_size() != 1:
+            raise ValueError("B1 transaction increment requires a single-rank model owner")
+    
+        setup_overrides = args.build_setup_overrides()
+        setup_args = setup_overrides.build_setup()
+        init_output_dir(setup_args.output_dir)
+        setup_args = disable_runtime_ema_for_frozen_config(setup_args)
+    
+        # Surface the resolved max_action_dim into the experiment config when
+        # the user explicitly overrode it on the CLI; matches the previous
+        # ``experiment_opts=[f"model.config.max_action_dim={...}"]`` plumbing.
+        if args.max_action_dim is not None:
+            setup_args.experiment_overrides = [
+                *setup_args.experiment_overrides,
+                f"model.config.max_action_dim={int(args.max_action_dim)}",
+            ]
+    
+        log.info(
+            f"[action-server] loading model: config_file='{setup_args.config_file}' "
+            f"({setup_args.config_file_type}) experiment='{setup_args.experiment}' "
+            f"checkpoint_path='{setup_args.checkpoint_path}'"
+        )
+    
+        # OmniInference dispatches between MODULE (.py) and YAML/JSON loaders.
+        pipe = OmniInference.create(setup_args)
+        self.pipe: OmniInference = pipe
+        self.model = pipe.model
+        self.model.eval()
+        # OmniInference always uses OmniSetupArgs at runtime, but the base class
+        # types the attribute as the more general SetupArgs.
+        assert isinstance(pipe.setup_args, OmniSetupArgs)
+        self.setup_args: OmniSetupArgs = pipe.setup_args
+        self.experiment_config: dict = _load_introspection_config_dict(self.setup_args)
+        if transaction_options is not None:
+            from cosmos_framework.inference.robocasa_transaction_mode import validate_model_mode
+    
+            validate_model_mode(
+                self.model,
+                self.experiment_config,
+                self.setup_args.checkpoint_path,
+                args.local_memory_mode,
+                use_ema_weights=(
+                    self.setup_args.config_file_type == ConfigFileType.MODULE and self.setup_args.use_ema_weights
+                ),
+            )
+    
+        # Resolve action_chunk_size: CLI arg > experiment config > default.
+        if args.action_chunk_size is not None:
+            resolved_chunk_size = int(args.action_chunk_size)
+        else:
+            config_chunk = _extract_chunk_length_from_config(self.experiment_config)
+            if config_chunk is not None:
+                resolved_chunk_size = config_chunk
+                log.info(
+                    f"[action-server] --action-chunk-size not specified, "
+                    f"using chunk_length={resolved_chunk_size} from experiment config"
+                )
+            else:
+                resolved_chunk_size = _DEFAULT_ACTION_CHUNK_SIZE
+                log.info(
+                    f"[action-server] --action-chunk-size not specified and not found in experiment config, "
+                    f"using default={resolved_chunk_size}"
+                )
+    
+        # Resolve max_action_dim: CLI > model config > default (64).
+        if args.max_action_dim is not None:
+            resolved_max_action_dim = int(args.max_action_dim)
+        else:
+            model_max_action_dim = getattr(self.model.config, "max_action_dim", None)
+            if isinstance(model_max_action_dim, int):
+                resolved_max_action_dim = model_max_action_dim
+                log.info(
+                    f"[action-server] --max-action-dim not specified, "
+                    f"using max_action_dim={resolved_max_action_dim} from model config"
+                )
+            else:
+                resolved_max_action_dim = 64
+                log.info(
+                    f"[action-server] --max-action-dim not specified and not found in model config, "
+                    f"using default={resolved_max_action_dim}"
+                )
+    
+        self.cfg = ActionServerConfig(
+            seed=int(args.seed),
+            guidance=float(args.guidance),
+            num_steps=int(args.num_steps),
+            fps=int(args.fps),
+            action_chunk_size=resolved_chunk_size,
+            max_action_dim=resolved_max_action_dim,
+            raw_action_dim=int(args.raw_action_dim) if args.raw_action_dim is not None else None,
+            dump_dir=args.dump_dir,
+            dump_every=int(args.dump_every),
+            http_400_on_error=bool(args.http_400_on_error),
+            action_stats_path=args.action_stats_path,
+            action_normalization=args.action_normalization,
+            experiment_name=setup_args.experiment or "",
+            checkpoint_dir=setup_args.checkpoint_path,
+        )
+    
+        self._lock = threading.Lock()
+        self._req_id_lock = threading.Lock()
+        self._req_id = 0
+    
+        # Whether the checkpoint was trained with proprioception prepended as a clean
+        # conditioning action frame. A request must then carry "state": serving such a model
+        # without it does not raise anywhere downstream, it just drops a conditioning signal
+        # the policy depends on, so the mismatch is rejected explicitly in _prep_policy_item.
+        self.requires_state = _extract_bool_from_config(self.experiment_config, "use_state", default=False)
+        if self.requires_state:
+            log.info("[action-server] checkpoint trained with use_state=True; requests must carry 'state'")
+    
+        self.append_duration_fps = _extract_bool_from_config(
+            self.experiment_config, "append_duration_fps", default=True
+        )
+        self.append_resolution_info = _extract_bool_from_config(
+            self.experiment_config, "append_resolution_info", default=True
+        )
+        # When the experiment trains with format_prompt_as_json=True, the caption is a
+        # structured JSON dict (ActionPromptJsonFormatter) and the legacy string appenders
+        # are skipped. Mirror that at serve time so the prompt format matches training. The
+        # CLI flag overrides the config when the eval experiment differs from the checkpoint.
+        if args.format_prompt_as_json is not None:
+            self.format_prompt_as_json = bool(args.format_prompt_as_json)
+        else:
+            self.format_prompt_as_json = _extract_bool_from_config(
+                self.experiment_config, "format_prompt_as_json", default=False
+            )
+        self._prompt_json_formatter = (
+            ActionPromptJsonFormatter(caption_key="ai_caption") if self.format_prompt_as_json else None
+        )
+        log.info(
+            f"[action-server] prompt augmentation: "
+            f"append_duration_fps={self.append_duration_fps}, append_resolution_info={self.append_resolution_info}, "
+            f"format_prompt_as_json={self.format_prompt_as_json}"
+        )
+    
+        # Action denormalization stats.
+        self.action_min: torch.Tensor | None = None
+        self.action_range: torch.Tensor | None = None
+        self.action_mean: torch.Tensor | None = None
+        self.action_std: torch.Tensor | None = None
+        self.action_normalization: ResolvedActionNormalization = "minmax"
+        # Effective action width: --raw-action-dim > action stats > experiment config.
+        # There is no default: guessing a width silently produces a server whose
+        # /predict rejects every request from a correctly configured evaluator, and the
+        # error surfaces far from its cause.
+        self.raw_action_dim: int | None = self.cfg.raw_action_dim
+        self.raw_action_dim_source = "--raw-action-dim" if self.raw_action_dim is not None else ""
+        self._load_action_normalization_stats()
+        if self.raw_action_dim is not None and not self.raw_action_dim_source:
+            self.raw_action_dim_source = "action stats"
+        if self.raw_action_dim is None:
+            self.raw_action_dim = _extract_raw_action_dim_from_config(self.experiment_config)
+            self.raw_action_dim_source = "experiment config"
+        if self.raw_action_dim is None:
+            raise ValueError(
+                "could not determine the action width: the experiment config carries no RoboCasa "
+                "dataset node to read use_base_action/base_encoding from, and no action stats were "
+                "given. Pass --raw-action-dim explicitly (15 for the default recipe: "
+                "use_base_action=True, base_encoding='raw')."
+            )
+        log.info(f"[action-server] effective raw_action_dim={self.raw_action_dim} (from {self.raw_action_dim_source})")
+        if args.local_memory_mode == "required":
+            if self.raw_action_dim != 15:
+                raise ValueError("required V3 RoboCasa Local-TTT needs raw_action_dim=15")
+            if not self.requires_state:
+                raise ValueError("required V3 RoboCasa Local-TTT formal checkpoint must use_state=True")
+        self.local_memory_adapter = RoboCasaLocalMemoryPolicyAdapter(
+            self,
+            mode=args.local_memory_mode,
+            decode_image=lambda value: _decode_base64_png_to_rgb_uint8(value),
+            max_sessions=int(args.local_memory_max_sessions),
+        )
+        log.info(f"[action-server] local_memory={self.local_memory_adapter.info()}")
+        if transaction_options is not None:
+            if (
+                self.cfg.action_chunk_size != 16
+                or self.raw_action_dim != 15
+                or not self.requires_state
+                or (
+                    args.local_memory_mode == "required"
+                    and (
+                        self.local_memory_adapter.info()["k_local"] != 4
+                        or self.local_memory_adapter.info()["local_dim"] != 32
+                    )
+                )
+            ):
+>               raise ValueError("B1 transaction profile requires resolved raw15/state15/H16/K4/local32")
+E               ValueError: B1 transaction profile requires resolved raw15/state15/H16/K4/local32
+
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:929: ValueError
+_ test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required] _
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused4/tmp/test_public_server_constructor1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f763750cce0>
+mode = 'required', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+        from cosmos_framework.inference.args import OmniSetupArgs
+        from cosmos_framework.inference.common.args import ConfigFileType
+        from cosmos_framework.inference.robocasa_session_transactions_test import RealLocalModel
+    
+        model = RealLocalModel() if mode == "required" else nn.Module()
+        if mode == "off":
+            model.net = nn.Module()
+            model.net.weight = nn.Parameter(torch.zeros(1))
+        model.net.config = SimpleNamespace(local_memory_enabled=mode == "required")
+        model.config = SimpleNamespace(max_action_dim=64)
+        checkpoint = tmp_path / "checkpoint"
+        state = model.state_dict()
+        if mismatch:
+            if mode == "off":
+                state["net.local_memory_runtime.weight"] = torch.zeros(1)
+            else:
+                state = {key: value for key, value in state.items() if "local_memory_runtime" not in key}
+        save(state, checkpoint_id=checkpoint / "model")
+        config = {"model": {"config": {"local_memory_enabled": mode == "required"}}, "use_state": True}
+        setup = OmniSetupArgs.model_construct(
+            checkpoint_path=str(checkpoint),
+            use_ema_weights=False,
+            experiment="CPU fixture",
+            output_dir=tmp_path / "loader-output",
+            config_file="CPU fixture config",
+            config_file_type=ConfigFileType.YAML,
+        )
+        monkeypatch.setattr(
+            server.ActionServerArgs, "build_setup_overrides", lambda _: SimpleNamespace(build_setup=lambda: setup)
+        )
+        monkeypatch.setattr(server, "init_output_dir", lambda _: None)
+        monkeypatch.setattr(server, "disable_runtime_ema_for_frozen_config", lambda value: value)
+        monkeypatch.setattr(server, "maybe_init_distributed", lambda: None)
+        monkeypatch.setattr(server.torch.cuda, "is_available", lambda: True)
+        monkeypatch.setattr(server.torch.cuda, "device_count", lambda: 1)
+        monkeypatch.setattr(server.torch.distributed, "get_world_size", lambda: 1)
+        monkeypatch.setattr(server.OmniInference, "create", lambda _: SimpleNamespace(model=model, setup_args=setup))
+        monkeypatch.setattr(server, "_load_introspection_config_dict", lambda _: config)
+        token = tmp_path / "capability"
+        token.write_text("cpu-owner")
+        token.chmod(0o600)
+        args = server.ActionServerArgs.model_construct(
+            local_memory_mode=mode,
+            raw_action_dim=15,
+            action_chunk_size=16,
+            transaction_profile="batch",
+            transaction_slot_ids="slot0,slot1",
+            local_memory_max_sessions=2,
+            transaction_max_batch_size=2,
+            transaction_owner_token_file=token,
+            transaction_run_lease="run",
+            transaction_manifest_digest="a" * 64,
+        )
+        if mismatch:
+            with pytest.raises(ValueError, match="inventory"):
+                server.ActionModelService(args)
+        else:
+>           obj = server.ActionModelService(args)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:412: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.scripts.action_policy_server_robocasa.ActionModelService object at 0x7f763760fd10>
+args = ActionServerArgs(checkpoint=CheckpointOverrides(config_file='cosmos_framework/configs/base/config.py', config_file_typ...pt_as_json=None, dump_dir=None, dump_every=1, host='0.0.0.0', port=8000, http_400_on_error=False, run_validation=False)
+
+    def __init__(self, args: ActionServerArgs) -> None:
+        transaction_options = _transaction_options(args)
+        self.transactions = None
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is required for OmniMoTModel inference in this repo.")
+        if transaction_options is not None and torch.cuda.device_count() != 1:
+            raise ValueError("B1 transaction increment requires exactly one visible model GPU")
+    
+        # OmniInference internally calls into FSDP / DTensor parallelize utilities
+        # that expect a process group; create a single-rank PG when not under
+        # torchrun (init_script() only inits the PG when WORLD_SIZE>1).
+        maybe_init_distributed()
+        if transaction_options is not None and torch.distributed.get_world_size() != 1:
+            raise ValueError("B1 transaction increment requires a single-rank model owner")
+    
+        setup_overrides = args.build_setup_overrides()
+        setup_args = setup_overrides.build_setup()
+        init_output_dir(setup_args.output_dir)
+        setup_args = disable_runtime_ema_for_frozen_config(setup_args)
+    
+        # Surface the resolved max_action_dim into the experiment config when
+        # the user explicitly overrode it on the CLI; matches the previous
+        # ``experiment_opts=[f"model.config.max_action_dim={...}"]`` plumbing.
+        if args.max_action_dim is not None:
+            setup_args.experiment_overrides = [
+                *setup_args.experiment_overrides,
+                f"model.config.max_action_dim={int(args.max_action_dim)}",
+            ]
+    
+        log.info(
+            f"[action-server] loading model: config_file='{setup_args.config_file}' "
+            f"({setup_args.config_file_type}) experiment='{setup_args.experiment}' "
+            f"checkpoint_path='{setup_args.checkpoint_path}'"
+        )
+    
+        # OmniInference dispatches between MODULE (.py) and YAML/JSON loaders.
+        pipe = OmniInference.create(setup_args)
+        self.pipe: OmniInference = pipe
+        self.model = pipe.model
+        self.model.eval()
+        # OmniInference always uses OmniSetupArgs at runtime, but the base class
+        # types the attribute as the more general SetupArgs.
+        assert isinstance(pipe.setup_args, OmniSetupArgs)
+        self.setup_args: OmniSetupArgs = pipe.setup_args
+        self.experiment_config: dict = _load_introspection_config_dict(self.setup_args)
+        if transaction_options is not None:
+            from cosmos_framework.inference.robocasa_transaction_mode import validate_model_mode
+    
+            validate_model_mode(
+                self.model,
+                self.experiment_config,
+                self.setup_args.checkpoint_path,
+                args.local_memory_mode,
+                use_ema_weights=(
+                    self.setup_args.config_file_type == ConfigFileType.MODULE and self.setup_args.use_ema_weights
+                ),
+            )
+    
+        # Resolve action_chunk_size: CLI arg > experiment config > default.
+        if args.action_chunk_size is not None:
+            resolved_chunk_size = int(args.action_chunk_size)
+        else:
+            config_chunk = _extract_chunk_length_from_config(self.experiment_config)
+            if config_chunk is not None:
+                resolved_chunk_size = config_chunk
+                log.info(
+                    f"[action-server] --action-chunk-size not specified, "
+                    f"using chunk_length={resolved_chunk_size} from experiment config"
+                )
+            else:
+                resolved_chunk_size = _DEFAULT_ACTION_CHUNK_SIZE
+                log.info(
+                    f"[action-server] --action-chunk-size not specified and not found in experiment config, "
+                    f"using default={resolved_chunk_size}"
+                )
+    
+        # Resolve max_action_dim: CLI > model config > default (64).
+        if args.max_action_dim is not None:
+            resolved_max_action_dim = int(args.max_action_dim)
+        else:
+            model_max_action_dim = getattr(self.model.config, "max_action_dim", None)
+            if isinstance(model_max_action_dim, int):
+                resolved_max_action_dim = model_max_action_dim
+                log.info(
+                    f"[action-server] --max-action-dim not specified, "
+                    f"using max_action_dim={resolved_max_action_dim} from model config"
+                )
+            else:
+                resolved_max_action_dim = 64
+                log.info(
+                    f"[action-server] --max-action-dim not specified and not found in model config, "
+                    f"using default={resolved_max_action_dim}"
+                )
+    
+        self.cfg = ActionServerConfig(
+            seed=int(args.seed),
+            guidance=float(args.guidance),
+            num_steps=int(args.num_steps),
+            fps=int(args.fps),
+            action_chunk_size=resolved_chunk_size,
+            max_action_dim=resolved_max_action_dim,
+            raw_action_dim=int(args.raw_action_dim) if args.raw_action_dim is not None else None,
+            dump_dir=args.dump_dir,
+            dump_every=int(args.dump_every),
+            http_400_on_error=bool(args.http_400_on_error),
+            action_stats_path=args.action_stats_path,
+            action_normalization=args.action_normalization,
+            experiment_name=setup_args.experiment or "",
+            checkpoint_dir=setup_args.checkpoint_path,
+        )
+    
+        self._lock = threading.Lock()
+        self._req_id_lock = threading.Lock()
+        self._req_id = 0
+    
+        # Whether the checkpoint was trained with proprioception prepended as a clean
+        # conditioning action frame. A request must then carry "state": serving such a model
+        # without it does not raise anywhere downstream, it just drops a conditioning signal
+        # the policy depends on, so the mismatch is rejected explicitly in _prep_policy_item.
+        self.requires_state = _extract_bool_from_config(self.experiment_config, "use_state", default=False)
+        if self.requires_state:
+            log.info("[action-server] checkpoint trained with use_state=True; requests must carry 'state'")
+    
+        self.append_duration_fps = _extract_bool_from_config(
+            self.experiment_config, "append_duration_fps", default=True
+        )
+        self.append_resolution_info = _extract_bool_from_config(
+            self.experiment_config, "append_resolution_info", default=True
+        )
+        # When the experiment trains with format_prompt_as_json=True, the caption is a
+        # structured JSON dict (ActionPromptJsonFormatter) and the legacy string appenders
+        # are skipped. Mirror that at serve time so the prompt format matches training. The
+        # CLI flag overrides the config when the eval experiment differs from the checkpoint.
+        if args.format_prompt_as_json is not None:
+            self.format_prompt_as_json = bool(args.format_prompt_as_json)
+        else:
+            self.format_prompt_as_json = _extract_bool_from_config(
+                self.experiment_config, "format_prompt_as_json", default=False
+            )
+        self._prompt_json_formatter = (
+            ActionPromptJsonFormatter(caption_key="ai_caption") if self.format_prompt_as_json else None
+        )
+        log.info(
+            f"[action-server] prompt augmentation: "
+            f"append_duration_fps={self.append_duration_fps}, append_resolution_info={self.append_resolution_info}, "
+            f"format_prompt_as_json={self.format_prompt_as_json}"
+        )
+    
+        # Action denormalization stats.
+        self.action_min: torch.Tensor | None = None
+        self.action_range: torch.Tensor | None = None
+        self.action_mean: torch.Tensor | None = None
+        self.action_std: torch.Tensor | None = None
+        self.action_normalization: ResolvedActionNormalization = "minmax"
+        # Effective action width: --raw-action-dim > action stats > experiment config.
+        # There is no default: guessing a width silently produces a server whose
+        # /predict rejects every request from a correctly configured evaluator, and the
+        # error surfaces far from its cause.
+        self.raw_action_dim: int | None = self.cfg.raw_action_dim
+        self.raw_action_dim_source = "--raw-action-dim" if self.raw_action_dim is not None else ""
+        self._load_action_normalization_stats()
+        if self.raw_action_dim is not None and not self.raw_action_dim_source:
+            self.raw_action_dim_source = "action stats"
+        if self.raw_action_dim is None:
+            self.raw_action_dim = _extract_raw_action_dim_from_config(self.experiment_config)
+            self.raw_action_dim_source = "experiment config"
+        if self.raw_action_dim is None:
+            raise ValueError(
+                "could not determine the action width: the experiment config carries no RoboCasa "
+                "dataset node to read use_base_action/base_encoding from, and no action stats were "
+                "given. Pass --raw-action-dim explicitly (15 for the default recipe: "
+                "use_base_action=True, base_encoding='raw')."
+            )
+        log.info(f"[action-server] effective raw_action_dim={self.raw_action_dim} (from {self.raw_action_dim_source})")
+        if args.local_memory_mode == "required":
+            if self.raw_action_dim != 15:
+                raise ValueError("required V3 RoboCasa Local-TTT needs raw_action_dim=15")
+            if not self.requires_state:
+>               raise ValueError("required V3 RoboCasa Local-TTT formal checkpoint must use_state=True")
+E               ValueError: required V3 RoboCasa Local-TTT formal checkpoint must use_state=True
+
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:908: ValueError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required]
+2 failed, 45 passed, 14 warnings in 46.91s

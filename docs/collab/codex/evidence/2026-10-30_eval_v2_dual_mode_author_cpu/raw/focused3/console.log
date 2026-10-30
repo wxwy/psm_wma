@@ -1,0 +1,136 @@
+.........................FFFF[eval-v2] stopped: ValueError('No-TTT transaction acknowledgement mismatch')
+{"prototype_only": false, "manifest_digest": "1e4b8feadc8545ec2a388fe12ade8671f28c88cc74444156344aaafed47a8b2b", "status": "partial", "success": 0, "failure": 0, "invalid": 0, "interrupted": 1, "pending": 1, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "results_qualified": false, "clean_execution": false, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 0, "failure": 0, "invalid": 0, "interrupted": 1, "pending": 1, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 0, "expected": 2, "sr": null, "partial_sr_valid_only": null, "unresolved_process_errors": 0, "open_worker_streams": ["7418ecc5c1e44cab8b698ea9a6ba20ee"], "sampling_streams": [{"stream_id": "7418ecc5c1e44cab8b698ea9a6ba20ee", "worker_id": "75ad437f7faa412087903ba6113facd8", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": false, "results_qualified": false, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 1, "initialization_errors": 0}}}
+F{"prototype_only": false, "manifest_digest": "8040e4c8c3b658096ad658bdbb845962a9abfbe6ba1a756d006c13241b3f8759", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "d0d546299079470d960c927bfaffcd14", "worker_id": "72fa261f6e3340b1bfa4de08e1b06ff7", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "8040e4c8c3b658096ad658bdbb845962a9abfbe6ba1a756d006c13241b3f8759", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "d0d546299079470d960c927bfaffcd14", "worker_id": "72fa261f6e3340b1bfa4de08e1b06ff7", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+.....[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"batches": 0, "batch_histogram": {}, "queued": 0, "encoded_bytes": 0, "queue_high_water": 0, "sessions": 1, "media_jobs": 0, "media_cpu_bytes": 0, "quarantined": false}}}
+[eval-v2] {"task": "CloseFridge", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "OpenCabinet", "episode": 0, "outcome": "success"}
+[eval-v2] {"task": "OpenCabinet", "episode": 1, "outcome": "success"}
+[eval-v2] {"task": "CloseFridge", "episode": 1, "outcome": "success"}
+.
+=================================== FAILURES ===================================
+_ test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off] _
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed412a0a70>
+mode = 'off', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+>       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError
+_ test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required] _
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a6960>
+mode = 'required', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+>       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError
+_ test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-off] _
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a56a0>
+mode = 'off', mismatch = True
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+>       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError
+_ test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-required] _
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a6450>
+mode = 'required', mismatch = True
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+>       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError
+__________ test_public_CLI_Fresh_Resume_immutable_mode_identity[off] ___________
+
+real_prepare = namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_CLI_Fresh_Resume_i0/eval.yaml'),...b778872d3'}}], Runtime=<class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.<locals>.Runtime'>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a6db0>
+mode = 'off'
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    def test_public_CLI_Fresh_Resume_immutable_mode_identity(
+        real_prepare, monkeypatch, mode
+    ):
+        case = real_prepare
+        case.cfg.update(
+            execution_profile="phase_b",
+            sims_per_gpu=2,
+            max_infer_batch_size=2,
+            local_memory_mode=mode,
+        )
+        case.path.write_text(yaml.safe_dump(case.cfg))
+        monkeypatch.setattr(
+            identity, "clock_environment", lambda *a: {"domain": "CPU-double"}
+        )
+>       assert public(case, "fresh") == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = public(namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_CLI_Fresh_Resume_i0/eval.yaml'),...b778872d3'}}], Runtime=<class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.<locals>.Runtime'>), 'fresh')
+
+tools/v3/eval_v2_batch_tests/dual_mode_test.py:44: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[required]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[None-False]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[None-True]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[missing-False]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[missing-True]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[shape-False]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[shape-True]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-off]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-required]
+FAILED tools/v3/eval_v2_batch_tests/dual_mode_test.py::test_public_CLI_Fresh_Resume_immutable_mode_identity[off]
+5 failed, 31 passed, 10 warnings in 40.50s

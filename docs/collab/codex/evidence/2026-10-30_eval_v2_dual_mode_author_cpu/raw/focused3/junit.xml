@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="36" time="40.495" timestamp="2026-10-30T11:53:40.675424+00:00" hostname="68036c4fdbac"><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-False-off]" time="0.053" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-False-required]" time="0.072" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-True-off]" time="0.044" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-True-required]" time="0.045" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[2-True-off]" time="1.050" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[2-True-required]" time="1.245" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_client_B2_lost_delivery_ACK_and_strict_mode_handshake[off]" time="0.051" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_client_B2_lost_delivery_ACK_and_strict_mode_handshake[required]" time="0.053" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[timeout-off]" time="0.023" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[timeout-required]" time="0.022" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[end-off]" time="0.033" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[end-required]" time="0.034" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[generation-off]" time="0.009" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[generation-required]" time="0.010" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_no_ttt_native_32_step_loop_uses_no_Local_client_and_Ends_common_Session" time="0.238" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]" time="0.016" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_small_DCP_inventory_and_config_must_match_selected_mode[required]" time="0.007" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[None-False]" time="0.012" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[None-True]" time="0.008" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[missing-False]" time="0.007" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[missing-True]" time="0.005" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[shape-False]" time="0.008" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_selected_DCP_tree_accepts_regular_and_EMA_without_weakening_inventory[shape-True]" time="0.010" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_response_allocation_failure_before_commit_leaves_both_sessions_unpublished[off]" time="0.025" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_response_allocation_failure_before_commit_leaves_both_sessions_unpublished[required]" time="0.027" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off]" time="0.003"><failure message="ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fed412a0a70&gt;
+mode = 'off', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+&gt;       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError</failure></testcase><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required]" time="0.001"><failure message="ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a6960&gt;
+mode = 'required', mismatch = False
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+&gt;       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError</failure></testcase><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-off]" time="0.001"><failure message="ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a56a0&gt;
+mode = 'off', mismatch = True
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+&gt;       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError</failure></testcase><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-required]" time="0.001"><failure message="ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_server_constructor3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a6450&gt;
+mode = 'required', mismatch = True
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    @pytest.mark.parametrize("mismatch", [False, True])
+    def test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch(
+        tmp_path, monkeypatch, mode, mismatch
+    ):
+        from torch.distributed.checkpoint import save
+    
+&gt;       from cosmos_framework.inference.common.args import OmniSetupArgs
+E       ImportError: cannot import name 'OmniSetupArgs' from 'cosmos_framework.inference.common.args' (/workspace/work/psm-wma-dual-mode/cosmos-framework/cosmos_framework/inference/common/args.py)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py:348: ImportError</failure></testcase><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_public_CLI_Fresh_Resume_immutable_mode_identity[off]" time="0.236"><failure message="AssertionError: assert 1 == 0&#10; +  where 1 = public(namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_CLI_Fresh_Resume_i0/eval.yaml'),...b778872d3'}}], Runtime=&lt;class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;), 'fresh')">real_prepare = namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_CLI_Fresh_Resume_i0/eval.yaml'),...b778872d3'}}], Runtime=&lt;class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fed411a6db0&gt;
+mode = 'off'
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    def test_public_CLI_Fresh_Resume_immutable_mode_identity(
+        real_prepare, monkeypatch, mode
+    ):
+        case = real_prepare
+        case.cfg.update(
+            execution_profile="phase_b",
+            sims_per_gpu=2,
+            max_infer_batch_size=2,
+            local_memory_mode=mode,
+        )
+        case.path.write_text(yaml.safe_dump(case.cfg))
+        monkeypatch.setattr(
+            identity, "clock_environment", lambda *a: {"domain": "CPU-double"}
+        )
+&gt;       assert public(case, "fresh") == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = public(namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused3/tmp/test_public_CLI_Fresh_Resume_i0/eval.yaml'),...b778872d3'}}], Runtime=&lt;class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;), 'fresh')
+
+tools/v3/eval_v2_batch_tests/dual_mode_test.py:44: AssertionError</failure></testcase><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_public_CLI_Fresh_Resume_immutable_mode_identity[required]" time="0.761" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[None]" time="0.055" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[auto]" time="0.071" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[True]" time="0.078" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[none]" time="0.095" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup" time="18.216" /></testsuite></testsuites>

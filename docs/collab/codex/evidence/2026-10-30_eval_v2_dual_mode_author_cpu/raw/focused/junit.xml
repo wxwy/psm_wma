@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="24" time="33.440" timestamp="2026-10-30T11:50:39.440900+00:00" hostname="68036c4fdbac"><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-False-off]" time="0.122" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-False-required]" time="0.079" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-True-off]" time="0.037" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[1-True-required]" time="0.081" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[2-True-off]" time="1.110" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_public_native_generation_replay_session_isolation_and_real_Local[2-True-required]" time="1.112" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_client_B2_lost_delivery_ACK_and_strict_mode_handshake[off]" time="0.070" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_client_B2_lost_delivery_ACK_and_strict_mode_handshake[required]" time="0.072" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[timeout-off]" time="0.035" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[timeout-required]" time="0.033" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[end-off]" time="0.023" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[end-required]" time="0.051" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[generation-off]" time="0.010" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_sealed_failure_never_publishes_response_and_End_waits_for_quiescence[generation-required]" time="0.013" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_no_ttt_native_32_step_loop_uses_no_Local_client_and_Ends_common_Session" time="0.247" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]" time="0.019" /><testcase classname="cosmos-framework.cosmos_framework.inference.robocasa_dual_mode_test" name="test_real_small_DCP_inventory_and_config_must_match_selected_mode[required]" time="0.009" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_public_CLI_Fresh_Resume_immutable_mode_identity[off]" time="0.401"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i0/out/run_inputs.json'">real_prepare = namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i0/eval.yaml'), ...b778872d3'}}], Runtime=&lt;class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5c20f1e7e0&gt;
+mode = 'off'
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    def test_public_CLI_Fresh_Resume_immutable_mode_identity(
+        real_prepare, monkeypatch, mode
+    ):
+        case = real_prepare
+        case.cfg.update(
+            execution_profile="phase_b",
+            sims_per_gpu=2,
+            max_infer_batch_size=2,
+            local_memory_mode=mode,
+        )
+        case.path.write_text(yaml.safe_dump(case.cfg))
+        monkeypatch.setattr(
+            identity, "clock_environment", lambda *a: {"domain": "CPU-double"}
+        )
+        assert public(case, "fresh") == 0
+        manifest = json.loads((case.root / "manifest.json").read_bytes())
+        assert manifest["protocol"]["local_memory"] == mode
+        assert validate_manifest(manifest) == manifest
+        original = core_bytes(case.root)
+&gt;       anchor = (case.root / "run_inputs.json").read_bytes()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/dual_mode_test.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i0/out/run_inputs.json')
+
+    def read_bytes(self):
+        """
+        Open the file in bytes mode, read it, and close the file.
+        """
+&gt;       with self.open(mode='rb') as f:
+             ^^^^^^^^^^^^^^^^^^^^
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1019: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i0/out/run_inputs.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i0/out/run_inputs.json'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_public_CLI_Fresh_Resume_immutable_mode_identity[required]" time="0.421"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i1/out/run_inputs.json'">real_prepare = namespace(path=PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i1/eval.yaml'), ...b778872d3'}}], Runtime=&lt;class 'tools.v3.eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5c20e2f080&gt;
+mode = 'required'
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    def test_public_CLI_Fresh_Resume_immutable_mode_identity(
+        real_prepare, monkeypatch, mode
+    ):
+        case = real_prepare
+        case.cfg.update(
+            execution_profile="phase_b",
+            sims_per_gpu=2,
+            max_infer_batch_size=2,
+            local_memory_mode=mode,
+        )
+        case.path.write_text(yaml.safe_dump(case.cfg))
+        monkeypatch.setattr(
+            identity, "clock_environment", lambda *a: {"domain": "CPU-double"}
+        )
+        assert public(case, "fresh") == 0
+        manifest = json.loads((case.root / "manifest.json").read_bytes())
+        assert manifest["protocol"]["local_memory"] == mode
+        assert validate_manifest(manifest) == manifest
+        original = core_bytes(case.root)
+&gt;       anchor = (case.root / "run_inputs.json").read_bytes()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/dual_mode_test.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i1/out/run_inputs.json')
+
+    def read_bytes(self):
+        """
+        Open the file in bytes mode, read it, and close the file.
+        """
+&gt;       with self.open(mode='rb') as f:
+             ^^^^^^^^^^^^^^^^^^^^
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1019: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i1/out/run_inputs.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/workspace/work/dual-mode-evidence/focused/tmp/test_public_CLI_Fresh_Resume_i1/out/run_inputs.json'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[None]" time="0.065" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[auto]" time="0.076" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[True]" time="0.074" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_unknown_mode_never_silently_falls_back[none]" time="0.495" /><testcase classname="tools.v3.eval_v2_batch_tests.dual_mode_test" name="test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup" time="14.743"><failure message="Failed: [Errno 2] No such file or directory: '/proc/self/timens_offsets'&#10;&#10;&#10;/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.&#10;  import pynvml  # type: ignore[import]&#10;CPU_MODEL_OWNER_READY {&quot;pid&quot;: 17935, &quot;model_loads&quot;: 1}">tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused/tmp/test_real_OS_NoTTT_two_Sim_B2_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5c20ff2e10&gt;
+
+    def test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup(
+        tmp_path, monkeypatch
+    ):
+        store, cfg, runtime, report, error = cpu_run(
+            tmp_path, monkeypatch, local_memory_mode="off"
+        )
+        if error is not None:
+&gt;           pytest.fail(
+                str(error)
+                + "\n"
+                + "\n".join(
+                    p.read_text()[-8000:] for p in (store.root / "logs").glob("*.log")
+                )
+            )
+E           Failed: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+E           
+E           
+E           /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+E             import pynvml  # type: ignore[import]
+E           CPU_MODEL_OWNER_READY {"pid": 17935, "model_loads": 1}
+
+tools/v3/eval_v2_batch_tests/dual_mode_test.py:69: Failed</failure></testcase></testsuite></testsuites>

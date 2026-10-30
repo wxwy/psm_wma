@@ -1,0 +1,33 @@
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/startup-fix2/tmp/test_public_server_constructor0/checkpoint'
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:813:__init__] [action-server] --max-action-dim not specified, using max_action_dim=64 from model config
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:851:__init__] [action-server] checkpoint trained with use_state=True; requests must carry 'state'
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:872:__init__] [action-server] prompt augmentation: append_duration_fps=True, append_resolution_info=True, format_prompt_as_json=False
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:903:__init__] [action-server] effective raw_action_dim=15 (from --raw-action-dim)
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:915:__init__] [action-server] local_memory={'enabled': False, 'mode': 'off'}
+.[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/startup-fix2/tmp/test_public_server_constructor1/checkpoint'
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:813:__init__] [action-server] --max-action-dim not specified, using max_action_dim=64 from model config
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:851:__init__] [action-server] checkpoint trained with use_state=True; requests must carry 'state'
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:872:__init__] [action-server] prompt augmentation: append_duration_fps=True, append_resolution_info=True, format_prompt_as_json=False
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:903:__init__] [action-server] effective raw_action_dim=15 (from --raw-action-dim)
+[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:915:__init__] [action-server] local_memory={'enabled': True, 'mode': 'required', 'evidence_version': 'corrected_composite_current_executed_raw15_v1', 'evidence_format': 'robocasa_composite_rgb_canonical_raw15_v1', 'visual_evidence': 'corrected_composite_single_frame_encode1_v1', 'memory_kind': 'ttt_fast_weight', 'action_dim': 15, 'k_local': 4, 'local_dim': 32, 'ttt_dim': 8, 'tbptt_steps': 16, 'inner_lr': 0.1, 'sessions': 0, 'pending': 0}
+.[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/startup-fix2/tmp/test_public_server_constructor2/checkpoint'
+.[10-30 11:57:58|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:759:__init__] [action-server] loading model: config_file='CPU fixture config' (yaml) experiment='CPU fixture' checkpoint_path='/workspace/work/dual-mode-evidence/startup-fix2/tmp/test_public_server_constructor3/checkpoint'
+.
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-required]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-off]
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[True-required]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_public_server_constructor_wires_actual_mode_and_rejects_checkpoint_mismatch[False-off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+4 passed, 6 warnings in 12.22s

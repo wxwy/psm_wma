@@ -1,0 +1,19 @@
+{
+  "physical_slot_id": "e3cda33f33e54cb6ad642a06717ab6b0",
+  "attempt_id": "b1a6651c387a4228a25ab84bc4858066",
+  "task": "OpenDrawer",
+  "states": [
+    "IDLE",
+    "CLAIMED",
+    "TASK_SWITCH",
+    "ENV_READY",
+    "RESETTING",
+    "ADMISSION",
+    "SESSION_OPEN",
+    "EXECUTING",
+    "EXECUTING",
+    "EXECUTING",
+    "SESSION_CLOSING",
+    "CLEAN"
+  ]
+}

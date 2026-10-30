@@ -1,0 +1,22 @@
+{
+  "task": "OpenDrawer",
+  "episode": 0,
+  "attempt_id": "b1a6651c387a4228a25ab84bc4858066",
+  "stream_id": "70885da2ae41492baab199ced8b309ff",
+  "seed": 7,
+  "manifest_digest": "742928ccb8c211579447579929c64fb842231c77caee8d757358ffb3b457dd8d",
+  "initial_success": false,
+  "reset_index": 0,
+  "sampling": {
+    "environment_id": "609612851b954e92a34bba6d4a65eba3",
+    "actual_seed": 7,
+    "environment_reset_index": 0,
+    "physical_slot_id": "e3cda33f33e54cb6ad642a06717ab6b0",
+    "protocol": "dynamic_slot_environment_seed_then_continuous_reset_v3"
+  },
+  "episode_metadata": {
+    "lang": "actual OpenDrawer",
+    "layout_id": 2029167941,
+    "cpu_synthetic": true
+  }
+}

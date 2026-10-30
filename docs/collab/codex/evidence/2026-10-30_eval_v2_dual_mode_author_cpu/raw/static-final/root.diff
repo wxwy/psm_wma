@@ -1,0 +1,603 @@
+diff --git a/cosmos-framework b/cosmos-framework
+index 53c3c952..2f7334c4 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 53c3c95202e14d3b72d236eee6899a80acf82989
++Subproject commit 2f7334c4ada6ace1d21185985aae90539052bf18
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index b7b1435e..b69a8607 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -89,35 +89,60 @@ def require_free_ports(ports: list[int]) -> None:
+                 raise RuntimeError(f"action server port {port} unavailable: {error}") from error
+ 
+ 
+-def validate_server_info(info: Any, *, checkpoint: Path, config_file: Path, num_steps: int, guidance: float) -> None:
++def validate_server_info(
++    info: Any,
++    *,
++    checkpoint: Path,
++    config_file: Path,
++    num_steps: int,
++    guidance: float,
++    local_memory_mode="required",
++) -> None:
+     """Validate the effective server configuration, not just HTTP readiness."""
+     if not isinstance(info, dict):
+         raise ValueError("action server /info must be an object")
+     # CLI/manifest retain the requested root; the Child reports its selected model DCP.
+-    for name, expected in (("checkpoint", (checkpoint / "model").resolve()), ("config_file", config_file)):
++    for name, expected in (
++        ("checkpoint", (checkpoint / "model").resolve()),
++        ("config_file", config_file),
++    ):
+         value = info.get(name)
+-        if not isinstance(value, str) or not Path(value).is_absolute() or Path(value).resolve() != expected:
+-            raise ValueError(f"action server {name} mismatch: expected {expected}, got {value!r}")
++        if (
++            not isinstance(value, str)
++            or not Path(value).is_absolute()
++            or Path(value).resolve() != expected
++        ):
++            raise ValueError(
++                f"action server {name} mismatch: expected {expected}, got {value!r}"
++            )
+     for name, expected in (
+         ("raw_action_dim", 15),
+         ("action_chunk_size", 16),
+         ("max_action_dim", 64),
+         ("num_steps", num_steps),
+         ("fps", 20),
+-        ("seed", 0),  # Policy sampler default; --seed on this queue is the environment seed.
++        (
++            "seed",
++            0,
++        ),  # Policy sampler default; --seed on this queue is the environment seed.
+     ):
+         if type(info.get(name)) is not int or info[name] != expected:
+-            raise ValueError(f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}")
++            raise ValueError(
++                f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}"
++            )
+     if type(info.get("guidance")) not in (int, float) or info["guidance"] != guidance:
+         raise ValueError("action server guidance mismatch")
+     local = info.get("local_memory")
+     if (
+         info.get("requires_state") is not True
+         or not isinstance(local, dict)
+-        or local.get("enabled") is not True
+-        or local.get("mode") != "required"
+-        or type(local.get("action_dim")) is not int
+-        or local["action_dim"] != 15
++        or local_memory_mode not in ("off", "required")
++        or local.get("enabled") is not (local_memory_mode == "required")
++        or local.get("mode") != local_memory_mode
++        or (
++            local_memory_mode == "required"
++            and (type(local.get("action_dim")) is not int or local["action_dim"] != 15)
++        )
+     ):
+         raise ValueError("action server state/required Local-TTT protocol mismatch")
+ 
+@@ -161,6 +186,7 @@ def wait_server(
+     num_steps: int,
+     guidance: float,
+     stop: threading.Event | None = None,
++    local_memory_mode="required",
+ ) -> dict[str, Any]:
+     deadline = time.monotonic() + timeout
+     url = f"http://127.0.0.1:{port}/info"
+@@ -182,6 +208,7 @@ def wait_server(
+             config_file=config_file,
+             num_steps=num_steps,
+             guidance=guidance,
++            local_memory_mode=local_memory_mode,
+         )
+         require_owned_listener(proc, port)
+         if proc.poll() is not None:
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index 86618151..714a7615 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -10,6 +10,7 @@ from pathlib import Path
+ DEFAULTS = {
+     "schema": "psm_robocasa_eval_v2",
+     "execution_profile": "phase_a",
++    "local_memory_mode": "required",
+     "batch_wait_ms": 20,
+     "tasks": "all",
+     "episodes_per_task": 50,
+@@ -51,6 +52,7 @@ def resolve(argv=None):
+     p.add_argument("--owner-decision", type=Path)
+     p.add_argument("--gpus")
+     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
++    p.add_argument("--local-memory-mode", choices=("off", "required"))
+     p.add_argument("--batch-wait-ms", type=int)
+     p.add_argument("--sims-per-gpu", type=int)
+     p.add_argument("--max-infer-batch-size", type=int)
+@@ -79,7 +81,7 @@ def resolve(argv=None):
+     cfg = {**DEFAULTS, **data}
+     if cfg["schema"] != DEFAULTS["schema"]:
+         raise ValueError("new V2 config schema required")
+-    for field in ("execution_profile", "batch_wait_ms"):
++    for field in ("execution_profile", "batch_wait_ms", "local_memory_mode"):
+         if getattr(a, field) is not None:
+             cfg[field] = getattr(a, field)
+     if a.sims_per_gpu is not None:
+@@ -124,6 +126,12 @@ def resolve(argv=None):
+         raise ValueError("plan/port range")
+     if cfg["execution_profile"] not in ("phase_a", "phase_b"):
+         raise ValueError("explicit execution profile required")
++    if cfg["local_memory_mode"] not in ("off", "required"):
++        raise ValueError("explicit off|required Local-TTT mode required")
++    if cfg["local_memory_mode"] == "off" and cfg["execution_profile"] != "phase_b":
++        raise ValueError(
++            "No-TTT requires the shared transactional phase_b profile (B1 or B2+)"
++        )
+     if (
+         cfg["sims_per_gpu"] > 8
+         or cfg["max_infer_batch_size"] > 8
+diff --git a/scripts/robocasa_eval_v2/identity.py b/scripts/robocasa_eval_v2/identity.py
+index 25eb425e..d1e471ad 100644
+--- a/scripts/robocasa_eval_v2/identity.py
++++ b/scripts/robocasa_eval_v2/identity.py
+@@ -177,6 +177,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
+         horizons=runtime["protocol"]["official_horizons"],
+         formal=len(tasks) == 18 and cfg["episodes_per_task"] == 50,
+         execution=execution(cfg),
++        local_memory=cfg.get("local_memory_mode", "required"),
+         experiment={
+             "model_digest": model["digest"],
+             "config_sha256": sha256_file(Path(cfg["config_file"])),
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index d0184f4b..a14987b6 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -47,6 +47,10 @@ class Runtime:
+         )
+         if store.manifest.get("execution") != execution(cfg):
+             raise ValueError("runtime execution profile differs from frozen manifest")
++        if store.manifest["protocol"]["local_memory"] != cfg.get(
++            "local_memory_mode", "required"
++        ):
++            raise ValueError("runtime Local-TTT mode differs from frozen manifest")
+         self.stop = threading.Event()
+         self.registry = Registry(store.root, cfg["terminate_grace_s"])
+         self.servers = {}
+@@ -159,6 +163,9 @@ class Runtime:
+         command = server_argv(
+             args, Path(self.cfg["checkpoint"]), Path(self.cfg["config_file"]), port
+         )
++        command[command.index("--local-memory-mode") + 1] = self.store.manifest[
++            "protocol"
++        ]["local_memory"]
+         if self.batch_profile:
+             slots = [
+                 self.slot_ids[w] for w in self.workers if self.worker_gpus[w] == gpu
+@@ -213,6 +220,7 @@ class Runtime:
+                 num_steps=self.cfg["prediction_steps"],
+                 guidance=self.cfg["guidance"],
+                 stop=self.stop,
++                local_memory_mode=self.store.manifest["protocol"]["local_memory"],
+             )
+         except BaseException:
+             self.stop.set()
+@@ -223,6 +231,9 @@ class Runtime:
+                 tx.get(k) != v
+                 for k, v in {
+                     "enabled": True,
++                    "local_memory_mode": self.store.manifest["protocol"][
++                        "local_memory"
++                    ],
+                     "execution_profile": "session_native_batch_v1",
+                     "run_lease": self.store.lease_id,
+                     "manifest_digest": self.store.manifest["digest"],
+@@ -284,6 +295,9 @@ class Runtime:
+                     "horizon": self.store.manifest["horizons"][task],
+                     "execution_profile": self.cfg.get("execution_profile", "phase_a"),
+                     "max_infer_batch_size": self.cfg.get("max_infer_batch_size", 1),
++                    "local_memory_mode": self.store.manifest["protocol"][
++                        "local_memory"
++                    ],
+                     "predict_timeout_s": self.cfg["request_timeout_s"],
+                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
+                     "save_generated_video": self.cfg["save_generated_video"],
+@@ -363,6 +377,8 @@ class Runtime:
+                 or ready.get("physical_slot_id") != self.slot_ids[worker]
+                 or ready.get("state") != "IDLE"
+                 or ready.get("runtime_digest") != self.inputs["runtime"]["digest"]
++                or ready.get("local_memory_mode")
++                != self.store.manifest["protocol"]["local_memory"]
+             ):
+                 raise RuntimeError("native Worker handshake mismatch")
+             self.resource_probe(
+@@ -442,6 +458,7 @@ class Runtime:
+                 transport=transport,
+                 batch_profile=True,
+                 max_batch_size=self.cfg["max_infer_batch_size"],
++                local_memory_mode=self.store.manifest["protocol"]["local_memory"],
+             )
+             lease = client.register(
+                 {
+@@ -455,7 +472,12 @@ class Runtime:
+                 },
+                 self.server_owners[key],
+             )
+-            return {"lease": lease, "prediction_clock_domain": client.clock_domain}
++            return {
++                "lease": lease,
++                "prediction_clock_domain": client.clock_domain,
++                "local_memory_mode": client.mode,
++                "profile": client.protocol,
++            }
+ 
+     def run_slot(self, scheduler, claim):
+         a = claim["attempt"]
+diff --git a/tools/v3/eval_v2_batch_tests/dual_mode_test.py b/tools/v3/eval_v2_batch_tests/dual_mode_test.py
+new file mode 100644
+index 00000000..4ee4d76e
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/dual_mode_test.py
+@@ -0,0 +1,201 @@
++"""Public CLI identity and real OS No-TTT Sim/Server paths; no GPU/assets."""
++# ruff: noqa: F811 -- imported pytest fixture names are resolved by pytest.
++
++import json
++
++import pytest
++import yaml
++from cosmos_framework.evaluation.robocasa_v2.contract import validate_manifest
++from cosmos_framework.evaluation.robocasa_v2.scheduler import logical_plan
++from cosmos_framework.evaluation.robocasa_v2.store import records
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    clock_kernel as clock_kernel,
++)
++from robocasa_eval_v2 import identity
++from robocasa_eval_v2.config import resolve
++from robocasa_eval_v2.runtime import Runtime
++from robocasa_eval_v2_processes import process_identity
++from tools.v3.eval_v2_batch_tests.runtime_test import cpu_run
++from tools.v3.eval_v2_production_tests.runtime_evidence_test import (
++    core_bytes,
++    public,
++)
++
++from tools.v3.eval_v2_production_tests.runtime_evidence_test import (
++    real_prepare as real_prepare,
++)  # noqa: F401, F811
++
++
++@pytest.mark.parametrize("mode", ["off", "required"])
++def test_public_CLI_Fresh_Resume_immutable_mode_identity(
++    real_prepare, monkeypatch, mode
++):
++    case = real_prepare
++    case.cfg.update(
++        execution_profile="phase_b",
++        sims_per_gpu=2,
++        max_infer_batch_size=2,
++        local_memory_mode=mode,
++    )
++    case.path.write_text(yaml.safe_dump(case.cfg))
++    monkeypatch.setattr(
++        identity, "clock_environment", lambda *a: {"domain": "CPU-double"}
++    )
++    assert public(case, "fresh") == 0
++    manifest = json.loads((case.root / "manifest.json").read_bytes())
++    assert manifest["protocol"]["local_memory"] == mode
++    assert validate_manifest(manifest) == manifest
++    original = core_bytes(case.root)
++    anchor = (case.root / "_internal/run_inputs.json").read_bytes()
++    assert public(case, "resume") == 0
++    assert core_bytes(case.root) == original
++    assert (case.root / "_internal/run_inputs.json").read_bytes() == anchor
++    case.cfg["local_memory_mode"] = "required" if mode == "off" else "off"
++    case.path.write_text(yaml.safe_dump(case.cfg))
++    with pytest.raises(ValueError, match="immutable"):
++        public(case, "resume")
++    assert core_bytes(case.root) == original
++    assert (case.root / "_internal/run_inputs.json").read_bytes() == anchor
++
++
++@pytest.mark.parametrize("mode", [None, "auto", True, "none"])
++def test_unknown_mode_never_silently_falls_back(real_prepare, mode):
++    real_prepare.cfg["local_memory_mode"] = mode
++    real_prepare.path.write_text(yaml.safe_dump(real_prepare.cfg))
++    with pytest.raises(ValueError, match="mode"):
++        resolve(["dry-run", "--config", str(real_prepare.path)])
++
++
++def test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup(
++    tmp_path, monkeypatch
++):
++    store, cfg, runtime, report, error = cpu_run(
++        tmp_path, monkeypatch, local_memory_mode="off"
++    )
++    if error is not None:
++        pytest.fail(
++            str(error)
++            + "\n"
++            + "\n".join(
++                p.read_text()[-8000:] for p in (store.root / "logs").glob("*.log")
++            )
++        )
++    assert report["valid"] == 4 and report["results_qualified"]
++    processes = records(store.root / "_internal/processes")
++    assert sum(p["kind"] == "server" for p in processes) == 1
++    assert sum(p["kind"].startswith("simulator_slot:") for p in processes) == 2
++    for p in processes:
++        assert (store.root / "_internal/process_closed" / (p["id"] + ".json")).exists()
++        assert process_identity(p["identity"]["pid"]) is None
++    calls = [
++        json.loads(s.removeprefix("CPU_NATIVE_BATCH "))
++        for p in (store.root / "logs").glob("*_server.log")
++        for s in p.read_text().splitlines()
++        if s.startswith("CPU_NATIVE_BATCH ")
++    ]
++    assert any(c["size"] == 2 for c in calls) and sum(c["size"] for c in calls) == 8
++    assert all(c["prefix_present"] == [] for c in calls)
++    predictions = [
++        json.loads(s)
++        for p in store.root.glob("tasks/*/episodes/*/predictions.jsonl")
++        for s in p.read_text().splitlines()
++    ]
++    assert len(predictions) == 8 and all(p["local_memory"] is None for p in predictions)
++    assert all(
++        p["transaction"]["protocol"] == "robocasa.session-transactions.no-ttt.v1"
++        for p in predictions
++    )
++    first = [p for p in predictions if p["source_step"] == 0]
++    assert len({p["transaction"]["assignment"]["session_id"] for p in first}) == 4
++    rows = records(next((store.root / "_internal/scheduler").iterdir()))
++    assert [
++        (x["data"]["task"], x["data"]["episode"])
++        for x in rows
++        if x["kind"] == "DISPATCH"
++    ] == logical_plan(store.manifest)
++    assert sum(x["kind"] == "ROUND_BARRIER" for x in rows) == 2
++    original = core_bytes(store.root)
++    resumed = Runtime(
++        store,
++        cfg,
++        runtime.inputs,
++        runtime.environment,
++        resource_probe=lambda *a, **k: None,
++    )
++    with store.locked():
++        report, error = resumed.run()
++    assert error is None and report["valid"] == 4 and core_bytes(store.root) == original
++    assert not resumed.actors and not resumed.servers
++
++
++@pytest.mark.parametrize(
++    "damage", ["protocol", "assignment", "Local_status", "Local_action", "End"]
++)
++def test_NoTTT_Core_commit_and_read_reject_wrong_mode_or_unproven_Session(
++    tmp_path, damage
++):
++    from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
++    from cosmos_framework.evaluation.robocasa_v2.store import Store
++    from tools.v3.eval_v2_production_tests.contract_test import manifest, record
++    from tools.v3.eval_v2_production_tests.store_test import admitted, fixture_core
++
++    base = manifest(episodes=1)
++    value = Store(
++        tmp_path / "run",
++        build_manifest(
++            tasks=base["tasks"],
++            episodes=1,
++            seed=base["seed"],
++            horizons=base["horizons"],
++            experiment=base["experiment"],
++            local_memory="off",
++        ),
++    )
++    value.create()
++
++    def corrupt(directory):
++        if damage in ("protocol", "assignment", "Local_status"):
++            path = directory / "predictions.jsonl"
++            events = [json.loads(line) for line in path.read_text().splitlines()]
++            if damage == "protocol":
++                events[0]["transaction"]["protocol"] = (
++                    "robocasa.session-transactions.b1.v1"
++                )
++            elif damage == "assignment":
++                events[0]["transaction"]["assignment"]["attempt_id"] = "foreign"
++            else:
++                events[0]["local_memory"] = {"prefix_present": False}
++            raw = path.read_bytes()
++            path.write_text("".join(json.dumps(event) + "\n" for event in events))
++        elif damage == "Local_action":
++            path = directory / "actions.jsonl"
++            events = [json.loads(line) for line in path.read_text().splitlines()]
++            events[0]["canonical_executed_raw15"] = [0.0] * 15
++            raw = path.read_bytes()
++            path.write_text("".join(json.dumps(event) + "\n" for event in events))
++        else:
++            path = directory / "local_memory.json"
++            event = json.loads(path.read_bytes())
++            event["reset_ok"] = False
++            raw = path.read_bytes()
++            path.write_text(json.dumps(event))
++        return path, raw
++
++    with value.locked():
++        value.begin_task("CloseFridge")
++        attempt = admitted(value, value.begin_episode("CloseFridge", 0))
++        row = record(value.manifest, {**attempt, "reset_index": 0}, 0)
++        staging = fixture_core(value, attempt, row)
++        path, raw = corrupt(staging)
++        with pytest.raises(ValueError, match="No-TTT|action evidence|acknowledgement"):
++            value.commit(row, staging=staging)
++        assert not (value._slot("CloseFridge", 0) / "result.json").exists()
++        path.write_bytes(raw)
++        value.commit(row, staging=staging)
++        public_dir = value._slot("CloseFridge", 0)
++        assert value._result("CloseFridge", 0) == row
++        path, raw = corrupt(public_dir)
++        with pytest.raises(ValueError, match="No-TTT|action evidence|acknowledgement"):
++            value._result("CloseFridge", 0)
++        path.write_bytes(raw)
++        assert value._result("CloseFridge", 0) == row
+diff --git a/tools/v3/eval_v2_batch_tests/os_fixture.py b/tools/v3/eval_v2_batch_tests/os_fixture.py
+index cb960a7c..f290c8bb 100644
+--- a/tools/v3/eval_v2_batch_tests/os_fixture.py
++++ b/tools/v3/eval_v2_batch_tests/os_fixture.py
+@@ -70,11 +70,22 @@ def run_server(argv):
+     ):
+         parser.add_argument("--" + name, required=True)
+     args, _ = parser.parse_known_args(argv)
++    mode = argv[argv.index("--local-memory-mode") + 1]
+     patch = pytest.MonkeyPatch()
+     obj = service(patch)
+     obj.cfg.seed = 0
+     ids = tuple(args.transaction_slot_ids.split(","))
+     obj.local_memory_adapter, obj.model = make_adapter(len(ids))
++    if mode == "off":
++        from cosmos_framework.inference.robocasa_local_memory_policy import (
++            RoboCasaLocalMemoryPolicyAdapter,
++        )
++
++        obj.model = torch.nn.Module()
++        obj.model.net = torch.nn.Module()
++        obj.local_memory_adapter = RoboCasaLocalMemoryPolicyAdapter(
++            obj, mode="off", decode_image=lambda _: None, max_sessions=len(ids)
++        )
+ 
+     def decode(value):
+         image = Image.open(io.BytesIO(base64.b64decode(value)))
+@@ -86,7 +97,11 @@ def run_server(argv):
+ 
+     def generate(batch, **kwargs):
+         n = len(batch["prompt"])
+-        assert len(kwargs["_local_memory_prefixes"]) == n
++        if mode == "required":
++            assert len(kwargs["_local_memory_prefixes"]) == n
++        else:
++            assert "_local_memory_prefixes" not in kwargs
++            assert obj.local_memory_adapter.memory is None
+         calls.append(n)
+         if "--cpu-exit-after-live-slots" in argv:
+             assert len(ids) == 2 and n == 1
+@@ -124,7 +139,7 @@ def run_server(argv):
+                 {
+                     "size": n,
+                     "prefix_present": [
+-                        p is not None for p in kwargs["_local_memory_prefixes"]
++                        p is not None for p in kwargs.get("_local_memory_prefixes", ())
+                     ],
+                     "pid": os.getpid(),
+                     "model_loads": 1,
+@@ -166,7 +181,7 @@ def run_server(argv):
+         "fps": 20,
+         "seed": 0,
+         "requires_state": True,
+-        "local_memory": {"enabled": True, "mode": "required", "action_dim": 15},
++        "local_memory": {"enabled": mode == "required", "mode": mode, "action_dim": 15},
+         "session_transactions": obj.transactions.info(),
+     }
+     http = ThreadingHTTPServer(("127.0.0.1", int(args.port)), server._ActionHandler)
+diff --git a/tools/v3/eval_v2_batch_tests/runtime_test.py b/tools/v3/eval_v2_batch_tests/runtime_test.py
+index b5f2d254..3a5c8207 100644
+--- a/tools/v3/eval_v2_batch_tests/runtime_test.py
++++ b/tools/v3/eval_v2_batch_tests/runtime_test.py
+@@ -90,10 +90,20 @@ class CpuRegistry(Registry):
+         return super().start(command, kind=kind, **kwargs)
+ 
+ 
+-def cpu_run(tmp_path, monkeypatch, *, g=1, n=2, episodes=2, fail_server=False):
++def cpu_run(
++    tmp_path,
++    monkeypatch,
++    *,
++    g=1,
++    n=2,
++    episodes=2,
++    fail_server=False,
++    local_memory_mode="required",
++):
+     tasks = ("CloseFridge", "OpenCabinet", "OpenDrawer")[:n]
+     cfg = dict(
+         execution_profile="phase_b",
++        local_memory_mode=local_memory_mode,
+         gpu_ids=list(range(g)),
+         sims_per_gpu=2,
+         # The death fixture must fire even when batching is impossible.
+@@ -137,6 +147,7 @@ def cpu_run(tmp_path, monkeypatch, *, g=1, n=2, episodes=2, fail_server=False):
+         horizons={t: 32 for t in tasks},
+         experiment=experiment,
+         execution=execution(cfg),
++        local_memory=local_memory_mode,
+     )
+     value = Store(tmp_path / "run", m)
+     value.create()
+diff --git a/tools/v3/eval_v2_production_tests/store_test.py b/tools/v3/eval_v2_production_tests/store_test.py
+index 6c442062..7c9039ec 100644
+--- a/tools/v3/eval_v2_production_tests/store_test.py
++++ b/tools/v3/eval_v2_production_tests/store_test.py
+@@ -596,12 +596,13 @@ def fixture_core(value, a, row):
+     raw = [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+     env = [0.0] * 11 + [-1.0]
+     session = "fixture_session_" + a["attempt_id"]
++    required = value.manifest["protocol"]["local_memory"] == "required"
+     actions = [
+         {
+             "source_step": i,
+             "evidence_completed": True,
+             "predicted_raw15": raw,
+-            "canonical_executed_raw15": raw,
++            "canonical_executed_raw15": raw if required else None,
+             "submitted_env12": env,
+         }
+         for i in range(row["steps"])
+@@ -615,7 +616,27 @@ def fixture_core(value, a, row):
+                 "session_id": session,
+                 "episode_id": "fixture_episode",
+                 "consumer_step": 16 * i,
+-            },
++            }
++            if required
++            else None,
++            **(
++                {}
++                if required
++                else {
++                    "transaction": {
++                        "protocol": "robocasa.session-transactions.no-ttt.v1",
++                        "frontier": i,
++                        "assignment": {
++                            "manifest_digest": row["manifest_digest"],
++                            "task": a["task"],
++                            "episode_index": a["episode"],
++                            "attempt_id": a["attempt_id"],
++                            "session_id": session,
++                            "episode_id": "fixture_episode",
++                        },
++                    }
++                }
++            ),
+         }
+         for i in range(row["replans"])
+     ]
+@@ -626,7 +647,18 @@ def fixture_core(value, a, row):
+         "".join(json.dumps(x) + "\n" for x in predictions)
+     )
+     (directory / "local_memory.json").write_text(
+-        json.dumps({"session_id": session, "reset_ok": True, "cleanup_error": None})
++        json.dumps(
++            {
++                "session_id": session,
++                "reset_ok": True,
++                "cleanup_error": None,
++                **(
++                    {}
++                    if required
++                    else {"local_memory_mode": "off", "local_state": "not_instantiated"}
++                ),
++            }
++        )
+     )
+     scene = {
+         k: row[k]

@@ -480,3 +480,8 @@
 - **V3-EVAL-V2-F5-P1** — IN_PROGRESS; Codex; minimal boundedrun_inputs/runtimeprobe sidecar64MiB appendonly atomicwriter+>16MiB publicCLI Fresh/Resume/identity/limits regressions. Baseline427b/0ae, isolatednewChild→Root thenGPTfreshnarrowCodeGate. No435repeat/sharedGPU/Canary/900/train/merge.
 
 - **V3-EVAL-V2-F5-P1** — REVIEW; Codex; FormalRoot7c74dc26ac4837f193727ecf847b9b64554c18b2/Child53c3c95202e14d3b72d236eee6899a80acf82989. Finalnarrow85PASS/0fail,error,skip + static/scope/realSourceCheckPASS; oldoversizeRED1FAIL, synthetic150kMap37MBsidecars/2553Banchor FreshResumeverified. Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/`; publishChild→Root thenGPTnarrowCodeGateSTOP. No435/sharedGPU/GPU/Canary/train/900/merge.
+
+- **V3-EVAL-V2-DUAL-MODE** — IN_PROGRESS; Codex; prerequisite Owner final dual-mode requirement56d8ba87, baseline7c74dc26/53c3c952; explicit off|required identity/handshake with shared transaction cache, Session/Batch/Sim. Local strict adaptation preserved, off has none; CPU B1/B2, isolation, replay, timeout/cleanup, Resume/mode mismatch and affected old regressions. Isolated new Pair → GPT Code Gate; no GPU/435/900/merge/training.
+
+
+- **V3-EVAL-V2-DUAL-MODE** — REVIEW; Codex; FormalRootd18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163/Child2f7334c4ada6ace1d21185985aae90539052bf18。最终clean定向324PASS(47new+277old)/0fail,error,skip/shell0/source44stable/static21+sourceguardPASS；原F3/Local三拓扑保留、NoTTT四Core/B2公共链通过；docs/collab/codex/evidence/2026-10-30_eval_v2_dual_mode_author_cpu/README.md。新GPT窄CodeGate，DS后续分别真实两mode待Owner执行范围，未GPU/435/900/train/merge。

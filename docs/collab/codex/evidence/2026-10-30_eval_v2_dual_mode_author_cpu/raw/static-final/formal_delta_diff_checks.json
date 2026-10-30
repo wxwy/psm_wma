@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/work/psm-wma-dual-mode",
+        "diff",
+        "--check",
+        "608f55dccff6077e276e78644af6a578b4087781",
+        "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+        "--",
+        "scripts",
+        "tools",
+        "configs"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/workspace/work/psm-wma-dual-mode/cosmos-framework",
+        "diff",
+        "--check",
+        "53c3c95202e14d3b72d236eee6899a80acf82989",
+        "2f7334c4ada6ace1d21185985aae90539052bf18",
+        "--"
+      ],
+      "exit": 0,
+      "output": ""
+    }
+  ],
+  "note": "Explicit new source delta; excludes unchanged historical Root raw evidence. Original clean workingtree diff checks remain archived."
+}

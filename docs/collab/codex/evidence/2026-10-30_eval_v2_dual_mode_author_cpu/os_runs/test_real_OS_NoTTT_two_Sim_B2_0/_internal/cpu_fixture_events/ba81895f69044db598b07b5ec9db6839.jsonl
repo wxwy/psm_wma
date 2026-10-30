@@ -1,0 +1,8 @@
+{"kind": "make", "pid": 21819, "time": 44489.454487959, "task": "OpenCabinet", "seed": 7}
+{"kind": "reset", "pid": 21819, "time": 44489.477900909, "task": "OpenCabinet", "scene": 2029167941}
+{"kind": "execute_begin", "pid": 21819, "time": 44489.901476104, "task": "OpenCabinet"}
+{"kind": "execute_end", "pid": 21819, "time": 44490.242118726, "task": "OpenCabinet"}
+{"kind": "reset", "pid": 21819, "time": 44490.52704468, "task": "OpenCabinet", "scene": 1342382292}
+{"kind": "execute_begin", "pid": 21819, "time": 44490.718437609, "task": "OpenCabinet"}
+{"kind": "execute_end", "pid": 21819, "time": 44490.998989609, "task": "OpenCabinet"}
+{"kind": "close", "pid": 21819, "time": 44491.213446808, "task": "OpenCabinet"}

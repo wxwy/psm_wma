@@ -1,0 +1,153 @@
+{"prototype_only": false, "manifest_digest": "ddbef7ad25a6f62ab30647da352e1f096a6407244a00540b8f4818ccea320023", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "5f21d3862b854acd9bde6987ccc48770", "worker_id": "224711948a654f22b78d4dc9fdad9e1a", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "ddbef7ad25a6f62ab30647da352e1f096a6407244a00540b8f4818ccea320023", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "5f21d3862b854acd9bde6987ccc48770", "worker_id": "224711948a654f22b78d4dc9fdad9e1a", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+.{"prototype_only": false, "manifest_digest": "c64361c8e8a5494a072e4810738ce1fe79e80b3158cb0bc9db9355829bd42ddb", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "d68817e06c2d4b57ab456f41e0147cf4", "worker_id": "f645465d17314777a7ed1a95a0492dd4", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+{"prototype_only": false, "manifest_digest": "c64361c8e8a5494a072e4810738ce1fe79e80b3158cb0bc9db9355829bd42ddb", "status": "complete", "success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "results_qualified": true, "clean_execution": true, "process_errors": [], "unresolved_process_errors": 0, "resolved_process_errors": 0, "tasks": {"CloseFridge": {"success": 1, "failure": 1, "invalid": 0, "interrupted": 0, "pending": 0, "skipped_init_error": 0, "scene_admission_exhausted": 0, "valid": 2, "expected": 2, "sr": 0.5, "partial_sr_valid_only": 0.5, "unresolved_process_errors": 0, "open_worker_streams": [], "sampling_streams": [{"stream_id": "d68817e06c2d4b57ab456f41e0147cf4", "worker_id": "f645465d17314777a7ed1a95a0492dd4", "logical_stream_seed": 0, "kind": "initial_dynamic_slot_stream"}], "clean_execution": true, "results_qualified": true, "missing_blocked_ids": [], "admission_rejections": 0, "admission_samples": 2, "initialization_errors": 0}}}
+.....[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+[eval-v2] {"round": 1, "workers": [{"gpu": "GPU0_S0", "task": "CloseFridge", "episode": 0, "episodes": 2, "stage": "model_loading", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}, {"gpu": "GPU0_S1", "task": "OpenCabinet", "episode": 0, "episodes": 2, "stage": "environment_initialization", "steps": 0, "horizon": 32, "predictions": 0, "last_prediction_ms": null}], "native_batches": {"GPU0": {"diagnostic_error": "ConnectionError"}}}
+F.........................F........................[10-30 11:52:02|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1472:predict_policy] [action-server] request_id=1 mode=policy prompt='close the fridge' domain_name='robocasa' image_size=256 img=(3, 256, 512) steps=2 guidance=1.0
+[10-30 11:52:02|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1550:predict_policy] [action-server] request_id=1 done action_steps=16 video_frames=0 local_memory={'session_id': 'ed9126f91816456ca2c226b7477d9785:slot0:1:644c02b022ce4c7db98a56869b514f96', 'episode_id': 'd3f50d76674e459784c993ae59c67fa8', 'consumer_step': 0, 'prefix_present': False, 'replay': False, 'encoded_steps': 0, 'adapted_steps': 0.0, 'inner_loss_mean': 0.0, 'fast_state_norm': 0.0, 'fast_update_norm': 0.0} ms_total=8.7 ms_decode=4.0 ms_infer=3.1
+[10-30 11:52:02|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1472:predict_policy] [action-server] request_id=2 mode=policy prompt='close the fridge' domain_name='robocasa' image_size=256 img=(3, 256, 512) steps=2 guidance=1.0
+[10-30 11:52:02|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1550:predict_policy] [action-server] request_id=2 done action_steps=16 video_frames=0 local_memory={'session_id': 'ed9126f91816456ca2c226b7477d9785:slot0:1:644c02b022ce4c7db98a56869b514f96', 'episode_id': 'd3f50d76674e459784c993ae59c67fa8', 'consumer_step': 2, 'prefix_present': True, 'replay': False, 'encoded_steps': 2, 'adapted_steps': 2.0, 'fast_state_norm': 4.135106515504236, 'fast_update_norm': 0.029027819633483887, 'inner_loss_mean': 0.4292404353618622} ms_total=25.6 ms_decode=6.3 ms_infer=18.7
+...........[10-30 11:52:03|WARNING|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1295:_transaction_batch] Optional media spool dropped: %s
+[10-30 11:52:03|WARNING|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1295:_transaction_batch] Optional media spool dropped: %s
+...[10-30 11:52:03|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1472:predict_policy] [action-server] request_id=1 mode=policy prompt='close the fridge' domain_name='robocasa' image_size=256 img=(3, 256, 512) steps=2 guidance=1.0
+[10-30 11:52:03|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1550:predict_policy] [action-server] request_id=1 done action_steps=16 video_frames=0 local_memory={'session_id': '326c39a19d5f4d00a87b08e109170c20:slot0:1:46bf225e36f241e69347039586abf8f1', 'episode_id': 'bf691a36dd1b48f6a48c19cc1ec91fe4', 'consumer_step': 0, 'prefix_present': False, 'replay': False, 'encoded_steps': 0, 'adapted_steps': 0.0, 'inner_loss_mean': 0.0, 'fast_state_norm': 0.0, 'fast_update_norm': 0.0} ms_total=5.5 ms_decode=3.2 ms_infer=1.4
+[10-30 11:52:03|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1472:predict_policy] [action-server] request_id=2 mode=policy prompt='close the fridge' domain_name='robocasa' image_size=256 img=(3, 256, 512) steps=2 guidance=1.0
+[10-30 11:52:03|INFO|cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:1550:predict_policy] [action-server] request_id=2 done action_steps=16 video_frames=0 local_memory={'session_id': '326c39a19d5f4d00a87b08e109170c20:slot0:1:46bf225e36f241e69347039586abf8f1', 'episode_id': 'bf691a36dd1b48f6a48c19cc1ec91fe4', 'consumer_step': 2, 'prefix_present': True, 'replay': False, 'encoded_steps': 2, 'adapted_steps': 2.0, 'fast_state_norm': 4.135106515504236, 'fast_update_norm': 0.029027819633483887, 'inner_loss_mean': 0.4292404353618622} ms_total=19.4 ms_decode=5.5 ms_infer=13.4
+...............................................................
+=================================== FAILURES ===================================
+________ test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup ________
+
+tmp_path = PosixPath('/workspace/work/dual-mode-evidence/focused2/tmp/test_real_OS_NoTTT_two_Sim_B2_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcf84ce9520>
+
+    def test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup(
+        tmp_path, monkeypatch
+    ):
+        store, cfg, runtime, report, error = cpu_run(
+            tmp_path, monkeypatch, local_memory_mode="off"
+        )
+        if error is not None:
+>           pytest.fail(
+                str(error)
+                + "\n"
+                + "\n".join(
+                    p.read_text()[-8000:] for p in (store.root / "logs").glob("*.log")
+                )
+            )
+E           Failed: prediction frontier mismatch
+E           
+E           
+E           /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+E             import pynvml  # type: ignore[import]
+E           CPU_MODEL_OWNER_READY {"pid": 18419, "model_loads": 1}
+E           CPU_NATIVE_BATCH {"size": 1, "prefix_present": [], "pid": 18419, "model_loads": 1}
+E           CPU_NATIVE_BATCH {"size": 2, "prefix_present": [], "pid": 18419, "model_loads": 1}
+E           CPU_NATIVE_BATCH {"size": 1, "prefix_present": [], "pid": 18419, "model_loads": 1}
+
+tools/v3/eval_v2_batch_tests/dual_mode_test.py:75: Failed
+_____ test_huge_frontier_gap_rejected_before_adapter_range_materialization _____
+
+runtime = (<cosmos_framework.inference.robocasa_session_transactions.SessionTransactions object at 0x7fcf84b8eba0>, <cosmos_fram...f9f9aa0286fe13', 'evidence': [], 'evidence_format': 'robocasa_composite_rgb_canonical_raw15_v1', ...}, ...}, (None,))])
+
+    def test_huge_frontier_gap_rejected_before_adapter_range_materialization(runtime):
+        actor, _, model, _ = runtime
+        lease = register(actor)
+        cold = wait_result(actor, lease, submit(actor, lease, payload(lease)))
+        ack(actor, lease, cold)
+        bad = payload(lease, 1, 0)
+        bad["local_memory"]["consumer_step"] = 10**18
+        with pytest.raises(ValueError, match="bounded contiguous"):
+>           submit(actor, lease, bad)
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py:545: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+actor = <cosmos_framework.inference.robocasa_session_transactions.SessionTransactions object at 0x7fcf84b8eba0>
+lease = {'attempt_id': 'attempt-1', 'capability': '_UDtvLs4NYDuvcdSW-lHAzljwWFQU7SFGT-0qCx_Q78', 'episode_id': '42c9ce1bcc1d4b8b8df9f9aa0286fe13', 'episode_index': 0, ...}
+request = {'domain_name': 'robocasa', 'image': '0', 'image_size': 256, 'local_memory': {'consumer_step': 1000000000000000000, 'e... 0.01, 0.01, 0.01, ...], 'source_step': 0}], 'evidence_format': 'robocasa_composite_rgb_canonical_raw15_v1', ...}, ...}
+
+    def submit(actor, lease, request):
+        """Actor-only tests supply an original budget; HTTP tests use the real client."""
+        now = actor.clock()
+>       return actor.submit(
+            lease,
+            request,
+            budget={
+                "clock_domain": actor.clock_domain,
+                "started_at": now,
+                "deadline": now + actor.timeout_s,
+            },
+        )
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_session_transactions.SessionTransactions object at 0x7fcf84b8eba0>
+proof = {'attempt_id': 'attempt-1', 'capability': '_UDtvLs4NYDuvcdSW-lHAzljwWFQU7SFGT-0qCx_Q78', 'episode_id': '42c9ce1bcc1d4b8b8df9f9aa0286fe13', 'episode_index': 0, ...}
+payload = {'domain_name': 'robocasa', 'image': '0', 'image_size': 256, 'local_memory': {'consumer_step': 1000000000000000000, 'e... 0.01, 0.01, 0.01, ...], 'source_step': 0}], 'evidence_format': 'robocasa_composite_rgb_canonical_raw15_v1', ...}, ...}
+
+    def submit(self, proof: dict, payload: dict, *, budget: dict) -> Reply:
+        deadline = original_deadline(budget, self.clock_domain, self.clock(), self.timeout_s)
+        raw = json_bytes(payload)
+        if len(raw) > MAX_BODY:
+            raise ValueError("encoded inference item exceeds bound")
+        payload = strict_json(raw)  # Freeze caller-owned structures before admission.
+        if not self._payload_keys_valid(payload):
+            raise ValueError("B1 policy payload requires observation/state/local evidence; media must be off")
+>       frontier = request_frontier(payload, self.mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:361: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+payload = {'domain_name': 'robocasa', 'image': '0', 'image_size': 256, 'local_memory': {'consumer_step': 1000000000000000000, 'e... 0.01, 0.01, 0.01, ...], 'source_step': 0}], 'evidence_format': 'robocasa_composite_rgb_canonical_raw15_v1', ...}, ...}
+mode = 'required'
+
+    def request_frontier(payload, mode):
+        """No-TTT has a transaction sequence, never a fabricated Local frontier."""
+        if mode == "required":
+            local = payload.get("local_memory")
+            if not isinstance(local, dict):
+                raise ValueError("Local evidence object required")
+            value = local.get("consumer_step")
+        else:
+            inference = payload.get("inference")
+            if not isinstance(inference, dict) or set(inference) != {"session_id", "episode_id", "request_index"}:
+                raise ValueError("exact No-TTT inference identity required")
+            value = inference["request_index"]
+        if type(value) is not int or not 0 <= value <= 100000:
+>           raise ValueError("bounded integer inference frontier required")
+E           ValueError: bounded integer inference frontier required
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:52: ValueError
+
+During handling of the above exception, another exception occurred:
+
+runtime = (<cosmos_framework.inference.robocasa_session_transactions.SessionTransactions object at 0x7fcf84b8eba0>, <cosmos_fram...f9f9aa0286fe13', 'evidence': [], 'evidence_format': 'robocasa_composite_rgb_canonical_raw15_v1', ...}, ...}, (None,))])
+
+    def test_huge_frontier_gap_rejected_before_adapter_range_materialization(runtime):
+        actor, _, model, _ = runtime
+        lease = register(actor)
+        cold = wait_result(actor, lease, submit(actor, lease, payload(lease)))
+        ack(actor, lease, cold)
+        bad = payload(lease, 1, 0)
+        bad["local_memory"]["consumer_step"] = 10**18
+>       with pytest.raises(ValueError, match="bounded contiguous"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'bounded contiguous'
+E         Actual message: 'bounded integer inference frontier required'
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py:544: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_tests/dual_mode_test.py::test_real_OS_NoTTT_two_Sim_B2_Common_Session_D5_Resume_cleanup
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py::test_huge_frontier_gap_rejected_before_adapter_range_materialization
+2 failed, 132 passed, 1 warning in 33.77s

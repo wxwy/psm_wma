@@ -1,0 +1,17 @@
+{
+  "physical_slot_id": "ba81895f69044db598b07b5ec9db6839",
+  "attempt_id": "0da05b1514a94dc58ba358b683dd0830",
+  "task": "OpenCabinet",
+  "states": [
+    "CLEAN",
+    "CLAIMED",
+    "ENV_READY",
+    "RESETTING",
+    "ADMISSION",
+    "SESSION_OPEN",
+    "EXECUTING",
+    "EXECUTING",
+    "EXECUTING",
+    "CLEAN"
+  ]
+}

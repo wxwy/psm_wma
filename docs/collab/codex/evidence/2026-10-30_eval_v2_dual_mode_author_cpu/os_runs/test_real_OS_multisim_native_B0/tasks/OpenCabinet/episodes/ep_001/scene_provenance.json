@@ -1,0 +1,22 @@
+{
+  "task": "OpenCabinet",
+  "episode": 1,
+  "attempt_id": "7249046784de45fb87993ac49497b368",
+  "stream_id": "f9f6b075fb6c4b8d8f6f4f9574d18be7",
+  "seed": 7,
+  "manifest_digest": "9fad05a3ce364431e50878f3917a92e12e80f970db735c65de5c3c99832f57b7",
+  "initial_success": false,
+  "reset_index": 1,
+  "sampling": {
+    "environment_id": "54c0de3bd7394b838fa077ed7d6777e8",
+    "actual_seed": 7,
+    "environment_reset_index": 1,
+    "physical_slot_id": "cc31b829d4c04b66b63fbf697ec09b44",
+    "protocol": "dynamic_slot_environment_seed_then_continuous_reset_v3"
+  },
+  "episode_metadata": {
+    "lang": "actual OpenCabinet",
+    "layout_id": 1342382292,
+    "cpu_synthetic": true
+  }
+}

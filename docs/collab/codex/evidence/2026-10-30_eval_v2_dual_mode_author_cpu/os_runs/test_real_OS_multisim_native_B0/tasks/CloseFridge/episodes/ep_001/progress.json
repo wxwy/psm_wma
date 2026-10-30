@@ -1,0 +1,9 @@
+{
+  "event": "stage",
+  "stage": "environment_initialization",
+  "max_steps": 32,
+  "steps": 0,
+  "predictions": 0,
+  "last_prediction_ms": null,
+  "error": null
+}

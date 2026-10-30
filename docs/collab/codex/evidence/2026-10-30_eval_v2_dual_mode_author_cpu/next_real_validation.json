@@ -1,0 +1,24 @@
+{
+  "formal_pair": {
+    "root": "d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163",
+    "child": "2f7334c4ada6ace1d21185985aae90539052bf18"
+  },
+  "status": "PENDING_NEW_GPT_CODE_GATE_AND_OWNER_EXECUTION_SCOPE",
+  "required_modes": [
+    "off",
+    "required"
+  ],
+  "execution_profile": "phase_b",
+  "sims_per_gpu": 2,
+  "max_infer_batch_size": 2,
+  "checkpoint_and_config": "Separate mode-matched stable complete inputs and fresh independent run namespace per mode",
+  "must_prove": [
+    "actual native B2 histogram",
+    "separate per-mode Episode/SR/Core/MP4 artifacts",
+    "owned-only cleanup"
+  ],
+  "new_GPU_runs_authorized_by_this_handoff": false,
+  "automatic_8_episodes": false,
+  "formal_900": false,
+  "training_or_shared_GPU_policy_changes": false
+}
