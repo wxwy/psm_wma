@@ -1,0 +1,17 @@
+{
+  "CUDA_VISIBLE_DEVICES": "",
+  "COSMOS_DEVICE": "cpu",
+  "HF_HUB_OFFLINE": "1",
+  "TRANSFORMERS_OFFLINE": "1",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "HF_HOME": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/cache/hf",
+  "MPLCONFIGDIR": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/cache/mpl",
+  "XDG_CACHE_HOME": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/cache/xdg",
+  "RUFF_CACHE_DIR": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/cache/ruff",
+  "TRITON_CACHE_DIR": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/cache/triton",
+  "PYTEST_ADDOPTS": "",
+  "PYTHONPATH": "/workspace/work/psm-wma-inflight-snapshot-formal:/workspace/work/psm-wma-inflight-snapshot-formal/cosmos-framework:/workspace/work/psm-wma-inflight-snapshot-formal/scripts"
+}

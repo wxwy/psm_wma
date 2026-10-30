@@ -1,0 +1,1 @@
+{"body":{"data":{"manifest_digest":"29a78160e1df4f23e193b300890ea9bb5632792b99769dc1210be82d1f17bd01","workers":["GPU0_S0","GPU0_S1"]},"invocation":"c116bad9216248d4aa85d7e8b19aafef","kind":"START","lease_id":"10cd9947dc7c4148943601c8ddf5475d","round":0,"time_ns":1793324301064914329},"sha256":"a6e51fada3650ff374edeb2db228a72ac28188c37a49de7f708e1ed409e3100e"}

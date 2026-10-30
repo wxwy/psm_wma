@@ -1,0 +1,54 @@
+{
+  "role": "AUTHOR_CPU, not independent DS",
+  "formal_root": "a139b5a35877a79e0a56c2208f3002f731972b11",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "status": "PASS",
+  "junit": {
+    "tests": 435,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "groups": {
+    "inference": {
+      "tests": 145,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "phase_a_regression": {
+      "tests": 256,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "phase_b_runtime": {
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "source_unchanged": true,
+  "original_source_fingerprints": 54,
+  "total_source_bindings": 62,
+  "shell_exit": 0,
+  "gate_syntax_files": 30,
+  "copy_policy": "Exact bytes of explicitly allowlisted originals; not all temporary/cache artifacts.",
+  "privacy": {
+    "generated_test_server_capabilities_scanned": 5,
+    "private_values_or_hashes_published": false,
+    "public_recursive_field_check": "PASS"
+  },
+  "excluded": [
+    "all caches",
+    "whole *_tmp trees",
+    "server capability files",
+    "actor/assignment configs",
+    "runtime proofs",
+    "fake checkpoint containers"
+  ],
+  "limits": "Synthetic CPU fixtures including the synthetic900 scheduling regression. No native GPU/Cosmos weights/RoboCasa/EGL/real DCP/formal900 benchmark/training execution. Foreign survival and completed Resume are carried by passed original test assertions, not fabricated standalone raw artifacts.",
+  "independent_DS": "NOT_RUN by this author archive; no Evidence Gate closure inferred.",
+  "next_step": "Owner/GPT review and separately authorized independent DS unified Gate; no automatic dispatch or V3 merge."
+}

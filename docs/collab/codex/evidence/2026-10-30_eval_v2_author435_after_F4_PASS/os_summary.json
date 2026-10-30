@@ -1,0 +1,137 @@
+{
+  "synthetic_CPU_only": true,
+  "runs": [
+    {
+      "label": "G1_N2_E2",
+      "raw_run": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run",
+      "G_N_episodes": [
+        1,
+        2,
+        2
+      ],
+      "owned_processes": 3,
+      "owned_cleanup_receipts": 3,
+      "servers": 1,
+      "sim_processes": 2,
+      "native_batch_histogram": {
+        "1": 2,
+        "2": 3
+      },
+      "native_request_total": 8,
+      "prediction_rows": 8,
+      "result_records": 4,
+      "scheduler_records": 11,
+      "fixture_events": 16,
+      "foreign_survival": "Not asserted in this success case.",
+      "completed_resume": "Carried by the passed test assertions for no resource probe and unchanged result bytes; no separate before/after raw byte snapshot was written.",
+      "raw_fixture_physics_overlap": true
+    },
+    {
+      "label": "G2_N3_E1",
+      "raw_run": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run",
+      "G_N_episodes": [
+        2,
+        3,
+        1
+      ],
+      "owned_processes": 5,
+      "owned_cleanup_receipts": 5,
+      "servers": 2,
+      "sim_processes": 3,
+      "native_batch_histogram": {
+        "1": 4,
+        "2": 1
+      },
+      "native_request_total": 6,
+      "prediction_rows": 6,
+      "result_records": 3,
+      "scheduler_records": 8,
+      "fixture_events": 15,
+      "foreign_survival": "Not asserted in this success case.",
+      "completed_resume": "Carried by the passed test assertions for no resource probe and unchanged result bytes; no separate before/after raw byte snapshot was written.",
+      "raw_fixture_physics_overlap": true
+    },
+    {
+      "label": "G1_N3_E1",
+      "raw_run": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run",
+      "G_N_episodes": [
+        1,
+        3,
+        1
+      ],
+      "owned_processes": 3,
+      "owned_cleanup_receipts": 3,
+      "servers": 1,
+      "sim_processes": 2,
+      "native_batch_histogram": {
+        "1": 4,
+        "2": 1
+      },
+      "native_request_total": 6,
+      "prediction_rows": 6,
+      "result_records": 3,
+      "scheduler_records": 8,
+      "fixture_events": 15,
+      "foreign_survival": "Not asserted in this success case.",
+      "completed_resume": "Carried by the passed test assertions for no resource probe and unchanged result bytes; no separate before/after raw byte snapshot was written.",
+      "raw_fixture_physics_overlap": true
+    },
+    {
+      "label": "F3_server_death",
+      "raw_run": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run",
+      "G_N_episodes": [
+        1,
+        2,
+        2
+      ],
+      "owned_processes": 3,
+      "owned_cleanup_receipts": 3,
+      "servers": 1,
+      "sim_processes": 2,
+      "native_batch_histogram": {},
+      "native_request_total": 0,
+      "prediction_rows": 0,
+      "result_records": 0,
+      "scheduler_records": 4,
+      "fixture_events": 4,
+      "foreign_survival": "Carried by the passed test assertion; no separate raw external-process survival artifact exists.",
+      "completed_resume": "Not part of the failure case.",
+      "fault_marker": {
+        "pid": 5232,
+        "native_size": 1,
+        "tickets": [
+          {
+            "server_epoch": "ff011de8c1ce4217be26165d161ec5c5",
+            "run_lease": "10cd9947dc7c4148943601c8ddf5475d",
+            "manifest_digest": "29a78160e1df4f23e193b300890ea9bb5632792b99769dc1210be82d1f17bd01",
+            "slot_id": "34c8faabcbff4c51bf44de7f9ebaaf28",
+            "generation": 1,
+            "task": "CloseFridge",
+            "episode_index": 0,
+            "attempt_id": "025c646d6f954a34b96bf75d6ba13020",
+            "session_id": "ff011de8c1ce4217be26165d161ec5c5:34c8faabcbff4c51bf44de7f9ebaaf28:1:f7b8731a4d654313b8841b9cba305f21",
+            "episode_id": "eb79c41731674c46a20de11c4080cc85",
+            "state": "GENERATING"
+          },
+          {
+            "server_epoch": "ff011de8c1ce4217be26165d161ec5c5",
+            "run_lease": "10cd9947dc7c4148943601c8ddf5475d",
+            "manifest_digest": "29a78160e1df4f23e193b300890ea9bb5632792b99769dc1210be82d1f17bd01",
+            "slot_id": "df1e07e78306403bb64949898a6ceb4c",
+            "generation": 1,
+            "task": "OpenCabinet",
+            "episode_index": 0,
+            "attempt_id": "27fab6c7334b4949b4afbe93f6a2b5a4",
+            "session_id": "ff011de8c1ce4217be26165d161ec5c5:df1e07e78306403bb64949898a6ceb4c:1:80ccbcb017d94236b0d5dead14f1abbb",
+            "episode_id": "a76ca8bcc50e406fa427cd332aa0ae84",
+            "state": "QUEUED"
+          }
+        ]
+      }
+    }
+  ],
+  "store_concurrency_fault_uuids": [
+    "8a1ae9591b284a18b06185f96c4dee20",
+    "b7ea78d0e6344ab78b3d3d842479ac59"
+  ]
+}

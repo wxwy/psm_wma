@@ -538,3 +538,8 @@
 - **V3-EVAL-V2-F4-P1** — IN_PROGRESS; Codex; Owner Root-only same-lock inflight snapshot+deterministic old-red/new-green regression. Expected files runtime.py/runtime_progress_test.py, Child0ae unchanged. Freeze newRoot then GPT narrowCodeGate; no900/fullGate/DS.
 
 - **V3-EVAL-V2-F4-P1** — REVIEW; Codex; FormalRoota139b5a35877a79e0a56c2208f3002f731972b11/Child0ae313e329d290fc6b8a50fda1112820fb7ac485; controlledRED1FAIL then exactPairGREEN3PASS/static/scopeproof PASS; evidence `docs/collab/codex/evidence/2026-10-29_eval_v2_inflight_snapshot_F4_P1/`. GPT narrowCodeGate prerequisite for one fullauthor CPU (expected435), then evidence review/DS. No fullGate/900/DS run or merge.
+
+- **V3-EVAL-V2-F4-P1** — DONE source only; GPTAPPROVE_CODE89445391 exacta139/0ae; evidence gates separate.
+- **V3-EVAL-V2-AUTHOR435-AFTER-F4** — IN_PROGRESS; Codex; Owner exactly-once existing fullCPU Gate on clean a139/0ae, target435/0fail,error,skip/shell0/gatePASS/sourceunchanged. Raw artifacts then GPT evidence review; no auto retry/DS/merge/GPU/real900/training.
+
+- **V3-EVAL-V2-AUTHOR435-AFTER-F4** — REVIEW; Codex; exactlyone fullauthorGate PASS435=145+256+34/zero failures,errors,skips/shell0/rawPASS/sourceunchanged; exacta139b5a35877a79e0a56c2208f3002f731972b11/0ae313e329d290fc6b8a50fda1112820fb7ac485 unchanged/clean54hash. RawEvidence `docs/collab/codex/evidence/2026-10-30_eval_v2_author435_after_F4_PASS/`; GPT authorEvidence validation next, then DS independentGate. No automatic DS/merge/GPU/Canary/real900/training.

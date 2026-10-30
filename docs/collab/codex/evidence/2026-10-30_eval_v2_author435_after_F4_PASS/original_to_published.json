@@ -1,0 +1,1208 @@
+[
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/cpu_fixture_events/34c8faabcbff4c51bf44de7f9ebaaf28.jsonl",
+    "published": "os/F3_server_death/_internal/cpu_fixture_events/34c8faabcbff4c51bf44de7f9ebaaf28.jsonl",
+    "sha256": "b5f19a550e2c370143f3ded7f63a08b5c1313cb3e4b9d762b4b9ca5a78e47963",
+    "bytes": 187
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/cpu_fixture_events/df1e07e78306403bb64949898a6ceb4c.jsonl",
+    "published": "os/F3_server_death/_internal/cpu_fixture_events/df1e07e78306403bb64949898a6ceb4c.jsonl",
+    "sha256": "f0b6ffc8092d2f8b79006c9f6c0b1340788bb419db2fa8eda3009ae6ec285227",
+    "bytes": 187
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/process_closed/6c5b72971bda42c5a68f7e3bd87b2524.json",
+    "published": "os/F3_server_death/_internal/process_closed/6c5b72971bda42c5a68f7e3bd87b2524.json",
+    "sha256": "8b14259bbc33013b59b34b98508c9468a93825bd5a91e10f266d6bc04fa3856f",
+    "bytes": 880
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/process_closed/8fd3ed3689294cf9be17b852891bccc1.json",
+    "published": "os/F3_server_death/_internal/process_closed/8fd3ed3689294cf9be17b852891bccc1.json",
+    "sha256": "3a59df58230eec5a7020e8c698d0dc8277865af3f618147899d899622c51e82e",
+    "bytes": 1729
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/process_closed/a46fb269ab774917880a68a777632b95.json",
+    "published": "os/F3_server_death/_internal/process_closed/a46fb269ab774917880a68a777632b95.json",
+    "sha256": "e76afdb777459475d61f5278aed997509a134790803d5ef7b3e1eef10cde0eb8",
+    "bytes": 881
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/processes/6c5b72971bda42c5a68f7e3bd87b2524.json",
+    "published": "os/F3_server_death/_internal/processes/6c5b72971bda42c5a68f7e3bd87b2524.json",
+    "sha256": "29040f5daf1633048f0af0adf3448d487105385cbc6d9bb98b9ef4964a7e9a11",
+    "bytes": 724
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/processes/8fd3ed3689294cf9be17b852891bccc1.json",
+    "published": "os/F3_server_death/_internal/processes/8fd3ed3689294cf9be17b852891bccc1.json",
+    "sha256": "b29cf75cd14eccc7b82b2ed999accf7d71a5700f6a0d832b5974f4235c654241",
+    "bytes": 1583
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/processes/a46fb269ab774917880a68a777632b95.json",
+    "published": "os/F3_server_death/_internal/processes/a46fb269ab774917880a68a777632b95.json",
+    "sha256": "3a68588d6c0fb9d5b53bb33905cde669583adb243b0c89bc70cf4d73e0057363",
+    "bytes": 725
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000000.json",
+    "published": "os/F3_server_death/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000000.json",
+    "sha256": "6623d17a6c1d827ce0f4bbc2064aabb4ad6fa5a85a46b23eb66b8b255cfff7eb",
+    "bytes": 362
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000001.json",
+    "published": "os/F3_server_death/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000001.json",
+    "sha256": "126709259eb3c9a77250b05fa50756ab1692dc5c7292e5bfe65c43aed35f8a05",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000002.json",
+    "published": "os/F3_server_death/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000002.json",
+    "sha256": "5887e70e2cb65fb50e710da6948afffce69ca0ea22d50abfb330a74303fa6946",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000003.json",
+    "published": "os/F3_server_death/_internal/scheduler/c116bad9216248d4aa85d7e8b19aafef/000003.json",
+    "sha256": "630e0b2d08555ee7af7a11a4572c8852b97c8bdf2def6b6fc2e74b439766208c",
+    "bytes": 1416
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/cleanup/20a9fc394821468b9188a51ffca8376c.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/cleanup/20a9fc394821468b9188a51ffca8376c.json",
+    "sha256": "122a39112ed77dd717899e735b2ee3bcca69873ba1053a892eebcd0683f72d19",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/errors/620ac751ff9d486489fc0aa9e2a2e219.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/errors/620ac751ff9d486489fc0aa9e2a2e219.json",
+    "sha256": "b015e9a1c0a06f5e2a40b9bca7507d28ba3afb73de3bcb60e4311960f76277f4",
+    "bytes": 1768
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/errors/94426f8089204cd0890c34288137bbeb.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/errors/94426f8089204cd0890c34288137bbeb.json",
+    "sha256": "ab0eee7d507b6b561471f648e3d52a7dc544b38fb407af71918ecdc3649d1dbb",
+    "bytes": 776
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/errors/c378b46976f8405b99f572ffb5d13465.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/errors/c378b46976f8405b99f572ffb5d13465.json",
+    "sha256": "1ac578ee71508e2950eeb22f04177384acc94ed714445f144fa2ae1a8d869989",
+    "bytes": 770
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/errors/f007617190fa4a20a95931e72a198c6a.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/errors/f007617190fa4a20a95931e72a198c6a.json",
+    "sha256": "abc35882ad6b2aa035317b0300c23f735d11653bebd610d15af9b061223f142c",
+    "bytes": 788
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "sha256": "5c1825d70b3cbf8d7d296bd01b069ec7777474a734f852aa81f745008eb50584",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/slots/ep_000/events/025c646d6f954a34b96bf75d6ba13020/000000.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/slots/ep_000/events/025c646d6f954a34b96bf75d6ba13020/000000.json",
+    "sha256": "ecfdc46833162d0418285830e67a4d6609c838d0356c5a5154268a61cbab8ce9",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/slots/ep_000/events/025c646d6f954a34b96bf75d6ba13020/000001.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/slots/ep_000/events/025c646d6f954a34b96bf75d6ba13020/000001.json",
+    "sha256": "3eb5df2fd601141164de548d1134156b2d01452f312665a03f7ac031e6b44d15",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/slots/ep_000/events/025c646d6f954a34b96bf75d6ba13020/000002.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/slots/ep_000/events/025c646d6f954a34b96bf75d6ba13020/000002.json",
+    "sha256": "268b099954a626cfa2aeda8057bae0802d08f2498a680f85351243ace145b1d8",
+    "bytes": 598
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/CloseFridge/streams/20a9fc394821468b9188a51ffca8376c.json",
+    "published": "os/F3_server_death/_internal/tasks/CloseFridge/streams/20a9fc394821468b9188a51ffca8376c.json",
+    "sha256": "5781694ab826147c6a8022186085815f02713957ca4996c182e7c44166d10647",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/cleanup/0de4ddd43cd04bf7981f1533e32cb3e5.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/cleanup/0de4ddd43cd04bf7981f1533e32cb3e5.json",
+    "sha256": "3d5eba40b11bca43ecab635783f0649346a90ae22d6a32aec31800ebe9dcff23",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/errors/113e1c89f27f4194a03141e1aafacbdb.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/errors/113e1c89f27f4194a03141e1aafacbdb.json",
+    "sha256": "6bd616a74e74e071a6a2149826cc9b8a67104200c3effd52fe409127a149ee0e",
+    "bytes": 788
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/errors/29e60062516b48acbc2289f65ccd01be.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/errors/29e60062516b48acbc2289f65ccd01be.json",
+    "sha256": "c8bed123468b128971f312fbdbb16978309b1f5efbe446cb9ce078b7d4d2033e",
+    "bytes": 776
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/errors/48beacc498a74a5f9be02c898c98473e.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/errors/48beacc498a74a5f9be02c898c98473e.json",
+    "sha256": "f90de93d7bd3e172f9b53a560cac8a4f56d32cc98628eae6a247cd81b437a476",
+    "bytes": 770
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/errors/eebb62f7993a4817bbb0e7bc721b9f61.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/errors/eebb62f7993a4817bbb0e7bc721b9f61.json",
+    "sha256": "9c64a7a8bc1f2cd7ac3e860089835822373aa1bbce98332a16001a0b843fe57d",
+    "bytes": 1769
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "sha256": "103e0046df6b0d5637cdc43de18b64f83ed74ad5392fcb0c13434ff87d77f574",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/slots/ep_000/events/27fab6c7334b4949b4afbe93f6a2b5a4/000000.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/slots/ep_000/events/27fab6c7334b4949b4afbe93f6a2b5a4/000000.json",
+    "sha256": "a3c78d3d42211325df20ee48939fa7bccd885b7512ccb0e1a908dfa2d6bf6c40",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/slots/ep_000/events/27fab6c7334b4949b4afbe93f6a2b5a4/000001.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/slots/ep_000/events/27fab6c7334b4949b4afbe93f6a2b5a4/000001.json",
+    "sha256": "d59cd462062efdc68102fdccc84e8dea7a82687ae62766b46056ad4bab24f72e",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/slots/ep_000/events/27fab6c7334b4949b4afbe93f6a2b5a4/000002.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/slots/ep_000/events/27fab6c7334b4949b4afbe93f6a2b5a4/000002.json",
+    "sha256": "d1ebbc3236f5253a292ad130f5a1bacd502087bf979187f20bfb6629e01f0267",
+    "bytes": 598
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/_internal/tasks/OpenCabinet/streams/0de4ddd43cd04bf7981f1533e32cb3e5.json",
+    "published": "os/F3_server_death/_internal/tasks/OpenCabinet/streams/0de4ddd43cd04bf7981f1533e32cb3e5.json",
+    "sha256": "b7eb15b1c424f868a560b7ce06fd6cda5e31a5f220ce1a17ac17b79df2250a39",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/episodes.jsonl",
+    "published": "os/F3_server_death/episodes.jsonl",
+    "sha256": "f61b5ca60617c3c3b21230547ca5505821df3c482a662ab54432c22c8bc3392c",
+    "bytes": 312
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/logs/GPU0_server.log",
+    "published": "os/F3_server_death/logs/GPU0_server.log",
+    "sha256": "53cc015f938a0c036082d8faa57814d36ab8f0a29b63873d646f6d78c8d8cdf2",
+    "bytes": 1524
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/manifest.json",
+    "published": "os/F3_server_death/manifest.json",
+    "sha256": "06cd7470be2d0b4162fa02819d41f3839cebea0a264815bca47698e702d4ffea",
+    "bytes": 1792
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/summary.json",
+    "published": "os/F3_server_death/summary.json",
+    "sha256": "ed5db3a00be718c9b91fc0239e378bd9d6bb4ce2bddcb707488dcdd754edfc6d",
+    "bytes": 5586
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/tasks/CloseFridge/summary.json",
+    "published": "os/F3_server_death/tasks/CloseFridge/summary.json",
+    "sha256": "ded836587caba52a54d3ffd757bb73aa6b7f06b29249a88ce0284dbab73bafc8",
+    "bytes": 562
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_owned_Server_death_faults0/run/tasks/OpenCabinet/summary.json",
+    "published": "os/F3_server_death/tasks/OpenCabinet/summary.json",
+    "sha256": "6a5b8a760ebcb158b86f846cbc33f21edb1e58bf31176e8f8b0d028baabd9492",
+    "bytes": 562
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/cpu_fixture_events/473e19c3ae63406d8b875c6350b4ef3c.jsonl",
+    "published": "os/G1_N2_E2/_internal/cpu_fixture_events/473e19c3ae63406d8b875c6350b4ef3c.jsonl",
+    "sha256": "ea58332aafad7496e957335276bf2c7f7a19548b0ff7cea5e4e9bce774130c41",
+    "bytes": 704
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/cpu_fixture_events/e7dcd9b46da345f98b0f5ffd9c51a06b.jsonl",
+    "published": "os/G1_N2_E2/_internal/cpu_fixture_events/e7dcd9b46da345f98b0f5ffd9c51a06b.jsonl",
+    "sha256": "f0ff7bee970ab3d3df78735541c2fc98397162b01f0a3aa6832e9e9bd1f87a3f",
+    "bytes": 704
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/process_closed/ab0389d94fba4bcc801463501edcf731.json",
+    "published": "os/G1_N2_E2/_internal/process_closed/ab0389d94fba4bcc801463501edcf731.json",
+    "sha256": "b2139cf09c29729c4e43cc5894d0bb57eae5b2ebe39a29fdb597085da9c7d7e8",
+    "bytes": 880
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/process_closed/d2dc5292e84c439299966084168ba5ef.json",
+    "published": "os/G1_N2_E2/_internal/process_closed/d2dc5292e84c439299966084168ba5ef.json",
+    "sha256": "280ab53a79888633217db29a4e72d1007b07670ab162c80421fc562102addf14",
+    "bytes": 1709
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/process_closed/f445c4b5f1004a8abb63a6dbea0f15a8.json",
+    "published": "os/G1_N2_E2/_internal/process_closed/f445c4b5f1004a8abb63a6dbea0f15a8.json",
+    "sha256": "b7e81db6357d5b8d6d86a057e1d613922580111b678d88e574d17e014fc4e288",
+    "bytes": 881
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/processes/ab0389d94fba4bcc801463501edcf731.json",
+    "published": "os/G1_N2_E2/_internal/processes/ab0389d94fba4bcc801463501edcf731.json",
+    "sha256": "8c2f853c5affdee7a4d4e08e16a4f62d507fbd15ae643eeb641c093dc760c287",
+    "bytes": 724
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/processes/d2dc5292e84c439299966084168ba5ef.json",
+    "published": "os/G1_N2_E2/_internal/processes/d2dc5292e84c439299966084168ba5ef.json",
+    "sha256": "ab1cf203285d1b9a5bc1ecb098856e40928041232cbcf8063d606774fbfda0dc",
+    "bytes": 1553
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/processes/f445c4b5f1004a8abb63a6dbea0f15a8.json",
+    "published": "os/G1_N2_E2/_internal/processes/f445c4b5f1004a8abb63a6dbea0f15a8.json",
+    "sha256": "9d8fc27e2edb293b5e6bcac865373755d0f68c28f8dcbad0b9c520868a58d660",
+    "bytes": 725
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000000.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000000.json",
+    "sha256": "5e196ed7951d0ffa6a57bc5aeddbd2fe49ebf3f115284cf9e218aa16f2f23351",
+    "bytes": 362
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000001.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000001.json",
+    "sha256": "33e3a3cdbc43a34322531f72588f1313f1faaecded17b69b713a2037a45a107a",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000002.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000002.json",
+    "sha256": "25f22476a31a92044c7c0f9007f373ba81eb833d97a2b14964f4f9fcf7a25023",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000003.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000003.json",
+    "sha256": "645522bb9521a8927dfeacb1825f37466fe88585b16d531af319efd94fc860ac",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000004.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000004.json",
+    "sha256": "c2b460c221dbd983ff5ace153da4b706400e9d1eb21faaf9a329b45b261d0171",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000005.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000005.json",
+    "sha256": "2f4aafcd10e8bfe18bd2cd88c5d53312855a85f80f9b74068e107eb8f315f7ab",
+    "bytes": 265
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000006.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000006.json",
+    "sha256": "ee5bf8f4bdce2c2952498847fe8f0644f355dcfabc1cad92476d507929c2d5ed",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000007.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000007.json",
+    "sha256": "1b6ea64620d5b3124351440ed94ab979b1c30ff12bc25c21437dacbbbe2c2b56",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000008.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000008.json",
+    "sha256": "260e1c73d87a022e344ac074cc570b348362314ba4fe57bdfc15a9a6202d09b4",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000009.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000009.json",
+    "sha256": "a30953349496aaa432e1360d6d4e8bf9300413b32c6f709d34f4beb680531dcc",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000010.json",
+    "published": "os/G1_N2_E2/_internal/scheduler/5661cb9a52eb47c5b3551861a95e3b55/000010.json",
+    "sha256": "1468c838a80aa3576a48ca5a34b56cf84ef6dbb817fd8a4c0662c2aa320a0191",
+    "bytes": 265
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/cleanup/ff0251c105624e27b1906dad0c0f46e7.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/cleanup/ff0251c105624e27b1906dad0c0f46e7.json",
+    "sha256": "dcc987915ae0e6f6b642c749fb93df9a3e4ce35a316324c798da99629a9309e4",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "sha256": "0f5072893a7d57a3f11a9c6b755717efbdd074ea45220491270243d979c54c1a",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/slots/ep_000/events/ce20e9eedc4449d4829c91af06398e9e/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/slots/ep_000/events/ce20e9eedc4449d4829c91af06398e9e/000000.json",
+    "sha256": "429fc74eae79822c4dcc2516d7fab87d570ff13b77d840b71f4d1e88935e52ae",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/slots/ep_000/events/ce20e9eedc4449d4829c91af06398e9e/000001.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/slots/ep_000/events/ce20e9eedc4449d4829c91af06398e9e/000001.json",
+    "sha256": "cca7786bcf3a3339546befd0be7755049dbd2e82a3906f325b7a09238689aa5b",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/slots/ep_001/attempts/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/slots/ep_001/attempts/000000.json",
+    "sha256": "57ced069d8054bf9d07aa0d873811df0fe206d6f4418899cace4f1d585f6eeff",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/slots/ep_001/events/65131635e9ce409a99d030f636ad3caa/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/slots/ep_001/events/65131635e9ce409a99d030f636ad3caa/000000.json",
+    "sha256": "dd7118f19ea7dd767dc2860f7cb3ed88749b71f8466cc6a77df941c186de6cbe",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/slots/ep_001/events/65131635e9ce409a99d030f636ad3caa/000001.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/slots/ep_001/events/65131635e9ce409a99d030f636ad3caa/000001.json",
+    "sha256": "b6dd7e88a3d595b067ad46a057b0218eb66a28876d87d15a5be6b351419aa2d1",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/CloseFridge/streams/ff0251c105624e27b1906dad0c0f46e7.json",
+    "published": "os/G1_N2_E2/_internal/tasks/CloseFridge/streams/ff0251c105624e27b1906dad0c0f46e7.json",
+    "sha256": "1dedb766e55d65528d69acea7a74ceacea79d1bd08722ff99f62074160b94338",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/cleanup/315b05d3b732435d976c9597f5392840.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/cleanup/315b05d3b732435d976c9597f5392840.json",
+    "sha256": "33531f2b22293942cb8c9364a5c0296ea392d0e303a80a308c0f1831df6e7107",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "sha256": "ae93cf8022585b216bf047d796fa76cf5d81cca85fa6570e105dc5943cf2de7a",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/slots/ep_000/events/d80fb271d40b415ab715532f18ae7a43/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/slots/ep_000/events/d80fb271d40b415ab715532f18ae7a43/000000.json",
+    "sha256": "7faf34330ffeb99a1c3e8ae3029bbe5a07b3903d7aa96976a95b8820744ab1bb",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/slots/ep_000/events/d80fb271d40b415ab715532f18ae7a43/000001.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/slots/ep_000/events/d80fb271d40b415ab715532f18ae7a43/000001.json",
+    "sha256": "a17a9f66630db08b18086ca362895b0b70192f99add3d55eca9091f65a667e7d",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/slots/ep_001/attempts/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/slots/ep_001/attempts/000000.json",
+    "sha256": "f2c5a2086f0d6531a12d1ac3aacf62e5c8df1b492e9da1696fa09245885834c0",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/slots/ep_001/events/8db72901605f4ea28fa40f07dc80f243/000000.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/slots/ep_001/events/8db72901605f4ea28fa40f07dc80f243/000000.json",
+    "sha256": "167f9cb6841a4ba9d4c000a5ad8853b8450a8aeb74bc346e23dd867c46a0c55a",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/slots/ep_001/events/8db72901605f4ea28fa40f07dc80f243/000001.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/slots/ep_001/events/8db72901605f4ea28fa40f07dc80f243/000001.json",
+    "sha256": "9d8eafa7c0382b32ba8f4a54d826cd9703a6cfe870e3a021aa36ceabe5f0eb67",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/_internal/tasks/OpenCabinet/streams/315b05d3b732435d976c9597f5392840.json",
+    "published": "os/G1_N2_E2/_internal/tasks/OpenCabinet/streams/315b05d3b732435d976c9597f5392840.json",
+    "sha256": "571bce4f5b0cb07a6836bf607c00eec049d51edc413760460ee27633af211d84",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/episodes.jsonl",
+    "published": "os/G1_N2_E2/episodes.jsonl",
+    "sha256": "b901656682dce57ea40141d2eff327edd0116708a4815117881544ffb7912461",
+    "bytes": 4290
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/logs/GPU0_server.log",
+    "published": "os/G1_N2_E2/logs/GPU0_server.log",
+    "sha256": "c11e2492b970dba15859cd8c783bec49da588b89ba9d75c0c7896fdb2592c52d",
+    "bytes": 842
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/manifest.json",
+    "published": "os/G1_N2_E2/manifest.json",
+    "sha256": "595bf182c38bba97e4a843d28066ecc2f6139be79a4afb2f9d8a106270a5c803",
+    "bytes": 1792
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/summary.json",
+    "published": "os/G1_N2_E2/summary.json",
+    "sha256": "9001fa9338d060e6289a21d6c6653f34bd93f79985463aa1f4b6228fb9e9a693",
+    "bytes": 1587
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/CloseFridge/episodes/ep_000/predictions.jsonl",
+    "published": "os/G1_N2_E2/tasks/CloseFridge/episodes/ep_000/predictions.jsonl",
+    "sha256": "41676748bc2fcde43be71652fb6fa4d79350115eeb38d7f9bec3d43af08c138b",
+    "bytes": 5954
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/CloseFridge/episodes/ep_000/result.json",
+    "published": "os/G1_N2_E2/tasks/CloseFridge/episodes/ep_000/result.json",
+    "sha256": "78b70223906de582b738cf85e9a6c9eeded94d402133d058578c78d78c50969a",
+    "bytes": 1157
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/CloseFridge/episodes/ep_001/predictions.jsonl",
+    "published": "os/G1_N2_E2/tasks/CloseFridge/episodes/ep_001/predictions.jsonl",
+    "sha256": "9dd13ea73f26a34c7b3b6c96e1b5197fa596e71e9a825f8ca486d12045d6673b",
+    "bytes": 5958
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/CloseFridge/episodes/ep_001/result.json",
+    "published": "os/G1_N2_E2/tasks/CloseFridge/episodes/ep_001/result.json",
+    "sha256": "32e53d639ac7f2d01a3eb9d53338d6284978a48a91862a220340b0fb16165e9e",
+    "bytes": 1158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/CloseFridge/summary.json",
+    "published": "os/G1_N2_E2/tasks/CloseFridge/summary.json",
+    "sha256": "dee2a8ae17336dc115f6dcf5edd211b25a6028a2fa970f6050b068ff6ffc32dc",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/OpenCabinet/episodes/ep_000/predictions.jsonl",
+    "published": "os/G1_N2_E2/tasks/OpenCabinet/episodes/ep_000/predictions.jsonl",
+    "sha256": "a48348afefbe634cd128593b95e6d0631d6b3e358af3236c8415a6e45d666932",
+    "bytes": 5957
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/OpenCabinet/episodes/ep_000/result.json",
+    "published": "os/G1_N2_E2/tasks/OpenCabinet/episodes/ep_000/result.json",
+    "sha256": "f731dffce04cd1273d1b96446b55154d8fbee736a96c7189d5c34dfcc8a4e500",
+    "bytes": 1157
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/OpenCabinet/episodes/ep_001/predictions.jsonl",
+    "published": "os/G1_N2_E2/tasks/OpenCabinet/episodes/ep_001/predictions.jsonl",
+    "sha256": "319a69d29efd20d863fc59914d6ad2a6ff483aad8e48d58e923d798e2662131f",
+    "bytes": 5957
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/OpenCabinet/episodes/ep_001/result.json",
+    "published": "os/G1_N2_E2/tasks/OpenCabinet/episodes/ep_001/result.json",
+    "sha256": "fcc3e96b01ad2d3ad221b667c340170650f9c88d67ea8ac1734fb7268742db52",
+    "bytes": 1158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B0/run/tasks/OpenCabinet/summary.json",
+    "published": "os/G1_N2_E2/tasks/OpenCabinet/summary.json",
+    "sha256": "cef61abf8143738de8ee0738745037ea876ac79f1067d6fc6b82a611102930f8",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/cpu_fixture_events/5780a302fd184ec5aa15ad40e425333b.jsonl",
+    "published": "os/G1_N3_E1/_internal/cpu_fixture_events/5780a302fd184ec5aa15ad40e425333b.jsonl",
+    "sha256": "e15f9e35f56d1ba66850b33d29305f4490ebbe4a2f2f3273b65a9b6c6ebb9e96",
+    "bytes": 435
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/cpu_fixture_events/f7727782e4dc4421b2d7f8d6475041e9.jsonl",
+    "published": "os/G1_N3_E1/_internal/cpu_fixture_events/f7727782e4dc4421b2d7f8d6475041e9.jsonl",
+    "sha256": "94d7e9cdbd574aa0eca9641102432757ac8d3490356bb79cba0fe7d58c3bc8e0",
+    "bytes": 863
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/process_closed/29ef962313cf4045acfe47a136e98a78.json",
+    "published": "os/G1_N3_E1/_internal/process_closed/29ef962313cf4045acfe47a136e98a78.json",
+    "sha256": "9f86a5f5a44074c39b0d5d2a63ed94c3301fa24f3a2e3a277a77ed8fb8ee6143",
+    "bytes": 880
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/process_closed/a582b3f29f4643e682a552a4c3745c9c.json",
+    "published": "os/G1_N3_E1/_internal/process_closed/a582b3f29f4643e682a552a4c3745c9c.json",
+    "sha256": "b54692a298427f94c46733149cc4c89db80203a0308351463e0759cedf0a7be7",
+    "bytes": 1709
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/process_closed/ed5c0e1ea652402bb8ebeac84054b863.json",
+    "published": "os/G1_N3_E1/_internal/process_closed/ed5c0e1ea652402bb8ebeac84054b863.json",
+    "sha256": "75da3ed92c84de1961c3c6cae33f065a827c492f260804963e28e0dd1c8cd6e2",
+    "bytes": 881
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/processes/29ef962313cf4045acfe47a136e98a78.json",
+    "published": "os/G1_N3_E1/_internal/processes/29ef962313cf4045acfe47a136e98a78.json",
+    "sha256": "a4d2f9d5002a1fc1b0cf51db9a92cf8a663356a3b0cb1ca0cc430b0d3ad133dd",
+    "bytes": 724
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/processes/a582b3f29f4643e682a552a4c3745c9c.json",
+    "published": "os/G1_N3_E1/_internal/processes/a582b3f29f4643e682a552a4c3745c9c.json",
+    "sha256": "e2405cb5ad021ed45f42fa49b846517a5cfb42a75812fd2b37ca028d50e279eb",
+    "bytes": 1553
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/processes/ed5c0e1ea652402bb8ebeac84054b863.json",
+    "published": "os/G1_N3_E1/_internal/processes/ed5c0e1ea652402bb8ebeac84054b863.json",
+    "sha256": "ccc8f0a6d8072f1817e0e095ece0c189c36ffb45f5101ecccbbe59ddbfd438b3",
+    "bytes": 725
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000000.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000000.json",
+    "sha256": "bfcd8fb8fbf0a1c9322f1e20e15b6320302161db095cb7d248a54caa00a2a1fd",
+    "bytes": 362
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000001.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000001.json",
+    "sha256": "88af88a18c6aa7ca1bfe7298446cf9af6c77c1864f9c2d65ba4d89393084eae5",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000002.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000002.json",
+    "sha256": "6b4b5e58f81fa17f6034b69dc9e65e356eb81ec7dd330ab66705a6b5a7525514",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000003.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000003.json",
+    "sha256": "e35aea5f9390582248eaae4e1c0717be20ac2d3aa702f321ddf71649f3fc87fc",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000004.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000004.json",
+    "sha256": "dcfa91f4caf3606cd937fd3406aec99986526f593ca455076787a0537c14692b",
+    "bytes": 797
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000005.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000005.json",
+    "sha256": "c2865096e89781cce8b1a14f855c0517daec5752b3d052e0a8922aed5dca3af3",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000006.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000006.json",
+    "sha256": "02c7c96abd0afb9cd5ffb805fc8493d9f3aae345ba729c61b112b99345c36711",
+    "bytes": 837
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000007.json",
+    "published": "os/G1_N3_E1/_internal/scheduler/a351cd1496c54db385202b16358ebe3f/000007.json",
+    "sha256": "99e31ab2bba2f09f2f69290304346fc2dd8f56a6f7c11ec5aef9dbe24bb28b7e",
+    "bytes": 265
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/CloseFridge/cleanup/db2fa9154ebc49598449da923ba452bc.json",
+    "published": "os/G1_N3_E1/_internal/tasks/CloseFridge/cleanup/db2fa9154ebc49598449da923ba452bc.json",
+    "sha256": "5baeb215217d935ccf00d309b72bd125b38608b4f943430c6ce75305d66cd3ee",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "published": "os/G1_N3_E1/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "sha256": "bcd4550a3c7e62528d1e4d980f266897d9b76716ff0607d596302e84ef98b700",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/CloseFridge/slots/ep_000/events/c438623fa5b742cc97a79487af09dac3/000000.json",
+    "published": "os/G1_N3_E1/_internal/tasks/CloseFridge/slots/ep_000/events/c438623fa5b742cc97a79487af09dac3/000000.json",
+    "sha256": "e8be8918cf9251fe7879155f2fc88b974f1d4b47a9095f3af1c5ab048e9e851e",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/CloseFridge/slots/ep_000/events/c438623fa5b742cc97a79487af09dac3/000001.json",
+    "published": "os/G1_N3_E1/_internal/tasks/CloseFridge/slots/ep_000/events/c438623fa5b742cc97a79487af09dac3/000001.json",
+    "sha256": "e7edf12892b98ef912ceb29873cf5b7efc60c6b3c7254ce06aa0d7f0c3901296",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/CloseFridge/streams/db2fa9154ebc49598449da923ba452bc.json",
+    "published": "os/G1_N3_E1/_internal/tasks/CloseFridge/streams/db2fa9154ebc49598449da923ba452bc.json",
+    "sha256": "c7a88dbb7b4585fdcc4cec52a9556f08ac39525270ee6874398682ca4b1430af",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenCabinet/cleanup/e133854e4a744d4788b7003a52e532d5.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenCabinet/cleanup/e133854e4a744d4788b7003a52e532d5.json",
+    "sha256": "ac4cb2dcefe0c8ccfb6e5daf89d4c5e9a06fdb9ce858768ffbfbad474f7bac92",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "sha256": "3964cb66ae17b1af47eb4acaebcdbe426b5e86f401883bde0062c80212ba20b8",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenCabinet/slots/ep_000/events/f81b713cfb7b4338989c4bba6b923dcc/000000.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenCabinet/slots/ep_000/events/f81b713cfb7b4338989c4bba6b923dcc/000000.json",
+    "sha256": "409fcf488f53bdf8e8f2085ce21f82fc2a56fdca7ede8d0d0f48b574a0669ef5",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenCabinet/slots/ep_000/events/f81b713cfb7b4338989c4bba6b923dcc/000001.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenCabinet/slots/ep_000/events/f81b713cfb7b4338989c4bba6b923dcc/000001.json",
+    "sha256": "84558b05bc1a43f185d5630c8af73b55640f49154ca506f025d4ae212110ab0f",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenCabinet/streams/e133854e4a744d4788b7003a52e532d5.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenCabinet/streams/e133854e4a744d4788b7003a52e532d5.json",
+    "sha256": "ec31db6e1de90e5cdde5d2d52ec2375a39bb3423f2c1538450b57bc4ac5d4cc9",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenDrawer/cleanup/c3abe44500274e5c9f8672687a173ab2.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenDrawer/cleanup/c3abe44500274e5c9f8672687a173ab2.json",
+    "sha256": "1b1d1715d2142ee6ae646c2e64b1d53a5abcd637f88ddf1d849d2c4081b55f6e",
+    "bytes": 670
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenDrawer/slots/ep_000/attempts/000000.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenDrawer/slots/ep_000/attempts/000000.json",
+    "sha256": "05ec8594a213d637f08a359c45f01f5179b7b320dad5e471919a1a56816f587b",
+    "bytes": 467
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenDrawer/slots/ep_000/events/84dbdf67915646c3b196d573000f6830/000000.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenDrawer/slots/ep_000/events/84dbdf67915646c3b196d573000f6830/000000.json",
+    "sha256": "53682df10a23143fe538e37f258e2b27e06cd3a4793fd82a3c5c15c9b3edd5c4",
+    "bytes": 581
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenDrawer/slots/ep_000/events/84dbdf67915646c3b196d573000f6830/000001.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenDrawer/slots/ep_000/events/84dbdf67915646c3b196d573000f6830/000001.json",
+    "sha256": "c35ad59bbbd3b4860595c87fc5f274de147c5995799e9c2825a5aabdc5f3554a",
+    "bytes": 579
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/_internal/tasks/OpenDrawer/streams/c3abe44500274e5c9f8672687a173ab2.json",
+    "published": "os/G1_N3_E1/_internal/tasks/OpenDrawer/streams/c3abe44500274e5c9f8672687a173ab2.json",
+    "sha256": "61a4022700e932918f4b9bd7ec8bc037827aa92ec09dda7ca6f975b3d3a2f68a",
+    "bytes": 408
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/episodes.jsonl",
+    "published": "os/G1_N3_E1/episodes.jsonl",
+    "sha256": "eb406f9336dd59dc8809a77da40c02b5d83c8684c6832863c820e240b2a962c9",
+    "bytes": 3214
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/logs/GPU0_server.log",
+    "published": "os/G1_N3_E1/logs/GPU0_server.log",
+    "sha256": "f8853217a7fc73310b5d314e4a6085974ccf5e62fd872842e5e92a81d00c914e",
+    "bytes": 829
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/manifest.json",
+    "published": "os/G1_N3_E1/manifest.json",
+    "sha256": "0a344bef7e58956fe0d7bdb7df760d577f19f3d514b28d81718129a67ad47e0f",
+    "bytes": 1914
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/summary.json",
+    "published": "os/G1_N3_E1/summary.json",
+    "sha256": "f3c031871e792e366dabea74749456f97e534c176a85c74bfca27b4f50ec151c",
+    "bytes": 2158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/CloseFridge/episodes/ep_000/predictions.jsonl",
+    "published": "os/G1_N3_E1/tasks/CloseFridge/episodes/ep_000/predictions.jsonl",
+    "sha256": "6e59cb3ed71a9fbcb842024547b9a465752fcce870a165e46e18098c798bed46",
+    "bytes": 5955
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/CloseFridge/episodes/ep_000/result.json",
+    "published": "os/G1_N3_E1/tasks/CloseFridge/episodes/ep_000/result.json",
+    "sha256": "9229bb515dec3e21e84d22c5e6cb1018cf0663ae74bb3a29813650799229739c",
+    "bytes": 1158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/CloseFridge/summary.json",
+    "published": "os/G1_N3_E1/tasks/CloseFridge/summary.json",
+    "sha256": "f6fd2692d8754e7b9f837f2956d88edd850112642469762d7adfaaa535ffb358",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/OpenCabinet/episodes/ep_000/predictions.jsonl",
+    "published": "os/G1_N3_E1/tasks/OpenCabinet/episodes/ep_000/predictions.jsonl",
+    "sha256": "cf2ca0ac813396112a1a30d2330c8821d59003f31bb12de9c75ceb68daec183a",
+    "bytes": 5957
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/OpenCabinet/episodes/ep_000/result.json",
+    "published": "os/G1_N3_E1/tasks/OpenCabinet/episodes/ep_000/result.json",
+    "sha256": "f6a968d9f3f236aeec127300e74908e0bf495599674cbf56f8a2fc53b37c2295",
+    "bytes": 1158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/OpenCabinet/summary.json",
+    "published": "os/G1_N3_E1/tasks/OpenCabinet/summary.json",
+    "sha256": "614d714851df1fb76ad2ae5f6dbc2c1dd8f7a2f04377971dcf3bea17925b97b6",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/OpenDrawer/episodes/ep_000/predictions.jsonl",
+    "published": "os/G1_N3_E1/tasks/OpenDrawer/episodes/ep_000/predictions.jsonl",
+    "sha256": "bc179d68fd79745d9b31882eff72611c61d464d4fb6e7a8a28ed9bd49996e573",
+    "bytes": 5953
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/OpenDrawer/episodes/ep_000/result.json",
+    "published": "os/G1_N3_E1/tasks/OpenDrawer/episodes/ep_000/result.json",
+    "sha256": "96b3e24ad2d4f06a70d364dbd58bba298bd27a47c08e16c98e4977483894c7eb",
+    "bytes": 1153
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B2/run/tasks/OpenDrawer/summary.json",
+    "published": "os/G1_N3_E1/tasks/OpenDrawer/summary.json",
+    "sha256": "0e5a72beee2e77ff160cab14b1f4e6d8e0d994ccae41a84ee21d6e3a761c3faa",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/cpu_fixture_events/0d86641a07904d5fba646be16aa302c0.jsonl",
+    "published": "os/G2_N3_E1/_internal/cpu_fixture_events/0d86641a07904d5fba646be16aa302c0.jsonl",
+    "sha256": "46e19e4e250622c2f570eb4c6a4bee15e2ad93b5d714699bb05725d8dcafd704",
+    "bytes": 430
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/cpu_fixture_events/25bdd0b876974729a6900e0dcb1a14d8.jsonl",
+    "published": "os/G2_N3_E1/_internal/cpu_fixture_events/25bdd0b876974729a6900e0dcb1a14d8.jsonl",
+    "sha256": "1579d537effaf8f937bcbcbfc450b55dc6f64740474d1b4254092cd6b4f6457a",
+    "bytes": 434
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/cpu_fixture_events/8f449ccf8e5d4f4fad882bd640c83bc1.jsonl",
+    "published": "os/G2_N3_E1/_internal/cpu_fixture_events/8f449ccf8e5d4f4fad882bd640c83bc1.jsonl",
+    "sha256": "df7d3f1c4139f297ed102fc96e10e9076033a394bfdfdafa8b3af748cc7fefa7",
+    "bytes": 434
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/process_closed/3a62e2f8905348ed9822c7f7ec73dd86.json",
+    "published": "os/G2_N3_E1/_internal/process_closed/3a62e2f8905348ed9822c7f7ec73dd86.json",
+    "sha256": "569682d52ae1fa54c77dc9c0a0e572c6ed33cd1d8b1f39dc096406178464c98c",
+    "bytes": 881
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/process_closed/830de876f5bc4539924d9fc5b4641df9.json",
+    "published": "os/G2_N3_E1/_internal/process_closed/830de876f5bc4539924d9fc5b4641df9.json",
+    "sha256": "bda154bbd5da758c574ed80d014aa53ef94a537f9389e71170ab3f65da3f1afb",
+    "bytes": 1709
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/process_closed/d94cf48ae19d4c8faaac9632ea1ab5ad.json",
+    "published": "os/G2_N3_E1/_internal/process_closed/d94cf48ae19d4c8faaac9632ea1ab5ad.json",
+    "sha256": "1e59e7d49b35020fa670a650f09d031f53fe2ec4b50ff72a329a71e762c75ac2",
+    "bytes": 1676
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/process_closed/d956b39e28d54041b7f1b08b713f0684.json",
+    "published": "os/G2_N3_E1/_internal/process_closed/d956b39e28d54041b7f1b08b713f0684.json",
+    "sha256": "5d2b14915b3cffa2844628d3179839a1579337ed8001049555c2fac188a9a9f6",
+    "bytes": 880
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/process_closed/f7e78ef7f6244441b5e92eb4c252af7a.json",
+    "published": "os/G2_N3_E1/_internal/process_closed/f7e78ef7f6244441b5e92eb4c252af7a.json",
+    "sha256": "8041f66f4eb9fb2bf8df4b8f1d0765e7bec716d3b37afd30afff560d3c91cba2",
+    "bytes": 881
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/processes/3a62e2f8905348ed9822c7f7ec73dd86.json",
+    "published": "os/G2_N3_E1/_internal/processes/3a62e2f8905348ed9822c7f7ec73dd86.json",
+    "sha256": "129dbe15181f7fb4ee130ea61b0af836920345f9bf417f713f8036aa2230b1e5",
+    "bytes": 725
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/processes/830de876f5bc4539924d9fc5b4641df9.json",
+    "published": "os/G2_N3_E1/_internal/processes/830de876f5bc4539924d9fc5b4641df9.json",
+    "sha256": "a9b37f7a9b8b0af8a0fa12abb193bd01ce3fd6fd7e5976c8a1a6be30f598243a",
+    "bytes": 1553
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/processes/d94cf48ae19d4c8faaac9632ea1ab5ad.json",
+    "published": "os/G2_N3_E1/_internal/processes/d94cf48ae19d4c8faaac9632ea1ab5ad.json",
+    "sha256": "925ca21be4f63452548003d77010c33e90b757e5843579da87eb55b31f41a1e6",
+    "bytes": 1520
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/processes/d956b39e28d54041b7f1b08b713f0684.json",
+    "published": "os/G2_N3_E1/_internal/processes/d956b39e28d54041b7f1b08b713f0684.json",
+    "sha256": "862d03b6355eb14dd1c753fe28a0029feec8794ff548c1e50dcd374322e8d1de",
+    "bytes": 724
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/processes/f7e78ef7f6244441b5e92eb4c252af7a.json",
+    "published": "os/G2_N3_E1/_internal/processes/f7e78ef7f6244441b5e92eb4c252af7a.json",
+    "sha256": "0da4e21020cb7ab213128dea5a604a593676f2a5671c7548227483d6b3f83eff",
+    "bytes": 725
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000000.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000000.json",
+    "sha256": "1dfa1d0a81770fa4cbac2dbbcd42b765d9893c2b0d4140e40eb9cc8000829569",
+    "bytes": 372
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000001.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000001.json",
+    "sha256": "225c695a1cf6421f2156483a3532c89e7211a3889b19c025c8f78a03a12a7590",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000002.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000002.json",
+    "sha256": "e3ff1b2b297b8fe3b7e188c52b4e1fa849f2a5d9b6cca9135d2f23573d5f2f5d",
+    "bytes": 799
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000003.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000003.json",
+    "sha256": "54328b66d0c425b7b85ff6469baa775059a5965e535f821209db3a3288bd9b68",
+    "bytes": 797
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000004.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000004.json",
+    "sha256": "31f5abb3d14b402ca5da6243a30c9fde0915cbb4f6ce875e12f6f1f183f3e940",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000005.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000005.json",
+    "sha256": "b33bcf22944ab529e3fe1f14b649d22d1643970b5b0c01c7dd1186a5ea933d14",
+    "bytes": 839
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000006.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000006.json",
+    "sha256": "ccc8e2335b645d7dfd9466449fca318766e72c166bae86c72113568d76ae95be",
+    "bytes": 837
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000007.json",
+    "published": "os/G2_N3_E1/_internal/scheduler/93df582b503d4969a9949d46aa242f56/000007.json",
+    "sha256": "80dcab98869e72e5d0a9da71a187ecbc415e2cf874af89d7d7185f7d9deb5ef8",
+    "bytes": 265
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/CloseFridge/cleanup/b926a133b2644b37bc92b3e401ac4e63.json",
+    "published": "os/G2_N3_E1/_internal/tasks/CloseFridge/cleanup/b926a133b2644b37bc92b3e401ac4e63.json",
+    "sha256": "e31c38e97ba7a9a7b9027777ce48c434c00ee5ff5e75c0a66bd82ebac6403ce1",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "published": "os/G2_N3_E1/_internal/tasks/CloseFridge/slots/ep_000/attempts/000000.json",
+    "sha256": "69dd939c6c394817797e1b9d88d31695b65099343936e048a373cc1d3e5da6af",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/CloseFridge/slots/ep_000/events/1e04558db3124a99b522f1debb6f8b50/000000.json",
+    "published": "os/G2_N3_E1/_internal/tasks/CloseFridge/slots/ep_000/events/1e04558db3124a99b522f1debb6f8b50/000000.json",
+    "sha256": "97332d4edcec5f8472572be65f7c0c4ef321e5460d06a816db268ca48c693864",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/CloseFridge/slots/ep_000/events/1e04558db3124a99b522f1debb6f8b50/000001.json",
+    "published": "os/G2_N3_E1/_internal/tasks/CloseFridge/slots/ep_000/events/1e04558db3124a99b522f1debb6f8b50/000001.json",
+    "sha256": "2c42fdbad647bb3d544c37c3ac0c388e9aace28f84b35c1ffce50d36229cc93b",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/CloseFridge/streams/b926a133b2644b37bc92b3e401ac4e63.json",
+    "published": "os/G2_N3_E1/_internal/tasks/CloseFridge/streams/b926a133b2644b37bc92b3e401ac4e63.json",
+    "sha256": "89a5a33b67788557a54f4a1dc01e5f08090f3336d8e112f25aef12f6f843f9e9",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenCabinet/cleanup/c8f69bc210da4668bb0a309ce25bf996.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenCabinet/cleanup/c8f69bc210da4668bb0a309ce25bf996.json",
+    "sha256": "d29759834ea7e9cc40445fac0b8af9f3bfd7d7f94b22779abc40a8d1df14c9a2",
+    "bytes": 671
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenCabinet/slots/ep_000/attempts/000000.json",
+    "sha256": "9cdfd48c0949331c1443cf7abbadc21829b0f4720ce3ca7db8061fc3d64c1881",
+    "bytes": 468
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenCabinet/slots/ep_000/events/5c3d393879ca44a28b9e65ace26c94d8/000000.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenCabinet/slots/ep_000/events/5c3d393879ca44a28b9e65ace26c94d8/000000.json",
+    "sha256": "1b1f60e001830ff91afcb3e26d92af182fb13ff234e6497956c1ad2d48be24f4",
+    "bytes": 582
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenCabinet/slots/ep_000/events/5c3d393879ca44a28b9e65ace26c94d8/000001.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenCabinet/slots/ep_000/events/5c3d393879ca44a28b9e65ace26c94d8/000001.json",
+    "sha256": "96015ba2fc6b4095b8f2daf18eb42cc677578f28dcf2abf65ecb4deadc3646f8",
+    "bytes": 580
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenCabinet/streams/c8f69bc210da4668bb0a309ce25bf996.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenCabinet/streams/c8f69bc210da4668bb0a309ce25bf996.json",
+    "sha256": "e539da65baa8bacb878af2c002b97757efbace2fa2da1f971d79a0d166366677",
+    "bytes": 409
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenDrawer/cleanup/559f0408546c42e58c3c6eedf0ea0498.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenDrawer/cleanup/559f0408546c42e58c3c6eedf0ea0498.json",
+    "sha256": "77eb2eb87246a948eab5d139ad1177f75fc65e43cba414dd9fa76c0c29aad4c5",
+    "bytes": 670
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenDrawer/slots/ep_000/attempts/000000.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenDrawer/slots/ep_000/attempts/000000.json",
+    "sha256": "1934372be2bb2edfc3015510d2456556ea7713647602405d40ec61975105494f",
+    "bytes": 467
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenDrawer/slots/ep_000/events/7d980cc21c354a9e923b89db9aa2f497/000000.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenDrawer/slots/ep_000/events/7d980cc21c354a9e923b89db9aa2f497/000000.json",
+    "sha256": "888a4c28218d4b64c7f9f40b467b0084446ab1420555511032979cce6273d0ca",
+    "bytes": 581
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenDrawer/slots/ep_000/events/7d980cc21c354a9e923b89db9aa2f497/000001.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenDrawer/slots/ep_000/events/7d980cc21c354a9e923b89db9aa2f497/000001.json",
+    "sha256": "e9527f8fcad154196916b9ff2ad72d97d7fb18ada77e3ede6a3d9baf6f302b3e",
+    "bytes": 579
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/_internal/tasks/OpenDrawer/streams/559f0408546c42e58c3c6eedf0ea0498.json",
+    "published": "os/G2_N3_E1/_internal/tasks/OpenDrawer/streams/559f0408546c42e58c3c6eedf0ea0498.json",
+    "sha256": "fb2689246a1d31e8bdfc95b6d2701dd5f76784883d16ecb5fe8b1ffa91291244",
+    "bytes": 408
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/episodes.jsonl",
+    "published": "os/G2_N3_E1/episodes.jsonl",
+    "sha256": "c2742ca053fa0ffb4f6c837f2a0d999aa17f0dec1bf0aef106adef300735edc8",
+    "bytes": 3217
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/logs/GPU0_server.log",
+    "published": "os/G2_N3_E1/logs/GPU0_server.log",
+    "sha256": "3d928d632ef6fc360c7722351e1f6eaf656a4cef52742b45667a4c12d6734242",
+    "bytes": 656
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/logs/GPU1_server.log",
+    "published": "os/G2_N3_E1/logs/GPU1_server.log",
+    "sha256": "9feeaf00e1032836422b4abac491cf5c9de139e6c0fcf0c57ff5ac11c6b38400",
+    "bytes": 563
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/manifest.json",
+    "published": "os/G2_N3_E1/manifest.json",
+    "sha256": "fd72e9d8cf736b8d1323c51cbfb24ffecdc8716f52a68bcca12518685496c6f0",
+    "bytes": 1916
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/summary.json",
+    "published": "os/G2_N3_E1/summary.json",
+    "sha256": "96e495d0228b2e2578059dd7fefa73ec51249c568595c0b362e2514ab26aef61",
+    "bytes": 2158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/CloseFridge/episodes/ep_000/predictions.jsonl",
+    "published": "os/G2_N3_E1/tasks/CloseFridge/episodes/ep_000/predictions.jsonl",
+    "sha256": "68ff2452d136d95b2aeb30df262a35b0764bade5ea5fc6f8830a9e9ce1bb0514",
+    "bytes": 5955
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/CloseFridge/episodes/ep_000/result.json",
+    "published": "os/G2_N3_E1/tasks/CloseFridge/episodes/ep_000/result.json",
+    "sha256": "c99fd44fe8683f00fa17c5eb8f184ad45db143c29db2d66e9a0eb61c2aece0b8",
+    "bytes": 1158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/CloseFridge/summary.json",
+    "published": "os/G2_N3_E1/tasks/CloseFridge/summary.json",
+    "sha256": "ef16cb064b6384b83002236ad533481445abfba8c6c092b82b3f2e35ab95d7fc",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/OpenCabinet/episodes/ep_000/predictions.jsonl",
+    "published": "os/G2_N3_E1/tasks/OpenCabinet/episodes/ep_000/predictions.jsonl",
+    "sha256": "3d0827cf778aba468960a8a03f187ce47716740321fab5555e68274906cb1cf2",
+    "bytes": 5957
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/OpenCabinet/episodes/ep_000/result.json",
+    "published": "os/G2_N3_E1/tasks/OpenCabinet/episodes/ep_000/result.json",
+    "sha256": "164e1cb9cbc8b2de79158f440134d41c750b2be1d68d1d3ae9cd5f8ba7d95ed0",
+    "bytes": 1158
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/OpenCabinet/summary.json",
+    "published": "os/G2_N3_E1/tasks/OpenCabinet/summary.json",
+    "sha256": "6365207d7860d6ffcac593c83847d83e295544257429f38a00de7a43b2eaf176",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/OpenDrawer/episodes/ep_000/predictions.jsonl",
+    "published": "os/G2_N3_E1/tasks/OpenDrawer/episodes/ep_000/predictions.jsonl",
+    "sha256": "e493985c5da90f968bff424eb01f0590640caf749f1844d9989da1b38175cf5d",
+    "bytes": 5954
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/OpenDrawer/episodes/ep_000/result.json",
+    "published": "os/G2_N3_E1/tasks/OpenDrawer/episodes/ep_000/result.json",
+    "sha256": "d27fb6700bdd80297fb5f101c68484fc46629ca53890e21454c46c995b4897ba",
+    "bytes": 1156
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_real_OS_multisim_native_B1/run/tasks/OpenDrawer/summary.json",
+    "published": "os/G2_N3_E1/tasks/OpenDrawer/summary.json",
+    "sha256": "9e7e080cda85252a9a10b657ca64c983c16a01f63bbfe9ca2777adc3411d739b",
+    "bytes": 558
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review.console.log",
+    "published": "raw/console.log",
+    "sha256": "7f66895c7702867c23ed2c1d620ab6fcb306b7b4dfd65aba4252c824f71dd611",
+    "bytes": 9848
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/environment.json",
+    "published": "raw/environment.json",
+    "sha256": "53963f81bce4205220eb927792d1b5793b40adc88065675edba8f8675934f1e2",
+    "bytes": 217
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/environment_overrides.json",
+    "published": "raw/environment_overrides.json",
+    "sha256": "57def3acc704535596d9e8eb668243142ca272a98e5f7a62bcb9d6e9edcedf51",
+    "bytes": 973
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/gate.json",
+    "published": "raw/gate.json",
+    "sha256": "12d8305cc4efc8cde6bd3eb1a8f6704391ac3a4aec226b7a4f151e85eac28225",
+    "bytes": 9706
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/import_origin.log",
+    "published": "raw/import_origin.log",
+    "sha256": "747bee60ad73d8a6aa844797e52704be2b68914350eb5d557fae69524feddf36",
+    "bytes": 95
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/inference.log",
+    "published": "raw/inference.log",
+    "sha256": "a4c11d387c29cbe210f491847233ad4183c98c0370e4fcfe61bda6f45fd30747",
+    "bytes": 5661
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/inference.xml",
+    "published": "raw/inference.xml",
+    "sha256": "1c01d642bdd737be1cced588eaf756b855a9a8d1b97e7745ff4c3c4cf91b50bf",
+    "bytes": 28092
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/junit.xml",
+    "published": "raw/junit.xml",
+    "sha256": "f2fc313d47fb47fc3f287a4820c90f9431f4212b253b3458475e489cbf940c1a",
+    "bytes": 339991
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_a_regression.log",
+    "published": "raw/phase_a_regression.log",
+    "sha256": "c729033ed769be2874dca825cb8c03d761e974e4632c3e448c0c005834ce87cf",
+    "bytes": 106088
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_a_regression.xml",
+    "published": "raw/phase_a_regression.xml",
+    "sha256": "fa01889ce14ecbd645236a6637bf1d9e6617be1ab492d2cbd35c9ba3a4d20b56",
+    "bytes": 306390
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime.log",
+    "published": "raw/phase_b_runtime.log",
+    "sha256": "9fd7874069534ead901e5907bc2325eeb4ac81fd5f7df469008c493320822430",
+    "bytes": 9759
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime.xml",
+    "published": "raw/phase_b_runtime.xml",
+    "sha256": "1a9cb1c842be729befbdd369558d9011cae07af566901f5b49674414b1e40f55",
+    "bytes": 5694
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/ruff_check.log",
+    "published": "raw/ruff_check.log",
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "bytes": 19
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/ruff_format.log",
+    "published": "raw/ruff_format.log",
+    "sha256": "5a29981aebe12cf610955c0455e62c60bdd53f693ac0d954a67db9c7f9e5042a",
+    "bytes": 27
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/run_author435_once.sh",
+    "published": "raw/run_author435_once.sh",
+    "sha256": "4437888167a5bc0b71bc0d1e2d0f83988a75b823b5185774bf7f09c365fa2e66",
+    "bytes": 997
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review.shell-exit.txt",
+    "published": "raw/shell-exit.txt",
+    "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "bytes": 2
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/source_sha256.json",
+    "published": "raw/source_sha256.json",
+    "sha256": "02dad2d70ef913713e9b2b88c684673c3f6161981330bfefb0440842011465c1",
+    "bytes": 7206
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_two_real_fault_writers_pr0/new900/_internal/tasks/CloseFridge/errors/8a1ae9591b284a18b06185f96c4dee20.json",
+    "published": "store_concurrency/_internal/tasks/CloseFridge/errors/8a1ae9591b284a18b06185f96c4dee20.json",
+    "sha256": "536808ed02c40e1ac07da92fd4378dfb5dd938ccdba6a7f003be767f186a9ede",
+    "bytes": 760
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_two_real_fault_writers_pr0/new900/_internal/tasks/CloseFridge/errors/b7ea78d0e6344ab78b3d3d842479ac59.json",
+    "published": "store_concurrency/_internal/tasks/CloseFridge/errors/b7ea78d0e6344ab78b3d3d842479ac59.json",
+    "sha256": "de91c22006c16f5684d94d417a405ad542a9033101e770c9dd98f5224b8ab9a3",
+    "bytes": 756
+  },
+  {
+    "original": "/workspace/work/inflight-snapshot-evidence/author-full-after-code-review/phase_b_runtime_tmp/test_two_real_fault_writers_pr0/new900/manifest.json",
+    "published": "store_concurrency/manifest.json",
+    "sha256": "99130a89f74ba753ed7af25f1364925c9b438a995345f7e9c49ab8b5d0bad2be",
+    "bytes": 1472
+  }
+]

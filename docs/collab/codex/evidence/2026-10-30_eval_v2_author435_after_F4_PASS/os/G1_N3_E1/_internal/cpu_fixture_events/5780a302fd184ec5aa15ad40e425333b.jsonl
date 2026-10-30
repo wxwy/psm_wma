@@ -1,0 +1,5 @@
+{"kind": "make", "pid": 5151, "time": 7181.314005345, "task": "OpenCabinet", "seed": 7}
+{"kind": "reset", "pid": 5151, "time": 7181.329454645, "task": "OpenCabinet", "scene": 2029167941}
+{"kind": "execute_begin", "pid": 5151, "time": 7181.616425931, "task": "OpenCabinet"}
+{"kind": "execute_end", "pid": 5151, "time": 7182.128193512, "task": "OpenCabinet"}
+{"kind": "close", "pid": 5151, "time": 7182.582388633, "task": "OpenCabinet"}
