@@ -180,7 +180,6 @@ def test_config_and_resource_gates_no_protected_writes(tmp_path):
     assert check(cfg, run=nvml)["owned_pids"] == []
 
 
-
 def test_shared_gpu_retains_budget_and_missing_gpu_safety():
     # GPU7 already runs No-TTT; a separate compute-app PID is not a hard blocker.
     used_mib = [35538]
