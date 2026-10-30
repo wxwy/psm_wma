@@ -1,0 +1,118 @@
+{
+  "schema": "psm_evalv2_shared_gpu_quick_cpu_v1",
+  "status": "PASS",
+  "date": "2026-10-30",
+  "tested_root": "19342b35011a8ce0f4f81d59779d5da86f9bc9f4",
+  "child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "promotion_base": "e5fde3f7279aaf171d32c4d3a78b038da0ac4d4f",
+  "source_tree": "d06ed5a8d52995a907bb6805e6794d533db6a3d1",
+  "source_unchanged": true,
+  "junit": {
+    "tests": 63,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "groups": {
+    "tools.v3.eval_v2_production_tests.entry_test": 15,
+    "tools.v3.eval_v2_production_tests.process_test": 8,
+    "tools.v3.eval_v2_batch_tests.config_test": 17,
+    "tools.v3.robocasa_processes_test": 23
+  },
+  "elapsed_seconds": 2.997,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "packages": {
+    "pytest": "9.2.0",
+    "ruff": "0.12.7",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "PyYAML": "6.0.3",
+    "requests": "2.34.2"
+  },
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PYTHONPATH": "/workspace/scratch/c952f41a0279/psm_wma_eval_shared_gpu:/workspace/scratch/c952f41a0279/psm_wma_eval_shared_gpu/scripts:/workspace/scratch/c952f41a0279/psm_wma_eval_shared_gpu/cosmos-framework"
+  },
+  "commands": {
+    "pytest": [
+      "/tmp/psm-eval-cpu-20261030/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "--rootdir=/workspace/scratch/c952f41a0279/psm_wma_eval_shared_gpu",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-x",
+      "tools/v3/eval_v2_production_tests/entry_test.py",
+      "tools/v3/eval_v2_production_tests/process_test.py",
+      "tools/v3/eval_v2_batch_tests/config_test.py",
+      "tools/v3/robocasa_processes_test.py",
+      "--basetemp=/tmp/psm-shared-gpu-19342b3-20261030/pytest_tmp",
+      "--junitxml=/tmp/psm-shared-gpu-19342b3-20261030/junit.xml"
+    ],
+    "ruff_check": [
+      "/tmp/psm-eval-cpu-20261030/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "--no-cache",
+      "scripts/robocasa_eval_v2/resources.py",
+      "tools/v3/eval_v2_production_tests/entry_test.py"
+    ],
+    "ruff_format": [
+      "/tmp/psm-eval-cpu-20261030/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "--no-cache",
+      "scripts/robocasa_eval_v2/resources.py",
+      "tools/v3/eval_v2_production_tests/entry_test.py"
+    ]
+  },
+  "exit_codes": {
+    "pytest": 0,
+    "ruff_check": 0,
+    "ruff_format": 0
+  },
+  "source_files": {
+    "scripts/robocasa_eval_v2/resources.py": {
+      "git_blob": "b095a5367a48e474fb2dc57bbaea923b9ab91c2f",
+      "sha256": "622c97e741fef25850b9dcc6733e70dec690ac2ea3521e0114ec3e83ad4337dc"
+    },
+    "tools/v3/eval_v2_production_tests/entry_test.py": {
+      "git_blob": "0c89e189c13e9f0796c008140d523449571aa49d",
+      "sha256": "5ea2822bc01694126064e675d7d98b95ad038ad9f117207023c0faca5870d937"
+    }
+  },
+  "prior_attempts": [
+    {
+      "result": "ENVIRONMENT_DEPENDENCIES_MISSING",
+      "junit": {
+        "passed": 8,
+        "failures": 1
+      },
+      "cause": "requests and torch package metadata absent; installed requests and official CPU torch without source or assertion changes"
+    },
+    {
+      "result": "SANDBOX_PROCFS_PID_MISMATCH",
+      "junit": {
+        "passed": 15,
+        "failures": 1
+      },
+      "cause": "ordinary sandbox getpid differs from /proc/self/stat; project process identity test not applicable in that namespace view"
+    }
+  ],
+  "final_execution": "Supported escalated CPU executor; verified getpid=proc-self-pid=numeric-proc-pid=1251 before unchanged test invocation",
+  "real_gpu_model_simulation_training": "NOT_RUN",
+  "scope": "Focused quick CPU regression only; not a repeat of historical 435-test full gate or GPU Canary"
+}
