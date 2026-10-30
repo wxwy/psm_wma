@@ -224,3 +224,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 
 - Frozen root e0fe911dfb9fd34957234828195cf051713f6c3d/child f6a92d47b6dac7998ddc58b3da26ef93f8068dc7 保持；旧APPROVE_CODE、CPU301/6raw PASS不重审。DS Owner授权的CPU-only实测ScopeA build193652.7ms、SourceReader192970.6ms、LeRobot init188782.1ms、prepare224.5ms，ScopeB real single worker materialize120.249s Timeout（warm状态）。这些为DS报告，GPT未直接验原始服务器JSON；单Worker超时证实不必32并发，SourceReader eager初始化为首要可行动瓶颈，Worker内部阶段未实测。
 - Review docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_RealCPU_OneWorker_ColdStart_RootCause_Review.md；Codex窄修设计交接 docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Issue12_Codex_LeRobot_WorkerColdStart_NarrowFix_Handoff.md。无需再DS Probe/ZIP/旧301，Codex只在隔离候选解决昂贵首包初始化，保证Source/Delta/RNG/Frontier/DCP与异步功能；新真实CPU/GPU/正式切换须Owner授权。Issue12 GPU B0 commits、性能INCONCLUSIVE不变。
+
+## 2026-10-30 — Training NoTTT Issue12 Worker ColdStart 新FormalPair 增量 Code Gate APPROVE_CODE
+
+- **Formal Root fd9021b0908b4b2763b3d02508b1f34df377dc97 / Child+Gitlink 224c5f3c0bd6911bb49cb6bb0895ba7da53ff822**（旧production Pair e0fe911d/f6a92d47不重审）。Child相对旧Pair只改 2 production files：Recipe注入新的 VerifiedWorkerLeRobotDataset Factory；新Worker Source使用VerifiedIndex、每Episode Arrow按需投影、官方LeRobot inherited Delta/Caption/Torch read和有界LRU，旧NoTTT Loader、nw0、120s timeout、RNG/Frontier/DCP不改。2 test files加入Source合成对照/真实spawn接线。
+- GPT直接读GitHub原始`final/junit.xml`：47+11=**58唯一PASS/0failure/error/skip**；独立SHA核验manifest里的**11/11关键原件一致**；Ruff、format日志exit0（作者构建，GPT未本机运行pyarrow/datasets/lerobot）。正式Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_WorkerColdStart_fd9021b_224c5f3_Incremental_Code_Gate_APPROVE_CODE.md`，**`APPROVE_CODE`仅代码+合成CPU Gate**。
+- 新Pair **真实RoboCasa首包<120s、4rank DCP Resume、GPU吞吐尚未运行**；由Owner另批DS真实1Worker首包（含RAM/IO/worker清理）后再决定独占GPU同DCP匹配A/B。禁止直接合并V3/Child、触碰现役NoTTT 30k Job及Checkpoint，EvalV2线隔离，旧301不重跑。
