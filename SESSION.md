@@ -1,3 +1,18 @@
+# 2026-10-30 — Issue #12 worker cold-start narrow fix, claimed
+
+Task IN_PROGRESS, Codex sole editor, isolated Root/Child branch
+v3-nottt-lerobot-coldstart-20261030. Latest V3 fetched/advertised
+9344198a5abf4964a4997bf7e9268b8e5ccc73e8, detailed Issue12 review/request and
+exact previous e0fe/f6a9 Code APPROVE + Issue11 DS Evidence PASS read. Candidate
+starts from published2260/f6a9, preserves canonical EvalV2 line without merging
+or replacing its source. Planned files and minimal synthetic acceptance:
+docs/build/PSM-WMA_V3_NoTTT_Issue12_Worker_ColdStart_NarrowFix_2026-10-30.md.
+Only worker verified source adapter + AsyncRecipe injection and targeted tests;
+no SourceReader default, model, RNG policy, Frontier, DCP or timeout changes.
+No real data/model/DCP/GPU/Job/DS operations. New exact Pair and author evidence
+then STOP for GPT incremental Code Gate. Owner latest request overrides old
+three-reviewer/pane/wait workflow. Plan/claim uncommitted; no project code run.
+
 # 2026-10-29 — Issue #9 candidate author CPU PASS; awaiting fresh GPT Code Gate
 
 FormalRoot e0fe911dfb9fd34957234828195cf051713f6c3d / Child+Gitlink f6a92d47b6dac7998ddc58b3da26ef93f8068dc7. Isolatedbranch v3-nottt-async-overlap-20261029. Exactcleanlocked03 author301PASS=72new+229old,0fail/error/skip; one forbiddenreal-data node explicitlyexcluded; Ruff/format/AST13/import/sourceunchangedPASS. Internalstatic51checks,102oldassertAST retained;18watchedGitBlobs/81artifacthashes. CPUtraceproveslaterMember+nextWindowSource/TFoverlap, butcoldstartwallslowerthanserial, noGPUbenefitclaim. Extra8CPUworkers actualPID/RSS/IPC/cleanup recorded, no nativeRAMqualification. TwoearlierfailedPairs andfixturefailuresretained. Evidence/handoff publishedseparatelyfromformal.
