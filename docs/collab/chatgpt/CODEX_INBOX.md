@@ -153,3 +153,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **F5-P1 HIGH（源码已直接确认）**：Root `robocasa_vendor.py:130,260-286` 包含全部untracked资产SHA +原始stdout；`identity.py:201-215` 把全部作为`inputs`，`cli.py:139-140`写并读`run_inputs.json`；Child `store.py:30,75-99,117-118`严格256KiB，故大数据必报`oversized JSON`。现场20,989,831B、123,363资产、GPU7等数字仅DS用户报告，原raw服务器文件GPT未读取。
 - **整改仅限**把小型稳定runtime digest等身份字段留在`run_inputs`，全量`evaluation_runtime`和`runtime_probe_evidence`另外通过专用限额（建议64MiB）原子Evidence writer保存；原256KiB普通合同、vendor逐资产SHA、Manifest runtime identity、strict resume/source清洁校验、owned cleanup全部保持。针对真实大型payload做Fresh→Resume公开路径CPU回归及大证据/普通ledger边界负例。Codex新Root/Child提交后GPT fresh窄增量审；无须重跑旧435 CPU，无理由反复在旧SHA fresh。
 - **未授权**在旧审核Root上用local patch绕过、放宽全部JSON limit、停NoTTT训练、直接正式900；新源码批准后仅按原授权重试1GPU×2Sim×B2×4Episode真实Canary。
+
+## 2026-10-30 — Training Issue12 DS仓库外Probe v2 d54ef1b0 增量复审 REQUEST_CHANGES
+
+- Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，既有production APPROVE_CODE、Issue#11 CPU301/6raw PASS不重审。此次唯一新对象仓库外script v2 SHA256 `d54ef1b006bbf99bc4aedef633f8adf267b2d67334e993bcd1ac21526f096795`（从用户上传的CRLF文本提取并统一LF/单行尾，18378 bytes，AST compile PASS）。
+- 审核记录 `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_v2_d54ef1b0_INCREMENTAL_REQUEST_CHANGES.md`：v1 P1 torch NameError CLOSED，partial-window finish + finally清理 CLOSED；P2真实Worker spawn时长仍漏测（_begin在timer前）、ScopeA预热ScopeB；P3还用private API；P4 initial_frontier不是iter9600真实恢复frontier；P5 budget/RSS只是阻塞后检查且命令无外层timeout/输出仍近满盘；新P6失败时没有阶段实时日志/partial witness。此次 `SCRIPT_v2=REQUEST_CHANGES`；只由DS改仓库外脚本，生产源码只能Codex修改。
+- `REAL_DATA_CPU_EXECUTION=PENDING_OWNER_AUTHORIZATION`、Issue12 B真实GPU0commit/timeout性能Inconclusive不变；不运行脚本、CPU301、GPU或训练、不动正式Job/Checkpoints/V3实现。
