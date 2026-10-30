@@ -102,3 +102,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 用户上传完整第6份 `overlap_trace.json` 分为3个文本，GPT拼接解析后以 `json.dumps(indent=2)` 原样序列化117909字节，sha256 `27357f1034a0b2ea91e887240c6566c1aac2630f37bd5f983123a332e3396c11` 与既冻hash**完全一致**；先前5份完整raw亦已匹配。**`DS_CPU=PASS / RAW_EVIDENCE=PASS_6_OF_6`**。详细正式Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_SixRaw_Trace_Hash_Overlap_Independent_Evidence_GATE_PASS.md`。
 - GPT独立从399异步事件重算下一GA Member Source87.798/Transform128.965ms、下一Window Source20.455/Transform32.393ms（各绝对差0），串行204事件交叠0；主进程等待96事件合计10376.207ms一致。旧已核原始JUnit72+229=301唯一PASS、0fail/error/skip、Gitlink一致、source unchanged记录。无需重跑CPU或补交原件。
 - **GPU吞吐与真实DCP Resume仍 NOT_RUN**，CPU cold fake异步12.142s反而慢于同步3.452s；原正式NoTTT旧RAW nw8 Job仍不得停/切/并发Resume。真实GPU资格提案 `PROPOSED_NOT_AUTHORIZED`，需Owner另行授权和GPU空闲窗口；Compact strict Gradient失败历史维持。
+
+## 2026-10-30 — V3 EvalV2 PhaseB B2 已受控提升（源码树等价Gate）
+
+- 已在GitHub远端V3受控提升生产Root `978337deef0173f60336977367e21f513772a465` / Child+Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`；被测试正式Root `a139b5a35877a79e0a56c2208f3002f731972b11` / same Child，**区别是V3文档历史导致的新Root SHA**。本轮详细Review：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_B2_Controlled_Promotion_978337de_0ae313e3_Source_Equivalence.md`。
+- 提升提交single-parent，仅新增/更新53个审核源Git对象：2 configs+10 scripts+40 tools+1 Child Gitlink，未直接merge候选全分支；保留V3已有docs/SESSION/TODO和NoTTT现有代码。GitHub完整GitTree**9,844个非文档文件/对象在Promotion Root和被测试Root之间精确同SHA、mode、type（0 diff）**，非文档源码equivalence窄Gate `APPROVE_CODE`。新Root没有独立执行435CPU，不能虚构新Root raw evidence。
+- CPU：作者旧正式Pair完整435原始证据GPT已核`PASS`；DS同Pair435/435独立运行报告`PASS_REPORTED`，Owner指示依报告继续但GPT未取得DS raw，禁止写成独立raw字节验过。远端仅Source Promotion，未做NoTTT工作树任何操作。
+- 下一步真实1GPU/M2/B2 Canary需Owner单独授权和**不影响NoTTT训练**的独占可用GPU；正式900更需独立授权。不得把本次受控源码提升当成GPU/真实仿真合格。
+
