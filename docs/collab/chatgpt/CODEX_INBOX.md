@@ -138,3 +138,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 
 - 冻结Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`，当前 Issue12真实B120s首包Timeout、0commit、归因未定，原NoTTT CPU301 PASS不重审。
 - 正式DS指导 `docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Issue12_DS_OneWorker_ColdStart_CPU_Diagnostic_Guidance_NOT_AUTHORIZED.md`：立即仅只读整理已有B四Rank日志（标明确切缺失的Worker init计时）；准备单Worker/单真实request CPU-only外部脚本和精确命令，**`PENDING_OWNER_AUTHORIZATION`不执行新真实数据探针**。禁止动GPU/正式NoTTT/产线代码/Checkpoint/V3。
+
+## 2026-10-30 — Training Issue12 DS外部冷启动探针代码评审REQUEST_CHANGES（未批准运行）
+
+- Formal生产Pair `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，旧APPROVE_CODE、CPU301/6raw PASS不重审。本轮只审用户上传外部`issue12_worker_coldstart_probe.py`源码SHA `5215bf115ea48b3cd05d833599b0c6f50fd38a31dbc62601be882ffdd1ce9167`，正式独立Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_5215bf11_REQUEST_CHANGES.md`，本版脚本 `REQUEST_CHANGES`、PhaseP真实数据CPU仍`PENDING_OWNER_AUTHORIZATION`。
+- 最小阻断：探针`_require_cpu_only`读模块全局`torch`，但torch仅在main内部局部导入→必然NameError；Phase1手工重写build/跳过worker import与spawn，Phase2计时起点在`_begin`之后，不是包含spawn的真实冷启动；仅消费1 segment却调用`finish()`必报incomplete Window且绕过公开API/finally；初始frontier≠9600恢复frontier、硬编码digest不等于完成实际身份核证；拟运行命令缺真正外层timeout/强制资源上限，输出与高占用数据卷混用。
+- DS只修临时外部脚本、带完整安全命令和静态check后再申请脚本复审；**不执行任何真实数据CPU/GPU/正式训练，不改production/timeout/V3**。修正后脚本审核与Owner新CPU-only执行授权分开。
