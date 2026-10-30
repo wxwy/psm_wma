@@ -1,5 +1,14 @@
 # 2026-10-30 — Issue #12 worker cold-start narrow fix, claimed
 
+Implementation now limited to new worker source storage + AsyncRecipe factory
+injection. Exploratory03 source/recipe46PASS; real two-spawn-worker full
+Source/Transform/CFG/B8GA4 three-Window integration focused06 1PASS. These are
+preliminary, not the final clean-pair Gate. Initial dependency-hook collection
+error and three fixture failures (expected guard location, native profile, proxy
+properties) retained; no old assert loosened or production guard changed.
+Final exact-pair targeted/static replay and publication still pending. No real
+data/model/DCP/GPU/active Job/canonical source change.
+
 Task IN_PROGRESS, Codex sole editor, isolated Root/Child branch
 v3-nottt-lerobot-coldstart-20261030. Latest V3 fetched/advertised
 9344198a5abf4964a4997bf7e9268b8e5ccc73e8, detailed Issue12 review/request and

@@ -54,6 +54,34 @@ runbook/evidence, Gitlink, SESSION/TODO and append-only review request.
 5. Ruff 0.12.7 check/format, AST, source fingerprints, exact clean Formal Pair,
    targeted JUnit/raw logs and diff. No assertion weakening or skipped failures.
 
+## Implemented storage contract
+
+Two production files only: new `trainer/no_ttt_worker_source.py` plus the
+`AsyncRecipe.build()` factory injection. `VerifiedWorkerLeRobotDataset` inherits
+the official `__getitem__`, `_get_query_indices`, `_query_hf_dataset` and
+`_get_query_timestamps` without overrides. Its HF indexing facade uses accepted
+relative spans and checks mapping consistency; the unchanged SourceReader still
+validates every 17-row identity, padding, action/state and caption.
+
+Only Episode metadata and the existing mmap are opened at construction. Data
+parquet opens happen on the worker's first actual read. Project non-video HF
+features, prune row groups by episode statistics, filter fixed-size batches,
+and cast using the same official HF Arrow schema/Torch transform. Multiple
+Episodes in one file and different file/episode orders are supported. There is
+no HF full-source scan/filter, full row-column scan or per-worker Python row-map
+rebuild, no readiness timeout extension and no work moved into the trainer.
+
+The source Arrow LRU independently retains at most `max(1, 8/workers)` Episodes
+and `profile.max_cache_bytes` bytes/worker, with eviction during bounded batch
+loading. The existing latent mmap LRU is unchanged. At the existing default
+2GiB limit and nw8, the new retained source cap is 16GiB/rank (64GiB for world4),
+not an estimate of actual RSS. Cast buffers, one read batch, Arrow/Python memory,
+latent mmap and IPC are additional/transient; real RAM/I/O qualification remains
+DS work. Limits do not silently truncate data; an oversized Episode fails closed.
+No tables, dataset objects, queues or speculative state enter the recipe or DCP.
+
+## Validation boundary
+
 CPU evidence cannot prove first real packet <120s or GPU throughput. After a new
 GPT Code Gate, separately authorized DS checks one real worker first packet;
 then a separately authorized matched full-DCP exclusive-GPU A/B must validate

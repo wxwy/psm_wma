@@ -480,9 +480,9 @@
 - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — IN_PROGRESS;Codex; Owner task production49df7f3c/746c5cf2, isolatedRootbranch only. Persist verified strong-model/stat evidence under existing RunStore lock; warm0payload reads; cold onehash+lockedstat; invalid fallbackstrictidentity; readonly dry-run; config/task invocation witness; synthetic hit/miss/race/legacy/crash tests+regressions. Preserve source/episode/media/Local/plan/runtime truth. Submit exactRoot/unchangedChild+CPU evidence thenGPT/DS,STOP,no V3 merge/live assets.
 
 - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — REVIEW; authorfive-moduleCPU227PASS/0skip,53new tests,static9/frozen10PASS; stable cold modelonefullhash and lockedstat, warm0payload bytes identicalSHA, strict cache miss/invalid/atomickill/lease/history/configTask/CLI negatives. Candidate-only Root+unchanged746c5cf2Child; rawEvidence +runbook thenGPTfreshreview/DSCPU,STOP. No live eval/training/model/server/GPU or V3 merge.
+
 # 2026-10-30 Issue #12
 
 | ID | Status | Owner | Prerequisite | Acceptance |
 | --- | --- | --- | --- | --- |
 | NOTTT-ISSUE12-WORKER-COLDSTART | IN_PROGRESS | Codex | Owner narrow fix; 9344198a request; e0fe/f6a9 Code APPROVE and DS301 PASS | Verified-only lazy worker source, same official Delta/caption, bounds/RNG/order/Resume/cleanup targeted CPU; exact isolated Root/Child + raw evidence then GPT and STOP; no GPU/real assets/promotion |
-
