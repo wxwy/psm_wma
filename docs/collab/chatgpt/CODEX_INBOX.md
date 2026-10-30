@@ -110,3 +110,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - CPU：作者旧正式Pair完整435原始证据GPT已核`PASS`；DS同Pair435/435独立运行报告`PASS_REPORTED`，Owner指示依报告继续但GPT未取得DS raw，禁止写成独立raw字节验过。远端仅Source Promotion，未做NoTTT工作树任何操作。
 - 下一步真实1GPU/M2/B2 Canary需Owner单独授权和**不影响NoTTT训练**的独占可用GPU；正式900更需独立授权。不得把本次受控源码提升当成GPU/真实仿真合格。
 
+
+## 2026-10-30 — Owner授权 No-TTT 真DCP Resume + Compact1 nw0/nw8 GPU资格（条件执行）
+
+- 原 No-TTT Async Frozen Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`，前序 `APPROVE_CODE` + Issue#11 DS 301 CPU/6raw全部PASS不重审。
+- Owner本轮明确「我授权」前序提出的**真实DCP恢复与隔离真实GPU性能**，**状态从`PROPOSED_NOT_AUTHORIZED`更新为`AUTHORIZED_CONDITIONAL_RESOURCE`**，详细正式执行指令 `docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Real_DCP_Compact1_NW0_vs_NW8_Owner_Authorized_Execute.md`；**只授权这一次候选代码20步A (Compact1,nw0) + 20步B (Compact1,nw8)的匹配C真实DCP Resume实验**。其余训练/仿真/代码无关。
+- GPU4–7若被旧正式Job占用，DS只读核对并 `BLOCKED_RESOURCE_OR_CHECKPOINT`、绝不停止正在训Job；GPU4–7全空闲且原Job已退出、完整C/四rank DCP +独立输出/磁盘可用时才可分别依序启动。DS不可修改/清理正式Job的source/Checkpoint/identity/git/disk，也不可直接合并V3/Child。Root/Child Gitlink在V3可能被其它工作改变，必须使用**冻结NoTTT精确隔离Pair**而不是 V3 HEAD。
+- 实验后GPT独立审核实际真实DCP/数据/监控/GPU性能；只需新Evidence，不新代码Gate；即便通过也不代表授权正式Job切换或Compact旧严格GPU梯度历史PASS。
