@@ -1,3 +1,16 @@
+# 2026-10-30 — Issue12 candidate published and remote verified; STOP for GPT
+
+Formal fd9021b0908b4b2763b3d02508b1f34df377dc97 / Child+Gitlink
+224c5f3c0bd6911bb49cb6bb0895ba7da53ff822; isolated branches published,
+Root evidence de20afc1d5172e8100c3852525c24c23668c2976. Remote Root/Child
+refs, GitHub Formal Gitlink and Gate blob verified. Full publication receipt:
+docs/collab/codex/reviews/2026-10-30_V3_NoTTT_Issue12_remote_publication_receipt.json.
+Author58PASS/static4, raw43/18bindings; no native performance claim. V3
+9344198a and canonical Child746c5cf2 not updated. New Pair GPT Code Gate
+REQUESTED; no final verdict found in fresh canonical exact-SHA review scan.
+STOP, no further tests/DS/GPU/DCP/Job/promotion without new instruction.
+This receipt commit is bookkeeping and never replaces the Formal Root.
+
 # 2026-10-30 — Issue #12 worker cold-start narrow fix, claimed
 
 FINAL author Gate PASS on clean Formal Root
