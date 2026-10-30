@@ -72,3 +72,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **F4-P1源码CLOSED，正式 `APPROVE_CODE`（仅此最小源/回归Gate）**：诊断持既有`scheduler._lock`复制tuple snapshot，然后锁外文件I/O，保留全部D5/Core/Resume/Batch约束。旧版相同回归受控RED 1FAIL真实`runtime.py:796`字典变化，新版GREEN3PASS(实际Core/round/cleanup证据)、静态Ruff/format/AST通过、54/54源码指纹新Pair前后清洁。旧RED worktree有未提交文档和同一新回归临时文件，不声称旧RED是clean完整Formal Gate；源与回归哈希可验证。
 - **旧作者434事故throw-site原始证据仍未知**（单例不复现 INCONCLUSIVE），本批准不自动关闭作者/DS CPU Evidence。新Pair完整作者Gate `NOT_RUN`，预计435=145 inference+256 PhaseA+34 PhaseB，实际收集为准；授权作者在干净新Pair且全新外部Evidence目录**只跑一次完整统一CPU**，作者PASS后GPT核证，再交DS_PRO独立完整CPU。**不合并V3生产、不启GPU/真实RoboCasa/900/训练**。
 
+
+## 2026-10-30 — EvalV2 PhaseB formal Pair `a139b5a3/0ae313e3` 作者完整CPU435 Evidence: PASS
+
+- **Formal source Pair未变** Root `a139b5a35877a79e0a56c2208f3002f731972b11` / Child+Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`；作者Evidence/bookkeeping commit `2c2f590093ae7d1f8d97b828bb6113487960b1fc` **不是**新的正式实施SHA，不重新进行Code Gate。正式作者CPU Evidence verdict **`PASS`**；详细Review `docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_Author435_a139b5a3_0ae313e3_Evidence_Gate_PASS.md`。
+- GPT经GitHub实际读取 `raw/gate.json`、分组与combined原始JUnit及日志：145 inference +256 PhaseA+34 PhaseB=**435/435 PASS**，0fail/error/skip、Shell0、6step全exit0、Gate PASS/source_unchanged=true；54/54 前后source SHA256一致，额外62/62 source GitBlob绑定与完整冻结Root/Child Git树吻合，Root/Child干净；Combined JUnit 435 unique IDs和三组完全相同。原始归档201项原件映射、209项hash manifest均与发布路径一致。
+- 行为原件：F4快照旧竞态新回归`copy_held_writer_lock=[true]`、2 workers可在progress I/O期间finish；synthetic900 900 valid/50barrier/450成功450失败；真实CPU OS G1/N2/E2 B1×2+B2×3、G2/N3/E1 B1×4+B2×1，执行间存在physics overlap；F3两个活跃Ticket、Server退出23、owned清理3/3、故障记录不伪造success；Store并发两条不同UUID fault。foreign survival/Resume byte parity以实际PASSED测试断言为证据，未冒称额外独立raw witness。
+- **DS独立CPU Gate仍 OPEN/NOT_RUN，不继承作者PASS**；下一步只由DS在新独立干净Exact Pair执行一次同一完整435 CPU Gate，输出完整原始JUnit/OS/Source证据交GPT。此前旧作者434 FAIL不能被此单证据覆盖其真实原抛错行；无V3生产合并/GPU/Canary/正式900/训练授权，不增架构Gate。
+
