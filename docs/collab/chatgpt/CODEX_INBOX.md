@@ -133,3 +133,8 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **ISS12-E3字段疑义CLOSED，但DS“cuda_sampled=false表示gpu_data_stall来自主机墙钟”属于错误解释**：Frozen `corrected_telemetry.py:148-211,441-465`有独立`_sample_data_stall`每步记录CUDA Events并`elapsed_time`；`cuda_sampled`仅对应常规每100步的compute events。20步`gpu_data_stall_status=ready` = rank0 current CUDA stream data-gap estimate，不能解释成全卡GPU idle。
 - B4rank真实DCP9600成功加载，首个materialize 120sTimeout，0 optimizer commits；`ISSUE12=REQUEST_CHANGES`保持。Worker每次首请求重建LeRobot Dataset，高成本冷启动/正式Job共享争用都可能，缺worker-init时戳，归因未证。现成manifest粘贴列14项而摘要称13，LOW；Owner外部GPU共享豁免仅DS转述+RUN_MANIFEST，`REPORTED_UNVERIFIED`，不能推断未授权。
 - **不重跑CPU/GPU、不修改生产代码、不停训练、不合并**。下步仅证据可用性整理，若要新探针/独占匹配A/B需Owner明确授权。
+
+## 2026-10-30 — Issue12 NoTTT 首包超时诊断 DS 指导交付（Phase R now / Phase P未授权）
+
+- 冻结Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`，当前 Issue12真实B120s首包Timeout、0commit、归因未定，原NoTTT CPU301 PASS不重审。
+- 正式DS指导 `docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Issue12_DS_OneWorker_ColdStart_CPU_Diagnostic_Guidance_NOT_AUTHORIZED.md`：立即仅只读整理已有B四Rank日志（标明确切缺失的Worker init计时）；准备单Worker/单真实request CPU-only外部脚本和精确命令，**`PENDING_OWNER_AUTHORIZATION`不执行新真实数据探针**。禁止动GPU/正式NoTTT/产线代码/Checkpoint/V3。
