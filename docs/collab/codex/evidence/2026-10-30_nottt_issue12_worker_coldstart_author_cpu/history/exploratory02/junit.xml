@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="10" time="6.719" timestamp="2026-10-30T13:17:12.729493+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_official_delta_caption_padding_and_source_windows_match[shared]" time="0.245" /><testcase classname="" name="test_official_delta_caption_padding_and_source_windows_match[split]" time="0.218" /><testcase classname="" name="test_official_delta_caption_padding_and_source_windows_match[reverse]" time="0.211" /><testcase classname="" name="test_official_delta_caption_padding_and_source_windows_match[subset]" time="0.123" /><testcase classname="" name="test_build_does_not_call_eager_constructor_or_read_any_source_parquet" time="0.086" /><testcase classname="" name="test_lru_eviction_bounds_and_reload_preserve_exact_values" time="0.143" /><testcase classname="" name="test_bad_verified_metadata_and_mapping_fail_closed[length]" time="0.054" /><testcase classname="" name="test_bad_verified_metadata_and_mapping_fail_closed[file]" time="0.062" /><testcase classname="" name="test_bad_verified_metadata_and_mapping_fail_closed[first_mapping]" time="0.061" /><testcase classname="" name="test_bad_verified_metadata_and_mapping_fail_closed[interior_mapping]" time="0.076"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'per-read row mapping'&#10;  Actual message: &quot;runtime global index 漂移：ExactWindowEpisodeKey(task_class='Pick Mug', task_slug='Pick_Mug', episode_index=0)/0&quot;">cosmos_framework/trainer/no_ttt_worker_source_test.py:179: in test_bad_verified_metadata_and_mapping_fail_closed
+    lazy.read_at(0)
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source.py:505: in read_at
+    return self.read_window(*self.index[index])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source.py:476: in read_window
+    raise ValueError(f"runtime global index 漂移：{key}/{start_frame}")
+E   ValueError: runtime global index 漂移：ExactWindowEpisodeKey(task_class='Pick Mug', task_slug='Pick_Mug', episode_index=0)/0
+
+During handling of the above exception, another exception occurred:
+cosmos_framework/trainer/no_ttt_worker_source_test.py:178: in test_bad_verified_metadata_and_mapping_fail_closed
+    with pytest.raises(ValueError, match="per-read row mapping"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'per-read row mapping'
+E     Actual message: "runtime global index 漂移：ExactWindowEpisodeKey(task_class='Pick Mug', task_slug='Pick_Mug', episode_index=0)/0"</failure></testcase></testsuite></testsuites>

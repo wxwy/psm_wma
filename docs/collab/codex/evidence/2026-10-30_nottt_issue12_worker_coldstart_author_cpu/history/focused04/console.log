@@ -1,0 +1,21 @@
+F
+=================================== FAILURES ===================================
+____ test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup ____
+cosmos_framework/trainer/no_ttt_async_recipe_test.py:271: in test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup
+    loader = NoTTTAsyncLoader(producer, LoaderProfile(2, 1, True, 120), planner, recipe=_CpuTextRecipe(recipe))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_async_loader.py:174: in __init__
+    raise ValueError("async preparation requires the matched B8/GA4 profile")
+E   ValueError: async preparation requires the matched B8/GA4 profile
+------------------------------ Captured log setup ------------------------------
+WARNING  root:video_utils.py:40 'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 warning in 5.53s

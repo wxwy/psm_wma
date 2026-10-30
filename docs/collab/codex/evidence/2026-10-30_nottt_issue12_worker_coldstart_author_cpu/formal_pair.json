@@ -1,0 +1,15 @@
+{
+  "formal_root": "fd9021b0908b4b2763b3d02508b1f34df377dc97",
+  "child": "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
+  "gitlink": "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
+  "baseline_root": "2260f2a6f89368301ba50a686676994af90a2ca5",
+  "baseline_child": "f6a92d47b6dac7998ddc58b3da26ef93f8068dc7",
+  "approved_previous_implementation_root": "e0fe911dfb9fd34957234828195cf051713f6c3d",
+  "branch": "v3-nottt-lerobot-coldstart-20261030",
+  "latest_directive_root": "9344198a5abf4964a4997bf7e9268b8e5ccc73e8",
+  "author_cpu_only": true,
+  "canonical_merge": false,
+  "gpu_run": false,
+  "real_data_run": false,
+  "real_dcp_run": false
+}

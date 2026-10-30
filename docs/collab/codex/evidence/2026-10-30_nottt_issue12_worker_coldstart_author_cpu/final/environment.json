@@ -1,0 +1,26 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LD_LIBRARY_PATH": "",
+    "PYTEST_ADDOPTS": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-nottt-coldstart-20261030/final01/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-nottt-coldstart-20261030/final01/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-nottt-coldstart-20261030/final01/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-nottt-coldstart-20261030/final01/cache/ruff",
+    "PYTHONPATH": "/workspace/psm-wma-nottt-coldstart:/workspace/psm-wma-nottt-coldstart/cosmos-framework:/workspace/psm-wma-nottt-coldstart/scripts",
+    "PSM_NOTTT_ASYNC_EVIDENCE": "/tmp/psm-nottt-coldstart-20261030/final01/timelines"
+  },
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7"
+  }
+}

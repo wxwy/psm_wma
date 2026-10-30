@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.535" timestamp="2026-10-30T13:18:24.199224+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup" time="0.198"><failure message="ValueError: async preparation requires the matched B8/GA4 profile">cosmos_framework/trainer/no_ttt_async_recipe_test.py:271: in test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup
+    loader = NoTTTAsyncLoader(producer, LoaderProfile(2, 1, True, 120), planner, recipe=_CpuTextRecipe(recipe))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_async_loader.py:174: in __init__
+    raise ValueError("async preparation requires the matched B8/GA4 profile")
+E   ValueError: async preparation requires the matched B8/GA4 profile</failure></testcase></testsuite></testsuites>

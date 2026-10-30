@@ -1,5 +1,18 @@
 # 2026-10-30 — Issue #12 worker cold-start narrow fix, claimed
 
+FINAL author Gate PASS on clean Formal Root
+fd9021b0908b4b2763b3d02508b1f34df377dc97 / Child+Gitlink
+224c5f3c0bd6911bb49cb6bb0895ba7da53ff822: 47 source/recipe +11 selected
+regression =58PASS, zero fail/error/skip; Ruff0.12.7/format/AST4/import/source
+unchanged. No old301 rerun. Production delta exactly2files,12protected blobs
+unchanged,10original test definition AST retained. Raw43artifacts/18bindings,
+diffs and exploratory failures packaged. Source build opens0 dataParquet;
+actual2worker B8GA4/3Window Source+Transform/CFG equality and cleanup PASS.
+All timing is tiny synthetic, no real first-packet or GPU improvement claim.
+Handoff docs/collab/codex/reviews/2026-10-30_V3_NoTTT_Issue12_Worker_ColdStart_author_handoff.md.
+Task REVIEW. Publish isolated Child thenRoot, remote readback, STOP for GPT.
+No canonical merge/DS dispatch/native/GPU/activeJob/DCP/config/history operations.
+
 Implementation now limited to new worker source storage + AsyncRecipe factory
 injection. Exploratory03 source/recipe46PASS; real two-spawn-worker full
 Source/Transform/CFG/B8GA4 three-Window integration focused06 1PASS. These are

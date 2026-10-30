@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="14.975" timestamp="2026-10-30T13:19:54.230087+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup" time="9.679" /></testsuite></testsuites>

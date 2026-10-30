@@ -1,0 +1,32 @@
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[64-counts0-0]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[64-counts0-1]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[64-counts0-2]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[64-counts0-3]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[17-counts1-0]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[17-counts1-1]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[17-counts1-2]
+::test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng[17-counts1-3]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[0-8-0]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[0-8-1]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[0-8-2]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[0-8-3]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-0-0]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-0-1]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-0-2]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-0-3]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-8-0]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-8-1]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-8-2]
+::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-8-3]
+::test_failed_active_window_keeps_checkpoint_frontier_and_reaps_speculation[nan_loss]
+::test_failed_active_window_keeps_checkpoint_frontier_and_reaps_speculation[nan_gradient]
+::test_failed_active_window_keeps_checkpoint_frontier_and_reaps_speculation[step_skip]
+::test_failed_active_window_keeps_checkpoint_frontier_and_reaps_speculation[native_error]
+
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+24 tests collected in 5.69s

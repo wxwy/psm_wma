@@ -1,0 +1,750 @@
+diff --git a/cosmos_framework/trainer/no_ttt_async_recipe.py b/cosmos_framework/trainer/no_ttt_async_recipe.py
+index f27aaf7..397fde6 100644
+--- a/cosmos_framework/trainer/no_ttt_async_recipe.py
++++ b/cosmos_framework/trainer/no_ttt_async_recipe.py
+@@ -16,6 +16,7 @@ import pickle
+ import time
+ from copy import deepcopy
+ from dataclasses import dataclass, replace
++from functools import partial
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -214,6 +215,7 @@ class AsyncRecipe:
+             ExactWindowSegmentProducer,
+         )
+         from cosmos_framework.trainer.no_ttt_cpu_loader import MappedEpisodeReader
++        from cosmos_framework.trainer.no_ttt_worker_source import VerifiedWorkerLeRobotDataset
+ 
+         if torch.cuda.is_initialized() or os.environ.get("CUDA_VISIBLE_DEVICES") != "":
+             raise RuntimeError("async worker reconstruction requires CPU-only startup")
+@@ -225,7 +227,17 @@ class AsyncRecipe:
+             verify_files=not self.trusted_training,
+         )
+         catalog = RoboCasaExactWindowCacheCatalog(self.cache_root, verified_index=index)
+-        source = RoboCasaExactWindowSourceReader(catalog, self.source_root, verified_index=index)
++        source = RoboCasaExactWindowSourceReader(
++            catalog,
++            self.source_root,
++            verified_index=index,
++            dataset_factory=partial(
++                VerifiedWorkerLeRobotDataset,
++                verified_index=index,
++                max_episodes=max(1, 8 // self.workers),
++                max_bytes=self.max_cache_bytes,
++            ),
++        )
+         if (
+             catalog.corpus_digest != self.cache_digest
+             or catalog.manifest_sha256 != self.manifest_digest
+diff --git a/cosmos_framework/trainer/no_ttt_async_recipe_test.py b/cosmos_framework/trainer/no_ttt_async_recipe_test.py
+index 1e73c7f..d6631b8 100644
+--- a/cosmos_framework/trainer/no_ttt_async_recipe_test.py
++++ b/cosmos_framework/trainer/no_ttt_async_recipe_test.py
+@@ -1,12 +1,15 @@
+ """Synthetic local files and real Source/Cache/Transform; fake CPU text processor."""
+ 
++import json
+ import pickle
+ import random
+ from copy import deepcopy
+-from dataclasses import replace
++from dataclasses import dataclass, replace
+ from pathlib import Path
+ 
+ import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
+ import pytest
+ import torch
+ 
+@@ -35,6 +38,35 @@ class FakeProcessor:
+         return [11, *caption.encode(), 12]
+ 
+ 
++@dataclass(frozen=True)
++class _CpuTextRecipe:
++    """Spawn-safe fixture; only processor vocabulary is synthetic, not Source."""
++
++    inner: AsyncRecipe
++
++    @property
++    def rate(self):
++        return self.inner.rate
++
++    @property
++    def caption_key(self):
++        return self.inner.caption_key
++
++    @property
++    def token_key(self):
++        return self.inner.token_key
++
++    def build(self):
++        from lerobot.datasets.lerobot_dataset import LeRobotDataset
++
++        def forbidden(*args, **kwargs):
++            raise AssertionError("worker called full LeRobot construction")
++
++        LeRobotDataset.__init__ = forbidden
++        text_tokenizer.lazy_instantiate = lambda config: FakeProcessor(config["tokenizer_type"])
++        return self.inner.build()
++
++
+ @pytest.fixture
+ def real_recipe(roots, tmp_path, monkeypatch):
+     monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "")
+@@ -219,3 +251,102 @@ def test_worker_source_and_transform_must_remain_rng_neutral(real_recipe):
+     worker.producer.catalog.wrapped_sft._transform = wrong
+     with pytest.raises(ValueError, match="must not consume"):
+         worker.prepare(request)
++
++
++def test_first_worker_recipe_build_never_calls_full_lerobot_constructor(real_recipe, monkeypatch):
++    from lerobot.datasets.lerobot_dataset import LeRobotDataset
++
++    producer, recipe = real_recipe
++
++    def forbidden(*args, **kwargs):
++        raise AssertionError("full eager LeRobotDataset construction is forbidden in async workers")
++
++    monkeypatch.setattr(LeRobotDataset, "__init__", forbidden)
++    monkeypatch.setattr(LeRobotDataset, "load_hf_dataset", forbidden)
++    worker = recipe.build()
++    rows = worker.producer.catalog.raw.source_reader.dataset.hf_dataset
++    assert not rows.cache
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=1, active_ga=1)
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    segment, events = worker.prepare(request)
++    assert int(segment.consumer_valid.sum()) == request.valid_count
++    assert list(rows.cache) == [0]
++    assert [event["stage"] for event in events] == ["cpu_source", "cpu_transform"]
++
++
++def test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup(real_recipe, tmp_path):
++    from cosmos_framework.trainer.no_ttt_async_loader import NoTTTAsyncLoader
++    from cosmos_framework.trainer.no_ttt_async_loader_test import consume, equal_tree, seed
++
++    initial, original_recipe = real_recipe
++    # B8/GA4 requires 16 distinct two-segment Episodes per Window. Enlarge only
++    # this temporary fixture; never bypass the production native-profile guard.
++    cache, root = Path(original_recipe.cache_root), Path(original_recipe.source_root)
++    manifest_file = cache / "dataset_manifest.json"
++    manifest = json.loads(manifest_file.read_text())
++    first_record = manifest["tasks"][0]["episodes"][0]
++    payload = torch.load(cache / "tasks/Pick_Mug/episodes/episode_000000.pt", weights_only=True)
++    parquet_file = root / "data/chunk-000/file-000.parquet"
++    first_rows = pq.read_table(parquet_file).slice(0, 19).to_pylist()
++    rows, metadata, records = [], [], []
++    for ep in range(16):
++        record = deepcopy(first_record)
++        record["episode_index"] = ep
++        records.append(record)
++        copied = deepcopy(payload)
++        for window in copied["windows"].values():
++            window["global_row_indices"] += 19 * ep
++        torch.save(copied, cache / f"tasks/Pick_Mug/episodes/episode_{ep:06d}.pt")
++        for row in deepcopy(first_rows):
++            row["index"] += 19 * ep
++            row["episode_index"] = ep
++            rows.append(row)
++        metadata.append(
++            {
++                "length": 19,
++                "dataset_from_index": 100 + 19 * ep,
++                "dataset_to_index": 119 + 19 * ep,
++                "data/chunk_index": 0,
++                "data/file_index": 0,
++            }
++        )
++    manifest["tasks"][0]["episodes"] = records
++    manifest["episode_count"], manifest["window_count"] = 16, 48
++    manifest_file.write_text(json.dumps(manifest))
++    pq.write_table(pa.Table.from_pylist(rows), parquet_file, row_group_size=19)
++    pq.write_table(pa.Table.from_pylist(metadata), root / "meta/episodes/chunk-000/file-000.parquet")
++    info_file = root / "meta/info.json"
++    info = json.loads(info_file.read_text())
++    info["total_episodes"], info["total_frames"] = 16, 16 * 19
++    info_file.write_text(json.dumps(info))
++    dataset = get_action_robocasa_exact_window_cached_sft_dataset(
++        cache_root=cache,
++        source_root=root,
++        tokenizer_config=initial.catalog.wrapped_sft._transform.text_tokenizer.args["tokenizer_config"],
++        cfg_dropout_rate=0.5,
++    )
++    index = VerifiedExactWindowIndex.build(
++        tmp_path / "native_index", cache_catalog=dataset._dataset.catalog, source_reader=dataset._dataset.source_reader
++    )
++    dataset._dataset.source_reader.verified_index = index
++    producer = ExactWindowSegmentProducer(
++        ExactWindowLocalCatalog(dataset, ttt_tbptt_steps=2), config_digest="test_config"
++    )
++    recipe = AsyncRecipe.from_producer(producer, LoaderProfile(2, 1, True, 120))
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=8, active_ga=4)
++    seed()
++    reference = consume(producer, planner)
++    seed()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(2, 1, True, 120), planner, recipe=_CpuTextRecipe(recipe))
++    loader.file_witnesses = True  # real temporary source/cache files; retain production guards
++    try:
++        actual = consume(producer, planner, loader=loader)
++        equal_tree(reference[:4], actual[:4])
++        assert len(actual[4]) == 3 and loader.preview is not None
++        assert all(len(row["worker_pids"]) == 2 for row in actual[4])
++        assert all(row["source_read_ms"] == row["transform_host_ms"] == 0 for row in actual[4])
++        assert all(row["worker_source_ms_sum"] > 0 and row["worker_transform_ms_sum"] > 0 for row in actual[4])
++    finally:
++        loader.close()
++    assert len(loader.last_cleanup) == 2
++    assert all(row["exitcode"] is not None and not Path(f"/proc/{row['pid']}").exists() for row in loader.last_cleanup)
+diff --git a/cosmos_framework/trainer/no_ttt_worker_source.py b/cosmos_framework/trainer/no_ttt_worker_source.py
+new file mode 100644
+index 0000000..59c1595
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_worker_source.py
+@@ -0,0 +1,228 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++"""Verified, lazy row storage for the unchanged official LeRobot read methods.
++
++Only the async worker uses this factory. It does not call LeRobot's eager
++constructor, load all parquet files, or rebuild the accepted absolute row map.
++Delta indices, padding, tensor queries and task captions still run through the
++installed LeRobotDataset methods. The original nw0 dataset is untouched.
++"""
++
++from __future__ import annotations
++
++from bisect import bisect_right
++from collections import OrderedDict
++from dataclasses import dataclass
++from pathlib import Path
++
++import datasets
++import pyarrow as pa
++import pyarrow.compute as pc
++import pyarrow.parquet as pq
++from lerobot.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatasetMetadata
++from lerobot.datasets.utils import (
++    check_delta_timestamps,
++    get_delta_indices,
++    get_hf_features_from_features,
++    hf_transform_to_torch,
++)
++
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_source import _local_path
++from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++
++
++@dataclass(frozen=True)
++class _EpisodeRows:
++    episode: int
++    absolute: int
++    relative: int
++    length: int
++    path: str
++
++
++class _Column:
++    def __init__(self, rows, key):
++        self.rows, self.key = rows, key
++
++    def __getitem__(self, indices):
++        return self.rows.read(indices, self.key)
++
++
++class _VerifiedRows:
++    """HF indexing facade; at most a few accepted Episodes are materialized."""
++
++    def __init__(self, root, meta, index, episodes, *, max_episodes, max_bytes):
++        self.root, self.meta = Path(root), meta
++        self.lookup = index.open_rows()
++        self.features = get_hf_features_from_features(meta.features)
++        if "episode_index" not in self.features or "index" not in self.features:
++            raise ValueError("worker source requires LeRobot row identity columns")
++        if type(max_episodes) is not int or max_episodes <= 0 or type(max_bytes) is not int or max_bytes <= 0:
++            raise ValueError("worker source cache limits must be positive integers")
++        self.max_episodes, self.max_bytes = max_episodes, max_bytes
++        self.cache = OrderedDict()
++        self.cache_bytes = 0
++        spans = []
++        for binding in index.receipt["bindings"]:
++            ep = binding["episode_index"]
++            row = meta.episodes[ep]
++            start, end = row["dataset_from_index"], row["dataset_to_index"]
++            length = row["length"]
++            path = str(meta.get_data_file_path(ep))
++            if (
++                any(type(value) is not int for value in (ep, start, end, length))
++                or length <= 0
++                or end - start != length
++                or binding["dataset_from_index"] != start
++                or binding["dataset_to_index"] != end
++                or binding["length"] != length
++                or binding["data_file"] != path
++                or Path(path).is_absolute()
++                or ".." in Path(path).parts
++            ):
++                raise ValueError("worker source verified episode metadata mismatch")
++            first, last = self.lookup[start], self.lookup[end - 1]
++            if last - first != length - 1:
++                raise ValueError("worker source verified episode row mapping is not contiguous")
++            spans.append(_EpisodeRows(ep, start, first, length, path))
++        if sorted(span.episode for span in spans) != episodes or len(set(episodes)) != len(episodes):
++            raise ValueError("worker source selected episode set differs from verified index")
++        self.spans = sorted(spans, key=lambda span: span.relative)
++        offset = 0
++        for span in self.spans:
++            if span.relative != offset:
++                raise ValueError("worker source verified relative row spans overlap or contain gaps")
++            offset += span.length
++        if offset != len(self.lookup):
++            raise ValueError("worker source verified row count mismatch")
++        self.starts = [span.relative for span in self.spans]
++
++    def __len__(self):
++        return len(self.lookup)
++
++    def _locate(self, relative):
++        if type(relative) is not int or not 0 <= relative < len(self):
++            raise IndexError(relative)
++        span = self.spans[bisect_right(self.starts, relative) - 1]
++        local = relative - span.relative
++        if self.lookup[span.absolute + local] != relative:
++            raise ValueError("worker source verified per-read row mapping mismatch")
++        return span, local
++
++    def _evict(self):
++        _, (_, size) = self.cache.popitem(last=False)
++        self.cache_bytes -= size
++
++    def _load(self, span):
++        if span.episode in self.cache:
++            dataset, _ = self.cache[span.episode]
++            self.cache.move_to_end(span.episode)
++            return dataset
++        while len(self.cache) >= self.max_episodes:
++            self._evict()
++        path = _local_path(self.root, Path(span.path), "worker source parquet")
++        # Column projection, row-group pruning and bounded batches avoid the
++        # full-dataset HF filter/index construction. Shared episode files work.
++        batches, size = [], 0
++        with pq.ParquetFile(path, memory_map=True) as parquet:
++            ep_column = parquet.schema.names.index("episode_index")
++            groups = []
++            for number in range(parquet.num_row_groups):
++                stats = parquet.metadata.row_group(number).column(ep_column).statistics
++                if stats is None or not stats.has_min_max or stats.min <= span.episode <= stats.max:
++                    groups.append(number)
++            for batch in parquet.iter_batches(
++                batch_size=4096, row_groups=groups, columns=list(self.features), use_threads=False
++            ):
++                selected = batch.filter(pc.equal(batch.column("episode_index"), span.episode))
++                if not selected.num_rows:
++                    continue
++                size += selected.nbytes
++                if size > self.max_bytes:
++                    raise MemoryError("worker source episode exceeds bounded Arrow cache")
++                while self.cache and self.cache_bytes + size > self.max_bytes:
++                    self._evict()
++                batches.append(selected)
++        if not batches or sum(batch.num_rows for batch in batches) != span.length:
++            raise ValueError("worker source parquet episode length mismatch")
++        table = pa.Table.from_batches(batches).cast(self.features.arrow_schema)
++        # Cast exactly as the official HF loader does (notably float32 action
++        # and state). Conversion/tensor and caption semantics are not rewritten.
++        if table.nbytes > self.max_bytes:
++            raise MemoryError("worker source cast episode exceeds bounded Arrow cache")
++        while self.cache and self.cache_bytes + table.nbytes > self.max_bytes:
++            self._evict()
++        dataset = datasets.Dataset(table, info=datasets.DatasetInfo(features=self.features))
++        dataset.set_transform(hf_transform_to_torch)
++        self.cache[span.episode] = (dataset, table.nbytes)
++        self.cache_bytes += table.nbytes
++        return dataset
++
++    def read(self, indices, column=None):
++        if type(indices) is int:
++            span, local = self._locate(indices)
++            dataset = self._load(span)
++            return dataset[local] if column is None else dataset.select_columns([column])[local][column]
++        locations = [self._locate(index) for index in indices]
++        if not locations:
++            return [] if column is not None else {key: [] for key in self.features}
++        span = locations[0][0]
++        if any(other != span for other, _ in locations):
++            # Official non-visual deltas must remain inside the same Episode.
++            raise ValueError("worker source queried rows across episode boundaries")
++        dataset = self._load(span)
++        local = [offset for _, offset in locations]
++        return dataset[local] if column is None else dataset.select_columns([column])[local][column]
++
++    def __getitem__(self, key):
++        return _Column(self, key) if isinstance(key, str) else self.read(key)
++
++
++class VerifiedWorkerLeRobotDataset(LeRobotDataset):
++    """Read-only, verified-only construction; inherit all official read methods."""
++
++    def __init__(
++        self,
++        *,
++        repo_id,
++        root,
++        episodes,
++        delta_timestamps,
++        revision,
++        force_cache_sync,
++        download_videos,
++        verified_index,
++        max_episodes,
++        max_bytes,
++    ):
++        if (
++            type(verified_index) is not VerifiedExactWindowIndex
++            or repo_id != "local"
++            or revision != "local"
++            or force_cache_sync is not False
++            or download_videos is not False
++        ):
++            raise ValueError("worker source requires accepted local non-visual verified data")
++        self.root, self.repo_id, self.revision = Path(root), repo_id, revision
++        self.writer = None
++        self._lazy_loading = False
++        self.image_transforms = None
++        self.episodes = episodes
++        self.tolerance_s = 1e-4
++        self.delta_timestamps = delta_timestamps
++        self.meta = LeRobotDatasetMetadata(repo_id, self.root, revision, force_cache_sync=False)
++        self.meta.info["features"] = {
++            key: value for key, value in self.meta.features.items() if value.get("dtype") != "video"
++        }
++        check_delta_timestamps(delta_timestamps, self.fps, self.tolerance_s)
++        self.delta_indices = get_delta_indices(delta_timestamps, self.fps)
++        self.hf_dataset = _VerifiedRows(
++            self.root, self.meta, verified_index, episodes, max_episodes=max_episodes, max_bytes=max_bytes
++        )
++        self._absolute_to_relative_idx = self.hf_dataset.lookup
++
++    def load_hf_dataset(self):
++        raise RuntimeError("worker source must never rebuild the eager LeRobot dataset")
++
++    def download(self, download_videos=True):
++        raise FileNotFoundError(f"worker source is offline and read-only: {self.root}")
+diff --git a/cosmos_framework/trainer/no_ttt_worker_source_test.py b/cosmos_framework/trainer/no_ttt_worker_source_test.py
+new file mode 100644
+index 0000000..b1e5216
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_worker_source_test.py
+@@ -0,0 +1,311 @@
++"""Synthetic files only: lazy worker storage versus the pinned official reader."""
++
++from __future__ import annotations
++
++import json
++import multiprocessing as mp
++import os
++import random
++import time
++from copy import deepcopy
++from functools import partial
++from pathlib import Path
++
++import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
++import pytest
++import torch
++from lerobot.datasets.lerobot_dataset import LeRobotDataset
++
++from cosmos_framework.data.generator.action.datasets import robocasa_exact_window_source as source
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cache import (
++    ExactWindowEpisodeKey,
++    RoboCasaExactWindowCacheCatalog,
++)
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_source_test import _cache, _source
++from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++from cosmos_framework.trainer.no_ttt_async_loader_test import equal_tree
++from cosmos_framework.trainer.no_ttt_cpu_loader import _require_same_rng, _rng_snapshot
++from cosmos_framework.trainer.no_ttt_worker_source import VerifiedWorkerLeRobotDataset
++
++
++def _two_episodes(tmp_path, *, subset=False, split=False, reverse=False):
++    cache, root = _cache(tmp_path / "cache"), _source(tmp_path / "source", extra_episode=True)
++    if not subset:
++        manifest = json.loads((cache / "dataset_manifest.json").read_text())
++        record = deepcopy(manifest["tasks"][0]["episodes"][0])
++        record["episode_index"] = 1
++        manifest["tasks"][0]["episodes"].append(record)
++        manifest["episode_count"], manifest["window_count"] = 2, 6
++        (cache / "dataset_manifest.json").write_text(json.dumps(manifest))
++        episode = cache / "tasks/Pick_Mug/episodes/episode_000000.pt"
++        payload = torch.load(episode, weights_only=True)
++        for window in payload["windows"].values():
++            window["global_row_indices"] += 19
++        torch.save(payload, episode.with_name("episode_000001.pt"))
++    file = root / "data/chunk-000/file-000.parquet"
++    table = pq.read_table(file)
++    if split:
++        # Selected episode order need not equal physical parquet-file order.
++        pq.write_table(table.slice(19), file, row_group_size=7)
++        pq.write_table(table.slice(0, 19), file.with_name("file-001.parquet"), row_group_size=7)
++        metadata = root / "meta/episodes/chunk-000/file-000.parquet"
++        rows = pq.read_table(metadata).to_pylist()
++        rows[0]["data/file_index"] = 1
++        pq.write_table(pa.Table.from_pylist(rows), metadata)
++    elif reverse:
++        pq.write_table(table.take([*range(19, 38), *range(19)]), file, row_group_size=7)
++    catalog = RoboCasaExactWindowCacheCatalog(cache)
++    eager = source.RoboCasaExactWindowSourceReader(catalog, root)
++    index = VerifiedExactWindowIndex.build(tmp_path / "index", cache_catalog=catalog, source_reader=eager)
++    return eager, index
++
++
++@pytest.fixture
++def pair(tmp_path):
++    return _two_episodes(tmp_path)
++
++
++def _lazy(eager, index, *, max_episodes=2, max_bytes=1024**2):
++    return source.RoboCasaExactWindowSourceReader(
++        eager.catalog,
++        eager.source_root,
++        verified_index=index,
++        dataset_factory=partial(
++            VerifiedWorkerLeRobotDataset,
++            verified_index=index,
++            max_episodes=max_episodes,
++            max_bytes=max_bytes,
++        ),
++    )
++
++
++@pytest.mark.parametrize("layout", ["shared", "split", "reverse", "subset"])
++def test_official_delta_caption_padding_and_source_windows_match(tmp_path, layout):
++    eager, index = _two_episodes(
++        tmp_path, split=layout == "split", reverse=layout == "reverse", subset=layout == "subset"
++    )
++    before = _rng_snapshot()
++    lazy = _lazy(eager, index)
++    assert lazy.source_binding_digest == eager.source_binding_digest
++    for record in eager.catalog.episodes:
++        for start in record.window_starts:
++            expected, actual = eager.read_window(record.key, start), lazy.read_window(record.key, start)
++            equal_tree(expected, actual)
++            assert actual.ai_caption == "Please pick the mug"  # actual task_index, not class name
++            assert actual.action12.dtype == actual.state16.dtype == torch.float32
++        bound = eager._bound[record.key]
++        # Also exercise official padding outside the accepted Exact-Window range.
++        relative = eager.abs_to_relative[bound.dataset_to_index - 1]
++        equal_tree(eager.dataset[relative], lazy.dataset[relative])
++        assert bool(lazy.dataset[relative]["action_is_pad"].any())
++    _require_same_rng(before)
++    for name in ("__getitem__", "_get_query_indices", "_query_hf_dataset", "_get_query_timestamps"):
++        assert getattr(type(lazy.dataset), name) is getattr(LeRobotDataset, name)
++
++
++def test_build_does_not_call_eager_constructor_or_read_any_source_parquet(pair, monkeypatch, tmp_path):
++    eager, index = pair
++    monkeypatch.setattr(LeRobotDataset, "__init__", lambda *a, **k: pytest.fail("eager constructor"))
++    monkeypatch.setattr(LeRobotDataset, "load_hf_dataset", lambda *a, **k: pytest.fail("global HF load"))
++    opened = []
++    original = pq.ParquetFile
++
++    def observe(path, *args, **kwargs):
++        opened.append(str(path))
++        return original(path, *args, **kwargs)
++
++    monkeypatch.setattr(pq, "ParquetFile", observe)
++    started = time.monotonic()
++    lazy = _lazy(eager, index)
++    built = time.monotonic()
++    assert not opened and not lazy.dataset.hf_dataset.cache
++    lazy.read_at(0)
++    ready = time.monotonic()
++    assert opened == [str(eager.source_root / "data/chunk-000/file-000.parquet")]
++    assert list(lazy.dataset.hf_dataset.cache) == [0]
++    lazy.read_at(1)
++    assert len(opened) == 1
++    evidence = {
++        "scope": "synthetic_not_real_data_or_GPU",
++        "eager_constructor_calls": 0,
++        "full_source_load_calls": 0,
++        "source_parquet_opens_at_build": 0,
++        "source_parquet_opens_after_two_reads": len(opened),
++        "retained_episodes": list(lazy.dataset.hf_dataset.cache),
++        "build_ms": (built - started) * 1000,
++        "first_read_ms": (ready - built) * 1000,
++        "original_data_timeout_s": 120,
++    }
++    (tmp_path / "lazy_source_witness.json").write_text(json.dumps(evidence, indent=2))
++    print(json.dumps(evidence, sort_keys=True))
++
++
++def test_lru_eviction_bounds_and_reload_preserve_exact_values(pair, monkeypatch):
++    eager, index = pair
++    lazy = _lazy(eager, index, max_episodes=1)
++    storage = lazy.dataset.hf_dataset
++    for ep in (0, 1, 0):
++        key = ExactWindowEpisodeKey("Pick Mug", "Pick_Mug", ep)
++        equal_tree(eager.read_window(key, 0), lazy.read_window(key, 0))
++        assert list(storage.cache) == [ep]
++        assert 0 < storage.cache_bytes <= storage.max_bytes
++        assert storage.cache_bytes == sum(size for _, size in storage.cache.values())
++    lazy = _lazy(eager, index, max_bytes=1)
++    with pytest.raises(MemoryError, match="bounded Arrow cache"):
++        lazy.read_at(0)
++    assert not lazy.dataset.hf_dataset.cache and lazy.dataset.hf_dataset.cache_bytes == 0
++
++
++@pytest.mark.parametrize("fault", ["length", "file", "first_mapping", "interior_mapping", "relative_gap"])
++def test_bad_verified_metadata_and_mapping_fail_closed(pair, fault):
++    eager, index = pair
++    if fault in ("length", "file"):
++        index.receipt = deepcopy(index.receipt)
++        index.receipt["bindings"][0]["length" if fault == "length" else "data_file"] = (
++            123 if fault == "length" else "bad"
++        )
++        with pytest.raises(ValueError, match="metadata|source metadata"):
++            _lazy(eager, index)
++        return
++    rows = np.load(index.rows_path, mmap_mode="r+", allow_pickle=False)
++    location = 0 if fault == "first_mapping" else 1 if fault == "interior_mapping" else slice(19, 38)
++    rows[location, 1] += 1
++    rows.flush()
++    if fault == "interior_mapping":
++        lazy = _lazy(eager, index)
++        # Official absolute->relative query observes the corrupted mapping;
++        # the unchanged SourceReader's exact returned-row check must reject it.
++        with pytest.raises(ValueError, match="runtime global index"):
++            lazy.read_at(0)
++    else:
++        with pytest.raises(ValueError, match="row mapping|row spans"):
++            _lazy(eager, index)
++
++
++@pytest.mark.parametrize("fault", ["missing", "escape", "length", "frame", "episode", "annotation", "nan", "caption"])
++def test_missing_changed_or_corrupt_source_never_becomes_valid_window(pair, tmp_path, fault):
++    eager, index = pair
++    lazy = _lazy(eager, index)
++    path = eager.source_root / "data/chunk-000/file-000.parquet"
++    if fault == "missing":
++        path.unlink()
++    elif fault == "escape":
++        foreign = tmp_path / "foreign.parquet"
++        path.rename(foreign)
++        path.symlink_to(foreign)
++    else:
++        rows = pq.read_table(path).to_pylist()
++        if fault == "length":
++            rows.pop(0)
++        elif fault == "frame":
++            rows[1]["frame_index"] = 88
++        elif fault == "episode":
++            rows[1]["episode_index"] = 1
++        elif fault == "annotation":
++            rows[1]["annotation.human.task_name"] = 1
++        elif fault == "nan":
++            rows[1]["action"][0] = float("nan")
++        elif fault == "caption":
++            rows[0]["task_index"] = -100
++        pq.write_table(pa.Table.from_pylist(rows), path)
++    with pytest.raises((ValueError, FileNotFoundError, IndexError)):
++        lazy.read_at(0)
++
++
++@pytest.mark.parametrize("fault", ["no_index", "hub", "revision", "sync", "videos", "episode_subset"])
++def test_unsupported_worker_constructor_does_not_fallback(pair, fault):
++    eager, index = pair
++    kwargs = dict(
++        repo_id="local",
++        root=eager.source_root,
++        episodes=[0, 1],
++        delta_timestamps=source._delta_timestamps(20),
++        revision="local",
++        force_cache_sync=False,
++        download_videos=False,
++        verified_index=index,
++        max_episodes=1,
++        max_bytes=1024**2,
++    )
++    field, value = {
++        "no_index": ("verified_index", None),
++        "hub": ("repo_id", "remote/dataset"),
++        "revision": ("revision", "main"),
++        "sync": ("force_cache_sync", True),
++        "videos": ("download_videos", True),
++        "episode_subset": ("episodes", [0]),
++    }[fault]
++    kwargs[field] = value
++    with pytest.raises(ValueError, match="verified|selected episode"):
++        VerifiedWorkerLeRobotDataset(**kwargs)
++
++
++def _spawn_read(cache, root, index_root, connection):
++    try:
++        random.seed(17)
++        np.random.seed(17)
++        torch.manual_seed(17)
++        before = _rng_snapshot()
++        started = time.monotonic()
++        index = VerifiedExactWindowIndex.open(index_root, cache_root=cache, source_root=root, verify_files=False)
++        catalog = RoboCasaExactWindowCacheCatalog(cache, verified_index=index)
++        reader = source.RoboCasaExactWindowSourceReader(
++            catalog,
++            root,
++            verified_index=index,
++            dataset_factory=partial(
++                VerifiedWorkerLeRobotDataset, verified_index=index, max_episodes=1, max_bytes=1024**2
++            ),
++        )
++        built = time.monotonic()
++        window = reader.read_at(0)
++        _require_same_rng(before)
++        connection.send(
++            {
++                "pid": os.getpid(),
++                "build_ms": (built - started) * 1000,
++                "first_read_ms": (time.monotonic() - built) * 1000,
++                "caption": window.ai_caption,
++                "action": window.action12.tolist(),
++                "rows": window.global_row_indices,
++                "rng_unchanged": True,
++                "retained_episodes": list(reader.dataset.hf_dataset.cache),
++            }
++        )
++    except BaseException as exc:
++        connection.send({"error": repr(exc)})
++        raise
++    finally:
++        connection.close()
++
++
++def test_real_spawn_reconstructs_only_small_verified_source_and_reaps(pair, tmp_path):
++    eager, index = pair
++    before = _rng_snapshot()
++    context = mp.get_context("spawn")
++    parent, child = context.Pipe(duplex=False)
++    process = context.Process(target=_spawn_read, args=(eager.catalog.cache_root, eager.source_root, index.root, child))
++    try:
++        process.start()
++        child.close()
++        assert parent.poll(60), "bounded synthetic spawn did not return"
++        result = parent.recv()
++        process.join(5)
++        assert process.exitcode == 0 and "error" not in result
++        assert result["pid"] != os.getpid() and result["rng_unchanged"]
++        assert result["caption"] == eager.read_at(0).ai_caption
++        assert result["rows"] == eager.read_at(0).global_row_indices
++        assert result["action"] == eager.read_at(0).action12.tolist()
++        assert result["retained_episodes"] == [0]
++        (tmp_path / "spawn_source_witness.json").write_text(json.dumps(result, indent=2))
++        print(json.dumps(result, sort_keys=True))
++        _require_same_rng(before)
++    finally:
++        if process.is_alive():
++            process.kill()
++        process.join(5)
++        parent.close()
++        child.close()
++    assert not process.is_alive() and not Path(f"/proc/{process.pid}").exists()

@@ -485,4 +485,4 @@
 
 | ID | Status | Owner | Prerequisite | Acceptance |
 | --- | --- | --- | --- | --- |
-| NOTTT-ISSUE12-WORKER-COLDSTART | IN_PROGRESS | Codex | Owner narrow fix; 9344198a request; e0fe/f6a9 Code APPROVE and DS301 PASS | Verified-only lazy worker source, same official Delta/caption, bounds/RNG/order/Resume/cleanup targeted CPU; exact isolated Root/Child + raw evidence then GPT and STOP; no GPU/real assets/promotion |
+| NOTTT-ISSUE12-WORKER-COLDSTART | REVIEW | Codex | Owner narrow fix; 9344198a request; e0fe/f6a9 Code APPROVE and DS301 PASS | Formal fd9021b0908b4b2763b3d02508b1f34df377dc97 / 224c5f3c0bd6911bb49cb6bb0895ba7da53ff822; author58PASS, static4, source unchanged, raw43/18bindings; isolated publication then GPT incremental and STOP; no real first-packet/GPU/DS PASS or promotion |

@@ -1,0 +1,26 @@
+{
+  "status": "AUTHOR_TARGETED_SYNTHETIC_CPU_PASS",
+  "formal_root": "fd9021b0908b4b2763b3d02508b1f34df377dc97",
+  "child": "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
+  "gitlink": "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
+  "tests": 58,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "groups": {
+    "source_recipe": 47,
+    "selected_regression": 11
+  },
+  "old_301_rerun": false,
+  "ruff": "0.12.7",
+  "static_files": 4,
+  "source_unchanged": true,
+  "new_code_review": "REQUESTED_NOT_YET_VERDICT",
+  "ds_new_cpu": "NOT_RUN",
+  "real_first_packet_under_120s": "NOT_MEASURED",
+  "gpu_performance": "NOT_RUN_FOR_NEW_PAIR",
+  "real_dcp_resume": "NOT_RUN_FOR_NEW_PAIR",
+  "running_formal_job": "NOT_ACCESSED_OR_MODIFIED",
+  "source_timeout_changed": false,
+  "old_issue12_gpu_failure": "UNCHANGED: B first materialize120s timeout / zero commits / performance inconclusive"
+}

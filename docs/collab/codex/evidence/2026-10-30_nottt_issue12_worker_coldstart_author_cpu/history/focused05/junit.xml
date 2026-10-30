@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="13.807" timestamp="2026-10-30T13:19:30.987927+00:00" hostname="4dc91cf49e12"><testcase classname="" name="test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup" time="8.461"><failure message="AttributeError: '_CpuTextRecipe' object has no attribute 'rate'">cosmos_framework/trainer/no_ttt_async_recipe_test.py:331: in test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup
+    actual = consume(producer, planner, loader=loader)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_async_loader_test.py:87: in consume
+    segment = producer.produce(request) if loader is None else loader.materialize(request)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_cpu_loader.py:440: in materialize
+    return self._materialize(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_async_loader.py:308: in _materialize
+    != (self.recipe.rate, self.recipe.caption_key, self.recipe.token_key)
+        ^^^^^^^^^^^^^^^^
+E   AttributeError: '_CpuTextRecipe' object has no attribute 'rate'</failure></testcase></testsuite></testsuites>

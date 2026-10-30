@@ -1,0 +1,36 @@
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+F
+=================================== FAILURES ===================================
+____ test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup ____
+cosmos_framework/trainer/no_ttt_async_recipe_test.py:331: in test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup
+    actual = consume(producer, planner, loader=loader)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_async_loader_test.py:87: in consume
+    segment = producer.produce(request) if loader is None else loader.materialize(request)
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_cpu_loader.py:440: in materialize
+    return self._materialize(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/trainer/no_ttt_async_loader.py:308: in _materialize
+    != (self.recipe.rate, self.recipe.caption_key, self.recipe.token_key)
+        ^^^^^^^^^^^^^^^^
+E   AttributeError: '_CpuTextRecipe' object has no attribute 'rate'
+------------------------------ Captured log setup ------------------------------
+WARNING  root:video_utils.py:40 'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+------------------------------ Captured log call -------------------------------
+WARNING  root:video_utils.py:40 'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 warning in 13.81s
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 2 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

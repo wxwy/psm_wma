@@ -1,0 +1,311 @@
+diff --git a/SESSION.md b/SESSION.md
+index 54538657..fea2438a 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,27 @@
++# 2026-10-30 — Issue #12 worker cold-start narrow fix, claimed
++
++Implementation now limited to new worker source storage + AsyncRecipe factory
++injection. Exploratory03 source/recipe46PASS; real two-spawn-worker full
++Source/Transform/CFG/B8GA4 three-Window integration focused06 1PASS. These are
++preliminary, not the final clean-pair Gate. Initial dependency-hook collection
++error and three fixture failures (expected guard location, native profile, proxy
++properties) retained; no old assert loosened or production guard changed.
++Final exact-pair targeted/static replay and publication still pending. No real
++data/model/DCP/GPU/active Job/canonical source change.
++
++Task IN_PROGRESS, Codex sole editor, isolated Root/Child branch
++v3-nottt-lerobot-coldstart-20261030. Latest V3 fetched/advertised
++9344198a5abf4964a4997bf7e9268b8e5ccc73e8, detailed Issue12 review/request and
++exact previous e0fe/f6a9 Code APPROVE + Issue11 DS Evidence PASS read. Candidate
++starts from published2260/f6a9, preserves canonical EvalV2 line without merging
++or replacing its source. Planned files and minimal synthetic acceptance:
++docs/build/PSM-WMA_V3_NoTTT_Issue12_Worker_ColdStart_NarrowFix_2026-10-30.md.
++Only worker verified source adapter + AsyncRecipe injection and targeted tests;
++no SourceReader default, model, RNG policy, Frontier, DCP or timeout changes.
++No real data/model/DCP/GPU/Job/DS operations. New exact Pair and author evidence
++then STOP for GPT incremental Code Gate. Owner latest request overrides old
++three-reviewer/pane/wait workflow. Plan/claim uncommitted; no project code run.
++
+ # 2026-10-29 — Issue #9 candidate author CPU PASS; awaiting fresh GPT Code Gate
+ 
+ FormalRoot e0fe911dfb9fd34957234828195cf051713f6c3d / Child+Gitlink f6a92d47b6dac7998ddc58b3da26ef93f8068dc7. Isolatedbranch v3-nottt-async-overlap-20261029. Exactcleanlocked03 author301PASS=72new+229old,0fail/error/skip; one forbiddenreal-data node explicitlyexcluded; Ruff/format/AST13/import/sourceunchangedPASS. Internalstatic51checks,102oldassertAST retained;18watchedGitBlobs/81artifacthashes. CPUtraceproveslaterMember+nextWindowSource/TFoverlap, butcoldstartwallslowerthanserial, noGPUbenefitclaim. Extra8CPUworkers actualPID/RSS/IPC/cleanup recorded, no nativeRAMqualification. TwoearlierfailedPairs andfixturefailuresretained. Evidence/handoff publishedseparatelyfromformal.
+diff --git a/TODO.md b/TODO.md
+index f06572a9..d73d5d2f 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -480,3 +480,9 @@
+ - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — IN_PROGRESS;Codex; Owner task production49df7f3c/746c5cf2, isolatedRootbranch only. Persist verified strong-model/stat evidence under existing RunStore lock; warm0payload reads; cold onehash+lockedstat; invalid fallbackstrictidentity; readonly dry-run; config/task invocation witness; synthetic hit/miss/race/legacy/crash tests+regressions. Preserve source/episode/media/Local/plan/runtime truth. Submit exactRoot/unchangedChild+CPU evidence thenGPT/DS,STOP,no V3 merge/live assets.
+ 
+ - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — REVIEW; authorfive-moduleCPU227PASS/0skip,53new tests,static9/frozen10PASS; stable cold modelonefullhash and lockedstat, warm0payload bytes identicalSHA, strict cache miss/invalid/atomickill/lease/history/configTask/CLI negatives. Candidate-only Root+unchanged746c5cf2Child; rawEvidence +runbook thenGPTfreshreview/DSCPU,STOP. No live eval/training/model/server/GPU or V3 merge.
++
++# 2026-10-30 Issue #12
++
++| ID | Status | Owner | Prerequisite | Acceptance |
++| --- | --- | --- | --- | --- |
++| NOTTT-ISSUE12-WORKER-COLDSTART | IN_PROGRESS | Codex | Owner narrow fix; 9344198a request; e0fe/f6a9 Code APPROVE and DS301 PASS | Verified-only lazy worker source, same official Delta/caption, bounds/RNG/order/Resume/cleanup targeted CPU; exact isolated Root/Child + raw evidence then GPT and STOP; no GPU/real assets/promotion |
+diff --git a/cosmos-framework b/cosmos-framework
+index f6a92d47..224c5f3c 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit f6a92d47b6dac7998ddc58b3da26ef93f8068dc7
++Subproject commit 224c5f3c0bd6911bb49cb6bb0895ba7da53ff822
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Issue12_Worker_ColdStart_NarrowFix_2026-10-30.md b/docs/build/PSM-WMA_V3_NoTTT_Issue12_Worker_ColdStart_NarrowFix_2026-10-30.md
+new file mode 100644
+index 00000000..7e16a0a1
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Issue12_Worker_ColdStart_NarrowFix_2026-10-30.md
+@@ -0,0 +1,89 @@
++# Issue #12 — verified-index worker source, isolated implementation plan
++
++2026-10-30 (Asia/Shanghai). Owner authorizes a narrow isolated candidate and
++targeted synthetic CPU tests, then submission to GPT. No canonical promotion,
++real source/model/DCP access, GPU, training, or new DS diagnostic is authorized.
++
++## Authority and baseline
++
++- Latest request/review read from advertised and fetched V3
++  `9344198a5abf4964a4997bf7e9268b8e5ccc73e8`.
++- Frozen No-TTT source: Root `e0fe911dfb9fd34957234828195cf051713f6c3d`,
++  Child/Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`.
++- This branch starts from its published bookkeeping head
++  `2260f2a6f89368301ba50a686676994af90a2ca5`, with the same source.
++  Canonical V3's later EvalV2 production promotion is a separate line; do not
++  replace its Gitlink, merge that work into this fix, or promote this whole tree.
++- Prior Code APPROVE and DS CPU301 PASS stay historical, not new test results.
++- Installed/pinned LeRobot fork: `mli0603/lerobot`
++  `1a4316c6845330bc552fb982dbc44bdb4f66f2f1` (Child uv.lock).
++
++## Minimal patch
++
++Add a worker-only, verified-index-backed non-visual LeRobot reader. Keep the
++official `LeRobotDataset.__getitem__`, delta calculation/query, padding and task
++caption methods; replace only eager full-dataset construction and row storage.
++Use the already accepted absolute/relative mmap and metadata to route reads.
++Load only the requested Episode's non-visual parquet rows, using the official HF
++feature casting and Torch transform, with bounded LRU storage. Reject inconsistent
++metadata/mapping and missing/changed data; do not build a new index or download.
++
++`AsyncRecipe.build()` injects this reader into the unchanged SourceReader factory
++seam. The original synchronous SourceReader/default dataset factory remains
++unchanged. Real Source, Cache and Transform continue inside spawned workers.
++No model, optimizer, RNG policy, Frontier or DCP changes, no full dataset pickle,
++no fork, no change to the 120-second data timeout.
++
++Expected production files: new `trainer/no_ttt_worker_source.py` and narrow
++`trainer/no_ttt_async_recipe.py` injection. Tests: new worker-source tests and
++focused additions to existing recipe/loader fixtures only if needed. Root:
++runbook/evidence, Gitlink, SESSION/TODO and append-only review request.
++
++## Targeted CPU acceptance
++
++1. Real temporary synthetic parquet, metadata and verified index: compare all
++   source/LeRobot fields to the unchanged official eager path at first, middle,
++   terminal and multi-Episode/subset windows, including captions and padding.
++2. Spy/fault the eager constructor/full-load hooks: worker build must perform
++   neither full source scan nor full data materialization; first read loads only
++   requested rows. Show structural improvement and report synthetic wall only.
++3. Bounds, eviction, shared parquet files, mapping/path/data corruption, offline
++   failure, parent/worker RNG, true spawn ownership and cleanup.
++4. Target existing recipe RNG/order tests plus selected cross-Window overlap and
++   CPU model/frontier Resume cases. Do not rerun old CPU301 or real data probes.
++5. Ruff 0.12.7 check/format, AST, source fingerprints, exact clean Formal Pair,
++   targeted JUnit/raw logs and diff. No assertion weakening or skipped failures.
++
++## Implemented storage contract
++
++Two production files only: new `trainer/no_ttt_worker_source.py` plus the
++`AsyncRecipe.build()` factory injection. `VerifiedWorkerLeRobotDataset` inherits
++the official `__getitem__`, `_get_query_indices`, `_query_hf_dataset` and
++`_get_query_timestamps` without overrides. Its HF indexing facade uses accepted
++relative spans and checks mapping consistency; the unchanged SourceReader still
++validates every 17-row identity, padding, action/state and caption.
++
++Only Episode metadata and the existing mmap are opened at construction. Data
++parquet opens happen on the worker's first actual read. Project non-video HF
++features, prune row groups by episode statistics, filter fixed-size batches,
++and cast using the same official HF Arrow schema/Torch transform. Multiple
++Episodes in one file and different file/episode orders are supported. There is
++no HF full-source scan/filter, full row-column scan or per-worker Python row-map
++rebuild, no readiness timeout extension and no work moved into the trainer.
++
++The source Arrow LRU independently retains at most `max(1, 8/workers)` Episodes
++and `profile.max_cache_bytes` bytes/worker, with eviction during bounded batch
++loading. The existing latent mmap LRU is unchanged. At the existing default
++2GiB limit and nw8, the new retained source cap is 16GiB/rank (64GiB for world4),
++not an estimate of actual RSS. Cast buffers, one read batch, Arrow/Python memory,
++latent mmap and IPC are additional/transient; real RAM/I/O qualification remains
++DS work. Limits do not silently truncate data; an oversized Episode fails closed.
++No tables, dataset objects, queues or speculative state enter the recipe or DCP.
++
++## Validation boundary
++
++CPU evidence cannot prove first real packet <120s or GPU throughput. After a new
++GPT Code Gate, separately authorized DS checks one real worker first packet;
++then a separately authorized matched full-DCP exclusive-GPU A/B must validate
++C+1 commit and steady-state end-to-end step wall/current-stream gap. No shared
++GPU old A versus exclusive new B speed claim.
+diff --git a/docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Issue12_Codex_LeRobot_WorkerColdStart_NarrowFix_Handoff.md b/docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Issue12_Codex_LeRobot_WorkerColdStart_NarrowFix_Handoff.md
+new file mode 100644
+index 00000000..cee1ba30
+--- /dev/null
++++ b/docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Issue12_Codex_LeRobot_WorkerColdStart_NarrowFix_Handoff.md
+@@ -0,0 +1,21 @@
++# Codex Design Handoff — Issue #12 No-TTT Async 首次Worker构建瓶颈
++
++2026-10-30。负责仓库内源码及正式测试的唯一作者：Codex。DS_PRO只做外部诊断/Owner授权后的执行；GPT审核；Owner控制最终授权。**本工单允许进行只读设计和候选准备，不是正式源码合并/训练/新GPU或真实数据运行授权。**
++
++原冻结 Root e0fe911dfb9fd34957234828195cf051713f6c3d / Child f6a92d47b6dac7998ddc58b3da26ef93f8068dc7；APPROVE_CODE与Issue#11 CPU301 PASS保留。DS真实CPU-only：ScopeA SourceReader构建192.97秒，其中LeRobotDataset init188.78秒；真实单spawn Worker ScopeB第一次materialize在120秒超时，没有首包。无须再让DS重复Probe。
++
++**目标：** 消除或安全地前移每个Async Worker首个__getitem__时昂贵的LeRobotDataset eager build，保证正常首包能够在原120秒数据请求Timeout内到达，且稳态Worker Source/Transform仍在后台真正并行。不要仅加大Timeout掩盖成本。
++
++关注冻结 Child：
++1. cosmos_framework/trainer/no_ttt_async_loader.py:124-135，PreparedDataset首次self.recipe.build；:245-295 begin/first-materialize，保持request token/ordering/bounded cleanup。
++2. cosmos_framework/trainer/no_ttt_async_recipe.py:195-254，worker重建Index、SourceReader、Tokenizer、Producer。
++3. cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source.py:247-258及459-505，官方LeRobotDataset eager构造和17帧Delta、caption、action/state/row identity严格语义。
++
++**先交付最小实现方案与候选Patch范围：**
++- 优先考虑轻量worker-source路径（复用既有VerifiedIndex和离线受验数据，维持官方LeRobot Delta输出与强校验），或显式 bounded one-time worker readiness/prewarm、将初次构建的失败定位与正式每包120秒Timeout分离；若后者仅把190秒初始化移动到启动阶段，必须报告真实初始化壁钟和资源成本，不能伪装为获得吞吐优化。
++- 不允许fork携带CUDA训练状态，不能把完整LeRobotDataset大对象直接pickle给32个spawn Worker而造成不受控内存；不能偷偷把Source所有工作退回Parent使其不再异步。
++- 保留world4/B8/T16/GA4、generation-only、Compact1、raw15/state15、cached latent、正式frontier/episode/slot游标、CFG Parent RNG顺序、FSDP/DCP train state、官方caption/tokenizer与每Read的身份校验、rank清理、nw0旧同步回归。
++
++**最小验证：** Codex只对候选新改动跑局部synthetic CPU数据/顺序/RNG/cleanup回归，不重跑旧301/6raw；准备新Root/Child Gitlink正式增量Code Gate，GPT独立Review；仅在Owner另行批准后，DS做一个真实数据Worker首包检查，随后以相同完整合法DCP独占GPU条件做最小matched A/B并实际验证C+1提交、端到端Step Wall与GPU current-stream gap。不得用旧共享GPU A的Wall与新独占B直接相减。
++
++禁止：在运行中正式Job工作树修改/停训，覆盖其源DCP、切正式30k、改EvalV2、调整正式120s Timeout掩盖问题、未授权新真实CPU/GPU执行或生产合并。
+diff --git a/docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_AsyncOverlap_e0fe911d_f6a92d47_Incremental_Code_Gate_APPROVE_CODE.md b/docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_AsyncOverlap_e0fe911d_f6a92d47_Incremental_Code_Gate_APPROVE_CODE.md
+new file mode 100644
+index 00000000..03e8dc0a
+--- /dev/null
++++ b/docs/collab/chatgpt/reviews/2026-10-29_V3_NoTTT_AsyncOverlap_e0fe911d_f6a92d47_Incremental_Code_Gate_APPROVE_CODE.md
+@@ -0,0 +1,52 @@
++# PSM-WMA V3 Issue #9 — No-TTT Async Source/Transform Overlap 独立增量 Code Gate
++
++- 日期：2026-10-29（Asia/Shanghai）。
++- **FORMAL VERDICT：`APPROVE_CODE` — 仅限此精确 Formal Pair 的隔离生产源码与作者合成 CPU Evidence。**
++- **Formal Root：`e0fe911dfb9fd34957234828195cf051713f6c3d`；Formal Child/Gitlink：`f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`**。
++- Baseline：Root `3d5806a2b702b42d3f24e7645aa7cec9cd70b0c7` / Child `746c5cf2f2324104a62fb71510343aa40d3976c5`。
++- Candidate：`v3-nottt-async-overlap-20261029`。Author Evidence/Handoff HEAD `c645d3d6452f6817a888c5b3e429b3f6b143762e` **仅为 docs/Evidence HEAD，不是正式代码 SHA**。
++- Owner frozen contract：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_Async_Data_GPU_Overlap_Codex_Implementation_Directive.md`；Issue [#9](https://github.com/wxwy/psm_wma/issues/9)。既有 #4 的 nw>0 RAW worker 代码不自动满足本新 Gate。
++- 本轮 **没有** 在 GPT 环境执行 Torch/pytest、真实数据、模型、CUDA、DCP 或服务器性能测试；评审基于 Formal Git 树、真实源代码、完整 Author JUnit/Gate/Trace 与实际修改 Diff。未操作活动正式 Job。
++
++## 一、Formal 源码范围核验
++
++1. 直接从 GitHub 读取 Root formal commit/tree，`cosmos-framework` mode160000 Gitlink 精确为 `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`；V3 主分支仍为历史 Child `746c5cf2...`，候选未合入。
++2. 对 Root baseline→formal 的4次增量：仅 `SESSION/TODO`、两份设计说明、`tools/v3/no_ttt_workers_entry_test.py` 与新的精确 CPU Gate Runner，以及 Child Gitlink；没有修改 Root 训练 launcher、configs、Vendor、G1。
++3. Child baseline→formal 的3次增量：新增 `trainer/no_ttt_async_recipe.py`、`trainer/no_ttt_async_loader.py`及关联合成测试，窄改 `matched_no_ttt.py`、No-TTT loader runtime profile、cached-SFT 仅生成重建 metadata，以及原有两处测试 fixture。未修改 model/Generation optimizer、generic Trainer、DCP writer、原 Frontier schema、Local-TTT/G1。
++4. Author `formal_source_bindings.json` 列出的 **18/18 当前正式 Root/Child Git Blob**，由 GPT 逐项直接 fetch 比对完全匹配；Author Handoff/evidence 提交在 Formal 后仅包含 docs/证据与记录，不构成另一新 implementation pair。
++
++## 二、真实行为审核（Contract → Source → Evidence）
++
++| Contract | 实际源码和权威行为 | Code Gate 判断 |
++| --- | --- | --- |
++| `NOTTT_LOADER_WORKERS=0` 保持同步历史路径 | `matched_no_ttt.py:230–233,266–288`，0时仍走原 `producer.produce` 和原 Pack/Collate/H2D/Native training | 通过（源分支保持） |
++| `nw>0` 真 CPU worker Source/Transform | `AsyncRecipe.from_producer/build` 封装已冻结 local Index/Source/Cache/JSON SFT；`AsyncWorkerState.prepare:277–299` 在 spawned worker 中调用真实 `producer.prepare + materialize`；`PreparedDataset.__getitem__:129–160` 传送有界 CPU bytes | 通过（合成 CPU 类内/进程路径） |
++| 跨 Member/跨 Window 的真实 overlap | `NoTTTAsyncLoader._begin:245–284` 预览 active 的 candidate frontier 对应下一 Window；`_materialize:286–375` 按请求顺序取回，并在 current GA native 计算时异步推进后续 Source/Transform；父进程不再同步完成大块 Transform | 通过（CPU fake-compute 时序 Gate） |
++| 原 RNG/CFG 保持 | `_known_pipeline:25–99` fail-closed 仅支持已知 JSON pipeline + `legacy_global`；worker 用 cfg_dropout=0 准备 conditioned + empty tokens，主进程 `_materialize:340–345` 在原有效 Consumer 顺序消耗 `random.random`，没有 per-sample seed 或 speculative RNG 前进 | 通过（当前受限能力，需真实 tokenizer Gateway 验证） |
++| Frontier / Optimizer / Save-Resume | `MatchedNoTTTTrainer.training_step:266–361` 只有 GA4 backward 完成且 optimizer 成功后 `window.finish`，再 `loader.finish`；`NoTTTFrontierCallback.state_dict:140–159` 保留原 format/strict sidecar；下个 `begin` 强制核对 preview predecessor | 通过（作者 synthetic CPU） |
++| Identity、资源有界、失败 | 请求 token、generation、Window、owned worker PID、Segment provenance、Source/Cache stat 核验；单 packet cap 默认32MiB，prefetch1/nw8 最多256MiB编码队列/RANK（另有 worker内存）；异常关闭进程、清除 pending，失败 Trainer poisoned | 通过（代码＋fault tests） |
++
++### 独立 Evidence 交叉核验
++
++- 从已提交的 **原始** `final/async.xml` 读到72个 testcase，`final/regression.xml` 与冻结 `final/gate.json` 合计 **301 tests，0 failures，0 errors，0 skipped，`source_unchanged=true`**，精确 Root/Child/Gitlink 一致。Ruff/format/AST13 均记录 exit0；GPT未宣称亲自运行 CPU suite。
++- 1个真实数据 optional 节点以 `--deselect` 明确排除，**不计算为PASS，也不伪报为skip=0代表全量真实数据已测**。
++- 直接读取 `final/timelines/overlap_trace.json`，独立按每个 CPU Source/Transform 与 fake GPU compute 的 `max(0,min(end)-max(start))` 重算：后续 Member Source **96.257ms**、Transform **160.573ms**；下一 Window Source **24.373ms**、Transform **38.022ms**。时间线中96个 Source、96个 Transform、12个 fake-compute interval、3次 commit；交集分别有18/18/4/4个非零配对，确实不是“只创建 worker PID”。
++- 相同日志明确 **CPU-only cold spawn 短测 async7.761s vs serial3.315s**，主线程 wait累计5.972s。仅证明同时性，不证明更快；不得向 Owner 声称 GPU 训练收益已完成。旧 Raw Backend 的 RED witness 仅作为负例，不计入301失败。
++- `bounds/bounds.json` 含8个真实子进程 PID及reaped，synthetic RSS各约503MiB、sample packet271437bytes；真实world4/8worker/rank所需RAM、I/O、processor启动、cache mmap与性能未测。
++- 作者保留了旧失败的 fixture attempts；`protected/audit.json` 102条旧assert AST保护为作者内部证据。GPT未把作者内部source audit等价为独立全测试执行。
++
++## 三、明确保留的未闭环项目（不新增本 Code blocker）
++
++1. **Real processor/reconstruction**：`AsyncRecipe.from_producer` 硬要求已staged local `Nemotron3DenseVLProcessor`，CPU真实Source/Cache实验使用合成文件和fake processor；真实 Cache/Index/Tokenizer/DROID Model 从nw0→nw8的 on-site 4Rank、DCP和Runtime没有执行。若Native时出现不符，按新Bug/Gate处理，不反向声称此 Code Gate验证了真实资产。
++2. **Numerical parity**：先前 Compact 0↔1 GPU strict gradient `FAIL_PARITY`、Dense0→Dense0重复性未达冻结阈值、Compact独立影响 `INCONCLUSIVE` 保持，不因本异步源码合格而变更。此CPU测试不能证明GPU数值等价。
++3. **Performance**：CPU并发存在不代表真实GPU利用率提升。后续真实Compact1 `nw0` 对 `nw8` 需匹配Checkpoint/数据，测 CUDA forward/backward、CPU读/Transform、GPU data stall、完整 Step Wall P50/P90、Host RAM/worker errors及共存干扰，不能外推10步nw0均值20.32s为nw8加速。
++4. **Failure/RNG on CUDA**：作者只以CPU合成模型验证 0→8 / 8→0 / 8→8全状态续训及失败；真实CUDA RNG/optimizer scheduler/4Rank Frontier/DCP恢复仍待独立真实 Gate。
++5. **Nonpersistent mode**：显式关闭 persistent worker 会丢弃跨Window preview，不是目标吞吐配置；推荐 `nw8,prefetch1,persistent1` 进入后续GPU阶段。真实内存容量不能仅按synthetic RSS推算。
++
++## 四、正式结论和严格执行边界
++
++**VERDICT = `APPROVE_CODE`，只关闭 Issue #9 这个精确 Formal Pair 的隔离生产源码＋作者 CPU Evidence Gate。** 当前没有证据足以确认一项违反冻结行为合同的生产源 blocker。**不能**把此 verdict 写成GPU加速PASS、真实DCP Resume PASS、正式Job切换授权或完全数值等价声明。
++
++下一步按已授权分工派 **DS_PRO 在隔离干净 exact-pair Root/Child 上做一次独立301项 CPU Gate**，原始 JUnit、负例、时序、Source绑定和进程cleanup回传。要求详见 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_AsyncOverlap_DS_PRO_Independent_CPU_ExactPair.md`。如DS有真实代码失败，原Gate重开；如DS独立CPU PASS，再由 Owner 独立决定 isolate real DCP/GPU Canary 和最终原Job checkpoint边界切换。
++
++**不授权：** 合并V3或Child正式分支、停止/重启当前正式 Job、改旧 identity/checkpoint/source/cache、直接GPU/model/DCP/RoboCasa训练/评测、30k续训、任何自动Runner/PID清理外部进程。ChatGPT本轮不实施源码修复。正式源 target 是 e0fe/f6a92；此次Review/Inbox/DS Request commit只属Bookkeeping。
+diff --git a/docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_SixRaw_Trace_Hash_Overlap_Independent_Evidence_GATE_PASS.md b/docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_SixRaw_Trace_Hash_Overlap_Independent_Evidence_GATE_PASS.md
+new file mode 100644
+index 00000000..2d701a0e
+--- /dev/null
++++ b/docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_SixRaw_Trace_Hash_Overlap_Independent_Evidence_GATE_PASS.md
+@@ -0,0 +1,37 @@
++# PSM-WMA V3 No-TTT — Issue #11 独立 DS301 CPU Evidence Gate 最终关闭（第六份 Trace 原件）
++
++- 日期：2026-10-30；范围：**仅本次增量 Evidence 关闭，不重新审核同一 Formal Pair 源码**。
++- **Formal Root：`e0fe911dfb9fd34957234828195cf051713f6c3d`；Child/Gitlink：`f6a92d47b6dac7998ddc58b3da26ef93f8068dc7`**。前序正式 `APPROVE_CODE` 不变。
++- **FINAL EVIDENCE VERDICT：`PASS` — Issue #11 DS_PRO 独立 301 synthetic CPU Gate，六份冻结核心 raw Evidence SHA256 均核验通过**。
++- Frozen 依据：`docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_AsyncOverlap_DS_PRO_Independent_CPU_ExactPair.md`；[Issue #11](https://github.com/wxwy/psm_wma/issues/11)；上轮五文件审核：`docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_5Raw_SHA_Verification_Trace_Pending.md`。
++- **新输入**：Owner 当前消息上传的三个连续文本部分（同一份 `timelines/overlap_trace.json`，分别为 `粘贴的文本 (1)(20261030-023923).txt`、`粘贴的文本 (2)(3).txt`、`粘贴的文本 (3)(3).txt`）。GPT在当前容器程序化读取3份原始上传字节、按顺序拼接为JSON，再 `json.dumps(obj,indent=2)` 复原冻结文件；并非直接连接 DS 服务器，未在 DS 工作树做任何操作。
++
++## 一、6/6 Raw 字节级 SHA 与测试结果
++
++五份已核原始 `gate.json` / `async.xml` / `regression.xml` / `environment.json` / `source_sha256.json` 的SHA-256及JUnit 301个unique case / 0 failures/errors/skips，已在上轮冻结Review直接解析，本轮不重复该范围。其原件此前汇总于本会话归档，现与第六份一起提供完整6-raw证据包。
++
++**第六份完整 `timelines/overlap_trace.json`**：JSON解析有效，Canonical编码后长度 **117909 bytes**（纯UTF-8、`indent=2`、结尾无换行），SHA-256 **`27357f1034a0b2ea91e887240c6566c1aac2630f37bd5f983123a332e3396c11`**；与DS先前冻结 `evidence_files.sha256` 的第6项**精确匹配**。原三份文本的CRLF和切分边界空格不是原始文件的字节，故仅按原始JSON序列化复原；匹配已冻结SHA解决了原件一致性。
++
++此文件具有异步399事件（96 `cpu_source` + 96 `cpu_transform` +96 `main_thread_wait` +96 `consumer_ready` +12 `fake_gpu_compute` +3 `committed_iter`），串行对照204事件（96 Source+96 Transform+12 fake compute）。2个实际worker PID **551358/551359**，trainer PID **549876**；每个 Window 0/1/2 的四个GA Member各有8个 Source与8个Transform事件，96 Token 的Source/Transform一一对应、先Source后Transform，Worker PID一致。12次fake compute落在主进程；3次 `committed_iter` 均晚于各自Window最后compute结束。
++
++## 二、独立从原始 monotonic 时刻重算
++
++按每对事件交集 `max(0,min(stage_end,compute_end)-max(stage_start,compute_start))*1000`，与原始 JSON 内 aggregate **浮点值完全相等，绝对差0.0ms**：
++
++| 关联 | CPU Source Read | CPU Transform | 正交叠事件对（Source/Transform） |
++| --- | ---: | ---: | ---: |
++| 下一 GA Member（current window的更高member） | **87.7982173115015 ms** | **128.96525859832764 ms** | 13 / 13 |
++| 下一 Window（window+1） | **20.45540139079094 ms** | **32.39326551556587 ms** | 3 / 3 |
++
++- 串行组全部CPU Source/Transform事件与fake compute重叠对数**0**。
++- 96个 `main_thread_wait` 时间加和重算 **10376.20665319264ms**，与冻结字段完全相等。三Window分别与当窗main wait的Source/Transform交叠：W0约176.748/242.821ms、W1约210.473/253.675ms、W2约168.546/228.687ms；这是CPU主线程wait，不是GPU Idle。
++- 冷启动CPU fake的 `async_window_wall_ms_including_pool_startup=12142.11947657168`，串行 `sync_source_transform_compute_wall_ms=3452.382903546095`。本轮虽已证明真实Worker并行，但**在本CPU短测中异步更慢**；绝对不得当真实CUDA吞吐改善或GPU等待减少的证明。
++
++## 三、冻结状态与权限
++
++- **Issue #11：`DS_CPU=PASS`; `RAW_EVIDENCE=PASS_6_OF_6`; `DIRECT_TRACE_OVERLAP_RECOMPUTE=PASS`；前轮缺失的Trace已关闭，完全不需要再次上传/重跑原CPU301。**
++- 原正式训练 Job `no_ttt_packed128_droid_fresh_30k_world4_ga4` 最后已由DS现场报告真实 `NOTTT_LOADER_WORKERS=8`、仍使用旧RAW Loader；本审核**没有在当前时点重新在线确认进程**，也未检查其运行时迭代数。新候选是实际后台Source+Transform/跨Window预取，不能把旧`nw8`当成新能力。
++- **`REAL_GPU_PERFORMANCE=NOT_RUN`、`REAL_DCP_RESUME=NOT_RUN`**；Compact0↔1严格GPU Gradient Parity历史 `FAIL_PARITY`，Dense重复性未达冻结阈值、Compact归因`INCONCLUSIVE` 原样保留。CPU合成PASS不能修正这些事实。
++- 后续真实资格实验只可在Owner另行明示授权、GPU4–7合法腾出、完整旧Job DCP/4rank sidecar、不同隔离输出namespace的前提下做；此前 `docs/collab/chatgpt/requests/2026-10-29_V3_NoTTT_AsyncCompact_Real_DCP_GPU_Qualification_Proposal.md` 仍为 `PROPOSED_NOT_AUTHORIZED`。**不允许直接合入V3/Child正式分支、触碰当前Job源码/Checkpoints、停止/并发Resume/正式30k训练、GPU实验或磁盘Cleaner**。
++
++本轮只对同 Formal Pair 的**新证据字节和交叠行为**出最终 `PASS`，不是任何新实现 Code Gate、模型数值等价Gate或正式Resume授权。
+diff --git a/docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_RealCPU_OneWorker_ColdStart_RootCause_Review.md b/docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_RealCPU_OneWorker_ColdStart_RootCause_Review.md
+new file mode 100644
+index 00000000..3afa332a
+--- /dev/null
++++ b/docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_RealCPU_OneWorker_ColdStart_RootCause_Review.md
+@@ -0,0 +1,29 @@
++# No-TTT Issue #12 — 实际 CPU 冷启动定位 Evidence Review
++
++2026-10-30。**结论：DIAGNOSTIC=PASS_REPORTED_STRONGLY_SUPPORTED；ASYNC_STARTUP_BOTTLENECK=HIGH_CONFIDENCE；GPU_PERFORMANCE=INCONCLUSIVE。**
++
++冻结的生产 Formal Root e0fe911dfb9fd34957234828195cf051713f6c3d、Child/Gitlink f6a92d47b6dac7998ddc58b3da26ef93f8068dc7 不变；原 APPROVE_CODE 和 Issue#11 CPU301/六份Raw PASS保留。这次是对DS实测报告和冻结源码调用链的增量审核，不是新代码Gate，不触及仿真线。
++
++**证据来源：** Owner转来的 DS_PRO 真实数据 CPU-only Scope A+B 执行报告。原始 probe_scopeA_plus_B.json、stdout、stderr在DS服务器，GPT未从该服务器取回文件字节，故实测数字均标记为 DS_REPORTED，不声称GPT现场重复测量；Owner已指出文件转运不可行，**不要求再复制ZIP/raw或再次运行Probe**。
++
++| 阶段 | DS报告 | 证据语义 |
++|---|---:|---|
++| ScopeA：进程内模拟Worker完整构建 | 193652.7 ms | Parent进程近似、不是实际Worker内部定时 |
++| SourceReader构建 | 192970.6 ms | 占完整构建约99.648% |
++| LeRobotDataset init | 188782.1 ms | 占完整构建约97.484% |
++| 首个Request的state.prepare | 224.5 ms | Parent近似、不是实际Worker |
++| Transform pipeline构造 | 409.4 ms | 构造成本，非每条样本Transform |
++| AsyncWorkerState构造 | 42.5 ms | 同一近似路径 |
++| ScopeB：真实单Worker first_materialize | 120.249 s / Timeout | 已经过ScopeA预热，但仍没有首包返回 |
++| ScopeB：constructor+begin+first_materialize | 120.266 s / Timeout | 超时退出所用Wall，不是数据Packet完成时间 |
++
++**源码交叉核验：**
++- cosmos_framework/trainer/no_ttt_async_loader.py:124-135：PreparedDataset在第一个__getitem__时调用self.recipe.build()；:245-295在PyTorch iterator发起请求并等待next；profile timeout120s。
++- cosmos_framework/trainer/no_ttt_async_recipe.py:195-254：每Worker重开Index/Cache/SourceReader/Transformer/Tokenizer/Producer。
++- cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source.py:247-258：SourceReader构造函数立即初始化非视觉LeRobotDataset；:459-505通过官方dataset[relative]读取17帧delta数据并核严格identity。不能简单删掉Dataset而改变序列/文本语义。
++
++**独立判断：** 真实单Worker复现Timeout，排除“必须32Worker同时启动才会导致Timeout”。SourceReader/LeRobot eager初始化是强烈支持的首要修复点，足够启动Codex窄修设计，不需新探针。但是ScopeA的193s并非ScopeB真实Worker内部逐阶段计时，也不能排除同期正式任务IO/CPU争用；不把DS口头“唯一根因100%证实”升级为绝对因果断言。
++
++因persistent_workers=true，该昂贵构建发生于每Worker首次取样，并非每训练Step重复；修复首包Timeout不等于证明GPU steady-state加速。旧Issue12：A Compact1/nw0从9600连续20次optimizer commit PASS；B Compact1/nw8加载DCP后0 commits、性能INCONCLUSIVE，未改变。
++
++**Verdict：READY_FOR_CODEX_NARROW_FIX_DESIGN；不授权立即停止正式30k任务、改现役Checkpoint、合并V3或执行GPU。** Codex设计交接见同日期 requests/2026-10-30_V3_NoTTT_Issue12_Codex_LeRobot_WorkerColdStart_NarrowFix_Handoff.md。

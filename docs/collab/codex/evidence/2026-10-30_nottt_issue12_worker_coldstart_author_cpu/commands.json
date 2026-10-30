@@ -1,0 +1,126 @@
+{
+  "outer_command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-nottt-coldstart-20261030/run_gate.py",
+    "--root-worktree",
+    "/workspace/psm-wma-nottt-coldstart",
+    "--expected-root",
+    "fd9021b0908b4b2763b3d02508b1f34df377dc97",
+    "--expected-child",
+    "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
+    "--evidence-dir",
+    "/tmp/psm-nottt-coldstart-20261030/final01"
+  ],
+  "actual_subcommands": [
+    {
+      "name": "import_origin",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import pathlib,cosmos_framework; assert pathlib.Path(cosmos_framework.__file__).resolve().is_relative_to(pathlib.Path('/workspace/psm-wma-nottt-coldstart/cosmos-framework')); print(cosmos_framework.__file__)"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-coldstart",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06401003900100477
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_worker_source.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_worker_source_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-coldstart",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06410159499500878
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_worker_source.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_worker_source_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-coldstart",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.0640553229895886
+    },
+    {
+      "name": "async",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-o",
+        "markers=level: original local CPU test level",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-coldstart",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_worker_source_test.py",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_recipe_test.py",
+        "--basetemp=/tmp/psm-nottt-coldstart-20261030/final01/async_tmp",
+        "--junitxml=/tmp/psm-nottt-coldstart-20261030/final01/async.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-coldstart",
+      "timeout_s": 1800,
+      "exit_code": 0,
+      "seconds": 28.25629292501253
+    },
+    {
+      "name": "regression",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-o",
+        "markers=level: original local CPU test level",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-coldstart",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_actual_source_transform_next_member_and_next_window_overlap",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_full_and_terminal_partial_three_windows_exact_data_and_interleaved_rng[1]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_full_and_terminal_partial_three_windows_exact_data_and_interleaved_rng[8]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_prepared_file_changed_after_worker_completion_is_rejected_before_rng[source]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_prepared_file_changed_after_worker_completion_is_rejected_before_rng[cache]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_source_transform_faults_close_all_owned_workers_and_preserve_foreign_process[ignore_term]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader_test.py::test_persistence_option_and_speculative_checkpoint_are_rng_neutral[True]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[0-8-0]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-0-3]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py::test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps[8-8-0]",
+        "cosmos-framework/cosmos_framework/trainer/no_ttt_async_trainer_test.py::test_failed_active_window_keeps_checkpoint_frontier_and_reaps_speculation[native_error]",
+        "--basetemp=/tmp/psm-nottt-coldstart-20261030/final01/regression_tmp",
+        "--junitxml=/tmp/psm-nottt-coldstart-20261030/final01/regression.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-coldstart",
+      "timeout_s": 1800,
+      "exit_code": 0,
+      "seconds": 116.71496417999151
+    }
+  ]
+}
