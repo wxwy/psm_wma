@@ -168,3 +168,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **F5-P1 HIGH CLOSED**：Root仅`cli.py`将大`evaluation_runtime`+raw `runtime_probe_evidence` 按独立Evidence追加（UUID+canonical hash），`run_inputs.json`保留`runtime.digest`及其它身份字段；Child`store.py`只增64MiB专用writer。普通256KiB `read/write`、原vendor逐资产SHA、Source/Gitlink严检、manifest/runtime identity、Model Cache/Resume保护与SharedGPU均不变。
 - GPT直接核GitHub原始JUnit **85 unique/85 PASS，0fail/error/skip**、shell0/clean和10项source fingerprint、公开Fresh→Resume大型合成用例、2,553字节原`run_inputs.json`及Cache/两invocation引用；作者Evidence sidecar37,200,840/37,200,847 B，gzip原件**未由GPT独立解压**；Ruff/format为作者报告，非GPT独立重跑。无DS真实GPU/真实vendor验证。
 - **下一步仅允许已有Owner范围1GPU×2Sim×B2×2Task各2Episode（4总量）的独立clean候选Canary**，须新输出namespace、稳定完整Checkpoint、正确source/Child，真实batch histogram/MP4/4Episode/显存/清理原始证据交GPT；不自动合并V3/Child、不停止NoTTT、不启动900/额外GPU实验、不重跑旧435 CPU。
+
+## 2026-10-30 — Training Issue12 DS外部Probe v3 增量复审（当前REQUEST_CHANGES，不授权CPU探针）
+
+- 生产 Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，之前生产APPROVE_CODE + Issue11 301CPU/6raw PASS不重审。新审对象为DS在服务器**仓库外**的v3脚本（自述SHA `5eea42983a88ca823b2419e69a18fa6d0016cdc0bc252942488c3eeaca68d9c4`，但上传大粘贴Markdown格式化破坏Python字节，不可独立检原.py SHA/compile），独立增量Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_v3_INCREMENTAL_REQUEST_CHANGES.md`。
+- 本轮关闭v2的publicAPI、只消费单请求不得finish、漏算begin-spawn时长；仍BLOCKER：P6卡在Scope A/B高成本构造/首包时PARTIAL只在Scope完成后更新，SIGTERM失去阶段定位（应增加flush start/done阶段日志）；P5命令虽`timeout1800`但缺kill-after、stderr/stdout持久化且输出仍在高占用/data1；P2真实Worker跑在ScopeA已重建/读取之后的warm状态，不能称严格cold。ScopeB需独立进程或明确降格辅助。
+- `SCRIPT_v3=REQUEST_CHANGES`，`REAL_DATA_CPU=NOT_AUTHORIZED`，DS仅修自己仓库外临时脚本并回传原始.py字节与精确SHA，不动仓库代码/正式训练/GPU/DCP。
