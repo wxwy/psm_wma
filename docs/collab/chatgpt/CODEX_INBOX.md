@@ -159,3 +159,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，既有production APPROVE_CODE、Issue#11 CPU301/6raw PASS不重审。此次唯一新对象仓库外script v2 SHA256 `d54ef1b006bbf99bc4aedef633f8adf267b2d67334e993bcd1ac21526f096795`（从用户上传的CRLF文本提取并统一LF/单行尾，18378 bytes，AST compile PASS）。
 - 审核记录 `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_v2_d54ef1b0_INCREMENTAL_REQUEST_CHANGES.md`：v1 P1 torch NameError CLOSED，partial-window finish + finally清理 CLOSED；P2真实Worker spawn时长仍漏测（_begin在timer前）、ScopeA预热ScopeB；P3还用private API；P4 initial_frontier不是iter9600真实恢复frontier；P5 budget/RSS只是阻塞后检查且命令无外层timeout/输出仍近满盘；新P6失败时没有阶段实时日志/partial witness。此次 `SCRIPT_v2=REQUEST_CHANGES`；只由DS改仓库外脚本，生产源码只能Codex修改。
 - `REAL_DATA_CPU_EXECUTION=PENDING_OWNER_AUTHORIZATION`、Issue12 B真实GPU0commit/timeout性能Inconclusive不变；不运行脚本、CPU301、GPU或训练、不动正式Job/Checkpoints/V3实现。
+
+
+## 2026-10-30 — EvalV2 F5-P1 有界Runtime Probe持久化 新FormalPair增量Code Gate：APPROVE_CODE
+
+- **Formal Source Root `7c74dc26ac4837f193727ecf847b9b64554c18b2` / Child+Gitlink `53c3c95202e14d3b72d236eee6899a80acf82989`**，与前一被阻断Pair `427b4d09/0ae313e3`不同，已实施窄fresh review；作者证据/bookkeeping `608f55dc`及本条review commit都不替代Formal Pair。
+- **GPT verdict=`APPROVE_CODE` 仅F5-P1最小生产源码增量 + 作者Synthetic CPU Evidence**。详细Review `docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_F5P1_RuntimeProbe_7c74dc26_53c3c952_Incremental_Code_Gate_APPROVE_CODE.md`。
+- **F5-P1 HIGH CLOSED**：Root仅`cli.py`将大`evaluation_runtime`+raw `runtime_probe_evidence` 按独立Evidence追加（UUID+canonical hash），`run_inputs.json`保留`runtime.digest`及其它身份字段；Child`store.py`只增64MiB专用writer。普通256KiB `read/write`、原vendor逐资产SHA、Source/Gitlink严检、manifest/runtime identity、Model Cache/Resume保护与SharedGPU均不变。
+- GPT直接核GitHub原始JUnit **85 unique/85 PASS，0fail/error/skip**、shell0/clean和10项source fingerprint、公开Fresh→Resume大型合成用例、2,553字节原`run_inputs.json`及Cache/两invocation引用；作者Evidence sidecar37,200,840/37,200,847 B，gzip原件**未由GPT独立解压**；Ruff/format为作者报告，非GPT独立重跑。无DS真实GPU/真实vendor验证。
+- **下一步仅允许已有Owner范围1GPU×2Sim×B2×2Task各2Episode（4总量）的独立clean候选Canary**，须新输出namespace、稳定完整Checkpoint、正确source/Child，真实batch histogram/MP4/4Episode/显存/清理原始证据交GPT；不自动合并V3/Child、不停止NoTTT、不启动900/额外GPU实验、不重跑旧435 CPU。
