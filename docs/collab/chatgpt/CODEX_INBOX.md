@@ -95,3 +95,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **本轮GPT未读到DS自身的原始文件字节**：仅用户报告的Gate SHA `919f3ca9...` 等待核实，服务器`/tmp`不在本会话沙箱，Desktop Commander设备离线，V3暂无本次DS evidence。**独立DS Evidence正式Gate=`REQUEST_CHANGES`（Evidence-only: `DS-RAW-1`），不是“DS测试失败”；只请DS归档/交付现成Gate+JUnit+log+source+关键OS原件，无需重跑435或更改源码。**
 - 最新origin V3 `e7543ff63bfc1f492349fb05e61aa0c8317588b1`且Gitlink仍为旧`746c5cf2...`；DS本地`5b540cce`不能作为合并远端HEAD依据。未授权V3受控合并、真实GPU/Canary/正式900；禁止操作NoTTT训练目录。原件复核后再给DS独立Gate最终结论。
 
+
+## 2026-10-30 — NoTTT Issue#11 DS301独立CPU Gate六份原始Evidence正式PASS（Trace已关闭）
+
+- **Frozen Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` 未变；旧源码 `APPROVE_CODE` 维持，禁止重复代码审核**。
+- 用户上传完整第6份 `overlap_trace.json` 分为3个文本，GPT拼接解析后以 `json.dumps(indent=2)` 原样序列化117909字节，sha256 `27357f1034a0b2ea91e887240c6566c1aac2630f37bd5f983123a332e3396c11` 与既冻hash**完全一致**；先前5份完整raw亦已匹配。**`DS_CPU=PASS / RAW_EVIDENCE=PASS_6_OF_6`**。详细正式Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_SixRaw_Trace_Hash_Overlap_Independent_Evidence_GATE_PASS.md`。
+- GPT独立从399异步事件重算下一GA Member Source87.798/Transform128.965ms、下一Window Source20.455/Transform32.393ms（各绝对差0），串行204事件交叠0；主进程等待96事件合计10376.207ms一致。旧已核原始JUnit72+229=301唯一PASS、0fail/error/skip、Gitlink一致、source unchanged记录。无需重跑CPU或补交原件。
+- **GPU吞吐与真实DCP Resume仍 NOT_RUN**，CPU cold fake异步12.142s反而慢于同步3.452s；原正式NoTTT旧RAW nw8 Job仍不得停/切/并发Resume。真实GPU资格提案 `PROPOSED_NOT_AUTHORIZED`，需Owner另行授权和GPU空闲窗口；Compact strict Gradient失败历史维持。
