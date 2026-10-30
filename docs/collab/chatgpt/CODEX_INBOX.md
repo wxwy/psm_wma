@@ -144,3 +144,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - Formal生产Pair `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，旧APPROVE_CODE、CPU301/6raw PASS不重审。本轮只审用户上传外部`issue12_worker_coldstart_probe.py`源码SHA `5215bf115ea48b3cd05d833599b0c6f50fd38a31dbc62601be882ffdd1ce9167`，正式独立Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_DS_External_CPUColdStartProbe_5215bf11_REQUEST_CHANGES.md`，本版脚本 `REQUEST_CHANGES`、PhaseP真实数据CPU仍`PENDING_OWNER_AUTHORIZATION`。
 - 最小阻断：探针`_require_cpu_only`读模块全局`torch`，但torch仅在main内部局部导入→必然NameError；Phase1手工重写build/跳过worker import与spawn，Phase2计时起点在`_begin`之后，不是包含spawn的真实冷启动；仅消费1 segment却调用`finish()`必报incomplete Window且绕过公开API/finally；初始frontier≠9600恢复frontier、硬编码digest不等于完成实际身份核证；拟运行命令缺真正外层timeout/强制资源上限，输出与高占用数据卷混用。
 - DS只修临时外部脚本、带完整安全命令和静态check后再申请脚本复审；**不执行任何真实数据CPU/GPU/正式训练，不改production/timeout/V3**。修正后脚本审核与Owner新CPU-only执行授权分开。
+
+
+## 2026-10-30 — EvalV2 GPU7 PhaseB 真实Canary RunInputs超限：生产阻断 HIGH / Evidence REQUEST_CHANGES
+
+- **Formal Root** `427b4d09cdd8070820a39b93ebf2ff832a23e359` / **Child+Gitlink** `0ae313e329d290fc6b8a50fda1112820fb7ac485` 未改变；此前共享GPU最小代码/CPU63 + Ruff原Gate不重审。现只审新DS真实Canary运行Evidence。
+- **Formal Evidence verdict = `REQUEST_CHANGES`；Canary因生产缺陷BLOCKED。** 独立Review：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_Canary_427b4d09_0ae313e3_RunInputs_Oversize_Evidence_REQUEST_CHANGES.md`。
+- **F5-P1 HIGH（源码已直接确认）**：Root `robocasa_vendor.py:130,260-286` 包含全部untracked资产SHA +原始stdout；`identity.py:201-215` 把全部作为`inputs`，`cli.py:139-140`写并读`run_inputs.json`；Child `store.py:30,75-99,117-118`严格256KiB，故大数据必报`oversized JSON`。现场20,989,831B、123,363资产、GPU7等数字仅DS用户报告，原raw服务器文件GPT未读取。
+- **整改仅限**把小型稳定runtime digest等身份字段留在`run_inputs`，全量`evaluation_runtime`和`runtime_probe_evidence`另外通过专用限额（建议64MiB）原子Evidence writer保存；原256KiB普通合同、vendor逐资产SHA、Manifest runtime identity、strict resume/source清洁校验、owned cleanup全部保持。针对真实大型payload做Fresh→Resume公开路径CPU回归及大证据/普通ledger边界负例。Codex新Root/Child提交后GPT fresh窄增量审；无须重跑旧435 CPU，无理由反复在旧SHA fresh。
+- **未授权**在旧审核Root上用local patch绕过、放宽全部JSON limit、停NoTTT训练、直接正式900；新源码批准后仅按原授权重试1GPU×2Sim×B2×4Episode真实Canary。
