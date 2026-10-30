@@ -125,3 +125,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **关键归因疑点**：B每个Worker `PreparedDataset.__getitem__`首用`AsyncRecipe.build`重建官方`RoboCasaExactWindowSourceReader`+LeRobotDataset，主Preflight的186s初始化耗时不能排除该**Worker内冷启动**作为120s Timeout机制；与正式Job同时占GPU4–7/HostIO的资源争用并列待证，未确认生产代码新Bug，不自动变更Timeout。A报告的data wait5.35s需查原始字段。
 - 原授权 `e5fde3f7` 要求正式Job存活/GPU4–7占用即BLOCKED，DS现称Owner外部豁免并发但本轮未提供权威Waiver记录。无论是否有效，共享资源下A壁钟不能作为将来独占B的公平baseline。
 - **Issue#12当前真实 Evidence Gate `REQUEST_CHANGES`（运行失败+原始日志待核），正式Job未触碰为DS报告**。DS仅提交现存ArmA/B4rank/manifest/S0/超时stack/指标字段及waiver凭据，**不重跑A或B、不改码、不停训、不GPU实验、不合并V3**；若后续需要新独占matched A/B须Owner另外授权。
+
+## 2026-10-30 — Training Issue12 DS补证：ArmA20监控字段核验、CUDA Event语义纠正；B首包Timeout仍OPEN
+
+- Formal Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，前序`APPROVE_CODE`及Issue#11独立CPU301/6raw PASS保持，**本轮只审核新增Evidence**。详见正式新Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_Supplement_ArmA20_CUDAStall_ColdStart_Evidence_Incremental.md`。
+- 用户上传 `arm_a_20step_monitor_v1`完整20行JSON，GPT程序化解析：9601..9620连续20条optimizer commit、4F/4B、missing/nonfinite0；全20步 wall median20.723s，稳态18步median20.490s；稳态 `data_prepare` median5884.427ms，`gpu_data_stall` median5354.804ms。`data_wait_ms=null`。
+- **ISS12-E3字段疑义CLOSED，但DS“cuda_sampled=false表示gpu_data_stall来自主机墙钟”属于错误解释**：Frozen `corrected_telemetry.py:148-211,441-465`有独立`_sample_data_stall`每步记录CUDA Events并`elapsed_time`；`cuda_sampled`仅对应常规每100步的compute events。20步`gpu_data_stall_status=ready` = rank0 current CUDA stream data-gap estimate，不能解释成全卡GPU idle。
+- B4rank真实DCP9600成功加载，首个materialize 120sTimeout，0 optimizer commits；`ISSUE12=REQUEST_CHANGES`保持。Worker每次首请求重建LeRobot Dataset，高成本冷启动/正式Job共享争用都可能，缺worker-init时戳，归因未证。现成manifest粘贴列14项而摘要称13，LOW；Owner外部GPU共享豁免仅DS转述+RUN_MANIFEST，`REPORTED_UNVERIFIED`，不能推断未授权。
+- **不重跑CPU/GPU、不修改生产代码、不停训练、不合并**。下步仅证据可用性整理，若要新探针/独占匹配A/B需Owner明确授权。
