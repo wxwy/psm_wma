@@ -188,3 +188,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **Evidence verdict=`REQUEST_CHANGES`，当前`BLOCKED_INPUT_INCOMPATIBLE`，不是源码生产新blocker**。Root `eval_robocasa_18task_queue.py:272`强制`required`，Child `action_policy_server_robocasa.py:653-663,894-930`要求raw15/state15/H16/K4/local32，`robocasa_local_memory_policy.py:74-78`无runtime立即拒绝，`robocasa_session_transactions.py:166`要求实际 Local Memory，`robocasa_v2/contract.py:89` manifest为required。NoTTT model不能拿来验证此冻结LocalTTT Session/Batch路径；简单`off`会改变协议并触发更多拒绝。
 - DS报告此次已用clean精确Pair、GPU7 dry-run PASS，紧凑`run_inputs.json` 5,085B、独立Evidence已生成（F5修复现场生效）；Action Server启动退出1，NoTTT `iter_000010400` config禁用LocalTTT，0 valid（2 invalid/2 pending）、无实际B2。DS服务器raw与TTT A1/A2 checkpoint字节本轮GPT未读取，不写成独立现场验证。
 - **技术路线选A（作为建议，Owner仍需确认改变测试模型）**：DS只读核A1 `formal_verified_index_30k/iter1300` checkpoint真实Local runtime和同源config及raw15/state15/H16/K4/local32；若A1不合格，再核A2 `packed128_droid_fresh_g1_20261019/iter20000` 的真实完整同源config，不能借A1 config冒充。若无同源匹配Pair即BLOCKED。通过且Owner确认后原授权范围内新namespace重跑1GPU/2Sim/B2/两Task各2Episode，提交真实Session/Batch/MP4/cleanup证据；**不修改正式代码、不允许NoTTT auto-off、不授权900或NoTTT正式评测**。
+
+
+## 2026-10-30 — Owner目标纠正：EvalV2 PhaseB 接替NoTTT评测；此前“切LocalTTT checkpoint”建议RETRACTED
+
+- Owner本轮明确 **“我们就是接替nottt，为什么要强制要求是local-ttt？”**：原 1GPU×2Sim×B2×4Episode Canary 是在 **NoTTT checkpoint** 上验证EvalV2多Sim/native batch和结果链，不是LocalTTT算法测试。此前Review `2026-10-30_V3_EvalV2_PhaseB_Canary_7c74dc26_53c3c952_TTT_Checkpoint_Compatibility_Evidence_Gate.md` 的“换TTT checkpoint / 非生产能力缺口”建议**正式撤回**；旧F5-P1 `APPROVE_CODE` 和产线代码事实不变，Formal Pair 未变不重审旧实现。
+- 正式纠错详细文件：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_NoTTT_Target_Owner_Correction_Erratum.md`。NoTTT场景当前 **`REQUEST_CHANGES / BLOCKED_NOTTT_PHASE_B_UNSUPPORTED`**，属于新目标下缺乏执行能力，而非NoTTT checkpoint选择错误。
+- Root `eval_robocasa_18task_queue.py:272` hardcode required；Child `action_policy_server_robocasa.py:654,910-912,1257`、`robocasa_session_transactions.py:166,328,339`、`robocasa_batch_transactions.py:201-273`、Sim `eval_v2_transactions.py:23-69` 的Session/fast state/prefix均耦合TTT。**不是仅把required换off**；应由Codex在新隔离候选实现明确NoTTT模式，把Slot/Lease/ACK/Deadline/native B2复用、response cache归事务状态、不生成fast-state、不注入Local prefix；原TTT模式严检不变、不同模式不同科学身份、NoTTT模型及原定4Episode真实验收不变。
+- 未授权在旧 SHA 上现场patch、用TTT模型替代目标、直接正式900、修改NoTTT训练。新精确Root+Child产出后GPT按增量Code Gate审核；本条仅文档勘误与正确路线登记。
