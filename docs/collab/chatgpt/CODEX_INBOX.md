@@ -87,3 +87,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 用户上传DS 6核心raw的copy-paste包，GPT已按raw文本字节重建并哈希匹配5份完整的gate.json、async.xml、regression.xml、environment.json、source_sha256.json（**5/5**）；原始JUnit72+229=301唯一case、0fail/error/skip、Gate PASS/5steps exit0、source unchanged、18/18 source hash与原Formal源清单一致。
 - 第6份 `timelines/overlap_trace.json` 只包含头部/派生摘要/worker PID清单，92KB完整事件未贴；**`DS_CPU_TEST_EXECUTION=PASS_VERIFIED_FROM_PASTED_RAW`，`RAW_TRACE_INTEGRITY=PENDING_ONE_FILE`，完整6项Evidence审核仅此OPEN（Evidence-only）**。已有overlap testcase JUnit确实PASS，单个时序ms尚不能独立重算。不要求重跑301项/补传663项。
 - 时间戳XML UTC15:13–15:32，对应CST23:13–23:32；报告误标CST非阻断。详细 Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_5Raw_SHA_Verification_Trace_Pending.md`。只请DS补已生成的**完整trace一个文件**，无源码/训练动作；GPU/DCP未授权，正式nw8旧RAW训练继续。
+
+## 2026-10-30 — DS_PRO EvalV2 PhaseB B2 独立435 CPU报告口径核查：PASS_REPORTED / RAW_PENDING
+
+- Formal Root `a139b5a35877a79e0a56c2208f3002f731972b11` / Child+Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485` **未变**；沿用之前Code Gate `APPROVE_CODE`与作者完整CPU435原件核验 `PASS`，此次**不重新Code Gate、不重复作者Evidence审核**。本轮详细Review：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_PhaseB_B2_DS435_Independent_CPU_Report_Consistent_Raw_Pending.md`。
+- DS报告在其**独立Git Clone** `/tmp/ds_pro_evalv2_435_20261030/` 声称435/435（145+256+34）、0 fail/error/skip、shell0、Gate PASS/source_unchanged true、真实G1/N2/E2 histogram{1:4,2:2}、F1/F2/F3/Store/F4/D5/Resume PASS，未碰NoTTT目录/训练或GPU。**报告自洽、无新生产Code blocker线索**，允许记录`DS_CPU_PASS_REPORTED`。
+- **本轮GPT未读到DS自身的原始文件字节**：仅用户报告的Gate SHA `919f3ca9...` 等待核实，服务器`/tmp`不在本会话沙箱，Desktop Commander设备离线，V3暂无本次DS evidence。**独立DS Evidence正式Gate=`REQUEST_CHANGES`（Evidence-only: `DS-RAW-1`），不是“DS测试失败”；只请DS归档/交付现成Gate+JUnit+log+source+关键OS原件，无需重跑435或更改源码。**
+- 最新origin V3 `e7543ff63bfc1f492349fb05e61aa0c8317588b1`且Gitlink仍为旧`746c5cf2...`；DS本地`5b540cce`不能作为合并远端HEAD依据。未授权V3受控合并、真实GPU/Canary/正式900；禁止操作NoTTT训练目录。原件复核后再给DS独立Gate最终结论。
+
