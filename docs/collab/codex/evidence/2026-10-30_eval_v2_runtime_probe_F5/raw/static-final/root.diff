@@ -1,0 +1,559 @@
+diff --git a/cosmos-framework b/cosmos-framework
+index 0ae313e3..53c3c952 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 0ae313e329d290fc6b8a50fda1112820fb7ac485
++Subproject commit 53c3c95202e14d3b72d236eee6899a80acf82989
+diff --git a/scripts/robocasa_eval_v2/cli.py b/scripts/robocasa_eval_v2/cli.py
+index bf413573..8dded489 100644
+--- a/scripts/robocasa_eval_v2/cli.py
++++ b/scripts/robocasa_eval_v2/cli.py
+@@ -6,6 +6,7 @@ import hashlib
+ import json
+ import tempfile
+ import time
++import uuid
+ from pathlib import Path
+ 
+ from cosmos_framework.evaluation.robocasa_v2.contract import digest
+@@ -16,6 +17,7 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
+     save,
+     write,
+     write_report,
++    write_runtime_probe,
+ )
+ from robocasa_episode_resume.model_identity import verification_record
+ 
+@@ -135,7 +137,20 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+             _, inputs, environment = prepare_inputs(
+                 cfg, cache=cache, anchor=anchor, manifest=manifest
+             )
+-        else:
++        probe = {
++            "manifest_digest": manifest["digest"],
++            "evaluation_runtime": inputs["runtime"],
++            "runtime_probe_evidence": inputs["runtime_probe_evidence"],
++        }
++        inputs = {
++            key: value
++            for key, value in inputs.items()
++            if key not in ("runtime", "runtime_probe_evidence")
++        }
++        inputs["runtime"] = {"digest": probe["evaluation_runtime"]["digest"]}
++        probe_path = root / "_internal/runtime_probe" / f"{uuid.uuid4().hex}.json"
++        write_runtime_probe(probe_path, probe)
++        if args.mode == "fresh":
+             write(root / "_internal/run_inputs.json", inputs)
+         anchor = read(root / "_internal/run_inputs.json")
+         record = verification_record(
+@@ -149,6 +164,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+                 "resolved": cfg,
+                 "actual_root": inputs["actual_root"],
+                 "clock_preflight": inputs.get("clock_preflight"),
++                "runtime_probe": {
++                    "path": str(probe_path.relative_to(root)),
++                    "canonical_sha256": digest(probe),
++                },
+             },
+         )
+         runtime = runtime_type(store, cfg, inputs, environment)
+diff --git a/tools/v3/eval_v2_production_tests/entry_test.py b/tools/v3/eval_v2_production_tests/entry_test.py
+index 0c89e189..5065d438 100644
+--- a/tools/v3/eval_v2_production_tests/entry_test.py
++++ b/tools/v3/eval_v2_production_tests/entry_test.py
+@@ -88,6 +88,8 @@ def fake_prepare(cfg, *, cache, anchor=None, manifest=None):
+             "model": model,
+             "actual_root": "a" * 40,
+             "tasks": dict((t, str(d)) for t, d in tasks),
++            "runtime": {"digest": "3" * 64},
++            "runtime_probe_evidence": {},
+         },
+         {},
+     )
+diff --git a/tools/v3/eval_v2_production_tests/runtime_evidence_test.py b/tools/v3/eval_v2_production_tests/runtime_evidence_test.py
+new file mode 100644
+index 00000000..a9579e8f
+--- /dev/null
++++ b/tools/v3/eval_v2_production_tests/runtime_evidence_test.py
+@@ -0,0 +1,480 @@
++"""Public Fresh/Resume runtime evidence with real identity hashing and Store.
++
++Vendor/interpreter probes and physics/model execution are explicit CPU doubles.
++The real prepare/verify_source/model-header/hash/cache/CLI/Store algorithms run;
++source verification uses two tiny real Git repositories, never a disabled guard.
++"""
++
++import errno
++import json
++import subprocess
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2 import store as store_module
++from cosmos_framework.evaluation.robocasa_v2.contract import canonical, digest
++from robocasa_eval_v2 import cli, identity
++
++from tools.v3.eval_v2_production_tests.entry_test import CpuRuntime, config
++
++MIB = 1024 * 1024
++
++
++def git(repo, *args):
++    return subprocess.check_output(
++        [
++            "git",
++            "-C",
++            str(repo),
++            "-c",
++            "user.name=CPU identity fixture",
++            "-c",
++            "user.email=cpu-fixture@example.invalid",
++            "-c",
++            "commit.gpgsign=false",
++            *args,
++        ],
++        text=True,
++    ).strip()
++
++
++@pytest.fixture
++def real_prepare(tmp_path, monkeypatch):
++    path, cfg = config(tmp_path)
++    source = tmp_path / "mini-source"
++    child = source / "cosmos-framework"
++    child.mkdir(parents=True)
++    git(child, "init", "-q")
++    (child / "source.py").write_text("# Synthetic Child provenance sentinel.\n")
++    git(child, "add", "source.py")
++    git(child, "commit", "-qm", "CPU Child source")
++    git(source, "init", "-q")
++    for name in ("scripts", "configs", "third_party/robosuite_patches"):
++        (source / name).mkdir(parents=True, exist_ok=True)
++    (source / "scripts/source.py").write_text("# Synthetic Root provenance sentinel.\n")
++    (source / "configs/source.yaml").write_text("cpu_fixture: true\n")
++    (source / "third_party/robosuite_patches/vendor.lock.json").write_bytes(
++        Path(cfg["vendor_lock"]).read_bytes()
++    )
++    git(source, "add", "scripts", "configs", "third_party")
++    git(
++        source,
++        "update-index",
++        "--add",
++        "--cacheinfo",
++        "160000",
++        git(child, "rev-parse", "HEAD"),
++        "cosmos-framework",
++    )
++    git(source, "commit", "-qm", "CPU Root source and exact Child Gitlink")
++    monkeypatch.setattr(identity, "ROOT", source)
++    monkeypatch.setattr(identity, "CHILD", child)
++    monkeypatch.setattr(CpuRuntime, "starts", 0)
++    state = SimpleNamespace(
++        path=path,
++        cfg=cfg,
++        source=source,
++        child=child,
++        root=Path(cfg["output_dir"]),
++        assets={"robocasa/models/assets/cpu_fixture/asset_000000.png": "0" * 64},
++        warning="first CPU vendor warning",
++        revision=1,
++        attestations=[],
++        constructed=[],
++    )
++
++    def collect(**kwargs):
++        assert kwargs["tasks"] == ["CloseFridge"]
++        runtime = {
++            "schema": "psm_robocasa_runtime_v1",
++            "synthetic_CPU_only": True,
++            "protocol": {"official_horizons": {"CloseFridge": 2}},
++            "packages": {"robocasa": {"untracked_asset_sha256": state.assets}},
++            "revision": state.revision,
++        }
++        runtime["digest"] = digest(runtime)
++        attestation = {
++            "evaluation_runtime": runtime,
++            "runtime_probe_evidence": {
++                "argv": ["CPU_SYNTHETIC_VENDOR_BOUNDARY"],
++                "stdout": state.warning
++                + "\nPSM_RUNTIME "
++                + json.dumps(runtime, sort_keys=True)
++                + "\n",
++                "stderr": "CPU fixture: no simulator imported\n",
++                "returncode": 0,
++            },
++        }
++        state.attestations.append(attestation)
++        return attestation
++
++    monkeypatch.setattr(identity, "collect_runtime", collect)
++    monkeypatch.setattr(
++        identity,
++        "interpreter_libraries",
++        lambda executable, environment, names: {
++            n: "CPU-fixture-version" for n in names
++        },
++    )
++
++    class Runtime(CpuRuntime):
++        def __init__(self, store, resolved, inputs, environment):
++            assert store.held
++            assert inputs["runtime"] == {
++                "digest": state.attestations[-1]["evaluation_runtime"]["digest"]
++            }
++            assert "runtime_probe_evidence" not in inputs
++            assert list((store.root / "_internal/runtime_probe").glob("*.json"))
++            state.constructed.append(inputs)
++            super().__init__(store, resolved, inputs, environment)
++
++    state.Runtime = Runtime
++    return state
++
++
++def public(case, mode, *, output=None):
++    argv = [mode, "--config", str(case.path)]
++    if output is not None:
++        argv += ["--output-dir", str(output)]
++    return cli.main(argv, prepare_inputs=identity.prepare, runtime_type=case.Runtime)
++
++
++def core_bytes(root):
++    return {
++        str(p.relative_to(root)): p.read_bytes()
++        for p in root.glob("tasks/*/episodes/*/result.json")
++    }
++
++
++def invocations(root):
++    return store_module.records(root / "_internal/invocations")
++
++
++def probe_records(root):
++    result = []
++    for invocation in invocations(root):
++        reference = invocation["runtime_probe"]
++        assert set(reference) == {"path", "canonical_sha256"}
++        path = Path(reference["path"])
++        if not path.is_absolute():
++            path = root / path
++        assert path.parent == root / "_internal/runtime_probe"
++        assert len(path.stem) == 32 and all(c in "0123456789abcdef" for c in path.stem)
++        record = json.loads(path.read_bytes())
++        assert set(record) == {
++            "manifest_digest",
++            "evaluation_runtime",
++            "runtime_probe_evidence",
++        }
++        assert (
++            record["manifest_digest"]
++            == store_module.read(root / "manifest.json")["digest"]
++        )
++        assert reference["canonical_sha256"] == digest(record)
++        assert path.read_bytes() == canonical(record) + b"\n"
++        result.append((path, record))
++    return result
++
++
++def test_public_large_runtime_evidence_fresh_resume_preserves_anchor_and_Core(
++    real_prepare, tmp_path, capsys
++):
++    case = real_prepare
++    case.assets = {
++        f"robocasa/models/assets/cpu_fixture/asset_{index:06d}.png": f"{index:064x}"
++        for index in range(150_000)
++    }
++    _, resolved = cli.resolve(["fresh", "--config", str(case.path)])
++    prepared = identity.prepare(resolved, cache=tmp_path / "direct-prepare-cache")
++    assert isinstance(prepared, tuple) and len(prepared) == 3
++    assert prepared[1]["runtime"] == case.attestations[-1]["evaluation_runtime"]
++    assert (
++        prepared[1]["runtime_probe_evidence"]
++        == case.attestations[-1]["runtime_probe_evidence"]
++    )
++    assert len(canonical(prepared[1]["runtime"])) > 16 * MIB
++    assert public(case, "fresh") == 0
++    initial = case.attestations[-1]
++    anchor_path = case.root / "_internal/run_inputs.json"
++    anchor_bytes = anchor_path.read_bytes()
++    anchor = store_module.read(anchor_path)
++    assert len(anchor_bytes) < 256 * 1024
++    assert anchor["runtime"] == {"digest": initial["evaluation_runtime"]["digest"]}
++    assert "runtime_probe_evidence" not in anchor
++    before = core_bytes(case.root)
++    assert len(before) == 2
++    fresh_records = probe_records(case.root)
++    assert len(fresh_records) == 1
++    first_path, first_record = fresh_records[0]
++    assert first_record["evaluation_runtime"] == initial["evaluation_runtime"]
++    assert first_record["runtime_probe_evidence"] == initial["runtime_probe_evidence"]
++    assert (
++        first_record["evaluation_runtime"]["packages"]["robocasa"][
++            "untracked_asset_sha256"
++        ]
++        == case.assets
++    )
++    first_bytes = first_path.read_bytes()
++    assert len(first_bytes) > 16 * MIB
++    with pytest.raises(ValueError):
++        store_module.read(first_path)  # The ordinary read limit is not widened.
++    cache = store_module.read(case.root / "_internal/verification_cache.json")
++    assert cache["anchor_sha256"] == digest(anchor)
++
++    case.warning = "changed CPU vendor warning only"
++    assert public(case, "resume") == 0
++    assert (
++        case.attestations[-1]["evaluation_runtime"]["digest"]
++        == initial["evaluation_runtime"]["digest"]
++    )
++    assert anchor_path.read_bytes() == anchor_bytes and core_bytes(case.root) == before
++    assert first_path.read_bytes() == first_bytes
++    records = probe_records(case.root)
++    assert len(records) == 2 and records[0][0] != records[1][0]
++    assert {r["runtime_probe_evidence"]["stdout"] for _, r in records} == {
++        initial["runtime_probe_evidence"]["stdout"],
++        case.attestations[-1]["runtime_probe_evidence"]["stdout"],
++    }
++    assert all(
++        r["evaluation_runtime"] == initial["evaluation_runtime"] for _, r in records
++    )
++    cache = store_module.read(case.root / "_internal/verification_cache.json")
++    assert cache["anchor_sha256"] == digest(anchor)
++    assert CpuRuntime.starts == 1 and len(case.constructed) == 2
++    capsys.readouterr()
++    latest_stdout = case.attestations[-1]["runtime_probe_evidence"]["stdout"]
++    warning_only = (
++        initial["runtime_probe_evidence"]["stdout"].split("\n", 1)[1]
++        == latest_stdout.split("\n", 1)[1]
++        and initial["runtime_probe_evidence"]["stdout"].split("\n", 1)[0]
++        != latest_stdout.split("\n", 1)[0]
++    )
++    assert warning_only
++    with capsys.disabled():
++        print(
++            "V2_RUNTIME_EVIDENCE_WITNESS "
++            + json.dumps(
++                {
++                    "synthetic_CPU_only": True,
++                    "sidecar_bytes": [p.stat().st_size for p, _ in records],
++                    "run_inputs_bytes": anchor_path.stat().st_size,
++                    "synthetic_asset_SHA_entries": len(case.assets),
++                    "runtime_digest": initial["evaluation_runtime"]["digest"],
++                    "anchor_canonical_sha256_before": digest(anchor),
++                    "anchor_canonical_sha256_after": digest(
++                        store_module.read(anchor_path)
++                    ),
++                    "anchor_bytes_unchanged": anchor_path.read_bytes() == anchor_bytes,
++                    "fresh_evidence_count": len(fresh_records),
++                    "resume_evidence_count": len(records),
++                    "stdout_warning_only_changed": warning_only,
++                    "Core_bytes_unchanged": core_bytes(case.root) == before,
++                }
++            ),
++            flush=True,
++        )
++
++
++@pytest.mark.parametrize(
++    "drift", ["runtime", "model", "config", "source_dirty", "source_commit", "child"]
++)
++def test_public_resume_rejects_identity_drift_before_new_evidence_or_Runtime(
++    real_prepare, drift, capsys
++):
++    case = real_prepare
++    assert public(case, "fresh") == 0
++    original = core_bytes(case.root)
++    anchor = (case.root / "_internal/run_inputs.json").read_bytes()
++    probes = {str(p): p.read_bytes() for p, _ in probe_records(case.root)}
++    if drift == "runtime":
++        case.revision += 1
++    elif drift == "model":
++        shard = Path(case.cfg["checkpoint"]) / "model/rank0.distcp"
++        shard.write_bytes(shard.read_bytes() + b"changed synthetic payload")
++    elif drift == "config":
++        Path(case.cfg["config_file"]).write_text("raw_action_dim: 15\nchanged: true\n")
++    elif drift.startswith("source"):
++        (case.source / "scripts/source.py").write_text("# changed production source\n")
++        if drift == "source_commit":
++            git(case.source, "add", "scripts/source.py")
++            git(case.source, "commit", "-qm", "CPU committed source drift")
++    else:
++        (case.child / "source.py").write_text("# changed Child source\n")
++        git(case.child, "add", "source.py")
++        git(case.child, "commit", "-qm", "CPU Child drift")
++    with pytest.raises(ValueError):
++        public(case, "resume")
++    assert len(case.constructed) == 1 and len(invocations(case.root)) == 1
++    assert (case.root / "_internal/run_inputs.json").read_bytes() == anchor
++    assert core_bytes(case.root) == original
++    assert {str(p): p.read_bytes() for p, _ in probe_records(case.root)} == probes
++    capsys.readouterr()
++
++
++@pytest.mark.parametrize("mode", ["fresh", "resume"])
++def test_public_evidence_write_failure_never_constructs_Runtime_or_adopts_fresh(
++    real_prepare, monkeypatch, mode, capsys
++):
++    case = real_prepare
++    if mode == "resume":
++        assert public(case, "fresh") == 0
++    before = core_bytes(case.root)
++    previous_invocations = len(invocations(case.root))
++    previous_constructors = len(case.constructed)
++    error = OSError(errno.EIO, "synthetic evidence write failure")
++
++    def fail(path, value):
++        assert Path(path).parent == case.root / "_internal/runtime_probe"
++        assert (
++            value["evaluation_runtime"] == case.attestations[-1]["evaluation_runtime"]
++        )
++        raise error
++
++    with monkeypatch.context() as fault:
++        fault.setattr(cli, "write_runtime_probe", fail)
++        with pytest.raises(OSError) as raised:
++            public(case, mode)
++        assert raised.value is error
++    assert case.root.exists() and len(case.constructed) == previous_constructors
++    assert len(invocations(case.root)) == previous_invocations
++    assert core_bytes(case.root) == before
++    if mode == "fresh":
++        assert not (case.root / "summary.json").exists()
++    residue = {str(p): p.read_bytes() for p in case.root.rglob("*") if p.is_file()}
++    with pytest.raises(FileExistsError):
++        public(case, "fresh")
++    assert {
++        str(p): p.read_bytes() for p in case.root.rglob("*") if p.is_file()
++    } == residue
++    assert public(case, "fresh", output=case.root.with_name("clean-new-run")) == 0
++    assert len(case.constructed) == previous_constructors + 1
++    capsys.readouterr()
++
++
++def probe_path(tmp_path):
++    return tmp_path / "run/_internal/runtime_probe" / ("a" * 32 + ".json")
++
++
++def test_ordinary_JSON_limits_stay_small_and_probe_limit_is_private_64MiB(tmp_path):
++    assert store_module.MAX_JSON == 256 * 1024
++    assert store_module.MAX_RUNTIME_PROBE == 64 * MIB
++    ordinary = tmp_path / "ordinary.json"
++    value = {"synthetic": "x" * store_module.MAX_JSON}
++    with pytest.raises(ValueError):
++        store_module.write(ordinary, value)
++    assert not ordinary.exists()
++    ordinary.write_bytes(canonical(value) + b"\n")
++    with pytest.raises(ValueError):
++        store_module.read(ordinary)
++    oversized = {"synthetic": "x" * store_module.MAX_RUNTIME_PROBE}
++    target = probe_path(tmp_path)
++    with pytest.raises(ValueError):
++        store_module.write_runtime_probe(target, oversized)
++    assert not target.exists()
++
++
++@pytest.mark.parametrize("wrong", ["parent", "ancestor", "suffix", "uuid"])
++def test_runtime_probe_writer_rejects_non_probe_paths(tmp_path, wrong):
++    target = probe_path(tmp_path)
++    if wrong == "parent":
++        target = target.parent.with_name("ledger") / target.name
++    elif wrong == "ancestor":
++        target = tmp_path / "public/runtime_probe" / target.name
++    elif wrong == "suffix":
++        target = target.with_suffix(".txt")
++    else:
++        target = target.with_name("not-a-uuid.json")
++    with pytest.raises(ValueError):
++        store_module.write_runtime_probe(target, {"synthetic": True})
++    assert not target.exists()
++
++
++@pytest.mark.parametrize("kind", ["overwrite", "leaf_symlink", "parent_symlink"])
++def test_runtime_probe_writer_never_overwrites_or_follows_symlinks(tmp_path, kind):
++    target = probe_path(tmp_path)
++    target.parent.mkdir(parents=True)
++    value = {"synthetic": "original evidence"}
++    if kind == "overwrite":
++        store_module.write_runtime_probe(target, value)
++        before = target.read_bytes()
++        with pytest.raises(FileExistsError):
++            store_module.write_runtime_probe(target, {"synthetic": "overwrite"})
++        assert target.read_bytes() == before
++    else:
++        other = tmp_path / "outside"
++        other.mkdir()
++        if kind == "leaf_symlink":
++            protected = other / "protected.json"
++            protected.write_bytes(b"keep original")
++            target.symlink_to(protected)
++        else:
++            target.parent.rmdir()
++            target.parent.symlink_to(other, target_is_directory=True)
++        with pytest.raises(ValueError):
++            store_module.write_runtime_probe(target, value)
++        if kind == "leaf_symlink":
++            assert protected.read_bytes() == b"keep original"
++        else:
++            assert not list(other.iterdir())
++    assert not list(target.parent.glob(".pending-*"))
++
++
++@pytest.mark.parametrize(
++    "stage", ["partial", "file_fsync", "publish", "directory_fsync"]
++)
++def test_probe_partial_publish_and_fsync_faults_preserve_errors_and_no_success(
++    tmp_path, monkeypatch, stage
++):
++    target = probe_path(tmp_path)
++    target.parent.mkdir(parents=True)
++    value = {"synthetic": "complete evidence"}
++    error = OSError(errno.EIO, "synthetic " + stage)
++    original_fdopen, original_sync = store_module.os.fdopen, store_module.sync_dir
++
++    def failed(*args, **kwargs):
++        raise error
++
++    if stage == "partial":
++
++        class Partial:
++            def __init__(self, stream):
++                self.stream = stream
++
++            def __enter__(self):
++                self.stream.__enter__()
++                return self
++
++            def __exit__(self, *args):
++                return self.stream.__exit__(*args)
++
++            def write(self, raw):
++                self.stream.write(raw[:5])
++                raise error
++
++        monkeypatch.setattr(
++            store_module.os, "fdopen", lambda *a, **k: Partial(original_fdopen(*a, **k))
++        )
++    elif stage == "file_fsync":
++        monkeypatch.setattr(store_module.os, "fsync", failed)
++    elif stage == "publish":
++        monkeypatch.setattr(store_module.os, "link", failed)
++    else:
++
++        def sync(path):
++            if Path(path) == target.parent:
++                assert target.exists()  # Link precedes the directory durability fence.
++                raise error
++            return original_sync(path)
++
++        monkeypatch.setattr(store_module, "sync_dir", sync)
++    with pytest.raises(OSError) as raised:
++        store_module.write_runtime_probe(target, value)
++    assert raised.value is error
++    assert not list(target.parent.glob(".pending-*"))
++    if stage == "directory_fsync":
++        # A visible complete record after failed directory fsync is retained
++        # diagnostic residue, never a successful return or invocation receipt.
++        assert json.loads(target.read_bytes()) == value
++    else:
++        assert not target.exists()

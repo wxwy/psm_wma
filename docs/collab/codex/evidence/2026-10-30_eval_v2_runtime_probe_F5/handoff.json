@@ -1,0 +1,149 @@
+{
+  "formal_root": "7c74dc26ac4837f193727ecf847b9b64554c18b2",
+  "child_gitlink": "53c3c95202e14d3b72d236eee6899a80acf82989",
+  "role": "AUTHOR focused CPU/static; not DS",
+  "final": {
+    "label": "final-formatted",
+    "counts": {
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "groups": {
+      "new_runtime_evidence": 21,
+      "existing_entry": 15,
+      "existing_store": 49
+    },
+    "source_unchanged": true,
+    "clean": true,
+    "shell_exit": 0
+  },
+  "red": {
+    "pair": [
+      "427b4d09cdd8070820a39b93ebf2ff832a23e359",
+      "0ae313e329d290fc6b8a50fda1112820fb7ac485"
+    ],
+    "counts": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "shell_exit": 1,
+    "scope": "Same new test copied untracked into clean old production Pair; original oversized JSON failure retained as FAIL."
+  },
+  "intermediate_only": {
+    "working": {
+      "counts": {
+        "tests": 85,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "original_source": {
+        "root": "427b4d09cdd8070820a39b93ebf2ff832a23e359",
+        "child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+        "gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+        "root_status": "M SESSION.md\n M TODO.md\n M cosmos-framework\n M scripts/robocasa_eval_v2/cli.py\n M tools/v3/eval_v2_production_tests/entry_test.py\n?? tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
+        "child_status": "M cosmos_framework/evaluation/robocasa_v2/store.py",
+        "source_sha256": {
+          "scripts/robocasa_eval_v2/cli.py": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5",
+          "scripts/robocasa_eval_v2/identity.py": "9362b03ded6404b1ebf70fb59771216ac87bf5227dcf899c10b80989a7d5bb2e",
+          "scripts/robocasa_eval_v2/runtime.py": "019222460381ee96e02150d37b4703eaace90aa70f3be9431b14755fa1411790",
+          "scripts/robocasa_eval_v2/resources.py": "622c97e741fef25850b9dcc6733e70dec690ac2ea3521e0114ec3e83ad4337dc",
+          "scripts/robocasa_vendor.py": "bb221444bfa14fe4dfac86d066c2bc3cca38c1997451d96613f334260aea2b51",
+          "scripts/robocasa_episode_resume/model_identity.py": "65438cb4fb89199b86bfa78145210e692e77b3eefe86659fb9f08879de0216aa",
+          "tools/v3/eval_v2_production_tests/entry_test.py": "cec6b72766ffe9bf64ee119ee8b681a5420019ae2c0a1f624c8727bce689806c",
+          "tools/v3/eval_v2_production_tests/store_test.py": "49ab1d535bcdaac7ef59863636e748a5e6eefb2057df1d89941f8f189a0141d6",
+          "tools/v3/eval_v2_production_tests/runtime_evidence_test.py": "ce896f7750728bb536feb075ac303d9d59e75fb9aa058c748cbdf17267630ff4",
+          "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": "d718c47c817bd163f8761961c03b0f9d3f13f89f18a408e8cf34aeae1aef002d"
+        }
+      }
+    },
+    "final": {
+      "counts": {
+        "tests": 85,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "original_source": {
+        "root": "a3fc9b55f20c0c627c99896e084c088e0e56144d",
+        "child": "fef20b338e2fbdd32d91078b24c58b9957a092f0",
+        "gitlink": "fef20b338e2fbdd32d91078b24c58b9957a092f0",
+        "root_status": "",
+        "child_status": "",
+        "source_sha256": {
+          "scripts/robocasa_eval_v2/cli.py": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5",
+          "scripts/robocasa_eval_v2/identity.py": "9362b03ded6404b1ebf70fb59771216ac87bf5227dcf899c10b80989a7d5bb2e",
+          "scripts/robocasa_eval_v2/runtime.py": "019222460381ee96e02150d37b4703eaace90aa70f3be9431b14755fa1411790",
+          "scripts/robocasa_eval_v2/resources.py": "622c97e741fef25850b9dcc6733e70dec690ac2ea3521e0114ec3e83ad4337dc",
+          "scripts/robocasa_vendor.py": "bb221444bfa14fe4dfac86d066c2bc3cca38c1997451d96613f334260aea2b51",
+          "scripts/robocasa_episode_resume/model_identity.py": "65438cb4fb89199b86bfa78145210e692e77b3eefe86659fb9f08879de0216aa",
+          "tools/v3/eval_v2_production_tests/entry_test.py": "cec6b72766ffe9bf64ee119ee8b681a5420019ae2c0a1f624c8727bce689806c",
+          "tools/v3/eval_v2_production_tests/store_test.py": "49ab1d535bcdaac7ef59863636e748a5e6eefb2057df1d89941f8f189a0141d6",
+          "tools/v3/eval_v2_production_tests/runtime_evidence_test.py": "ce896f7750728bb536feb075ac303d9d59e75fb9aa058c748cbdf17267630ff4",
+          "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": "d718c47c817bd163f8761961c03b0f9d3f13f89f18a408e8cf34aeae1aef002d"
+        }
+      }
+    }
+  },
+  "debug": "Initial static format check failed; unchanged original logs/diff retained, final static checks separately PASS.",
+  "static_final": {
+    "checks": 5,
+    "exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "syntax_files": 4,
+    "actual_unmodified_verify_source": {
+      "source": [
+        "7c74dc26ac4837f193727ecf847b9b64554c18b2",
+        "53c3c95202e14d3b72d236eee6899a80acf82989",
+        "7c74dc26ac4837f193727ecf847b9b64554c18b2"
+      ],
+      "store_import": "/workspace/work/psm-wma-runtime-evidence-formal/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py"
+    },
+    "ordinary_Store_AST_unchanged_except": [
+      "MAX_RUNTIME_PROBE",
+      "write_runtime_probe"
+    ]
+  },
+  "large_case": {
+    "original_test_witness": {
+      "synthetic_CPU_only": true,
+      "sidecar_bytes": [
+        37200840,
+        37200847
+      ],
+      "run_inputs_bytes": 2553,
+      "synthetic_asset_SHA_entries": 150000,
+      "runtime_digest": "0c05a671d506721dd7fbaae8c229e6a74cacc628930623c711a013b7fddca8b8",
+      "anchor_canonical_sha256_before": "fafdda6a72c7e059b3c40219a9816ff458c373bc7ca8588eafe8364dc7175ac5",
+      "anchor_canonical_sha256_after": "fafdda6a72c7e059b3c40219a9816ff458c373bc7ca8588eafe8364dc7175ac5",
+      "anchor_bytes_unchanged": true,
+      "fresh_evidence_count": 1,
+      "resume_evidence_count": 2,
+      "stdout_warning_only_changed": true,
+      "Core_bytes_unchanged": true
+    },
+    "sidecars": 2,
+    "asset_entries_each": 150000,
+    "compression": "Complete raw original bytes preserved losslessly in deterministic gzip; no plain oversized sidecars committed.",
+    "Core_before_after_equality": "Carried by passed original test and raw witness; only the surviving Core originals are archived, no separate before snapshot was produced."
+  },
+  "not_additive": "Repeated working/preformat/final runs are separate evidence, not an aggregate test total.",
+  "excluded": [
+    "whole tmp/cache trees",
+    "miniGit repositories",
+    "fake checkpoint containers",
+    "real assets"
+  ],
+  "limits": "Synthetic vendor/interpreter/model-execution boundaries with real prepare/verify_source/Git/model identity/Store. No real assets/GPU/Canary/900/full unified Gate or training execution in this focused archive.",
+  "independent_DS": "Not performed or approved by this author evidence.",
+  "next_step": "Root/Owner review; no automatic Gate replay, DS dispatch or V3 merge."
+}

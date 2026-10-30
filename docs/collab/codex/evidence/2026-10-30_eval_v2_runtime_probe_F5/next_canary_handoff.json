@@ -1,0 +1,21 @@
+{
+  "formal_root": "7c74dc26ac4837f193727ecf847b9b64554c18b2",
+  "child_gitlink": "53c3c95202e14d3b72d236eee6899a80acf82989",
+  "scope": "Same original Canary only: 1GPU/2Sim/B=2/4 total Episodes",
+  "required_before_execution": [
+    "Fresh GPT narrow Code Gate approval for this Pair",
+    "Independent clean exact source/Child/Gitlink",
+    "New output namespace; never adopt prior failed Fresh",
+    "DS re-confirms complete stable checkpoint"
+  ],
+  "not_executed": true,
+  "no_full435_replay_required_by_current_Owner_scope": true,
+  "prohibited": [
+    "V3/Child merge without separate authority",
+    "old-SHA patch/bypass",
+    "source/vendor checks disabled",
+    "shared GPU logic/config change",
+    "training/checkpoint mutation",
+    "900 Episode expansion"
+  ]
+}

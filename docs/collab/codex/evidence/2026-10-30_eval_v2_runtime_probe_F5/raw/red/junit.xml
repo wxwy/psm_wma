@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="3.512" timestamp="2026-10-30T08:57:14.884901+00:00" hostname="68036c4fdbac"><testcase classname="tools.v3.eval_v2_production_tests.runtime_evidence_test" name="test_public_large_runtime_evidence_fresh_resume_preserves_anchor_and_Core" time="1.348"><failure message="ValueError: oversized JSON">real_prepare = namespace(path=PosixPath('/workspace/work/runtime-probe-evidence/red/tmp/test_public_large_runtime_evid0/eval.yaml'), ...: 0}}], constructed=[], Runtime=&lt;class 'eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;)
+tmp_path = PosixPath('/workspace/work/runtime-probe-evidence/red/tmp/test_public_large_runtime_evid0')
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x7fa7ed2a4ce0&gt;
+
+    def test_public_large_runtime_evidence_fresh_resume_preserves_anchor_and_Core(
+        real_prepare, tmp_path, capsys
+    ):
+        case = real_prepare
+        case.assets = {
+            f"robocasa/models/assets/cpu_fixture/asset_{index:06d}.png": f"{index:064x}"
+            for index in range(150_000)
+        }
+        _, resolved = cli.resolve(["fresh", "--config", str(case.path)])
+        prepared = identity.prepare(resolved, cache=tmp_path / "direct-prepare-cache")
+        assert isinstance(prepared, tuple) and len(prepared) == 3
+        assert prepared[1]["runtime"] == case.attestations[-1]["evaluation_runtime"]
+        assert (
+            prepared[1]["runtime_probe_evidence"]
+            == case.attestations[-1]["runtime_probe_evidence"]
+        )
+        assert len(canonical(prepared[1]["runtime"])) &gt; 16 * MIB
+&gt;       assert public(case, "fresh") == 0
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/runtime_evidence_test.py:197: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+case = namespace(path=PosixPath('/workspace/work/runtime-probe-evidence/red/tmp/test_public_large_runtime_evid0/eval.yaml'), ...: 0}}], constructed=[], Runtime=&lt;class 'eval_v2_production_tests.runtime_evidence_test.real_prepare.&lt;locals&gt;.Runtime'&gt;)
+mode = 'fresh'
+
+    def public(case, mode, *, output=None):
+        argv = [mode, "--config", str(case.path)]
+        if output is not None:
+            argv += ["--output-dir", str(output)]
+&gt;       return cli.main(argv, prepare_inputs=identity.prepare, runtime_type=case.Runtime)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_production_tests/runtime_evidence_test.py:140: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+argv = ['fresh', '--config', '/workspace/work/runtime-probe-evidence/red/tmp/test_public_large_runtime_evid0/eval.yaml']
+
+    def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+        args, cfg = resolve(argv)
+        root = Path(cfg["output_dir"])
+        if args.mode == "dry-run":
+            tasks = discover(cfg)
+            dispositions = []
+            if (root / "manifest.json").exists():
+                manifest = read(root / "manifest.json")
+                store = Store(root, manifest)
+                if (
+                    manifest["task_order"] != [t for t, _ in tasks]
+                    or manifest["episodes_per_task"] != cfg["episodes_per_task"]
+                    or manifest.get("execution") != execution(cfg)
+                ):
+                    raise ValueError("dry-run scientific plan differs from frozen Run")
+                for ep in range(cfg["episodes_per_task"]):
+                    for task, _ in tasks:
+                        action = {
+                            "skip_valid_core": "skip_valid",
+                            "skip_owner_pending": "skip_owner_pending",
+                            "execute": "execute_missing",
+                        }[slot_disposition(store, task, ep)]
+                        dispositions.append({"task": task, "episode": ep, "action": action})
+            print(
+                json.dumps(
+                    {
+                        "mode": "CPU_PREVIEW_ONLY",
+                        "resolved": cfg,
+                        "task_order": [t for t, _ in tasks],
+                        "physical_slots": physical_slots(cfg, len(tasks)),
+                        "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
+                        "slots": [
+                            [t, ep]
+                            for ep in range(cfg["episodes_per_task"])
+                            for t, _ in tasks
+                        ],
+                        "resume_dispositions": dispositions,
+                        "runtime_attested": False,
+                        "models_loaded": 0,
+                        "environments_created": 0,
+                    },
+                    indent=2,
+                )
+            )
+            return 0
+        if args.mode == "authorize":
+            if args.owner_decision is None:
+                raise ValueError("explicit externally provided --owner-decision required")
+            decision = read(args.owner_decision)
+            manifest = read(root / "manifest.json")
+            store = Store(root, manifest)
+            if (
+                set(decision)
+                != {
+                    "schema",
+                    "approved_by",
+                    "owner_decision_ref",
+                    "manifest_digest",
+                    "slots",
+                }
+                or decision["schema"] != "psm_eval_v2_owner_release_v1"
+                or decision["approved_by"] != "Owner"
+                or decision["manifest_digest"] != manifest["digest"]
+                or not decision["owner_decision_ref"]
+                or not decision["slots"]
+            ):
+                raise ValueError("invalid targeted Owner release document")
+            targets = [(v["task"], v["episode"]) for v in decision["slots"]]
+            if len(set(targets)) != len(targets):
+                raise ValueError("duplicate Owner target")
+            with store.locked():
+                # Prevalidate every target before publishing any permit.
+                for task, ep in targets:
+                    if store.slot(task, ep)["status"] not in (
+                        "skipped_init_error",
+                        "scene_admission_exhausted",
+                    ):
+                        raise ValueError(
+                            "Owner release can only target blocked missing slots"
+                        )
+                raw = args.owner_decision.read_bytes()
+                sha = hashlib.sha256(raw).hexdigest()
+                path = root / "_internal/owner_decisions" / f"{sha}.json"
+                if not path.exists():
+                    write(path, decision)
+                for task, ep in targets:
+                    store.authorize_retry(
+                        task, ep, owner_ref=decision["owner_decision_ref"] + ":" + sha
+                    )
+            print(json.dumps({"owner_released": targets, "no_execution": True}))
+            return 0
+        cache = root / "_internal/cache"
+        if args.mode == "fresh":
+            # Imports may materialize caches. They must not create/adopt the fresh
+            # namespace before its exclusive mkdir succeeds.
+            with tempfile.TemporaryDirectory(prefix="psm-eval-v2-preflight-") as temporary:
+                manifest, inputs, environment = prepare_inputs(cfg, cache=Path(temporary))
+            store = Store(root, manifest)
+            store.create()
+            environment = runtime_environment(cache)
+        else:
+            manifest = read(root / "manifest.json")
+            store = Store(root, manifest)
+            inputs = environment = None
+        with store.locked():
+            if args.mode == "resume":
+                anchor = read(root / "_internal/run_inputs.json")
+                _, inputs, environment = prepare_inputs(
+                    cfg, cache=cache, anchor=anchor, manifest=manifest
+                )
+            else:
+&gt;               write(root / "_internal/run_inputs.json", inputs)
+
+scripts/robocasa_eval_v2/cli.py:139: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/workspace/work/runtime-probe-evidence/red/tmp/test_public_large_runtime_evid0/out/_internal/run_inputs.json')
+value = {'actual_root': '31c630cce81ffbd915b72878041d40fb3416cae6', 'child': '313ff4d603907f7166ec65dea3bfdf3c30f5598a', 'cloc...dence/red/tmp/test_public_large_runtime_evid0/inputs/dataset/CloseFridge/lerobot/extras/dataset_meta.json', ...}], ...}
+
+    def write(path, value, *, replace=False):
+&gt;       _publish(path, value, replace=replace, limit=MAX_JSON)
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/workspace/work/runtime-probe-evidence/red/tmp/test_public_large_runtime_evid0/out/_internal/run_inputs.json')
+value = {'actual_root': '31c630cce81ffbd915b72878041d40fb3416cae6', 'child': '313ff4d603907f7166ec65dea3bfdf3c30f5598a', 'cloc...dence/red/tmp/test_public_large_runtime_evid0/inputs/dataset/CloseFridge/lerobot/extras/dataset_meta.json', ...}], ...}
+
+    def _publish(path, value, *, replace=False, limit=MAX_JSON):
+        path = safe(path)
+        payload = canonical(value) + b"\n"
+        if len(payload) &gt; limit:
+&gt;           raise ValueError("oversized JSON")
+E           ValueError: oversized JSON
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:99: ValueError</failure></testcase></testsuite></testsuites>
