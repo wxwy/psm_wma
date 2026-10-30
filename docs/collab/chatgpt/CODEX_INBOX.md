@@ -117,3 +117,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - Owner本轮明确「我授权」前序提出的**真实DCP恢复与隔离真实GPU性能**，**状态从`PROPOSED_NOT_AUTHORIZED`更新为`AUTHORIZED_CONDITIONAL_RESOURCE`**，详细正式执行指令 `docs/collab/chatgpt/requests/2026-10-30_V3_NoTTT_Real_DCP_Compact1_NW0_vs_NW8_Owner_Authorized_Execute.md`；**只授权这一次候选代码20步A (Compact1,nw0) + 20步B (Compact1,nw8)的匹配C真实DCP Resume实验**。其余训练/仿真/代码无关。
 - GPU4–7若被旧正式Job占用，DS只读核对并 `BLOCKED_RESOURCE_OR_CHECKPOINT`、绝不停止正在训Job；GPU4–7全空闲且原Job已退出、完整C/四rank DCP +独立输出/磁盘可用时才可分别依序启动。DS不可修改/清理正式Job的source/Checkpoint/identity/git/disk，也不可直接合并V3/Child。Root/Child Gitlink在V3可能被其它工作改变，必须使用**冻结NoTTT精确隔离Pair**而不是 V3 HEAD。
 - 实验后GPT独立审核实际真实DCP/数据/监控/GPU性能；只需新Evidence，不新代码Gate；即便通过也不代表授权正式Job切换或Compact旧严格GPU梯度历史PASS。
+
+## 2026-10-30 — Training NoTTT Issue#12 真实DCP/GPU A PASS / B first-materialize Timeout，Evidence REQUEST_CHANGES
+
+- Frozen Root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**，原源码`APPROVE_CODE` + DS独立CPU301/6raw`PASS`保持，不重新审核旧源码。新 DS原始资料未上传，仅用户粘贴 `ISSUE12_EXECUTION_REPORT`；独立新Evidence Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue12_RealDCP_GPU_ArmA20_PASS_ArmB0_TIMEOUT_Evidence_GATE_REQUEST_CHANGES.md`。
+- DS报告：合法完整DCP C=iter9600克隆13/13；ArmA `Compact1,nw0`真实Resume 9601..9620 **20/20 commits PASS**，wall P50=20.50s/P90=22.70s（共享GPU环境）；ArmB `Compact1,nw8` DCP load成功后首批 `next(loader)`120s Timeout、**0次commit FAIL**；`PERFORMANCE=INCONCLUSIVE`，不能称新async GPU加速或已证实更慢。
+- **关键归因疑点**：B每个Worker `PreparedDataset.__getitem__`首用`AsyncRecipe.build`重建官方`RoboCasaExactWindowSourceReader`+LeRobotDataset，主Preflight的186s初始化耗时不能排除该**Worker内冷启动**作为120s Timeout机制；与正式Job同时占GPU4–7/HostIO的资源争用并列待证，未确认生产代码新Bug，不自动变更Timeout。A报告的data wait5.35s需查原始字段。
+- 原授权 `e5fde3f7` 要求正式Job存活/GPU4–7占用即BLOCKED，DS现称Owner外部豁免并发但本轮未提供权威Waiver记录。无论是否有效，共享资源下A壁钟不能作为将来独占B的公平baseline。
+- **Issue#12当前真实 Evidence Gate `REQUEST_CHANGES`（运行失败+原始日志待核），正式Job未触碰为DS报告**。DS仅提交现存ArmA/B4rank/manifest/S0/超时stack/指标字段及waiver凭据，**不重跑A或B、不改码、不停训、不GPU实验、不合并V3**；若后续需要新独占matched A/B须Owner另外授权。
