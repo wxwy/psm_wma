@@ -80,3 +80,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 行为原件：F4快照旧竞态新回归`copy_held_writer_lock=[true]`、2 workers可在progress I/O期间finish；synthetic900 900 valid/50barrier/450成功450失败；真实CPU OS G1/N2/E2 B1×2+B2×3、G2/N3/E1 B1×4+B2×1，执行间存在physics overlap；F3两个活跃Ticket、Server退出23、owned清理3/3、故障记录不伪造success；Store并发两条不同UUID fault。foreign survival/Resume byte parity以实际PASSED测试断言为证据，未冒称额外独立raw witness。
 - **DS独立CPU Gate仍 OPEN/NOT_RUN，不继承作者PASS**；下一步只由DS在新独立干净Exact Pair执行一次同一完整435 CPU Gate，输出完整原始JUnit/OS/Source证据交GPT。此前旧作者434 FAIL不能被此单证据覆盖其真实原抛错行；无V3生产合并/GPU/Canary/正式900/训练授权，不增架构Gate。
 
+
+## 2026-10-30 — Training/NoTTT Issue#11 DS301五份原始Evidence SHA核验（只剩完整Trace）
+
+- Frozen Formal Pair root `e0fe911dfb9fd34957234828195cf051713f6c3d` / Child+Gitlink `f6a92d47b6dac7998ddc58b3da26ef93f8068dc7` **未变**；旧 `APPROVE_CODE` 不重审。
+- 用户上传DS 6核心raw的copy-paste包，GPT已按raw文本字节重建并哈希匹配5份完整的gate.json、async.xml、regression.xml、environment.json、source_sha256.json（**5/5**）；原始JUnit72+229=301唯一case、0fail/error/skip、Gate PASS/5steps exit0、source unchanged、18/18 source hash与原Formal源清单一致。
+- 第6份 `timelines/overlap_trace.json` 只包含头部/派生摘要/worker PID清单，92KB完整事件未贴；**`DS_CPU_TEST_EXECUTION=PASS_VERIFIED_FROM_PASTED_RAW`，`RAW_TRACE_INTEGRITY=PENDING_ONE_FILE`，完整6项Evidence审核仅此OPEN（Evidence-only）**。已有overlap testcase JUnit确实PASS，单个时序ms尚不能独立重算。不要求重跑301项/补传663项。
+- 时间戳XML UTC15:13–15:32，对应CST23:13–23:32；报告误标CST非阻断。详细 Review `docs/collab/chatgpt/reviews/2026-10-30_V3_NoTTT_Issue11_DS301_5Raw_SHA_Verification_Trace_Pending.md`。只请DS补已生成的**完整trace一个文件**，无源码/训练动作；GPU/DCP未授权，正式nw8旧RAW训练继续。
