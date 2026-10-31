@@ -254,3 +254,8 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **第二步（仅短测可接受才跑原授权Canary）**：保留GPU7 Action Server、两Sim、B2、NoTTT `local_memory_mode: off`、CloseFridge+OpenCabinet各2集、seed0、prediction_steps30、`save_rollout_mp4:true`；新 `fresh` namespace；不得Resume旧失败namespace。输出真实 `native_batch` histogram（至少存在真正 B=2）、4条有效Core/结果/rollout MP4、Session结束/owned-only cleanup、sim渲染耗时p50/p95、推理与队列等待时间、每集wall time、CPU/RSS/显存峰值，确认训练任务无干扰。可选模型生成视频设置若改变必须单独记录，别把其与渲染后端一起当作单因素对照。
 - **速度判据**：不是强制仿真20Hz现实时间；看OSMesa是否显著拖慢env+render、超出既定episode/request timeout、明显破坏两Sim请求重合导致B2长期无法命中，及CPU资源/评测总耗时是否可接受；不可通过取消B2、挪用他人GPU或破坏任务指标伪造通过。
 - **若OSMesa缺库、不兼容或明显太慢**：DS只保留可复核日志和性能对比，停止扩大运行；再交 GPT/Owner 决定 EGL异卡（正式显式`render-gpus`新代码/新SHA窄审）或其他办法。**不自动启动900 Episode，不授权额外GPU正式实验，不修改生产代码和训练。**
+
+## 2026-10-31 — Training Issue12 new Lazy Source 4R8W GPU C9620→C9625功能PASS；非独占nw0/nw8表观对比
+
+- Formal Root `fd9021b0908b4b2763b3d02508b1f34df377dc97` / Child `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822`，旧Code/CPU Gate不重审。DS获Owner本次GPU4–7并发豁免，报告5/5 optimizer commits迭代9621–9625，首包24.2s<120s、保存iter9625完整DCP、无OOM；GPT源码post_commit审阅但没有服务器原始日志字节。审核 `docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue12_Candidate_4R8W_C9620_C9625_Resume_Functional_PASS_SharedGPU_Perf_INCONCLUSIVE.md`：功能 `PASS_REPORTED_WITH_CODE_CROSSCHECK`。
+- 非独占旧nw0稳态P50约20.49s（18步）与新nw8 P50 13.75s（4步），描述性−32.9% wall/吞吐1.49×；因不同时段/原DCP区间/争用和样本不匹配 **speedup INCONCLUSIVE**。nw0 data_prepare与nw8 data_wait不同指标；新gpu_data_stall值没有；不得称current-stream stall下降。下一步只在Owner另授权下排他同DCP matched nw0/nw8；不改正式训练或合并V3。
