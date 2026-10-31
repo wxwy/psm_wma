@@ -485,4 +485,11 @@
 
 - **NOTTT-ISSUE12-13-INTEGRATION** — DONE (source/synthetic composition Code Gate only); exact57e36decbec0e00ecb94dc1c080fd8976afff25d/baf1b5bf46853e9849a91518803b9738fc216235 approved GPT1f79 detailed review. Original6CPU/static evidence preserved, not rerun. V3 promotion tracked separately; training authorization not included.
 
+
+<!-- Historical F5 candidate entries imported byte-for-byte; current approval and Owner merge directive supersede their old pending status. -->
+
+- **V3-EVAL-V2-F5-P1** — IN_PROGRESS; Codex; minimal boundedrun_inputs/runtimeprobe sidecar64MiB appendonly atomicwriter+>16MiB publicCLI Fresh/Resume/identity/limits regressions. Baseline427b/0ae, isolatednewChild→Root thenGPTfreshnarrowCodeGate. No435repeat/sharedGPU/Canary/900/train/merge.
+
+- **V3-EVAL-V2-F5-P1** — REVIEW; Codex; FormalRoot7c74dc26ac4837f193727ecf847b9b64554c18b2/Child53c3c95202e14d3b72d236eee6899a80acf82989. Finalnarrow85PASS/0fail,error,skip + static/scope/realSourceCheckPASS; oldoversizeRED1FAIL, synthetic150kMap37MBsidecars/2553Banchor FreshResumeverified. Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/`; publishChild→Root thenGPTnarrowCodeGateSTOP. No435/sharedGPU/GPU/Canary/train/900/merge.
+
 - **V3-EVALV2-PROMOTION** — IN_PROGRESS; Codex; Owner safe merge+light CPU task, exact approved d18b420c/2f7334c4, actual current V3=369f3f4d/baf1b5bf training advanced. Prepare disjoint approved Child composition, object-preserving Root merge and light synthetic CPU. New Child SHA required to preserve training; canonical publication pending resolution of Owner exact2f target. No real execution/Canary repeat/oldfullGate.

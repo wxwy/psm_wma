@@ -6,6 +6,7 @@ import hashlib
 import json
 import tempfile
 import time
+import uuid
 from pathlib import Path
 
 from cosmos_framework.evaluation.robocasa_v2.contract import digest
@@ -16,6 +17,7 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
     save,
     write,
     write_report,
+    write_runtime_probe,
 )
 from robocasa_episode_resume.model_identity import verification_record
 
@@ -135,7 +137,20 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             _, inputs, environment = prepare_inputs(
                 cfg, cache=cache, anchor=anchor, manifest=manifest
             )
-        else:
+        probe = {
+            "manifest_digest": manifest["digest"],
+            "evaluation_runtime": inputs["runtime"],
+            "runtime_probe_evidence": inputs["runtime_probe_evidence"],
+        }
+        inputs = {
+            key: value
+            for key, value in inputs.items()
+            if key not in ("runtime", "runtime_probe_evidence")
+        }
+        inputs["runtime"] = {"digest": probe["evaluation_runtime"]["digest"]}
+        probe_path = root / "_internal/runtime_probe" / f"{uuid.uuid4().hex}.json"
+        write_runtime_probe(probe_path, probe)
+        if args.mode == "fresh":
             write(root / "_internal/run_inputs.json", inputs)
         anchor = read(root / "_internal/run_inputs.json")
         record = verification_record(
@@ -149,6 +164,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                 "resolved": cfg,
                 "actual_root": inputs["actual_root"],
                 "clock_preflight": inputs.get("clock_preflight"),
+                "runtime_probe": {
+                    "path": str(probe_path.relative_to(root)),
+                    "canonical_sha256": digest(probe),
+                },
             },
         )
         runtime = runtime_type(store, cfg, inputs, environment)
