@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-31T04:47:58.393939+00:00",
+  "formal_root": "c66ade95b044d3664cd782d43d7917a604425db3",
+  "formal_child": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "fetched_advertised_V3": "2bcc27e94576837167cacd190af7dc837e6129cd",
+  "canonical_updates_since_base": [],
+  "merge": "not needed; isolated candidate intentionally diverges; no canonical mutation",
+  "exact_pair_canonical_review_scan": {
+    "argv": [
+      "git",
+      "grep",
+      "-l",
+      "-e",
+      "c66ade95b044d3664cd782d43d7917a604425db3",
+      "-e",
+      "baf1b5bf46853e9849a91518803b9738fc216235",
+      "origin/V3",
+      "--",
+      "docs/collab/chatgpt/reviews/"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "review_request_scope": "GPT incremental integration only; no DS execution, no three-pane delegation under latest Owner roles",
+  "verdict_status": "new Pair review requested after publication; no verdict inferred"
+}
