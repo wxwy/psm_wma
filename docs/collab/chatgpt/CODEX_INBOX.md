@@ -236,3 +236,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - Formal Pair Root `fd9021b0908b4b2763b3d02508b1f34df377dc97` / Child `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822`不变，旧合成CPU Code`APPROVE_CODE`不重新审核。DS获Owner授权新真实data CPU probe：真实SingleWorker `first_materialize=14.421s`、`first_packet_total=14.436s`，`status=ok`并通过`NoTTTAsyncLoader.materialize`严格Segment身份；旧单Worker 120.249s timeout。ScopeA进程内新build7.2035s vs旧193.6527s，已减少全源LeRobot构造，Parent eager约192s仍存在。原始数据在DS服务器，GPT独立核对冻源码校验逻辑，未直接验证原始JSON字节。
 - **CPU_REAL_DATA_SINGLE_WORKER_FIRST_PACKET=PASS**（严格仅此Gate）；**4Rank×8Worker/DCP C+1/GPU性能 NOT_RUN**。Worker RSS `5917056KiB≈5.643GiB`；`cache_mapped_bytes≈56.59MiB`仅旧Latent/Episode mmap，不是新增Source Arrow LRU；32Worker内存/IO容量必须下一个受控Gate实测，不从单Worker推25x并发余量。
 - 正式Evidence Review `docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue12_Candidate_RealCPU_FirstPacket_Evidence_GATE_PASS.md`；不重复冷启动探针/旧CPU301、不直接合并V3/修改活跃训练/覆盖DCP，下一步仅在Owner另批后安排独占GPU4–7相同完整DCP的隔离matched A/B commits。
+
+
+## 2026-10-31 — EvalV2 NoTTT 真实Canary 同卡 EGL/CUDA SIGABRT：DS根因归因过强，A包装脚本不可行（Evidence REQUEST_CHANGES）
+
+- **Formal Source Pair 未变**：Root `d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163` / Child+Gitlink `2f7334c4ada6ace1d21185985aae90539052bf18`；原双模式增量 `APPROVE_CODE` 保留，不重复代码技术审核。本次只审DS新GPU事故报告；详细Review：`docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_NoTTT_EGL_CUDA_Canary_DS_Analysis_Evidence_REQUEST_CHANGES.md`，**真实Evidence verdict=`REQUEST_CHANGES`，`BLOCKED_NATIVE_SIM_SIGABRT`**。
+- DS报告3次NoTTT同卡闭环在`mjr_readPixels`附近SIGABRT，纯MuJoCo/随机RoboCasa/Server idle可稳定，跨卡Sim4/5+Server7闭环两集和32次推理稳定；这些是同卡并发/资源压力强关联，但**不证明**“CUDA alloc/free破坏EGL context/已知NVIDIA驱动bug”，真实`iso_*.log`与`GPU7_S0_simulator.log`未由GPT取得；要提供前序stderr/原生错误、EGL设备到物理GPU UUID映射、推理/显存时序。
+- **DS方案A shell包装`sim_python`行不通**：Root `robocasa_vendor.py:244-278`要求`sim_python`与真实`sys.executable`/二进制sha相等，shell脚本`exec`真实Python会导致探针身份不匹配；Root `runtime.py:327-332`还硬覆盖`MUJOCO_EGL_DEVICE_ID`，外部export也无效。不得通过绕过身份守卫规避。
+- **优先零生产改动诊断**：明确检查 `iso_closed_loop` 有没有发`media`。Child `eval_v2_transactions.py:115-117` 的`save_generated_video=first`仅首个replan请求可选VAE decode，不是每次；可以新输出namespace尝试`save_generated_video:none`但继续`save_rollout_mp4:true`，共享训练不变、同卡仍B2，若iso本来无media则跳过该测试。备选`MUJOCO_GL=osmesa` CPU渲染（需真机可用性/性能/画面预检和记录renderer）。
+- 若仍不稳定，则建议Codex **窄改Root config+runtime** 显式Sim EGL renderer GPU与Server CUDA GPU分离（先查物理UUID与renderer显存预算）；不得使用shell`sim_python`包装/改训练/降低B2伪造验证。新Formal Pair需增量Code Gate；不自动授权额外GPU run或900。当前NoTTT/LocalTTT真实B2 Canary均未关闭。
