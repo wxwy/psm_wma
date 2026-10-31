@@ -264,3 +264,14 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 
 - Owner明确授权正式NoTTT训练在C12200完整Checkpoint保存后**由Owner自己停止并释放GPU4–7**，DS据真实资源检查GREEN执行 **一次正式匹配A/B：同候选Root `fd9021b0908b4b2763b3d02508b1f34df377dc97` / Child `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822`、同源完整DCP C12200独立双clone、同GPU4–7独占/同模型Config/Compact1，A nw0→12220 20 commits，B nw8→12220 20 commits**。严格只改worker配置，前2步冷启动，剩18步稳态P50/P90/mean+current CUDA stream stall，HostRAM/WorkerRSS/清理/DCP验证；无需重复征得这次限定授权。正式request `docs/collab/chatgpt/requests/2026-10-31_V3_NoTTT_Issue12_C12200_Owner_Authorized_Exclusive_Matched_NW0_NW8_20x2.md`。
 - S0必须确认正式Job所有PID已退出、GPU4–7无残留且Host资源足、C12200真实DCP complete/rank0–3 sidecars/完整optimizer/scheduler/trainer、双clone原文件不动；若S0失败STOP，不改正式Job、不占GPU；只由DS执行测试、Codex才可改Git仓代码。GPT Remote Desktop设备Offline，不能在DS服务器直接启动；已通过Github Issue发DS执行合同。测试不自动合并当前V3 EvalV2技术线，不改原120sTimeout/正式30000 Training/Checkpoint。
+
+
+## 2026-10-31 — Owner暂停NoTTT训练至iter12200后的GPU空窗执行顺序（仅运行建议，非新Code Gate）
+
+- Owner通知：NoTTT正式训练预计保存 `iter_000012200` 后由Owner本人暂停，释放 **GPU4–7**；GPU0–3被其他人员使用，严禁触碰。请**不要**由DS/GPT主动停止、kill、修改训练进程或checkpoint；只在Owner确认保存完成、训练退出之后操作。检查 `iter_000012200/model/.metadata`、所有DCP shards、配套 config及其文件大小/mtime稳定，防止读到未完成的checkpoint；即使metadata存在也不等于实际模型必然可加载。训练重新启动前保留原始checkpoint供Resume。
+- 本轮继续使用已批准 **Formal Pair Root `d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163` / Child `2f7334c4ada6ace1d21185985aae90539052bf18`**，没有新implementation SHA、不重新审核源码。运行器为 `scripts/run_robocasa_eval_v2.sh`，实际底层CLI支持 `dry-run/fresh --config --gpus --sims-per-gpu --max-infer-batch-size --local-memory-mode --output-dir`。
+- **优先0生产修改**：原`sim_python`真实解释器不变，独立运行前设置 `MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa LIBGL_ALWAYS_SOFTWARE=1`。先测试`libOSMesa`/RoboCasa相机/几十步render→readPixels + 双Sim并行短测，记录CPU/RSS、render step p50/p95、图像形状、是否真实OSMesa；不能仅靠环境变量宣称backend已选择。如果库缺失，不在共享服务器上未经授权安装/升级系统依赖。
+- **仅烟测通过才做原授权NoTTT 4Episode**：GPU7模型Server + 2×CPU OSMesa Sim，checkpoint `iter_000012200` 与同源config，`execution_profile:phase_b`、`local_memory_mode:off`、`gpu_ids:[7]`、`sims_per_gpu:2`、`max_infer_batch_size:2`、`batch_wait_ms:20`、CloseFridge/OpenCabinet各2、seed0、prediction_steps30、`save_rollout_mp4:true`。模型生成视频的`save_generated_video`设置保持原值，除非独立登记变更。**新fresh namespace**，不得Resume之前iter10700失败目录。验收四个有效Core/MP4、原生B2 histogram非零、Session/End/owned-only cleanup、CPU/RSS、GPU显存、render/Server latency与wall time，确保GPU0–3他人任务存活。
+- 若CPU软件渲染显著拖慢、导致请求无法重叠/B2=0或超时，则**停止扩大**；在GPU4–7空闲期间先做无训练竞争的GPU7同卡EGL短隔离对照。若仍崩，可用DS现有隔离脚本尝试Server7 + Sim EGL4/5，确认物理EGL映射；**现有正式`runtime.py`绑定EGL=Server GPU，不能用shell`sim_python` wrapper绕过**，如需正式异卡EvalV2则交Codex最小新实现/新Formal Pair审核。
+- 本次训练暂停的Canary只能证明**无GPU4–7训练竞争**下的功能正确性与性能，不等同未来**与训练并行**的稳定性Gate。若已经稳定，后续并发压力测试应在可控训练窗口按Owner明确授权单独进行。未授权正式900、额外实验、切换TTT权重或合并V3生产分支。
+- GPT Remote Desktop Commander设备当前`Offline`，不能从ChatGPT直接操作训练GPU；DS_PRO可在Owner明确训练保存/停止与原Canary许可后手动执行并回传原始证据。不要将本条视为由GPT已实际运行。
