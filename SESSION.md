@@ -1,3 +1,24 @@
+# 2026-10-31 — Unified train+Eval V3 promotion claimed
+
+IN_PROGRESS; Codex; Owner approved6c target and requests safe promotion.
+Current fetched/advertised V3 b0c56553afcdd0cec99cdbae6bdef1043bb9c0bd; latest
+union formal 4139ad245b73cc1c16c9d4954241cecb81478992/6c83596d6a259e89c4cd3e79424024983426ac3d
+actually read in detailed APPROVE_CODE Review docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_NoTTT_TrainEval_4139ad24_6c83596d_Union_Incremental_Code_Gate_APPROVE_CODE.md.
+Canonical review+Inbox both present; source candidate6bfb05f8 pinned published
+Root/Child v3-eval-v2-integration-20261031. No old2f pin allowed:6c merges
+bafNoTTT+2fEval parents; each source retained, no new production edits.
+
+Claim: new worktree v3-train-eval-promotion-20261031 fromlatestV3; preserve both
+histories/all review/evidence/SESSION/TODO/Inbox, resolve only bookkeepers,
+Git-only exact union+approved-source/evidence hashes then ordinary Child fast-
+forward first to6c and Root V3 second. No84/oldsuite/GPU rerun, no runtime Job/
+model/data/config/DCP access, no training/simulation/DS dispatch.
+Long-term maintenance V3 only, training/eval keep distinct frozen run contracts
+and separate results/Gates. STOP after canonical readback and exactSHA report.
+Observation 2026-10-31T14:16:08.833372+08:00; source review authority is detailed report.
+
+## Preserved canonical records
+
 # 2026-10-31 — No-TTT Issue12+13 V3 promotion DONE; training not started
 
 Owner Step1 completed; GitHub readback PASS at2026-10-31 13:24:48 CST.

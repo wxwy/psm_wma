@@ -484,3 +484,7 @@
 # 2026-10-31 — Approved No-TTT candidates composition
 
 - **NOTTT-ISSUE12-13-INTEGRATION** — DONE (source/synthetic composition Code Gate only); exact57e36decbec0e00ecb94dc1c080fd8976afff25d/baf1b5bf46853e9849a91518803b9738fc216235 approved GPT1f79 detailed review. Original6CPU/static evidence preserved, not rerun. V3 promotion tracked separately; training authorization not included.
+
+# 2026-10-31 — V3 unified training/evaluation promotion
+
+- **V3-TRAIN-EVAL-UNION-PROMOTION** — IN_PROGRESS; Codex; Owner6c target confirmed, exact GPTAPPROVE_CODE4139ad24/6c83596d read at canonicalb0c56553. Preserve approved6c two-parent union+4139 Root source, both histories/docs; Child official fast-forward first then Root V3 normal merge/push/readback. Git-only object/evidence audit, no production edits or84test rerun. No runtime/GPU/Job/DCP/training/eval start; report finalSHAs andSTOP.
