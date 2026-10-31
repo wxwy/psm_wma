@@ -503,8 +503,8 @@
 
 # 2026-10-31 — Approved console boundary V3 promotion
 
-- **NOTTT-CONSOLE-BOUNDARY-PROMOTION** — IN_PROGRESS; Codex; exact GPTAPPROVE_CODE3cf74537/6c83596d and Owner isolated-promotion instruction verified at ec9d7b26. New independent cloudworktree only, mergeapproved candidate+latestV3 history/records; one wrapper production blob, othercode/Child unchanged; Git-only audit/readback and normalnonforceV3 push. No test/GPU/runtime/server/sharedResumeDir/Job/DCP/config/log operations; report preciseRoot/Child andSTOP.
+- **NOTTT-CONSOLE-BOUNDARY-PROMOTION** — DONE (isolated code promotion only); Root437fdd04aef3e18f25b06f508e11024ef72b9a5a publishedV3, unchangedChild/Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d. GitHub readback2026-10-31 16:07:40CST PASS;9851 approved-source objects/43artifact hashes/8bindings, bothhistories/records retained,no force. No oldtests/static/GPU or activeResume sharedcode/process/Job/DCP/config/log/pause/restart operations. STOP, newbehaviorforlaterlaunches.
 
 # 2026-10-31 — Issue13 initialization visibility
 
-- **NOTTT-CONSOLE-START-BOUNDARY** — REVIEW; Codex; FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d, isolatedRootonly. Fullinit through visibleStart marker thenprogress; singleproductionwrapper file, oldraw/error/cleanup preserved. Author46PASS/0skip,Ruff/format/AST4PASS,43artifacthashes/8bindings. Published isolated9022cbc4/readbackPASS, AwaitGPTfreshGate/STOP; no V3merge/currentResume/GPU/Job/DCP/launchers/EvalV2 operations.
+- **NOTTT-CONSOLE-START-BOUNDARY** — DONE (code+original syntheticCPU Gate); exact3cf7453777a693ac029a79ed8b19afc55df0d4fa/6c83596d6a259e89c4cd3e79424024983426ac3d formallyAPPROVE_CODEec9d review, publishedV3 via437fdd04. Original46PASS/static Evidence preserved, not rerun. CurrentResume sharedcode/process untouched, no runtimeauthorization inferred.

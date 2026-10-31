@@ -1,0 +1,23 @@
+{
+  "status": "PASS_CANONICAL_BOUNDARY_PROMOTION_READBACK",
+  "observed_cst": "2026-10-31T16:07:40.686968+08:00",
+  "code_review_formal_root": "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+  "promotion_root": "437fdd04aef3e18f25b06f508e11024ef72b9a5a",
+  "V3_advertised": "437fdd04aef3e18f25b06f508e11024ef72b9a5a",
+  "unchanged_child_official_head": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "root_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "all_source_equal_approved": true,
+  "root_source_object_count": 9851,
+  "canonical_docs_preserved": 2610,
+  "candidate_docs_preserved": 2657,
+  "canonical_inbox_prefix_preserved": true,
+  "inbox_bytes": 94733,
+  "artifact_sha256_verified": 43,
+  "source_bindings_verified": 8,
+  "tests_static_or_GPU_reexecuted": false,
+  "training_or_simulation": false,
+  "active_shared_resume_code_directory_process_job_config_checkpoint_logs_accessed": false,
+  "code_file_mutations": "new isolated cloud worktree only; existing source worktrees unchanged",
+  "no_force_or_history_loss": true,
+  "worktrees_clean": true
+}
