@@ -503,4 +503,4 @@
 
 # 2026-10-31 — Issue13 initialization visibility
 
-- **NOTTT-CONSOLE-START-BOUNDARY** — IN_PROGRESS; Codex; Owner Issue13 new boundary after coreTrainer Starting training...; baseV3cee6f53e/Child6c unchanged. Only wrapper state/byte display and matching narrow CPU fixtures/tests, preserve raw-first/error/cleanup semantics and launchers/training/EvalV2/liveResume. Publish isolated newRoot/6c+CPU evidence thenGPTfreshreview andSTOP; no V3 merge/GPU/runtime.
+- **NOTTT-CONSOLE-START-BOUNDARY** — REVIEW; Codex; FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d, isolatedRootonly. Fullinit through visibleStart marker thenprogress; singleproductionwrapper file, oldraw/error/cleanup preserved. Author46PASS/0skip,Ruff/format/AST4PASS,43artifacthashes/8bindings. Publish/readback thenGPTfreshGate/STOP; no V3merge/currentResume/GPU/Job/DCP/launchers/EvalV2 operations.

@@ -1,0 +1,56 @@
+[
+  {
+    "case": "test_approved_launcher_console0",
+    "world": 4,
+    "workers": 8,
+    "phase": "fresh",
+    "raw_log": "/tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console0/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793431752828006354_ntrf8jhm.log",
+    "artifact_raw_log": "integration_cases/test_approved_launcher_console0/launch_1793431752828006354_ntrf8jhm.log",
+    "injected_failure": false
+  },
+  {
+    "case": "test_approved_launcher_console1",
+    "world": 4,
+    "workers": 8,
+    "phase": "resume",
+    "raw_log": "/tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console1/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793431759642332782_nr8qmd0w.log",
+    "artifact_raw_log": "integration_cases/test_approved_launcher_console1/launch_1793431759642332782_nr8qmd0w.log",
+    "injected_failure": false
+  },
+  {
+    "case": "test_approved_launcher_console2",
+    "world": 8,
+    "workers": 0,
+    "phase": "fresh",
+    "raw_log": "/tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console2/output with spaces/_launch_logs/no_ttt_composition_world8_ga2/launch_1793431766184782957_iarmk9de.log",
+    "artifact_raw_log": "integration_cases/test_approved_launcher_console2/launch_1793431766184782957_iarmk9de.log",
+    "injected_failure": false
+  },
+  {
+    "case": "test_approved_launcher_console3",
+    "world": 8,
+    "workers": 0,
+    "phase": "resume",
+    "raw_log": "/tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console3/output with spaces/_launch_logs/no_ttt_composition_world8_ga2/launch_1793431773022547401_0quocqco.log",
+    "artifact_raw_log": "integration_cases/test_approved_launcher_console3/launch_1793431773022547401_0quocqco.log",
+    "injected_failure": false
+  },
+  {
+    "case": "test_approved_launcher_console4",
+    "world": 4,
+    "workers": 0,
+    "phase": "resume",
+    "raw_log": "/tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console4/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793431779836567442_60q4jaha.log",
+    "artifact_raw_log": "integration_cases/test_approved_launcher_console4/launch_1793431779836567442_60q4jaha.log",
+    "injected_failure": false
+  },
+  {
+    "case": "test_approved_launcher_console5",
+    "world": 4,
+    "workers": 8,
+    "phase": "resume",
+    "raw_log": "/tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console5/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793431786567643329_6d6i52lx.log",
+    "artifact_raw_log": "integration_cases/test_approved_launcher_console5/launch_1793431786567643329_6d6i52lx.log",
+    "injected_failure": true
+  }
+]

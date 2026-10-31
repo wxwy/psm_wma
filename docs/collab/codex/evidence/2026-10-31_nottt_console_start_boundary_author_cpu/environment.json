@@ -1,0 +1,26 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LD_LIBRARY_PATH": "",
+    "PYTEST_ADDOPTS": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-nottt-boundary-20261031/final/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-nottt-boundary-20261031/final/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-nottt-boundary-20261031/final/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-nottt-boundary-20261031/final/cache/ruff",
+    "PYTHONPATH": "/workspace/psm-wma-nottt-boundary:/workspace/psm-wma-nottt-boundary/cosmos-framework:/workspace/psm-wma-nottt-boundary/scripts"
+  },
+  "versions": {
+    "ruff": "0.12.7",
+    "pytest": "9.0.2",
+    "torch": "2.10.0+cpu"
+  },
+  "note": "Integration substitutes torchrun with CPU shim; launcher GPU IDs are symbolic, torch.version.cuda None is asserted. No native training/worker pool."
+}

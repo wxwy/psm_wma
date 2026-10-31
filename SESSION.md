@@ -1,3 +1,22 @@
+# 2026-10-31 — No-TTT Starting-training boundary author PASS; REVIEW
+
+FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d.
+Isolated v3-nottt-console-start-boundary-20261031 fromcurrentV3cee6f53e.
+Production onlyconsole helper; fullinit raw-first streaming through visible
+Starting training marker, then progress-only. No marker means full visibility.
+Bothlaunchers/wholeChild/Trainer/DCP/config/EvalV2 unchanged;12,456otherRoot
+objects and raw-write/process/cleanup/main AST exactbaseline.
+Author46PASS/0fail/error/skip (19new+21console+6synthetic binding), Ruff0.12.7
+check/format/AST4PASS, cleanexactPair/sourceunchanged. No full49/84/GPU
+rerun. No actualResume/model/data/DCP/Job/log/runtime operations or DS dispatch.
+Handoff/evidence dated2026-10-31_nottt_console_start_boundary under
+docs/collab/codex;43artifact checksums/8sourcebindings/rawconsole examples.
+Observation2026-10-31T15:32:53.761388+08:00:fresh fetchedV3cee6f53e/noadvance; exactnewRootreview
+scanexit1. Publish isolatedcandidate/evidence/request, remoteverify thenSTOP
+for GPTfreshoutput-layer Gate. No canonical merge or currentResume restart.
+
+## Earlier claim/canonical history preserved
+
 # 2026-10-31 — Issue13 Starting-training console boundary claimed
 
 IN_PROGRESS; Codex; isolated v3-nottt-console-start-boundary-20261031 from

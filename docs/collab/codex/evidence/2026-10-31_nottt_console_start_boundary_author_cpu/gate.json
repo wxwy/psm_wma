@@ -1,0 +1,108 @@
+{
+  "status": "PASS",
+  "gate": "AUTHOR_NOTTT_CONSOLE_START_BOUNDARY_CPU",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/no_ttt_console.py",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/no_ttt_console_boundary_test.py",
+        "tools/v3/no_ttt_integrated_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-boundary",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06410676002269611
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "scripts/no_ttt_console.py",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/no_ttt_console_boundary_test.py",
+        "tools/v3/no_ttt_integrated_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-boundary",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06418418203247711
+    },
+    {
+      "name": "console",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-boundary",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/no_ttt_console_boundary_test.py",
+        "--basetemp=/tmp/psm-nottt-boundary-20261031/final/console_tmp",
+        "--junitxml=/tmp/psm-nottt-boundary-20261031/final/console.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-boundary",
+      "timeout_s": 480,
+      "exit_code": 0,
+      "seconds": 19.668669642007444
+    },
+    {
+      "name": "integration",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-boundary",
+        "tools/v3/no_ttt_integrated_entry_test.py",
+        "--basetemp=/tmp/psm-nottt-boundary-20261031/final/integration_tmp",
+        "--junitxml=/tmp/psm-nottt-boundary-20261031/final/integration.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-boundary",
+      "timeout_s": 480,
+      "exit_code": 0,
+      "seconds": 40.980001710006036
+    }
+  ],
+  "real_gpu": false,
+  "real_job_checkpoint_data": false,
+  "training": false,
+  "simulation": false,
+  "historical84_or_full49_rerun": false,
+  "identities": {
+    "root": "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+    "child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+    "gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d"
+  },
+  "syntax_python_files": 4,
+  "totals": {
+    "tests": 46,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true
+}

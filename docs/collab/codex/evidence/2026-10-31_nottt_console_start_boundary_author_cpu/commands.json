@@ -1,0 +1,16 @@
+{
+  "cwd": "/workspace/psm-wma-nottt-boundary",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-nottt-boundary-20261031/run_gate.py",
+    "--root-worktree",
+    "/workspace/psm-wma-nottt-boundary",
+    "--expected-root",
+    "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+    "--expected-child",
+    "6c83596d6a259e89c4cd3e79424024983426ac3d",
+    "--evidence-dir",
+    "/tmp/psm-nottt-boundary-20261031/final"
+  ],
+  "note": "Already executed once; exact subprocesses and timeouts in gate.json, env in environment.json."
+}
