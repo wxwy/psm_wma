@@ -476,3 +476,6 @@
 - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — REVIEW; authorfive-moduleCPU227PASS/0skip,53new tests,static9/frozen10PASS; stable cold modelonefullhash and lockedstat, warm0payload bytes identicalSHA, strict cache miss/invalid/atomickill/lease/history/configTask/CLI negatives. Candidate-only Root+unchanged746c5cf2Child; rawEvidence +runbook thenGPTfreshreview/DSCPU,STOP. No live eval/training/model/server/GPU or V3 merge.
 
 - [x] **V3-EVALV2-SHARED-GPU-20261030** — DONE（代码与快速CPU/Ruff，Owner授权V3提升）；被测Root19342b35011a8ce0f4f81d59779d5da86f9bc9f4 / Child0ae313e329d290fc6b8a50fda1112820fb7ac485。直接删除foreign GPU PID独占拒绝，无新开关；63CPU零失败/错误/跳过、Ruff0.12.7 check/format PASS；显存/缺卡/RSS及owned-only cleanup保留。Review：docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_SharedGPU_19342b3_QuickCPU63_Promotion.md。真实GPU Canary不属于本项完成声明。
+# 2026-10-31 — NoTTT integration
+
+- **NOTTT-ASYNC-LAZY-CANONICAL-PORT** — IN_PROGRESS; Codex; Owner continuation after Issue12 APPROVE_PERFORMANCE fd9021b0/224c5f3c; baseV3 2bcc27e9/0ae313e3, isolated candidate only. Explicit6production+7test donor blob port preserves all other EvalV2/currentChild objects; new wiring sentries/targetedCPU/static/protected-source evidence; Child→Root candidate andGPT freshincremental thenSTOP. No Issue13 merge/production promotion/realData-DCP-GPU/JobResume.
