@@ -511,4 +511,4 @@
 
 # 2026-10-31 — EvalV2 CLI wildcard parity
 
-- **EVALV2-CLI-TASKS-ALL** — IN_PROGRESS; Codex; Owner confirmed parser bug, base0ab13951/unchangedChild6c. One-line CLIall canonical string preservation, CSV unchanged; new CPU semantic/parity/real dry-run/negative tests + narrow config regression, frozen RED/GREEN/source/static evidence. Publish isolated exactRoot/6c thenGPTfreshreview/STOP. No Child/runtime/realdata/model/DCP/GPU/liveJob or V3merge.
+- **EVALV2-CLI-TASKS-ALL** — REVIEW; Codex; FormalRootf3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d. Singleproductionline CLIall canonicalstring, CSV/validation unchanged; oldmoduleRED1expected + GREEN29PASS/0skip, Ruff/format/AST2PASS,19artifact hashes/5bindings. Publishisolated/readback thenGPTfreshGateSTOP; no V3merge/runtime/GPU/realdata-model-DCP/sharedJob or Resume.

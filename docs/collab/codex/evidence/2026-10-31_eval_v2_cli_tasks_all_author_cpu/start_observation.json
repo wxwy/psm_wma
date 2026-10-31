@@ -1,0 +1,18 @@
+{
+  "observed_cst": "2026-10-31T21:34:59.519441+08:00",
+  "fresh_fetched_advertised_V3": "0ab13951d640d50ea2c9c8812817bf3009eae7b5",
+  "previous_head": "d7a444036e4497ec9684ccc9bb4b7d497cf68529",
+  "canonical_delta": "0ab LocalTTT PhaseA design review/Inbox only; unrelated, preserve unchanged",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "owner_request": "CLI --tasks all same semantics as YAML tasks: all; no simulation execution",
+  "confirmed_code": "config.resolve unconditionally splits a.tasks; identity.discover recognizes only string all",
+  "production_scope": [
+    "scripts/robocasa_eval_v2/config.py"
+  ],
+  "test_scope": [
+    "tools/v3/eval_v2_batch_tests/tasks_cli_test.py"
+  ],
+  "plan": "one-line exact all special case; real config/discover/CPU dry-run with synthetic18metadata; preserve CSV and invalid/incomplete rejection",
+  "candidate_branch": "v3-eval-v2-cli-tasks-all-20261031",
+  "authorization": "isolated code/CPU/newSHA and review; no V3 merge, GPU/runtime/real data/model/DCP/activeJob access"
+}

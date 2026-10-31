@@ -1,0 +1,16 @@
+{
+  "cwd": "/workspace/psm-wma-eval-tasks-all",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-eval-tasks-all-20261031/run_gate.py",
+    "--root-worktree",
+    "/workspace/psm-wma-eval-tasks-all",
+    "--expected-root",
+    "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+    "--expected-child",
+    "6c83596d6a259e89c4cd3e79424024983426ac3d",
+    "--evidence-dir",
+    "/tmp/psm-eval-tasks-all-20261031/final"
+  ],
+  "note": "Already executed; exact RED and GREEN subprocess commands/exit codes retained in gate.json."
+}

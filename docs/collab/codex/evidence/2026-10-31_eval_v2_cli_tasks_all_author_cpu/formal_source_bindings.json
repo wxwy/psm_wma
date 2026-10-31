@@ -1,0 +1,36 @@
+{
+  "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "files": [
+    {
+      "path": "scripts/robocasa_eval_v2/config.py",
+      "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+      "blob": "2881df219c254f485e601b9e1a540c4ca15c1b46",
+      "sha256": "f6626e19c779a9d9eee05b020d41d5504a0a387deac7b6763da9170e4499437f"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_tests/tasks_cli_test.py",
+      "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+      "blob": "21616a29c53cbde3b9174c5829ac4d85bcfb3178",
+      "sha256": "8224da641af3b8f8a30c6510517d2217509eef339df52e8bdacdb1aaa2b83472"
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_tests/config_test.py",
+      "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+      "blob": "2159b26f13f00d05aec3af48e2990cb4513d8ec4",
+      "sha256": "1caa63bbd0a606886d7e6d874ee6bb8da37c92077b2eaaeb52cc5b74f6137db6"
+    },
+    {
+      "path": "scripts/robocasa_eval_v2/cli.py",
+      "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+      "blob": "8dded4895f63c2f9ef2ea48f9e3f2ae3f6c81ac4",
+      "sha256": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5"
+    },
+    {
+      "path": "scripts/robocasa_eval_v2/identity.py",
+      "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+      "blob": "d1e471addba07ad413b6d947b1385ad54140b3c5",
+      "sha256": "826cc9ac307082b91f2979669ada9bbc4d17fc4f790f657fd73fc13fcd6301c0"
+    }
+  ]
+}

@@ -1,3 +1,22 @@
+# 2026-10-31 — EvalV2 CLIall author RED/GREEN PASS, REVIEW
+
+FormalRootf3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d;
+isolated v3-eval-v2-cli-tasks-all-20261031 from V3base0ab13951. One-line
+config.resolve fix preserves exactall string; CSV unchanged.12,522otherRoot
+objects/wholeChild/discovery/identity/scheduler/runtime/training unchanged.
+Oldconfig exactblob RED1expected Atomic taskerror withsamefrozenpublicdryrun
+test; GREEN29PASS/0fail/error/skip (12new+17config), Ruff0.12.7/check/format/
+AST2PASS, clean exactPair/sourceunchanged. Real CPUdryrun18tasks/36slots
+YAML/CLI parity, model/config absent and runtimeforbidden. No actualeval or
+realdata/model/DCP/GPU/server/activeJob actions.
+Handoff/evidence under docs/collab/codex dated2026-10-31_eval_v2_cli_tasks_all;
+19artifact checksums/5sourcebindings/rawRED+GREEN. Observation2026-10-31T21:38:32.388722+08:00,
+newfetchV3base0ab noadvance; exactRootreviewscanexit1. Publish isolated
+candidate/request/readback thenSTOP forGPTfreshGate. No V3merge/DSdispatch
+or changes to currentruns; YAML workaround stillvalid pendingpromotion.
+
+## Earlier claim/history preserved
+
 # 2026-10-31 — EvalV2 CLI tasks-all fix claimed
 
 IN_PROGRESS; Codex; new isolated v3-eval-v2-cli-tasks-all-20261031 from
