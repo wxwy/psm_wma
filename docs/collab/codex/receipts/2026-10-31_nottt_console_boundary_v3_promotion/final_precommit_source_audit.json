@@ -1,0 +1,29 @@
+{
+  "status": "PASS_READONLY_BOUNDARY_PROMOTION_AUDIT",
+  "canonical_base": "ec9d7b26391821d0eed34977e8d45ae90b346ba3",
+  "approved_formal_root": "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+  "candidate_head": "22ca7cc387dc41e001408026d42fe1fea799f922",
+  "unchanged_child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "prepared_tree_snapshot": "37f82176610b719ae1f2776b24d904af207d6df7",
+  "all_root_source_equal_approved": true,
+  "root_source_object_count": 9851,
+  "production_delta": [
+    "scripts/no_ttt_console.py"
+  ],
+  "both_launchers_unchanged": true,
+  "whole_child_unchanged": true,
+  "canonical_docs_preserved": 2609,
+  "candidate_docs_preserved": 2657,
+  "canonical_inbox_prefix_preserved": true,
+  "candidate_tail_preserved_once": true,
+  "inbox_bytes": 93029,
+  "artifact_sha256_verified": 43,
+  "source_bindings_verified": 8,
+  "original_junit_cases_read_only": 46,
+  "tests_reexecuted": false,
+  "GPU_training_or_simulation": false,
+  "current_resume_shared_directory_job_config_checkpoint_logs_accessed": false,
+  "mutations": "new isolated cloud worktree only; remote V3 push pending",
+  "review_path": "docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue13_StartingTrainingBoundary_3cf74537_6c83596d_Incremental_Code_Gate_APPROVE_CODE.md",
+  "review_object": "100644 blob 4b35c2980bb4c0044557f9647731dd3f72c03795"
+}

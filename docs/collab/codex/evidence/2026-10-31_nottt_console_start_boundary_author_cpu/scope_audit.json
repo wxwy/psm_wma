@@ -1,0 +1,31 @@
+{
+  "status": "PASS_EXACT_SCOPE",
+  "root": "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+  "child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "canonical_base": "cee6f53eef345579c3db1124148f350fd2edc618",
+  "changed_paths": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_V3_NoTTT_Console_Starting_Training_Boundary_2026-10-31.md",
+    "scripts/no_ttt_console.py",
+    "tools/v3/no_ttt_console_boundary_test.py",
+    "tools/v3/no_ttt_console_test.py",
+    "tools/v3/no_ttt_integrated_entry_test.py"
+  ],
+  "production_changed_paths": [
+    "scripts/no_ttt_console.py"
+  ],
+  "all_other_root_objects_unchanged": 12456,
+  "whole_child_unchanged": true,
+  "launchers_unchanged": {
+    "scripts/train_v3_matched_no_ttt.sh": "100755 blob 656ef042e09862301f1586fd58608a5a4658218f",
+    "scripts/train_v3_matched_no_ttt_4gpu.sh": "100644 blob e8e8ba5d5cc5cb09ed9f6775bd2c2243b418ea7e"
+  },
+  "raw_write_process_cleanup_and_main_AST_unchanged": [
+    "_write_all",
+    "_owned",
+    "_signal",
+    "_cleanup",
+    "main"
+  ]
+}

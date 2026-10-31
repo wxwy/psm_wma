@@ -1,0 +1,6 @@
+[NoTTT][log] full log: /tmp/psm-nottt-boundary-20261031/final/integration_tmp/test_approved_launcher_console4/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793431779836567442_60q4jaha.log
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+synthetic initialization and Resume binding complete
+[10-31 15:00:00|INFO|cosmos_framework/trainer/__init__.py:330:train] Starting training...
+[CorrectedV3][progress] composition step=0/30000

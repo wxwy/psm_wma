@@ -1,0 +1,20 @@
+{
+  "status": "PASS_ISOLATED_CONSOLE_BOUNDARY_READBACK",
+  "observed_cst": "2026-10-31T15:34:28.128958+08:00",
+  "formal_root": "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+  "unchanged_child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "branch": "v3-nottt-console-start-boundary-20261031",
+  "published_evidence_head": "9022cbc44848e153a17211165367460da8d6e6cc",
+  "child_canonical_unchanged": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "canonical_V3_unchanged": "cee6f53eef345579c3db1124148f350fd2edc618",
+  "artifact_sha256_verified": 43,
+  "source_bindings_verified": 8,
+  "inbox_prefix_preserved": true,
+  "inbox_bytes": 89490,
+  "author_CPU_cases": 46,
+  "raw_current_resume_logs_job_DCP_accessed": false,
+  "real_GPU_training_or_simulation": false,
+  "canonical_merge": false,
+  "review": "fresh GPT request published; no new verdict inferred",
+  "clean": true
+}

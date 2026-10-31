@@ -1,0 +1,502 @@
+diff --git a/SESSION.md b/SESSION.md
+index 91869cb7..8f966814 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,21 @@
++# 2026-10-31 — Issue13 Starting-training console boundary claimed
++
++IN_PROGRESS; Codex; isolated v3-nottt-console-start-boundary-20261031 from
++fresh fetched/advertisedV3cee6f53eef345579c3db1124148f350fd2edc618; Child/Gitlink6c unchanged.
++Latest Owner requirement: complete init stdout/stderr until actual coreTrainer
++Starting training... log (currently330, Rank0 by default), echo marker, then
++progress-only; full raw logging/error exits/owned cleanup remain unchanged.
++Planned production ONLYscripts/no_ttt_console.py, plus narrow console/boundary/
++existing synthetic integration fixtures and docs/records/evidence. No launcher,
++Child/Trainer/config/algorithm/DCP/EvalV2 or active Resume worktree/process/log
++changes. Source log formatting inspected in Childutils/log.py.
++Small CPU tests only, no84/oldGPU experiments/real data/model/DCP. Freeze new
++Root/unchangedChild Pair, publish isolated candidate/evidence/request thenSTOP
++for GPT fresh review; not authorized V3 merge or runtime start.
++Claim CST 2026-10-31T15:24:54.240402+08:00; uncommitted implementation not yet started.
++
++## Prior canonical state preserved
++
+ # 2026-10-31 — V3 unified train/Eval promotion DONE
+ 
+ Canonical publication/readback PASS at2026-10-31 14:19:12 CST.
+diff --git a/TODO.md b/TODO.md
+index bd4ad24a..1d292e1f 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -500,3 +500,7 @@
+ 
+ 
+ - **V3-EVALV2-PROMOTION** — DONE (code promotion); reviewed Formal4139ad245b73cc1c16c9d4954241cecb81478992/6c83596d6a259e89c4cd3e79424024983426ac3d source now canonical via e1ec802ceff91661559e9086452700488c5db035. Original84PASS/static/source Evidence remains frozen and was not rerun; oldtargetpending text historical. NoGPU/OS/Canary/Job/DCP operation.
++
++# 2026-10-31 — Issue13 initialization visibility
++
++- **NOTTT-CONSOLE-START-BOUNDARY** — IN_PROGRESS; Codex; Owner Issue13 new boundary after coreTrainer Starting training...; baseV3cee6f53e/Child6c unchanged. Only wrapper state/byte display and matching narrow CPU fixtures/tests, preserve raw-first/error/cleanup semantics and launchers/training/EvalV2/liveResume. Publish isolated newRoot/6c+CPU evidence thenGPTfreshreview andSTOP; no V3 merge/GPU/runtime.
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Console_Starting_Training_Boundary_2026-10-31.md b/docs/build/PSM-WMA_V3_NoTTT_Console_Starting_Training_Boundary_2026-10-31.md
+new file mode 100644
+index 00000000..77c6760f
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Console_Starting_Training_Boundary_2026-10-31.md
+@@ -0,0 +1,57 @@
++# No-TTT console: full initialization, then progress
++
++Owner Issue13 update: before core Trainer `Starting training...`, show complete
++stdout/stderr; show the boundary line itself; after it, show only Rank0
++`[CorrectedV3][progress]`. Keep all raw bytes on disk, exit/error reporting,
++owned-process cleanup and unique logs. Current running Resume is untouched;
++the new version is for later launches after review.
++
++Base canonical Root `cee6f53eef345579c3db1124148f350fd2edc618` /
++unchanged Child `6c83596d6a259e89c4cd3e79424024983426ac3d`.
++Candidate Root branch `v3-nottt-console-start-boundary-20261031`, isolated only.
++
++## Source seam and minimal implementation
++
++Child `cosmos_framework/trainer/__init__.py:330` currently calls
++`log.info("Starting training...")` after checkpointer.load, iteration admission,
++dataloader positioning and distributed model setup. `utils/log.py` defaults to
++Rank0 and formats INFO with timestamp, relative source path, line and function;
++ANSI colors/machine fields are optional. Neither Child file is modified.
++
++Only production change is Root `scripts/no_ttt_console.py`:
++
++- New supervisor starts in full-display mode. It writes each raw chunk to its
++  existing file first, then streams initialization bytes to terminal immediately,
++  including incomplete lines, large messages and split UTF8. No extra buffering
++  until model loading finishes, no additional training import/dependency.
++- Recognize a complete newline-terminated plain `Starting training...` message or
++  actual Cosmos INFO Trainer/train log; ignore optional ANSI/CR for recognition,
++  preserve original bytes for display. Quoted config strings, rank prefixes,
++  other sources/functions and non-INFO logs do not switch mode.
++- Echo the boundary before a one-way switch; subsequent noise in the same read
++  is already filtered. Existing bounded progress framing remains, detector runs
++  only before training. No marker means full visibility continues, not silence.
++  A new launch/Resume gets a new full-display state.
++- Keep raw logging, file modes, failure codes/tails, SIGINT/SIGTERM, process
++  ownership/teardown and original command/env behavior. No launcher changes.
++
++## Narrow author CPU scope
++
++New19 boundary cases use real CPU pipes and fake subprocesses: formatting,
++ANSI, byte fragments, live unfinished initialization, same-read boundary,
++false positives, buffer bounds/invalid UTF8, EOF, initialization failure and
++per-launch reset. Keep all21 original console cases, updating only display
++expectations/fixtures required by the new contract; raw/error/cleanup assertions
++remain. Existing6 synthetic shell→console→real CPU profile/Trainer-binding cases
++emit a synthetic start line and verify full prefix+progress, not actual training.
++
++Expected46 cases; final JUnit is count authority. Scoped Ruff0.12.7 check/format
++and syntax4 Python files, clean exact Pair and fingerprints before/after. Verify
++whole Child/Gitlink, both standard launchers, all other code objects and previous
++cleanup/main functions unchanged. Freeze raw commands/logs/JUnit/source hashes.
++No old84/49 suite replay, GPU experiment, model/data/DCP/server/simulator or live
++Resume access. No tests skipped/xfail or weakening of failure/cleanup conditions.
++
++Commit new Root with same Child, author CPU evidence and fresh GPT incremental
++review request, publish isolated candidate only, then STOP. No V3 merge or
++runtime start is included in this task.
+diff --git a/scripts/no_ttt_console.py b/scripts/no_ttt_console.py
+index 59c135fb..72a4f282 100644
+--- a/scripts/no_ttt_console.py
++++ b/scripts/no_ttt_console.py
+@@ -1,6 +1,8 @@
+ """Foreground No-TTT stdout/stderr split. Stdlib only; never imports training.
+ 
+ Raw bytes reach the unique log before a progress copy reaches the console.
++Initialization is displayed in full through the Trainer's Starting training log;
++only subsequent progress lines are copied to the console.
+ Linux subreaper ownership covers torchrun Ranks in separate sessions; process
+ tree scans occur only on exit/cancellation, never while training is running.
+ """
+@@ -9,6 +11,7 @@ from __future__ import annotations
+ 
+ import ctypes
+ import os
++import re
+ import selectors
+ import signal
+ import subprocess
+@@ -17,6 +20,20 @@ import tempfile
+ import time
+ from pathlib import Path
+ 
++_ANSI = re.compile(rb"\x1b\[[0-?]*[ -/]*[@-~]")
++_TRAINING_LOG = re.compile(
++    rb"\[\d{2}-\d{2} \d{2}:\d{2}:\d{2}\|(?:[^\r\n]*\|[ \t]*)?INFO\|"
++    rb"(?:[^\r\n]*[/\\])?cosmos_framework[/\\]trainer[/\\]__init__\.py:"
++    rb"\d+:train\] Starting training\.\.\."
++)
++
++
++def _starts_training(line):
++    plain = _ANSI.sub(b"", line).rstrip(b"\r")
++    return (
++        plain == b"Starting training..." or _TRAINING_LOG.fullmatch(plain) is not None
++    )
++
+ 
+ def _write_all(fd, value):
+     view = memoryview(value)
+@@ -29,7 +46,10 @@ def _write_all(fd, value):
+ 
+ def _console(fd, text):
+     try:
+-        _write_all(fd, text.encode("utf-8", errors="replace"))
++        _write_all(
++            fd,
++            text if isinstance(text, bytes) else text.encode("utf-8", errors="replace"),
++        )
+     except OSError:
+         pass  # A detached terminal must not prevent durable file logging.
+ 
+@@ -74,6 +94,7 @@ class _Output:
+         self.selector.register(pipe, selectors.EVENT_READ)
+         self.pending, self.tail = b"", b""
+         self.discard = self.eof = False
++        self.training_started = False
+         self.error = None
+ 
+     def poll(self, timeout):
+@@ -100,12 +121,20 @@ class _Output:
+         parts = chunk.split(b"\n")
+         for index, part in enumerate(parts):
+             complete = index < len(parts) - 1
++            if not self.training_started:
++                # Stream even partial/huge/invalid-UTF8 initialization bytes.
++                # The complete marker is echoed before changing mode, including
++                # when later filtered lines are in this same read() chunk.
++                _console(1, part + b"\n" if complete else part)
+             if not self.discard:
+                 self.pending += part
+                 if len(self.pending) > 16384:
+                     self.pending, self.discard = b"", True
+             if complete:
+-                if not self.discard and self.pending.startswith(
++                if not self.training_started:
++                    if not self.discard and _starts_training(self.pending):
++                        self.training_started = True
++                elif not self.discard and self.pending.startswith(
+                     b"[CorrectedV3][progress] "
+                 ):
+                     _console(
+diff --git a/tools/v3/no_ttt_console_boundary_test.py b/tools/v3/no_ttt_console_boundary_test.py
+new file mode 100644
+index 00000000..e1890cf5
+--- /dev/null
++++ b/tools/v3/no_ttt_console_boundary_test.py
+@@ -0,0 +1,196 @@
++"""CPU pipes and fake processes for the initialization/training display boundary."""
++
++from __future__ import annotations
++
++import importlib.util
++import os
++import signal
++import subprocess
++
++import pytest
++
++from tools.v3 import no_ttt_console_test as base
++
++START = base.START.encode()
++PROGRESS = base.PROGRESS.encode()
++
++
++@pytest.fixture
++def display(tmp_path, monkeypatch):
++    spec = importlib.util.spec_from_file_location("boundary_console", base.HELPER)
++    module = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(module)
++    read_fd, write_fd = os.pipe()
++    path = tmp_path / "raw.log"
++    log_fd = os.open(path, os.O_CREAT | os.O_WRONLY, 0o600)
++    output = module._Output(os.fdopen(read_fd, "rb", buffering=0), log_fd)
++    expected, visible = bytearray(), []
++
++    def console(fd, value):
++        assert fd == 1
++        assert path.read_bytes() == expected  # Raw bytes must precede display.
++        visible.append(value if isinstance(value, bytes) else value.encode())
++
++    monkeypatch.setattr(module, "_console", console)
++
++    def feed(piece):
++        assert len(piece) <= 4096  # No blocked producer on a real small pipe.
++        expected.extend(piece)
++        assert os.write(write_fd, piece) == len(piece)
++        output.poll(0)
++        assert len(output.pending) <= 16384
++
++    try:
++        yield feed, output, visible, path
++    finally:
++        output.close()
++        os.close(write_fd)
++        os.close(log_fd)
++
++
++def test_boundary_and_following_noise_in_same_read_keep_marker_and_rank0(display):
++    feed, output, visible, path = display
++    initial = b"environment\nmodel loaded\nDCP Resume restored\nconfig\n"
++    raw = initial + START + b"loader JSON\n" + PROGRESS
++    raw += b"[rank1] [CorrectedV3][progress] hidden\ncheckpoint details\n"
++    feed(raw)
++    assert output.training_started
++    assert b"".join(visible) == initial + START + PROGRESS
++    assert path.read_bytes() == raw
++
++
++@pytest.mark.parametrize(
++    "marker",
++    [
++        b"Starting training...\n",
++        START,
++        b"\x1b[32m" + START.rstrip(b"\n") + b"\x1b[0m\n",
++        b"[10-31 15:00:00|[Node0/1][RANK0/4][MainProcess]| INFO|"
++        b"cosmos_framework/trainer/__init__.py:999:train] Starting training...\n",
++        b"[10-31 15:00:00|INFO|/workspace/project/cosmos_framework/trainer/"
++        b"__init__.py:330:train] Starting training...\r\n",
++    ],
++)
++def test_complete_fragmented_plain_or_actual_log_format_switches_once(display, marker):
++    feed, output, visible, _ = display
++    initial = "初始化和 Checkpoint 恢复中\n".encode()
++    for piece in [initial, *(bytes([x]) for x in marker)]:
++        feed(piece)
++    assert output.training_started
++    feed(b"hidden before progress\n" + PROGRESS + START + b"hidden after repeat\n")
++    assert b"".join(visible) == initial + marker + PROGRESS
++
++
++@pytest.mark.parametrize(
++    "not_marker",
++    [
++        b'{"message":"Starting training..."}\n',
++        b"configuration: Starting training...\n",
++        b"[rank1] Starting training...\n",
++        START.replace(b"|INFO|", b"|DEBUG|"),
++        START.replace(b":train]", b":validate]"),
++        START.replace(b"cosmos_framework/trainer/__init__.py", b"dataset.py"),
++        START.rstrip(b"\n") + b" is only a quoted setting\n",
++    ],
++)
++def test_message_in_config_wrong_source_or_rank_does_not_hide_initialization(
++    display, not_marker
++):
++    feed, output, visible, _ = display
++    initial = not_marker + b"DCP Resume still running\n"
++    feed(initial)
++    assert not output.training_started and b"".join(visible) == initial
++    feed(START + b"hidden loader details\n" + PROGRESS)
++    assert b"".join(visible) == initial + START + PROGRESS
++
++
++def test_partial_marker_is_visible_immediately_but_switch_waits_for_newline(display):
++    feed, output, visible, _ = display
++    fragment = START.rstrip(b"\n")
++    feed(fragment)
++    assert not output.training_started and b"".join(visible) == fragment
++    feed(b"\nloader JSON\n" + PROGRESS)
++    assert output.training_started and b"".join(visible) == START + PROGRESS
++
++
++def test_large_invalid_utf8_initialization_is_streamed_and_buffer_is_bounded(display):
++    feed, output, visible, path = display
++    initial = "恢复数据集 🌟".encode() + b"\xff\xfe" + b"x" * 70000
++    for start in range(0, len(initial), 1024):
++        feed(initial[start : start + 1024])
++    assert b"".join(visible) == initial and not output.training_started
++    feed(b"\n" + START)
++    noise = b"loader JSON=" + b"y" * 90000 + b"\n"
++    for start in range(0, len(noise), 1024):
++        feed(noise[start : start + 1024])
++    feed(PROGRESS + b"hidden unterminated training diagnostic")
++    assert b"".join(visible) == initial + b"\n" + START + PROGRESS
++    assert path.read_bytes().startswith(initial + b"\n" + START + noise)
++    assert path.read_bytes().endswith(b"hidden unterminated training diagnostic")
++
++
++def test_markerless_eof_keeps_all_initial_bytes_including_unterminated_text(tmp_path):
++    raw = b"DCP Resume in progress\n\xff\xfetail without newline"
++    command = base._script(tmp_path, f"import os\nos.write(1,{raw!r})\n")
++    result = base._run(base._command(tmp_path, command))
++    assert result.returncode == 0 and not result.stderr
++    assert result.stdout.split(b"\n", 1)[1] == raw
++    assert base._logs(tmp_path)[0].read_bytes() == raw
++
++
++def test_initialization_failure_remains_visible_and_nonzero(tmp_path):
++    raw = b"loading model\nTraceback: synthetic DCP Resume failure\n"
++    command = base._script(
++        tmp_path, f"import os\nos.write(2,{raw!r})\nraise SystemExit(9)\n"
++    )
++    result = base._run(base._command(tmp_path, command))
++    assert result.returncode == 9
++    assert result.stdout.split(b"\n", 1)[1] == raw
++    assert b"[NoTTT][failed] exit=9" in result.stderr
++    assert b"synthetic DCP Resume failure" in result.stderr
++    assert base._logs(tmp_path)[0].read_bytes() == raw
++
++
++def test_each_resume_starts_with_full_initialization_and_preserves_prior_log(tmp_path):
++    raws = []
++    for invocation in range(2):
++        initial = f"Resume initialization {invocation}\n".encode()
++        raw = initial + START + b"hidden loader telemetry\n" + PROGRESS
++        raws.append(raw)
++        command = base._script(tmp_path, f"import os\nos.write(1,{raw!r})\n")
++        result = base._run(base._command(tmp_path, command))
++        assert result.returncode == 0 and not result.stderr
++        assert result.stdout.split(b"\n", 1)[1] == initial + START + PROGRESS
++    logs = base._logs(tmp_path)
++    assert len(logs) == 2 and {p.read_bytes() for p in logs} == set(raws)
++
++
++def test_real_supervisor_streams_incomplete_resume_log_before_starting_training(
++    tmp_path,
++):
++    initial = "DCP Resume 恢复中，尚未换行".encode()
++    after = b"\n" + START + b"hidden loader telemetry\n" + PROGRESS
++    command = base._script(
++        tmp_path,
++        f"import os,sys\nos.write(1,{initial!r})\nsys.stdin.buffer.read(1)\n"
++        f"os.write(1,{after!r})\n",
++    )
++    process = subprocess.Popen(
++        base._command(tmp_path, command),
++        stdin=subprocess.PIPE,
++        stdout=subprocess.PIPE,
++        stderr=subprocess.PIPE,
++    )
++    try:
++        first = base._read_until(process, initial)
++        assert (
++            process.poll() is None and base._logs(tmp_path)[0].read_bytes() == initial
++        )
++        rest, err = process.communicate(input=b"x", timeout=12)
++        assert process.returncode == 0 and not err
++        assert (first + rest).split(b"\n", 1)[1] == initial + b"\n" + START + PROGRESS
++        assert base._logs(tmp_path)[0].read_bytes() == initial + after
++    finally:
++        if process.poll() is None:
++            process.send_signal(signal.SIGTERM)
++            process.communicate(timeout=12)
+diff --git a/tools/v3/no_ttt_console_test.py b/tools/v3/no_ttt_console_test.py
+index cc64118f..7a9347ab 100644
+--- a/tools/v3/no_ttt_console_test.py
++++ b/tools/v3/no_ttt_console_test.py
+@@ -16,10 +16,17 @@ import pytest
+ ROOT = Path(__file__).resolve().parents[2]
+ HELPER = ROOT / "scripts/no_ttt_console.py"
+ PROGRESS = "[CorrectedV3][progress] step=1/30000 loss=1.25\n"
+-RAW = (
++START = (
++    "[10-31 15:00:00|INFO|cosmos_framework/trainer/__init__.py:330:train] "
++    "Starting training...\n"
++)
++INITIAL = (
+     "Cosmos initializing\n"
+     "[rank1] warning: synthetic rank1\n"
+-    '[NoTTT][cpu_loader] {"wait_ms":3}\n'
++    '[NoTTT][cpu_loader] {"wait_ms":3}\n' + START
++)
++RAW = (
++    INITIAL
+     + PROGRESS
+     + '[CorrectedV3][train] {"iteration":1}\n'
+     + "[CorrectedV3][checkpoint] saved\n"
+@@ -81,7 +88,7 @@ def test_full_stdout_stderr_saved_before_progress_copy_and_exact_exit(tmp_path,
+     assert result.returncode == code
+     lines = result.stdout.decode().splitlines(keepends=True)
+     assert lines[0].startswith("[NoTTT][log] full log: ")
+-    assert lines[1:] == [PROGRESS]
++    assert lines[1:] == (INITIAL + PROGRESS).splitlines(keepends=True)
+     assert len(_logs(tmp_path)) == 1 and _logs(tmp_path)[0].read_bytes() == RAW.encode()
+     assert json.loads(marker.read_text()) == {"unbuffered": "1"}
+     assert not (tmp_path / "output root/no_ttt_shell_test").exists()
+@@ -99,7 +106,7 @@ def test_warning_only_no_progress_is_not_an_empty_grep_failure(tmp_path):
+     )
+     result = _run(_command(tmp_path, command))
+     assert result.returncode == 0 and not result.stderr
+-    assert len(result.stdout.splitlines()) == 1
++    assert result.stdout.splitlines()[1:] == [b"warning only; not a failed process"]
+     assert _logs(tmp_path)[0].read_bytes() == b"warning only; not a failed process\n"
+ 
+ 
+@@ -118,7 +125,8 @@ def test_each_resume_uses_exclusive_new_log_without_overwriting_history(tmp_path
+ 
+ def test_unbuffered_partial_line_huge_json_and_invalid_bytes_preserve_all_raw(tmp_path):
+     raw = (
+-        b"json="
++        START.encode()
++        + b"json="
+         + b"x" * 200000
+         + b"\n\xff\xfe\n"
+         + PROGRESS.encode()
+@@ -130,7 +138,7 @@ def test_unbuffered_partial_line_huge_json_and_invalid_bytes_preserve_all_raw(tm
+     )
+     result = _run(_command(tmp_path, command))
+     assert result.returncode == 0
+-    assert result.stdout.decode().splitlines(keepends=True)[1:] == [PROGRESS]
++    assert result.stdout.decode().splitlines(keepends=True)[1:] == [START, PROGRESS]
+     assert _logs(tmp_path)[0].read_bytes() == raw
+ 
+ 
+@@ -362,7 +370,7 @@ def test_real_standard_launcher_default_split_preserves_original_fake_training_a
+     result = _run(["bash", str(script), "resume", "12220"], env=env)
+     assert result.returncode == 0 and result.stdout.decode().splitlines(keepends=True)[
+         1:
+-    ] == [PROGRESS]
++    ] == (INITIAL + PROGRESS).splitlines(keepends=True)
+     data = json.loads(capture.read_text())
+     assert data["argv"][:4] == [
+         "-m",
+diff --git a/tools/v3/no_ttt_integrated_entry_test.py b/tools/v3/no_ttt_integrated_entry_test.py
+index 8e9f9a8a..c7c38dcc 100644
+--- a/tools/v3/no_ttt_integrated_entry_test.py
++++ b/tools/v3/no_ttt_integrated_entry_test.py
+@@ -20,6 +20,10 @@ from unittest.mock import patch
+ import pytest
+ 
+ ROOT = Path(__file__).resolve().parents[2]
++START = (
++    b"[10-31 15:00:00|INFO|cosmos_framework/trainer/__init__.py:330:train] "
++    b"Starting training...\n"
++)
+ 
+ 
+ def _receive_launch():
+@@ -115,6 +119,7 @@ def _receive_launch():
+             loader.close()
+             assert loader.closed and loader.context.processes == []
+     Path(os.environ["COMPOSITION_CAPTURE"]).write_text(json.dumps(observation))
++    os.write(1, b"synthetic initialization and Resume binding complete\n" + START)
+     os.write(1, b"[NoTTT][cpu_loader] synthetic receiver bound\n")
+     os.write(2, b"[rank1] diagnostic retained by the actual console wrapper\n")
+     os.write(1, b"[CorrectedV3][progress] composition step=0/30000\n")
+@@ -192,9 +197,6 @@ def test_approved_launcher_console_and_actual_receiver_compose(
+     (tmp_path / "console.stderr").write_bytes(result.stderr)
+     assert result.returncode == code, result.stderr
+     assert result.stdout.splitlines()[0].startswith(b"[NoTTT][log] full log: ")
+-    assert result.stdout.splitlines()[1:] == [
+-        b"[CorrectedV3][progress] composition step=0/30000"
+-    ]
+     data = json.loads(capture.read_text())
+     assert data["loader"] == ("NoTTTAsyncLoader" if workers else None)
+     assert data["profile"]["workers"] == workers
+@@ -231,6 +233,11 @@ def test_approved_launcher_console_and_actual_receiver_compose(
+     logs = list((output / "_launch_logs" / job).glob("launch_*.log"))
+     assert len(logs) == 1
+     raw = logs[0].read_bytes()
++    assert raw.count(START) == 1
++    initial = raw[: raw.index(START) + len(START)]
++    assert result.stdout.split(b"\n", 1)[1] == (
++        initial + b"[CorrectedV3][progress] composition step=0/30000\n"
++    )
+     assert b"[NoTTT][cpu_loader] synthetic receiver bound\n" in raw
+     assert b"[rank1] diagnostic retained by the actual console wrapper\n" in raw
+     assert b"[CorrectedV3][progress] composition step=0/30000\n" in raw

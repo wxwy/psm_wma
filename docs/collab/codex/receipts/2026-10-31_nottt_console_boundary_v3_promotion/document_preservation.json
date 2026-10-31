@@ -1,0 +1,32 @@
+{
+  "SESSION.md": {
+    "strategy": "both exact added prefixes plus common history once",
+    "common_bytes": 318906,
+    "ours_unique_bytes": 1333,
+    "candidate_unique_bytes": 3268,
+    "ours_unique_sha256": "753d95a7c499b30eaf4a5966ea26a9bf1e5be1c002a0b71796b22d1ea8e4c481",
+    "candidate_unique_sha256": "24805d50e3cb06da131306f78b615426697ecd6a0a265a30b51715331284a7b3",
+    "merged_bytes": 323548,
+    "all_record_blocks_preserved": true
+  },
+  "TODO.md": {
+    "strategy": "canonical/claim unchanged prefix then candidate-only suffix",
+    "common_bytes": 186371,
+    "ours_unique_bytes": 524,
+    "candidate_unique_bytes": 552,
+    "ours_unique_sha256": "356b0b5c978db3da21a13116dec70a37de17068e3549adbd8d97e66d40242770",
+    "candidate_unique_sha256": "65f040062cbdf0159b10a2b0f9f082a1c11ce40e22231f619d28dd036e2ec7d6",
+    "merged_bytes": 187447,
+    "all_record_blocks_preserved": true
+  },
+  "docs/collab/chatgpt/CODEX_INBOX.md": {
+    "strategy": "canonical/claim unchanged prefix then candidate-only suffix",
+    "common_bytes": 87581,
+    "ours_unique_bytes": 1630,
+    "candidate_unique_bytes": 2438,
+    "ours_unique_sha256": "a79ac908447fdd9d7926cd9c09c9e44e7d938dea7c09baf294ddf69516f96c58",
+    "candidate_unique_sha256": "7fdb2f81354f9687f3a5e9e00e1236dc3d46387d9a9b08a278518502305d3072",
+    "merged_bytes": 91649,
+    "all_record_blocks_preserved": true
+  }
+}

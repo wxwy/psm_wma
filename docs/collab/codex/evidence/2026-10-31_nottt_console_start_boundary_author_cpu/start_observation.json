@@ -1,0 +1,27 @@
+{
+  "observed_cst": "2026-10-31T15:24:54.240402+08:00",
+  "fetched_advertised_V3": "cee6f53eef345579c3db1124148f350fd2edc618",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "owner_request": "Issue13 Starting training boundary; initial logs complete, marker visible, then Rank0 progress only; full raw logging+exit errors unchanged",
+  "source_observed": {
+    "trainer": "cosmos_framework/trainer/__init__.py:330 log.info(Starting training...) after checkpointer.load and initialization",
+    "logger": "utils/log.py Rank0 default; [MM-DD HH:mm:ss|INFO|relativepath:line:function] message; optional ANSI"
+  },
+  "candidate_branch": "v3-nottt-console-start-boundary-20261031",
+  "production_scope": [
+    "scripts/no_ttt_console.py"
+  ],
+  "test_scope": [
+    "tools/v3/no_ttt_console_test.py",
+    "tools/v3/no_ttt_console_boundary_test.py",
+    "tools/v3/no_ttt_integrated_entry_test.py"
+  ],
+  "no_changes": [
+    "Child",
+    "two training launchers",
+    "EvalV2",
+    "training/DCP/config/Job",
+    "active Resume worktree/process/logs"
+  ],
+  "authorization": "isolated implementation+small CPU; then new SHA/evidence for GPT review; no V3 merge/GPU/training/runtime"
+}

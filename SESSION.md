@@ -1,3 +1,24 @@
+# 2026-10-31 — Issue13 boundary promotion prepared, push pending
+
+IN_PROGRESS; Owner-approved isolated promotion only. FormalAPPROVE_CODE
+3cf7453777a693ac029a79ed8b19afc55df0d4fa / unchangedChild6c83596d6a259e89c4cd3e79424024983426ac3d
+read in actual canonicalec9d7b26 review+Inbox. Newcloudworktree only; active
+NoTTTResume sharedcode/worktree/process/config/Job/Checkpoint/logs untouched.
+Prepared merge preserves latestV3+candidate22ca7cc3 histories/allrecords.
+Only3 bookkeeper conflicts, bothsides retained. Git-onlyaudit PASS:9851Root
+sourceobjects equalapproved3cf, oneproductionwrapper; bothlaunchers/wholeChild6c
+unchanged.43 frozen artifact hashes/8bindings/original46JUnit checked READONLY;
+NO pytest/static/GPU/OS/realmodel/data/DCP/runtime or DS execution.
+
+At2026-10-31T16:05:09.716125+08:00, next fresh ancestry check and normal nonforceV3push, then
+exact remoteRoot/unchangedChild/Gitlink readback andSTOP. Newbehavior for later
+launches only; no sharedtraining code pull/update or currentrun restart.
+Report docs/collab/codex/reviews/2026-10-31_V3_NoTTT_Issue13_Boundary_Approved_V3_Promotion.md;
+receipts docs/collab/codex/receipts/2026-10-31_nottt_console_boundary_v3_promotion/.
+INFO-disabled fullvisibility remains accepted nonblocker, no newfallback.
+
+## Prior preserved records
+
 # 2026-10-31 — Issue13 approved boundary promotion claimed
 
 IN_PROGRESS; Codex, NEW isolated cloud worktree v3-nottt-boundary-promotion-20261031.
@@ -17,6 +38,62 @@ Root/Child/Gitlink readback thenSTOP. INFO-off full-display behavior is accepted
 nonblocker, no new fallback/config or source changes. Observation2026-10-31T16:03:31.872630+08:00.
 
 ## Preserved canonical records
+
+
+## Preserved candidate session records
+
+# 2026-10-31 — No-TTT start-boundary candidate published; STOP for GPT
+
+REVIEW. FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa /
+unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d.
+Isolatedbranch v3-nottt-console-start-boundary-20261031 evidence/request HEAD
+9022cbc44848e153a17211165367460da8d6e6cc published. GitHub fetch/advertised
+readback2026-10-31 15:34:28 CST PASS,43artifact hashes/8sourcebindings verified,
+canonicalV3 stillcee6f53e andChildofficial6c unchanged, Inboxprefix intact.
+Author46CPU PASS/static4; no GPU or currentResume/Job/DCP/log access/update.
+Receipt docs/collab/codex/receipts/2026-10-31_nottt_console_start_boundary/.
+New code outputs fullinit+Starting marker thenProgress; only wrapper production
+changed. This receipt successor is docs-only, FormalPair unchanged. STOP for
+GPTfreshincremental Code Gate; no V3merge or currentResume restart.
+
+## Earlier records preserved
+
+# 2026-10-31 — No-TTT Starting-training boundary author PASS; REVIEW
+
+FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d.
+Isolated v3-nottt-console-start-boundary-20261031 fromcurrentV3cee6f53e.
+Production onlyconsole helper; fullinit raw-first streaming through visible
+Starting training marker, then progress-only. No marker means full visibility.
+Bothlaunchers/wholeChild/Trainer/DCP/config/EvalV2 unchanged;12,456otherRoot
+objects and raw-write/process/cleanup/main AST exactbaseline.
+Author46PASS/0fail/error/skip (19new+21console+6synthetic binding), Ruff0.12.7
+check/format/AST4PASS, cleanexactPair/sourceunchanged. No full49/84/GPU
+rerun. No actualResume/model/data/DCP/Job/log/runtime operations or DS dispatch.
+Handoff/evidence dated2026-10-31_nottt_console_start_boundary under
+docs/collab/codex;43artifact checksums/8sourcebindings/rawconsole examples.
+Observation2026-10-31T15:32:53.761388+08:00:fresh fetchedV3cee6f53e/noadvance; exactnewRootreview
+scanexit1. Publish isolatedcandidate/evidence/request, remoteverify thenSTOP
+for GPTfreshoutput-layer Gate. No canonical merge or currentResume restart.
+
+## Earlier claim/canonical history preserved
+
+# 2026-10-31 — Issue13 Starting-training console boundary claimed
+
+IN_PROGRESS; Codex; isolated v3-nottt-console-start-boundary-20261031 from
+fresh fetched/advertisedV3cee6f53eef345579c3db1124148f350fd2edc618; Child/Gitlink6c unchanged.
+Latest Owner requirement: complete init stdout/stderr until actual coreTrainer
+Starting training... log (currently330, Rank0 by default), echo marker, then
+progress-only; full raw logging/error exits/owned cleanup remain unchanged.
+Planned production ONLYscripts/no_ttt_console.py, plus narrow console/boundary/
+existing synthetic integration fixtures and docs/records/evidence. No launcher,
+Child/Trainer/config/algorithm/DCP/EvalV2 or active Resume worktree/process/log
+changes. Source log formatting inspected in Childutils/log.py.
+Small CPU tests only, no84/oldGPU experiments/real data/model/DCP. Freeze new
+Root/unchangedChild Pair, publish isolated candidate/evidence/request thenSTOP
+for GPT fresh review; not authorized V3 merge or runtime start.
+Claim CST 2026-10-31T15:24:54.240402+08:00; uncommitted implementation not yet started.
+
+## Prior canonical state preserved
 
 # 2026-10-31 — V3 unified train/Eval promotion DONE
 

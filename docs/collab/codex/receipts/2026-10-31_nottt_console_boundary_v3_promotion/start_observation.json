@@ -1,0 +1,15 @@
+{
+  "observed_cst": "2026-10-31T16:03:31.872630+08:00",
+  "prior_candidate_head": "22ca7cc387dc41e001408026d42fe1fea799f922",
+  "fresh_fetched_advertised_V3": "ec9d7b26391821d0eed34977e8d45ae90b346ba3",
+  "canonical_delta": "review + append-only Inbox only sincecee6f53e",
+  "approved_formal_root": "3cf7453777a693ac029a79ed8b19afc55df0d4fa",
+  "unchanged_child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "exact_review": "docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue13_StartingTrainingBoundary_3cf74537_6c83596d_Incremental_Code_Gate_APPROVE_CODE.md",
+  "review_blob": "4b35c2980bb4c0044557f9647731dd3f72c03795",
+  "verdict": "APPROVE_CODE",
+  "latest_owner_instruction": "safe one-production-file promotion from isolated worktree; must not update/restart active shared NoTTTResume directory or job",
+  "scope": "Git merge and frozen object/evidence readback only, no tests/runtime",
+  "isolation": "new cloud worktree only; no training-server command/access or existing worktree file edits",
+  "INFO_disabled_note": "retain full output, accepted nonblocker; no fallback or LOGURU config change"
+}

@@ -1,0 +1,23 @@
+{
+  "author_only": true,
+  "final_unique_cases": 46,
+  "new_boundary_cases": 19,
+  "existing_console_regressions": 21,
+  "existing_synthetic_integration": 6,
+  "failed_errors_skipped": [
+    0,
+    0,
+    0
+  ],
+  "static_python_files": 4,
+  "production_files_changed": 1,
+  "child_changed": false,
+  "launchers_changed": false,
+  "old_full49_or84_rerun": false,
+  "real_training_model_dataset_DCP_GPU_OS_or_simulation": false,
+  "actual_training_torchrun_or_worker_pool": false,
+  "active_resume_touched": false,
+  "contract_updates": "old fixtures now emit Starting training and assert full prefix plus Progress; raw log/exit/failure/process cleanup assertions retained",
+  "draft_static_note": "Two unused test imports removed before freezing Formal3cf; final Ruff rules/format unchanged and first frozen CPU gate PASS.",
+  "deployment": "candidate for later launches only, after GPT review; no canonical merge or current Resume restart"
+}
