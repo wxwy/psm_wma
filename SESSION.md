@@ -1,3 +1,20 @@
+# 2026-10-31 — EvalV2 CLI tasks-all fix claimed
+
+IN_PROGRESS; Codex; new isolated v3-eval-v2-cli-tasks-all-20261031 from
+fresh V30ab13951d640d50ea2c9c8812817bf3009eae7b5, Child6c unchanged. Owner identifies real parser
+bug: a.tasks.split makes all→[all], discover accepts literal stringall only.
+Plan one production line in scripts/robocasa_eval_v2/config.py: preserve exact
+all string, CSV unchanged. New narrowCPUtasks tests + existingconfig17 only;
+synthetic18metadata/real CLI dry-run, no models/GPU/env/runtime. No Child,
+Scheduler/Resume/identity/TaskDiscovery changes or oldGate broad rerun.
+Record exact Root/6c, RED oldconfig/GREEN new, raw logs/JUnit/static/source
+proof, publish isolated candidate andGPTreview request thenSTOP. No V3 merge
+or current training/eval/sharedcode/Job/DCP/log operations.
+Latest canonical0ab LocalTTT designreview unrelated, preserved without action.
+Claim2026-10-31T21:34:59.519441+08:00; source edit not yet started.
+
+## Prior canonical records
+
 # 2026-10-31 — Approved No-TTT boundary V3 promotion DONE
 
 GitHub canonical readback PASS at2026-10-31 16:07:40 CST.

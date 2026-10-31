@@ -91,7 +91,7 @@ def resolve(argv=None):
     if a.gpus is not None:
         cfg["gpu_ids"] = [int(x) for x in a.gpus.split(",")]
     if a.tasks is not None:
-        cfg["tasks"] = a.tasks.split(",")
+        cfg["tasks"] = "all" if a.tasks == "all" else a.tasks.split(",")
     if a.episodes is not None:
         cfg["episodes_per_task"] = a.episodes
     if a.output_dir is not None:

@@ -508,3 +508,7 @@
 # 2026-10-31 — Issue13 initialization visibility
 
 - **NOTTT-CONSOLE-START-BOUNDARY** — DONE (code+original syntheticCPU Gate); exact3cf7453777a693ac029a79ed8b19afc55df0d4fa/6c83596d6a259e89c4cd3e79424024983426ac3d formallyAPPROVE_CODEec9d review, publishedV3 via437fdd04. Original46PASS/static Evidence preserved, not rerun. CurrentResume sharedcode/process untouched, no runtimeauthorization inferred.
+
+# 2026-10-31 — EvalV2 CLI wildcard parity
+
+- **EVALV2-CLI-TASKS-ALL** — IN_PROGRESS; Codex; Owner confirmed parser bug, base0ab13951/unchangedChild6c. One-line CLIall canonical string preservation, CSV unchanged; new CPU semantic/parity/real dry-run/negative tests + narrow config regression, frozen RED/GREEN/source/static evidence. Publish isolated exactRoot/6c thenGPTfreshreview/STOP. No Child/runtime/realdata/model/DCP/GPU/liveJob or V3merge.
