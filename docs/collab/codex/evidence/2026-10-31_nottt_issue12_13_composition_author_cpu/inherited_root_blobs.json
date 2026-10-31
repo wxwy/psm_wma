@@ -1,0 +1,37 @@
+[
+  {
+    "path": "scripts/no_ttt_console.py",
+    "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "blob": "59c135fb6365d2663d9417f97a5eb90172d4ea48"
+  },
+  {
+    "path": "scripts/train_v3_matched_no_ttt.sh",
+    "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "blob": "656ef042e09862301f1586fd58608a5a4658218f"
+  },
+  {
+    "path": "scripts/train_v3_matched_no_ttt_4gpu.sh",
+    "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "blob": "e8e8ba5d5cc5cb09ed9f6775bd2c2243b418ea7e"
+  },
+  {
+    "path": "tools/v3/no_ttt_console_test.py",
+    "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "blob": "cc64118fe4cf281de859156640009c876bb2f2ae"
+  },
+  {
+    "path": "tools/v3/matched_no_ttt_entry_test.py",
+    "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "blob": "a1a7d432217bebdd817a2225763aeea72690c510"
+  },
+  {
+    "path": "tools/v3/no_ttt_workers_entry_test.py",
+    "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "blob": "663aba165850e3bbeb84faf883e9ed1660b3a940"
+  },
+  {
+    "path": "tools/v3/no_ttt_async_port_test.py",
+    "donor": "c66ade95b044d3664cd782d43d7917a604425db3",
+    "blob": "374f0693c0317d02185e0c1cdd24edf8e535e13d"
+  }
+]

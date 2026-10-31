@@ -1,0 +1,16 @@
+{
+  "working_directory": "/workspace/psm-wma-nottt-integrated",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-nottt-integrated-20261031/run_gate.py",
+    "--root-worktree",
+    "/workspace/psm-wma-nottt-integrated",
+    "--expected-root",
+    "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+    "--expected-child",
+    "baf1b5bf46853e9849a91518803b9738fc216235",
+    "--evidence-dir",
+    "/tmp/psm-nottt-integrated-20261031/verified"
+  ],
+  "note": "Already executed; exact underlying static/pytest commands and overrides retained in gate.json/environment.json."
+}

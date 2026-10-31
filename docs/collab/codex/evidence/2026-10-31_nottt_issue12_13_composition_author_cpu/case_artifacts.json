@@ -1,0 +1,62 @@
+[
+  {
+    "case": "test_approved_launcher_console0",
+    "world_size": 4,
+    "workers": 8,
+    "phase": "fresh",
+    "loader": "NoTTTAsyncLoader",
+    "raw_log": "/tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console0/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793422943154384798_xw6vt2ra.log",
+    "artifact_raw_log": "cases/test_approved_launcher_console0/launch_1793422943154384798_xw6vt2ra.log",
+    "failure_injected": false
+  },
+  {
+    "case": "test_approved_launcher_console1",
+    "world_size": 4,
+    "workers": 8,
+    "phase": "resume",
+    "loader": "NoTTTAsyncLoader",
+    "raw_log": "/tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console1/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793422949982526634_zj45u3cd.log",
+    "artifact_raw_log": "cases/test_approved_launcher_console1/launch_1793422949982526634_zj45u3cd.log",
+    "failure_injected": false
+  },
+  {
+    "case": "test_approved_launcher_console2",
+    "world_size": 8,
+    "workers": 0,
+    "phase": "fresh",
+    "loader": null,
+    "raw_log": "/tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console2/output with spaces/_launch_logs/no_ttt_composition_world8_ga2/launch_1793422956684848643_1jyfzg2w.log",
+    "artifact_raw_log": "cases/test_approved_launcher_console2/launch_1793422956684848643_1jyfzg2w.log",
+    "failure_injected": false
+  },
+  {
+    "case": "test_approved_launcher_console3",
+    "world_size": 8,
+    "workers": 0,
+    "phase": "resume",
+    "loader": null,
+    "raw_log": "/tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console3/output with spaces/_launch_logs/no_ttt_composition_world8_ga2/launch_1793422963255139999_gml6e413.log",
+    "artifact_raw_log": "cases/test_approved_launcher_console3/launch_1793422963255139999_gml6e413.log",
+    "failure_injected": false
+  },
+  {
+    "case": "test_approved_launcher_console4",
+    "world_size": 4,
+    "workers": 0,
+    "phase": "resume",
+    "loader": null,
+    "raw_log": "/tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console4/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793422969912009572_nudvev4i.log",
+    "artifact_raw_log": "cases/test_approved_launcher_console4/launch_1793422969912009572_nudvev4i.log",
+    "failure_injected": false
+  },
+  {
+    "case": "test_approved_launcher_console5",
+    "world_size": 4,
+    "workers": 8,
+    "phase": "resume",
+    "loader": "NoTTTAsyncLoader",
+    "raw_log": "/tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console5/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793422976536844423_x_aoz3h6.log",
+    "artifact_raw_log": "cases/test_approved_launcher_console5/launch_1793422976536844423_x_aoz3h6.log",
+    "failure_injected": true
+  }
+]

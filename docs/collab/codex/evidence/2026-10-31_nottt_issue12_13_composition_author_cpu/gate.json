@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "gate": "AUTHOR_MINIMAL_ISSUE12_13_COMPOSITION_CPU",
+  "steps": [
+    {
+      "name": "bash_syntax",
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/train_v3_matched_no_ttt.sh"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-integrated",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.0037564130034297705
+    },
+    {
+      "name": "bash_syntax4",
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/train_v3_matched_no_ttt_4gpu.sh"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-integrated",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.0036292150034569204
+    },
+    {
+      "name": "shellcheck",
+      "argv": [
+        "/tmp/psm-nottt-console-20261031/tools/bin/shellcheck",
+        "scripts/train_v3_matched_no_ttt.sh",
+        "scripts/train_v3_matched_no_ttt_4gpu.sh"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-integrated",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.11418592202244326
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/no_ttt_console.py",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/matched_no_ttt_entry_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py",
+        "tools/v3/no_ttt_async_port_test.py",
+        "tools/v3/no_ttt_integrated_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-integrated",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.06427487800829113
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "scripts/no_ttt_console.py",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/matched_no_ttt_entry_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py",
+        "tools/v3/no_ttt_async_port_test.py",
+        "tools/v3/no_ttt_integrated_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-integrated",
+      "timeout_s": 60,
+      "exit_code": 0,
+      "seconds": 0.0640097519790288
+    },
+    {
+      "name": "composition",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-integrated",
+        "tools/v3/no_ttt_integrated_entry_test.py",
+        "--basetemp=/tmp/psm-nottt-integrated-20261031/verified/cases",
+        "--junitxml=/tmp/psm-nottt-integrated-20261031/verified/junit.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-integrated",
+      "timeout_s": 480,
+      "exit_code": 0,
+      "seconds": 40.76952030198299
+    }
+  ],
+  "real_gpu": false,
+  "real_data": false,
+  "real_model": false,
+  "real_dcp": false,
+  "training": false,
+  "actual_torchrun": false,
+  "pool_spawn": false,
+  "historical49_43_58_301_rerun": false,
+  "gpu_performance_rerun": false,
+  "identities": {
+    "root": "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+    "child": "baf1b5bf46853e9849a91518803b9738fc216235",
+    "gitlink": "baf1b5bf46853e9849a91518803b9738fc216235"
+  },
+  "syntax_python_files": 6,
+  "totals": {
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true
+}

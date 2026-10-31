@@ -1,0 +1,28 @@
+{
+  "utc": "2026-10-31T05:00:08.500439+00:00",
+  "candidate_start": "b260290ef09ef25a8a41259aef153df5efff3369",
+  "prior_candidate_head": "761ef61092a0afb3053cbc520cab7bb8ee3eec51",
+  "fresh_fetch_advertised_V3": "b260290ef09ef25a8a41259aef153df5efff3369",
+  "canonical_changes_since_previous_task": [
+    "b260290ef09ef25a8a41259aef153df5efff3369 docs/reviews and Inbox only"
+  ],
+  "sync": "new isolated worktree at exact canonical HEAD; old candidates preserved, no divergence overwritten",
+  "matched_reviews": [
+    {
+      "path": "docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue13_DefaultProgressConsole_24dbb677_0ae313e3_Incremental_Code_Gate_APPROVE_CODE.md",
+      "formal_root": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "formal_child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+      "verdict": "APPROVE_CODE",
+      "blob": "9291bb0682f03c7675702da9a02e1f180e757f00"
+    },
+    {
+      "path": "docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue12_LazySource_CanonicalPort_c66ade95_baf1b5bf_Incremental_Code_Gate_APPROVE_CODE.md",
+      "formal_root": "c66ade95b044d3664cd782d43d7917a604425db3",
+      "formal_child": "baf1b5bf46853e9849a91518803b9738fc216235",
+      "verdict": "APPROVE_CODE",
+      "blob": "fcf83d58183c72f3f2af3d11e629b2776d889d48"
+    }
+  ],
+  "roles": "latest Owner Codex integration+CPU, GPT review, DS independent execution; no legacy pane delegation or GPU",
+  "next_authorized": "isolated composition only, then new exact Pair review; no canonical merge or training"
+}

@@ -1,0 +1,11 @@
+[NoTTT][failed] exit=7; training_exit=7; training failed or interrupted; full log: /tmp/psm-nottt-integrated-20261031/verified/cases/test_approved_launcher_console5/output with spaces/_launch_logs/no_ttt_composition_world4_ga4/launch_1793422976536844423_x_aoz3h6.log
+[NoTTT][failed] last raw output:
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/data/dataloader.py:424: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 5, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  self.check_worker_number_rationality()
+[NoTTT][cpu_loader] synthetic receiver bound
+[rank1] diagnostic retained by the actual console wrapper
+[CorrectedV3][progress] composition step=0/30000
+Traceback: injected failure after successful async binding
+

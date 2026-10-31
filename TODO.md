@@ -479,4 +479,4 @@
 
 # 2026-10-31 — Approved No-TTT candidates composition
 
-- **NOTTT-ISSUE12-13-INTEGRATION** — IN_PROGRESS; Codex; precondition two exact APPROVE_CODE reviews at canonicalb260290e verified, isolated candidate only. Inherit approved3Root production blobs and unchanged baf1b5bf Child, preserveEvalV2/canonical records/old candidate branches. Few shell+console+positive-worker receiver CPU cases, exact-object audit/static, newFormalPair/evidence then GPTcomposition review andSTOP. No repeated historical suites/GPU/performance/realDCP/formalResume/canonicalpromotion.
+- **NOTTT-ISSUE12-13-INTEGRATION** — REVIEW; Codex; FormalRoot57e36decbec0e00ecb94dc1c080fd8976afff25d/approved unchangedChild-Gitlinkbaf1b5bf46853e9849a91518803b9738fc216235, isolatedRootonly. Production3/inherited7Root blobs exact approved donors, wholeChild unchanged, EvalV2 intact. New6CPU PASS/0skip; static6Python/bash2/ShellCheck PASS;15bindings/rawJUnit/log/Diff. Publish candidate/evidence/request/readback thenSTOP for GPTcomposition Gate. No repeated historical suites/GPU/realDCP/Job/Resume/canonicalpromotion.

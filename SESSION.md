@@ -1,3 +1,26 @@
+# 2026-10-31 — No-TTT Issue12+13 composition author PASS, REVIEW
+
+Formal Root 57e36decbec0e00ecb94dc1c080fd8976afff25d / unchangedChild-Gitlink baf1b5bf46853e9849a91518803b9738fc216235.
+Isolated Root v3-nottt-integrated-20261031 from current canonicalb260.
+3production/seven inherited Root paths equal approved donors; entire approved
+Child unchanged, EvalV2/protected root trees preserved. No production rework.
+New6 composition cases PASS/0fail/error/skip in40.269s; Ruff0.12.7 check/format/
+AST6,bash2,ShellCheck0.10.0 PASS; exact cleanPair/source unchanged;15bindings.
+CLI/binding tests only, no real Phase5/model/optimizer/spawn/distributed/DCP/GPU.
+No historical suites/GPU A/B repeated. Initial external audit path typo retained
+under evidence preflight_path_error, no tests began until corrected audit.
+
+Two prior detailed exact-pair APPROVE_CODE reviews inherited from canonical.
+Fresh canonical fetch/advertisedb260 at 2026-10-31T05:04:43.374658+00:00; no advancement; newRoot
+review search exit1. No newPair approval inferred. Handoff/evidence dated
+2026-10-31 issue12_13_composition under docs/collab/codex. Publish isolated Root
+referencing existing publishedbafChild, remote readback then STOP for GPT.
+No canonical merge/DS dispatch/Job-history-config-DCP or trainingResume.
+Old candidate branches and immutable evidence retained; Owner resumes only
+after combined acceptance and separate authorization from originalC12200.
+
+## Earlier task claim / canonical session preserved
+
 # 2026-10-31 — No-TTT Issue12+13 minimal composition candidate
 
 IN_PROGRESS; Codex, isolated v3-nottt-integrated-20261031. New worktree starts
