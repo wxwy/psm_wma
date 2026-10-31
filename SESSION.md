@@ -1,3 +1,19 @@
+# 2026-10-31 — No-TTT start-boundary candidate published; STOP for GPT
+
+REVIEW. FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa /
+unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d.
+Isolatedbranch v3-nottt-console-start-boundary-20261031 evidence/request HEAD
+9022cbc44848e153a17211165367460da8d6e6cc published. GitHub fetch/advertised
+readback2026-10-31 15:34:28 CST PASS,43artifact hashes/8sourcebindings verified,
+canonicalV3 stillcee6f53e andChildofficial6c unchanged, Inboxprefix intact.
+Author46CPU PASS/static4; no GPU or currentResume/Job/DCP/log access/update.
+Receipt docs/collab/codex/receipts/2026-10-31_nottt_console_start_boundary/.
+New code outputs fullinit+Starting marker thenProgress; only wrapper production
+changed. This receipt successor is docs-only, FormalPair unchanged. STOP for
+GPTfreshincremental Code Gate; no V3merge or currentResume restart.
+
+## Earlier records preserved
+
 # 2026-10-31 — No-TTT Starting-training boundary author PASS; REVIEW
 
 FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d.

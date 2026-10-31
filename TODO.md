@@ -503,4 +503,4 @@
 
 # 2026-10-31 — Issue13 initialization visibility
 
-- **NOTTT-CONSOLE-START-BOUNDARY** — REVIEW; Codex; FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d, isolatedRootonly. Fullinit through visibleStart marker thenprogress; singleproductionwrapper file, oldraw/error/cleanup preserved. Author46PASS/0skip,Ruff/format/AST4PASS,43artifacthashes/8bindings. Publish/readback thenGPTfreshGate/STOP; no V3merge/currentResume/GPU/Job/DCP/launchers/EvalV2 operations.
+- **NOTTT-CONSOLE-START-BOUNDARY** — REVIEW; Codex; FormalRoot3cf7453777a693ac029a79ed8b19afc55df0d4fa/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d, isolatedRootonly. Fullinit through visibleStart marker thenprogress; singleproductionwrapper file, oldraw/error/cleanup preserved. Author46PASS/0skip,Ruff/format/AST4PASS,43artifacthashes/8bindings. Published isolated9022cbc4/readbackPASS, AwaitGPTfreshGate/STOP; no V3merge/currentResume/GPU/Job/DCP/launchers/EvalV2 operations.
