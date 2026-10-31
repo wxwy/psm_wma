@@ -1,3 +1,23 @@
+# 2026-10-31 — No-TTT canonical-based async/lazy integration: REVIEW
+
+Formal Root `c66ade95b044d3664cd782d43d7917a604425db3`; Child/Gitlink `baf1b5bf46853e9849a91518803b9738fc216235`.
+Author targeted43PASS/0fail/error/skip; Ruff0.12.7 check/format/syntax14PASS;
+source unchanged, exact donor13 blobs and1,255 preserved canonical Child objects.
+Whole training trees equal accepted donor224c; current EvalV2 protected.
+No Issue13 code, Root launcher/default/config change, GPU/real data/model/DCP
+or formalJob operation. New evidence/Inbox/handoff are docs-only successor.
+
+Fresh prepublication fetch/ls-remote V3=2bcc27e94576837167cacd190af7dc837e6129cd
+at 2026-10-31T04:47:58.393939+00:00; no advancement; newPair review scan exit1.
+Read historical donor APPROVE_PERFORMANCE only; no newPair approval inferred.
+GPT integration Code Gate request, isolated Child→Root publication/readback then
+STOP under latest Owner role boundary (no DS dispatch/legacy three-pane wait).
+Evidence/handoff under docs/collab/codex dated2026-10-31 canonical_port.
+Raw warnings retained incl2 semaphore objects reported for resource_tracker
+cleanup; worker-process exit tests PASS, no blanket no-resource-leak claim.
+
+## Earlier task claim and preserved session history
+
 # 2026-10-31 — Issue12 canonical-based async/lazy integration candidate, claimed
 
 Explicit Child port committed baf1b5bf46853e9849a91518803b9738fc216235:

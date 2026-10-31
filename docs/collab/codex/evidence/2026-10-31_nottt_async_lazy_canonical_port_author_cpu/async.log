@@ -1,0 +1,19 @@
+...........{"build_ms": 14.843697979813442, "eager_constructor_calls": 0, "first_read_ms": 15.314410004066303, "full_source_load_calls": 0, "original_data_timeout_s": 120, "retained_episodes": [0], "scope": "synthetic_not_real_data_or_GPU", "source_parquet_opens_after_two_reads": 1, "source_parquet_opens_at_build": 0}
+.................../workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+...
+=============================== warnings summary ===============================
+../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+tools/v3/no_ttt_async_port_test.py::test_actual_trainer_uses_async_for_positive_workers_and_preserves_training_binding[8]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/data/dataloader.py:424: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 5, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+    self.check_worker_number_rationality()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+33 passed, 2 warnings in 18.64s
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 2 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

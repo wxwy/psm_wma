@@ -1,0 +1,25 @@
+{
+  "author_cpu_only": true,
+  "final_cases": 43,
+  "source_and_receiver_cases": 33,
+  "regression_cases": 10,
+  "preliminary_cases": 7,
+  "preliminary_cases_repeated_in_final": true,
+  "static_python_paths": 14,
+  "source_unchanged": true,
+  "original_301_reexecuted": false,
+  "original_58_full_reexecuted": false,
+  "real_data": false,
+  "real_model": false,
+  "real_dcp": false,
+  "real_gpu": false,
+  "real_gpu_performance_source": "GPT accepted DS_REPORTED fd9021b0/224c5f3c historical matched C12200 A/B; no new measurement by Codex",
+  "prefinal_static_correction": "Root78437396 had two import-bootstrap E402 annotations displaced by formatter. Four comment-only lines corrected in c66ade95 before final43/static; no production changes or relaxed rules.",
+  "raw_warnings_retained": [
+    "pynvml deprecation",
+    "8 workers exceed suggested affinity5 advisory",
+    "async process exit resource_tracker reports 2 semaphore objects for cleanup; not proof of zero semaphore leaks"
+  ],
+  "cleanup_evidence": "Selected tests assert owned spawned worker processes exit; raw semaphore warning remains disclosed. No blanket zero-resource-leak or GPU throughput claim.",
+  "review_status": "New integration Pair requires GPT fresh incremental Code Gate; no approval inferred from author PASS or historical donor performance."
+}

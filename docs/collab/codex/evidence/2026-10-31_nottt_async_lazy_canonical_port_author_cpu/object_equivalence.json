@@ -1,0 +1,45 @@
+{
+  "status": "PASS_AUTHOR_GIT_OBJECT_EQUIVALENCE",
+  "root": "c66ade95b044d3664cd782d43d7917a604425db3",
+  "child": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "canonical_base_child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "approved_donor_child": "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
+  "exact_donor_paths": 13,
+  "production_paths": 6,
+  "test_support_paths": 7,
+  "outside_allowlist_objects_preserved": 1255,
+  "protected_canonical_trees": {
+    "cosmos_framework/evaluation": "1e6c0dd03b19fae8cd576e1ef0de0a5249f8b31e",
+    "cosmos_framework/inference": "bfe0e05fe97aaa45d49b19a7994b8f560b04f165",
+    "cosmos_framework/simulation": "a505589a5a7d2cc4aa54bd4d95f3f2744a64a565",
+    "cosmos_framework/model": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+    "cosmos_framework/checkpoint": "a544d735bb95024eacca51fb3527955aad91616c",
+    "cosmos_framework/configs": "e24a02df6fa009c6f206bccb18925d9d0facf6aa",
+    "packages": "566c617b0655ccb4aff215024db1db31209f2703",
+    "uv.lock": "0a05554a4e8410ec820f9a9a0548bba4720c250f"
+  },
+  "whole_training_trees_equal_donor": {
+    "cosmos_framework/trainer": "621320f8a8adc42c92182cd7b0367a4d091707a5",
+    "cosmos_framework/data": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5",
+    "cosmos_framework/model": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+    "cosmos_framework/checkpoint": "a544d735bb95024eacca51fb3527955aad91616c",
+    "cosmos_framework/utils": "a0e153f6ed30c1944091b51527365a4f778b12b3",
+    "cosmos_framework/configs": "e24a02df6fa009c6f206bccb18925d9d0facf6aa",
+    "examples": "12a76fe82e466479aa3c930f78fdd94b7621c7df",
+    "uv.lock": "0a05554a4e8410ec820f9a9a0548bba4720c250f"
+  },
+  "root_changed_paths": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Canonical_Port_2026-10-31.md",
+    "docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Port_inventory_2026-10-31.json",
+    "tools/v3/no_ttt_async_port_test.py"
+  ],
+  "root_launchers_equal_both_base_and_donor": {
+    "scripts/train_v3_matched_no_ttt.sh": "085b54c971e99384f99fae9f19011914ddceb0c5",
+    "scripts/train_v3_matched_no_ttt_4gpu.sh": "dd786c9938826124caf6ef01b48ea7805754bb84"
+  },
+  "issue13_not_included": true,
+  "real_training_or_dcp_gpu_rerun": false
+}

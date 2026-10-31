@@ -1,0 +1,16 @@
+{
+  "launcher": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-nottt-port-20261031/run_gate.py",
+    "--root-worktree",
+    "/workspace/psm-wma-nottt-port",
+    "--expected-root",
+    "c66ade95b044d3664cd782d43d7917a604425db3",
+    "--expected-child",
+    "baf1b5bf46853e9849a91518803b9738fc216235",
+    "--evidence-dir",
+    "/tmp/psm-nottt-port-20261031/final"
+  ],
+  "working_directory": "/workspace/psm-wma-nottt-port",
+  "note": "Already executed once. Exact subprocess commands, timeouts and exit codes are in gate.json; environment overrides in environment.json."
+}

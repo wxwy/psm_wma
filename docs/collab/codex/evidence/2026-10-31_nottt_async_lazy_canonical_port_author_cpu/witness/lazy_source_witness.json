@@ -1,0 +1,13 @@
+{
+  "scope": "synthetic_not_real_data_or_GPU",
+  "eager_constructor_calls": 0,
+  "full_source_load_calls": 0,
+  "source_parquet_opens_at_build": 0,
+  "source_parquet_opens_after_two_reads": 1,
+  "retained_episodes": [
+    0
+  ],
+  "build_ms": 14.843697979813442,
+  "first_read_ms": 15.314410004066303,
+  "original_data_timeout_s": 120
+}

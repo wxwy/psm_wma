@@ -1,0 +1,2914 @@
+diff --git a/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py b/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py
+index 5ad3bfc..254b2be 100644
+--- a/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py
++++ b/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py
+@@ -5,6 +5,7 @@
+ 
+ from __future__ import annotations
+ 
++from copy import deepcopy
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -192,7 +193,7 @@ def get_action_robocasa_exact_window_cached_sft_dataset(
+     source_reader = RoboCasaExactWindowSourceReader(catalog, source_root, verified_index=verified_index)
+     raw = RoboCasaExactWindowCachedDataset(catalog, source_reader, contract)
+     install_rank_shared_reader(raw)
+-    transform = ActionTransformPipeline(
++    transform_kwargs = dict(
+         tokenizer_config=tokenizer_config,
+         cfg_dropout_rate=cfg_dropout_rate,
+         max_action_dim=contract.max_action_dim,
+@@ -202,9 +203,13 @@ def get_action_robocasa_exact_window_cached_sft_dataset(
+         append_idle_frames=True,
+         format_prompt_as_json=True,
+     )
++    transform = ActionTransformPipeline(**transform_kwargs)
+     if raw.compact_cached_video:
+         transform.video_resize = CachedGeometryResize(transform.video_resize, tuple(raw._canvas_geometry))
+     sft = ActionSFTDataset(raw, transform, resolution=None)
++    # CPU-loader reconstruction metadata only; no instantiated processor/model.
++    # Legacy workers=0 keeps this exact pipeline and its original global RNG.
++    sft._no_ttt_transform_recipe = deepcopy(transform_kwargs)
+     sft.summary = raw.summary
+     if iterable_shuffle:
+         from cosmos_framework.data.generator.action.datasets.action_sft_dataset import ActionIterableShuffleDataset
+diff --git a/cosmos_framework/trainer/matched_no_ttt.py b/cosmos_framework/trainer/matched_no_ttt.py
+index 3e56f65..b335958 100644
+--- a/cosmos_framework/trainer/matched_no_ttt.py
++++ b/cosmos_framework/trainer/matched_no_ttt.py
+@@ -25,6 +25,7 @@ from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (
+ from cosmos_framework.trainer import ImaginaireTrainer
+ from cosmos_framework.trainer.local_memory_grouped import GroupedLocalMemoryTrainer, collate_grouped_native_batch
+ from cosmos_framework.trainer.local_memory_grouped_resume import require_dcp_grouped_resume_component
++from cosmos_framework.trainer.no_ttt_async_loader import NoTTTAsyncLoader
+ from cosmos_framework.utils import misc
+ from cosmos_framework.utils.callback import Callback
+ 
+@@ -149,6 +150,8 @@ class NoTTTFrontierCallback(Callback):
+         ):
+             raise RuntimeError("No-TTT checkpoint requires a committed optimizer boundary")
+         trainer._grouped_planner.validate_frontier(window.live.frontier)
++        if loader is not None and hasattr(loader, "checkpoint_boundary"):
++            loader.checkpoint_boundary()
+         return {
+             "format": FORMAT,  # Transport-independent; compatible with existing workers=0 checkpoints.
+             **_binding(trainer),
+@@ -226,9 +229,7 @@ class MatchedNoTTTTrainer(ImaginaireTrainer):
+         self._resume_required = self._no_ttt_failed = False
+         self._no_ttt_loader = None
+         if loader_profile is not None and loader_profile.workers:
+-            from cosmos_framework.trainer.no_ttt_cpu_loader import NoTTTCpuLoader
+-
+-            self._no_ttt_loader = NoTTTCpuLoader(producer, loader_profile)
++            self._no_ttt_loader = NoTTTAsyncLoader(producer, loader_profile, planner)
+         self.callbacks._callbacks.insert(0, NoTTTFrontierCallback(self))
+ 
+     def train(self, model, dataloader_train, dataloader_val):
+diff --git a/cosmos_framework/trainer/no_ttt_async_loader.py b/cosmos_framework/trainer/no_ttt_async_loader.py
+new file mode 100644
+index 0000000..f5cbd22
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_async_loader.py
+@@ -0,0 +1,424 @@
++"""Bounded two-Window CPU preparation; only ordered CFG selection stays in Trainer.
++
++The DataLoader transports owned bytes rather than mmap tensor views. It knows
++nothing about models, optimizer state or the committed frontier. All random
++choices remain on the original consuming process and at the original position.
++"""
++
++from __future__ import annotations
++
++import io
++import os
++import pickle
++import random
++import resource
++import time
++from collections import deque
++from dataclasses import dataclass, fields, replace
++from pathlib import Path
++
++import torch
++from torch.utils.data import Dataset, Sampler
++
++from cosmos_framework.trainer.no_ttt_cpu_loader import (
++    NoTTTCpuLoader,
++    OwnedDataLoader,
++    OwnedSpawnContext,
++    _cpu_tree,
++    _rng_snapshot,
++    _token,
++    _worker_init,
++)
++
++
++@dataclass(frozen=True)
++class AsyncJob:
++    generation: int
++    window: int
++    request: object
++    file_versions: tuple = ()
++
++    @property
++    def token(self):
++        return _token(self.request)
++
++
++class PreviewSampler(Sampler):
++    def __init__(self):
++        self.jobs = deque()
++
++    def __iter__(self):
++        while True:
++            if not self.jobs:
++                raise RuntimeError("async preview credits exhausted before committed promotion")
++            yield self.jobs.popleft()
++
++
++def _versions(paths):
++    result = []
++    for name in paths:
++        info = Path(name).stat()
++        result.append((str(name), info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns))
++    return tuple(result)
++
++
++def _check_versions(expected):
++    if _versions([row[0] for row in expected]) != expected:
++        raise ValueError("async prepared source/cache file changed before consumption")
++
++
++def _transport_tree(value):
++    # Video is a geometry carrier on the required cached-latent path. Preserve
++    # every value/shape/dtype while avoiding exporting a dense zero storage.
++    if isinstance(value, dict):
++        out = {key: _transport_tree(item) for key, item in value.items() if key != "video"}
++        if "video" in value:
++            video = value["video"]
++            _geometry_bytes(video)
++            out["video"] = video.new_zeros(()).expand(video.shape)
++        return out
++    if isinstance(value, torch.Tensor):
++        if value.device.type != "cpu":
++            raise ValueError("async packet cannot contain CUDA tensors")
++        return value.clone(memory_format=torch.contiguous_format)
++    if isinstance(value, (tuple, list)):
++        return type(value)(_transport_tree(item) for item in value)
++    if hasattr(value, "__dataclass_fields__"):
++        return replace(value, **{f.name: _transport_tree(getattr(value, f.name)) for f in fields(value)})
++    return value
++
++
++def _transport_bytes(value):
++    """Conservative pre-clone size accounting; geometry carriers use one scalar."""
++    if isinstance(value, torch.Tensor):
++        return value.numel() * value.element_size() + 512
++    if isinstance(value, dict):
++        return (
++            sum(
++                len(str(key).encode()) + (_geometry_bytes(item) if key == "video" else _transport_bytes(item))
++                for key, item in value.items()
++            )
++            + 128
++        )
++    if isinstance(value, (tuple, list)):
++        return sum(_transport_bytes(item) for item in value) + 128
++    if hasattr(value, "__dataclass_fields__"):
++        return sum(_transport_bytes(getattr(value, f.name)) for f in fields(value)) + 128
++    if isinstance(value, str):
++        return len(value.encode()) + 64
++    return 128
++
++
++def _geometry_bytes(video):
++    if not isinstance(video, torch.Tensor) or video.device.type != "cpu" or not video.numel():
++        raise ValueError("async cached geometry must be nonempty CPU tensor")
++    if all(stride == 0 for stride in video.stride()):
++        zero = video[(0,) * video.ndim].item() == 0
++    else:
++        zero = not bool(video.count_nonzero())
++    if not zero:
++        raise ValueError("async cached video must be a zero CPU geometry carrier")
++    return video.element_size() + 512
++
++
++class PreparedDataset(Dataset):
++    def __init__(self, recipe, max_packet_bytes):
++        self.recipe, self.max_packet_bytes = recipe, max_packet_bytes
++        self.state = None
++
++    def __getitem__(self, job):
++        if self.state is None:
++            self.state = self.recipe.build()
++        state = self.state
++        _check_versions(job.file_versions)
++        segment, events = state.prepare(job.request)
++        _check_versions(job.file_versions)
++        if _transport_bytes((segment, state.empty_tokens)) > self.max_packet_bytes:
++            raise ValueError("async prepared segment exceeds byte bound before transport cloning")
++        package = _transport_tree((segment, state.empty_tokens))
++        output = io.BytesIO()
++        torch.save(package, output)
++        packet = output.getvalue()
++        if len(packet) > self.max_packet_bytes:
++            raise ValueError("async prepared segment exceeds encoded packet byte bound")
++        if torch.cuda.is_initialized():
++            raise RuntimeError("async CPU worker initialized CUDA")
++        cache = state.cache_reader
++        return {
++            "generation": job.generation,
++            "window": job.window,
++            "token": job.token,
++            "file_versions": [list(row) for row in job.file_versions],
++            "pid": os.getpid(),
++            "packet": packet,
++            "events": events,
++            "rate": state.rate,
++            "caption_key": state.caption_key,
++            "token_key": state.token_key,
++            "worker_maxrss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
++            "cache_mapped_bytes": sum(getattr(cache, "_mapped_sizes", {}).values()),
++        }
++
++
++class NoTTTAsyncLoader(NoTTTCpuLoader):
++    """One active + one speculative Window, with parent-only consumption/commit.
++
++    Explicit ``recipe`` is a test injection seam, never a launcher option. The
++    production recipe only reconstructs the exact validated local SFT pipeline.
++    """
++
++    def __init__(self, producer, profile, planner, *, recipe=None):
++        if not profile.workers:
++            raise ValueError("workers0 must keep the original synchronous path")
++        if planner.b_stream != 8 or planner.active_ga != 4:
++            raise ValueError("async preparation requires the matched B8/GA4 profile")
++        from cosmos_framework.trainer.no_ttt_async_recipe import AsyncRecipe
++
++        self.producer, self.profile, self.planner = producer, profile, planner
++        self.recipe = AsyncRecipe.from_producer(producer, profile) if recipe is None else recipe
++        self.file_witnesses = recipe is None  # injected synthetic recipes have no external data files
++        self._cache_records = {record.key: record for record in producer.catalog.raw.catalog.episodes}
++        if len(pickle.dumps(self.recipe, protocol=5)) > 64 * 1024**2:
++            raise ValueError("async CPU metadata recipe exceeds 64MiB")
++        self.sampler = PreviewSampler()
++        self.generator = torch.Generator(device="cpu").manual_seed(0)
++        self.context = OwnedSpawnContext()
++        self.loader = OwnedDataLoader(
++            PreparedDataset(self.recipe, profile.max_packet_bytes),
++            batch_size=None,
++            sampler=self.sampler,
++            num_workers=profile.workers,
++            prefetch_factor=profile.prefetch_factor,
++            persistent_workers=profile.persistent_workers,
++            pin_memory=False,
++            timeout=profile.timeout_s,
++            multiprocessing_context=self.context,
++            worker_init_fn=_worker_init,
++            generator=self.generator,
++        )
++        self.iterator = self.pending = None
++        self.preview = None
++        self.index = self.serial = self.generation = 0
++        self.closed = False
++        self.last_cleanup = []
++        self.active_rng = None
++        self.binding = self._binding()
++
++    def _binding(self):
++        catalog = self.producer.catalog
++        raw = catalog.raw
++        return (
++            catalog.manifest_digest,
++            catalog.cache_corpus_digest,
++            catalog.source_binding_digest,
++            raw.catalog.manifest_sha256,
++            raw.catalog.corpus_digest,
++            raw.source_reader.source_binding_digest,
++            self.producer.config_digest,
++        )
++
++    def _admit(self, plan, serial):
++        self.sampler.jobs.extend(
++            AsyncJob(self.generation, serial, request, self._request_versions(request))
++            for member in plan.members
++            for request in member
++        )
++
++    def _request_versions(self, request):
++        if not self.file_witnesses:
++            return ()
++        raw = self.producer.catalog.raw
++        record = self._cache_records[request.episode.key]
++        pairs = (
++            (raw.catalog.cache_root, record.relative_path),
++            (raw.source_reader.source_root, raw.source_reader._bound[record.key].data_file),
++        )
++        paths = []
++        for root, relative in pairs:
++            directory, rel = Path(root).resolve(), Path(relative)
++            path = directory / rel
++            if rel.is_absolute() or ".." in rel.parts or not path.resolve().is_relative_to(directory):
++                raise ValueError("async source/cache witness path escaped its root")
++            paths.append(str(path))
++        return _versions(paths)
++
++    def _begin(self, plan):
++        if self.closed or self.pending is not None or self.binding != self._binding():
++            raise RuntimeError("async loader closed, pending, or source identity changed")
++        self.started = time.monotonic()
++        self.active_rng = (
++            _rng_snapshot(),
++            torch.cuda.get_rng_state() if torch.cuda.is_initialized() else None,
++        )
++        self.index = 0
++        self.record_trace = self.serial < 3 or self.serial % 1000 == 0
++        self.metrics = {
++            "schema": "nottt_async_loader_timing_v1",
++            "trainer_pid": os.getpid(),
++            "worker_pids": [],
++            "loader_profile": self.profile.async_identity(),
++            "execution": "source_cache_transform_worker_cfg_select_parent",
++            "timing_scope": "host_monotonic_not_measured_gpu_idle",
++            "raw_wait_host_ms": 0.0,
++            "collate_host_ms": 0.0,
++            "transform_host_ms": 0.0,
++            "source_read_ms": 0.0,
++            "worker_source_ms_sum": 0.0,
++            "worker_transform_ms_sum": 0.0,
++            "main_decode_cfg_ms": 0.0,
++            "worker_cache_last": {},
++            "trace": [],
++            "trace_window_sampled": self.record_trace,
++        }
++        if self.preview is not None:
++            if plan != self.preview:
++                raise ValueError("speculative plan differs from committed predecessor")
++        else:
++            self._admit(plan, self.serial)
++        self.preview = self.planner.plan_window(plan.candidate_frontier)
++        self._admit(self.preview, self.serial + 1)
++        self.pending = tuple(request for member in plan.members for request in member)
++        if len(self.sampler.jobs) > 2 * self.planner.b_stream * self.planner.active_ga:
++            raise RuntimeError("async preview metadata exceeded two-Window bound")
++        if self.iterator is None:
++            self.iterator = iter(self.loader)
++
++    def _materialize(self, request):
++        if (
++            self.pending is None
++            or self.index >= len(self.pending)
++            or request != self.pending[self.index]
++            or self.binding != self._binding()
++        ):
++            raise ValueError("async consume request/source order mismatch")
++        started = time.monotonic()
++        result = next(self.iterator)
++        ready = time.monotonic()
++        self.metrics["raw_wait_host_ms"] += (ready - started) * 1000
++        if (
++            result["generation"] != self.generation
++            or result["window"] != self.serial
++            or result["token"] != _token(request)
++            or type(result["pid"]) is not int
++            or result["pid"] == os.getpid()
++            or result["pid"] not in {process.pid for process in self.context.processes}
++            or not isinstance(result["packet"], bytes)
++            or len(result["packet"]) > self.profile.max_packet_bytes
++            or (result["rate"], result["caption_key"], result["token_key"])
++            != (self.recipe.rate, self.recipe.caption_key, self.recipe.token_key)
++        ):
++            raise ValueError("async packet generation/window/token/PID/CFG mismatch")
++        if result["file_versions"] != [list(row) for row in self._request_versions(request)]:
++            raise ValueError("async prepared source/cache file changed before consumption")
++        for event in result["events"]:
++            key = {"cpu_source": "worker_source_ms_sum", "cpu_transform": "worker_transform_ms_sum"}.get(event["stage"])
++            if key is None or event["pid"] != result["pid"] or not event["start"] <= event["end"]:
++                raise ValueError("async worker timing provenance malformed")
++            self.metrics[key] += (event["end"] - event["start"]) * 1000
++        # Only bytes from our owned worker are decoded; this is not an external
++        # checkpoint or user-provided pickle. Shared mmap storage never crosses.
++        segment, empty_tokens = torch.load(io.BytesIO(result["packet"]), map_location="cpu", weights_only=False)
++        _cpu_tree(segment)
++        segment.validate(self.planner.catalog.ttt_tbptt_steps)
++        if (
++            segment.episode_id != (request.episode.uid,)
++            or segment.segment_provenance.config_digest != self.producer.config_digest
++            or segment.segment_provenance.manifest_digest != self.binding[0]
++            or segment.segment_provenance.source_digest != request.identity.source_digest
++            or segment.segment_provenance.segment_id != request.identity.segment_id
++            or segment.slot_id.tolist() != [request.identity.slot_id]
++            or segment.consumer_step[0, : request.valid_count].tolist()
++            != list(
++                range(
++                    request.identity.cursor * self.planner.catalog.ttt_tbptt_steps,
++                    request.identity.cursor * self.planner.catalog.ttt_tbptt_steps + request.valid_count,
++                )
++            )
++            or segment.consumer_valid[0].sum().item() != request.valid_count
++        ):
++            raise ValueError("async prepared Segment identity/consumer mismatch")
++        # No speculative RNG state exists. This draw is exactly where the
++        # synchronous producer's original tokenizer would have drawn it.
++        for payload in segment.consumer_payload[0]:
++            if payload is not None and self.recipe.rate > 0 and random.random() < self.recipe.rate:
++                payload[self.recipe.caption_key] = ""
++                payload[self.recipe.token_key] = empty_tokens.clone()
++        self.metrics["main_decode_cfg_ms"] += (time.monotonic() - ready) * 1000
++        if result["pid"] not in self.metrics["worker_pids"]:
++            self.metrics["worker_pids"].append(result["pid"])
++        self.metrics["worker_cache_last"][str(result["pid"])] = {
++            key: result[key] for key in ("worker_maxrss_kib", "cache_mapped_bytes")
++        }
++        if self.record_trace:
++            self.metrics["trace"].extend(
++                {
++                    **event,
++                    "window": self.serial,
++                    "member": self.index // self.planner.b_stream,
++                    "token": result["token"],
++                }
++                for event in result["events"]
++            )
++        self._trace(
++            {
++                "stage": "main_thread_wait",
++                "start": started,
++                "end": ready,
++                "pid": os.getpid(),
++                "window": self.serial,
++                "token": result["token"],
++            }
++        )
++        self._trace(
++            {"stage": "consumer_ready", "at": time.monotonic(), "window": self.serial, "token": result["token"]}
++        )
++        self.index += 1
++        return segment
++
++    def _trace(self, event):
++        if self.record_trace:
++            self.metrics["trace"].append(event)
++
++    def finish(self):
++        if self.pending is None or self.index != len(self.pending):
++            raise RuntimeError("async loader cannot finish incomplete active Window")
++        # Called only after the real optimizer and frontier have committed.
++        # Later cleanup/telemetry failures cannot rewind a committed RNG stream.
++        self.active_rng = None
++        self.pending = None
++        self.serial += 1
++        self._trace({"stage": "committed_iter", "at": time.monotonic(), "window": self.serial - 1})
++        self.metrics["step_window_host_wall_ms_before_telemetry"] = (time.monotonic() - self.started) * 1000
++        if not self.profile.persistent_workers:
++            # Explicit nonpersistent mode intentionally discards the neutral
++            # preview and reopens workers next Window. It does not publish data.
++            self._shutdown()
++            self.sampler.jobs.clear()
++            self.preview = None
++        return dict(self.metrics)
++
++    def checkpoint_boundary(self):
++        if self.closed or self.pending is not None:
++            raise RuntimeError("async checkpoint requires no active uncommitted Window")
++        # Speculative CPU work is RNG-neutral and has no state in the frontier.
++        # It can finish in its bounded queues while DCP reads committed state.
++        return None
++
++    def close(self):
++        self.closed = True
++        self.generation += 1
++        try:
++            self._shutdown()
++        finally:
++            if self.active_rng is not None:
++                import numpy as np
++
++                cpu, cuda = self.active_rng
++                random.setstate(cpu[0])
++                np.random.set_state(cpu[1])
++                torch.set_rng_state(cpu[2])
++                if cuda is not None:
++                    torch.cuda.set_rng_state(cuda)
++                self.active_rng = None
++            self.pending = self.preview = None
++            self.sampler.jobs.clear()
+diff --git a/cosmos_framework/trainer/no_ttt_async_loader_test.py b/cosmos_framework/trainer/no_ttt_async_loader_test.py
+new file mode 100644
+index 0000000..3086f5c
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_async_loader_test.py
+@@ -0,0 +1,522 @@
++"""Real spawn/Source/Transform ordering; fake compute is exclusively a CPU oracle."""
++
++from __future__ import annotations
++
++import hashlib
++import io
++import json
++import os
++import random
++import subprocess
++import sys
++import time
++from dataclasses import replace
++from pathlib import Path
++
++import numpy as np
++import pytest
++import torch
++
++from cosmos_framework.model.generator.mot.robocasa_exact_window_local import ExactWindowRankPlanner
++from cosmos_framework.trainer.no_ttt_async_loader import (
++    AsyncJob,
++    NoTTTAsyncLoader,
++    PreparedDataset,
++    _transport_bytes,
++    _transport_tree,
++    _versions,
++)
++from cosmos_framework.trainer.no_ttt_async_recipe import AsyncWorkerState
++from cosmos_framework.trainer.no_ttt_async_test_support import (
++    BaselineRawRecipe,
++    SyntheticAsyncRecipe,
++    build_synthetic_producer,
++)
++from cosmos_framework.trainer.no_ttt_cpu_loader import NoTTTCpuLoader, _require_same_rng, _rng_snapshot
++from cosmos_framework.utils.no_ttt_loader_profile import LoaderProfile
++
++
++def setup(*, count=9, t=2, rank=0, world=4, **kwargs):
++    recipe = SyntheticAsyncRecipe(count=count, t=t, world=world, **kwargs)
++    producer = build_synthetic_producer(count=count, t=t, world=world, rate=recipe.rate)
++    planner = ExactWindowRankPlanner(producer.catalog, rank=rank, world_size=world, b_stream=8, active_ga=4)
++    return producer, planner, recipe
++
++
++def equal_tree(left, right):
++    if isinstance(left, torch.Tensor):
++        torch.testing.assert_close(left, right, rtol=0, atol=0)
++    elif isinstance(left, np.ndarray):
++        np.testing.assert_array_equal(left, right)
++    elif hasattr(left, "__dataclass_fields__"):
++        for name in left.__dataclass_fields__:
++            equal_tree(getattr(left, name), getattr(right, name))
++    elif isinstance(left, dict):
++        assert left.keys() == right.keys()
++        for key in left:
++            equal_tree(left[key], right[key])
++    elif isinstance(left, (list, tuple)):
++        assert type(left) is type(right) and len(left) == len(right)
++        for a, b in zip(left, right, strict=True):
++            equal_tree(a, b)
++    else:
++        assert left == right
++
++
++def seed(value=81):
++    random.seed(value)
++    np.random.seed(value)
++    torch.manual_seed(value)
++
++
++def model_draws():
++    return random.random(), float(np.random.rand()), float(torch.rand(()))
++
++
++def consume(producer, planner, *, loader=None, windows=3, compute=None):
++    frontier = planner.initial_frontier()
++    output, draws, records = [], [], []
++    for iteration in range(windows):
++        plan = planner.plan_window(frontier)
++        if loader is not None:
++            before = _rng_snapshot()
++            loader.begin(plan)
++            _require_same_rng(before)
++        for member, requests in enumerate(plan.members):
++            for request in requests:
++                segment = producer.produce(request) if loader is None else loader.materialize(request)
++                output.append(segment)
++            draws.append(model_draws())
++            if compute:
++                compute(iteration, member)
++        frontier = plan.candidate_frontier  # fake successful optimizer boundary
++        if loader is not None:
++            records.append(loader.finish())
++            before = _rng_snapshot()
++            if hasattr(loader, "checkpoint_boundary"):
++                loader.checkpoint_boundary()
++            _require_same_rng(before)
++    return output, draws, frontier, _rng_snapshot(), records
++
++
++@pytest.mark.parametrize("workers", [1, 2, 4, 8])
++def test_full_and_terminal_partial_three_windows_exact_data_and_interleaved_rng(workers):
++    producer, planner, recipe = setup(count=17, t=16)
++    seed()
++    expected = consume(producer, planner)
++    seed()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(workers, 1, True, 90), planner, recipe=recipe)
++    try:
++        actual = consume(producer, planner, loader=loader)
++        equal_tree(expected[:4], actual[:4])
++        assert any(int(segment.consumer_valid.sum()) == 1 for segment in actual[0])
++        assert all(len(record["worker_pids"]) == workers for record in actual[4])
++        assert len(loader.sampler.jobs) <= 64
++        assert loader.preview is not None and loader.pending is None
++        assert all(record["transform_host_ms"] == 0 and record["source_read_ms"] == 0 for record in actual[4])
++    finally:
++        loader.close()
++    assert all(row["exitcode"] is not None and not Path(f"/proc/{row['pid']}").exists() for row in loader.last_cleanup)
++
++
++def test_actual_source_transform_next_member_and_next_window_overlap(tmp_path):
++    producer, planner, recipe = setup(count=19, source_delay=0.003, transform_delay=0.004)
++    compute_events = []
++
++    def compute(iteration, member):
++        started = time.monotonic()
++        # A real CPU-only callback stands in for device work. Merely spawning
++        # workers or sleeping without measured Source/Transform is not a pass.
++        digest = b"fake_gpu_only"
++        while time.monotonic() - started < 0.13:
++            digest = hashlib.sha256(digest * 128).digest()
++        compute_events.append(
++            {
++                "stage": "fake_gpu_compute",
++                "window": iteration,
++                "member": member,
++                "start": started,
++                "end": time.monotonic(),
++                "pid": os.getpid(),
++            }
++        )
++
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(2, 1, True, 90), planner, recipe=recipe)
++    try:
++        result = consume(producer, planner, loader=loader, compute=compute)
++    finally:
++        loader.close()
++    events = [event for record in result[4] for event in record["trace"]]
++    overlaps = {"next_member": {}, "next_window": {}}
++    for relation in overlaps:
++        for stage in ("cpu_source", "cpu_transform"):
++            values = [
++                max(0.0, min(event["end"], gpu["end"]) - max(event["start"], gpu["start"])) * 1000
++                for event in events
++                if event["stage"] == stage
++                for gpu in compute_events
++                if (
++                    event["window"] == gpu["window"] and event["member"] > gpu["member"]
++                    if relation == "next_member"
++                    else event["window"] == gpu["window"] + 1
++                )
++            ]
++            overlaps[relation][stage + "_overlap_ms"] = sum(values)
++            assert sum(values) > 0, (relation, stage)
++    for event in events:
++        if event["stage"] == "committed_iter":
++            assert event["at"] >= max(c["end"] for c in compute_events if c["window"] == event["window"])
++    # Independent serial reference: source and transform have no concurrency
++    # with its own fake model compute interval and the original RNG agrees.
++    sync_state = AsyncWorkerState(
++        build_synthetic_producer(
++            count=recipe.count,
++            t=recipe.t,
++            world=recipe.world,
++            rate=0,
++            source_delay=recipe.source_delay,
++            transform_delay=recipe.transform_delay,
++        ),
++        rate=recipe.rate,
++        cache_reader=None,
++    )
++    sync_trace = []
++    sync_frontier = planner.initial_frontier()
++    sync_started = time.monotonic()
++    for iteration in range(3):
++        plan = planner.plan_window(sync_frontier)
++        for member, requests in enumerate(plan.members):
++            for request in requests:
++                segment, stage_events = sync_state.prepare(request)
++                sync_trace.extend(stage_events)
++                for payload in segment.consumer_payload[0]:
++                    if payload is not None and random.random() < recipe.rate:
++                        payload[recipe.caption_key] = ""
++                        payload[recipe.token_key] = sync_state.empty_tokens.clone()
++            model_draws()
++            started = time.monotonic()
++            digest = b"fake_gpu_only"
++            while time.monotonic() - started < 0.13:
++                digest = hashlib.sha256(digest * 128).digest()
++            sync_trace.append({"stage": "fake_gpu_compute", "start": started, "end": time.monotonic()})
++        sync_frontier = plan.candidate_frontier
++    sync_wall_ms = (time.monotonic() - sync_started) * 1000
++    assert all(
++        min(a["end"], b["end"]) <= max(a["start"], b["start"])
++        for a in sync_trace
++        if a["stage"].startswith("cpu_")
++        for b in sync_trace
++        if b["stage"] == "fake_gpu_compute"
++    )
++    report = {
++        "schema": "nottt_async_cpu_fake_compute_timeline_v1",
++        "real_gpu": False,
++        "workers": 2,
++        "windows": 3,
++        "overlap": overlaps,
++        "async_trace": events + compute_events,
++        "sync_trace": sync_trace,
++        "main_wait_ms": sum(r["raw_wait_host_ms"] for r in result[4]),
++        "async_window_wall_ms_including_pool_startup": sum(
++            r["step_window_host_wall_ms_before_telemetry"] for r in result[4]
++        ),
++        "sync_source_transform_compute_wall_ms": sync_wall_ms,
++        "performance_claim": "CPU_FAKE_ONLY_NOT_GPU_THROUGHPUT",
++    }
++    path = tmp_path / "overlap_trace.json"
++    path.write_text(json.dumps(report, indent=2))
++    external = os.environ.get("PSM_NOTTT_ASYNC_EVIDENCE")
++    if external:
++        directory = Path(external)
++        directory.mkdir(parents=True, exist_ok=True)
++        (directory / "overlap_trace.json").write_text(json.dumps(report, indent=2))
++    print("CPU_FAKE_COMPUTE_OVERLAP " + json.dumps(overlaps), flush=True)
++
++
++def test_unchanged_raw_worker_baseline_fails_full_pipeline_overlap_target(tmp_path):
++    producer = build_synthetic_producer(count=19, t=2, world=4, source_delay=0.003, transform_delay=0.004)
++    raw = producer.catalog.raw
++
++    # The old parent source packet contains only non-visual source fields;
++    # cached latent and geometry are reconstructed at its explicit RAW double.
++    def source_snapshot(flat):
++        row = raw[flat]
++        return {"flat": flat, "action": row["action"], "ai_caption": row["ai_caption"]}
++
++    raw.source_reader.read_at = source_snapshot
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=4, b_stream=8, active_ga=4)
++    events = []
++    for name, stage in (("prepare", "cpu_source"), ("materialize", "cpu_transform")):
++        original = getattr(producer, name)
++
++        def track(*args, _original=original, _stage=stage, **kwargs):
++            started = time.monotonic()
++            value = _original(*args, **kwargs)
++            events.append({"stage": _stage, "start": started, "end": time.monotonic(), "pid": os.getpid()})
++            return value
++
++        setattr(producer, name, track)
++
++    def compute(iteration, member):
++        started = time.monotonic()
++        digest = b"baseline_fake_gpu"
++        while time.monotonic() - started < 0.04:
++            digest = hashlib.sha256(digest * 128).digest()
++        events.append(
++            {
++                "stage": "fake_gpu_compute",
++                "window": iteration,
++                "member": member,
++                "start": started,
++                "end": time.monotonic(),
++            }
++        )
++
++    loader = NoTTTCpuLoader(producer, LoaderProfile(2, 1, True, 90), recipe=BaselineRawRecipe())
++    try:
++        consume(producer, planner, loader=loader, compute=compute)
++    finally:
++        loader.close()
++    assert all(
++        min(a["end"], b["end"]) <= max(a["start"], b["start"])
++        for a in events
++        if a["stage"].startswith("cpu_")
++        for b in events
++        if b["stage"] == "fake_gpu_compute"
++    )
++    report = {
++        "expected_target_verdict": "RED_NO_FULL_PIPELINE_OVERLAP",
++        "real_gpu": False,
++        "baseline_backend": "unchanged_NoTTTCpuLoader",
++        "raw_recipe": "explicit_synthetic_double",
++        "source_transform_owner": "parent",
++        "windows": 3,
++        "trace": events,
++    }
++    external = Path(os.environ.get("PSM_NOTTT_ASYNC_EVIDENCE", str(tmp_path)))
++    external.mkdir(parents=True, exist_ok=True)
++    (external / "old_raw_baseline_target_red.json").write_text(json.dumps(report, indent=2))
++
++
++@pytest.mark.parametrize(
++    "fault",
++    ["error", "crash", "timeout", "ignore_term", "identity", "cache_change", "transform_error", "transform_rng"],
++)
++def test_source_transform_faults_close_all_owned_workers_and_preserve_foreign_process(fault, tmp_path):
++    producer, planner, recipe = setup(fault=fault, witness=str(tmp_path))
++    loader = NoTTTAsyncLoader(
++        producer, LoaderProfile(2, 1, True, 2 if fault in ("timeout", "ignore_term") else 90), planner, recipe=recipe
++    )
++    foreign = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(120)"])
++    before = _rng_snapshot()
++    started = time.monotonic()
++    try:
++        loader.begin(planner.plan_window(planner.initial_frontier()))
++        if fault in ("timeout", "ignore_term"):
++            until = time.monotonic() + 45
++            while len(list(tmp_path.glob("worker_*.json"))) < 2 and time.monotonic() < until:
++                time.sleep(0.02)
++            assert len(list(tmp_path.glob("worker_*.json"))) == 2
++        with pytest.raises((OSError, RuntimeError, ValueError)):
++            loader.materialize(loader.pending[0])
++        _require_same_rng(before)
++        assert loader.closed and loader.pending is None
++        assert foreign.poll() is None
++        assert time.monotonic() - started < 100
++        assert all(row["exitcode"] is not None for row in loader.last_cleanup)
++        if fault == "ignore_term":
++            assert any(row["exitcode"] == -9 for row in loader.last_cleanup)
++    finally:
++        loader.close()
++        foreign.terminate()
++        foreign.wait(timeout=5)
++
++
++def test_request_and_preview_predecessor_mismatch_fail_before_publication():
++    producer, planner, recipe = setup()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, True, 90), planner, recipe=recipe)
++    plan = planner.plan_window(planner.initial_frontier())
++    before = _rng_snapshot()
++    try:
++        loader.begin(plan)
++        request = loader.pending[0]
++        wrong = replace(request, binding_epoch=request.binding_epoch + 1)
++        with pytest.raises(ValueError, match="order"):
++            loader.materialize(wrong)
++        _require_same_rng(before)
++        assert loader.closed
++    finally:
++        loader.close()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, True, 90), planner, recipe=recipe)
++    try:
++        loader.preview = planner.plan_window(plan.candidate_frontier)
++        with pytest.raises(ValueError, match="predecessor"):
++            loader.begin(plan)
++        assert loader.closed and loader.iterator is None
++    finally:
++        loader.close()
++
++
++@pytest.mark.parametrize("persistent", [False, True])
++def test_persistence_option_and_speculative_checkpoint_are_rng_neutral(persistent):
++    producer, planner, recipe = setup()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, persistent, 90), planner, recipe=recipe)
++    try:
++        consume(producer, planner, loader=loader, windows=2)
++        before = _rng_snapshot()
++        loader.checkpoint_boundary()
++        _require_same_rng(before)
++        assert (loader.iterator is not None) is persistent
++    finally:
++        loader.close()
++
++
++def test_compact_geometry_does_not_allocate_dense_video_and_packet_limit_precedes_clone(monkeypatch):
++    from cosmos_framework.trainer import no_ttt_async_loader as module
++
++    video = torch.zeros((), dtype=torch.uint8).expand(3, 17, 192, 320)
++    out = _transport_tree({"video": video})
++    assert out["video"].untyped_storage().nbytes() == 1
++    assert _transport_bytes({"video": video}) < 1024
++    producer, planner, recipe = setup()
++    state = AsyncWorkerState(
++        build_synthetic_producer(t=recipe.t, count=recipe.count, rate=0), rate=recipe.rate, cache_reader=None
++    )
++    dataset = PreparedDataset(recipe, 1024)
++    dataset.state = state
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++
++    def forbidden(*args):
++        raise AssertionError("transport clone ran before byte bound")
++
++    monkeypatch.setattr(module, "_transport_tree", forbidden)
++    with pytest.raises(ValueError, match="before transport cloning"):
++        dataset[AsyncJob(0, 0, request)]
++
++
++class PacketIterator:
++    def __init__(self, packet):
++        self.packet = packet
++
++    def __next__(self):
++        return self.packet
++
++
++class CompletedOwnedProcess:
++    """An explicit completed-process double for packet-only negative tests."""
++
++    exitcode = 0
++
++    def __init__(self, pid):
++        self.pid = pid
++
++    def is_alive(self):
++        return False
++
++    def join(self, timeout):
++        pass
++
++
++@pytest.mark.parametrize("mutation", ["token", "window", "generation", "timing", "consumer", "config", "duplicate"])
++def test_stale_reordered_corrupt_packet_rejected_before_cfg_rng(mutation):
++    producer, planner, recipe = setup()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, True, 90), planner, recipe=recipe)
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    state = AsyncWorkerState(
++        build_synthetic_producer(t=recipe.t, count=recipe.count, rate=0), rate=recipe.rate, cache_reader=None
++    )
++    dataset = PreparedDataset(recipe, loader.profile.max_packet_bytes)
++    dataset.state = state
++    packet = dataset[AsyncJob(0, 0, request)]
++    packet["pid"] += 1000000
++    loader.context.processes = [CompletedOwnedProcess(packet["pid"])]
++    for event in packet["events"]:
++        event["pid"] = packet["pid"]
++    loader.pending = (request,)
++    loader.metrics = {"raw_wait_host_ms": 0.0, "worker_source_ms_sum": 0.0, "worker_transform_ms_sum": 0.0}
++    if mutation in ("token", "window", "generation"):
++        packet[mutation] = "foreign" if mutation == "token" else 9
++    elif mutation == "timing":
++        packet["events"][0]["end"] = -1
++    elif mutation in ("consumer", "config"):
++        segment, empty = torch.load(io.BytesIO(packet["packet"]), weights_only=False)
++        if mutation == "consumer":
++            segment.consumer_step[0, 0] = 123
++        else:
++            segment = replace(segment, segment_provenance=replace(segment.segment_provenance, config_digest="foreign"))
++        output = io.BytesIO()
++        torch.save((segment, empty), output)
++        packet["packet"] = output.getvalue()
++    else:
++        loader.index = 1  # an already consumed result cannot be delivered again
++    loader.iterator = PacketIterator(packet)
++    before = _rng_snapshot()
++    with pytest.raises((ValueError, RuntimeError)):
++        loader.materialize(request)
++    _require_same_rng(before)
++    assert loader.closed
++
++
++@pytest.mark.parametrize("which", ["cache", "source"])
++def test_prepared_file_changed_after_worker_completion_is_rejected_before_rng(tmp_path, which):
++    producer, planner, recipe = setup()
++    paths = [tmp_path / "cache.pt", tmp_path / "source.parquet"]
++    for path in paths:
++        path.write_bytes(b"original")
++    versions = _versions(paths)
++    state = AsyncWorkerState(
++        build_synthetic_producer(t=recipe.t, count=recipe.count, rate=0), rate=recipe.rate, cache_reader=None
++    )
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, True, 90), planner, recipe=recipe)
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    dataset = PreparedDataset(recipe, loader.profile.max_packet_bytes)
++    dataset.state = state
++    packet = dataset[AsyncJob(0, 0, request, versions)]
++    packet["pid"] += 1000000
++    loader.context.processes = [CompletedOwnedProcess(packet["pid"])]
++    loader.pending = (request,)
++    loader.metrics = {"raw_wait_host_ms": 0.0}
++    loader._request_versions = lambda _: _versions(paths)
++    loader.iterator = PacketIterator(packet)
++    paths[0 if which == "cache" else 1].write_bytes(b"changed after CPU preparation")
++    before = _rng_snapshot()
++    with pytest.raises(ValueError, match="file changed"):
++        loader.materialize(request)
++    _require_same_rng(before)
++    assert loader.closed
++
++
++def test_missing_and_escaped_source_witness_files_reject_before_worker_start(tmp_path):
++    producer, planner, recipe = setup()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, True, 90), planner, recipe=recipe)
++    raw = producer.catalog.raw
++    raw.catalog.cache_root = tmp_path
++    raw.source_reader.source_root = tmp_path
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    raw.source_reader._bound[request.episode.key].data_file = "source.parquet"
++    loader.file_witnesses = True
++    with pytest.raises(FileNotFoundError):
++        loader.begin(planner.plan_window(planner.initial_frontier()))
++    assert loader.closed and loader.iterator is None
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(1, 1, True, 90), planner, recipe=recipe)
++    loader.file_witnesses = True
++    raw.source_reader._bound[request.episode.key].data_file = "../outside"
++    with pytest.raises(ValueError, match="escaped"):
++        loader._request_versions(request)
++    loader.close()
++
++
++def test_out_of_order_worker_completion_never_changes_consumer_rng_order(tmp_path):
++    producer, planner, recipe = setup(fault="late_order", witness=str(tmp_path))
++    seed(700)
++    expected = consume(producer, planner, windows=1)
++    seed(700)
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(2, 1, True, 90), planner, recipe=recipe)
++    try:
++        actual = consume(producer, planner, loader=loader, windows=1)
++        equal_tree(expected[:4], actual[:4])
++        events = [e for e in actual[4][0]["trace"] if e["stage"] == "cpu_transform"]
++        assert events[1]["end"] < events[0]["start"], "slot1 really finished before admitted slot0"
++        assert len(actual[4][0]["worker_pids"]) == 2
++    finally:
++        loader.close()
+diff --git a/cosmos_framework/trainer/no_ttt_async_recipe.py b/cosmos_framework/trainer/no_ttt_async_recipe.py
+new file mode 100644
+index 0000000..397fde6
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_async_recipe.py
+@@ -0,0 +1,311 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++"""Offline worker-owned Source/Cache/Transform recipe for the No-TTT pipeline.
++
++The worker prepares the deterministic conditioned branch and the same tokenizer's
++empty-caption tokens. Only the trainer consumes the original CFG random draw,
++at the original consumer position. There is no reseeding, RNG prediction, model,
++frontier owner or instantiated tokenizer in the serialized recipe.
++"""
++
++from __future__ import annotations
++
++import math
++import os
++import pickle
++import time
++from copy import deepcopy
++from dataclasses import dataclass, replace
++from functools import partial
++from pathlib import Path
++from typing import Any
++
++import torch
++
++
++def _known_pipeline(producer):
++    from cosmos_framework.data.generator.action.utils.cached_pixel_geometry import CachedGeometryResize
++    from cosmos_framework.data.generator.action.utils.json_formatter import ActionPromptJsonFormatter
++    from cosmos_framework.data.generator.action.utils.transforms import ActionTransformPipeline, VideoResize
++    from cosmos_framework.data.generator.augmentors.text_tokenizer import TextTokenizerTransform
++
++    wrapped = producer.catalog.wrapped_sft
++    transform = wrapped._transform
++    tokenizer = getattr(transform, "text_tokenizer", None)
++    kwargs = getattr(wrapped, "_no_ttt_transform_recipe", None)
++    if (
++        type(transform) is not ActionTransformPipeline
++        or type(tokenizer) is not TextTokenizerTransform
++        or tokenizer.tokenize_separately
++        or type(transform.prompt_json_formatter) is not ActionPromptJsonFormatter
++        or transform.idle_frames_augmentor is not None
++        or wrapped._resolution is not None
++        or producer.transform_rng_mode != "legacy_global"
++        or not isinstance(kwargs, dict)
++        or kwargs.get("format_prompt_as_json") is not True
++        or tokenizer.input_keys != [transform.caption_key]
++        or len(tokenizer.output_keys) != 1
++        or tokenizer.use_system_prompt
++    ):
++        raise ValueError("async No-TTT requires the known JSON ActionTransformPipeline and legacy CFG RNG")
++    rate = tokenizer.cfg_dropout_rate
++    if (
++        type(rate) not in (float, int)
++        or not math.isfinite(rate)
++        or not 0 <= rate <= 1
++        or kwargs.get("cfg_dropout_rate") != rate
++        or kwargs.get("caption_key", "ai_caption") != transform.caption_key
++        or kwargs.get("text_token_key", "text_token_ids") != tokenizer.output_keys[0]
++        or kwargs.get("max_action_dim") != transform.max_action_dim
++        or kwargs.get("tokenizer_config") != tokenizer.args["tokenizer_config"]
++    ):
++        raise ValueError("async No-TTT transform reconstruction metadata changed")
++    # Construct only the cheap processor-free deterministic skeleton. Compare
++    # every constructor-owned field rather than trusting copied kwargs alone.
++    expected_kwargs = deepcopy(kwargs)
++    expected_kwargs["tokenizer_config"] = None
++    expected = ActionTransformPipeline(**expected_kwargs)
++    for name in (
++        "caption_key",
++        "video_temporal_downsample",
++        "max_action_dim",
++        "action_channel_masking",
++        "enable_mode_specific_prompt",
++        "append_action_caption_semantics",
++        "pad_keys",
++        "keep_aspect_ratio",
++    ):
++        if getattr(transform, name) != getattr(expected, name):
++            raise ValueError(f"async No-TTT transform reconstruction field changed: {name}")
++    for name in ("action_processor", "prompt_json_formatter"):
++        actual_value, expected_value = getattr(transform, name), getattr(expected, name)
++        if type(actual_value) is not type(expected_value) or vars(actual_value) != vars(expected_value):
++            raise ValueError(f"async No-TTT transform reconstruction field changed: {name}")
++    if any(
++        getattr(transform, name) is not None
++        for name in ("viewpoint_augmentor", "duration_fps_augmentor", "resolution_info_augmentor")
++    ):
++        raise ValueError("async No-TTT JSON pipeline gained a stochastic/plain-caption augmentor")
++    resize = transform.video_resize
++    if producer.catalog.raw.compact_cached_video:
++        if (
++            type(resize) is not CachedGeometryResize
++            or resize.canvas != tuple(producer.catalog.raw._canvas_geometry)
++            or type(resize.original) is not VideoResize
++        ):
++            raise ValueError("async No-TTT compact geometry reconstruction changed")
++        resize = resize.original
++    if type(resize) is not VideoResize or vars(resize) != vars(expected.video_resize):
++        raise ValueError("async No-TTT resize reconstruction changed")
++    return wrapped, transform, tokenizer, kwargs
++
++
++@dataclass(frozen=True)
++class AsyncRecipe:
++    cache_root: str
++    source_root: str
++    index_root: str
++    trusted_training: bool
++    tokenizer_config: dict[str, Any]
++    transform_kwargs: dict[str, Any]
++    config_digest: str
++    source_digest: str
++    cache_digest: str
++    manifest_digest: str
++    ttt_steps: int
++    compact: bool
++    workers: int
++    max_cache_bytes: int
++
++    @property
++    def rate(self):
++        return self.transform_kwargs["cfg_dropout_rate"]
++
++    @property
++    def caption_key(self):
++        return self.transform_kwargs.get("caption_key", "ai_caption")
++
++    @property
++    def token_key(self):
++        return self.transform_kwargs.get("text_token_key", "text_token_ids")
++
++    @classmethod
++    def from_producer(cls, producer, profile):
++        from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++        from cosmos_framework.data.generator.processors.nemotron3densevl_processor import Nemotron3DenseVLProcessor
++
++        if profile.workers not in (1, 2, 4, 8):
++            raise ValueError("async recipe requires positive No-TTT CPU workers")
++        wrapped, _, tokenizer, kwargs = _known_pipeline(producer)
++        raw = producer.catalog.raw
++        source = raw.source_reader
++        index = getattr(source, "verified_index", None)
++        if type(index) is not VerifiedExactWindowIndex:
++            raise ValueError("async No-TTT requires the existing verified offline index")
++        # Reopen the already resolved local processor artifact. Repository lazy
++        # configs can invoke an HF CLI subprocess; that must not run in workers.
++        processor_path = getattr(tokenizer._processor, "name", None)
++        if (
++            type(tokenizer._processor) is not Nemotron3DenseVLProcessor
++            or not isinstance(processor_path, str)
++            or not Path(processor_path).is_dir()
++        ):
++            raise ValueError("async No-TTT requires an already staged local tokenizer directory")
++        original_config = tokenizer.args["tokenizer_config"]
++        target = original_config.get("_target_")
++        target = (
++            target
++            if isinstance(target, str)
++            else f"{getattr(target, '__module__', '')}.{getattr(target, '__qualname__', '')}"
++        )
++        if target not in {
++            "cosmos_framework.data.generator.processors.build_processor_lazy",
++            "cosmos_framework.data.generator.processors.build_processor",
++        }:
++            raise ValueError("async No-TTT cannot reconstruct an unknown tokenizer factory")
++        native_edge = original_config.get("use_native_edge_processor", False)
++        if type(native_edge) is not bool:
++            raise ValueError("invalid native Edge processor option")
++        local_config = {
++            "_target_": "cosmos_framework.data.generator.processors.build_processor_lazy",
++            "tokenizer_type": str(Path(processor_path).resolve()),
++            "use_native_edge_processor": native_edge,
++        }
++        copied = deepcopy(kwargs)
++        copied["tokenizer_config"] = local_config
++        result = cls(
++            str(Path(raw.catalog.cache_root).resolve()),
++            str(Path(source.source_root).resolve()),
++            str(Path(index.root).resolve()),
++            index.trusted_training,
++            local_config,
++            copied,
++            producer.config_digest,
++            producer.catalog.source_binding_digest,
++            producer.catalog.cache_corpus_digest,
++            producer.catalog.manifest_digest,
++            producer.catalog.ttt_tbptt_steps,
++            raw.compact_cached_video,
++            profile.workers,
++            profile.max_cache_bytes,
++        )
++        if len(pickle.dumps(result, protocol=5)) > 1024**2:
++            raise ValueError("async CPU recipe exceeds 1MiB metadata bound")
++        return result
++
++    def build(self):
++        from cosmos_framework.data.generator.action.datasets.action_sft_dataset import ActionSFTDataset
++        from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cache import (
++            RoboCasaExactWindowCacheCatalog,
++        )
++        from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft import (
++            RoboCasaExactWindowCachedDataset,
++        )
++        from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_policy import (
++            CorrectedRoboCasaPolicyContract,
++        )
++        from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_source import (
++            RoboCasaExactWindowSourceReader,
++        )
++        from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++        from cosmos_framework.data.generator.action.utils.cached_pixel_geometry import CachedGeometryResize
++        from cosmos_framework.data.generator.action.utils.transforms import ActionTransformPipeline
++        from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (
++            ExactWindowLocalCatalog,
++            ExactWindowSegmentProducer,
++        )
++        from cosmos_framework.trainer.no_ttt_cpu_loader import MappedEpisodeReader
++        from cosmos_framework.trainer.no_ttt_worker_source import VerifiedWorkerLeRobotDataset
++
++        if torch.cuda.is_initialized() or os.environ.get("CUDA_VISIBLE_DEVICES") != "":
++            raise RuntimeError("async worker reconstruction requires CPU-only startup")
++        os.environ["HF_HUB_OFFLINE"] = os.environ["TRANSFORMERS_OFFLINE"] = "1"
++        index = VerifiedExactWindowIndex.open(
++            self.index_root,
++            cache_root=self.cache_root,
++            source_root=self.source_root,
++            verify_files=not self.trusted_training,
++        )
++        catalog = RoboCasaExactWindowCacheCatalog(self.cache_root, verified_index=index)
++        source = RoboCasaExactWindowSourceReader(
++            catalog,
++            self.source_root,
++            verified_index=index,
++            dataset_factory=partial(
++                VerifiedWorkerLeRobotDataset,
++                verified_index=index,
++                max_episodes=max(1, 8 // self.workers),
++                max_bytes=self.max_cache_bytes,
++            ),
++        )
++        if (
++            catalog.corpus_digest != self.cache_digest
++            or catalog.manifest_sha256 != self.manifest_digest
++            or source.source_binding_digest != self.source_digest
++        ):
++            raise ValueError("async worker source/cache/index identity mismatch")
++        # max_cache_bytes retains the existing loader's per-worker meaning.
++        # Dividing it by worker count would reject previously valid large
++        # Episodes when switching to nw8. Total rank mapping is still bounded
++        # by workers * max_cache_bytes and at most eight cached Episodes.
++        reader = MappedEpisodeReader(catalog, max(1, 8 // self.workers), self.max_cache_bytes)
++        source.cache_reader = reader
++        raw = RoboCasaExactWindowCachedDataset(
++            catalog, source, CorrectedRoboCasaPolicyContract.from_cache_catalog(catalog), cache_reader=reader
++        )
++        raw.compact_cached_video = self.compact
++        kwargs = deepcopy(self.transform_kwargs)
++        rate = kwargs["cfg_dropout_rate"]
++        kwargs["cfg_dropout_rate"] = 0.0
++        transform = ActionTransformPipeline(**kwargs)
++        if self.compact:
++            transform.video_resize = CachedGeometryResize(transform.video_resize, tuple(raw._canvas_geometry))
++        wrapped = ActionSFTDataset(raw, transform, resolution=None)
++        local = ExactWindowLocalCatalog(wrapped, ttt_tbptt_steps=self.ttt_steps)
++        producer = ExactWindowSegmentProducer(local, config_digest=self.config_digest)
++        return AsyncWorkerState(producer, rate=rate, cache_reader=reader)
++
++
++class AsyncWorkerState:
++    """One worker's private deterministic reader/transform and bounded mmap cache."""
++
++    def __init__(self, producer, *, rate, cache_reader):
++        from cosmos_framework.data.generator.augmentors.text_tokenizer import _MAX_NUM_TOKENS
++        from cosmos_framework.trainer.no_ttt_cpu_loader import _require_same_rng, _rng_snapshot
++
++        self.producer, self.rate, self.cache_reader = producer, rate, cache_reader
++        transform = producer.catalog.wrapped_sft._transform
++        tokenizer = transform.text_tokenizer
++        if tokenizer.cfg_dropout_rate != 0:
++            raise ValueError("worker must construct only the deterministic conditioned CFG branch")
++        self.caption_key, self.token_key = tokenizer.input_keys[0], tokenizer.output_keys[0]
++        before = _rng_snapshot()
++        tokens = tokenizer._processor.tokenize_text("", is_video=False, use_system_prompt=tokenizer.use_system_prompt)[
++            :_MAX_NUM_TOKENS
++        ]
++        self.empty_tokens = torch.tensor(tokens)
++        _require_same_rng(before)
++
++    def prepare(self, request):
++        from cosmos_framework.model.generator.mot.robocasa_exact_window_local import ExactWindowSegmentRequest
++        from cosmos_framework.trainer.no_ttt_cpu_loader import _require_same_rng, _rng_snapshot
++
++        if type(request) is not ExactWindowSegmentRequest:
++            raise TypeError("async worker request type mismatch")
++        episode = self.producer.catalog.by_uid.get(request.episode.uid)
++        if episode is None or episode != request.episode:
++            raise ValueError("async worker episode metadata/capability mismatch")
++        local_request = replace(request, episode=episode)
++        events = []
++        before = _rng_snapshot()
++        started = time.monotonic()
++        prepared = self.producer.prepare(local_request)
++        events.append({"stage": "cpu_source", "start": started, "end": time.monotonic(), "pid": os.getpid()})
++        _require_same_rng(before)
++        started = time.monotonic()
++        segment = self.producer.materialize(prepared)
++        events.append({"stage": "cpu_transform", "start": started, "end": time.monotonic(), "pid": os.getpid()})
++        _require_same_rng(before)
++        if torch.cuda.is_initialized():
++            raise RuntimeError("async worker unexpectedly initialized CUDA")
++        return segment, events
+diff --git a/cosmos_framework/trainer/no_ttt_async_recipe_test.py b/cosmos_framework/trainer/no_ttt_async_recipe_test.py
+new file mode 100644
+index 0000000..d6631b8
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_async_recipe_test.py
+@@ -0,0 +1,352 @@
++"""Synthetic local files and real Source/Cache/Transform; fake CPU text processor."""
++
++import json
++import pickle
++import random
++from copy import deepcopy
++from dataclasses import dataclass, replace
++from pathlib import Path
++
++import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
++import pytest
++import torch
++
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft import (
++    get_action_robocasa_exact_window_cached_sft_dataset,
++)
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft_test import roots  # noqa: F401
++from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++from cosmos_framework.data.generator.augmentors import text_tokenizer
++from cosmos_framework.data.generator.processors.nemotron3densevl_processor import Nemotron3DenseVLProcessor
++from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (
++    ExactWindowLocalCatalog,
++    ExactWindowRankPlanner,
++    ExactWindowSegmentProducer,
++)
++from cosmos_framework.trainer.no_ttt_async_recipe import AsyncRecipe
++from cosmos_framework.utils.no_ttt_loader_profile import LoaderProfile
++
++
++class FakeProcessor:
++    def __init__(self, path):
++        self.name = str(path)
++
++    def tokenize_text(self, caption, **kwargs):
++        assert kwargs == {"is_video": False, "use_system_prompt": False}
++        return [11, *caption.encode(), 12]
++
++
++@dataclass(frozen=True)
++class _CpuTextRecipe:
++    """Spawn-safe fixture; only processor vocabulary is synthetic, not Source."""
++
++    inner: AsyncRecipe
++
++    @property
++    def rate(self):
++        return self.inner.rate
++
++    @property
++    def caption_key(self):
++        return self.inner.caption_key
++
++    @property
++    def token_key(self):
++        return self.inner.token_key
++
++    def build(self):
++        from lerobot.datasets.lerobot_dataset import LeRobotDataset
++
++        def forbidden(*args, **kwargs):
++            raise AssertionError("worker called full LeRobot construction")
++
++        LeRobotDataset.__init__ = forbidden
++        text_tokenizer.lazy_instantiate = lambda config: FakeProcessor(config["tokenizer_type"])
++        return self.inner.build()
++
++
++@pytest.fixture
++def real_recipe(roots, tmp_path, monkeypatch):
++    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "")
++    monkeypatch.setenv("PSM_V3_COMPACT_CACHED_VIDEO", "1")
++    processor_path = tmp_path / "processor"
++    processor_path.mkdir()
++    processor = object.__new__(Nemotron3DenseVLProcessor)
++    processor.name = str(processor_path)
++    monkeypatch.setattr(Nemotron3DenseVLProcessor, "tokenize_text", FakeProcessor.tokenize_text)
++    monkeypatch.setattr(text_tokenizer, "lazy_instantiate", lambda config: processor)
++    dataset = get_action_robocasa_exact_window_cached_sft_dataset(
++        cache_root=roots[0],
++        source_root=roots[1],
++        tokenizer_config={"_target_": "cosmos_framework.data.generator.processors.build_processor_lazy"},
++        cfg_dropout_rate=0.5,
++    )
++    index = VerifiedExactWindowIndex.build(
++        tmp_path / "index", cache_catalog=dataset._dataset.catalog, source_reader=dataset._dataset.source_reader
++    )
++    dataset._dataset.source_reader.verified_index = index
++    catalog = ExactWindowLocalCatalog(dataset, ttt_tbptt_steps=2)
++    producer = ExactWindowSegmentProducer(catalog, config_digest="test_config")
++    recipe = AsyncRecipe.from_producer(producer, LoaderProfile(2, 1, True, 60))
++    return producer, recipe
++
++
++def _same(left, right):
++    if isinstance(left, torch.Tensor):
++        assert left.dtype == right.dtype
++        torch.testing.assert_close(left, right, rtol=0, atol=0)
++    elif isinstance(left, dict):
++        assert left.keys() == right.keys()
++        for key in left:
++            _same(left[key], right[key])
++    elif isinstance(left, (tuple, list)):
++        assert type(left) is type(right) and len(left) == len(right)
++        for a, b in zip(left, right, strict=True):
++            _same(a, b)
++    else:
++        assert left == right
++
++
++def test_worker_recipe_freezes_resolved_data_roots_before_alias_can_change(real_recipe, tmp_path):
++    producer, original = real_recipe
++    raw = producer.catalog.raw
++    links = {}
++    for name, target in (
++        ("cache", original.cache_root),
++        ("source", original.source_root),
++        ("index", original.index_root),
++    ):
++        path = tmp_path / f"{name}_alias"
++        path.symlink_to(target, target_is_directory=True)
++        links[name] = path
++    raw.catalog.cache_root = links["cache"]
++    raw.source_reader.source_root = links["source"]
++    raw.source_reader.verified_index.root = links["index"]
++    frozen = AsyncRecipe.from_producer(producer, LoaderProfile(2, 1, True, 60))
++    for name in links:
++        assert getattr(frozen, f"{name}_root") == str(Path(getattr(original, f"{name}_root")).resolve())
++        links[name].unlink()
++        links[name].symlink_to(tmp_path / "missing_alternate_tree", target_is_directory=True)
++    assert frozen.build().producer.catalog.manifest_digest == producer.catalog.manifest_digest
++
++
++@pytest.mark.parametrize("seed", [1, 2, 7])
++def test_real_transform_two_branches_preserve_values_and_original_rng_interleaving(real_recipe, seed):
++    producer, recipe = real_recipe
++    worker = recipe.build()
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=1, active_ga=2)
++    requests = tuple(member[0] for member in planner.plan_window(planner.initial_frontier()).members)
++    random.seed(seed)
++    np.random.seed(seed)
++    torch.manual_seed(seed)
++    expected = []
++    for request in requests:
++        expected.append(producer.produce(request))
++        # Preserve arbitrary interleaved model/callback draws; don't forecast RNG.
++        random.random()
++        np.random.rand()
++        torch.rand(())
++    expected_rng = (random.getstate(), np.random.get_state(), torch.get_rng_state().clone())
++    random.seed(seed)
++    np.random.seed(seed)
++    torch.manual_seed(seed)
++    packets = [worker.prepare(request) for request in requests]
++    assert random.getstate() == random.Random(seed).getstate()
++    for request, reference, (segment, events) in zip(requests, expected, packets, strict=True):
++        assert [event["stage"] for event in events] == ["cpu_source", "cpu_transform"]
++        assert all(event["start"] <= event["end"] for event in events)
++        for payload in segment.consumer_payload[0][: request.valid_count]:
++            if worker.rate > 0 and random.random() < worker.rate:
++                payload[worker.caption_key] = ""
++                payload[worker.token_key] = worker.empty_tokens.clone()
++        _same(reference.consumer_payload, segment.consumer_payload)
++        random.random()
++        np.random.rand()
++        torch.rand(())
++    assert random.getstate() == expected_rng[0]
++    actual_np = np.random.get_state()
++    assert actual_np[0] == expected_rng[1][0]
++    np.testing.assert_array_equal(actual_np[1], expected_rng[1][1])
++    assert actual_np[2:] == expected_rng[1][2:]
++    torch.testing.assert_close(torch.get_rng_state(), expected_rng[2], rtol=0, atol=0)
++
++
++def test_recipe_roundtrip_contains_only_small_metadata_and_reopens_private_readers(real_recipe):
++    producer, recipe = real_recipe
++    encoded = pickle.dumps(recipe, protocol=5)
++    assert len(encoded) < 1024**2
++    restored = pickle.loads(encoded)
++    worker = restored.build()
++    assert worker.producer is not producer
++    assert worker.producer.catalog.raw.source_reader is not producer.catalog.raw.source_reader
++    assert worker.producer.catalog.raw.cache_reader is worker.cache_reader
++    assert worker.producer.catalog.raw.source_reader.cache_reader is worker.cache_reader
++    assert worker.rate == 0.5
++    assert worker.producer.catalog.wrapped_sft._transform.text_tokenizer.cfg_dropout_rate == 0
++    assert producer.catalog.wrapped_sft._transform.text_tokenizer.cfg_dropout_rate == 0.5
++    assert worker.empty_tokens.tolist() == [11, 12]
++    assert restored.tokenizer_config["tokenizer_type"].endswith("processor")
++    assert "repository" not in restored.tokenizer_config
++
++
++@pytest.mark.parametrize("field", ["source_digest", "cache_digest", "manifest_digest"])
++def test_worker_reconstruction_rejects_frozen_identity_drift(real_recipe, field):
++    _, recipe = real_recipe
++    with pytest.raises(ValueError, match="identity mismatch"):
++        replace(recipe, **{field: "foreign"}).build()
++
++
++@pytest.mark.parametrize(
++    "fault",
++    ["keyed", "nonjson", "separate", "rate", "unknown", "remote_processor", "temporal", "formatter", "resize"],
++)
++def test_unknown_or_changed_transform_contract_rejected_before_workers(real_recipe, fault):
++    producer, _ = real_recipe
++    transform = producer.catalog.wrapped_sft._transform
++    if fault == "keyed":
++        producer.transform_rng_mode = "consumer_keyed_v1"
++    elif fault == "nonjson":
++        transform.prompt_json_formatter = None
++    elif fault == "separate":
++        transform.text_tokenizer.tokenize_separately = True
++    elif fault == "rate":
++        transform.text_tokenizer.cfg_dropout_rate = float("nan")
++    elif fault == "unknown":
++        producer.catalog.wrapped_sft._transform = lambda *_: {}
++    elif fault == "temporal":
++        transform.video_temporal_downsample += 1
++    elif fault == "formatter":
++        transform.prompt_json_formatter.float_seconds = True
++    elif fault == "resize":
++        transform.video_resize.canvas = (320, 320, 320, 320)
++    else:
++        transform.text_tokenizer._processor.name = "remote/not/staged"
++    with pytest.raises(ValueError, match="async No-TTT|reconstruction"):
++        AsyncRecipe.from_producer(producer, LoaderProfile(2, 1, True, 60))
++
++
++def test_foreign_episode_metadata_rejected_but_ipc_copy_rebound(real_recipe):
++    producer, recipe = real_recipe
++    worker = recipe.build()
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=1, active_ga=1)
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    worker.prepare(deepcopy(request))
++    with pytest.raises(ValueError, match="episode metadata"):
++        worker.prepare(replace(request, episode=replace(request.episode, flat_start=12345)))
++
++
++def test_worker_source_and_transform_must_remain_rng_neutral(real_recipe):
++    producer, recipe = real_recipe
++    worker = recipe.build()
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=1, active_ga=1)
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    original = worker.producer.catalog.wrapped_sft._transform
++
++    def wrong(item, resolution):
++        random.random()
++        return original(item, resolution)
++
++    worker.producer.catalog.wrapped_sft._transform = wrong
++    with pytest.raises(ValueError, match="must not consume"):
++        worker.prepare(request)
++
++
++def test_first_worker_recipe_build_never_calls_full_lerobot_constructor(real_recipe, monkeypatch):
++    from lerobot.datasets.lerobot_dataset import LeRobotDataset
++
++    producer, recipe = real_recipe
++
++    def forbidden(*args, **kwargs):
++        raise AssertionError("full eager LeRobotDataset construction is forbidden in async workers")
++
++    monkeypatch.setattr(LeRobotDataset, "__init__", forbidden)
++    monkeypatch.setattr(LeRobotDataset, "load_hf_dataset", forbidden)
++    worker = recipe.build()
++    rows = worker.producer.catalog.raw.source_reader.dataset.hf_dataset
++    assert not rows.cache
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=1, active_ga=1)
++    request = planner.plan_window(planner.initial_frontier()).members[0][0]
++    segment, events = worker.prepare(request)
++    assert int(segment.consumer_valid.sum()) == request.valid_count
++    assert list(rows.cache) == [0]
++    assert [event["stage"] for event in events] == ["cpu_source", "cpu_transform"]
++
++
++def test_spawned_real_recipe_source_transform_cfg_and_cross_window_cleanup(real_recipe, tmp_path):
++    from cosmos_framework.trainer.no_ttt_async_loader import NoTTTAsyncLoader
++    from cosmos_framework.trainer.no_ttt_async_loader_test import consume, equal_tree, seed
++
++    initial, original_recipe = real_recipe
++    # B8/GA4 requires 16 distinct two-segment Episodes per Window. Enlarge only
++    # this temporary fixture; never bypass the production native-profile guard.
++    cache, root = Path(original_recipe.cache_root), Path(original_recipe.source_root)
++    manifest_file = cache / "dataset_manifest.json"
++    manifest = json.loads(manifest_file.read_text())
++    first_record = manifest["tasks"][0]["episodes"][0]
++    payload = torch.load(cache / "tasks/Pick_Mug/episodes/episode_000000.pt", weights_only=True)
++    parquet_file = root / "data/chunk-000/file-000.parquet"
++    first_rows = pq.read_table(parquet_file).slice(0, 19).to_pylist()
++    rows, metadata, records = [], [], []
++    for ep in range(16):
++        record = deepcopy(first_record)
++        record["episode_index"] = ep
++        records.append(record)
++        copied = deepcopy(payload)
++        for window in copied["windows"].values():
++            window["global_row_indices"] += 19 * ep
++        torch.save(copied, cache / f"tasks/Pick_Mug/episodes/episode_{ep:06d}.pt")
++        for row in deepcopy(first_rows):
++            row["index"] += 19 * ep
++            row["episode_index"] = ep
++            rows.append(row)
++        metadata.append(
++            {
++                "length": 19,
++                "dataset_from_index": 100 + 19 * ep,
++                "dataset_to_index": 119 + 19 * ep,
++                "data/chunk_index": 0,
++                "data/file_index": 0,
++            }
++        )
++    manifest["tasks"][0]["episodes"] = records
++    manifest["episode_count"], manifest["window_count"] = 16, 48
++    manifest_file.write_text(json.dumps(manifest))
++    pq.write_table(pa.Table.from_pylist(rows), parquet_file, row_group_size=19)
++    pq.write_table(pa.Table.from_pylist(metadata), root / "meta/episodes/chunk-000/file-000.parquet")
++    info_file = root / "meta/info.json"
++    info = json.loads(info_file.read_text())
++    info["total_episodes"], info["total_frames"] = 16, 16 * 19
++    info_file.write_text(json.dumps(info))
++    dataset = get_action_robocasa_exact_window_cached_sft_dataset(
++        cache_root=cache,
++        source_root=root,
++        tokenizer_config=initial.catalog.wrapped_sft._transform.text_tokenizer.args["tokenizer_config"],
++        cfg_dropout_rate=0.5,
++    )
++    index = VerifiedExactWindowIndex.build(
++        tmp_path / "native_index", cache_catalog=dataset._dataset.catalog, source_reader=dataset._dataset.source_reader
++    )
++    dataset._dataset.source_reader.verified_index = index
++    producer = ExactWindowSegmentProducer(
++        ExactWindowLocalCatalog(dataset, ttt_tbptt_steps=2), config_digest="test_config"
++    )
++    recipe = AsyncRecipe.from_producer(producer, LoaderProfile(2, 1, True, 120))
++    planner = ExactWindowRankPlanner(producer.catalog, rank=0, world_size=1, b_stream=8, active_ga=4)
++    seed()
++    reference = consume(producer, planner)
++    seed()
++    loader = NoTTTAsyncLoader(producer, LoaderProfile(2, 1, True, 120), planner, recipe=_CpuTextRecipe(recipe))
++    loader.file_witnesses = True  # real temporary source/cache files; retain production guards
++    try:
++        actual = consume(producer, planner, loader=loader)
++        equal_tree(reference[:4], actual[:4])
++        assert len(actual[4]) == 3 and loader.preview is not None
++        assert all(len(row["worker_pids"]) == 2 for row in actual[4])
++        assert all(row["source_read_ms"] == row["transform_host_ms"] == 0 for row in actual[4])
++        assert all(row["worker_source_ms_sum"] > 0 and row["worker_transform_ms_sum"] > 0 for row in actual[4])
++    finally:
++        loader.close()
++    assert len(loader.last_cleanup) == 2
++    assert all(row["exitcode"] is not None and not Path(f"/proc/{row['pid']}").exists() for row in loader.last_cleanup)
+diff --git a/cosmos_framework/trainer/no_ttt_async_test_support.py b/cosmos_framework/trainer/no_ttt_async_test_support.py
+new file mode 100644
+index 0000000..035881c
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_async_test_support.py
+@@ -0,0 +1,208 @@
++"""Spawn-safe synthetic data and text processor for CPU-only async loader tests.
++
++There is no production CLI route to this recipe. Source/cache data and tokenizer
++are doubles; ActionTransformPipeline, SegmentProducer and the async state path
++are real. Delays are inside the source/transform calls, not parent-side sleeps.
++"""
++
++from __future__ import annotations
++
++import json
++import os
++import random
++import signal
++import time
++from dataclasses import dataclass
++from pathlib import Path
++from unittest.mock import patch
++
++import torch
++
++from cosmos_framework.data.generator.action.datasets.action_sft_dataset import ActionSFTDataset
++from cosmos_framework.data.generator.action.utils.cached_pixel_geometry import (
++    CachedGeometryResize,
++    cached_pixel_placeholder,
++)
++from cosmos_framework.data.generator.action.utils.transforms import ActionTransformPipeline
++from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (
++    ExactWindowLocalCatalog,
++    ExactWindowSegmentProducer,
++)
++from cosmos_framework.model.generator.mot.robocasa_exact_window_local_test import _FakeRaw
++from cosmos_framework.trainer.no_ttt_async_recipe import AsyncWorkerState
++
++IMPORTED_CUDA_VISIBLE = os.environ.get("CUDA_VISIBLE_DEVICES")
++IMPORTED_RANK = os.environ.get("RANK")
++
++
++class SyntheticTextProcessor:
++    def tokenize_text(self, caption, **kwargs):
++        assert kwargs == {"is_video": False, "use_system_prompt": False}
++        return [11, *caption.encode(), 12]
++
++
++class SyntheticRaw(_FakeRaw):
++    def __init__(self, counts, *, delay=0.0, fault="", fault_flat=-1):
++        super().__init__(counts)
++        self.delay, self.fault, self.fault_flat = delay, fault, fault_flat
++        self.compact_cached_video = True
++
++    def __getitem__(self, index):
++        if self.delay:
++            time.sleep(self.delay)
++        hit = bool(self.fault) and (self.fault_flat < 0 or index >= self.fault_flat)
++        if hit:
++            if self.fault in {"error", "worker_error"}:
++                raise OSError("injected async synthetic Source Read error")
++            if self.fault == "crash":
++                os._exit(17)
++            if self.fault in {"timeout", "ignore_term"}:
++                if self.fault == "ignore_term":
++                    signal.signal(signal.SIGTERM, signal.SIG_IGN)
++                time.sleep(60)
++            if self.fault == "cache_change":
++                raise ValueError("injected async cache file changed during worker lifetime")
++            if self.fault == "rng":
++                random.random()
++        row = super().__getitem__(index)
++        row.update(
++            ai_caption=f"Pick up mug in episode {row['episode_index']}",
++            video=cached_pixel_placeholder(compact=True),
++            conditioning_fps=torch.tensor(24.0),
++            mode="wam",
++            domain_id=torch.tensor(0),
++            viewpoint="concat_view",
++            idle_frames=torch.tensor(0),
++            global_row_indices=torch.arange(row["start_frame"], row["start_frame"] + 17),
++            window_frame_indices=torch.arange(row["start_frame"], row["start_frame"] + 17),
++            latent_source_frame_indices=torch.arange(row["start_frame"], row["start_frame"] + 17, 4),
++        )
++        if hit and self.fault in {"identity", "source"}:
++            row["task_class"] = "foreign"
++        if hit and self.fault in {"order", "reorder"}:
++            row["start_frame"] += 1
++        if hit and self.fault == "large_packet":
++            row["test_padding"] = torch.zeros(20000)
++        return row
++
++
++class TimedActionPipeline(ActionTransformPipeline):
++    def __init__(self, *, delay=0.0, fault="", **kwargs):
++        self.delay, self.fault = delay, fault
++        super().__init__(**kwargs)
++
++    def __call__(self, item, resolution):
++        if self.delay:
++            time.sleep(self.delay)
++        if self.fault == "transform_error":
++            raise ValueError("injected async Transform error")
++        if self.fault == "transform_rng":
++            random.random()
++        return super().__call__(item, resolution)
++
++
++def build_synthetic_producer(
++    count=33,
++    t=16,
++    world=4,
++    rank=0,
++    rate=0.1,
++    source_delay=0.0,
++    transform_delay=0.0,
++    fault="",
++    fault_flat=-1,
++):
++    del rank  # Catalog is global; the real planner owns rank assignment.
++    raw = SyntheticRaw((count,) * max(256, 8 * world * 4), delay=source_delay, fault=fault, fault_flat=fault_flat)
++    kwargs = dict(
++        tokenizer_config={"synthetic": True},
++        cfg_dropout_rate=rate,
++        max_action_dim=64,
++        append_viewpoint_info=True,
++        append_duration_fps_timestamps=True,
++        append_resolution_info=True,
++        append_idle_frames=True,
++        format_prompt_as_json=True,
++    )
++    with patch(
++        "cosmos_framework.data.generator.augmentors.text_tokenizer.lazy_instantiate",
++        return_value=SyntheticTextProcessor(),
++    ):
++        transform = TimedActionPipeline(delay=transform_delay, fault=fault, **kwargs)
++    transform.video_resize = CachedGeometryResize(transform.video_resize, (192, 320, 160, 320))
++    wrapped = ActionSFTDataset(raw, transform, resolution=None)
++    catalog = ExactWindowLocalCatalog(wrapped, ttt_tbptt_steps=t)
++    return ExactWindowSegmentProducer(catalog, config_digest="config")
++
++
++@dataclass(frozen=True)
++class SyntheticAsyncRecipe:
++    count: int = 33
++    t: int = 16
++    world: int = 4
++    rate: float = 0.1
++    source_delay: float = 0.0
++    transform_delay: float = 0.0
++    fault: str = ""
++    fault_flat: int = -1
++    witness: str = ""
++    caption_key: str = "ai_caption"
++    token_key: str = "text_token_ids"
++
++    def build(self):
++        if IMPORTED_CUDA_VISIBLE != "" or IMPORTED_RANK is not None:
++            raise AssertionError("async worker import must be CPU-only and rank-free")
++        if torch.cuda.is_initialized() or torch.utils.data.get_worker_info() is None:
++            raise AssertionError("synthetic async recipe must run in real CPU DataLoader worker")
++        if torch.get_num_threads() != 1 or os.environ.get("RANK") is not None:
++            raise AssertionError("async worker thread/rank environment not isolated")
++        if self.witness:
++            path = Path(self.witness)
++            path.mkdir(parents=True, exist_ok=True)
++            (path / f"worker_{os.getpid()}.json").write_text(
++                json.dumps({"pid": os.getpid(), "fault": self.fault, "at": time.monotonic()})
++            )
++        producer = build_synthetic_producer(
++            self.count,
++            self.t,
++            self.world,
++            rate=0,
++            source_delay=self.source_delay,
++            transform_delay=self.transform_delay,
++            fault=self.fault,
++            fault_flat=self.fault_flat,
++        )
++        if self.fault == "late_order":
++            state = OrderedCompletionState(producer, rate=self.rate, cache_reader=None)
++            state.witness = Path(self.witness)
++            return state
++        return AsyncWorkerState(producer, rate=self.rate, cache_reader=None)
++
++
++class OrderedCompletionState(AsyncWorkerState):
++    def prepare(self, request):
++        marker = self.witness / "nonzero_slot_completed"
++        if request.identity.slot_id == 0:
++            until = time.monotonic() + 45
++            while not marker.exists() and time.monotonic() < until:
++                time.sleep(0.01)
++            if not marker.exists():
++                raise RuntimeError("ordered-completion test barrier expired")
++        result = super().prepare(request)
++        if request.identity.slot_id != 0:
++            marker.touch()
++        return result
++
++
++@dataclass(frozen=True)
++class BaselineRawRecipe:
++    """Only the old backend's RAW/cache boundary is doubled in its RED witness."""
++
++    count: int = 19
++    world: int = 4
++
++    def reader(self):
++        return SyntheticRaw((self.count,) * max(256, 8 * self.world * 4))
++
++    def read(self, job, reader):
++        return tuple((flat, reader[flat]) for flat, _ in job.sources)
+diff --git a/cosmos_framework/trainer/no_ttt_async_trainer_test.py b/cosmos_framework/trainer/no_ttt_async_trainer_test.py
+new file mode 100644
+index 0000000..aaaf2cc
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_async_trainer_test.py
+@@ -0,0 +1,327 @@
++"""Production No-TTT trainer/async-loader integration with synthetic CPU inputs.
++
++The native collator, source planner, ActionTransformPipeline, loader, callback
++and optimizer lifecycle are real. Physics, tokenizer vocabulary and model are
++small CPU doubles. These tests neither load a real DCP nor exercise CUDA.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import pickle
++import random
++from contextlib import nullcontext
++from copy import deepcopy
++from dataclasses import fields, is_dataclass
++from pathlib import Path
++from types import SimpleNamespace
++
++import numpy as np
++import pytest
++import torch
++from torch import nn
++
++from cosmos_framework.model.generator.mot.robocasa_exact_window_local import ExactWindowRankPlanner
++from cosmos_framework.trainer import matched_no_ttt as module
++from cosmos_framework.trainer.local_memory_grouped_test import _Hooks
++from cosmos_framework.trainer.no_ttt_async_loader import NoTTTAsyncLoader
++from cosmos_framework.trainer.no_ttt_async_test_support import SyntheticAsyncRecipe, build_synthetic_producer
++from cosmos_framework.utils.no_ttt_loader_profile import LoaderProfile
++
++
++def _fingerprint(value):
++    """Compare every native input value without expanding one-byte zero videos."""
++    if isinstance(value, torch.Tensor):
++        assert value.device.type == "cpu"
++        header = (str(value.dtype), tuple(value.shape))
++        if value.ndim == 4 and value.stride() == (0, 0, 0, 0):
++            assert value.dtype == torch.uint8 and value.untyped_storage().nbytes() == 1
++            assert int(value[0, 0, 0, 0]) == 0
++            return (*header, "all_zero")
++        encoded = value.detach().contiguous().numpy().tobytes()
++        return (*header, hashlib.sha256(encoded).hexdigest())
++    if isinstance(value, dict):
++        return {key: _fingerprint(item) for key, item in value.items()}
++    if isinstance(value, (list, tuple)):
++        return (type(value).__name__, tuple(_fingerprint(item) for item in value))
++    if is_dataclass(value):
++        return (
++            type(value).__qualname__,
++            {field.name: _fingerprint(getattr(value, field.name)) for field in fields(value)},
++        )
++    return value
++
++
++class NoisyNativeModel(nn.Module):
++    """No Local parameters; no prefix kwarg; loss observes the selected CFG branch."""
++
++    def __init__(self):
++        super().__init__()
++        self.config = SimpleNamespace(local_memory_enabled=False)
++        self.net = nn.Module()
++        self.net.moe_gen = nn.Parameter(torch.tensor(2.0))
++        self.seen = []
++        self.batch_sizes = []
++        self.before_zero = None
++
++    def training_step(self, batch, iteration):
++        self.seen.append(_fingerprint(batch))
++        size = len(batch["sequence_plan"])
++        self.batch_sizes.append(size)
++        assert len(batch["action"]) == len(batch["text_token_ids"]) == size
++        action = torch.stack([row[0][1].mean() for row in batch["action_raw"]]).mean()
++        tokens = sum(float(row[0].sum()) for row in batch["text_token_ids"]) / size
++        # These draws must stay BETWEEN members' original CFG decisions, even
++        # while workers prepare later members and the next Window in advance.
++        noise = random.random() + float(np.random.rand()) + torch.rand(())
++        loss = self.net.moe_gen * (1 + action * 0.001 + tokens * 0.00001 + noise * 0.001)
++        return {"flow_matching_loss_action": loss, "aux_loss_gen": loss * 0.1}, loss
++
++    def on_after_backward(self):
++        pass
++
++    def on_before_optimizer_step(self, *args, **kwargs):
++        pass
++
++    def on_before_zero_grad(self, *args, **kwargs):
++        self.before_zero = self.net.moe_gen.grad.detach().clone()
++
++
++def _rng():
++    return random.getstate(), deepcopy(np.random.get_state()), torch.get_rng_state().clone()
++
++
++def _set_rng(state):
++    random.setstate(state[0])
++    np.random.set_state(state[1])
++    torch.set_rng_state(state[2])
++
++
++def _equal_rng(left, right):
++    assert left[0] == right[0]
++    assert left[1][0] == right[1][0] and left[1][2:] == right[1][2:]
++    np.testing.assert_array_equal(left[1][1], right[1][1])
++    torch.testing.assert_close(left[2], right[2], rtol=0, atol=0)
++
++
++@pytest.fixture(autouse=True)
++def cpu_integration_boundary(monkeypatch):
++    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "")
++    monkeypatch.setenv("PSM_V3_COMPACT_CACHED_VIDEO", "1")
++
++    def loader(producer, profile, planner):
++        raw = producer.catalog.raw
++        recipe = SyntheticAsyncRecipe(
++            count=raw.records[0].window_count,
++            t=producer.catalog.ttt_tbptt_steps,
++            world=planner.world_size,
++            rate=producer.catalog.wrapped_sft._transform.text_tokenizer.cfg_dropout_rate,
++        )
++        return NoTTTAsyncLoader(producer, profile, planner, recipe=recipe)
++
++    # Only the worker's data recipe is doubled. The real async backend, native
++    # Packed128 collator, CPU transfer and Trainer implementation still execute.
++    monkeypatch.setattr(module, "NoTTTAsyncLoader", loader)
++    with torch.enable_grad():
++        yield
++
++
++def _make(*, rank=0, workers=0, count=9, t=2):
++    producer = build_synthetic_producer(count=count, t=t, world=4, rate=0.25)
++    planner = ExactWindowRankPlanner(producer.catalog, rank=rank, world_size=4, b_stream=8, active_ga=4, seed=83)
++    trainer = object.__new__(module.MatchedNoTTTTrainer)
++    trainer.config = SimpleNamespace(trainer=SimpleNamespace(grad_accum_iter=4, distributed_parallelism="fsdp"))
++    trainer.callbacks = _Hooks()
++    trainer.training_timer = lambda name: nullcontext()
++    options = {"loader_profile": LoaderProfile(workers, 1, True, 60)} if workers else {}
++    trainer.bind_grouped_stream(planner, producer, config_digest="config", **options)
++    trainer.cpu_loader_observer = lambda _: None
++    model = NoisyNativeModel()
++    optimizer = torch.optim.SGD(model.parameters(), lr=0.0001, momentum=0.9)
++    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: min((step + 1) / 500, 1))
++    scaler = torch.amp.GradScaler("cpu", enabled=False)
++    return trainer, model, optimizer, scheduler, scaler
++
++
++def _step(state, iteration):
++    trainer, model, *optim = state
++    planner = trainer._grouped_planner
++    before = (
++        trainer._grouped_window.live.frontier
++        if hasattr(trainer, "_grouped_window")
++        else trainer._pending_grouped_resume["frontier"]
++        if trainer._pending_grouped_resume is not None
++        else planner.initial_frontier()
++    )
++    expected = planner.plan_window(before).candidate_frontier
++    for member in range(4):
++        output, loss, next_member = trainer.training_step(model, *optim, {}, iteration, member)
++        assert next_member == (member + 1) % 4 and bool(torch.isfinite(loss))
++        assert set(output) == {"flow_matching_loss_action", "aux_loss_gen"}
++        assert trainer._grouped_window.live.frontier == (expected if member == 3 else before)
++        assert trainer._grouped_completed_iteration == iteration + (member == 3)
++
++
++def _close(state):
++    if state is not None and state[0]._no_ttt_loader is not None:
++        loader = state[0]._no_ttt_loader
++        loader.close()
++        assert loader.pending is None and loader.preview is None
++        assert all(
++            row["exitcode"] is not None and not Path(f"/proc/{row['pid']}").exists() for row in loader.last_cleanup
++        )
++
++
++def _checkpoint(state):
++    trainer, model, optimizer, scheduler, scaler = state
++    before = _rng()
++    saved = {
++        "model": model.state_dict(),
++        "optim": optimizer.state_dict(),
++        "scheduler": scheduler.state_dict(),
++        "scaler": scaler.state_dict(),
++        "trainer": {"iteration": trainer._grouped_completed_iteration, "rng": before},
++        "dataloader": trainer.callbacks._callbacks[0].state_dict(),
++    }
++    _equal_rng(before, _rng())
++    assert saved["dataloader"]["format"] == module.FORMAT
++    assert set(saved["dataloader"]) == {
++        "format",
++        "iteration",
++        "frontier",
++        "config_digest",
++        "profile",
++        "cache_manifest_sha256",
++        "cache_corpus_digest",
++        "source_binding_digest",
++    }
++    return pickle.loads(pickle.dumps(saved))
++
++
++def _restore(state, saved):
++    trainer, model, optimizer, scheduler, scaler = state
++    model.load_state_dict(saved["model"])
++    optimizer.load_state_dict(saved["optim"])
++    scheduler.load_state_dict(saved["scheduler"])
++    scaler.load_state_dict(saved["scaler"])
++    trainer.callbacks._callbacks[0].load_state_dict(saved["dataloader"])
++    trainer._resume_required = True
++    _set_rng(saved["trainer"]["rng"])
++
++
++def _equal_training(left, right):
++    a, b = left[0], right[0]
++    assert a._grouped_completed_iteration == b._grouped_completed_iteration
++    assert a._grouped_window.live == b._grouped_window.live
++    torch.testing.assert_close(left[1].net.moe_gen, right[1].net.moe_gen, rtol=0, atol=0)
++    torch.testing.assert_close(left[1].before_zero, right[1].before_zero, rtol=0, atol=0)
++    assert left[3].state_dict() == right[3].state_dict()
++    assert left[4].state_dict() == right[4].state_dict()
++    torch.testing.assert_close(
++        left[2].state[left[1].net.moe_gen]["momentum_buffer"],
++        right[2].state[right[1].net.moe_gen]["momentum_buffer"],
++        rtol=0,
++        atol=0,
++    )
++
++
++@pytest.mark.parametrize("rank", range(4))
++@pytest.mark.parametrize("count,counts", [(64, [128, 128, 128, 128]), (17, [128, 8, 128, 8])])
++def test_full_packed128_and_terminal_partial_four_ranks_match_sync_values_and_rng(rank, count, counts):
++    random.seed(125 + rank)
++    np.random.seed(125 + rank)
++    torch.manual_seed(125 + rank)
++    initial = _rng()
++    sync = _make(rank=rank, count=count, t=16)
++    async_state = None
++    try:
++        _step(sync, 0)
++        expected_rng = _rng()
++        _set_rng(initial)
++        async_state = _make(rank=rank, workers=2, count=count, t=16)
++        _step(async_state, 0)
++        assert sync[1].batch_sizes == async_state[1].batch_sizes == counts
++        assert sync[1].seen == async_state[1].seen
++        _equal_training(sync, async_state)
++        _equal_rng(expected_rng, _rng())
++        assert async_state[0]._no_ttt_loader.preview is not None
++        assert async_state[0]._no_ttt_loader.sampler.jobs, (
++            "checkpoint must occur before all preview requests are dispatched"
++        )
++        assert _checkpoint(sync)["dataloader"] == _checkpoint(async_state)["dataloader"]
++    finally:
++        _close(sync)
++        _close(async_state)
++
++
++@pytest.mark.parametrize("rank", range(4))
++@pytest.mark.parametrize("from_workers,to_workers", [(0, 8), (8, 0), (8, 8)])
++def test_same_job_checkpoint_resume_worker_changes_preserve_entire_next_steps(rank, from_workers, to_workers):
++    random.seed(270 + rank)
++    np.random.seed(270 + rank)
++    torch.manual_seed(270 + rank)
++    source = _make(rank=rank, workers=from_workers)
++    resumed = None
++    try:
++        _step(source, 0)
++        if from_workers:
++            assert source[0]._no_ttt_loader.pending is None and source[0]._no_ttt_loader.preview is not None
++            assert source[0]._no_ttt_loader.sampler.jobs
++        saved = _checkpoint(source)
++        for iteration in (1, 2):
++            _step(source, iteration)
++        expected_rng = _rng()
++        expected_batches = source[1].seen[4:]
++        expected_frontier = _checkpoint(source)["dataloader"]
++        _close(source)  # Never overlap two separate rank-owned pools.
++        resumed = _make(rank=rank, workers=to_workers)
++        _restore(resumed, saved)
++        for iteration in (1, 2):
++            _step(resumed, iteration)
++        assert resumed[1].seen == expected_batches
++        _equal_training(source, resumed)
++        _equal_rng(expected_rng, _rng())
++        assert expected_frontier == _checkpoint(resumed)["dataloader"]
++    finally:
++        _close(source)
++        _close(resumed)
++
++
++@pytest.mark.parametrize("failure", ["nan_loss", "nan_gradient", "step_skip", "native_error"])
++def test_failed_active_window_keeps_checkpoint_frontier_and_reaps_speculation(monkeypatch, failure):
++    state = _make(workers=2)
++    trainer, model = state[:2]
++    try:
++        _step(state, 0)
++        saved = _checkpoint(state)
++        before_failed_window_rng = _rng()
++        original = model.training_step
++        if failure == "nan_loss":
++            monkeypatch.setattr(model, "training_step", lambda *args: ({}, model.net.moe_gen * float("nan")))
++        elif failure == "nan_gradient":
++            model.net.moe_gen.register_hook(lambda grad: grad * float("nan"))
++        elif failure == "step_skip":
++            monkeypatch.setattr(trainer, "_optimizer_step_success", lambda *args: False)
++        else:
++
++            def explode(*args):
++                raise OSError("injected async native compute failure")
++
++            monkeypatch.setattr(model, "training_step", explode)
++        with pytest.raises((ValueError, FloatingPointError, RuntimeError, OSError)):
++            _step(state, 1)
++        assert trainer._grouped_window.live.frontier == saved["dataloader"]["frontier"]
++        assert trainer._grouped_completed_iteration == 1 and state[3].last_epoch == 1
++        assert trainer._no_ttt_failed and trainer._no_ttt_loader.closed
++        assert trainer._no_ttt_loader.pending is None and trainer._no_ttt_loader.preview is None
++        _equal_rng(before_failed_window_rng, _rng())
++        with pytest.raises(RuntimeError, match="committed"):
++            trainer.callbacks._callbacks[0].state_dict()
++        with pytest.raises(RuntimeError, match="failed instance"):
++            trainer.training_step(model, *state[2:], {}, 1, 0)
++        # The persisted pre-failure state remains immutable and reloadable; a
++        # failed Trainer is never reused or mistaken for an in-memory rollback.
++        assert saved["trainer"]["iteration"] == saved["dataloader"]["iteration"] == 1
++        monkeypatch.setattr(model, "training_step", original)
++    finally:
++        _close(state)
+diff --git a/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py b/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py
+index 84a18ec..a357485 100644
+--- a/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py
++++ b/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py
+@@ -52,6 +52,14 @@ def step(state, iteration):
+ @pytest.fixture(autouse=True)
+ def cpu_boundaries(monkeypatch):
+     monkeypatch.setattr(loader_module.RawRecipe, "from_producer", classmethod(lambda cls, p, c: SyntheticRecipe()))
++    # This pre-existing oracle deliberately uses an arbitrary three-RNG
++    # Transform and reduced B1 geometry. Keep its explicit RAW backend seam;
++    # the known production JSON pipeline is exercised by async_loader_test.
++    monkeypatch.setattr(
++        trainer_module,
++        "NoTTTAsyncLoader",
++        lambda producer, profile, planner: loader_module.NoTTTCpuLoader(producer, profile),
++    )
+     monkeypatch.setattr(trainer_module, "collate_grouped_native_batch", lambda payloads: {"payloads": payloads})
+     monkeypatch.setattr(trainer_module.misc, "to", lambda value, **kwargs: value)
+     # Native config fixtures may leave inference grad mode disabled globally.
+@@ -195,9 +203,8 @@ def test_worker_count_changes_resume_same_committed_state_without_changing_train
+         if resumed is not None and resumed[0]._no_ttt_loader is not None:
+             resumed[0]._no_ttt_loader.close()
+ 
+-@pytest.mark.parametrize(
+-    "damage", ["rank", "world", "seed", "config", "corpus", "source", "format", "sidecar"]
+-)
++
++@pytest.mark.parametrize("damage", ["rank", "world", "seed", "config", "corpus", "source", "format", "sidecar"])
+ def test_wrong_checkpoint_profile_never_starts_workers_or_native_model(damage):
+     source = make()
+     try:
+diff --git a/cosmos_framework/trainer/no_ttt_worker_source.py b/cosmos_framework/trainer/no_ttt_worker_source.py
+new file mode 100644
+index 0000000..59c1595
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_worker_source.py
+@@ -0,0 +1,228 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++"""Verified, lazy row storage for the unchanged official LeRobot read methods.
++
++Only the async worker uses this factory. It does not call LeRobot's eager
++constructor, load all parquet files, or rebuild the accepted absolute row map.
++Delta indices, padding, tensor queries and task captions still run through the
++installed LeRobotDataset methods. The original nw0 dataset is untouched.
++"""
++
++from __future__ import annotations
++
++from bisect import bisect_right
++from collections import OrderedDict
++from dataclasses import dataclass
++from pathlib import Path
++
++import datasets
++import pyarrow as pa
++import pyarrow.compute as pc
++import pyarrow.parquet as pq
++from lerobot.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatasetMetadata
++from lerobot.datasets.utils import (
++    check_delta_timestamps,
++    get_delta_indices,
++    get_hf_features_from_features,
++    hf_transform_to_torch,
++)
++
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_source import _local_path
++from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++
++
++@dataclass(frozen=True)
++class _EpisodeRows:
++    episode: int
++    absolute: int
++    relative: int
++    length: int
++    path: str
++
++
++class _Column:
++    def __init__(self, rows, key):
++        self.rows, self.key = rows, key
++
++    def __getitem__(self, indices):
++        return self.rows.read(indices, self.key)
++
++
++class _VerifiedRows:
++    """HF indexing facade; at most a few accepted Episodes are materialized."""
++
++    def __init__(self, root, meta, index, episodes, *, max_episodes, max_bytes):
++        self.root, self.meta = Path(root), meta
++        self.lookup = index.open_rows()
++        self.features = get_hf_features_from_features(meta.features)
++        if "episode_index" not in self.features or "index" not in self.features:
++            raise ValueError("worker source requires LeRobot row identity columns")
++        if type(max_episodes) is not int or max_episodes <= 0 or type(max_bytes) is not int or max_bytes <= 0:
++            raise ValueError("worker source cache limits must be positive integers")
++        self.max_episodes, self.max_bytes = max_episodes, max_bytes
++        self.cache = OrderedDict()
++        self.cache_bytes = 0
++        spans = []
++        for binding in index.receipt["bindings"]:
++            ep = binding["episode_index"]
++            row = meta.episodes[ep]
++            start, end = row["dataset_from_index"], row["dataset_to_index"]
++            length = row["length"]
++            path = str(meta.get_data_file_path(ep))
++            if (
++                any(type(value) is not int for value in (ep, start, end, length))
++                or length <= 0
++                or end - start != length
++                or binding["dataset_from_index"] != start
++                or binding["dataset_to_index"] != end
++                or binding["length"] != length
++                or binding["data_file"] != path
++                or Path(path).is_absolute()
++                or ".." in Path(path).parts
++            ):
++                raise ValueError("worker source verified episode metadata mismatch")
++            first, last = self.lookup[start], self.lookup[end - 1]
++            if last - first != length - 1:
++                raise ValueError("worker source verified episode row mapping is not contiguous")
++            spans.append(_EpisodeRows(ep, start, first, length, path))
++        if sorted(span.episode for span in spans) != episodes or len(set(episodes)) != len(episodes):
++            raise ValueError("worker source selected episode set differs from verified index")
++        self.spans = sorted(spans, key=lambda span: span.relative)
++        offset = 0
++        for span in self.spans:
++            if span.relative != offset:
++                raise ValueError("worker source verified relative row spans overlap or contain gaps")
++            offset += span.length
++        if offset != len(self.lookup):
++            raise ValueError("worker source verified row count mismatch")
++        self.starts = [span.relative for span in self.spans]
++
++    def __len__(self):
++        return len(self.lookup)
++
++    def _locate(self, relative):
++        if type(relative) is not int or not 0 <= relative < len(self):
++            raise IndexError(relative)
++        span = self.spans[bisect_right(self.starts, relative) - 1]
++        local = relative - span.relative
++        if self.lookup[span.absolute + local] != relative:
++            raise ValueError("worker source verified per-read row mapping mismatch")
++        return span, local
++
++    def _evict(self):
++        _, (_, size) = self.cache.popitem(last=False)
++        self.cache_bytes -= size
++
++    def _load(self, span):
++        if span.episode in self.cache:
++            dataset, _ = self.cache[span.episode]
++            self.cache.move_to_end(span.episode)
++            return dataset
++        while len(self.cache) >= self.max_episodes:
++            self._evict()
++        path = _local_path(self.root, Path(span.path), "worker source parquet")
++        # Column projection, row-group pruning and bounded batches avoid the
++        # full-dataset HF filter/index construction. Shared episode files work.
++        batches, size = [], 0
++        with pq.ParquetFile(path, memory_map=True) as parquet:
++            ep_column = parquet.schema.names.index("episode_index")
++            groups = []
++            for number in range(parquet.num_row_groups):
++                stats = parquet.metadata.row_group(number).column(ep_column).statistics
++                if stats is None or not stats.has_min_max or stats.min <= span.episode <= stats.max:
++                    groups.append(number)
++            for batch in parquet.iter_batches(
++                batch_size=4096, row_groups=groups, columns=list(self.features), use_threads=False
++            ):
++                selected = batch.filter(pc.equal(batch.column("episode_index"), span.episode))
++                if not selected.num_rows:
++                    continue
++                size += selected.nbytes
++                if size > self.max_bytes:
++                    raise MemoryError("worker source episode exceeds bounded Arrow cache")
++                while self.cache and self.cache_bytes + size > self.max_bytes:
++                    self._evict()
++                batches.append(selected)
++        if not batches or sum(batch.num_rows for batch in batches) != span.length:
++            raise ValueError("worker source parquet episode length mismatch")
++        table = pa.Table.from_batches(batches).cast(self.features.arrow_schema)
++        # Cast exactly as the official HF loader does (notably float32 action
++        # and state). Conversion/tensor and caption semantics are not rewritten.
++        if table.nbytes > self.max_bytes:
++            raise MemoryError("worker source cast episode exceeds bounded Arrow cache")
++        while self.cache and self.cache_bytes + table.nbytes > self.max_bytes:
++            self._evict()
++        dataset = datasets.Dataset(table, info=datasets.DatasetInfo(features=self.features))
++        dataset.set_transform(hf_transform_to_torch)
++        self.cache[span.episode] = (dataset, table.nbytes)
++        self.cache_bytes += table.nbytes
++        return dataset
++
++    def read(self, indices, column=None):
++        if type(indices) is int:
++            span, local = self._locate(indices)
++            dataset = self._load(span)
++            return dataset[local] if column is None else dataset.select_columns([column])[local][column]
++        locations = [self._locate(index) for index in indices]
++        if not locations:
++            return [] if column is not None else {key: [] for key in self.features}
++        span = locations[0][0]
++        if any(other != span for other, _ in locations):
++            # Official non-visual deltas must remain inside the same Episode.
++            raise ValueError("worker source queried rows across episode boundaries")
++        dataset = self._load(span)
++        local = [offset for _, offset in locations]
++        return dataset[local] if column is None else dataset.select_columns([column])[local][column]
++
++    def __getitem__(self, key):
++        return _Column(self, key) if isinstance(key, str) else self.read(key)
++
++
++class VerifiedWorkerLeRobotDataset(LeRobotDataset):
++    """Read-only, verified-only construction; inherit all official read methods."""
++
++    def __init__(
++        self,
++        *,
++        repo_id,
++        root,
++        episodes,
++        delta_timestamps,
++        revision,
++        force_cache_sync,
++        download_videos,
++        verified_index,
++        max_episodes,
++        max_bytes,
++    ):
++        if (
++            type(verified_index) is not VerifiedExactWindowIndex
++            or repo_id != "local"
++            or revision != "local"
++            or force_cache_sync is not False
++            or download_videos is not False
++        ):
++            raise ValueError("worker source requires accepted local non-visual verified data")
++        self.root, self.repo_id, self.revision = Path(root), repo_id, revision
++        self.writer = None
++        self._lazy_loading = False
++        self.image_transforms = None
++        self.episodes = episodes
++        self.tolerance_s = 1e-4
++        self.delta_timestamps = delta_timestamps
++        self.meta = LeRobotDatasetMetadata(repo_id, self.root, revision, force_cache_sync=False)
++        self.meta.info["features"] = {
++            key: value for key, value in self.meta.features.items() if value.get("dtype") != "video"
++        }
++        check_delta_timestamps(delta_timestamps, self.fps, self.tolerance_s)
++        self.delta_indices = get_delta_indices(delta_timestamps, self.fps)
++        self.hf_dataset = _VerifiedRows(
++            self.root, self.meta, verified_index, episodes, max_episodes=max_episodes, max_bytes=max_bytes
++        )
++        self._absolute_to_relative_idx = self.hf_dataset.lookup
++
++    def load_hf_dataset(self):
++        raise RuntimeError("worker source must never rebuild the eager LeRobot dataset")
++
++    def download(self, download_videos=True):
++        raise FileNotFoundError(f"worker source is offline and read-only: {self.root}")
+diff --git a/cosmos_framework/trainer/no_ttt_worker_source_test.py b/cosmos_framework/trainer/no_ttt_worker_source_test.py
+new file mode 100644
+index 0000000..b1e5216
+--- /dev/null
++++ b/cosmos_framework/trainer/no_ttt_worker_source_test.py
+@@ -0,0 +1,311 @@
++"""Synthetic files only: lazy worker storage versus the pinned official reader."""
++
++from __future__ import annotations
++
++import json
++import multiprocessing as mp
++import os
++import random
++import time
++from copy import deepcopy
++from functools import partial
++from pathlib import Path
++
++import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
++import pytest
++import torch
++from lerobot.datasets.lerobot_dataset import LeRobotDataset
++
++from cosmos_framework.data.generator.action.datasets import robocasa_exact_window_source as source
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cache import (
++    ExactWindowEpisodeKey,
++    RoboCasaExactWindowCacheCatalog,
++)
++from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_source_test import _cache, _source
++from cosmos_framework.data.generator.action.datasets.robocasa_verified_index import VerifiedExactWindowIndex
++from cosmos_framework.trainer.no_ttt_async_loader_test import equal_tree
++from cosmos_framework.trainer.no_ttt_cpu_loader import _require_same_rng, _rng_snapshot
++from cosmos_framework.trainer.no_ttt_worker_source import VerifiedWorkerLeRobotDataset
++
++
++def _two_episodes(tmp_path, *, subset=False, split=False, reverse=False):
++    cache, root = _cache(tmp_path / "cache"), _source(tmp_path / "source", extra_episode=True)
++    if not subset:
++        manifest = json.loads((cache / "dataset_manifest.json").read_text())
++        record = deepcopy(manifest["tasks"][0]["episodes"][0])
++        record["episode_index"] = 1
++        manifest["tasks"][0]["episodes"].append(record)
++        manifest["episode_count"], manifest["window_count"] = 2, 6
++        (cache / "dataset_manifest.json").write_text(json.dumps(manifest))
++        episode = cache / "tasks/Pick_Mug/episodes/episode_000000.pt"
++        payload = torch.load(episode, weights_only=True)
++        for window in payload["windows"].values():
++            window["global_row_indices"] += 19
++        torch.save(payload, episode.with_name("episode_000001.pt"))
++    file = root / "data/chunk-000/file-000.parquet"
++    table = pq.read_table(file)
++    if split:
++        # Selected episode order need not equal physical parquet-file order.
++        pq.write_table(table.slice(19), file, row_group_size=7)
++        pq.write_table(table.slice(0, 19), file.with_name("file-001.parquet"), row_group_size=7)
++        metadata = root / "meta/episodes/chunk-000/file-000.parquet"
++        rows = pq.read_table(metadata).to_pylist()
++        rows[0]["data/file_index"] = 1
++        pq.write_table(pa.Table.from_pylist(rows), metadata)
++    elif reverse:
++        pq.write_table(table.take([*range(19, 38), *range(19)]), file, row_group_size=7)
++    catalog = RoboCasaExactWindowCacheCatalog(cache)
++    eager = source.RoboCasaExactWindowSourceReader(catalog, root)
++    index = VerifiedExactWindowIndex.build(tmp_path / "index", cache_catalog=catalog, source_reader=eager)
++    return eager, index
++
++
++@pytest.fixture
++def pair(tmp_path):
++    return _two_episodes(tmp_path)
++
++
++def _lazy(eager, index, *, max_episodes=2, max_bytes=1024**2):
++    return source.RoboCasaExactWindowSourceReader(
++        eager.catalog,
++        eager.source_root,
++        verified_index=index,
++        dataset_factory=partial(
++            VerifiedWorkerLeRobotDataset,
++            verified_index=index,
++            max_episodes=max_episodes,
++            max_bytes=max_bytes,
++        ),
++    )
++
++
++@pytest.mark.parametrize("layout", ["shared", "split", "reverse", "subset"])
++def test_official_delta_caption_padding_and_source_windows_match(tmp_path, layout):
++    eager, index = _two_episodes(
++        tmp_path, split=layout == "split", reverse=layout == "reverse", subset=layout == "subset"
++    )
++    before = _rng_snapshot()
++    lazy = _lazy(eager, index)
++    assert lazy.source_binding_digest == eager.source_binding_digest
++    for record in eager.catalog.episodes:
++        for start in record.window_starts:
++            expected, actual = eager.read_window(record.key, start), lazy.read_window(record.key, start)
++            equal_tree(expected, actual)
++            assert actual.ai_caption == "Please pick the mug"  # actual task_index, not class name
++            assert actual.action12.dtype == actual.state16.dtype == torch.float32
++        bound = eager._bound[record.key]
++        # Also exercise official padding outside the accepted Exact-Window range.
++        relative = eager.abs_to_relative[bound.dataset_to_index - 1]
++        equal_tree(eager.dataset[relative], lazy.dataset[relative])
++        assert bool(lazy.dataset[relative]["action_is_pad"].any())
++    _require_same_rng(before)
++    for name in ("__getitem__", "_get_query_indices", "_query_hf_dataset", "_get_query_timestamps"):
++        assert getattr(type(lazy.dataset), name) is getattr(LeRobotDataset, name)
++
++
++def test_build_does_not_call_eager_constructor_or_read_any_source_parquet(pair, monkeypatch, tmp_path):
++    eager, index = pair
++    monkeypatch.setattr(LeRobotDataset, "__init__", lambda *a, **k: pytest.fail("eager constructor"))
++    monkeypatch.setattr(LeRobotDataset, "load_hf_dataset", lambda *a, **k: pytest.fail("global HF load"))
++    opened = []
++    original = pq.ParquetFile
++
++    def observe(path, *args, **kwargs):
++        opened.append(str(path))
++        return original(path, *args, **kwargs)
++
++    monkeypatch.setattr(pq, "ParquetFile", observe)
++    started = time.monotonic()
++    lazy = _lazy(eager, index)
++    built = time.monotonic()
++    assert not opened and not lazy.dataset.hf_dataset.cache
++    lazy.read_at(0)
++    ready = time.monotonic()
++    assert opened == [str(eager.source_root / "data/chunk-000/file-000.parquet")]
++    assert list(lazy.dataset.hf_dataset.cache) == [0]
++    lazy.read_at(1)
++    assert len(opened) == 1
++    evidence = {
++        "scope": "synthetic_not_real_data_or_GPU",
++        "eager_constructor_calls": 0,
++        "full_source_load_calls": 0,
++        "source_parquet_opens_at_build": 0,
++        "source_parquet_opens_after_two_reads": len(opened),
++        "retained_episodes": list(lazy.dataset.hf_dataset.cache),
++        "build_ms": (built - started) * 1000,
++        "first_read_ms": (ready - built) * 1000,
++        "original_data_timeout_s": 120,
++    }
++    (tmp_path / "lazy_source_witness.json").write_text(json.dumps(evidence, indent=2))
++    print(json.dumps(evidence, sort_keys=True))
++
++
++def test_lru_eviction_bounds_and_reload_preserve_exact_values(pair, monkeypatch):
++    eager, index = pair
++    lazy = _lazy(eager, index, max_episodes=1)
++    storage = lazy.dataset.hf_dataset
++    for ep in (0, 1, 0):
++        key = ExactWindowEpisodeKey("Pick Mug", "Pick_Mug", ep)
++        equal_tree(eager.read_window(key, 0), lazy.read_window(key, 0))
++        assert list(storage.cache) == [ep]
++        assert 0 < storage.cache_bytes <= storage.max_bytes
++        assert storage.cache_bytes == sum(size for _, size in storage.cache.values())
++    lazy = _lazy(eager, index, max_bytes=1)
++    with pytest.raises(MemoryError, match="bounded Arrow cache"):
++        lazy.read_at(0)
++    assert not lazy.dataset.hf_dataset.cache and lazy.dataset.hf_dataset.cache_bytes == 0
++
++
++@pytest.mark.parametrize("fault", ["length", "file", "first_mapping", "interior_mapping", "relative_gap"])
++def test_bad_verified_metadata_and_mapping_fail_closed(pair, fault):
++    eager, index = pair
++    if fault in ("length", "file"):
++        index.receipt = deepcopy(index.receipt)
++        index.receipt["bindings"][0]["length" if fault == "length" else "data_file"] = (
++            123 if fault == "length" else "bad"
++        )
++        with pytest.raises(ValueError, match="metadata|source metadata"):
++            _lazy(eager, index)
++        return
++    rows = np.load(index.rows_path, mmap_mode="r+", allow_pickle=False)
++    location = 0 if fault == "first_mapping" else 1 if fault == "interior_mapping" else slice(19, 38)
++    rows[location, 1] += 1
++    rows.flush()
++    if fault == "interior_mapping":
++        lazy = _lazy(eager, index)
++        # Official absolute->relative query observes the corrupted mapping;
++        # the unchanged SourceReader's exact returned-row check must reject it.
++        with pytest.raises(ValueError, match="runtime global index"):
++            lazy.read_at(0)
++    else:
++        with pytest.raises(ValueError, match="row mapping|row spans"):
++            _lazy(eager, index)
++
++
++@pytest.mark.parametrize("fault", ["missing", "escape", "length", "frame", "episode", "annotation", "nan", "caption"])
++def test_missing_changed_or_corrupt_source_never_becomes_valid_window(pair, tmp_path, fault):
++    eager, index = pair
++    lazy = _lazy(eager, index)
++    path = eager.source_root / "data/chunk-000/file-000.parquet"
++    if fault == "missing":
++        path.unlink()
++    elif fault == "escape":
++        foreign = tmp_path / "foreign.parquet"
++        path.rename(foreign)
++        path.symlink_to(foreign)
++    else:
++        rows = pq.read_table(path).to_pylist()
++        if fault == "length":
++            rows.pop(0)
++        elif fault == "frame":
++            rows[1]["frame_index"] = 88
++        elif fault == "episode":
++            rows[1]["episode_index"] = 1
++        elif fault == "annotation":
++            rows[1]["annotation.human.task_name"] = 1
++        elif fault == "nan":
++            rows[1]["action"][0] = float("nan")
++        elif fault == "caption":
++            rows[0]["task_index"] = -100
++        pq.write_table(pa.Table.from_pylist(rows), path)
++    with pytest.raises((ValueError, FileNotFoundError, IndexError)):
++        lazy.read_at(0)
++
++
++@pytest.mark.parametrize("fault", ["no_index", "hub", "revision", "sync", "videos", "episode_subset"])
++def test_unsupported_worker_constructor_does_not_fallback(pair, fault):
++    eager, index = pair
++    kwargs = dict(
++        repo_id="local",
++        root=eager.source_root,
++        episodes=[0, 1],
++        delta_timestamps=source._delta_timestamps(20),
++        revision="local",
++        force_cache_sync=False,
++        download_videos=False,
++        verified_index=index,
++        max_episodes=1,
++        max_bytes=1024**2,
++    )
++    field, value = {
++        "no_index": ("verified_index", None),
++        "hub": ("repo_id", "remote/dataset"),
++        "revision": ("revision", "main"),
++        "sync": ("force_cache_sync", True),
++        "videos": ("download_videos", True),
++        "episode_subset": ("episodes", [0]),
++    }[fault]
++    kwargs[field] = value
++    with pytest.raises(ValueError, match="verified|selected episode"):
++        VerifiedWorkerLeRobotDataset(**kwargs)
++
++
++def _spawn_read(cache, root, index_root, connection):
++    try:
++        random.seed(17)
++        np.random.seed(17)
++        torch.manual_seed(17)
++        before = _rng_snapshot()
++        started = time.monotonic()
++        index = VerifiedExactWindowIndex.open(index_root, cache_root=cache, source_root=root, verify_files=False)
++        catalog = RoboCasaExactWindowCacheCatalog(cache, verified_index=index)
++        reader = source.RoboCasaExactWindowSourceReader(
++            catalog,
++            root,
++            verified_index=index,
++            dataset_factory=partial(
++                VerifiedWorkerLeRobotDataset, verified_index=index, max_episodes=1, max_bytes=1024**2
++            ),
++        )
++        built = time.monotonic()
++        window = reader.read_at(0)
++        _require_same_rng(before)
++        connection.send(
++            {
++                "pid": os.getpid(),
++                "build_ms": (built - started) * 1000,
++                "first_read_ms": (time.monotonic() - built) * 1000,
++                "caption": window.ai_caption,
++                "action": window.action12.tolist(),
++                "rows": window.global_row_indices,
++                "rng_unchanged": True,
++                "retained_episodes": list(reader.dataset.hf_dataset.cache),
++            }
++        )
++    except BaseException as exc:
++        connection.send({"error": repr(exc)})
++        raise
++    finally:
++        connection.close()
++
++
++def test_real_spawn_reconstructs_only_small_verified_source_and_reaps(pair, tmp_path):
++    eager, index = pair
++    before = _rng_snapshot()
++    context = mp.get_context("spawn")
++    parent, child = context.Pipe(duplex=False)
++    process = context.Process(target=_spawn_read, args=(eager.catalog.cache_root, eager.source_root, index.root, child))
++    try:
++        process.start()
++        child.close()
++        assert parent.poll(60), "bounded synthetic spawn did not return"
++        result = parent.recv()
++        process.join(5)
++        assert process.exitcode == 0 and "error" not in result
++        assert result["pid"] != os.getpid() and result["rng_unchanged"]
++        assert result["caption"] == eager.read_at(0).ai_caption
++        assert result["rows"] == eager.read_at(0).global_row_indices
++        assert result["action"] == eager.read_at(0).action12.tolist()
++        assert result["retained_episodes"] == [0]
++        (tmp_path / "spawn_source_witness.json").write_text(json.dumps(result, indent=2))
++        print(json.dumps(result, sort_keys=True))
++        _require_same_rng(before)
++    finally:
++        if process.is_alive():
++            process.kill()
++        process.join(5)
++        parent.close()
++        child.close()
++    assert not process.is_alive() and not Path(f"/proc/{process.pid}").exists()
+diff --git a/cosmos_framework/utils/no_ttt_loader_profile.py b/cosmos_framework/utils/no_ttt_loader_profile.py
+index 8b62905..3db5533 100644
+--- a/cosmos_framework/utils/no_ttt_loader_profile.py
++++ b/cosmos_framework/utils/no_ttt_loader_profile.py
+@@ -43,6 +43,20 @@ class LoaderProfile:
+             **asdict(self),
+         }
+ 
++    def async_identity(self):
++        """Runtime provenance only; never part of training/frontier identity."""
++        return {
++            **self.identity(),
++            "schema": "nottt_cpu_async_dataloader_v1",
++            "source_reader": "worker_offline_verified_source",
++            "transform": "worker_conditioned_parent_ordered_cfg_selection",
++            "max_prepared_windows": 2,
++            "max_inflight_packets": self.workers * (self.prefetch_factor or 0),
++            "max_inflight_encoded_bytes": self.workers * (self.prefetch_factor or 0) * self.max_packet_bytes,
++            "rank_mmap_budget_bytes": self.workers * self.max_cache_bytes,
++            "worker_mmap_budget_bytes": self.max_cache_bytes,
++        }
++
+ 
+ def profile_from_args(args):
+     workers = getattr(args, "no_ttt_loader_workers", 0)
+diff --git a/examples/psm_wma_robocasa_matched_no_ttt_test.py b/examples/psm_wma_robocasa_matched_no_ttt_test.py
+index 7b9dfda..c0fc575 100644
+--- a/examples/psm_wma_robocasa_matched_no_ttt_test.py
++++ b/examples/psm_wma_robocasa_matched_no_ttt_test.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ from copy import deepcopy
++from dataclasses import make_dataclass
+ from types import SimpleNamespace
+ 
+ import pytest
+@@ -19,6 +20,19 @@ from examples.psm_wma_robocasa_phase5_f0_test import Serializer, _args, _report
+ from examples.psm_wma_robocasa_phase5_f0_test import _config as lifecycle_config
+ 
+ 
++def _structured_identity_fixture(value):
++    """Use supported structured config records; never relax production identity."""
++    if isinstance(value, SimpleNamespace):
++        values = {key: _structured_identity_fixture(item) for key, item in vars(value).items()}
++        record = make_dataclass("IdentityConfigFixture", [(key, object) for key in values])
++        return record(**values)
++    if isinstance(value, dict):
++        return {key: _structured_identity_fixture(item) for key, item in value.items()}
++    if isinstance(value, (list, tuple)):
++        return type(value)(_structured_identity_fixture(item) for item in value)
++    return value
++
++
+ def test_overlay_only_removes_local_and_keeps_data_loss_optimizer_schedule(tmp_path):
+     _, local, _, _ = _config(tmp_path)
+     local.model.config.ema = SimpleNamespace(enabled=True)
+@@ -75,6 +89,7 @@ def test_all_worker_counts_share_strict_training_and_config_identity(tmp_path):
+     config.optimizer.keys_to_select = list(phase5.GENERATION_KEYS)
+     config.checkpoint.strict_resume = True
+     config.data_setting = SimpleNamespace(seed=123)
++    config = _structured_identity_fixture(config)
+     args = _args(
+         tmp_path,
+         "--no-ttt",
+@@ -85,6 +100,8 @@ def test_all_worker_counts_share_strict_training_and_config_identity(tmp_path):
+         "--job-name",
+         "no_ttt_packed128_droid_fresh_30k_world4_ga4",
+     )
++    args.dataset_index_root.mkdir(parents=True)
++    (args.dataset_index_root / "receipt.json").write_text("{}")
+     report = {
+         "cache_manifest_sha256": catalog.manifest_digest,
+         "cache_corpus_digest": catalog.cache_corpus_digest,
+@@ -368,9 +385,7 @@ def test_existing_formal_nottt4_resume_skips_job_identity_without_rewriting_chec
+     resumed_digest = phase5._json_digest({"phase5_digest": "a" * 64, "training_identity": selected})
+     assert resumed_digest == old_digest
+     if historical_root_child:
+-        assert old_digest != phase5._json_digest(
+-            {"phase5_digest": "a" * 64, "training_identity": current_runtime}
+-        )
++        assert old_digest != phase5._json_digest({"phase5_digest": "a" * 64, "training_identity": current_runtime})
+     assert {p.relative_to(job): p.read_bytes() for p in job.rglob("*") if p.is_file()} == before
+ 
+ 

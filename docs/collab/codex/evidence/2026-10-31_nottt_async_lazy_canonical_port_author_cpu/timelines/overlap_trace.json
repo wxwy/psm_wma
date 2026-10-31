@@ -1,0 +1,4419 @@
+{
+  "schema": "nottt_async_cpu_fake_compute_timeline_v1",
+  "real_gpu": false,
+  "workers": 2,
+  "windows": 3,
+  "overlap": {
+    "next_member": {
+      "cpu_source_overlap_ms": 105.77974797342904,
+      "cpu_transform_overlap_ms": 150.95405600732192
+    },
+    "next_window": {
+      "cpu_source_overlap_ms": 27.24173996830359,
+      "cpu_transform_overlap_ms": 37.186793982982635
+    }
+  },
+  "async_trace": [
+    {
+      "stage": "cpu_source",
+      "start": 260716.902130565,
+      "end": 260716.908897992,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "0bc7f8fd52c7d0095b32ddf622874817fb6170fcab96b697ac8aae7615b84a51"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.909005223,
+      "end": 260716.919093886,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "0bc7f8fd52c7d0095b32ddf622874817fb6170fcab96b697ac8aae7615b84a51"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260711.386989074,
+      "end": 260716.923625522,
+      "pid": 247798,
+      "window": 0,
+      "token": "0bc7f8fd52c7d0095b32ddf622874817fb6170fcab96b697ac8aae7615b84a51"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260716.927650627,
+      "window": 0,
+      "token": "0bc7f8fd52c7d0095b32ddf622874817fb6170fcab96b697ac8aae7615b84a51"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.938842293,
+      "end": 260716.945596685,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "916408d88689dde676023b5ef26d25ff7cc867b6766553885c5f9a8849e5460b"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.94570569,
+      "end": 260716.955992003,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "916408d88689dde676023b5ef26d25ff7cc867b6766553885c5f9a8849e5460b"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260716.927669172,
+      "end": 260716.960352594,
+      "pid": 247798,
+      "window": 0,
+      "token": "916408d88689dde676023b5ef26d25ff7cc867b6766553885c5f9a8849e5460b"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260716.962344057,
+      "window": 0,
+      "token": "916408d88689dde676023b5ef26d25ff7cc867b6766553885c5f9a8849e5460b"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.92428759,
+      "end": 260716.930856088,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "eb09da3841931d1a67bb3a2d3e13a40ef053e30844a8d6a1415918644c5873cb"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.930999597,
+      "end": 260716.940206949,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "eb09da3841931d1a67bb3a2d3e13a40ef053e30844a8d6a1415918644c5873cb"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260716.962353845,
+      "end": 260716.962448623,
+      "pid": 247798,
+      "window": 0,
+      "token": "eb09da3841931d1a67bb3a2d3e13a40ef053e30844a8d6a1415918644c5873cb"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260716.964375996,
+      "window": 0,
+      "token": "eb09da3841931d1a67bb3a2d3e13a40ef053e30844a8d6a1415918644c5873cb"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.961019138,
+      "end": 260716.967435556,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "87c6ceabb201d7663b8c44d379909fadade2e1d694b2f6bea7685f464beab35f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.967622427,
+      "end": 260716.976996881,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "87c6ceabb201d7663b8c44d379909fadade2e1d694b2f6bea7685f464beab35f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260716.964382729,
+      "end": 260716.978990684,
+      "pid": 247798,
+      "window": 0,
+      "token": "87c6ceabb201d7663b8c44d379909fadade2e1d694b2f6bea7685f464beab35f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260716.981050776,
+      "window": 0,
+      "token": "87c6ceabb201d7663b8c44d379909fadade2e1d694b2f6bea7685f464beab35f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.962978458,
+      "end": 260716.969421046,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "98603fd5df69fe2349e033fe65d708dd61c33e69dc0236a4a6dd834016e75adb"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.969572921,
+      "end": 260716.978812282,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "98603fd5df69fe2349e033fe65d708dd61c33e69dc0236a4a6dd834016e75adb"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260716.98105811,
+      "end": 260716.981179167,
+      "pid": 247798,
+      "window": 0,
+      "token": "98603fd5df69fe2349e033fe65d708dd61c33e69dc0236a4a6dd834016e75adb"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260716.982943585,
+      "window": 0,
+      "token": "98603fd5df69fe2349e033fe65d708dd61c33e69dc0236a4a6dd834016e75adb"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.979557241,
+      "end": 260716.986024896,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "39c3b76969d592fb1124a7c347907c3396f97dc2ac8f431487b3e597e6cd6f37"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.986132147,
+      "end": 260716.995342544,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "39c3b76969d592fb1124a7c347907c3396f97dc2ac8f431487b3e597e6cd6f37"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260716.982949736,
+      "end": 260716.997592797,
+      "pid": 247798,
+      "window": 0,
+      "token": "39c3b76969d592fb1124a7c347907c3396f97dc2ac8f431487b3e597e6cd6f37"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260716.999518127,
+      "window": 0,
+      "token": "39c3b76969d592fb1124a7c347907c3396f97dc2ac8f431487b3e597e6cd6f37"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.981671712,
+      "end": 260716.988142764,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "6f18fa6de614fa756d0d3178965d56b7a8ac68d3c4677247fa028b3930db70bf"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260716.9882475,
+      "end": 260716.997423813,
+      "pid": 247801,
+      "window": 0,
+      "member": 0,
+      "token": "6f18fa6de614fa756d0d3178965d56b7a8ac68d3c4677247fa028b3930db70bf"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260716.999526994,
+      "end": 260716.999656747,
+      "pid": 247798,
+      "window": 0,
+      "token": "6f18fa6de614fa756d0d3178965d56b7a8ac68d3c4677247fa028b3930db70bf"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.001395867,
+      "window": 0,
+      "token": "6f18fa6de614fa756d0d3178965d56b7a8ac68d3c4677247fa028b3930db70bf"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260716.998135299,
+      "end": 260717.00462745,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "4ba8c2dbb8a037441143cbcd47bdfd16a35abc22499000051cca8a09a4164058"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.004773494,
+      "end": 260717.01389808,
+      "pid": 247802,
+      "window": 0,
+      "member": 0,
+      "token": "4ba8c2dbb8a037441143cbcd47bdfd16a35abc22499000051cca8a09a4164058"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.001401969,
+      "end": 260717.015998573,
+      "pid": 247798,
+      "window": 0,
+      "token": "4ba8c2dbb8a037441143cbcd47bdfd16a35abc22499000051cca8a09a4164058"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.017961543,
+      "window": 0,
+      "token": "4ba8c2dbb8a037441143cbcd47bdfd16a35abc22499000051cca8a09a4164058"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.00013722,
+      "end": 260717.009804703,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "adcd559ebc34ea9d59564218074c12e01b3355364e9e909958fc29aefddd8d02"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.009915401,
+      "end": 260717.019093146,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "adcd559ebc34ea9d59564218074c12e01b3355364e9e909958fc29aefddd8d02"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.14809824,
+      "end": 260717.148356453,
+      "pid": 247798,
+      "window": 0,
+      "token": "adcd559ebc34ea9d59564218074c12e01b3355364e9e909958fc29aefddd8d02"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.150633212,
+      "window": 0,
+      "token": "adcd559ebc34ea9d59564218074c12e01b3355364e9e909958fc29aefddd8d02"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.016633788,
+      "end": 260717.02633228,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "ea1d6c086d9b03039eaea2a5c3ea4a335783196d1c6d767aa5070a5ebf0c9fda"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.026462274,
+      "end": 260717.035925565,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "ea1d6c086d9b03039eaea2a5c3ea4a335783196d1c6d767aa5070a5ebf0c9fda"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.150642399,
+      "end": 260717.150789875,
+      "pid": 247798,
+      "window": 0,
+      "token": "ea1d6c086d9b03039eaea2a5c3ea4a335783196d1c6d767aa5070a5ebf0c9fda"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.152800865,
+      "window": 0,
+      "token": "ea1d6c086d9b03039eaea2a5c3ea4a335783196d1c6d767aa5070a5ebf0c9fda"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.149322086,
+      "end": 260717.159065251,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "968f1822d442f2af76f5bfecf983667662c33ba6a151c7b6b1d8035805a92936"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.159215744,
+      "end": 260717.169073694,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "968f1822d442f2af76f5bfecf983667662c33ba6a151c7b6b1d8035805a92936"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.152807268,
+      "end": 260717.171227279,
+      "pid": 247798,
+      "window": 0,
+      "token": "968f1822d442f2af76f5bfecf983667662c33ba6a151c7b6b1d8035805a92936"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.173317448,
+      "window": 0,
+      "token": "968f1822d442f2af76f5bfecf983667662c33ba6a151c7b6b1d8035805a92936"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.151505452,
+      "end": 260717.161376507,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "807abd2358dfebbe707719a2cf856291f5050055cb76434e538cfd1210a94fb5"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.16154339,
+      "end": 260717.171158695,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "807abd2358dfebbe707719a2cf856291f5050055cb76434e538cfd1210a94fb5"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.173324982,
+      "end": 260717.17345715,
+      "pid": 247798,
+      "window": 0,
+      "token": "807abd2358dfebbe707719a2cf856291f5050055cb76434e538cfd1210a94fb5"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.17521212,
+      "window": 0,
+      "token": "807abd2358dfebbe707719a2cf856291f5050055cb76434e538cfd1210a94fb5"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.171742187,
+      "end": 260717.181445658,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "ab286afda49ed1791931fcb001ff6a228f1d1b1c900aa28e861a119c4015de93"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.181581473,
+      "end": 260717.190835191,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "ab286afda49ed1791931fcb001ff6a228f1d1b1c900aa28e861a119c4015de93"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.175219384,
+      "end": 260717.192811333,
+      "pid": 247798,
+      "window": 0,
+      "token": "ab286afda49ed1791931fcb001ff6a228f1d1b1c900aa28e861a119c4015de93"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.194678023,
+      "window": 0,
+      "token": "ab286afda49ed1791931fcb001ff6a228f1d1b1c900aa28e861a119c4015de93"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.174004842,
+      "end": 260717.183710607,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "7c2feee2a4c98803da6981a06737e79ebc81a559ec279eb024936c2d795f811d"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.183817107,
+      "end": 260717.193106121,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "7c2feee2a4c98803da6981a06737e79ebc81a559ec279eb024936c2d795f811d"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.194684545,
+      "end": 260717.195134288,
+      "pid": 247798,
+      "window": 0,
+      "token": "7c2feee2a4c98803da6981a06737e79ebc81a559ec279eb024936c2d795f811d"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.196909396,
+      "window": 0,
+      "token": "7c2feee2a4c98803da6981a06737e79ebc81a559ec279eb024936c2d795f811d"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.193443691,
+      "end": 260717.203106245,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "c148c04498c9df8db4e113c1f1b79eebee5e9bfadeb240b82ef7fcb7711f28d1"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.203232532,
+      "end": 260717.212474378,
+      "pid": 247801,
+      "window": 0,
+      "member": 1,
+      "token": "c148c04498c9df8db4e113c1f1b79eebee5e9bfadeb240b82ef7fcb7711f28d1"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.196916569,
+      "end": 260717.214577008,
+      "pid": 247798,
+      "window": 0,
+      "token": "c148c04498c9df8db4e113c1f1b79eebee5e9bfadeb240b82ef7fcb7711f28d1"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.216448777,
+      "window": 0,
+      "token": "c148c04498c9df8db4e113c1f1b79eebee5e9bfadeb240b82ef7fcb7711f28d1"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.195662153,
+      "end": 260717.205338052,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "21195f2d9b2b411aaad04434761522769ed4c1157949653a0c670b166f4908e5"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.205444151,
+      "end": 260717.214713158,
+      "pid": 247802,
+      "window": 0,
+      "member": 1,
+      "token": "21195f2d9b2b411aaad04434761522769ed4c1157949653a0c670b166f4908e5"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.21645598,
+      "end": 260717.217071694,
+      "pid": 247798,
+      "window": 0,
+      "token": "21195f2d9b2b411aaad04434761522769ed4c1157949653a0c670b166f4908e5"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.218811706,
+      "window": 0,
+      "token": "21195f2d9b2b411aaad04434761522769ed4c1157949653a0c670b166f4908e5"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.214719386,
+      "end": 260717.224352876,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "57be6d9d9e98faaaeee52ecbc28f9e9822abefc34ec69d693c2b3a938a7b7dba"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.2244562,
+      "end": 260717.234178241,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "57be6d9d9e98faaaeee52ecbc28f9e9822abefc34ec69d693c2b3a938a7b7dba"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.348883271,
+      "end": 260717.349207238,
+      "pid": 247798,
+      "window": 0,
+      "token": "57be6d9d9e98faaaeee52ecbc28f9e9822abefc34ec69d693c2b3a938a7b7dba"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.351515165,
+      "window": 0,
+      "token": "57be6d9d9e98faaaeee52ecbc28f9e9822abefc34ec69d693c2b3a938a7b7dba"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.217568981,
+      "end": 260717.227361419,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "9d5a408c9bce20d8bc87223d443c327a73c831b23c515cbc1a0df5d9b7b1200c"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.227520267,
+      "end": 260717.236967608,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "9d5a408c9bce20d8bc87223d443c327a73c831b23c515cbc1a0df5d9b7b1200c"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.351525354,
+      "end": 260717.351659125,
+      "pid": 247798,
+      "window": 0,
+      "token": "9d5a408c9bce20d8bc87223d443c327a73c831b23c515cbc1a0df5d9b7b1200c"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.353405128,
+      "window": 0,
+      "token": "9d5a408c9bce20d8bc87223d443c327a73c831b23c515cbc1a0df5d9b7b1200c"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.3502539,
+      "end": 260717.360107335,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "e1beefd64a51859cf2078babbf742047325d152ae6d93d5795d66c64ee83a475"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.360270561,
+      "end": 260717.369742588,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "e1beefd64a51859cf2078babbf742047325d152ae6d93d5795d66c64ee83a475"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.353412271,
+      "end": 260717.37185732,
+      "pid": 247798,
+      "window": 0,
+      "token": "e1beefd64a51859cf2078babbf742047325d152ae6d93d5795d66c64ee83a475"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.373752553,
+      "window": 0,
+      "token": "e1beefd64a51859cf2078babbf742047325d152ae6d93d5795d66c64ee83a475"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.352373398,
+      "end": 260717.362182728,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "15989781ab8921d6a58b5e0c776e2c3127c356a1cecfc42ead26c9c26ba1ffee"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.362318753,
+      "end": 260717.371884215,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "15989781ab8921d6a58b5e0c776e2c3127c356a1cecfc42ead26c9c26ba1ffee"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.373759737,
+      "end": 260717.374231,
+      "pid": 247798,
+      "window": 0,
+      "token": "15989781ab8921d6a58b5e0c776e2c3127c356a1cecfc42ead26c9c26ba1ffee"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.375945765,
+      "window": 0,
+      "token": "15989781ab8921d6a58b5e0c776e2c3127c356a1cecfc42ead26c9c26ba1ffee"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.372385162,
+      "end": 260717.382124458,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "9c435a0e2a3f7d22948cac76400976c69bbff9616225c828e6c375d78599f902"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.382266604,
+      "end": 260717.391616763,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "9c435a0e2a3f7d22948cac76400976c69bbff9616225c828e6c375d78599f902"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.375953099,
+      "end": 260717.393995633,
+      "pid": 247798,
+      "window": 0,
+      "token": "9c435a0e2a3f7d22948cac76400976c69bbff9616225c828e6c375d78599f902"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.395860068,
+      "window": 0,
+      "token": "9c435a0e2a3f7d22948cac76400976c69bbff9616225c828e6c375d78599f902"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.374803699,
+      "end": 260717.384554488,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "21b82ce2981c34dd1f025a383824bf4f318846dcf416dfd135a57059d4f9d57f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.384929902,
+      "end": 260717.394362335,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "21b82ce2981c34dd1f025a383824bf4f318846dcf416dfd135a57059d4f9d57f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.395867933,
+      "end": 260717.396459241,
+      "pid": 247798,
+      "window": 0,
+      "token": "21b82ce2981c34dd1f025a383824bf4f318846dcf416dfd135a57059d4f9d57f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.398155722,
+      "window": 0,
+      "token": "21b82ce2981c34dd1f025a383824bf4f318846dcf416dfd135a57059d4f9d57f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.394625353,
+      "end": 260717.404266838,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "332dc45ee2e7e667548535a1ce05993d94af01dc981c850e926061562418d69a"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.404384348,
+      "end": 260717.413697608,
+      "pid": 247801,
+      "window": 0,
+      "member": 2,
+      "token": "332dc45ee2e7e667548535a1ce05993d94af01dc981c850e926061562418d69a"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.398162935,
+      "end": 260717.415778409,
+      "pid": 247798,
+      "window": 0,
+      "token": "332dc45ee2e7e667548535a1ce05993d94af01dc981c850e926061562418d69a"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.417681627,
+      "window": 0,
+      "token": "332dc45ee2e7e667548535a1ce05993d94af01dc981c850e926061562418d69a"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.396990923,
+      "end": 260717.406677983,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "e8aebfa5d4929b7f2f755e291edd5a5f75557ba1d88f20bc2ace31e90a3e81f8"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.406829267,
+      "end": 260717.416307956,
+      "pid": 247802,
+      "window": 0,
+      "member": 2,
+      "token": "e8aebfa5d4929b7f2f755e291edd5a5f75557ba1d88f20bc2ace31e90a3e81f8"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.41768889,
+      "end": 260717.418449827,
+      "pid": 247798,
+      "window": 0,
+      "token": "e8aebfa5d4929b7f2f755e291edd5a5f75557ba1d88f20bc2ace31e90a3e81f8"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.420513516,
+      "window": 0,
+      "token": "e8aebfa5d4929b7f2f755e291edd5a5f75557ba1d88f20bc2ace31e90a3e81f8"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.41636589,
+      "end": 260717.426028504,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "6a2a6fd30f21f3818d2e6c0adc09ae008f604096a5bfb9123c034cd76c5e330f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.426132459,
+      "end": 260717.435365699,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "6a2a6fd30f21f3818d2e6c0adc09ae008f604096a5bfb9123c034cd76c5e330f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.550605018,
+      "end": 260717.550818038,
+      "pid": 247798,
+      "window": 0,
+      "token": "6a2a6fd30f21f3818d2e6c0adc09ae008f604096a5bfb9123c034cd76c5e330f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.552907124,
+      "window": 0,
+      "token": "6a2a6fd30f21f3818d2e6c0adc09ae008f604096a5bfb9123c034cd76c5e330f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.418962864,
+      "end": 260717.428627261,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "318e9e3b3cdc027dc1f96de5f10b454122e10ba28a5fa1c45a881898e81a14ed"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.428736005,
+      "end": 260717.437917398,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "318e9e3b3cdc027dc1f96de5f10b454122e10ba28a5fa1c45a881898e81a14ed"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.55291566,
+      "end": 260717.553042438,
+      "pid": 247798,
+      "window": 0,
+      "token": "318e9e3b3cdc027dc1f96de5f10b454122e10ba28a5fa1c45a881898e81a14ed"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.554760729,
+      "window": 0,
+      "token": "318e9e3b3cdc027dc1f96de5f10b454122e10ba28a5fa1c45a881898e81a14ed"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.55159668,
+      "end": 260717.561286044,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "fe91c74a2a504f2a7c796d8a062d425ff28a04b815e9a0937d2ca84a1e24b436"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.561429673,
+      "end": 260717.570855754,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "fe91c74a2a504f2a7c796d8a062d425ff28a04b815e9a0937d2ca84a1e24b436"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.554767923,
+      "end": 260717.572934459,
+      "pid": 247798,
+      "window": 0,
+      "token": "fe91c74a2a504f2a7c796d8a062d425ff28a04b815e9a0937d2ca84a1e24b436"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.574864928,
+      "window": 0,
+      "token": "fe91c74a2a504f2a7c796d8a062d425ff28a04b815e9a0937d2ca84a1e24b436"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.553769666,
+      "end": 260717.56364044,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "991235addb80b391ab22649dd08ea1ad02b85b7f3d4e553a8224f7ff2ab362fb"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.56381627,
+      "end": 260717.573313384,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "991235addb80b391ab22649dd08ea1ad02b85b7f3d4e553a8224f7ff2ab362fb"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.574872603,
+      "end": 260717.575820019,
+      "pid": 247798,
+      "window": 0,
+      "token": "991235addb80b391ab22649dd08ea1ad02b85b7f3d4e553a8224f7ff2ab362fb"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.577659567,
+      "window": 0,
+      "token": "991235addb80b391ab22649dd08ea1ad02b85b7f3d4e553a8224f7ff2ab362fb"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.573507896,
+      "end": 260717.583182233,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "4b960cf029e27c203c616607946f45048c0edd1614d61645903d00bc2c1f36f2"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.58331416,
+      "end": 260717.59264372,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "4b960cf029e27c203c616607946f45048c0edd1614d61645903d00bc2c1f36f2"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.577667382,
+      "end": 260717.594798007,
+      "pid": 247798,
+      "window": 0,
+      "token": "4b960cf029e27c203c616607946f45048c0edd1614d61645903d00bc2c1f36f2"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.596658745,
+      "window": 0,
+      "token": "4b960cf029e27c203c616607946f45048c0edd1614d61645903d00bc2c1f36f2"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.576391545,
+      "end": 260717.586094094,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "9aed9b2660f7499aedf9e139c60f4961cd3c03732547973dee52636f479263c6"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.586200684,
+      "end": 260717.595627426,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "9aed9b2660f7499aedf9e139c60f4961cd3c03732547973dee52636f479263c6"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.5966669,
+      "end": 260717.597850499,
+      "pid": 247798,
+      "window": 0,
+      "token": "9aed9b2660f7499aedf9e139c60f4961cd3c03732547973dee52636f479263c6"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.599695137,
+      "window": 0,
+      "token": "9aed9b2660f7499aedf9e139c60f4961cd3c03732547973dee52636f479263c6"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.59532156,
+      "end": 260717.605000165,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "ba371ffd9121cb872bc0bfa56c02c1b6baebf3545511c27c066ae539b7558c07"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.605106344,
+      "end": 260717.614267568,
+      "pid": 247801,
+      "window": 0,
+      "member": 3,
+      "token": "ba371ffd9121cb872bc0bfa56c02c1b6baebf3545511c27c066ae539b7558c07"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.599702712,
+      "end": 260717.616199398,
+      "pid": 247798,
+      "window": 0,
+      "token": "ba371ffd9121cb872bc0bfa56c02c1b6baebf3545511c27c066ae539b7558c07"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.618192885,
+      "window": 0,
+      "token": "ba371ffd9121cb872bc0bfa56c02c1b6baebf3545511c27c066ae539b7558c07"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.598612953,
+      "end": 260717.608274205,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "f751a6749d7182467b92ce2b6175fb5a5ce03256bac5e3113e124925d1a2df43"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.608389872,
+      "end": 260717.617699605,
+      "pid": 247802,
+      "window": 0,
+      "member": 3,
+      "token": "f751a6749d7182467b92ce2b6175fb5a5ce03256bac5e3113e124925d1a2df43"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.61820079,
+      "end": 260717.619792524,
+      "pid": 247798,
+      "window": 0,
+      "token": "f751a6749d7182467b92ce2b6175fb5a5ce03256bac5e3113e124925d1a2df43"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.6215612,
+      "window": 0,
+      "token": "f751a6749d7182467b92ce2b6175fb5a5ce03256bac5e3113e124925d1a2df43"
+    },
+    {
+      "stage": "committed_iter",
+      "at": 260717.751705794,
+      "window": 0
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.616755493,
+      "end": 260717.626473591,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "ece359e21c0397ce7a8de0ddd3581340f2948899d500ae6608656af9fbb9bc1f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.626628722,
+      "end": 260717.635971116,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "ece359e21c0397ce7a8de0ddd3581340f2948899d500ae6608656af9fbb9bc1f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.753295594,
+      "end": 260717.753581189,
+      "pid": 247798,
+      "window": 1,
+      "token": "ece359e21c0397ce7a8de0ddd3581340f2948899d500ae6608656af9fbb9bc1f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.755759463,
+      "window": 1,
+      "token": "ece359e21c0397ce7a8de0ddd3581340f2948899d500ae6608656af9fbb9bc1f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.619952418,
+      "end": 260717.629606116,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "b72ab2fa78baa5b67c12b2288362d0405dd59b97e8843214fbe04f97a9d50f89"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.629712476,
+      "end": 260717.63910859,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "b72ab2fa78baa5b67c12b2288362d0405dd59b97e8843214fbe04f97a9d50f89"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.755767408,
+      "end": 260717.755984786,
+      "pid": 247798,
+      "window": 1,
+      "token": "b72ab2fa78baa5b67c12b2288362d0405dd59b97e8843214fbe04f97a9d50f89"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.757642764,
+      "window": 1,
+      "token": "b72ab2fa78baa5b67c12b2288362d0405dd59b97e8843214fbe04f97a9d50f89"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.754464926,
+      "end": 260717.764451317,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "9fc7696a9171c7692afd94ce5aebe5415cdc3c82419519dfe3989d132299c1fa"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.764662954,
+      "end": 260717.774063417,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "9fc7696a9171c7692afd94ce5aebe5415cdc3c82419519dfe3989d132299c1fa"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.757648825,
+      "end": 260717.776384469,
+      "pid": 247798,
+      "window": 1,
+      "token": "9fc7696a9171c7692afd94ce5aebe5415cdc3c82419519dfe3989d132299c1fa"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.778201054,
+      "window": 1,
+      "token": "9fc7696a9171c7692afd94ce5aebe5415cdc3c82419519dfe3989d132299c1fa"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.756382914,
+      "end": 260717.766202773,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "2ba92abeb1752fcb09a11de7cc798108aec51837d619f83dfce188cf97af582a"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.766347234,
+      "end": 260717.775985172,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "2ba92abeb1752fcb09a11de7cc798108aec51837d619f83dfce188cf97af582a"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.778207466,
+      "end": 260717.778381903,
+      "pid": 247798,
+      "window": 1,
+      "token": "2ba92abeb1752fcb09a11de7cc798108aec51837d619f83dfce188cf97af582a"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.780296903,
+      "window": 1,
+      "token": "2ba92abeb1752fcb09a11de7cc798108aec51837d619f83dfce188cf97af582a"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.776984162,
+      "end": 260717.786762404,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "37e2adaca700919b6933375df7c5935d46d49d296e99362b049c51c525ac4275"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.786971806,
+      "end": 260717.796271631,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "37e2adaca700919b6933375df7c5935d46d49d296e99362b049c51c525ac4275"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.780303095,
+      "end": 260717.798296357,
+      "pid": 247798,
+      "window": 1,
+      "token": "37e2adaca700919b6933375df7c5935d46d49d296e99362b049c51c525ac4275"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.801803261,
+      "window": 1,
+      "token": "37e2adaca700919b6933375df7c5935d46d49d296e99362b049c51c525ac4275"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.779167248,
+      "end": 260717.789156805,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "17a8cf4dab3766b10c7d13fc4d8557dc28d59f0ab2ef64ad6db46a8618038a05"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.789289965,
+      "end": 260717.798458333,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "17a8cf4dab3766b10c7d13fc4d8557dc28d59f0ab2ef64ad6db46a8618038a05"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.801810214,
+      "end": 260717.801948824,
+      "pid": 247798,
+      "window": 1,
+      "token": "17a8cf4dab3766b10c7d13fc4d8557dc28d59f0ab2ef64ad6db46a8618038a05"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.803678046,
+      "window": 1,
+      "token": "17a8cf4dab3766b10c7d13fc4d8557dc28d59f0ab2ef64ad6db46a8618038a05"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.798923061,
+      "end": 260717.808595474,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "df47515dca09272056c32e5e1f8648ac83a191df911525cab78579d4d36389d0"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.808712213,
+      "end": 260717.817930575,
+      "pid": 247801,
+      "window": 1,
+      "member": 0,
+      "token": "df47515dca09272056c32e5e1f8648ac83a191df911525cab78579d4d36389d0"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.803684959,
+      "end": 260717.819889858,
+      "pid": 247798,
+      "window": 1,
+      "token": "df47515dca09272056c32e5e1f8648ac83a191df911525cab78579d4d36389d0"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.821767699,
+      "window": 1,
+      "token": "df47515dca09272056c32e5e1f8648ac83a191df911525cab78579d4d36389d0"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.802468581,
+      "end": 260717.812185978,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "d585d4ac36cee2a9e68b681f2c529b7e6b79b656a5cb7f80b2c7593b24c8aea1"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.812318948,
+      "end": 260717.821682081,
+      "pid": 247802,
+      "window": 1,
+      "member": 0,
+      "token": "d585d4ac36cee2a9e68b681f2c529b7e6b79b656a5cb7f80b2c7593b24c8aea1"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.821775063,
+      "end": 260717.823986518,
+      "pid": 247798,
+      "window": 1,
+      "token": "d585d4ac36cee2a9e68b681f2c529b7e6b79b656a5cb7f80b2c7593b24c8aea1"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.825697857,
+      "window": 1,
+      "token": "d585d4ac36cee2a9e68b681f2c529b7e6b79b656a5cb7f80b2c7593b24c8aea1"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.82054149,
+      "end": 260717.830216517,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "0aaec511f9e9f9745d8266ee11437cae94c69e0cb684e0f48d0787df68bcc75b"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.830323157,
+      "end": 260717.839460838,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "0aaec511f9e9f9745d8266ee11437cae94c69e0cb684e0f48d0787df68bcc75b"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.955757329,
+      "end": 260717.956047663,
+      "pid": 247798,
+      "window": 1,
+      "token": "0aaec511f9e9f9745d8266ee11437cae94c69e0cb684e0f48d0787df68bcc75b"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.958359698,
+      "window": 1,
+      "token": "0aaec511f9e9f9745d8266ee11437cae94c69e0cb684e0f48d0787df68bcc75b"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.82456732,
+      "end": 260717.834239893,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "687716718ef8e915ca7addcbd98f45f321be2f8192794a8cfdf13d7d16e6283b"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.834351091,
+      "end": 260717.843786269,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "687716718ef8e915ca7addcbd98f45f321be2f8192794a8cfdf13d7d16e6283b"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.958368694,
+      "end": 260717.958526961,
+      "pid": 247798,
+      "window": 1,
+      "token": "687716718ef8e915ca7addcbd98f45f321be2f8192794a8cfdf13d7d16e6283b"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.960556957,
+      "window": 1,
+      "token": "687716718ef8e915ca7addcbd98f45f321be2f8192794a8cfdf13d7d16e6283b"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.957151272,
+      "end": 260717.966898294,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "4496b493f23ec4ffe9dc6062b732927c80fd7c4185bdaf4a0ebd3f2a4ec1ff5e"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.96706684,
+      "end": 260717.976659965,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "4496b493f23ec4ffe9dc6062b732927c80fd7c4185bdaf4a0ebd3f2a4ec1ff5e"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.960563389,
+      "end": 260717.978948725,
+      "pid": 247798,
+      "window": 1,
+      "token": "4496b493f23ec4ffe9dc6062b732927c80fd7c4185bdaf4a0ebd3f2a4ec1ff5e"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.980792172,
+      "window": 1,
+      "token": "4496b493f23ec4ffe9dc6062b732927c80fd7c4185bdaf4a0ebd3f2a4ec1ff5e"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.959286557,
+      "end": 260717.969058717,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "80ba7d104b2fb307f29208272bb583539b70515c4f1d8dcdcbf4530bb28ba7e0"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.969286203,
+      "end": 260717.978641903,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "80ba7d104b2fb307f29208272bb583539b70515c4f1d8dcdcbf4530bb28ba7e0"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.980800868,
+      "end": 260717.980926754,
+      "pid": 247798,
+      "window": 1,
+      "token": "80ba7d104b2fb307f29208272bb583539b70515c4f1d8dcdcbf4530bb28ba7e0"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260717.982622783,
+      "window": 1,
+      "token": "80ba7d104b2fb307f29208272bb583539b70515c4f1d8dcdcbf4530bb28ba7e0"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.97911652,
+      "end": 260717.988796426,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "b7864edc7d39fe061313560705d77b7f62013af46cf312b858673e0922bacfe7"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.988928414,
+      "end": 260717.998113593,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "b7864edc7d39fe061313560705d77b7f62013af46cf312b858673e0922bacfe7"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260717.982630047,
+      "end": 260718.000094137,
+      "pid": 247798,
+      "window": 1,
+      "token": "b7864edc7d39fe061313560705d77b7f62013af46cf312b858673e0922bacfe7"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.001983949,
+      "window": 1,
+      "token": "b7864edc7d39fe061313560705d77b7f62013af46cf312b858673e0922bacfe7"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260717.981410463,
+      "end": 260717.991118653,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "7ad52af12e9795027bd40106d9cbb2660caa7d2ab5bd56682b67b1b8f52b644d"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260717.991234169,
+      "end": 260718.000572816,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "7ad52af12e9795027bd40106d9cbb2660caa7d2ab5bd56682b67b1b8f52b644d"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.001991394,
+      "end": 260718.002773941,
+      "pid": 247798,
+      "window": 1,
+      "token": "7ad52af12e9795027bd40106d9cbb2660caa7d2ab5bd56682b67b1b8f52b644d"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.004532327,
+      "window": 1,
+      "token": "7ad52af12e9795027bd40106d9cbb2660caa7d2ab5bd56682b67b1b8f52b644d"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.000670286,
+      "end": 260718.010319295,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "b18fcb10d262e930c07f061f20d12fc8f6a083a9d09a8605cc20e6cdea712d92"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.010426847,
+      "end": 260718.019793306,
+      "pid": 247801,
+      "window": 1,
+      "member": 1,
+      "token": "b18fcb10d262e930c07f061f20d12fc8f6a083a9d09a8605cc20e6cdea712d92"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.004539841,
+      "end": 260718.021898944,
+      "pid": 247798,
+      "window": 1,
+      "token": "b18fcb10d262e930c07f061f20d12fc8f6a083a9d09a8605cc20e6cdea712d92"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.023870721,
+      "window": 1,
+      "token": "b18fcb10d262e930c07f061f20d12fc8f6a083a9d09a8605cc20e6cdea712d92"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.00326822,
+      "end": 260718.012931836,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "dc6c0d51d4d18cddd58af60944f681df64f561247097a3a8c03ff22dbea0723f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.013038275,
+      "end": 260718.022186656,
+      "pid": 247802,
+      "window": 1,
+      "member": 1,
+      "token": "dc6c0d51d4d18cddd58af60944f681df64f561247097a3a8c03ff22dbea0723f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.023877092,
+      "end": 260718.024184699,
+      "pid": 247798,
+      "window": 1,
+      "token": "dc6c0d51d4d18cddd58af60944f681df64f561247097a3a8c03ff22dbea0723f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.025888934,
+      "window": 1,
+      "token": "dc6c0d51d4d18cddd58af60944f681df64f561247097a3a8c03ff22dbea0723f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.022419359,
+      "end": 260718.032108774,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "d910260f3c5e19e4793548d5524d508591689ddc6ff41f0e9971568a8710fab9"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.032239359,
+      "end": 260718.041461187,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "d910260f3c5e19e4793548d5524d508591689ddc6ff41f0e9971568a8710fab9"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.155949549,
+      "end": 260718.15624367,
+      "pid": 247798,
+      "window": 1,
+      "token": "d910260f3c5e19e4793548d5524d508591689ddc6ff41f0e9971568a8710fab9"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.158551417,
+      "window": 1,
+      "token": "d910260f3c5e19e4793548d5524d508591689ddc6ff41f0e9971568a8710fab9"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.024667026,
+      "end": 260718.034290537,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "65e193605cf5bddcffb5585c569ec61414229f382d25e8c4fba71575d5350665"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.034396676,
+      "end": 260718.043730484,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "65e193605cf5bddcffb5585c569ec61414229f382d25e8c4fba71575d5350665"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.158560764,
+      "end": 260718.158704554,
+      "pid": 247798,
+      "window": 1,
+      "token": "65e193605cf5bddcffb5585c569ec61414229f382d25e8c4fba71575d5350665"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.160684385,
+      "window": 1,
+      "token": "65e193605cf5bddcffb5585c569ec61414229f382d25e8c4fba71575d5350665"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.157291063,
+      "end": 260718.167075867,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "30984bfca151fcd121a758c9837ed018dd3cbbb9282a7d5fa4827fa7bc4971c6"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.167226309,
+      "end": 260718.176761605,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "30984bfca151fcd121a758c9837ed018dd3cbbb9282a7d5fa4827fa7bc4971c6"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.160691719,
+      "end": 260718.17918581,
+      "pid": 247798,
+      "window": 1,
+      "token": "30984bfca151fcd121a758c9837ed018dd3cbbb9282a7d5fa4827fa7bc4971c6"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.181009899,
+      "window": 1,
+      "token": "30984bfca151fcd121a758c9837ed018dd3cbbb9282a7d5fa4827fa7bc4971c6"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.159616956,
+      "end": 260718.169411989,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "827f58c873ef7fdbea620ef1b9bc57c25854a75a2e240cd9d66e1ba9d73975e0"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.169593539,
+      "end": 260718.179084732,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "827f58c873ef7fdbea620ef1b9bc57c25854a75a2e240cd9d66e1ba9d73975e0"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.181016171,
+      "end": 260718.181675668,
+      "pid": 247798,
+      "window": 1,
+      "token": "827f58c873ef7fdbea620ef1b9bc57c25854a75a2e240cd9d66e1ba9d73975e0"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.183536386,
+      "window": 1,
+      "token": "827f58c873ef7fdbea620ef1b9bc57c25854a75a2e240cd9d66e1ba9d73975e0"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.179362541,
+      "end": 260718.189055602,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "59a975953bfe285ea1fbaf32c531a3d0bb9752e6959637186d2a01efec8b5c27"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.189176228,
+      "end": 260718.198371407,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "59a975953bfe285ea1fbaf32c531a3d0bb9752e6959637186d2a01efec8b5c27"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.183544461,
+      "end": 260718.200384411,
+      "pid": 247798,
+      "window": 1,
+      "token": "59a975953bfe285ea1fbaf32c531a3d0bb9752e6959637186d2a01efec8b5c27"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.202311413,
+      "window": 1,
+      "token": "59a975953bfe285ea1fbaf32c531a3d0bb9752e6959637186d2a01efec8b5c27"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.182178713,
+      "end": 260718.191897523,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "b0ee4b3c32b748e1c8937e42190cfe21d1bcb93b524aadf62c00513a8be5a145"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.192086066,
+      "end": 260718.201333993,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "b0ee4b3c32b748e1c8937e42190cfe21d1bcb93b524aadf62c00513a8be5a145"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.202319598,
+      "end": 260718.203456841,
+      "pid": 247798,
+      "window": 1,
+      "token": "b0ee4b3c32b748e1c8937e42190cfe21d1bcb93b524aadf62c00513a8be5a145"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.205427465,
+      "window": 1,
+      "token": "b0ee4b3c32b748e1c8937e42190cfe21d1bcb93b524aadf62c00513a8be5a145"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.201016495,
+      "end": 260718.210666276,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "c09ade7d60f6feb87e3b86d4806d6b431533b85fe9ae16b9bac4a712e9be0b2c"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.210785429,
+      "end": 260718.2202007,
+      "pid": 247801,
+      "window": 1,
+      "member": 2,
+      "token": "c09ade7d60f6feb87e3b86d4806d6b431533b85fe9ae16b9bac4a712e9be0b2c"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.205434197,
+      "end": 260718.222210869,
+      "pid": 247798,
+      "window": 1,
+      "token": "c09ade7d60f6feb87e3b86d4806d6b431533b85fe9ae16b9bac4a712e9be0b2c"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.224215707,
+      "window": 1,
+      "token": "c09ade7d60f6feb87e3b86d4806d6b431533b85fe9ae16b9bac4a712e9be0b2c"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.204225273,
+      "end": 260718.213957428,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "610ddcb6228ff463128c989961e202a4e628afb176c2ac6bd80bc906d131e66f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.214063407,
+      "end": 260718.22358137,
+      "pid": 247802,
+      "window": 1,
+      "member": 2,
+      "token": "610ddcb6228ff463128c989961e202a4e628afb176c2ac6bd80bc906d131e66f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.224223151,
+      "end": 260718.225727952,
+      "pid": 247798,
+      "window": 1,
+      "token": "610ddcb6228ff463128c989961e202a4e628afb176c2ac6bd80bc906d131e66f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.227676305,
+      "window": 1,
+      "token": "610ddcb6228ff463128c989961e202a4e628afb176c2ac6bd80bc906d131e66f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.222927802,
+      "end": 260718.232714817,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "78a1c194f4bd9252edee339538e6f00ed853a75e20fee920b4244f3a1f8b4c64"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.232843318,
+      "end": 260718.242577016,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "78a1c194f4bd9252edee339538e6f00ed853a75e20fee920b4244f3a1f8b4c64"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.357746308,
+      "end": 260718.358090133,
+      "pid": 247798,
+      "window": 1,
+      "token": "78a1c194f4bd9252edee339538e6f00ed853a75e20fee920b4244f3a1f8b4c64"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.360725724,
+      "window": 1,
+      "token": "78a1c194f4bd9252edee339538e6f00ed853a75e20fee920b4244f3a1f8b4c64"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.226647088,
+      "end": 260718.236321985,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "b728d514a8cb0e36722f28dc465bfee54be41d15dee08215229e3f1af84d3db9"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.236457669,
+      "end": 260718.245743027,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "b728d514a8cb0e36722f28dc465bfee54be41d15dee08215229e3f1af84d3db9"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.36073416,
+      "end": 260718.360945917,
+      "pid": 247798,
+      "window": 1,
+      "token": "b728d514a8cb0e36722f28dc465bfee54be41d15dee08215229e3f1af84d3db9"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.363154548,
+      "window": 1,
+      "token": "b728d514a8cb0e36722f28dc465bfee54be41d15dee08215229e3f1af84d3db9"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.359150612,
+      "end": 260718.369020716,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "2db79b38bf776e9feb4dede1a4427bdc21df64b3bbda18e69f88a20c4ccd4d1c"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.369160659,
+      "end": 260718.378642145,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "2db79b38bf776e9feb4dede1a4427bdc21df64b3bbda18e69f88a20c4ccd4d1c"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.363161731,
+      "end": 260718.380736129,
+      "pid": 247798,
+      "window": 1,
+      "token": "2db79b38bf776e9feb4dede1a4427bdc21df64b3bbda18e69f88a20c4ccd4d1c"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.382688279,
+      "window": 1,
+      "token": "2db79b38bf776e9feb4dede1a4427bdc21df64b3bbda18e69f88a20c4ccd4d1c"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.361389275,
+      "end": 260718.371202292,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "d75922c43090ad249d7c2fd8097e8d611fab944014a11ec2609c0ad1744d79b4"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.371343797,
+      "end": 260718.380847404,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "d75922c43090ad249d7c2fd8097e8d611fab944014a11ec2609c0ad1744d79b4"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.38269453,
+      "end": 260718.38297683,
+      "pid": 247798,
+      "window": 1,
+      "token": "d75922c43090ad249d7c2fd8097e8d611fab944014a11ec2609c0ad1744d79b4"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.385090542,
+      "window": 1,
+      "token": "d75922c43090ad249d7c2fd8097e8d611fab944014a11ec2609c0ad1744d79b4"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.381385387,
+      "end": 260718.391872799,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "ee428e3babb23ef95a543ce37f5cd6f4f28c4a862d56aa1789cdc99da50375e6"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.392041706,
+      "end": 260718.401275647,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "ee428e3babb23ef95a543ce37f5cd6f4f28c4a862d56aa1789cdc99da50375e6"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.385097846,
+      "end": 260718.403197758,
+      "pid": 247798,
+      "window": 1,
+      "token": "ee428e3babb23ef95a543ce37f5cd6f4f28c4a862d56aa1789cdc99da50375e6"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.405438759,
+      "window": 1,
+      "token": "ee428e3babb23ef95a543ce37f5cd6f4f28c4a862d56aa1789cdc99da50375e6"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.383467486,
+      "end": 260718.393114602,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "4ee353bf9c8479024d78f055cb709b03b35121ee21f36917307fe06ae1a54c74"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.393368969,
+      "end": 260718.402585648,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "4ee353bf9c8479024d78f055cb709b03b35121ee21f36917307fe06ae1a54c74"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.405445121,
+      "end": 260718.40561041,
+      "pid": 247798,
+      "window": 1,
+      "token": "4ee353bf9c8479024d78f055cb709b03b35121ee21f36917307fe06ae1a54c74"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.407540589,
+      "window": 1,
+      "token": "4ee353bf9c8479024d78f055cb709b03b35121ee21f36917307fe06ae1a54c74"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.404150537,
+      "end": 260718.413837557,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "f21816b795cf7417fddd89a2dacc34c5e2b93ff53996d29c8a8064f43814040b"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.413944498,
+      "end": 260718.423131281,
+      "pid": 247801,
+      "window": 1,
+      "member": 3,
+      "token": "f21816b795cf7417fddd89a2dacc34c5e2b93ff53996d29c8a8064f43814040b"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.407547011,
+      "end": 260718.425201449,
+      "pid": 247798,
+      "window": 1,
+      "token": "f21816b795cf7417fddd89a2dacc34c5e2b93ff53996d29c8a8064f43814040b"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.427004359,
+      "window": 1,
+      "token": "f21816b795cf7417fddd89a2dacc34c5e2b93ff53996d29c8a8064f43814040b"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.406412853,
+      "end": 260718.416126504,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "458f21b9c402cf406a5a9455c7cdee8e42f386b497098b0880e874a4f049fdde"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.41625809,
+      "end": 260718.425582652,
+      "pid": 247802,
+      "window": 1,
+      "member": 3,
+      "token": "458f21b9c402cf406a5a9455c7cdee8e42f386b497098b0880e874a4f049fdde"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.427010411,
+      "end": 260718.427507793,
+      "pid": 247798,
+      "window": 1,
+      "token": "458f21b9c402cf406a5a9455c7cdee8e42f386b497098b0880e874a4f049fdde"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.429262813,
+      "window": 1,
+      "token": "458f21b9c402cf406a5a9455c7cdee8e42f386b497098b0880e874a4f049fdde"
+    },
+    {
+      "stage": "committed_iter",
+      "at": 260718.55935223,
+      "window": 1
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.425715546,
+      "end": 260718.43540944,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "a4b026b2b17113f617d8a8c5ab2ac642e81be20b290d909dca8245b75a53e152"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.435550935,
+      "end": 260718.444810314,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "a4b026b2b17113f617d8a8c5ab2ac642e81be20b290d909dca8245b75a53e152"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.56090425,
+      "end": 260718.561150522,
+      "pid": 247798,
+      "window": 2,
+      "token": "a4b026b2b17113f617d8a8c5ab2ac642e81be20b290d909dca8245b75a53e152"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.563664104,
+      "window": 2,
+      "token": "a4b026b2b17113f617d8a8c5ab2ac642e81be20b290d909dca8245b75a53e152"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.427983643,
+      "end": 260718.437628425,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "9a6210324cf0e106f38ae36bb925069a9e57dcd55b14988f4346039547ab69c4"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.437753149,
+      "end": 260718.446942056,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "9a6210324cf0e106f38ae36bb925069a9e57dcd55b14988f4346039547ab69c4"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.563676898,
+      "end": 260718.563829053,
+      "pid": 247798,
+      "window": 2,
+      "token": "9a6210324cf0e106f38ae36bb925069a9e57dcd55b14988f4346039547ab69c4"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.565667219,
+      "window": 2,
+      "token": "9a6210324cf0e106f38ae36bb925069a9e57dcd55b14988f4346039547ab69c4"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.562028002,
+      "end": 260718.571809871,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "7b76c92ecc5b9639b59dc4739d36480ac625a8c60ad69a9f8232c7a0528fae3e"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.57194257,
+      "end": 260718.581414497,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "7b76c92ecc5b9639b59dc4739d36480ac625a8c60ad69a9f8232c7a0528fae3e"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.565674463,
+      "end": 260718.58391534,
+      "pid": 247798,
+      "window": 2,
+      "token": "7b76c92ecc5b9639b59dc4739d36480ac625a8c60ad69a9f8232c7a0528fae3e"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.58572317,
+      "window": 2,
+      "token": "7b76c92ecc5b9639b59dc4739d36480ac625a8c60ad69a9f8232c7a0528fae3e"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.564734389,
+      "end": 260718.574772698,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "6cf76c6edb8facdf650fd535c1a47582bf7ada4cdd0164ba032a4087ab182a22"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.574915636,
+      "end": 260718.584464558,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "6cf76c6edb8facdf650fd535c1a47582bf7ada4cdd0164ba032a4087ab182a22"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.585730173,
+      "end": 260718.586823473,
+      "pid": 247798,
+      "window": 2,
+      "token": "6cf76c6edb8facdf650fd535c1a47582bf7ada4cdd0164ba032a4087ab182a22"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.588829353,
+      "window": 2,
+      "token": "6cf76c6edb8facdf650fd535c1a47582bf7ada4cdd0164ba032a4087ab182a22"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.584121953,
+      "end": 260718.593805658,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "8fb8b31ca0e734b95d643a69998852a3eeb5e4160397bbd8d44e4f81fef7a929"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.593915233,
+      "end": 260718.603105904,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "8fb8b31ca0e734b95d643a69998852a3eeb5e4160397bbd8d44e4f81fef7a929"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.588836667,
+      "end": 260718.605124262,
+      "pid": 247798,
+      "window": 2,
+      "token": "8fb8b31ca0e734b95d643a69998852a3eeb5e4160397bbd8d44e4f81fef7a929"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.607046145,
+      "window": 2,
+      "token": "8fb8b31ca0e734b95d643a69998852a3eeb5e4160397bbd8d44e4f81fef7a929"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.587315403,
+      "end": 260718.596981374,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "914848c02a22dd1975b1d8eb23e5454eee911ab49c6643e55f5f00a9ea82a42f"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.597088465,
+      "end": 260718.606296508,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "914848c02a22dd1975b1d8eb23e5454eee911ab49c6643e55f5f00a9ea82a42f"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.607053339,
+      "end": 260718.608575633,
+      "pid": 247798,
+      "window": 2,
+      "token": "914848c02a22dd1975b1d8eb23e5454eee911ab49c6643e55f5f00a9ea82a42f"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.61028116,
+      "window": 2,
+      "token": "914848c02a22dd1975b1d8eb23e5454eee911ab49c6643e55f5f00a9ea82a42f"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.605735754,
+      "end": 260718.615382319,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "394c16b023c814d46cd116f334920525b3a414bfce38112d6fc0498f47d734a3"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.61552669,
+      "end": 260718.624889984,
+      "pid": 247801,
+      "window": 2,
+      "member": 0,
+      "token": "394c16b023c814d46cd116f334920525b3a414bfce38112d6fc0498f47d734a3"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.610288204,
+      "end": 260718.62684319,
+      "pid": 247798,
+      "window": 2,
+      "token": "394c16b023c814d46cd116f334920525b3a414bfce38112d6fc0498f47d734a3"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.628883124,
+      "window": 2,
+      "token": "394c16b023c814d46cd116f334920525b3a414bfce38112d6fc0498f47d734a3"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.609057764,
+      "end": 260718.618820327,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "caeca099ae9040a66bffdec22eb2e0af1eebd3118575c74313d8b014fa9846f8"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.618945592,
+      "end": 260718.628337469,
+      "pid": 247802,
+      "window": 2,
+      "member": 0,
+      "token": "caeca099ae9040a66bffdec22eb2e0af1eebd3118575c74313d8b014fa9846f8"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.628889476,
+      "end": 260718.63059225,
+      "pid": 247798,
+      "window": 2,
+      "token": "caeca099ae9040a66bffdec22eb2e0af1eebd3118575c74313d8b014fa9846f8"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.632534652,
+      "window": 2,
+      "token": "caeca099ae9040a66bffdec22eb2e0af1eebd3118575c74313d8b014fa9846f8"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.62738471,
+      "end": 260718.633857105,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "140e43e63dab563a929bd8d2a71c72819a22845c019400f7f7a90313428b4b5b"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.633966249,
+      "end": 260718.63884179,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "140e43e63dab563a929bd8d2a71c72819a22845c019400f7f7a90313428b4b5b"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.762592881,
+      "end": 260718.762826048,
+      "pid": 247798,
+      "window": 2,
+      "token": "140e43e63dab563a929bd8d2a71c72819a22845c019400f7f7a90313428b4b5b"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.764647974,
+      "window": 2,
+      "token": "140e43e63dab563a929bd8d2a71c72819a22845c019400f7f7a90313428b4b5b"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.631286157,
+      "end": 260718.637737943,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "9a2b4bf98fa132f91c1e00b8d3db183464ce1fc23aeb41d416f49d8216a993c3"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.637873597,
+      "end": 260718.642722418,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "9a2b4bf98fa132f91c1e00b8d3db183464ce1fc23aeb41d416f49d8216a993c3"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.764655978,
+      "end": 260718.764789208,
+      "pid": 247798,
+      "window": 2,
+      "token": "9a2b4bf98fa132f91c1e00b8d3db183464ce1fc23aeb41d416f49d8216a993c3"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.766246811,
+      "window": 2,
+      "token": "9a2b4bf98fa132f91c1e00b8d3db183464ce1fc23aeb41d416f49d8216a993c3"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.763668281,
+      "end": 260718.770181901,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "c6c0f7be0b002644c81551bc06bfa985b2567ea52863e80f580c3808839037ec"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.770324288,
+      "end": 260718.775269209,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "c6c0f7be0b002644c81551bc06bfa985b2567ea52863e80f580c3808839037ec"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.766253764,
+      "end": 260718.777082403,
+      "pid": 247798,
+      "window": 2,
+      "token": "c6c0f7be0b002644c81551bc06bfa985b2567ea52863e80f580c3808839037ec"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.778455627,
+      "window": 2,
+      "token": "c6c0f7be0b002644c81551bc06bfa985b2567ea52863e80f580c3808839037ec"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.765568606,
+      "end": 260718.772163028,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "e75e0b48336fe563ad03974240bcb4f1fa49cec5e0cdd082fccc616017edad1b"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.772321726,
+      "end": 260718.777287155,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "e75e0b48336fe563ad03974240bcb4f1fa49cec5e0cdd082fccc616017edad1b"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.778462971,
+      "end": 260718.779039993,
+      "pid": 247798,
+      "window": 2,
+      "token": "e75e0b48336fe563ad03974240bcb4f1fa49cec5e0cdd082fccc616017edad1b"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.78039311,
+      "window": 2,
+      "token": "e75e0b48336fe563ad03974240bcb4f1fa49cec5e0cdd082fccc616017edad1b"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.777644853,
+      "end": 260718.78415579,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "b986191b7cbda9f29e517496c07f680ebb268020995f4aa24777e50d69a0f602"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.784262971,
+      "end": 260718.789081564,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "b986191b7cbda9f29e517496c07f680ebb268020995f4aa24777e50d69a0f602"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.780400864,
+      "end": 260718.790668294,
+      "pid": 247798,
+      "window": 2,
+      "token": "b986191b7cbda9f29e517496c07f680ebb268020995f4aa24777e50d69a0f602"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.792279023,
+      "window": 2,
+      "token": "b986191b7cbda9f29e517496c07f680ebb268020995f4aa24777e50d69a0f602"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.779547903,
+      "end": 260718.786007313,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "751f30bca3e1723b8e92bb0aa7dc966b258cb972435f28b06fe24d47c807d2fa"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.786126306,
+      "end": 260718.790877814,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "751f30bca3e1723b8e92bb0aa7dc966b258cb972435f28b06fe24d47c807d2fa"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.792286918,
+      "end": 260718.792420058,
+      "pid": 247798,
+      "window": 2,
+      "token": "751f30bca3e1723b8e92bb0aa7dc966b258cb972435f28b06fe24d47c807d2fa"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.793889773,
+      "window": 2,
+      "token": "751f30bca3e1723b8e92bb0aa7dc966b258cb972435f28b06fe24d47c807d2fa"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.791202741,
+      "end": 260718.797621084,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "5f6b57903c973d0e6436194fd5aeaa3ee26a97a72b54e283e16033a9fef92306"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.797731881,
+      "end": 260718.802438074,
+      "pid": 247801,
+      "window": 2,
+      "member": 1,
+      "token": "5f6b57903c973d0e6436194fd5aeaa3ee26a97a72b54e283e16033a9fef92306"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.793897267,
+      "end": 260718.804087962,
+      "pid": 247798,
+      "window": 2,
+      "token": "5f6b57903c973d0e6436194fd5aeaa3ee26a97a72b54e283e16033a9fef92306"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.805416613,
+      "window": 2,
+      "token": "5f6b57903c973d0e6436194fd5aeaa3ee26a97a72b54e283e16033a9fef92306"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.792932506,
+      "end": 260718.799390173,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "9d61a4a92ccbe09081cb74cf22b6b8d65d54ef410df74b83f3d35cba6ea59450"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.7995538,
+      "end": 260718.804379777,
+      "pid": 247802,
+      "window": 2,
+      "member": 1,
+      "token": "9d61a4a92ccbe09081cb74cf22b6b8d65d54ef410df74b83f3d35cba6ea59450"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.805423757,
+      "end": 260718.805821843,
+      "pid": 247798,
+      "window": 2,
+      "token": "9d61a4a92ccbe09081cb74cf22b6b8d65d54ef410df74b83f3d35cba6ea59450"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.807101452,
+      "window": 2,
+      "token": "9d61a4a92ccbe09081cb74cf22b6b8d65d54ef410df74b83f3d35cba6ea59450"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.804592904,
+      "end": 260718.81105542,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "c7bdf963374d5a9831c647682ce5a2bd27d072fb6d35abc50871319605c9b4f3"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.811164545,
+      "end": 260718.820412973,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "c7bdf963374d5a9831c647682ce5a2bd27d072fb6d35abc50871319605c9b4f3"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.93715943,
+      "end": 260718.937462047,
+      "pid": 247798,
+      "window": 2,
+      "token": "c7bdf963374d5a9831c647682ce5a2bd27d072fb6d35abc50871319605c9b4f3"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.939887164,
+      "window": 2,
+      "token": "c7bdf963374d5a9831c647682ce5a2bd27d072fb6d35abc50871319605c9b4f3"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.806273568,
+      "end": 260718.812720374,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "6d849ed0337c7813e98986d780761cba73c0be3c484b68f6cbb7752d74efef68"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.812824479,
+      "end": 260718.822038072,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "6d849ed0337c7813e98986d780761cba73c0be3c484b68f6cbb7752d74efef68"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.939895519,
+      "end": 260718.940085195,
+      "pid": 247798,
+      "window": 2,
+      "token": "6d849ed0337c7813e98986d780761cba73c0be3c484b68f6cbb7752d74efef68"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.942048546,
+      "window": 2,
+      "token": "6d849ed0337c7813e98986d780761cba73c0be3c484b68f6cbb7752d74efef68"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.938325551,
+      "end": 260718.944872405,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "36ce3724fbc19c2ef442c2fc82ec069563e43a939cca7ca084002f0d8c090b40"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.945009262,
+      "end": 260718.954228516,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "36ce3724fbc19c2ef442c2fc82ec069563e43a939cca7ca084002f0d8c090b40"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.942055429,
+      "end": 260718.956433444,
+      "pid": 247798,
+      "window": 2,
+      "token": "36ce3724fbc19c2ef442c2fc82ec069563e43a939cca7ca084002f0d8c090b40"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.958228279,
+      "window": 2,
+      "token": "36ce3724fbc19c2ef442c2fc82ec069563e43a939cca7ca084002f0d8c090b40"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.940859364,
+      "end": 260718.947441895,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "7bd17a82d297b0ded8a6fa99637bb52b5ac79eb580414ec99d7200a92bf46aa0"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.947773026,
+      "end": 260718.957049988,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "7bd17a82d297b0ded8a6fa99637bb52b5ac79eb580414ec99d7200a92bf46aa0"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.958235383,
+      "end": 260718.959247109,
+      "pid": 247798,
+      "window": 2,
+      "token": "7bd17a82d297b0ded8a6fa99637bb52b5ac79eb580414ec99d7200a92bf46aa0"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.961091988,
+      "window": 2,
+      "token": "7bd17a82d297b0ded8a6fa99637bb52b5ac79eb580414ec99d7200a92bf46aa0"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.956985755,
+      "end": 260718.963368371,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "769d0480e7cbaab50926820ed93eaee7912993c0084dba3667fdfe895a6232dd"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.963473007,
+      "end": 260718.972729018,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "769d0480e7cbaab50926820ed93eaee7912993c0084dba3667fdfe895a6232dd"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.96109831,
+      "end": 260718.974897931,
+      "pid": 247798,
+      "window": 2,
+      "token": "769d0480e7cbaab50926820ed93eaee7912993c0084dba3667fdfe895a6232dd"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.976856603,
+      "window": 2,
+      "token": "769d0480e7cbaab50926820ed93eaee7912993c0084dba3667fdfe895a6232dd"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.959768375,
+      "end": 260718.966232674,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "772ece56ad6e5104f42f3cbdc08ab79dca3ef6f4c9cc723518a287a4f810299e"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.966338662,
+      "end": 260718.975658826,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "772ece56ad6e5104f42f3cbdc08ab79dca3ef6f4c9cc723518a287a4f810299e"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.976863326,
+      "end": 260718.978474857,
+      "pid": 247798,
+      "window": 2,
+      "token": "772ece56ad6e5104f42f3cbdc08ab79dca3ef6f4c9cc723518a287a4f810299e"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.98026859,
+      "window": 2,
+      "token": "772ece56ad6e5104f42f3cbdc08ab79dca3ef6f4c9cc723518a287a4f810299e"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.975393393,
+      "end": 260718.981973268,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "d18830a60b6787bba7fe5f9f274bbf7709f8970a0d3c99c7594346e9ef94bb22"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.982081281,
+      "end": 260718.991221747,
+      "pid": 247801,
+      "window": 2,
+      "member": 2,
+      "token": "d18830a60b6787bba7fe5f9f274bbf7709f8970a0d3c99c7594346e9ef94bb22"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.980275763,
+      "end": 260718.993738282,
+      "pid": 247798,
+      "window": 2,
+      "token": "d18830a60b6787bba7fe5f9f274bbf7709f8970a0d3c99c7594346e9ef94bb22"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.995473305,
+      "window": 2,
+      "token": "d18830a60b6787bba7fe5f9f274bbf7709f8970a0d3c99c7594346e9ef94bb22"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.979010599,
+      "end": 260718.985440925,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "fa2169aeb65b08a10ee06058b497419c7ac22f010a29971b20753b046c347cb4"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260718.985914873,
+      "end": 260718.995161188,
+      "pid": 247802,
+      "window": 2,
+      "member": 2,
+      "token": "fa2169aeb65b08a10ee06058b497419c7ac22f010a29971b20753b046c347cb4"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260718.99551366,
+      "end": 260718.997634737,
+      "pid": 247798,
+      "window": 2,
+      "token": "fa2169aeb65b08a10ee06058b497419c7ac22f010a29971b20753b046c347cb4"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260718.999365452,
+      "window": 2,
+      "token": "fa2169aeb65b08a10ee06058b497419c7ac22f010a29971b20753b046c347cb4"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.994237781,
+      "end": 260719.003914383,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "0fba128ddb3e822f29fb54a00df5d259414553f888d15048d95906dcd6608147"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.004082358,
+      "end": 260719.013343249,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "0fba128ddb3e822f29fb54a00df5d259414553f888d15048d95906dcd6608147"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.129422769,
+      "end": 260719.129718563,
+      "pid": 247798,
+      "window": 2,
+      "token": "0fba128ddb3e822f29fb54a00df5d259414553f888d15048d95906dcd6608147"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.131905964,
+      "window": 2,
+      "token": "0fba128ddb3e822f29fb54a00df5d259414553f888d15048d95906dcd6608147"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260718.99813368,
+      "end": 260719.007815872,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "fd4562eeaea8e30e4476d9c225ac2eed40e1fa0c33251c45d5eaf37dbf10d4ef"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.007922812,
+      "end": 260719.017213651,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "fd4562eeaea8e30e4476d9c225ac2eed40e1fa0c33251c45d5eaf37dbf10d4ef"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.13191444,
+      "end": 260719.132185698,
+      "pid": 247798,
+      "window": 2,
+      "token": "fd4562eeaea8e30e4476d9c225ac2eed40e1fa0c33251c45d5eaf37dbf10d4ef"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.134283561,
+      "window": 2,
+      "token": "fd4562eeaea8e30e4476d9c225ac2eed40e1fa0c33251c45d5eaf37dbf10d4ef"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.130565794,
+      "end": 260719.140281399,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "31b8748e937c3172165a76ccb62a9f238eb4562da8fb56a1c1c5d86a93fd04f0"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.140412534,
+      "end": 260719.149898348,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "31b8748e937c3172165a76ccb62a9f238eb4562da8fb56a1c1c5d86a93fd04f0"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.134290895,
+      "end": 260719.152439129,
+      "pid": 247798,
+      "window": 2,
+      "token": "31b8748e937c3172165a76ccb62a9f238eb4562da8fb56a1c1c5d86a93fd04f0"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.154262777,
+      "window": 2,
+      "token": "31b8748e937c3172165a76ccb62a9f238eb4562da8fb56a1c1c5d86a93fd04f0"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.132617586,
+      "end": 260719.142407269,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "01a81d1f4884a0580f5ab3833612f13b4bb5d5dae28e5f5afb88240433a6c0d8"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.14262084,
+      "end": 260719.152308231,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "01a81d1f4884a0580f5ab3833612f13b4bb5d5dae28e5f5afb88240433a6c0d8"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.154270051,
+      "end": 260719.154553182,
+      "pid": 247798,
+      "window": 2,
+      "token": "01a81d1f4884a0580f5ab3833612f13b4bb5d5dae28e5f5afb88240433a6c0d8"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.157004458,
+      "window": 2,
+      "token": "01a81d1f4884a0580f5ab3833612f13b4bb5d5dae28e5f5afb88240433a6c0d8"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.152639267,
+      "end": 260719.16231684,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "821662c31d0cc5735f0706029709b7f56a9233fa2213c115a2248326794acaf9"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.162422047,
+      "end": 260719.171855032,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "821662c31d0cc5735f0706029709b7f56a9233fa2213c115a2248326794acaf9"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.157020247,
+      "end": 260719.174070613,
+      "pid": 247798,
+      "window": 2,
+      "token": "821662c31d0cc5735f0706029709b7f56a9233fa2213c115a2248326794acaf9"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.175692413,
+      "window": 2,
+      "token": "821662c31d0cc5735f0706029709b7f56a9233fa2213c115a2248326794acaf9"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.15517732,
+      "end": 260719.16487465,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "fff82ced62570229f76b0fb48f47688016d6d06b74e5f01635c1acd33254ca29"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.164993653,
+      "end": 260719.174175277,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "fff82ced62570229f76b0fb48f47688016d6d06b74e5f01635c1acd33254ca29"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.175700588,
+      "end": 260719.176431288,
+      "pid": 247798,
+      "window": 2,
+      "token": "fff82ced62570229f76b0fb48f47688016d6d06b74e5f01635c1acd33254ca29"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.179657647,
+      "window": 2,
+      "token": "fff82ced62570229f76b0fb48f47688016d6d06b74e5f01635c1acd33254ca29"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.174223522,
+      "end": 260719.183905313,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "45913a0dbf01f91c23c1efd4257bae6c1245c2e71738e82953a3e85530bba992"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.184073899,
+      "end": 260719.193555395,
+      "pid": 247801,
+      "window": 2,
+      "member": 3,
+      "token": "45913a0dbf01f91c23c1efd4257bae6c1245c2e71738e82953a3e85530bba992"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.179665011,
+      "end": 260719.195576171,
+      "pid": 247798,
+      "window": 2,
+      "token": "45913a0dbf01f91c23c1efd4257bae6c1245c2e71738e82953a3e85530bba992"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.19770425,
+      "window": 2,
+      "token": "45913a0dbf01f91c23c1efd4257bae6c1245c2e71738e82953a3e85530bba992"
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.176940441,
+      "end": 260719.186644664,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "8f6e1cf9854e5c6fafa337759af4ede60dd1761f0add6ef5c841359134ceb821"
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.186752246,
+      "end": 260719.196117804,
+      "pid": 247802,
+      "window": 2,
+      "member": 3,
+      "token": "8f6e1cf9854e5c6fafa337759af4ede60dd1761f0add6ef5c841359134ceb821"
+    },
+    {
+      "stage": "main_thread_wait",
+      "start": 260719.197711083,
+      "end": 260719.198222251,
+      "pid": 247798,
+      "window": 2,
+      "token": "8f6e1cf9854e5c6fafa337759af4ede60dd1761f0add6ef5c841359134ceb821"
+    },
+    {
+      "stage": "consumer_ready",
+      "at": 260719.200200831,
+      "window": 2,
+      "token": "8f6e1cf9854e5c6fafa337759af4ede60dd1761f0add6ef5c841359134ceb821"
+    },
+    {
+      "stage": "committed_iter",
+      "at": 260719.330284437,
+      "window": 2
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 0,
+      "member": 0,
+      "start": 260717.01807206,
+      "end": 260717.148074094,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 0,
+      "member": 1,
+      "start": 260717.21885089,
+      "end": 260717.348854006,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 0,
+      "member": 2,
+      "start": 260717.420585952,
+      "end": 260717.550588798,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 0,
+      "member": 3,
+      "start": 260717.621638845,
+      "end": 260717.751642545,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 1,
+      "member": 0,
+      "start": 260717.825736559,
+      "end": 260717.955737191,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 1,
+      "member": 1,
+      "start": 260718.025925924,
+      "end": 260718.155928019,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 1,
+      "member": 2,
+      "start": 260718.227713084,
+      "end": 260718.357714398,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 1,
+      "member": 3,
+      "start": 260718.429299071,
+      "end": 260718.559300393,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 2,
+      "member": 0,
+      "start": 260718.632572713,
+      "end": 260718.762574005,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 2,
+      "member": 1,
+      "start": 260718.807135796,
+      "end": 260718.937140074,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 2,
+      "member": 2,
+      "start": 260718.999401158,
+      "end": 260719.129404134,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "window": 2,
+      "member": 3,
+      "start": 260719.200237239,
+      "end": 260719.330239683,
+      "pid": 247798
+    }
+  ],
+  "sync_trace": [
+    {
+      "stage": "cpu_source",
+      "start": 260719.356697054,
+      "end": 260719.363424727,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.363589696,
+      "end": 260719.373636502,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.373853498,
+      "end": 260719.380301607,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.380417845,
+      "end": 260719.389585512,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.389800085,
+      "end": 260719.396168123,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.396295562,
+      "end": 260719.405554029,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.405754876,
+      "end": 260719.412179551,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.412305918,
+      "end": 260719.421515113,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.421725828,
+      "end": 260719.42819189,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.428317385,
+      "end": 260719.437372361,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.437625165,
+      "end": 260719.444144309,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.44425706,
+      "end": 260719.453364354,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.453626646,
+      "end": 260719.460159904,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.460286692,
+      "end": 260719.469373417,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.46962018,
+      "end": 260719.476112903,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.476216317,
+      "end": 260719.485300127,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260719.485457642,
+      "end": 260719.615461288
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.6156489,
+      "end": 260719.62552235,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.625668674,
+      "end": 260719.635078255,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.63536896,
+      "end": 260719.645030313,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.645135731,
+      "end": 260719.654334666,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.654591037,
+      "end": 260719.664157582,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.664283999,
+      "end": 260719.673550461,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.673755526,
+      "end": 260719.683421547,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.683590784,
+      "end": 260719.693053976,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.693256215,
+      "end": 260719.703010522,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.703135316,
+      "end": 260719.712630357,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.712879885,
+      "end": 260719.722696538,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.72280961,
+      "end": 260719.732193964,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.732409709,
+      "end": 260719.742071412,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.742191918,
+      "end": 260719.751446498,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.751710332,
+      "end": 260719.761627326,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.761751519,
+      "end": 260719.771021538,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260719.771203379,
+      "end": 260719.901773447
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.902106521,
+      "end": 260719.912080039,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.912244998,
+      "end": 260719.921966564,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.922230669,
+      "end": 260719.931854512,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.931969878,
+      "end": 260719.941240338,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.941474477,
+      "end": 260719.951128396,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.951256786,
+      "end": 260719.960554508,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.960786592,
+      "end": 260719.970501876,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.970611943,
+      "end": 260719.979905286,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.980182505,
+      "end": 260719.989847595,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260719.989958523,
+      "end": 260719.99923816,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260719.999548673,
+      "end": 260720.009278793,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.009393548,
+      "end": 260720.018631527,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.018844126,
+      "end": 260720.028523362,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.028640642,
+      "end": 260720.037879523,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.038106869,
+      "end": 260720.047819888,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.047948279,
+      "end": 260720.057259606,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260720.057417401,
+      "end": 260720.187418523
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.187568094,
+      "end": 260720.197301121,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.197426315,
+      "end": 260720.206928209,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.207149674,
+      "end": 260720.21682876,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.216956259,
+      "end": 260720.226155716,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.226407839,
+      "end": 260720.236161314,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.236286398,
+      "end": 260720.245641098,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.245886548,
+      "end": 260720.25575045,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.255881627,
+      "end": 260720.265256592,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.265513814,
+      "end": 260720.275201697,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.275329857,
+      "end": 260720.28469262,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.284949382,
+      "end": 260720.294660337,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.29478449,
+      "end": 260720.303991131,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.304253913,
+      "end": 260720.313986128,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.314089522,
+      "end": 260720.323392854,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.323683609,
+      "end": 260720.333352907,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.333455208,
+      "end": 260720.342713966,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260720.342907319,
+      "end": 260720.472910133
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.473171794,
+      "end": 260720.482922615,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.48304264,
+      "end": 260720.492445899,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.492693954,
+      "end": 260720.502362109,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.5024743,
+      "end": 260720.511786027,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.511993456,
+      "end": 260720.521611788,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.521712878,
+      "end": 260720.530908527,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.531154247,
+      "end": 260720.540770185,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.540871605,
+      "end": 260720.550297497,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.550560169,
+      "end": 260720.560178792,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.560306982,
+      "end": 260720.569450835,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.569714549,
+      "end": 260720.579419053,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.579601535,
+      "end": 260720.588870692,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.589076268,
+      "end": 260720.598796872,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.598923419,
+      "end": 260720.608343499,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.608638111,
+      "end": 260720.618325163,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.618426753,
+      "end": 260720.627711961,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260720.627873894,
+      "end": 260720.75787716
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.758037751,
+      "end": 260720.767906452,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.768124581,
+      "end": 260720.777600657,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.777844023,
+      "end": 260720.78751296,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.787641391,
+      "end": 260720.79699152,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.797201043,
+      "end": 260720.807322538,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.807449747,
+      "end": 260720.816906606,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.817149782,
+      "end": 260720.826887267,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.827012472,
+      "end": 260720.836377609,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.836654348,
+      "end": 260720.846367529,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.846474409,
+      "end": 260720.855720684,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.855943291,
+      "end": 260720.865626264,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.865734197,
+      "end": 260720.874996571,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.875232313,
+      "end": 260720.88494357,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.885070768,
+      "end": 260720.894246228,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260720.894458997,
+      "end": 260720.904183468,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260720.904308763,
+      "end": 260720.913531925,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260720.913696463,
+      "end": 260721.043697564
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.043845181,
+      "end": 260721.053643541,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.053779716,
+      "end": 260721.063186572,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.063458371,
+      "end": 260721.073068368,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.073170509,
+      "end": 260721.082310635,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.082583527,
+      "end": 260721.092168206,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.09229298,
+      "end": 260721.101426403,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.101674397,
+      "end": 260721.111375054,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.111509746,
+      "end": 260721.12087295,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.121077874,
+      "end": 260721.130791826,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.130918874,
+      "end": 260721.140254736,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.140460803,
+      "end": 260721.150109542,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.150212104,
+      "end": 260721.159364112,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.159617026,
+      "end": 260721.169271556,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.169378607,
+      "end": 260721.178603091,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.178833052,
+      "end": 260721.188585447,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.188717193,
+      "end": 260721.197894078,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260721.198071591,
+      "end": 260721.328073313
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.328256557,
+      "end": 260721.338309654,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.338545266,
+      "end": 260721.348253426,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.348601078,
+      "end": 260721.358307896,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.358450133,
+      "end": 260721.367920187,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.368234967,
+      "end": 260721.37788038,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.377983914,
+      "end": 260721.387274001,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.387526083,
+      "end": 260721.39718951,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.397291842,
+      "end": 260721.40639594,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.406646269,
+      "end": 260721.416340824,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.416467281,
+      "end": 260721.425688368,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.425891369,
+      "end": 260721.435609007,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.435739362,
+      "end": 260721.445016755,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.445226899,
+      "end": 260721.454918689,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.455042461,
+      "end": 260721.464417747,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.464662085,
+      "end": 260721.47436212,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.474519255,
+      "end": 260721.483858795,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260721.484111027,
+      "end": 260721.614114754
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.614920504,
+      "end": 260721.624737438,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.624881559,
+      "end": 260721.634315345,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.634580743,
+      "end": 260721.644162086,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.644287551,
+      "end": 260721.653450719,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.653706689,
+      "end": 260721.663358885,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.663521039,
+      "end": 260721.672896295,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.673096992,
+      "end": 260721.682813457,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.682936498,
+      "end": 260721.692327654,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.692616135,
+      "end": 260721.702309598,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.702416288,
+      "end": 260721.711770295,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.711971813,
+      "end": 260721.721643575,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.721746237,
+      "end": 260721.730913764,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.731137504,
+      "end": 260721.740813324,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.740936935,
+      "end": 260721.750169294,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.750424092,
+      "end": 260721.760176805,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.760306068,
+      "end": 260721.769653161,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260721.769821297,
+      "end": 260721.899822649
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.899955327,
+      "end": 260721.906585608,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.906718046,
+      "end": 260721.911679077,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.91194205,
+      "end": 260721.918617324,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.918755083,
+      "end": 260721.923623069,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.923866796,
+      "end": 260721.930321747,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.930445229,
+      "end": 260721.935242292,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.935437338,
+      "end": 260721.941908019,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.942012244,
+      "end": 260721.946813325,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.94706138,
+      "end": 260721.953531991,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.953641647,
+      "end": 260721.95828944,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.958537215,
+      "end": 260721.964979933,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.965102844,
+      "end": 260721.969799118,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.969992381,
+      "end": 260721.976452351,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.976615267,
+      "end": 260721.981393455,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260721.981654935,
+      "end": 260721.988152626,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260721.988255589,
+      "end": 260721.993039138,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260721.993219947,
+      "end": 260722.123223072
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.123368174,
+      "end": 260722.129991201,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.13012429,
+      "end": 260722.139681177,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.139903734,
+      "end": 260722.146390666,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.146529315,
+      "end": 260722.155813401,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.156069391,
+      "end": 260722.162570028,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.162685535,
+      "end": 260722.171955443,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.172277227,
+      "end": 260722.178758067,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.178859347,
+      "end": 260722.187948878,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.188203615,
+      "end": 260722.19463931,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.194758874,
+      "end": 260722.203960696,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.204272931,
+      "end": 260722.210736188,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.210861463,
+      "end": 260722.220159044,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.220402581,
+      "end": 260722.226906394,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.227030046,
+      "end": 260722.236259829,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.236526209,
+      "end": 260722.242970961,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.243095124,
+      "end": 260722.252418974,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260722.252649015,
+      "end": 260722.382652539
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.382806838,
+      "end": 260722.392629844,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.392773112,
+      "end": 260722.402123952,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.402363421,
+      "end": 260722.412151631,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.412277246,
+      "end": 260722.421468117,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.421715811,
+      "end": 260722.431406699,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.431563733,
+      "end": 260722.440995685,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.441224704,
+      "end": 260722.45088784,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.451011401,
+      "end": 260722.460383432,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.460658227,
+      "end": 260722.470449533,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.470627797,
+      "end": 260722.479980029,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.480355764,
+      "end": 260722.490063493,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.490172046,
+      "end": 260722.499600522,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.499854979,
+      "end": 260722.50957466,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.509678445,
+      "end": 260722.518875526,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_source",
+      "start": 260722.519083536,
+      "end": 260722.528765728,
+      "pid": 247798
+    },
+    {
+      "stage": "cpu_transform",
+      "start": 260722.528892565,
+      "end": 260722.538075781,
+      "pid": 247798
+    },
+    {
+      "stage": "fake_gpu_compute",
+      "start": 260722.53823528,
+      "end": 260722.668237536
+    }
+  ],
+  "main_wait_ms": 6191.183658898808,
+  "async_window_wall_ms_including_pool_startup": 7947.735686000669,
+  "sync_source_transform_compute_wall_ms": 3312.2479880112223,
+  "performance_claim": "CPU_FAKE_ONLY_NOT_GPU_THROUGHPUT"
+}

@@ -1,0 +1,332 @@
+diff --git a/SESSION.md b/SESSION.md
+index d8317788..454fafcf 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,27 @@
++# 2026-10-31 — Issue12 canonical-based async/lazy integration candidate, claimed
++
++Explicit Child port committed baf1b5bf46853e9849a91518803b9738fc216235:
++13 paths (6production+7test/support), all exact approved224c5f3c blobs, parent
++currentV3Child0ae313e3. Scoped Child Ruff/format13 PASS. New Root receiver
++7 CPU sentries PASS: actual default binding selects async for1/2/4/8, zero
++stays synchronous, no worker/model creation or training identity/RNG mutation
++at bind. Final narrow43-case source/RNG/Resume integration selection pending.
++No whole-child merge, EvalV2 or Issue13 code carried, GPU/DCP/Job untouched.
++
++IN_PROGRESS, Codex, isolated v3-nottt-async-lazy-port-20261031. Latest V3
++fetched/advertised2bcc27e94576837167cacd190af7dc837e6129cd and exact detailed
++APPROVE_PERFORMANCE fd9021b0/224c5f3c actually read. This approval is historical
++donor evidence, not a new GPU run or promotion permission. Start Root2bcc27e9,
++Child0ae313e329d290fc6b8a50fda1112820fb7ac485, preserving EvalV2.
++Inspection found original Issue9 async prerequisites absent: currentTrainer
++still binds oldRAW loader. Required executable closure is6 approved production
++files +7 test/support paths, all exact donor224c5f3c blobs, not entire oldChild.
++Plan/ownership docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Canonical_Port_2026-10-31.md.
++Root new integration test/doc/evidence/Gitlink only; launchers/configs/Issue13
++remain unchanged. Targeted newPairCPU and source equivalence then isolated
++Child/Root publication and GPT Code Gate, STOP. No real data/model/DCP/GPU,
++canonical merge, formalResume/Job/history access. Claim uncommitted.
++
+ # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
+ 
+ - Gate `V3-CORRECTED-PHASE3-CACHED-SFT-CACHE-HIT` 进入 REVIEW。authority：Phase3 v1.0 design root `78ff45375cecc3783ec3d219af23c4be5902b9da` 与 `/tmp/CX_PHASE3_CACHED_LATENT_SFT_CACHE_HIT.md`；baseline child `ce07cb6f4a3f7792d85b7583ff6c8bda0bfa0cb0`。复用 Phase1A cache catalog/reader、Phase1B source/index、Phase2 official raw15/state15 adapter、官方 ActionSFTDataset/ActionTransformPipeline 与 PackingDataLoader；本轮 child 只新增 `robocasa_exact_window_cached_sft.py`、`robocasa_exact_window_cached_sft_test.py`、`omni_mot_cached_vision_test.py`，并仅在 `omni_mot_model.py:get_data_and_condition` 加 optional cache-hit vision preparation。raw sample 附 `cached_latent_required=True`，model 对哨兵缺 latent/反向缺哨兵及不合法 packed ABI fail-closed；constructor 校验 VideoResize `192×320` canvas 与 fixed Wan factor16 对应 latent `12×20`，cache-hit保留 native crop 与 temporal helper，VAE/collective调用为0，off-mode 保持原路。
+diff --git a/TODO.md b/TODO.md
+index 9ef8431a..cc88dff2 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -476,3 +476,6 @@
+ - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — REVIEW; authorfive-moduleCPU227PASS/0skip,53new tests,static9/frozen10PASS; stable cold modelonefullhash and lockedstat, warm0payload bytes identicalSHA, strict cache miss/invalid/atomickill/lease/history/configTask/CLI negatives. Candidate-only Root+unchanged746c5cf2Child; rawEvidence +runbook thenGPTfreshreview/DSCPU,STOP. No live eval/training/model/server/GPU or V3 merge.
+ 
+ - [x] **V3-EVALV2-SHARED-GPU-20261030** — DONE（代码与快速CPU/Ruff，Owner授权V3提升）；被测Root19342b35011a8ce0f4f81d59779d5da86f9bc9f4 / Child0ae313e329d290fc6b8a50fda1112820fb7ac485。直接删除foreign GPU PID独占拒绝，无新开关；63CPU零失败/错误/跳过、Ruff0.12.7 check/format PASS；显存/缺卡/RSS及owned-only cleanup保留。Review：docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_SharedGPU_19342b3_QuickCPU63_Promotion.md。真实GPU Canary不属于本项完成声明。
++# 2026-10-31 — NoTTT integration
++
++- **NOTTT-ASYNC-LAZY-CANONICAL-PORT** — IN_PROGRESS; Codex; Owner continuation after Issue12 APPROVE_PERFORMANCE fd9021b0/224c5f3c; baseV3 2bcc27e9/0ae313e3, isolated candidate only. Explicit6production+7test donor blob port preserves all other EvalV2/currentChild objects; new wiring sentries/targetedCPU/static/protected-source evidence; Child→Root candidate andGPT freshincremental thenSTOP. No Issue13 merge/production promotion/realData-DCP-GPU/JobResume.
+diff --git a/cosmos-framework b/cosmos-framework
+index 0ae313e3..baf1b5bf 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 0ae313e329d290fc6b8a50fda1112820fb7ac485
++Subproject commit baf1b5bf46853e9849a91518803b9738fc216235
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Canonical_Port_2026-10-31.md b/docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Canonical_Port_2026-10-31.md
+new file mode 100644
+index 00000000..43f6d2e4
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Canonical_Port_2026-10-31.md
+@@ -0,0 +1,63 @@
++# No-TTT verified async/lazy path — canonical-based isolated port
++
++Owner continuation after the exact-pair Issue12 `APPROVE_PERFORMANCE` review at
++V3 `2bcc27e94576837167cacd190af7dc837e6129cd`. Prepare code and targeted CPU
++evidence for a NEW incremental Code Gate; do not update canonical branches or
++restart training. Original12200 DCP remains the only proposed formal Resume
++source; no A/B checkpoint promotion. Issue13 stays a separate output-only task.
++
++## Exact source identities
++
++- Current V3 Root baseline `2bcc27e94576837167cacd190af7dc837e6129cd`.
++- Current Child baseline `0ae313e329d290fc6b8a50fda1112820fb7ac485`.
++- Approved/performance-tested donor Root
++  `fd9021b0908b4b2763b3d02508b1f34df377dc97`, Child
++  `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822`.
++- New isolated Root/Child branch `v3-nottt-async-lazy-port-20261031`.
++
++The formal review was actually read after a fresh V3 fetch and advertised SHA
++check. It approves n18 steady Step Wall1.6116x from DS reported data, not a new
++run by Codex. No repeat GPU A/B, no new interpretation of data/stall metrics.
++
++## Necessary dependency closure discovered in current code
++
++The current V3 Child still binds `NoTTTCpuLoader`, has no AsyncRecipe/AsyncLoader,
++and lacks transform reconstruction metadata. Copying only the two Issue12
++worker-source/recipe files would leave the approved path unused. Do not claim
++integration based on their mere presence. The minimal executable closure is SIX
++production files, ALL byte-identical to the already approved donor:
++
++1. new trainer/no_ttt_async_loader.py (original Issue9 pipeline).
++2. new trainer/no_ttt_async_recipe.py (including the approved lazy injection).
++3. new trainer/no_ttt_worker_source.py (approved Issue12 reader).
++4. matched_no_ttt.py (positive-worker binding and checkpoint-boundary guard).
++5. utils/no_ttt_loader_profile.py (runtime-only async provenance/limits).
++6. data/generator/action/datasets/robocasa_exact_window_cached_sft.py (constructor
++   metadata retention for the same existing transform).
++
++Copy only those explicit files and seven donor test/support paths (async loader,
++recipe, trainer and worker-source tests, async support, two old CPU fixture
++adjustments). No whole-commit cherry-pick/merge or donor Gitlink reset. All other
++Child objects, especially EvalV2 inference/simulation/evaluation, model,
++optimizer/DCP/Local algorithms and configs, must remain current-canonical exact
++Git objects. Root launchers/configs/Issue13 output helper remain unchanged.
++
++## Targeted integration acceptance
++
++- Freeze an inventory of base/donor/selected blobs and entire outside-allowlist
++  tree equality. Prove every ported file is an exact approved donor object.
++- New Root integration sentries: actual MatchedNoTTT binding selects the new
++  class at workers1/2/4/8, keeps workers0 synchronous, does not create workers at
++  bind time; async identity remains runtime-only; protected EvalV2 objects and
++  Root launchers unchanged, no Issue13 helper is pulled in.
++- Selected donor CPU tests: official source payload/caption/padding at different
++  file layouts, no eager worker build, bounded source cache, corrupt evidence,
++  original RNG, real2-worker Source+Transform/CFG three-window path, T16/B8/GA4
++  full/partial, CPU fullstate Resume and failure/cleanup at representative ranks.
++  No full301 or previous58 replay; use new targeted selection on the new Pair.
++- Scoped Ruff0.12.7 check/format/AST, clean exact Root/Child/Gitlink evidence,
++  source fingerprints before/after, raw JUnit/log/commands and full narrow diff.
++- Submit Child then Root only to isolated branches, remote readback, GPT fresh
++  integration review and STOP. No GPU, real data/model/DCP access, DS dispatch,
++  canonical promotion, change to current Job/Config/identity/checkpoint/history,
++  Index8/Packed128 numeric comparison, performance retest or automatic Resume.
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Port_inventory_2026-10-31.json b/docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Port_inventory_2026-10-31.json
+new file mode 100644
+index 00000000..176ef66a
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Async_Lazy_Port_inventory_2026-10-31.json
+@@ -0,0 +1,98 @@
++{
++  "baseline_child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
++  "donor_child": "224c5f3c0bd6911bb49cb6bb0895ba7da53ff822",
++  "source": "explicit path copy, no whole-child merge",
++  "files": {
++    "cosmos_framework/trainer/no_ttt_async_loader.py": {
++      "kind": "production",
++      "donor_blob": "f5cbd2209e5f9a6643a503d5dd8b060abd441e67",
++      "baseline_blob": null,
++      "sha256": "619a7d51cd441facbc4a351da5046095e169e9dfa447ed81df149d1070a340fb",
++      "bytes": 18005
++    },
++    "cosmos_framework/trainer/no_ttt_async_recipe.py": {
++      "kind": "production",
++      "donor_blob": "397fde663bc16e3611938fc2185e1dd9fa038fc8",
++      "baseline_blob": null,
++      "sha256": "7cd239396c78147f396e5ab60daede79b9941857788b9189e3217ba52f09125d",
++      "bytes": 14908
++    },
++    "cosmos_framework/trainer/no_ttt_worker_source.py": {
++      "kind": "production",
++      "donor_blob": "59c1595eabf9da5fc75d68959b28b779cba6d693",
++      "baseline_blob": null,
++      "sha256": "01ff1429a263d5a16da66dad2cb5c35ef3ce16931dc07f5401e3c7019c8850b0",
++      "bytes": 10223
++    },
++    "cosmos_framework/trainer/matched_no_ttt.py": {
++      "kind": "production",
++      "donor_blob": "b335958182e9b3e00069dbcb29628259f8ed5639",
++      "baseline_blob": "3e56f65d860f3c761cfe2dd02e78d6369ac5e1a2",
++      "sha256": "711e6e5ca8eece67fe1440b60fa30a12de6c142d5a5a3cd0aa4e24183906512d",
++      "bytes": 18331
++    },
++    "cosmos_framework/utils/no_ttt_loader_profile.py": {
++      "kind": "production",
++      "donor_blob": "3db553361bcacda76e35800fffaa6ae9cc30ddf2",
++      "baseline_blob": "8b62905a8dd505133eb388de3bde4762d4e23257",
++      "sha256": "c2e23aab62931f4f36cf09b459eafd280d9c680777b09ae5ef0bfdb4419541d3",
++      "bytes": 3528
++    },
++    "cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py": {
++      "kind": "production",
++      "donor_blob": "254b2be7dd95f129bf928436b98865c04c9a06fb",
++      "baseline_blob": "5ad3bfc181dc2cd4729de053ab4a42ccc4c1d975",
++      "sha256": "0eff3b15f86133af9c82379ed5930809b0ff6c461e3681516cdcff0f78b650ee",
++      "bytes": 10900
++    },
++    "cosmos_framework/trainer/no_ttt_async_loader_test.py": {
++      "kind": "test_or_support",
++      "donor_blob": "3086f5c1049ed4bd37ae03d869b8e0e650fa55b2",
++      "baseline_blob": null,
++      "sha256": "512ef48d66f999bd0bfb5e4035f09ef41f9134bc72d96b7a3520a33d873b6b22",
++      "bytes": 21607
++    },
++    "cosmos_framework/trainer/no_ttt_async_recipe_test.py": {
++      "kind": "test_or_support",
++      "donor_blob": "d6631b8254f7ec7464252fd2e3a0e1a4a10ec2a2",
++      "baseline_blob": null,
++      "sha256": "82dcab3410084051feacd4f195b6f4dc2962a70a184393562640e1fc91156e18",
++      "bytes": 15827
++    },
++    "cosmos_framework/trainer/no_ttt_async_trainer_test.py": {
++      "kind": "test_or_support",
++      "donor_blob": "aaaf2cc197d76d8fd9e5654a82c08e8095246e57",
++      "baseline_blob": null,
++      "sha256": "648b44cd3f667d80941a7405331520a117bc02e0ccb3db94e180333c3639c4fe",
++      "bytes": 13858
++    },
++    "cosmos_framework/trainer/no_ttt_worker_source_test.py": {
++      "kind": "test_or_support",
++      "donor_blob": "b1e5216a0ab7a59a04be8e8682e205da1a51a68b",
++      "baseline_blob": null,
++      "sha256": "884a15e9ef92cfd3eec597fe07176f070b20b364a76e772310d396eab64e701d",
++      "bytes": 13167
++    },
++    "cosmos_framework/trainer/no_ttt_async_test_support.py": {
++      "kind": "test_or_support",
++      "donor_blob": "035881c2ebbfe61736476e69476d0ead70c45645",
++      "baseline_blob": null,
++      "sha256": "dab38d6a80db5e529baa59bfa140db5c8ed25a360650211417e0578dbd5322c0",
++      "bytes": 7923
++    },
++    "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py": {
++      "kind": "test_or_support",
++      "donor_blob": "a357485140d465a99faf080a92c94d42ec568d5b",
++      "baseline_blob": "84a18ecae529793cd6b628d681feb2b42b6b2025",
++      "sha256": "27ad8f7535c361b5522fb41d1988b6703fab567eb6b12deef851d22953f08de5",
++      "bytes": 11018
++    },
++    "examples/psm_wma_robocasa_matched_no_ttt_test.py": {
++      "kind": "test_or_support",
++      "donor_blob": "c0fc5756b19fc96e788b5f6384cf4b638332ba85",
++      "baseline_blob": "7b9dfda1d5ed3c35e0fd2da293fa84aea292aa55",
++      "sha256": "a97a68c80e3edb1ed4c9e7f2a7cde7e07c23aafbb328183e7896b749151f799b",
++      "bytes": 24040
++    }
++  }
++}
+diff --git a/tools/v3/no_ttt_async_port_test.py b/tools/v3/no_ttt_async_port_test.py
+new file mode 100644
+index 00000000..374f0693
+--- /dev/null
++++ b/tools/v3/no_ttt_async_port_test.py
+@@ -0,0 +1,103 @@
++"""Receiver integration checks for the No-TTT async/lazy port, CPU only."""
++
++from __future__ import annotations
++
++import sys
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "cosmos-framework"))
++
++from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (  # noqa: E402
++    ExactWindowRankPlanner,
++)
++from cosmos_framework.trainer import matched_no_ttt as module  # noqa: E402
++from cosmos_framework.trainer.no_ttt_async_loader import NoTTTAsyncLoader  # noqa: E402
++from cosmos_framework.trainer.no_ttt_async_recipe import AsyncRecipe  # noqa: E402
++from cosmos_framework.trainer.no_ttt_async_test_support import (  # noqa: E402
++    SyntheticAsyncRecipe,
++    build_synthetic_producer,
++)
++from cosmos_framework.trainer.no_ttt_cpu_loader import (  # noqa: E402
++    RawRecipe,
++    _require_same_rng,
++    _rng_snapshot,
++)
++from cosmos_framework.utils.no_ttt_loader_profile import LoaderProfile  # noqa: E402
++
++
++def _trainer(planner, producer, profile):
++    trainer = object.__new__(module.MatchedNoTTTTrainer)
++    trainer.config = SimpleNamespace(trainer=SimpleNamespace(grad_accum_iter=4))
++    trainer.callbacks = SimpleNamespace(_callbacks=[])
++    trainer.bind_grouped_stream(
++        planner, producer, config_digest=producer.config_digest, loader_profile=profile
++    )
++    return trainer
++
++
++@pytest.mark.parametrize("workers", [0, 1, 2, 4, 8])
++def test_actual_trainer_uses_async_for_positive_workers_and_preserves_training_binding(
++    monkeypatch, workers
++):
++    assert module.NoTTTAsyncLoader is NoTTTAsyncLoader
++    assert Path(module.__file__).resolve().is_relative_to(ROOT / "cosmos-framework")
++    producer = build_synthetic_producer(count=64, t=16, world=4)
++    planner = ExactWindowRankPlanner(
++        producer.catalog, rank=0, world_size=4, b_stream=8, active_ga=4, seed=83
++    )
++    metadata_calls = []
++
++    def recipe(cls, selected, profile):
++        assert selected is producer and profile.workers == workers
++        metadata_calls.append(profile.workers)
++        return SyntheticAsyncRecipe(count=64, t=16, world=4)
++
++    def raw_forbidden(*args):
++        pytest.fail("positive workers still bind the old RAW pipeline")
++
++    # Only metadata is synthetic. Do not replace the actual trainer binding or
++    # async loader class; this detects unused copied recipe/source modules.
++    monkeypatch.setattr(AsyncRecipe, "from_producer", classmethod(recipe))
++    monkeypatch.setattr(RawRecipe, "from_producer", classmethod(raw_forbidden))
++    baseline = _trainer(planner, producer, LoaderProfile())
++    before = _rng_snapshot()
++    profile = LoaderProfile(workers, 1, True, 120) if workers else LoaderProfile()
++    trainer = _trainer(planner, producer, profile)
++    loader = trainer._no_ttt_loader
++    try:
++        assert module._binding(trainer) == module._binding(baseline)
++        assert len(trainer.callbacks._callbacks) == 1
++        assert trainer.callbacks._callbacks[0].checkpoint_component == "dataloader"
++        if workers:
++            assert type(loader) is NoTTTAsyncLoader
++            assert loader.planner is planner and loader.profile is profile
++            assert loader.iterator is None and loader.pending is None
++            assert (
++                loader.context.processes == []
++            )  # Spawn only at the original lazy begin.
++            assert metadata_calls == [workers]
++        else:
++            assert loader is None and metadata_calls == []
++        _require_same_rng(before)
++    finally:
++        if loader is not None:
++            loader.close()
++            assert loader.closed and loader.context.processes == []
++
++
++@pytest.mark.parametrize("workers", [1, 8])
++def test_async_runtime_ownership_is_explicit_without_mutating_legacy_identity(workers):
++    profile = LoaderProfile(workers, 1, True, 120)
++    before = profile.identity()
++    runtime = profile.async_identity()
++    assert runtime["source_reader"] == "worker_offline_verified_source"
++    assert runtime["transform"] == "worker_conditioned_parent_ordered_cfg_selection"
++    assert runtime["max_prepared_windows"] == 2
++    assert runtime["max_inflight_packets"] == workers
++    assert profile.identity() == before
++    assert before["schema"] == "nottt_cpu_raw_dataloader_v1"
++    assert module.FORMAT == "psm_v3_matched_no_ttt_frontier_v1"
