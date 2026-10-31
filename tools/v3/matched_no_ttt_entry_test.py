@@ -17,6 +17,17 @@ from serve_v3_matched_no_ttt import GENERATION_KEYS, main, server_command
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def _launch_payload(result, env):
+    assert result.stdout.startswith("[NoTTT][log] full log: ")
+    logs = list(
+        (Path(env["OUTPUT_ROOT"]) / "_launch_logs" / env["JOB_NAME"]).glob(
+            "launch_*.log"
+        )
+    )
+    assert len(logs) == 1
+    return json.loads(logs[0].read_text())
+
+
 def profile(tmp_path, *, world_size=8, ga=2):
     job = tmp_path / "no_ttt_job"
     model = job / "checkpoints/iter_000000100/model"
@@ -78,17 +89,23 @@ def profile(tmp_path, *, world_size=8, ga=2):
             json.dumps(semantic, sort_keys=True, separators=(",", ":")).encode()
         ).hexdigest(),
         "diagnostic_only_do_not_resume": False,
-        "canonical_config_sha256": {"config.yaml": hashlib.sha256(config_path.read_bytes()).hexdigest()},
+        "canonical_config_sha256": {
+            "config.yaml": hashlib.sha256(config_path.read_bytes()).hexdigest()
+        },
     }
     (job / "v3_job_identity.json").write_text(json.dumps(identity))
-    value = yaml.safe_load((ROOT / "configs/eval/robocasa_matched_no_ttt.example.yaml").read_text())
+    value = yaml.safe_load(
+        (ROOT / "configs/eval/robocasa_matched_no_ttt.example.yaml").read_text()
+    )
     value.update(checkpoint=str(model.parent), config_file=str(config_path))
     path = tmp_path / "profile.yaml"
     path.write_text(yaml.safe_dump(value))
     return path, value, job, config, identity
 
 
-def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(tmp_path, capsys, monkeypatch):
+def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(
+    tmp_path, capsys, monkeypatch
+):
     path, value, job, *_ = profile(tmp_path)
     before = {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
 
@@ -104,12 +121,18 @@ def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(tmp_path, capsy
     assert args[args.index("--raw-action-dim") + 1] == "15"
     assert args[args.index("--config-file") + 1] == str(job / "config.yaml")
     assert result["model_loaded"] is False
-    assert {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+    assert {
+        str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()
+    } == before
 
 
 @pytest.mark.parametrize(("world_size", "ga"), [(8, 2), (4, 4)])
-def test_off_inference_accepts_both_approved_batch_matched_profiles(tmp_path, world_size, ga):
-    path, _values, _job, _config, _identity = profile(tmp_path, world_size=world_size, ga=ga)
+def test_off_inference_accepts_both_approved_batch_matched_profiles(
+    tmp_path, world_size, ga
+):
+    path, _values, _job, _config, _identity = profile(
+        tmp_path, world_size=world_size, ga=ga
+    )
     command = server_command(path)
     assert "--local-memory-mode" in command
     assert command[command.index("--local-memory-mode") + 1] == "off"
@@ -126,7 +149,9 @@ def test_off_inference_accepts_both_approved_batch_matched_profiles(tmp_path, wo
         "replicate_degree",
     ],
 )
-def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(tmp_path, damage):
+def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(
+    tmp_path, damage
+):
     path, _values, job, config, identity = profile(tmp_path, world_size=4, ga=4)
     if damage == "world_only":
         identity["semantic"]["contract"]["world_size"] = 8
@@ -140,12 +165,16 @@ def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(tmp_pa
         config["model"]["config"]["parallelism"]["data_parallel_replicate_degree"] = 2
     if damage.endswith("_only") and damage in {"world_only", "ga_only"}:
         identity["semantic_digest"] = hashlib.sha256(
-            json.dumps(identity["semantic"], sort_keys=True, separators=(",", ":")).encode()
+            json.dumps(
+                identity["semantic"], sort_keys=True, separators=(",", ":")
+            ).encode()
         ).hexdigest()
     else:
         config_file = job / "config.yaml"
         config_file.write_text(yaml.safe_dump(config))
-        identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(config_file.read_bytes()).hexdigest()
+        identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(
+            config_file.read_bytes()
+        ).hexdigest()
     (job / "v3_job_identity.json").write_text(json.dumps(identity))
     with pytest.raises(ValueError, match="No-TTT"):
         server_command(path)
@@ -220,8 +249,12 @@ def test_reject_g1_or_wrong_checkpoint_config_identity(tmp_path, damage):
         server_command(path)
 
 
-@pytest.mark.parametrize("phase,until", [("fresh", "30000"), ("fresh", "100"), ("resume", "500")])
-def test_launcher_exact_world8_matched_contract_without_torchrun(tmp_path, phase, until):
+@pytest.mark.parametrize(
+    "phase,until", [("fresh", "30000"), ("fresh", "100"), ("resume", "500")]
+)
+def test_launcher_exact_world8_matched_contract_without_torchrun(
+    tmp_path, phase, until
+):
     fake = tmp_path / "capture_python"
     fake.write_text(
         f'#!{sys.executable}\nimport json, os, sys\nprint(json.dumps({{"argv": sys.argv[1:], "cwd": os.getcwd(), "offline": os.environ["HF_HUB_OFFLINE"]}}))\n'
@@ -248,7 +281,7 @@ def test_launcher_exact_world8_matched_contract_without_torchrun(tmp_path, phase
         timeout=10,
         check=True,
     )
-    payload = json.loads(result.stdout)
+    payload = _launch_payload(result, env)
     argv = payload["argv"]
     assert "--no-ttt" in argv and "--nproc_per_node=8" in argv
     for key, value in {
@@ -267,11 +300,15 @@ def test_launcher_exact_world8_matched_contract_without_torchrun(tmp_path, phase
     }.items():
         assert argv[argv.index(key) + 1] == value
     assert argv[argv.index("--base-checkpoint") + 1] == env["BASE_CHECKPOINT_PATH"]
-    assert payload["cwd"] == str(ROOT / "cosmos-framework") and payload["offline"] == "1"
+    assert (
+        payload["cwd"] == str(ROOT / "cosmos-framework") and payload["offline"] == "1"
+    )
 
 
 def test_launcher_rejects_g1_job_before_any_python():
-    env = dict(os.environ, JOB_NAME="packed128_droid_fresh_g1_20261019", PYTHON="/must/not/run")
+    env = dict(
+        os.environ, JOB_NAME="packed128_droid_fresh_g1_20261019", PYTHON="/must/not/run"
+    )
     for key in (
         "OUTPUT_ROOT",
         "SOURCE_ROOT",
@@ -306,17 +343,26 @@ def test_launcher_rejects_g1_job_before_any_python():
         ("fps", 15),
     ],
 )
-def test_rehashed_canonical_config_still_must_match_dataset_contract(tmp_path, key, value):
+def test_rehashed_canonical_config_still_must_match_dataset_contract(
+    tmp_path, key, value
+):
     path, _, job, config, identity = profile(tmp_path)
-    config["dataloader_train"]["dataloader"]["datasets"]["robocasa"]["dataset"][key] = value
+    config["dataloader_train"]["dataloader"]["datasets"]["robocasa"]["dataset"][key] = (
+        value
+    )
     (job / "config.yaml").write_text(yaml.safe_dump(config))
-    identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256((job / "config.yaml").read_bytes()).hexdigest()
+    identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(
+        (job / "config.yaml").read_bytes()
+    ).hexdigest()
     (job / "v3_job_identity.json").write_text(json.dumps(identity))
     with pytest.raises(ValueError, match="dataset"):
         server_command(path)
 
 
-@pytest.mark.parametrize("key,value", [("state_dim", 16), ("h_pred", 32), ("b", 128), ("ga", 1), ("world_size", 1)])
+@pytest.mark.parametrize(
+    "key,value",
+    [("state_dim", 16), ("h_pred", 32), ("b", 128), ("ga", 1), ("world_size", 1)],
+)
 def test_resigned_semantic_identity_still_must_be_matched_profile(tmp_path, key, value):
     path, _, job, _, identity = profile(tmp_path)
     identity["semantic"]["contract"][key] = value
@@ -327,11 +373,16 @@ def test_resigned_semantic_identity_still_must_be_matched_profile(tmp_path, key,
     with pytest.raises(ValueError, match="Packed128"):
         server_command(path)
 
-@pytest.mark.parametrize("phase,until", [("fresh", "100"), ("resume", "500"), ("fresh", "30000")])
-def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_sources(tmp_path, phase, until):
+
+@pytest.mark.parametrize(
+    "phase,until", [("fresh", "100"), ("resume", "500"), ("fresh", "30000")]
+)
+def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_sources(
+    tmp_path, phase, until
+):
     fake = tmp_path / "capture_python4"
     fake.write_text(
-        f'#!{sys.executable}\nimport json,os,sys\n'
+        f"#!{sys.executable}\nimport json,os,sys\n"
         'print(json.dumps({"argv":sys.argv[1:],'
         '"cwd":os.getcwd(),"devices":os.environ["CUDA_VISIBLE_DEVICES"],'
         '"offline":os.environ["HF_HUB_OFFLINE"]}))\n'
@@ -349,12 +400,20 @@ def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_source
     ):
         env[key] = str(tmp_path / (key + " with spaces"))
     # Obsolete pins must NOT control this standalone four-GPU launch.
-    env.update(EXPECTED_ROOT="outdated", EXPECTED_CHILD="outdated", CUDA_VISIBLE_DEVICES="4,5,6,7")
+    env.update(
+        EXPECTED_ROOT="outdated",
+        EXPECTED_CHILD="outdated",
+        CUDA_VISIBLE_DEVICES="4,5,6,7",
+    )
     run = subprocess.run(
         ["bash", str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"), phase, until],
-        capture_output=True, text=True, env=env, check=True, timeout=15,
+        capture_output=True,
+        text=True,
+        env=env,
+        check=True,
+        timeout=15,
     )
-    payload = json.loads(run.stdout)
+    payload = _launch_payload(run, env)
     argv = payload["argv"]
     assert payload["devices"] == "4,5,6,7" and payload["offline"] == "1"
     assert payload["cwd"] == str(ROOT / "cosmos-framework")
@@ -378,7 +437,9 @@ def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_source
     assert argv[argv.index("--root-worktree") + 1] == str(ROOT)
 
 
-def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses_project_venv(tmp_path):
+def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses_project_venv(
+    tmp_path,
+):
     # Reproduce the DS_PRO blocker without touching the actual repository:
     # no .git at all, plus dirty-style untracked docs/eval/ reports.
     root = tmp_path / "psm_wma_v3"
@@ -387,30 +448,50 @@ def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses
     scripts.mkdir(parents=True)
     (child / "examples").mkdir(parents=True)
     (root / "docs/eval").mkdir(parents=True)
-    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text("DS report\n")
-    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("placeholder\n")
+    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text(
+        "DS report\n"
+    )
+    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text(
+        "placeholder\n"
+    )
     launcher = scripts / "train_v3_matched_no_ttt_4gpu.sh"
     launcher.write_text((ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh").read_text())
+    (scripts / "no_ttt_console.py").write_bytes(
+        (ROOT / "scripts/no_ttt_console.py").read_bytes()
+    )
     fake = child / ".venv/bin/python"
     fake.parent.mkdir(parents=True)
     fake.write_text(
-        f'#!{sys.executable}\nimport json,os,sys\n'
+        f"#!{sys.executable}\nimport json,os,sys\n"
         'print(json.dumps({"argv":sys.argv[1:],"exe":sys.argv[0],'
         '"visible":os.environ["CUDA_VISIBLE_DEVICES"]}))\n'
     )
     fake.chmod(0o755)
-    env = dict(os.environ, JOB_NAME="no_ttt_simulated_world4_ga4", CUDA_VISIBLE_DEVICES="4,5,6,7")
+    env = dict(
+        os.environ,
+        JOB_NAME="no_ttt_simulated_world4_ga4",
+        CUDA_VISIBLE_DEVICES="4,5,6,7",
+    )
     env.pop("PYTHON", None)
     for key in (
-        "OUTPUT_ROOT", "SOURCE_ROOT", "CACHE_ROOT", "DATASET_INDEX_ROOT",
-        "EDGE_POLICY_CHECKPOINT", "WAN_VAE_PATH", "BASE_CHECKPOINT_PATH",
+        "OUTPUT_ROOT",
+        "SOURCE_ROOT",
+        "CACHE_ROOT",
+        "DATASET_INDEX_ROOT",
+        "EDGE_POLICY_CHECKPOINT",
+        "WAN_VAE_PATH",
+        "BASE_CHECKPOINT_PATH",
     ):
         env[key] = str(tmp_path / key)
     call = subprocess.run(
         ["bash", str(launcher), "fresh", "100"],
-        capture_output=True, text=True, check=True, env=env, timeout=10,
+        capture_output=True,
+        text=True,
+        check=True,
+        env=env,
+        timeout=10,
     )
-    payload = json.loads(call.stdout)
+    payload = _launch_payload(call, env)
     assert payload["visible"] == "4,5,6,7"
     assert payload["exe"] == str(fake)
     assert payload["argv"][payload["argv"].index("--root-worktree") + 1] == str(root)
@@ -426,9 +507,14 @@ def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses
         ("no_ttt_contract_world4_ga4", "0,1,2,3"),
     ],
 )
-def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(tmp_path, job, devices):
+def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(
+    tmp_path, job, devices
+):
     env = dict(
-        os.environ, PYTHON="/must/not/run", JOB_NAME=job, CUDA_VISIBLE_DEVICES=devices,
+        os.environ,
+        PYTHON="/must/not/run",
+        JOB_NAME=job,
+        CUDA_VISIBLE_DEVICES=devices,
     )
     for key in (
         "OUTPUT_ROOT",
@@ -441,8 +527,16 @@ def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(tmp_path,
     ):
         env[key] = str(tmp_path / key)
     run = subprocess.run(
-        ["bash", str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"), "fresh", "30000"],
-        capture_output=True, text=True, env=env, timeout=10,
+        [
+            "bash",
+            str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"),
+            "fresh",
+            "30000",
+        ],
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=10,
     )
     assert run.returncode == 2
     assert "4GPU profile" in run.stderr

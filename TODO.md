@@ -480,3 +480,7 @@
 # 2026-10-31 — Approved No-TTT V3 promotion
 
 - **NOTTT-ISSUE12-13-V3-PROMOTION** — IN_PROGRESS; Codex; latest Owner Step1 and exact APPROVE_CODE57e36dec/baf1b5bf confirmed at canonical692b7ed4. Safe merge published candidate/currentV3 preserving both histories/records; exact approved source/Child/EvalV2/ledger audit then non-force V3 update and remote exactRoot/Child/Gitlink receipt. No implementation rework/tests/GPU/DCP/Job/formalResume; stop after promotion.
+
+# 2026-10-31 — Approved No-TTT candidates composition
+
+- **NOTTT-ISSUE12-13-INTEGRATION** — DONE (source/synthetic composition Code Gate only); exact57e36decbec0e00ecb94dc1c080fd8976afff25d/baf1b5bf46853e9849a91518803b9738fc216235 approved GPT1f79 detailed review. Original6CPU/static evidence preserved, not rerun. V3 promotion tracked separately; training authorization not included.

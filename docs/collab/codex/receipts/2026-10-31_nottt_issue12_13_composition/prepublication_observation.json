@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-31T05:04:43.374658+00:00",
+  "formal_root": "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+  "formal_child": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "prepublication_fresh_V3_advertised": "b260290ef09ef25a8a41259aef153df5efff3369",
+  "latest_fetch_success": true,
+  "canonical_updates_since_start": [],
+  "new_pair_review_scan": {
+    "argv": [
+      "git",
+      "grep",
+      "-l",
+      "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+      "origin/V3",
+      "--",
+      "docs/collab/chatgpt/reviews/"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "source_approval_authority": "two inherited exact-pair detailed APPROVE_CODE reviews at b260; composition requires new review",
+  "no_delegation": "Owner latest role boundary: GPT review, DS independent; no tmux wait/DS dispatch"
+}

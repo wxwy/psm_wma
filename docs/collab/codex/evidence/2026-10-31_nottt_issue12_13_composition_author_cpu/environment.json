@@ -1,0 +1,26 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LD_LIBRARY_PATH": "",
+    "PYTEST_ADDOPTS": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-nottt-integrated-20261031/verified/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-nottt-integrated-20261031/verified/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-nottt-integrated-20261031/verified/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-nottt-integrated-20261031/verified/cache/ruff",
+    "PYTHONPATH": "/workspace/psm-wma-nottt-integrated:/workspace/psm-wma-nottt-integrated/cosmos-framework:/workspace/psm-wma-nottt-integrated/scripts"
+  },
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7"
+  },
+  "note": "4GPU launcher symbolically sets CUDA_VISIBLE_DEVICES4,5,6,7, but executable is CPU torchrun substitute; torch.version.cuda is asserted None."
+}

@@ -1,0 +1,41 @@
+{
+  "SESSION.md": {
+    "strategy": "retain both exact prepended session blocks and common history once",
+    "base_bytes": 298868,
+    "ours_bytes": 300411,
+    "candidate_bytes": 303187,
+    "merged_bytes": 304771,
+    "ours_unique_bytes": 1543,
+    "candidate_unique_bytes": 4319,
+    "base_sha256": "6d105878f0743b99866a41e5e6fd92571c8a75d2f3f6d20699fdc29f3381af76",
+    "ours_unique_sha256": "8cdfdd3f54edbdf5b74da3e021974a83e8338bdbc2a661a7c2cd8b0d6706175c",
+    "candidate_unique_sha256": "774e132cc39bee5f4b16a4a0a67d9d83a9eb083837f5de887ac81e7ce7b38ba2",
+    "all_record_blocks_preserved": true
+  },
+  "TODO.md": {
+    "strategy": "canonical/claim prefix unchanged; append candidate-only suffix",
+    "base_bytes": 183365,
+    "ours_bytes": 183836,
+    "candidate_bytes": 183949,
+    "merged_bytes": 184420,
+    "ours_unique_bytes": 471,
+    "candidate_unique_bytes": 584,
+    "base_sha256": "9f1f22e9435aaaec2ff2a5855556c7c644914784e4e94d639889c720224ce058",
+    "ours_unique_sha256": "8782302a595dd1d866aaeee50bf6005db1d5b17adfcacc7c3ee149768ecc2284",
+    "candidate_unique_sha256": "425f6df83bf307784fb6f6aac44177bd7f15d183cea805aa16ec0e6e079d9bce",
+    "all_record_blocks_preserved": true
+  },
+  "docs/collab/chatgpt/CODEX_INBOX.md": {
+    "strategy": "canonical/claim prefix unchanged; append candidate-only suffix",
+    "base_bytes": 67337,
+    "ours_bytes": 71950,
+    "candidate_bytes": 70287,
+    "merged_bytes": 74900,
+    "ours_unique_bytes": 4613,
+    "candidate_unique_bytes": 2950,
+    "base_sha256": "9a3346e887987604c20f1f7bdbaa0314cb07a920b776f44a9e66ac508c1f751e",
+    "ours_unique_sha256": "0f704ad0ac6ebedcbdf63f337b3e8a0cad75df79e514722db34c8107d0de3d69",
+    "candidate_unique_sha256": "e29a09d547e9b06998ba0e696893dd5f011c3f8093fc0cb41656dbd3662540aa",
+    "all_record_blocks_preserved": true
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "status": "FAIL",
+  "gate": "AUTHOR_MINIMAL_ISSUE12_13_COMPOSITION_CPU",
+  "steps": [],
+  "real_gpu": false,
+  "real_data": false,
+  "real_model": false,
+  "real_dcp": false,
+  "training": false,
+  "actual_torchrun": false,
+  "pool_spawn": false,
+  "historical49_43_58_301_rerun": false,
+  "gpu_performance_rerun": false,
+  "identities": {
+    "root": "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+    "child": "baf1b5bf46853e9849a91518803b9738fc216235",
+    "gitlink": "baf1b5bf46853e9849a91518803b9738fc216235"
+  },
+  "error": "CalledProcessError: Command '['git', '-C', '/workspace/psm-wma-nottt-integrated', 'rev-parse', '57e36decbec0e00ecb94dc1c080fd8976afff25d:tools/v3/eval_v2']' returned non-zero exit status 128."
+}

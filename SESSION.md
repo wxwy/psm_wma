@@ -1,3 +1,23 @@
+# 2026-10-31 — Approved No-TTT V3 merge prepared; publication pending
+
+IN_PROGRESS promotion only, Owner latest Step1. Formal GPT APPROVE_CODE
+57e36decbec0e00ecb94dc1c080fd8976afff25d / Child-Gitlink
+baf1b5bf46853e9849a91518803b9738fc216235 actually read in canonical692b7ed4.
+Fresh latestV3 and published candidatecf1065ba histories merged; only3 bookkeeping
+conflicts, all canonical/candidate record blocks preserved. New unrelated OSMesa
+review/request remains unchanged. Git-only audit PASS:9,848 Root source objects
+equal approved57e3, entireChildbaf unchanged, EvalV2 protected.45 artifactSHA256/
+15sourcebindings verified, original6passJUnit read-only; no test/GPU rerun.
+
+Prepared at CST 2026-10-31T13:22:20.872148+08:00; next normal non-force V3 push after fresh remote
+ancestor check, then exact advertised/fetched Root/Child/Gitlink source readback.
+Promotion record docs/collab/codex/reviews/2026-10-31_V3_NoTTT_Issue12_13_Approved_V3_Promotion.md;
+audit/merge receipts under docs/collab/codex/receipts/2026-10-31_nottt_issue12_13_v3_promotion/.
+No trainingResume, real data/model/DCP/config/Job/history access or DS dispatch.
+Prior Code Gate closed; training still separate Owner authorization.
+
+## Preserved canonical/candidate records
+
 # 2026-10-31 — No-TTT Issue12+13 production promotion claimed
 
 IN_PROGRESS; Codex; isolated v3-nottt-promotion-20261031. Latest Owner
@@ -20,6 +40,77 @@ advance triggers safe resync. After remote readback, report exact final Root/Chi
 and STOP; actual original12200 nw8 training remains Owner-only separate action.
 
 ## Preserved canonical session
+
+
+## Preserved candidate session entries
+
+# 2026-10-31 — No-TTT composition published; STOP for GPT Code Gate
+
+REVIEW. Formal Root57e36decbec0e00ecb94dc1c080fd8976afff25d /
+approved unchangedChild-Gitlinkbaf1b5bf46853e9849a91518803b9738fc216235.
+Isolated Root v3-nottt-integrated-20261031 evidence/request HEAD
+de276eae978fd8bdf9fc68607f21ed7ce9b6b727 published and GitHub fetched/
+advertised readback PASS at2026-10-31T05:05:27Z. Child already published on
+v3-nottt-async-lazy-port-20261031.45 artifact hashes and15 formal source
+bindings verified, Inbox prefix intact69,807bytes, worktreesclean. Canonical
+V3 stillb260290ef09ef25a8a41259aef153df5efff3369; no merge/training/GPU.
+New6 synthetic composition cases/static6Python/bash2/ShellCheckPASS; no old
+suites or performance experiment replayed.3 production blobs exactIssue13;
+wholeChild exactIssue12/EvalV2 retained. Fresh composition review request
+published, no newPair verdict inferred. Receipt under docs/collab/codex/receipts/
+2026-10-31_nottt_issue12_13_composition/. Stop per latest Owner gate.
+This subsequent receipt commit is bookkeeping, not Formal Implementation.
+
+## Earlier task/session records preserved
+
+# 2026-10-31 — No-TTT Issue12+13 composition author PASS, REVIEW
+
+Formal Root 57e36decbec0e00ecb94dc1c080fd8976afff25d / unchangedChild-Gitlink baf1b5bf46853e9849a91518803b9738fc216235.
+Isolated Root v3-nottt-integrated-20261031 from current canonicalb260.
+3production/seven inherited Root paths equal approved donors; entire approved
+Child unchanged, EvalV2/protected root trees preserved. No production rework.
+New6 composition cases PASS/0fail/error/skip in40.269s; Ruff0.12.7 check/format/
+AST6,bash2,ShellCheck0.10.0 PASS; exact cleanPair/source unchanged;15bindings.
+CLI/binding tests only, no real Phase5/model/optimizer/spawn/distributed/DCP/GPU.
+No historical suites/GPU A/B repeated. Initial external audit path typo retained
+under evidence preflight_path_error, no tests began until corrected audit.
+
+Two prior detailed exact-pair APPROVE_CODE reviews inherited from canonical.
+Fresh canonical fetch/advertisedb260 at 2026-10-31T05:04:43.374658+00:00; no advancement; newRoot
+review search exit1. No newPair approval inferred. Handoff/evidence dated
+2026-10-31 issue12_13_composition under docs/collab/codex. Publish isolated Root
+referencing existing publishedbafChild, remote readback then STOP for GPT.
+No canonical merge/DS dispatch/Job-history-config-DCP or trainingResume.
+Old candidate branches and immutable evidence retained; Owner resumes only
+after combined acceptance and separate authorization from originalC12200.
+
+## Earlier task claim / canonical session preserved
+
+# 2026-10-31 — No-TTT Issue12+13 minimal composition candidate
+
+IN_PROGRESS; Codex, isolated v3-nottt-integrated-20261031. New worktree starts
+from fresh fetched/advertised V3 b260290ef09ef25a8a41259aef153df5efff3369.
+Both detailed exact-pair APPROVE_CODE reviews actually read: Issue13
+24dbb677f7a60eeab6934c44352c7e00fa6d9b36/0ae313e3 and Issue12
+c66ade95b044d3664cd782d43d7917a604425db3/baf1b5bf. Review sources already
+present on canonical, authority is detailed reviews, not user summary/Inbox.
+No old branch fast-forward forced: create fresh worktree, preserve all old work.
+
+Planned Root changes only: approved3 production blobs (two standard launchers,
+no_ttt_console.py), approved3 Issue13 test files + approved Root async-port test,
+one new composition test, runbook/SESSION/TODO/evidence/append-only Inbox.
+Gitlink points to exact approved baf1b5bf46853e9849a91518803b9738fc216235;
+Child unchanged, no new Child implementation needed. Preserve EvalV2/current
+canonical docs; link old candidate evidence without relabeling it as a new run.
+4GPU accepts positive workers; approved8GPU launcher remains synchronous with
+no positive-worker forwarding, no new capability. CPU composition exercises
+real shell+console+real Trainer bind and LoaderProfile, synthetic producer only.
+No GPU, real data/model/DCP, servers/simulation/training or canonical merge.
+No repeated49/43/58/301 suites or GPU A/B. New exactRoot/baf Pair and incremental
+composition Code Gate then STOP, actual formalResume remains Owner-only.
+Observation UTC 2026-10-31T05:00:08.500439+00:00 (full local record /tmp/psm-nottt-integrated-20261031/start_observation.json).
+
+## Preserved canonical session history
 
 # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
 

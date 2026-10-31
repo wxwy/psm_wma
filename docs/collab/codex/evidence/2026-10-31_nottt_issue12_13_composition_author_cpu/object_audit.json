@@ -1,0 +1,75 @@
+{
+  "status": "PASS_AUTHOR_COMPOSITION_OBJECT_AUDIT",
+  "root": "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+  "child": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "gitlink": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "baseline": "b260290ef09ef25a8a41259aef153df5efff3369",
+  "root_inherited": [
+    {
+      "path": "scripts/no_ttt_console.py",
+      "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "blob": "59c135fb6365d2663d9417f97a5eb90172d4ea48"
+    },
+    {
+      "path": "tools/v3/no_ttt_console_test.py",
+      "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "blob": "cc64118fe4cf281de859156640009c876bb2f2ae"
+    },
+    {
+      "path": "tools/v3/matched_no_ttt_entry_test.py",
+      "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "blob": "a1a7d432217bebdd817a2225763aeea72690c510"
+    },
+    {
+      "path": "tools/v3/no_ttt_workers_entry_test.py",
+      "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "blob": "663aba165850e3bbeb84faf883e9ed1660b3a940"
+    },
+    {
+      "path": "scripts/train_v3_matched_no_ttt.sh",
+      "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "blob": "656ef042e09862301f1586fd58608a5a4658218f"
+    },
+    {
+      "path": "scripts/train_v3_matched_no_ttt_4gpu.sh",
+      "donor": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+      "blob": "e8e8ba5d5cc5cb09ed9f6775bd2c2243b418ea7e"
+    },
+    {
+      "path": "tools/v3/no_ttt_async_port_test.py",
+      "donor": "c66ade95b044d3664cd782d43d7917a604425db3",
+      "blob": "374f0693c0317d02185e0c1cdd24edf8e535e13d"
+    }
+  ],
+  "inherited_root_paths": 7,
+  "inherited_root_production_paths": 3,
+  "whole_child_unchanged_from_approved_port": true,
+  "protected_child_trees": {
+    "cosmos_framework/evaluation": "1e6c0dd03b19fae8cd576e1ef0de0a5249f8b31e",
+    "cosmos_framework/inference": "bfe0e05fe97aaa45d49b19a7994b8f560b04f165",
+    "cosmos_framework/simulation": "a505589a5a7d2cc4aa54bd4d95f3f2744a64a565",
+    "cosmos_framework/model": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+    "cosmos_framework/checkpoint": "a544d735bb95024eacca51fb3527955aad91616c",
+    "cosmos_framework/configs": "e24a02df6fa009c6f206bccb18925d9d0facf6aa"
+  },
+  "protected_root_trees": {
+    "configs": "f37e957a697dbe2a0743cdf004c951eb539efb7e",
+    "third_party": "d01633d083298fc5245b5bc97677c5b297700c31",
+    "tools/v3/eval_v2_production_tests": "e3f5a8f8e55de001cf262050b298db11f271fb14",
+    "docs/collab/chatgpt/reviews": "cb74b73fcaa7356cb357269059852a674d0dd3b7"
+  },
+  "root_changed_paths": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "docs/build/PSM-WMA_V3_NoTTT_Issue12_13_Minimal_Composition_2026-10-31.md",
+    "scripts/no_ttt_console.py",
+    "scripts/train_v3_matched_no_ttt.sh",
+    "scripts/train_v3_matched_no_ttt_4gpu.sh",
+    "tools/v3/matched_no_ttt_entry_test.py",
+    "tools/v3/no_ttt_async_port_test.py",
+    "tools/v3/no_ttt_console_test.py",
+    "tools/v3/no_ttt_integrated_entry_test.py",
+    "tools/v3/no_ttt_workers_entry_test.py"
+  ]
+}
