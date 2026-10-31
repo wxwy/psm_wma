@@ -275,3 +275,8 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 若CPU软件渲染显著拖慢、导致请求无法重叠/B2=0或超时，则**停止扩大**；在GPU4–7空闲期间先做无训练竞争的GPU7同卡EGL短隔离对照。若仍崩，可用DS现有隔离脚本尝试Server7 + Sim EGL4/5，确认物理EGL映射；**现有正式`runtime.py`绑定EGL=Server GPU，不能用shell`sim_python` wrapper绕过**，如需正式异卡EvalV2则交Codex最小新实现/新Formal Pair审核。
 - 本次训练暂停的Canary只能证明**无GPU4–7训练竞争**下的功能正确性与性能，不等同未来**与训练并行**的稳定性Gate。若已经稳定，后续并发压力测试应在可控训练窗口按Owner明确授权单独进行。未授权正式900、额外实验、切换TTT权重或合并V3生产分支。
 - GPT Remote Desktop Commander设备当前`Offline`，不能从ChatGPT直接操作训练GPU；DS_PRO可在Owner明确训练保存/停止与原Canary许可后手动执行并回传原始证据。不要将本条视为由GPT已实际运行。
+
+## 2026-10-31 — NoTTT控制台只显示Progress，完整日志保留：独立输出层小任务
+
+- Owner希望开始NoTTT Training后终端仅Rank0 `[CorrectedV3][progress]`，但保留完整训练指标JSONL/原始观察者Raw日志、Loader/Rank/异常日志。Frozen phase5中的`TelemetryJournal`已有`[train]`写JSONL不回显；多余`[NoTTT][cpu_loader]`等来自未走Journal的print，因此**建议外层launcher完整tee落盘后只过滤console**，而不是修改Trainer/数据或删除日志。
+- 指令 `docs/collab/chatgpt/requests/2026-10-31_V3_NoTTT_Console_ProgressOnly_FullLogs_Preserved_Minimal_Handoff.md`：DS可改自己仓库外下一次启动脚本，以`PYTHONUNBUFFERED=1`+`tee -a full_launch.log`+`awk progress fflush`实现，`PIPESTATUS`透传失败且失败时tail原始日志，正常只progress；真实运行前需保持独占matched A/B frozen命令不变。若要纳入仓库由Codex修改shell的独立可选小Patch，旧training/EvalV2与A/B均不能被日志改动污染。
