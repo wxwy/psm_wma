@@ -1,3 +1,24 @@
+# 2026-10-31 — Issue13 default progress-only console, claimed
+
+IN_PROGRESS, Codex, isolated v3-nottt-progress-console-20261031 at fetched and
+advertised V3 3332d1825de8778e3d6dbb7e9ba98cbffff487c6. Child/Gitlink
+0ae313e329d290fc6b8a50fda1112820fb7ac485 remains unchanged. Read latest canonical
+Inbox/Issue13 contract, launchers and Journal/Observer; this task does not depend
+on promoting prior Issue12 or EvalV2 candidates. Planned files/CPU acceptance:
+docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md.
+Only Root No-TTT console/raw-log supervision and necessary shell fixtures.
+No actual training/model/torchrun/GPU/data/DCP, no active C12200 worktree changes.
+New exact Root+unchangedChild/evidence then GPT incremental and STOP. Owner roles
+and explicit STOP supersede old three-pane/polling rules. Claim uncommitted.
+
+Implementation ready:2 standard launchers +new foreground stdlib console helper;
+original command/profile/model/Child unchanged. Old fake-Python shell fixtures
+now read diagnostic JSON from the full file, original assertions retained.
+Preliminary17 then expanded49synthetic PASS; Bash syntax/ShellCheck0.10.0,
+Ruff0.12.7/format4 PASS. No actual torchrun/data/model/GPU/DCP execution. Freeze
+Root and bind final clean exact-SHA raw evidence, then isolated publication and
+GPT incremental. No source promotion, activeAB/Job or separate candidate changes.
+
 # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
 
 - Gate `V3-CORRECTED-PHASE3-CACHED-SFT-CACHE-HIT` 进入 REVIEW。authority：Phase3 v1.0 design root `78ff45375cecc3783ec3d219af23c4be5902b9da` 与 `/tmp/CX_PHASE3_CACHED_LATENT_SFT_CACHE_HIT.md`；baseline child `ce07cb6f4a3f7792d85b7583ff6c8bda0bfa0cb0`。复用 Phase1A cache catalog/reader、Phase1B source/index、Phase2 official raw15/state15 adapter、官方 ActionSFTDataset/ActionTransformPipeline 与 PackingDataLoader；本轮 child 只新增 `robocasa_exact_window_cached_sft.py`、`robocasa_exact_window_cached_sft_test.py`、`omni_mot_cached_vision_test.py`，并仅在 `omni_mot_model.py:get_data_and_condition` 加 optional cache-hit vision preparation。raw sample 附 `cached_latent_required=True`，model 对哨兵缺 latent/反向缺哨兵及不合法 packed ABI fail-closed；constructor 校验 VideoResize `192×320` canvas 与 fixed Wan factor16 对应 latent `12×20`，cache-hit保留 native crop 与 temporal helper，VAE/collective调用为0，off-mode 保持原路。

@@ -65,7 +65,8 @@ export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 export PYTHONPATH="$child_worktree${PYTHONPATH:+:$PYTHONPATH}"
 cd -- "$child_worktree"
-exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=4 \
+exec python3 "$root_worktree/scripts/no_ttt_console.py" "$OUTPUT_ROOT" "$JOB_NAME" -- \
+    "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=4 \
     examples/psm_wma_robocasa_corrected_phase5.py --no-ttt \
     --phase "$phase" --formal-execution-until "$execution_until" \
     --root-worktree "$root_worktree" \
