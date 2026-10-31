@@ -46,3 +46,13 @@ Receipt: `docs/collab/codex/receipts/2026-10-31_eval_v2_cli_tasks_all_v3_promoti
 The normal nonforce V3 push and remote readback will identify the promotion commit
 in the completion receipt. Stop after publication; actual GPU evaluation still
 requires separate authorization.
+
+## Completion
+
+Production promotion Root `68cba5640eae205445153808951145cac0912d8c` was published to V3 without force.
+At 2026-10-31T23:11:17.089659+08:00, GitHub fetched and advertised Root matched this commit;
+official Child and Gitlink both remained `6c83596d6a259e89c4cd3e79424024983426ac3d`.
+Remote source and evidence checks passed; see `publication_readback.json`.
+The completion successor only records this receipt. No runtime or active shared
+directory was touched. Work is complete; real evaluation still requires its own
+authorization.

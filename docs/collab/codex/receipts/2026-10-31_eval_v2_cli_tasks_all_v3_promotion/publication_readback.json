@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "observed_cst": "2026-10-31T23:11:17.089659+08:00",
+  "approved_formal_root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "promotion_root": "68cba5640eae205445153808951145cac0912d8c",
+  "fetched_V3": "68cba5640eae205445153808951145cac0912d8c",
+  "advertised_V3": "68cba5640eae205445153808951145cac0912d8c",
+  "root_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "official_child_branch": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "push": "normal nonforce 2e44cd70..68cba564 HEAD -> V3",
+  "merge_parents": [
+    "2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a",
+    "5bd1c354ec011fd2379862c378cb6989dbe6f662"
+  ],
+  "all_source_objects_identical_to_approved_formal": 9852,
+  "artifact_hashes_verified": 19,
+  "formal_source_bindings_verified": 5,
+  "canonical_inbox_prefix_preserved": true,
+  "inbox_bytes": 103194,
+  "candidate_request_retained_once": true,
+  "exact_pair_review_preserved": true,
+  "clean_promotion_worktree_before_receipt": true,
+  "historical_test_rerun": false,
+  "runtime_started": false,
+  "active_shared_directory_updated": false,
+  "authority": "existing exact-pair APPROVE_CODE and Owner safe-promotion authorization; no new Gate or runtime permission",
+  "next": "record docs-only completion successor and STOP; no real evaluation or training"
+}

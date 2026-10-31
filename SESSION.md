@@ -1,3 +1,24 @@
+# 2026-10-31 — EvalV2 CLI `--tasks all`: V3 promotion COMPLETE
+
+Production promotion Root: `68cba5640eae205445153808951145cac0912d8c`.
+Unchanged official Child / Root Gitlink: `6c83596d6a259e89c4cd3e79424024983426ac3d`.
+Approved Formal Root remains `f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1`.
+
+Normal nonforce push to V3 completed. GitHub fetched and advertised V3 matched
+at 2026-10-31T23:11:17.089659+08:00. Both canonical review history and candidate history are retained.
+All 9,852 Root source objects match approved Formal code; 19 original artifact
+hashes and 5 source bindings verified. The existing author 29 PASS is preserved;
+no historical CPU/static/GPU tests were rerun, and no new Gate is claimed.
+
+The only production change is the approved CLI wildcard line. No existing runtime
+or shared code directory was updated; no process, config, model/data/DCP or log
+was accessed. No training, Server, GPU, simulation, evaluation or DS dispatch.
+Receipt: `docs/collab/codex/receipts/2026-10-31_eval_v2_cli_tasks_all_v3_promotion/`.
+The completion successor is docs-only and does not replace the approved Formal
+Pair or production promotion Root. STOP; real evaluation remains separately gated.
+
+## Promotion preparation and candidate history preserved
+
 # 2026-10-31 — EvalV2 CLI `--tasks all`: approved V3 promotion in progress
 
 Owner authorized safe promotion only, with no historical test rerun or runtime.
