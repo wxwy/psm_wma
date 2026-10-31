@@ -259,3 +259,8 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 
 - Formal Root `fd9021b0908b4b2763b3d02508b1f34df377dc97` / Child `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822`，旧Code/CPU Gate不重审。DS获Owner本次GPU4–7并发豁免，报告5/5 optimizer commits迭代9621–9625，首包24.2s<120s、保存iter9625完整DCP、无OOM；GPT源码post_commit审阅但没有服务器原始日志字节。审核 `docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue12_Candidate_4R8W_C9620_C9625_Resume_Functional_PASS_SharedGPU_Perf_INCONCLUSIVE.md`：功能 `PASS_REPORTED_WITH_CODE_CROSSCHECK`。
 - 非独占旧nw0稳态P50约20.49s（18步）与新nw8 P50 13.75s（4步），描述性−32.9% wall/吞吐1.49×；因不同时段/原DCP区间/争用和样本不匹配 **speedup INCONCLUSIVE**。nw0 data_prepare与nw8 data_wait不同指标；新gpu_data_stall值没有；不得称current-stream stall下降。下一步只在Owner另授权下排他同DCP matched nw0/nw8；不改正式训练或合并V3。
+
+## 2026-10-31 — Issue12 C12200 Exclusive GPU4–7 Owner授权matched A/B：待Owner完成保存并停正式Job后DS执行
+
+- Owner明确授权正式NoTTT训练在C12200完整Checkpoint保存后**由Owner自己停止并释放GPU4–7**，DS据真实资源检查GREEN执行 **一次正式匹配A/B：同候选Root `fd9021b0908b4b2763b3d02508b1f34df377dc97` / Child `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822`、同源完整DCP C12200独立双clone、同GPU4–7独占/同模型Config/Compact1，A nw0→12220 20 commits，B nw8→12220 20 commits**。严格只改worker配置，前2步冷启动，剩18步稳态P50/P90/mean+current CUDA stream stall，HostRAM/WorkerRSS/清理/DCP验证；无需重复征得这次限定授权。正式request `docs/collab/chatgpt/requests/2026-10-31_V3_NoTTT_Issue12_C12200_Owner_Authorized_Exclusive_Matched_NW0_NW8_20x2.md`。
+- S0必须确认正式Job所有PID已退出、GPU4–7无残留且Host资源足、C12200真实DCP complete/rank0–3 sidecars/完整optimizer/scheduler/trainer、双clone原文件不动；若S0失败STOP，不改正式Job、不占GPU；只由DS执行测试、Codex才可改Git仓代码。GPT Remote Desktop设备Offline，不能在DS服务器直接启动；已通过Github Issue发DS执行合同。测试不自动合并当前V3 EvalV2技术线，不改原120sTimeout/正式30000 Training/Checkpoint。
