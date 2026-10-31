@@ -493,3 +493,6 @@
 - **V3-EVAL-V2-F5-P1** — REVIEW; Codex; FormalRoot7c74dc26ac4837f193727ecf847b9b64554c18b2/Child53c3c95202e14d3b72d236eee6899a80acf82989. Finalnarrow85PASS/0fail,error,skip + static/scope/realSourceCheckPASS; oldoversizeRED1FAIL, synthetic150kMap37MBsidecars/2553Banchor FreshResumeverified. Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/`; publishChild→Root thenGPTnarrowCodeGateSTOP. No435/sharedGPU/GPU/Canary/train/900/merge.
 
 - **V3-EVALV2-PROMOTION** — IN_PROGRESS; Codex; Owner safe merge+light CPU task, exact approved d18b420c/2f7334c4, actual current V3=369f3f4d/baf1b5bf training advanced. Prepare disjoint approved Child composition, object-preserving Root merge and light synthetic CPU. New Child SHA required to preserve training; canonical publication pending resolution of Owner exact2f target. No real execution/Canary repeat/oldfullGate.
+
+
+- **V3-EVALV2-PROMOTION** — IN_PROGRESS; reviewed isolatedsourceRoot4139ad245b73cc1c16c9d4954241cecb81478992/Child6c83596d6a259e89c4cd3e79424024983426ac3d, objectunionverified, authorlightCPU84PASS+static24/sourceguard/entryPASS. Canonical V3 publication pending originalexactChild2f vs newlymergedbaftraining target resolution. Evidence docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md; noGPU/Canary/OS/Job/DCP.

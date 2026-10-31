@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "pair": [
+    "4139ad245b73cc1c16c9d4954241cecb81478992",
+    "6c83596d6a259e89c4cd3e79424024983426ac3d",
+    "4139ad245b73cc1c16c9d4954241cecb81478992"
+  ],
+  "origins": {
+    "robocasa_eval_v2.cli": "/workspace/work/psm-wma-v3-eval-merge/scripts/robocasa_eval_v2/cli.py",
+    "cosmos_framework.inference.robocasa_session_transactions": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+    "cosmos_framework.inference.robocasa_transaction_mode": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+    "cosmos_framework.trainer.matched_no_ttt": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+    "cosmos_framework.trainer.no_ttt_async_loader": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py"
+  }
+}

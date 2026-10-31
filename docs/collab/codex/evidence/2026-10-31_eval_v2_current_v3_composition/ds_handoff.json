@@ -1,0 +1,13 @@
+{
+  "status": "READY_RECIPE_NOT_DISPATCHED",
+  "root": "4139ad245b73cc1c16c9d4954241cecb81478992",
+  "child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "external_recorder_directory_requires": [
+    "instrumentation/run_light_cpu.py -> run_light_cpu.py",
+    "object_audit.json -> object_audit.json"
+  ],
+  "expected_tests": 84,
+  "expected_failures_errors_skips": 0,
+  "GPU_training_real_data_DCP_OS_Canary": false,
+  "canonical_target_confirmation_required": true
+}

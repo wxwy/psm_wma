@@ -1,0 +1,26 @@
+[
+  {
+    "path": "SESSION.md",
+    "canonical_prefix_preserved": true,
+    "candidate_suffix_preserved": true,
+    "canonical_sha256": "c1db9504dcb11166c8f64524aa85d66c85a337d208e85b4a6030ed86cbee6252",
+    "result_sha256": "f63aeadeba834107e50492d76a1266769d378297ec63345d36e4dfd5f50b52cd",
+    "result_bytes": 313413
+  },
+  {
+    "path": "TODO.md",
+    "canonical_prefix_preserved": true,
+    "candidate_suffix_preserved": true,
+    "canonical_sha256": "e404027d1922469c8e630c3ec76198e2941264eb3b523f1ac08fa744f1482610",
+    "result_sha256": "27b3b4038259315acb875572759ea25966faa4397671506825abb659452ca490",
+    "result_bytes": 185616
+  },
+  {
+    "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+    "canonical_prefix_preserved": true,
+    "candidate_suffix_preserved": true,
+    "canonical_sha256": "40a1eeebd50cd2f6c95048cf710f25a13652096eff3c63148104b27510379c5c",
+    "result_sha256": "fd81530b6a1ef6627c660ef644f1e56de5fd588da41b98cd46258633ac3434aa",
+    "result_bytes": 81852
+  }
+]

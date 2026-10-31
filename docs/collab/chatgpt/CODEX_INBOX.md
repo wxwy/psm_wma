@@ -360,3 +360,11 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - RealpublicFresh→Resume onsynthetic150k assetSHA table: fullsidecars37,200,840/37,200,847B, smallanchor2,553B; fullruntime>16MiB, complete map/stdout retained, warning-onlyResumeappend andunchangedanchor/Core/cachebinding. Identitydrift/ordinary256KiB/private64MiB/path/symlink/overwrite/partial/fsync/link/fail-beforeRuntime negativesPASS. Vendor/library/execution CPUdoubles explicit; originalperassetverificationsourceunchanged. OnsiteDS21MB/123363 remainsDSreported, no realassetsaccess.
 - Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/`: rawXML/log/env/commands/fingerprints, complete sidecars gzip-losslesswithoriginalSHA/bytes/invocationcanonicalchecks, smallCore/identity originals, sourcebindings/diffs anddeterministictests. No fulltmp/cache/fakecheckpoint/miniGit dump. No435replay/sharedGPUchange/GPU/realCanary/train/900/Issue response/V3merge.
 - Publish isolated **Child thenRoot** andreadback; STOP forGPT freshnarrow CodeGate. Afterapproved sourceonly nextnative action remainsoriginal1GPU×2Sim×B2×4Episode Canary innewcleanPair/newnamespace withcheckpoint availabilityrechecked byDS. Do notreuseoldfailedFreshorbypassverify_source.
+
+
+## 2026-10-31 — EvalV2 safe current-V3 composition ready; original Child pin requires resolution
+
+- Owner授权merge已批d18/2f+lightCPU，fresh实际V3已369f3f4d/baf(训练先合入)，不同于Owner观察2ee/0ae。**canonical尚未改动**；直接pin原2f会丢13训练delta。
+- 已准备隔离组合source Root `4139ad245b73cc1c16c9d4954241cecb81478992` / Child `6c83596d6a259e89c4cd3e79424024983426ac3d`，纯merge两已批源码，Child包含baf和2f两祖先，1270对象完整并集；Root12407对象除bookkeepers+Gitlink外原对象并集，原V3 docs全部保留，生产路径无冲突/无手写变更。
+- **轻量84/84 PASS、0fail/error/skip、1计划排除OS用例、shell0/source unchanged**，新组合入口/两mode/训练Shell→CPUTrainer绑定与static24/sourceGuard/import/CLI help PASS。未重跑324/435/OSMesa4EP/900、不索要DS旧raw、不启动GPU/Job/数据/真实DCP。
+- 证据/DS轻测交接 `docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md`。这是来源组合与作者CPU，不伪称旧Code Gate绑定新SHA或DS独立PASS。保留已批设计；canonical发布前只需解决Owner原Child精确2f与新训练baf保留冲突。新Child6c是保留两路的方案，不应回退训练；隔离branch供review。

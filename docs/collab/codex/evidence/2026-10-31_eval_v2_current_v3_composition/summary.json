@@ -1,0 +1,24 @@
+{
+  "status": "AUTHOR_LIGHT_CPU_PASS_ISOLATED",
+  "source_pair": {
+    "root": "4139ad245b73cc1c16c9d4954241cecb81478992",
+    "child": "6c83596d6a259e89c4cd3e79424024983426ac3d"
+  },
+  "canonical_base": {
+    "root": "369f3f4d82b8694b7efee5d5b16589d82aa00547",
+    "child": "baf1b5bf46853e9849a91518803b9738fc216235"
+  },
+  "original_requested_child": "2f7334c4ada6ace1d21185985aae90539052bf18",
+  "canonical_publication": "PENDING_OWNER_EXACT_TARGET_RESOLUTION",
+  "pytest": {
+    "collected": 84,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "watched_files": 50,
+  "DS_independent_CPU": "NOT_RUN",
+  "real_OS_Server_Sim_GPU_Canary_training_real_data_real_DCP": "NOT_RUN",
+  "CPU_tiny_synthetic_DCP_and_shim_subprocesses": "EXECUTED_AS_TEST_BOUNDARIES"
+}
