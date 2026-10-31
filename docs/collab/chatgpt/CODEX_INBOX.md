@@ -280,3 +280,8 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 
 - Owner希望开始NoTTT Training后终端仅Rank0 `[CorrectedV3][progress]`，但保留完整训练指标JSONL/原始观察者Raw日志、Loader/Rank/异常日志。Frozen phase5中的`TelemetryJournal`已有`[train]`写JSONL不回显；多余`[NoTTT][cpu_loader]`等来自未走Journal的print，因此**建议外层launcher完整tee落盘后只过滤console**，而不是修改Trainer/数据或删除日志。
 - 指令 `docs/collab/chatgpt/requests/2026-10-31_V3_NoTTT_Console_ProgressOnly_FullLogs_Preserved_Minimal_Handoff.md`：DS可改自己仓库外下一次启动脚本，以`PYTHONUNBUFFERED=1`+`tee -a full_launch.log`+`awk progress fflush`实现，`PIPESTATUS`透传失败且失败时tail原始日志，正常只progress；真实运行前需保持独占matched A/B frozen命令不变。若要纳入仓库由Codex修改shell的独立可选小Patch，旧training/EvalV2与A/B均不能被日志改动污染。
+
+## 2026-10-31 — Owner要求NoTTT默认Progress-only Console（不是可选/外部手动过滤），Codex生产启动脚本修改任务
+
+- Owner明确要求NoTTT训练开始后终端**默认只显示Rank0 `[CorrectedV3][progress]`**；完整stdout/stderr(含all ranks/NoTTT loader/errors)须记录外部full log，训练结构化`monitor/train_rank0.jsonl`和Observer raw不变。既有TelemetryJournal已不console回显`[train]`，直接loader print仍会刷屏，因此应在Root NoTTT启动脚本外层作全量落盘后只console progress，而不改Trainer。具体Codex实施合同 `docs/collab/chatgpt/requests/2026-10-31_V3_NoTTT_Default_Progress_Only_Console_Codex_Implementation_Order.md`，取代先前“DS仓库外可选过滤”的建议。
+- 仅Codex改Git repo标准NoTTT 4GPU/8GPU启动器，默认开启，日志路径不侵占Job namespace，正确传递torchrun/tee/awk失败码与SIGINT，stderr/其它rank真实保留。当前C12200 matched A/B不得改源码/启动命令，不增加GPU/CPU训练Gate。代码**尚未修改**，待Codex隔离候选SHA与shell synthetic evidence供GPT增量Review。
