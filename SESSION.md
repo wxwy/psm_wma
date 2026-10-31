@@ -1,3 +1,16 @@
+# 2026-10-31 — No-TTT promotion resynced with concurrent Owner records
+
+Local promotion mergee65f1b20 prepared. Before push canonical advanced docs-only
+692b7ed4→7fb45b78→2ee690b0c3b0a6d9219db12096813ef4eb26de2b.
+Owner-accepted DS OSMesa report record preserved, no stale Evidence demand
+reintroduced. Re-merge latest canonical; Inbox prefix plus all earlier candidate/
+promotion suffix bytes preserved. Production stays approved57e36dec/baf1b5bf.
+Child canonicalv3-local-ttt746c5cf2 ancestry tobaf confirmed: normal fast-forward
+Child first, then RootV3 non-force after final ancestor check. Publication pending.
+No tests/GPU/Job/DCP/config or formalResume; STOP after readback.
+
+## Earlier records preserved
+
 # 2026-10-31 — Approved No-TTT V3 merge prepared; publication pending
 
 IN_PROGRESS promotion only, Owner latest Step1. Formal GPT APPROVE_CODE

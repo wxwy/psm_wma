@@ -57,3 +57,15 @@ world4/GA4 路线具备已批 nw8 Async Loader；world4/nw0 和 world8/nw0 同�
 Job Identity、数据或历史运行；没有启动 Action Server、RoboCasa、训练或 DS
 任务。后续正式训练只能经 Owner 单独授权，从**原正式完整 iter12200**恢复，
 使用已验证的 nw8/prefetch1/persistent1/timeout120；不使用 A/B 生成的 iter12220。
+
+## 并发同步补记
+
+提交本地提升合并 e65f1b2010557f2d982a6c2d22fa162382d28077 后，
+推送前发现远端新增7fb45b78、2ee690b0两笔文档提交。重新同步到
+`2ee690b0c3b0a6d9219db12096813ef4eb26de2b`，完整保留 Owner 采信 DS
+OSMesa Canary 报告的最新决策及原先历史，不把过期的取证要求恢复为阻断项。
+本任务没有重开或改变该 Canary 裁决，正式训练授权仍单独保留。
+
+只有 Inbox 追加位置冲突：先完整保留最新 canonical 前缀，再追加此前候选及
+本轮提升的独有记录。重新核对源码对象，仍与已批57e3完全一致。Child正式
+分支原746c5cf2是baf1b5bf的祖先，可非强推快进；Child先、Root后提升。

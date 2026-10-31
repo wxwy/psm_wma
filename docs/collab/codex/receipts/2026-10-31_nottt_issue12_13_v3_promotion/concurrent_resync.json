@@ -1,0 +1,22 @@
+{
+  "observed_cst": "2026-10-31T13:23:47.048445+08:00",
+  "previous_canonical": "692b7ed467b04b016d609a17d91a8631c867710e",
+  "new_canonical": "2ee690b0c3b0a6d9219db12096813ef4eb26de2b",
+  "local_promotion_merge": "e65f1b2010557f2d982a6c2d22fa162382d28077",
+  "advance_commits": [
+    "7fb45b7810482d164b0b4592e8f05aef6792d22f",
+    "2ee690b0c3b0a6d9219db12096813ef4eb26de2b"
+  ],
+  "canonical_delta": "docs-only Owner-accepted OSMesa report; no production source",
+  "conflict": "Inbox only",
+  "latest_canonical_prefix_preserved": true,
+  "prior_candidate_and_promotion_suffix_preserved": true,
+  "prior_suffix_bytes": 4344,
+  "prior_suffix_sha256": "4464778f156a55766344b204605e04cf4fabad0c2e6a831f714dc25af09cbcf3",
+  "inbox_bytes": 77802,
+  "child_branch_before": "746c5cf2f2324104a62fb71510343aa40d3976c5",
+  "child_target": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "child_fast_forward_ancestry_confirmed": true,
+  "testing_reexecuted": false,
+  "training_authorized": false
+}

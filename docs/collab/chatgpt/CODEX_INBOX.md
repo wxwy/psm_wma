@@ -315,6 +315,14 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **E6-P2 MEDIUM**：当前`launch_environment()`继承`MUJOCO_GL`，但`config.py`/Manifest的`runtime_identity`未绑定render backend、外部`LD_LIBRARY_PATH`的OSMesa/LLVM二进制和cache digest；Resume可能在EGL与OSMesa不同环境间不报协议漂移。为本次4EP先补不可变运行环境记录；**正式900前**需最小补齐科学身份与Resume拒绝，若改源码按新Pair独立Code Gate。
 - **不夸大结论**：此次 checkpoint是iter11000而不是Owner预期iter12200；未明确证明“训练与评测并行”，不能记成GPU并行压力测试PASS。NoTTT也不能替代LocalTTT真机Canary。未授权900/额外GPU、不停止他人训练、不更改已批准源码、不自动合并V3。
 
+
+## 2026-10-31 — Owner明确采信DS_PRO报告，NoTTT OSMesa Canary PASS（原始证据免收）
+
+- Owner原话「不要再收集原始证据了，我们信任ds」；**立即停止之前Review关于索取summary/raw JSON、log、MP4、sha256清单与为原件而重复4EP的全部要求**。先前Evidence`REQUEST_CHANGES`中“未提供原件则卡Gate”已被**Owner正式覆盖**。保留历史Review但不能用旧结论继续阻塞流程。
+- **最终本轮No-TTT + CPU OSMesa 4 Episode Canary：`PASS (DS_PRO_REPORTED / OWNER_ACCEPTED)`**，以DS正式报告为权威依据，不伪称GPT访问过DS服务器原件。Root`d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163` + Child`2f7334c4ada6ace1d21185985aae90539052bf18`旧Code Gate`APPROVE_CODE`保留；`iter_000011000` NoTTT, 4/4 valid但SR0, 4MP4, B2 2/244（Owner允许）, GPU7稳定, clean_EXIT0。
+- CPU OSMesa作为当前选择定案，不为此次Canary额外尝试GPU异卡EGL或调Batch窗口。Numba缓存异步注入的可能时序/跨环境风险仅保留为已知运行注意事项；**不得借此再次索要原始证据或重跑Canary**。正式长跑前DS按既有成功recipe确保缓存就绪即可；若有真正运行故障再针对性处理。
+- 本决策为本轮**机制Canary PASS**，并非授权900Episode，不代表`iter_000012200`被评测，也不自动覆盖Local-TTT或训练+评测并行稳定性验证。另见：`docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_NoTTT_OSMesa_Owner_Accepted_Report_Gate_PASS.md`。
+
 ## 2026-10-31 — Issue12+13 minimal composition: new exact Pair Code Gate request
 
 - **REVIEW**; Formal Root `57e36decbec0e00ecb94dc1c080fd8976afff25d` / unchanged approved Child-Gitlink `baf1b5bf46853e9849a91518803b9738fc216235`; isolated Root branch `v3-nottt-integrated-20261031`, based on latest canonical `b260290ef09ef25a8a41259aef153df5efff3369`. Successor evidence/ledger commits are not Formal Implementation SHA.
