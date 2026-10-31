@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "base": "0ab13951d640d50ea2c9c8812817bf3009eae7b5",
+  "canonical": "2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a",
+  "candidate": "5bd1c354ec011fd2379862c378cb6989dbe6f662",
+  "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+  "strategy": "canonical byte-for-byte prefix + candidate tail after shared base",
+  "base_bytes": 97739,
+  "canonical_bytes": 99351,
+  "candidate_tail_bytes": 2427,
+  "merged_bytes": 101778,
+  "canonical_prefix_preserved": true,
+  "candidate_tail_preserved_once": true,
+  "canonical_sha256": "4c7eb2ffcffe2406949877f2307eb47a2e918cc36a92ffd50e1b60ca67ff453f",
+  "candidate_tail_sha256": "73ccf9907c40fcf7a7f4fb0b3da93098599eb48cbf5278491f1274c4e4cb981a",
+  "only_merge_conflict": "docs/collab/chatgpt/CODEX_INBOX.md"
+}

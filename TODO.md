@@ -508,3 +508,9 @@
 # 2026-10-31 — Issue13 initialization visibility
 
 - **NOTTT-CONSOLE-START-BOUNDARY** — DONE (code+original syntheticCPU Gate); exact3cf7453777a693ac029a79ed8b19afc55df0d4fa/6c83596d6a259e89c4cd3e79424024983426ac3d formallyAPPROVE_CODEec9d review, publishedV3 via437fdd04. Original46PASS/static Evidence preserved, not rerun. CurrentResume sharedcode/process untouched, no runtimeauthorization inferred.
+
+# 2026-10-31 — EvalV2 CLI wildcard parity
+
+- **EVALV2-CLI-TASKS-ALL** — DONE (Code Gate only); Codex; Formal Root f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1 / unchanged Child 6c83596d6a259e89c4cd3e79424024983426ac3d; exact-pair GPT APPROVE_CODE at canonical 2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a. Original author 29 PASS retained; no rerun. Safe V3 promotion tracked separately; runtime not authorized.
+
+- **EVALV2-CLI-TASKS-ALL-PROMOTE** — IN_PROGRESS; Codex; prerequisite exact-pair APPROVE_CODE verified at 2e44cd70. Isolated worktree only; preserve both histories, one approved production line plus tests, unchanged Child. Accept only source/evidence inheritance PASS, normal nonforce V3 publication and readback; no historical tests, active shared-directory update or runtime.

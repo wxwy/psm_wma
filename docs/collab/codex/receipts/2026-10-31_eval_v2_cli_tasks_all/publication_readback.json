@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "observed_cst": "2026-10-31T21:40:42.918726+08:00",
+  "formal_root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "branch": "v3-eval-v2-cli-tasks-all-20261031",
+  "published_evidence_head": "961f15948438c115b522a1b43adff26ac1de65b5",
+  "fetched_candidate_head": "961f15948438c115b522a1b43adff26ac1de65b5",
+  "advertised_root_refs": {
+    "V3": "0ab13951d640d50ea2c9c8812817bf3009eae7b5",
+    "v3-eval-v2-cli-tasks-all-20261031": "961f15948438c115b522a1b43adff26ac1de65b5"
+  },
+  "advertised_child_branch": {
+    "v3-local-ttt": "6c83596d6a259e89c4cd3e79424024983426ac3d"
+  },
+  "fetch_and_advertised_readback": "completed successfully; advertised SHA equals fetched SHA",
+  "canonical_V3_unchanged": true,
+  "formal_and_canonical_ancestry_preserved": true,
+  "evidence_successor_production_and_test_diff": [],
+  "artifact_checksums_passed": 19,
+  "formal_source_bindings_passed": 5,
+  "author_cpu_totals": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "canonical_inbox_prefix_preserved": true,
+  "candidate_inbox_bytes": 99533,
+  "clean_worktrees_before_receipt": [
+    "root",
+    "child"
+  ],
+  "raw_evidence_whitespace": "preserved byte-for-byte in implementation.diff, red.log and red.xml; authored files pass git diff --check",
+  "scope": "isolated candidate publication and GitHub readback; no canonical promotion or runtime authorization",
+  "next": "STOP for GPT fresh incremental Code Gate; author PASS is not independent acceptance"
+}

@@ -1,0 +1,233 @@
+diff --git a/SESSION.md b/SESSION.md
+index fb2ef650..334042e6 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,20 @@
++# 2026-10-31 — EvalV2 CLI tasks-all fix claimed
++
++IN_PROGRESS; Codex; new isolated v3-eval-v2-cli-tasks-all-20261031 from
++fresh V30ab13951d640d50ea2c9c8812817bf3009eae7b5, Child6c unchanged. Owner identifies real parser
++bug: a.tasks.split makes all→[all], discover accepts literal stringall only.
++Plan one production line in scripts/robocasa_eval_v2/config.py: preserve exact
++all string, CSV unchanged. New narrowCPUtasks tests + existingconfig17 only;
++synthetic18metadata/real CLI dry-run, no models/GPU/env/runtime. No Child,
++Scheduler/Resume/identity/TaskDiscovery changes or oldGate broad rerun.
++Record exact Root/6c, RED oldconfig/GREEN new, raw logs/JUnit/static/source
++proof, publish isolated candidate andGPTreview request thenSTOP. No V3 merge
++or current training/eval/sharedcode/Job/DCP/log operations.
++Latest canonical0ab LocalTTT designreview unrelated, preserved without action.
++Claim2026-10-31T21:34:59.519441+08:00; source edit not yet started.
++
++## Prior canonical records
++
+ # 2026-10-31 — Approved No-TTT boundary V3 promotion DONE
+ 
+ GitHub canonical readback PASS at2026-10-31 16:07:40 CST.
+diff --git a/TODO.md b/TODO.md
+index e67e9ba1..33cc715d 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -508,3 +508,7 @@
+ # 2026-10-31 — Issue13 initialization visibility
+ 
+ - **NOTTT-CONSOLE-START-BOUNDARY** — DONE (code+original syntheticCPU Gate); exact3cf7453777a693ac029a79ed8b19afc55df0d4fa/6c83596d6a259e89c4cd3e79424024983426ac3d formallyAPPROVE_CODEec9d review, publishedV3 via437fdd04. Original46PASS/static Evidence preserved, not rerun. CurrentResume sharedcode/process untouched, no runtimeauthorization inferred.
++
++# 2026-10-31 — EvalV2 CLI wildcard parity
++
++- **EVALV2-CLI-TASKS-ALL** — IN_PROGRESS; Codex; Owner confirmed parser bug, base0ab13951/unchangedChild6c. One-line CLIall canonical string preservation, CSV unchanged; new CPU semantic/parity/real dry-run/negative tests + narrow config regression, frozen RED/GREEN/source/static evidence. Publish isolated exactRoot/6c thenGPTfreshreview/STOP. No Child/runtime/realdata/model/DCP/GPU/liveJob or V3merge.
+diff --git a/docs/build/PSM-WMA_V3_EvalV2_CLI_Tasks_All_Fix_2026-10-31.md b/docs/build/PSM-WMA_V3_EvalV2_CLI_Tasks_All_Fix_2026-10-31.md
+new file mode 100644
+index 00000000..1f957233
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_EvalV2_CLI_Tasks_All_Fix_2026-10-31.md
+@@ -0,0 +1,26 @@
++# EvalV2 CLI `--tasks all` parity fix
++
++Base V3 `0ab13951d640d50ea2c9c8812817bf3009eae7b5`, unchanged Child
++`6c83596d6a259e89c4cd3e79424024983426ac3d`. Isolated branch
++`v3-eval-v2-cli-tasks-all-20261031`; no V3 merge or runtime execution.
++
++Bug: config.resolve converts CLIall to list[all]; identity.discover recognizes
++only stringall as the complete18-task wildcard. Preserve exact CLI stringall;
++other values keep original comma splitting, order and validation. Production
++change is one line in scripts/robocasa_eval_v2/config.py. Discovery, task catalog,
++scheduler, sampling, identity, Resume and Child stay unchanged.
++
++New12 CPU cases cover dry-run/fresh/resume config parity with YAMLall, defaultall,
++CSV order/override, invalid/mixed/duplicate names, incomplete18-task catalog and
++the real public CPU dry-run JSON plan (both model/config files absent, runtime
++preparation forbidden). Synthetic metadata only; no model/GPU/real DCP or env.
++Run existing17 config/profile regression cases, not full84/GPU/OS suites.
++
++Freeze newRoot/Child and tests before RED: the old config.py exact Git blob is
++loaded into the unchanged CLI/discovery call chain with the same new frozen test;
++expect one specific wildcard failure. GREEN uses the real new module and all29
++cases, scoped Ruff0.12.7/check/format/AST and exact clean source before/after.
++Archive commands/rawJUnit/logs/hashes, publish isolated candidate for fresh GPT
++incremental review, thenSTOP. No active training/eval worktree,Job,config,outputs
++or checkpoint access; current workaround YAMLtasksall without CLI flag remains
++valid until code is reviewed/promoted.
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index 714a7615..2881df21 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -91,7 +91,7 @@ def resolve(argv=None):
+     if a.gpus is not None:
+         cfg["gpu_ids"] = [int(x) for x in a.gpus.split(",")]
+     if a.tasks is not None:
+-        cfg["tasks"] = a.tasks.split(",")
++        cfg["tasks"] = "all" if a.tasks == "all" else a.tasks.split(",")
+     if a.episodes is not None:
+         cfg["episodes_per_task"] = a.episodes
+     if a.output_dir is not None:
+diff --git a/tools/v3/eval_v2_batch_tests/tasks_cli_test.py b/tools/v3/eval_v2_batch_tests/tasks_cli_test.py
+new file mode 100644
+index 00000000..21616a29
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/tasks_cli_test.py
+@@ -0,0 +1,145 @@
++"""Real CLI/config/discovery wildcard parity, synthetic task metadata only."""
++
++import json
++import sys
++from pathlib import Path
++
++import pytest
++import yaml
++from robocasa_eval_v2.cli import main
++from robocasa_eval_v2.config import resolve
++from robocasa_eval_v2.identity import ATOMIC_TASKS, discover
++
++
++@pytest.fixture
++def selection(tmp_path):
++    inputs = tmp_path / "inputs"
++    dataset = inputs / "dataset"
++    for task in ATOMIC_TASKS:
++        meta = dataset / task / "lerobot/extras/dataset_meta.json"
++        meta.parent.mkdir(parents=True)
++        meta.write_text(json.dumps({"env_args": {"env_name": task, "env_kwargs": {}}}))
++    cfg = dict(
++        schema="psm_robocasa_eval_v2",
++        checkpoint=str(inputs / "checkpoint_NOT_PRESENT"),
++        config_file=str(inputs / "model_NOT_PRESENT.yaml"),
++        dataset_root=str(dataset),
++        vendor_lock=str(inputs / "vendor_NOT_PRESENT.json"),
++        output_dir=str(tmp_path / "evaluation_NOT_CREATED"),
++        server_python=sys.executable,
++        sim_python=sys.executable,
++        gpu_ids=[7],
++        execution_profile="phase_b",
++        local_memory_mode="off",
++        sims_per_gpu=2,
++        max_infer_batch_size=2,
++        episodes_per_task=2,
++        tasks=["CloseFridge"],
++    )
++    path = tmp_path / "eval.yaml"
++    path.write_text(yaml.safe_dump(cfg))
++    return path, cfg
++
++
++@pytest.mark.parametrize("mode", ["dry-run", "fresh", "resume"])
++def test_cli_all_overrides_subset_and_matches_yaml_all_in_every_run_mode(
++    selection, mode
++):
++    path, cfg = selection
++    _, explicit = resolve([mode, "--config", str(path), "--tasks", "all"])
++    assert explicit["tasks"] == "all"
++    cfg["tasks"] = "all"
++    path.write_text(yaml.safe_dump(cfg))
++    _, yaml_only = resolve([mode, "--config", str(path)])
++    assert explicit == yaml_only
++    assert discover(explicit) == discover(yaml_only)
++    assert [t for t, _ in discover(explicit)] == sorted(ATOMIC_TASKS)
++    assert len(discover(explicit)) == 18
++    assert not Path(cfg["output_dir"]).exists()
++
++
++def test_default_all_yaml_all_and_cli_all_are_the_same_selection(selection):
++    path, cfg = selection
++    del cfg["tasks"]
++    path.write_text(yaml.safe_dump(cfg))
++    _, default = resolve(["dry-run", "--config", str(path)])
++    _, explicit = resolve(["dry-run", "--config", str(path), "--tasks", "all"])
++    assert default == explicit and default["tasks"] == "all"
++    assert len(discover(default)) == 18
++
++
++def test_csv_still_preserves_requested_order_and_overrides_yaml_all(selection):
++    path, cfg = selection
++    cfg["tasks"] = "all"
++    path.write_text(yaml.safe_dump(cfg))
++    ordered = ["OpenCabinet", "CloseFridge"]
++    _, explicit = resolve(
++        ["dry-run", "--config", str(path), "--tasks", ",".join(ordered)]
++    )
++    assert explicit["tasks"] == ordered
++    assert [t for t, _ in discover(explicit)] == ordered
++    cfg["tasks"] = ordered
++    path.write_text(yaml.safe_dump(cfg))
++    assert resolve(["dry-run", "--config", str(path)])[1] == explicit
++
++
++@pytest.mark.parametrize(
++    "value", ["all,CloseFridge", "all,all", "NoSuchTask", "", "ALL"]
++)
++def test_mixed_wildcard_duplicate_empty_or_unknown_names_remain_rejected(
++    selection, value
++):
++    path, _ = selection
++    with pytest.raises(ValueError):
++        _, cfg = resolve(["dry-run", "--config", str(path), "--tasks", value])
++        discover(cfg)
++
++
++def test_all_still_requires_the_complete_18_task_metadata_catalog(selection):
++    path, cfg = selection
++    missing = (
++        Path(cfg["dataset_root"]) / ATOMIC_TASKS[0] / "lerobot/extras/dataset_meta.json"
++    )
++    missing.unlink()  # Synthetic fixture only.
++    _, explicit = resolve(["dry-run", "--config", str(path), "--tasks", "all"])
++    with pytest.raises(ValueError, match="all requires18"):
++        discover(explicit)
++    cfg["tasks"] = "all"
++    path.write_text(yaml.safe_dump(cfg))
++    with pytest.raises(ValueError, match="all requires18"):
++        discover(resolve(["dry-run", "--config", str(path)])[1])
++
++
++def test_public_dry_run_cli_and_yaml_all_emit_same_18_task_plan_without_runtime(
++    selection, capsys
++):
++    path, cfg = selection
++
++    def forbidden(*args, **kwargs):
++        pytest.fail("dry-run must not prepare model/runtime/environment")
++
++    def preview(extra):
++        assert (
++            main(
++                ["dry-run", "--config", str(path), *extra],
++                prepare_inputs=forbidden,
++                runtime_type=forbidden,
++            )
++            == 0
++        )
++        return json.loads(capsys.readouterr().out)
++
++    cfg["tasks"] = "all"
++    path.write_text(yaml.safe_dump(cfg))
++    yaml_plan = preview([])
++    cli_plan = preview(["--tasks", "all"])
++    assert cli_plan == yaml_plan
++    assert cli_plan["task_order"] == sorted(ATOMIC_TASKS)
++    assert cli_plan["slots"] == [
++        [task, ep] for ep in range(2) for task in sorted(ATOMIC_TASKS)
++    ]
++    assert cli_plan["models_loaded"] == cli_plan["environments_created"] == 0
++    assert cli_plan["runtime_attested"] is False
++    assert not Path(cfg["checkpoint"]).exists()
++    assert not Path(cfg["config_file"]).exists()
++    assert not Path(cfg["output_dir"]).exists()

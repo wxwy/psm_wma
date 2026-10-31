@@ -1,0 +1,57 @@
+F
+=================================== FAILURES ===================================
+_ test_public_dry_run_cli_and_yaml_all_emit_same_18_task_plan_without_runtime __
+
+selection = (PosixPath('/tmp/psm-eval-tasks-all-20261031/final/red_tmp/test_public_dry_run_cli_and_ya0/eval.yaml'), {'checkpoint':...sm-eval-tasks-all-20261031/final/red_tmp/test_public_dry_run_cli_and_ya0/inputs/dataset', 'episodes_per_task': 2, ...})
+capsys = <_pytest.capture.CaptureFixture object at 0x7fbbc7d880b0>
+
+    def test_public_dry_run_cli_and_yaml_all_emit_same_18_task_plan_without_runtime(
+        selection, capsys
+    ):
+        path, cfg = selection
+    
+        def forbidden(*args, **kwargs):
+            pytest.fail("dry-run must not prepare model/runtime/environment")
+    
+        def preview(extra):
+            assert (
+                main(
+                    ["dry-run", "--config", str(path), *extra],
+                    prepare_inputs=forbidden,
+                    runtime_type=forbidden,
+                )
+                == 0
+            )
+            return json.loads(capsys.readouterr().out)
+    
+        cfg["tasks"] = "all"
+        path.write_text(yaml.safe_dump(cfg))
+        yaml_plan = preview([])
+>       cli_plan = preview(["--tasks", "all"])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/tasks_cli_test.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_tests/tasks_cli_test.py:123: in preview
+    main(
+scripts/robocasa_eval_v2/cli.py:34: in main
+    tasks = discover(cfg)
+            ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cfg = {'base_port': 8912, 'batch_wait_ms': 20, 'checkpoint': '/tmp/psm-eval-tasks-all-20261031/final/red_tmp/test_public_dry...': '/tmp/psm-eval-tasks-all-20261031/final/red_tmp/test_public_dry_run_cli_and_ya0/inputs/model_NOT_PRESENT.yaml', ...}
+
+    def discover(cfg):
+        mapping = dict(discover_task_datasets(Path(cfg["dataset_root"]), None))
+        order = sorted(mapping) if cfg["tasks"] == "all" else list(cfg["tasks"])
+        if any(t not in ATOMIC_TASKS for t in order):
+>           raise ValueError(
+                "only RoboCasa365 Target Atomic-Seen tasks are supported by this protocol"
+            )
+E           ValueError: only RoboCasa365 Target Atomic-Seen tasks are supported by this protocol
+
+scripts/robocasa_eval_v2/identity.py:71: ValueError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_tests/tasks_cli_test.py::test_public_dry_run_cli_and_yaml_all_emit_same_18_task_plan_without_runtime
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 0.15s

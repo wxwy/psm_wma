@@ -1,0 +1,24 @@
+{
+  "observed_cst": "2026-10-31T23:09:00.182017+08:00",
+  "before_candidate_head": "5bd1c354ec011fd2379862c378cb6989dbe6f662",
+  "fetched_and_advertised_V3": "2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a",
+  "fetched_and_advertised_candidate": "5bd1c354ec011fd2379862c378cb6989dbe6f662",
+  "new_canonical_commits": [
+    {
+      "sha": "2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a",
+      "subject": "docs(review): APPROVE_CODE EvalV2 CLI tasks all f3fccc8f/6c83596d"
+    }
+  ],
+  "formal_root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "advertised_child_branch_head": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "review_path": "docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_CLI_TasksAll_f3fccc8f_6c83596d_Incremental_Code_Gate_APPROVE_CODE.md",
+  "review_blob": "f0d95913c5b7f0ac6f1d4e8ea1179d066df73c2d",
+  "review_sha256": "23798b03f750832ad18f80b0753e663c1e52b9a4da9209e7841ed3085285f1df",
+  "verdict": "APPROVE_CODE",
+  "scope": "Owner-approved safe promotion in a new isolated worktree; no new implementation or rerun",
+  "role_override": "latest Owner: GPT design/review, Codex code/CPU, DS independent execution. Old three-pane/polling requirement superseded; no extra reviewers or execution dispatch",
+  "sync_plan": "candidate and canonical intentionally diverged only in review/ledger changes; new worktree starts from advertised canonical and merges candidate history without force",
+  "allowed": "Git/source/evidence integrity checks, preserve both histories, normal V3 push and readback",
+  "forbidden": "active shared code update, training/eval/GPU/real data/model/DCP/server/simulator/DS dispatch, historical tests rerun"
+}

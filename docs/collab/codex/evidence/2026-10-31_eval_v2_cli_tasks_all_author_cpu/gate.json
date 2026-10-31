@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "gate": "AUTHOR_EVALV2_CLI_TASKS_ALL_CPU",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/robocasa_eval_v2/config.py",
+        "tools/v3/eval_v2_batch_tests/tasks_cli_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-eval-tasks-all",
+      "timeout_s": 120,
+      "expected_exit": 0,
+      "exit_code": 0,
+      "seconds": 0.0639541579876095
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "scripts/robocasa_eval_v2/config.py",
+        "tools/v3/eval_v2_batch_tests/tasks_cli_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-eval-tasks-all",
+      "timeout_s": 120,
+      "expected_exit": 0,
+      "exit_code": 0,
+      "seconds": 0.06406402599532157
+    },
+    {
+      "name": "red",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "/tmp/psm-eval-tasks-all-20261031/final/red_old_config/bootstrap.py",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-eval-tasks-all",
+        "tools/v3/eval_v2_batch_tests/tasks_cli_test.py::test_public_dry_run_cli_and_yaml_all_emit_same_18_task_plan_without_runtime",
+        "--basetemp=/tmp/psm-eval-tasks-all-20261031/final/red_tmp",
+        "--junitxml=/tmp/psm-eval-tasks-all-20261031/final/red.xml"
+      ],
+      "cwd": "/workspace/psm-wma-eval-tasks-all",
+      "timeout_s": 120,
+      "expected_exit": 1,
+      "exit_code": 1,
+      "seconds": 0.6655932720168494
+    },
+    {
+      "name": "green",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-eval-tasks-all",
+        "tools/v3/eval_v2_batch_tests/tasks_cli_test.py",
+        "tools/v3/eval_v2_batch_tests/config_test.py",
+        "--basetemp=/tmp/psm-eval-tasks-all-20261031/final/green_tmp",
+        "--junitxml=/tmp/psm-eval-tasks-all-20261031/final/junit.xml"
+      ],
+      "cwd": "/workspace/psm-wma-eval-tasks-all",
+      "timeout_s": 120,
+      "expected_exit": 0,
+      "exit_code": 0,
+      "seconds": 0.8662172140320763
+    }
+  ],
+  "real_gpu": false,
+  "real_model_data_DCP": false,
+  "simulation_training_or_active_job": false,
+  "identities": {
+    "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+    "child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+    "gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d"
+  },
+  "syntax_python_files": 2,
+  "red_old_config_expected_failure": true,
+  "totals": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true
+}

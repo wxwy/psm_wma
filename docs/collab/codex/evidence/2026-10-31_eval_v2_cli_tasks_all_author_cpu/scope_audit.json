@@ -1,0 +1,20 @@
+{
+  "status": "PASS_ONE_LINE_ONLY",
+  "root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "baseline": "0ab13951d640d50ea2c9c8812817bf3009eae7b5",
+  "changed_paths": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_V3_EvalV2_CLI_Tasks_All_Fix_2026-10-31.md",
+    "scripts/robocasa_eval_v2/config.py",
+    "tools/v3/eval_v2_batch_tests/tasks_cli_test.py"
+  ],
+  "production_changed_paths": [
+    "scripts/robocasa_eval_v2/config.py"
+  ],
+  "one_line_production_fix": true,
+  "other_root_objects_unchanged": 12522,
+  "whole_child_unchanged": true,
+  "discovery_scheduler_identity_runtime_training_unchanged": true
+}

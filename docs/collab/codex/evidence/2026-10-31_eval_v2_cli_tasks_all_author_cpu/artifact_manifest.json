@@ -1,0 +1,83 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 2073,
+      "sha256": "a55dd221767d1e67d61e6a9baf0f75462e2a24f5e7ba552870426c135b90bfac"
+    },
+    "commands.json": {
+      "bytes": 545,
+      "sha256": "87650a6418fcd7ebd048add896f44266a3827d094cf8a17b2115c1f1539f526c"
+    },
+    "environment.json": {
+      "bytes": 891,
+      "sha256": "29ec096e5a772faecf72106a42c2323f3cb21556881ba7088726cbb2005b25c6"
+    },
+    "formal_source_bindings.json": {
+      "bytes": 1477,
+      "sha256": "25b1c2107e1a060e0b517206b376b2414034068d4a9ba306bf34a8ba7ab6cd04"
+    },
+    "gate.json": {
+      "bytes": 3012,
+      "sha256": "9880d977428c599becf4fbd590a968f1718136ea4fda5b2de8fa71053a0e8704"
+    },
+    "green.log": {
+      "bytes": 49,
+      "sha256": "c534cea23bc114566315089d3aef047bcee90bab87c77400a9b18cbc0308e6d2"
+    },
+    "implementation.diff": {
+      "bytes": 10247,
+      "sha256": "5353e591108c2e98cd455cc3d4759e8c7c368c3e665167e4d07a2caf551a0a07"
+    },
+    "junit.xml": {
+      "bytes": 4989,
+      "sha256": "b574bc3647a7e75538e81174a31938110c29aac54650381580cef241050375c3"
+    },
+    "red.log": {
+      "bytes": 2768,
+      "sha256": "c440252f219453d6a3deaa2ef9f7ffa634b17734cb533ed0e46233a04606ef33"
+    },
+    "red.xml": {
+      "bytes": 2838,
+      "sha256": "5903da1e30541269ff01655cc9b38feb70549c6171b61f52f82b0719868fcd9e"
+    },
+    "red_old_config/bootstrap.py": {
+      "bytes": 369,
+      "sha256": "86c84c6dcff54e73914670e9f9cf79acf404d430ac8b4549127b99d234a38045"
+    },
+    "red_old_config/config.py": {
+      "bytes": 7539,
+      "sha256": "de1939d335c5df5d98d85fe253de7bec4e89702872531f33201845be788ecbb3"
+    },
+    "red_source_binding.json": {
+      "bytes": 777,
+      "sha256": "c6b62f58b63b85b37a157326bd24c021deca57d57900d25560d43b87d46634af"
+    },
+    "ruff_check.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "ruff_format.log": {
+      "bytes": 26,
+      "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+    },
+    "run_gate.py": {
+      "bytes": 8927,
+      "sha256": "1837f785082933538add91d967faaa39e3acaae164301556731395f6265dabdb"
+    },
+    "scope_audit.json": {
+      "bytes": 680,
+      "sha256": "409ce41ff26a536a7cc50ec5cd903522beb13cd5f9c862639778823d0b878473"
+    },
+    "source_sha256.json": {
+      "bytes": 563,
+      "sha256": "1932c2dfac509891c817c2c5d3a4e80e27dcd5beffc697b1cee7675d2f3ffab8"
+    },
+    "start_observation.json": {
+      "bytes": 1049,
+      "sha256": "4520ed99895e07e6c94c83a53968ef1902a726ba6da294296d9c5f6184e07ebf"
+    }
+  },
+  "excludes": [
+    "artifact_manifest.json"
+  ]
+}

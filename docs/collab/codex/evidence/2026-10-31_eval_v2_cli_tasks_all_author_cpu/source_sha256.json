@@ -1,0 +1,7 @@
+{
+  "scripts/robocasa_eval_v2/config.py": "f6626e19c779a9d9eee05b020d41d5504a0a387deac7b6763da9170e4499437f",
+  "tools/v3/eval_v2_batch_tests/tasks_cli_test.py": "8224da641af3b8f8a30c6510517d2217509eef339df52e8bdacdb1aaa2b83472",
+  "tools/v3/eval_v2_batch_tests/config_test.py": "1caa63bbd0a606886d7e6d874ee6bb8da37c92077b2eaaeb52cc5b74f6137db6",
+  "scripts/robocasa_eval_v2/cli.py": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5",
+  "scripts/robocasa_eval_v2/identity.py": "826cc9ac307082b91f2979669ada9bbc4d17fc4f790f657fd73fc13fcd6301c0"
+}

@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "formal_root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "canonical_before": "2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a",
+  "candidate": "5bd1c354ec011fd2379862c378cb6989dbe6f662",
+  "checked_staged_tree_before_promotion_docs": "0580e7eb00e748bcc732bd2a85565efc0b649255",
+  "all_root_source_objects_match_formal": true,
+  "matched_source_objects": 9852,
+  "source_changes_relative_to_canonical": [
+    "scripts/robocasa_eval_v2/config.py",
+    "tools/v3/eval_v2_batch_tests/tasks_cli_test.py"
+  ],
+  "production_change_only": "scripts/robocasa_eval_v2/config.py",
+  "production_and_test_blobs_match_approved": true,
+  "all_other_canonical_objects_preserved_except_ledger": true,
+  "all_candidate_objects_preserved_except_ledger": true,
+  "artifact_hashes_verified": 19,
+  "formal_source_bindings_verified": 5,
+  "original_author_cpu": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "tests_rerun": false,
+  "GPU_or_runtime_started": false,
+  "submodule_note": "Gitlink unchanged. New promotion worktree intentionally leaves Child uninitialized; official Child branch and existing isolated candidate HEAD were read as exact6c. No child files updated.",
+  "review_byte_identical_to_canonical": true,
+  "scope": "Git/source/evidence inheritance checks only, not a new CPU/GPU Gate"
+}

@@ -1,0 +1,24 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LD_LIBRARY_PATH": "",
+    "PYTEST_ADDOPTS": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-eval-tasks-all-20261031/final/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-tasks-all-20261031/final/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-tasks-all-20261031/final/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-eval-tasks-all-20261031/final/cache/ruff",
+    "PYTHONPATH": "/workspace/psm-wma-eval-tasks-all:/workspace/psm-wma-eval-tasks-all/scripts:/workspace/psm-wma-eval-tasks-all/cosmos-framework"
+  },
+  "versions": {
+    "pytest": "9.0.2",
+    "ruff": "0.12.7"
+  }
+}

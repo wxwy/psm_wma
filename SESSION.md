@@ -1,3 +1,85 @@
+# 2026-10-31 — EvalV2 CLI `--tasks all`: approved V3 promotion in progress
+
+Owner authorized safe promotion only, with no historical test rerun or runtime.
+Fresh observation: 2026-10-31T23:09:00.182017+08:00.
+Canonical fetched/advertised V3: `2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a`.
+Candidate fetched/advertised HEAD: `5bd1c354ec011fd2379862c378cb6989dbe6f662`.
+Formal approved Root: `f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1`.
+Unchanged Child / Gitlink and advertised Child branch: `6c83596d6a259e89c4cd3e79424024983426ac3d`.
+
+GPT final `APPROVE_CODE` independently read from the exact-pair report at canonical
+`docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_CLI_TasksAll_f3fccc8f_6c83596d_Incremental_Code_Gate_APPROVE_CODE.md`.
+New isolated cloud worktree: `/workspace/psm-wma-eval-tasks-all-promotion`.
+Merge preserves latest V3 review and candidate histories. The only merge conflict
+is the append-only Inbox; preserve canonical bytes then append candidate-only tail.
+No change to approved production or test files. Git/source checks PASS: all 9,852 Root source objects match approved Formal,
+19 artifact hashes and 5 formal bindings verified; no tests rerun.
+Next: normal nonforce V3 push, remote readback and completion receipt.
+
+Latest Owner role split governs: GPT review, Codex implementation, DS independent
+execution. No old three-pane requirement or new review request for identical code.
+Do not pull/update an active shared directory or access training/eval processes,
+model/data/DCP, frozen configs, GPUs, Action Server or simulator. No DS dispatch.
+Receipt: `docs/collab/codex/receipts/2026-10-31_eval_v2_cli_tasks_all_v3_promotion/`.
+
+## Candidate observations preserved
+
+# 2026-10-31 — EvalV2 CLI `--tasks all`: candidate published, REVIEW
+
+Formal Root: `f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1`.
+Unchanged Child / Gitlink: `6c83596d6a259e89c4cd3e79424024983426ac3d`.
+Candidate branch: `v3-eval-v2-cli-tasks-all-20261031`.
+Published evidence/Inbox HEAD: `961f15948438c115b522a1b43adff26ac1de65b5`.
+
+One production line preserves the CLI wildcard as the string `"all"`.
+Author CPU: 29 passed, 0 failures/errors/skips; old-module RED reproduced the bug.
+Ruff 0.12.7 check/format and syntax PASS. GitHub readback verified 19 artifact
+hashes and 5 formal source bindings. Later receipt commits contain documentation
+only and do not replace the Formal Root. Independent acceptance is still pending.
+
+Canonical V3 remains `0ab13951d640d50ea2c9c8812817bf3009eae7b5` at the receipt
+observation. No Child changes, V3 promotion, runtime actions or active run changes.
+Receipt: `docs/collab/codex/receipts/2026-10-31_eval_v2_cli_tasks_all/`.
+STOP for GPT fresh incremental Code Gate under the latest Owner role split.
+
+## Earlier implementation observations preserved
+
+# 2026-10-31 — EvalV2 CLIall author RED/GREEN PASS, REVIEW
+
+FormalRootf3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d;
+isolated v3-eval-v2-cli-tasks-all-20261031 from V3base0ab13951. One-line
+config.resolve fix preserves exactall string; CSV unchanged.12,522otherRoot
+objects/wholeChild/discovery/identity/scheduler/runtime/training unchanged.
+Oldconfig exactblob RED1expected Atomic taskerror withsamefrozenpublicdryrun
+test; GREEN29PASS/0fail/error/skip (12new+17config), Ruff0.12.7/check/format/
+AST2PASS, clean exactPair/sourceunchanged. Real CPUdryrun18tasks/36slots
+YAML/CLI parity, model/config absent and runtimeforbidden. No actualeval or
+realdata/model/DCP/GPU/server/activeJob actions.
+Handoff/evidence under docs/collab/codex dated2026-10-31_eval_v2_cli_tasks_all;
+19artifact checksums/5sourcebindings/rawRED+GREEN. Observation2026-10-31T21:38:32.388722+08:00,
+newfetchV3base0ab noadvance; exactRootreviewscanexit1. Publish isolated
+candidate/request/readback thenSTOP forGPTfreshGate. No V3merge/DSdispatch
+or changes to currentruns; YAML workaround stillvalid pendingpromotion.
+
+## Earlier claim/history preserved
+
+# 2026-10-31 — EvalV2 CLI tasks-all fix claimed
+
+IN_PROGRESS; Codex; new isolated v3-eval-v2-cli-tasks-all-20261031 from
+fresh V30ab13951d640d50ea2c9c8812817bf3009eae7b5, Child6c unchanged. Owner identifies real parser
+bug: a.tasks.split makes all→[all], discover accepts literal stringall only.
+Plan one production line in scripts/robocasa_eval_v2/config.py: preserve exact
+all string, CSV unchanged. New narrowCPUtasks tests + existingconfig17 only;
+synthetic18metadata/real CLI dry-run, no models/GPU/env/runtime. No Child,
+Scheduler/Resume/identity/TaskDiscovery changes or oldGate broad rerun.
+Record exact Root/6c, RED oldconfig/GREEN new, raw logs/JUnit/static/source
+proof, publish isolated candidate andGPTreview request thenSTOP. No V3 merge
+or current training/eval/sharedcode/Job/DCP/log operations.
+Latest canonical0ab LocalTTT designreview unrelated, preserved without action.
+Claim2026-10-31T21:34:59.519441+08:00; source edit not yet started.
+
+## Prior canonical records
+
 # 2026-10-31 — Approved No-TTT boundary V3 promotion DONE
 
 GitHub canonical readback PASS at2026-10-31 16:07:40 CST.

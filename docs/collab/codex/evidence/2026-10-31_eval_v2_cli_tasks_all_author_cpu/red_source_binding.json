@@ -1,0 +1,12 @@
+{
+  "old_root": "0ab13951d640d50ea2c9c8812817bf3009eae7b5",
+  "old_path": "scripts/robocasa_eval_v2/config.py",
+  "old_blob": "714a76156c5542c846681c6bc31c91935e01c69e",
+  "old_sha256": "de1939d335c5df5d98d85fe253de7bec4e89702872531f33201845be788ecbb3",
+  "frozen_test_root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "frozen_test_blob": "21616a29c53cbde3b9174c5829ac4d85bcfb3178",
+  "frozen_test_sha256": "8224da641af3b8f8a30c6510517d2217509eef339df52e8bdacdb1aaa2b83472",
+  "unchanged_cli_blob": "8dded4895f63c2f9ef2ea48f9e3f2ae3f6c81ac4",
+  "unchanged_discovery_blob": "d1e471addba07ad413b6d947b1385ad54140b3c5",
+  "method": "load exact old config Git blob in sys.modules before importing unchanged production CLI and frozen new regression; no source/assertion edits"
+}
