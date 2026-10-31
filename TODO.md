@@ -484,3 +484,5 @@
 # 2026-10-31 — Approved No-TTT candidates composition
 
 - **NOTTT-ISSUE12-13-INTEGRATION** — DONE (source/synthetic composition Code Gate only); exact57e36decbec0e00ecb94dc1c080fd8976afff25d/baf1b5bf46853e9849a91518803b9738fc216235 approved GPT1f79 detailed review. Original6CPU/static evidence preserved, not rerun. V3 promotion tracked separately; training authorization not included.
+
+- **V3-EVALV2-PROMOTION** — IN_PROGRESS; Codex; Owner safe merge+light CPU task, exact approved d18b420c/2f7334c4, actual current V3=369f3f4d/baf1b5bf training advanced. Prepare disjoint approved Child composition, object-preserving Root merge and light synthetic CPU. New Child SHA required to preserve training; canonical publication pending resolution of Owner exact2f target. No real execution/Canary repeat/oldfullGate.
