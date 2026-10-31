@@ -1,0 +1,5 @@
+...........{"signal": 2, "late_child": false, "owned_reaped": [244581, 244582], "foreign_survived": true}
+.{"signal": 15, "late_child": false, "owned_reaped": [244585, 244586], "foreign_survived": true}
+.{"signal": 15, "late_child": true, "owned_reaped": [244589, 244590, 244591], "foreign_survived": true}
+....
+17 passed in 17.68s

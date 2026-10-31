@@ -1,0 +1,22 @@
+{
+  "python": "/workspace/.venvs/psm-wma-cpu/bin/python",
+  "ruff": "0.12.7",
+  "scope": "fake training processes only",
+  "overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "LD_LIBRARY_PATH": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "/workspace/psm-wma-nottt-console:/workspace/psm-wma-nottt-console/scripts:/workspace/psm-wma-nottt-console/cosmos-framework",
+    "HF_HOME": "/tmp/psm-nottt-console-20261031/final/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-nottt-console-20261031/final/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-nottt-console-20261031/final/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-nottt-console-20261031/final/cache/ruff"
+  }
+}

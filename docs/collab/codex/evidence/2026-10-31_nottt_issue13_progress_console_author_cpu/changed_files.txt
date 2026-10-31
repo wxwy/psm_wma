@@ -1,0 +1,9 @@
+M	SESSION.md
+M	TODO.md
+A	docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md
+A	scripts/no_ttt_console.py
+M	scripts/train_v3_matched_no_ttt.sh
+M	scripts/train_v3_matched_no_ttt_4gpu.sh
+M	tools/v3/matched_no_ttt_entry_test.py
+A	tools/v3/no_ttt_console_test.py
+M	tools/v3/no_ttt_workers_entry_test.py

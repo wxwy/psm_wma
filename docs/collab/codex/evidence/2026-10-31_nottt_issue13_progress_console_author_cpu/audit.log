@@ -1,0 +1,47 @@
+{
+  "status": "PASS_AUTHOR_READONLY_SCOPE",
+  "formal_root": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+  "child_gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+  "changed_root_files": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md",
+    "scripts/no_ttt_console.py",
+    "scripts/train_v3_matched_no_ttt.sh",
+    "scripts/train_v3_matched_no_ttt_4gpu.sh",
+    "tools/v3/matched_no_ttt_entry_test.py",
+    "tools/v3/no_ttt_console_test.py",
+    "tools/v3/no_ttt_workers_entry_test.py"
+  ],
+  "training_commands": {
+    "scripts/train_v3_matched_no_ttt.sh": {
+      "all_training_command_text_identical": true,
+      "all_prior_admission_exports_cwd_identical": true
+    },
+    "scripts/train_v3_matched_no_ttt_4gpu.sh": {
+      "all_training_command_text_identical": true,
+      "all_prior_admission_exports_cwd_identical": true
+    }
+  },
+  "original_assertions_retained": {
+    "tools/v3/no_ttt_workers_entry_test.py": 19,
+    "tools/v3/matched_no_ttt_entry_test.py": 27
+  },
+  "all_child_objects_unchanged": true,
+  "helper_imports": [
+    "__future__",
+    "ctypes",
+    "os",
+    "selectors",
+    "signal",
+    "subprocess",
+    "sys",
+    "tempfile",
+    "time",
+    "pathlib"
+  ],
+  "process_scan_callers": [
+    "_cleanup"
+  ],
+  "real_training_or_DCP_GPU_run": false
+}

@@ -1,0 +1,7 @@
+initializing fake model
+[rank1] warning
+[NoTTT][cpu_loader] {"wait_ms":3}
+[CorrectedV3][progress] step=1/30000 loss=1.25
+[CorrectedV3][train] {"iteration":1}
+[CorrectedV3][checkpoint] synthetic save event
+stderr Traceback: fake diagnostic

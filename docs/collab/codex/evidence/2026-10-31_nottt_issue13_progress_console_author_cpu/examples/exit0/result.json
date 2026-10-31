@@ -1,0 +1,15 @@
+{
+  "status": "PASS_FAKE_RAW_DEMO",
+  "exit_code": 0,
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/workspace/psm-wma-nottt-console/scripts/no_ttt_console.py",
+    "/tmp/psm-nottt-console-20261031/demos/exit0/output",
+    "no_ttt_raw_demo",
+    "--",
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/tmp/psm-nottt-console-20261031/demos/exit0/fake_training.py"
+  ],
+  "formal_root": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+  "real_training": false
+}

@@ -1,0 +1,32 @@
+{
+  "scripts/train_v3_matched_no_ttt.sh": {
+    "commit": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "git_blob": "656ef042e09862301f1586fd58608a5a4658218f",
+    "sha256": "1baa7b13c79a79b94121ff57a1f995748eefc21f7b7f9fcfe6250ad963f6686e"
+  },
+  "scripts/train_v3_matched_no_ttt_4gpu.sh": {
+    "commit": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "git_blob": "e8e8ba5d5cc5cb09ed9f6775bd2c2243b418ea7e",
+    "sha256": "599bebeafc985f74e7fdf49e1c45231273aab494537228d285210c3999ac766f"
+  },
+  "scripts/no_ttt_console.py": {
+    "commit": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "git_blob": "59c135fb6365d2663d9417f97a5eb90172d4ea48",
+    "sha256": "787c4e64c34b9a7a79e4b98b80c072e26ae037c550e828cb9bf3cd7c52b11a17"
+  },
+  "tools/v3/no_ttt_console_test.py": {
+    "commit": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "git_blob": "cc64118fe4cf281de859156640009c876bb2f2ae",
+    "sha256": "8c8f6752c30178494c601febe65751bc37fecd532e2c84c15796c87cdc0e736c"
+  },
+  "tools/v3/no_ttt_workers_entry_test.py": {
+    "commit": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "git_blob": "663aba165850e3bbeb84faf883e9ed1660b3a940",
+    "sha256": "2644e66fbc517c3d3dc7d2a46eb36b2e213a96d38ab127e426d1c8f18430568c"
+  },
+  "tools/v3/matched_no_ttt_entry_test.py": {
+    "commit": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "git_blob": "a1a7d432217bebdd817a2225763aeea72690c510",
+    "sha256": "7651792840b25d71daf105b99d66ad45b75bb87507869cdc769b2847ab7c7f83"
+  }
+}

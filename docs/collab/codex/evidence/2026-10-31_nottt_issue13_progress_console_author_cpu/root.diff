@@ -1,0 +1,1471 @@
+diff --git a/SESSION.md b/SESSION.md
+index d8317788..6638a8ae 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,24 @@
++# 2026-10-31 — Issue13 default progress-only console, claimed
++
++IN_PROGRESS, Codex, isolated v3-nottt-progress-console-20261031 at fetched and
++advertised V3 3332d1825de8778e3d6dbb7e9ba98cbffff487c6. Child/Gitlink
++0ae313e329d290fc6b8a50fda1112820fb7ac485 remains unchanged. Read latest canonical
++Inbox/Issue13 contract, launchers and Journal/Observer; this task does not depend
++on promoting prior Issue12 or EvalV2 candidates. Planned files/CPU acceptance:
++docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md.
++Only Root No-TTT console/raw-log supervision and necessary shell fixtures.
++No actual training/model/torchrun/GPU/data/DCP, no active C12200 worktree changes.
++New exact Root+unchangedChild/evidence then GPT incremental and STOP. Owner roles
++and explicit STOP supersede old three-pane/polling rules. Claim uncommitted.
++
++Implementation ready:2 standard launchers +new foreground stdlib console helper;
++original command/profile/model/Child unchanged. Old fake-Python shell fixtures
++now read diagnostic JSON from the full file, original assertions retained.
++Preliminary17 then expanded49synthetic PASS; Bash syntax/ShellCheck0.10.0,
++Ruff0.12.7/format4 PASS. No actual torchrun/data/model/GPU/DCP execution. Freeze
++Root and bind final clean exact-SHA raw evidence, then isolated publication and
++GPT incremental. No source promotion, activeAB/Job or separate candidate changes.
++
+ # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
+ 
+ - Gate `V3-CORRECTED-PHASE3-CACHED-SFT-CACHE-HIT` 进入 REVIEW。authority：Phase3 v1.0 design root `78ff45375cecc3783ec3d219af23c4be5902b9da` 与 `/tmp/CX_PHASE3_CACHED_LATENT_SFT_CACHE_HIT.md`；baseline child `ce07cb6f4a3f7792d85b7583ff6c8bda0bfa0cb0`。复用 Phase1A cache catalog/reader、Phase1B source/index、Phase2 official raw15/state15 adapter、官方 ActionSFTDataset/ActionTransformPipeline 与 PackingDataLoader；本轮 child 只新增 `robocasa_exact_window_cached_sft.py`、`robocasa_exact_window_cached_sft_test.py`、`omni_mot_cached_vision_test.py`，并仅在 `omni_mot_model.py:get_data_and_condition` 加 optional cache-hit vision preparation。raw sample 附 `cached_latent_required=True`，model 对哨兵缺 latent/反向缺哨兵及不合法 packed ABI fail-closed；constructor 校验 VideoResize `192×320` canvas 与 fixed Wan factor16 对应 latent `12×20`，cache-hit保留 native crop 与 temporal helper，VAE/collective调用为0，off-mode 保持原路。
+diff --git a/TODO.md b/TODO.md
+index 9ef8431a..d5b3ec26 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -476,3 +476,6 @@
+ - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — REVIEW; authorfive-moduleCPU227PASS/0skip,53new tests,static9/frozen10PASS; stable cold modelonefullhash and lockedstat, warm0payload bytes identicalSHA, strict cache miss/invalid/atomickill/lease/history/configTask/CLI negatives. Candidate-only Root+unchanged746c5cf2Child; rawEvidence +runbook thenGPTfreshreview/DSCPU,STOP. No live eval/training/model/server/GPU or V3 merge.
+ 
+ - [x] **V3-EVALV2-SHARED-GPU-20261030** — DONE（代码与快速CPU/Ruff，Owner授权V3提升）；被测Root19342b35011a8ce0f4f81d59779d5da86f9bc9f4 / Child0ae313e329d290fc6b8a50fda1112820fb7ac485。直接删除foreign GPU PID独占拒绝，无新开关；63CPU零失败/错误/跳过、Ruff0.12.7 check/format PASS；显存/缺卡/RSS及owned-only cleanup保留。Review：docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_SharedGPU_19342b3_QuickCPU63_Promotion.md。真实GPU Canary不属于本项完成声明。
++# Issue13 — 2026-10-31
++
++- **NOTTT-DEFAULT-PROGRESS-CONSOLE** — IN_PROGRESS; Codex; Owner/Issue13 request3332d182; change only standard4/8GPU NoTTT output wrapper, full raw file then progress console, exit/signal/log-failure/owned cleanup; targeted synthetic shell/static evidence and isolated Root SHA+unchanged Child, GPT review thenSTOP; no current C12200/GPU/DCP/promotion.
+diff --git a/docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md b/docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md
+new file mode 100644
+index 00000000..fd29c0bc
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_NoTTT_Issue13_Default_Progress_Console_2026-10-31.md
+@@ -0,0 +1,77 @@
++# Issue #13 — default No-TTT console split, isolated implementation
++
++Authority: Owner + Issue13 + canonical request at V3
++`3332d1825de8778e3d6dbb7e9ba98cbffff487c6`. This isolated branch starts there;
++Child/Gitlink stays `0ae313e329d290fc6b8a50fda1112820fb7ac485`. Do not merge the
++separate frozen training candidate or change the active C12200 A/B source.
++
++## Scope and implementation plan
++
++- Only standard Root No-TTT 4/8 GPU launchers and a small stdlib output wrapper.
++- Preserve the exact original torchrun argv, chosen training Python, working
++  directory, profiles, identity, env except `PYTHONUNBUFFERED=1` for pipe output.
++- Default, no new enable/debug switch: persist combined raw stdout/stderr first,
++  then display only complete `[CorrectedV3][progress]` lines. The existing
++  Observer emits progress on rank0; do not modify its content or Journal.
++- Open an exclusive unique raw log under `OUTPUT_ROOT/_launch_logs/JOB_NAME/`,
++  never the fresh Trainer namespace. Startup may print the path once. Error,
++  signal or log failure prints an explicit summary, path and bounded raw tail.
++- The wrapper is a foreground process, not a logging service. No Torch/model
++  imports, per-step instrumentation, fsync-per-line, filtering before raw write,
++  new training timeout, or training/checkpoint logic. Fsync at close catches
++  persistence failures; log setup/write/sync errors fail closed.
++- Torchrun creates separate sessions for Rank subprocesses. On shutdown only,
++  use Linux subreaper ownership and descendant identity checks to handle these
++  sessions, bounded termination/escalation, adopted-child reaping and residual
++  pipe drain. Do not scan process trees in the steady-state training hot path or
++  signal another job. INT/TERM return130/143; preserve ordinary training exit7.
++- Use system `python3` for the stdlib wrapper, separately from the unchanged
++  selected `$PYTHON` for training. No dependency on the training Torch imports.
++
++Expected files: `scripts/train_v3_matched_no_ttt{,_4gpu}.sh`, new
++`scripts/no_ttt_console.py`, synthetic shell/process tests under tools/v3, and
++minimal updates of existing fake-Python launcher fixtures to read the full log
++instead of expecting suppressed diagnostic JSON on stdout. Preserve all argv,
++profile/admission and Resume assertions.
++
++## Targeted synthetic acceptance
++
++Fake training only: mixed rank/stdout/stderr/progress/loader/checkpoint/traceback,
++exact raw bytes, no-progress warnings, exit0/7/exec failure, unique Resume logs,
++no premature Job claim, open/write/fsync faults, bounded huge/fragmented lines,
++live progress flush and signals with owned separate-session descendants and a
++foreign survival control. Compare pre/post launcher fake-command argv and env.
++Bash syntax, shell static analysis, scoped Ruff0.12.7/format/AST and exact source
++identity/diff. No previous CPU58/301, real data/DCP/model/torchrun/GPU or training.
++
++Deliver a new Root implementation SHA, unchanged Child SHA, raw CPU evidence and
++incremental GPT Code Gate request; then STOP. No canonical promotion, DS dispatch
++or change to ongoing C12200 tests.
++
++## Implemented behavior and runtime assumptions
++
++The two launchers now exec the shared `scripts/no_ttt_console.py` through the
++host's `python3`; the original training interpreter and complete torchrun argv
++follow `--` unchanged. No optional enable switch. Requires Linux `/proc` and
++child-subreaper support, already the target deployment platform. Setup fails
++before training if the log or ownership guard cannot be initialized.
++
++Raw files are exclusive0600, one per invocation. Writes are unbuffered OS writes
++with short-write handling, before any terminal copy; fsync occurs only on close.
++Incomplete/huge diagnostic lines never grow the display buffer without bound;
++raw bytes, including invalid UTF8, remain exact. Existing normal progress lines
++are far below the16KiB display framing bound. A detached console is independent
++of raw persistence. Warnings with no progress and exit0 remain success.
++
++Ordinary child exit codes propagate, signal exits normalize to128+signal, user
++SIGINT/SIGTERM return130/143. Infrastructure persistence failures return nonzero
++and display both wrapper exit and the observed child exit, log path and last8KiB.
++Cancellation gives the original torchrun leader its signal, allows5s teardown,
++then freezes/kills remaining owned descendants and bounds reaping/drain. No
++process-tree scans, device APIs or training-time limits run during normal steps.
++This is output supervision; checkpoint format/publication logic is untouched.
++
++Preliminary synthetic results:17 output/process cases PASS; expanded21new+28old
++launcher cases49PASS. Static Bash/ShellCheck0.10.0 and scoped Ruff0.12.7 pass.
++Final exact-SHA evidence publication is separate from this implementation doc.
++No real training/Checkpoint/GPU performance test is required or claimed here.
+diff --git a/scripts/no_ttt_console.py b/scripts/no_ttt_console.py
+new file mode 100644
+index 00000000..59c135fb
+--- /dev/null
++++ b/scripts/no_ttt_console.py
+@@ -0,0 +1,272 @@
++"""Foreground No-TTT stdout/stderr split. Stdlib only; never imports training.
++
++Raw bytes reach the unique log before a progress copy reaches the console.
++Linux subreaper ownership covers torchrun Ranks in separate sessions; process
++tree scans occur only on exit/cancellation, never while training is running.
++"""
++
++from __future__ import annotations
++
++import ctypes
++import os
++import selectors
++import signal
++import subprocess
++import sys
++import tempfile
++import time
++from pathlib import Path
++
++
++def _write_all(fd, value):
++    view = memoryview(value)
++    while view:
++        count = os.write(fd, view)
++        if count <= 0:
++            raise OSError("short log write")
++        view = view[count:]
++
++
++def _console(fd, text):
++    try:
++        _write_all(fd, text.encode("utf-8", errors="replace"))
++    except OSError:
++        pass  # A detached terminal must not prevent durable file logging.
++
++
++def _owned():
++    rows = {}
++    for path in Path("/proc").glob("[0-9]*/stat"):
++        try:
++            fields = path.read_text().rsplit(")", 1)[1].split()
++            rows[int(path.parent.name)] = (int(fields[1]), fields[19], fields[0])
++        except (OSError, ValueError, IndexError):
++            continue
++    result, parents = {}, {os.getpid()}
++    while True:
++        found = {
++            pid: row
++            for pid, row in rows.items()
++            if row[0] in parents and pid not in result
++        }
++        if not found:
++            return result
++        result.update(found)
++        parents.update(found)
++
++
++def _signal(pid, row, sig):
++    try:
++        fresh = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
++        if fresh[19] == row[1]:  # Do not signal a PID reused after the snapshot.
++            os.kill(pid, sig)
++    except ProcessLookupError:
++        pass
++    except FileNotFoundError:
++        pass
++
++
++class _Output:
++    def __init__(self, pipe, log_fd):
++        self.pipe, self.log_fd = pipe, log_fd
++        self.selector = selectors.DefaultSelector()
++        os.set_blocking(pipe.fileno(), False)
++        self.selector.register(pipe, selectors.EVENT_READ)
++        self.pending, self.tail = b"", b""
++        self.discard = self.eof = False
++        self.error = None
++
++    def poll(self, timeout):
++        if self.eof:
++            time.sleep(min(timeout, 0.02))
++            return
++        if not self.selector.select(timeout):
++            return
++        chunk = os.read(self.pipe.fileno(), 65536)
++        if not chunk:
++            self.eof = True
++            self.selector.unregister(self.pipe)
++            return
++        self.tail = (self.tail + chunk)[-8192:]
++        if self.error is not None:
++            return  # Fail-closed teardown is in progress; no more console copies.
++        try:
++            _write_all(self.log_fd, chunk)
++        except OSError as exc:
++            self.error = exc
++            raise
++        # Bound console framing even for an enormous/unterminated JSON line.
++        # The raw log has no such limit and always receives every byte.
++        parts = chunk.split(b"\n")
++        for index, part in enumerate(parts):
++            complete = index < len(parts) - 1
++            if not self.discard:
++                self.pending += part
++                if len(self.pending) > 16384:
++                    self.pending, self.discard = b"", True
++            if complete:
++                if not self.discard and self.pending.startswith(
++                    b"[CorrectedV3][progress] "
++                ):
++                    _console(
++                        1, (self.pending + b"\n").decode("utf-8", errors="replace")
++                    )
++                self.pending, self.discard = b"", False
++
++    def close(self):
++        self.selector.close()
++        self.pipe.close()
++
++
++def _cleanup(process, output, requested):
++    """Only descendants of this standalone supervisor, including adopted Ranks."""
++    if process.poll() is None:
++        process.send_signal(requested or signal.SIGTERM)
++    until = time.monotonic() + 7
++    kill_at = time.monotonic() + 5
++    signalled = set()
++    while time.monotonic() < until:
++        process.poll()  # Popen alone reaps the torchrun leader.
++        rows = _owned()
++        if not rows:
++            break
++        for pid, row in rows.items():
++            if time.monotonic() >= kill_at and row[2] != "Z":
++                _signal(pid, row, signal.SIGSTOP)
++        for pid, row in reversed(list(rows.items())):
++            if row[2] != "Z":
++                if time.monotonic() >= kill_at:
++                    _signal(pid, row, signal.SIGKILL)
++                elif process.returncode is not None and (pid, row[1]) not in signalled:
++                    _signal(pid, row, requested or signal.SIGTERM)
++                    signalled.add((pid, row[1]))
++            if pid != process.pid:
++                try:
++                    os.waitpid(pid, os.WNOHANG)
++                except ChildProcessError:
++                    pass
++        if output is None:
++            time.sleep(0.02)
++        else:
++            try:
++                output.poll(0.02)
++            except OSError as exc:
++                output.error = exc
++    if _owned():
++        raise RuntimeError("owned Rank/Worker processes survived bounded cleanup")
++    if output is None:
++        process.stdout.close()
++        return
++    # Writers are now gone; retain the rest of their pipe, including tracebacks.
++    until = time.monotonic() + 2
++    while not output.eof and time.monotonic() < until:
++        try:
++            output.poll(0.02)
++        except OSError as exc:
++            output.error = exc
++    if not output.eof:
++        raise RuntimeError("owned stdout/stderr did not close after cleanup")
++
++
++def main(argv=None):
++    args = list(sys.argv[1:] if argv is None else argv)
++    if (
++        len(args) < 4
++        or args[2] != "--"
++        or not args[1].startswith("no_ttt_")
++        or any(c in args[1] for c in "/\\\r\n")
++    ):
++        _console(
++            2, "Usage: no_ttt_console.py OUTPUT_ROOT NO_TTT_JOB -- COMMAND [ARGS...]\n"
++        )
++        return 2
++    output = process = None
++    log_fd = None
++    path = "not created"
++    requested, previous = [], {}
++    error, code = None, 1
++    try:
++        directory = Path(args[0]) / "_launch_logs" / args[1]
++        directory.mkdir(parents=True, exist_ok=True)
++        log_fd, path = tempfile.mkstemp(
++            prefix=f"launch_{time.time_ns()}_", suffix=".log", dir=directory
++        )
++        # This is a standalone CLI process, not a library changing its caller.
++        Path("/proc/self/stat").read_text()
++        libc = ctypes.CDLL(None, use_errno=True)
++        if libc.prctl(36, 1, 0, 0, 0) != 0:
++            raise OSError(ctypes.get_errno(), "cannot enable owned child subreaper")
++        for sig in (signal.SIGINT, signal.SIGTERM):
++            previous[sig] = signal.signal(
++                sig, lambda signum, frame: requested.append(signum)
++            )
++        _console(1, f"[NoTTT][log] full log: {path}\n")
++        process = subprocess.Popen(
++            args[3:],
++            stdout=subprocess.PIPE,
++            stderr=subprocess.STDOUT,
++            start_new_session=True,
++            env={**os.environ, "PYTHONUNBUFFERED": "1"},
++            bufsize=0,
++        )
++        output = _Output(process.stdout, log_fd)
++        while process.poll() is None and not requested:
++            output.poll(0.1)
++        code = (
++            process.returncode if process.returncode is not None else 128 + requested[0]
++        )
++    except Exception as exc:
++        error = f"{type(exc).__name__}: {exc}"
++    finally:
++        try:
++            if process is not None:
++                _cleanup(process, output, requested[0] if requested else None)
++                if output is not None and output.error is not None:
++                    raise output.error
++        except Exception as exc:
++            error = f"{type(exc).__name__}: {exc}"
++        finally:
++            if output is not None:
++                try:
++                    output.close()
++                except OSError as exc:
++                    error = f"log pipe close failed: {exc}"
++            if log_fd is not None:
++                try:
++                    os.fsync(log_fd)
++                except OSError as exc:
++                    error = f"log persistence failed: {exc}"
++                finally:
++                    try:
++                        os.close(log_fd)
++                    except OSError as exc:
++                        error = f"log close failed: {exc}"
++            for sig, handler in previous.items():
++                signal.signal(sig, handler)
++    code = (
++        1
++        if error
++        else 128 + requested[0]
++        if requested
++        else 128 - code
++        if code < 0
++        else code
++    )
++    if code:
++        _console(
++            2,
++            f"[NoTTT][failed] exit={code}; training_exit={process.returncode if process else 'not started'}; "
++            f"{error or 'training failed or interrupted'}; full log: {path}\n",
++        )
++        if output is not None and output.tail:
++            _console(
++                2,
++                "[NoTTT][failed] last raw output:\n"
++                + output.tail.decode("utf-8", errors="replace")
++                + "\n",
++            )
++    return code
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/train_v3_matched_no_ttt.sh b/scripts/train_v3_matched_no_ttt.sh
+index 085b54c9..656ef042 100755
+--- a/scripts/train_v3_matched_no_ttt.sh
++++ b/scripts/train_v3_matched_no_ttt.sh
+@@ -24,7 +24,8 @@ export HF_HUB_OFFLINE=1
+ export TRANSFORMERS_OFFLINE=1
+ export PYTHONPATH="$root_worktree/cosmos-framework${PYTHONPATH:+:$PYTHONPATH}"
+ cd -- "$root_worktree/cosmos-framework"
+-exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=8 \
++exec python3 "$root_worktree/scripts/no_ttt_console.py" "$OUTPUT_ROOT" "$JOB_NAME" -- \
++    "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=8 \
+     examples/psm_wma_robocasa_corrected_phase5.py --no-ttt \
+     --phase "$phase" --formal-execution-until "$execution_until" \
+     --root-worktree "$root_worktree" --expected-root "$EXPECTED_ROOT" --expected-child "$EXPECTED_CHILD" \
+diff --git a/scripts/train_v3_matched_no_ttt_4gpu.sh b/scripts/train_v3_matched_no_ttt_4gpu.sh
+index dd786c99..e8e8ba5d 100644
+--- a/scripts/train_v3_matched_no_ttt_4gpu.sh
++++ b/scripts/train_v3_matched_no_ttt_4gpu.sh
+@@ -65,7 +65,8 @@ export HF_HUB_OFFLINE=1
+ export TRANSFORMERS_OFFLINE=1
+ export PYTHONPATH="$child_worktree${PYTHONPATH:+:$PYTHONPATH}"
+ cd -- "$child_worktree"
+-exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=4 \
++exec python3 "$root_worktree/scripts/no_ttt_console.py" "$OUTPUT_ROOT" "$JOB_NAME" -- \
++    "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=4 \
+     examples/psm_wma_robocasa_corrected_phase5.py --no-ttt \
+     --phase "$phase" --formal-execution-until "$execution_until" \
+     --root-worktree "$root_worktree" \
+diff --git a/tools/v3/matched_no_ttt_entry_test.py b/tools/v3/matched_no_ttt_entry_test.py
+index f1d9f9d1..a1a7d432 100644
+--- a/tools/v3/matched_no_ttt_entry_test.py
++++ b/tools/v3/matched_no_ttt_entry_test.py
+@@ -17,6 +17,17 @@ from serve_v3_matched_no_ttt import GENERATION_KEYS, main, server_command
+ ROOT = Path(__file__).resolve().parents[2]
+ 
+ 
++def _launch_payload(result, env):
++    assert result.stdout.startswith("[NoTTT][log] full log: ")
++    logs = list(
++        (Path(env["OUTPUT_ROOT"]) / "_launch_logs" / env["JOB_NAME"]).glob(
++            "launch_*.log"
++        )
++    )
++    assert len(logs) == 1
++    return json.loads(logs[0].read_text())
++
++
+ def profile(tmp_path, *, world_size=8, ga=2):
+     job = tmp_path / "no_ttt_job"
+     model = job / "checkpoints/iter_000000100/model"
+@@ -78,17 +89,23 @@ def profile(tmp_path, *, world_size=8, ga=2):
+             json.dumps(semantic, sort_keys=True, separators=(",", ":")).encode()
+         ).hexdigest(),
+         "diagnostic_only_do_not_resume": False,
+-        "canonical_config_sha256": {"config.yaml": hashlib.sha256(config_path.read_bytes()).hexdigest()},
++        "canonical_config_sha256": {
++            "config.yaml": hashlib.sha256(config_path.read_bytes()).hexdigest()
++        },
+     }
+     (job / "v3_job_identity.json").write_text(json.dumps(identity))
+-    value = yaml.safe_load((ROOT / "configs/eval/robocasa_matched_no_ttt.example.yaml").read_text())
++    value = yaml.safe_load(
++        (ROOT / "configs/eval/robocasa_matched_no_ttt.example.yaml").read_text()
++    )
+     value.update(checkpoint=str(model.parent), config_file=str(config_path))
+     path = tmp_path / "profile.yaml"
+     path.write_text(yaml.safe_dump(value))
+     return path, value, job, config, identity
+ 
+ 
+-def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(tmp_path, capsys, monkeypatch):
++def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(
++    tmp_path, capsys, monkeypatch
++):
+     path, value, job, *_ = profile(tmp_path)
+     before = {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+ 
+@@ -104,12 +121,18 @@ def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(tmp_path, capsy
+     assert args[args.index("--raw-action-dim") + 1] == "15"
+     assert args[args.index("--config-file") + 1] == str(job / "config.yaml")
+     assert result["model_loaded"] is False
+-    assert {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
++    assert {
++        str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()
++    } == before
+ 
+ 
+ @pytest.mark.parametrize(("world_size", "ga"), [(8, 2), (4, 4)])
+-def test_off_inference_accepts_both_approved_batch_matched_profiles(tmp_path, world_size, ga):
+-    path, _values, _job, _config, _identity = profile(tmp_path, world_size=world_size, ga=ga)
++def test_off_inference_accepts_both_approved_batch_matched_profiles(
++    tmp_path, world_size, ga
++):
++    path, _values, _job, _config, _identity = profile(
++        tmp_path, world_size=world_size, ga=ga
++    )
+     command = server_command(path)
+     assert "--local-memory-mode" in command
+     assert command[command.index("--local-memory-mode") + 1] == "off"
+@@ -126,7 +149,9 @@ def test_off_inference_accepts_both_approved_batch_matched_profiles(tmp_path, wo
+         "replicate_degree",
+     ],
+ )
+-def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(tmp_path, damage):
++def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(
++    tmp_path, damage
++):
+     path, _values, job, config, identity = profile(tmp_path, world_size=4, ga=4)
+     if damage == "world_only":
+         identity["semantic"]["contract"]["world_size"] = 8
+@@ -140,12 +165,16 @@ def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(tmp_pa
+         config["model"]["config"]["parallelism"]["data_parallel_replicate_degree"] = 2
+     if damage.endswith("_only") and damage in {"world_only", "ga_only"}:
+         identity["semantic_digest"] = hashlib.sha256(
+-            json.dumps(identity["semantic"], sort_keys=True, separators=(",", ":")).encode()
++            json.dumps(
++                identity["semantic"], sort_keys=True, separators=(",", ":")
++            ).encode()
+         ).hexdigest()
+     else:
+         config_file = job / "config.yaml"
+         config_file.write_text(yaml.safe_dump(config))
+-        identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(config_file.read_bytes()).hexdigest()
++        identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(
++            config_file.read_bytes()
++        ).hexdigest()
+     (job / "v3_job_identity.json").write_text(json.dumps(identity))
+     with pytest.raises(ValueError, match="No-TTT"):
+         server_command(path)
+@@ -220,8 +249,12 @@ def test_reject_g1_or_wrong_checkpoint_config_identity(tmp_path, damage):
+         server_command(path)
+ 
+ 
+-@pytest.mark.parametrize("phase,until", [("fresh", "30000"), ("fresh", "100"), ("resume", "500")])
+-def test_launcher_exact_world8_matched_contract_without_torchrun(tmp_path, phase, until):
++@pytest.mark.parametrize(
++    "phase,until", [("fresh", "30000"), ("fresh", "100"), ("resume", "500")]
++)
++def test_launcher_exact_world8_matched_contract_without_torchrun(
++    tmp_path, phase, until
++):
+     fake = tmp_path / "capture_python"
+     fake.write_text(
+         f'#!{sys.executable}\nimport json, os, sys\nprint(json.dumps({{"argv": sys.argv[1:], "cwd": os.getcwd(), "offline": os.environ["HF_HUB_OFFLINE"]}}))\n'
+@@ -248,7 +281,7 @@ def test_launcher_exact_world8_matched_contract_without_torchrun(tmp_path, phase
+         timeout=10,
+         check=True,
+     )
+-    payload = json.loads(result.stdout)
++    payload = _launch_payload(result, env)
+     argv = payload["argv"]
+     assert "--no-ttt" in argv and "--nproc_per_node=8" in argv
+     for key, value in {
+@@ -267,11 +300,15 @@ def test_launcher_exact_world8_matched_contract_without_torchrun(tmp_path, phase
+     }.items():
+         assert argv[argv.index(key) + 1] == value
+     assert argv[argv.index("--base-checkpoint") + 1] == env["BASE_CHECKPOINT_PATH"]
+-    assert payload["cwd"] == str(ROOT / "cosmos-framework") and payload["offline"] == "1"
++    assert (
++        payload["cwd"] == str(ROOT / "cosmos-framework") and payload["offline"] == "1"
++    )
+ 
+ 
+ def test_launcher_rejects_g1_job_before_any_python():
+-    env = dict(os.environ, JOB_NAME="packed128_droid_fresh_g1_20261019", PYTHON="/must/not/run")
++    env = dict(
++        os.environ, JOB_NAME="packed128_droid_fresh_g1_20261019", PYTHON="/must/not/run"
++    )
+     for key in (
+         "OUTPUT_ROOT",
+         "SOURCE_ROOT",
+@@ -306,17 +343,26 @@ def test_launcher_rejects_g1_job_before_any_python():
+         ("fps", 15),
+     ],
+ )
+-def test_rehashed_canonical_config_still_must_match_dataset_contract(tmp_path, key, value):
++def test_rehashed_canonical_config_still_must_match_dataset_contract(
++    tmp_path, key, value
++):
+     path, _, job, config, identity = profile(tmp_path)
+-    config["dataloader_train"]["dataloader"]["datasets"]["robocasa"]["dataset"][key] = value
++    config["dataloader_train"]["dataloader"]["datasets"]["robocasa"]["dataset"][key] = (
++        value
++    )
+     (job / "config.yaml").write_text(yaml.safe_dump(config))
+-    identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256((job / "config.yaml").read_bytes()).hexdigest()
++    identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(
++        (job / "config.yaml").read_bytes()
++    ).hexdigest()
+     (job / "v3_job_identity.json").write_text(json.dumps(identity))
+     with pytest.raises(ValueError, match="dataset"):
+         server_command(path)
+ 
+ 
+-@pytest.mark.parametrize("key,value", [("state_dim", 16), ("h_pred", 32), ("b", 128), ("ga", 1), ("world_size", 1)])
++@pytest.mark.parametrize(
++    "key,value",
++    [("state_dim", 16), ("h_pred", 32), ("b", 128), ("ga", 1), ("world_size", 1)],
++)
+ def test_resigned_semantic_identity_still_must_be_matched_profile(tmp_path, key, value):
+     path, _, job, _, identity = profile(tmp_path)
+     identity["semantic"]["contract"][key] = value
+@@ -327,11 +373,16 @@ def test_resigned_semantic_identity_still_must_be_matched_profile(tmp_path, key,
+     with pytest.raises(ValueError, match="Packed128"):
+         server_command(path)
+ 
+-@pytest.mark.parametrize("phase,until", [("fresh", "100"), ("resume", "500"), ("fresh", "30000")])
+-def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_sources(tmp_path, phase, until):
++
++@pytest.mark.parametrize(
++    "phase,until", [("fresh", "100"), ("resume", "500"), ("fresh", "30000")]
++)
++def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_sources(
++    tmp_path, phase, until
++):
+     fake = tmp_path / "capture_python4"
+     fake.write_text(
+-        f'#!{sys.executable}\nimport json,os,sys\n'
++        f"#!{sys.executable}\nimport json,os,sys\n"
+         'print(json.dumps({"argv":sys.argv[1:],'
+         '"cwd":os.getcwd(),"devices":os.environ["CUDA_VISIBLE_DEVICES"],'
+         '"offline":os.environ["HF_HUB_OFFLINE"]}))\n'
+@@ -349,12 +400,20 @@ def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_source
+     ):
+         env[key] = str(tmp_path / (key + " with spaces"))
+     # Obsolete pins must NOT control this standalone four-GPU launch.
+-    env.update(EXPECTED_ROOT="outdated", EXPECTED_CHILD="outdated", CUDA_VISIBLE_DEVICES="4,5,6,7")
++    env.update(
++        EXPECTED_ROOT="outdated",
++        EXPECTED_CHILD="outdated",
++        CUDA_VISIBLE_DEVICES="4,5,6,7",
++    )
+     run = subprocess.run(
+         ["bash", str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"), phase, until],
+-        capture_output=True, text=True, env=env, check=True, timeout=15,
++        capture_output=True,
++        text=True,
++        env=env,
++        check=True,
++        timeout=15,
+     )
+-    payload = json.loads(run.stdout)
++    payload = _launch_payload(run, env)
+     argv = payload["argv"]
+     assert payload["devices"] == "4,5,6,7" and payload["offline"] == "1"
+     assert payload["cwd"] == str(ROOT / "cosmos-framework")
+@@ -378,7 +437,9 @@ def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_source
+     assert argv[argv.index("--root-worktree") + 1] == str(ROOT)
+ 
+ 
+-def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses_project_venv(tmp_path):
++def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses_project_venv(
++    tmp_path,
++):
+     # Reproduce the DS_PRO blocker without touching the actual repository:
+     # no .git at all, plus dirty-style untracked docs/eval/ reports.
+     root = tmp_path / "psm_wma_v3"
+@@ -387,30 +448,50 @@ def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses
+     scripts.mkdir(parents=True)
+     (child / "examples").mkdir(parents=True)
+     (root / "docs/eval").mkdir(parents=True)
+-    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text("DS report\n")
+-    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("placeholder\n")
++    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text(
++        "DS report\n"
++    )
++    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text(
++        "placeholder\n"
++    )
+     launcher = scripts / "train_v3_matched_no_ttt_4gpu.sh"
+     launcher.write_text((ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh").read_text())
++    (scripts / "no_ttt_console.py").write_bytes(
++        (ROOT / "scripts/no_ttt_console.py").read_bytes()
++    )
+     fake = child / ".venv/bin/python"
+     fake.parent.mkdir(parents=True)
+     fake.write_text(
+-        f'#!{sys.executable}\nimport json,os,sys\n'
++        f"#!{sys.executable}\nimport json,os,sys\n"
+         'print(json.dumps({"argv":sys.argv[1:],"exe":sys.argv[0],'
+         '"visible":os.environ["CUDA_VISIBLE_DEVICES"]}))\n'
+     )
+     fake.chmod(0o755)
+-    env = dict(os.environ, JOB_NAME="no_ttt_simulated_world4_ga4", CUDA_VISIBLE_DEVICES="4,5,6,7")
++    env = dict(
++        os.environ,
++        JOB_NAME="no_ttt_simulated_world4_ga4",
++        CUDA_VISIBLE_DEVICES="4,5,6,7",
++    )
+     env.pop("PYTHON", None)
+     for key in (
+-        "OUTPUT_ROOT", "SOURCE_ROOT", "CACHE_ROOT", "DATASET_INDEX_ROOT",
+-        "EDGE_POLICY_CHECKPOINT", "WAN_VAE_PATH", "BASE_CHECKPOINT_PATH",
++        "OUTPUT_ROOT",
++        "SOURCE_ROOT",
++        "CACHE_ROOT",
++        "DATASET_INDEX_ROOT",
++        "EDGE_POLICY_CHECKPOINT",
++        "WAN_VAE_PATH",
++        "BASE_CHECKPOINT_PATH",
+     ):
+         env[key] = str(tmp_path / key)
+     call = subprocess.run(
+         ["bash", str(launcher), "fresh", "100"],
+-        capture_output=True, text=True, check=True, env=env, timeout=10,
++        capture_output=True,
++        text=True,
++        check=True,
++        env=env,
++        timeout=10,
+     )
+-    payload = json.loads(call.stdout)
++    payload = _launch_payload(call, env)
+     assert payload["visible"] == "4,5,6,7"
+     assert payload["exe"] == str(fake)
+     assert payload["argv"][payload["argv"].index("--root-worktree") + 1] == str(root)
+@@ -426,9 +507,14 @@ def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses
+         ("no_ttt_contract_world4_ga4", "0,1,2,3"),
+     ],
+ )
+-def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(tmp_path, job, devices):
++def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(
++    tmp_path, job, devices
++):
+     env = dict(
+-        os.environ, PYTHON="/must/not/run", JOB_NAME=job, CUDA_VISIBLE_DEVICES=devices,
++        os.environ,
++        PYTHON="/must/not/run",
++        JOB_NAME=job,
++        CUDA_VISIBLE_DEVICES=devices,
+     )
+     for key in (
+         "OUTPUT_ROOT",
+@@ -441,8 +527,16 @@ def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(tmp_path,
+     ):
+         env[key] = str(tmp_path / key)
+     run = subprocess.run(
+-        ["bash", str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"), "fresh", "30000"],
+-        capture_output=True, text=True, env=env, timeout=10,
++        [
++            "bash",
++            str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"),
++            "fresh",
++            "30000",
++        ],
++        capture_output=True,
++        text=True,
++        env=env,
++        timeout=10,
+     )
+     assert run.returncode == 2
+     assert "4GPU profile" in run.stderr
+diff --git a/tools/v3/no_ttt_console_test.py b/tools/v3/no_ttt_console_test.py
+new file mode 100644
+index 00000000..cc64118f
+--- /dev/null
++++ b/tools/v3/no_ttt_console_test.py
+@@ -0,0 +1,477 @@
++"""Only fake shell training/processes. No Torch, dataset, model or GPU imports."""
++
++from __future__ import annotations
++
++import json
++import os
++import select
++import signal
++import subprocess
++import sys
++import time
++from pathlib import Path
++
++import pytest
++
++ROOT = Path(__file__).resolve().parents[2]
++HELPER = ROOT / "scripts/no_ttt_console.py"
++PROGRESS = "[CorrectedV3][progress] step=1/30000 loss=1.25\n"
++RAW = (
++    "Cosmos initializing\n"
++    "[rank1] warning: synthetic rank1\n"
++    '[NoTTT][cpu_loader] {"wait_ms":3}\n'
++    + PROGRESS
++    + '[CorrectedV3][train] {"iteration":1}\n'
++    + "[CorrectedV3][checkpoint] saved\n"
++    + "stderr Traceback: synthetic test diagnostic\n"
++    + "[rank1] [CorrectedV3][progress] must not echo\n"
++)
++
++
++def _script(tmp_path, source):
++    path = tmp_path / "fake_training.py"
++    path.write_text(source)
++    return [sys.executable, str(path)]
++
++
++def _command(tmp_path, command, *, job="no_ttt_shell_test"):
++    return [
++        sys.executable,
++        str(HELPER),
++        str(tmp_path / "output root"),
++        job,
++        "--",
++        *command,
++    ]
++
++
++def _logs(tmp_path):
++    return list((tmp_path / "output root/_launch_logs").rglob("launch_*.log"))
++
++
++def _run(command, *, env=None):
++    return subprocess.run(command, capture_output=True, env=env, timeout=15)
++
++
++def _read_until(process, marker, timeout=5):
++    result = b""
++    until = time.monotonic() + timeout
++    while marker not in result and time.monotonic() < until:
++        if select.select([process.stdout], [], [], 0.05)[0]:
++            chunk = os.read(process.stdout.fileno(), 65536)
++            if not chunk:
++                break
++            result += chunk
++    assert marker in result, result
++    return result
++
++
++@pytest.mark.parametrize("code", [0, 7])
++def test_full_stdout_stderr_saved_before_progress_copy_and_exact_exit(tmp_path, code):
++    marker = tmp_path / "namespace_checked.json"
++    command = _script(
++        tmp_path,
++        f"import os,json,pathlib\n"
++        f"assert not pathlib.Path({str(tmp_path / 'output root/no_ttt_shell_test')!r}).exists()\n"
++        f"pathlib.Path({str(marker)!r}).write_text(json.dumps(dict(unbuffered=os.environ.get('PYTHONUNBUFFERED'))))\n"
++        f"os.write(1,{RAW[: RAW.index('stderr')].encode()!r})\n"
++        f"os.write(2,{RAW[RAW.index('stderr') :].encode()!r})\nraise SystemExit({code})\n",
++    )
++    result = _run(_command(tmp_path, command))
++    assert result.returncode == code
++    lines = result.stdout.decode().splitlines(keepends=True)
++    assert lines[0].startswith("[NoTTT][log] full log: ")
++    assert lines[1:] == [PROGRESS]
++    assert len(_logs(tmp_path)) == 1 and _logs(tmp_path)[0].read_bytes() == RAW.encode()
++    assert json.loads(marker.read_text()) == {"unbuffered": "1"}
++    assert not (tmp_path / "output root/no_ttt_shell_test").exists()
++    if code:
++        assert b"[NoTTT][failed] exit=7" in result.stderr
++        assert b"stderr Traceback: synthetic test diagnostic" in result.stderr
++        assert os.fsencode(_logs(tmp_path)[0]) in result.stderr
++    else:
++        assert not result.stderr
++
++
++def test_warning_only_no_progress_is_not_an_empty_grep_failure(tmp_path):
++    command = _script(
++        tmp_path, "import os\nos.write(2,b'warning only; not a failed process\\n')\n"
++    )
++    result = _run(_command(tmp_path, command))
++    assert result.returncode == 0 and not result.stderr
++    assert len(result.stdout.splitlines()) == 1
++    assert _logs(tmp_path)[0].read_bytes() == b"warning only; not a failed process\n"
++
++
++def test_each_resume_uses_exclusive_new_log_without_overwriting_history(tmp_path):
++    command = _script(tmp_path, f"import os\nos.write(1,{PROGRESS.encode()!r})\n")
++    args = _command(tmp_path, command)
++    for _ in range(3):
++        assert _run(args).returncode == 0
++    logs = _logs(tmp_path)
++    assert len(logs) == 3 and len({path.name for path in logs}) == 3
++    assert all(
++        path.read_bytes() == PROGRESS.encode() and path.stat().st_mode & 0o077 == 0
++        for path in logs
++    )
++
++
++def test_unbuffered_partial_line_huge_json_and_invalid_bytes_preserve_all_raw(tmp_path):
++    raw = (
++        b"json="
++        + b"x" * 200000
++        + b"\n\xff\xfe\n"
++        + PROGRESS.encode()
++        + b"unterminated diagnostic"
++    )
++    command = _script(
++        tmp_path,
++        f"import os\nraw={raw!r}\nfor start in range(0,len(raw),7): os.write(1,raw[start:start+7])\n",
++    )
++    result = _run(_command(tmp_path, command))
++    assert result.returncode == 0
++    assert result.stdout.decode().splitlines(keepends=True)[1:] == [PROGRESS]
++    assert _logs(tmp_path)[0].read_bytes() == raw
++
++
++def test_progress_is_visible_while_training_runs_and_already_present_in_log(tmp_path):
++    command = _script(
++        tmp_path,
++        f"import os,time\nos.write(1,{PROGRESS.encode()!r})\ntime.sleep(120)\n",
++    )
++    process = subprocess.Popen(
++        _command(tmp_path, command), stdout=subprocess.PIPE, stderr=subprocess.PIPE
++    )
++    try:
++        visible = _read_until(process, PROGRESS.encode())
++        assert visible.startswith(b"[NoTTT][log]")
++        assert (
++            process.poll() is None
++            and _logs(tmp_path)[0].read_bytes() == PROGRESS.encode()
++        )
++        process.send_signal(signal.SIGTERM)
++        _, err = process.communicate(timeout=12)
++        assert process.returncode == 143 and b"[NoTTT][failed] exit=143" in err
++    finally:
++        if process.poll() is None:
++            process.send_signal(signal.SIGTERM)
++            process.communicate(timeout=12)
++
++
++def test_log_open_failure_never_starts_training(tmp_path):
++    root = tmp_path / "output root"
++    root.mkdir()
++    (root / "_launch_logs").write_text("cannot replace this existing file")
++    marker = tmp_path / "must_not_execute"
++    command = _script(
++        tmp_path, f"import pathlib\npathlib.Path({str(marker)!r}).touch()\n"
++    )
++    result = _run(_command(tmp_path, command))
++    assert result.returncode != 0 and b"[NoTTT][failed]" in result.stderr
++    assert (
++        not marker.exists()
++        and (root / "_launch_logs").read_text() == "cannot replace this existing file"
++    )
++
++
++@pytest.mark.parametrize("fault", ["write", "sync", "selector"])
++def test_log_write_sync_or_pipe_setup_error_is_fail_closed_with_diagnosis(
++    tmp_path, fault
++):
++    pid_file = tmp_path / "owned_pid"
++    command = _script(
++        tmp_path,
++        f"import os,pathlib,time\npathlib.Path({str(pid_file)!r}).write_text(str(os.getpid()))\n"
++        + (
++            f"os.write(1,{PROGRESS.encode()!r})\ntime.sleep(120)\n"
++            if fault == "write"
++            else "print('done')\n"
++        ),
++    )
++    # Fault injection exists ONLY in this standalone CPU test bootstrap.
++    bootstrap = tmp_path / "fault_bootstrap.py"
++    patches = {
++        "write": "original=os.write\ndef bad(fd,data):\n if fd>2: raise OSError(28,'synthetic ENOSPC')\n return original(fd,data)\nos.write=bad\n",
++        "sync": "def bad(fd): raise OSError(5,'synthetic fsync error')\nos.fsync=bad\n",
++        "selector": "def bad(*a,**k): raise OSError(24,'synthetic selector error')\nselectors.DefaultSelector=bad\n",
++    }
++    bootstrap.write_text(
++        "import os,runpy,sys,selectors\n"
++        + patches[fault]
++        + f"sys.argv={_command(tmp_path, command)[1:]!r}\n"
++        + f"runpy.run_path({str(HELPER)!r},run_name='__main__')\n"
++    )
++    result = _run([sys.executable, str(bootstrap)])
++    assert result.returncode != 0 and b"[NoTTT][failed]" in result.stderr
++    assert b"synthetic" in result.stderr and b"full log:" in result.stderr
++    assert len(_logs(tmp_path)) == 1
++    if fault == "write":
++        assert PROGRESS.encode() not in b"".join(
++            result.stdout.splitlines(keepends=True)[1:]
++        )
++    if pid_file.exists():
++        assert not Path(f"/proc/{int(pid_file.read_text())}").exists()
++
++
++def test_command_exec_failure_has_log_and_explicit_nonzero(tmp_path):
++    result = _run(_command(tmp_path, [str(tmp_path / "missing-executable")]))
++    assert (
++        result.returncode != 0
++        and b"No such file" in result.stderr
++        and b"[NoTTT][failed]" in result.stderr
++    )
++    assert len(_logs(tmp_path)) == 1
++
++
++def _tree_command(tmp_path, *, late=False, exit_code=None):
++    ready = tmp_path / "ready.json"
++    child_code = (
++        "import signal,time,pathlib,os; signal.signal(signal.SIGTERM,signal.SIG_IGN); "
++        f"pathlib.Path({str(tmp_path)!r},'rank_ready_'+str(os.getpid())).touch(); time.sleep(120)"
++    )
++    body = (
++        "import os,sys,json,pathlib,signal,subprocess,time\n"
++        f"children=[subprocess.Popen([sys.executable,'-c',{child_code!r}],start_new_session=True)]\n"
++        f"ready=pathlib.Path({str(ready)!r})\n"
++        "def publish(): ready.write_text(json.dumps([os.getpid(),*[p.pid for p in children]]))\n"
++    )
++    if late:
++        body += (
++            "def stop(sig,frame):\n"
++            f" children.append(subprocess.Popen([sys.executable,'-c',{child_code!r}],start_new_session=True))\n publish()\n"
++            "signal.signal(signal.SIGTERM,stop)\n"
++        )
++    body += "publish()\nprint('[CorrectedV3][progress] tree-ready',flush=True)\n"
++    body += (
++        f"raise SystemExit({exit_code})\n"
++        if exit_code is not None
++        else "while True: time.sleep(.05)\n"
++    )
++    return _script(tmp_path, body), ready
++
++
++@pytest.mark.parametrize(
++    "sig,late",
++    [(signal.SIGINT, False), (signal.SIGTERM, False), (signal.SIGTERM, True)],
++)
++def test_interrupt_reaps_separate_session_ranks_including_late_child_and_spares_foreign(
++    tmp_path, sig, late
++):
++    command, ready = _tree_command(tmp_path, late=late)
++    foreign = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(120)"])
++    process = subprocess.Popen(
++        _command(tmp_path, command), stdout=subprocess.PIPE, stderr=subprocess.PIPE
++    )
++    try:
++        until = time.monotonic() + 5
++        initial = None
++        while time.monotonic() < until:
++            try:
++                initial = json.loads(ready.read_text())
++                if all(
++                    (tmp_path / f"rank_ready_{pid}").exists() for pid in initial[1:]
++                ):
++                    break
++            except (FileNotFoundError, json.JSONDecodeError):
++                pass
++            time.sleep(0.01)
++        assert initial and all(
++            (tmp_path / f"rank_ready_{pid}").exists() for pid in initial[1:]
++        )
++        process.send_signal(sig)
++        out, err = process.communicate(timeout=12)
++        owned = json.loads(ready.read_text())
++        assert process.returncode == 128 + sig
++        assert f"[NoTTT][failed] exit={128 + sig}".encode() in err
++        assert all(not Path(f"/proc/{pid}").exists() for pid in owned)
++        assert foreign.poll() is None
++        assert len(owned) == (3 if late else 2)
++        assert (
++            out.startswith(b"[NoTTT][log]")
++            and b"tree-ready" in _logs(tmp_path)[0].read_bytes()
++        )
++        print(
++            json.dumps(
++                {
++                    "signal": int(sig),
++                    "late_child": late,
++                    "owned_reaped": owned,
++                    "foreign_survived": True,
++                }
++            )
++        )
++    finally:
++        if process.poll() is None:
++            process.send_signal(signal.SIGTERM)
++            process.communicate(timeout=12)
++        foreign.terminate()
++        foreign.wait(timeout=5)
++
++
++def test_failed_parent_exit_cannot_leave_rank_holding_log_pipe_forever(tmp_path):
++    command, ready = _tree_command(tmp_path, exit_code=7)
++    result = _run(_command(tmp_path, command))
++    assert result.returncode == 7 and b"[NoTTT][failed] exit=7" in result.stderr
++    assert all(
++        not Path(f"/proc/{pid}").exists() for pid in json.loads(ready.read_text())
++    )
++
++
++@pytest.mark.parametrize("world", [4, 8])
++def test_real_standard_launcher_default_split_preserves_original_fake_training_argv_and_env(
++    tmp_path, world
++):
++    script = (
++        ROOT
++        / "scripts"
++        / (
++            "train_v3_matched_no_ttt_4gpu.sh"
++            if world == 4
++            else "train_v3_matched_no_ttt.sh"
++        )
++    )
++    capture = tmp_path / "argv.json"
++    fake = tmp_path / "fake python"
++    fake.write_text(
++        f"#!{sys.executable}\nimport os,json,pathlib,sys\n"
++        f"pathlib.Path({str(capture)!r}).write_text(json.dumps(dict(argv=sys.argv[1:],cwd=os.getcwd(),"
++        "env={k:os.environ[k] for k in ('HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE','PYTHONUNBUFFERED','JOB_NAME')})))\n"
++        f"os.write(1,{RAW.encode()!r})\n"
++    )
++    fake.chmod(0o755)
++    env = {
++        key: value for key, value in os.environ.items() if not key.startswith("NOTTT_")
++    }
++    env.update(
++        PYTHON=str(fake),
++        JOB_NAME="no_ttt_shell_world4_ga4" if world == 4 else "no_ttt_shell_world8_ga2",
++    )
++    for key in (
++        "OUTPUT_ROOT",
++        "SOURCE_ROOT",
++        "CACHE_ROOT",
++        "DATASET_INDEX_ROOT",
++        "EDGE_POLICY_CHECKPOINT",
++        "WAN_VAE_PATH",
++        "BASE_CHECKPOINT_PATH",
++        "EXPECTED_ROOT",
++        "EXPECTED_CHILD",
++    ):
++        env[key] = str(tmp_path / f"{key} with spaces")
++    env.pop("CUDA_VISIBLE_DEVICES", None)
++    result = _run(["bash", str(script), "resume", "12220"], env=env)
++    assert result.returncode == 0 and result.stdout.decode().splitlines(keepends=True)[
++        1:
++    ] == [PROGRESS]
++    data = json.loads(capture.read_text())
++    assert data["argv"][:4] == [
++        "-m",
++        "torch.distributed.run",
++        "--standalone",
++        f"--nproc_per_node={world}",
++    ]
++    assert data["cwd"] == str(ROOT / "cosmos-framework")
++    for key, value in {
++        "--ga": "4" if world == 4 else "2",
++        "--world-size": str(world),
++        "--t": "16",
++        "--b": "8",
++        "--max-iter": "30000",
++        "--warmup": "500",
++        "--save-iter": "100",
++        "--formal-execution-until": "12220",
++        "--phase": "resume",
++    }.items():
++        assert data["argv"][data["argv"].index(key) + 1] == value
++    assert (
++        data["env"]["PYTHONUNBUFFERED"]
++        == data["env"]["HF_HUB_OFFLINE"]
++        == data["env"]["TRANSFORMERS_OFFLINE"]
++        == "1"
++    )
++    logs = list(
++        (Path(env["OUTPUT_ROOT"]) / "_launch_logs" / env["JOB_NAME"]).glob("*.log")
++    )
++    assert len(logs) == 1 and logs[0].read_bytes() == RAW.encode()
++
++
++@pytest.mark.parametrize("world", [4, 8])
++@pytest.mark.parametrize("phase", ["fresh", "resume"])
++def test_entire_training_command_and_key_env_equal_frozen_original(
++    tmp_path, world, phase
++):
++    name = (
++        "train_v3_matched_no_ttt_4gpu.sh"
++        if world == 4
++        else "train_v3_matched_no_ttt.sh"
++    )
++    root = tmp_path / "synthetic worktree"
++    scripts, child = root / "scripts", root / "cosmos-framework"
++    scripts.mkdir(parents=True)
++    (child / "examples").mkdir(parents=True)
++    (child / "examples/psm_wma_robocasa_corrected_phase5.py").touch()
++    launcher = scripts / name
++    (scripts / "no_ttt_console.py").write_bytes(HELPER.read_bytes())
++    capture = tmp_path / "capture.json"
++    fake = tmp_path / "capture python"
++    keys = [
++        "CUDA_VISIBLE_DEVICES",
++        "HF_HUB_OFFLINE",
++        "TRANSFORMERS_OFFLINE",
++        "PYTHONPATH",
++        "JOB_NAME",
++        "NOTTT_LOADER_WORKERS",
++        "NOTTT_PREFETCH_FACTOR",
++        "NOTTT_PERSISTENT_WORKERS",
++        "NOTTT_LOADER_TIMEOUT_S",
++    ]
++    fake.write_text(
++        f"#!{sys.executable}\nimport os,sys,json,pathlib\n"
++        f"pathlib.Path({str(capture)!r}).write_text(json.dumps(dict(argv=sys.argv,cwd=os.getcwd(),"
++        f"env={{key:os.environ.get(key) for key in {keys!r}}})))\n"
++        "print('[CorrectedV3][progress] captured')\n"
++    )
++    fake.chmod(0o755)
++    env = {
++        key: value for key, value in os.environ.items() if not key.startswith("NOTTT_")
++    }
++    env.pop("CUDA_VISIBLE_DEVICES", None)
++    env.update(
++        PYTHON=str(fake),
++        JOB_NAME="no_ttt_frozen_world4_ga4"
++        if world == 4
++        else "no_ttt_frozen_world8_ga2",
++    )
++    if world == 4:
++        env.update(
++            NOTTT_LOADER_WORKERS="8",
++            NOTTT_PREFETCH_FACTOR="1",
++            NOTTT_PERSISTENT_WORKERS="1",
++            NOTTT_LOADER_TIMEOUT_S="120",
++        )
++    for key in (
++        "OUTPUT_ROOT",
++        "SOURCE_ROOT",
++        "CACHE_ROOT",
++        "DATASET_INDEX_ROOT",
++        "EDGE_POLICY_CHECKPOINT",
++        "WAN_VAE_PATH",
++        "BASE_CHECKPOINT_PATH",
++        "EXPECTED_ROOT",
++        "EXPECTED_CHILD",
++    ):
++        env[key] = str(tmp_path / f"{key} with spaces")
++    launcher.write_bytes(
++        subprocess.check_output(
++            ["git", "show", f"3332d1825de8778e3d6dbb7e9ba98cbffff487c6:scripts/{name}"],
++            cwd=ROOT,
++        )
++    )
++    original = _run(["bash", str(launcher), phase, "12220"], env=env)
++    assert original.returncode == 0
++    expected = json.loads(capture.read_text())
++    launcher.write_bytes((ROOT / "scripts" / name).read_bytes())
++    current = _run(["bash", str(launcher), phase, "12220"], env=env)
++    assert current.returncode == 0
++    assert json.loads(capture.read_text()) == expected
++    assert current.stdout.splitlines()[1:] == [b"[CorrectedV3][progress] captured"]
+diff --git a/tools/v3/no_ttt_workers_entry_test.py b/tools/v3/no_ttt_workers_entry_test.py
+index 07229550..663aba16 100644
+--- a/tools/v3/no_ttt_workers_entry_test.py
++++ b/tools/v3/no_ttt_workers_entry_test.py
+@@ -12,9 +12,9 @@ import pytest
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ sys.path.insert(0, str(ROOT / "cosmos-framework"))
+-from cosmos_framework.utils.no_ttt_loader_profile import profile_from_args
+-from examples import psm_wma_robocasa_corrected_phase5 as phase5
+-from examples.psm_wma_robocasa_phase5_f0_test import Serializer, _args, _config, _report
++from cosmos_framework.utils.no_ttt_loader_profile import profile_from_args  # noqa: E402 - worktree import bootstrap
++from examples import psm_wma_robocasa_corrected_phase5 as phase5  # noqa: E402
++from examples.psm_wma_robocasa_phase5_f0_test import Serializer, _args, _config, _report  # noqa: E402
+ 
+ 
+ def setup(tmp_path):
+@@ -22,9 +22,14 @@ def setup(tmp_path):
+     (root / "scripts").mkdir(parents=True)
+     child = root / "cosmos-framework"
+     (child / "examples").mkdir(parents=True)
+-    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("# not executed\n")
++    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text(
++        "# not executed\n"
++    )
+     script = root / "scripts/train_v3_matched_no_ttt_4gpu.sh"
+     script.write_bytes((ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh").read_bytes())
++    (root / "scripts/no_ttt_console.py").write_bytes(
++        (ROOT / "scripts/no_ttt_console.py").read_bytes()
++    )
+     fake = tmp_path / "fake-python"
+     fake.write_text(
+         f'#!{sys.executable}\nimport sys,json,os\nprint(json.dumps({{"argv":sys.argv[1:],"cwd":os.getcwd()}}))\n'
+@@ -33,7 +38,8 @@ def setup(tmp_path):
+     env = {
+         key: value
+         for key, value in os.environ.items()
+-        if not key.startswith("NOTTT_") and key not in ("JOB_NAME", "CUDA_VISIBLE_DEVICES")
++        if not key.startswith("NOTTT_")
++        and key not in ("JOB_NAME", "CUDA_VISIBLE_DEVICES")
+     }
+     env["PYTHON"] = str(fake)
+     for key in (
+@@ -49,32 +55,62 @@ def setup(tmp_path):
+     return script, env
+ 
+ 
++def _launch_payload(result, env):
++    # Fake training stdout now belongs in the complete raw file, not the
++    # progress-only terminal. Keep every original argv/profile assertion.
++    assert result.stdout.startswith("[NoTTT][log] full log: ")
++    logs = list((Path(env["OUTPUT_ROOT"]) / "_launch_logs").rglob("launch_*.log"))
++    return json.loads(max(logs, key=lambda path: path.stat().st_mtime_ns).read_text())
++
++
+ @pytest.mark.parametrize("workers", [0, 1, 2, 4, 8])
+-def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path, workers):
++def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(
++    tmp_path, workers
++):
+     script, env = setup(tmp_path)
+     env["NOTTT_LOADER_WORKERS"] = str(workers)
+     result = subprocess.run(
+-        ["bash", str(script), "fresh", "100"], env=env, text=True, capture_output=True, check=True, timeout=10
++        ["bash", str(script), "fresh", "100"],
++        env=env,
++        text=True,
++        capture_output=True,
++        check=True,
++        timeout=10,
+     )
+-    payload = json.loads(result.stdout)
++    payload = _launch_payload(result, env)
+     argv = payload["argv"]
+     assert "--expected-root" not in argv and "--expected-child" not in argv
+-    assert argv[argv.index("--ga") + 1] == "4" and argv[argv.index("--world-size") + 1] == "4"
++    assert (
++        argv[argv.index("--ga") + 1] == "4"
++        and argv[argv.index("--world-size") + 1] == "4"
++    )
+     assert argv[argv.index("--num-workers") + 1] == "0"
+     if workers:
+         assert argv[argv.index("--no-ttt-loader-workers") + 1] == str(workers)
+-        assert argv[argv.index("--job-name") + 1] == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
++        assert (
++            argv[argv.index("--job-name") + 1]
++            == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
++        )
+         parsed = phase5.parser().parse_args(argv[argv.index("--no-ttt") :])
+         assert profile_from_args(parsed).persistent_workers is True
+     else:
+         assert "--no-ttt-loader-workers" not in argv
+         baseline = subprocess.check_output(
+-            ["git", "show", "e6ae2084305a8c24d763d82b517984660cc73c30:scripts/train_v3_matched_no_ttt_4gpu.sh"],
++            [
++                "git",
++                "show",
++                "e6ae2084305a8c24d763d82b517984660cc73c30:scripts/train_v3_matched_no_ttt_4gpu.sh",
++            ],
+             cwd=ROOT,
+         )
+         script.write_bytes(baseline)
+         old = subprocess.run(
+-            ["bash", str(script), "fresh", "100"], env=env, text=True, capture_output=True, check=True, timeout=10
++            ["bash", str(script), "fresh", "100"],
++            env=env,
++            text=True,
++            capture_output=True,
++            check=True,
++            timeout=10,
+         )
+         assert json.loads(old.stdout) == payload
+ 
+@@ -91,11 +127,19 @@ def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path
+         {"NOTTT_LOADER_WORKERS": "1", "NOTTT_PERSISTENT_WORKERS": "bad"},
+     ],
+ )
+-def test_invalid_loader_or_non_nott_job_options_rejected_before_python(tmp_path, change):
++def test_invalid_loader_or_non_nott_job_options_rejected_before_python(
++    tmp_path, change
++):
+     script, env = setup(tmp_path)
+     env.update(change)
+     env["PYTHON"] = "/must/not/run"
+-    result = subprocess.run(["bash", str(script), "resume", "500"], env=env, text=True, capture_output=True, timeout=10)
++    result = subprocess.run(
++        ["bash", str(script), "resume", "500"],
++        env=env,
++        text=True,
++        capture_output=True,
++        timeout=10,
++    )
+     assert result.returncode == 2
+ 
+ 
+@@ -113,7 +157,10 @@ def test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_seman
+         "--job-name",
+         "no_ttt_packed128_droid_fresh_30k_world4_ga4",
+     )
+-    semantic = {"training_profile": "matched_no_ttt_v1", "contract": {"world_size": 4, "ga": 4}}
++    semantic = {
++        "training_profile": "matched_no_ttt_v1",
++        "contract": {"world_size": 4, "ga": 4},
++    }
+     args.no_ttt_loader_workers = original_workers
+     args.no_ttt_prefetch_factor = 1 if original_workers else None
+     args.no_ttt_persistent_workers = True if original_workers else None
+@@ -140,19 +187,31 @@ def test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_seman
+         assert phase5.check_job_namespace(args, semantic)["semantic"] == semantic
+ 
+     assert {str(p): p.read_bytes() for p in path.rglob("*") if p.is_file()} == before
+-    assert phase5._expected_source_identity(args) == ("nottt_world4_ga4_source_head_not_verified",) * 2
+-    wrong = {"training_profile": "matched_no_ttt_v1", "contract": {"world_size": 8, "ga": 4}}
++    assert (
++        phase5._expected_source_identity(args)
++        == ("nottt_world4_ga4_source_head_not_verified",) * 2
++    )
++    wrong = {
++        "training_profile": "matched_no_ttt_v1",
++        "contract": {"world_size": 8, "ga": 4},
++    }
+     with pytest.raises(ValueError, match="semantic"):
+         phase5.check_job_namespace(args, wrong)
+ 
+ 
+ @pytest.mark.parametrize("from_workers,to_workers", [(0, 8), (8, 0), (2, 4), (8, 1)])
+-def test_launcher_resume_same_job_with_different_worker_count(tmp_path, from_workers, to_workers):
++def test_launcher_resume_same_job_with_different_worker_count(
++    tmp_path, from_workers, to_workers
++):
+     script, env = setup(tmp_path)
+ 
+     def invoke(workers, phase):
+         settings = dict(env, NOTTT_LOADER_WORKERS=str(workers))
+-        for key in ("NOTTT_PREFETCH_FACTOR", "NOTTT_PERSISTENT_WORKERS", "NOTTT_LOADER_TIMEOUT_S"):
++        for key in (
++            "NOTTT_PREFETCH_FACTOR",
++            "NOTTT_PERSISTENT_WORKERS",
++            "NOTTT_LOADER_TIMEOUT_S",
++        ):
+             settings.pop(key, None)
+         result = subprocess.run(
+             ["bash", str(script), phase, "500"],
+@@ -162,28 +221,45 @@ def test_launcher_resume_same_job_with_different_worker_count(tmp_path, from_wor
+             check=True,
+             timeout=10,
+         )
+-        argv = json.loads(result.stdout)["argv"]
++        argv = _launch_payload(result, settings)["argv"]
+         return argv, argv[argv.index("--job-name") + 1]
+ 
+     fresh, original_job = invoke(from_workers, "fresh")
+     resumed, resumed_job = invoke(to_workers, "resume")
+     assert original_job == resumed_job == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
+-    assert fresh[fresh.index("--num-workers") + 1] == resumed[resumed.index("--num-workers") + 1] == "0"
++    assert (
++        fresh[fresh.index("--num-workers") + 1]
++        == resumed[resumed.index("--num-workers") + 1]
++        == "0"
++    )
+     if to_workers:
+         assert resumed[resumed.index("--no-ttt-loader-workers") + 1] == str(to_workers)
+     else:
+         assert "--no-ttt-loader-workers" not in resumed
+ 
++
+ def test_explicit_prefetch_and_nonpersistent_cli_are_real_profile_options(tmp_path):
+     script, env = setup(tmp_path)
+     env.update(
+-        NOTTT_LOADER_WORKERS="2", NOTTT_PREFETCH_FACTOR="2", NOTTT_PERSISTENT_WORKERS="0", NOTTT_LOADER_TIMEOUT_S="30"
++        NOTTT_LOADER_WORKERS="2",
++        NOTTT_PREFETCH_FACTOR="2",
++        NOTTT_PERSISTENT_WORKERS="0",
++        NOTTT_LOADER_TIMEOUT_S="30",
+     )
+     result = subprocess.run(
+-        ["bash", str(script), "fresh", "100"], env=env, text=True, capture_output=True, check=True, timeout=10
++        ["bash", str(script), "fresh", "100"],
++        env=env,
++        text=True,
++        capture_output=True,
++        check=True,
++        timeout=10,
+     )
+-    argv = json.loads(result.stdout)["argv"]
++    argv = _launch_payload(result, env)["argv"]
+     args = phase5.parser().parse_args(argv[argv.index("--no-ttt") :])
+     profile = profile_from_args(args)
+-    assert profile.workers == 2 and profile.prefetch_factor == 2 and profile.persistent_workers is False
++    assert (
++        profile.workers == 2
++        and profile.prefetch_factor == 2
++        and profile.persistent_workers is False
++    )
+     assert profile.timeout_s == 30

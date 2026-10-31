@@ -1,0 +1,141 @@
+{
+  "status": "PASS",
+  "gate": "ISSUE13_AUTHOR_FAKE_SHELL_CPU_ONLY",
+  "steps": [
+    {
+      "name": "bash_syntax_0",
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/train_v3_matched_no_ttt.sh"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 60,
+      "exit_code": 0,
+      "seconds": 0.0038302999746520072
+    },
+    {
+      "name": "bash_syntax_1",
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/train_v3_matched_no_ttt_4gpu.sh"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 60,
+      "exit_code": 0,
+      "seconds": 0.0037411150115076452
+    },
+    {
+      "name": "shellcheck_version",
+      "argv": [
+        "/tmp/psm-nottt-console-20261031/tools/bin/shellcheck",
+        "--version"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 60,
+      "exit_code": 0,
+      "seconds": 0.0014270459942054003
+    },
+    {
+      "name": "shellcheck",
+      "argv": [
+        "/tmp/psm-nottt-console-20261031/tools/bin/shellcheck",
+        "scripts/train_v3_matched_no_ttt.sh",
+        "scripts/train_v3_matched_no_ttt_4gpu.sh"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 60,
+      "exit_code": 0,
+      "seconds": 0.11418977900757454
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/no_ttt_console.py",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py",
+        "tools/v3/matched_no_ttt_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 60,
+      "exit_code": 0,
+      "seconds": 0.06442669100943021
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "scripts/no_ttt_console.py",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py",
+        "tools/v3/matched_no_ttt_entry_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 60,
+      "exit_code": 0,
+      "seconds": 0.06411573599325493
+    },
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-o",
+        "addopts=",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-nottt-console",
+        "-x",
+        "-q",
+        "-s",
+        "--tb=short",
+        "tools/v3/no_ttt_console_test.py",
+        "tools/v3/no_ttt_workers_entry_test.py::test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher",
+        "tools/v3/no_ttt_workers_entry_test.py::test_invalid_loader_or_non_nott_job_options_rejected_before_python",
+        "tools/v3/no_ttt_workers_entry_test.py::test_launcher_resume_same_job_with_different_worker_count",
+        "tools/v3/no_ttt_workers_entry_test.py::test_explicit_prefetch_and_nonpersistent_cli_are_real_profile_options",
+        "tools/v3/matched_no_ttt_entry_test.py::test_launcher_exact_world8_matched_contract_without_torchrun",
+        "tools/v3/matched_no_ttt_entry_test.py::test_launcher_rejects_g1_job_before_any_python",
+        "tools/v3/matched_no_ttt_entry_test.py::test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_sources",
+        "tools/v3/matched_no_ttt_entry_test.py::test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses_project_venv",
+        "tools/v3/matched_no_ttt_entry_test.py::test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python",
+        "--basetemp=/tmp/psm-nottt-console-20261031/final/tmp",
+        "--junitxml=/tmp/psm-nottt-console-20261031/final/junit.xml"
+      ],
+      "cwd": "/workspace/psm-wma-nottt-console",
+      "timeout": 180,
+      "exit_code": 0,
+      "seconds": 21.283289523998974
+    }
+  ],
+  "gpu": false,
+  "real_training": false,
+  "real_dcp": false,
+  "old_58_301_rerun": false,
+  "identities": {
+    "root": "24dbb677f7a60eeab6934c44352c7e00fa6d9b36",
+    "child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485"
+  },
+  "ast_files": 4,
+  "totals": {
+    "tests": 49,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true
+}
