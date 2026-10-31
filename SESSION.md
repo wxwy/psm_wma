@@ -1,3 +1,26 @@
+# 2026-10-31 — No-TTT Issue12+13 production promotion claimed
+
+IN_PROGRESS; Codex; isolated v3-nottt-promotion-20261031. Latest Owner
+Step1 safe promotion instruction follows formal APPROVE_CODE exact Pair
+57e36decbec0e00ecb94dc1c080fd8976afff25d / baf1b5bf46853e9849a91518803b9738fc216235.
+Actual detailed review read at canonical 692b7ed467b04b016d609a17d91a8631c867710e,
+source docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue12_13_Integrated_57e36dec_baf1b5bf_Composition_Incremental_Code_Gate_APPROVE_CODE.md.
+Review docs and matching live Inbox both present. Observation CST 2026-10-31T13:20:24.270204+08:00;
+fresh fetch/advertised match. Since prior b260,1f79 approval plus563e/692b
+EvalV2 OSMesa evidence/handoff docs only; preserve these unrelated records.
+
+Plan: merge published combined candidate cf1065bab335b7f268a183f302bf8b953e3e5e94 into latestV3
+history without force or whole-tree overwrite; resolve only bookkeeping docs
+by preserving canonical+candidate bytes. Root source/tools/scripts/configs/vendor
+objects must equal approved57e3; Child/Gitlink exactlybaf, EvalV2 preserved.
+No production code editing, old tests/performance rerun, GPU/server/sim/model/data/
+DCP/Job/config identity or formalResume. Record Git-object/ledger preservation
+evidence, non-force push only after current remote is an ancestor; concurrent
+advance triggers safe resync. After remote readback, report exact final Root/Child
+and STOP; actual original12200 nw8 training remains Owner-only separate action.
+
+## Preserved canonical session
+
 # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
 
 - Gate `V3-CORRECTED-PHASE3-CACHED-SFT-CACHE-HIT` 进入 REVIEW。authority：Phase3 v1.0 design root `78ff45375cecc3783ec3d219af23c4be5902b9da` 与 `/tmp/CX_PHASE3_CACHED_LATENT_SFT_CACHE_HIT.md`；baseline child `ce07cb6f4a3f7792d85b7583ff6c8bda0bfa0cb0`。复用 Phase1A cache catalog/reader、Phase1B source/index、Phase2 official raw15/state15 adapter、官方 ActionSFTDataset/ActionTransformPipeline 与 PackingDataLoader；本轮 child 只新增 `robocasa_exact_window_cached_sft.py`、`robocasa_exact_window_cached_sft_test.py`、`omni_mot_cached_vision_test.py`，并仅在 `omni_mot_model.py:get_data_and_condition` 加 optional cache-hit vision preparation。raw sample 附 `cached_latent_required=True`，model 对哨兵缺 latent/反向缺哨兵及不合法 packed ABI fail-closed；constructor 校验 VideoResize `192×320` canvas 与 fixed Wan factor16 对应 latent `12×20`，cache-hit保留 native crop 与 temporal helper，VAE/collective调用为0，off-mode 保持原路。

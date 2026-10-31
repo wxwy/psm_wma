@@ -476,3 +476,7 @@
 - **V3-EVAL-INPUT-CACHE-ISSUE6-20261027** — REVIEW; authorfive-moduleCPU227PASS/0skip,53new tests,static9/frozen10PASS; stable cold modelonefullhash and lockedstat, warm0payload bytes identicalSHA, strict cache miss/invalid/atomickill/lease/history/configTask/CLI negatives. Candidate-only Root+unchanged746c5cf2Child; rawEvidence +runbook thenGPTfreshreview/DSCPU,STOP. No live eval/training/model/server/GPU or V3 merge.
 
 - [x] **V3-EVALV2-SHARED-GPU-20261030** — DONE（代码与快速CPU/Ruff，Owner授权V3提升）；被测Root19342b35011a8ce0f4f81d59779d5da86f9bc9f4 / Child0ae313e329d290fc6b8a50fda1112820fb7ac485。直接删除foreign GPU PID独占拒绝，无新开关；63CPU零失败/错误/跳过、Ruff0.12.7 check/format PASS；显存/缺卡/RSS及owned-only cleanup保留。Review：docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_SharedGPU_19342b3_QuickCPU63_Promotion.md。真实GPU Canary不属于本项完成声明。
+
+# 2026-10-31 — Approved No-TTT V3 promotion
+
+- **NOTTT-ISSUE12-13-V3-PROMOTION** — IN_PROGRESS; Codex; latest Owner Step1 and exact APPROVE_CODE57e36dec/baf1b5bf confirmed at canonical692b7ed4. Safe merge published candidate/currentV3 preserving both histories/records; exact approved source/Child/EvalV2/ledger audit then non-force V3 update and remote exactRoot/Child/Gitlink receipt. No implementation rework/tests/GPU/DCP/Job/formalResume; stop after promotion.
