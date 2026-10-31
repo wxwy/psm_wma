@@ -514,3 +514,7 @@
 - **EVALV2-CLI-TASKS-ALL** — DONE (Code Gate only); Codex; Formal Root f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1 / unchanged Child 6c83596d6a259e89c4cd3e79424024983426ac3d; exact-pair GPT APPROVE_CODE at canonical 2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a. Original author 29 PASS retained; no rerun. Safe V3 promotion tracked separately; runtime not authorized.
 
 - **EVALV2-CLI-TASKS-ALL-PROMOTE** — DONE; Codex; production Root 68cba5640eae205445153808951145cac0912d8c normally pushed to V3 and remotely read back; official Child/Gitlink 6c83596d6a259e89c4cd3e79424024983426ac3d unchanged. All 9,852 source objects equal approved Formal f3fccc8f; 19 artifact hashes / 5 bindings PASS. Both histories and review preserved. No historical tests, active shared-directory update or runtime actions; completion receipt docs-only, then STOP.
+
+# 2026-11-01 — Issue14 optional rollout cap
+
+- **EVALV2-ROLLOUT-FIRST-N** — IN_PROGRESS; Codex; prerequisite Owner Issue #14 and minimal design at Root9ba1dd11 read. Scope: Root config/runtime, Child native adapter, narrow tests/evidence. Accept strict optional integer cap, per-Task logical index selection on reused actors, independent generated media/SR/cleanup, same-Run cap-drift refusal with legacy null preserved. Exact isolated Formal Pair + author CPU, then GPT Code Gate; no V3 merge or active runtime changes.

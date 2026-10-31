@@ -1,3 +1,30 @@
+# 2026-11-01 — Issue #14: per-Task first-N rollout media, IN_PROGRESS
+
+Owner Issue #14 and canonical minimal design read and ACK at 2026-11-01T07:53:41.800116+08:00.
+New isolated Root/Child branch: `v3-eval-v2-rollout-first-n-20261101`.
+Root base: `9ba1dd110a4e3e99e717937c2f8d044fa077cdbf`.
+Child base: `6c83596d6a259e89c4cd3e79424024983426ac3d`.
+
+Planned production files: Root `scripts/robocasa_eval_v2/config.py` and `runtime.py`;
+Child `cosmos_framework/simulation/robocasa/eval_v2_adapter.py`.
+New focused test: `tools/v3/eval_v2_batch_tests/rollout_policy_test.py`; add a build
+runbook and frozen author CPU evidence. The three production files and the focused test/runbook are implemented; CPU Gate pending.
+
+Add optional YAML `rollout_mp4_first_n_per_task` (default null, legacy bool intact),
+strict exact-int 0..episodes bound and reject false+non-null cap. Pass the static
+cap to every actor and decide per NativeEpisode.execute using logical episode
+index. Generated media and Core SR/Local cleanup stay independent. Reuse existing
+resolved invocation snapshots to reject same-Run cap drift, including an old Run
+that has no cap; do not add a schema/service or change legacy null behavior.
+
+Only narrow synthetic CPU/static checks, exact Formal Root/Child, isolated
+publication and fresh GPT Code Gate request. Do not auto-merge V3, update active
+shared psm_wma_v3/out2/YAML/results/media or training/eval processes, access real
+DCP/model/data, run GPU/Action Server/simulator/FFmpeg, or dispatch DS. No running
+900-Episode or NoTTT asset is touched. Scoped Ruff formatting completed. Freeze Child, then Root/Gitlink before author checks; not yet committed.
+
+## Earlier V3 promotion history preserved
+
 # 2026-10-31 — EvalV2 CLI `--tasks all`: V3 promotion COMPLETE
 
 Production promotion Root: `68cba5640eae205445153808951145cac0912d8c`.

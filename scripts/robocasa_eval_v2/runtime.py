@@ -51,6 +51,27 @@ class Runtime:
             "local_memory_mode", "required"
         ):
             raise ValueError("runtime Local-TTT mode differs from frozen manifest")
+        limit = cfg.get("rollout_mp4_first_n_per_task")
+        # CLI writes its resolved snapshot under the Run lock before constructing
+        # Runtime. Anchor to Fresh, never a later (possibly rejected) Resume.
+        initial = next(
+            (
+                entry
+                for entry in records(store.root / "_internal/invocations")
+                if entry["mode"] == "fresh"
+            ),
+            None,
+        )
+        if initial is not None:
+            frozen_limit = initial["resolved"].get("rollout_mp4_first_n_per_task")
+            if (
+                frozen_limit is not None and type(frozen_limit) is not int
+            ) or frozen_limit != limit:
+                raise ValueError(
+                    "rollout cap differs from the initial Run configuration"
+                )
+        elif limit is not None:
+            raise ValueError("rollout cap requires a Fresh Run configuration record")
         self.stop = threading.Event()
         self.registry = Registry(store.root, cfg["terminate_grace_s"])
         self.servers = {}
@@ -300,6 +321,9 @@ class Runtime:
                     ],
                     "predict_timeout_s": self.cfg["request_timeout_s"],
                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
+                    "rollout_mp4_first_n_per_task": self.cfg.get(
+                        "rollout_mp4_first_n_per_task"
+                    ),
                     "save_generated_video": self.cfg["save_generated_video"],
                     "encoder_grace_s": self.cfg["encoder_grace_s"],
                 },

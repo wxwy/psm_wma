@@ -20,6 +20,7 @@ DEFAULTS = {
     "prediction_steps": 30,
     "guidance": 1.0,
     "save_rollout_mp4": True,
+    "rollout_mp4_first_n_per_task": None,
     "save_generated_video": "first",
     "server_start_s": 900.0,
     "episode_wall_s": 1800.0,
@@ -170,6 +171,13 @@ def resolve(argv=None):
         or type(cfg["save_rollout_mp4"]) is not bool
     ):
         raise ValueError("invalid resource/media policy")
+    limit = cfg["rollout_mp4_first_n_per_task"]
+    if limit is not None and (
+        type(limit) is not int
+        or not 0 <= limit <= cfg["episodes_per_task"]
+        or not cfg["save_rollout_mp4"]
+    ):
+        raise ValueError("invalid rollout_mp4_first_n_per_task")
     for key in PATHS - {"asset_manifest"}:
         if not cfg.get(key):
             raise ValueError(f"missing {key}")
