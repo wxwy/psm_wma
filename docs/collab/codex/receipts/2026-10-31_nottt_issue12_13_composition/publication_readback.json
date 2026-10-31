@@ -1,0 +1,20 @@
+{
+  "status": "PASS_GITHUB_COMPOSITION_READBACK",
+  "utc": "2026-10-31T05:05:27.417920+00:00",
+  "formal_root": "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+  "formal_child_gitlink": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "candidate_branch": "v3-nottt-integrated-20261031",
+  "root_evidence_advertised": "de276eae978fd8bdf9fc68607f21ed7ce9b6b727",
+  "child_branch": "v3-nottt-async-lazy-port-20261031",
+  "child_advertised": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "artifacts_sha256_verified": 45,
+  "source_bindings_verified": 15,
+  "author_cases": 6,
+  "canonical_V3_unchanged": "b260290ef09ef25a8a41259aef153df5efff3369",
+  "inbox_prefix_preserved": true,
+  "inbox_bytes": 69807,
+  "clean": true,
+  "production_merged": false,
+  "real_data_model_dcp_gpu_training": false,
+  "review": "fresh composition Code Gate request published, no new verdict inferred"
+}

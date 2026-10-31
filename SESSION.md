@@ -1,3 +1,22 @@
+# 2026-10-31 — No-TTT composition published; STOP for GPT Code Gate
+
+REVIEW. Formal Root57e36decbec0e00ecb94dc1c080fd8976afff25d /
+approved unchangedChild-Gitlinkbaf1b5bf46853e9849a91518803b9738fc216235.
+Isolated Root v3-nottt-integrated-20261031 evidence/request HEAD
+de276eae978fd8bdf9fc68607f21ed7ce9b6b727 published and GitHub fetched/
+advertised readback PASS at2026-10-31T05:05:27Z. Child already published on
+v3-nottt-async-lazy-port-20261031.45 artifact hashes and15 formal source
+bindings verified, Inbox prefix intact69,807bytes, worktreesclean. Canonical
+V3 stillb260290ef09ef25a8a41259aef153df5efff3369; no merge/training/GPU.
+New6 synthetic composition cases/static6Python/bash2/ShellCheckPASS; no old
+suites or performance experiment replayed.3 production blobs exactIssue13;
+wholeChild exactIssue12/EvalV2 retained. Fresh composition review request
+published, no newPair verdict inferred. Receipt under docs/collab/codex/receipts/
+2026-10-31_nottt_issue12_13_composition/. Stop per latest Owner gate.
+This subsequent receipt commit is bookkeeping, not Formal Implementation.
+
+## Earlier task/session records preserved
+
 # 2026-10-31 — No-TTT Issue12+13 composition author PASS, REVIEW
 
 Formal Root 57e36decbec0e00ecb94dc1c080fd8976afff25d / unchangedChild-Gitlink baf1b5bf46853e9849a91518803b9738fc216235.
