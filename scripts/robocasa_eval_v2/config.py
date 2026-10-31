@@ -10,6 +10,7 @@ from pathlib import Path
 DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
+    "local_memory_mode": "required",
     "batch_wait_ms": 20,
     "tasks": "all",
     "episodes_per_task": 50,
@@ -51,6 +52,7 @@ def resolve(argv=None):
     p.add_argument("--owner-decision", type=Path)
     p.add_argument("--gpus")
     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
+    p.add_argument("--local-memory-mode", choices=("off", "required"))
     p.add_argument("--batch-wait-ms", type=int)
     p.add_argument("--sims-per-gpu", type=int)
     p.add_argument("--max-infer-batch-size", type=int)
@@ -79,7 +81,7 @@ def resolve(argv=None):
     cfg = {**DEFAULTS, **data}
     if cfg["schema"] != DEFAULTS["schema"]:
         raise ValueError("new V2 config schema required")
-    for field in ("execution_profile", "batch_wait_ms"):
+    for field in ("execution_profile", "batch_wait_ms", "local_memory_mode"):
         if getattr(a, field) is not None:
             cfg[field] = getattr(a, field)
     if a.sims_per_gpu is not None:
@@ -124,6 +126,12 @@ def resolve(argv=None):
         raise ValueError("plan/port range")
     if cfg["execution_profile"] not in ("phase_a", "phase_b"):
         raise ValueError("explicit execution profile required")
+    if cfg["local_memory_mode"] not in ("off", "required"):
+        raise ValueError("explicit off|required Local-TTT mode required")
+    if cfg["local_memory_mode"] == "off" and cfg["execution_profile"] != "phase_b":
+        raise ValueError(
+            "No-TTT requires the shared transactional phase_b profile (B1 or B2+)"
+        )
     if (
         cfg["sims_per_gpu"] > 8
         or cfg["max_infer_batch_size"] > 8

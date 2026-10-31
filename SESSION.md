@@ -1,3 +1,26 @@
+# 2026-10-31 — V3 train/Eval union promotion prepared, publication pending
+
+IN_PROGRESS; Owner confirmed6c target, exact APPROVE_CODE
+4139ad245b73cc1c16c9d4954241cecb81478992 /
+6c83596d6a259e89c4cd3e79424024983426ac3d actually read at canonicalb0c56553.
+No old2f pin: Child6c hasparentsbaf+2f and retains both histories/source.
+Prepared Git-only audit PASS:9850Root source objects exact approved4139;
+1270Child objects exact disjoint union, eachside13paths. Canonical2479 and
+candidate2599 existing doc objects preserved; Inbox canonical byteprefix+
+candidate tail once.44 original artifact hashes/84 original uniqueJUnit verified
+read-only,0fail/error/skip;1real_OS planned deselected. NO TEST/OS/GPU RERUN.
+
+Prepared 2026-10-31T14:18:03.587038+08:00. Next fresh remote check, normal Childv3-local-ttt
+fast-forwardbaf→6c FIRST, RootV3 safe merge/push SECOND, exact remote readback
+thenSTOP. No original Job/config/data/model/identity/Checkpoint/DCP/runtime
+access, training or simulation; no DS dispatch. V3solemaintenancebaseline,
+training/eval keep separate frozen run contracts/results/Gates. Old candidate
+README target-pending text is historical; current Owner and Review settle6c.
+Report docs/collab/codex/reviews/2026-10-31_V3_TrainEval_6c83596d_Approved_Promotion.md;
+receipts docs/collab/codex/receipts/2026-10-31_train_eval_union_v3_promotion/.
+
+## Earlier and preserved records
+
 # 2026-10-31 — Unified train+Eval V3 promotion claimed
 
 IN_PROGRESS; Codex; Owner approved6c target and requests safe promotion.
@@ -1807,3 +1830,35 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 - Owner明确取消显卡独占 BLOCKED_RESOURCE，并授权“自己快速 CPU 回归和 Ruff 检查 合并”。复核现有候选 `19342b35011a8ce0f4f81d59779d5da86f9bc9f4` / Child+Gitlink `0ae313e329d290fc6b8a50fda1112820fb7ac485`：相对V3 `e5fde3f7279aaf171d32c4d3a78b038da0ac4d4f` 仅resources.py/entry_test.py两文件；无新开关，直接去除foreign GPU PID拒绝，保留GPU/显存/RSS检查及owned-only cleanup。
 - 快速CPU四组实际15+8+17+23=63 passed、零失败/错误/跳过；Ruff0.12.7 check/format两文件PASS，源/Child测试前后clean。缺依赖及普通沙箱PID/procfs不一致的两个前序失败保留并明确为环境问题；在验证PID一致的受支持环境中，原样源码/断言/测试选择最终63PASS。
 - 本提交为被测候选的docs-only后继，按Owner授权以expected-head、非force方式提升V3；生产源码及Child与已测候选一致。正式Review：`docs/collab/chatgpt/reviews/2026-10-30_V3_EvalV2_SharedGPU_19342b3_QuickCPU63_Promotion.md`；原始最终证据：`docs/collab/chatgpt/evidence/2026-10-30_evalv2_shared_gpu_quick_cpu_19342b3/`。不重复旧435项、不运行GPU/真实模型/仿真/训练，不改活跃NoTTT工作树。
+
+
+<!-- Historical F5 candidate entries imported byte-for-byte; current approval and Owner merge directive supersede their old pending status. -->
+
+
+## 2026-10-30 — F5-P1 bounded run identity / large runtime Evidence claim
+
+- Task V3-EVAL-V2-F5-P1 IN_PROGRESS/Codex. Owner explicit minimal persistence repair; freshfetch/advertised/trackingV3=80583a82c578bf64bddf37bd18474c856b64366b; official exactReview blobbfbfc5c3a9fe237274a5ff528c4ffa3007967fb0 directlyread. BaselineRoot427b4d09cdd8070820a39b93ebf2ff832a23e359/Child-Gitlink0ae313e329d290fc6b8a50fda1112820fb7ac485. IsolatedRoot/Child branchv3-eval-v2-runtime-evidence-20261030. DS onsite21MB/123363 asset counts remainDSreported, no access to originalDS files.
+- Intended files: Root scripts/robocasa_eval_v2/cli.py identity/evidence split at persistence boundary (identity.prepare/vendor/guard unchanged if possible), adjacent entry_test CPUfixture contract and new runtime_evidence_test.py. Child evaluation/robocasa_v2/store.py dedicated append-only64MiB writer limited to_internal/runtime_probe/<uuid>.json usingexistingatomic_publish/safe/fsync. Ordinary256KiB andreport16MiB contractsunchanged; no publiclimit arg. Root keepsallnecessaryfields andruntime.digest, rawprobe/fullruntime onlysidecar+invocationref.
+- Parallelowners: rootCLI andfixtureminimalupdate; mkdir_race_design Childwriteronly; fixture_review newRootruntime_evidence_test.py only; review_requirements read-onlyidentitysemantic audit. Claimbeforeedits. Newlarge>16MiB publicFresh/Resume tests, warning-onlyResume allowed/evidence appended, true digest/source/model/config drift refused, ordinaryJSONlimit and dedicatedwriter boundary/failure negatives; narrowrelatedCPU/staticonly.
+- No435repeat/sharedGPU/Batch/Queue/LocalTTT/NoTTT/checkpoint/GPUconfig/sourceverification/vendorSHA changes, noCanary/900/training ormerge. NewChildthenRoot exactPair/sourcechecks/evidence thenGPT narrowCodeGateSTOP. LatestV3Owner roles supersedeobsolete multi-reviewwait. Notcommittedyet.
+
+
+## 2026-10-30 — F5-P1 source freeze and narrow CPU handoff
+
+- FinalRoot7c74dc26ac4837f193727ecf847b9b64554c18b2/Child-Gitlink53c3c95202e14d3b72d236eee6899a80acf82989, parent427b/0ae; productionCLI20+/1- andChildwriter10+ only, oldidentity/vendor/modelguard/runtime/resources/config bytesunchanged. OrdinaryStoreASTunchangedexceptnew64MiBwriter/constant; oldentryassertionsunchangedexceptfake_preparetwofields. Final85PASS=21new+15entry+49Store/0skip,shell0,cleanPair/source10hashstable; static5checks/syntax4/scopeproof/realverify_source PASS. OldRED1oversizedFAIL retained, working+preformat andformatdebug areintermediateonly.
+- Complete synthetic150kassetSHA publicFreshResume sidecars37,200,840/37,200,847B, anchor2553B; warning-onlyappend/runtimeDigeststable/anchorCore/cachebindingstable; allidentity/storagefailclosednegativesPASS. Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/` includes losslessgz largeoriginals+SHA/bytes andrawsmall/JUnit/log/sourceproof. NoactualDSraw/realassets/GPU/training.
+- V3-EVAL-V2-F5-P1 REVIEW; CanonicalInbox requestsGPT fresh persistence-only CodeGate. IsolatedChildthenRootpublish/readbackSTOP; originalCanary1GPU2SimB2total4onlyafterapproval, newnamespace/checkpointavailabilitycheck. No435replay/DSrun/sharedGPUpatch/V3merge/Issue response/900.
+
+## 2026-10-31 — EvalV2 approved implementation / current V3 composition claim
+
+- V3-EVALV2-PROMOTION IN_PROGRESS/Codex; Owner authorizes safe merge and light CPU only, preserves current V3 docs/training, no redesign/Canary replay/real evaluation/training execution. Fresh fetch+advertised+tracking V3=369f3f4d82b8694b7efee5d5b16589d82aa00547 (advanced beyond Owner observed2ee690b0), Gitlink=baf1b5bf46853e9849a91518803b9738fc216235.
+- Direct GitHub exact reviews read: EvalV2 d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163/2f7334c4ada6ace1d21185985aae90539052bf18 APPROVE_CODE (blob9b09df9fa690b08557a504d6c43ccf2256fe08d3); OSMesa DS_PRO_REPORTED/OWNER_ACCEPTED PASS (blob49cffe8ee739cf31af81bb7d6765066b55a3def7), no request for old raw/Canary rerun; approved NoTTT composition57e36dec/baf1b5bf review blobd23c345da4ccd77de20589ee2ea2e8cf1ad2003a. Current Owner merge authorization supersedes older review no-merge limit and obsolete V2/MM/Kimi gating.
+- Conflict in requested outcome discovered: exact pin2f7334c4 would drop newly mergedbaf1b5bf training code. Isolated Root/Child branchv3-eval-v2-integration-20261031 based on current369/baf. Prepare only a reviewable non-destructive composition of both approved Child histories, whose modified paths are disjoint; preserve EvalV2 bytes from2f7334c4 and NoTTT training bytes frombaf1b5bf. Result necessarily has a NEW Child SHA. Do not publish canonical V3/v3-local-ttt until exact-target constraint is resolved with Owner; reversible prep/tests/isolated publication allowed.
+- Anticipated modifications: merge existing approved Root candidate d18b420c (F5+dual mode+existing Evidence) without rewriting production; resolve only bookkeeper conflicts SESSION/TODO/CODEX_INBOX append-only preserving both histories; Root Gitlink to isolated composed Child. Child pure Git merge of2f7334c4 into currentbaf1b5bf, no hand edits/new feature. Object audit all source and docs, narrow dual-mode/config/entry + training composition synthetic CPU, Ruff/syntax/import/entry checks. No old435/324 full rerun, no OS/GPU/real assets/DCP/Job/Checkpoint/Canary/18-task/900 execution. Work external evidence /workspace/work/eval-v3-integration-evidence.
+
+
+## 2026-10-31 — Current-V3 composition ready for exact Child decision
+
+- V3-EVALV2-PROMOTION IN_PROGRESS / canonical publication pending exact-target resolution, not completedV3 merge. SourceRoot4139ad245b73cc1c16c9d4954241cecb81478992/Child6c83596d6a259e89c4cd3e79424024983426ac3d; Root/Child clean before/after lightCPU84PASS/0fail,error,skip/1deselected/shell0, fixedsourcehashes. Static24/sourceGuard/import/CLI helpPASS. Preserveswholecanonical369+baf and approvedd18+2f objectunion; no production edits.
+- Independent read-only source audit confirmsChild1270 objects exactunion, 13vs13pathsdisjoint; Rootonly3ledgers/Gitlink overlap. Evidence docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md includesrawsmall/commands/conflict originals/object proof. Twoexternalstatic scope-preflight assumptions failed beforeproject; correctedonlyexternalchecker, noformalcode/testassertion changes.
+- No canonical V3/v3-local-ttt publication, DS dispatch/execution, OS/GPU/Canary/18task/900/train/realcheckpoint/data access. Willpublishisolatedrefs only forreview; needOwner resolve originalpin2f which woulddropnewbaftraining. Currentrecommendedcandidate preservesbothusingnew6c Child. OldOSMesaCanaryOWNER_ACCEPTED honored withoutrequestingraw/repeatingrun.

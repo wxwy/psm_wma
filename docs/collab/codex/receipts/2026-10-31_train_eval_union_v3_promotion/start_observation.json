@@ -1,0 +1,22 @@
+{
+  "observed_cst": "2026-10-31T14:16:08.833372+08:00",
+  "before_head": "369f3f4d82b8694b7efee5d5b16589d82aa00547",
+  "fetched_advertised_V3": "b0c56553afcdd0cec99cdbae6bdef1043bb9c0bd",
+  "canonical_delta": "b0c56553 review and append-only Inbox only",
+  "formal_root": "4139ad245b73cc1c16c9d4954241cecb81478992",
+  "formal_child": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "candidate_head": "6bfb05f8a916aad51e619c557231463ed6e3f1ce",
+  "candidate_branch": "v3-eval-v2-integration-20261031",
+  "exact_review": "docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_NoTTT_TrainEval_4139ad24_6c83596d_Union_Incremental_Code_Gate_APPROVE_CODE.md",
+  "verdict": "APPROVE_CODE",
+  "review_blob": "a71320cec17a48f5a5561012ac9a8da33825dc37",
+  "latest_owner_scope": "safe Child-first/Root-second promotion only; V3 sole maintenance baseline, independent training/eval run contracts",
+  "not_authorized": [
+    "test rerun",
+    "GPU/OS integration",
+    "trainingResume",
+    "simulation",
+    "real data/model/DCP/Job modifications"
+  ],
+  "roles": "Codex safe Git merge/source verification; GPT approved exact union; no DS dispatch/old tmux review workflow"
+}

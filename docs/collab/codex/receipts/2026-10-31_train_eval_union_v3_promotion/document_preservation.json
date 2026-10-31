@@ -1,0 +1,28 @@
+{
+  "TODO.md": {
+    "canonical_or_claim_prefix_preserved": true,
+    "candidate_suffix_preserved_once": true,
+    "common_bytes": 184281,
+    "prefix_bytes": 184782,
+    "candidate_suffix_bytes": 1782,
+    "candidate_suffix_sha256": "4df6788058ab85c0142cecdddd5e94d8cd10c7e8f5dcc67d7e131290cb01d8ba",
+    "merged_bytes": 186564
+  },
+  "docs/collab/chatgpt/CODEX_INBOX.md": {
+    "canonical_or_claim_prefix_preserved": true,
+    "candidate_suffix_preserved_once": true,
+    "common_bytes": 79000,
+    "prefix_bytes": 80627,
+    "candidate_suffix_bytes": 4137,
+    "candidate_suffix_sha256": "04613b9e6d5386c4a1b46c6ef77756a63e56f05b671281cff8bf770594028141",
+    "merged_bytes": 84764
+  },
+  "SESSION.md": {
+    "auto_merged": true,
+    "claim_prefix_preserved": true,
+    "shared_history_preserved": true,
+    "candidate_suffix_preserved": true,
+    "candidate_suffix_bytes": 6801,
+    "candidate_suffix_sha256": "032818e63885955ef3fb9e64a5b2f2b12140bd9d362b5c690b3c80530c636bea"
+  }
+}

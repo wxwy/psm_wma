@@ -1,0 +1,16 @@
+--- cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py
++++ cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py
+@@ -128,11 +128,7 @@
+ def write_runtime_probe(path, value):
+     """Append bounded diagnostics only within the runtime probe namespace."""
+     path = safe(path)
+-    if (
+-        path.parent.name != "runtime_probe"
+-        or path.parent.parent.name != "_internal"
+-        or path.suffix != ".json"
+-    ):
++    if path.parent.name != "runtime_probe" or path.parent.parent.name != "_internal" or path.suffix != ".json":
+         raise ValueError("runtime probe UUID JSON path required")
+     identifier(path.stem)
+     _publish(path, value, limit=MAX_RUNTIME_PROBE)
+

@@ -1,0 +1,38 @@
+[
+  {
+    "mode": "fresh",
+    "original": "/workspace/work/runtime-probe-evidence/final-formatted/tmp/test_public_large_runtime_evid0/out/_internal/runtime_probe/5322d750a9934fa780ea48e5ee5ce469.json",
+    "published": "large_case/_internal/runtime_probe/5322d750a9934fa780ea48e5ee5ce469.json.gz",
+    "encoding": "gzip_mtime0_no_filename",
+    "original_sha256": "750b0b2529aace70403e2e1ac2e9b153459761d5ffbb2b60048d046372d3ac9c",
+    "original_bytes": 37200840,
+    "published_sha256": "fd4af63b07fe41c9ac3cfa4bac6b2c215c15d99300a891bb594d22d7a05390d9",
+    "published_bytes": 1600966,
+    "canonical_sha256": "67bc69e9901453b0a8bba5cfc479cf33a4c504b87995452fd9540bd3292906c3",
+    "decompressed_bytes_JSON_canonical_verified": true,
+    "runtime_digest": "0c05a671d506721dd7fbaae8c229e6a74cacc628930623c711a013b7fddca8b8",
+    "asset_SHA_entries": 150000,
+    "asset_table_canonical_sha256": "a07c553620c1c1768a712975f68ad48846893943c6192a3485966cb69e984cc5",
+    "stdout_sha256": "1fe5d8d5494031cce88123fb66c8587ef7e1f919340b7da9a13345df0b4a28e0",
+    "stdout_warning": "first CPU vendor warning",
+    "stdout_body_sha256": "a662de0bae7bbc2c5e3c1cc5298e910b9d68f28014468c423eb52baafbe33447"
+  },
+  {
+    "mode": "resume",
+    "original": "/workspace/work/runtime-probe-evidence/final-formatted/tmp/test_public_large_runtime_evid0/out/_internal/runtime_probe/532127c2128e4bd7b100fa010ae19ae7.json",
+    "published": "large_case/_internal/runtime_probe/532127c2128e4bd7b100fa010ae19ae7.json.gz",
+    "encoding": "gzip_mtime0_no_filename",
+    "original_sha256": "823c695381f4344f8ead3df956d67cb31c5225467c59e0367a29863dd334f0af",
+    "original_bytes": 37200847,
+    "published_sha256": "b68aa7989ff3be890858de349278ce461f1101b21b7f9ea1f91ceb23b0702375",
+    "published_bytes": 1600972,
+    "canonical_sha256": "c7266d718e9d221a6c1638315bed113bb567c54dba63022d98e32d9696ffff83",
+    "decompressed_bytes_JSON_canonical_verified": true,
+    "runtime_digest": "0c05a671d506721dd7fbaae8c229e6a74cacc628930623c711a013b7fddca8b8",
+    "asset_SHA_entries": 150000,
+    "asset_table_canonical_sha256": "a07c553620c1c1768a712975f68ad48846893943c6192a3485966cb69e984cc5",
+    "stdout_sha256": "199054ac9c6591013f10baba16c9213cdd9731fe829004240d9be0c0bc72db45",
+    "stdout_warning": "changed CPU vendor warning only",
+    "stdout_body_sha256": "a662de0bae7bbc2c5e3c1cc5298e910b9d68f28014468c423eb52baafbe33447"
+  }
+]

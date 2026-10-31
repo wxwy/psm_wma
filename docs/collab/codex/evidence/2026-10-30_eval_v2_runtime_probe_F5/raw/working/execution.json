@@ -1,0 +1,81 @@
+{
+  "label": "working",
+  "cwd": "/workspace/work/psm-wma-runtime-evidence",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/work/psm-wma-runtime-evidence",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "-s",
+    "--tb=long",
+    "--basetemp=/workspace/work/runtime-probe-evidence/working/tmp",
+    "--junitxml=/workspace/work/runtime-probe-evidence/working/junit.xml",
+    "tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
+    "tools/v3/eval_v2_production_tests/entry_test.py",
+    "tools/v3/eval_v2_production_tests/store_test.py"
+  ],
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "LD_LIBRARY_PATH": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PYTEST_ADDOPTS": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/workspace/work/runtime-probe-evidence/working/cache/hf",
+    "XDG_CACHE_HOME": "/workspace/work/runtime-probe-evidence/working/cache/xdg",
+    "MPLCONFIGDIR": "/workspace/work/runtime-probe-evidence/working/cache/mpl",
+    "PYTHONPATH": "/workspace/work/psm-wma-runtime-evidence:/workspace/work/psm-wma-runtime-evidence/cosmos-framework:/workspace/work/psm-wma-runtime-evidence/scripts"
+  },
+  "source_before": {
+    "root": "427b4d09cdd8070820a39b93ebf2ff832a23e359",
+    "child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "root_status": "M SESSION.md\n M TODO.md\n M cosmos-framework\n M scripts/robocasa_eval_v2/cli.py\n M tools/v3/eval_v2_production_tests/entry_test.py\n?? tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
+    "child_status": "M cosmos_framework/evaluation/robocasa_v2/store.py",
+    "source_sha256": {
+      "scripts/robocasa_eval_v2/cli.py": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5",
+      "scripts/robocasa_eval_v2/identity.py": "9362b03ded6404b1ebf70fb59771216ac87bf5227dcf899c10b80989a7d5bb2e",
+      "scripts/robocasa_eval_v2/runtime.py": "019222460381ee96e02150d37b4703eaace90aa70f3be9431b14755fa1411790",
+      "scripts/robocasa_eval_v2/resources.py": "622c97e741fef25850b9dcc6733e70dec690ac2ea3521e0114ec3e83ad4337dc",
+      "scripts/robocasa_vendor.py": "bb221444bfa14fe4dfac86d066c2bc3cca38c1997451d96613f334260aea2b51",
+      "scripts/robocasa_episode_resume/model_identity.py": "65438cb4fb89199b86bfa78145210e692e77b3eefe86659fb9f08879de0216aa",
+      "tools/v3/eval_v2_production_tests/entry_test.py": "cec6b72766ffe9bf64ee119ee8b681a5420019ae2c0a1f624c8727bce689806c",
+      "tools/v3/eval_v2_production_tests/store_test.py": "49ab1d535bcdaac7ef59863636e748a5e6eefb2057df1d89941f8f189a0141d6",
+      "tools/v3/eval_v2_production_tests/runtime_evidence_test.py": "ce896f7750728bb536feb075ac303d9d59e75fb9aa058c748cbdf17267630ff4",
+      "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": "d718c47c817bd163f8761961c03b0f9d3f13f89f18a408e8cf34aeae1aef002d"
+    }
+  },
+  "source_after": {
+    "root": "427b4d09cdd8070820a39b93ebf2ff832a23e359",
+    "child": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "gitlink": "0ae313e329d290fc6b8a50fda1112820fb7ac485",
+    "root_status": "M SESSION.md\n M TODO.md\n M cosmos-framework\n M scripts/robocasa_eval_v2/cli.py\n M tools/v3/eval_v2_production_tests/entry_test.py\n?? tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
+    "child_status": "M cosmos_framework/evaluation/robocasa_v2/store.py",
+    "source_sha256": {
+      "scripts/robocasa_eval_v2/cli.py": "f8134ee79cc40dd436b8d043c70123170ef2b4dbbdb619f1187aa3a13b4c12b5",
+      "scripts/robocasa_eval_v2/identity.py": "9362b03ded6404b1ebf70fb59771216ac87bf5227dcf899c10b80989a7d5bb2e",
+      "scripts/robocasa_eval_v2/runtime.py": "019222460381ee96e02150d37b4703eaace90aa70f3be9431b14755fa1411790",
+      "scripts/robocasa_eval_v2/resources.py": "622c97e741fef25850b9dcc6733e70dec690ac2ea3521e0114ec3e83ad4337dc",
+      "scripts/robocasa_vendor.py": "bb221444bfa14fe4dfac86d066c2bc3cca38c1997451d96613f334260aea2b51",
+      "scripts/robocasa_episode_resume/model_identity.py": "65438cb4fb89199b86bfa78145210e692e77b3eefe86659fb9f08879de0216aa",
+      "tools/v3/eval_v2_production_tests/entry_test.py": "cec6b72766ffe9bf64ee119ee8b681a5420019ae2c0a1f624c8727bce689806c",
+      "tools/v3/eval_v2_production_tests/store_test.py": "49ab1d535bcdaac7ef59863636e748a5e6eefb2057df1d89941f8f189a0141d6",
+      "tools/v3/eval_v2_production_tests/runtime_evidence_test.py": "ce896f7750728bb536feb075ac303d9d59e75fb9aa058c748cbdf17267630ff4",
+      "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py": "d718c47c817bd163f8761961c03b0f9d3f13f89f18a408e8cf34aeae1aef002d"
+    }
+  },
+  "source_unchanged": true,
+  "duration_s": 27.27689695200388,
+  "shell_exit": 0
+}

@@ -88,6 +88,8 @@ def fake_prepare(cfg, *, cache, anchor=None, manifest=None):
             "model": model,
             "actual_root": "a" * 40,
             "tasks": dict((t, str(d)) for t, d in tasks),
+            "runtime": {"digest": "3" * 64},
+            "runtime_probe_evidence": {},
         },
         {},
     )

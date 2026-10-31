@@ -89,35 +89,60 @@ def require_free_ports(ports: list[int]) -> None:
                 raise RuntimeError(f"action server port {port} unavailable: {error}") from error
 
 
-def validate_server_info(info: Any, *, checkpoint: Path, config_file: Path, num_steps: int, guidance: float) -> None:
+def validate_server_info(
+    info: Any,
+    *,
+    checkpoint: Path,
+    config_file: Path,
+    num_steps: int,
+    guidance: float,
+    local_memory_mode="required",
+) -> None:
     """Validate the effective server configuration, not just HTTP readiness."""
     if not isinstance(info, dict):
         raise ValueError("action server /info must be an object")
     # CLI/manifest retain the requested root; the Child reports its selected model DCP.
-    for name, expected in (("checkpoint", (checkpoint / "model").resolve()), ("config_file", config_file)):
+    for name, expected in (
+        ("checkpoint", (checkpoint / "model").resolve()),
+        ("config_file", config_file),
+    ):
         value = info.get(name)
-        if not isinstance(value, str) or not Path(value).is_absolute() or Path(value).resolve() != expected:
-            raise ValueError(f"action server {name} mismatch: expected {expected}, got {value!r}")
+        if (
+            not isinstance(value, str)
+            or not Path(value).is_absolute()
+            or Path(value).resolve() != expected
+        ):
+            raise ValueError(
+                f"action server {name} mismatch: expected {expected}, got {value!r}"
+            )
     for name, expected in (
         ("raw_action_dim", 15),
         ("action_chunk_size", 16),
         ("max_action_dim", 64),
         ("num_steps", num_steps),
         ("fps", 20),
-        ("seed", 0),  # Policy sampler default; --seed on this queue is the environment seed.
+        (
+            "seed",
+            0,
+        ),  # Policy sampler default; --seed on this queue is the environment seed.
     ):
         if type(info.get(name)) is not int or info[name] != expected:
-            raise ValueError(f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}")
+            raise ValueError(
+                f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}"
+            )
     if type(info.get("guidance")) not in (int, float) or info["guidance"] != guidance:
         raise ValueError("action server guidance mismatch")
     local = info.get("local_memory")
     if (
         info.get("requires_state") is not True
         or not isinstance(local, dict)
-        or local.get("enabled") is not True
-        or local.get("mode") != "required"
-        or type(local.get("action_dim")) is not int
-        or local["action_dim"] != 15
+        or local_memory_mode not in ("off", "required")
+        or local.get("enabled") is not (local_memory_mode == "required")
+        or local.get("mode") != local_memory_mode
+        or (
+            local_memory_mode == "required"
+            and (type(local.get("action_dim")) is not int or local["action_dim"] != 15)
+        )
     ):
         raise ValueError("action server state/required Local-TTT protocol mismatch")
 
@@ -161,6 +186,7 @@ def wait_server(
     num_steps: int,
     guidance: float,
     stop: threading.Event | None = None,
+    local_memory_mode="required",
 ) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     url = f"http://127.0.0.1:{port}/info"
@@ -182,6 +208,7 @@ def wait_server(
             config_file=config_file,
             num_steps=num_steps,
             guidance=guidance,
+            local_memory_mode=local_memory_mode,
         )
         require_owned_listener(proc, port)
         if proc.poll() is not None:

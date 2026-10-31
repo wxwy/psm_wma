@@ -353,3 +353,31 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - 当前V3首先确认Root `369f3f4d` / Child `baf1b5bf` 已合入NoTTT；新Child`6c83596d6a259e89c4cd3e79424024983426ac3d`Git**双父分别为baf和旧Eval2f**。Direct compare：baf→6c仅13 EvalV2 files，2f→6c仅13 NoTTT train/test files；Root current369→new4139为可祖先快进，且核心EvalRoot 4/4、NoTTTRoot 4/4、Child训练6/6与Eval 3/3被测GitBlob分别和已批来源一致，未发现源码回退。不能固定Gitlink到旧2f。
 - Codex正式组合 Root `4139ad245b73cc1c16c9d4954241cecb81478992` / Child `6c83596d6a259e89c4cd3e79424024983426ac3d`；GPT直接核Junit **84 unique PASS/0failed/error/skip**，一个`real_OS`用例明确deselected不算PASS，静态/check/import来源作者全exit0；GPT独立SHA验真6份Evidence全匹配，原对象并集完整的计数属作者原审计。正式Review `docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_NoTTT_TrainEval_4139ad24_6c83596d_Union_Incremental_Code_Gate_APPROVE_CODE.md`：**`APPROVE_CODE`只限合并代码和lightCPU**，不把它当真实OS/GPU或新DCP资格。
 - Owner决定自此NoTTT训练和EvalV2统一V3维护、本会话统一审核/下发计划。Codex负责使用双历史Child6c按**Child先/Root后非强推**提升现行V3并回验，保留旧Eval+NoTTT历史/Inbox；DS仅实机证据执行，后续真实NoTTT从原正式C12200 Resume、Eval18×1/LocalTTT Canary等均需Owner另授权，不能使用A/B生成DCP或干扰共享GPU。新Formal变才增量Gate，旧Pair不重复。
+
+
+<!-- Historical F5 candidate entries imported byte-for-byte; current approval and Owner merge directive supersede their old pending status. -->
+
+
+## 2026-10-30 — F5-P1 run_inputs oversize / new persistence-only Code Gate request
+
+- **Formal Root `7c74dc26ac4837f193727ecf847b9b64554c18b2` / Child+Gitlink `53c3c95202e14d3b72d236eee6899a80acf82989`**, parent `427b4d09cdd8070820a39b93ebf2ff832a23e359` / `0ae313e329d290fc6b8a50fda1112820fb7ac485`. Owner-approved minimal persistence repair after direct exactReview80583a82/blob bfbfc5c3. This is fresh narrow APPROVE_CODE / REQUEST_CHANGES request, not realCanary evidence or prior435/sharedGPU re-review. Later docs/evidence HEAD is bookkeeping only.
+- RootCLI projection only: full verifiedruntime/probe+manifest binding→append-only internalEvidence, boundedrun_inputs keeps runtime.digest/allother identity fields; Resumeanchor neverrewritten, invocation sidecarrelativepath/canonicalSHA. ChildStore adds dedicated64MiB writer restricted _internal/runtime_probe/32hex.json, no replace/limit publicescape; existing256KiB read/write and16MiB summary +allordinaryStoreAST unchanged. Vendor/identity/verify_source/modelcache/Runtime/resources/config protectedBlobs unchanged. SharedGPU/Queue/Batch/NoTTT untouched.
+- Controlled oldRED1FAIL/shell1 hits realStore oversizedJSON; same newtesthash butoldworktree hasuntrackedtest, notformalcleanGate. **FinalexactcleanPair85PASS=21new+15entry+49Store,0fail/error/skip,shell0**, sourcehashes10unchanged; finalRuff/format/syntax4/diff/AST/protectedblob/actualunmockedsourceadmission PASS. Working/pre-format runs andinitialformatdebug retained separately, notaddedtotals.
+- RealpublicFresh→Resume onsynthetic150k assetSHA table: fullsidecars37,200,840/37,200,847B, smallanchor2,553B; fullruntime>16MiB, complete map/stdout retained, warning-onlyResumeappend andunchangedanchor/Core/cachebinding. Identitydrift/ordinary256KiB/private64MiB/path/symlink/overwrite/partial/fsync/link/fail-beforeRuntime negativesPASS. Vendor/library/execution CPUdoubles explicit; originalperassetverificationsourceunchanged. OnsiteDS21MB/123363 remainsDSreported, no realassetsaccess.
+- Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/`: rawXML/log/env/commands/fingerprints, complete sidecars gzip-losslesswithoriginalSHA/bytes/invocationcanonicalchecks, smallCore/identity originals, sourcebindings/diffs anddeterministictests. No fulltmp/cache/fakecheckpoint/miniGit dump. No435replay/sharedGPUchange/GPU/realCanary/train/900/Issue response/V3merge.
+- Publish isolated **Child thenRoot** andreadback; STOP forGPT freshnarrow CodeGate. Afterapproved sourceonly nextnative action remainsoriginal1GPU×2Sim×B2×4Episode Canary innewcleanPair/newnamespace withcheckpoint availabilityrechecked byDS. Do notreuseoldfailedFreshorbypassverify_source.
+
+
+## 2026-10-31 — EvalV2 safe current-V3 composition ready; original Child pin requires resolution
+
+- Owner授权merge已批d18/2f+lightCPU，fresh实际V3已369f3f4d/baf(训练先合入)，不同于Owner观察2ee/0ae。**canonical尚未改动**；直接pin原2f会丢13训练delta。
+- 已准备隔离组合source Root `4139ad245b73cc1c16c9d4954241cecb81478992` / Child `6c83596d6a259e89c4cd3e79424024983426ac3d`，纯merge两已批源码，Child包含baf和2f两祖先，1270对象完整并集；Root12407对象除bookkeepers+Gitlink外原对象并集，原V3 docs全部保留，生产路径无冲突/无手写变更。
+- **轻量84/84 PASS、0fail/error/skip、1计划排除OS用例、shell0/source unchanged**，新组合入口/两mode/训练Shell→CPUTrainer绑定与static24/sourceGuard/import/CLI help PASS。未重跑324/435/OSMesa4EP/900、不索要DS旧raw、不启动GPU/Job/数据/真实DCP。
+- 证据/DS轻测交接 `docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md`。这是来源组合与作者CPU，不伪称旧Code Gate绑定新SHA或DS独立PASS。保留已批设计；canonical发布前只需解决Owner原Child精确2f与新训练baf保留冲突。新Child6c是保留两路的方案，不应回退训练；隔离branch供review。
+
+## 2026-10-31 — Owner-confirmed 6c union promotion prepared (no new review request)
+
+- Exact GPTAPPROVE_CODE4139ad245b73cc1c16c9d4954241cecb81478992 / 6c83596d6a259e89c4cd3e79424024983426ac3d actually read at currentcanonicalb0c56553. Owner explicitly chooses6c (parentsbaf+2f), no rollbackto2f. Rootmergepublished6bfb05f8 candidate withlatestV3, preserve both histories/records.
+- Git-only audit: all9850Root source objects exactapproved4139; all1270Child objects equal parentunion,13Eval paths+13NoTTT paths disjoint. Canonical2479 and candidate2599 doc objects intact, canonicalInbox prefix+candidate tail preservedonce.44 frozen artifactSHA256 and original84uniqueJUnit PASS/0fail,error,skip read-only,1OS planned deselect notPASS. No pytest/static/oldGate/GPU rerun or production edits.
+- Report docs/collab/codex/reviews/2026-10-31_V3_TrainEval_6c83596d_Approved_Promotion.md; rawreceipts docs/collab/codex/receipts/2026-10-31_train_eval_union_v3_promotion/. Prepared2026-10-31T14:18:03.587038+08:00; normalChildfast-forwardfirst thenRootV3 nonforce/readback, stop. Existing frozen README target-pending remains historical, supersededby Owner6c choice and this exact Review.
+- V3 solemaintenancebaseline; training/eval keep own frozen runtime contracts/Checkpoint/data/results/Gates. No actualJob/config/identity/DCP/data/model/Server/OSMesa/GPU/DS dispatch/training/18task/Canary; runtime actions require separate Owner authorization.

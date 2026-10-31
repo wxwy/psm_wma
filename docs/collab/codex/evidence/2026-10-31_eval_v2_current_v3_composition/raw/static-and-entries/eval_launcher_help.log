@@ -1,0 +1,29 @@
+usage: robocasa_eval_v2_cli.py [-h] --config CONFIG
+                               [--owner-decision OWNER_DECISION] [--gpus GPUS]
+                               [--execution-profile {phase_a,phase_b}]
+                               [--local-memory-mode {off,required}]
+                               [--batch-wait-ms BATCH_WAIT_MS]
+                               [--sims-per-gpu SIMS_PER_GPU]
+                               [--max-infer-batch-size MAX_INFER_BATCH_SIZE]
+                               [--tasks TASKS] [--episodes EPISODES]
+                               [--output-dir OUTPUT_DIR]
+                               {fresh,resume,dry-run,authorize}
+
+Independent RoboCasa Evaluation V2 (requires approved runtime Gate)
+
+positional arguments:
+  {fresh,resume,dry-run,authorize}
+
+options:
+  -h, --help            show this help message and exit
+  --config CONFIG
+  --owner-decision OWNER_DECISION
+  --gpus GPUS
+  --execution-profile {phase_a,phase_b}
+  --local-memory-mode {off,required}
+  --batch-wait-ms BATCH_WAIT_MS
+  --sims-per-gpu SIMS_PER_GPU
+  --max-infer-batch-size MAX_INFER_BATCH_SIZE
+  --tasks TASKS
+  --episodes EPISODES
+  --output-dir OUTPUT_DIR

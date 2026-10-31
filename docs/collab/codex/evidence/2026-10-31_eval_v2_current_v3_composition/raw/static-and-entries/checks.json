@@ -1,0 +1,151 @@
+{
+  "status": "PASS",
+  "syntax_files": 24,
+  "commands": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+        "scripts/eval_robocasa_18task_queue.py",
+        "scripts/robocasa_eval_v2/cli.py",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/identity.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_batch_tests/dual_mode_test.py",
+        "tools/v3/eval_v2_batch_tests/os_fixture.py",
+        "tools/v3/eval_v2_batch_tests/runtime_test.py",
+        "tools/v3/eval_v2_production_tests/entry_test.py",
+        "tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
+        "tools/v3/eval_v2_production_tests/store_test.py"
+      ],
+      "exit": 0,
+      "log": "ruff_check.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/evidence.py",
+        "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_client.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_transactions_b1_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+        "scripts/robocasa_eval_v2/cli.py",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/identity.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_batch_tests/dual_mode_test.py",
+        "tools/v3/eval_v2_batch_tests/os_fixture.py",
+        "tools/v3/eval_v2_batch_tests/runtime_test.py",
+        "tools/v3/eval_v2_production_tests/entry_test.py",
+        "tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
+        "tools/v3/eval_v2_production_tests/store_test.py"
+      ],
+      "exit": 0,
+      "log": "ruff_format.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--range",
+        "92-133",
+        "scripts/eval_robocasa_18task_queue.py"
+      ],
+      "exit": 0,
+      "log": "queue_format_range.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/run_robocasa_eval_v2.sh",
+        "scripts/train_v3_matched_no_ttt_4gpu.sh",
+        "scripts/train_v3_matched_no_ttt.sh"
+      ],
+      "exit": 0,
+      "log": "bash_syntax.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "369f3f4d82b8694b7efee5d5b16589d82aa00547",
+        "4139ad245b73cc1c16c9d4954241cecb81478992",
+        "--",
+        "scripts",
+        "tools",
+        "configs"
+      ],
+      "exit": 0,
+      "log": "root_diff_check.log"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "cosmos-framework",
+        "diff",
+        "--check",
+        "baf1b5bf46853e9849a91518803b9738fc216235",
+        "6c83596d6a259e89c4cd3e79424024983426ac3d"
+      ],
+      "exit": 0,
+      "log": "child_diff_check.log"
+    }
+  ],
+  "source_guard_import": {
+    "status": "PASS",
+    "pair": [
+      "4139ad245b73cc1c16c9d4954241cecb81478992",
+      "6c83596d6a259e89c4cd3e79424024983426ac3d",
+      "4139ad245b73cc1c16c9d4954241cecb81478992"
+    ],
+    "origins": {
+      "robocasa_eval_v2.cli": "/workspace/work/psm-wma-v3-eval-merge/scripts/robocasa_eval_v2/cli.py",
+      "cosmos_framework.inference.robocasa_session_transactions": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py",
+      "cosmos_framework.inference.robocasa_transaction_mode": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/inference/robocasa_transaction_mode.py",
+      "cosmos_framework.trainer.matched_no_ttt": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+      "cosmos_framework.trainer.no_ttt_async_loader": "/workspace/work/psm-wma-v3-eval-merge/cosmos-framework/cosmos_framework/trainer/no_ttt_async_loader.py"
+    }
+  },
+  "launcher_help": {
+    "argv": [
+      "bash",
+      "scripts/run_robocasa_eval_v2.sh",
+      "--help"
+    ],
+    "exit": 0,
+    "mode_option": "--local-memory-mode {off,required}"
+  }
+}
