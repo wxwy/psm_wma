@@ -347,3 +347,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - All9848 Root source objects equal approvedFormal57e36decbec0e00ecb94dc1c080fd8976afff25d; wholeChild unchanged, EvalV2/allrecords intact.45 original artifact hashes/15 source bindings matched; no CPU/GPU suite rerun or new performance claim.
 - Receipt/report: docs/collab/codex/receipts/2026-10-31_nottt_issue12_13_v3_promotion/ and docs/collab/codex/reviews/2026-10-31_V3_NoTTT_Issue12_13_Approved_V3_Promotion.md. This completion entry is docs-only, not a replacement Formal implementation or Code Gate.
 - STOP. No real Job/config/identity/checkpoint/data/model operations, DS dispatch, server/sim/GPU/torchrun or trainingResume. Step2 still needs separate Owner authorization from original completeC12200 with agreednw8 options, never A/B checkpoint.
+
+## 2026-10-31 — 统一V3 Train+Eval `4139ad24/6c83596d` 新组合 Formal Code Gate `APPROVE_CODE`，批准采用新Child替代旧2f
+
+- 当前V3首先确认Root `369f3f4d` / Child `baf1b5bf` 已合入NoTTT；新Child`6c83596d6a259e89c4cd3e79424024983426ac3d`Git**双父分别为baf和旧Eval2f**。Direct compare：baf→6c仅13 EvalV2 files，2f→6c仅13 NoTTT train/test files；Root current369→new4139为可祖先快进，且核心EvalRoot 4/4、NoTTTRoot 4/4、Child训练6/6与Eval 3/3被测GitBlob分别和已批来源一致，未发现源码回退。不能固定Gitlink到旧2f。
+- Codex正式组合 Root `4139ad245b73cc1c16c9d4954241cecb81478992` / Child `6c83596d6a259e89c4cd3e79424024983426ac3d`；GPT直接核Junit **84 unique PASS/0failed/error/skip**，一个`real_OS`用例明确deselected不算PASS，静态/check/import来源作者全exit0；GPT独立SHA验真6份Evidence全匹配，原对象并集完整的计数属作者原审计。正式Review `docs/collab/chatgpt/reviews/2026-10-31_V3_EvalV2_NoTTT_TrainEval_4139ad24_6c83596d_Union_Incremental_Code_Gate_APPROVE_CODE.md`：**`APPROVE_CODE`只限合并代码和lightCPU**，不把它当真实OS/GPU或新DCP资格。
+- Owner决定自此NoTTT训练和EvalV2统一V3维护、本会话统一审核/下发计划。Codex负责使用双历史Child6c按**Child先/Root后非强推**提升现行V3并回验，保留旧Eval+NoTTT历史/Inbox；DS仅实机证据执行，后续真实NoTTT从原正式C12200 Resume、Eval18×1/LocalTTT Canary等均需Owner另授权，不能使用A/B生成DCP或干扰共享GPU。新Formal变才增量Gate，旧Pair不重复。
