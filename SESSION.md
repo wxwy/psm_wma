@@ -1,3 +1,29 @@
+# 2026-10-31 — No-TTT Issue12+13 minimal composition candidate
+
+IN_PROGRESS; Codex, isolated v3-nottt-integrated-20261031. New worktree starts
+from fresh fetched/advertised V3 b260290ef09ef25a8a41259aef153df5efff3369.
+Both detailed exact-pair APPROVE_CODE reviews actually read: Issue13
+24dbb677f7a60eeab6934c44352c7e00fa6d9b36/0ae313e3 and Issue12
+c66ade95b044d3664cd782d43d7917a604425db3/baf1b5bf. Review sources already
+present on canonical, authority is detailed reviews, not user summary/Inbox.
+No old branch fast-forward forced: create fresh worktree, preserve all old work.
+
+Planned Root changes only: approved3 production blobs (two standard launchers,
+no_ttt_console.py), approved3 Issue13 test files + approved Root async-port test,
+one new composition test, runbook/SESSION/TODO/evidence/append-only Inbox.
+Gitlink points to exact approved baf1b5bf46853e9849a91518803b9738fc216235;
+Child unchanged, no new Child implementation needed. Preserve EvalV2/current
+canonical docs; link old candidate evidence without relabeling it as a new run.
+4GPU accepts positive workers; approved8GPU launcher remains synchronous with
+no positive-worker forwarding, no new capability. CPU composition exercises
+real shell+console+real Trainer bind and LoaderProfile, synthetic producer only.
+No GPU, real data/model/DCP, servers/simulation/training or canonical merge.
+No repeated49/43/58/301 suites or GPU A/B. New exactRoot/baf Pair and incremental
+composition Code Gate then STOP, actual formalResume remains Owner-only.
+Observation UTC 2026-10-31T05:00:08.500439+00:00 (full local record /tmp/psm-nottt-integrated-20261031/start_observation.json).
+
+## Preserved canonical session history
+
 # V3 Corrected Phase 3 cached-SFT/cache-hit implementation（2026-10-05）
 
 - Gate `V3-CORRECTED-PHASE3-CACHED-SFT-CACHE-HIT` 进入 REVIEW。authority：Phase3 v1.0 design root `78ff45375cecc3783ec3d219af23c4be5902b9da` 与 `/tmp/CX_PHASE3_CACHED_LATENT_SFT_CACHE_HIT.md`；baseline child `ce07cb6f4a3f7792d85b7583ff6c8bda0bfa0cb0`。复用 Phase1A cache catalog/reader、Phase1B source/index、Phase2 official raw15/state15 adapter、官方 ActionSFTDataset/ActionTransformPipeline 与 PackingDataLoader；本轮 child 只新增 `robocasa_exact_window_cached_sft.py`、`robocasa_exact_window_cached_sft_test.py`、`omni_mot_cached_vision_test.py`，并仅在 `omni_mot_model.py:get_data_and_condition` 加 optional cache-hit vision preparation。raw sample 附 `cached_latent_required=True`，model 对哨兵缺 latent/反向缺哨兵及不合法 packed ABI fail-closed；constructor 校验 VideoResize `192×320` canvas 与 fixed Wan factor16 对应 latent `12×20`，cache-hit保留 native crop 与 temporal helper，VAE/collective调用为0，off-mode 保持原路。
