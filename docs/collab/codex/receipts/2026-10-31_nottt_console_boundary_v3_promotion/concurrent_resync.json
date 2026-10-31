@@ -1,0 +1,15 @@
+{
+  "observed_cst": "2026-10-31T16:06:28.454249+08:00",
+  "previous_canonical": "ec9d7b26391821d0eed34977e8d45ae90b346ba3",
+  "new_canonical": "2667393e501a1ff7429bdff004e4806d45724e3f",
+  "local_prepared_merge": "3f55986a9a934bc772924d16599d0c279861bb12",
+  "canonical_delta": "18x1 prelaunch review+Inbox, docs only",
+  "prepush_guard": "correctly stopped because remote advanced; no push attempted",
+  "conflict": "Inbox only",
+  "latest_canonical_prefix_preserved": true,
+  "previous_promotion_tail_preserved_once": true,
+  "promotion_tail_bytes": 3818,
+  "promotion_tail_sha256": "b12c684da620890e4f54f328563becb4e05e3158c8a80eb7a9d34a2e96b2ca9d",
+  "inbox_bytes": 94733,
+  "runtime_or_test_execution": false
+}
