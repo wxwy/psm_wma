@@ -1,3 +1,23 @@
+# 2026-10-31 — Issue13 approved boundary promotion claimed
+
+IN_PROGRESS; Codex, NEW isolated cloud worktree v3-nottt-boundary-promotion-20261031.
+Latest fetched/advertisedV3ec9d7b26391821d0eed34977e8d45ae90b346ba3; exact APPROVE_CODE
+3cf7453777a693ac029a79ed8b19afc55df0d4fa/6c83596d6a259e89c4cd3e79424024983426ac3d
+read from docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue13_StartingTrainingBoundary_3cf74537_6c83596d_Incremental_Code_Gate_APPROVE_CODE.md, withcanonicalInbox record.
+Owner permits safe promotion for later launches only, prohibits updating active
+Resume shared code directory/process/Checkpoint/config/Job/logs. All mutations
+restricted to new localworktree and remote Git refs; no server/runtime access.
+
+Plan: mergepublished candidate22ca7cc3 into latestV3, preserve both histories
+and complete bookkeeper/review/Evidence records; only wrapper production path,
+standardlaunchers/wholeChild6c/Trainer/DCP/EvalV2 exact approved objects.
+Git-only object/archivedEvidence verification; NO pytest/static/GPU/OS/runtime
+rerun. Ordinary nonforce V3 update after fresh ancestry check; remote precise
+Root/Child/Gitlink readback thenSTOP. INFO-off full-display behavior is accepted
+nonblocker, no new fallback/config or source changes. Observation2026-10-31T16:03:31.872630+08:00.
+
+## Preserved canonical records
+
 # 2026-10-31 — V3 unified train/Eval promotion DONE
 
 Canonical publication/readback PASS at2026-10-31 14:19:12 CST.

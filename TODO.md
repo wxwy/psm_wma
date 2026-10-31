@@ -500,3 +500,7 @@
 
 
 - **V3-EVALV2-PROMOTION** — DONE (code promotion); reviewed Formal4139ad245b73cc1c16c9d4954241cecb81478992/6c83596d6a259e89c4cd3e79424024983426ac3d source now canonical via e1ec802ceff91661559e9086452700488c5db035. Original84PASS/static/source Evidence remains frozen and was not rerun; oldtargetpending text historical. NoGPU/OS/Canary/Job/DCP operation.
+
+# 2026-10-31 — Approved console boundary V3 promotion
+
+- **NOTTT-CONSOLE-BOUNDARY-PROMOTION** — IN_PROGRESS; Codex; exact GPTAPPROVE_CODE3cf74537/6c83596d and Owner isolated-promotion instruction verified at ec9d7b26. New independent cloudworktree only, mergeapproved candidate+latestV3 history/records; one wrapper production blob, othercode/Child unchanged; Git-only audit/readback and normalnonforceV3 push. No test/GPU/runtime/server/sharedResumeDir/Job/DCP/config/log operations; report preciseRoot/Child andSTOP.
