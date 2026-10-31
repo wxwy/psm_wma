@@ -20,6 +20,10 @@ from unittest.mock import patch
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
+START = (
+    b"[10-31 15:00:00|INFO|cosmos_framework/trainer/__init__.py:330:train] "
+    b"Starting training...\n"
+)
 
 
 def _receive_launch():
@@ -115,6 +119,7 @@ def _receive_launch():
             loader.close()
             assert loader.closed and loader.context.processes == []
     Path(os.environ["COMPOSITION_CAPTURE"]).write_text(json.dumps(observation))
+    os.write(1, b"synthetic initialization and Resume binding complete\n" + START)
     os.write(1, b"[NoTTT][cpu_loader] synthetic receiver bound\n")
     os.write(2, b"[rank1] diagnostic retained by the actual console wrapper\n")
     os.write(1, b"[CorrectedV3][progress] composition step=0/30000\n")
@@ -192,9 +197,6 @@ def test_approved_launcher_console_and_actual_receiver_compose(
     (tmp_path / "console.stderr").write_bytes(result.stderr)
     assert result.returncode == code, result.stderr
     assert result.stdout.splitlines()[0].startswith(b"[NoTTT][log] full log: ")
-    assert result.stdout.splitlines()[1:] == [
-        b"[CorrectedV3][progress] composition step=0/30000"
-    ]
     data = json.loads(capture.read_text())
     assert data["loader"] == ("NoTTTAsyncLoader" if workers else None)
     assert data["profile"]["workers"] == workers
@@ -231,6 +233,11 @@ def test_approved_launcher_console_and_actual_receiver_compose(
     logs = list((output / "_launch_logs" / job).glob("launch_*.log"))
     assert len(logs) == 1
     raw = logs[0].read_bytes()
+    assert raw.count(START) == 1
+    initial = raw[: raw.index(START) + len(START)]
+    assert result.stdout.split(b"\n", 1)[1] == (
+        initial + b"[CorrectedV3][progress] composition step=0/30000\n"
+    )
     assert b"[NoTTT][cpu_loader] synthetic receiver bound\n" in raw
     assert b"[rank1] diagnostic retained by the actual console wrapper\n" in raw
     assert b"[CorrectedV3][progress] composition step=0/30000\n" in raw

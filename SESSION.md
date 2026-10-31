@@ -1,3 +1,21 @@
+# 2026-10-31 — Issue13 Starting-training console boundary claimed
+
+IN_PROGRESS; Codex; isolated v3-nottt-console-start-boundary-20261031 from
+fresh fetched/advertisedV3cee6f53eef345579c3db1124148f350fd2edc618; Child/Gitlink6c unchanged.
+Latest Owner requirement: complete init stdout/stderr until actual coreTrainer
+Starting training... log (currently330, Rank0 by default), echo marker, then
+progress-only; full raw logging/error exits/owned cleanup remain unchanged.
+Planned production ONLYscripts/no_ttt_console.py, plus narrow console/boundary/
+existing synthetic integration fixtures and docs/records/evidence. No launcher,
+Child/Trainer/config/algorithm/DCP/EvalV2 or active Resume worktree/process/log
+changes. Source log formatting inspected in Childutils/log.py.
+Small CPU tests only, no84/oldGPU experiments/real data/model/DCP. Freeze new
+Root/unchangedChild Pair, publish isolated candidate/evidence/request thenSTOP
+for GPT fresh review; not authorized V3 merge or runtime start.
+Claim CST 2026-10-31T15:24:54.240402+08:00; uncommitted implementation not yet started.
+
+## Prior canonical state preserved
+
 # 2026-10-31 — V3 unified train/Eval promotion DONE
 
 Canonical publication/readback PASS at2026-10-31 14:19:12 CST.

@@ -1,6 +1,8 @@
 """Foreground No-TTT stdout/stderr split. Stdlib only; never imports training.
 
 Raw bytes reach the unique log before a progress copy reaches the console.
+Initialization is displayed in full through the Trainer's Starting training log;
+only subsequent progress lines are copied to the console.
 Linux subreaper ownership covers torchrun Ranks in separate sessions; process
 tree scans occur only on exit/cancellation, never while training is running.
 """
@@ -9,6 +11,7 @@ from __future__ import annotations
 
 import ctypes
 import os
+import re
 import selectors
 import signal
 import subprocess
@@ -16,6 +19,20 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+
+_ANSI = re.compile(rb"\x1b\[[0-?]*[ -/]*[@-~]")
+_TRAINING_LOG = re.compile(
+    rb"\[\d{2}-\d{2} \d{2}:\d{2}:\d{2}\|(?:[^\r\n]*\|[ \t]*)?INFO\|"
+    rb"(?:[^\r\n]*[/\\])?cosmos_framework[/\\]trainer[/\\]__init__\.py:"
+    rb"\d+:train\] Starting training\.\.\."
+)
+
+
+def _starts_training(line):
+    plain = _ANSI.sub(b"", line).rstrip(b"\r")
+    return (
+        plain == b"Starting training..." or _TRAINING_LOG.fullmatch(plain) is not None
+    )
 
 
 def _write_all(fd, value):
@@ -29,7 +46,10 @@ def _write_all(fd, value):
 
 def _console(fd, text):
     try:
-        _write_all(fd, text.encode("utf-8", errors="replace"))
+        _write_all(
+            fd,
+            text if isinstance(text, bytes) else text.encode("utf-8", errors="replace"),
+        )
     except OSError:
         pass  # A detached terminal must not prevent durable file logging.
 
@@ -74,6 +94,7 @@ class _Output:
         self.selector.register(pipe, selectors.EVENT_READ)
         self.pending, self.tail = b"", b""
         self.discard = self.eof = False
+        self.training_started = False
         self.error = None
 
     def poll(self, timeout):
@@ -100,12 +121,20 @@ class _Output:
         parts = chunk.split(b"\n")
         for index, part in enumerate(parts):
             complete = index < len(parts) - 1
+            if not self.training_started:
+                # Stream even partial/huge/invalid-UTF8 initialization bytes.
+                # The complete marker is echoed before changing mode, including
+                # when later filtered lines are in this same read() chunk.
+                _console(1, part + b"\n" if complete else part)
             if not self.discard:
                 self.pending += part
                 if len(self.pending) > 16384:
                     self.pending, self.discard = b"", True
             if complete:
-                if not self.discard and self.pending.startswith(
+                if not self.training_started:
+                    if not self.discard and _starts_training(self.pending):
+                        self.training_started = True
+                elif not self.discard and self.pending.startswith(
                     b"[CorrectedV3][progress] "
                 ):
                     _console(

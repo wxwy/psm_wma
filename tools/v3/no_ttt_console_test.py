@@ -16,10 +16,17 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 HELPER = ROOT / "scripts/no_ttt_console.py"
 PROGRESS = "[CorrectedV3][progress] step=1/30000 loss=1.25\n"
-RAW = (
+START = (
+    "[10-31 15:00:00|INFO|cosmos_framework/trainer/__init__.py:330:train] "
+    "Starting training...\n"
+)
+INITIAL = (
     "Cosmos initializing\n"
     "[rank1] warning: synthetic rank1\n"
-    '[NoTTT][cpu_loader] {"wait_ms":3}\n'
+    '[NoTTT][cpu_loader] {"wait_ms":3}\n' + START
+)
+RAW = (
+    INITIAL
     + PROGRESS
     + '[CorrectedV3][train] {"iteration":1}\n'
     + "[CorrectedV3][checkpoint] saved\n"
@@ -81,7 +88,7 @@ def test_full_stdout_stderr_saved_before_progress_copy_and_exact_exit(tmp_path, 
     assert result.returncode == code
     lines = result.stdout.decode().splitlines(keepends=True)
     assert lines[0].startswith("[NoTTT][log] full log: ")
-    assert lines[1:] == [PROGRESS]
+    assert lines[1:] == (INITIAL + PROGRESS).splitlines(keepends=True)
     assert len(_logs(tmp_path)) == 1 and _logs(tmp_path)[0].read_bytes() == RAW.encode()
     assert json.loads(marker.read_text()) == {"unbuffered": "1"}
     assert not (tmp_path / "output root/no_ttt_shell_test").exists()
@@ -99,7 +106,7 @@ def test_warning_only_no_progress_is_not_an_empty_grep_failure(tmp_path):
     )
     result = _run(_command(tmp_path, command))
     assert result.returncode == 0 and not result.stderr
-    assert len(result.stdout.splitlines()) == 1
+    assert result.stdout.splitlines()[1:] == [b"warning only; not a failed process"]
     assert _logs(tmp_path)[0].read_bytes() == b"warning only; not a failed process\n"
 
 
@@ -118,7 +125,8 @@ def test_each_resume_uses_exclusive_new_log_without_overwriting_history(tmp_path
 
 def test_unbuffered_partial_line_huge_json_and_invalid_bytes_preserve_all_raw(tmp_path):
     raw = (
-        b"json="
+        START.encode()
+        + b"json="
         + b"x" * 200000
         + b"\n\xff\xfe\n"
         + PROGRESS.encode()
@@ -130,7 +138,7 @@ def test_unbuffered_partial_line_huge_json_and_invalid_bytes_preserve_all_raw(tm
     )
     result = _run(_command(tmp_path, command))
     assert result.returncode == 0
-    assert result.stdout.decode().splitlines(keepends=True)[1:] == [PROGRESS]
+    assert result.stdout.decode().splitlines(keepends=True)[1:] == [START, PROGRESS]
     assert _logs(tmp_path)[0].read_bytes() == raw
 
 
@@ -362,7 +370,7 @@ def test_real_standard_launcher_default_split_preserves_original_fake_training_a
     result = _run(["bash", str(script), "resume", "12220"], env=env)
     assert result.returncode == 0 and result.stdout.decode().splitlines(keepends=True)[
         1:
-    ] == [PROGRESS]
+    ] == (INITIAL + PROGRESS).splitlines(keepends=True)
     data = json.loads(capture.read_text())
     assert data["argv"][:4] == [
         "-m",

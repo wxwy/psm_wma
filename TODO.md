@@ -500,3 +500,7 @@
 
 
 - **V3-EVALV2-PROMOTION** — DONE (code promotion); reviewed Formal4139ad245b73cc1c16c9d4954241cecb81478992/6c83596d6a259e89c4cd3e79424024983426ac3d source now canonical via e1ec802ceff91661559e9086452700488c5db035. Original84PASS/static/source Evidence remains frozen and was not rerun; oldtargetpending text historical. NoGPU/OS/Canary/Job/DCP operation.
+
+# 2026-10-31 — Issue13 initialization visibility
+
+- **NOTTT-CONSOLE-START-BOUNDARY** — IN_PROGRESS; Codex; Owner Issue13 new boundary after coreTrainer Starting training...; baseV3cee6f53e/Child6c unchanged. Only wrapper state/byte display and matching narrow CPU fixtures/tests, preserve raw-first/error/cleanup semantics and launchers/training/EvalV2/liveResume. Publish isolated newRoot/6c+CPU evidence thenGPTfreshreview andSTOP; no V3 merge/GPU/runtime.
