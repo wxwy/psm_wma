@@ -69,3 +69,12 @@ OSMesa Canary 报告的最新决策及原先历史，不把过期的取证要求
 只有 Inbox 追加位置冲突：先完整保留最新 canonical 前缀，再追加此前候选及
 本轮提升的独有记录。重新核对源码对象，仍与已批57e3完全一致。Child正式
 分支原746c5cf2是baf1b5bf的祖先，可非强推快进；Child先、Root后提升。
+
+## 已发布回验
+
+2026-10-31 13:24:48 CST，GitHub V3 advertised/fetched Root 为
+`953931b509550b96abbe2708b2ea5f84be150fef`；Child 正式 v3-local-ttt
+HEAD、Root Gitlink 和 Child 工作树均为
+`baf1b5bf46853e9849a91518803b9738fc216235`。全部上述对象与原工件验证通过，
+双方历史及最新 Owner 文档保留，无 force。代码提升 DONE；正式训练未恢复。
+最终完成回执提交只改文档与任务状态，生产源码仍等于已批57e3。

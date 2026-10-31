@@ -1,0 +1,23 @@
+{
+  "status": "PASS_CANONICAL_V3_PUBLICATION_READBACK",
+  "observed_cst": "2026-10-31T13:24:48.319953+08:00",
+  "code_review_formal_root": "57e36decbec0e00ecb94dc1c080fd8976afff25d",
+  "promotion_root": "953931b509550b96abbe2708b2ea5f84be150fef",
+  "canonical_V3_advertised": "953931b509550b96abbe2708b2ea5f84be150fef",
+  "child_v3_local_ttt_advertised": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "root_gitlink": "baf1b5bf46853e9849a91518803b9738fc216235",
+  "root_source_objects_equal_approved": 9848,
+  "all_source_objects_equal_approved": true,
+  "canonical_docs_preserved": 2417,
+  "candidate_docs_preserved": 2464,
+  "inbox_prefix_preserved": true,
+  "inbox_bytes": 77802,
+  "artifact_sha256_verified": 45,
+  "formal_source_bindings_verified": 15,
+  "old_tests_or_gpu_rerun": false,
+  "original_job_config_checkpoint_touched": false,
+  "training_started": false,
+  "canonical_and_candidate_histories_preserved": true,
+  "force_push": false,
+  "root_and_child_worktrees_clean": true
+}

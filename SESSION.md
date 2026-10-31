@@ -1,3 +1,23 @@
+# 2026-10-31 — No-TTT Issue12+13 V3 promotion DONE; training not started
+
+Owner Step1 completed; GitHub readback PASS at2026-10-31 13:24:48 CST.
+Production promotion Root953931b509550b96abbe2708b2ea5f84be150fef;
+canonical Childv3-local-ttt and RootGitlink BOTH
+baf1b5bf46853e9849a91518803b9738fc216235. Child normal fast-forward first
+from746c5cf2, Root normal fast-forward fromlatest2ee690b0; no force/history loss.
+All9,848 Root source objects equal approved57e36decbec0e00ecb94dc1c080fd8976afff25d;
+wholeChildbaf unchanged, EvalV2/latestOwner records intact.45 artifact hashes/
+15source bindings verified read-only. NO TESTS OR GPU EXPERIMENT RERUN.
+
+Receipt docs/collab/codex/receipts/2026-10-31_nottt_issue12_13_v3_promotion/.
+Promotion report docs/collab/codex/reviews/2026-10-31_V3_NoTTT_Issue12_13_Approved_V3_Promotion.md.
+This completion successor is docs-only; production/approval identity unchanged.
+Step2 actual originalC12200/nw8 formalResume requires separate Owner permission.
+No original Job/config/identity/checkpoint/data/model/server/sim or training
+operation by Codex. STOP at completed code promotion.
+
+## Earlier records preserved
+
 # 2026-10-31 — No-TTT promotion resynced with concurrent Owner records
 
 Local promotion mergee65f1b20 prepared. Before push canonical advanced docs-only

@@ -479,7 +479,7 @@
 
 # 2026-10-31 — Approved No-TTT V3 promotion
 
-- **NOTTT-ISSUE12-13-V3-PROMOTION** — IN_PROGRESS; Codex; latest Owner Step1 and exact APPROVE_CODE57e36dec/baf1b5bf confirmed at canonical692b7ed4. Safe merge published candidate/currentV3 preserving both histories/records; exact approved source/Child/EvalV2/ledger audit then non-force V3 update and remote exactRoot/Child/Gitlink receipt. No implementation rework/tests/GPU/DCP/Job/formalResume; stop after promotion.
+- **NOTTT-ISSUE12-13-V3-PROMOTION** — DONE (code promotion only); Root953931b509550b96abbe2708b2ea5f84be150fef publishedV3; canonicalChild/Gitlinkbaf1b5bf46853e9849a91518803b9738fc216235. GitHub readback2026-10-31 13:24:48CST PASS;9848 approved source objects,45artifact hashes/15bindings,EvalV2/allrecords intact,noforce. No oldtests/GPU/DCP/Job/formalResume; Step2 separate Owner authorization. Receipt docs/collab/codex/receipts/2026-10-31_nottt_issue12_13_v3_promotion/.
 
 # 2026-10-31 — Approved No-TTT candidates composition
 
