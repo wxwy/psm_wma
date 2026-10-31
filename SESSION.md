@@ -1,3 +1,18 @@
+# 2026-11-01 — Issue14 first author Gate stopped; invocation fixture corrected
+
+Frozen initial Pair 94e5a935f53efbd714842eb5441b4f92c26cc5d3 /
+8664267704da3206e719f3c7eef2b5ed86e2a417: scoped Ruff check/format and syntax PASS;
+pytest stopped at 20 passed / 1 failed. Raw evidence retained under external
+`/tmp/psm-eval-rollout-first-n-20261101/final/`.
+The new invocation fixture used plain write() while the real CLI uses save()
+with an immutable digest envelope. Production correctly rejected that fixture.
+Correct the fixture to save(); retain the typed corrupt-cap negative with a valid
+record envelope. No production/assertion relaxation. Child unchanged.
+Commit a new Root before rerunning the same narrow Gate with a new evidence dir.
+No GPU/real model/data/DCP/runtime/shared-directory access; no candidate published yet.
+
+## Earlier implementation notes preserved
+
 # 2026-11-01 — Issue #14: per-Task first-N rollout media, IN_PROGRESS
 
 Owner Issue #14 and canonical minimal design read and ACK at 2026-11-01T07:53:41.800116+08:00.

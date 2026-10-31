@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 import yaml
-from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
+from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest, digest
 from cosmos_framework.evaluation.robocasa_v2.media import MediaSink
-from cosmos_framework.evaluation.robocasa_v2.store import Store, write
+from cosmos_framework.evaluation.robocasa_v2.store import Store, save
 from cosmos_framework.simulation.robocasa import closed_loop_eval as native
 from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
 from robocasa_eval_v2 import runtime as runtime_module
@@ -137,7 +137,7 @@ def runtime_inputs(tmp_path, limit, *, profile="phase_a", legacy=False):
     initial = dict(cfg)
     if legacy:
         initial.pop(FIELD)
-    write(
+    save(
         store.root / "_internal/invocations/0001.json",
         {"mode": "fresh", "resolved": initial},
     )
@@ -153,7 +153,7 @@ def test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor(
     changed = {**cfg, FIELD: after}
     # A rejected Resume is still an invocation in the existing CLI. Give it an
     # earlier filename too: selection must use mode=fresh, not filename order.
-    write(
+    save(
         store.root / "_internal/invocations/0000.json",
         {"mode": "resume", "resolved": changed},
     )
@@ -191,9 +191,9 @@ def test_corrupt_boolean_in_initial_cap_is_not_equal_to_integer_one(tmp_path):
     store, cfg = runtime_inputs(tmp_path, 1)
     # Retained synthetic corruption, not a production/history edit.
     path = store.root / "_internal/invocations/0001.json"
-    row = json.loads(path.read_text())
+    row = json.loads(path.read_text())["body"]
     row["resolved"][FIELD] = True
-    path.write_text(json.dumps(row))
+    path.write_text(json.dumps({"body": row, "sha256": digest(row)}))
     with pytest.raises(ValueError, match="rollout cap differs"):
         Runtime(store, cfg, {}, {})
 
