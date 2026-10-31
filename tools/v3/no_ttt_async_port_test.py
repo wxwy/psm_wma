@@ -11,9 +11,9 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "cosmos-framework"))
 
-from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (
+from cosmos_framework.model.generator.mot.robocasa_exact_window_local import (  # noqa: E402
     ExactWindowRankPlanner,
-)  # noqa: E402
+)
 from cosmos_framework.trainer import matched_no_ttt as module  # noqa: E402
 from cosmos_framework.trainer.no_ttt_async_loader import NoTTTAsyncLoader  # noqa: E402
 from cosmos_framework.trainer.no_ttt_async_recipe import AsyncRecipe  # noqa: E402
@@ -21,11 +21,11 @@ from cosmos_framework.trainer.no_ttt_async_test_support import (  # noqa: E402
     SyntheticAsyncRecipe,
     build_synthetic_producer,
 )
-from cosmos_framework.trainer.no_ttt_cpu_loader import (
+from cosmos_framework.trainer.no_ttt_cpu_loader import (  # noqa: E402
     RawRecipe,
     _require_same_rng,
     _rng_snapshot,
-)  # noqa: E402
+)
 from cosmos_framework.utils.no_ttt_loader_profile import LoaderProfile  # noqa: E402
 
 
