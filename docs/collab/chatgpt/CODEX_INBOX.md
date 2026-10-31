@@ -245,3 +245,12 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **DS方案A shell包装`sim_python`行不通**：Root `robocasa_vendor.py:244-278`要求`sim_python`与真实`sys.executable`/二进制sha相等，shell脚本`exec`真实Python会导致探针身份不匹配；Root `runtime.py:327-332`还硬覆盖`MUJOCO_EGL_DEVICE_ID`，外部export也无效。不得通过绕过身份守卫规避。
 - **优先零生产改动诊断**：明确检查 `iso_closed_loop` 有没有发`media`。Child `eval_v2_transactions.py:115-117` 的`save_generated_video=first`仅首个replan请求可选VAE decode，不是每次；可以新输出namespace尝试`save_generated_video:none`但继续`save_rollout_mp4:true`，共享训练不变、同卡仍B2，若iso本来无media则跳过该测试。备选`MUJOCO_GL=osmesa` CPU渲染（需真机可用性/性能/画面预检和记录renderer）。
 - 若仍不稳定，则建议Codex **窄改Root config+runtime** 显式Sim EGL renderer GPU与Server CUDA GPU分离（先查物理UUID与renderer显存预算）；不得使用shell`sim_python`包装/改训练/降低B2伪造验证。新Formal Pair需增量Code Gate；不自动授权额外GPU run或900。当前NoTTT/LocalTTT真实B2 Canary均未关闭。
+
+
+## 2026-10-31 — Owner选择：CPU OSMesa渲染先行，小规模性能/稳定性验收后才考虑EGL异卡方案
+
+- **Owner最新执行指令**：“可以先尝试cpu渲染，如果速度太慢跟不上sim和server，我们再尝试别的方案”。**优先 OSMesa CPU headless rendering**，不触碰 GPU0–3（他人训练满载）；GPU4–7 当前训练/推理共享策略、NoTTT checkpoint、模型参数与正式生产源码保持不变。当前已批准的正式实现 Pair Root `d18b420c02cfc51a1b85e9f1d6ce5d26f7bd3163` / Child+Gitlink `2f7334c4ada6ace1d21185985aae90539052bf18`，此前 `APPROVE_CODE` 保持。此次仅是运行策略，不是新 Code Gate 或新 SHA。
+- **DS_PRO 第一步（CPU小烟测）**：在独立新进程环境设置 `MUJOCO_GL=osmesa`、`PYOPENGL_PLATFORM=osmesa`、`LIBGL_ALWAYS_SOFTWARE=1`；使用原本真实 `sim_python` 不采用shell wrapper，不改`verify_source`或Vendor probe。在不修改共享训练环境/不安装系统依赖的前提下，检查 `libOSMesa` 可用、RoboCasa camera RGB/depth、几十步真实 env.step→render/readPixels、2个独立sim兼容；记录 backend和CPU时延、CPU/RSS、设备映射/残余GPU渲染。当前 `runtime.py` 在spawn时仍设置 `MUJOCO_EGL_DEVICE_ID`，OSMesa一般忽略；须在实际worker确认选中了OSMesa，而不是只相信env变量。
+- **第二步（仅短测可接受才跑原授权Canary）**：保留GPU7 Action Server、两Sim、B2、NoTTT `local_memory_mode: off`、CloseFridge+OpenCabinet各2集、seed0、prediction_steps30、`save_rollout_mp4:true`；新 `fresh` namespace；不得Resume旧失败namespace。输出真实 `native_batch` histogram（至少存在真正 B=2）、4条有效Core/结果/rollout MP4、Session结束/owned-only cleanup、sim渲染耗时p50/p95、推理与队列等待时间、每集wall time、CPU/RSS/显存峰值，确认训练任务无干扰。可选模型生成视频设置若改变必须单独记录，别把其与渲染后端一起当作单因素对照。
+- **速度判据**：不是强制仿真20Hz现实时间；看OSMesa是否显著拖慢env+render、超出既定episode/request timeout、明显破坏两Sim请求重合导致B2长期无法命中，及CPU资源/评测总耗时是否可接受；不可通过取消B2、挪用他人GPU或破坏任务指标伪造通过。
+- **若OSMesa缺库、不兼容或明显太慢**：DS只保留可复核日志和性能对比，停止扩大运行；再交 GPT/Owner 决定 EGL异卡（正式显式`render-gpus`新代码/新SHA窄审）或其他办法。**不自动启动900 Episode，不授权额外GPU正式实验，不修改生产代码和训练。**
