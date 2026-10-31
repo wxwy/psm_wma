@@ -60,3 +60,12 @@ advertised/fetched Root、Child 正式分支和 Root Gitlink，并补记精确�
 Checkpoint，没有派发 DS、加载模型、启动 Server/OSMesa/Local-TTT 或训练。
 正式 No-TTT 原 C12200/nw8 Resume、18×1 No-TTT screening 和 Local-TTT Canary
 仍需 Owner 各自明确授权，并遵守各自独立的运行合同。
+
+## 已发布回验
+
+2026-10-31 14:19:12 CST，GitHub V3 advertised/fetched Root 为
+`e1ec802ceff91661559e9086452700488c5db035`；Child正式 v3-local-ttt HEAD、
+Root Gitlink 和 Child工作树均为 `6c83596d6a259e89c4cd3e79424024983426ac3d`。
+训练/Eval 两路对象、原始工件、双方历史及文档保全验证通过。代码提升 DONE。
+后续完成回执仅改文档/任务状态，正式获批源 Pair 和实现源码保持不变。
+没有恢复训练或启动仿真；V3统一维护与运行授权仍是两个独立事项。

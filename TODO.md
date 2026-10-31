@@ -487,7 +487,7 @@
 
 # 2026-10-31 — V3 unified training/evaluation promotion
 
-- **V3-TRAIN-EVAL-UNION-PROMOTION** — IN_PROGRESS; Codex; Owner6c target confirmed, exact GPTAPPROVE_CODE4139ad24/6c83596d read at canonicalb0c56553. Preserve approved6c two-parent union+4139 Root source, both histories/docs; Child official fast-forward first then Root V3 normal merge/push/readback. Git-only object/evidence audit, no production edits or84test rerun. No runtime/GPU/Job/DCP/training/eval start; report finalSHAs andSTOP.
+- **V3-TRAIN-EVAL-UNION-PROMOTION** — DONE (code promotion); canonicalRoot e1ec802ceff91661559e9086452700488c5db035 / canonicalChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d published Child-first/Root-second, noforce; GitHub readback2026-10-31 14:19:12CST PASS.9850Root approved-source objects/1270Child union/44artifact hashes verified. No test/GPU/OS/runtime rerun or training/eval start; V3solemaintenance, separate run contracts/Gates; STOP.
 
 
 <!-- Historical F5 candidate entries imported byte-for-byte; current approval and Owner merge directive supersede their old pending status. -->
@@ -496,7 +496,7 @@
 
 - **V3-EVAL-V2-F5-P1** — REVIEW; Codex; FormalRoot7c74dc26ac4837f193727ecf847b9b64554c18b2/Child53c3c95202e14d3b72d236eee6899a80acf82989. Finalnarrow85PASS/0fail,error,skip + static/scope/realSourceCheckPASS; oldoversizeRED1FAIL, synthetic150kMap37MBsidecars/2553Banchor FreshResumeverified. Evidence `docs/collab/codex/evidence/2026-10-30_eval_v2_runtime_probe_F5/`; publishChild→Root thenGPTnarrowCodeGateSTOP. No435/sharedGPU/GPU/Canary/train/900/merge.
 
-- **V3-EVALV2-PROMOTION** — IN_PROGRESS; Codex; Owner safe merge+light CPU task, exact approved d18b420c/2f7334c4, actual current V3=369f3f4d/baf1b5bf training advanced. Prepare disjoint approved Child composition, object-preserving Root merge and light synthetic CPU. New Child SHA required to preserve training; canonical publication pending resolution of Owner exact2f target. No real execution/Canary repeat/oldfullGate.
+- **V3-EVALV2-PROMOTION** — DONE (source target resolution/composition); Owner explicitly replaced legacy exact2f request with6c union preservingbafNoTTT. Existing source approvals retained; new4139/6c APPROVE_CODE verified and production promotion recorded separately. No runtime authorization inferred.
 
 
-- **V3-EVALV2-PROMOTION** — IN_PROGRESS; reviewed isolatedsourceRoot4139ad245b73cc1c16c9d4954241cecb81478992/Child6c83596d6a259e89c4cd3e79424024983426ac3d, objectunionverified, authorlightCPU84PASS+static24/sourceguard/entryPASS. Canonical V3 publication pending originalexactChild2f vs newlymergedbaftraining target resolution. Evidence docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md; noGPU/Canary/OS/Job/DCP.
+- **V3-EVALV2-PROMOTION** — DONE (code promotion); reviewed Formal4139ad245b73cc1c16c9d4954241cecb81478992/6c83596d6a259e89c4cd3e79424024983426ac3d source now canonical via e1ec802ceff91661559e9086452700488c5db035. Original84PASS/static/source Evidence remains frozen and was not rerun; oldtargetpending text historical. NoGPU/OS/Canary/Job/DCP operation.

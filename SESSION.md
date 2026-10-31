@@ -1,3 +1,27 @@
+# 2026-10-31 — V3 unified train/Eval promotion DONE
+
+Canonical publication/readback PASS at2026-10-31 14:19:12 CST.
+Production promotion Root e1ec802ceff91661559e9086452700488c5db035;
+canonical Child v3-local-ttt HEAD and Root Gitlink both
+6c83596d6a259e89c4cd3e79424024983426ac3d. Child fast-forwardbaf→6c FIRST,
+Root normal updateb0c→e1e SECOND; no force, both histories preserved.
+Approved Formal4139ad245b73cc1c16c9d4954241cecb81478992/6c unchanged:
+all9850 Root source objects equalapproved, all1270 Child objects exact baf+2f
+union. Training/EvalV2/Progress-console intact,44 original artifacts verified.
+No84/oldtests/OS/GPU rerun; no real runtimeJob/config/data/model/DCP access.
+
+V3 is sole maintenance baseline. Training and evaluation retain independent
+frozen run contracts/Checkpoint/data/resources/results/Gates. Current6c pin
+supersedes oldEval-only2f. Old candidate evidence target-pending text remains
+historical immutable; Owner6c decision and APPROVE_CODE settle that question.
+No DS dispatch, trainingResume, simulation/18task/LocalCanary or GPU start.
+STOP after code promotion; all runtime execution needs separate authorization.
+Receipt docs/collab/codex/receipts/2026-10-31_train_eval_union_v3_promotion/;
+report docs/collab/codex/reviews/2026-10-31_V3_TrainEval_6c83596d_Approved_Promotion.md.
+This completion successor is docs-only, not a new implementation/Code Gate.
+
+## Earlier claim and preserved records
+
 # 2026-10-31 — V3 train/Eval union promotion prepared, publication pending
 
 IN_PROGRESS; Owner confirmed6c target, exact APPROVE_CODE

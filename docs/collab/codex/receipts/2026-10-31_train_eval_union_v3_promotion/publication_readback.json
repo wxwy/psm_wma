@@ -1,0 +1,27 @@
+{
+  "status": "PASS_UNIFIED_V3_CANONICAL_READBACK",
+  "observed_cst": "2026-10-31T14:19:12.751032+08:00",
+  "approved_formal_root": "4139ad245b73cc1c16c9d4954241cecb81478992",
+  "promotion_root": "e1ec802ceff91661559e9086452700488c5db035",
+  "root_V3_advertised": "e1ec802ceff91661559e9086452700488c5db035",
+  "child_v3_local_ttt_advertised": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "root_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "child_parents": [
+    "baf1b5bf46853e9849a91518803b9738fc216235",
+    "2f7334c4ada6ace1d21185985aae90539052bf18"
+  ],
+  "all_source_equal_approved": true,
+  "root_source_objects": 9850,
+  "child_objects": 1270,
+  "canonical_docs_preserved": 2479,
+  "candidate_docs_preserved": 2599,
+  "inbox_prefix_preserved": true,
+  "inbox_bytes": 86209,
+  "artifact_sha256_verified": 44,
+  "original_tests_rerun": false,
+  "GPU_OS_training_or_simulation_started": false,
+  "original_job_config_checkpoint_touched": false,
+  "normal_nonforce_child_first_root_second": true,
+  "both_histories_preserved": true,
+  "root_child_worktrees_clean": true
+}
