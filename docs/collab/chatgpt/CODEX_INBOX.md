@@ -285,3 +285,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 
 - Owner明确要求NoTTT训练开始后终端**默认只显示Rank0 `[CorrectedV3][progress]`**；完整stdout/stderr(含all ranks/NoTTT loader/errors)须记录外部full log，训练结构化`monitor/train_rank0.jsonl`和Observer raw不变。既有TelemetryJournal已不console回显`[train]`，直接loader print仍会刷屏，因此应在Root NoTTT启动脚本外层作全量落盘后只console progress，而不改Trainer。具体Codex实施合同 `docs/collab/chatgpt/requests/2026-10-31_V3_NoTTT_Default_Progress_Only_Console_Codex_Implementation_Order.md`，取代先前“DS仓库外可选过滤”的建议。
 - 仅Codex改Git repo标准NoTTT 4GPU/8GPU启动器，默认开启，日志路径不侵占Job namespace，正确传递torchrun/tee/awk失败码与SIGINT，stderr/其它rank真实保留。当前C12200 matched A/B不得改源码/启动命令，不增加GPU/CPU训练Gate。代码**尚未修改**，待Codex隔离候选SHA与shell synthetic evidence供GPT增量Review。
+
+## 2026-10-31 — Issue#12 独占C12200 nw0/nw8 20×2 matched GPU 性能 `APPROVE_PERFORMANCE`（DS真实报告，GPT核冻结源码）
+
+- Formal Implementation Root `fd9021b0908b4b2763b3d02508b1f34df377dc97` / Child+Gitlink `224c5f3c0bd6911bb49cb6bb0895ba7da53ff822` **未变**，旧Code/CPU/有界GPU功能Gate不重审。DS报告Owner保存C12200后停止正式Job，GPU4–7独占互斥，A=nw0 B=nw8分别从同一完整C12200 DCP独立clone进行iter12201–12220，均20/20optimizer_committed、完全保存12220、没有OOM/Timeout/正式目录污染。原始log/manifest/DCP在DS服务器，GPT未独立获取其哈希。
+- 稳态12203–12220 n18 each step-wall mean **15.489s→9.611s**，A/B=**1.6116×**，step时间减少**37.95%**；P50 15.5→9.5，P90 15.93→10.13，peak VRAM相同33.06GiB。按冻结Runbook **`APPROVE_PERFORMANCE`仅matched Step Wall**，正式Review `docs/collab/chatgpt/reviews/2026-10-31_V3_NoTTT_Issue12_C12200_Exclusive_Matched_NW0_NW8_20x2_Performance_APPROVE_PERFORMANCE.md`；不等于完整Job全流程1.61×或长期30k稳定性。
+- **指标报表需最小澄清而不重跑GPU**：Candidate `formal_monitor.format_progress()`的`data=`实为 `gpu_data_stall_ms`且status ready才显示；DS把Loader`timing_scope=host_monotonic_not_measured_gpu_idle/trace_window_sampled=false`误用于推断Observer未采GPU数据，故所谓A5.472s vs B0.112s“data wait49×”需DS从已存在A/B `monitor/train_rank0.jsonl`只读提取原`gpu_data_stall_ms/status/data_prepare_ms/data_wait_ms`字段修正，不能宣传整GPU idle49×。
+- **Next**：Codex最小cherry-pick Worker Source+Recipe增量到Canonical V3当前Child，保留EvalV2技术线；#13 Progress-only是独立Shell修改；新Pair小范围Code Gate后仅Owner另授权正式从原C12200 DCP恢复30k。旧A/B checkpoint不替代正式checkpoint，禁止DS直接合并/重启。
