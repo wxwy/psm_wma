@@ -1,0 +1,22 @@
+{
+  "observed_cst": "2026-10-31T21:38:32.388722+08:00",
+  "formal_root": "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+  "child_gitlink": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "fresh_fetched_V3": "0ab13951d640d50ea2c9c8812817bf3009eae7b5",
+  "canonical_advance": [],
+  "exact_root_review_scan": {
+    "argv": [
+      "git",
+      "grep",
+      "-l",
+      "f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1",
+      "origin/V3",
+      "--",
+      "docs/collab/chatgpt/reviews/"
+    ],
+    "exit_code": 1,
+    "stdout": ""
+  },
+  "request": "fresh narrow parser Code Gate; no runtime permission",
+  "roles": "Owner tasks request, Codex candidate+CPU, GPT review; no old3pane or DS dispatch"
+}

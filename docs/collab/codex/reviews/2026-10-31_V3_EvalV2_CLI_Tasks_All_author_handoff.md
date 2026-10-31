@@ -61,3 +61,13 @@ only. Preserve existing strict source/Resume identity; do not treat the change a
 cross-version Resume permission. Publish and read back the isolated branch, then stop; no
 automatic V3 promotion, DS dispatch or real evaluation. The existing YAML `tasks: all`
 workaround without the CLI flag remains valid until this candidate is accepted.
+
+## Publication receipt
+
+The isolated candidate and request were published at evidence HEAD
+`961f15948438c115b522a1b43adff26ac1de65b5`. GitHub fetch and advertised-ref
+readback matched; all 19 artifact hashes and 5 formal source bindings passed.
+The canonical V3 and official Child branch were unchanged at that observation.
+See `docs/collab/codex/receipts/2026-10-31_eval_v2_cli_tasks_all/`.
+The Formal Root remains `f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1`.
+Stop for GPT review; this receipt is not an acceptance verdict.

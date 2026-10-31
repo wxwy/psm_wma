@@ -1,3 +1,23 @@
+# 2026-10-31 — EvalV2 CLI `--tasks all`: candidate published, REVIEW
+
+Formal Root: `f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1`.
+Unchanged Child / Gitlink: `6c83596d6a259e89c4cd3e79424024983426ac3d`.
+Candidate branch: `v3-eval-v2-cli-tasks-all-20261031`.
+Published evidence/Inbox HEAD: `961f15948438c115b522a1b43adff26ac1de65b5`.
+
+One production line preserves the CLI wildcard as the string `"all"`.
+Author CPU: 29 passed, 0 failures/errors/skips; old-module RED reproduced the bug.
+Ruff 0.12.7 check/format and syntax PASS. GitHub readback verified 19 artifact
+hashes and 5 formal source bindings. Later receipt commits contain documentation
+only and do not replace the Formal Root. Independent acceptance is still pending.
+
+Canonical V3 remains `0ab13951d640d50ea2c9c8812817bf3009eae7b5` at the receipt
+observation. No Child changes, V3 promotion, runtime actions or active run changes.
+Receipt: `docs/collab/codex/receipts/2026-10-31_eval_v2_cli_tasks_all/`.
+STOP for GPT fresh incremental Code Gate under the latest Owner role split.
+
+## Earlier implementation observations preserved
+
 # 2026-10-31 — EvalV2 CLIall author RED/GREEN PASS, REVIEW
 
 FormalRootf3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d;

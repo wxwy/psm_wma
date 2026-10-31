@@ -511,4 +511,4 @@
 
 # 2026-10-31 — EvalV2 CLI wildcard parity
 
-- **EVALV2-CLI-TASKS-ALL** — REVIEW; Codex; FormalRootf3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d. Singleproductionline CLIall canonicalstring, CSV/validation unchanged; oldmoduleRED1expected + GREEN29PASS/0skip, Ruff/format/AST2PASS,19artifact hashes/5bindings. Publishisolated/readback thenGPTfreshGateSTOP; no V3merge/runtime/GPU/realdata-model-DCP/sharedJob or Resume.
+- **EVALV2-CLI-TASKS-ALL** — REVIEW; Codex; FormalRootf3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1/unchangedChild-Gitlink6c83596d6a259e89c4cd3e79424024983426ac3d. Singleproductionline CLIall canonicalstring, CSV/validation unchanged; oldmoduleRED1expected + GREEN29PASS/0skip, Ruff/format/AST2PASS,19artifact hashes/5bindings. Isolated candidate published at evidence HEAD961f15948438c115b522a1b43adff26ac1de65b5; GitHub readback PASS; STOP for GPT fresh Gate; no V3merge/runtime/GPU/realdata-model-DCP/sharedJob or Resume.
