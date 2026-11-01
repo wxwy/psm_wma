@@ -1,3 +1,32 @@
+# 2026-11-01 — Candidate request published and GitHub readback PASS
+
+Observation 2026-11-01T12:32:36.427295+08:00. Formal46d3a604e66ca139e2f060fd4caaaa0583a1035f /
+Child-Gitlinkd3b2a29b978ff4abef800b9e71fab4422b7a0d23. Child candidate was
+pushed first, then Root candidate 126e7d4c9939193bb0c470ca79b5a97a8748cdb4, normal nonforce. Fresh fetch
+and advertised refs agree; candidate Gitlink matches. Canonical V3 remains
+7e2be5ca40891915a1e86eea935ed054ec1984dd, official Child8664267704da3206e719f3c7eef2b5ed86e2a417.
+GitHub-fetched evidence53/53 hashes and source23/23 bindings match; candidate
+source equals Formal. Author clean-Pair CPU192/0/0/0 is retained, not rerun.
+Candidate Inbox request unique,118200 bytes, original prefix identical.
+
+Initial readback failed on a stale origin/candidate tracking ref: Root origin
+fetch is narrowly mapped to V2. Recovered by explicit nonforce fetch refspecs
+for V3 and this candidate; no Git configuration/working files were changed.
+The successful complete observation above followed this recovery, not the
+failed attempt. All source/receipt/evidence results are from that fresh pass.
+
+The request/handoff is published only on the candidate branch. This observation
+asserts delivery/readback, not a GPT verdict or independent acceptance. Current
+Owner reviewer GPT; DS independent CPU follows a successful code review. No
+MM/Kimi dispatch, old V2 polling or automatic execution under superseded workflow.
+Root/Child clean before receipt bookkeeping. Readback files retained in
+docs/collab/codex/receipts/2026-11-01_eval_v2_render_media_candidate/.
+This successor changes only receipt/SESSION, never implementation; final repeat
+ref/source readback is external. STOP for GPT review; no V3 merge, GPU/model/
+simulator/FFmpeg/Canary/evaluation/training or active out2/NoTTT access.
+
+## Earlier history preserved
+
 # 2026-11-01 — Packaging diagnostic classified without rewriting raw evidence
 
 Evidence commit 72f3f5e8e191eca13684f3419ea78435f3961c55 was created after git diff --cached --check

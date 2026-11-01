@@ -1,0 +1,33 @@
+{
+  "time": "2026-11-01T12:32:36.427295+08:00",
+  "status": "PASS_READBACK",
+  "formal_root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+  "formal_child": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "candidate_root_head": "126e7d4c9939193bb0c470ca79b5a97a8748cdb4",
+  "candidate_child_head": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "gitlink": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "root_refs": {
+    "refs/heads/V3": "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+    "refs/heads/v3-eval-v2-render-media-20261101": "126e7d4c9939193bb0c470ca79b5a97a8748cdb4"
+  },
+  "child_refs": {
+    "refs/heads/v3-eval-v2-render-media-20261101": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+    "refs/heads/v3-local-ttt": "8664267704da3206e719f3c7eef2b5ed86e2a417"
+  },
+  "source_equivalent_to_formal": true,
+  "raw_artifact_hashes_verified": 53,
+  "formal_source_hashes_verified": 23,
+  "inbox_append_only": true,
+  "inbox_bytes": 118200,
+  "request_count": 1,
+  "clean_before_readback": true,
+  "canonical_refs_unchanged": true,
+  "author_tests": 192,
+  "independent_acceptance": false,
+  "real_gpu": false,
+  "real_ffmpeg": false,
+  "simulator": false,
+  "model": false,
+  "old_out2": false,
+  "note": "Candidate publication/readback only. Code Gate requested, no approval inferred. Later readback receipts are bookkeeping, not a new Formal Pair."
+}
