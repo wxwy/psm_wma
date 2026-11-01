@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="28" time="0.660" timestamp="2026-10-31T23:59:43.173585+00:00" hostname="4dc91cf49e12"><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_omitted_and_null_preserve_legacy_boolean[False-False]" time="0.005" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_omitted_and_null_preserve_legacy_boolean[False-True]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_omitted_and_null_preserve_legacy_boolean[True-False]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_omitted_and_null_preserve_legacy_boolean[True-True]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_exact_integer_limits_are_accepted[0]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_exact_integer_limits_are_accepted[3]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_exact_integer_limits_are_accepted[50]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[-1]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[51]" time="0.002" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[3.0]" time="0.002" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[3]" time="0.002" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[True]" time="0.002" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[False]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[limit6]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_invalid_limit_types_and_range_are_rejected[limit7]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_disabled_rollout_with_any_nonnull_limit_is_rejected[0]" time="0.002" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_disabled_rollout_with_any_nonnull_limit_is_rejected[3]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_disabled_rollout_with_any_nonnull_limit_is_rejected[50]" time="0.003" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_limit_is_checked_after_cli_episode_override" time="0.005" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_public_dry_run_reports_policy_without_model_or_runtime" time="0.004" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor[3-0]" time="0.006" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor[3-None]" time="0.006" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor[None-3]" time="0.006" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor[0-None]" time="0.006" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_legacy_missing_cap_keeps_boolean_and_generated_resume_choices" time="0.005" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_nonnull_cap_cannot_adopt_run_without_fresh_record" time="0.005" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_corrupt_boolean_in_initial_cap_is_not_equal_to_integer_one" time="0.005" /><testcase classname="tools.v3.eval_v2_batch_tests.rollout_policy_test" name="test_every_physical_actor_receives_static_limit[None-phase_a]" time="0.005"><failure message="AttributeError: 'Store' object has no attribute 'lease_id'">tmp_path = PosixPath('/tmp/psm-eval-rollout-first-n-20261101/final_r1/pytest_tmp/test_every_physical_actor_rece0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fa22aaae3c0&gt;
+profile = 'phase_a', limit = None
+
+    @pytest.mark.parametrize("profile", ["phase_a", "phase_b"])
+    @pytest.mark.parametrize("limit", [None, 0, 3])
+    def test_every_physical_actor_receives_static_limit(
+        tmp_path, monkeypatch, profile, limit
+    ):
+        store, cfg = runtime_inputs(tmp_path, limit, profile=profile)
+        inputs = {
+            "tasks": {task: "/unread/synthetic/" + task for task in TASKS},
+            "simulation_libraries": {},
+            "runtime": {"digest": "1" * 64},
+        }
+        runtime = Runtime(store, cfg, inputs, {})
+        monkeypatch.setattr(runtime, "_server", lambda worker: (None, {}, 8912))
+        captured = []
+    
+        class CapturedBeforeProcess(Exception):
+            pass
+    
+        def capture(path, value):
+            assert path.parent.name == "actor_configs"
+            captured.append(value)
+            raise CapturedBeforeProcess
+    
+        monkeypatch.setattr(runtime_module, "write", capture)
+        for worker in runtime.workers:
+            with pytest.raises(CapturedBeforeProcess):
+&gt;               runtime._actor({"task": TASKS[0], "physical_worker": worker})
+
+tools/v3/eval_v2_batch_tests/rollout_policy_test.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;robocasa_eval_v2.runtime.Runtime object at 0x7fa22aaacf80&gt;
+claim = {'physical_worker': 'GPU4', 'task': 'CloseFridge'}
+
+    def _actor(self, claim):
+        task = claim["task"]
+        worker = claim["physical_worker"]
+        with self.setup_lock:
+            if self.stop.is_set():
+                raise RuntimeError("cancelled before runtime startup")
+            server, server_rec, port = self._server(claim["physical_worker"])
+            self.phases[claim["physical_worker"]] = "environment_initialization"
+            if worker in self.actors:
+                return self._start_assignment(claim, self.actors[worker], server_rec)
+            nonce = uuid.uuid4().hex
+            cfg = {
+                "nonce": nonce,
+                "manifest_digest": self.store.manifest["digest"],
+&gt;               "coordinator_lease_id": self.store.lease_id,
+                                        ^^^^^^^^^^^^^^^^^^^
+                "episodes_per_task": self.store.manifest["episodes_per_task"],
+                "physical_slot_id": self.slot_ids[worker],
+                "physical_worker": worker,
+                "gpu_id": self.worker_gpus[worker],
+                "task_root": str(self.store.root / "_internal/tasks"),
+                "tasks": {
+                    name: {
+                        "dataset_dir": directory,
+                        "metadata_sha256": self.store.manifest["experiment"][
+                            "task_metadata"
+                        ][name],
+                        "horizon": self.store.manifest["horizons"][name],
+                    }
+                    for name, directory in self.inputs["tasks"].items()
+                },
+                "source_files": {
+                    key: {
+                        "path": str(CHILD / path),
+                        "sha256": hashlib.sha256(
+                            (CHILD / path).read_bytes()
+                        ).hexdigest(),
+                    }
+                    for key, path in {
+                        "worker": "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+                        "native": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+                        "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+                        "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+                    }.items()
+                },
+                "settings": {
+                    "server_url": f"http://127.0.0.1:{port}",
+                    "horizon": self.store.manifest["horizons"][task],
+                    "execution_profile": self.cfg.get("execution_profile", "phase_a"),
+                    "max_infer_batch_size": self.cfg.get("max_infer_batch_size", 1),
+                    "local_memory_mode": self.store.manifest["protocol"][
+                        "local_memory"
+                    ],
+                    "predict_timeout_s": self.cfg["request_timeout_s"],
+                    "save_rollout_mp4": self.cfg["save_rollout_mp4"],
+                    "rollout_mp4_first_n_per_task": self.cfg.get(
+                        "rollout_mp4_first_n_per_task"
+                    ),
+                    "save_generated_video": self.cfg["save_generated_video"],
+                    "encoder_grace_s": self.cfg["encoder_grace_s"],
+                },
+                "simulation_libraries": self.inputs["simulation_libraries"],
+                "runtime_args": {
+                    "runtime_probe_script": str(ROOT / "scripts/robocasa_vendor.py"),
+                    "runtime_lock_file": self.cfg["vendor_lock"],
+                    "runtime_asset_manifest": self.cfg.get("asset_manifest"),
+                    "expected_runtime_digest": self.inputs["runtime"]["digest"],
+                    "runtime_tasks": ",".join(self.store.manifest["task_order"]),
+                },
+            }
+E           AttributeError: 'Store' object has no attribute 'lease_id'
+
+scripts/robocasa_eval_v2/runtime.py:284: AttributeError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,94 @@
+....................F
+=================================== FAILURES ===================================
+_ test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor[3-0] _
+
+tmp_path = PosixPath('/tmp/psm-eval-rollout-first-n-20261101/final/pytest_tmp/test_resume_cap_drift_is_rejec0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f14451fa720>
+before = 3, after = 0
+
+    @pytest.mark.parametrize("before,after", [(3, 0), (3, None), (None, 3), (0, None)])
+    def test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor(
+        tmp_path, monkeypatch, before, after
+    ):
+        store, cfg = runtime_inputs(tmp_path, before, legacy=before is None)
+        anchor = (store.root / "_internal/invocations/0001.json").read_bytes()
+        changed = {**cfg, FIELD: after}
+        # A rejected Resume is still an invocation in the existing CLI. Give it an
+        # earlier filename too: selection must use mode=fresh, not filename order.
+        write(
+            store.root / "_internal/invocations/0000.json",
+            {"mode": "resume", "resolved": changed},
+        )
+        with monkeypatch.context() as patch:
+            patch.setattr(
+                runtime_module,
+                "Registry",
+                lambda *a: pytest.fail("drift must fail before process setup"),
+            )
+            with pytest.raises(ValueError, match="rollout cap differs"):
+>               Runtime(store, changed, {}, {})
+
+tools/v3/eval_v2_batch_tests/rollout_policy_test.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/robocasa_eval_v2/runtime.py:60: in __init__
+    for entry in records(store.root / "_internal/invocations")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:191: in records
+    result.append(load(path))
+                  ^^^^^^^^^^
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:166: in load
+    value = _cached_document(str(path), witness(path))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = '/tmp/psm-eval-rollout-first-n-20261101/final/pytest_tmp/test_resume_cap_drift_is_rejec0/run/_internal/invocations/0000.json'
+stamp = (34, 690763, 1322, 1793491126418530870, 1793491126418530870)
+
+    @lru_cache(maxsize=32768)
+    def _cached_document(path, stamp):
+        READ_METRICS["disk_reads"] += 1
+        doc = read(path)
+        if witness(path) != stamp:
+            raise ValueError("record changed during cached verification")
+        if not isinstance(doc, dict) or set(doc) != {"body", "sha256"} or doc["sha256"] != digest(doc["body"]):
+>           raise ValueError("corrupt immutable record")
+E           ValueError: corrupt immutable record
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:159: ValueError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = PosixPath('/tmp/psm-eval-rollout-first-n-20261101/final/pytest_tmp/test_resume_cap_drift_is_rejec0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f14451fa720>
+before = 3, after = 0
+
+    @pytest.mark.parametrize("before,after", [(3, 0), (3, None), (None, 3), (0, None)])
+    def test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor(
+        tmp_path, monkeypatch, before, after
+    ):
+        store, cfg = runtime_inputs(tmp_path, before, legacy=before is None)
+        anchor = (store.root / "_internal/invocations/0001.json").read_bytes()
+        changed = {**cfg, FIELD: after}
+        # A rejected Resume is still an invocation in the existing CLI. Give it an
+        # earlier filename too: selection must use mode=fresh, not filename order.
+        write(
+            store.root / "_internal/invocations/0000.json",
+            {"mode": "resume", "resolved": changed},
+        )
+        with monkeypatch.context() as patch:
+            patch.setattr(
+                runtime_module,
+                "Registry",
+                lambda *a: pytest.fail("drift must fail before process setup"),
+            )
+>           with pytest.raises(ValueError, match="rollout cap differs"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'rollout cap differs'
+E             Actual message: 'corrupt immutable record'
+
+tools/v3/eval_v2_batch_tests/rollout_policy_test.py:166: AssertionError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_tests/rollout_policy_test.py::test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor[3-0]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 20 passed in 0.69s

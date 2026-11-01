@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/tmp/psm-eval-rollout-first-n-20261101/run_gate.py", line 136, in <module>
+    step("pytest", [sys.executable, "-m", "pytest", "--noconftest", "-c", "/dev/null", "-q", "-s", "-x", "-p", "no:cacheprovider",
+  File "/tmp/psm-eval-rollout-first-n-20261101/run_gate.py", line 111, in step
+    raise RuntimeError(f"{name} failed: {result.returncode}; see {out / (name + '.log')}")
+RuntimeError: pytest failed: 1; see /tmp/psm-eval-rollout-first-n-20261101/final/pytest.log

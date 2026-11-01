@@ -517,4 +517,4 @@
 
 # 2026-11-01 — Issue14 optional rollout cap
 
-- **EVALV2-ROLLOUT-FIRST-N** — IN_PROGRESS; Codex; prerequisite Owner Issue #14 and minimal design at Root9ba1dd11 read. Scope: Root config/runtime, Child native adapter, narrow tests/evidence. Accept strict optional integer cap, per-Task logical index selection on reused actors, independent generated media/SR/cleanup, same-Run cap-drift refusal with legacy null preserved. Exact isolated Formal Pair + author CPU, then GPT Code Gate; no V3 merge or active runtime changes.
+- **EVALV2-ROLLOUT-FIRST-N** — REVIEW; Codex; Formal Root fd183f9e8fddfaef93b6ec9484184f071062ae41 / Child-Gitlink 8664267704da3206e719f3c7eef2b5ed86e2a417; final69 PASS/0fail/error/skip, scoped Ruff0.12.7/format/AST4 PASS; 42 artifact hashes/11 bindings, two earlier fixture failures retained. Three production files only; default null, strict bounds, per-logical-index selection, independent generated/SR/cleanup and same-Run cap guard. Publish independent Child then Root candidates/readback and STOP for GPT fresh Gate. No V3 merge or active shared900/NoTTT/runtime/GPU/real inputs access.

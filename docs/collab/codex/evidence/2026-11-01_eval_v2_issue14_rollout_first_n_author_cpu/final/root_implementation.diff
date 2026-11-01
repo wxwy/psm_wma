@@ -1,0 +1,591 @@
+diff --git a/SESSION.md b/SESSION.md
+index 55828c12..31d2b6bc 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,58 @@
++# 2026-11-01 — Issue14 second author Gate stopped; actor lease fixture corrected
++
++Root719097ae04f4a5af38d0c3d9140942574d7e7de6 / unchanged Child86642677:
++scoped static checks PASS; pytest stopped at 27 passed / 1 failed. External raw
++Gate/JUnit/traceback retained under final_r1. Invocation-envelope correction is
++verified by those passed tests. Actor-config fixture lacked the coordinator lease
++created by the production CLI's Store.locked context. Add the actual lock context
++around actor-config creation; no production, assertion, timeout or count change.
++Commit a new Root and rerun the same narrow Gate, preserving both prior failures.
++No runtime/GPU/active shared-directory action or publication has occurred.
++
++## Earlier observations preserved
++
++# 2026-11-01 — Issue14 first author Gate stopped; invocation fixture corrected
++
++Frozen initial Pair 94e5a935f53efbd714842eb5441b4f92c26cc5d3 /
++8664267704da3206e719f3c7eef2b5ed86e2a417: scoped Ruff check/format and syntax PASS;
++pytest stopped at 20 passed / 1 failed. Raw evidence retained under external
++`/tmp/psm-eval-rollout-first-n-20261101/final/`.
++The new invocation fixture used plain write() while the real CLI uses save()
++with an immutable digest envelope. Production correctly rejected that fixture.
++Correct the fixture to save(); retain the typed corrupt-cap negative with a valid
++record envelope. No production/assertion relaxation. Child unchanged.
++Commit a new Root before rerunning the same narrow Gate with a new evidence dir.
++No GPU/real model/data/DCP/runtime/shared-directory access; no candidate published yet.
++
++## Earlier implementation notes preserved
++
++# 2026-11-01 — Issue #14: per-Task first-N rollout media, IN_PROGRESS
++
++Owner Issue #14 and canonical minimal design read and ACK at 2026-11-01T07:53:41.800116+08:00.
++New isolated Root/Child branch: `v3-eval-v2-rollout-first-n-20261101`.
++Root base: `9ba1dd110a4e3e99e717937c2f8d044fa077cdbf`.
++Child base: `6c83596d6a259e89c4cd3e79424024983426ac3d`.
++
++Planned production files: Root `scripts/robocasa_eval_v2/config.py` and `runtime.py`;
++Child `cosmos_framework/simulation/robocasa/eval_v2_adapter.py`.
++New focused test: `tools/v3/eval_v2_batch_tests/rollout_policy_test.py`; add a build
++runbook and frozen author CPU evidence. The three production files and the focused test/runbook are implemented; CPU Gate pending.
++
++Add optional YAML `rollout_mp4_first_n_per_task` (default null, legacy bool intact),
++strict exact-int 0..episodes bound and reject false+non-null cap. Pass the static
++cap to every actor and decide per NativeEpisode.execute using logical episode
++index. Generated media and Core SR/Local cleanup stay independent. Reuse existing
++resolved invocation snapshots to reject same-Run cap drift, including an old Run
++that has no cap; do not add a schema/service or change legacy null behavior.
++
++Only narrow synthetic CPU/static checks, exact Formal Root/Child, isolated
++publication and fresh GPT Code Gate request. Do not auto-merge V3, update active
++shared psm_wma_v3/out2/YAML/results/media or training/eval processes, access real
++DCP/model/data, run GPU/Action Server/simulator/FFmpeg, or dispatch DS. No running
++900-Episode or NoTTT asset is touched. Scoped Ruff formatting completed. Freeze Child, then Root/Gitlink before author checks; not yet committed.
++
++## Earlier V3 promotion history preserved
++
+ # 2026-10-31 — EvalV2 CLI `--tasks all`: V3 promotion COMPLETE
+ 
+ Production promotion Root: `68cba5640eae205445153808951145cac0912d8c`.
+diff --git a/TODO.md b/TODO.md
+index e9ac77f0..0689a520 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -514,3 +514,7 @@
+ - **EVALV2-CLI-TASKS-ALL** — DONE (Code Gate only); Codex; Formal Root f3fccc8f9ba99cbaf8ce5e3597edfce8b6fc4ce1 / unchanged Child 6c83596d6a259e89c4cd3e79424024983426ac3d; exact-pair GPT APPROVE_CODE at canonical 2e44cd70f343ebe8c1c7741cdbbc605485a4dd9a. Original author 29 PASS retained; no rerun. Safe V3 promotion tracked separately; runtime not authorized.
+ 
+ - **EVALV2-CLI-TASKS-ALL-PROMOTE** — DONE; Codex; production Root 68cba5640eae205445153808951145cac0912d8c normally pushed to V3 and remotely read back; official Child/Gitlink 6c83596d6a259e89c4cd3e79424024983426ac3d unchanged. All 9,852 source objects equal approved Formal f3fccc8f; 19 artifact hashes / 5 bindings PASS. Both histories and review preserved. No historical tests, active shared-directory update or runtime actions; completion receipt docs-only, then STOP.
++
++# 2026-11-01 — Issue14 optional rollout cap
++
++- **EVALV2-ROLLOUT-FIRST-N** — IN_PROGRESS; Codex; prerequisite Owner Issue #14 and minimal design at Root9ba1dd11 read. Scope: Root config/runtime, Child native adapter, narrow tests/evidence. Accept strict optional integer cap, per-Task logical index selection on reused actors, independent generated media/SR/cleanup, same-Run cap-drift refusal with legacy null preserved. Exact isolated Formal Pair + author CPU, then GPT Code Gate; no V3 merge or active runtime changes.
+diff --git a/cosmos-framework b/cosmos-framework
+index 6c83596d..86642677 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 6c83596d6a259e89c4cd3e79424024983426ac3d
++Subproject commit 8664267704da3206e719f3c7eef2b5ed86e2a417
+diff --git a/docs/build/PSM-WMA_V3_EvalV2_Rollout_First_N_Issue14_2026-11-01.md b/docs/build/PSM-WMA_V3_EvalV2_Rollout_First_N_Issue14_2026-11-01.md
+new file mode 100644
+index 00000000..82797071
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_EvalV2_Rollout_First_N_Issue14_2026-11-01.md
+@@ -0,0 +1,68 @@
++# Issue #14 — optional per-Task rollout MP4 limit
++
++Owner contract: https://github.com/wxwy/psm_wma/issues/14 .
++Base Root `9ba1dd110a4e3e99e717937c2f8d044fa077cdbf`, Child
++`6c83596d6a259e89c4cd3e79424024983426ac3d`. Implement only on the independent
++`v3-eval-v2-rollout-first-n-20261101` Root and Child branches, then stop for a
++fresh GPT incremental Code Gate. No automatic V3 promotion or runtime action.
++
++## Configuration and behavior
++
++```yaml
++save_rollout_mp4: true
++rollout_mp4_first_n_per_task: 3
++save_generated_video: first
++```
++
++The optional limit defaults to null. Null preserves the existing boolean:
++true records every Episode, false records none. A non-null value must be an
++exact integer (not bool), between zero and the resolved episodes_per_task
++inclusive (at most 50). False plus any non-null limit is rejected, including zero.
++CLI episode-count overrides are applied before checking the bound.
++
++The runtime passes the limit unchanged to every reusable Sim actor. Each
++`NativeEpisode.execute` creates its own MediaSink with rollout enabled exactly
++when the boolean is true and its logical Episode index is below the limit.
++The choice is per Task, independent of completion order, success or retry count.
++N=3 includes ep_000, ep_001 and ep_002 even when an Episode is a behavioral failure.
++Retry/Resume of the same index preserves the choice. N=0 records none; N=50
++records all fifty. Generated media retains its independent none/first/all policy.
++
++The existing CLI already records the full resolved configuration before Runtime
++construction. Runtime checks the new limit against the first Fresh invocation,
++before process setup. A rejected Resume snapshot cannot become the anchor.
++Old snapshots without the field mean null; they cannot adopt a non-null limit.
++With a null limit, legacy boolean/generated Resume choices remain unchanged.
++Non-null limits require a Fresh record. No new manifest/schema/service is added;
++scientific and source identity checks remain strict. This is not permission to
++resume an old Run under different Root/Child code.
++
++Per-Episode media diagnostics record the configured limit and actual
++`rollout_requested`. Existing invocation/actor configuration and source witnesses
++retain the actual Root/Child provenance. No old media or Core Result is altered.
++
++## Scope and CPU verification
++
++Production changes: Root config.py and runtime.py; Child eval_v2_adapter.py.
++MediaSink, Scheduler, Store, SR, Local-TTT, model/server and training are unchanged.
++No missing or broken optional media changes environment outcomes or Local cleanup.
++Limiting saved videos is not a claim of reduced OSMesa rendering cost.
++
++Focused tests exercise strict config boundaries; actual CPU dry-run; new and old
++invocation snapshots, rejected Resume recovery; production actor-config creation;
++reused NativeEpisode with two Tasks and logical indices 0/1/2/3/49 plus repeated
++indices; independent generated policies; and media faults with valid Core commit
++and Local reset. Environment/model and encoder are synthetic boundaries. The
++native HTTP codec/Local client use a loopback fixture; no real Action Server,
++RoboCasa, model, GPU, FFmpeg or MP4 encoding runs. Keep the existing 17 config
++regressions and two focused Core/media regressions; do not rerun broad Gates.
++
++Freeze the new Root/Child pair before the author Gate. Retain the full command,
++safe CPU/offline/cache overrides, JUnit/logs, scoped Ruff 0.12.7 check/format,
++syntax checks, source bindings and minimal Diff. PASS requires no failures,
++errors or skips and clean unchanged source before/after. Any failure stops the
++Gate and retains its raw evidence. Author PASS is not independent acceptance.
++
++The current Local-TTT out2 900-Episode evaluation and NoTTT training, their shared
++worktree, YAML, outputs, MP4s, checkpoint/config identities and GPU processes
++must not be accessed or updated. Publish candidates and request review, then stop.
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index 2881df21..d77efbb3 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -20,6 +20,7 @@ DEFAULTS = {
+     "prediction_steps": 30,
+     "guidance": 1.0,
+     "save_rollout_mp4": True,
++    "rollout_mp4_first_n_per_task": None,
+     "save_generated_video": "first",
+     "server_start_s": 900.0,
+     "episode_wall_s": 1800.0,
+@@ -170,6 +171,13 @@ def resolve(argv=None):
+         or type(cfg["save_rollout_mp4"]) is not bool
+     ):
+         raise ValueError("invalid resource/media policy")
++    limit = cfg["rollout_mp4_first_n_per_task"]
++    if limit is not None and (
++        type(limit) is not int
++        or not 0 <= limit <= cfg["episodes_per_task"]
++        or not cfg["save_rollout_mp4"]
++    ):
++        raise ValueError("invalid rollout_mp4_first_n_per_task")
+     for key in PATHS - {"asset_manifest"}:
+         if not cfg.get(key):
+             raise ValueError(f"missing {key}")
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index a14987b6..8a278adb 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -51,6 +51,27 @@ class Runtime:
+             "local_memory_mode", "required"
+         ):
+             raise ValueError("runtime Local-TTT mode differs from frozen manifest")
++        limit = cfg.get("rollout_mp4_first_n_per_task")
++        # CLI writes its resolved snapshot under the Run lock before constructing
++        # Runtime. Anchor to Fresh, never a later (possibly rejected) Resume.
++        initial = next(
++            (
++                entry
++                for entry in records(store.root / "_internal/invocations")
++                if entry["mode"] == "fresh"
++            ),
++            None,
++        )
++        if initial is not None:
++            frozen_limit = initial["resolved"].get("rollout_mp4_first_n_per_task")
++            if (
++                frozen_limit is not None and type(frozen_limit) is not int
++            ) or frozen_limit != limit:
++                raise ValueError(
++                    "rollout cap differs from the initial Run configuration"
++                )
++        elif limit is not None:
++            raise ValueError("rollout cap requires a Fresh Run configuration record")
+         self.stop = threading.Event()
+         self.registry = Registry(store.root, cfg["terminate_grace_s"])
+         self.servers = {}
+@@ -300,6 +321,9 @@ class Runtime:
+                     ],
+                     "predict_timeout_s": self.cfg["request_timeout_s"],
+                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
++                    "rollout_mp4_first_n_per_task": self.cfg.get(
++                        "rollout_mp4_first_n_per_task"
++                    ),
+                     "save_generated_video": self.cfg["save_generated_video"],
+                     "encoder_grace_s": self.cfg["encoder_grace_s"],
+                 },
+diff --git a/tools/v3/eval_v2_batch_tests/rollout_policy_test.py b/tools/v3/eval_v2_batch_tests/rollout_policy_test.py
+new file mode 100644
+index 00000000..32dc4c22
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/rollout_policy_test.py
+@@ -0,0 +1,361 @@
++"""Issue14: real config/runtime/adapter paths; synthetic inputs and no encoder."""
++
++import json
++import sys
++from pathlib import Path
++
++import pytest
++import yaml
++from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest, digest
++from cosmos_framework.evaluation.robocasa_v2.media import MediaSink
++from cosmos_framework.evaluation.robocasa_v2.store import Store, save
++from cosmos_framework.simulation.robocasa import closed_loop_eval as native
++from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
++from robocasa_eval_v2 import runtime as runtime_module
++from robocasa_eval_v2.cli import main
++from robocasa_eval_v2.config import execution, resolve
++from robocasa_eval_v2.runtime import Runtime
++
++from tools.v3.eval_v2_production_tests.contract_test import manifest
++from tools.v3.eval_v2_production_tests import native_test
++from tools.v3.eval_v2_production_tests.native_test import Env, server
++
++FIELD = "rollout_mp4_first_n_per_task"
++TASKS = ("CloseFridge", "OpenCabinet")
++
++
++def configuration(tmp_path, **changes):
++    inputs = tmp_path / "absent_inputs"
++    cfg = {
++        "checkpoint": str(inputs / "checkpoint"),
++        "config_file": str(inputs / "model.yaml"),
++        "dataset_root": str(inputs / "dataset"),
++        "vendor_lock": str(inputs / "vendor.lock"),
++        "output_dir": str(tmp_path / "run"),
++        "server_python": sys.executable,
++        "sim_python": sys.executable,
++        "tasks": list(TASKS),
++        "episodes_per_task": 50,
++        **changes,
++    }
++    path = tmp_path / "eval.yaml"
++    path.write_text(yaml.safe_dump(cfg))
++    return path
++
++
++@pytest.mark.parametrize("enabled", [False, True])
++@pytest.mark.parametrize("explicit_null", [False, True])
++def test_omitted_and_null_preserve_legacy_boolean(tmp_path, enabled, explicit_null):
++    changes = {"save_rollout_mp4": enabled}
++    if explicit_null:
++        changes[FIELD] = None
++    path = configuration(tmp_path, **changes)
++    _, cfg = resolve(["dry-run", "--config", str(path)])
++    assert cfg[FIELD] is None and cfg["save_rollout_mp4"] is enabled
++
++
++@pytest.mark.parametrize("limit", [0, 3, 50])
++def test_exact_integer_limits_are_accepted(tmp_path, limit):
++    path = configuration(tmp_path, **{FIELD: limit})
++    _, cfg = resolve(["dry-run", "--config", str(path)])
++    assert type(cfg[FIELD]) is int and cfg[FIELD] == limit
++
++
++@pytest.mark.parametrize("limit", [-1, 51, 3.0, "3", True, False, [3], {"n": 3}])
++def test_invalid_limit_types_and_range_are_rejected(tmp_path, limit):
++    path = configuration(tmp_path, **{FIELD: limit})
++    with pytest.raises(ValueError, match=FIELD):
++        resolve(["dry-run", "--config", str(path)])
++    assert not (tmp_path / "run").exists()
++
++
++@pytest.mark.parametrize("limit", [0, 3, 50])
++def test_disabled_rollout_with_any_nonnull_limit_is_rejected(tmp_path, limit):
++    path = configuration(tmp_path, save_rollout_mp4=False, **{FIELD: limit})
++    with pytest.raises(ValueError, match=FIELD):
++        resolve(["fresh", "--config", str(path)])
++
++
++def test_limit_is_checked_after_cli_episode_override(tmp_path):
++    path = configuration(tmp_path, **{FIELD: 3})
++    with pytest.raises(ValueError, match=FIELD):
++        resolve(["resume", "--config", str(path), "--episodes", "2"])
++    _, cfg = resolve(["resume", "--config", str(path), "--episodes", "3"])
++    assert cfg[FIELD] == cfg["episodes_per_task"] == 3
++
++
++def test_public_dry_run_reports_policy_without_model_or_runtime(tmp_path, capsys):
++    path = configuration(tmp_path, episodes_per_task=5, **{FIELD: 3})
++    for task in TASKS:
++        meta = (
++            tmp_path / f"absent_inputs/dataset/{task}/lerobot/extras/dataset_meta.json"
++        )
++        meta.parent.mkdir(parents=True)
++        meta.write_text(json.dumps({"env_args": {"env_name": task}}))
++
++    def forbidden(*a, **kw):
++        pytest.fail("dry-run cannot prepare model inputs or start runtime")
++
++    assert (
++        main(
++            ["dry-run", "--config", str(path)],
++            prepare_inputs=forbidden,
++            runtime_type=forbidden,
++        )
++        == 0
++    )
++    preview = json.loads(capsys.readouterr().out)
++    assert preview["resolved"][FIELD] == 3
++    assert preview["resolved"]["save_generated_video"] == "first"
++    assert preview["slots"] == [[task, ep] for ep in range(5) for task in TASKS]
++    assert preview["models_loaded"] == preview["environments_created"] == 0
++    assert not Path(preview["resolved"]["checkpoint"]).exists()
++    assert not Path(preview["resolved"]["config_file"]).exists()
++    assert not (tmp_path / "run").exists()
++
++
++def runtime_inputs(tmp_path, limit, *, profile="phase_a", legacy=False):
++    path = configuration(
++        tmp_path,
++        execution_profile=profile,
++        gpu_ids=[4, 5],
++        sims_per_gpu=2 if profile == "phase_b" else 1,
++        **{FIELD: limit},
++    )
++    _, cfg = resolve(["fresh", "--config", str(path)])
++    m = manifest(tasks=TASKS, episodes=50)
++    m = build_manifest(
++        tasks=m["tasks"],
++        episodes=m["episodes_per_task"],
++        seed=m["seed"],
++        horizons=m["horizons"],
++        experiment=m["experiment"],
++        execution=execution(cfg),
++    )
++    store = Store(Path(cfg["output_dir"]), m)
++    store.create()
++    initial = dict(cfg)
++    if legacy:
++        initial.pop(FIELD)
++    save(
++        store.root / "_internal/invocations/0001.json",
++        {"mode": "fresh", "resolved": initial},
++    )
++    return store, cfg
++
++
++@pytest.mark.parametrize("before,after", [(3, 0), (3, None), (None, 3), (0, None)])
++def test_resume_cap_drift_is_rejected_and_bad_invocation_cannot_poison_anchor(
++    tmp_path, monkeypatch, before, after
++):
++    store, cfg = runtime_inputs(tmp_path, before, legacy=before is None)
++    anchor = (store.root / "_internal/invocations/0001.json").read_bytes()
++    changed = {**cfg, FIELD: after}
++    # A rejected Resume is still an invocation in the existing CLI. Give it an
++    # earlier filename too: selection must use mode=fresh, not filename order.
++    save(
++        store.root / "_internal/invocations/0000.json",
++        {"mode": "resume", "resolved": changed},
++    )
++    with monkeypatch.context() as patch:
++        patch.setattr(
++            runtime_module,
++            "Registry",
++            lambda *a: pytest.fail("drift must fail before process setup"),
++        )
++        with pytest.raises(ValueError, match="rollout cap differs"):
++            Runtime(store, changed, {}, {})
++    Runtime(store, cfg, {}, {})
++    assert (store.root / "_internal/invocations/0001.json").read_bytes() == anchor
++
++
++def test_legacy_missing_cap_keeps_boolean_and_generated_resume_choices(tmp_path):
++    store, cfg = runtime_inputs(tmp_path, None, legacy=True)
++    Runtime(
++        store,
++        {**cfg, "save_rollout_mp4": False, "save_generated_video": "none"},
++        {},
++        {},
++    )
++
++
++def test_nonnull_cap_cannot_adopt_run_without_fresh_record(tmp_path):
++    store, cfg = runtime_inputs(tmp_path, 3)
++    (store.root / "_internal/invocations/0001.json").unlink()
++    with pytest.raises(ValueError, match="Fresh Run configuration record"):
++        Runtime(store, cfg, {}, {})
++    Runtime(store, {**cfg, FIELD: None}, {}, {})  # Legacy null behavior remains.
++
++
++def test_corrupt_boolean_in_initial_cap_is_not_equal_to_integer_one(tmp_path):
++    store, cfg = runtime_inputs(tmp_path, 1)
++    # Retained synthetic corruption, not a production/history edit.
++    path = store.root / "_internal/invocations/0001.json"
++    row = json.loads(path.read_text())["body"]
++    row["resolved"][FIELD] = True
++    path.write_text(json.dumps({"body": row, "sha256": digest(row)}))
++    with pytest.raises(ValueError, match="rollout cap differs"):
++        Runtime(store, cfg, {}, {})
++
++
++@pytest.mark.parametrize("profile", ["phase_a", "phase_b"])
++@pytest.mark.parametrize("limit", [None, 0, 3])
++def test_every_physical_actor_receives_static_limit(
++    tmp_path, monkeypatch, profile, limit
++):
++    store, cfg = runtime_inputs(tmp_path, limit, profile=profile)
++    inputs = {
++        "tasks": {task: "/unread/synthetic/" + task for task in TASKS},
++        "simulation_libraries": {},
++        "runtime": {"digest": "1" * 64},
++    }
++    runtime = Runtime(store, cfg, inputs, {})
++    monkeypatch.setattr(runtime, "_server", lambda worker: (None, {}, 8912))
++    captured = []
++
++    class CapturedBeforeProcess(Exception):
++        pass
++
++    def capture(path, value):
++        assert path.parent.name == "actor_configs"
++        captured.append(value)
++        raise CapturedBeforeProcess
++
++    monkeypatch.setattr(runtime_module, "write", capture)
++    with store.locked():
++        for worker in runtime.workers:
++            with pytest.raises(CapturedBeforeProcess):
++                runtime._actor({"task": TASKS[0], "physical_worker": worker})
++    assert {row["physical_worker"] for row in captured} == set(runtime.workers)
++    for row in captured:
++        assert row["settings"][FIELD] == limit
++        assert row["settings"]["save_generated_video"] == "first"
++    assert not runtime.actors and not runtime.logs
++
++
++class CapturedMedia(MediaSink):
++    """Keep real frame/prediction selection; replace only encoder submission."""
++
++    def __init__(self, directory, *, rollout, generated, grace_s):
++        self.rollout, self.generated = rollout, generated
++        self.errors, self.queued = [], []
++        self.dropped = 0
++
++    def _submit(self, kind, payload):
++        self.queued.append(kind)  # No queue, subprocess, decoding or video copy.
++
++    def close(self):
++        return {"errors": self.errors, "helper_pids": []}
++
++
++@pytest.mark.parametrize(
++    "limit,enabled", [(None, True), (None, False), (0, True), (3, True), (50, True)]
++)
++@pytest.mark.parametrize("generated", ["none", "first", "all"])
++def test_reused_native_episode_uses_task_logical_index_not_completion_order(
++    tmp_path, monkeypatch, limit, enabled, generated
++):
++    monkeypatch.setattr(native, "build_state_token", lambda _: [0.0] * 15)
++    sinks = []
++
++    def media_factory(*a, **kw):
++        sinks.append(CapturedMedia(*a, **kw))
++        return sinks[-1]
++
++    def policy(*a, **kw):
++        prediction = kw["on_prediction"]
++        kw["on_prediction"] = lambda result, latency: prediction(
++            {**result, "video": ["synthetic diagnostic payload; never decoded"]},
++            latency,
++        )
++        return native.run_policy(*a, **kw)
++
++    env = Env()
++    # Two Task names in Episode-major order, then a Retry/Resume of the same
++    # logical index with fresh attempt IDs. One engine/settings is reused.
++    slots = [(task, ep) for ep in (0, 1, 2, 3, 49) for task in TASKS]
++    slots += [(TASKS[0], 1), (TASKS[1], 3)]
++    with server() as (url, calls):
++        engine = NativeEpisode(
++            env,
++            {
++                "server_url": url,
++                "horizon": 2,
++                "predict_timeout_s": 2.0,
++                "save_rollout_mp4": enabled,
++                FIELD: limit,
++                "save_generated_video": generated,
++            },
++            policy=policy,
++            media_factory=media_factory,
++        )
++        for order, (task, episode) in enumerate(slots):
++            env.success_at = 1 if episode % 2 == 0 else 100
++            assert engine.initialize()["initial_success"] is False
++            directory = tmp_path / f"attempt_{order}"
++            result = engine.execute(
++                {
++                    "task": task,
++                    "episode": episode,
++                    "attempt_id": f"{order:032x}",
++                    "stream_id": "1" * 32,
++                    "seed": 7,
++                    "manifest_digest": "2" * 64,
++                },
++                reset_index=order,
++                directory=directory,
++            )
++            expected = enabled and (limit is None or episode < limit)
++            assert sinks[-1].rollout is expected
++            assert ("frame" in sinks[-1].queued) is expected
++            assert ("prediction" in sinks[-1].queued) is (generated != "none")
++            assert result["observation"]["outcome"] == (
++                "success" if episode % 2 == 0 else "failure"
++            )
++            assert result["local_session"]["reset_ack"] is True
++            diagnostics = json.loads((directory / "media_diagnostics.json").read_text())
++            assert diagnostics["rollout_requested"] is expected
++            assert diagnostics[FIELD] == limit
++            assert calls[-1]["_local_memory_command"] == "reset"
++        assert len(sinks) == len(slots)
++        assert sum(row.get("_local_memory_command") == "reset" for row in calls) == len(
++            slots
++        )
++    assert not list(tmp_path.rglob("*.mp4"))  # Encoder replaced; no actual MP4s.
++
++
++@pytest.mark.parametrize("failure", ["constructor", "callbacks"])
++def test_media_failure_with_cap_zero_preserves_real_core_commit_and_local_reset(
++    tmp_path, monkeypatch, failure
++):
++    def capped_engine(env, settings, **kw):
++        return NativeEpisode(
++            env,
++            {
++                **settings,
++                "save_rollout_mp4": True,
++                FIELD: 0,
++                "save_generated_video": "first",
++            },
++            **kw,
++        )
++
++    def broken_factory(*a, **kw):
++        raise OSError("synthetic encoder initialization failure")
++
++    monkeypatch.setattr(native_test, "NativeEpisode", capped_engine)
++    row, _, calls, store = native_test.native_execute(
++        tmp_path,
++        monkeypatch,
++        media_factory=broken_factory
++        if failure == "constructor"
++        else native_test.BadMedia,
++    )
++    assert row["outcome"] == "success" and row["steps"] == 2
++    assert calls[-1]["_local_memory_command"] == "reset"
++    assert len(store.rows("CloseFridge")) == 1
++    diagnostic = json.loads(
++        (store._slot("CloseFridge", 0) / "media_diagnostics.json").read_text()
++    )
++    assert diagnostic["rollout_requested"] is False and diagnostic[FIELD] == 0
++    assert not list(store.root.rglob("*.mp4"))

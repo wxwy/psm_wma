@@ -1,0 +1,65 @@
+[
+  {
+    "status": "FAIL",
+    "identities": {
+      "root": "94e5a935f53efbd714842eb5441b4f92c26cc5d3",
+      "child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+      "gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417"
+    },
+    "evidence_directory": "/tmp/psm-eval-rollout-first-n-20261101/final",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "/tmp/psm-eval-rollout-first-n-20261101/run_gate.py",
+      "--root-worktree",
+      "/workspace/psm-wma-eval-rollout-first-n",
+      "--expected-root",
+      "94e5a935f53efbd714842eb5441b4f92c26cc5d3",
+      "--expected-child",
+      "8664267704da3206e719f3c7eef2b5ed86e2a417",
+      "--evidence-dir",
+      "/tmp/psm-eval-rollout-first-n-20261101/final"
+    ]
+  },
+  {
+    "status": "FAIL",
+    "identities": {
+      "root": "719097ae04f4a5af38d0c3d9140942574d7e7de6",
+      "child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+      "gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417"
+    },
+    "evidence_directory": "/tmp/psm-eval-rollout-first-n-20261101/final_r1",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "/tmp/psm-eval-rollout-first-n-20261101/run_gate.py",
+      "--root-worktree",
+      "/workspace/psm-wma-eval-rollout-first-n",
+      "--expected-root",
+      "719097ae04f4a5af38d0c3d9140942574d7e7de6",
+      "--expected-child",
+      "8664267704da3206e719f3c7eef2b5ed86e2a417",
+      "--evidence-dir",
+      "/tmp/psm-eval-rollout-first-n-20261101/final_r1"
+    ]
+  },
+  {
+    "status": "PASS",
+    "identities": {
+      "root": "fd183f9e8fddfaef93b6ec9484184f071062ae41",
+      "child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+      "gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417"
+    },
+    "evidence_directory": "/tmp/psm-eval-rollout-first-n-20261101/final_r2",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "/tmp/psm-eval-rollout-first-n-20261101/run_gate.py",
+      "--root-worktree",
+      "/workspace/psm-wma-eval-rollout-first-n",
+      "--expected-root",
+      "fd183f9e8fddfaef93b6ec9484184f071062ae41",
+      "--expected-child",
+      "8664267704da3206e719f3c7eef2b5ed86e2a417",
+      "--evidence-dir",
+      "/tmp/psm-eval-rollout-first-n-20261101/final_r2"
+    ]
+  }
+]

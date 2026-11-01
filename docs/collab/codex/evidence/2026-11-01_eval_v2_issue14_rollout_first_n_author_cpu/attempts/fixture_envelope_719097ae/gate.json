@@ -1,0 +1,104 @@
+{
+  "gate": "AUTHOR_ISSUE14_ROLLOUT_FIRST_N_CPU",
+  "status": "FAIL",
+  "identities": {
+    "root": "719097ae04f4a5af38d0c3d9140942574d7e7de6",
+    "child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+    "gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417"
+  },
+  "steps": [
+    {
+      "name": "root_ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_batch_tests/rollout_policy_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-eval-rollout-first-n",
+      "exit_code": 0,
+      "timeout_s": 120,
+      "seconds": 0.048408881993964314
+    },
+    {
+      "name": "root_ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "scripts/robocasa_eval_v2/config.py",
+        "scripts/robocasa_eval_v2/runtime.py",
+        "tools/v3/eval_v2_batch_tests/rollout_policy_test.py"
+      ],
+      "cwd": "/workspace/psm-wma-eval-rollout-first-n",
+      "exit_code": 0,
+      "timeout_s": 120,
+      "seconds": 0.048855476023163646
+    },
+    {
+      "name": "child_ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "cosmos_framework/simulation/robocasa/eval_v2_adapter.py"
+      ],
+      "cwd": "/workspace/psm-wma-eval-rollout-first-n/cosmos-framework",
+      "exit_code": 0,
+      "timeout_s": 120,
+      "seconds": 0.04765430302359164
+    },
+    {
+      "name": "child_ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "cosmos_framework/simulation/robocasa/eval_v2_adapter.py"
+      ],
+      "cwd": "/workspace/psm-wma-eval-rollout-first-n/cosmos-framework",
+      "exit_code": 0,
+      "timeout_s": 120,
+      "seconds": 0.04769095196388662
+    },
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-s",
+        "-x",
+        "-p",
+        "no:cacheprovider",
+        "--rootdir=/workspace/psm-wma-eval-rollout-first-n",
+        "tools/v3/eval_v2_batch_tests/rollout_policy_test.py",
+        "tools/v3/eval_v2_batch_tests/config_test.py",
+        "tools/v3/eval_v2_production_tests/native_test.py::test_broken_media_never_changes_environment_success_or_Core_commit",
+        "tools/v3/eval_v2_production_tests/native_test.py::test_horizon_failure_with_high_reward_is_valid_and_never_retried",
+        "--basetemp=/tmp/psm-eval-rollout-first-n-20261101/final_r1/pytest_tmp",
+        "--junitxml=/tmp/psm-eval-rollout-first-n-20261101/final_r1/junit.xml"
+      ],
+      "cwd": "/workspace/psm-wma-eval-rollout-first-n",
+      "exit_code": 1,
+      "timeout_s": 180,
+      "seconds": 1.2211654530256055
+    }
+  ],
+  "real_GPU_model_data_DCP_server_simulator_FFmpeg": false,
+  "active_runtime_or_shared_directory_access": false,
+  "syntax_files": 4,
+  "error": "RuntimeError('pytest failed: 1; see /tmp/psm-eval-rollout-first-n-20261101/final_r1/pytest.log')"
+}

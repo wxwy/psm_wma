@@ -1,3 +1,23 @@
+# 2026-11-01 — Issue14 author CPU PASS, candidate REVIEW
+
+Formal Root `fd183f9e8fddfaef93b6ec9484184f071062ae41` / Child-Gitlink `8664267704da3206e719f3c7eef2b5ed86e2a417`.
+Independent Root/Child branch `v3-eval-v2-rollout-first-n-20261101`, base9ba1dd11/6c83596d.
+Final69 PASS/0failure/error/skip, 50new+19unchanged focused cases; Ruff0.12.7
+check/format and AST4 PASS. Exact source clean/unchanged. All three production
+files only; optional null/int cap is passed statically and applied per logical EP.
+Fresh invocation records fix same-Run cap; generated/SR/Local state stay independent.
+Two prior fixture failures (20pass/1fail,27pass/1fail) are retained and documented.
+42 artifact hashes / 11 source bindings checked. Author PASS is not independent acceptance.
+
+Observation 2026-11-01T08:02:56.154696+08:00: fresh fetched/advertised V3 still9ba1dd110a4e3e99e717937c2f8d044fa077cdbf, official Child still6c83596d6a259e89c4cd3e79424024983426ac3d;
+exact-new-Root review scanexit1. Latest Owner roles apply: independent candidate
+and CPU, then GPT fresh Gate. No legacy3pane/DS dispatch or automatic V3 merge.
+Handoff/evidence under docs/collab/codex dated2026-11-01 Issue14.
+Publish Child then Root candidates, read back and STOP. No actual900/noTTT shared
+worktree, outputs/media/YAML/DCP/log/process/model/data access or GPU/runtime action.
+
+## Earlier author attempts preserved
+
 # 2026-11-01 — Issue14 second author Gate stopped; actor lease fixture corrected
 
 Root719097ae04f4a5af38d0c3d9140942574d7e7de6 / unchanged Child86642677:

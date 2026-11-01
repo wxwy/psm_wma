@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "root_changes": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "docs/build/PSM-WMA_V3_EvalV2_Rollout_First_N_Issue14_2026-11-01.md",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/runtime.py",
+    "tools/v3/eval_v2_batch_tests/rollout_policy_test.py"
+  ],
+  "child_changes": [
+    "cosmos_framework/simulation/robocasa/eval_v2_adapter.py"
+  ],
+  "production_files": 3,
+  "all_other_source_unchanged": true
+}
