@@ -19,6 +19,7 @@ def cfg(tmp_path):
     metadata = directory / "extras/dataset_meta.json"
     metadata.write_text('{"env_args":{}}')
     from cosmos_framework.simulation.robocasa import eval_v2_slot
+    from cosmos_framework.simulation.robocasa import render_devices
     from tools.v3.eval_v2_production_tests.store_test import fresh
 
     value = fresh(tmp_path, episodes=1)
@@ -31,6 +32,7 @@ def cfg(tmp_path):
         "native": Path(native.__file__),
         "adapter": Path(eval_v2_adapter.__file__),
         "slot": Path(eval_v2_slot.__file__),
+        "rendering": Path(render_devices.__file__),
     }
     return {
         "nonce": "cpu",
@@ -53,6 +55,12 @@ def cfg(tmp_path):
             "horizon": 2,
             "server_url": "http://unused",
             "predict_timeout_s": 0.1,
+        },
+        "rendering": {
+            "backend": "osmesa",
+            "server_gpu_id": 4,
+            "render_gpu_id": None,
+            "expected_device": None,
         },
         "runtime_args": {},
         "dataset_dir": str(directory),

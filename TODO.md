@@ -520,3 +520,8 @@
 - **EVALV2-ROLLOUT-FIRST-N** — DONE (Code Gate); Codex; exact fd183f9e8fddfaef93b6ec9484184f071062ae41 / 8664267704da3206e719f3c7eef2b5ed86e2a417 APPROVE_CODE read at candidate11cae65a. Original author69 PASS and failures retained; no rerun. Owner promotion tracked separately; no runtime authorization.
 
 - **EVALV2-ROLLOUT-FIRST-N-PROMOTE** — DONE; Codex; Owner-approved promotion Root ab6b80e08030c1d5835d966a510ea8246944c536 published V3 after official Child fast-forward to 8664267704da3206e719f3c7eef2b5ed86e2a417; Root Gitlink/official Child and fetched/advertised readback match. Source9853/otherChild1269 preserved;42 hashes/11 bindings PASS; original69 PASS and failure history retained without rerun. No active shared runtime/config/media/DCP/log/process or GPU/real MP4/DS operation. Completion receipt docs-only; STOP.
+
+# 2026-11-01 — Owner split render/media candidate
+
+- **EVALV2-RENDER-MAP** — IN_PROGRESS; Codex; prerequisite Owner configurable2Server/16Sim directive, latestV3/866base read. Scope config/resources/runtime, worker/slot physical EGL identity, narrow tests/config/docs. Accept independent physical GPU mapping with proof, OSMesa retained, same-Run policy frozen, selected-GPU budget/conflict checks and CPU evidence; no Scheduler/Server rewrite or real GPU/simulation. Independent candidate + fresh GPT Code Gate, not V3 merge.
+- **EVALV2-MEDIA-LIFECYCLE** — IN_PROGRESS (traceback pending); Codex; scope MediaSink cleanup/adapter flags, bounded CPU failure tests. Distinguish optional encoder failure and successful reap from actual owned residual; preserve fail-closed and Core/Local semantics. Owner will supply EBADF traceback; continue independent render work while awaiting it. No current out2/NoTTT/shared runtime edits or restart.

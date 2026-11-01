@@ -24,7 +24,7 @@ from robocasa_episode_resume.model_identity import verification_record
 from robocasa_eval_v2.config import resolve, execution
 from robocasa_eval_v2.identity import discover, prepare, runtime_environment
 from robocasa_eval_v2.runtime import Runtime
-from robocasa_eval_v2.resources import physical_slots
+from robocasa_eval_v2.resources import physical_slots, render_slots
 
 
 def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
@@ -57,6 +57,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                     "resolved": cfg,
                     "task_order": [t for t, _ in tasks],
                     "physical_slots": physical_slots(cfg, len(tasks)),
+                    "render_slots": render_slots(cfg, len(tasks)),
                     "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
                     "slots": [
                         [t, ep]

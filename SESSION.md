@@ -1,3 +1,51 @@
+# 2026-11-01 — Renderer development CPU118 PASS; Media traceback pending
+
+Independent render implementation complete in Root config/resources/runtime/CLI,
+Child render_devices/worker/slot, example and focused tests. No Scheduler/Server/
+Local-TTT/model code changed. Render policy frozen via Fresh invocation; device
+proof uses NVML PCI -> EGL DRM/sysfs and actual Context checks. GPU0–3 absent from
+target assignments; no real GPU access. OSMesa and configurable counts retained.
+
+Development checks under /tmp/psm-eval-render-media-20261101/render_development_2/:
+118 passed/0failure/error/skip; scoped Ruff and AST PASS; source hashes unchanged
+after formatting. Prior development1 stopped on import sorting before pytest;
+raw logs retained. This is dirty-development-source evidence, not a formal Gate.
+Freeze independent renderer commits now; no publication or promotion yet.
+
+Media production files remain untouched. Owner replied 稍等；我随后给你 about
+EBADF traceback; defer dependent repair while preserving source analysis. Final
+combined clean-pair author Gate after the media changes, then GPT review/STOP.
+No current out2/NoTTT shared code/config/results/media/DCP/log/process access,
+realGPU/EGL/OSMesa/model/Server/simulator/FFmpeg or DS execution.
+
+## Earlier task claim preserved
+
+# 2026-11-01 — EvalV2 split render mapping and media lifecycle, IN_PROGRESS
+
+Owner target2 Servers +16 Sim, all device/count/M/B settings configurable.
+Isolated Root/Child branch v3-eval-v2-render-media-20261101; Rootbase
+7e2be5ca40891915a1e86eea935ed054ec1984dd, Childbase8664267704da3206e719f3c7eef2b5ed86e2a417.
+Claimed 2026-11-01T11:48:58.931745+08:00 before production edits.
+
+A: configurable Server/Render GPUs and EGL/OSMesa, selected-role resource checks,
+physical EGL identity attestation before Sim use, frozen effective render policy,
+keep existing Scheduler/Server/NativeBatch/Local state semantics. Planned Root
+config/resources/runtime + focused rendering helper, example/runbook/tests;
+Child worker/slot and a lazy EGL identity helper. Device selection is not proof
+from numeric CUDA/EGL ordinal equality. Actual hardware proof stays a future Gate.
+
+B: inspect EBADF/encoder reclamation/diagnostic-vs-residual fault semantics in
+Child MediaSink and adapter, focused CPU lifecycle tests, true residuals fail-closed.
+Owner will provide traceback shortly; defer Media production edits until it arrives.
+No production files edited yet; commits/evidence not created.
+
+Independent candidate only: no automatic V3/official Child promotion, real GPU,
+EGL/OSMesa simulation/model/FFmpeg or out2 Resume/evaluation/training, no access to
+active shared code/YAML/media/results/DCP/log/processes and no DS dispatch.
+Future Owner-only hardware sequence M1/B1 then M8/B2 then B4/B8 is not executed.
+
+## Prior promotion history preserved
+
 # 2026-11-01 — Issue14 V3 promotion COMPLETE
 
 Owner-authorized production promotion Root: `ab6b80e08030c1d5835d966a510ea8246944c536`.

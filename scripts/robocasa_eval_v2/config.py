@@ -15,6 +15,10 @@ DEFAULTS = {
     "tasks": "all",
     "episodes_per_task": 50,
     "gpu_ids": [4, 5, 6],
+    "render_gpu_ids": None,
+    "render_backend": None,
+    "server_reserve_bytes": 20 * 1024**3,
+    "render_reserve_bytes_per_sim": 1024**3,
     "base_port": 8912,
     "seed": 0,
     "prediction_steps": 30,
@@ -52,6 +56,8 @@ def resolve(argv=None):
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--owner-decision", type=Path)
     p.add_argument("--gpus")
+    p.add_argument("--render-gpus")
+    p.add_argument("--render-backend", choices=("egl", "osmesa"))
     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
     p.add_argument("--local-memory-mode", choices=("off", "required"))
     p.add_argument("--batch-wait-ms", type=int)
@@ -91,6 +97,10 @@ def resolve(argv=None):
         cfg["max_infer_batch_size"] = a.max_infer_batch_size
     if a.gpus is not None:
         cfg["gpu_ids"] = [int(x) for x in a.gpus.split(",")]
+    if a.render_gpus is not None:
+        cfg["render_gpu_ids"] = [int(x) for x in a.render_gpus.split(",")]
+    if a.render_backend is not None:
+        cfg["render_backend"] = a.render_backend
     if a.tasks is not None:
         cfg["tasks"] = "all" if a.tasks == "all" else a.tasks.split(",")
     if a.episodes is not None:
@@ -104,6 +114,11 @@ def resolve(argv=None):
         or any(type(g) is not int or g < 0 for g in cfg["gpu_ids"])
     ):
         raise ValueError("unique nonnegative GPU IDs required")
+    render = rendering(cfg)
+    cfg.update(render_backend=render["backend"], render_gpu_ids=render["gpu_ids"])
+    for key in ("server_reserve_bytes", "render_reserve_bytes_per_sim"):
+        if type(cfg[key]) is not int or cfg[key] < 0:
+            raise ValueError(f"invalid {key}")
     if cfg["tasks"] != "all" and (
         not isinstance(cfg["tasks"], list)
         or not cfg["tasks"]
@@ -215,3 +230,26 @@ def execution(cfg):
         "batch_wait_ms": cfg["batch_wait_ms"],
         "noise": "literal_cfg_seed_per_sample_v1",
     }
+
+
+def rendering(cfg):
+    """One ordered render device per Server; duplicates allow deliberate sharing."""
+    backend = cfg.get("render_backend")
+    if backend is None:
+        backend = os.environ.get("MUJOCO_GL", "egl")
+    if backend not in ("egl", "osmesa"):
+        raise ValueError("render_backend must be egl or osmesa")
+    devices = cfg.get("render_gpu_ids")
+    if backend == "osmesa":
+        if devices is not None and devices != []:
+            raise ValueError("OSMesa cannot allocate render GPUs")
+        return {"backend": backend, "gpu_ids": []}
+    if devices is None:
+        devices = cfg["gpu_ids"]
+    if (
+        not isinstance(devices, list)
+        or len(devices) != len(cfg["gpu_ids"])
+        or any(type(g) is not int or g < 0 for g in devices)
+    ):
+        raise ValueError("render_gpu_ids must map each Server to a physical GPU")
+    return {"backend": backend, "gpu_ids": list(devices)}

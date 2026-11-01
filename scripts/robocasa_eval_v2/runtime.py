@@ -21,6 +21,7 @@ from cosmos_framework.evaluation.robocasa_v2.scheduler import (
     slot_disposition,
 )
 from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
+from cosmos_framework.simulation.robocasa.render_devices import validate_proof
 from eval_robocasa_18task_queue import (
     CHILD,
     ROOT,
@@ -32,7 +33,7 @@ from robocasa_eval_v2_processes import Actor, Registry, process_identity
 from robocasa_processes import group_members
 
 from robocasa_eval_v2 import identity, resources
-from robocasa_eval_v2.config import execution
+from robocasa_eval_v2.config import execution, rendering
 
 
 class Runtime:
@@ -72,6 +73,19 @@ class Runtime:
                 )
         elif limit is not None:
             raise ValueError("rollout cap requires a Fresh Run configuration record")
+        self.render_policy = rendering(cfg)
+        if initial is not None:
+            frozen = initial["resolved"]
+            if frozen.get("render_backend") is None:
+                if (
+                    cfg.get("render_backend") is not None
+                    or cfg.get("render_gpu_ids") is not None
+                ):
+                    raise ValueError("explicit render policy requires a new Run")
+            elif rendering(frozen) != self.render_policy:
+                raise ValueError(
+                    "render policy differs from the initial Run configuration"
+                )
         self.stop = threading.Event()
         self.registry = Registry(store.root, cfg["terminate_grace_s"])
         self.servers = {}
@@ -83,6 +97,10 @@ class Runtime:
             cfg, len(store.manifest["task_order"])
         )
         self.workers = list(self.worker_gpus)
+        self.worker_render_gpus = resources.render_slots(
+            cfg, len(store.manifest["task_order"])
+        )
+        self.actor_rendering = {}
         self.batch_profile = cfg.get("execution_profile", "phase_a") == "phase_b"
         self.slot_ids = {worker: uuid.uuid4().hex for worker in self.workers}
         self.slot_generations = dict.fromkeys(self.workers, 0)
@@ -278,6 +296,15 @@ class Runtime:
             if worker in self.actors:
                 return self._start_assignment(claim, self.actors[worker], server_rec)
             nonce = uuid.uuid4().hex
+            render_gpu = self.worker_render_gpus[worker]
+            render_plan = {
+                "backend": self.render_policy["backend"],
+                "server_gpu_id": self.worker_gpus[worker],
+                "render_gpu_id": render_gpu,
+                "expected_device": resources.gpu_identity(render_gpu)
+                if render_gpu is not None
+                else None,
+            }
             cfg = {
                 "nonce": nonce,
                 "manifest_digest": self.store.manifest["digest"],
@@ -286,6 +313,7 @@ class Runtime:
                 "physical_slot_id": self.slot_ids[worker],
                 "physical_worker": worker,
                 "gpu_id": self.worker_gpus[worker],
+                "rendering": render_plan,
                 "task_root": str(self.store.root / "_internal/tasks"),
                 "tasks": {
                     name: {
@@ -309,6 +337,7 @@ class Runtime:
                         "native": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
                         "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
                         "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+                        "rendering": "cosmos_framework/simulation/robocasa/render_devices.py",
                     }.items()
                 },
                 "settings": {
@@ -348,12 +377,15 @@ class Runtime:
             path = self.store.root / "_internal/actor_configs" / f"{nonce}.json"
             write(path, cfg)
             parent, child = socket.socketpair()
-            gpu = self.worker_gpus[claim["physical_worker"]]
             env = dict(
                 self.environment,
-                CUDA_VISIBLE_DEVICES=str(gpu),
-                MUJOCO_EGL_DEVICE_ID=str(gpu),
+                CUDA_VISIBLE_DEVICES="",
+                MUJOCO_GL=self.render_policy["backend"],
+                PYOPENGL_PLATFORM=self.render_policy["backend"],
             )
+            env.pop(
+                "MUJOCO_EGL_DEVICE_ID", None
+            )  # Worker resolves the physical PCI -> EGL index before imports.
             log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
             self.logs.append(log)
             command = [
@@ -405,6 +437,10 @@ class Runtime:
                 != self.store.manifest["protocol"]["local_memory"]
             ):
                 raise RuntimeError("native Worker handshake mismatch")
+            self.actor_rendering[worker] = validate_proof(
+                ready.get("rendering"), render_plan
+            )
+            self._proof("render_device", self.actor_rendering[worker])
             self.resource_probe(
                 self.cfg,
                 [v[0] for v in self.servers.values()]
@@ -517,6 +553,16 @@ class Runtime:
                     raise RuntimeError("evaluation cancelled")
                 sample = self.store.begin_initialization(a)
                 response = actor.request("initialize", deadline=deadline)
+                if (
+                    response.get("error") is None
+                    and self.render_policy["backend"] == "egl"
+                ):
+                    proof = validate_proof(
+                        response.get("rendering"),
+                        self.actor_rendering[claim["physical_worker"]],
+                        context=True,
+                    )
+                    self._proof("render_context", proof)
                 if response.get("error") is None:
                     state = self.store.initialization_outcome(
                         a, initial_success=response["initial_success"]
