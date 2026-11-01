@@ -1,3 +1,28 @@
+# 2026-11-01 — Owner GPU policy candidate/request published, readback PASS
+
+The first readback failed on Child GitHub HTTP503 before writing any success
+receipt. A bounded readonly retry completed the full fresh pass below; no prior
+or partial result was reused. No code/config mutation for network recovery.
+
+Observation 2026-11-01T20:13:37.632754+08:00: Formal Root 4b581493db805c92964cb27e740c736db87c0329, unchanged
+Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6. Root-only normal nonforce candidate push, HEAD
+19525faf36bc09a03e2d39e7bcc5d018a1a039bb. Fresh explicit fetches and advertised refs agree;27/27 artifact
+hashes and6/6 source bindings re-read from GitHub objects. Source equals Formal,
+clean worktrees before receipt bookkeeping; final70/0/0/0 clean-Pair author Gate
+retained. Inbox128696bytes, prefix intact, unique policy request. Old APPROVE_CODE
+remains attached to6484dd83/9a8cd618; this observation asserts request delivery
+only and does not infer a new policy verdict. Prior evidence preserved, not rerun.
+
+Official V3 remains7e2be5ca, official Child86642677; no canonical promotion.
+No actual GPU/NVML/EGL/process-list/FFmpeg/model/Server/simulator, training,
+out2/NoTTT/shared runtime/DCP/results/log/process access or DS dispatch. Selected
+GPU identity/Context and owned cleanup remain; admission no longer considers
+other GPU jobs or VRAM budgets per explicit Owner decision. Receipt/SESSION
+successor is bookkeeping, not new implementation. Final repeat readback external,
+then STOP for GPT narrow review; no superseded V2/tmux poll or launch authority.
+
+## Earlier policy history preserved
+
 # 2026-11-01 — Owner resource policy clean-Pair70 PASS, request prepared
 
 Formal Root 4b581493db805c92964cb27e740c736db87c0329, same Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6.
