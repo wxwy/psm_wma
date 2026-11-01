@@ -21,7 +21,7 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
 )
 from robocasa_episode_resume.model_identity import verification_record
 
-from robocasa_eval_v2.config import resolve, execution
+from robocasa_eval_v2.config import resolve, execution, rendering
 from robocasa_eval_v2.identity import discover, prepare, runtime_environment
 from robocasa_eval_v2.runtime import Runtime
 from robocasa_eval_v2.resources import physical_slots, render_slots
@@ -40,6 +40,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                 manifest["task_order"] != [t for t, _ in tasks]
                 or manifest["episodes_per_task"] != cfg["episodes_per_task"]
                 or manifest.get("execution") != execution(cfg)
+                or (
+                    manifest.get("rendering") is not None
+                    and manifest["rendering"] != rendering(cfg)
+                )
             ):
                 raise ValueError("dry-run scientific plan differs from frozen Run")
             for ep in range(cfg["episodes_per_task"]):

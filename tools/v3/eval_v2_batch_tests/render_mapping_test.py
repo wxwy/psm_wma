@@ -7,7 +7,10 @@ from types import SimpleNamespace
 
 import pytest
 import yaml
-from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
+from cosmos_framework.evaluation.robocasa_v2.contract import (
+    build_manifest,
+    validate_manifest,
+)
 from cosmos_framework.evaluation.robocasa_v2.store import Store, save
 from robocasa_eval_v2 import resources
 from robocasa_eval_v2.cli import main
@@ -307,3 +310,68 @@ def test_physical_identity_uses_pci_and_uuid_not_an_assumed_egl_index():
         "uuid": "GPU-render-six",
         "pci_bus_id": "0000:af:00.0",
     }
+
+
+@pytest.mark.parametrize(
+    "policy",
+    [
+        {"backend": "egl", "gpu_ids": [6, 7]},
+        {"backend": "egl", "gpu_ids": [7, 6]},
+        {"backend": "osmesa", "gpu_ids": []},
+    ],
+)
+def test_new_run_manifest_digest_binds_backend_and_ordered_render_roles(policy):
+    m = manifest()
+    args = dict(
+        tasks=m["tasks"],
+        episodes=m["episodes_per_task"],
+        seed=m["seed"],
+        horizons=m["horizons"],
+        experiment=m["experiment"],
+    )
+    old = build_manifest(**args)
+    new = build_manifest(**args, rendering=policy)
+    assert validate_manifest(new) == new
+    assert old["digest"] != new["digest"]
+    other = {"backend": "egl", "gpu_ids": [8, 9]}
+    assert new["digest"] != build_manifest(**args, rendering=other)["digest"]
+
+
+@pytest.mark.parametrize(
+    "policy",
+    [
+        {"backend": "egl", "gpu_ids": []},
+        {"backend": "osmesa", "gpu_ids": [6]},
+        {"backend": "egl", "gpu_ids": [True]},
+        {"backend": "egl", "gpu_ids": [-1]},
+        {"backend": "egl", "gpu_ids": [6], "ignored": True},
+    ],
+)
+def test_manifest_rejects_incomplete_or_malformed_render_identity(policy):
+    m = manifest()
+    with pytest.raises(ValueError, match="render backend"):
+        build_manifest(
+            tasks=m["tasks"],
+            episodes=3,
+            seed=m["seed"],
+            horizons=m["horizons"],
+            experiment=m["experiment"],
+            rendering=policy,
+        )
+
+
+def test_runtime_refuses_render_roles_different_from_frozen_manifest(tmp_path):
+    store, cfg = store_cfg(tmp_path)
+    m = store.manifest
+    changed = build_manifest(
+        tasks=m["tasks"],
+        episodes=50,
+        seed=m["seed"],
+        horizons=m["horizons"],
+        experiment=m["experiment"],
+        execution=execution(cfg),
+        rendering={"backend": "egl", "gpu_ids": [7, 6]},
+    )
+    store = Store(tmp_path / "different-frozen-run", changed)
+    with pytest.raises(ValueError, match="frozen manifest"):
+        Runtime(store, cfg, {}, {})

@@ -1,3 +1,63 @@
+# 2026-11-01 — Combined development192 PASS; final implementation freeze next
+
+Owner's latest clarification: DS facts can be trusted, DS analysis must be
+evaluated critically. Applied below: DS log observations are labelled reported,
+CPython error-path control independently reproduced; no claim that every server
+failure is caused by this race or EBADF proves process death.
+
+Command: /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-render-media-20261101/combined_cpu.py
+/tmp/psm-eval-render-media-20261101/combined_development_1 --format
+Python3.13.5, Ruff0.12.7, CPU/offline/tmp caches, synthetic frame/Env/model/device
+boundaries plus actual owned Linux CPU process-group cleanup.192 passed,
+0failure/error/skip; scoped Ruff/format/syntax/diff-check PASS. Added stdlib
+sentinel EBADF -> semaphore error control, actual pidfd TERM/KILL/reap with
+unrelated-process survival, helper/PID/new-descendant checks. No true FFmpeg/EGL/
+model/simulator/GPU. Relevant config/worker/slot/native/process/video-policy
+regressions retained. All watched code hashes stable during tests.
+
+Current production edits are uncommitted, about to freeze Child then Root. Root
+Manifest/render fields and process helper plus Child Media/adapter/contract are
+the remaining increment over the earlier renderer stage. Follow the current
+Owner workflow (Codex CPU -> GPT Code Gate -> DS independent CPU -> separately
+authorized Canary), not the older V2/tmux three-reviewer polling mechanism.
+This only authorizes isolated candidate implementation/publication and one GPT
+request, then STOP. No merge or runtime/old out2 Resume authority.
+
+## Earlier observations preserved
+
+# 2026-11-01 — DS traceback received; combined candidate IN_PROGRESS
+
+Owner supplied DS-reported Python3.13 QueueFeederThread EBADF -> semaphore
+over-release trace and out2 diagnostic references. Facts accepted as DS evidence;
+server files were not accessed. DS's causal/fix proposals remain hypotheses.
+CPython3.13 source confirms sentinel reader_close is inside the ordinary error
+handler that releases queue_sem; this is not a finally block. Do not infer that
+EBADF proves encoder death, or relax genuine live-residual failure semantics.
+
+Media now uses bounded feeder-first close with one serialized reader-close
+callback shared by parent and feeder. Optional diagnostics/successful forced reap
+are separate from live encoder/feeder failure. Adapter preserves Core/Local
+semantics. Root owned-descendant check adds bounded normal wait/reap, then verified
+targeted TERM/KILL (pidfd final identity pin); actual survivors remain blocking.
+No independent encoder PGID or algorithm/Server/Scheduler changes.
+Effective render policy additionally binds the immutable Manifest/digest.
+
+Development CPU command: /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-render-media-20261101/media_cpu.py
+/tmp/psm-eval-render-media-20261101/media_development_2 ; Python3.13.5, CPU/offline,
+fake encoder/process/HTTP model boundaries, isolated caches.29 passed/0failure/
+error/skip; Ruff0.12.7 PASS. Earlier media_development_1 stopped on fixture E731;
+no pytest ran there. All output retained. Added stdlib error-path control and
+helper identity recheck afterward; these latest changes remain untested.
+
+All new Media/Manifest/process edits are currently uncommitted. Final combined
+focused regression, clean implementation pair, raw author evidence and one fresh
+GPT Code Gate request still required. No GPU/EGL/FFmpeg/model/real simulator,
+canonical merge, out2/NoTTT/shared runtime or server filesystem operation.
+
+## Earlier stage checkpoint preserved
+
 # 2026-11-01 — Renderer stage checkpoint; Media traceback required next
 
 Renderer stage code Root91896fac2140f6c77dfb440c32253626051eb8f2 /

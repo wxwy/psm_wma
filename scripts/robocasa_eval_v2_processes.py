@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import signal
 import socket
 import sys
@@ -42,6 +43,161 @@ def verify_group(identity):
             or member["start_ticks"] < identity["start_ticks"]
         ):
             raise RuntimeError("ambiguous process group ownership")
+
+
+def signal_media_process(
+    expected,
+    sig,
+    *,
+    identity=process_identity,
+    open_pidfd=None,
+    fd_signal=None,
+    close_fd=os.close,
+):
+    """Pin the verified process across the final check-to-signal race."""
+    open_pidfd = open_pidfd or getattr(os, "pidfd_open", None)
+    fd_signal = fd_signal or getattr(signal, "pidfd_send_signal", None)
+    if open_pidfd is None or fd_signal is None:
+        raise RuntimeError("safe pidfd media cleanup is unavailable")
+    fd = open_pidfd(expected["pid"], 0)
+    try:
+        if identity(expected["pid"]) != expected:
+            raise RuntimeError("PID reuse: refusing media signal")
+        fd_signal(fd, sig)
+    finally:
+        close_fd(fd)
+
+
+def quiesce_media(
+    actor,
+    helpers,
+    grace,
+    *,
+    members=group_members,
+    identity=process_identity,
+    send_signal=None,
+    reap=os.waitpid,
+    clock=time.monotonic,
+    pause=time.sleep,
+    read_command=None,
+):
+    """Boundedly reap only this registered Actor's non-Actor descendants.
+
+    Resource trackers may persist for the Actor lifetime. No whole-group signal
+    is sent here, and no PID is signalled without fresh session/start-time proof.
+    """
+    helpers = list(helpers)
+    if len(helpers) > 1 or any(type(pid) is not int or pid <= 0 for pid in helpers):
+        raise RuntimeError("invalid media helper ownership")
+    leader, pgid = actor.owned.proc.pid, actor.owned.pgid
+    send_signal = send_signal or (
+        lambda expected, sig: signal_media_process(expected, sig, identity=identity)
+    )
+    read_command = read_command or (
+        lambda pid: (Path("/proc") / str(pid) / "cmdline").read_bytes().split(b"\0")
+    )
+    allowed = {}
+    for pid in helpers:
+        current = identity(pid)
+        if current is None:
+            continue  # An exited helper is not a live leak.
+        if (
+            current["pgid"] != pgid
+            or actor.record.get("identity") is None
+            or current["session"] != actor.record["identity"]["session"]
+            or current["start_ticks"] < actor.record["identity"]["start_ticks"]
+        ):
+            raise RuntimeError("unverified media helper process")
+        try:
+            command = read_command(pid)
+        except FileNotFoundError:
+            if identity(pid) is None:
+                continue
+            raise RuntimeError("media helper identity changed during verification")
+        if identity(pid) != current or not any(
+            re.fullmatch(
+                rb"from multiprocessing\.resource_tracker import main;main\(\d+\)", v
+            )
+            for v in command
+        ):
+            raise RuntimeError("unverified media helper process")
+        allowed[pid] = current
+    actions = []
+
+    def snapshot():
+        group = members(pgid)
+        if actor.owned.proc.poll() is not None or leader not in group:
+            raise RuntimeError("Actor exited before media cleanup proof")
+        for pid, expected in allowed.items():
+            current = identity(pid)
+            if current is not None and current != expected:
+                raise RuntimeError("media helper PID reused during cleanup")
+        return {
+            pid: state
+            for pid, state in group.items()
+            if pid not in set(allowed) | {leader}
+        }
+
+    remaining = snapshot()
+    if not remaining:
+        return {"clean": True, "actions": actions, "pgid": pgid}
+    owner = actor.record.get("identity")
+    if owner is None or identity(leader) != owner:
+        raise RuntimeError("unproven Actor identity: refusing descendant cleanup")
+
+    def owned(pid):
+        current = identity(pid)
+        if current is not None and (
+            current["pgid"] != pgid
+            or current["session"] != owner["session"]
+            or current["start_ticks"] < owner["start_ticks"]
+        ):
+            raise RuntimeError("foreign process: refusing media cleanup")
+        return current
+
+    def await_clean():
+        until = clock() + grace
+        while True:
+            remaining = snapshot()
+            for pid, state in remaining.items():
+                current = owned(pid)
+                if current is not None and state == "Z":
+                    if identity(pid) != current:
+                        raise RuntimeError("PID reuse: refusing media reap")
+                    try:
+                        result, _ = reap(pid, os.WNOHANG)
+                        if result:
+                            actions.append({"pid": pid, "action": "reaped"})
+                    except (ChildProcessError, ProcessLookupError):
+                        pass
+            remaining = snapshot()
+            if not remaining or clock() >= until:
+                return remaining
+            pause(min(0.02, max(0, until - clock())))
+
+    remaining = await_clean()  # Normal late exit/zombie reap before sending signals.
+    for sig in (signal.SIGTERM, signal.SIGKILL):
+        if not remaining:
+            break
+        if identity(leader) != owner:
+            raise RuntimeError("Actor PID reused during media cleanup")
+        for pid, state in remaining.items():
+            current = owned(pid)
+            if current is None or state == "Z":
+                continue
+            if identity(pid) != current:
+                raise RuntimeError("PID reuse: refusing media signal")
+            try:
+                send_signal(current, sig)
+                actions.append({"pid": pid, "action": sig.name, "identity": current})
+            except ProcessLookupError:
+                pass
+        remaining = await_clean()
+    if remaining:
+        raise RuntimeError(
+            f"owned media/process descendants remain after Core commit: {sorted(remaining)}"
+        )
+    return {"clean": True, "actions": actions, "pgid": pgid}
 
 
 class Registry:

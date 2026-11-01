@@ -6,7 +6,6 @@ import hashlib
 import json
 import os
 import secrets
-import re
 import socket
 import threading
 import time
@@ -29,7 +28,7 @@ from eval_robocasa_18task_queue import (
     server_argv,
     wait_server,
 )
-from robocasa_eval_v2_processes import Actor, Registry, process_identity
+from robocasa_eval_v2_processes import Actor, Registry, process_identity, quiesce_media
 from robocasa_processes import group_members
 
 from robocasa_eval_v2 import identity, resources
@@ -74,6 +73,11 @@ class Runtime:
         elif limit is not None:
             raise ValueError("rollout cap requires a Fresh Run configuration record")
         self.render_policy = rendering(cfg)
+        if (
+            store.manifest.get("rendering") is not None
+            and store.manifest["rendering"] != self.render_policy
+        ):
+            raise ValueError("render policy differs from the frozen manifest")
         if initial is not None:
             frozen = initial["resolved"]
             if frozen.get("render_backend") is None:
@@ -664,33 +668,18 @@ class Runtime:
             scheduler.commit(claim, row, staging=directory)
             # Encoders are in this Task's owned group. Any late/stray child means
             # resource cleanup is uncertain, independent of the committed SR.
-            helpers = set(response.get("media_helper_pids", []))
-            if len(helpers) > 1 or any(
-                type(pid) is not int or pid <= 0 for pid in helpers
-            ):
-                raise RuntimeError("invalid media helper ownership")
-            for pid in helpers:
-                ident = process_identity(pid)
-                command = (
-                    (Path("/proc") / str(pid) / "cmdline").read_bytes().split(b"\0")
-                )
-                if (
-                    ident is None
-                    or ident["pgid"] != actor.owned.pgid
-                    or not any(
-                        re.fullmatch(
-                            rb"from multiprocessing\.resource_tracker import main;main\(\d+\)",
-                            v,
-                        )
-                        for v in command
-                    )
-                ):
-                    raise RuntimeError("unverified media helper process")
-            if response.get("media_process_fault") or set(
-                group_members(actor.owned.pgid)
-            ) - helpers != {actor.owned.proc.pid}:
+            receipt = quiesce_media(
+                actor,
+                response.get("media_helper_pids", []),
+                self.cfg["terminate_grace_s"],
+                members=group_members,
+                identity=process_identity,
+            )
+            if receipt["actions"]:
+                self._proof("media_cleanup", receipt)
+            if response.get("media_process_fault"):
                 raise RuntimeError(
-                    "owned media/process descendants remain after Core commit"
+                    "owned media/process descendants remain after Core commit: encoder/feeder or server media not quiescent"
                 )
             for error in self.store.errors(task):
                 cert = self.certificates.get(error["id"])
