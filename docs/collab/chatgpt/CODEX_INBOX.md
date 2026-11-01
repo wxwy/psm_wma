@@ -560,3 +560,9 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **Formal verdict：`APPROVE_CODE`**（仅隔离候选源码 + 作者定向 CPU Evidence）。`resources.py` 仅查询选定 GPU4–7 的 index/UUID，不查询外部 CUDA 任务、memory.used/total、GPU reserve/fraction；保持选定设备存在性和索引/UUID基本身份、单独 gpu_identity PCI、EGL Context、owned-only RSS、安全进程回收；Runtime 接口不变。Root 改动只有 resources.py + 相关 CPU tests，Child/Gitlink 不变。
 - 独立读取作者原始 JUnit **70 passed,0failure/error/skip**、Gate、commands、6 bindings、27 artifact hash 记录、相关真实 production/test diff；**没有独立运行 pytest 或任何真实 GPU/NVML/EGL/FFmpeg/模型/仿真**。旧192/206/29不重复计数。不同索引 UUID 别名（极端错误查询）不另行阻断本轮：上一 Formal Pair 的同路径已缺少此检查，实际 PCI→EGL/Context proof 仍在，待真实 Canary 依据真实硬件身份判断。
 - [Detailed review](docs/collab/chatgpt/reviews/2026-11-01_V3_EvalV2_Owner_GPU_Resource_Policy_4b581493_9a8cd618_APPROVE_CODE.md). 本 verdict **不自动合并 V3、不授权测试真实 GPU、不中断/改写任何训练/out2/DCP/结果或进程、不触 GPU0–3、不自动启动 Canary/900EP/Resume**。下一步需 DS_PRO 独立定向 CPU，以及 Owner 单独授权硬件执行。仅文档 bookkeeping SHA 不改变 Formal Pair。
+
+## 2026-11-01 — Owner 双项授权：DS_PRO CPU70 → GPU4–7 Hardware Canary
+
+- **Owner 已在会话中明确一次性授权**：DS_PRO 在隔离候选 `v3-eval-v2-render-media-20261101` 锁定 Formal Root `4b581493db805c92964cb27e740c736db87c0329` / Child-Gitlink `9a8cd6183424bfce245fbca393ca25ed59919ea6`，先独立验收新 GPU 准入策略定向 70 CPU case；若 CPU PASS，**可不再另请 Owner**，连续做真实 GPU Canary H1(M1/B1,1 Server4+1 EGL Sim6)、H2(M2/B2,2 Servers4–5+4 EGL Sims6–7)、H3(M8/B2,2 Servers4–5+16 EGL Sims6–7)。每阶段有 fail-closed 停止条件，单独新 Run 目录、dry-run 后 fresh，所有 Rollout + 全部 Replan MP4。
+- **边界**：不询问/管理其他 GPU 任务、不以 GPU4–7 训练存在或显存已用作准入条件；已有训练照跑。GPU0–3 不探测/不碰；不修改 `out2`/No-TTT/Checkpoint/DCP/历史媒体与共享目录；不修改生产代码、不合并 V3、不进行正式18×50 EP或旧 Run Resume。真实错误仅停止本 Canary 自己的注册进程。
+- **详细执行授权/独立验收协议**：`docs/collab/chatgpt/reviews/2026-11-01_V3_EvalV2_Owner_Authorization_DS_CPU70_and_GPU4-7_Canary.md`。GPT 资源策略 `APPROVE_CODE` 已记录；**本授权并非 DS 已经执行或 PASS 的证明**。DS 取得授权文档后执行并提交 CPU/H1/H2/H3 分段证据。
