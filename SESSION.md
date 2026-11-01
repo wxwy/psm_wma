@@ -1,3 +1,61 @@
+# 2026-11-01 — RM-M01 targeted development GREEN, exact Pair freeze next
+
+Old committed Childd3b2a29b / Rootf6ada882 with frozen new tests reproduced
+14 cases:10 expected failures+4 controls PASS,0error/skip. Test SHA256 before
+first RED2ff48caeb197c5a4e04a04a686ebcdb28944d3e12c4d0968629726b774c56c5c;
+saved full frozen test and raw JUnit/stdout in
+/tmp/psm-eval-render-media-rm01-20261101/old_red. Failure messages checked to
+be the exact missing-failure assertions, not fixture/infrastructure exceptions.
+
+Only production edit: Child media.py sets fd_failed=True for Queue shutdown
+OSError/ValueError and OR-preserves it through later descriptor-close EBADF.
+No architecture/timeout/renderer/ownership/Adapter/scientific changes. Same frozen
+tests then GREEN:29 passed,0failure/error/skip;14new+13existing Media lifecycle+
+2existing Core regressions. Actual Python3.13.5 Queue/CPU encoder regression,
+fake stopped Queue/process/fd injections and loopback HTTP model/env only.
+No true FFmpeg/GPU/EGL/model/simulator. Ruff0.12.7 check/format and six-file AST
+PASS. Source/test hashes stable; source not changed after this run.
+Commands: /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-render-media-rm01-20261101/run_cpu.py red [old_red] / green
+[development_green], full invocation/environment/logs stored in those dirs.
+
+Freeze Child first, then Root test/Gitlink; clean-Pair scoped29 Gate next.
+Historical192 is untouched and not rerun or inherited as new-Pair full PASS.
+Current edits uncommitted at this entry; publish independent candidate/request
+only after final evidence, STOP for GPT incremental review. Owner runtime and
+no-V3/official-Child/out2/NoTTT/DCP boundaries unchanged.
+
+## Earlier RM-M01 observation preserved
+
+# 2026-11-01 — RM-M01 formal review consumed; narrow remediation IN_PROGRESS
+
+Observed/fetched candidate HEAD f6ada8822f597d0ce4ee7928282fd690ca652ec0;
+advertised Root candidate agrees, canonical V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd.
+Official Child8664267704da3206e719f3c7eef2b5ed86e2a417, candidate Childd3b2a29b978ff4abef800b9e71fab4422b7a0d23.
+Review read at its actual candidate ref, full exact Pair46d3a604/d3b2a29b and
+REQUEST_CHANGES confirmed in detailed review and live Inbox. Initial lookup in
+origin/V3 had no review file; no conclusion was drawn from that failed lookup.
+Remote advanced only by a0e79fc1/f6ada882 review/Inbox documents; clean isolated
+Root fast-forwarded0f1e4f0e -> f6ada882, no production/source/Gitlink change.
+Current Owner workflow is Codex author -> GPT review -> DS independent CPU;
+older V2/tmux three-reviewer governance is superseded for this task.
+
+Scope: only Child media.py unknown Queue-close failure flag and focused new
+Root tests, then exact new Gitlink/evidence/handoff. Unknown OSError/ValueError
+from cancel_join_thread/close must stay sticky even if a later descriptor EBADF
+is tolerated. No renderer/ownership/Adapter/model/Local/Store/Scheduler/timeout
+change. Planned Root file tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py.
+Reproduce deterministic RED on old committed Child, freeze tests before execution,
+fix minimally, run only Media lifecycle/reporting CPU regressions, freeze new
+Child then Root and clean-Pair targeted evidence. Preserve original192 evidence
+and GPT review. Do not rerun GPU mapping or the whole192 suite.
+Independent candidate only; no V3/official Child promotion, out2 Resume, shared
+runtime, GPU/EGL/FFmpeg/model/simulator/Canary/evaluation/training/DCP access.
+After new Pair publication/readback and one GPT incremental request, STOP.
+No production/test edit made at claim time; commits/evidence for RM-M01 pending.
+
+## Prior history preserved
+
 # 2026-11-01 — Candidate request published and GitHub readback PASS
 
 Observation 2026-11-01T12:32:36.427295+08:00. Formal46d3a604e66ca139e2f060fd4caaaa0583a1035f /
