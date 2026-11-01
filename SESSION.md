@@ -1,3 +1,26 @@
+# 2026-11-01 — Renderer stage checkpoint; Media traceback required next
+
+Renderer stage code Root91896fac2140f6c77dfb440c32253626051eb8f2 /
+Childf1439ac3a83bf3f7c32d3be204f2723f90231996. Same isolated branch
+v3-eval-v2-render-media-20261101, baseV37e2be5ca/Child86642677.
+Development118 PASS/0fail/error/skip; scoped Ruff/AST PASS;10 watched source files
+match the committed Git blobs.21 development artifact hashes retained under
+ docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/.
+Execution was dirty-development source, explicitly not a clean-pair Formal Gate.
+Root/Child stage has independent configurable GPU roles, selected-role resource
+checks and PCI/actual Context proof. No true EGL/GPU/FFmpeg/model/simulation run.
+
+Media/adapter production files remain byte-identical to baseline. Owner replied
+“稍等；我随后给你” to the async traceback request; do not infer its server cause.
+Next: consume that traceback, minimal Media lifecycle fix and deterministic CPU
+negatives, then freeze the final combined Pair / author Gate / GPT review request.
+Current stage is a candidate checkpoint, not a Code Gate request or approval.
+Publish only isolated branches/evidence, read back, then yield for the promised
+traceback if it has not arrived. No V3/official Child promotion or active out2 /
+NoTTT/shared directory/config/media/results/DCP/log/process access or dispatch.
+
+## Earlier renderer development observations preserved
+
 # 2026-11-01 — Renderer development CPU118 PASS; Media traceback pending
 
 Independent render implementation complete in Root config/resources/runtime/CLI,

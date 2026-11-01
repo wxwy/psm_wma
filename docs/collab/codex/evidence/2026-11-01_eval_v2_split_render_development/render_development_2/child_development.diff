@@ -1,0 +1,63 @@
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_slot.py b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+index aab7078..6f9a1b4 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_slot.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+@@ -9,6 +9,7 @@ from cosmos_framework.evaluation.robocasa_v2.contract import SAMPLING
+ from cosmos_framework.evaluation.robocasa_v2.store import identifier, load
+ from cosmos_framework.simulation.robocasa import closed_loop_eval as native
+ from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
++from cosmos_framework.simulation.robocasa.render_devices import verify_current
+ 
+ 
+ class SimSlot:
+@@ -133,6 +134,12 @@ class SimSlot:
+         self._state("RESETTING")
+         self.reset_index += 1  # Includes failed and initially successful scene samples.
+         value = self.engine.initialize()
++        if value.get("error") is None and self.cfg.get("rendering", {}).get("backend") == "egl":
++            try:
++                value["rendering"] = verify_current(self.cfg["rendering"])
++            except BaseException:
++                self._state("FAILED_QUARANTINED")
++                raise
+         self._state("FAILED_QUARANTINED" if value.get("error") and not value.get("safe_to_retry") else "ADMISSION")
+         return dict(value, sampling=self.sampling())
+ 
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index 6151702..192611d 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -17,6 +17,7 @@ from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
+ def serve(channel, cfg, *, factory=None):
+     # Factory is a Python CPU test boundary, never selectable via production CLI.
+     from cosmos_framework.simulation.robocasa import closed_loop_eval as native
++    from cosmos_framework.simulation.robocasa import render_devices
+     from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
+     from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
+ 
+@@ -35,6 +36,7 @@ def serve(channel, cfg, *, factory=None):
+                 "native": Path(native.__file__),
+                 "adapter": Path(sys.modules[NativeEpisode.__module__].__file__),
+                 "slot": Path(sys.modules[SimSlot.__module__].__file__),
++                "rendering": Path(render_devices.__file__),
+             }
+             if cfg["settings"].get("execution_profile") == "phase_b":
+                 from cosmos_framework.simulation.robocasa import eval_v2_transactions
+@@ -49,6 +51,9 @@ def serve(channel, cfg, *, factory=None):
+                     or hashlib.sha256(file.read_bytes()).hexdigest() != expected["sha256"]
+                 ):
+                     raise ValueError("native import origin/source mismatch")
++        rendering = render_devices.configure(cfg["rendering"])
++        cfg["rendering"] = rendering
++        if factory is None:
+             runtime = native.verify_runtime(SimpleNamespace(**cfg["runtime_args"]), next(iter(cfg["tasks"])))
+             if runtime is None or any(
+                 runtime["protocol"]["official_horizons"][task] != spec["horizon"] for task, spec in cfg["tasks"].items()
+@@ -65,6 +70,7 @@ def serve(channel, cfg, *, factory=None):
+                 "state": slot.state,
+                 "local_memory_mode": cfg["settings"].get("local_memory_mode", "required"),
+                 "runtime_digest": runtime["digest"] if factory is None else "CPU_TEST_FACTORY",
++                "rendering": rendering,
+             },
+         )
+         while True:
