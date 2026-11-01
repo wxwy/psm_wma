@@ -1,0 +1,263 @@
+FFFFFFFF..FF..
+=================================== FAILURES ===================================
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-eio-cancel_join_thread] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays0')
+operation = 'cancel_join_thread', exception = 'eio', writer_ebadf = False
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-eio-close] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays1')
+operation = 'close', exception = 'eio', writer_ebadf = False
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-value_error-cancel_join_thread] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays2')
+operation = 'cancel_join_thread', exception = 'value_error'
+writer_ebadf = False
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-value_error-close] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays3')
+operation = 'close', exception = 'value_error', writer_ebadf = False
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-eio-cancel_join_thread] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays4')
+operation = 'cancel_join_thread', exception = 'eio', writer_ebadf = True
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-eio-close] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays5')
+operation = 'close', exception = 'eio', writer_ebadf = True
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-value_error-cancel_join_thread] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays6')
+operation = 'cancel_join_thread', exception = 'value_error', writer_ebadf = True
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-value_error-close] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_unknown_queue_error_stays7')
+operation = 'close', exception = 'value_error', writer_ebadf = True
+
+    @pytest.mark.parametrize("operation", ["cancel_join_thread", "close"])
+    @pytest.mark.parametrize("exception", ["eio", "value_error"])
+    @pytest.mark.parametrize("writer_ebadf", [False, True])
+    def test_unknown_queue_error_stays_failed_even_after_descriptors_close(
+        tmp_path, operation, exception, writer_ebadf
+    ):
+        sink, calls = stopped_sink(
+            tmp_path, operation=operation, exception=exception, writer_ebadf=writer_ebadf
+        )
+        result = sink.close()
+        assert result["encoder_alive"] is result["feeder_alive"] is False
+>       assert result["process_cleanup_failed"] is True
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:54: AssertionError
+_ test_native_adapter_reports_unknown_failure_without_changing_core_or_local_reset[queue_eio] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_native_adapter_reports_un0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6cd4e37e10>
+kind = 'queue_eio'
+
+    @pytest.mark.parametrize(
+        "kind", ["queue_eio", "queue_value_error", "descriptor_ebadf", "forced_reaped"]
+    )
+    def test_native_adapter_reports_unknown_failure_without_changing_core_or_local_reset(
+        tmp_path, monkeypatch, kind
+    ):
+        from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
+        from tools.v3.eval_v2_production_tests.native_test import native_execute
+    
+        outcomes = []
+        execute = NativeEpisode.execute
+    
+        def record(self, *args, **kwargs):
+            result = execute(self, *args, **kwargs)
+            outcomes.append(result)
+            return result
+    
+        def factory(directory, **kwargs):
+            sink, _ = stopped_sink(
+                directory,
+                operation="cancel_join_thread"
+                if kind == "queue_eio"
+                else "close"
+                if kind == "queue_value_error"
+                else None,
+                exception="value_error" if kind == "queue_value_error" else "eio",
+                writer_ebadf=kind == "descriptor_ebadf",
+            )
+            sink.forced = kind == "forced_reaped"
+            return sink
+    
+        monkeypatch.setattr(NativeEpisode, "execute", record)
+        row, _, calls, value = native_execute(tmp_path, monkeypatch, media_factory=factory)
+        fault = kind.startswith("queue_")
+>       assert outcomes[0]["media_process_fault"] is fault
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:107: AssertionError
+_ test_native_adapter_reports_unknown_failure_without_changing_core_or_local_reset[queue_value_error] _
+
+tmp_path = PosixPath('/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp/test_native_adapter_reports_un1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6ccfda4fc0>
+kind = 'queue_value_error'
+
+    @pytest.mark.parametrize(
+        "kind", ["queue_eio", "queue_value_error", "descriptor_ebadf", "forced_reaped"]
+    )
+    def test_native_adapter_reports_unknown_failure_without_changing_core_or_local_reset(
+        tmp_path, monkeypatch, kind
+    ):
+        from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
+        from tools.v3.eval_v2_production_tests.native_test import native_execute
+    
+        outcomes = []
+        execute = NativeEpisode.execute
+    
+        def record(self, *args, **kwargs):
+            result = execute(self, *args, **kwargs)
+            outcomes.append(result)
+            return result
+    
+        def factory(directory, **kwargs):
+            sink, _ = stopped_sink(
+                directory,
+                operation="cancel_join_thread"
+                if kind == "queue_eio"
+                else "close"
+                if kind == "queue_value_error"
+                else None,
+                exception="value_error" if kind == "queue_value_error" else "eio",
+                writer_ebadf=kind == "descriptor_ebadf",
+            )
+            sink.forced = kind == "forced_reaped"
+            return sink
+    
+        monkeypatch.setattr(NativeEpisode, "execute", record)
+        row, _, calls, value = native_execute(tmp_path, monkeypatch, media_factory=factory)
+        fault = kind.startswith("queue_")
+>       assert outcomes[0]["media_process_fault"] is fault
+E       assert False is True
+
+tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py:107: AssertionError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-eio-cancel_join_thread]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-eio-close]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-value_error-cancel_join_thread]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[False-value_error-close]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-eio-cancel_join_thread]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-eio-close]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-value_error-cancel_join_thread]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_unknown_queue_error_stays_failed_even_after_descriptors_close[True-value_error-close]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_native_adapter_reports_unknown_failure_without_changing_core_or_local_reset[queue_eio]
+FAILED tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py::test_native_adapter_reports_unknown_failure_without_changing_core_or_local_reset[queue_value_error]
+10 failed, 4 passed in 2.78s

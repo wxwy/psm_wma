@@ -1,3 +1,48 @@
+# 2026-11-01 — Raw RED traceback retained without formatting mutation
+
+Pre-commit full content whitespace check stopped the metadata commit on16
+four-space blank lines rendered inside original pytest RED JUnit/stdout.
+Verified every warning refers only to the two raw RED artifacts; source and
+all other staged content pass when excluding only those two preserved raw
+files.48 artifact hashes unchanged. No original log, XML, test or production
+code rewritten. Packaging note retains exact warning and scoped command.
+Formal6484dd83/9a8cd618 and clean-Pair29 author PASS remain unchanged.
+
+## Earlier RM-M01 history preserved
+
+# 2026-11-01 — RM-M01 exact author Gate PASS; new incremental request prepared
+
+Formal Root 6484dd83efc512e6801470790eb84ac7349c127a / Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6; candidate-only.
+Final clean-Pair command: Python3.13.5 run_cpu.py formal final, under
+/tmp/psm-eval-render-media-rm01-20261101/;29 passed,0failure/error/skip,
+Root/Child clean and matching Gitlink before/after, hashes unchanged. Ruff0.12.7
+check/format, six-file syntax and production Root/Child diff-check PASS.
+Pre-RED frozen test2ff48cae... is identical in all runs and new Formal Root.
+Old committed Child RED14:10 expected failures+4controls,0error/skip.14new +
+13existing Media lifecycle+2Core final regressions. Development29 separate.
+No full192 rerun. Original53 hashes unchanged and bound to old Pair; new48
+artifacts and6 source bindings verified, scope protected trees unchanged.
+
+Only Child production delta is media.py's two sticky failure assignments.
+Renderer, process ownership, Adapter/reporting implementation and scientific/
+training/checkpoint/Vendor source untouched. Reporting tests confirm true Queue
+failure versus descriptor EBADF/successful forced reap, valid Core/Local ACK.
+
+Observation/request preparation 2026-11-01T13:06:52.576830+08:00: detailed GPT REQUEST_CHANGES and
+Inbox were fetched/read at candidatef6ada882, not canonicalV3. Exact old Pair
+verified; no new approval inferred. Canonical V3 advertised7e2be5ca, official
+Child86642677, prior candidateChildd3b2a29b. Current Owner workflow GPT is sole
+code reviewer, DS independent CPU follows; no superseded three-pane polling.
+Candidate Inbox append-only: before119939, append2401,
+after122340 bytes, prefix unchanged/no rollover. New unique RM-M01
+request prepared; publish Child then Root by normal nonforce push and read back.
+Evidence/ledger successors do not replace Formal implementation. STOP after
+publication for incremental GPT review; no V3 merge/out2/NoTTT/shared runtime,
+GPU/EGL/FFmpeg/model/ActionServer/simulator/Canary/evaluation/training/DCP or DS
+dispatch. No true hardware, independent DS or real FFmpeg acceptance claimed.
+
+## Earlier RM-M01 history preserved
+
 # 2026-11-01 — RM-M01 targeted development GREEN, exact Pair freeze next
 
 Old committed Childd3b2a29b / Rootf6ada882 with frozen new tests reproduced

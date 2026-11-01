@@ -1,0 +1,9 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/media.py b/cosmos_framework/evaluation/robocasa_v2/media.py
+index 2574ef5..7829a2a 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/media.py
++++ b/cosmos_framework/evaluation/robocasa_v2/media.py
+@@ -225,0 +226 @@ class MediaSink:
++                fd_failed = True
+@@ -244 +245 @@ class MediaSink:
+-                    fd_failed = error.errno != errno.EBADF
++                    fd_failed = fd_failed or error.errno != errno.EBADF

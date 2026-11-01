@@ -1,0 +1,20 @@
+{
+  "time": "2026-11-01T13:06:52.576830+08:00",
+  "formal_root": "6484dd83efc512e6801470790eb84ac7349c127a",
+  "formal_child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "inbox_before_bytes": 119939,
+  "inbox_append_bytes": 2401,
+  "inbox_after_bytes": 122340,
+  "inbox_prefix_unchanged": true,
+  "rollover": false,
+  "artifact_hashes_verified": 48,
+  "new_tests": 14,
+  "final_targeted_tests": 29,
+  "status": "PREPARED_CANDIDATE_INCREMENTAL_REQUEST",
+  "prior_review": "REQUEST_CHANGES46d3a604/d3b2a29b at f6ada882",
+  "canonical_merge": false,
+  "real_gpu": false,
+  "real_ffmpeg": false,
+  "old_out2": false,
+  "governance": "Current Owner Codex author -> GPT incremental -> DS independent CPU; STOP after candidate publication, no old V2/tmux poll or execution authority."
+}
