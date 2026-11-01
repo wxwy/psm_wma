@@ -1,3 +1,24 @@
+# 2026-11-01 — RM-M01 candidate request published; exact readback PASS
+
+Observation 2026-11-01T13:09:40.608133+08:00: Formal Root 6484dd83efc512e6801470790eb84ac7349c127a /
+Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6. Normal nonforce Child candidate push first,
+then Root candidate 7ad8c9e8aecee16a9131f4a2811bbb3920ed79a1. Explicit Root fetch refspecs (origin default
+maps V2 only) and Child fetch match advertised refs. Official V3 remains7e2be5ca,
+official Child86642677; no canonical promotion. Both worktrees clean before
+receipt bookkeeping; candidate source equals Formal. New48/48 raw artifact
+hashes and6/6 source bindings re-read from GitHub-fetched objects; final29/0/0/0
+exact clean-Pair gate retained. Unique Inbox append122340bytes, old prefix
+identical; original GPT RM-M01 review and192 evidence preserved.
+
+This records delivery/readback only, not a GPT approval or independent DS Gate.
+Review request published only on isolated candidate; no old V2/tmux polling,
+DS dispatch, actual GPU/EGL/FFmpeg/model/ActionServer/simulator, out2/NoTTT/shared
+runtime, DCP, training/evaluation/Resume action. Successor receipt/SESSION is
+bookkeeping and does not replace Formal Pair. Final repeat ref/source check is
+external; STOP for GPT narrow incremental review under current Owner workflow.
+
+## Earlier RM-M01 history preserved
+
 # 2026-11-01 — Raw RED traceback retained without formatting mutation
 
 Pre-commit full content whitespace check stopped the metadata commit on16
