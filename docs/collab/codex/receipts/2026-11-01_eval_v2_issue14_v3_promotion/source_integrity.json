@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "formal_root": "fd183f9e8fddfaef93b6ec9484184f071062ae41",
+  "formal_child_gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "canonical_root_before": "9ba1dd110a4e3e99e717937c2f8d044fa077cdbf",
+  "official_child_before": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "reviewed_candidate": "11cae65a63804401672aa5de4dcb74358315f3f5",
+  "matched_root_source_objects": 9853,
+  "all_root_source_matches_formal": true,
+  "root_source_changes_from_canonical": [
+    "cosmos-framework",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/runtime.py",
+    "tools/v3/eval_v2_batch_tests/rollout_policy_test.py"
+  ],
+  "child_source_changes": [
+    "cosmos_framework/simulation/robocasa/eval_v2_adapter.py"
+  ],
+  "unchanged_child_objects": 1269,
+  "all_other_child_objects_preserved": true,
+  "artifact_hashes_verified": 42,
+  "formal_source_bindings_verified": 11,
+  "original_author_cpu": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "both_prior_fixture_failure_bundles_retained": true,
+  "review_preserved_byte_for_byte": true,
+  "canonical_inbox_prefix_preserved": true,
+  "root_history_fast_forward": true,
+  "child_history_fast_forward": true,
+  "tests_static_or_GPU_rerun": false,
+  "new_root_child_directory": "intentionally uninitialized; source validated from existing isolated candidate Git objects, no shared child files updated",
+  "scope": "Git/source/evidence inheritance only; no new Code Gate, independent CPU/real MP4 acceptance or runtime"
+}

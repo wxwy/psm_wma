@@ -484,3 +484,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **Verdict:** `APPROVE_CODE`（仅隔离候选、合成 CPU 增量 Code Gate）；当前 contract/code/evidence blockers 无；前两次测试 fixture-only 失败 CLOSED。**未独立执行 pytest**，未验证真实 MP4/FFmpeg、仿真/模型/GPU 或性能。
 - **详细独立 Review:** `docs/collab/chatgpt/reviews/2026-11-01_V3_EvalV2_Issue14_FirstN_fd183f9_86642677_CodeGate_APPROVE_CODE.md`。保留候选于 `v3-eval-v2-rollout-first-n-20261101`；本条为 bookkeeping，不改变 Formal Pair。
 - **禁止自动 promotion/runtime**：正式 V3/Child、在跑 900EP `out2`、NoTTT 训练和共享 worktree/config/media/results/DCP/log 均不可操作；不自动派发 DS/Canary/真实评测。后续由 Owner 单独授权。
+
+## 2026-11-01 — Approved Issue14 V3 promotion prepared (Owner 合入)
+
+- Exact-pair GPT `APPROVE_CODE` verified at reviewed candidate `11cae65a63804401672aa5de4dcb74358315f3f5` for Formal Root `fd183f9e8fddfaef93b6ec9484184f071062ae41` / Child `8664267704da3206e719f3c7eef2b5ed86e2a417`. Owner explicitly authorizes code promotion; prior candidate-only restriction is superseded only for this action. Runtime restrictions remain.
+- New isolated worktree fast-forwards current canonical V3 `9ba1dd110a4e3e99e717937c2f8d044fa077cdbf` to reviewed candidate, preserving all history, review, canonical Inbox prefix, final author69 PASS and both earlier fixture-failure records. All 9,853 Root source objects equal approved Formal; only approved two Root production files/new test/Gitlink and one Child adapter differ from baseline. Other 1,269 Child objects unchanged; training and other EvalV2 retained.
+- Original42 artifact hashes / 11 formal bindings checked. No tests, Ruff, GPU or media encoding rerun. Report `docs/collab/codex/reviews/2026-11-01_V3_EvalV2_Issue14_Approved_V3_Promotion.md`; receipts `docs/collab/codex/receipts/2026-11-01_eval_v2_issue14_v3_promotion/`. Prepared 2026-11-01T08:21:42.512986+08:00; next Child official fast-forward then Root normal nonforce push/readback, completion receipt and STOP.
+- No active shared code/out2/NoTTT config/results/media/DCP/log/process access or change; no model/GPU/Server/simulation/FFmpeg/MP4/training/evaluation/DS dispatch. This is approved promotion, not a new review request or runtime permission.

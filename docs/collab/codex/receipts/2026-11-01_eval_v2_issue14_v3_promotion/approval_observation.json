@@ -1,0 +1,22 @@
+{
+  "observed_cst": "2026-11-01T08:20:28.504775+08:00",
+  "before_candidate_worktree_head": "dc1a353cf0ed33875fbf365b2456c66976814161",
+  "fetched_and_advertised_canonical_V3": "9ba1dd110a4e3e99e717937c2f8d044fa077cdbf",
+  "fetched_and_advertised_candidate": "11cae65a63804401672aa5de4dcb74358315f3f5",
+  "official_child_before": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "approved_formal_root": "fd183f9e8fddfaef93b6ec9484184f071062ae41",
+  "approved_formal_child_gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "review_source_ref": "11cae65a63804401672aa5de4dcb74358315f3f5",
+  "review_path": "docs/collab/chatgpt/reviews/2026-11-01_V3_EvalV2_Issue14_FirstN_fd183f9_86642677_CodeGate_APPROVE_CODE.md",
+  "review_blob": "8a0168f6254ba5238ce8517ecea77b0f9c95ea67",
+  "review_sha256": "fb5ade4f70ca252eba97c1cc4f8f57bb88e1f73fbabc0bcd58d329625a8f7160",
+  "verdict": "APPROVE_CODE",
+  "new_candidate_commits": [
+    "cb96f9025acc6681191b247e268c668f9cd3d571",
+    "11cae65a63804401672aa5de4dcb74358315f3f5"
+  ],
+  "user_override": "Owner explicitly says 合入 after the Code Gate; authorizes code promotion beyond earlier candidate-only stop, no runtime permission",
+  "roles": "Latest Owner role split GPT review / Codex code and CPU / DS independent execution; old three-pane/polling rules superseded",
+  "safe_plan": "new isolated Root worktree at current V3; fast-forward candidate with review history; source/evidence checks; Child normal fast-forward push first; Root normal push and readback",
+  "forbidden": "active shared worktree/config/results/media/DCP/log/process access, tests rerun, real GPU/model/simulator/FFmpeg/MP4 evaluation, DS dispatch"
+}

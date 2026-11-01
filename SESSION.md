@@ -1,3 +1,24 @@
+# 2026-11-01 — Issue14 approved promotion IN_PROGRESS
+
+Owner explicitly authorized 合入 after exact-pair APPROVE_CODE.
+Formal Root fd183f9e8fddfaef93b6ec9484184f071062ae41 / Child8664267704da3206e719f3c7eef2b5ed86e2a417.
+Fresh V3 advertised9ba1dd11; official Child6c83596d; reviewed candidate advertised
+11cae65a63804401672aa5de4dcb74358315f3f5. The detailed GPT report was independently
+read from that candidate and matches the complete Formal Pair. Review source:
+docs/collab/chatgpt/reviews/2026-11-01_V3_EvalV2_Issue14_FirstN_fd183f9_86642677_CodeGate_APPROVE_CODE.md.
+
+New isolated cloud worktree /workspace/psm-wma-eval-rollout-first-n-promotion
+fast-forwarded from V3 to reviewed candidate, preserving all history/records.
+Next: Git/source/evidence checks, official Child normal fast-forward first, then
+Root V3 normal push, remote readback and completion receipt. No production edits,
+historical tests, active shared worktree/config/results/media/DCP/log/process
+access, GPU/model/Server/simulator/FFmpeg or DS execution. Prior candidate-only
+stop is superseded only for code promotion by Owner; runtime boundaries remain.
+Latest Owner role split applies, no legacy three-pane or extra review for identical code.
+Receipt: docs/collab/codex/receipts/2026-11-01_eval_v2_issue14_v3_promotion/.
+
+## Approved candidate observations preserved
+
 # 2026-11-01 — Issue14 candidate published, REVIEW / STOP for GPT
 
 Formal Root `fd183f9e8fddfaef93b6ec9484184f071062ae41`.
