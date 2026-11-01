@@ -1,0 +1,7 @@
+ .../evaluation/robocasa_v2/contract.py             |  29 +++-
+ cosmos_framework/evaluation/robocasa_v2/media.py   | 141 ++++++++++++++---
+ .../simulation/robocasa/eval_v2_adapter.py         |   4 +-
+ .../simulation/robocasa/eval_v2_slot.py            |   7 +
+ .../simulation/robocasa/eval_v2_worker.py          |   6 +
+ .../simulation/robocasa/render_devices.py          | 166 +++++++++++++++++++++
+ 6 files changed, 327 insertions(+), 26 deletions(-)

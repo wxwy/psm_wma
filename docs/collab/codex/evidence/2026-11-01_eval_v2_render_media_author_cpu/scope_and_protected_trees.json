@@ -1,0 +1,118 @@
+{
+  "base_root": "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+  "base_child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "formal_root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+  "formal_child": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "root_changed": [
+    "SESSION.md",
+    "TODO.md",
+    "configs/eval/robocasa_eval_v2_split_render.example.yaml",
+    "cosmos-framework",
+    "docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md",
+    "docs/collab/chatgpt/CODEX_INBOX.md",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/README.md",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/artifact_manifest.json",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/child_stage.diff",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/committed_source_equivalence.json",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_cpu.py",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/child_check.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/child_development.diff",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/child_format.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/dirty_source_sha256.json",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/root_check.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/root_development.diff",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_1/root_format.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/child_check.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/child_development.diff",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/child_format.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/dirty_source_sha256.json",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/junit.xml",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/pytest.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/root_check.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/root_development.diff",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/render_development_2/root_format.log",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/root_stage.diff",
+    "scripts/robocasa_eval_v2/cli.py",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/identity.py",
+    "scripts/robocasa_eval_v2/resources.py",
+    "scripts/robocasa_eval_v2/runtime.py",
+    "scripts/robocasa_eval_v2_processes.py",
+    "tools/v3/eval_v2_batch_tests/media_cleanup_test.py",
+    "tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py",
+    "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+    "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+    "tools/v3/eval_v2_production_tests/worker_test.py"
+  ],
+  "child_changed": [
+    "cosmos_framework/evaluation/robocasa_v2/contract.py",
+    "cosmos_framework/evaluation/robocasa_v2/media.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+    "cosmos_framework/simulation/robocasa/render_devices.py"
+  ],
+  "protected": [
+    {
+      "repository": "Root",
+      "path": "third_party",
+      "before": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "after": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "unchanged": true
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/inference",
+      "before": "bcecdb9afd5d3c2dd99e8f2db5d8a00efac75a96",
+      "after": "bcecdb9afd5d3c2dd99e8f2db5d8a00efac75a96",
+      "unchanged": true
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/model",
+      "before": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+      "after": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+      "unchanged": true
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/data",
+      "before": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5",
+      "after": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5",
+      "unchanged": true
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/trainer",
+      "before": "621320f8a8adc42c92182cd7b0367a4d091707a5",
+      "after": "621320f8a8adc42c92182cd7b0367a4d091707a5",
+      "unchanged": true
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/checkpoint",
+      "before": "a544d735bb95024eacca51fb3527955aad91616c",
+      "after": "a544d735bb95024eacca51fb3527955aad91616c",
+      "unchanged": true
+    }
+  ],
+  "root_production": [
+    "configs/eval/robocasa_eval_v2_split_render.example.yaml",
+    "cosmos-framework",
+    "scripts/robocasa_eval_v2/cli.py",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/identity.py",
+    "scripts/robocasa_eval_v2/resources.py",
+    "scripts/robocasa_eval_v2/runtime.py",
+    "scripts/robocasa_eval_v2_processes.py"
+  ],
+  "child_production": [
+    "cosmos_framework/evaluation/robocasa_v2/contract.py",
+    "cosmos_framework/evaluation/robocasa_v2/media.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+    "cosmos_framework/simulation/robocasa/render_devices.py"
+  ],
+  "all_unlisted_child_files_unchanged": true
+}

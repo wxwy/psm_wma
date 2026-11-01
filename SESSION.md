@@ -1,3 +1,35 @@
+# 2026-11-01 — Exact combined author CPU PASS; candidate Code Gate publication
+
+Formal Root 46d3a604e66ca139e2f060fd4caaaa0583a1035f / Child-Gitlink d3b2a29b978ff4abef800b9e71fab4422b7a0d23.
+Independent branch v3-eval-v2-render-media-20261101. Final author command is
+the recorded combined_cpu.py final_author_cpu --formal run;192 passed,0failure/
+error/skip, Python3.13.5, Ruff0.12.7 check/format/syntax/diff-check PASS, clean
+exact Pair and source hashes unchanged before/after.23 formal source bindings
+and53 artifact hashes re-read. Historical counters
+are not combined: development29/192 and renderer118 are separate; initial
+Media fixture E731 stop retained. No new production changes after Formal freeze.
+
+Observation/preparation 2026-11-01T12:29:25.119937+08:00: last fetched/advertised V3 is7e2be5ca,
+official Child86642677, candidate pre-publication refs4acdcf80/f1439ac3. Exact
+new full-Root review scan against origin/V3 returned1/no match. No GPT verdict
+is inferred. Per Owner current workflow, GPT is the reviewer and DS independent
+CPU follows; no old V2/tmux three-reviewer dispatch or polling. Owner explicitly
+requires STOP after candidate/request publication; no canonical promotion or
+runtime action. Candidate Inbox request is append-only: before114968,
+append3232, after118200 bytes, prefix identical/no rollover.
+Prepared receipt and artifact/source verification at
+docs/collab/codex/receipts/2026-11-01_eval_v2_render_media_candidate/prepared.json.
+
+DS facts accepted, causal analysis checked independently and limited as stated
+in the handoff. Real ffmpeg/EGL/model/simulator/GPU and storage/checkpoint/active
+out2/NoTTT/shared code/log access were not performed. Training/inference/model/
+data/checkpoint/vendor trees unchanged. Publish Child first then Root by normal
+nonforce candidate push; fetch and compare full heads/Gitlink and evidence hash.
+The evidence/request successor is not the Formal implementation Root. STOP for
+GPT fresh Code Gate once publication readback is recorded.
+
+## Earlier task history preserved
+
 # 2026-11-01 — Combined development192 PASS; final implementation freeze next
 
 Owner's latest clarification: DS facts can be trusted, DS analysis must be

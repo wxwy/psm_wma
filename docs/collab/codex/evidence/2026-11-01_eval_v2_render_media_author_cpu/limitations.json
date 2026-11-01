@@ -1,0 +1,16 @@
+{
+  "author_cpu_only": true,
+  "independent_ds": false,
+  "gpu": false,
+  "real_egl": false,
+  "ffmpeg_execution": false,
+  "real_robocasa": false,
+  "model_loading": false,
+  "v3_merged": false,
+  "old_out2_access_or_resume": false,
+  "training_or_dcp_access": false,
+  "ds_traceback": "Owner-supplied DS observations accepted; server logs not directly accessed; DS analysis was independently checked, not inherited as a verdict",
+  "stdlib_control": "Injected sentinel reader EBADF reproduces secondary semaphore ValueError in the real Python3.13 Queue._feed; protected callback prevents it. Not a frozen old-production RED Gate.",
+  "remaining": "GPT exact-pair Code Gate; independent DS CPU; separately authorized real EGL/FFmpeg/model Canary and capacity testing",
+  "historical_failure": "media_development_1: fixture E731, stopped before pytest; retained. Prior render style stop/118 development tests remain in the earlier immutable development bundle."
+}

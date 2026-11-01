@@ -1,0 +1,38 @@
+{
+  "command": [
+    "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+    "/tmp/psm-eval-render-media-20261101/combined_cpu.py",
+    "/tmp/psm-eval-render-media-20261101/final_author_cpu",
+    "--formal"
+  ],
+  "cwd": "/workspace/psm-wma-eval-render-media",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LD_LIBRARY_PATH": "",
+    "PYTHONPATH": "/workspace/psm-wma-eval-render-media:/workspace/psm-wma-eval-render-media/scripts:/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "HF_HOME": "/tmp/psm-eval-render-media-20261101/final_author_cpu/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-render-media-20261101/final_author_cpu/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-render-media-20261101/final_author_cpu/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-eval-render-media-20261101/final_author_cpu/cache/ruff",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "formal": true,
+  "versions": {
+    "root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+    "child": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+    "gitlink": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+    "root_status": "",
+    "child_status": ""
+  },
+  "inputs": "synthetic observations/frames, CPU subprocesses, fake EGL/NVML/HTTP model; no model/data/checkpoint",
+  "expected": "all scoped tests/static pass; exact source unchanged"
+}

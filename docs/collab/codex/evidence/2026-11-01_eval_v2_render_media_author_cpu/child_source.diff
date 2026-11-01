@@ -1,0 +1,510 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/contract.py b/cosmos_framework/evaluation/robocasa_v2/contract.py
+index 261e363..9126939 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/contract.py
++++ b/cosmos_framework/evaluation/robocasa_v2/contract.py
+@@ -31,7 +31,16 @@ def integer(value, minimum, maximum, name):
+ 
+ 
+ def build_manifest(
+-    *, tasks, episodes, seed, horizons, experiment, formal=False, execution=None, local_memory="required"
++    *,
++    tasks,
++    episodes,
++    seed,
++    horizons,
++    experiment,
++    formal=False,
++    execution=None,
++    local_memory="required",
++    rendering=None,
+ ):
+     if local_memory not in ("off", "required"):
+         raise ValueError("explicit off|required Local-TTT mode required")
+@@ -117,6 +126,23 @@ def build_manifest(
+             raise ValueError("distinct physical GPUs required")
+         body["execution"] = execution
+         body["protocol"]["resource_architecture"] = "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b"
++    if rendering is not None:
++        if (
++            not isinstance(rendering, dict)
++            or set(rendering) != {"backend", "gpu_ids"}
++            or rendering["backend"] not in ("egl", "osmesa")
++            or not isinstance(rendering["gpu_ids"], list)
++            or any(type(g) is not int or g < 0 for g in rendering["gpu_ids"])
++            or (rendering["backend"] == "osmesa" and rendering["gpu_ids"])
++            or (rendering["backend"] == "egl" and not rendering["gpu_ids"])
++            or (
++                rendering["backend"] == "egl"
++                and execution is not None
++                and len(rendering["gpu_ids"]) != len(execution["gpu_ids"])
++            )
++        ):
++            raise ValueError("exact render backend/physical GPU policy required")
++        body["rendering"] = rendering
+     return json.loads(canonical({**body, "digest": digest(body)}))
+ 
+ 
+@@ -132,6 +158,7 @@ def validate_manifest(value):
+         formal=value["scope"] == "formal900",
+         execution=value.get("execution"),
+         local_memory=value["protocol"]["local_memory"],
++        rendering=value.get("rendering"),
+     )
+     if value != expected:
+         raise ValueError("invalid immutable manifest or protocol")
+diff --git a/cosmos_framework/evaluation/robocasa_v2/media.py b/cosmos_framework/evaluation/robocasa_v2/media.py
+index 704039e..2574ef5 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/media.py
++++ b/cosmos_framework/evaluation/robocasa_v2/media.py
+@@ -2,12 +2,56 @@
+ 
+ from __future__ import annotations
+ 
++import errno
+ import multiprocessing as mp
+ import os
++import threading
+ from pathlib import Path
+ from queue import Full
+ 
+ 
++def _diagnostic(errors, error):
++    if len(errors) < 16:
++        errors.append(repr(error)[:2048] if not isinstance(error, str) else error[:2048])
++
++
++class _ReaderClose:
++    """Parent-only close shared with QueueFeederThread, installed after spawn.
++
++    Connection.close() is idempotent but not thread-safe: its _handle test and
++    os.close can interleave. Serializing both callers prevents the sentinel path
++    from raising EBADF and then incorrectly releasing Queue's semaphore.
++    """
++
++    def __init__(self, close, errors, grace):
++        self.close, self.errors, self.grace = close, errors, grace
++        self.lock = threading.Lock()
++        self.done = self.failed = False
++
++    def __call__(self):
++        if not self.lock.acquire(timeout=self.grace):
++            self.failed = True
++            _diagnostic(self.errors, "encoder reader close lock did not quiesce")
++            return
++        try:
++            if self.done:
++                return
++            try:
++                self.close()
++            except OSError as error:
++                # EBADF is a descriptor diagnostic, never evidence that a
++                # process died. Actual encoder/feeder liveness is checked later.
++                self.failed = self.failed or error.errno != errno.EBADF
++                _diagnostic(self.errors, error)
++            except Exception as error:
++                self.failed = True
++                _diagnostic(self.errors, error)
++            finally:
++                self.done = True
++        finally:
++            self.lock.release()
++
++
+ def _guarded_encoder(target, args, parent):
+     import ctypes
+     import signal
+@@ -77,6 +121,9 @@ class MediaSink:
+         self.process = None
+         self.forced = False
+         self.helpers = []
++        self._closed = False
++        self._result = None
++        self._reader_guard = None
+         if rollout or generated != "none":
+             ctx = mp.get_context("spawn")
+             self.queue = ctx.Queue(maxsize=4)
+@@ -92,20 +139,30 @@ class MediaSink:
+             )
+             try:
+                 self.process.start()
++                # Install only after Queue was pickled into the child, before
++                # the first parent put() can start its feeder. No stdlib patch.
++                self._reader_guard = _ReaderClose(self.queue._reader.close, self.errors, self.grace_s)
++                self.queue._reader.close = self._reader_guard
+             except Exception as e:
+-                self.errors.append(repr(e))
+-                self.process = None
+-                self.queue.close()
+-                self.queue = None
++                _diagnostic(self.errors, e)
++                if self.process.pid is None:
++                    self.process = None
++                if self._reader_guard is None:
++                    self._reader_guard = _ReaderClose(self.queue._reader.close, self.errors, self.grace_s)
++                    self.queue._reader.close = self._reader_guard
++                self.close()
+ 
+     def _submit(self, kind, payload):
++        if self._closed:
++            self.dropped += 1
++            return
+         if self.queue is None:
+             return
+         try:
+             if self.process is None or not self.process.is_alive():
+                 raise RuntimeError("encoder exited")
+             self.queue.put_nowait((kind, payload))
+-        except (Full, RuntimeError, OSError) as e:
++        except (Full, RuntimeError, OSError, ValueError) as e:
+             self.dropped += 1
+             if len(self.errors) < 16:
+                 self.errors.append(type(e).__name__ + ": " + str(e))
+@@ -132,35 +189,73 @@ class MediaSink:
+             self._submit("prediction", (index, video))
+ 
+     def close(self):
++        if self._result is not None:
++            return dict(self._result, errors=list(self._result["errors"]), helper_pids=list(self.helpers))
++        self._closed = True
++        encoder_alive = feeder_alive = fd_failed = False
+         if self.process is not None:
+             try:
+                 self.queue.put_nowait(None)
+-            except (Full, OSError):
++            except (Full, OSError, ValueError) as error:
+                 self.dropped += 1
++                _diagnostic(self.errors, error)
+             self.process.join(self.grace_s)
+             if self.process.is_alive():
+                 self.forced = True
+-                self.process.terminate()
++                try:
++                    self.process.terminate()
++                except ProcessLookupError:
++                    pass
+                 self.process.join(self.grace_s)
+             if self.process.is_alive():
+-                self.process.kill()
++                try:
++                    self.process.kill()
++                except ProcessLookupError:
++                    pass
+                 self.process.join(self.grace_s)
+-            if self.process.is_alive():
+-                raise RuntimeError("owned encoder survived SIGKILL")
+-            if self.process.exitcode != 0:
+-                self.errors.append(f"encoder exit {self.process.exitcode}")
+-            self.queue.cancel_join_thread()
+-            self.queue.close()
+-            self.queue._reader.close()
+-            if self.queue._thread is not None:
+-                self.queue._thread.join(self.grace_s)
+-                if self.queue._thread.is_alive():
+-                    self.forced = True
+-                    self.errors.append("encoder feeder thread did not stop")
+-        return {
++            encoder_alive = self.process.is_alive()
++            if encoder_alive:
++                _diagnostic(self.errors, "owned encoder survived SIGKILL")
++            elif self.process.exitcode != 0:
++                _diagnostic(self.errors, f"encoder exit {self.process.exitcode}")
++        if self.queue is not None:
++            try:
++                self.queue.cancel_join_thread()  # Never an unbounded join at interpreter exit.
++                self.queue.close()
++            except (OSError, ValueError) as error:
++                _diagnostic(self.errors, error)
++            feeder = self.queue._thread
++            if feeder is not None:
++                feeder.join(self.grace_s)  # Normal path: feeder owns reader_close().
++            if feeder is not None and feeder.is_alive():
++                # A dead consumer can leave send_bytes blocked on a full pipe.
++                # Use the SAME serialized close as the feeder, then wait again.
++                self.forced = True
++                self._reader_guard()
++                feeder.join(self.grace_s)
++            feeder_alive = feeder is not None and feeder.is_alive()
++            if feeder_alive:
++                _diagnostic(self.errors, "encoder feeder thread did not stop")
++            else:
++                try:
++                    self.queue._reader.close()
++                    self.queue._writer.close()
++                except OSError as error:
++                    fd_failed = error.errno != errno.EBADF
++                    _diagnostic(self.errors, error)
++                if self._reader_guard is not None:
++                    fd_failed = fd_failed or self._reader_guard.failed
++                    # Drop the instance override only after the feeder is gone;
++                    # this breaks its Connection/guard reference cycle.
++                    del self.queue._reader.close
++        self._result = {
+             "dropped": self.dropped,
+-            "errors": self.errors,
++            "errors": list(self.errors),
+             "independent_of_SR": True,
+             "forced_encoder_cleanup": self.forced,
+-            "helper_pids": self.helpers,
++            "process_cleanup_failed": encoder_alive or feeder_alive or fd_failed,
++            "encoder_alive": encoder_alive,
++            "feeder_alive": feeder_alive,
++            "helper_pids": list(self.helpers),
+         }
++        return dict(self._result, errors=list(self._result["errors"]))
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+index 686e77c..80367ac 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+@@ -255,7 +255,7 @@ class NativeEpisode:
+                 try:
+                     media = sink.close() if sink is not None else {"errors": media_errors}
+                 except Exception as e:
+-                    media = {"errors": [repr(e)], "forced_encoder_cleanup": True}
++                    media = {"errors": [repr(e)], "forced_encoder_cleanup": True, "process_cleanup_failed": True}
+                 media["parent_errors"] = media_errors
+                 media["rollout_requested"] = rollout_enabled
+                 media["rollout_mp4_first_n_per_task"] = limit
+@@ -278,7 +278,7 @@ class NativeEpisode:
+             "instruction": prompt,
+             "replans": replans,
+             "elapsed_seconds": time.monotonic() - start,
+-            "media_process_fault": media.get("forced_encoder_cleanup", False)
++            "media_process_fault": media.get("process_cleanup_failed", media.get("forced_encoder_cleanup", False))
+             or (transactional is not None and transactional.media_process_fault),
+             "media_helper_pids": media.get("helper_pids", []),
+         }
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_slot.py b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+index aab7078..6f9a1b4 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_slot.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+@@ -9,6 +9,7 @@ from cosmos_framework.evaluation.robocasa_v2.contract import SAMPLING
+ from cosmos_framework.evaluation.robocasa_v2.store import identifier, load
+ from cosmos_framework.simulation.robocasa import closed_loop_eval as native
+ from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
++from cosmos_framework.simulation.robocasa.render_devices import verify_current
+ 
+ 
+ class SimSlot:
+@@ -133,6 +134,12 @@ class SimSlot:
+         self._state("RESETTING")
+         self.reset_index += 1  # Includes failed and initially successful scene samples.
+         value = self.engine.initialize()
++        if value.get("error") is None and self.cfg.get("rendering", {}).get("backend") == "egl":
++            try:
++                value["rendering"] = verify_current(self.cfg["rendering"])
++            except BaseException:
++                self._state("FAILED_QUARANTINED")
++                raise
+         self._state("FAILED_QUARANTINED" if value.get("error") and not value.get("safe_to_retry") else "ADMISSION")
+         return dict(value, sampling=self.sampling())
+ 
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index 6151702..192611d 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -17,6 +17,7 @@ from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
+ def serve(channel, cfg, *, factory=None):
+     # Factory is a Python CPU test boundary, never selectable via production CLI.
+     from cosmos_framework.simulation.robocasa import closed_loop_eval as native
++    from cosmos_framework.simulation.robocasa import render_devices
+     from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
+     from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
+ 
+@@ -35,6 +36,7 @@ def serve(channel, cfg, *, factory=None):
+                 "native": Path(native.__file__),
+                 "adapter": Path(sys.modules[NativeEpisode.__module__].__file__),
+                 "slot": Path(sys.modules[SimSlot.__module__].__file__),
++                "rendering": Path(render_devices.__file__),
+             }
+             if cfg["settings"].get("execution_profile") == "phase_b":
+                 from cosmos_framework.simulation.robocasa import eval_v2_transactions
+@@ -49,6 +51,9 @@ def serve(channel, cfg, *, factory=None):
+                     or hashlib.sha256(file.read_bytes()).hexdigest() != expected["sha256"]
+                 ):
+                     raise ValueError("native import origin/source mismatch")
++        rendering = render_devices.configure(cfg["rendering"])
++        cfg["rendering"] = rendering
++        if factory is None:
+             runtime = native.verify_runtime(SimpleNamespace(**cfg["runtime_args"]), next(iter(cfg["tasks"])))
+             if runtime is None or any(
+                 runtime["protocol"]["official_horizons"][task] != spec["horizon"] for task, spec in cfg["tasks"].items()
+@@ -65,6 +70,7 @@ def serve(channel, cfg, *, factory=None):
+                 "state": slot.state,
+                 "local_memory_mode": cfg["settings"].get("local_memory_mode", "required"),
+                 "runtime_digest": runtime["digest"] if factory is None else "CPU_TEST_FACTORY",
++                "rendering": rendering,
+             },
+         )
+         while True:
+diff --git a/cosmos_framework/simulation/robocasa/render_devices.py b/cosmos_framework/simulation/robocasa/render_devices.py
+new file mode 100644
+index 0000000..b8b1592
+--- /dev/null
++++ b/cosmos_framework/simulation/robocasa/render_devices.py
+@@ -0,0 +1,166 @@
++"""Resolve physical EGL devices by PCI identity, never by CUDA ordinal equality.
++
++Import is CPU-only. EGL is loaded only in a real EGL worker, before vendor imports.
++No context is initialized on any device while enumerating its identity.
++"""
++
++from __future__ import annotations
++
++import ctypes
++import os
++import re
++from pathlib import Path
++
++
++def normalize_pci(value):
++    if not isinstance(value, str) or not re.fullmatch(r"[0-9a-fA-F]{4,8}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-7]", value):
++        raise ValueError("invalid physical PCI bus identity")
++    domain, bus, slot_function = value.lower().split(":")
++    if int(domain, 16) > 65535:
++        raise ValueError("unsupported PCI domain")
++    return f"{int(domain, 16):04x}:{bus}:{slot_function}"
++
++
++class EGLDevices:
++    def __init__(self):
++        self.lib = ctypes.CDLL("libEGL.so.1")
++        self.lib.eglGetProcAddress.argtypes = [ctypes.c_char_p]
++        self.lib.eglGetProcAddress.restype = ctypes.c_void_p
++        self.lib.eglGetCurrentDisplay.restype = ctypes.c_void_p
++        self.lib.eglGetCurrentContext.restype = ctypes.c_void_p
++        self.lib.eglGetError.restype = ctypes.c_uint
++        self.query_devices = self._function(
++            b"eglQueryDevicesEXT",
++            ctypes.c_uint,
++            ctypes.c_int,
++            ctypes.POINTER(ctypes.c_void_p),
++            ctypes.POINTER(ctypes.c_int),
++        )
++        self.query_string = self._function(b"eglQueryDeviceStringEXT", ctypes.c_char_p, ctypes.c_void_p, ctypes.c_int)
++        self.query_display = self._function(
++            b"eglQueryDisplayAttribEXT", ctypes.c_uint, ctypes.c_void_p, ctypes.c_int, ctypes.POINTER(ctypes.c_ssize_t)
++        )
++
++    def _function(self, name, result, *arguments):
++        address = self.lib.eglGetProcAddress(name)
++        if not address:
++            raise RuntimeError(f"physical EGL identity extension missing: {name.decode()}")
++        return ctypes.CFUNCTYPE(result, *arguments)(address)
++
++    def _describe(self, device):
++        # EGL_EXT_device_drm / EGL_EXT_device_drm_render_node. A missing DRM
++        # identity is BLOCKED, never an excuse to assume ordinal N == GPU N.
++        for attribute in (0x3377, 0x3233):
++            raw = self.query_string(device, attribute)
++            self.lib.eglGetError()  # Do not leave an unsupported-attribute error for the vendor.
++            if raw:
++                node = Path(raw.decode("utf-8", errors="strict"))
++                if node.parent != Path("/dev/dri"):
++                    continue
++                try:
++                    pci = (Path("/sys/class/drm") / node.name / "device").resolve(strict=True).name
++                    return normalize_pci(pci), str(node)
++                except (OSError, ValueError):
++                    continue
++        raise RuntimeError("EGL physical PCI identity unavailable; no ordinal fallback")
++
++    def inventory(self):
++        count = ctypes.c_int()
++        if not self.query_devices(0, None, ctypes.byref(count)) or not 0 < count.value <= 256:
++            raise RuntimeError("bounded EGL device enumeration failed")
++        devices = (ctypes.c_void_p * count.value)()
++        capacity = count.value
++        if not self.query_devices(capacity, devices, ctypes.byref(count)) or not 0 < count.value <= capacity:
++            raise RuntimeError("EGL devices changed during enumeration")
++        result = []
++        for index, device in enumerate(devices[: count.value]):
++            try:
++                pci, node = self._describe(device)
++            except RuntimeError:
++                pci = node = None  # Software/unidentifiable devices cannot be selected.
++            result.append({"egl_device_index": index, "handle": device, "pci_bus_id": pci, "device_node": node})
++        return result
++
++    def current(self):
++        display = self.lib.eglGetCurrentDisplay()
++        if not display or not self.lib.eglGetCurrentContext():
++            raise RuntimeError("no current EGL context after environment reset")
++        device = ctypes.c_ssize_t()
++        if not self.query_display(display, 0x322C, ctypes.byref(device)):  # EGL_DEVICE_EXT
++            raise RuntimeError("cannot identify the actual EGL display device")
++        pci, node = self._describe(device.value)
++        return {"handle": device.value, "pci_bus_id": pci, "device_node": node}
++
++
++def validate_proof(proof, plan, *, context=False):
++    if not isinstance(proof, dict) or any(
++        proof.get(k) != plan[k] for k in ("backend", "server_gpu_id", "render_gpu_id", "expected_device")
++    ):
++        raise ValueError("render device attestation differs from assigned roles")
++    if plan["backend"] == "egl":
++        expected = plan["expected_device"]
++        actual = proof.get("actual_device", {})
++        if (
++            proof.get("protocol") != "egl_physical_pci_v1"
++            or proof.get("physical_identity_verified") is not True
++            or type(proof.get("egl_device_index")) is not int
++            or proof["egl_device_index"] < 0
++            or actual != expected
++            or (context and proof.get("context_verified") is not True)
++        ):
++            raise ValueError("unproven physical EGL device/context")
++    elif (
++        plan["backend"] != "osmesa"
++        or proof.get("protocol") != "cpu_osmesa_v1"
++        or proof.get("actual_device") is not None
++    ):
++        raise ValueError("unproven CPU render backend")
++    return proof
++
++
++def configure(plan, *, api=None):
++    backend = plan["backend"]
++    if backend not in ("egl", "osmesa"):
++        raise ValueError("unsupported render backend")
++    os.environ.update(MUJOCO_GL=backend, PYOPENGL_PLATFORM=backend, CUDA_VISIBLE_DEVICES="")
++    os.environ.pop("MUJOCO_EGL_DEVICE_ID", None)
++    if backend == "osmesa":
++        if plan["render_gpu_id"] is not None or plan["expected_device"] is not None:
++            raise ValueError("OSMesa must not allocate a GPU")
++        return dict(plan, protocol="cpu_osmesa_v1", actual_device=None, context_verified=False)
++    expected = plan["expected_device"]
++    if expected["gpu_id"] != plan["render_gpu_id"] or normalize_pci(expected["pci_bus_id"]) != expected["pci_bus_id"]:
++        raise ValueError("physical render assignment identity mismatch")
++    devices = (api or EGLDevices()).inventory()
++    matches = [v for v in devices if v["pci_bus_id"] == expected["pci_bus_id"]]
++    if len(matches) != 1:
++        raise RuntimeError("selected physical render GPU must have one provable EGL device")
++    selected = matches[0]
++    os.environ["MUJOCO_EGL_DEVICE_ID"] = str(selected["egl_device_index"])
++    proof = dict(
++        plan,
++        protocol="egl_physical_pci_v1",
++        actual_device=dict(expected),
++        egl_device_index=selected["egl_device_index"],
++        device_node=selected["device_node"],
++        physical_identity_verified=True,
++        context_verified=False,
++    )
++    return validate_proof(proof, plan)
++
++
++def verify_current(proof, *, api=None):
++    if proof["backend"] != "egl":
++        return proof
++    if os.environ.get("MUJOCO_GL") != "egl" or os.environ.get("MUJOCO_EGL_DEVICE_ID") != str(proof["egl_device_index"]):
++        raise RuntimeError("render environment changed after physical device attestation")
++    driver = api or EGLDevices()
++    current = driver.current()
++    selected = [v for v in driver.inventory() if v["egl_device_index"] == proof["egl_device_index"]]
++    if (
++        len(selected) != 1
++        or current["handle"] != selected[0]["handle"]
++        or current["pci_bus_id"] != proof["expected_device"]["pci_bus_id"]
++    ):
++        raise RuntimeError("actual EGL context uses a different physical GPU")
++    return validate_proof(dict(proof, context_verified=True), proof, context=True)
