@@ -1,3 +1,29 @@
+# 2026-11-01 — Owner resource policy clean-Pair70 PASS, request prepared
+
+Formal Root 4b581493db805c92964cb27e740c736db87c0329, same Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6.
+Final run_cpu.py formal final:70 PASS/0failure/error/skip, Root/Child clean and
+source hashes unchanged, Python3.13.5/Ruff0.12.7 check/format/syntax/diff PASS.
+15new+33mapping+20Context+2entry cases; development70 separate. No historical
+192/206/29 rerun, actual NVML/GPU/EGL/FFmpeg/model/simulator/job access or DS
+execution. Source scope: one production file resources.py plus3 focused test
+files; all Child/source safety, Media, scientific and runtime files unchanged.
+Old budget/foreign blockers intentionally retired by explicit Owner instruction;
+device/physical Context/own RSS and owned cleanup preserved. Diagnostic GPU map
+is now index->UUID; no memory/reserve fields or budget reads. API keyword kept.
+
+Preparation 2026-11-01T20:11:12.102202+08:00; fetched/read prior exact6484dd83/9a8cd618 APPROVE_CODE
+and candidate Inboxb0b6e8ca. Prior source verdict stays exact-Pair valid, no new
+approval inferred. Candidate-only policy request appended, bytes before126429,
+append2267, after128696, prefix unchanged/no rollover.
+Frozen27 artifact hashes/6 bindings and Diff/scope at
+docs/collab/codex/evidence/2026-11-01_eval_v2_owner_gpu_policy_author_cpu. Root candidate publication/readback only, Child unchanged. After
+successful remote proof STOP for GPT narrow Code Gate. Current Owner reviewer
+GPT followed by DS independent validation; no old V2/tmux polling/dispatch.
+No V3 merge, active out2/NoTTT/shared worktree/config/Job/DCP/results/media/log
+or process operation, GPU0-3 or actual runtime/Canary/evaluation/training/Resume.
+
+## Earlier resource-policy history preserved
+
 # 2026-11-01 — Owner GPU policy development70 PASS, Root freeze next
 
 Only production change is scripts/robocasa_eval_v2/resources.py: probe selected
