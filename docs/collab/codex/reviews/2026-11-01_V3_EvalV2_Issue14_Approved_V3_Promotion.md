@@ -48,3 +48,12 @@ source was checked from existing isolated Git objects without updating files.
 No active out2/NoTTT/shared worktree, config, results, media, DCP, logs or process
 was accessed. No GPU, model, Action Server, RoboCasa, FFmpeg, real MP4, training,
 evaluation or DS dispatch was started. Stop after remote publication/readback.
+
+## Completion
+
+Official Child `v3-local-ttt` was fast-forwarded to `8664267704da3206e719f3c7eef2b5ed86e2a417` first.
+Root promotion `ab6b80e08030c1d5835d966a510ea8246944c536` was then published to V3 without force.
+Fetched/advertised readback at 2026-11-01T08:22:50.669994+08:00 matched the Root and its Child Gitlink.
+All source/evidence checks passed; see `publication_readback.json`.
+The completion successor only records this receipt. Approved Formal Pair remains
+unchanged. No live shared directory or runtime was touched; work stops here.

@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "observed_cst": "2026-11-01T08:22:50.669994+08:00",
+  "approved_formal_root": "fd183f9e8fddfaef93b6ec9484184f071062ae41",
+  "approved_formal_child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "promotion_root": "ab6b80e08030c1d5835d966a510ea8246944c536",
+  "fetched_root_V3": "ab6b80e08030c1d5835d966a510ea8246944c536",
+  "advertised_root_V3": "ab6b80e08030c1d5835d966a510ea8246944c536",
+  "official_child_v3_local_ttt": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "root_gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "normal_nonforce_push_order": [
+    "Child 6c83596d..86642677 to v3-local-ttt",
+    "Root 9ba1dd11..ab6b80e0 to V3"
+  ],
+  "reviewed_candidate_history_preserved": "11cae65a63804401672aa5de4dcb74358315f3f5",
+  "all_previous_canonical_history_preserved": "9ba1dd110a4e3e99e717937c2f8d044fa077cdbf",
+  "root_source_objects_equal_approved": 9853,
+  "other_child_objects_preserved": 1269,
+  "artifact_hashes_verified": 42,
+  "formal_source_bindings_verified": 11,
+  "original_author_cpu": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "both_prior_fixture_failure_bundles_retained": true,
+  "review_and_inbox_prefix_preserved": true,
+  "inbox_bytes": 112113,
+  "clean_isolated_worktree_before_receipt": true,
+  "historical_tests_static_or_GPU_rerun": false,
+  "active_shared_directory_or_runtime_access": false,
+  "scope": "Owner-authorized code promotion only; no new Formal Pair or real MP4/FFmpeg, GPU/900 evaluation permission",
+  "next": "docs-only completion receipt and STOP"
+}

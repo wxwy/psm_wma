@@ -1,3 +1,26 @@
+# 2026-11-01 — Issue14 V3 promotion COMPLETE
+
+Owner-authorized production promotion Root: `ab6b80e08030c1d5835d966a510ea8246944c536`.
+Official Child `v3-local-ttt` and Root Gitlink: `8664267704da3206e719f3c7eef2b5ed86e2a417`.
+Approved Formal Pair remains fd183f9e8fddfaef93b6ec9484184f071062ae41 / 8664267704da3206e719f3c7eef2b5ed86e2a417.
+Child official fast-forward completed before Root's normal nonforce V3 push.
+Remote fetched/advertised readback PASS at 2026-11-01T08:22:50.669994+08:00.
+
+All 9,853 Root source objects match approved Formal; other1,269 Child objects
+unchanged. All42 original artifact hashes and11 formal bindings checked. Original
+author69 PASS and both prior fixture failures retained; no historical tests,
+Ruff/static, GPU, FFmpeg/MP4 or real runtime Gate rerun or new acceptance claim.
+Review and full candidate/canonical histories and Inbox records preserved.
+
+No update to active shared code/out2/NoTTT YAML/results/media/DCP/log/process,
+no model/data/Server/simulator access or GPU/training/evaluation/DS dispatch.
+New feature stays optional/null by default for future new Runs. No live Run
+configuration changed. Completion successor is docs-only, not a new Formal Pair.
+Receipt: docs/collab/codex/receipts/2026-11-01_eval_v2_issue14_v3_promotion/.
+STOP; real MP4/GPU/evaluation remains separately authorized.
+
+## Promotion preparation and earlier candidate facts preserved
+
 # 2026-11-01 — Issue14 approved promotion IN_PROGRESS
 
 Owner explicitly authorized 合入 after exact-pair APPROVE_CODE.
