@@ -222,9 +222,10 @@ def test_every_physical_actor_receives_static_limit(
         raise CapturedBeforeProcess
 
     monkeypatch.setattr(runtime_module, "write", capture)
-    for worker in runtime.workers:
-        with pytest.raises(CapturedBeforeProcess):
-            runtime._actor({"task": TASKS[0], "physical_worker": worker})
+    with store.locked():
+        for worker in runtime.workers:
+            with pytest.raises(CapturedBeforeProcess):
+                runtime._actor({"task": TASKS[0], "physical_worker": worker})
     assert {row["physical_worker"] for row in captured} == set(runtime.workers)
     for row in captured:
         assert row["settings"][FIELD] == limit

@@ -1,3 +1,16 @@
+# 2026-11-01 — Issue14 second author Gate stopped; actor lease fixture corrected
+
+Root719097ae04f4a5af38d0c3d9140942574d7e7de6 / unchanged Child86642677:
+scoped static checks PASS; pytest stopped at 27 passed / 1 failed. External raw
+Gate/JUnit/traceback retained under final_r1. Invocation-envelope correction is
+verified by those passed tests. Actor-config fixture lacked the coordinator lease
+created by the production CLI's Store.locked context. Add the actual lock context
+around actor-config creation; no production, assertion, timeout or count change.
+Commit a new Root and rerun the same narrow Gate, preserving both prior failures.
+No runtime/GPU/active shared-directory action or publication has occurred.
+
+## Earlier observations preserved
+
 # 2026-11-01 — Issue14 first author Gate stopped; invocation fixture corrected
 
 Frozen initial Pair 94e5a935f53efbd714842eb5441b4f92c26cc5d3 /
