@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "observed_cst": "2026-11-01T08:04:05.389697+08:00",
+  "formal_root": "fd183f9e8fddfaef93b6ec9484184f071062ae41",
+  "formal_child_gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "branch": "v3-eval-v2-rollout-first-n-20261101",
+  "published_evidence_head": "4eec73d82a7d336b91ea80e5e245ff3d1c0e402f",
+  "fetched_and_advertised_candidate_root": "4eec73d82a7d336b91ea80e5e245ff3d1c0e402f",
+  "fetched_and_advertised_candidate_child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "canonical_V3_unchanged": "9ba1dd110a4e3e99e717937c2f8d044fa077cdbf",
+  "official_child_branch_unchanged": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "candidate_root_gitlink": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "candidate_child_parent": "6c83596d6a259e89c4cd3e79424024983426ac3d",
+  "push_order": [
+    "child candidate",
+    "root candidate"
+  ],
+  "artifact_hashes_verified": 42,
+  "formal_source_bindings_verified": 11,
+  "final_author_cpu_totals": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "prior_fixture_failure_evidence_retained": true,
+  "canonical_inbox_prefix_preserved": true,
+  "candidate_request_count": 1,
+  "candidate_inbox_bytes": 108648,
+  "evidence_successor_source_diff": [],
+  "clean_root_and_child_before_receipt": true,
+  "production_files_changed": 3,
+  "no_real_GPU_model_data_DCP_simulator_FFmpeg_or_active_runtime_access": true,
+  "scope": "isolated candidates and author CPU only; not independent Code APPROVE, canonical promotion or runtime authorization",
+  "next": "STOP for GPT fresh incremental Code Gate; no DS dispatch"
+}

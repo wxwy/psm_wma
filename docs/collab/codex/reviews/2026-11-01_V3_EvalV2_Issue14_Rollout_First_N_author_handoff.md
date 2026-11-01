@@ -69,3 +69,12 @@ GPT 或 DS 独立验收。实际录像、GPU、Canary 与正式评测另需授�
 当前 out2 Local-TTT 900 集、NoTTT 正式训练及其共享工作树、YAML、结果、媒体、
 DCP、日志与进程均未访问或修改。V3 与正式 Child 分支保持原值；没有 DS 派发。
 源码身份保护不因字段默认兼容而放开，不授权旧 Run 跨 Root/Child 恢复。
+
+## 发布回执
+
+Child 候选先发布，Root 候选随后发布至 Evidence/Inbox HEAD
+`4eec73d82a7d336b91ea80e5e245ff3d1c0e402f`。
+2026-11-01T08:04:05.389697+08:00 远端 fetch/advertised 回读一致，42 份产物哈希、
+11 份源码绑定及 candidate Gitlink 均通过。V3 和正式 Child 分支未改动。
+完整回执见 `docs/collab/codex/receipts/2026-11-01_eval_v2_issue14_rollout_first_n/`。
+Formal Pair 不变；后续回执只是文档，当前停在 GPT fresh Code Gate。
