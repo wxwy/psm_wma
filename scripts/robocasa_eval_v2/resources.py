@@ -1,4 +1,4 @@
-"""Read-only resource admission; allow GPU sharing without managing foreign processes."""
+"""Selected GPU identity and owned RSS checks; GPU placement is the Owner's choice."""
 
 from __future__ import annotations
 
@@ -12,62 +12,29 @@ from robocasa_eval_v2.config import rendering
 
 
 def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+    # Keep the launcher signature; legacy GPU budgets are no longer admission inputs.
     render = rendering(cfg)
     selected_ids = sorted(set(cfg["gpu_ids"]) | set(render["gpu_ids"]))
     args = [
         "nvidia-smi",
         "-i",
         ",".join(map(str, selected_ids)),
-        "--query-gpu=index,uuid,memory.total,memory.used",
+        "--query-gpu=index,uuid",
         "--format=csv,noheader,nounits",
     ]
     output = run(args, capture_output=True, text=True, check=True, timeout=10).stdout
     devices = {}
     for line in output.splitlines():
-        index, uid, total, used = [x.strip() for x in line.split(",")]
-        devices[int(index)] = (uid, int(total) * 1024**2, int(used) * 1024**2)
+        index, uid = [x.strip() for x in line.split(",")]
+        index = int(index)
+        if index not in selected_ids or index in devices or not uid.startswith("GPU-"):
+            raise RuntimeError("BLOCKED_RESOURCE: invalid selected GPU identity")
+        devices[index] = uid
     allowed = set()
     for p in processes:
         allowed.update(group_members(p.pgid))
     if any(g not in devices for g in selected_ids):
         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
-    reserves = dict.fromkeys(selected_ids, 0)
-    if before_models:
-        for g in cfg["gpu_ids"]:
-            reserves[g] += cfg.get("server_reserve_bytes", 20 * 1024**3)
-        task_count = len(cfg["tasks"]) if isinstance(cfg.get("tasks"), list) else 18
-        for g in render_slots(cfg, task_count).values():
-            if g is not None:
-                reserves[g] += cfg.get("render_reserve_bytes_per_sim", 1024**3)
-    for g in selected_ids:
-        _, total, used = devices[g]
-        if used + reserves[g] > total * cfg["max_gpu_fraction"]:
-            raise RuntimeError("BLOCKED_RESOURCE: GPU memory budget")
-    if render["gpu_ids"]:
-        apps = run(
-            [
-                "nvidia-smi",
-                "-i",
-                ",".join(map(str, sorted(set(render["gpu_ids"])))),
-                "--query-compute-apps=gpu_uuid,pid",
-                "--format=csv,noheader,nounits",
-            ],
-            capture_output=True,
-            text=True,
-            check=True,
-            timeout=10,
-        ).stdout
-        render_uuids = {devices[g][0] for g in render["gpu_ids"]}
-        for line in apps.splitlines():
-            uid, pid = [v.strip() for v in line.split(",")]
-            if uid not in render_uuids or not pid.isdigit():
-                raise RuntimeError(
-                    "BLOCKED_RESOURCE: invalid render CUDA ownership probe"
-                )
-            if int(pid) not in allowed:
-                raise RuntimeError(
-                    "BLOCKED_RESOURCE: foreign CUDA workload on render GPU"
-                )
     rss = 0
     for pid in allowed:
         try:
@@ -82,7 +49,6 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
         "gpus": devices,
         "owned_pids": sorted(allowed),
         "rss_bytes": rss,
-        "reserves": reserves,
     }
 
 

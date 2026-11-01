@@ -252,16 +252,15 @@ def resource_cfg():
     }
 
 
-def probe(*, missing=False, used_render=0, apps=""):
+def probe(*, missing=False):
     calls = []
 
     def run(args, **kw):
         calls.append(args)
-        if any("query-compute-apps" in a for a in args):
-            return SimpleNamespace(stdout=apps)
+        assert args[3] == "--query-gpu=index,uuid"
         rows = [
-            f"{i}, GPU-{i}, 81920, {used_render if i in (6, 7) else 0}"
-            for i in (4, 5, 6, 7)
+            f"{i}, GPU-{i}"
+            for i in map(int, args[2].split(","))
             if not (missing and i == 6)
         ]
         return SimpleNamespace(stdout="\n".join(rows))
@@ -269,35 +268,29 @@ def probe(*, missing=False, used_render=0, apps=""):
     return run, calls
 
 
-def test_union_memory_admission_budgets_roles_without_querying_gpu_zero_to_three():
+def test_union_identity_check_uses_only_selected_gpu_four_to_seven():
     run, calls = probe()
     result = resources.check(resource_cfg(), before_models=True, run=run)
-    assert result["reserves"] == {
-        4: 10 * 1024**3,
-        5: 10 * 1024**3,
-        6: 8 * 800 * 1024**2,
-        7: 8 * 800 * 1024**2,
-    }
+    assert result["gpus"] == {i: f"GPU-{i}" for i in (4, 5, 6, 7)}
+    assert "reserves" not in result
     assert calls[0][1:3] == ["-i", "4,5,6,7"]
-    assert calls[1][1:3] == ["-i", "6,7"]
+    assert len(calls) == 1
 
 
-@pytest.mark.parametrize(
-    "options", [{"missing": True}, {"used_render": 70000}, {"apps": "GPU-6, 123456"}]
-)
-def test_missing_render_gpu_budget_or_foreign_cuda_is_blocked(options):
-    run, _ = probe(**options)
+def test_missing_render_gpu_is_still_blocked():
+    run, _ = probe(missing=True)
     with pytest.raises(RuntimeError, match="BLOCKED_RESOURCE"):
         resources.check(resource_cfg(), before_models=True, run=run)
 
 
-def test_owned_model_cuda_on_a_deliberately_shared_render_gpu_is_permitted(monkeypatch):
+def test_shared_render_gpu_only_accounts_for_owned_processes(monkeypatch):
     cfg = resource_cfg()
     cfg["render_gpu_ids"] = [4, 5]
-    run, _ = probe(apps="GPU-4, 123456")
+    run, calls = probe()
     monkeypatch.setattr(resources, "group_members", lambda pgid: {123456})
     result = resources.check(cfg, [SimpleNamespace(pgid=123456)], run=run)
     assert result["owned_pids"] == [123456]
+    assert len(calls) == 1 and calls[0][1:3] == ["-i", "4,5"]
 
 
 def test_physical_identity_uses_pci_and_uuid_not_an_assumed_egl_index():

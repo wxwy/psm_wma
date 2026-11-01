@@ -1,3 +1,67 @@
+# 2026-11-01 — Owner GPU policy development70 PASS, Root freeze next
+
+Only production change is scripts/robocasa_eval_v2/resources.py: probe selected
+index/UUID only, delete GPU used+reserve/fraction admission and compute-app PID
+enumeration. Keep missing-device/UUID validation, physical slots/gpu_identity
+PCI lookup, own RSS and source-independent owned-process cleanup. No memory
+statistics collected; GPU proof is index->UUID, reserves field removed. Runtime
+uses probe success only; no production consumer of removed memory fields.
+Legacy config keys accepted but not admission inputs; before_models call keyword
+retained. No config/CLI/runtime/Child/model/Media change.
+
+Related tests retire the old memory/foreign-CUDA blocking expectations per
+Owner's explicit new policy. Missing devices and physical proof checks retained;
+add15 policy cases for no budget-key reads, no memory/process-list queries, GPU4-7
+selection, malformed/absent identities, own-only RSS and real-probe error
+propagation. Development70/70 PASS,0failure/error/skip, Python3.13.5/Ruff0.12.7
+check/format/six-file AST PASS. Full render mapping/context CPU doubles and two
+entry resource cases included; no actual nvidia-smi/NVML/EGL/GPU/FFmpeg/model/
+simulation. Old Media/206 suites not rerun. Source hashes unchanged in test.
+Command /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-owner-gpu-policy-20261101/run_cpu.py development
+/tmp/psm-eval-owner-gpu-policy-20261101/development, explicit CPU/offline/tmp caches.
+
+Freeze separate Root policy implementation with unchanged Child9a8cd618. Then
+clean-Pair focused author70 Gate/evidence, independent narrow GPT request and
+STOP. Prior APPROVE_CODE stays attached to6484dd83/9a8cd618; it does not approve
+this new policy increment. No V3/official Child merge, real probes/run or active
+out2/NoTTT/shared code/config/DCP/results/log/process access.
+
+## Earlier claim preserved
+
+# 2026-11-01 — Owner GPU resource-policy override, IN_PROGRESS
+
+Read actual remote GPT APPROVE_CODE review for exact6484dd83/9a8cd618 and
+candidate live Inbox, plus DS mixed-interpreter acknowledgment (reported206
+unique cases across3.13/3.12, not a new execution by Codex). Remote candidate
+advanced only by248faf62/b55d78ac/b0b6e8ca review/Inbox docs; isolated clean
+Root fast-forwarded2105401b -> b0b6e8ca. Canonical V3 remains7e2be5ca,
+Child9a8cd618 unchanged. Current Owner workflow overrides old V2/three-pane
+polling; existing source approval remains tied to its exact old Pair.
+
+New Owner instruction authorizes only resources.py + related focused tests:
+remove external CUDA process enumeration/blocker and memory.used/reserve GPU
+admission, retain selected GPU existence/identity, PCI/EGL mapping and actual
+Context checks, and only owned-process RSS/safe cleanup. No query/manage/stop of
+other GPU jobs; selected target4,5,6,7 only, no GPU0-3 activity. Keep configurable
+2Server/16Sim M8/B2 target and all videos; no config/runtime/Child/model/Media/
+Local/Scheduler/Store/Checkpoint/NoTTT changes. Existing legacy GPU budget config
+keys may remain accepted but are ignored by resource admission; no new flag.
+
+Planned production file scripts/robocasa_eval_v2/resources.py. Related tests:
+resource cases in render_mapping_test.py, two entry_test.py resource regressions,
+new owner_gpu_resource_policy_test.py. Source check should query only index/UUID,
+preserve separately called gpu_identity PCI lookup and own RSS checks. Resource
+proof GPU entries become index->UUID; no production consumer depends on removed
+memory/reserve diagnostics (Runtime uses probe success only).
+Focused CPU tests/Source bindings/new Root with same Child then separate GPT
+incremental review. No canonical merge, real GPU/EGL/FFmpeg/Server/simulator,
+old out2/NoTTT/shared runtime/DCP/results/log access, training/evaluation/Resume
+or DS dispatch. STOP after candidate publication/readback and request. New task
+uncommitted at claim time; no production/test edits yet.
+
+## Previous approved implementation history preserved
+
 # 2026-11-01 — RM-M01 candidate request published; exact readback PASS
 
 Observation 2026-11-01T13:09:40.608133+08:00: Formal Root 6484dd83efc512e6801470790eb84ac7349c127a /
