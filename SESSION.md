@@ -1,3 +1,17 @@
+# 2026-11-01 — Packaging diagnostic classified without rewriting raw evidence
+
+Evidence commit 72f3f5e8e191eca13684f3419ea78435f3961c55 was created after git diff --cached --check
+reported whitespace in archived .diff files. This ordering was premature;
+the diagnostic is now retained and verified:31 blank context lines each
+contain the required unified-diff single-space prefix. Original artifacts
+are preserved. Production baseline-to-Formal Root/Child diff checks and
+metadata diff check excluding only those two raw .diff files PASS;53 frozen
+artifact hashes still match. No source change/retest/relaxation. Receipt:
+docs/collab/codex/receipts/2026-11-01_eval_v2_render_media_candidate/packaging_check.json.
+This is a bookkeeping clarification, not a new Formal Pair or Gate.
+
+## Earlier history preserved
+
 # 2026-11-01 — Exact combined author CPU PASS; candidate Code Gate publication
 
 Formal Root 46d3a604e66ca139e2f060fd4caaaa0583a1035f / Child-Gitlink d3b2a29b978ff4abef800b9e71fab4422b7a0d23.
