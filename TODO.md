@@ -1,5 +1,7 @@
 # PSM-WMA 任务队列
 
+- **EVALV2-RM-ALL-R01** — IN_PROGRESS; Codex; exact GPT REQUEST_CHANGES d2041e38/0dd13d3d read after fresh remote sync ec8a8bf3. Only bounded Episode ACK-history/reservation idempotency + focused public API tests, frozen old RED/new GREEN, new Child then Root SHA/evidence/request then STOP. No V3 promotion/GPU/model/real simulator/old media/training/DCP; prior379 evidence unchanged. Candidate v3-eval-v2-replan-ack-r01-20261102.
+
 - **EVALV2-REPLAN-ALL-LOSSLESS** — REVIEW; Codex; Owner f49d52e5 all-only contract. Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44 / Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9, isolated v3-eval-v2-replan-all-20261102. Clean-Pair author CPU379 distinct PASS/0failure/error/skip (58+174+129+18), Ruff/format/AST/py_compile22, protected scope and rollover PASS; synthetic10 completed/fully decoded MP4+receipts+ACK. Evidence/handoff archived; publish Child->Root/readback then STOP for GPT incremental Code Gate. Author PASS is not GPT/DS/hardware acceptance; no V3 promotion, GPU/model/real simulator, old H3/out2/NoTTT/Job/training/DCP access.
 
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。

@@ -1,3 +1,63 @@
+# 2026-11-02 — RM-ALL-R01 implemented, scoped122 development CPU PASS; freezing Pair
+
+Changed only Child inference/robocasa_batch_transactions.py and added Root
+tools/v3/eval_v2_replan_tests/ack_history_test.py. Bounded per-active-Episode
+request-key history retains payload/receipt digests and Replan index until
+acknowledged End, including End202 quiescence. No video/full-receipt storage.
+100001 record cap follows existing wire frontier0..100000; pending strict jobs
+count against cap before reservation, no eviction or late ACK-capacity failure.
+Correct older reserve/ACK after later Replans is idempotent without spool/native/
+decode/Encoder work; changed identity/foreign/stale generations remain rejected.
+Default spool4/512MiB, media timeout, Encoder/verification/Local/SR paths unchanged.
+
+New16-case public API tests frozen BEFORE old-production RED (including two
+different frame sequences/MP4 hashes). Old0dd13d3d source unchanged: expected
+RED2/2 targeted failures; first draft driver's redundant message check failed
+after pytest had correctly produced2RED, preserved raw logs, fixed driver check
+only and validated RED2 again without any test/production edits. New same frozen
+file: green74 = new16 + inherited58 PASS; real CPU Torch batch/Local/native48
+PASS. Total122 scoped development tests,0failure/error/skip; NOT a rerun/relabel
+of previous379. Static Ruff0.12.7/format/AST/py_compile2, unchanged frozen test,
+exact scope and historical379 evidence tree PASS. Logs external
+/tmp/psm-eval-v2-rm-all-r01-20261102. Child committed first, Root next; full new
+Pair and clean-Pair checks bound in the evidence successor. No extra implementation
+changes planned, no zero-overhead/performance claim, no hardware/old media access.
+
+## Original R01 claim and exact review observation retained
+
+# 2026-11-02 — RM-ALL-R01 claimed, narrow cross-Replan ACK replay fix IN_PROGRESS
+
+User supplied REQUEST_CHANGES; refreshed remote before consuming verdict.
+Before Root47b8e2242ed114b05ced96a9445c423144687a21; explicit candidate/V3 fetch
+and ls-remote agree on candidate ec8a8bf31d6e4cd2cc1a387b77d8510aef57e06f /
+official V3 7e2be5ca40891915a1e86eea935ed054ec1984dd. New commits e49947ec and
+ec8a8bf3 only detailed Review and Inbox; ancestry check0 and merge --ff-only
+succeeded. Read live Inbox and exact detailed Review
+docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_d2041e38_0dd13d3d_Incremental_Code_Gate_REQUEST_CHANGES.md:
+Formal d2041e388eda084e42a2d6b0d115db8beedfab44 /
+0dd13d3d952aa7cbab39f966dfab04b23551f0c9, GPT REQUEST_CHANGES, sole production
+blocker RM-ALL-R01. Not a new full audit of historical approved pairs.
+
+New isolated Root/Child branch v3-eval-v2-replan-ack-r01-20261102, same private
+worktree /workspace/psm-wma-eval-replan-all, bases ec8a8bf3 /0dd13d3d. Before
+implementation claim only Child inference/robocasa_batch_transactions.py and
+new Root tools/v3/eval_v2_replan_tests/ack_history_test.py plus necessary evidence,
+handoff, Gitlink and SESSION/TODO/append-only Inbox. No other production edits.
+Plan bounded per-active-Episode saved identity records (existing0..100000 wire
+index bound), exact old reserve/receipt replay after later Replans, no history
+eviction, cleanup on acknowledged End. Freeze public API tests before running
+old-production expected RED, then minimal code fix and same tests GREEN.
+
+Owner only author code/CPU -> publish new Child/Root -> GPT fresh incremental
+review -> STOP. This supersedes historical V2/tmux wait and multi-agent rules;
+no subagents, DS dispatch, hardware, actual model/RoboCasa, official V3 merge,
+existing training/DCP/Job/historical media access. Existing379 author evidence
+and10 synthetic clips immutable, not relabelled as new-Pair full acceptance.
+Performance encode/decode/fsync/hash measurement remains nonblocking future
+target-host evidence; no performance optimization or zero-overhead claim here.
+
+## Prior submission history retained
+
 # 2026-11-02 — Replan all-media candidate published; fresh remote readback PASS; STOP
 
 At2026-11-02T09:56:31Z, fresh explicit fetch/advertised refs/Git object readback
