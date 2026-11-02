@@ -56,3 +56,11 @@ Evidence: docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_publication/.
 Request delivered to the remote candidate Inbox, not a claim GPT has read it or
 approved it. STOP for independent incremental Code Gate; no old V2 pane polling,
 V3 merge, DS dispatch, GPU/model/real simulator/historical media/training actions.
+
+## 2026-11-02 — GPT Replan all-mode durable MP4 incremental Code Gate REQUEST_CHANGES (d2041e38 / 0dd13d3d)
+
+- 新 Formal Pair：Root `d2041e388eda084e42a2d6b0d115db8beedfab44` / Child-Gitlink `0dd13d3d952aa7cbab39f966dfab04b23551f0c9`，候选 `v3-eval-v2-replan-all-20261102`；上一已批准 `4b581493db805c92964cb27e740c736db87c0329` / `9a8cd6183424bfce245fbca393ca25ed59919ea6` 的 `APPROVE_CODE` 保持不变。**GPT 本轮独立增量 Code Gate：`REQUEST_CHANGES`**，不因作者379 pass直接批准。
+- 正向审阅：默认可配置4 jobs/512MiB、300s drain，Root→Server 参数与 `/info` 核对、严格 reservation 的有界重试、strict media decode优先、Encoder 临时MP4+完整编码/回执、服务器 ACK 后完成状态、Episode End 等待、科学 Core/SR 分离。四份原始作者 JUnit独立读取：58+174+129+18=379/379 pass，静态 check/format/diff 通过，未独立执行 GPU/pytest；旧 `none/first` 保持。所有文件审核针对精确新 Formal Pair，Root Child gitlink 已确认。
+- **RM-ALL-R01 MEDIUM Production blocker**：Child `cosmos_framework/inference/robocasa_batch_transactions.py:94,149–181,559–597` 的 `_acked_media[session_id]` 只保存**最近一次**已 ACK 视频。先成功Replan0、再成功Replan1，随后迟到/重试Replan0 reservation 不识别 already_saved，能重新建 `RESERVED` 占spool；Replan0合法ACK重放反被拒。违背 bounded replay/no new job 冻结契约，可消耗4个名额导致正常新视频超时。作者 replay test仅在首条 ACK 后立即重复一次，未覆盖跨 Replan 旧消息。要求修复为**每个活跃 Episode 有界已保存身份去重/幂等authority**，新增真实公开 API 两 Replan→旧 reserve/ACK 重放+变更身份拒绝 CPU regression，新 Formal Pair 后增量复审。**不要求重新架构、不启动GPU**。
+- **非阻断性能提醒**：当前每 Replan CPU FFmpeg 全帧二次解码 + fsync + 多次 SHA，完成确认并非零计算；未来窄幅硬件 Canary 记录耗时，不能声称几乎没有额外成本。此前合成10段相同 RGB 帧可加不同内容测试，但无第二 Production blocker。
+- [Detailed independent review](docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_d2041e38_0dd13d3d_Incremental_Code_Gate_REQUEST_CHANGES.md)。仅隔离候选文档，**不合并V3、不触GPU0–3/4–7训练/out2/NoTTT或Checkpoint/DCP、无 DS/GPU硬件授权、无正式900EP**。后续 Inbox/Review bookkeeping SHA 不替代正式实现Pair。
