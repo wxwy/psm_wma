@@ -31,6 +31,9 @@ DEFAULTS = {
     "request_timeout_s": 600.0,
     "terminate_grace_s": 10.0,
     "encoder_grace_s": 2.0,
+    "media_spool_max_jobs": 4,
+    "media_spool_max_bytes": 512 * 1024**2,
+    "media_drain_timeout_s": 300.0,
     "sims_per_gpu": 1,
     "max_infer_batch_size": 1,
     "max_gpu_fraction": 0.85,
@@ -63,6 +66,9 @@ def resolve(argv=None):
     p.add_argument("--batch-wait-ms", type=int)
     p.add_argument("--sims-per-gpu", type=int)
     p.add_argument("--max-infer-batch-size", type=int)
+    p.add_argument("--media-spool-max-jobs", type=int)
+    p.add_argument("--media-spool-max-bytes", type=int)
+    p.add_argument("--media-drain-timeout-s", type=float)
     p.add_argument("--tasks")
     p.add_argument("--episodes", type=int)
     p.add_argument("--output-dir", type=Path)
@@ -88,7 +94,14 @@ def resolve(argv=None):
     cfg = {**DEFAULTS, **data}
     if cfg["schema"] != DEFAULTS["schema"]:
         raise ValueError("new V2 config schema required")
-    for field in ("execution_profile", "batch_wait_ms", "local_memory_mode"):
+    for field in (
+        "execution_profile",
+        "batch_wait_ms",
+        "local_memory_mode",
+        "media_spool_max_jobs",
+        "media_spool_max_bytes",
+        "media_drain_timeout_s",
+    ):
         if getattr(a, field) is not None:
             cfg[field] = getattr(a, field)
     if a.sims_per_gpu is not None:
@@ -180,6 +193,15 @@ def resolve(argv=None):
             raise ValueError(f"invalid {key}")
     if cfg["execution_profile"] == "phase_b" and cfg["request_timeout_s"] > 6000:
         raise ValueError("transaction Server timeout cap exceeded")
+    if (
+        type(cfg["media_spool_max_jobs"]) is not int
+        or not 1 <= cfg["media_spool_max_jobs"] <= 64
+        or type(cfg["media_spool_max_bytes"]) is not int
+        or not 1 <= cfg["media_spool_max_bytes"] <= 2**31
+        or type(cfg["media_drain_timeout_s"]) not in (int, float)
+        or not 0 < cfg["media_drain_timeout_s"] <= 3600
+    ):
+        raise ValueError("bounded positive media spool/drain settings required")
     if (
         not 0 < cfg["max_gpu_fraction"] < 1
         or cfg["save_generated_video"] not in ("none", "first", "all")

@@ -1,5 +1,7 @@
 # PSM-WMA 任务队列
 
+- **EVALV2-REPLAN-ALL-LOSSLESS** — IN_PROGRESS; Codex; Owner f49d52e5 canonical all-only fix and4/512 spool/Encoder DONE contract read. Isolated v3-eval-v2-replan-all-20261102, basef49d52e5/9a8cd618. Bounded pre-inference media reservation, synchronous all decode/fetch/durable video receipt before ACK, media drain/explicit incomplete, none/first/Core/Local unchanged. Author CPU synthetic10 MP4/full-decode + faults, new Formal Pair/GPT request then STOP; no GPU/model/simulator/V3 merge/old H3,out2,NoTTT,training/DCP access.
+
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |

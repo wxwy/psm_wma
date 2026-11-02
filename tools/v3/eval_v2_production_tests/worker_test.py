@@ -18,8 +18,9 @@ def cfg(tmp_path):
     (directory / "extras").mkdir(parents=True)
     metadata = directory / "extras/dataset_meta.json"
     metadata.write_text('{"env_args":{}}')
-    from cosmos_framework.simulation.robocasa import eval_v2_slot
-    from cosmos_framework.simulation.robocasa import render_devices
+    from cosmos_framework.evaluation.robocasa_v2 import generated_video, media
+    from cosmos_framework.simulation.robocasa import eval_v2_slot, render_devices
+
     from tools.v3.eval_v2_production_tests.store_test import fresh
 
     value = fresh(tmp_path, episodes=1)
@@ -33,6 +34,8 @@ def cfg(tmp_path):
         "adapter": Path(eval_v2_adapter.__file__),
         "slot": Path(eval_v2_slot.__file__),
         "rendering": Path(render_devices.__file__),
+        "media": Path(media.__file__),
+        "generated_video": Path(generated_video.__file__),
     }
     return {
         "nonce": "cpu",

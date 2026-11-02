@@ -1,3 +1,83 @@
+# 2026-11-02 — Replan all-media implementation frozen, author exact-Pair check next
+
+New isolated candidate v3-eval-v2-replan-all-20261102. Child implementation
+committed first (full SHA in subsequent Root Gitlink); Root implementation commit
+pending. Development scoped author CPU: new_5 all_new58 PASS, inference_3
+real CPU Torch/Local129 PASS, related_2 media/config/worker/native174 PASS,
+runtime_1 owned OS Sim/HTTP/fake model18 PASS:379 distinct cases,0failure/error/
+skip. Static_4 Root/Child Ruff0.12.7 check/format and AST PASS. These are author
+development results; a clean exact committed Pair rerun will be bound separately,
+and neither author testing nor this record is GPT/DS/hardware acceptance.
+
+Implementation document:
+docs/build/PSM-WMA_V3_EvalV2_Replan_All_Durable_Media_Implementation_r1_2026-11-02.md.
+CPU commands/logs currently external /tmp/psm-eval-replan-all-20261102; final
+JUnit, command/environment records, source diffs and synthetic10-video proof
+will be archived in the author evidence successor commit after exact Pair tests.
+No source changes planned. Keep previous failed development logs; FFmpeg parser
+metadata suppression was corrected, report writer uses existing bounded generic
+write (not the summary-only writer), and old selection fixture initializes the
+new media interface without weakening its selection/Core assertions. Original
+spool-byte negative now proves rejection before CPU copy at the configured limit.
+
+Inbox was already140743bytes in basef49d52e5, exceeding131072 hard limit. Before
+new append, preserved it byte-for-byte at
+docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md,
+same original/archive Git Blob dd00d0981b57c55fb7ea21aa978ccd92f1603817;
+rebuilt live continuity index under routine AGENTS rollover exception. No lost
+history. Candidate-only; official Root V3/Child refs confirmed unchanged7e2be5ca/
+86642677. User role/STOP overrides historical V2/tmux90min waiting instructions.
+No GPU/model/real server/simulator/old media/training/Checkpoint/Job operations.
+Next: exact Root/Child, clean-Pair CPU/static, Child->Root candidate publication,
+readback + one GPT request, then STOP, no official V3 promotion or DS dispatch.
+
+## Earlier task claim (pre-implementation snapshot)
+
+# 2026-11-02 — Replan all-video lossless media candidate IN_PROGRESS
+
+Read Owner canonical request at f49d52e5646e54a1eb45c31f3179901650694c20
+and actual candidate live Inbox; official V3 has no such request and remains
+7e2be5ca/official Child86642677. New isolated Root/Child branches
+v3-eval-v2-replan-all-20261102 under /workspace/psm-wma-eval-replan-all,
+Root basef49d52e5 / Child9a8cd618. Prior approved4b581493/9a8cd618 code and
+all review/evidence preserved, no repeated old-pair technical review.
+
+Owner scope: all-mode per-Replan MP4 guaranteed-or-explicit-MEDIA_INCOMPLETE,
+per-Server configurable spool default4 jobs/512MiB, bounded backpressure,
+Encoder durable VIDEO_SAVED before server ACK, episode media completion drain,
+none/first unchanged, no scientific Core/SR/Local algorithm changes. Current
+Owner author->GPT->DS roles/STOP supersede historical V2 three-pane polling.
+Candidate code+CPU explicitly authorized; CPU requirement of genuinely decodable
+10 synthetic MP4 authorizes local CPU encoder/full-frame decode tests, not old
+H3/H2 files, GPU/simulator/model, production worktrees or V3 promotion. No old
+media/NoTTT/out2/training/DCP/results/log access. Historical HW-MEDIA-03 remains
+DS-only/offline evidence pending; do not claim417/121 old clips were decoded.
+
+Implementation choice: in all mode use synchronous per-Replan transfer/save/ACK
+for low-load diagnostics. Reserve bounded server spool via authenticated media
+control before inference, outside model executor/locks; 429 retries are bounded
+by independent media deadline. Failure stops further media requests but preserves
+one native action prediction/Core; no re-generation. Strict decode gets executor
+priority, no waiting while model lock is held. Reuse bounded32MiB wire item cap
+for strict item reservation, charged until durable ACK; capacity unavailable
+waits via client, oversize/errors explicit incomplete. No concurrency remap.
+Encoder uses atomic per-video temp/close/full-frame decode/fsync/rename and
+receipt JSON, then an independent bounded local datagram ACK. All pending saved
+proofs reconcile before normal encoder sentinel; true failures keep bounded
+owned cleanup and existing fail-closed semantics. Native end/reset always has
+its existing cleanup path; separate media diagnostics do not become policy fail.
+
+Planned Root config/runtime/CLI plus a small media-summary helper and focused
+tests; Child batch transactions/API dispatch, PolicyTransport, MediaSink/atomic
+video helper and NativeEpisode adapter. No base SessionTransactions, model/native
+generation action path, Local-TTT/Optimizer, Scheduler/Store, GPU policy/role,
+training/Checkpoint/data/Vendor changes. Defaults media drain300s (finite,
+configurable) allow decode+write+full verification; tests use bounded short delays.
+Before coding claimed task here/TODO; no production/test edits yet. Final exact
+Child then Root, focused CPU/static evidence and one GPT request, then STOP.
+
+## Previous candidate history preserved
+
 # 2026-11-01 — Owner GPU policy candidate/request published, readback PASS
 
 The first readback failed on Child GitHub HTTP503 before writing any success

@@ -243,6 +243,12 @@ class Runtime:
                 str(self.cfg["batch_wait_ms"]),
                 "--transaction-timeout-s",
                 str(self.cfg["request_timeout_s"]),
+                "--media-spool-max-jobs",
+                str(self.cfg.get("media_spool_max_jobs", 4)),
+                "--media-spool-max-bytes",
+                str(self.cfg.get("media_spool_max_bytes", 512 * 1024**2)),
+                "--media-drain-timeout-s",
+                str(self.cfg.get("media_drain_timeout_s", 300.0)),
             ]
         owned, rec = self.registry.start(
             command,
@@ -286,6 +292,17 @@ class Runtime:
                 }.items()
             ):
                 raise ValueError("transactional Server identity/profile mismatch")
+            if self.cfg.get("save_generated_video") == "all" and any(
+                tx.get(k) != self.cfg.get(k, default)
+                for k, default in (
+                    ("media_spool_max_jobs", 4),
+                    ("media_spool_max_bytes", 512 * 1024**2),
+                    ("media_drain_timeout_s", 300.0),
+                )
+            ):
+                raise ValueError(
+                    "effective Server media spool/drain configuration mismatch"
+                )
         self._proof("server_identity", {"process": rec, "info": info})
         return self.servers[key]
 
@@ -342,6 +359,8 @@ class Runtime:
                         "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
                         "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
                         "rendering": "cosmos_framework/simulation/robocasa/render_devices.py",
+                        "media": "cosmos_framework/evaluation/robocasa_v2/media.py",
+                        "generated_video": "cosmos_framework/evaluation/robocasa_v2/generated_video.py",
                     }.items()
                 },
                 "settings": {
@@ -359,6 +378,9 @@ class Runtime:
                     ),
                     "save_generated_video": self.cfg["save_generated_video"],
                     "encoder_grace_s": self.cfg["encoder_grace_s"],
+                    "media_drain_timeout_s": self.cfg.get(
+                        "media_drain_timeout_s", 300.0
+                    ),
                 },
                 "simulation_libraries": self.inputs["simulation_libraries"],
                 "runtime_args": {
@@ -427,7 +449,12 @@ class Runtime:
                 nonce,
                 self.stop,
                 server.proc,
-                self.cfg["episode_wall_s"],
+                self.cfg["episode_wall_s"]
+                + (
+                    self.cfg.get("media_drain_timeout_s", 300.0)
+                    if self.cfg["save_generated_video"] == "all"
+                    else 0
+                ),
             )
             self.actors[worker] = actor
             ready = actor._receive()
@@ -642,7 +669,12 @@ class Runtime:
                 attempt=a,
                 reset_index=sample["reset_index"],
                 directory=str(directory),
-                deadline=deadline,
+                deadline=deadline
+                + (
+                    self.cfg.get("media_drain_timeout_s", 300.0)
+                    if self.cfg["save_generated_video"] == "all"
+                    else 0
+                ),
                 **extra,
             )
             sampling = response["sampling"]
@@ -787,6 +819,9 @@ class Runtime:
                         "sessions",
                         "media_jobs",
                         "media_cpu_bytes",
+                        "media_spool_max_jobs",
+                        "media_spool_max_bytes",
+                        "media_drain_timeout_s",
                         "quarantined",
                     )
                 }
