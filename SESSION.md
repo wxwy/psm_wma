@@ -1,3 +1,28 @@
+# 2026-11-02 — RM-ALL-R01 exact Pair122 author CPU PASS; publish/request next
+
+Formal Root e7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Child-Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796 on isolated Root/Child branch
+v3-eval-v2-replan-ack-r01-20261102. Final clean exact Pair:74 media tests +48
+actual CPU Torch Actor/Local/native =122 distinct PASS/0failure/error/skip,
+watched source/status unchanged. New16 tests exactly match pre-RED frozen bytes;
+old0dd expected RED2 preserved. Static Ruff0.12.7/format/AST/py_compile2, minimal
+allowlist, all other production trees and previous379 evidence unchanged PASS.
+Only production file Child robocasa_batch_transactions.py,26 additions/8 deletions.
+
+Evidence docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/
+has40 checksummed artifacts plus manifest, raw commands/logs/JUnit/frozen RED,
+minimal diffs/scope/bindings, two actual distinct fresh CPU MP4/receipts/full
+decode proof. Original379 evidence untouched, not rerun or relabelled as122+379.
+Handoff docs/collab/codex/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_ACK_History_Author_Handoff.md.
+This successor is bookkeeping only, Formal Pair remains above. No source edits
+after final checks. Prepare unique append-only GPT incremental request, publish
+new Child branch then Root branch, fresh remote readback, then STOP. Author tests
+do not close the finding or imply GPT/DS/hardware approval. No V3 merge, real
+GPU/model/RoboCasa, old media/training/DCP/Job/shared runtime or DS dispatch.
+Completion decode/fsync/hash cost remains nonblocking future measurement.
+
+## Pre-freeze development record retained
+
 # 2026-11-02 — RM-ALL-R01 implemented, scoped122 development CPU PASS; freezing Pair
 
 Changed only Child inference/robocasa_batch_transactions.py and added Root

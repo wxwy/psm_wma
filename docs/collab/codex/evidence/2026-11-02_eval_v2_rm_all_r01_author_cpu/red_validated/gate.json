@@ -1,0 +1,17 @@
+{
+  "status": "EXPECTED_FROZEN_OLD_PRODUCTION_RED",
+  "root": "ec8a8bf31d6e4cd2cc1a387b77d8510aef57e06f",
+  "child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "root_status": "M SESSION.md\n M TODO.md\n?? tools/v3/eval_v2_replan_tests/ack_history_test.py",
+  "child_status": "",
+  "tests": 2,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "phase": "red",
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "seconds": 3.5120648340089247,
+  "source_unchanged": true,
+  "frozen_test_sha256": "2114ca1435316be8ec2f4e13383badc0ebedcfee2da7a44966139fdf7ad53354"
+}

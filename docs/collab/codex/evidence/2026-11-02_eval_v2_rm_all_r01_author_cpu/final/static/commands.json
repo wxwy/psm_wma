@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "tools/v3/eval_v2_replan_tests/ack_history_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "tools/v3/eval_v2_replan_tests/ack_history_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "cosmos_framework/inference/robocasa_batch_transactions.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "cosmos_framework/inference/robocasa_batch_transactions.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "exit_code": 0
+  }
+]

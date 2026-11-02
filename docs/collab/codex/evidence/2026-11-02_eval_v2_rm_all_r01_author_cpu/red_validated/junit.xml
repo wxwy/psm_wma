@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="2.835" timestamp="2026-11-02T11:20:59.291821+00:00" hostname="4dc91cf49e12"><testcase classname="tools.v3.eval_v2_replan_tests.ack_history_test" name="test_old_reservation_after_two_ACKs_never_allocates_spool" time="1.114"><failure message="AssertionError: ({'payload_sha256': '4e01b5df08787e20c952ca458d1dca954177f0f0827a62359832af8b2f2a5481', 'request_key': 'c5b5808f099eeeed91e2ce413b84f0110312af068eb01b62651140e9eec512fa', 'reserved': True}, 1)&#10;assert (200 == 200 and None is True)&#10; +  where 200 = &lt;tools.v3.eval_v2_replan_tests.support.Response object at 0x7f15245e8c90&gt;.status_code&#10; +  and   None = &lt;built-in method get of dict object at 0x7f1524838a40&gt;('already_saved')&#10; +    where &lt;built-in method get of dict object at 0x7f1524838a40&gt; = {'payload_sha256': '4e01b5df08787e20c952ca458d1dca954177f0f0827a62359832af8b2f2a5481', 'request_key': 'c5b5808f099eeeed91e2ce413b84f0110312af068eb01b62651140e9eec512fa', 'reserved': True}.get&#10; +      where {'payload_sha256': '4e01b5df08787e20c952ca458d1dca954177f0f0827a62359832af8b2f2a5481', 'request_key': 'c5b5808f099eeeed91e2ce413b84f0110312af068eb01b62651140e9eec512fa', 'reserved': True} = json()&#10; +        where json = &lt;tools.v3.eval_v2_replan_tests.support.Response object at 0x7f15245e8c90&gt;.json">completed = namespace(service=namespace(calls=[{'domain_name': 'robocasa', 'image': 'synthetic', 'image_size': 256, 'inference': {...256': '6ff185b3733c14870bf829509b30584c5f231b1c3b0fb0c40d7a4de356f9e35a', 'size': [32, 32], 'status': 'VIDEO_SAVED'})])
+
+    def test_old_reservation_after_two_ACKs_never_allocates_spool(completed):
+        case = completed
+        before = snapshot(case)
+        result = post(case, "media/reserve", case.records[0][0])
+&gt;       assert result.status_code == 200 and result.json().get("already_saved") is True, (
+            result.json(),
+            case.actor.info()["media_jobs"],
+        )
+E       AssertionError: ({'payload_sha256': '4e01b5df08787e20c952ca458d1dca954177f0f0827a62359832af8b2f2a5481', 'request_key': 'c5b5808f099eeeed91e2ce413b84f0110312af068eb01b62651140e9eec512fa', 'reserved': True}, 1)
+E       assert (200 == 200 and None is True)
+E        +  where 200 = &lt;tools.v3.eval_v2_replan_tests.support.Response object at 0x7f15245e8c90&gt;.status_code
+E        +  and   None = &lt;built-in method get of dict object at 0x7f1524838a40&gt;('already_saved')
+E        +    where &lt;built-in method get of dict object at 0x7f1524838a40&gt; = {'payload_sha256': '4e01b5df08787e20c952ca458d1dca954177f0f0827a62359832af8b2f2a5481', 'request_key': 'c5b5808f099eeeed91e2ce413b84f0110312af068eb01b62651140e9eec512fa', 'reserved': True}.get
+E        +      where {'payload_sha256': '4e01b5df08787e20c952ca458d1dca954177f0f0827a62359832af8b2f2a5481', 'request_key': 'c5b5808f099eeeed91e2ce413b84f0110312af068eb01b62651140e9eec512fa', 'reserved': True} = json()
+E        +        where json = &lt;tools.v3.eval_v2_replan_tests.support.Response object at 0x7f15245e8c90&gt;.json
+
+tools/v3/eval_v2_replan_tests/ack_history_test.py:135: AssertionError</failure></testcase><testcase classname="tools.v3.eval_v2_replan_tests.ack_history_test" name="test_old_ACK_after_two_ACKs_is_idempotent" time="1.051"><failure message="ValueError: unknown or changed strict media ACK replay">completed = namespace(service=namespace(calls=[{'domain_name': 'robocasa', 'image': 'synthetic', 'image_size': 256, 'inference': {...256': '6ff185b3733c14870bf829509b30584c5f231b1c3b0fb0c40d7a4de356f9e35a', 'size': [32, 32], 'status': 'VIDEO_SAVED'})])
+
+    def test_old_ACK_after_two_ACKs_is_idempotent(completed):
+        case = completed
+        before = snapshot(case)
+        for index in (0, 1, 0):
+&gt;           result = post(case, "media/ack", replay_ack(case, index))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_replan_tests/ack_history_test.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_replan_tests/ack_history_test.py:34: in post
+    return case.direct.request("POST", "http://cpu/v2/" + operation, json=record)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_replan_tests/support.py:89: in request
+    self.dispatch(
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:744: in transaction_dispatch
+    return actor.media_ack(record["lease"], record["request_key"], record["payload_sha256"], record["receipt"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;cosmos_framework.inference.robocasa_batch_transactions.BatchedSessionTransactions object at 0x7f1524b57110&gt;
+proof = {'attempt_id': 'attempt-1', 'capability': '1s_AqfxlMb50X9HvOorf-Ssr5ELU3biKQX2OBFhR7n4', 'episode_id': '5bca905b0f034fc8bb066ec24c549f37', 'episode_index': 0, ...}
+key = '0c1e11c67f851b4ccc73aa69a9761755831fc5a7c46bce6ea1eb90deb14fd361'
+sha = '39aeaf2362a78ca8f18072031bf0229853cbe8ee516ea1558d0214938152d5f2'
+receipt = {'binding': {'episode': {'attempt_id': 'attempt-1', 'episode': 0, 'generation': 1, 'task': 'CloseFridge'}, 'index': 0,... 'binding_sha256': '471f07fcb1092f492a9176f0d71bbc02bf0ca9167468964ad8120b4e941f6fab', 'bytes': 1656, 'frames': 3, ...}
+
+    def media_ack(self, proof, key, sha, receipt=None):
+        with self._lock:
+            lease = self._lease(proof)
+            if key in self._media:
+                job = self._media[key]
+                if job.ticket.lease != self._lease(proof) or job.ticket.payload_sha256 != sha or job.state != "READY":
+                    raise ValueError("invalid media ACK")
+                if job.required:
+                    transfer = {
+                        "assignment": lease.identity(),
+                        "request_key": key,
+                        "payload_sha256": sha,
+                        "replan": job.replan,
+                    }
+                    if (
+                        not isinstance(receipt, dict)
+                        or len(json_bytes(receipt)) &gt; 16384
+                        or receipt.get("status") != "VIDEO_SAVED"
+                        or receipt.get("index") != job.replan
+                        or receipt.get("binding", {}).get("transfer") != transfer
+                        or receipt.get("path") != f"generated/replan_{job.replan:04d}.mp4"
+                        or type(receipt.get("frames")) is not int
+                        or not 1 &lt;= receipt["frames"] &lt;= 65
+                        or type(receipt.get("bytes")) is not int
+                        or receipt["bytes"] &lt;= 0
+                        or not isinstance(receipt.get("sha256"), str)
+                        or len(receipt["sha256"]) != 64
+                    ):
+                        raise ValueError("strict media ACK requires matching durable VIDEO_SAVED receipt")
+                    self._acked_media[lease.session_id] = (key, sha, digest(receipt), job.replan)
+                del self._media[key]
+            elif receipt is not None and self._acked_media.get(lease.session_id) != (
+                key,
+                sha,
+                digest(receipt),
+                receipt.get("index"),
+            ):
+&gt;               raise ValueError("unknown or changed strict media ACK replay")
+E               ValueError: unknown or changed strict media ACK replay
+
+cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py:596: ValueError</failure></testcase></testsuite></testsuites>

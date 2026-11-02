@@ -1,0 +1,97 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__________ test_old_reservation_after_two_ACKs_never_allocates_spool ___________
+
+completed = namespace(service=namespace(calls=[{'domain_name': 'robocasa', 'image': 'synthetic', 'image_size': 256, 'inference': {...256': '6ff185b3733c14870bf829509b30584c5f231b1c3b0fb0c40d7a4de356f9e35a', 'size': [32, 32], 'status': 'VIDEO_SAVED'})])
+
+    def test_old_reservation_after_two_ACKs_never_allocates_spool(completed):
+        case = completed
+        before = snapshot(case)
+        result = post(case, "media/reserve", case.records[0][0])
+>       assert result.status_code == 200 and result.json().get("already_saved") is True, (
+            result.json(),
+            case.actor.info()["media_jobs"],
+        )
+E       AssertionError: ({'payload_sha256': 'd7f3c250c9b9c05b191e81901b3b5401858ad9ee9f79062afe069569671b27bc', 'request_key': '69274a240f8e0222dda13863db414c3827672c9a9152ce3ae47125e4c32ae56f', 'reserved': True}, 1)
+E       assert (200 == 200 and None is True)
+E        +  where 200 = <tools.v3.eval_v2_replan_tests.support.Response object at 0x7fa033854c90>.status_code
+E        +  and   None = <built-in method get of dict object at 0x7fa033aa2f40>('already_saved')
+E        +    where <built-in method get of dict object at 0x7fa033aa2f40> = {'payload_sha256': 'd7f3c250c9b9c05b191e81901b3b5401858ad9ee9f79062afe069569671b27bc', 'request_key': '69274a240f8e0222dda13863db414c3827672c9a9152ce3ae47125e4c32ae56f', 'reserved': True}.get
+E        +      where {'payload_sha256': 'd7f3c250c9b9c05b191e81901b3b5401858ad9ee9f79062afe069569671b27bc', 'request_key': '69274a240f8e0222dda13863db414c3827672c9a9152ce3ae47125e4c32ae56f', 'reserved': True} = json()
+E        +        where json = <tools.v3.eval_v2_replan_tests.support.Response object at 0x7fa033854c90>.json
+
+tools/v3/eval_v2_replan_tests/ack_history_test.py:135: AssertionError
+__________________ test_old_ACK_after_two_ACKs_is_idempotent ___________________
+
+completed = namespace(service=namespace(calls=[{'domain_name': 'robocasa', 'image': 'synthetic', 'image_size': 256, 'inference': {...256': '6ff185b3733c14870bf829509b30584c5f231b1c3b0fb0c40d7a4de356f9e35a', 'size': [32, 32], 'status': 'VIDEO_SAVED'})])
+
+    def test_old_ACK_after_two_ACKs_is_idempotent(completed):
+        case = completed
+        before = snapshot(case)
+        for index in (0, 1, 0):
+>           result = post(case, "media/ack", replay_ack(case, index))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_replan_tests/ack_history_test.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_replan_tests/ack_history_test.py:34: in post
+    return case.direct.request("POST", "http://cpu/v2/" + operation, json=record)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/eval_v2_replan_tests/support.py:89: in request
+    self.dispatch(
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:744: in transaction_dispatch
+    return actor.media_ack(record["lease"], record["request_key"], record["payload_sha256"], record["receipt"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_batch_transactions.BatchedSessionTransactions object at 0x7fa033eb3110>
+proof = {'attempt_id': 'attempt-1', 'capability': 'HPqemadron1e_4t0f60OnpPV7wNG8T16mBjl0SMsNio', 'episode_id': '5ac9c1eaffa94ba09607bf7d718d5ba3', 'episode_index': 0, ...}
+key = '2354bc4dae4065f5a5889b38d2cd766d041dacbc8171544cc8447eeab6ad8b85'
+sha = 'd54d1d50a79b003fbfab5f429878e6b802fae61e89043804cec8f6bddc8fd417'
+receipt = {'binding': {'episode': {'attempt_id': 'attempt-1', 'episode': 0, 'generation': 1, 'task': 'CloseFridge'}, 'index': 0,... 'binding_sha256': 'b8f9d8ef76f3a0248e2bc28d2608cab59bfd9dd3f84d065eeb674c27b91c75df', 'bytes': 1656, 'frames': 3, ...}
+
+    def media_ack(self, proof, key, sha, receipt=None):
+        with self._lock:
+            lease = self._lease(proof)
+            if key in self._media:
+                job = self._media[key]
+                if job.ticket.lease != self._lease(proof) or job.ticket.payload_sha256 != sha or job.state != "READY":
+                    raise ValueError("invalid media ACK")
+                if job.required:
+                    transfer = {
+                        "assignment": lease.identity(),
+                        "request_key": key,
+                        "payload_sha256": sha,
+                        "replan": job.replan,
+                    }
+                    if (
+                        not isinstance(receipt, dict)
+                        or len(json_bytes(receipt)) > 16384
+                        or receipt.get("status") != "VIDEO_SAVED"
+                        or receipt.get("index") != job.replan
+                        or receipt.get("binding", {}).get("transfer") != transfer
+                        or receipt.get("path") != f"generated/replan_{job.replan:04d}.mp4"
+                        or type(receipt.get("frames")) is not int
+                        or not 1 <= receipt["frames"] <= 65
+                        or type(receipt.get("bytes")) is not int
+                        or receipt["bytes"] <= 0
+                        or not isinstance(receipt.get("sha256"), str)
+                        or len(receipt["sha256"]) != 64
+                    ):
+                        raise ValueError("strict media ACK requires matching durable VIDEO_SAVED receipt")
+                    self._acked_media[lease.session_id] = (key, sha, digest(receipt), job.replan)
+                del self._media[key]
+            elif receipt is not None and self._acked_media.get(lease.session_id) != (
+                key,
+                sha,
+                digest(receipt),
+                receipt.get("index"),
+            ):
+>               raise ValueError("unknown or changed strict media ACK replay")
+E               ValueError: unknown or changed strict media ACK replay
+
+cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py:596: ValueError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_replan_tests/ack_history_test.py::test_old_reservation_after_two_ACKs_never_allocates_spool
+FAILED tools/v3/eval_v2_replan_tests/ack_history_test.py::test_old_ACK_after_two_ACKs_is_idempotent
+2 failed in 2.98s
