@@ -1,0 +1,544 @@
+[
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "status",
+      "--porcelain"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "status",
+      "--porcelain"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "fetch",
+      "origin",
+      "refs/heads/v3-eval-v2-replan-ack-r01-20261102:refs/remotes/origin/v3-eval-v2-replan-ack-r01-20261102"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "ls-remote",
+      "origin",
+      "refs/heads/v3-eval-v2-replan-ack-r01-20261102",
+      "refs/heads/v3-local-ttt"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "rev-parse",
+      "refs/remotes/origin/v3-eval-v2-replan-ack-r01-20261102"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "fetch",
+      "origin",
+      "refs/heads/v3-eval-v2-replan-ack-r01-20261102:refs/remotes/origin/v3-eval-v2-replan-ack-r01-20261102"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "ls-remote",
+      "origin",
+      "refs/heads/v3-eval-v2-replan-ack-r01-20261102",
+      "refs/heads/V3"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "rev-parse",
+      "refs/remotes/origin/v3-eval-v2-replan-ack-r01-20261102"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "rev-parse",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:cosmos-framework"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/SHA256SUMS.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/README.md"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/environment.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/green/gate.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/green/invocation.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/green/junit.xml"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/green/pytest.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/junit.xml"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/regression/gate.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/regression/invocation.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/regression/junit.xml"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/regression/pytest.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/child.patch"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/child_diff_check.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/child_format.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/child_ruff.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/commands.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/gate.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/root.patch"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/root_diff_check.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/root_format.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/root_ruff.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/scope.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/source_bindings.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/gate.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red/frozen_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red/invocation.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red/junit.xml"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red/pytest.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red_validated/frozen_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red_validated/gate.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red_validated/invocation.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red_validated/junit.xml"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/red_validated/pytest.log"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/run_cpu.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/static.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/two_distinct_replans/decode_manifest.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/two_distinct_replans/replan_0000.mp4"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/two_distinct_replans/replan_0000.receipt.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/two_distinct_replans/replan_0001.mp4"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/two_distinct_replans/replan_0001.receipt.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/final/static/source_bindings.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:tools/v3/eval_v2_replan_tests/ack_history_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "rev-parse",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:tools/v3/eval_v2_replan_tests/ack_history_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "show",
+      "c93f2abf4fb27d36176ff8db094379a853cec796:cosmos_framework/inference/robocasa_batch_transactions.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "rev-parse",
+      "c93f2abf4fb27d36176ff8db094379a853cec796:cosmos_framework/inference/robocasa_batch_transactions.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/gate.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "diff",
+      "--name-only",
+      "e7ce99d7a0bbb7a81ea7afcee7253548687dc223",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "diff",
+      "--name-only",
+      "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+      "c93f2abf4fb27d36176ff8db094379a853cec796"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "ls-tree",
+      "ec8a8bf31d6e4cd2cc1a387b77d8510aef57e06f",
+      "--",
+      "docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "ls-tree",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741",
+      "--",
+      "docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "show",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/chatgpt/CODEX_INBOX.md"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "rev-parse",
+      "29e006ceee3e84f20deeec6f5878d7f361fbb741:docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "arguments": [
+      "status",
+      "--porcelain"
+    ],
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "arguments": [
+      "status",
+      "--porcelain"
+    ],
+    "exit_code": 0
+  }
+]

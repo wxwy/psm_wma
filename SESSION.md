@@ -1,3 +1,25 @@
+# 2026-11-02 — RM-ALL-R01 candidate published/readback PASS; STOP for incremental review
+
+Fresh2026-11-02T11:42:35Z fetch/advertised refs/Git object readback PASS for
+new candidate Root29e006ceee3e84f20deeec6f5878d7f361fbb741 (evidence/request)
+and Childc93f2abf4fb27d36176ff8db094379a853cec796, Gitlink equal. Normal new
+candidate branch pushes Child FIRST then Root, v3-eval-v2-replan-ack-r01-20261102.
+40/40 artifact SHA and2/2 source Blob/SHA bindings, one production file, previous
+379 evidence immutable, unique request and clean worktrees confirmed. Official
+V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd and official Child
+8664267704da3206e719f3c7eef2b5ed86e2a417; no force/promotion. Receipt archived
+docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_publication/.
+
+Formal Pair stays e7ce99d7a0bbb7a81ea7afcee7253548687dc223 /
+c93f2abf4fb27d36176ff8db094379a853cec796. This successor is metadata only; no
+source/test changes or repeat CPU. Author scoped122 PASS/0failure/error/skip,
+old frozen targeted RED2, new16 public-path tests and static/protected scope PASS
+stand. Request publication proven, not reviewer ACK/approval/finding closure.
+After final readonly successor verification STOP, status REVIEW. No GPU/model/
+RoboCasa/old media/training/DCP/Job/shared runtime, V3 merge or DS dispatch.
+
+## Prior evidence/request preparation
+
 # 2026-11-02 — RM-ALL-R01 exact Pair122 author CPU PASS; publish/request next
 
 Formal Root e7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Child-Gitlink
