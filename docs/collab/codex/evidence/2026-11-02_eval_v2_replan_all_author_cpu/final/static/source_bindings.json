@@ -1,0 +1,90 @@
+{
+  "scripts/robocasa_eval_v2/cli.py": {
+    "git_blob": "c1b16b0b17926b60f4b8b1dbf14c38b0e9185588",
+    "sha256": "2775353191f260f0c5adc954189e7a7690f59fe891817beb0b7d92bc6b0687ff"
+  },
+  "scripts/robocasa_eval_v2/config.py": {
+    "git_blob": "6786c0604ffa512cb5e891eb1f44683293665105",
+    "sha256": "caa56c4306e522b4b5575c90922f2f57d4552cc68b9ba39ba77093bfbbaf8aaa"
+  },
+  "scripts/robocasa_eval_v2/generated_media.py": {
+    "git_blob": "38af76a54015f711b7ae1439490e052352e957b1",
+    "sha256": "afe35de50dc2c80fcd6dcbca4dbfbca4060cadcbffcb4d180e646412693c7bc2"
+  },
+  "scripts/robocasa_eval_v2/runtime.py": {
+    "git_blob": "f5edb0d751eb5f0097c86ef2e2858c77cd418c3c",
+    "sha256": "e973ed17b4d9065b8e22e638bbca38d57c2d35d156ff01d1f7829df1fc828323"
+  },
+  "tools/v3/eval_v2_batch_tests/rollout_policy_test.py": {
+    "git_blob": "bccb663df9ebb70ea946b8118387e5436235bb9d",
+    "sha256": "437e59f257758d8258265a9a2133efa9dd9fdbd642b2e2f6d3110792257d410c"
+  },
+  "tools/v3/eval_v2_production_tests/worker_test.py": {
+    "git_blob": "b64e6b88333daae1e6acfd37f459dc2bd7b8af1f",
+    "sha256": "26cf29dc81203f89ab62ad22d762fcf90b65f064df2fdc13e08826f3f31dcec1"
+  },
+  "tools/v3/eval_v2_replan_tests/__init__.py": {
+    "git_blob": "929a55cb15bcc806b11f0cad0853692ee0590aad",
+    "sha256": "566fa3943a3f1ecd062672e19b3cd19a8978f4558a47f14f42da0d7ebc30f393"
+  },
+  "tools/v3/eval_v2_replan_tests/config_test.py": {
+    "git_blob": "a3a6af04317326ab3cc5266c48397f56a5fea298",
+    "sha256": "f96f2282d7cf86b0c9f9aa4a735628ed2d663a9a25e67eceef53b30536ed13b9"
+  },
+  "tools/v3/eval_v2_replan_tests/encoder_test.py": {
+    "git_blob": "e8129baad06020778a4dae893f05884c346e8bfa",
+    "sha256": "f57c24d7c2e992add1f9e14b82d428ff6e608c1f98b3d0f69764337e7abe5979"
+  },
+  "tools/v3/eval_v2_replan_tests/native_test.py": {
+    "git_blob": "890fdd2d48d856c5b8e81757d87f35f73d703209",
+    "sha256": "abf62a7fc894b22397a89c03d099a9df38fcdbf2974953fe11e12e1f13815b9f"
+  },
+  "tools/v3/eval_v2_replan_tests/report_test.py": {
+    "git_blob": "c9d7d6ea68a0aa2b405581cdc498eb0e7fa0a2a6",
+    "sha256": "984eb355fdb2cc8d7f7aa9f2b01f2d4353a497637107e6b9a010b15b46b34dd4"
+  },
+  "tools/v3/eval_v2_replan_tests/support.py": {
+    "git_blob": "915c54ce06986726ec4367bca362b05e3c44553a",
+    "sha256": "d28dde744dd62ec341fd083b845b449e3469c8070e025b7311d428b8f0716399"
+  },
+  "tools/v3/eval_v2_replan_tests/transport_test.py": {
+    "git_blob": "ef035a8ab5f830f19e1289bc3d837d8b03a74578",
+    "sha256": "4f4f7c6c3d5ca4244a7cbf338900578a2505cd3c4c3fe714e3b36f6c91609548"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/generated_video.py": {
+    "git_blob": "f6ccc80bcef1564a5e9365f9beaa74a6e50c91d6",
+    "sha256": "14dbca87ae0595a2800f2d489677635235728d714275954f6f954402e4e1126b"
+  },
+  "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/media.py": {
+    "git_blob": "cadd8e01043e356ea94919a568541ed7d6de9fd4",
+    "sha256": "52ff325f178da63be170bfa15ca99b777a188b83331a0ae272c0cb95f9eef6bd"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py": {
+    "git_blob": "b2ef96c37bcd5ac6788e6a8f81a7260fc35d150e",
+    "sha256": "199769623ef71daa041ca2d4a93d42cd85ad30e21a1f97404fa365dcfc6b4dab"
+  },
+  "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions_test.py": {
+    "git_blob": "1c96df55e8818a87e332641e63fe5b4466b15a65",
+    "sha256": "360233e45d5eccc71be69848afe1668a725362de4026f21d0ed5c12f7c806e5a"
+  },
+  "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py": {
+    "git_blob": "aec9abf590bcf95d9ff41d029d2e909034280cb5",
+    "sha256": "a27b2dc834e1bfc139e545c254a172647689067f322470417f18524ee676b57b"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_adapter.py": {
+    "git_blob": "a1aeda8285495c80a108d34dbd501003d50bbd6c",
+    "sha256": "25443a402d90d7dbca2f545a13976dc27b932b7c1dfbafe64b95753ff68341d5"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py": {
+    "git_blob": "ed0ece7f77a3e6ee3ed778022f6a676e89f87c69",
+    "sha256": "60983ed0578d3d981731bd3ccbf1ff86004e2977624e48cf603218e44d1af375"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py": {
+    "git_blob": "fa197caf5f51c23694d2af9907551ed43eb986f5",
+    "sha256": "72586ae98edce93f1f3a374882a0ad6573cb863271c465c86f65ea08621c99a6"
+  },
+  "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py": {
+    "git_blob": "4d72f81ca6018cd6c5cfa28c8e1cef95c5ee97b8",
+    "sha256": "b548425ba36562b1b5bb5327c79357147ff795382b54e8e75807fddb86035042"
+  }
+}

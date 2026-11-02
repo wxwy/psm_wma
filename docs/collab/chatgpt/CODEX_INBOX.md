@@ -21,3 +21,17 @@ promotion, hardware, model, simulator, old media, out2/NoTTT/training/DCP access
 HW-MEDIA-03 historical full decode remains DS-only/pending; synthetic new MP4
 decodes do not close historical hardware evidence. Owner->GPT->DS current roles
 and stop instruction supersede historical V2 multi-pane waiting workflow.
+
+
+## 2026-11-02 — Codex EVALV2-REPLAN-ALL-LOSSLESS d2041e38/0dd13d3d incremental Code review request
+
+- Formal Root implementation: `d2041e388eda084e42a2d6b0d115db8beedfab44`.
+- Formal Child/Gitlink: `0dd13d3d952aa7cbab39f966dfab04b23551f0c9`.
+- Both isolated candidate branches: `v3-eval-v2-replan-all-20261102`; base Owner request Root f49d52e5646e54a1eb45c31f3179901650694c20 / Child9a8cd6183424bfce245fbca393ca25ed59919ea6. Prior4b581493/9a8cd618 APPROVE_CODE is historical only, not inherited as approval of this new Pair.
+- Owner all-only fix implemented: configurable per-Server4 jobs/512MiB spool with effective identity proof, bounded client reservation/backpressure outside locks, strict decode priority, synchronous all fetch, atomic temp/close/full-decode/fsync/publish + per-video VIDEO_SAVED, durable receipt before media ACK, idempotent replay, independent300s configurable media drain and safe End/cleanup, explicit MEDIA_INCOMPLETE. None/first/Core/SR/Local algorithm/training/GPU policy/Vendor unchanged. No media repair by re-predicting actions or rerunning completed Episodes.
+- Clean exact-Pair author CPU **379 DISTINCT PASS /0failure/error/skip**: new58 + related174 under Python3.13.5, inference129 + runtime18 under3.12.14 CPU Torch. Actual10 newly synthetic MP4 fully decoded,10 receipts/10 ACKs, missing0; real CPU Local/Fast/prefix/End retained on media error. Ruff0.12.7/format/AST/py_compile22 source files;22 source Git Blob/SHA bindings; scope/protected trees/byte-identical Inbox rollover PASS. Not independent DS, GPT or hardware acceptance.
+- Handoff: `docs/collab/codex/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_Author_Handoff.md`; implementation/options: `docs/build/PSM-WMA_V3_EvalV2_Replan_All_Durable_Media_Implementation_r1_2026-11-02.md`.
+- Evidence: `docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu/` includes raw final JUnit379, stdout/commands/env, source diffs/bindings,73 artifact hashes,10 fresh synthetic MP4/receipts/full-decode manifest, and preserved development failures. Actual cloud timens_offsets absent; parser tested with explicit kernel-file doubles; no target clock proof.
+- **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED** for the new media path and impacted interfaces. This entry is prepared for candidate publication; followup fresh Git ref/object readback records delivery. Evidence/bookkeeping HEAD does NOT replace Formal Root. Old approved contracts are not reopened.
+- Routine Inbox rollover preserved140743 original bytes at `docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md`, identical Blob dd00d0981b57c55fb7ea21aa978ccd92f1603817; live continuity index resumes append-only. No history deleted.
+- STOP after Child->Root publication + readback. No official V3/Child promotion, GPU/model/real simulator, historical H3/H2/out2/NoTTT media/log/Job/training/DCP/shared worktree operations, GPU0–3 use or DS dispatch. HW-MEDIA-03 historical full decode / hardware Batch gates remain separately pending; synthetic evidence does not close them.

@@ -1,0 +1,10 @@
+{
+  "status": "AUTHOR_CLEAN_PAIR_STATIC_PASS",
+  "root": "d2041e388eda084e42a2d6b0d115db8beedfab44",
+  "child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "ruff": "0.12.7",
+  "syntax_files": 22,
+  "source_bindings": 22,
+  "source_unchanged": true
+}

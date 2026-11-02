@@ -1,0 +1,146 @@
+{
+  "changed": {
+    "/workspace/psm-wma-eval-replan-all": [
+      "SESSION.md",
+      "TODO.md",
+      "cosmos-framework",
+      "docs/build/PSM-WMA_V3_EvalV2_Replan_All_Durable_Media_Implementation_r1_2026-11-02.md",
+      "docs/collab/chatgpt/CODEX_INBOX.md",
+      "docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md",
+      "scripts/robocasa_eval_v2/cli.py",
+      "scripts/robocasa_eval_v2/config.py",
+      "scripts/robocasa_eval_v2/generated_media.py",
+      "scripts/robocasa_eval_v2/runtime.py",
+      "tools/v3/eval_v2_batch_tests/rollout_policy_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py",
+      "tools/v3/eval_v2_replan_tests/__init__.py",
+      "tools/v3/eval_v2_replan_tests/config_test.py",
+      "tools/v3/eval_v2_replan_tests/encoder_test.py",
+      "tools/v3/eval_v2_replan_tests/native_test.py",
+      "tools/v3/eval_v2_replan_tests/report_test.py",
+      "tools/v3/eval_v2_replan_tests/support.py",
+      "tools/v3/eval_v2_replan_tests/transport_test.py"
+    ],
+    "/workspace/psm-wma-eval-replan-all/cosmos-framework": [
+      "cosmos_framework/evaluation/robocasa_v2/generated_video.py",
+      "cosmos_framework/evaluation/robocasa_v2/media.py",
+      "cosmos_framework/inference/robocasa_batch_transactions.py",
+      "cosmos_framework/inference/robocasa_batch_transactions_test.py",
+      "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_worker.py"
+    ]
+  },
+  "protected": {
+    "root/configs": {
+      "before": "040000 tree 5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935\tconfigs",
+      "after": "040000 tree 5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935\tconfigs",
+      "unchanged": true
+    },
+    "root/third_party": {
+      "before": "040000 tree d01633d083298fc5245b5bc97677c5b297700c31\tthird_party",
+      "after": "040000 tree d01633d083298fc5245b5bc97677c5b297700c31\tthird_party",
+      "unchanged": true
+    },
+    "root/scripts/robocasa_eval_v2/resources.py": {
+      "before": "100644 blob 704358fd6c49a4a5b024ae9032f639ae2a24d908\tscripts/robocasa_eval_v2/resources.py",
+      "after": "100644 blob 704358fd6c49a4a5b024ae9032f639ae2a24d908\tscripts/robocasa_eval_v2/resources.py",
+      "unchanged": true
+    },
+    "root/scripts/robocasa_eval_v2_processes.py": {
+      "before": "100644 blob d2744ca2d59c52619a0b139329cf03b4ccee41a7\tscripts/robocasa_eval_v2_processes.py",
+      "after": "100644 blob d2744ca2d59c52619a0b139329cf03b4ccee41a7\tscripts/robocasa_eval_v2_processes.py",
+      "unchanged": true
+    },
+    "root/scripts/train_v3_matched_no_ttt.sh": {
+      "before": "100755 blob 656ef042e09862301f1586fd58608a5a4658218f\tscripts/train_v3_matched_no_ttt.sh",
+      "after": "100755 blob 656ef042e09862301f1586fd58608a5a4658218f\tscripts/train_v3_matched_no_ttt.sh",
+      "unchanged": true
+    },
+    "child/cosmos_framework/model": {
+      "before": "040000 tree ae232e9cbe841d41ba5a363400c5f76890b9649e\tcosmos_framework/model",
+      "after": "040000 tree ae232e9cbe841d41ba5a363400c5f76890b9649e\tcosmos_framework/model",
+      "unchanged": true
+    },
+    "child/cosmos_framework/trainer": {
+      "before": "040000 tree 621320f8a8adc42c92182cd7b0367a4d091707a5\tcosmos_framework/trainer",
+      "after": "040000 tree 621320f8a8adc42c92182cd7b0367a4d091707a5\tcosmos_framework/trainer",
+      "unchanged": true
+    },
+    "child/cosmos_framework/checkpoint": {
+      "before": "040000 tree a544d735bb95024eacca51fb3527955aad91616c\tcosmos_framework/checkpoint",
+      "after": "040000 tree a544d735bb95024eacca51fb3527955aad91616c\tcosmos_framework/checkpoint",
+      "unchanged": true
+    },
+    "child/cosmos_framework/data": {
+      "before": "040000 tree 9a6b486bfbabd591d25575a5729ab2f2989ee2f5\tcosmos_framework/data",
+      "after": "040000 tree 9a6b486bfbabd591d25575a5729ab2f2989ee2f5\tcosmos_framework/data",
+      "unchanged": true
+    },
+    "child/cosmos_framework/configs": {
+      "before": "040000 tree e24a02df6fa009c6f206bccb18925d9d0facf6aa\tcosmos_framework/configs",
+      "after": "040000 tree e24a02df6fa009c6f206bccb18925d9d0facf6aa\tcosmos_framework/configs",
+      "unchanged": true
+    },
+    "child/cosmos_framework/callbacks": {
+      "before": "040000 tree babfa872c5431dedf2b1ffb40070f581815d023c\tcosmos_framework/callbacks",
+      "after": "040000 tree babfa872c5431dedf2b1ffb40070f581815d023c\tcosmos_framework/callbacks",
+      "unchanged": true
+    },
+    "child/examples": {
+      "before": "040000 tree 12a76fe82e466479aa3c930f78fdd94b7621c7df\texamples",
+      "after": "040000 tree 12a76fe82e466479aa3c930f78fdd94b7621c7df\texamples",
+      "unchanged": true
+    },
+    "child/cosmos_framework/evaluation/robocasa_v2/store.py": {
+      "before": "100644 blob b423ad8ffbd3711413e0a9f53dfb54e80f17e259\tcosmos_framework/evaluation/robocasa_v2/store.py",
+      "after": "100644 blob b423ad8ffbd3711413e0a9f53dfb54e80f17e259\tcosmos_framework/evaluation/robocasa_v2/store.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/evaluation/robocasa_v2/scheduler.py": {
+      "before": "100644 blob 332c648ffb9e5d9995bd097754f4edc434c90c84\tcosmos_framework/evaluation/robocasa_v2/scheduler.py",
+      "after": "100644 blob 332c648ffb9e5d9995bd097754f4edc434c90c84\tcosmos_framework/evaluation/robocasa_v2/scheduler.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/simulation/robocasa/closed_loop_eval.py": {
+      "before": "100644 blob 9e5dbd5e16fcd6d33aa8301aa810c4ed717e3415\tcosmos_framework/simulation/robocasa/closed_loop_eval.py",
+      "after": "100644 blob 9e5dbd5e16fcd6d33aa8301aa810c4ed717e3415\tcosmos_framework/simulation/robocasa/closed_loop_eval.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/simulation/robocasa/render_devices.py": {
+      "before": "100644 blob b8b15921351e8fff8e05a4463273427ea080bf74\tcosmos_framework/simulation/robocasa/render_devices.py",
+      "after": "100644 blob b8b15921351e8fff8e05a4463273427ea080bf74\tcosmos_framework/simulation/robocasa/render_devices.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/robocasa_session_transactions.py": {
+      "before": "100644 blob 7231dee4a19135b15e25dbba89e8b3400e4f1cc8\tcosmos_framework/inference/robocasa_session_transactions.py",
+      "after": "100644 blob 7231dee4a19135b15e25dbba89e8b3400e4f1cc8\tcosmos_framework/inference/robocasa_session_transactions.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/robocasa_transaction_client.py": {
+      "before": "100644 blob 75b654cf7fac15b828be91096319a7dd803644f9\tcosmos_framework/inference/robocasa_transaction_client.py",
+      "after": "100644 blob 75b654cf7fac15b828be91096319a7dd803644f9\tcosmos_framework/inference/robocasa_transaction_client.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/local_memory_state.py": {
+      "before": "100644 blob 8cff7550646d4467c05dea7d4fe0e72d182928ec\tcosmos_framework/inference/local_memory_state.py",
+      "after": "100644 blob 8cff7550646d4467c05dea7d4fe0e72d182928ec\tcosmos_framework/inference/local_memory_state.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/local_memory_online.py": {
+      "before": "100644 blob b95d3b1ce1463d3b1cad6d2a4c97403b0acd7997\tcosmos_framework/inference/local_memory_online.py",
+      "after": "100644 blob b95d3b1ce1463d3b1cad6d2a4c97403b0acd7997\tcosmos_framework/inference/local_memory_online.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/robocasa_local_memory_policy.py": {
+      "before": "100644 blob dec79dd4f002ebbf4518cb3e493c4037db219ab2\tcosmos_framework/inference/robocasa_local_memory_policy.py",
+      "after": "100644 blob dec79dd4f002ebbf4518cb3e493c4037db219ab2\tcosmos_framework/inference/robocasa_local_memory_policy.py",
+      "unchanged": true
+    }
+  },
+  "rollover_byte_identical": true,
+  "actual_timens_offsets_available": false,
+  "source_unchanged": true
+}

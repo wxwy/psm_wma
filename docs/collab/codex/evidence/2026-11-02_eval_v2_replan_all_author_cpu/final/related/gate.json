@@ -1,0 +1,16 @@
+{
+  "status": "AUTHOR_CLEAN_PAIR_CPU_PASS",
+  "root": "d2041e388eda084e42a2d6b0d115db8beedfab44",
+  "child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "root_status": "",
+  "child_status": "",
+  "tests": 174,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "group": "related",
+  "source_unchanged": true,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "seconds": 30.47812820400577
+}

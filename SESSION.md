@@ -1,3 +1,31 @@
+# 2026-11-02 — Replan all-media clean Formal Pair379 PASS; publishing for review
+
+Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44, Child/Gitlink
+0dd13d3d952aa7cbab39f966dfab04b23551f0c9; new isolated
+v3-eval-v2-replan-all-20261102. Four FINAL clean-Pair groups379 DISTINCT PASS,
+0failure/error/skip (new58/related174/inference129/runtime18), source/status
+unchanged before/after. Python3.13.5 for first two;3.12.14 CPU Torch for last two.
+Ruff0.12.7 check/format, AST+py_compile22 files,22 Git Blob/SHA source bindings,
+precise allowlist/protected tree/byte-identical rollover PASS. Includes10 actual
+fresh synthetic CPU MP4, full-frame decode proofs, Encoder receipts and10 Server
+ACKs, no real model/physics/GPU. Actual Local/Fast/cold-hot-prefix End tested on
+CPU. No independent GPT/DS/hardware verdict is implied.
+
+Evidence docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu/
+(73 hashed artifacts plus manifest, raw JUnit/logs/commands/diffs, synthetic media,
+failed development logs retained); author handoff
+docs/collab/codex/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_Author_Handoff.md.
+This successor commit adds evidence/bookkeeping only; Formal Pair stays above.
+No source change after final tests. Publish new Child candidate then Root, read
+back exact refs/Gitlink/all artifacts+22 source bindings, append unique GPT request,
+then STOP. No V3/official Child merge, DS dispatch, GPU/model/real simulator,
+historical media or training/DCP/Job/shared worktree operations. HW-MEDIA-03 and
+old hardware findings remain pending. Owner current role/STOP supersedes old V2
+three-pane waiting. Inbox rollover complete; original140743bytes Blob dd00d098
+preserved without edits in immutable archive. Next state is REVIEW, not Gate PASS.
+
+## Pre-commit snapshot retained
+
 # 2026-11-02 — Replan all-media implementation frozen, author exact-Pair check next
 
 New isolated candidate v3-eval-v2-replan-all-20261102. Child implementation

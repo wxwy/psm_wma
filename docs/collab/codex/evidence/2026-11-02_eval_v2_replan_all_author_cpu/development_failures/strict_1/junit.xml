@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.836" timestamp="2026-11-02T09:19:34.045259+00:00" hostname="4dc91cf49e12"><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_queue_full_and_slow_encoder_wait_for_saved_not_two_second_grace" time="1.150"><failure message="assert (not False and not [RuntimeError(&quot;MEDIA_INCOMPLETE: Encoder VIDEO_FAILED: OSError('Could not load meta information\\n=== stderr ===\\n\\n')&quot;)])&#10; +  where False = is_alive()&#10; +    where is_alive = &lt;Thread(Thread-1 (save), stopped 139673640326848)&gt;.is_alive">tmp_path = PosixPath('/tmp/psm-eval-replan-all-20261102/strict_1/pytest_tmp/test_queue_full_and_slow_encod0')
+
+    def test_queue_full_and_slow_encoder_wait_for_saved_not_two_second_grace(tmp_path):
+        sink = strict_sink(tmp_path, target=delayed_encoder)
+        # Four actual accepted items fill the bounded queue while the child is gated.
+        for _ in range(4):
+            sink.queue.put(("frame", np.zeros((32, 32, 3), dtype=np.uint8)), timeout=1)
+        result, errors = [], []
+    
+        def save():
+            try:
+                result.append(sink.prediction(0, {"video": png_frames()}))
+            except Exception as error:
+                errors.append(error)
+    
+        thread = threading.Thread(target=save)
+        thread.start()
+        try:
+            time.sleep(0.2)
+            assert thread.is_alive() and not result and not errors
+            assert not (tmp_path / "generated/replan_0000.mp4").exists()
+            (tmp_path / "release").touch()
+            thread.join(15)
+&gt;           assert not thread.is_alive() and not errors
+E           assert (not False and not [RuntimeError("MEDIA_INCOMPLETE: Encoder VIDEO_FAILED: OSError('Could not load meta information\\n=== stderr ===\\n\\n')")])
+E            +  where False = is_alive()
+E            +    where is_alive = &lt;Thread(Thread-1 (save), stopped 139673640326848)&gt;.is_alive
+
+tools/v3/eval_v2_replan_tests/encoder_test.py:68: AssertionError</failure></testcase></testsuite></testsuites>

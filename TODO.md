@@ -1,6 +1,6 @@
 # PSM-WMA 任务队列
 
-- **EVALV2-REPLAN-ALL-LOSSLESS** — IN_PROGRESS; Codex; Owner f49d52e5 canonical all-only fix and4/512 spool/Encoder DONE contract read. Isolated v3-eval-v2-replan-all-20261102, basef49d52e5/9a8cd618. Bounded pre-inference media reservation, synchronous all decode/fetch/durable video receipt before ACK, media drain/explicit incomplete, none/first/Core/Local unchanged. Author CPU synthetic10 MP4/full-decode + faults, new Formal Pair/GPT request then STOP; no GPU/model/simulator/V3 merge/old H3,out2,NoTTT,training/DCP access.
+- **EVALV2-REPLAN-ALL-LOSSLESS** — REVIEW; Codex; Owner f49d52e5 all-only contract. Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44 / Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9, isolated v3-eval-v2-replan-all-20261102. Clean-Pair author CPU379 distinct PASS/0failure/error/skip (58+174+129+18), Ruff/format/AST/py_compile22, protected scope and rollover PASS; synthetic10 completed/fully decoded MP4+receipts+ACK. Evidence/handoff archived; publish Child->Root/readback then STOP for GPT incremental Code Gate. Author PASS is not GPT/DS/hardware acceptance; no V3 promotion, GPU/model/real simulator, old H3/out2/NoTTT/Job/training/DCP access.
 
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 

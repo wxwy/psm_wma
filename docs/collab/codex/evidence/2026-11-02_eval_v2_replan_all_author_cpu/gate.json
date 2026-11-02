@@ -1,0 +1,27 @@
+{
+  "status": "AUTHOR_CPU_PASS_GPT_REVIEW_PENDING",
+  "root": "d2041e388eda084e42a2d6b0d115db8beedfab44",
+  "child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "tests": 379,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "distinct_testcases": 379,
+  "parts": {
+    "new": 58,
+    "related": 174,
+    "inference": 129,
+    "runtime": 18
+  },
+  "static": "final/static/gate.json",
+  "source_bindings": 22,
+  "synthetic_clips": 10,
+  "decoded_frames_per_clip": 3,
+  "no_real_gpu": true,
+  "no_real_model": true,
+  "no_real_RoboCasa": true,
+  "no_historical_media_access": true,
+  "independent_DS": false,
+  "official_V3_promoted": false
+}

@@ -1,0 +1,16 @@
+{
+  "status": "AUTHOR_CLEAN_PAIR_CPU_PASS",
+  "root": "d2041e388eda084e42a2d6b0d115db8beedfab44",
+  "child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "root_status": "",
+  "child_status": "",
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "group": "runtime",
+  "source_unchanged": true,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "seconds": 62.31650495901704
+}
