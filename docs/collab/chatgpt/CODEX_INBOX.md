@@ -95,3 +95,11 @@ Formal review target remains Roote7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Chil
 - **DS_PRO 执行指令已补齐**：`docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_DS_PRO_CPU122_Independent_Acceptance_Handoff.md`。GPT `APPROVE_CODE` Formal Root `e7ce99d7a0bbb7a81ea7afcee7253548687dc223` / Child `c93f2abf4fb27d36176ff8db094379a853cec796`；当前 candidate `v3-eval-v2-replan-ack-r01-20261102` 的后续文档 HEAD **不是** Formal Pair。
 - **本轮仅独立 CPU Gate**，使用 detached clean Root/Child 和候选证据 `run_cpu.py` + `red_validated/frozen_test.py`，分别用可运行 Python3.13跑 `--phase green` **74 cases**，Python3.12 CPU-Torch跑 `--phase regression` **48 cases**；真实输出 `74/74 + 48/48, 0 fail/error/skip`、Ruff/format/syntax PASS、exact source/hash/clean。需原始JUnit、invocation、gate、log、解释器/version/工作树身份证据。缺依赖时 `BLOCKED_ENV`，不得偷改测试或共有环境，不重跑旧379和old RED2，不把作者122冒充DS独立PASS。
 - **执行边界/停止点**：CPU测试完成后提交证据回 GPT/Owner立即STOP。后续新 Formal Pair 的真实 GPU6 Server/GPU4 EGL、小 Task × 少量 EP、`save_generated_video: all` Canary 只是**未授权建议**，须 Owner 单独批准；不自动合入正式 V3、不运行900EP，不触碰GPU0–3/其它训练、No-TTT/out2、历史H3/H2/任何checkpoint/DCP或旧结果。
+
+## 2026-11-02 — GPT DS_PRO RM-ALL-R01 independent CPU122 acceptance CLOSED
+
+- DS_PRO 提交独立 CPU 验收完整报告；**CPU122 Gate `DS_INDEPENDENT_PASS` / CLOSED（report-supported）**。Formal Root `e7ce99d7a0bbb7a81ea7afcee7253548687dc223` / Child-Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796` 未变：历史 GPT `APPROVE_CODE`/RM-ALL-R01 CLOSED 不重审。DS 新隔离 detached clean checkout，测试前后Root+Child clean，环境 CPU-only，无 V3 合入。
+- DS 实际报告：`green` Python3.13.11 **74/74 PASS**（37.3s）；`regression` Python3.12.13 + CPU Torch2.8.0 **48/48 PASS**（14.2s）；合计122/122，0 failure/error/skip。Ruff0.12.7 check/format root13+child9文件、py_compile与source-only diff均PASS；冻结 test SHA `2114ca14...`、Child production SHA `f8d88ab5...` 与 Gate 绑定一致。作者环境版本不同但成功通过。
+- 静态例外：全树 `git diff --check` 的尾随空白仅见历史作者证据日志/补丁归档，源代码检查PASS；不建议因格式覆盖不可变原始Evidence。执行边界提醒：DS 报告提及查询 `nvidia-smi` compute-app PID 列表，与 Owner 要求的“不查询其他任务”不一致，后续禁止此类查询；本轮不因这一非干预观察重跑CPU。
+- **证明层级**：本次主要依据DS自包含报告及服务器证据实际路径，GPT未远程直取DS原始JUnit/日志，不得冒充亲自执行。详细结论见 `docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_DS_PRO_CPU122_Independent_Acceptance_CLOSED.md`。
+- **下一硬件 Gate 仍需 Owner 单独许可**：仅新的少量 RoboCasa `save_generated_video=all` GPU6 Server + GPU4 EGL Run，核对每次Replan完整 MP4/receipt/ACK/ffmpeg逐帧、Local与Media clean及各项耗时；不能自动执行GPU/900EP/V3合并/out2 Resume，不碰GPU0–3或查询管理他人GPU训练。
