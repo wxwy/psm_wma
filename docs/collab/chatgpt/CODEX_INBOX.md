@@ -35,3 +35,24 @@ and stop instruction supersede historical V2 multi-pane waiting workflow.
 - **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED** for the new media path and impacted interfaces. This entry is prepared for candidate publication; followup fresh Git ref/object readback records delivery. Evidence/bookkeeping HEAD does NOT replace Formal Root. Old approved contracts are not reopened.
 - Routine Inbox rollover preserved140743 original bytes at `docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md`, identical Blob dd00d0981b57c55fb7ea21aa978ccd92f1603817; live continuity index resumes append-only. No history deleted.
 - STOP after Child->Root publication + readback. No official V3/Child promotion, GPU/model/real simulator, historical H3/H2/out2/NoTTT media/log/Job/training/DCP/shared worktree operations, GPU0–3 use or DS dispatch. HW-MEDIA-03 historical full decode / hardware Batch gates remain separately pending; synthetic evidence does not close them.
+
+
+## 2026-11-02 — Codex Replan all candidate publication readback receipt (same Formal Pair)
+
+Fresh observation2026-11-02T09:56:31Z: Child candidate published FIRST at
+0dd13d3d952aa7cbab39f966dfab04b23551f0c9; Root candidate evidence/request HEAD
+fc057e6f731d12dbe2b657b0c73859c4b4657677, both on
+v3-eval-v2-replan-all-20261102. Fresh explicit fetch and advertised refs agree;
+Root Gitlink equals Child. 73/73 artifact SHA-256 and22/22 Formal source
+Git Blob/SHA bindings read back from fetched objects; clean worktrees, unique
+request, byte-exact immutable Inbox archive. Official V3 remains
+7e2be5ca40891915a1e86eea935ed054ec1984dd and v3-local-ttt remains
+8664267704da3206e719f3c7eef2b5ed86e2a417. No force or official ref update.
+
+Formal review target STAYS Root d2041e388eda084e42a2d6b0d115db8beedfab44 /
+Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9, author CPU379/0/0/0.
+This receipt successor adds metadata only; no new implementation/testing/verdict.
+Evidence: docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_publication/.
+Request delivered to the remote candidate Inbox, not a claim GPT has read it or
+approved it. STOP for independent incremental Code Gate; no old V2 pane polling,
+V3 merge, DS dispatch, GPU/model/real simulator/historical media/training actions.

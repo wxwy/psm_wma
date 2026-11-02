@@ -1,3 +1,26 @@
+# 2026-11-02 — Replan all-media candidate published; fresh remote readback PASS; STOP
+
+At2026-11-02T09:56:31Z, fresh explicit fetch/advertised refs/Git object readback
+PASS: candidate Root evidence/request HEAD fc057e6f731d12dbe2b657b0c73859c4b4657677,
+Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9. Child pushed FIRST, then Root,
+normal nonforce new candidate branches v3-eval-v2-replan-all-20261102. Official
+Root V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd and Child v3-local-ttt
+8664267704da3206e719f3c7eef2b5ed86e2a417. Source bound to Formal Root
+d2041e388eda084e42a2d6b0d115db8beedfab44 / same Child; Root successors metadata
+only. 73/73 artifact SHA and22/22 source Blob/SHA bindings re-read successfully,
+unique canonical request, clean worktrees, exact archive; receipt persisted at
+docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_publication/.
+
+This receipt commit is bookkeeping, not a new Formal implementation. Author
+clean-Pair CPU379 PASS/0failure/error/skip and static PASS stand; no source changes
+or extra test reruns. Request publication is proven, not reviewer ACK/approval.
+After final readonly verification of this receipt successor, STOP. Task REVIEW,
+GPT incremental Code Gate pending; independent DS CPU and separately authorized
+hardware remain separate. No V3 promotion, GPU/model/real simulator/historical
+media/NoTTT/out2/Job/training/DCP/shared-worktree operation or DS dispatch.
+
+## Previous publication preparation
+
 # 2026-11-02 — Replan all-media clean Formal Pair379 PASS; publishing for review
 
 Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44, Child/Gitlink
