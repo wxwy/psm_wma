@@ -41,3 +41,31 @@
 - **停止点**：提交孤立候选新 Formal Pair、author CPU evidence、Code handoff 给 GPT 审核后停止；DS independent CPU / 后续真实小规模 GPU Canary 必须再经 Owner 单独授权（目前未授权）。不可自动合并 V3 或修改正在运行作业。
 
 **重要**：修的是 Replan 的传输/落盘语义，不是 GPU7 EGL/真实 B2 batching，也不是 900 Episode SR 评测。保留所有以前实验结果，不改 H3 历史结论。
+
+
+## Owner 追加决策（2026-11-02）：Spool 可配置默认 4 / 512 MiB；Media Drain + Encoder DONE
+
+以下为 Owner 追加的**具体实现选择**，覆盖上述任何含糊处，但不放宽原“all 每次 Replan 完整保存”的验收标准。
+
+### A. Server spool 参数及传播
+
+- 引入可配置服务器媒体 spool 上限，**默认 `media_spool_max_jobs: 4` 与 `media_spool_max_bytes: 536870912`（512 MiB）**，明确这是每个 Action Server 的资源上限，不是每 Sim 配额。根仓 EvalV2 YAML/CLI 构造→Server 启动参数→`BatchedSessionTransactions` 传递，并校验正整数/有限安全上限；运行/诊断应记录实际生效配置，避免“Yaml 改了但 Server 没收到”。实际字段名可与既有命名风格统一，但保留显式参数与默认值。没有必要更改模型/训练策略/任务调度。
+- 保留现有有限缓存和正确的身份/边界，不采用无限队列。**把默认2/128提高到4/512只降低触顶频率，不能被当做零丢视频的完整修复**。当配置容量不可用或单条媒体超出上限，`all` 不能再静默返回 `dropped` 并把 Episode 标成媒体完整；应在可证明正确的请求/队列边界有界等待重新获取容量，或明确标记媒体未完成，并保留 Action/Core/SR 结果。**不可在共享 `_model_lock`、`_lock`、或同一 media executor 内做阻止当前 executor 释放缓存的等待**；务必审计并排除死锁。
+
+### B. Episode 结束后的媒体等待
+
+- Owner 要求：**结束一个 Episode 时，如 Replan 预测视频尚未完成保存，则继续等待到全部完成**，而不是立即取消最后一批 `pending`。
+- 清理必须保持安全：用**媒体专用、可配置的有界 drain timeout** 区别于原 Encoder termination grace；正常健康运行时要求等待所有媒体真正完成，遇到磁盘故障/进程死亡/不可恢复超时才报告 `MEDIA_INCOMPLETE` 并继续安全的 Session/Local cleanup。不要无限卡死，不要悄悄把媒体 cancellation 当完整保存。具体默认 drain deadline 可由 Codex 在实现说明与 CPU 延迟测试中确定并说明理由，Owner 本轮只钉住 spool 默认4/512MiB。
+- 确认 `PolicyTransport.end` 与 native Local End/Reset 的调用时序：严格模式媒体等待不能使 actor/Session 长期保持不可清理状态，尤其不能在等待模型 executor 解码时占用其执行/关停锁。若分层实现需要先确保 native/local End 安全再独立 drain，必须使服务端媒体 ticket 在 drain 完成前仍合法可 fetch，且不因 Session End 被无意取消；不能改动作、Fast Weight 和 SR 成功权威。
+
+### C. Encoder 可靠落盘的最小协议（重要）
+
+- 现 `MediaSink._submit()` 的 `queue.put_nowait` 会在满队列时丢视频；而客户端 `fetched_to_optional_sink` 发生于传给 queue 之后，**不等于 Encoder/FFmpeg 已完成**。对 `all` 模式改为有界 queue backpressure 和**逐个 Replan 的 Encoder 完成回执**，其身份至少绑定 `Episode/run+replan_index`，对应一条传输回执与一个完成的 MP4。
+- Encoder 对单条视频编码到临时文件，完整关闭 writer（使 MP4 封装完成），成功验证已落盘后 `os.replace` 成正式 `replan_{index:04d}.mp4`；**随后才反馈 `VIDEO_SAVED(index,path)`** 给 Parent。编码失败、文件缺失、尺寸/帧数错误、文件损坏应返回明确 `VIDEO_FAILED`，不可发布误导性的最终 MP4。
+- `PolicyTransport` 对服务端 `/v2/media/ack` 的确认应在**本地该 index 的 Encoder DONE 回执**之后进行，而不是传进队列立即 ACK。要防止 ACK/Parent/Encoder 相互阻塞；采用必要的独立有界状态/ACK 通道与超时保护，禁止轮询死锁、等待未注册/已退出子进程。即使网络 ACK 失败，也不能把已完成的视频丢弃；应保留状态供诊断。
+- Episode 结束时，先对全部预期 Replan 索引完成序列化对账（`expected_replans == saved_and_decodable_mp4 == encoder_done_receipts`），再将媒体 drain 完成。关闭 Encoder 时**sentinel 应在正常待写队列清空/ACK 达成后发送**；不得提前发 sentinel、因2秒 `encoder_grace_s` 直接强杀尚在健康写盘的进程。若真实不可恢复失败，清理仍有界、fail-closed，并分别记录媒体不完整与 process cleanup 是否安全，不污染已提交科学 Core。
+
+### D. 改动和验收范围不变
+
+- 新行为严格限定 `save_generated_video: all`；`none` 不增加模型 decode/HTTP/Video 写入开销，`first` 保留既有行为。900EP 由 Owner 自行选择媒体开关，不作为本任务修改对象。
+- 新测试必须包含 `spool_max_jobs=4`、`spool_max_bytes=512MiB` 的有效读取与 server propagation；满 spool、slow decode、slow FFmpeg、pending episode-end、queue full、ACK 先后与崩溃/超时、文件原子替换、其他 Session 并发，均有 deterministic CPU fail/pass。**10 Replans → 10 VIDEO_SAVED → 10 可解码 MP4；零 `MEDIA_INCOMPLETE`**。异常则明确 incomplete 并安全清理；不要求本轮真实 GPU 运行。
