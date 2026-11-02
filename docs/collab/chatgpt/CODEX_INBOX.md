@@ -584,3 +584,10 @@ Previous immutable archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261029_IS
 - **硬件性能 witness HW-CANARY-BATCH-02 MEDIUM**：H3 native_batch.size 直方图实际 `{1:481}`，`size2=0`；16物理Slot参与但最大活跃Episode估计≈3，并没有证明真实B2成批或16 Sim同时满载。实测 wall1613s、35.7EP/h、prediction p50 2974/p95 4419ms；性能目标未通过而非前述功能失败。需要 Owner 后续授权更窄受控真实负载，或显式限定 Gate 为配置层面。
 - **离线小项 HW-CANARY-MEDIA-03 LOW**：ffprobe417文件如仅 header probe 不能证明全部帧解码；给出真实 `ffmpeg -f null -` 全帧校验（H3 417、H2swap 121）或等效证据。完整 Review：`docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_GPU_Canary_Supplement_Actual_Media_Batch_REQUEST_CHANGES.md`。
 - 没有新 GPU 执行或生产文件编辑授权；不碰 GPU0–3、现有训练、旧out2、No-TTT、Checkpoint/DCP/旧媒体与日志，不合并 V3、不启动正式900EP。只要求下一步最小的合约对齐/证据动作，勿过度架构。
+
+## 2026-11-02 — Owner: Codex fix save_generated_video=all Replan MP4 losses (media-only task)
+
+- Owner 2026-11-02 纠正范围：**900 Episode 的 MP4 开关完全由 Owner 自己决定**，不再把“900 EP 全保存”作为整改目标。Codex 的唯一新任务是修复用户**主动开启 `save_generated_video: all` 时 Replan MP4 缺失**；不得在已拉取/已保存的 401/481 比例下宣称 `all` 已满足。
+- H3 真实证据：`481 replans = 401 fetched/MP4 + 73 server bounded_spool_unavailable + 7 cancelled_at_episode_end`。根因横跨 Child `robocasa_batch_transactions.py` (2 ticket /128MiB spool+无背压)、`action_policy_server_robocasa.py` (spool full 时不保留 vision latent)、`eval_v2_transactions.py` (异步 fetch/结束取消)、`media.py` (queue.put_nowait + close/sentinel 的媒体边界)。这是**新 Code Fix 请求**，非对已审核 `4b581493db805c92964cb27e740c736db87c0329`/`9a8cd6183424bfce245fbca393ca25ed59919ea6` 进行重复 Gate。
+- **给 Codex 的窄范围实现交接**：`docs/collab/chatgpt/requests/2026-11-02_V3_EvalV2_Replan_Video_All_Lossless_Media_Fix_Codex.md`。原则：`all` strict guaranteed-or-explicitly-incomplete（healthy 10 replans→10完整MP4；bounded backpressure、结束前 drain、durable write 先于 ACK，媒体错误不能伪装成已完成）；`none` 快路径不变、`first` 兼容。手工分析的小 EP 可接受额外耗时，拒绝无限缓存或重构整套评测系统。
+- 本条仅下达候选代码任务，**不是 Codex 已修改代码或测试通过**。新实现需要新 Formal Root+Child/Gitlink、定向 CPU Gate 及 GPT 独立 Code Gate；未授权真实 GPU、正式 900 EP、V3 merge、修改 out2/NoTTT/训练或使用 GPU0–3。Codex 完成隔离候选后提交代码与 Evidence，暂不运行硬件。
