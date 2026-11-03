@@ -270,3 +270,88 @@ def test_production_worker_attests_device_then_context_before_policy(
         thread.join(2)
     assert not thread.is_alive()
     assert bool(errors) is wrong_context
+
+
+class NoDRMDriver(Driver):
+    """Portable CPU double for NVIDIA stacks with no EGL DRM identity strings."""
+
+    def __init__(self):
+        super().__init__()
+        self.rows = [
+            {
+                "egl_device_index": index,
+                "handle": 1000 + index,
+                "pci_bus_id": None,
+                "device_node": None,
+            }
+            for index in range(8)
+        ]
+        self.context_device_handle = 1006
+
+    def current_handle(self):
+        return self.context_device_handle
+
+
+def test_unidentified_nvidia_egl_uses_explicit_index_without_forging_pci_identity():
+    driver = NoDRMDriver()
+    proof = module.configure(plan(), api=driver)
+    assert proof["protocol"] == "egl_index_unverified_v1"
+    assert proof["egl_device_index"] == 6
+    assert module.os.environ["MUJOCO_EGL_DEVICE_ID"] == "6"
+    assert proof["actual_device"] is None
+    assert proof["physical_identity_verified"] is False
+    assert proof["context_verified"] is False
+    current = module.verify_current(proof, api=driver)
+    assert current["context_verified"] is True
+    assert current["context_device_handle_verified"] is True
+    assert current["physical_identity_verified"] is False
+
+
+def test_missing_vendor_current_device_attribute_does_not_block_valid_current_context():
+    driver = NoDRMDriver()
+    proof = module.configure(plan(), api=driver)
+    driver.context_device_handle = None
+    current = module.verify_current(proof, api=driver)
+    assert current["context_verified"] is True
+    assert current["context_device_handle_verified"] is False
+    assert current["physical_identity_verified"] is False
+
+
+def test_fallback_rejects_different_known_context_device():
+    driver = NoDRMDriver()
+    proof = module.configure(plan(), api=driver)
+    driver.context_device_handle = 1004
+    with pytest.raises(RuntimeError, match="different enumerated device"):
+        module.verify_current(proof, api=driver)
+
+
+def test_fallback_does_not_override_known_wrong_pci_identity():
+    driver = NoDRMDriver()
+    driver.rows[6]["pci_bus_id"] = "0000:44:00.0"
+    with pytest.raises(RuntimeError, match="conflicts with known physical"):
+        module.configure(plan(), api=driver)
+
+
+def test_out_of_range_explicit_egl_index_blocks():
+    driver = NoDRMDriver()
+    driver.rows = driver.rows[:3]
+    with pytest.raises(RuntimeError, match="not enumerated"):
+        module.configure(plan(), api=driver)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("physical_identity_verified", True),
+        ("actual_device", {"gpu_id": 6, "uuid": "GPU-six", "pci_bus_id": "0000:66:00.0"}),
+        ("egl_device_index", 0),
+        ("egl_device_index", True),
+        ("device_node", "/dev/dri/renderD134"),
+    ],
+)
+def test_unverified_ordinal_proof_cannot_be_relabelled_as_physical_identity(field, value):
+    driver = NoDRMDriver()
+    proof = module.configure(plan(), api=driver)
+    proof[field] = value
+    with pytest.raises(ValueError):
+        module.validate_proof(proof, plan())
