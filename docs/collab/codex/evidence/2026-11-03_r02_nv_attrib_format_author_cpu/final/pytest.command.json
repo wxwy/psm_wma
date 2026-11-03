@@ -1,0 +1,23 @@
+{
+  "args": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+    "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+    "--basetemp",
+    "/tmp/psm-eval-v2-r02-format-20261103/pytest_tmp",
+    "--junitxml",
+    "/tmp/psm-eval-v2-r02-format-20261103/final/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format",
+  "expected_returncode": 0,
+  "returncode": 0,
+  "shell_display": "/workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -q -p no:cacheprovider tools/v3/eval_v2_batch_tests/render_devices_test.py tools/v3/eval_v2_batch_tests/render_mapping_test.py --basetemp /tmp/psm-eval-v2-r02-format-20261103/pytest_tmp --junitxml /tmp/psm-eval-v2-r02-format-20261103/final/junit.xml"
+}

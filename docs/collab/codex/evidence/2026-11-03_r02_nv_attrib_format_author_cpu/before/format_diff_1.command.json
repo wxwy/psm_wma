@@ -1,0 +1,12 @@
+{
+  "args": [
+    "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+    "format",
+    "--diff",
+    "tools/v3/eval_v2_batch_tests/render_devices_test.py"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format",
+  "expected_returncode": 1,
+  "returncode": 1,
+  "shell_display": "/workspace/.venvs/psm-wma-cpu/bin/ruff format --diff tools/v3/eval_v2_batch_tests/render_devices_test.py"
+}

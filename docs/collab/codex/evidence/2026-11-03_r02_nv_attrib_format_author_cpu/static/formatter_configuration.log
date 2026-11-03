@@ -1,0 +1,5 @@
+2 files already formatted
+[2026-11-03][11:40:40][ruff::resolve][DEBUG] Using Ruff default settings
+[2026-11-03][11:40:40][ruff::commands::format][DEBUG] format_path; path=/workspace/psm-wma-eval-r02-format/cosmos-framework/cosmos_framework/simulation/robocasa/render_devices.py
+[2026-11-03][11:40:40][ruff::commands::format][DEBUG] format_path; path=/workspace/psm-wma-eval-r02-format/tools/v3/eval_v2_batch_tests/render_devices_test.py
+[2026-11-03][11:40:40][ruff::commands::format][DEBUG] Formatted 2 files in 286.68µs

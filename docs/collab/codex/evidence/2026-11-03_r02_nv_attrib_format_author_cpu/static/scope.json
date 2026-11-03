@@ -1,0 +1,22 @@
+{
+  "child_formal_changed_files": [
+    "cosmos_framework/simulation/robocasa/render_devices.py"
+  ],
+  "child_other_source_unchanged": true,
+  "child_parent": "37558dcc71682304f3de1848923e6cedb9b77837",
+  "formal_child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "formal_root": "46c08127b2a13155bb22204069a1456cb01424d7",
+  "latest_review_documents_preserved": true,
+  "official_refs_not_modified": true,
+  "old_evidence_unchanged": true,
+  "production_changes_are_format_only": true,
+  "root_formal_changed_files": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "tools/v3/eval_v2_batch_tests/render_devices_test.py"
+  ],
+  "root_other_source_unchanged": true,
+  "root_parent": "c4d0a4281fb57797484a91b9c47387997b967f31",
+  "status": "PASS"
+}
