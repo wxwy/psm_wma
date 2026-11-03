@@ -21,7 +21,20 @@
 
 ## 3. DS_PRO — 首先独立 CPU 回归（无需 GPU/单独 EGL 探针）
 
-在**全新隔离干净的** Root+Child checkout，使用精确 Formal Pair，绝对不能切换/污染训练或旧 R02 checkout：
+在**全新隔离干净的** Root+Child checkout，使用精确 Formal Pair，绝对不能切换/污染训练或旧 R02 checkout。首次准备该 checkout 时（绝对路径由 DS 自己选一个全新目录）：
+
+```bash
+set -euo pipefail
+export ROOT=/ABS/NEW_ISOLATED_EGL_CANDIDATE_ROOT
+export CANDIDATE=v3-eval-v2-egl-index-fallback-20261103
+test ! -e "$ROOT" || { echo "NEW_ISOLATED_ROOT_MUST_NOT_EXIST"; exit 2; }
+git clone --no-checkout --single-branch --branch "$CANDIDATE" \
+  https://github.com/wxwy/psm_wma.git "$ROOT"
+git -C "$ROOT" checkout --detach aee15fe131b0fb88001004626944e13d587c26e9
+git -C "$ROOT" submodule update --init --checkout cosmos-framework
+```
+
+随后执行：
 
 ```bash
 set -euo pipefail
