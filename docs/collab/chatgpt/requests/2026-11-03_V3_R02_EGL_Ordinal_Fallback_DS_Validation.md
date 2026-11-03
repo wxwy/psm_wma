@@ -4,7 +4,7 @@
 
 ## 1. 冻结新 Formal Candidate
 
-- Root `fce487b1aba9e851f00937d4bd54a7f99d872980`；Child/Gitlink `dff087368e3a5015a7df69052713b7c6938a853a`。
+- Root `aee15fe131b0fb88001004626944e13d587c26e9`；Child/Gitlink `17761e171195a9c41e9165886fa2da0ebd9d52e8`。
 - 两仓隔离分支：`v3-eval-v2-egl-index-fallback-20261103`。
 - 官方 V3 原 Root `324d6983a068424a0c0c60ad6a94e512e39ed96c` / Child `c93f2abf4fb27d36176ff8db094379a853cec796` 不受影响。
 - 源码范围仅：Child `cosmos_framework/simulation/robocasa/render_devices.py`；Root `tools/v3/eval_v2_batch_tests/render_devices_test.py` 和 Child Gitlink。
@@ -31,9 +31,9 @@ export PY313=/ABS/KNOWN_PYTHON_313_WITH_PYTEST_AND_PROJECT_DEPENDENCIES
 git -C "$ROOT" rev-parse HEAD
 git -C "$ROOT" rev-parse HEAD:cosmos-framework
 git -C "$ROOT/cosmos-framework" rev-parse HEAD
-test "$(git -C "$ROOT" rev-parse HEAD)" = "fce487b1aba9e851f00937d4bd54a7f99d872980"
-test "$(git -C "$ROOT" rev-parse HEAD:cosmos-framework)" = "dff087368e3a5015a7df69052713b7c6938a853a"
-test "$(git -C "$ROOT/cosmos-framework" rev-parse HEAD)" = "dff087368e3a5015a7df69052713b7c6938a853a"
+test "$(git -C "$ROOT" rev-parse HEAD)" = "aee15fe131b0fb88001004626944e13d587c26e9"
+test "$(git -C "$ROOT" rev-parse HEAD:cosmos-framework)" = "17761e171195a9c41e9165886fa2da0ebd9d52e8"
+test "$(git -C "$ROOT/cosmos-framework" rev-parse HEAD)" = "17761e171195a9c41e9165886fa2da0ebd9d52e8"
 test -z "$(git -C "$ROOT" status --porcelain)"
 test -z "$(git -C "$ROOT/cosmos-framework" status --porcelain)"
 test ! -e "$EVID" && mkdir -p "$EVID"
