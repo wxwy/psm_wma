@@ -1,3 +1,54 @@
+# 2026-11-03 — Native media-summary literal fixed, development42 PASS, freezing Root
+
+Only Root generated_media.publish comparison literal changes CLI phase_b to
+Manifest phase_b_native_batch_v1 (format2 additions/1 deletion). Child/Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796 remains untouched, no Child commit.
+Frozen new media_profile_test.py before old RED2: real production execution()
+and Child build_manifest/Store/Core, true native profile/ACK wrongly rejected and
+false ACK wrongly accepted by old e7ce production. Same frozen tests GREEN:
+15 new +10 report +17 config =42 PASS/0failure/error/skip, source/status unchanged.
+Tests prove legal Phase B, Phase A/absence, strict ACK typing, both per-video
+receipt/file hashes on repeat publish, missing/bad receipt/file/hash refusal,
+unknown/CLI profile rejection by existing contract, Core/SR bytes unchanged.
+Only new synthetic CPU media; not DS actual19-record reconciliation.
+
+Ruff0.12.7/format/AST/py_compile2 PASS; AST diff exactly that string constant,
+Child, training/config/Vendor and old379/122 evidence unchanged. No extra source
+changes planned. Logs /tmp/psm-eval-v2-media-profile-20261103; Root implementation
+commit next then clean exact-Pair checks/evidence/request/publish/readback/STOP.
+Original Canary FAIL remains historical; DS isolated-copy offline19 still pending,
+no DS dispatch, GPU/model/RoboCasa/old artifacts/Job/training/DCP or V3 merge.
+
+## Pre-implementation claim retained
+
+# 2026-11-03 — R01-MEDIA-PROFILE-01 narrow Root fix claimed IN_PROGRESS
+
+User Hardware Canary REQUEST_CHANGES received. Fresh explicit candidate/V3 fetch
+and advertised refs matched: before8c0ff2e44fc1765126388a5f3c83bbfad23b6638,
+candidate b19b9edf7f39a83013a853f95c543081e0216b28, official V3 unchanged
+7e2be5ca40891915a1e86eea935ed054ec1984dd. Read all9 new commit subjects;
+diff only docs/Inbox, ancestry0 and safe merge --ff-only succeeded. Read exact
+2026-11-03 R01 Hardware profile Evidence review and Codex Narrow Fix request.
+Also verified previous e7ce99d7a0bbb7a81ea7afcee7253548687dc223 /
+c93f2abf4fb27d36176ff8db094379a853cec796 APPROVE_CODE and DS scoped CPU122
+closed from formal review files, without repeating old technical audits/tests.
+
+Current new Root-only branch v3-eval-v2-media-profile-20261103 in private
+/workspace/psm-wma-eval-replan-all, baseb19b9edf. Child/Gitlink stays
+c93f2abf4fb27d36176ff8db094379a853cec796, no Child branch/code/commit changes.
+Claim only Root scripts/robocasa_eval_v2/generated_media.py manifest literal
+phase_b ->phase_b_native_batch_v1, new focused profile test, necessary evidence/
+handoff/SESSION/TODO/append-only Inbox. No broad constant/manifest refactor.
+Freeze real native Manifest regression before old RED, then exact one-line fix,
+related report/config CPU/static only, new Formal Root SHA, review request, STOP.
+Keep original R01 FAIL and old379/122 evidence intact. Actual DS R01 outputs are
+not available/authorized here: offline19-record reconciliation remains DS-only
+pending on an isolated copy after review; no fabricated reconciliation PASS.
+No GPU/model/RoboCasa/old media/training/DCP/Job/shared source/V3 merge or DS
+dispatch. Owner current roles/STOP override stale V2/tmux/multi-pane rules.
+
+## Prior R01 publication record preserved
+
 # 2026-11-02 — RM-ALL-R01 candidate published/readback PASS; STOP for incremental review
 
 Fresh2026-11-02T11:42:35Z fetch/advertised refs/Git object readback PASS for

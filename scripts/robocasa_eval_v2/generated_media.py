@@ -33,7 +33,8 @@ def publish(store):
                     or completion.get("attempt_id") != row["attempt_id"]
                     or completion.get("server_ack_required")
                     is not (
-                        store.manifest.get("execution", {}).get("profile") == "phase_b"
+                        store.manifest.get("execution", {}).get("profile")
+                        == "phase_b_native_batch_v1"
                     )
                     or any(
                         type(completion.get(k)) is not int or completion[k] != count
