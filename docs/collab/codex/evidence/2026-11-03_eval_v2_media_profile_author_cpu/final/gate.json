@@ -1,0 +1,16 @@
+{
+  "status": "AUTHOR_CLEAN_PAIR_CPU_PASS",
+  "root": "2d1ad80f89ab4cc0e275ff4341f064954870abdd",
+  "child": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "gitlink": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "root_status": "",
+  "child_status": "",
+  "tests": 42,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "source_unchanged": true,
+  "frozen_test_sha256": "d5f32f29936bebedc94301e7f7a528b8abdcd26d96fa10d5d9b3aa28ca8fab8a",
+  "seconds": 4.126501037972048
+}

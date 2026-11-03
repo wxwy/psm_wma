@@ -1,0 +1,27 @@
+[
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "scripts/robocasa_eval_v2/generated_media.py",
+      "tools/v3/eval_v2_replan_tests/media_profile_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "scripts/robocasa_eval_v2/generated_media.py",
+      "tools/v3/eval_v2_replan_tests/media_profile_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  }
+]

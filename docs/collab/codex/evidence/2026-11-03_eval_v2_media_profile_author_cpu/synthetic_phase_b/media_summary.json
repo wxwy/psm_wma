@@ -1,0 +1,1 @@
+{"acknowledged":2,"episodes":1,"episodes_complete":[{"episode":0,"replans":2,"status":"COMPLETE","task":"CloseFridge"}],"errors":[],"expected":2,"expected_episodes":1,"independent_of_SR":true,"manifest_digest":"ab4a5d7d603415267abf737b663e40c4c56aa9ea7c76b38398b7be45a431f4b3","saved":2,"schema":"psm_generated_media_summary_v1","status":"COMPLETE"}

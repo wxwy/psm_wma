@@ -1,0 +1,56 @@
+{
+  "command": [
+    "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--rootdir=/workspace/psm-wma-eval-replan-all",
+    "tools/v3/eval_v2_replan_tests/media_profile_test.py::test_real_profile_summary_enters_every_receipt_and_file_hash_check[phase_b]",
+    "tools/v3/eval_v2_replan_tests/media_profile_test.py::test_wrong_or_untyped_ACK_authority_remains_incomplete[phase_b-False]",
+    "--basetemp=/tmp/psm-eval-v2-media-profile-20261103/red/pytest_tmp",
+    "--junitxml=/tmp/psm-eval-v2-media-profile-20261103/red/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-eval-replan-all",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "LD_LIBRARY_PATH": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-eval-v2-media-profile-20261103/red/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-v2-media-profile-20261103/red/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-v2-media-profile-20261103/red/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-eval-v2-media-profile-20261103/red/cache/ruff",
+    "PYTHONPATH": "/workspace/psm-wma-eval-replan-all:/workspace/psm-wma-eval-replan-all/scripts:/workspace/psm-wma-eval-replan-all/cosmos-framework"
+  },
+  "versions": {
+    "root": "b19b9edf7f39a83013a853f95c543081e0216b28",
+    "child": "c93f2abf4fb27d36176ff8db094379a853cec796",
+    "gitlink": "c93f2abf4fb27d36176ff8db094379a853cec796",
+    "root_status": "M SESSION.md\n M TODO.md\n?? tools/v3/eval_v2_replan_tests/media_profile_test.py",
+    "child_status": ""
+  },
+  "phase": "red",
+  "formal": false,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "source_sha256": {
+    "tools/v3/eval_v2_replan_tests/media_profile_test.py": "d5f32f29936bebedc94301e7f7a528b8abdcd26d96fa10d5d9b3aa28ca8fab8a",
+    "scripts/robocasa_eval_v2/generated_media.py": "afe35de50dc2c80fcd6dcbca4dbfbca4060cadcbffcb4d180e646412693c7bc2",
+    "scripts/robocasa_eval_v2/config.py": "caa56c4306e522b4b5575c90922f2f57d4552cc68b9ba39ba77093bfbbaf8aaa",
+    "cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py": "bd5dd67efd5099ed75341c0c6b72799c83a2efa26195befa41dfb76c84f32c1a"
+  },
+  "watchdog_s": 180,
+  "inputs": "fresh synthetic valid Manifest/Store/Core and CPU MP4 receipts only; no actual R01 files, GPU or model"
+}

@@ -1,0 +1,75 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_real_profile_summary_enters_every_receipt_and_file_hash_check[phase_b] __
+
+tmp_path = PosixPath('/tmp/psm-eval-v2-media-profile-20261103/red/pytest_tmp/test_real_profile_summary_ente0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f74efdc5480>
+profile = 'phase_b'
+
+    @pytest.mark.parametrize("profile", ["phase_b", "phase_a", "absent"])
+    def test_real_profile_summary_enters_every_receipt_and_file_hash_check(
+        tmp_path, monkeypatch, profile
+    ):
+        store, directory, _ = prepared(tmp_path, profile)
+        original = protected(store, directory)
+        receipts, hashes = [], []
+        read_receipt = generated_media.read_receipt
+        file_sha = generated_video.file_sha
+    
+        def receipt(media, index, binding):
+            receipts.append(index)
+            return read_receipt(media, index, binding)
+    
+        def file_hash(path):
+            hashes.append(path.name)
+            return file_sha(path)
+    
+        monkeypatch.setattr(generated_media, "read_receipt", receipt)
+        monkeypatch.setattr(generated_video, "file_sha", file_hash)
+        with store.locked():
+            for _ in range(2):
+                report = generated_media.publish(store)
+>               assert report["status"] == "COMPLETE", report
+E               AssertionError: {'acknowledged': 0, 'episodes': 1, 'episodes_complete': [], 'errors': [{'episode': 0, 'error': 'MEDIA_INCOMPLETE: generated completion/count binding', 'task': 'CloseFridge'}], ...}
+E               assert 'MEDIA_INCOMPLETE' == 'COMPLETE'
+E                 
+E                 - COMPLETE
+E                 + MEDIA_INCOMPLETE
+
+tools/v3/eval_v2_replan_tests/media_profile_test.py:153: AssertionError
+____ test_wrong_or_untyped_ACK_authority_remains_incomplete[phase_b-False] _____
+
+tmp_path = PosixPath('/tmp/psm-eval-v2-media-profile-20261103/red/pytest_tmp/test_wrong_or_untyped_ACK_auth0')
+profile = 'phase_b', ack = False
+
+    @pytest.mark.parametrize(
+        "profile,ack",
+        [
+            ("phase_b", False),
+            ("phase_b", None),
+            ("phase_b", 1),
+            ("phase_b", "true"),
+            ("phase_a", True),
+            ("absent", True),
+        ],
+    )
+    def test_wrong_or_untyped_ACK_authority_remains_incomplete(tmp_path, profile, ack):
+        store, directory, completion = prepared(tmp_path, profile)
+        original = protected(store, directory)
+        generated_video.atomic_json(
+            directory / "generated_media_completion.json",
+            {**completion, "server_ack_required": ack},
+        )
+        with store.locked():
+            report = generated_media.publish(store)
+>       assert report["status"] == "MEDIA_INCOMPLETE" and report["errors"]
+E       AssertionError: assert ('COMPLETE' == 'MEDIA_INCOMPLETE'
+E         
+E         - MEDIA_INCOMPLETE
+E         + COMPLETE)
+
+tools/v3/eval_v2_replan_tests/media_profile_test.py:181: AssertionError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_replan_tests/media_profile_test.py::test_real_profile_summary_enters_every_receipt_and_file_hash_check[phase_b]
+FAILED tools/v3/eval_v2_replan_tests/media_profile_test.py::test_wrong_or_untyped_ACK_authority_remains_incomplete[phase_b-False]
+2 failed in 1.15s
