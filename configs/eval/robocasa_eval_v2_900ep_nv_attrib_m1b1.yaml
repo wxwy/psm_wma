@@ -1,17 +1,17 @@
 # R03 RoboCasa365 Target-Atomic: 18 tasks x 50 episodes = 900.
 # Derived from the successful R02 NV_ATTRIB 1EP configuration.
-# Path variables must be populated from the VERIFIED R02 environment before dry-run/fresh.
+# Absolute input paths supplied from the R02 launch script; verify existence in R03 preflight.
 # This config does NOT authorize GPU execution; never reuse an existing output namespace.
 schema: psm_robocasa_eval_v2
 execution_profile: phase_b
 local_memory_mode: required
 
-checkpoint: ${EVAL_CHECKPOINT}
-config_file: ${EVAL_MODEL_CONFIG}
-dataset_root: ${EVAL_DATASET_ROOT}
+checkpoint: /mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000020000
+config_file: /mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/config.yaml
+dataset_root: /mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic
 output_dir: /mnt/data1/data_v2_0617/robocasa_eval_runs/local_ttt_robocasa_raw15/packed128_droid_fresh_g1_20261019/R03_900ep_nv_attrib_m1b1
-server_python: ${EVAL_SERVER_PYTHON}
-sim_python: ${EVAL_SIM_PYTHON}
+server_python: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/robocasa_sim_venv_20261023/bin/python
+sim_python: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/robocasa_sim_venv_20261023/bin/python
 vendor_lock: third_party/robosuite_patches/vendor.lock.json
 asset_manifest: /mnt/data1/data_v2_0617/robocasa_vendor_build_20261023/asset_manifest.json
 
