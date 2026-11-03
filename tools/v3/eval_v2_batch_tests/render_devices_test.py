@@ -358,3 +358,73 @@ def test_unverified_ordinal_proof_cannot_be_relabelled_as_physical_identity(fiel
     proof[field] = value
     with pytest.raises(ValueError):
         module.validate_proof(proof, plan())
+
+
+def test_real_egl_ctypes_without_drm_extensions_still_has_a_current_context(monkeypatch):
+    class Library:
+        eglGetProcAddress = Function(lambda *args: 0)
+        eglGetCurrentDisplay = Function(lambda: 111)
+        eglGetCurrentContext = Function(lambda: 222)
+        eglGetError = Function(lambda: 0x3000)
+
+    def query_devices(capacity, devices, count):
+        ctypes.cast(count, ctypes.POINTER(ctypes.c_int))[0] = 8
+        if capacity:
+            for index in range(8):
+                devices[index] = 1000 + index
+        return 1
+
+    def query_optional(self, name, *args):
+        if name == b"eglQueryDevicesEXT":
+            return query_devices
+        raise RuntimeError("unavailable optional EGL extension")
+
+    monkeypatch.setattr(module.ctypes, "CDLL", lambda name: Library())
+    monkeypatch.setattr(module.EGLDevices, "_function", query_optional)
+    driver = module.EGLDevices()
+    assert driver.query_string is None and driver.query_display is None
+    proof = module.configure(plan(), api=driver)
+    assert proof["protocol"] == "egl_index_unverified_v1"
+    verified = module.verify_current(proof, api=driver)
+    assert verified["context_verified"] is True
+    assert verified["context_device_handle_verified"] is False
+    assert verified["physical_identity_verified"] is False
+
+
+def test_production_worker_with_no_drm_device_identity_reaches_environment_ready(
+    tmp_path, monkeypatch
+):
+    configuration = worker_test.cfg(tmp_path)
+    configuration["rendering"] = plan()
+    driver = NoDRMDriver()
+    monkeypatch.setattr(module, "EGLDevices", lambda: driver)
+    channel, thread, errors, env = worker_test.run_worker(configuration, monkeypatch)
+    try:
+        ready = receive(channel)
+        assert ready["kind"] == "READY"
+        assert ready["rendering"]["egl_device_index"] == 6
+        assert ready["rendering"]["physical_identity_verified"] is False
+        assert ready["rendering"]["protocol"] == "egl_index_unverified_v1"
+        send(
+            channel,
+            {
+                "nonce": "cpu",
+                "request_id": "start",
+                "op": "start_episode",
+                "attempt": configuration["_test_attempt"],
+                "grant": configuration["_test_grant"],
+            },
+        )
+        assert receive(channel)["state"] == "ENV_READY"
+        send(channel, {"nonce": "cpu", "request_id": "initialize", "op": "initialize"})
+        initialized = receive(channel)
+        assert initialized["rendering"]["context_verified"] is True
+        assert initialized["rendering"]["physical_identity_verified"] is False
+        assert initialized["initial_success"] is True
+        send(channel, {"nonce": "cpu", "request_id": "close", "op": "close"})
+        assert receive(channel)["closed"] is True
+        assert env.resets == 1 and not env.actions
+    finally:
+        channel.close()
+        thread.join(2)
+    assert not thread.is_alive() and not errors
