@@ -1,0 +1,56 @@
+{
+  "command": [
+    "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--rootdir=/workspace/psm-wma-eval-replan-all",
+    "tools/v3/eval_v2_replan_tests/ack_history_test.py::test_old_reservation_after_two_ACKs_never_allocates_spool",
+    "tools/v3/eval_v2_replan_tests/ack_history_test.py::test_old_ACK_after_two_ACKs_is_idempotent",
+    "--basetemp=/tmp/psm-eval-v2-rm-all-r01-20261102/red/pytest_tmp",
+    "--junitxml=/tmp/psm-eval-v2-rm-all-r01-20261102/red/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-eval-replan-all",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "LD_LIBRARY_PATH": "",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "PYTHONPATH": "/workspace/psm-wma-eval-replan-all:/workspace/psm-wma-eval-replan-all/scripts:/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "HF_HOME": "/tmp/psm-eval-v2-rm-all-r01-20261102/red/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-v2-rm-all-r01-20261102/red/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-v2-rm-all-r01-20261102/red/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-eval-v2-rm-all-r01-20261102/red/cache/ruff",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "versions": {
+    "root": "ec8a8bf31d6e4cd2cc1a387b77d8510aef57e06f",
+    "child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+    "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+    "root_status": "M SESSION.md\n M TODO.md\n?? tools/v3/eval_v2_replan_tests/ack_history_test.py",
+    "child_status": ""
+  },
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "phase": "red",
+  "formal": false,
+  "source_sha256": {
+    "tools/v3/eval_v2_replan_tests/ack_history_test.py": "2114ca1435316be8ec2f4e13383badc0ebedcfee2da7a44966139fdf7ad53354",
+    "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py": "199769623ef71daa041ca2d4a93d42cd85ad30e21a1f97404fa365dcfc6b4dab",
+    "tools/v3/eval_v2_replan_tests/support.py": "d28dde744dd62ec341fd083b845b449e3469c8070e025b7311d428b8f0716399"
+  },
+  "frozen_pre_red_test_sha256": "2114ca1435316be8ec2f4e13383badc0ebedcfee2da7a44966139fdf7ad53354",
+  "inputs": "new synthetic CPU model/frames/video only; real public dispatcher/actor and CPU Encoder; no existing media/checkpoint/GPU",
+  "watchdog_s": 300
+}

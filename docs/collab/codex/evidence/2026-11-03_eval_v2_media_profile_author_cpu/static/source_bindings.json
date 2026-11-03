@@ -1,0 +1,10 @@
+{
+  "scripts/robocasa_eval_v2/generated_media.py": {
+    "git_blob": "16a02ac46ffdf56b3a747ec7fc5c50e08b6b525f",
+    "sha256": "cc2549cdeb61432bea02c715d03d6a596dddca896afaf6a586188146c350ec80"
+  },
+  "tools/v3/eval_v2_replan_tests/media_profile_test.py": {
+    "git_blob": "0228127c764cc714539b1492c5eb65e12ae45465",
+    "sha256": "d5f32f29936bebedc94301e7f7a528b8abdcd26d96fa10d5d9b3aa28ca8fab8a"
+  }
+}

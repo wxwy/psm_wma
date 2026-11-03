@@ -1,0 +1,2044 @@
+diff --git a/configs/eval/robocasa_eval_v2_split_render.example.yaml b/configs/eval/robocasa_eval_v2_split_render.example.yaml
+new file mode 100644
+index 00000000..68b1160f
+--- /dev/null
++++ b/configs/eval/robocasa_eval_v2_split_render.example.yaml
+@@ -0,0 +1,36 @@
++# Future NEW Run only; replace paths and obtain a separate hardware/run authorization.
++schema: psm_robocasa_eval_v2
++execution_profile: phase_b
++local_memory_mode: required
++checkpoint: /EDIT_READONLY/checkpoints/iter_000020000
++config_file: /EDIT_READONLY/config.yaml
++dataset_root: /EDIT_READONLY/robocasa365/target/atomic
++output_dir: /EDIT_NEW_OUTPUT/local_ttt_split_render
++server_python: /EDIT_SERVER_ENV/bin/python
++sim_python: /EDIT_SIM_ENV/bin/python
++vendor_lock: ${PSM_REPO}/third_party/robosuite_patches/vendor.lock.json
++tasks: all
++episodes_per_task: 50
++gpu_ids: [4, 5]
++render_gpu_ids: [6, 7]
++render_backend: egl
++sims_per_gpu: 8
++max_infer_batch_size: 2
++batch_wait_ms: 20
++save_rollout_mp4: true
++rollout_mp4_first_n_per_task: null
++save_generated_video: all
++# Admission estimates only, NOT verified memory peaks. Both remain configurable.
++server_reserve_bytes: 10737418240
++render_reserve_bytes_per_sim: 838860800
++max_gpu_fraction: 0.85
++max_rss_bytes: 137438953472
++base_port: 8912
++seed: 0
++prediction_steps: 30
++guidance: 1.0
++server_start_s: 900
++episode_wall_s: 1800
++request_timeout_s: 600
++terminate_grace_s: 10
++encoder_grace_s: 2
+diff --git a/cosmos-framework b/cosmos-framework
+index 86642677..d3b2a29b 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 8664267704da3206e719f3c7eef2b5ed86e2a417
++Subproject commit d3b2a29b978ff4abef800b9e71fab4422b7a0d23
+diff --git a/docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md b/docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md
+new file mode 100644
+index 00000000..22ef65eb
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md
+@@ -0,0 +1,105 @@
++# Configurable Server / Render GPU separation and media lifecycle candidate
++
++Owner scope: independent candidate only. Base Root
++`7e2be5ca40891915a1e86eea935ed054ec1984dd`, Child
++`8664267704da3206e719f3c7eef2b5ed86e2a417`. No canonical promotion, real GPU,
++simulator, model, FFmpeg or evaluation / out2 Resume is authorized.
++
++## Renderer mapping
++
++The target example is `configs/eval/robocasa_eval_v2_split_render.example.yaml`:
++Server GPUs [4,5], Render GPUs [6,7], M=8 and B=2. Each ordered render entry serves
++the corresponding Server's slots. Counts, devices, M/B/wait and budgets are
++configurable. Duplicate render IDs are permitted for intentional sharing; their
++memory reservations accumulate. OSMesa uses `render_backend: osmesa` and
++`render_gpu_ids: null` (or []). Omitted backend inherits MUJOCO_GL (default egl);
++omitted EGL device mapping uses the Server's physical devices.
++
++The existing Server/Slot scheduler, model, Local Session and Batch paths stay
++unchanged. The CPU dry-run displays both inference and rendering slot maps.
++Normalized effective rendering is bound into the new Run Manifest/digest and
++saved in existing invocation records. Different backends or ordered render maps
++therefore have different Run identities. Legacy manifests without this optional
++field remain readable; new public launches always bind it. Runtime
++rejects changed roles/backend against the initial Fresh record before process
++setup. Old Runs cannot silently adopt explicit new rendering policies; source
++identity and existing scientific/Resume guards are not weakened.
++
++Only Server processes get the inference CUDA device. Sim processes have no CUDA
++visibility and receive the chosen GL backend before vendor imports. The worker
++matches nvidia-smi's physical PCI identity to the EGL device's DRM/sysfs PCI
++identity, then sets the actual EGL enumeration index. Missing or ambiguous physical
++proof is blocked; numeric CUDA/EGL ordinal equality is never a fallback. The
++pinned robosuite EGL context honors this environment variable. After each valid
++Reset, verify the actual current EGL display/device before any policy action.
++Device and Context proofs are retained using existing runtime evidence records.
++
++This path requires EGL device-query extensions plus accessible DRM/sysfs PCI
++identity. Their availability, correct H100 Context and rendering speed remain a
++target-host Canary requirement. Enumeration itself initializes no GPU Context.
++The target config allocates no work to GPU0–3; device IDs remain configurable.
++
++Resource checks cover the union of inference and render GPUs. The configurable
++Server and per-Sim reservations are admission estimates, not measured peaks.
++Actual memory fraction/RSS checks remain. A foreign CUDA process on a selected EGL
++render device blocks admission; no foreign process is stopped or reconfigured.
++Native B1/B2/B4/B8 acceptance is not a claim that all fit a 10 GiB model budget.
++
++## Media lifecycle
++
++The Owner supplied DS's Python3.13 traceback: QueueFeederThread fails in
++`reader_close()` with EBADF, then `queue_sem.release()` raises semaphore
++over-release. DS references the frozen iter20000/out2 resume log
++`logs/GPU7_S0_simulator.log:18-95` and the original ep006
++`tasks/PickPlaceDrawerToCounter/episodes/ep_006/media_diagnostics.json`.
++These are accepted DS-reported observations, not server files read by Codex.
++No current Run or historical result is opened, migrated or resumed here.
++
++CPython3.13 source places sentinel `reader_close()` inside the normal error
++handler, not a finally block. A reader-close exception can reach the handler's
++semaphore release even though the sentinel did not acquire a message permit.
++The CPU control injects EBADF into that real stdlib path and checks the secondary
++ValueError; it does not establish every cause of the server's descriptor failure.
++The pre-existing parent reader close before feeder join exposes a close race,
++but merely swapping two lines does not handle a feeder blocked on a full pipe.
++
++MediaSink now waits boundedly for the feeder before closing descriptors on the
++normal path. A parent-only serialized close callback is installed after spawn,
++before the first put; both the parent and feeder share it. If the consumer died
++with a full pipe, this same callback closes the reader and the parent again waits
++boundedly for the feeder. EBADF is retained as an optional media diagnostic and
++cannot escape the sentinel callback into semaphore error handling. Unknown close
++errors, a live encoder, or a feeder that cannot stop remain cleanup failures.
++There is no global stdlib patch and no independent encoder process group.
++
++`forced_encoder_cleanup` remains diagnostic history. The separate
++`process_cleanup_failed`, `encoder_alive` and `feeder_alive` fields express actual
++cleanup status. A successful forced reap no longer turns a scientifically valid
++Core result into a process fault. EBADF alone never proves that a child exited.
++Local end/reset and environment-authoritative SR keep their existing semantics.
++
++After Core commit, the coordinator allows bounded normal late exit/zombie reap,
++then targeted TERM/KILL for verified descendants of the registered Actor. Signal
++delivery pins the PID with pidfd and rechecks session/start identity. Actor,
++unrelated processes and a verified resource tracker are protected; ambiguous
++ownership, an unavailable safe signalling API or actual survivors still block.
++Cleanup actions are retained in existing runtime proof records. A reported live
++feeder or server media fault still blocks even if the OS group has become empty.
++
++## Evidence and stopping point
++
++The earlier renderer development check has 118 passed, zero failure/error/skip, with
++scoped Ruff and AST checks. Driver/NVML/sysfs/Env/model boundaries are CPU doubles;
++no true EGL, GPU, FFmpeg or simulation was executed. This ran on hashed development
++source, not a formal clean-pair Gate. Initial Media development tests have 29
++passed on Python3.13.5, using fake CPU encoder targets and real Queue lifecycle.
++Combined development regression has 192 passed, zero failure/error/skip, with
++Ruff0.12.7 check/format and syntax PASS. The CPU process-group test uses an actual
++owned orphan, actual TERM/KILL and reap, and a separate surviving foreign process.
++Final combined results are recorded separately against a clean Root/Child Pair;
++only that exact Pair is submitted for a fresh GPT Code Gate. Do not auto-merge V3
++or update any active shared worktree, Run, YAML, media/results, DCP/log or process.
++
++Only after separate Owner authorization: M1/B1 real hardware Canary, then M8/B2,
++then B4/B8. Record real device identity, CUDA conflict checks, memory peaks and
++throughput; do not interrupt NoTTT training or recover the old out2 namespace.
+diff --git a/scripts/robocasa_eval_v2/cli.py b/scripts/robocasa_eval_v2/cli.py
+index 8dded489..05eb1ad6 100644
+--- a/scripts/robocasa_eval_v2/cli.py
++++ b/scripts/robocasa_eval_v2/cli.py
+@@ -21,10 +21,10 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
+ )
+ from robocasa_episode_resume.model_identity import verification_record
+ 
+-from robocasa_eval_v2.config import resolve, execution
++from robocasa_eval_v2.config import resolve, execution, rendering
+ from robocasa_eval_v2.identity import discover, prepare, runtime_environment
+ from robocasa_eval_v2.runtime import Runtime
+-from robocasa_eval_v2.resources import physical_slots
++from robocasa_eval_v2.resources import physical_slots, render_slots
+ 
+ 
+ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+@@ -40,6 +40,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+                 manifest["task_order"] != [t for t, _ in tasks]
+                 or manifest["episodes_per_task"] != cfg["episodes_per_task"]
+                 or manifest.get("execution") != execution(cfg)
++                or (
++                    manifest.get("rendering") is not None
++                    and manifest["rendering"] != rendering(cfg)
++                )
+             ):
+                 raise ValueError("dry-run scientific plan differs from frozen Run")
+             for ep in range(cfg["episodes_per_task"]):
+@@ -57,6 +61,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+                     "resolved": cfg,
+                     "task_order": [t for t, _ in tasks],
+                     "physical_slots": physical_slots(cfg, len(tasks)),
++                    "render_slots": render_slots(cfg, len(tasks)),
+                     "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
+                     "slots": [
+                         [t, ep]
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index d77efbb3..e34014c8 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -15,6 +15,10 @@ DEFAULTS = {
+     "tasks": "all",
+     "episodes_per_task": 50,
+     "gpu_ids": [4, 5, 6],
++    "render_gpu_ids": None,
++    "render_backend": None,
++    "server_reserve_bytes": 20 * 1024**3,
++    "render_reserve_bytes_per_sim": 1024**3,
+     "base_port": 8912,
+     "seed": 0,
+     "prediction_steps": 30,
+@@ -52,6 +56,8 @@ def resolve(argv=None):
+     p.add_argument("--config", type=Path, required=True)
+     p.add_argument("--owner-decision", type=Path)
+     p.add_argument("--gpus")
++    p.add_argument("--render-gpus")
++    p.add_argument("--render-backend", choices=("egl", "osmesa"))
+     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
+     p.add_argument("--local-memory-mode", choices=("off", "required"))
+     p.add_argument("--batch-wait-ms", type=int)
+@@ -91,6 +97,10 @@ def resolve(argv=None):
+         cfg["max_infer_batch_size"] = a.max_infer_batch_size
+     if a.gpus is not None:
+         cfg["gpu_ids"] = [int(x) for x in a.gpus.split(",")]
++    if a.render_gpus is not None:
++        cfg["render_gpu_ids"] = [int(x) for x in a.render_gpus.split(",")]
++    if a.render_backend is not None:
++        cfg["render_backend"] = a.render_backend
+     if a.tasks is not None:
+         cfg["tasks"] = "all" if a.tasks == "all" else a.tasks.split(",")
+     if a.episodes is not None:
+@@ -104,6 +114,11 @@ def resolve(argv=None):
+         or any(type(g) is not int or g < 0 for g in cfg["gpu_ids"])
+     ):
+         raise ValueError("unique nonnegative GPU IDs required")
++    render = rendering(cfg)
++    cfg.update(render_backend=render["backend"], render_gpu_ids=render["gpu_ids"])
++    for key in ("server_reserve_bytes", "render_reserve_bytes_per_sim"):
++        if type(cfg[key]) is not int or cfg[key] < 0:
++            raise ValueError(f"invalid {key}")
+     if cfg["tasks"] != "all" and (
+         not isinstance(cfg["tasks"], list)
+         or not cfg["tasks"]
+@@ -215,3 +230,26 @@ def execution(cfg):
+         "batch_wait_ms": cfg["batch_wait_ms"],
+         "noise": "literal_cfg_seed_per_sample_v1",
+     }
++
++
++def rendering(cfg):
++    """One ordered render device per Server; duplicates allow deliberate sharing."""
++    backend = cfg.get("render_backend")
++    if backend is None:
++        backend = os.environ.get("MUJOCO_GL", "egl")
++    if backend not in ("egl", "osmesa"):
++        raise ValueError("render_backend must be egl or osmesa")
++    devices = cfg.get("render_gpu_ids")
++    if backend == "osmesa":
++        if devices is not None and devices != []:
++            raise ValueError("OSMesa cannot allocate render GPUs")
++        return {"backend": backend, "gpu_ids": []}
++    if devices is None:
++        devices = cfg["gpu_ids"]
++    if (
++        not isinstance(devices, list)
++        or len(devices) != len(cfg["gpu_ids"])
++        or any(type(g) is not int or g < 0 for g in devices)
++    ):
++        raise ValueError("render_gpu_ids must map each Server to a physical GPU")
++    return {"backend": backend, "gpu_ids": list(devices)}
+diff --git a/scripts/robocasa_eval_v2/identity.py b/scripts/robocasa_eval_v2/identity.py
+index d1e471ad..f989a2cb 100644
+--- a/scripts/robocasa_eval_v2/identity.py
++++ b/scripts/robocasa_eval_v2/identity.py
+@@ -15,7 +15,7 @@ from robocasa_episode_resume.model_identity import (
+ )
+ from robocasa_vendor import collect_runtime, dataset_provenance, sha256_file
+ 
+-from robocasa_eval_v2.config import execution
++from robocasa_eval_v2.config import execution, rendering
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ CHILD = ROOT / "cosmos-framework"
+@@ -178,6 +178,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
+         formal=len(tasks) == 18 and cfg["episodes_per_task"] == 50,
+         execution=execution(cfg),
+         local_memory=cfg.get("local_memory_mode", "required"),
++        rendering=rendering(cfg),
+         experiment={
+             "model_digest": model["digest"],
+             "config_sha256": sha256_file(Path(cfg["config_file"])),
+diff --git a/scripts/robocasa_eval_v2/resources.py b/scripts/robocasa_eval_v2/resources.py
+index b095a536..a2a887d4 100644
+--- a/scripts/robocasa_eval_v2/resources.py
++++ b/scripts/robocasa_eval_v2/resources.py
+@@ -5,12 +5,19 @@ from __future__ import annotations
+ import subprocess
+ from pathlib import Path
+ 
++from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
+ from robocasa_processes import group_members
+ 
++from robocasa_eval_v2.config import rendering
++
+ 
+ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
++    render = rendering(cfg)
++    selected_ids = sorted(set(cfg["gpu_ids"]) | set(render["gpu_ids"]))
+     args = [
+         "nvidia-smi",
++        "-i",
++        ",".join(map(str, selected_ids)),
+         "--query-gpu=index,uuid,memory.total,memory.used",
+         "--format=csv,noheader,nounits",
+     ]
+@@ -22,14 +29,45 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+     allowed = set()
+     for p in processes:
+         allowed.update(group_members(p.pgid))
+-    selected = {devices[g][0] for g in cfg["gpu_ids"] if g in devices}
+-    if len(selected) != len(cfg["gpu_ids"]):
++    if any(g not in devices for g in selected_ids):
+         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
+-    for g in cfg["gpu_ids"]:
++    reserves = dict.fromkeys(selected_ids, 0)
++    if before_models:
++        for g in cfg["gpu_ids"]:
++            reserves[g] += cfg.get("server_reserve_bytes", 20 * 1024**3)
++        task_count = len(cfg["tasks"]) if isinstance(cfg.get("tasks"), list) else 18
++        for g in render_slots(cfg, task_count).values():
++            if g is not None:
++                reserves[g] += cfg.get("render_reserve_bytes_per_sim", 1024**3)
++    for g in selected_ids:
+         _, total, used = devices[g]
+-        reserve = 20 * 1024**3 if before_models else 0
+-        if used + reserve > total * cfg["max_gpu_fraction"]:
++        if used + reserves[g] > total * cfg["max_gpu_fraction"]:
+             raise RuntimeError("BLOCKED_RESOURCE: GPU memory budget")
++    if render["gpu_ids"]:
++        apps = run(
++            [
++                "nvidia-smi",
++                "-i",
++                ",".join(map(str, sorted(set(render["gpu_ids"])))),
++                "--query-compute-apps=gpu_uuid,pid",
++                "--format=csv,noheader,nounits",
++            ],
++            capture_output=True,
++            text=True,
++            check=True,
++            timeout=10,
++        ).stdout
++        render_uuids = {devices[g][0] for g in render["gpu_ids"]}
++        for line in apps.splitlines():
++            uid, pid = [v.strip() for v in line.split(",")]
++            if uid not in render_uuids or not pid.isdigit():
++                raise RuntimeError(
++                    "BLOCKED_RESOURCE: invalid render CUDA ownership probe"
++                )
++            if int(pid) not in allowed:
++                raise RuntimeError(
++                    "BLOCKED_RESOURCE: foreign CUDA workload on render GPU"
++                )
+     rss = 0
+     for pid in allowed:
+         try:
+@@ -40,7 +78,12 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+             pass
+     if rss > cfg["max_rss_bytes"]:
+         raise RuntimeError("BLOCKED_RESOURCE: owned process RSS budget")
+-    return {"gpus": devices, "owned_pids": sorted(allowed), "rss_bytes": rss}
++    return {
++        "gpus": devices,
++        "owned_pids": sorted(allowed),
++        "rss_bytes": rss,
++        "reserves": reserves,
++    }
+ 
+ 
+ def physical_slots(cfg, task_count):
+@@ -51,3 +94,39 @@ def physical_slots(cfg, task_count):
+         (f"GPU{g}_S{s}", g) for s in range(cfg["sims_per_gpu"]) for g in cfg["gpu_ids"]
+     ]
+     return dict(pairs[:task_count])
++
++
++def render_slots(cfg, task_count):
++    policy = rendering(cfg)
++    mapping = dict(zip(cfg["gpu_ids"], policy["gpu_ids"]))
++    return {
++        worker: mapping[gpu] if policy["backend"] == "egl" else None
++        for worker, gpu in physical_slots(cfg, task_count).items()
++    }
++
++
++def gpu_identity(gpu, *, run=subprocess.run):
++    """Resolve a physical nvidia-smi ID; never interpret it as an EGL ordinal."""
++    raw = (
++        run(
++            [
++                "nvidia-smi",
++                "-i",
++                str(gpu),
++                "--query-gpu=index,uuid,pci.bus_id",
++                "--format=csv,noheader,nounits",
++            ],
++            capture_output=True,
++            text=True,
++            check=True,
++            timeout=10,
++        )
++        .stdout.strip()
++        .splitlines()
++    )
++    if len(raw) != 1:
++        raise RuntimeError("one physical render GPU identity required")
++    index, uid, pci = [v.strip() for v in raw[0].split(",")]
++    if index != str(gpu) or not uid.startswith("GPU-"):
++        raise RuntimeError("physical render GPU identity mismatch")
++    return {"gpu_id": gpu, "uuid": uid, "pci_bus_id": normalize_pci(pci)}
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index 8a278adb..c6539752 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -6,7 +6,6 @@ import hashlib
+ import json
+ import os
+ import secrets
+-import re
+ import socket
+ import threading
+ import time
+@@ -21,6 +20,7 @@ from cosmos_framework.evaluation.robocasa_v2.scheduler import (
+     slot_disposition,
+ )
+ from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
++from cosmos_framework.simulation.robocasa.render_devices import validate_proof
+ from eval_robocasa_18task_queue import (
+     CHILD,
+     ROOT,
+@@ -28,11 +28,11 @@ from eval_robocasa_18task_queue import (
+     server_argv,
+     wait_server,
+ )
+-from robocasa_eval_v2_processes import Actor, Registry, process_identity
++from robocasa_eval_v2_processes import Actor, Registry, process_identity, quiesce_media
+ from robocasa_processes import group_members
+ 
+ from robocasa_eval_v2 import identity, resources
+-from robocasa_eval_v2.config import execution
++from robocasa_eval_v2.config import execution, rendering
+ 
+ 
+ class Runtime:
+@@ -72,6 +72,24 @@ class Runtime:
+                 )
+         elif limit is not None:
+             raise ValueError("rollout cap requires a Fresh Run configuration record")
++        self.render_policy = rendering(cfg)
++        if (
++            store.manifest.get("rendering") is not None
++            and store.manifest["rendering"] != self.render_policy
++        ):
++            raise ValueError("render policy differs from the frozen manifest")
++        if initial is not None:
++            frozen = initial["resolved"]
++            if frozen.get("render_backend") is None:
++                if (
++                    cfg.get("render_backend") is not None
++                    or cfg.get("render_gpu_ids") is not None
++                ):
++                    raise ValueError("explicit render policy requires a new Run")
++            elif rendering(frozen) != self.render_policy:
++                raise ValueError(
++                    "render policy differs from the initial Run configuration"
++                )
+         self.stop = threading.Event()
+         self.registry = Registry(store.root, cfg["terminate_grace_s"])
+         self.servers = {}
+@@ -83,6 +101,10 @@ class Runtime:
+             cfg, len(store.manifest["task_order"])
+         )
+         self.workers = list(self.worker_gpus)
++        self.worker_render_gpus = resources.render_slots(
++            cfg, len(store.manifest["task_order"])
++        )
++        self.actor_rendering = {}
+         self.batch_profile = cfg.get("execution_profile", "phase_a") == "phase_b"
+         self.slot_ids = {worker: uuid.uuid4().hex for worker in self.workers}
+         self.slot_generations = dict.fromkeys(self.workers, 0)
+@@ -278,6 +300,15 @@ class Runtime:
+             if worker in self.actors:
+                 return self._start_assignment(claim, self.actors[worker], server_rec)
+             nonce = uuid.uuid4().hex
++            render_gpu = self.worker_render_gpus[worker]
++            render_plan = {
++                "backend": self.render_policy["backend"],
++                "server_gpu_id": self.worker_gpus[worker],
++                "render_gpu_id": render_gpu,
++                "expected_device": resources.gpu_identity(render_gpu)
++                if render_gpu is not None
++                else None,
++            }
+             cfg = {
+                 "nonce": nonce,
+                 "manifest_digest": self.store.manifest["digest"],
+@@ -286,6 +317,7 @@ class Runtime:
+                 "physical_slot_id": self.slot_ids[worker],
+                 "physical_worker": worker,
+                 "gpu_id": self.worker_gpus[worker],
++                "rendering": render_plan,
+                 "task_root": str(self.store.root / "_internal/tasks"),
+                 "tasks": {
+                     name: {
+@@ -309,6 +341,7 @@ class Runtime:
+                         "native": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+                         "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+                         "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
++                        "rendering": "cosmos_framework/simulation/robocasa/render_devices.py",
+                     }.items()
+                 },
+                 "settings": {
+@@ -348,12 +381,15 @@ class Runtime:
+             path = self.store.root / "_internal/actor_configs" / f"{nonce}.json"
+             write(path, cfg)
+             parent, child = socket.socketpair()
+-            gpu = self.worker_gpus[claim["physical_worker"]]
+             env = dict(
+                 self.environment,
+-                CUDA_VISIBLE_DEVICES=str(gpu),
+-                MUJOCO_EGL_DEVICE_ID=str(gpu),
++                CUDA_VISIBLE_DEVICES="",
++                MUJOCO_GL=self.render_policy["backend"],
++                PYOPENGL_PLATFORM=self.render_policy["backend"],
+             )
++            env.pop(
++                "MUJOCO_EGL_DEVICE_ID", None
++            )  # Worker resolves the physical PCI -> EGL index before imports.
+             log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
+             self.logs.append(log)
+             command = [
+@@ -405,6 +441,10 @@ class Runtime:
+                 != self.store.manifest["protocol"]["local_memory"]
+             ):
+                 raise RuntimeError("native Worker handshake mismatch")
++            self.actor_rendering[worker] = validate_proof(
++                ready.get("rendering"), render_plan
++            )
++            self._proof("render_device", self.actor_rendering[worker])
+             self.resource_probe(
+                 self.cfg,
+                 [v[0] for v in self.servers.values()]
+@@ -517,6 +557,16 @@ class Runtime:
+                     raise RuntimeError("evaluation cancelled")
+                 sample = self.store.begin_initialization(a)
+                 response = actor.request("initialize", deadline=deadline)
++                if (
++                    response.get("error") is None
++                    and self.render_policy["backend"] == "egl"
++                ):
++                    proof = validate_proof(
++                        response.get("rendering"),
++                        self.actor_rendering[claim["physical_worker"]],
++                        context=True,
++                    )
++                    self._proof("render_context", proof)
+                 if response.get("error") is None:
+                     state = self.store.initialization_outcome(
+                         a, initial_success=response["initial_success"]
+@@ -618,33 +668,18 @@ class Runtime:
+             scheduler.commit(claim, row, staging=directory)
+             # Encoders are in this Task's owned group. Any late/stray child means
+             # resource cleanup is uncertain, independent of the committed SR.
+-            helpers = set(response.get("media_helper_pids", []))
+-            if len(helpers) > 1 or any(
+-                type(pid) is not int or pid <= 0 for pid in helpers
+-            ):
+-                raise RuntimeError("invalid media helper ownership")
+-            for pid in helpers:
+-                ident = process_identity(pid)
+-                command = (
+-                    (Path("/proc") / str(pid) / "cmdline").read_bytes().split(b"\0")
+-                )
+-                if (
+-                    ident is None
+-                    or ident["pgid"] != actor.owned.pgid
+-                    or not any(
+-                        re.fullmatch(
+-                            rb"from multiprocessing\.resource_tracker import main;main\(\d+\)",
+-                            v,
+-                        )
+-                        for v in command
+-                    )
+-                ):
+-                    raise RuntimeError("unverified media helper process")
+-            if response.get("media_process_fault") or set(
+-                group_members(actor.owned.pgid)
+-            ) - helpers != {actor.owned.proc.pid}:
++            receipt = quiesce_media(
++                actor,
++                response.get("media_helper_pids", []),
++                self.cfg["terminate_grace_s"],
++                members=group_members,
++                identity=process_identity,
++            )
++            if receipt["actions"]:
++                self._proof("media_cleanup", receipt)
++            if response.get("media_process_fault"):
+                 raise RuntimeError(
+-                    "owned media/process descendants remain after Core commit"
++                    "owned media/process descendants remain after Core commit: encoder/feeder or server media not quiescent"
+                 )
+             for error in self.store.errors(task):
+                 cert = self.certificates.get(error["id"])
+diff --git a/scripts/robocasa_eval_v2_processes.py b/scripts/robocasa_eval_v2_processes.py
+index af29c02c..d2744ca2 100644
+--- a/scripts/robocasa_eval_v2_processes.py
++++ b/scripts/robocasa_eval_v2_processes.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import os
++import re
+ import signal
+ import socket
+ import sys
+@@ -44,6 +45,161 @@ def verify_group(identity):
+             raise RuntimeError("ambiguous process group ownership")
+ 
+ 
++def signal_media_process(
++    expected,
++    sig,
++    *,
++    identity=process_identity,
++    open_pidfd=None,
++    fd_signal=None,
++    close_fd=os.close,
++):
++    """Pin the verified process across the final check-to-signal race."""
++    open_pidfd = open_pidfd or getattr(os, "pidfd_open", None)
++    fd_signal = fd_signal or getattr(signal, "pidfd_send_signal", None)
++    if open_pidfd is None or fd_signal is None:
++        raise RuntimeError("safe pidfd media cleanup is unavailable")
++    fd = open_pidfd(expected["pid"], 0)
++    try:
++        if identity(expected["pid"]) != expected:
++            raise RuntimeError("PID reuse: refusing media signal")
++        fd_signal(fd, sig)
++    finally:
++        close_fd(fd)
++
++
++def quiesce_media(
++    actor,
++    helpers,
++    grace,
++    *,
++    members=group_members,
++    identity=process_identity,
++    send_signal=None,
++    reap=os.waitpid,
++    clock=time.monotonic,
++    pause=time.sleep,
++    read_command=None,
++):
++    """Boundedly reap only this registered Actor's non-Actor descendants.
++
++    Resource trackers may persist for the Actor lifetime. No whole-group signal
++    is sent here, and no PID is signalled without fresh session/start-time proof.
++    """
++    helpers = list(helpers)
++    if len(helpers) > 1 or any(type(pid) is not int or pid <= 0 for pid in helpers):
++        raise RuntimeError("invalid media helper ownership")
++    leader, pgid = actor.owned.proc.pid, actor.owned.pgid
++    send_signal = send_signal or (
++        lambda expected, sig: signal_media_process(expected, sig, identity=identity)
++    )
++    read_command = read_command or (
++        lambda pid: (Path("/proc") / str(pid) / "cmdline").read_bytes().split(b"\0")
++    )
++    allowed = {}
++    for pid in helpers:
++        current = identity(pid)
++        if current is None:
++            continue  # An exited helper is not a live leak.
++        if (
++            current["pgid"] != pgid
++            or actor.record.get("identity") is None
++            or current["session"] != actor.record["identity"]["session"]
++            or current["start_ticks"] < actor.record["identity"]["start_ticks"]
++        ):
++            raise RuntimeError("unverified media helper process")
++        try:
++            command = read_command(pid)
++        except FileNotFoundError:
++            if identity(pid) is None:
++                continue
++            raise RuntimeError("media helper identity changed during verification")
++        if identity(pid) != current or not any(
++            re.fullmatch(
++                rb"from multiprocessing\.resource_tracker import main;main\(\d+\)", v
++            )
++            for v in command
++        ):
++            raise RuntimeError("unverified media helper process")
++        allowed[pid] = current
++    actions = []
++
++    def snapshot():
++        group = members(pgid)
++        if actor.owned.proc.poll() is not None or leader not in group:
++            raise RuntimeError("Actor exited before media cleanup proof")
++        for pid, expected in allowed.items():
++            current = identity(pid)
++            if current is not None and current != expected:
++                raise RuntimeError("media helper PID reused during cleanup")
++        return {
++            pid: state
++            for pid, state in group.items()
++            if pid not in set(allowed) | {leader}
++        }
++
++    remaining = snapshot()
++    if not remaining:
++        return {"clean": True, "actions": actions, "pgid": pgid}
++    owner = actor.record.get("identity")
++    if owner is None or identity(leader) != owner:
++        raise RuntimeError("unproven Actor identity: refusing descendant cleanup")
++
++    def owned(pid):
++        current = identity(pid)
++        if current is not None and (
++            current["pgid"] != pgid
++            or current["session"] != owner["session"]
++            or current["start_ticks"] < owner["start_ticks"]
++        ):
++            raise RuntimeError("foreign process: refusing media cleanup")
++        return current
++
++    def await_clean():
++        until = clock() + grace
++        while True:
++            remaining = snapshot()
++            for pid, state in remaining.items():
++                current = owned(pid)
++                if current is not None and state == "Z":
++                    if identity(pid) != current:
++                        raise RuntimeError("PID reuse: refusing media reap")
++                    try:
++                        result, _ = reap(pid, os.WNOHANG)
++                        if result:
++                            actions.append({"pid": pid, "action": "reaped"})
++                    except (ChildProcessError, ProcessLookupError):
++                        pass
++            remaining = snapshot()
++            if not remaining or clock() >= until:
++                return remaining
++            pause(min(0.02, max(0, until - clock())))
++
++    remaining = await_clean()  # Normal late exit/zombie reap before sending signals.
++    for sig in (signal.SIGTERM, signal.SIGKILL):
++        if not remaining:
++            break
++        if identity(leader) != owner:
++            raise RuntimeError("Actor PID reused during media cleanup")
++        for pid, state in remaining.items():
++            current = owned(pid)
++            if current is None or state == "Z":
++                continue
++            if identity(pid) != current:
++                raise RuntimeError("PID reuse: refusing media signal")
++            try:
++                send_signal(current, sig)
++                actions.append({"pid": pid, "action": sig.name, "identity": current})
++            except ProcessLookupError:
++                pass
++        remaining = await_clean()
++    if remaining:
++        raise RuntimeError(
++            f"owned media/process descendants remain after Core commit: {sorted(remaining)}"
++        )
++    return {"clean": True, "actions": actions, "pgid": pgid}
++
++
+ class Registry:
+     def __init__(self, root, grace):
+         self.root = Path(root)
+diff --git a/tools/v3/eval_v2_batch_tests/media_cleanup_test.py b/tools/v3/eval_v2_batch_tests/media_cleanup_test.py
+new file mode 100644
+index 00000000..6c513be6
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/media_cleanup_test.py
+@@ -0,0 +1,278 @@
++"""CPU-only Queue/encoder cleanup; fake encoder targets never invoke FFmpeg."""
++
++import errno
++import gc
++import multiprocessing as mp
++import signal
++import threading
++import time
++from collections import deque
++from multiprocessing.queues import Queue, _sentinel
++from pathlib import Path
++from types import SimpleNamespace
++
++import numpy as np
++import pytest
++from cosmos_framework.evaluation.robocasa_v2.media import MediaSink, _ReaderClose
++
++
++def drain(queue, directory, fps, rollout):
++    Path(directory).mkdir(parents=True, exist_ok=True)
++    Path(directory, "ready").touch()
++    count = 0
++    while queue.get() is not None:
++        count += 1
++    Path(directory, "count").write_text(str(count))
++
++
++def ignore_term(queue, directory, fps, rollout):
++    signal.signal(signal.SIGTERM, signal.SIG_IGN)
++    Path(directory).mkdir(parents=True, exist_ok=True)
++    Path(directory, "ready").touch()
++    while True:
++        time.sleep(0.05)
++
++
++def wait_ready(sink, directory):
++    until = time.monotonic() + 15
++    while not (directory / "ready").exists():
++        assert sink.process.is_alive(), "CPU encoder exited before ready"
++        assert time.monotonic() < until, "bounded CPU encoder startup expired"
++        time.sleep(0.01)
++
++
++@pytest.mark.parametrize("round_index", range(2))
++def test_eight_cpu_slots_repeatedly_drain_queue_without_background_errors(
++    tmp_path, monkeypatch, round_index
++):
++    background = []
++    monkeypatch.setattr(threading, "excepthook", background.append)
++    sinks = []
++    try:
++        for slot in range(8):
++            directory = tmp_path / f"round{round_index}_slot{slot}"
++            sink = MediaSink(directory, target=drain, grace_s=2)
++            sinks.append(sink)
++            wait_ready(sink, directory)
++            sink.frame(np.zeros((16, 16, 3), dtype=np.uint8))
++        for slot, sink in enumerate(sinks):
++            result = sink.close()
++            assert result["process_cleanup_failed"] is False
++            assert result["encoder_alive"] is result["feeder_alive"] is False
++            assert not result["forced_encoder_cleanup"]
++            assert result["errors"] == []
++            assert sink.process.exitcode == 0
++            assert sink.queue._reader.closed and sink.queue._writer.closed
++            assert (
++                tmp_path / f"round{round_index}_slot{slot}" / "count"
++            ).read_text() == "1"
++            assert result == sink.close()
++            sink.frame(np.zeros((1, 1, 3), dtype=np.uint8))
++            assert sink.dropped == 1 and not sink.queue._thread.is_alive()
++        assert background == []
++    finally:
++        for sink in sinks:
++            sink.close()
++
++
++def test_full_pipe_ignored_term_is_reaped_without_feeder_ebadf_or_semaphore_error(
++    tmp_path, monkeypatch
++):
++    background = []
++    monkeypatch.setattr(threading, "excepthook", background.append)
++    sink = MediaSink(tmp_path, target=ignore_term, grace_s=0.15)
++    try:
++        wait_ready(sink, tmp_path)
++        # > pipe capacity, < production frame cap; the child never reads.
++        for _ in range(10):
++            sink.frame(np.zeros((512, 512, 3), dtype=np.uint8))
++        start = time.monotonic()
++        result = sink.close()
++        assert time.monotonic() - start < 3
++        assert result["forced_encoder_cleanup"] is True
++        assert result["process_cleanup_failed"] is False
++        assert result["encoder_alive"] is result["feeder_alive"] is False
++        assert sink.process.exitcode == -signal.SIGKILL
++        assert sink.queue._reader.closed and sink.queue._writer.closed
++        assert result["dropped"] > 0
++        assert background == []
++        assert not any(
++            "Bad file descriptor" in e or "semaphore" in e for e in result["errors"]
++        )
++    finally:
++        sink.close()
++
++
++def test_reader_close_is_serialized_and_idempotent_when_both_threads_enter():
++    entered, release = threading.Event(), threading.Event()
++    calls, errors = [], []
++
++    def close():
++        calls.append("closed")
++        entered.set()
++        assert release.wait(2)
++
++    guard = _ReaderClose(close, errors, 1)
++    feeder = threading.Thread(target=guard)
++    parent = threading.Thread(target=guard)
++    feeder.start()
++    assert entered.wait(2)
++    parent.start()
++    release.set()
++    feeder.join(2)
++    parent.join(2)
++    assert not feeder.is_alive() and not parent.is_alive()
++    assert calls == ["closed"] and errors == [] and not guard.failed
++
++
++@pytest.mark.parametrize("code,failed", [(errno.EBADF, False), (errno.EIO, True)])
++def test_reader_close_error_is_diagnostic_not_an_escaping_feeder_exception(
++    code, failed
++):
++    calls, errors = [], []
++
++    def close():
++        calls.append(1)
++        raise OSError(code, "injected fd failure")
++
++    guard = _ReaderClose(close, errors, 0.05)
++    guard()
++    guard()
++    assert calls == [1] and guard.failed is failed
++    assert len(errors) == 1 and "injected fd failure" in errors[0]
++
++
++def test_reader_lock_timeout_is_bounded_and_stays_failed():
++    errors = []
++    guard = _ReaderClose(lambda: None, errors, 0.01)
++    with guard.lock:
++        start = time.monotonic()
++        guard()
++    guard()
++    assert time.monotonic() - start < 1 and guard.failed
++    assert "did not quiesce" in errors[0]
++
++
++def test_start_failure_closes_both_queue_descriptors(tmp_path, monkeypatch):
++    ctx = mp.get_context("spawn")
++    process_type = ctx.Process
++
++    def fail_start(self):
++        raise OSError(errno.EBADF, "injected encoder start failure")
++
++    monkeypatch.setattr(process_type, "start", fail_start)
++    sink = MediaSink(tmp_path, target=drain)
++    result = sink.close()
++    assert sink.process is None
++    assert sink.queue._reader.closed and sink.queue._writer.closed
++    assert not result["process_cleanup_failed"]
++    assert "injected encoder start failure" in result["errors"][0]
++
++
++def test_real_stdlib_sentinel_error_control_and_guarded_semaphore_path():
++    """An injected reader EBADF reproduces DS's secondary semaphore failure."""
++    errors, writes = [], []
++
++    def ebadf():
++        raise OSError(errno.EBADF, "injected sentinel reader close")
++
++    def feed(reader_close):
++        Queue._feed(
++            deque([_sentinel]),
++            threading.Condition(),
++            lambda raw: None,
++            threading.Lock(),
++            reader_close,
++            lambda: writes.append("closed"),
++            True,
++            lambda error, obj: errors.append(repr(error)),
++            threading.BoundedSemaphore(1),
++        )
++
++    with pytest.raises(ValueError, match="released too many times"):
++        feed(ebadf)  # Controlled RED of CPython's error path, not an old-code Gate.
++    diagnostics = []
++    feed(_ReaderClose(ebadf, diagnostics, 0.05))
++    assert writes == ["closed"] and errors == []
++    assert len(diagnostics) == 1 and "injected sentinel reader close" in diagnostics[0]
++
++
++@pytest.mark.parametrize("alive", ["encoder", "feeder"])
++def test_actual_unquiesced_encoder_or_feeder_remains_a_process_fault(tmp_path, alive):
++    sink = MediaSink(tmp_path, rollout=False)
++
++    def connection():
++        return SimpleNamespace(close=lambda: None)
++
++    thread = SimpleNamespace(
++        join=lambda timeout: None, is_alive=lambda: alive == "feeder"
++    )
++    sink.queue = SimpleNamespace(
++        put_nowait=lambda value: None,
++        cancel_join_thread=lambda: None,
++        close=lambda: None,
++        _reader=connection(),
++        _writer=connection(),
++        _thread=thread,
++    )
++    sink._reader_guard = _ReaderClose(sink.queue._reader.close, sink.errors, 0.01)
++    sink.queue._reader.close = sink._reader_guard
++    sink.process = SimpleNamespace(
++        join=lambda timeout: None,
++        terminate=lambda: None,
++        kill=lambda: None,
++        is_alive=lambda: alive == "encoder",
++        exitcode=0,
++    )
++    result = sink.close()
++    assert result["process_cleanup_failed"] is True
++    assert result[f"{alive}_alive"] is True
++
++
++def test_core_local_result_survives_successful_forced_media_cleanup(
++    tmp_path, monkeypatch
++):
++    from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
++    from tools.v3.eval_v2_production_tests.native_test import native_execute
++
++    outcomes = []
++    execute = NativeEpisode.execute
++
++    def record(self, *args, **kwargs):
++        result = execute(self, *args, **kwargs)
++        outcomes.append(result)
++        return result
++
++    monkeypatch.setattr(NativeEpisode, "execute", record)
++
++    class ReapedMedia:
++        def __init__(self, *args, **kwargs):
++            pass
++
++        def frame(self, frame):
++            pass
++
++        def prediction(self, index, result):
++            pass
++
++        def close(self):
++            return {
++                "forced_encoder_cleanup": True,
++                "process_cleanup_failed": False,
++                "errors": ["OSError(9, 'Bad file descriptor')"],
++            }
++
++    row, _, calls, value = native_execute(
++        tmp_path, monkeypatch, media_factory=ReapedMedia
++    )
++    assert row["outcome"] == "success" and len(value.rows("CloseFridge")) == 1
++    assert calls[-1]["_local_memory_command"] == "reset"
++    assert outcomes[0]["media_process_fault"] is False
++
++
++def test_optional_disabled_media_creates_no_process(tmp_path):
++    before = set(p.pid for p in mp.active_children())
++    sink = MediaSink(tmp_path, rollout=False)
++    assert not sink.close()["process_cleanup_failed"]
++    gc.collect()
++    assert set(p.pid for p in mp.active_children()) == before
+diff --git a/tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py b/tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py
+new file mode 100644
+index 00000000..f11c4640
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py
+@@ -0,0 +1,272 @@
++"""Bounded cleanup proof with deterministic ownership and pidfd fault injection."""
++
++import errno
++import os
++import signal
++import subprocess
++import sys
++import time
++from types import SimpleNamespace
++
++import pytest
++import robocasa_eval_v2_processes as processes
++
++
++def ident(pid):
++    return dict(pid=pid, pgid=100, session=100, start_ticks=pid)
++
++
++class World:
++    def __init__(self):
++        self.time = 0.0
++        self.rows = {100: "S", 200: "S"}
++        self.identities = {pid: ident(pid) for pid in self.rows}
++        self.signals = []
++        self.reaped = []
++        self.on_pause = lambda: None
++        self.on_signal = (
++            lambda pid, sig: self.rows.pop(pid, None) if sig == signal.SIGKILL else None
++        )
++        self.actor = SimpleNamespace(
++            owned=SimpleNamespace(
++                pgid=100, proc=SimpleNamespace(pid=100, poll=lambda: None)
++            ),
++            record={"identity": self.identities[100]},
++        )
++
++    def pause(self, seconds):
++        self.time += seconds
++        self.on_pause()
++
++    def send(self, expected, sig):
++        assert expected == self.identities[expected["pid"]]
++        self.signals.append((expected["pid"], sig))
++        self.on_signal(expected["pid"], sig)
++
++    def reap(self, pid, flags):
++        assert self.rows[pid] == "Z"
++        self.reaped.append(pid)
++        self.rows.pop(pid)
++        return pid, 0
++
++    def run(self, helpers=(), **overrides):
++        args = dict(
++            members=lambda pgid: dict(self.rows),
++            identity=lambda pid: self.identities.get(pid) if pid in self.rows else None,
++            send_signal=self.send,
++            reap=self.reap,
++            clock=lambda: self.time,
++            pause=self.pause,
++        )
++        args.update(overrides)
++        return processes.quiesce_media(self.actor, helpers, 0.1, **args)
++
++
++def test_normal_late_exit_does_not_signal_slow_media():
++    world = World()
++    world.on_pause = lambda: world.rows.pop(200, None)
++    assert world.run()["clean"]
++    assert world.signals == [] and world.time <= 0.1
++
++
++def test_owned_zombie_is_reaped_without_signalling_actor():
++    world = World()
++    world.rows[200] = "Z"
++    assert world.run()["clean"]
++    assert world.reaped == [200] and world.signals == []
++
++
++def test_ignored_term_is_killed_boundedly_and_actor_survives():
++    world = World()
++    result = world.run()
++    assert result["clean"] and set(world.rows) == {100}
++    assert world.signals == [(200, signal.SIGTERM), (200, signal.SIGKILL)]
++    assert world.time <= 0.31 and len(result["actions"]) == 2
++
++
++def test_survivor_after_kill_still_blocks_core_followup():
++    world = World()
++    world.on_signal = lambda pid, sig: None
++    with pytest.raises(RuntimeError, match="descendants remain after Core commit"):
++        world.run()
++    assert world.time <= 0.31 and 200 in world.rows
++
++
++@pytest.mark.parametrize(
++    "field,value", [("pgid", 99), ("session", 99), ("start_ticks", 1)]
++)
++def test_foreign_process_identity_never_gets_signalled(field, value):
++    world = World()
++    world.identities[200][field] = value
++    with pytest.raises(RuntimeError, match="foreign process"):
++        world.run()
++    assert world.signals == []
++
++
++def test_unregistered_actor_or_reused_actor_refuses_cleanup():
++    world = World()
++    world.actor.record = {}
++    with pytest.raises(RuntimeError, match="unproven Actor identity"):
++        world.run()
++    assert world.signals == []
++
++
++def test_pid_reuse_before_signal_is_refused_without_touching_replacement():
++    world = World()
++    calls = 0
++
++    def identity(pid):
++        nonlocal calls
++        if pid == 200 and world.time >= 0.1:
++            calls += 1
++            if calls == 2:
++                return dict(world.identities[200], start_ticks=999)
++        return world.identities.get(pid)
++
++    with pytest.raises(RuntimeError, match="PID reuse"):
++        world.run(identity=identity)
++    assert world.signals == []
++
++
++def test_new_descendant_during_cleanup_is_not_omitted():
++    world = World()
++
++    def on_signal(pid, sig):
++        if sig == signal.SIGTERM:
++            world.rows[201] = "S"
++            world.identities[201] = ident(201)
++        else:
++            world.rows.pop(pid)
++
++    world.on_signal = on_signal
++    assert world.run()["clean"]
++    assert set(world.rows) == {100}
++    assert (200, signal.SIGKILL) in world.signals and (
++        201,
++        signal.SIGKILL,
++    ) in world.signals
++
++
++def test_live_resource_tracker_is_allowed_but_exited_helper_need_not_persist():
++    world = World()
++    command = [
++        b"python",
++        b"-c",
++        b"from multiprocessing.resource_tracker import main;main(5)",
++    ]
++    assert world.run([200], read_command=lambda pid: command)["clean"]
++    assert world.signals == []
++    world.rows.pop(200)
++    assert world.run([200])["clean"]
++
++
++def test_foreign_helper_is_rejected_before_reading_command():
++    world = World()
++    world.identities[200]["pgid"] = 99
++    commands = []
++    with pytest.raises(RuntimeError, match="unverified media helper"):
++        world.run([200], read_command=lambda pid: commands.append(pid))
++    assert commands == [] and world.signals == []
++
++
++def test_helper_that_exits_during_command_read_is_harmless():
++    world = World()
++
++    def read(pid):
++        world.rows.pop(pid)
++        raise FileNotFoundError(errno.ENOENT, "exited")
++
++    assert world.run([200], read_command=read)["clean"]
++
++
++def test_fake_tracker_command_cannot_hide_residual_process():
++    world = World()
++    with pytest.raises(RuntimeError, match="unverified media helper"):
++        world.run([200], read_command=lambda pid: [b"not_resource_tracker"])
++    assert world.signals == []
++
++
++def test_pidfd_signal_pins_identity_and_closes_descriptor():
++    expected, events = ident(200), []
++    processes.signal_media_process(
++        expected,
++        signal.SIGKILL,
++        identity=lambda pid: expected,
++        open_pidfd=lambda pid, flags: events.append(("open", pid)) or 7,
++        fd_signal=lambda fd, sig: events.append(("signal", fd, sig)),
++        close_fd=lambda fd: events.append(("close", fd)),
++    )
++    assert events == [("open", 200), ("signal", 7, signal.SIGKILL), ("close", 7)]
++
++
++def test_pidfd_refuses_reused_pid_and_closes_without_signalling():
++    events = []
++    with pytest.raises(RuntimeError, match="PID reuse"):
++        processes.signal_media_process(
++            ident(200),
++            signal.SIGTERM,
++            identity=lambda pid: dict(ident(pid), start_ticks=999),
++            open_pidfd=lambda pid, flags: 7,
++            fd_signal=lambda fd, sig: events.append("signal"),
++            close_fd=lambda fd: events.append("close"),
++        )
++    assert events == ["close"]
++
++
++def test_pidfd_unavailable_is_fail_closed(monkeypatch):
++    monkeypatch.delattr(processes.os, "pidfd_open", raising=False)
++    with pytest.raises(RuntimeError, match="pidfd.*unavailable"):
++        processes.signal_media_process(ident(200), signal.SIGTERM)
++
++
++def test_real_owned_orphan_is_killed_and_reaped_without_touching_foreign_process(
++    tmp_path,
++):
++    """Actual CPU process group/pidfd integration, no simulator or encoder library."""
++    ready = tmp_path / "orphan_ready"
++    actor_ready = tmp_path / "actor_ready"
++    child_code = (
++        "import os,signal,time;from pathlib import Path;"
++        "signal.signal(signal.SIGTERM,signal.SIG_IGN);"
++        f"Path({str(ready)!r}).write_text(str(os.getpid()));"
++        "time.sleep(60)"
++    )
++    spawner = (
++        f"import subprocess,sys;subprocess.Popen([sys.executable,'-c',{child_code!r}])"
++    )
++    code = (
++        "import subprocess,sys,time;from pathlib import Path;"
++        f"p=subprocess.Popen([sys.executable,'-c',{spawner!r}]);p.wait();"
++        f"Path({str(actor_ready)!r}).touch();time.sleep(60)"
++    )
++    foreign = subprocess.Popen(
++        [sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True
++    )
++    registry = processes.Registry(tmp_path, 0.3)
++    owned = record = None
++    try:
++        owned, record = registry.start(
++            [sys.executable, "-c", code], kind="CPU_media_cleanup"
++        )
++        until = time.monotonic() + 10
++        while not (ready.exists() and actor_ready.exists()):
++            assert owned.proc.poll() is None
++            assert time.monotonic() < until, "bounded CPU orphan startup expired"
++            time.sleep(0.01)
++        pid = int(ready.read_text())
++        assert processes.process_identity(pid)["pgid"] == owned.pgid
++        result = processes.quiesce_media(
++            SimpleNamespace(owned=owned, record=record), [], 0.1
++        )
++        assert result["clean"] and processes.process_identity(pid) is None
++        assert foreign.poll() is None and owned.proc.poll() is None
++        assert (pid, "SIGKILL") in [
++            (row["pid"], row["action"]) for row in result["actions"]
++        ]
++        with pytest.raises(ChildProcessError):
++            os.waitpid(pid, os.WNOHANG)  # Already reaped, not merely a zombie.
++    finally:
++        if owned is not None:
++            registry.close(owned, record)
++        foreign.terminate()
++        foreign.wait(timeout=3)
+diff --git a/tools/v3/eval_v2_batch_tests/render_devices_test.py b/tools/v3/eval_v2_batch_tests/render_devices_test.py
+new file mode 100644
+index 00000000..8b64d1ab
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/render_devices_test.py
+@@ -0,0 +1,272 @@
++"""Real EGL selection/attestation logic with CPU driver and sysfs doubles."""
++
++import copy
++import ctypes
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
++from cosmos_framework.simulation.robocasa import render_devices as module
++
++from tools.v3.eval_v2_production_tests import worker_test
++
++
++@pytest.fixture(autouse=True)
++def restore_render_environment(monkeypatch):
++    for key, value in {
++        "MUJOCO_GL": "osmesa",
++        "PYOPENGL_PLATFORM": "osmesa",
++        "CUDA_VISIBLE_DEVICES": "",
++        "MUJOCO_EGL_DEVICE_ID": "stale-before-configure",
++    }.items():
++        monkeypatch.setenv(key, value)
++
++
++def plan():
++    return {
++        "backend": "egl",
++        "server_gpu_id": 4,
++        "render_gpu_id": 6,
++        "expected_device": {
++            "gpu_id": 6,
++            "uuid": "GPU-six",
++            "pci_bus_id": "0000:66:00.0",
++        },
++    }
++
++
++class Driver:
++    def __init__(self):
++        self.rows = [
++            {
++                "egl_device_index": 0,
++                "handle": 6006,
++                "pci_bus_id": "0000:66:00.0",
++                "device_node": "/dev/dri/renderD6",
++            },
++            {
++                "egl_device_index": 1,
++                "handle": 4004,
++                "pci_bus_id": "0000:44:00.0",
++                "device_node": "/dev/dri/renderD4",
++            },
++        ]
++        self.current_handle = 6006
++        self.queries = []
++
++    def inventory(self):
++        self.queries.append("inventory")
++        return copy.deepcopy(self.rows)
++
++    def current(self):
++        self.queries.append("current_context")
++        return next(
++            copy.deepcopy(v) for v in self.rows if v["handle"] == self.current_handle
++        )
++
++
++def test_permuted_egl_enumeration_is_resolved_by_pci_not_gpu_number():
++    driver = Driver()
++    proof = module.configure(plan(), api=driver)
++    assert proof["egl_device_index"] == 0 and proof["render_gpu_id"] == 6
++    assert module.os.environ["MUJOCO_EGL_DEVICE_ID"] == "0"
++    assert module.os.environ["CUDA_VISIBLE_DEVICES"] == ""
++    assert (
++        proof["physical_identity_verified"] is True
++        and proof["context_verified"] is False
++    )
++    assert module.verify_current(proof, api=driver)["context_verified"] is True
++    assert driver.queries == [
++        "inventory",
++        "current_context",
++        "inventory",
++    ]  # No context-creation API.
++
++
++@pytest.mark.parametrize("failure", ["missing", "ambiguous", "unidentifiable"])
++def test_missing_or_ambiguous_physical_identity_never_falls_back_to_an_ordinal(failure):
++    driver = Driver()
++    if failure == "missing":
++        driver.rows = driver.rows[1:]
++    if failure == "ambiguous":
++        driver.rows.append({**driver.rows[0], "egl_device_index": 2, "handle": 6666})
++    if failure == "unidentifiable":
++        driver.rows[0]["pci_bus_id"] = None
++    with pytest.raises(RuntimeError, match="one provable EGL device"):
++        module.configure(plan(), api=driver)
++    assert "MUJOCO_EGL_DEVICE_ID" not in module.os.environ
++
++
++def test_actual_current_context_on_the_server_gpu_is_rejected():
++    driver = Driver()
++    proof = module.configure(plan(), api=driver)
++    driver.current_handle = 4004
++    with pytest.raises(RuntimeError, match="different physical GPU"):
++        module.verify_current(proof, api=driver)
++
++
++@pytest.mark.parametrize(
++    "field,value",
++    [
++        ("physical_identity_verified", False),
++        ("physical_identity_verified", "true"),
++        ("egl_device_index", True),
++        ("context_verified", False),
++    ],
++)
++def test_root_handshake_rejects_unproven_or_malformed_device_flags(field, value):
++    proof = module.verify_current(module.configure(plan(), api=Driver()), api=Driver())
++    proof[field] = value
++    with pytest.raises(ValueError, match="unproven"):
++        module.validate_proof(proof, plan(), context=True)
++
++
++def test_wrong_role_or_uuid_cannot_be_reported_as_the_assigned_render_device():
++    proof = module.configure(plan(), api=Driver())
++    proof["render_gpu_id"] = 4
++    with pytest.raises(ValueError, match="assigned roles"):
++        module.validate_proof(proof, plan())
++    proof = module.configure(plan(), api=Driver())
++    proof["actual_device"]["uuid"] = "GPU-wrong"
++    with pytest.raises(ValueError, match="unproven"):
++        module.validate_proof(proof, plan())
++
++
++def test_osmesa_never_loads_an_egl_or_cuda_driver(monkeypatch):
++    monkeypatch.setattr(
++        module, "EGLDevices", lambda: pytest.fail("OSMesa cannot load EGL")
++    )
++    cfg = {
++        "backend": "osmesa",
++        "server_gpu_id": 4,
++        "render_gpu_id": None,
++        "expected_device": None,
++    }
++    proof = module.configure(cfg)
++    assert module.validate_proof(proof, cfg) == proof
++    assert (
++        module.os.environ["MUJOCO_GL"]
++        == module.os.environ["PYOPENGL_PLATFORM"]
++        == "osmesa"
++    )
++    assert module.os.environ["CUDA_VISIBLE_DEVICES"] == ""
++    assert "MUJOCO_EGL_DEVICE_ID" not in module.os.environ
++
++
++@pytest.mark.parametrize("pci", ["00000000:AF:00.0", "0000:af:00.0"])
++def test_pci_domain_and_case_are_normalized(pci):
++    assert module.normalize_pci(pci) == "0000:af:00.0"
++
++
++@pytest.mark.parametrize("pci", [None, "GPU-6", "0000:af:00", "10000000:00:00.0"])
++def test_malformed_pci_identity_is_rejected(pci):
++    with pytest.raises(ValueError):
++        module.normalize_pci(pci)
++
++
++class Function:
++    def __init__(self, callback):
++        self.callback = callback
++
++    def __call__(self, *args):
++        return self.callback(*args)
++
++
++def test_real_ctypes_inventory_and_current_display_parser_with_fake_functions(
++    monkeypatch,
++):
++    class Library:
++        eglGetProcAddress = Function(lambda *a: 0)
++        eglGetCurrentDisplay = Function(lambda: 111)
++        eglGetCurrentContext = Function(lambda: 222)
++        eglGetError = Function(lambda: 0x3000)
++
++    handles = [6006, 4004, 9999]
++
++    def query_devices(capacity, devices, count):
++        ctypes.cast(count, ctypes.POINTER(ctypes.c_int))[0] = len(handles)
++        if capacity:
++            for i, h in enumerate(handles):
++                devices[i] = h
++        return 1
++
++    def query_string(device, attribute):
++        return {6006: b"/dev/dri/renderD6", 4004: b"/dev/dri/renderD4"}.get(device)
++
++    def query_display(display, attribute, result):
++        assert display == 111 and attribute == 0x322C
++        ctypes.cast(result, ctypes.POINTER(ctypes.c_ssize_t))[0] = 6006
++        return 1
++
++    calls = {
++        b"eglQueryDevicesEXT": query_devices,
++        b"eglQueryDeviceStringEXT": query_string,
++        b"eglQueryDisplayAttribEXT": query_display,
++    }
++    monkeypatch.setattr(module.ctypes, "CDLL", lambda name: Library())
++    monkeypatch.setattr(
++        module.EGLDevices, "_function", lambda self, name, *a: calls[name]
++    )
++    original = module.Path.resolve
++
++    def resolve(path, *a, **kw):
++        mapping = {
++            "/sys/class/drm/renderD6/device": "0000:66:00.0",
++            "/sys/class/drm/renderD4/device": "0000:44:00.0",
++        }
++        if str(path) in mapping:
++            return module.Path("/synthetic/sysfs") / mapping[str(path)]
++        return original(path, *a, **kw)
++
++    monkeypatch.setattr(module.Path, "resolve", resolve)
++    driver = module.EGLDevices()
++    inventory = driver.inventory()
++    assert inventory[0]["pci_bus_id"] == "0000:66:00.0"
++    assert inventory[2]["pci_bus_id"] is None
++    proof = module.configure(plan(), api=driver)
++    assert module.verify_current(proof, api=driver)["context_verified"] is True
++
++
++@pytest.mark.parametrize("wrong_context", [False, True])
++def test_production_worker_attests_device_then_context_before_policy(
++    tmp_path, monkeypatch, wrong_context
++):
++    configuration = worker_test.cfg(tmp_path)
++    configuration["rendering"] = plan()
++    driver = Driver()
++    if wrong_context:
++        driver.current_handle = 4004
++    monkeypatch.setattr(module, "EGLDevices", lambda: driver)
++    channel, thread, errors, env = worker_test.run_worker(configuration, monkeypatch)
++    try:
++        ready = receive(channel)
++        assert ready["kind"] == "READY"
++        assert ready["rendering"]["render_gpu_id"] == 6
++        assert ready["rendering"]["egl_device_index"] == 0
++        send(
++            channel,
++            {
++                "nonce": "cpu",
++                "request_id": "start",
++                "op": "start_episode",
++                "attempt": configuration["_test_attempt"],
++                "grant": configuration["_test_grant"],
++            },
++        )
++        assert receive(channel)["state"] == "ENV_READY"
++        send(channel, {"nonce": "cpu", "request_id": "initialize", "op": "initialize"})
++        reply = receive(channel)
++        if wrong_context:
++            assert (
++                reply["kind"] == "FATAL" and "different physical GPU" in reply["error"]
++            )
++        else:
++            assert reply["rendering"]["context_verified"] is True
++            assert reply["initial_success"] is True
++            send(channel, {"nonce": "cpu", "request_id": "close", "op": "close"})
++            assert receive(channel)["closed"] is True
++        assert env.resets == 1 and not env.actions
++    finally:
++        channel.close()
++        thread.join(2)
++    assert not thread.is_alive()
++    assert bool(errors) is wrong_context
+diff --git a/tools/v3/eval_v2_batch_tests/render_mapping_test.py b/tools/v3/eval_v2_batch_tests/render_mapping_test.py
+new file mode 100644
+index 00000000..256c56be
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/render_mapping_test.py
+@@ -0,0 +1,377 @@
++"""Config, resource admission and real actor-config wiring without GPUs."""
++
++import copy
++import json
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++import yaml
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    build_manifest,
++    validate_manifest,
++)
++from cosmos_framework.evaluation.robocasa_v2.store import Store, save
++from robocasa_eval_v2 import resources
++from robocasa_eval_v2.cli import main
++from robocasa_eval_v2.config import execution, rendering, resolve
++from robocasa_eval_v2.identity import ATOMIC_TASKS
++from robocasa_eval_v2.runtime import Runtime
++
++from tools.v3.eval_v2_batch_tests.rollout_policy_test import configuration
++from tools.v3.eval_v2_production_tests.contract_test import manifest
++
++
++def resolved(tmp_path, **changes):
++    path = configuration(
++        tmp_path,
++        execution_profile="phase_b",
++        gpu_ids=[4, 5],
++        render_gpu_ids=[6, 7],
++        render_backend="egl",
++        sims_per_gpu=8,
++        max_infer_batch_size=2,
++        tasks="all",
++    )
++    raw = yaml.safe_load(path.read_text())
++    raw.update(changes)
++    path.write_text(yaml.safe_dump(raw))
++    return path, resolve(["dry-run", "--config", str(path)])[1]
++
++
++@pytest.mark.parametrize(
++    "gpus,renders,m,b",
++    [([4, 5], [6, 7], 8, 2), ([2], [3], 1, 1), ([2, 3, 4], [5, 5, 6], 3, 4)],
++)
++def test_counts_roles_and_batch_remain_independent(tmp_path, gpus, renders, m, b):
++    _, cfg = resolved(
++        tmp_path,
++        gpu_ids=gpus,
++        render_gpu_ids=renders,
++        sims_per_gpu=m,
++        max_infer_batch_size=b,
++    )
++    slots = resources.physical_slots(cfg, 18)
++    mapping = dict(zip(gpus, renders))
++    assert len(slots) == min(len(gpus) * m, 18)
++    assert resources.render_slots(cfg, 18) == {s: mapping[g] for s, g in slots.items()}
++    assert cfg["max_infer_batch_size"] == b
++
++
++@pytest.mark.parametrize(
++    "field,value",
++    [
++        ("render_backend", "glfw"),
++        ("render_backend", True),
++        ("render_gpu_ids", []),
++        ("render_gpu_ids", [6]),
++        ("render_gpu_ids", [6, -1]),
++        ("render_gpu_ids", [6, True]),
++        ("render_gpu_ids", "6,7"),
++        ("render_gpu_ids", [6.0, 7]),
++        ("server_reserve_bytes", -1),
++        ("server_reserve_bytes", True),
++        ("render_reserve_bytes_per_sim", 0.5),
++    ],
++)
++def test_bad_render_policy_is_rejected_before_runtime(tmp_path, field, value):
++    with pytest.raises(ValueError):
++        resolved(tmp_path, **{field: value})
++    assert not (tmp_path / "run").exists()
++
++
++def test_osmesa_and_legacy_environment_defaults_are_explicit(tmp_path, monkeypatch):
++    path, cfg = resolved(tmp_path, render_backend="osmesa", render_gpu_ids=None)
++    assert rendering(cfg) == {"backend": "osmesa", "gpu_ids": []}
++    assert set(resources.render_slots(cfg, 18).values()) == {None}
++    with pytest.raises(ValueError, match="OSMesa"):
++        resolved(tmp_path, render_backend="osmesa")
++    raw = yaml.safe_load(path.read_text())
++    raw.pop("render_backend")
++    raw.pop("render_gpu_ids")
++    path.write_text(yaml.safe_dump(raw))
++    monkeypatch.setenv("MUJOCO_GL", "osmesa")
++    cfg = resolve(["dry-run", "--config", str(path)])[1]
++    assert cfg["render_backend"] == "osmesa" and cfg["render_gpu_ids"] == []
++    monkeypatch.setenv("MUJOCO_GL", "egl")
++    cfg = resolve(["dry-run", "--config", str(path)])[1]
++    assert cfg["render_gpu_ids"] == cfg["gpu_ids"]
++
++
++def test_cli_render_overrides_and_preview_have_no_hardware_side_effects(
++    tmp_path, capsys
++):
++    path, cfg = resolved(tmp_path)
++    for task in ATOMIC_TASKS:
++        metadata = (
++            tmp_path / f"absent_inputs/dataset/{task}/lerobot/extras/dataset_meta.json"
++        )
++        metadata.parent.mkdir(parents=True)
++        metadata.write_text(json.dumps({"env_args": {"env_name": task}}))
++
++    def forbidden(*a, **k):
++        pytest.fail("preview must not probe a GPU or load a model")
++
++    assert (
++        main(
++            ["dry-run", "--config", str(path), "--render-gpus", "7,6"],
++            prepare_inputs=forbidden,
++            runtime_type=forbidden,
++        )
++        == 0
++    )
++    preview = json.loads(capsys.readouterr().out)
++    assert len(preview["physical_slots"]) == 16
++    assert set(preview["physical_slots"].values()) == {4, 5}
++    assert set(preview["render_slots"].values()) == {6, 7}
++    assert preview["render_slots"]["GPU4_S0"] == 7
++    assert preview["resolved"]["render_gpu_ids"] == [7, 6]
++    assert preview["models_loaded"] == preview["environments_created"] == 0
++    assert not (tmp_path / "run").exists()
++
++
++def store_cfg(tmp_path):
++    _, cfg = resolved(tmp_path)
++    m = manifest(tasks=ATOMIC_TASKS, episodes=50)
++    m = build_manifest(
++        tasks=m["tasks"],
++        episodes=50,
++        seed=m["seed"],
++        horizons=m["horizons"],
++        experiment=m["experiment"],
++        execution=execution(cfg),
++    )
++    store = Store(tmp_path / "run", m)
++    store.create()
++    save(
++        store.root / "_internal/invocations/0001.json",
++        {"mode": "fresh", "resolved": cfg},
++    )
++    return store, cfg
++
++
++@pytest.mark.parametrize(
++    "change",
++    [{"render_gpu_ids": [7, 6]}, {"render_backend": "osmesa", "render_gpu_ids": []}],
++)
++def test_same_run_render_drift_is_rejected_and_correct_resume_still_works(
++    tmp_path, change
++):
++    store, cfg = store_cfg(tmp_path)
++    changed = {**cfg, **change}
++    save(
++        store.root / "_internal/invocations/0000.json",
++        {"mode": "resume", "resolved": changed},
++    )
++    with pytest.raises(ValueError, match="render policy differs"):
++        Runtime(store, changed, {}, {})
++    Runtime(store, cfg, {}, {})
++
++
++def test_old_run_cannot_silently_adopt_explicit_render_roles(tmp_path):
++    store, cfg = store_cfg(tmp_path)
++    old = copy.deepcopy(cfg)
++    old.pop("render_backend")
++    old.pop("render_gpu_ids")
++    path = store.root / "_internal/invocations/0001.json"
++    path.unlink()  # Synthetic record replacement only.
++    save(path, {"mode": "fresh", "resolved": old})
++    with pytest.raises(ValueError, match="requires a new Run"):
++        Runtime(store, cfg, {}, {})
++
++
++def test_actual_actor_configuration_and_environment_use_independent_roles(
++    tmp_path, monkeypatch
++):
++    store, cfg = store_cfg(tmp_path)
++    runtime = Runtime(
++        store,
++        cfg,
++        {
++            "tasks": {t: "/unread/" + t for t in ATOMIC_TASKS},
++            "simulation_libraries": {},
++            "runtime": {"digest": "1" * 64},
++        },
++        {"MUJOCO_EGL_DEVICE_ID": "99"},
++    )
++    monkeypatch.setattr(runtime, "_server", lambda w: (None, {}, 8912))
++    monkeypatch.setattr(
++        resources,
++        "gpu_identity",
++        lambda g: {"gpu_id": g, "uuid": f"GPU-{g}", "pci_bus_id": f"0000:{g:02x}:00.0"},
++    )
++    launches = []
++
++    class BeforeProcess(Exception):
++        pass
++
++    def start(command, **kw):
++        assert command[2:4] == [
++            "-m",
++            "cosmos_framework.simulation.robocasa.eval_v2_worker",
++        ]
++        path = command[command.index("--config") + 1]
++        launches.append((json.loads(Path(path).read_text()), kw["env"]))
++        raise BeforeProcess
++
++    monkeypatch.setattr(runtime.registry, "start", start)
++    try:
++        with store.locked():
++            for worker in runtime.workers:
++                with pytest.raises(BeforeProcess):
++                    runtime._actor({"task": ATOMIC_TASKS[0], "physical_worker": worker})
++    finally:
++        for stream in runtime.logs:
++            stream.close()
++    assert len(launches) == 16
++    for actor, env in launches:
++        server_gpu = actor["gpu_id"]
++        assert server_gpu in (4, 5)
++        assert actor["rendering"]["server_gpu_id"] == server_gpu
++        assert actor["rendering"]["render_gpu_id"] == {4: 6, 5: 7}[server_gpu]
++        assert actor["rendering"]["expected_device"]["gpu_id"] in (6, 7)
++        assert env["CUDA_VISIBLE_DEVICES"] == ""
++        assert env["MUJOCO_GL"] == env["PYOPENGL_PLATFORM"] == "egl"
++        assert (
++            "MUJOCO_EGL_DEVICE_ID" not in env
++        )  # Worker must resolve the EGL enumeration.
++
++
++def resource_cfg():
++    return {
++        "gpu_ids": [4, 5],
++        "render_gpu_ids": [6, 7],
++        "render_backend": "egl",
++        "execution_profile": "phase_b",
++        "sims_per_gpu": 8,
++        "tasks": "all",
++        "max_gpu_fraction": 0.85,
++        "max_rss_bytes": 2**40,
++        "server_reserve_bytes": 10 * 1024**3,
++        "render_reserve_bytes_per_sim": 800 * 1024**2,
++    }
++
++
++def probe(*, missing=False, used_render=0, apps=""):
++    calls = []
++
++    def run(args, **kw):
++        calls.append(args)
++        if any("query-compute-apps" in a for a in args):
++            return SimpleNamespace(stdout=apps)
++        rows = [
++            f"{i}, GPU-{i}, 81920, {used_render if i in (6, 7) else 0}"
++            for i in (4, 5, 6, 7)
++            if not (missing and i == 6)
++        ]
++        return SimpleNamespace(stdout="\n".join(rows))
++
++    return run, calls
++
++
++def test_union_memory_admission_budgets_roles_without_querying_gpu_zero_to_three():
++    run, calls = probe()
++    result = resources.check(resource_cfg(), before_models=True, run=run)
++    assert result["reserves"] == {
++        4: 10 * 1024**3,
++        5: 10 * 1024**3,
++        6: 8 * 800 * 1024**2,
++        7: 8 * 800 * 1024**2,
++    }
++    assert calls[0][1:3] == ["-i", "4,5,6,7"]
++    assert calls[1][1:3] == ["-i", "6,7"]
++
++
++@pytest.mark.parametrize(
++    "options", [{"missing": True}, {"used_render": 70000}, {"apps": "GPU-6, 123456"}]
++)
++def test_missing_render_gpu_budget_or_foreign_cuda_is_blocked(options):
++    run, _ = probe(**options)
++    with pytest.raises(RuntimeError, match="BLOCKED_RESOURCE"):
++        resources.check(resource_cfg(), before_models=True, run=run)
++
++
++def test_owned_model_cuda_on_a_deliberately_shared_render_gpu_is_permitted(monkeypatch):
++    cfg = resource_cfg()
++    cfg["render_gpu_ids"] = [4, 5]
++    run, _ = probe(apps="GPU-4, 123456")
++    monkeypatch.setattr(resources, "group_members", lambda pgid: {123456})
++    result = resources.check(cfg, [SimpleNamespace(pgid=123456)], run=run)
++    assert result["owned_pids"] == [123456]
++
++
++def test_physical_identity_uses_pci_and_uuid_not_an_assumed_egl_index():
++    def run(args, **kw):
++        assert args[1:3] == ["-i", "6"]
++        return SimpleNamespace(stdout="6, GPU-render-six, 00000000:AF:00.0")
++
++    assert resources.gpu_identity(6, run=run) == {
++        "gpu_id": 6,
++        "uuid": "GPU-render-six",
++        "pci_bus_id": "0000:af:00.0",
++    }
++
++
++@pytest.mark.parametrize(
++    "policy",
++    [
++        {"backend": "egl", "gpu_ids": [6, 7]},
++        {"backend": "egl", "gpu_ids": [7, 6]},
++        {"backend": "osmesa", "gpu_ids": []},
++    ],
++)
++def test_new_run_manifest_digest_binds_backend_and_ordered_render_roles(policy):
++    m = manifest()
++    args = dict(
++        tasks=m["tasks"],
++        episodes=m["episodes_per_task"],
++        seed=m["seed"],
++        horizons=m["horizons"],
++        experiment=m["experiment"],
++    )
++    old = build_manifest(**args)
++    new = build_manifest(**args, rendering=policy)
++    assert validate_manifest(new) == new
++    assert old["digest"] != new["digest"]
++    other = {"backend": "egl", "gpu_ids": [8, 9]}
++    assert new["digest"] != build_manifest(**args, rendering=other)["digest"]
++
++
++@pytest.mark.parametrize(
++    "policy",
++    [
++        {"backend": "egl", "gpu_ids": []},
++        {"backend": "osmesa", "gpu_ids": [6]},
++        {"backend": "egl", "gpu_ids": [True]},
++        {"backend": "egl", "gpu_ids": [-1]},
++        {"backend": "egl", "gpu_ids": [6], "ignored": True},
++    ],
++)
++def test_manifest_rejects_incomplete_or_malformed_render_identity(policy):
++    m = manifest()
++    with pytest.raises(ValueError, match="render backend"):
++        build_manifest(
++            tasks=m["tasks"],
++            episodes=3,
++            seed=m["seed"],
++            horizons=m["horizons"],
++            experiment=m["experiment"],
++            rendering=policy,
++        )
++
++
++def test_runtime_refuses_render_roles_different_from_frozen_manifest(tmp_path):
++    store, cfg = store_cfg(tmp_path)
++    m = store.manifest
++    changed = build_manifest(
++        tasks=m["tasks"],
++        episodes=50,
++        seed=m["seed"],
++        horizons=m["horizons"],
++        experiment=m["experiment"],
++        execution=execution(cfg),
++        rendering={"backend": "egl", "gpu_ids": [7, 6]},
++    )
++    store = Store(tmp_path / "different-frozen-run", changed)
++    with pytest.raises(ValueError, match="frozen manifest"):
++        Runtime(store, cfg, {}, {})
+diff --git a/tools/v3/eval_v2_production_tests/worker_test.py b/tools/v3/eval_v2_production_tests/worker_test.py
+index 0f32641e..9e7b4dba 100644
+--- a/tools/v3/eval_v2_production_tests/worker_test.py
++++ b/tools/v3/eval_v2_production_tests/worker_test.py
+@@ -19,6 +19,7 @@ def cfg(tmp_path):
+     metadata = directory / "extras/dataset_meta.json"
+     metadata.write_text('{"env_args":{}}')
+     from cosmos_framework.simulation.robocasa import eval_v2_slot
++    from cosmos_framework.simulation.robocasa import render_devices
+     from tools.v3.eval_v2_production_tests.store_test import fresh
+ 
+     value = fresh(tmp_path, episodes=1)
+@@ -31,6 +32,7 @@ def cfg(tmp_path):
+         "native": Path(native.__file__),
+         "adapter": Path(eval_v2_adapter.__file__),
+         "slot": Path(eval_v2_slot.__file__),
++        "rendering": Path(render_devices.__file__),
+     }
+     return {
+         "nonce": "cpu",
+@@ -54,6 +56,12 @@ def cfg(tmp_path):
+             "server_url": "http://unused",
+             "predict_timeout_s": 0.1,
+         },
++        "rendering": {
++            "backend": "osmesa",
++            "server_gpu_id": 4,
++            "render_gpu_id": None,
++            "expected_device": None,
++        },
+         "runtime_args": {},
+         "dataset_dir": str(directory),
+         "metadata_sha256": hashlib.sha256(metadata.read_bytes()).hexdigest(),

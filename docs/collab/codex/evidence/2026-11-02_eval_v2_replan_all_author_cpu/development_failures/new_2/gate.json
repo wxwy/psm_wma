@@ -1,0 +1,14 @@
+{
+  "status": "FAIL",
+  "root": "f49d52e5646e54a1eb45c31f3179901650694c20",
+  "child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "gitlink": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "root_status": "M SESSION.md\n M TODO.md\n M cosmos-framework\n M scripts/robocasa_eval_v2/cli.py\n M scripts/robocasa_eval_v2/config.py\n M scripts/robocasa_eval_v2/runtime.py\n M tools/v3/eval_v2_production_tests/worker_test.py\n?? scripts/robocasa_eval_v2/generated_media.py\n?? tools/v3/eval_v2_replan_tests/",
+  "child_status": "M cosmos_framework/evaluation/robocasa_v2/media.py\n M cosmos_framework/inference/robocasa_batch_transactions.py\n M cosmos_framework/inference/robocasa_batch_transactions_test.py\n M cosmos_framework/scripts/action_policy_server_robocasa.py\n M cosmos_framework/simulation/robocasa/eval_v2_adapter.py\n M cosmos_framework/simulation/robocasa/eval_v2_transactions.py\n M cosmos_framework/simulation/robocasa/eval_v2_worker.py\n?? cosmos_framework/evaluation/robocasa_v2/generated_video.py",
+  "tests": 29,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "group": "all_new",
+  "seconds": 11.053866348986048
+}

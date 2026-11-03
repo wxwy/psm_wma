@@ -1,0 +1,110 @@
+[
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "scripts/robocasa_eval_v2/cli.py",
+      "scripts/robocasa_eval_v2/config.py",
+      "scripts/robocasa_eval_v2/generated_media.py",
+      "scripts/robocasa_eval_v2/runtime.py",
+      "tools/v3/eval_v2_batch_tests/rollout_policy_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py",
+      "tools/v3/eval_v2_replan_tests/__init__.py",
+      "tools/v3/eval_v2_replan_tests/config_test.py",
+      "tools/v3/eval_v2_replan_tests/encoder_test.py",
+      "tools/v3/eval_v2_replan_tests/native_test.py",
+      "tools/v3/eval_v2_replan_tests/report_test.py",
+      "tools/v3/eval_v2_replan_tests/support.py",
+      "tools/v3/eval_v2_replan_tests/transport_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "scripts/robocasa_eval_v2/cli.py",
+      "scripts/robocasa_eval_v2/config.py",
+      "scripts/robocasa_eval_v2/generated_media.py",
+      "scripts/robocasa_eval_v2/runtime.py",
+      "tools/v3/eval_v2_batch_tests/rollout_policy_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py",
+      "tools/v3/eval_v2_replan_tests/__init__.py",
+      "tools/v3/eval_v2_replan_tests/config_test.py",
+      "tools/v3/eval_v2_replan_tests/encoder_test.py",
+      "tools/v3/eval_v2_replan_tests/native_test.py",
+      "tools/v3/eval_v2_replan_tests/report_test.py",
+      "tools/v3/eval_v2_replan_tests/support.py",
+      "tools/v3/eval_v2_replan_tests/transport_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "f49d52e5646e54a1eb45c31f3179901650694c20",
+      "HEAD"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "cosmos_framework/evaluation/robocasa_v2/generated_video.py",
+      "cosmos_framework/evaluation/robocasa_v2/media.py",
+      "cosmos_framework/inference/robocasa_batch_transactions.py",
+      "cosmos_framework/inference/robocasa_batch_transactions_test.py",
+      "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_worker.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "cosmos_framework/evaluation/robocasa_v2/generated_video.py",
+      "cosmos_framework/evaluation/robocasa_v2/media.py",
+      "cosmos_framework/inference/robocasa_batch_transactions.py",
+      "cosmos_framework/inference/robocasa_batch_transactions_test.py",
+      "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_worker.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+      "HEAD"
+    ],
+    "cwd": "/workspace/psm-wma-eval-replan-all/cosmos-framework",
+    "exit_code": 0
+  }
+]

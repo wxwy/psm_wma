@@ -16,8 +16,8 @@ from robocasa_eval_v2.cli import main
 from robocasa_eval_v2.config import execution, resolve
 from robocasa_eval_v2.runtime import Runtime
 
-from tools.v3.eval_v2_production_tests.contract_test import manifest
 from tools.v3.eval_v2_production_tests import native_test
+from tools.v3.eval_v2_production_tests.contract_test import manifest
 from tools.v3.eval_v2_production_tests.native_test import Env, server
 
 FIELD = "rollout_mp4_first_n_per_task"
@@ -236,13 +236,19 @@ def test_every_physical_actor_receives_static_limit(
 class CapturedMedia(MediaSink):
     """Keep real frame/prediction selection; replace only encoder submission."""
 
-    def __init__(self, directory, *, rollout, generated, grace_s):
+    def __init__(self, directory, *, rollout, generated, grace_s, **media_options):
         self.rollout, self.generated = rollout, generated
+        self.strict = generated == "all"
         self.errors, self.queued = [], []
         self.dropped = 0
 
     def _submit(self, kind, payload):
         self.queued.append(kind)  # No queue, subprocess, decoding or video copy.
+
+    def _save_prediction(self, index, video, transfer, upstream_deadline=None):
+        # This fixture observes selection only, not durable completion. Real
+        # all-mode Encoder receipts are covered by eval_v2_replan_tests.
+        self.queued.append("prediction")
 
     def close(self):
         return {"errors": self.errors, "helper_pids": []}
@@ -297,6 +303,7 @@ def test_reused_native_episode_uses_task_logical_index_not_completion_order(
                 {
                     "task": task,
                     "episode": episode,
+                    "generation": 1,
                     "attempt_id": f"{order:032x}",
                     "stream_id": "1" * 32,
                     "seed": 7,

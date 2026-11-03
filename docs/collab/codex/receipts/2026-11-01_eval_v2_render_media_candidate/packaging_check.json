@@ -1,0 +1,70 @@
+{
+  "time": "2026-11-01T12:30:13.557611+08:00",
+  "formal_root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+  "evidence_head": "72f3f5e8e191eca13684f3419ea78435f3961c55",
+  "raw_diff_context_warnings": 31,
+  "verified_context_lines_only": true,
+  "raw_artifacts_preserved": true,
+  "all53_artifact_hashes_match": true,
+  "production_and_metadata_scoped_checks": "PASS",
+  "note": "Metadata commit had been created before classifying the raw-patch warning. Retained stdout is expected unified-diff context space, not source whitespace. No original artifact, test, configuration or production code was rewritten.",
+  "commands": [
+    {
+      "name": "raw_patch_context_warning",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+        "72f3f5e8e191eca13684f3419ea78435f3961c55"
+      ],
+      "cwd": "/workspace/psm-wma-eval-render-media",
+      "exit_code": 2
+    },
+    {
+      "name": "metadata_without_raw_diff_context",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+        "72f3f5e8e191eca13684f3419ea78435f3961c55",
+        "--",
+        ".",
+        ":(exclude)docs/collab/codex/evidence/2026-11-01_eval_v2_render_media_author_cpu/child_source.diff",
+        ":(exclude)docs/collab/codex/evidence/2026-11-01_eval_v2_render_media_author_cpu/root_source.diff"
+      ],
+      "cwd": "/workspace/psm-wma-eval-render-media",
+      "exit_code": 0
+    },
+    {
+      "name": "root_production_diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+        "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+        "--",
+        "scripts",
+        "configs",
+        "tools",
+        "cosmos-framework"
+      ],
+      "cwd": "/workspace/psm-wma-eval-render-media",
+      "exit_code": 0
+    },
+    {
+      "name": "child_production_diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "8664267704da3206e719f3c7eef2b5ed86e2a417",
+        "d3b2a29b978ff4abef800b9e71fab4422b7a0d23"
+      ],
+      "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "ruff_version",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "--version"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.0405870380345732
+  },
+  {
+    "name": "ruff",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "scripts/robocasa_eval_v2/resources.py",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_production_tests/entry_test.py",
+      "tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.04790808301186189
+  },
+  {
+    "name": "format",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "scripts/robocasa_eval_v2/resources.py",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_production_tests/entry_test.py",
+      "tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.05161963903810829
+  },
+  {
+    "name": "pytest",
+    "command": [
+      "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-q",
+      "-s",
+      "-x",
+      "-p",
+      "no:cacheprovider",
+      "--rootdir=/workspace/psm-wma-eval-render-media",
+      "tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+      "tools/v3/eval_v2_production_tests/entry_test.py::test_config_and_resource_gates_no_protected_writes",
+      "tools/v3/eval_v2_production_tests/entry_test.py::test_shared_gpu_has_no_occupancy_admission_but_retains_missing_device_safety",
+      "--basetemp=/tmp/psm-eval-owner-gpu-policy-20261101/final/pytest_tmp",
+      "--junitxml=/tmp/psm-eval-owner-gpu-policy-20261101/final/junit.xml"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 1.4051243120338768
+  }
+]

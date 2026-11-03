@@ -1,0 +1,23 @@
+{
+  "raw_traceback_blank_indent_lines": 16,
+  "content_exactly_four_spaces": true,
+  "affected_raw_artifacts": [
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml",
+    "docs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log"
+  ],
+  "original_artifacts_preserved": true,
+  "all48_hashes_match": true,
+  "source_and_other_metadata_diff_check": "PASS",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)docs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml",
+    ":(exclude)docs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log"
+  ],
+  "raw_diagnostic": "docs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:150: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:153: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:158: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:172: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:191: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:194: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:199: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/junit.xml:213: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:178: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:181: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:186: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:200: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:222: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:225: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:230: trailing whitespace.\n+    \ndocs/collab/codex/evidence/2026-11-01_eval_v2_rm_m01_queue_close_author_cpu/old_red/pytest.log:244: trailing whitespace.\n+    \n",
+  "no_production_or_test_change": true
+}

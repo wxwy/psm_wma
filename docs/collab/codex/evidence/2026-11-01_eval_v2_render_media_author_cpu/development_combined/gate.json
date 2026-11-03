@@ -1,0 +1,22 @@
+{
+  "status": "DEVELOPMENT_CPU_PASS",
+  "tests": 192,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "root": "4acdcf80c8a63ff77b095bf8953b11c4d4d1ca6e",
+  "child": "f1439ac3a83bf3f7c32d3be204f2723f90231996",
+  "gitlink": "f1439ac3a83bf3f7c32d3be204f2723f90231996",
+  "root_status": "M SESSION.md\n M cosmos-framework\n M docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md\n M scripts/robocasa_eval_v2/cli.py\n M scripts/robocasa_eval_v2/identity.py\n M scripts/robocasa_eval_v2/runtime.py\n M scripts/robocasa_eval_v2_processes.py\n M tools/v3/eval_v2_batch_tests/render_mapping_test.py\n?? tools/v3/eval_v2_batch_tests/media_cleanup_test.py\n?? tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py",
+  "child_status": "M cosmos_framework/evaluation/robocasa_v2/contract.py\n M cosmos_framework/evaluation/robocasa_v2/media.py\n M cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+  "source_unchanged": true,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "ruff": "0.12.7",
+  "real_gpu": false,
+  "real_egl": false,
+  "real_simulator": false,
+  "real_model": false,
+  "real_ffmpeg": false,
+  "independent_ds": false,
+  "scope": "split renderer and Media lifecycle, relevant existing config/slot/native/process/video-policy regressions"
+}

@@ -1,0 +1,102 @@
+{
+  "root_base": "ec8a8bf31d6e4cd2cc1a387b77d8510aef57e06f",
+  "child_base": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "root_changes": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "tools/v3/eval_v2_replan_tests/ack_history_test.py"
+  ],
+  "child_changes": [
+    "cosmos_framework/inference/robocasa_batch_transactions.py"
+  ],
+  "protected": {
+    "root/scripts": {
+      "before": "040000 tree c779440dfa15d04107b8da080fd12c5f28075868\tscripts",
+      "after": "040000 tree c779440dfa15d04107b8da080fd12c5f28075868\tscripts",
+      "unchanged": true
+    },
+    "root/configs": {
+      "before": "040000 tree 5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935\tconfigs",
+      "after": "040000 tree 5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935\tconfigs",
+      "unchanged": true
+    },
+    "root/third_party": {
+      "before": "040000 tree d01633d083298fc5245b5bc97677c5b297700c31\tthird_party",
+      "after": "040000 tree d01633d083298fc5245b5bc97677c5b297700c31\tthird_party",
+      "unchanged": true
+    },
+    "root/tools/v3/eval_v2_production_tests": {
+      "before": "040000 tree 28dc0aa9f74059a3317836bc6fb6f1f73a9f4f1f\ttools/v3/eval_v2_production_tests",
+      "after": "040000 tree 28dc0aa9f74059a3317836bc6fb6f1f73a9f4f1f\ttools/v3/eval_v2_production_tests",
+      "unchanged": true
+    },
+    "root/tools/v3/eval_v2_batch_tests": {
+      "before": "040000 tree aeb967cdd706ec412a42964b0e0beacd0b206e8e\ttools/v3/eval_v2_batch_tests",
+      "after": "040000 tree aeb967cdd706ec412a42964b0e0beacd0b206e8e\ttools/v3/eval_v2_batch_tests",
+      "unchanged": true
+    },
+    "root/docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu": {
+      "before": "040000 tree 4a2ab53e2677aede0ddfc50fa73d4377d9a60e28\tdocs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu",
+      "after": "040000 tree 4a2ab53e2677aede0ddfc50fa73d4377d9a60e28\tdocs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu",
+      "unchanged": true
+    },
+    "root/docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md": {
+      "before": "100644 blob dd00d0981b57c55fb7ea21aa978ccd92f1603817\tdocs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md",
+      "after": "100644 blob dd00d0981b57c55fb7ea21aa978ccd92f1603817\tdocs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md",
+      "unchanged": true
+    },
+    "child/cosmos_framework/model": {
+      "before": "040000 tree ae232e9cbe841d41ba5a363400c5f76890b9649e\tcosmos_framework/model",
+      "after": "040000 tree ae232e9cbe841d41ba5a363400c5f76890b9649e\tcosmos_framework/model",
+      "unchanged": true
+    },
+    "child/cosmos_framework/trainer": {
+      "before": "040000 tree 621320f8a8adc42c92182cd7b0367a4d091707a5\tcosmos_framework/trainer",
+      "after": "040000 tree 621320f8a8adc42c92182cd7b0367a4d091707a5\tcosmos_framework/trainer",
+      "unchanged": true
+    },
+    "child/cosmos_framework/checkpoint": {
+      "before": "040000 tree a544d735bb95024eacca51fb3527955aad91616c\tcosmos_framework/checkpoint",
+      "after": "040000 tree a544d735bb95024eacca51fb3527955aad91616c\tcosmos_framework/checkpoint",
+      "unchanged": true
+    },
+    "child/cosmos_framework/data": {
+      "before": "040000 tree 9a6b486bfbabd591d25575a5729ab2f2989ee2f5\tcosmos_framework/data",
+      "after": "040000 tree 9a6b486bfbabd591d25575a5729ab2f2989ee2f5\tcosmos_framework/data",
+      "unchanged": true
+    },
+    "child/cosmos_framework/evaluation": {
+      "before": "040000 tree e1a1951d1319227985f0d1f2b7b7e0c60890b144\tcosmos_framework/evaluation",
+      "after": "040000 tree e1a1951d1319227985f0d1f2b7b7e0c60890b144\tcosmos_framework/evaluation",
+      "unchanged": true
+    },
+    "child/cosmos_framework/simulation": {
+      "before": "040000 tree 2e8444de540892e90ab2c256ee467fb70ddec076\tcosmos_framework/simulation",
+      "after": "040000 tree 2e8444de540892e90ab2c256ee467fb70ddec076\tcosmos_framework/simulation",
+      "unchanged": true
+    },
+    "child/cosmos_framework/scripts": {
+      "before": "040000 tree ce596d269baa23f8904306487cd7cebc206671f8\tcosmos_framework/scripts",
+      "after": "040000 tree ce596d269baa23f8904306487cd7cebc206671f8\tcosmos_framework/scripts",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/robocasa_session_transactions.py": {
+      "before": "100644 blob 7231dee4a19135b15e25dbba89e8b3400e4f1cc8\tcosmos_framework/inference/robocasa_session_transactions.py",
+      "after": "100644 blob 7231dee4a19135b15e25dbba89e8b3400e4f1cc8\tcosmos_framework/inference/robocasa_session_transactions.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/robocasa_transaction_client.py": {
+      "before": "100644 blob 75b654cf7fac15b828be91096319a7dd803644f9\tcosmos_framework/inference/robocasa_transaction_client.py",
+      "after": "100644 blob 75b654cf7fac15b828be91096319a7dd803644f9\tcosmos_framework/inference/robocasa_transaction_client.py",
+      "unchanged": true
+    },
+    "child/cosmos_framework/inference/robocasa_batch_transactions_test.py": {
+      "before": "100644 blob 1c96df55e8818a87e332641e63fe5b4466b15a65\tcosmos_framework/inference/robocasa_batch_transactions_test.py",
+      "after": "100644 blob 1c96df55e8818a87e332641e63fe5b4466b15a65\tcosmos_framework/inference/robocasa_batch_transactions_test.py",
+      "unchanged": true
+    }
+  },
+  "old_379_evidence_unchanged": true,
+  "frozen_test_unchanged": true
+}

@@ -1,3 +1,784 @@
+# 2026-11-03 — Media-profile candidate published/readback PASS; STOP for review
+
+Fresh2026-11-03T03:36:14Z advertised-ref/fetch/Git-object readback PASS:
+Root candidate evidence/request2d8b1327ffd0f1585ce883fd272eea050f1ed8f2 on
+v3-eval-v2-media-profile-20261103, unchanged Child-Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796.25/25 artifact SHA and2/2 source Blob/
+SHA bindings, single Root production file, old379/122 evidence untouched, clean
+worktrees/unique request. Official V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd,
+official Child8664267704da3206e719f3c7eef2b5ed86e2a417. No Child push/commit.
+First verifier had old package-layout path final/static, failed without success
+record; fixed external path to static then repeated complete readonly pass.
+Both observations preserved in
+docs/collab/codex/evidence/2026-11-03_eval_v2_media_profile_publication/.
+
+Formal Root stays2d1ad80f89ab4cc0e275ff4341f064954870abdd / Childc93f2abf4fb27d36176ff8db094379a853cec796.
+This receipt successor is metadata only, no code/test changes or further CPU.
+Author exact-Pair42 PASS/0failure/error/skip, old frozen RED2/static scope stand;
+publication is not reviewer ACK/approval. After final readonly successor check
+STOP, status REVIEW. Actual DS19-record offline isolated-copy reconciliation
+pending; original R01 Hardware FAIL/exit1 preserved. No GPU/model/RoboCasa/V3
+promotion/training/DCP/Job/old media/shared runtime or DS dispatch.
+
+## Earlier publication preparation retained
+
+# 2026-11-03 — Media profile exact Root42 PASS, evidence/request publication next
+
+Formal Root2d1ad80f89ab4cc0e275ff4341f064954870abdd, unchanged Child/Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796. Clean exact-Pair final42 DISTINCT PASS,
+0failure/error/skip,15 new +10 report +17 config, no old379/122 rerun or edits.
+Frozen test SHA matches old targeted RED2, source/status unchanged during final.
+Ruff0.12.7/format/AST/py_compile2 PASS, AST production change exactly profile
+literal, Child/config/Vendor/previous evidence untouched. No production source
+change after the Formal commit. Only Root candidate v3-eval-v2-media-profile-20261103;
+no Child commit/push needed, existing remote Childc93f2abf stays locked.
+
+Evidence docs/collab/codex/evidence/2026-11-03_eval_v2_media_profile_author_cpu/
+(25 artifact hashes plus manifest, raw RED/GREEN/logs/env/frozen test/diff/static,
+fresh synthetic native Manifest/summaries and explicit pending offline status).
+Handoff docs/collab/codex/reviews/2026-11-03_V3_EvalV2_R01_Media_Profile_Author_Handoff.md.
+This successor is metadata only, not the Formal Root. New request, candidate push
+and fresh readback next, then STOP. Author42 does not close Code/DS/hardware Gate.
+DS actual19 outputs have not been accessed; offline reconciliation stays PENDING
+for isolated copy after review. Original R01 FAIL/exit1 and prior Code/CPU scoped
+approvals coexist unchanged; no V3/GPU/model/RoboCasa/old artifacts/Job/DCP actions.
+
+## Pre-freeze record retained
+
+# 2026-11-03 — Native media-summary literal fixed, development42 PASS, freezing Root
+
+Only Root generated_media.publish comparison literal changes CLI phase_b to
+Manifest phase_b_native_batch_v1 (format2 additions/1 deletion). Child/Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796 remains untouched, no Child commit.
+Frozen new media_profile_test.py before old RED2: real production execution()
+and Child build_manifest/Store/Core, true native profile/ACK wrongly rejected and
+false ACK wrongly accepted by old e7ce production. Same frozen tests GREEN:
+15 new +10 report +17 config =42 PASS/0failure/error/skip, source/status unchanged.
+Tests prove legal Phase B, Phase A/absence, strict ACK typing, both per-video
+receipt/file hashes on repeat publish, missing/bad receipt/file/hash refusal,
+unknown/CLI profile rejection by existing contract, Core/SR bytes unchanged.
+Only new synthetic CPU media; not DS actual19-record reconciliation.
+
+Ruff0.12.7/format/AST/py_compile2 PASS; AST diff exactly that string constant,
+Child, training/config/Vendor and old379/122 evidence unchanged. No extra source
+changes planned. Logs /tmp/psm-eval-v2-media-profile-20261103; Root implementation
+commit next then clean exact-Pair checks/evidence/request/publish/readback/STOP.
+Original Canary FAIL remains historical; DS isolated-copy offline19 still pending,
+no DS dispatch, GPU/model/RoboCasa/old artifacts/Job/training/DCP or V3 merge.
+
+## Pre-implementation claim retained
+
+# 2026-11-03 — R01-MEDIA-PROFILE-01 narrow Root fix claimed IN_PROGRESS
+
+User Hardware Canary REQUEST_CHANGES received. Fresh explicit candidate/V3 fetch
+and advertised refs matched: before8c0ff2e44fc1765126388a5f3c83bbfad23b6638,
+candidate b19b9edf7f39a83013a853f95c543081e0216b28, official V3 unchanged
+7e2be5ca40891915a1e86eea935ed054ec1984dd. Read all9 new commit subjects;
+diff only docs/Inbox, ancestry0 and safe merge --ff-only succeeded. Read exact
+2026-11-03 R01 Hardware profile Evidence review and Codex Narrow Fix request.
+Also verified previous e7ce99d7a0bbb7a81ea7afcee7253548687dc223 /
+c93f2abf4fb27d36176ff8db094379a853cec796 APPROVE_CODE and DS scoped CPU122
+closed from formal review files, without repeating old technical audits/tests.
+
+Current new Root-only branch v3-eval-v2-media-profile-20261103 in private
+/workspace/psm-wma-eval-replan-all, baseb19b9edf. Child/Gitlink stays
+c93f2abf4fb27d36176ff8db094379a853cec796, no Child branch/code/commit changes.
+Claim only Root scripts/robocasa_eval_v2/generated_media.py manifest literal
+phase_b ->phase_b_native_batch_v1, new focused profile test, necessary evidence/
+handoff/SESSION/TODO/append-only Inbox. No broad constant/manifest refactor.
+Freeze real native Manifest regression before old RED, then exact one-line fix,
+related report/config CPU/static only, new Formal Root SHA, review request, STOP.
+Keep original R01 FAIL and old379/122 evidence intact. Actual DS R01 outputs are
+not available/authorized here: offline19-record reconciliation remains DS-only
+pending on an isolated copy after review; no fabricated reconciliation PASS.
+No GPU/model/RoboCasa/old media/training/DCP/Job/shared source/V3 merge or DS
+dispatch. Owner current roles/STOP override stale V2/tmux/multi-pane rules.
+
+## Prior R01 publication record preserved
+
+# 2026-11-02 — RM-ALL-R01 candidate published/readback PASS; STOP for incremental review
+
+Fresh2026-11-02T11:42:35Z fetch/advertised refs/Git object readback PASS for
+new candidate Root29e006ceee3e84f20deeec6f5878d7f361fbb741 (evidence/request)
+and Childc93f2abf4fb27d36176ff8db094379a853cec796, Gitlink equal. Normal new
+candidate branch pushes Child FIRST then Root, v3-eval-v2-replan-ack-r01-20261102.
+40/40 artifact SHA and2/2 source Blob/SHA bindings, one production file, previous
+379 evidence immutable, unique request and clean worktrees confirmed. Official
+V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd and official Child
+8664267704da3206e719f3c7eef2b5ed86e2a417; no force/promotion. Receipt archived
+docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_publication/.
+
+Formal Pair stays e7ce99d7a0bbb7a81ea7afcee7253548687dc223 /
+c93f2abf4fb27d36176ff8db094379a853cec796. This successor is metadata only; no
+source/test changes or repeat CPU. Author scoped122 PASS/0failure/error/skip,
+old frozen targeted RED2, new16 public-path tests and static/protected scope PASS
+stand. Request publication proven, not reviewer ACK/approval/finding closure.
+After final readonly successor verification STOP, status REVIEW. No GPU/model/
+RoboCasa/old media/training/DCP/Job/shared runtime, V3 merge or DS dispatch.
+
+## Prior evidence/request preparation
+
+# 2026-11-02 — RM-ALL-R01 exact Pair122 author CPU PASS; publish/request next
+
+Formal Root e7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Child-Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796 on isolated Root/Child branch
+v3-eval-v2-replan-ack-r01-20261102. Final clean exact Pair:74 media tests +48
+actual CPU Torch Actor/Local/native =122 distinct PASS/0failure/error/skip,
+watched source/status unchanged. New16 tests exactly match pre-RED frozen bytes;
+old0dd expected RED2 preserved. Static Ruff0.12.7/format/AST/py_compile2, minimal
+allowlist, all other production trees and previous379 evidence unchanged PASS.
+Only production file Child robocasa_batch_transactions.py,26 additions/8 deletions.
+
+Evidence docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/
+has40 checksummed artifacts plus manifest, raw commands/logs/JUnit/frozen RED,
+minimal diffs/scope/bindings, two actual distinct fresh CPU MP4/receipts/full
+decode proof. Original379 evidence untouched, not rerun or relabelled as122+379.
+Handoff docs/collab/codex/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_ACK_History_Author_Handoff.md.
+This successor is bookkeeping only, Formal Pair remains above. No source edits
+after final checks. Prepare unique append-only GPT incremental request, publish
+new Child branch then Root branch, fresh remote readback, then STOP. Author tests
+do not close the finding or imply GPT/DS/hardware approval. No V3 merge, real
+GPU/model/RoboCasa, old media/training/DCP/Job/shared runtime or DS dispatch.
+Completion decode/fsync/hash cost remains nonblocking future measurement.
+
+## Pre-freeze development record retained
+
+# 2026-11-02 — RM-ALL-R01 implemented, scoped122 development CPU PASS; freezing Pair
+
+Changed only Child inference/robocasa_batch_transactions.py and added Root
+tools/v3/eval_v2_replan_tests/ack_history_test.py. Bounded per-active-Episode
+request-key history retains payload/receipt digests and Replan index until
+acknowledged End, including End202 quiescence. No video/full-receipt storage.
+100001 record cap follows existing wire frontier0..100000; pending strict jobs
+count against cap before reservation, no eviction or late ACK-capacity failure.
+Correct older reserve/ACK after later Replans is idempotent without spool/native/
+decode/Encoder work; changed identity/foreign/stale generations remain rejected.
+Default spool4/512MiB, media timeout, Encoder/verification/Local/SR paths unchanged.
+
+New16-case public API tests frozen BEFORE old-production RED (including two
+different frame sequences/MP4 hashes). Old0dd13d3d source unchanged: expected
+RED2/2 targeted failures; first draft driver's redundant message check failed
+after pytest had correctly produced2RED, preserved raw logs, fixed driver check
+only and validated RED2 again without any test/production edits. New same frozen
+file: green74 = new16 + inherited58 PASS; real CPU Torch batch/Local/native48
+PASS. Total122 scoped development tests,0failure/error/skip; NOT a rerun/relabel
+of previous379. Static Ruff0.12.7/format/AST/py_compile2, unchanged frozen test,
+exact scope and historical379 evidence tree PASS. Logs external
+/tmp/psm-eval-v2-rm-all-r01-20261102. Child committed first, Root next; full new
+Pair and clean-Pair checks bound in the evidence successor. No extra implementation
+changes planned, no zero-overhead/performance claim, no hardware/old media access.
+
+## Original R01 claim and exact review observation retained
+
+# 2026-11-02 — RM-ALL-R01 claimed, narrow cross-Replan ACK replay fix IN_PROGRESS
+
+User supplied REQUEST_CHANGES; refreshed remote before consuming verdict.
+Before Root47b8e2242ed114b05ced96a9445c423144687a21; explicit candidate/V3 fetch
+and ls-remote agree on candidate ec8a8bf31d6e4cd2cc1a387b77d8510aef57e06f /
+official V3 7e2be5ca40891915a1e86eea935ed054ec1984dd. New commits e49947ec and
+ec8a8bf3 only detailed Review and Inbox; ancestry check0 and merge --ff-only
+succeeded. Read live Inbox and exact detailed Review
+docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_d2041e38_0dd13d3d_Incremental_Code_Gate_REQUEST_CHANGES.md:
+Formal d2041e388eda084e42a2d6b0d115db8beedfab44 /
+0dd13d3d952aa7cbab39f966dfab04b23551f0c9, GPT REQUEST_CHANGES, sole production
+blocker RM-ALL-R01. Not a new full audit of historical approved pairs.
+
+New isolated Root/Child branch v3-eval-v2-replan-ack-r01-20261102, same private
+worktree /workspace/psm-wma-eval-replan-all, bases ec8a8bf3 /0dd13d3d. Before
+implementation claim only Child inference/robocasa_batch_transactions.py and
+new Root tools/v3/eval_v2_replan_tests/ack_history_test.py plus necessary evidence,
+handoff, Gitlink and SESSION/TODO/append-only Inbox. No other production edits.
+Plan bounded per-active-Episode saved identity records (existing0..100000 wire
+index bound), exact old reserve/receipt replay after later Replans, no history
+eviction, cleanup on acknowledged End. Freeze public API tests before running
+old-production expected RED, then minimal code fix and same tests GREEN.
+
+Owner only author code/CPU -> publish new Child/Root -> GPT fresh incremental
+review -> STOP. This supersedes historical V2/tmux wait and multi-agent rules;
+no subagents, DS dispatch, hardware, actual model/RoboCasa, official V3 merge,
+existing training/DCP/Job/historical media access. Existing379 author evidence
+and10 synthetic clips immutable, not relabelled as new-Pair full acceptance.
+Performance encode/decode/fsync/hash measurement remains nonblocking future
+target-host evidence; no performance optimization or zero-overhead claim here.
+
+## Prior submission history retained
+
+# 2026-11-02 — Replan all-media candidate published; fresh remote readback PASS; STOP
+
+At2026-11-02T09:56:31Z, fresh explicit fetch/advertised refs/Git object readback
+PASS: candidate Root evidence/request HEAD fc057e6f731d12dbe2b657b0c73859c4b4657677,
+Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9. Child pushed FIRST, then Root,
+normal nonforce new candidate branches v3-eval-v2-replan-all-20261102. Official
+Root V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd and Child v3-local-ttt
+8664267704da3206e719f3c7eef2b5ed86e2a417. Source bound to Formal Root
+d2041e388eda084e42a2d6b0d115db8beedfab44 / same Child; Root successors metadata
+only. 73/73 artifact SHA and22/22 source Blob/SHA bindings re-read successfully,
+unique canonical request, clean worktrees, exact archive; receipt persisted at
+docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_publication/.
+
+This receipt commit is bookkeeping, not a new Formal implementation. Author
+clean-Pair CPU379 PASS/0failure/error/skip and static PASS stand; no source changes
+or extra test reruns. Request publication is proven, not reviewer ACK/approval.
+After final readonly verification of this receipt successor, STOP. Task REVIEW,
+GPT incremental Code Gate pending; independent DS CPU and separately authorized
+hardware remain separate. No V3 promotion, GPU/model/real simulator/historical
+media/NoTTT/out2/Job/training/DCP/shared-worktree operation or DS dispatch.
+
+## Previous publication preparation
+
+# 2026-11-02 — Replan all-media clean Formal Pair379 PASS; publishing for review
+
+Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44, Child/Gitlink
+0dd13d3d952aa7cbab39f966dfab04b23551f0c9; new isolated
+v3-eval-v2-replan-all-20261102. Four FINAL clean-Pair groups379 DISTINCT PASS,
+0failure/error/skip (new58/related174/inference129/runtime18), source/status
+unchanged before/after. Python3.13.5 for first two;3.12.14 CPU Torch for last two.
+Ruff0.12.7 check/format, AST+py_compile22 files,22 Git Blob/SHA source bindings,
+precise allowlist/protected tree/byte-identical rollover PASS. Includes10 actual
+fresh synthetic CPU MP4, full-frame decode proofs, Encoder receipts and10 Server
+ACKs, no real model/physics/GPU. Actual Local/Fast/cold-hot-prefix End tested on
+CPU. No independent GPT/DS/hardware verdict is implied.
+
+Evidence docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu/
+(73 hashed artifacts plus manifest, raw JUnit/logs/commands/diffs, synthetic media,
+failed development logs retained); author handoff
+docs/collab/codex/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_Author_Handoff.md.
+This successor commit adds evidence/bookkeeping only; Formal Pair stays above.
+No source change after final tests. Publish new Child candidate then Root, read
+back exact refs/Gitlink/all artifacts+22 source bindings, append unique GPT request,
+then STOP. No V3/official Child merge, DS dispatch, GPU/model/real simulator,
+historical media or training/DCP/Job/shared worktree operations. HW-MEDIA-03 and
+old hardware findings remain pending. Owner current role/STOP supersedes old V2
+three-pane waiting. Inbox rollover complete; original140743bytes Blob dd00d098
+preserved without edits in immutable archive. Next state is REVIEW, not Gate PASS.
+
+## Pre-commit snapshot retained
+
+# 2026-11-02 — Replan all-media implementation frozen, author exact-Pair check next
+
+New isolated candidate v3-eval-v2-replan-all-20261102. Child implementation
+committed first (full SHA in subsequent Root Gitlink); Root implementation commit
+pending. Development scoped author CPU: new_5 all_new58 PASS, inference_3
+real CPU Torch/Local129 PASS, related_2 media/config/worker/native174 PASS,
+runtime_1 owned OS Sim/HTTP/fake model18 PASS:379 distinct cases,0failure/error/
+skip. Static_4 Root/Child Ruff0.12.7 check/format and AST PASS. These are author
+development results; a clean exact committed Pair rerun will be bound separately,
+and neither author testing nor this record is GPT/DS/hardware acceptance.
+
+Implementation document:
+docs/build/PSM-WMA_V3_EvalV2_Replan_All_Durable_Media_Implementation_r1_2026-11-02.md.
+CPU commands/logs currently external /tmp/psm-eval-replan-all-20261102; final
+JUnit, command/environment records, source diffs and synthetic10-video proof
+will be archived in the author evidence successor commit after exact Pair tests.
+No source changes planned. Keep previous failed development logs; FFmpeg parser
+metadata suppression was corrected, report writer uses existing bounded generic
+write (not the summary-only writer), and old selection fixture initializes the
+new media interface without weakening its selection/Core assertions. Original
+spool-byte negative now proves rejection before CPU copy at the configured limit.
+
+Inbox was already140743bytes in basef49d52e5, exceeding131072 hard limit. Before
+new append, preserved it byte-for-byte at
+docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md,
+same original/archive Git Blob dd00d0981b57c55fb7ea21aa978ccd92f1603817;
+rebuilt live continuity index under routine AGENTS rollover exception. No lost
+history. Candidate-only; official Root V3/Child refs confirmed unchanged7e2be5ca/
+86642677. User role/STOP overrides historical V2/tmux90min waiting instructions.
+No GPU/model/real server/simulator/old media/training/Checkpoint/Job operations.
+Next: exact Root/Child, clean-Pair CPU/static, Child->Root candidate publication,
+readback + one GPT request, then STOP, no official V3 promotion or DS dispatch.
+
+## Earlier task claim (pre-implementation snapshot)
+
+# 2026-11-02 — Replan all-video lossless media candidate IN_PROGRESS
+
+Read Owner canonical request at f49d52e5646e54a1eb45c31f3179901650694c20
+and actual candidate live Inbox; official V3 has no such request and remains
+7e2be5ca/official Child86642677. New isolated Root/Child branches
+v3-eval-v2-replan-all-20261102 under /workspace/psm-wma-eval-replan-all,
+Root basef49d52e5 / Child9a8cd618. Prior approved4b581493/9a8cd618 code and
+all review/evidence preserved, no repeated old-pair technical review.
+
+Owner scope: all-mode per-Replan MP4 guaranteed-or-explicit-MEDIA_INCOMPLETE,
+per-Server configurable spool default4 jobs/512MiB, bounded backpressure,
+Encoder durable VIDEO_SAVED before server ACK, episode media completion drain,
+none/first unchanged, no scientific Core/SR/Local algorithm changes. Current
+Owner author->GPT->DS roles/STOP supersede historical V2 three-pane polling.
+Candidate code+CPU explicitly authorized; CPU requirement of genuinely decodable
+10 synthetic MP4 authorizes local CPU encoder/full-frame decode tests, not old
+H3/H2 files, GPU/simulator/model, production worktrees or V3 promotion. No old
+media/NoTTT/out2/training/DCP/results/log access. Historical HW-MEDIA-03 remains
+DS-only/offline evidence pending; do not claim417/121 old clips were decoded.
+
+Implementation choice: in all mode use synchronous per-Replan transfer/save/ACK
+for low-load diagnostics. Reserve bounded server spool via authenticated media
+control before inference, outside model executor/locks; 429 retries are bounded
+by independent media deadline. Failure stops further media requests but preserves
+one native action prediction/Core; no re-generation. Strict decode gets executor
+priority, no waiting while model lock is held. Reuse bounded32MiB wire item cap
+for strict item reservation, charged until durable ACK; capacity unavailable
+waits via client, oversize/errors explicit incomplete. No concurrency remap.
+Encoder uses atomic per-video temp/close/full-frame decode/fsync/rename and
+receipt JSON, then an independent bounded local datagram ACK. All pending saved
+proofs reconcile before normal encoder sentinel; true failures keep bounded
+owned cleanup and existing fail-closed semantics. Native end/reset always has
+its existing cleanup path; separate media diagnostics do not become policy fail.
+
+Planned Root config/runtime/CLI plus a small media-summary helper and focused
+tests; Child batch transactions/API dispatch, PolicyTransport, MediaSink/atomic
+video helper and NativeEpisode adapter. No base SessionTransactions, model/native
+generation action path, Local-TTT/Optimizer, Scheduler/Store, GPU policy/role,
+training/Checkpoint/data/Vendor changes. Defaults media drain300s (finite,
+configurable) allow decode+write+full verification; tests use bounded short delays.
+Before coding claimed task here/TODO; no production/test edits yet. Final exact
+Child then Root, focused CPU/static evidence and one GPT request, then STOP.
+
+## Previous candidate history preserved
+
+# 2026-11-01 — Owner GPU policy candidate/request published, readback PASS
+
+The first readback failed on Child GitHub HTTP503 before writing any success
+receipt. A bounded readonly retry completed the full fresh pass below; no prior
+or partial result was reused. No code/config mutation for network recovery.
+
+Observation 2026-11-01T20:13:37.632754+08:00: Formal Root 4b581493db805c92964cb27e740c736db87c0329, unchanged
+Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6. Root-only normal nonforce candidate push, HEAD
+19525faf36bc09a03e2d39e7bcc5d018a1a039bb. Fresh explicit fetches and advertised refs agree;27/27 artifact
+hashes and6/6 source bindings re-read from GitHub objects. Source equals Formal,
+clean worktrees before receipt bookkeeping; final70/0/0/0 clean-Pair author Gate
+retained. Inbox128696bytes, prefix intact, unique policy request. Old APPROVE_CODE
+remains attached to6484dd83/9a8cd618; this observation asserts request delivery
+only and does not infer a new policy verdict. Prior evidence preserved, not rerun.
+
+Official V3 remains7e2be5ca, official Child86642677; no canonical promotion.
+No actual GPU/NVML/EGL/process-list/FFmpeg/model/Server/simulator, training,
+out2/NoTTT/shared runtime/DCP/results/log/process access or DS dispatch. Selected
+GPU identity/Context and owned cleanup remain; admission no longer considers
+other GPU jobs or VRAM budgets per explicit Owner decision. Receipt/SESSION
+successor is bookkeeping, not new implementation. Final repeat readback external,
+then STOP for GPT narrow review; no superseded V2/tmux poll or launch authority.
+
+## Earlier policy history preserved
+
+# 2026-11-01 — Owner resource policy clean-Pair70 PASS, request prepared
+
+Formal Root 4b581493db805c92964cb27e740c736db87c0329, same Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6.
+Final run_cpu.py formal final:70 PASS/0failure/error/skip, Root/Child clean and
+source hashes unchanged, Python3.13.5/Ruff0.12.7 check/format/syntax/diff PASS.
+15new+33mapping+20Context+2entry cases; development70 separate. No historical
+192/206/29 rerun, actual NVML/GPU/EGL/FFmpeg/model/simulator/job access or DS
+execution. Source scope: one production file resources.py plus3 focused test
+files; all Child/source safety, Media, scientific and runtime files unchanged.
+Old budget/foreign blockers intentionally retired by explicit Owner instruction;
+device/physical Context/own RSS and owned cleanup preserved. Diagnostic GPU map
+is now index->UUID; no memory/reserve fields or budget reads. API keyword kept.
+
+Preparation 2026-11-01T20:11:12.102202+08:00; fetched/read prior exact6484dd83/9a8cd618 APPROVE_CODE
+and candidate Inboxb0b6e8ca. Prior source verdict stays exact-Pair valid, no new
+approval inferred. Candidate-only policy request appended, bytes before126429,
+append2267, after128696, prefix unchanged/no rollover.
+Frozen27 artifact hashes/6 bindings and Diff/scope at
+docs/collab/codex/evidence/2026-11-01_eval_v2_owner_gpu_policy_author_cpu. Root candidate publication/readback only, Child unchanged. After
+successful remote proof STOP for GPT narrow Code Gate. Current Owner reviewer
+GPT followed by DS independent validation; no old V2/tmux polling/dispatch.
+No V3 merge, active out2/NoTTT/shared worktree/config/Job/DCP/results/media/log
+or process operation, GPU0-3 or actual runtime/Canary/evaluation/training/Resume.
+
+## Earlier resource-policy history preserved
+
+# 2026-11-01 — Owner GPU policy development70 PASS, Root freeze next
+
+Only production change is scripts/robocasa_eval_v2/resources.py: probe selected
+index/UUID only, delete GPU used+reserve/fraction admission and compute-app PID
+enumeration. Keep missing-device/UUID validation, physical slots/gpu_identity
+PCI lookup, own RSS and source-independent owned-process cleanup. No memory
+statistics collected; GPU proof is index->UUID, reserves field removed. Runtime
+uses probe success only; no production consumer of removed memory fields.
+Legacy config keys accepted but not admission inputs; before_models call keyword
+retained. No config/CLI/runtime/Child/model/Media change.
+
+Related tests retire the old memory/foreign-CUDA blocking expectations per
+Owner's explicit new policy. Missing devices and physical proof checks retained;
+add15 policy cases for no budget-key reads, no memory/process-list queries, GPU4-7
+selection, malformed/absent identities, own-only RSS and real-probe error
+propagation. Development70/70 PASS,0failure/error/skip, Python3.13.5/Ruff0.12.7
+check/format/six-file AST PASS. Full render mapping/context CPU doubles and two
+entry resource cases included; no actual nvidia-smi/NVML/EGL/GPU/FFmpeg/model/
+simulation. Old Media/206 suites not rerun. Source hashes unchanged in test.
+Command /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-owner-gpu-policy-20261101/run_cpu.py development
+/tmp/psm-eval-owner-gpu-policy-20261101/development, explicit CPU/offline/tmp caches.
+
+Freeze separate Root policy implementation with unchanged Child9a8cd618. Then
+clean-Pair focused author70 Gate/evidence, independent narrow GPT request and
+STOP. Prior APPROVE_CODE stays attached to6484dd83/9a8cd618; it does not approve
+this new policy increment. No V3/official Child merge, real probes/run or active
+out2/NoTTT/shared code/config/DCP/results/log/process access.
+
+## Earlier claim preserved
+
+# 2026-11-01 — Owner GPU resource-policy override, IN_PROGRESS
+
+Read actual remote GPT APPROVE_CODE review for exact6484dd83/9a8cd618 and
+candidate live Inbox, plus DS mixed-interpreter acknowledgment (reported206
+unique cases across3.13/3.12, not a new execution by Codex). Remote candidate
+advanced only by248faf62/b55d78ac/b0b6e8ca review/Inbox docs; isolated clean
+Root fast-forwarded2105401b -> b0b6e8ca. Canonical V3 remains7e2be5ca,
+Child9a8cd618 unchanged. Current Owner workflow overrides old V2/three-pane
+polling; existing source approval remains tied to its exact old Pair.
+
+New Owner instruction authorizes only resources.py + related focused tests:
+remove external CUDA process enumeration/blocker and memory.used/reserve GPU
+admission, retain selected GPU existence/identity, PCI/EGL mapping and actual
+Context checks, and only owned-process RSS/safe cleanup. No query/manage/stop of
+other GPU jobs; selected target4,5,6,7 only, no GPU0-3 activity. Keep configurable
+2Server/16Sim M8/B2 target and all videos; no config/runtime/Child/model/Media/
+Local/Scheduler/Store/Checkpoint/NoTTT changes. Existing legacy GPU budget config
+keys may remain accepted but are ignored by resource admission; no new flag.
+
+Planned production file scripts/robocasa_eval_v2/resources.py. Related tests:
+resource cases in render_mapping_test.py, two entry_test.py resource regressions,
+new owner_gpu_resource_policy_test.py. Source check should query only index/UUID,
+preserve separately called gpu_identity PCI lookup and own RSS checks. Resource
+proof GPU entries become index->UUID; no production consumer depends on removed
+memory/reserve diagnostics (Runtime uses probe success only).
+Focused CPU tests/Source bindings/new Root with same Child then separate GPT
+incremental review. No canonical merge, real GPU/EGL/FFmpeg/Server/simulator,
+old out2/NoTTT/shared runtime/DCP/results/log access, training/evaluation/Resume
+or DS dispatch. STOP after candidate publication/readback and request. New task
+uncommitted at claim time; no production/test edits yet.
+
+## Previous approved implementation history preserved
+
+# 2026-11-01 — RM-M01 candidate request published; exact readback PASS
+
+Observation 2026-11-01T13:09:40.608133+08:00: Formal Root 6484dd83efc512e6801470790eb84ac7349c127a /
+Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6. Normal nonforce Child candidate push first,
+then Root candidate 7ad8c9e8aecee16a9131f4a2811bbb3920ed79a1. Explicit Root fetch refspecs (origin default
+maps V2 only) and Child fetch match advertised refs. Official V3 remains7e2be5ca,
+official Child86642677; no canonical promotion. Both worktrees clean before
+receipt bookkeeping; candidate source equals Formal. New48/48 raw artifact
+hashes and6/6 source bindings re-read from GitHub-fetched objects; final29/0/0/0
+exact clean-Pair gate retained. Unique Inbox append122340bytes, old prefix
+identical; original GPT RM-M01 review and192 evidence preserved.
+
+This records delivery/readback only, not a GPT approval or independent DS Gate.
+Review request published only on isolated candidate; no old V2/tmux polling,
+DS dispatch, actual GPU/EGL/FFmpeg/model/ActionServer/simulator, out2/NoTTT/shared
+runtime, DCP, training/evaluation/Resume action. Successor receipt/SESSION is
+bookkeeping and does not replace Formal Pair. Final repeat ref/source check is
+external; STOP for GPT narrow incremental review under current Owner workflow.
+
+## Earlier RM-M01 history preserved
+
+# 2026-11-01 — Raw RED traceback retained without formatting mutation
+
+Pre-commit full content whitespace check stopped the metadata commit on16
+four-space blank lines rendered inside original pytest RED JUnit/stdout.
+Verified every warning refers only to the two raw RED artifacts; source and
+all other staged content pass when excluding only those two preserved raw
+files.48 artifact hashes unchanged. No original log, XML, test or production
+code rewritten. Packaging note retains exact warning and scoped command.
+Formal6484dd83/9a8cd618 and clean-Pair29 author PASS remain unchanged.
+
+## Earlier RM-M01 history preserved
+
+# 2026-11-01 — RM-M01 exact author Gate PASS; new incremental request prepared
+
+Formal Root 6484dd83efc512e6801470790eb84ac7349c127a / Child-Gitlink 9a8cd6183424bfce245fbca393ca25ed59919ea6; candidate-only.
+Final clean-Pair command: Python3.13.5 run_cpu.py formal final, under
+/tmp/psm-eval-render-media-rm01-20261101/;29 passed,0failure/error/skip,
+Root/Child clean and matching Gitlink before/after, hashes unchanged. Ruff0.12.7
+check/format, six-file syntax and production Root/Child diff-check PASS.
+Pre-RED frozen test2ff48cae... is identical in all runs and new Formal Root.
+Old committed Child RED14:10 expected failures+4controls,0error/skip.14new +
+13existing Media lifecycle+2Core final regressions. Development29 separate.
+No full192 rerun. Original53 hashes unchanged and bound to old Pair; new48
+artifacts and6 source bindings verified, scope protected trees unchanged.
+
+Only Child production delta is media.py's two sticky failure assignments.
+Renderer, process ownership, Adapter/reporting implementation and scientific/
+training/checkpoint/Vendor source untouched. Reporting tests confirm true Queue
+failure versus descriptor EBADF/successful forced reap, valid Core/Local ACK.
+
+Observation/request preparation 2026-11-01T13:06:52.576830+08:00: detailed GPT REQUEST_CHANGES and
+Inbox were fetched/read at candidatef6ada882, not canonicalV3. Exact old Pair
+verified; no new approval inferred. Canonical V3 advertised7e2be5ca, official
+Child86642677, prior candidateChildd3b2a29b. Current Owner workflow GPT is sole
+code reviewer, DS independent CPU follows; no superseded three-pane polling.
+Candidate Inbox append-only: before119939, append2401,
+after122340 bytes, prefix unchanged/no rollover. New unique RM-M01
+request prepared; publish Child then Root by normal nonforce push and read back.
+Evidence/ledger successors do not replace Formal implementation. STOP after
+publication for incremental GPT review; no V3 merge/out2/NoTTT/shared runtime,
+GPU/EGL/FFmpeg/model/ActionServer/simulator/Canary/evaluation/training/DCP or DS
+dispatch. No true hardware, independent DS or real FFmpeg acceptance claimed.
+
+## Earlier RM-M01 history preserved
+
+# 2026-11-01 — RM-M01 targeted development GREEN, exact Pair freeze next
+
+Old committed Childd3b2a29b / Rootf6ada882 with frozen new tests reproduced
+14 cases:10 expected failures+4 controls PASS,0error/skip. Test SHA256 before
+first RED2ff48caeb197c5a4e04a04a686ebcdb28944d3e12c4d0968629726b774c56c5c;
+saved full frozen test and raw JUnit/stdout in
+/tmp/psm-eval-render-media-rm01-20261101/old_red. Failure messages checked to
+be the exact missing-failure assertions, not fixture/infrastructure exceptions.
+
+Only production edit: Child media.py sets fd_failed=True for Queue shutdown
+OSError/ValueError and OR-preserves it through later descriptor-close EBADF.
+No architecture/timeout/renderer/ownership/Adapter/scientific changes. Same frozen
+tests then GREEN:29 passed,0failure/error/skip;14new+13existing Media lifecycle+
+2existing Core regressions. Actual Python3.13.5 Queue/CPU encoder regression,
+fake stopped Queue/process/fd injections and loopback HTTP model/env only.
+No true FFmpeg/GPU/EGL/model/simulator. Ruff0.12.7 check/format and six-file AST
+PASS. Source/test hashes stable; source not changed after this run.
+Commands: /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-render-media-rm01-20261101/run_cpu.py red [old_red] / green
+[development_green], full invocation/environment/logs stored in those dirs.
+
+Freeze Child first, then Root test/Gitlink; clean-Pair scoped29 Gate next.
+Historical192 is untouched and not rerun or inherited as new-Pair full PASS.
+Current edits uncommitted at this entry; publish independent candidate/request
+only after final evidence, STOP for GPT incremental review. Owner runtime and
+no-V3/official-Child/out2/NoTTT/DCP boundaries unchanged.
+
+## Earlier RM-M01 observation preserved
+
+# 2026-11-01 — RM-M01 formal review consumed; narrow remediation IN_PROGRESS
+
+Observed/fetched candidate HEAD f6ada8822f597d0ce4ee7928282fd690ca652ec0;
+advertised Root candidate agrees, canonical V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd.
+Official Child8664267704da3206e719f3c7eef2b5ed86e2a417, candidate Childd3b2a29b978ff4abef800b9e71fab4422b7a0d23.
+Review read at its actual candidate ref, full exact Pair46d3a604/d3b2a29b and
+REQUEST_CHANGES confirmed in detailed review and live Inbox. Initial lookup in
+origin/V3 had no review file; no conclusion was drawn from that failed lookup.
+Remote advanced only by a0e79fc1/f6ada882 review/Inbox documents; clean isolated
+Root fast-forwarded0f1e4f0e -> f6ada882, no production/source/Gitlink change.
+Current Owner workflow is Codex author -> GPT review -> DS independent CPU;
+older V2/tmux three-reviewer governance is superseded for this task.
+
+Scope: only Child media.py unknown Queue-close failure flag and focused new
+Root tests, then exact new Gitlink/evidence/handoff. Unknown OSError/ValueError
+from cancel_join_thread/close must stay sticky even if a later descriptor EBADF
+is tolerated. No renderer/ownership/Adapter/model/Local/Store/Scheduler/timeout
+change. Planned Root file tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py.
+Reproduce deterministic RED on old committed Child, freeze tests before execution,
+fix minimally, run only Media lifecycle/reporting CPU regressions, freeze new
+Child then Root and clean-Pair targeted evidence. Preserve original192 evidence
+and GPT review. Do not rerun GPU mapping or the whole192 suite.
+Independent candidate only; no V3/official Child promotion, out2 Resume, shared
+runtime, GPU/EGL/FFmpeg/model/simulator/Canary/evaluation/training/DCP access.
+After new Pair publication/readback and one GPT incremental request, STOP.
+No production/test edit made at claim time; commits/evidence for RM-M01 pending.
+
+## Prior history preserved
+
+# 2026-11-01 — Candidate request published and GitHub readback PASS
+
+Observation 2026-11-01T12:32:36.427295+08:00. Formal46d3a604e66ca139e2f060fd4caaaa0583a1035f /
+Child-Gitlinkd3b2a29b978ff4abef800b9e71fab4422b7a0d23. Child candidate was
+pushed first, then Root candidate 126e7d4c9939193bb0c470ca79b5a97a8748cdb4, normal nonforce. Fresh fetch
+and advertised refs agree; candidate Gitlink matches. Canonical V3 remains
+7e2be5ca40891915a1e86eea935ed054ec1984dd, official Child8664267704da3206e719f3c7eef2b5ed86e2a417.
+GitHub-fetched evidence53/53 hashes and source23/23 bindings match; candidate
+source equals Formal. Author clean-Pair CPU192/0/0/0 is retained, not rerun.
+Candidate Inbox request unique,118200 bytes, original prefix identical.
+
+Initial readback failed on a stale origin/candidate tracking ref: Root origin
+fetch is narrowly mapped to V2. Recovered by explicit nonforce fetch refspecs
+for V3 and this candidate; no Git configuration/working files were changed.
+The successful complete observation above followed this recovery, not the
+failed attempt. All source/receipt/evidence results are from that fresh pass.
+
+The request/handoff is published only on the candidate branch. This observation
+asserts delivery/readback, not a GPT verdict or independent acceptance. Current
+Owner reviewer GPT; DS independent CPU follows a successful code review. No
+MM/Kimi dispatch, old V2 polling or automatic execution under superseded workflow.
+Root/Child clean before receipt bookkeeping. Readback files retained in
+docs/collab/codex/receipts/2026-11-01_eval_v2_render_media_candidate/.
+This successor changes only receipt/SESSION, never implementation; final repeat
+ref/source readback is external. STOP for GPT review; no V3 merge, GPU/model/
+simulator/FFmpeg/Canary/evaluation/training or active out2/NoTTT access.
+
+## Earlier history preserved
+
+# 2026-11-01 — Packaging diagnostic classified without rewriting raw evidence
+
+Evidence commit 72f3f5e8e191eca13684f3419ea78435f3961c55 was created after git diff --cached --check
+reported whitespace in archived .diff files. This ordering was premature;
+the diagnostic is now retained and verified:31 blank context lines each
+contain the required unified-diff single-space prefix. Original artifacts
+are preserved. Production baseline-to-Formal Root/Child diff checks and
+metadata diff check excluding only those two raw .diff files PASS;53 frozen
+artifact hashes still match. No source change/retest/relaxation. Receipt:
+docs/collab/codex/receipts/2026-11-01_eval_v2_render_media_candidate/packaging_check.json.
+This is a bookkeeping clarification, not a new Formal Pair or Gate.
+
+## Earlier history preserved
+
+# 2026-11-01 — Exact combined author CPU PASS; candidate Code Gate publication
+
+Formal Root 46d3a604e66ca139e2f060fd4caaaa0583a1035f / Child-Gitlink d3b2a29b978ff4abef800b9e71fab4422b7a0d23.
+Independent branch v3-eval-v2-render-media-20261101. Final author command is
+the recorded combined_cpu.py final_author_cpu --formal run;192 passed,0failure/
+error/skip, Python3.13.5, Ruff0.12.7 check/format/syntax/diff-check PASS, clean
+exact Pair and source hashes unchanged before/after.23 formal source bindings
+and53 artifact hashes re-read. Historical counters
+are not combined: development29/192 and renderer118 are separate; initial
+Media fixture E731 stop retained. No new production changes after Formal freeze.
+
+Observation/preparation 2026-11-01T12:29:25.119937+08:00: last fetched/advertised V3 is7e2be5ca,
+official Child86642677, candidate pre-publication refs4acdcf80/f1439ac3. Exact
+new full-Root review scan against origin/V3 returned1/no match. No GPT verdict
+is inferred. Per Owner current workflow, GPT is the reviewer and DS independent
+CPU follows; no old V2/tmux three-reviewer dispatch or polling. Owner explicitly
+requires STOP after candidate/request publication; no canonical promotion or
+runtime action. Candidate Inbox request is append-only: before114968,
+append3232, after118200 bytes, prefix identical/no rollover.
+Prepared receipt and artifact/source verification at
+docs/collab/codex/receipts/2026-11-01_eval_v2_render_media_candidate/prepared.json.
+
+DS facts accepted, causal analysis checked independently and limited as stated
+in the handoff. Real ffmpeg/EGL/model/simulator/GPU and storage/checkpoint/active
+out2/NoTTT/shared code/log access were not performed. Training/inference/model/
+data/checkpoint/vendor trees unchanged. Publish Child first then Root by normal
+nonforce candidate push; fetch and compare full heads/Gitlink and evidence hash.
+The evidence/request successor is not the Formal implementation Root. STOP for
+GPT fresh Code Gate once publication readback is recorded.
+
+## Earlier task history preserved
+
+# 2026-11-01 — Combined development192 PASS; final implementation freeze next
+
+Owner's latest clarification: DS facts can be trusted, DS analysis must be
+evaluated critically. Applied below: DS log observations are labelled reported,
+CPython error-path control independently reproduced; no claim that every server
+failure is caused by this race or EBADF proves process death.
+
+Command: /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-render-media-20261101/combined_cpu.py
+/tmp/psm-eval-render-media-20261101/combined_development_1 --format
+Python3.13.5, Ruff0.12.7, CPU/offline/tmp caches, synthetic frame/Env/model/device
+boundaries plus actual owned Linux CPU process-group cleanup.192 passed,
+0failure/error/skip; scoped Ruff/format/syntax/diff-check PASS. Added stdlib
+sentinel EBADF -> semaphore error control, actual pidfd TERM/KILL/reap with
+unrelated-process survival, helper/PID/new-descendant checks. No true FFmpeg/EGL/
+model/simulator/GPU. Relevant config/worker/slot/native/process/video-policy
+regressions retained. All watched code hashes stable during tests.
+
+Current production edits are uncommitted, about to freeze Child then Root. Root
+Manifest/render fields and process helper plus Child Media/adapter/contract are
+the remaining increment over the earlier renderer stage. Follow the current
+Owner workflow (Codex CPU -> GPT Code Gate -> DS independent CPU -> separately
+authorized Canary), not the older V2/tmux three-reviewer polling mechanism.
+This only authorizes isolated candidate implementation/publication and one GPT
+request, then STOP. No merge or runtime/old out2 Resume authority.
+
+## Earlier observations preserved
+
+# 2026-11-01 — DS traceback received; combined candidate IN_PROGRESS
+
+Owner supplied DS-reported Python3.13 QueueFeederThread EBADF -> semaphore
+over-release trace and out2 diagnostic references. Facts accepted as DS evidence;
+server files were not accessed. DS's causal/fix proposals remain hypotheses.
+CPython3.13 source confirms sentinel reader_close is inside the ordinary error
+handler that releases queue_sem; this is not a finally block. Do not infer that
+EBADF proves encoder death, or relax genuine live-residual failure semantics.
+
+Media now uses bounded feeder-first close with one serialized reader-close
+callback shared by parent and feeder. Optional diagnostics/successful forced reap
+are separate from live encoder/feeder failure. Adapter preserves Core/Local
+semantics. Root owned-descendant check adds bounded normal wait/reap, then verified
+targeted TERM/KILL (pidfd final identity pin); actual survivors remain blocking.
+No independent encoder PGID or algorithm/Server/Scheduler changes.
+Effective render policy additionally binds the immutable Manifest/digest.
+
+Development CPU command: /tmp/psm-eval-render-media-20261101/python313/bin/python
+/tmp/psm-eval-render-media-20261101/media_cpu.py
+/tmp/psm-eval-render-media-20261101/media_development_2 ; Python3.13.5, CPU/offline,
+fake encoder/process/HTTP model boundaries, isolated caches.29 passed/0failure/
+error/skip; Ruff0.12.7 PASS. Earlier media_development_1 stopped on fixture E731;
+no pytest ran there. All output retained. Added stdlib error-path control and
+helper identity recheck afterward; these latest changes remain untested.
+
+All new Media/Manifest/process edits are currently uncommitted. Final combined
+focused regression, clean implementation pair, raw author evidence and one fresh
+GPT Code Gate request still required. No GPU/EGL/FFmpeg/model/real simulator,
+canonical merge, out2/NoTTT/shared runtime or server filesystem operation.
+
+## Earlier stage checkpoint preserved
+
+# 2026-11-01 — Renderer stage checkpoint; Media traceback required next
+
+Renderer stage code Root91896fac2140f6c77dfb440c32253626051eb8f2 /
+Childf1439ac3a83bf3f7c32d3be204f2723f90231996. Same isolated branch
+v3-eval-v2-render-media-20261101, baseV37e2be5ca/Child86642677.
+Development118 PASS/0fail/error/skip; scoped Ruff/AST PASS;10 watched source files
+match the committed Git blobs.21 development artifact hashes retained under
+ docs/collab/codex/evidence/2026-11-01_eval_v2_split_render_development/.
+Execution was dirty-development source, explicitly not a clean-pair Formal Gate.
+Root/Child stage has independent configurable GPU roles, selected-role resource
+checks and PCI/actual Context proof. No true EGL/GPU/FFmpeg/model/simulation run.
+
+Media/adapter production files remain byte-identical to baseline. Owner replied
+“稍等；我随后给你” to the async traceback request; do not infer its server cause.
+Next: consume that traceback, minimal Media lifecycle fix and deterministic CPU
+negatives, then freeze the final combined Pair / author Gate / GPT review request.
+Current stage is a candidate checkpoint, not a Code Gate request or approval.
+Publish only isolated branches/evidence, read back, then yield for the promised
+traceback if it has not arrived. No V3/official Child promotion or active out2 /
+NoTTT/shared directory/config/media/results/DCP/log/process access or dispatch.
+
+## Earlier renderer development observations preserved
+
+# 2026-11-01 — Renderer development CPU118 PASS; Media traceback pending
+
+Independent render implementation complete in Root config/resources/runtime/CLI,
+Child render_devices/worker/slot, example and focused tests. No Scheduler/Server/
+Local-TTT/model code changed. Render policy frozen via Fresh invocation; device
+proof uses NVML PCI -> EGL DRM/sysfs and actual Context checks. GPU0–3 absent from
+target assignments; no real GPU access. OSMesa and configurable counts retained.
+
+Development checks under /tmp/psm-eval-render-media-20261101/render_development_2/:
+118 passed/0failure/error/skip; scoped Ruff and AST PASS; source hashes unchanged
+after formatting. Prior development1 stopped on import sorting before pytest;
+raw logs retained. This is dirty-development-source evidence, not a formal Gate.
+Freeze independent renderer commits now; no publication or promotion yet.
+
+Media production files remain untouched. Owner replied 稍等；我随后给你 about
+EBADF traceback; defer dependent repair while preserving source analysis. Final
+combined clean-pair author Gate after the media changes, then GPT review/STOP.
+No current out2/NoTTT shared code/config/results/media/DCP/log/process access,
+realGPU/EGL/OSMesa/model/Server/simulator/FFmpeg or DS execution.
+
+## Earlier task claim preserved
+
+# 2026-11-01 — EvalV2 split render mapping and media lifecycle, IN_PROGRESS
+
+Owner target2 Servers +16 Sim, all device/count/M/B settings configurable.
+Isolated Root/Child branch v3-eval-v2-render-media-20261101; Rootbase
+7e2be5ca40891915a1e86eea935ed054ec1984dd, Childbase8664267704da3206e719f3c7eef2b5ed86e2a417.
+Claimed 2026-11-01T11:48:58.931745+08:00 before production edits.
+
+A: configurable Server/Render GPUs and EGL/OSMesa, selected-role resource checks,
+physical EGL identity attestation before Sim use, frozen effective render policy,
+keep existing Scheduler/Server/NativeBatch/Local state semantics. Planned Root
+config/resources/runtime + focused rendering helper, example/runbook/tests;
+Child worker/slot and a lazy EGL identity helper. Device selection is not proof
+from numeric CUDA/EGL ordinal equality. Actual hardware proof stays a future Gate.
+
+B: inspect EBADF/encoder reclamation/diagnostic-vs-residual fault semantics in
+Child MediaSink and adapter, focused CPU lifecycle tests, true residuals fail-closed.
+Owner will provide traceback shortly; defer Media production edits until it arrives.
+No production files edited yet; commits/evidence not created.
+
+Independent candidate only: no automatic V3/official Child promotion, real GPU,
+EGL/OSMesa simulation/model/FFmpeg or out2 Resume/evaluation/training, no access to
+active shared code/YAML/media/results/DCP/log/processes and no DS dispatch.
+Future Owner-only hardware sequence M1/B1 then M8/B2 then B4/B8 is not executed.
+
+## Prior promotion history preserved
+
 # 2026-11-01 — Issue14 V3 promotion COMPLETE
 
 Owner-authorized production promotion Root: `ab6b80e08030c1d5835d966a510ea8246944c536`.

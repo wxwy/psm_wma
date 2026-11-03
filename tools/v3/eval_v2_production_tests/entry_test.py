@@ -175,27 +175,23 @@ def test_config_and_resource_gates_no_protected_writes(tmp_path):
         resolve(["fresh", "--config", str(path)])
 
     def nvml(args, **kwargs):
-        assert args[1] == "--query-gpu=index,uuid,memory.total,memory.used"
-        return SimpleNamespace(stdout="4, GPU-cpu, 81920, 1000\n")
+        assert args[1:4] == ["-i", "4", "--query-gpu=index,uuid"]
+        return SimpleNamespace(stdout="4, GPU-cpu\n")
 
     cfg = {"gpu_ids": [4], "max_gpu_fraction": 0.85, "max_rss_bytes": 10**9}
     assert check(cfg, run=nvml)["owned_pids"] == []
 
 
-def test_shared_gpu_retains_budget_and_missing_gpu_safety():
-    # GPU7 already runs No-TTT; a separate compute-app PID is not a hard blocker.
-    used_mib = [35538]
-
+def test_shared_gpu_has_no_occupancy_admission_but_retains_missing_device_safety():
     def nvml(args, **kwargs):
-        assert args[1] == "--query-gpu=index,uuid,memory.total,memory.used"
-        return SimpleNamespace(stdout=f"7, GPU-shared, 81920, {used_mib[0]}\n")
+        assert args[3] == "--query-gpu=index,uuid"
+        return SimpleNamespace(stdout="7, GPU-shared\n" if args[2] == "7" else "")
 
     cfg = {"gpu_ids": [7], "max_gpu_fraction": 0.85, "max_rss_bytes": 10**9}
     assert check(cfg, before_models=True, run=nvml)["owned_pids"] == []
 
-    used_mib[0] = 69000
-    with pytest.raises(RuntimeError, match="GPU memory budget"):
-        check(cfg, before_models=True, run=nvml)
+    cfg.update(max_gpu_fraction=1e-9, server_reserve_bytes=2**90)
+    assert check(cfg, before_models=True, run=nvml)["gpus"] == {7: "GPU-shared"}
 
     cfg["gpu_ids"] = [4]
     with pytest.raises(RuntimeError, match="missing selected GPU"):

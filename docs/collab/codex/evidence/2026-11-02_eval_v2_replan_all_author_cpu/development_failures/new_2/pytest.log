@@ -1,0 +1,60 @@
+............................F
+=================================== FAILURES ===================================
+___ test_media_inventory_changes_only_diagnostic_status_never_Core_SR[None] ____
+
+tmp_path = PosixPath('/tmp/psm-eval-replan-all-20261102/new_2/pytest_tmp/test_media_inventory_changes_o0')
+fault = None
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            None,
+            "missing_completion",
+            "missing_receipt",
+            "missing_MP4",
+            "wrong_episode",
+            "truncated_MP4",
+        ],
+    )
+    def test_media_inventory_changes_only_diagnostic_status_never_Core_SR(tmp_path, fault):
+        store = completed(tmp_path)
+        directory, row, completion = media_for(store)
+        core = (directory / "result.json").read_bytes()
+        with store.locked():
+            before = store.publish_views()
+            scientific = (store.root / "summary.json").read_bytes()
+            if fault == "missing_completion":
+                (directory / "generated_media_completion.json").unlink()
+            elif fault == "wrong_episode":
+                atomic_json(
+                    directory / "generated_media_completion.json",
+                    {**completion, "episode": 99},
+                )
+            elif fault == "missing_receipt":
+                (directory / "media/generated/replan_0000.receipt.json").unlink()
+            elif fault == "missing_MP4":
+                (directory / "media/generated/replan_0000.mp4").unlink()
+            elif fault == "truncated_MP4":
+                (directory / "media/generated/replan_0000.mp4").write_bytes(b"truncated")
+>           report = publish(store)
+                     ^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_replan_tests/report_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/robocasa_eval_v2/generated_media.py:93: in publish
+    write_report(store.root / "media_summary.json", result)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/psm-eval-replan-all-20261102/new_2/pytest_tmp/test_media_inventory_changes_o0/new900/media_summary.json')
+value = {'acknowledged': 1, 'episodes': 1, 'episodes_complete': [{'episode': 0, 'replans': 1, 'status': 'COMPLETE', 'task': 'CloseFridge'}], 'errors': [], ...}
+
+    def write_report(path, value):
+        if Path(path).name != "summary.json":
+>           raise ValueError("report limit cannot be used for Core/ledger records")
+E           ValueError: report limit cannot be used for Core/ledger records
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:124: ValueError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_replan_tests/report_test.py::test_media_inventory_changes_only_diagnostic_status_never_Core_SR[None]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 28 passed in 10.45s

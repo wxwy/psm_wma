@@ -1,0 +1,78 @@
+........................................................................ [ 41%]
+............................F
+=================================== FAILURES ===================================
+_ test_reused_native_episode_uses_task_logical_index_not_completion_order[first-None-True] _
+
+tmp_path = PosixPath('/tmp/psm-eval-replan-all-20261102/related_1/pytest_tmp/test_reused_native_episode_use5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f747cb6a3c0>
+limit = None, enabled = True, generated = 'first'
+
+    @pytest.mark.parametrize(
+        "limit,enabled", [(None, True), (None, False), (0, True), (3, True), (50, True)]
+    )
+    @pytest.mark.parametrize("generated", ["none", "first", "all"])
+    def test_reused_native_episode_uses_task_logical_index_not_completion_order(
+        tmp_path, monkeypatch, limit, enabled, generated
+    ):
+        monkeypatch.setattr(native, "build_state_token", lambda _: [0.0] * 15)
+        sinks = []
+    
+        def media_factory(*a, **kw):
+            sinks.append(CapturedMedia(*a, **kw))
+            return sinks[-1]
+    
+        def policy(*a, **kw):
+            prediction = kw["on_prediction"]
+            kw["on_prediction"] = lambda result, latency: prediction(
+                {**result, "video": ["synthetic diagnostic payload; never decoded"]},
+                latency,
+            )
+            return native.run_policy(*a, **kw)
+    
+        env = Env()
+        # Two Task names in Episode-major order, then a Retry/Resume of the same
+        # logical index with fresh attempt IDs. One engine/settings is reused.
+        slots = [(task, ep) for ep in (0, 1, 2, 3, 49) for task in TASKS]
+        slots += [(TASKS[0], 1), (TASKS[1], 3)]
+        with server() as (url, calls):
+            engine = NativeEpisode(
+                env,
+                {
+                    "server_url": url,
+                    "horizon": 2,
+                    "predict_timeout_s": 2.0,
+                    "save_rollout_mp4": enabled,
+                    FIELD: limit,
+                    "save_generated_video": generated,
+                },
+                policy=policy,
+                media_factory=media_factory,
+            )
+            for order, (task, episode) in enumerate(slots):
+                env.success_at = 1 if episode % 2 == 0 else 100
+                assert engine.initialize()["initial_success"] is False
+                directory = tmp_path / f"attempt_{order}"
+                result = engine.execute(
+                    {
+                        "task": task,
+                        "episode": episode,
+                        "attempt_id": f"{order:032x}",
+                        "stream_id": "1" * 32,
+                        "seed": 7,
+                        "manifest_digest": "2" * 64,
+                    },
+                    reset_index=order,
+                    directory=directory,
+                )
+                expected = enabled and (limit is None or episode < limit)
+                assert sinks[-1].rollout is expected
+                assert ("frame" in sinks[-1].queued) is expected
+>               assert ("prediction" in sinks[-1].queued) is (generated != "none")
+E               AssertionError: assert ('prediction' in ['frame', 'frame']) is ('first' != 'none')
+E                +  where ['frame', 'frame'] = <eval_v2_batch_tests.rollout_policy_test.CapturedMedia object at 0x7f747f5b3850>.queued
+
+tools/v3/eval_v2_batch_tests/rollout_policy_test.py:311: AssertionError
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_tests/rollout_policy_test.py::test_reused_native_episode_uses_task_logical_index_not_completion_order[first-None-True]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 100 passed in 17.78s

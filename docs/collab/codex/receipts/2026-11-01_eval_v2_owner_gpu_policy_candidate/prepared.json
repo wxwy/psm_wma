@@ -1,0 +1,19 @@
+{
+  "time": "2026-11-01T20:11:12.102202+08:00",
+  "formal_root": "4b581493db805c92964cb27e740c736db87c0329",
+  "child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "policy_authority": "Owner explicit resource override",
+  "inbox_before": 126429,
+  "inbox_append": 2267,
+  "inbox_after": 128696,
+  "prefix_unchanged": true,
+  "artifacts": 27,
+  "bindings": 6,
+  "author_tests": 70,
+  "child_unchanged": true,
+  "candidate_only": true,
+  "canonical_merge": false,
+  "real_gpu": false,
+  "dispatch": false,
+  "status": "PREPARED_INCREMENTAL_REQUEST"
+}

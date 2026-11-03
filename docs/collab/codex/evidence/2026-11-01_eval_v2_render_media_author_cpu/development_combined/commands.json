@@ -1,0 +1,195 @@
+[
+  {
+    "name": "ruff_version",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "--version"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.04276952403597534
+  },
+  {
+    "name": "root_format_write",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "scripts/robocasa_eval_v2/config.py",
+      "scripts/robocasa_eval_v2/runtime.py",
+      "scripts/robocasa_eval_v2/resources.py",
+      "scripts/robocasa_eval_v2/cli.py",
+      "scripts/robocasa_eval_v2/identity.py",
+      "scripts/robocasa_eval_v2_processes.py",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+      "tools/v3/eval_v2_batch_tests/media_cleanup_test.py",
+      "tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.055719498021062464
+  },
+  {
+    "name": "child_format_write",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "cosmos_framework/evaluation/robocasa_v2/media.py",
+      "cosmos_framework/simulation/robocasa/render_devices.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_slot.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "exit_code": 0,
+    "elapsed_s": 0.04929213703144342
+  },
+  {
+    "name": "root_ruff",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "scripts/robocasa_eval_v2/config.py",
+      "scripts/robocasa_eval_v2/runtime.py",
+      "scripts/robocasa_eval_v2/resources.py",
+      "scripts/robocasa_eval_v2/cli.py",
+      "scripts/robocasa_eval_v2/identity.py",
+      "scripts/robocasa_eval_v2_processes.py",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+      "tools/v3/eval_v2_batch_tests/media_cleanup_test.py",
+      "tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.05190485098864883
+  },
+  {
+    "name": "child_ruff",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "cosmos_framework/evaluation/robocasa_v2/media.py",
+      "cosmos_framework/simulation/robocasa/render_devices.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_slot.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "exit_code": 0,
+    "elapsed_s": 0.048713482974562794
+  },
+  {
+    "name": "root_format",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "scripts/robocasa_eval_v2/config.py",
+      "scripts/robocasa_eval_v2/runtime.py",
+      "scripts/robocasa_eval_v2/resources.py",
+      "scripts/robocasa_eval_v2/cli.py",
+      "scripts/robocasa_eval_v2/identity.py",
+      "scripts/robocasa_eval_v2_processes.py",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+      "tools/v3/eval_v2_batch_tests/media_cleanup_test.py",
+      "tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.0479787879739888
+  },
+  {
+    "name": "child_format",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "cosmos_framework/evaluation/robocasa_v2/media.py",
+      "cosmos_framework/simulation/robocasa/render_devices.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+      "cosmos_framework/simulation/robocasa/eval_v2_slot.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "exit_code": 0,
+    "elapsed_s": 0.04753080301452428
+  },
+  {
+    "name": "root_diff_check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.022198618040420115
+  },
+  {
+    "name": "child_diff_check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "exit_code": 0,
+    "elapsed_s": 0.0049541949992999434
+  },
+  {
+    "name": "pytest",
+    "command": [
+      "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-q",
+      "-s",
+      "-x",
+      "-p",
+      "no:cacheprovider",
+      "--rootdir=/workspace/psm-wma-eval-render-media",
+      "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+      "tools/v3/eval_v2_batch_tests/media_cleanup_test.py",
+      "tools/v3/eval_v2_batch_tests/media_process_cleanup_test.py",
+      "tools/v3/eval_v2_production_tests/worker_test.py",
+      "tools/v3/eval_v2_production_tests/slot_test.py",
+      "tools/v3/eval_v2_production_tests/process_test.py",
+      "tools/v3/eval_v2_batch_tests/rollout_policy_test.py",
+      "tools/v3/eval_v2_batch_tests/config_test.py",
+      "tools/v3/eval_v2_production_tests/native_test.py",
+      "tools/v3/eval_v2_production_tests/media_test.py::test_stalled_encoder_is_bounded_and_requests_owned_task_cleanup",
+      "tools/v3/eval_v2_production_tests/media_test.py::test_optional_generated_video_bounds_do_not_throw_into_policy",
+      "--basetemp=/tmp/psm-eval-render-media-20261101/combined_development_1/pytest_tmp",
+      "--junitxml=/tmp/psm-eval-render-media-20261101/combined_development_1/junit.xml"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 30.324872462952044
+  }
+]

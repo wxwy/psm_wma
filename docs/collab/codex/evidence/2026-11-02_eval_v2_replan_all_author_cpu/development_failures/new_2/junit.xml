@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="29" time="10.364" timestamp="2026-11-02T09:25:42.680869+00:00" hostname="4dc91cf49e12"><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_spool_max_jobs-True]" time="0.006" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_spool_max_jobs-0]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_spool_max_jobs-65]" time="0.006" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_spool_max_bytes-False]" time="0.005" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_spool_max_bytes-0]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_spool_max_bytes-2147483649]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_drain_timeout_s-False]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_drain_timeout_s-0]" time="0.005" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_drain_timeout_s-nan]" time="0.005" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_drain_timeout_s-inf]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_invalid_spool_and_deadline_rejected_before_runtime[media_drain_timeout_s-3601]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_defaults_and_CLI_override_record_effective_values" time="0.006" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_real_server_option_parser_passes_spool_to_actor_and_info" time="0.073" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_runtime_argv_contains_settings_and_mismatched_info_rejected" time="0.063" /><testcase classname="tools.v3.eval_v2_replan_tests.config_test" name="test_RPC_media_wait_extension_does_not_change_prediction_Episode_deadline" time="0.007" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_queue_full_and_slow_encoder_wait_for_saved_not_two_second_grace" time="1.333" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_encoder_death_and_timeout_are_explicit_and_reaped[dead_encoder]" time="0.908" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_encoder_death_and_timeout_are_explicit_and_reaped[stalled_encoder]" time="1.007" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_final_replan_saved_before_immediate_close_and_replay_is_idempotent" time="0.892" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_foreign_replay_does_not_overwrite_original_and_reports_incomplete" time="0.890" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_encode_error_returns_VIDEO_FAILED_without_publishing" time="0.652" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_failed_atomic_encode_never_publishes_final_or_receipt[disk_full]" time="0.155" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_failed_atomic_encode_never_publishes_final_or_receipt[decode_mismatch]" time="0.018" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_failed_atomic_encode_never_publishes_final_or_receipt[rename]" time="0.033" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_optional_modes_keep_nonblocking_fast_path[none]" time="0.004" /><testcase classname="tools.v3.eval_v2_replan_tests.encoder_test" name="test_optional_modes_keep_nonblocking_fast_path[first]" time="0.056" /><testcase classname="tools.v3.eval_v2_replan_tests.native_test" name="test_native_last_replan_immediate_success_media_fault_keeps_Core_End_ACK[False]" time="2.379" /><testcase classname="tools.v3.eval_v2_replan_tests.native_test" name="test_native_last_replan_immediate_success_media_fault_keeps_Core_End_ACK[True]" time="0.891" /><testcase classname="tools.v3.eval_v2_replan_tests.report_test" name="test_media_inventory_changes_only_diagnostic_status_never_Core_SR[None]" time="0.079"><failure message="ValueError: report limit cannot be used for Core/ledger records">tmp_path = PosixPath('/tmp/psm-eval-replan-all-20261102/new_2/pytest_tmp/test_media_inventory_changes_o0')
+fault = None
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            None,
+            "missing_completion",
+            "missing_receipt",
+            "missing_MP4",
+            "wrong_episode",
+            "truncated_MP4",
+        ],
+    )
+    def test_media_inventory_changes_only_diagnostic_status_never_Core_SR(tmp_path, fault):
+        store = completed(tmp_path)
+        directory, row, completion = media_for(store)
+        core = (directory / "result.json").read_bytes()
+        with store.locked():
+            before = store.publish_views()
+            scientific = (store.root / "summary.json").read_bytes()
+            if fault == "missing_completion":
+                (directory / "generated_media_completion.json").unlink()
+            elif fault == "wrong_episode":
+                atomic_json(
+                    directory / "generated_media_completion.json",
+                    {**completion, "episode": 99},
+                )
+            elif fault == "missing_receipt":
+                (directory / "media/generated/replan_0000.receipt.json").unlink()
+            elif fault == "missing_MP4":
+                (directory / "media/generated/replan_0000.mp4").unlink()
+            elif fault == "truncated_MP4":
+                (directory / "media/generated/replan_0000.mp4").write_bytes(b"truncated")
+&gt;           report = publish(store)
+                     ^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_replan_tests/report_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/robocasa_eval_v2/generated_media.py:93: in publish
+    write_report(store.root / "media_summary.json", result)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/psm-eval-replan-all-20261102/new_2/pytest_tmp/test_media_inventory_changes_o0/new900/media_summary.json')
+value = {'acknowledged': 1, 'episodes': 1, 'episodes_complete': [{'episode': 0, 'replans': 1, 'status': 'COMPLETE', 'task': 'CloseFridge'}], 'errors': [], ...}
+
+    def write_report(path, value):
+        if Path(path).name != "summary.json":
+&gt;           raise ValueError("report limit cannot be used for Core/ledger records")
+E           ValueError: report limit cannot be used for Core/ledger records
+
+cosmos-framework/cosmos_framework/evaluation/robocasa_v2/store.py:124: ValueError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,6 @@
+{
+  "strict_1": "FFmpeg metadata suppressed by -v error; implementation corrected",
+  "new_1": "fixture imported nonexistent prepare alias; corrected to fake_prepare",
+  "new_2": "new report helper used summary-only store writer; corrected to generic bounded write",
+  "related_1": "old selection-only fake sink lacked strict initialization/new kwargs; fixture adapted, assertions retained"
+}

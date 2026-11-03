@@ -1,0 +1,103 @@
+[
+  {
+    "name": "ruff_version",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "--version"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.04493276996072382
+  },
+  {
+    "name": "test_format_write",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.04950251698028296
+  },
+  {
+    "name": "root_ruff",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.05248577002203092
+  },
+  {
+    "name": "child_ruff",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "cosmos_framework/evaluation/robocasa_v2/media.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "exit_code": 0,
+    "elapsed_s": 0.046919023036025465
+  },
+  {
+    "name": "root_format",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 0,
+    "elapsed_s": 0.04499845398822799
+  },
+  {
+    "name": "child_format",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "cosmos_framework/evaluation/robocasa_v2/media.py"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media/cosmos-framework",
+    "exit_code": 0,
+    "elapsed_s": 0.04947370302397758
+  },
+  {
+    "name": "pytest",
+    "command": [
+      "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-q",
+      "-s",
+      "-p",
+      "no:cacheprovider",
+      "--rootdir=/workspace/psm-wma-eval-render-media",
+      "tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py",
+      "--basetemp=/tmp/psm-eval-render-media-rm01-20261101/old_red/pytest_tmp",
+      "--junitxml=/tmp/psm-eval-render-media-rm01-20261101/old_red/junit.xml"
+    ],
+    "cwd": "/workspace/psm-wma-eval-render-media",
+    "exit_code": 1,
+    "elapsed_s": 3.2967948639998212
+  }
+]

@@ -15,7 +15,7 @@ from robocasa_episode_resume.model_identity import (
 )
 from robocasa_vendor import collect_runtime, dataset_provenance, sha256_file
 
-from robocasa_eval_v2.config import execution
+from robocasa_eval_v2.config import execution, rendering
 
 ROOT = Path(__file__).resolve().parents[2]
 CHILD = ROOT / "cosmos-framework"
@@ -178,6 +178,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         formal=len(tasks) == 18 and cfg["episodes_per_task"] == 50,
         execution=execution(cfg),
         local_memory=cfg.get("local_memory_mode", "required"),
+        rendering=rendering(cfg),
         experiment={
             "model_digest": model["digest"],
             "config_sha256": sha256_file(Path(cfg["config_file"])),

@@ -1,0 +1,1168 @@
+diff --git a/SESSION.md b/SESSION.md
+index 9552f7b9..422f11b2 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,51 @@
++# 2026-11-01 — Renderer development CPU118 PASS; Media traceback pending
++
++Independent render implementation complete in Root config/resources/runtime/CLI,
++Child render_devices/worker/slot, example and focused tests. No Scheduler/Server/
++Local-TTT/model code changed. Render policy frozen via Fresh invocation; device
++proof uses NVML PCI -> EGL DRM/sysfs and actual Context checks. GPU0–3 absent from
++target assignments; no real GPU access. OSMesa and configurable counts retained.
++
++Development checks under /tmp/psm-eval-render-media-20261101/render_development_2/:
++118 passed/0failure/error/skip; scoped Ruff and AST PASS; source hashes unchanged
++after formatting. Prior development1 stopped on import sorting before pytest;
++raw logs retained. This is dirty-development-source evidence, not a formal Gate.
++Freeze independent renderer commits now; no publication or promotion yet.
++
++Media production files remain untouched. Owner replied 稍等；我随后给你 about
++EBADF traceback; defer dependent repair while preserving source analysis. Final
++combined clean-pair author Gate after the media changes, then GPT review/STOP.
++No current out2/NoTTT shared code/config/results/media/DCP/log/process access,
++realGPU/EGL/OSMesa/model/Server/simulator/FFmpeg or DS execution.
++
++## Earlier task claim preserved
++
++# 2026-11-01 — EvalV2 split render mapping and media lifecycle, IN_PROGRESS
++
++Owner target2 Servers +16 Sim, all device/count/M/B settings configurable.
++Isolated Root/Child branch v3-eval-v2-render-media-20261101; Rootbase
++7e2be5ca40891915a1e86eea935ed054ec1984dd, Childbase8664267704da3206e719f3c7eef2b5ed86e2a417.
++Claimed 2026-11-01T11:48:58.931745+08:00 before production edits.
++
++A: configurable Server/Render GPUs and EGL/OSMesa, selected-role resource checks,
++physical EGL identity attestation before Sim use, frozen effective render policy,
++keep existing Scheduler/Server/NativeBatch/Local state semantics. Planned Root
++config/resources/runtime + focused rendering helper, example/runbook/tests;
++Child worker/slot and a lazy EGL identity helper. Device selection is not proof
++from numeric CUDA/EGL ordinal equality. Actual hardware proof stays a future Gate.
++
++B: inspect EBADF/encoder reclamation/diagnostic-vs-residual fault semantics in
++Child MediaSink and adapter, focused CPU lifecycle tests, true residuals fail-closed.
++Owner will provide traceback shortly; defer Media production edits until it arrives.
++No production files edited yet; commits/evidence not created.
++
++Independent candidate only: no automatic V3/official Child promotion, real GPU,
++EGL/OSMesa simulation/model/FFmpeg or out2 Resume/evaluation/training, no access to
++active shared code/YAML/media/results/DCP/log/processes and no DS dispatch.
++Future Owner-only hardware sequence M1/B1 then M8/B2 then B4/B8 is not executed.
++
++## Prior promotion history preserved
++
+ # 2026-11-01 — Issue14 V3 promotion COMPLETE
+ 
+ Owner-authorized production promotion Root: `ab6b80e08030c1d5835d966a510ea8246944c536`.
+diff --git a/TODO.md b/TODO.md
+index d35f3977..5fa179d5 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -520,3 +520,8 @@
+ - **EVALV2-ROLLOUT-FIRST-N** — DONE (Code Gate); Codex; exact fd183f9e8fddfaef93b6ec9484184f071062ae41 / 8664267704da3206e719f3c7eef2b5ed86e2a417 APPROVE_CODE read at candidate11cae65a. Original author69 PASS and failures retained; no rerun. Owner promotion tracked separately; no runtime authorization.
+ 
+ - **EVALV2-ROLLOUT-FIRST-N-PROMOTE** — DONE; Codex; Owner-approved promotion Root ab6b80e08030c1d5835d966a510ea8246944c536 published V3 after official Child fast-forward to 8664267704da3206e719f3c7eef2b5ed86e2a417; Root Gitlink/official Child and fetched/advertised readback match. Source9853/otherChild1269 preserved;42 hashes/11 bindings PASS; original69 PASS and failure history retained without rerun. No active shared runtime/config/media/DCP/log/process or GPU/real MP4/DS operation. Completion receipt docs-only; STOP.
++
++# 2026-11-01 — Owner split render/media candidate
++
++- **EVALV2-RENDER-MAP** — IN_PROGRESS; Codex; prerequisite Owner configurable2Server/16Sim directive, latestV3/866base read. Scope config/resources/runtime, worker/slot physical EGL identity, narrow tests/config/docs. Accept independent physical GPU mapping with proof, OSMesa retained, same-Run policy frozen, selected-GPU budget/conflict checks and CPU evidence; no Scheduler/Server rewrite or real GPU/simulation. Independent candidate + fresh GPT Code Gate, not V3 merge.
++- **EVALV2-MEDIA-LIFECYCLE** — IN_PROGRESS (traceback pending); Codex; scope MediaSink cleanup/adapter flags, bounded CPU failure tests. Distinguish optional encoder failure and successful reap from actual owned residual; preserve fail-closed and Core/Local semantics. Owner will supply EBADF traceback; continue independent render work while awaiting it. No current out2/NoTTT/shared runtime edits or restart.
+diff --git a/configs/eval/robocasa_eval_v2_split_render.example.yaml b/configs/eval/robocasa_eval_v2_split_render.example.yaml
+new file mode 100644
+index 00000000..68b1160f
+--- /dev/null
++++ b/configs/eval/robocasa_eval_v2_split_render.example.yaml
+@@ -0,0 +1,36 @@
++# Future NEW Run only; replace paths and obtain a separate hardware/run authorization.
++schema: psm_robocasa_eval_v2
++execution_profile: phase_b
++local_memory_mode: required
++checkpoint: /EDIT_READONLY/checkpoints/iter_000020000
++config_file: /EDIT_READONLY/config.yaml
++dataset_root: /EDIT_READONLY/robocasa365/target/atomic
++output_dir: /EDIT_NEW_OUTPUT/local_ttt_split_render
++server_python: /EDIT_SERVER_ENV/bin/python
++sim_python: /EDIT_SIM_ENV/bin/python
++vendor_lock: ${PSM_REPO}/third_party/robosuite_patches/vendor.lock.json
++tasks: all
++episodes_per_task: 50
++gpu_ids: [4, 5]
++render_gpu_ids: [6, 7]
++render_backend: egl
++sims_per_gpu: 8
++max_infer_batch_size: 2
++batch_wait_ms: 20
++save_rollout_mp4: true
++rollout_mp4_first_n_per_task: null
++save_generated_video: all
++# Admission estimates only, NOT verified memory peaks. Both remain configurable.
++server_reserve_bytes: 10737418240
++render_reserve_bytes_per_sim: 838860800
++max_gpu_fraction: 0.85
++max_rss_bytes: 137438953472
++base_port: 8912
++seed: 0
++prediction_steps: 30
++guidance: 1.0
++server_start_s: 900
++episode_wall_s: 1800
++request_timeout_s: 600
++terminate_grace_s: 10
++encoder_grace_s: 2
+diff --git a/cosmos-framework b/cosmos-framework
+index 86642677..f1439ac3 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 8664267704da3206e719f3c7eef2b5ed86e2a417
++Subproject commit f1439ac3a83bf3f7c32d3be204f2723f90231996
+diff --git a/docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md b/docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md
+new file mode 100644
+index 00000000..2cb96802
+--- /dev/null
++++ b/docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md
+@@ -0,0 +1,63 @@
++# Configurable Server / Render GPU separation and media lifecycle candidate
++
++Owner scope: independent candidate only. Base Root
++`7e2be5ca40891915a1e86eea935ed054ec1984dd`, Child
++`8664267704da3206e719f3c7eef2b5ed86e2a417`. No canonical promotion, real GPU,
++simulator, model, FFmpeg or evaluation / out2 Resume is authorized.
++
++## Renderer mapping
++
++The target example is `configs/eval/robocasa_eval_v2_split_render.example.yaml`:
++Server GPUs [4,5], Render GPUs [6,7], M=8 and B=2. Each ordered render entry serves
++the corresponding Server's slots. Counts, devices, M/B/wait and budgets are
++configurable. Duplicate render IDs are permitted for intentional sharing; their
++memory reservations accumulate. OSMesa uses `render_backend: osmesa` and
++`render_gpu_ids: null` (or []). Omitted backend inherits MUJOCO_GL (default egl);
++omitted EGL device mapping uses the Server's physical devices.
++
++The existing Server/Slot scheduler, model, Local Session and Batch paths stay
++unchanged. The CPU dry-run displays both inference and rendering slot maps.
++Normalized effective rendering is saved in existing invocation records. Runtime
++rejects changed roles/backend against the initial Fresh record before process
++setup. Old Runs cannot silently adopt explicit new rendering policies; source
++identity and existing scientific/Resume guards are not weakened.
++
++Only Server processes get the inference CUDA device. Sim processes have no CUDA
++visibility and receive the chosen GL backend before vendor imports. The worker
++matches nvidia-smi's physical PCI identity to the EGL device's DRM/sysfs PCI
++identity, then sets the actual EGL enumeration index. Missing or ambiguous physical
++proof is blocked; numeric CUDA/EGL ordinal equality is never a fallback. The
++pinned robosuite EGL context honors this environment variable. After each valid
++Reset, verify the actual current EGL display/device before any policy action.
++Device and Context proofs are retained using existing runtime evidence records.
++
++This path requires EGL device-query extensions plus accessible DRM/sysfs PCI
++identity. Their availability, correct H100 Context and rendering speed remain a
++target-host Canary requirement. Enumeration itself initializes no GPU Context.
++The target config allocates no work to GPU0–3; device IDs remain configurable.
++
++Resource checks cover the union of inference and render GPUs. The configurable
++Server and per-Sim reservations are admission estimates, not measured peaks.
++Actual memory fraction/RSS checks remain. A foreign CUDA process on a selected EGL
++render device blocks admission; no foreign process is stopped or reconfigured.
++Native B1/B2/B4/B8 acceptance is not a claim that all fit a 10 GiB model budget.
++
++## Media lifecycle
++
++Inspect EBADF, bounded encoder/feeder reclamation and diagnostic versus actual
++residual flags. Retain fail-closed for surviving owned processes/threads and keep
++media independent of Core/SR and Local cleanup. Owner traceback is pending;
++production media changes are deferred until it is available.
++
++## Evidence and stopping point
++
++The renderer development check has 118 passed, zero failure/error/skip, with
++scoped Ruff and AST checks. Driver/NVML/sysfs/Env/model boundaries are CPU doubles;
++no true EGL, GPU, FFmpeg or simulation was executed. This ran on hashed development
++source, not a formal clean-pair Gate. A final exact Root/Child and focused author
++Gate will follow the media fix, then a fresh GPT Code Gate. Do not auto-merge V3
++or update any active shared worktree, Run, YAML, media/results, DCP/log or process.
++
++Only after separate Owner authorization: M1/B1 real hardware Canary, then M8/B2,
++then B4/B8. Record real device identity, CUDA conflict checks, memory peaks and
++throughput; do not interrupt NoTTT training or recover the old out2 namespace.
+diff --git a/scripts/robocasa_eval_v2/cli.py b/scripts/robocasa_eval_v2/cli.py
+index 8dded489..83fd7558 100644
+--- a/scripts/robocasa_eval_v2/cli.py
++++ b/scripts/robocasa_eval_v2/cli.py
+@@ -24,7 +24,7 @@ from robocasa_episode_resume.model_identity import verification_record
+ from robocasa_eval_v2.config import resolve, execution
+ from robocasa_eval_v2.identity import discover, prepare, runtime_environment
+ from robocasa_eval_v2.runtime import Runtime
+-from robocasa_eval_v2.resources import physical_slots
++from robocasa_eval_v2.resources import physical_slots, render_slots
+ 
+ 
+ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+@@ -57,6 +57,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+                     "resolved": cfg,
+                     "task_order": [t for t, _ in tasks],
+                     "physical_slots": physical_slots(cfg, len(tasks)),
++                    "render_slots": render_slots(cfg, len(tasks)),
+                     "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
+                     "slots": [
+                         [t, ep]
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index d77efbb3..e34014c8 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -15,6 +15,10 @@ DEFAULTS = {
+     "tasks": "all",
+     "episodes_per_task": 50,
+     "gpu_ids": [4, 5, 6],
++    "render_gpu_ids": None,
++    "render_backend": None,
++    "server_reserve_bytes": 20 * 1024**3,
++    "render_reserve_bytes_per_sim": 1024**3,
+     "base_port": 8912,
+     "seed": 0,
+     "prediction_steps": 30,
+@@ -52,6 +56,8 @@ def resolve(argv=None):
+     p.add_argument("--config", type=Path, required=True)
+     p.add_argument("--owner-decision", type=Path)
+     p.add_argument("--gpus")
++    p.add_argument("--render-gpus")
++    p.add_argument("--render-backend", choices=("egl", "osmesa"))
+     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
+     p.add_argument("--local-memory-mode", choices=("off", "required"))
+     p.add_argument("--batch-wait-ms", type=int)
+@@ -91,6 +97,10 @@ def resolve(argv=None):
+         cfg["max_infer_batch_size"] = a.max_infer_batch_size
+     if a.gpus is not None:
+         cfg["gpu_ids"] = [int(x) for x in a.gpus.split(",")]
++    if a.render_gpus is not None:
++        cfg["render_gpu_ids"] = [int(x) for x in a.render_gpus.split(",")]
++    if a.render_backend is not None:
++        cfg["render_backend"] = a.render_backend
+     if a.tasks is not None:
+         cfg["tasks"] = "all" if a.tasks == "all" else a.tasks.split(",")
+     if a.episodes is not None:
+@@ -104,6 +114,11 @@ def resolve(argv=None):
+         or any(type(g) is not int or g < 0 for g in cfg["gpu_ids"])
+     ):
+         raise ValueError("unique nonnegative GPU IDs required")
++    render = rendering(cfg)
++    cfg.update(render_backend=render["backend"], render_gpu_ids=render["gpu_ids"])
++    for key in ("server_reserve_bytes", "render_reserve_bytes_per_sim"):
++        if type(cfg[key]) is not int or cfg[key] < 0:
++            raise ValueError(f"invalid {key}")
+     if cfg["tasks"] != "all" and (
+         not isinstance(cfg["tasks"], list)
+         or not cfg["tasks"]
+@@ -215,3 +230,26 @@ def execution(cfg):
+         "batch_wait_ms": cfg["batch_wait_ms"],
+         "noise": "literal_cfg_seed_per_sample_v1",
+     }
++
++
++def rendering(cfg):
++    """One ordered render device per Server; duplicates allow deliberate sharing."""
++    backend = cfg.get("render_backend")
++    if backend is None:
++        backend = os.environ.get("MUJOCO_GL", "egl")
++    if backend not in ("egl", "osmesa"):
++        raise ValueError("render_backend must be egl or osmesa")
++    devices = cfg.get("render_gpu_ids")
++    if backend == "osmesa":
++        if devices is not None and devices != []:
++            raise ValueError("OSMesa cannot allocate render GPUs")
++        return {"backend": backend, "gpu_ids": []}
++    if devices is None:
++        devices = cfg["gpu_ids"]
++    if (
++        not isinstance(devices, list)
++        or len(devices) != len(cfg["gpu_ids"])
++        or any(type(g) is not int or g < 0 for g in devices)
++    ):
++        raise ValueError("render_gpu_ids must map each Server to a physical GPU")
++    return {"backend": backend, "gpu_ids": list(devices)}
+diff --git a/scripts/robocasa_eval_v2/resources.py b/scripts/robocasa_eval_v2/resources.py
+index b095a536..a2a887d4 100644
+--- a/scripts/robocasa_eval_v2/resources.py
++++ b/scripts/robocasa_eval_v2/resources.py
+@@ -5,12 +5,19 @@ from __future__ import annotations
+ import subprocess
+ from pathlib import Path
+ 
++from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
+ from robocasa_processes import group_members
+ 
++from robocasa_eval_v2.config import rendering
++
+ 
+ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
++    render = rendering(cfg)
++    selected_ids = sorted(set(cfg["gpu_ids"]) | set(render["gpu_ids"]))
+     args = [
+         "nvidia-smi",
++        "-i",
++        ",".join(map(str, selected_ids)),
+         "--query-gpu=index,uuid,memory.total,memory.used",
+         "--format=csv,noheader,nounits",
+     ]
+@@ -22,14 +29,45 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+     allowed = set()
+     for p in processes:
+         allowed.update(group_members(p.pgid))
+-    selected = {devices[g][0] for g in cfg["gpu_ids"] if g in devices}
+-    if len(selected) != len(cfg["gpu_ids"]):
++    if any(g not in devices for g in selected_ids):
+         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
+-    for g in cfg["gpu_ids"]:
++    reserves = dict.fromkeys(selected_ids, 0)
++    if before_models:
++        for g in cfg["gpu_ids"]:
++            reserves[g] += cfg.get("server_reserve_bytes", 20 * 1024**3)
++        task_count = len(cfg["tasks"]) if isinstance(cfg.get("tasks"), list) else 18
++        for g in render_slots(cfg, task_count).values():
++            if g is not None:
++                reserves[g] += cfg.get("render_reserve_bytes_per_sim", 1024**3)
++    for g in selected_ids:
+         _, total, used = devices[g]
+-        reserve = 20 * 1024**3 if before_models else 0
+-        if used + reserve > total * cfg["max_gpu_fraction"]:
++        if used + reserves[g] > total * cfg["max_gpu_fraction"]:
+             raise RuntimeError("BLOCKED_RESOURCE: GPU memory budget")
++    if render["gpu_ids"]:
++        apps = run(
++            [
++                "nvidia-smi",
++                "-i",
++                ",".join(map(str, sorted(set(render["gpu_ids"])))),
++                "--query-compute-apps=gpu_uuid,pid",
++                "--format=csv,noheader,nounits",
++            ],
++            capture_output=True,
++            text=True,
++            check=True,
++            timeout=10,
++        ).stdout
++        render_uuids = {devices[g][0] for g in render["gpu_ids"]}
++        for line in apps.splitlines():
++            uid, pid = [v.strip() for v in line.split(",")]
++            if uid not in render_uuids or not pid.isdigit():
++                raise RuntimeError(
++                    "BLOCKED_RESOURCE: invalid render CUDA ownership probe"
++                )
++            if int(pid) not in allowed:
++                raise RuntimeError(
++                    "BLOCKED_RESOURCE: foreign CUDA workload on render GPU"
++                )
+     rss = 0
+     for pid in allowed:
+         try:
+@@ -40,7 +78,12 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+             pass
+     if rss > cfg["max_rss_bytes"]:
+         raise RuntimeError("BLOCKED_RESOURCE: owned process RSS budget")
+-    return {"gpus": devices, "owned_pids": sorted(allowed), "rss_bytes": rss}
++    return {
++        "gpus": devices,
++        "owned_pids": sorted(allowed),
++        "rss_bytes": rss,
++        "reserves": reserves,
++    }
+ 
+ 
+ def physical_slots(cfg, task_count):
+@@ -51,3 +94,39 @@ def physical_slots(cfg, task_count):
+         (f"GPU{g}_S{s}", g) for s in range(cfg["sims_per_gpu"]) for g in cfg["gpu_ids"]
+     ]
+     return dict(pairs[:task_count])
++
++
++def render_slots(cfg, task_count):
++    policy = rendering(cfg)
++    mapping = dict(zip(cfg["gpu_ids"], policy["gpu_ids"]))
++    return {
++        worker: mapping[gpu] if policy["backend"] == "egl" else None
++        for worker, gpu in physical_slots(cfg, task_count).items()
++    }
++
++
++def gpu_identity(gpu, *, run=subprocess.run):
++    """Resolve a physical nvidia-smi ID; never interpret it as an EGL ordinal."""
++    raw = (
++        run(
++            [
++                "nvidia-smi",
++                "-i",
++                str(gpu),
++                "--query-gpu=index,uuid,pci.bus_id",
++                "--format=csv,noheader,nounits",
++            ],
++            capture_output=True,
++            text=True,
++            check=True,
++            timeout=10,
++        )
++        .stdout.strip()
++        .splitlines()
++    )
++    if len(raw) != 1:
++        raise RuntimeError("one physical render GPU identity required")
++    index, uid, pci = [v.strip() for v in raw[0].split(",")]
++    if index != str(gpu) or not uid.startswith("GPU-"):
++        raise RuntimeError("physical render GPU identity mismatch")
++    return {"gpu_id": gpu, "uuid": uid, "pci_bus_id": normalize_pci(pci)}
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index 8a278adb..d47f8230 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -21,6 +21,7 @@ from cosmos_framework.evaluation.robocasa_v2.scheduler import (
+     slot_disposition,
+ )
+ from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
++from cosmos_framework.simulation.robocasa.render_devices import validate_proof
+ from eval_robocasa_18task_queue import (
+     CHILD,
+     ROOT,
+@@ -32,7 +33,7 @@ from robocasa_eval_v2_processes import Actor, Registry, process_identity
+ from robocasa_processes import group_members
+ 
+ from robocasa_eval_v2 import identity, resources
+-from robocasa_eval_v2.config import execution
++from robocasa_eval_v2.config import execution, rendering
+ 
+ 
+ class Runtime:
+@@ -72,6 +73,19 @@ class Runtime:
+                 )
+         elif limit is not None:
+             raise ValueError("rollout cap requires a Fresh Run configuration record")
++        self.render_policy = rendering(cfg)
++        if initial is not None:
++            frozen = initial["resolved"]
++            if frozen.get("render_backend") is None:
++                if (
++                    cfg.get("render_backend") is not None
++                    or cfg.get("render_gpu_ids") is not None
++                ):
++                    raise ValueError("explicit render policy requires a new Run")
++            elif rendering(frozen) != self.render_policy:
++                raise ValueError(
++                    "render policy differs from the initial Run configuration"
++                )
+         self.stop = threading.Event()
+         self.registry = Registry(store.root, cfg["terminate_grace_s"])
+         self.servers = {}
+@@ -83,6 +97,10 @@ class Runtime:
+             cfg, len(store.manifest["task_order"])
+         )
+         self.workers = list(self.worker_gpus)
++        self.worker_render_gpus = resources.render_slots(
++            cfg, len(store.manifest["task_order"])
++        )
++        self.actor_rendering = {}
+         self.batch_profile = cfg.get("execution_profile", "phase_a") == "phase_b"
+         self.slot_ids = {worker: uuid.uuid4().hex for worker in self.workers}
+         self.slot_generations = dict.fromkeys(self.workers, 0)
+@@ -278,6 +296,15 @@ class Runtime:
+             if worker in self.actors:
+                 return self._start_assignment(claim, self.actors[worker], server_rec)
+             nonce = uuid.uuid4().hex
++            render_gpu = self.worker_render_gpus[worker]
++            render_plan = {
++                "backend": self.render_policy["backend"],
++                "server_gpu_id": self.worker_gpus[worker],
++                "render_gpu_id": render_gpu,
++                "expected_device": resources.gpu_identity(render_gpu)
++                if render_gpu is not None
++                else None,
++            }
+             cfg = {
+                 "nonce": nonce,
+                 "manifest_digest": self.store.manifest["digest"],
+@@ -286,6 +313,7 @@ class Runtime:
+                 "physical_slot_id": self.slot_ids[worker],
+                 "physical_worker": worker,
+                 "gpu_id": self.worker_gpus[worker],
++                "rendering": render_plan,
+                 "task_root": str(self.store.root / "_internal/tasks"),
+                 "tasks": {
+                     name: {
+@@ -309,6 +337,7 @@ class Runtime:
+                         "native": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+                         "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+                         "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
++                        "rendering": "cosmos_framework/simulation/robocasa/render_devices.py",
+                     }.items()
+                 },
+                 "settings": {
+@@ -348,12 +377,15 @@ class Runtime:
+             path = self.store.root / "_internal/actor_configs" / f"{nonce}.json"
+             write(path, cfg)
+             parent, child = socket.socketpair()
+-            gpu = self.worker_gpus[claim["physical_worker"]]
+             env = dict(
+                 self.environment,
+-                CUDA_VISIBLE_DEVICES=str(gpu),
+-                MUJOCO_EGL_DEVICE_ID=str(gpu),
++                CUDA_VISIBLE_DEVICES="",
++                MUJOCO_GL=self.render_policy["backend"],
++                PYOPENGL_PLATFORM=self.render_policy["backend"],
+             )
++            env.pop(
++                "MUJOCO_EGL_DEVICE_ID", None
++            )  # Worker resolves the physical PCI -> EGL index before imports.
+             log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
+             self.logs.append(log)
+             command = [
+@@ -405,6 +437,10 @@ class Runtime:
+                 != self.store.manifest["protocol"]["local_memory"]
+             ):
+                 raise RuntimeError("native Worker handshake mismatch")
++            self.actor_rendering[worker] = validate_proof(
++                ready.get("rendering"), render_plan
++            )
++            self._proof("render_device", self.actor_rendering[worker])
+             self.resource_probe(
+                 self.cfg,
+                 [v[0] for v in self.servers.values()]
+@@ -517,6 +553,16 @@ class Runtime:
+                     raise RuntimeError("evaluation cancelled")
+                 sample = self.store.begin_initialization(a)
+                 response = actor.request("initialize", deadline=deadline)
++                if (
++                    response.get("error") is None
++                    and self.render_policy["backend"] == "egl"
++                ):
++                    proof = validate_proof(
++                        response.get("rendering"),
++                        self.actor_rendering[claim["physical_worker"]],
++                        context=True,
++                    )
++                    self._proof("render_context", proof)
+                 if response.get("error") is None:
+                     state = self.store.initialization_outcome(
+                         a, initial_success=response["initial_success"]
+diff --git a/tools/v3/eval_v2_batch_tests/render_devices_test.py b/tools/v3/eval_v2_batch_tests/render_devices_test.py
+new file mode 100644
+index 00000000..8b64d1ab
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/render_devices_test.py
+@@ -0,0 +1,272 @@
++"""Real EGL selection/attestation logic with CPU driver and sysfs doubles."""
++
++import copy
++import ctypes
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
++from cosmos_framework.simulation.robocasa import render_devices as module
++
++from tools.v3.eval_v2_production_tests import worker_test
++
++
++@pytest.fixture(autouse=True)
++def restore_render_environment(monkeypatch):
++    for key, value in {
++        "MUJOCO_GL": "osmesa",
++        "PYOPENGL_PLATFORM": "osmesa",
++        "CUDA_VISIBLE_DEVICES": "",
++        "MUJOCO_EGL_DEVICE_ID": "stale-before-configure",
++    }.items():
++        monkeypatch.setenv(key, value)
++
++
++def plan():
++    return {
++        "backend": "egl",
++        "server_gpu_id": 4,
++        "render_gpu_id": 6,
++        "expected_device": {
++            "gpu_id": 6,
++            "uuid": "GPU-six",
++            "pci_bus_id": "0000:66:00.0",
++        },
++    }
++
++
++class Driver:
++    def __init__(self):
++        self.rows = [
++            {
++                "egl_device_index": 0,
++                "handle": 6006,
++                "pci_bus_id": "0000:66:00.0",
++                "device_node": "/dev/dri/renderD6",
++            },
++            {
++                "egl_device_index": 1,
++                "handle": 4004,
++                "pci_bus_id": "0000:44:00.0",
++                "device_node": "/dev/dri/renderD4",
++            },
++        ]
++        self.current_handle = 6006
++        self.queries = []
++
++    def inventory(self):
++        self.queries.append("inventory")
++        return copy.deepcopy(self.rows)
++
++    def current(self):
++        self.queries.append("current_context")
++        return next(
++            copy.deepcopy(v) for v in self.rows if v["handle"] == self.current_handle
++        )
++
++
++def test_permuted_egl_enumeration_is_resolved_by_pci_not_gpu_number():
++    driver = Driver()
++    proof = module.configure(plan(), api=driver)
++    assert proof["egl_device_index"] == 0 and proof["render_gpu_id"] == 6
++    assert module.os.environ["MUJOCO_EGL_DEVICE_ID"] == "0"
++    assert module.os.environ["CUDA_VISIBLE_DEVICES"] == ""
++    assert (
++        proof["physical_identity_verified"] is True
++        and proof["context_verified"] is False
++    )
++    assert module.verify_current(proof, api=driver)["context_verified"] is True
++    assert driver.queries == [
++        "inventory",
++        "current_context",
++        "inventory",
++    ]  # No context-creation API.
++
++
++@pytest.mark.parametrize("failure", ["missing", "ambiguous", "unidentifiable"])
++def test_missing_or_ambiguous_physical_identity_never_falls_back_to_an_ordinal(failure):
++    driver = Driver()
++    if failure == "missing":
++        driver.rows = driver.rows[1:]
++    if failure == "ambiguous":
++        driver.rows.append({**driver.rows[0], "egl_device_index": 2, "handle": 6666})
++    if failure == "unidentifiable":
++        driver.rows[0]["pci_bus_id"] = None
++    with pytest.raises(RuntimeError, match="one provable EGL device"):
++        module.configure(plan(), api=driver)
++    assert "MUJOCO_EGL_DEVICE_ID" not in module.os.environ
++
++
++def test_actual_current_context_on_the_server_gpu_is_rejected():
++    driver = Driver()
++    proof = module.configure(plan(), api=driver)
++    driver.current_handle = 4004
++    with pytest.raises(RuntimeError, match="different physical GPU"):
++        module.verify_current(proof, api=driver)
++
++
++@pytest.mark.parametrize(
++    "field,value",
++    [
++        ("physical_identity_verified", False),
++        ("physical_identity_verified", "true"),
++        ("egl_device_index", True),
++        ("context_verified", False),
++    ],
++)
++def test_root_handshake_rejects_unproven_or_malformed_device_flags(field, value):
++    proof = module.verify_current(module.configure(plan(), api=Driver()), api=Driver())
++    proof[field] = value
++    with pytest.raises(ValueError, match="unproven"):
++        module.validate_proof(proof, plan(), context=True)
++
++
++def test_wrong_role_or_uuid_cannot_be_reported_as_the_assigned_render_device():
++    proof = module.configure(plan(), api=Driver())
++    proof["render_gpu_id"] = 4
++    with pytest.raises(ValueError, match="assigned roles"):
++        module.validate_proof(proof, plan())
++    proof = module.configure(plan(), api=Driver())
++    proof["actual_device"]["uuid"] = "GPU-wrong"
++    with pytest.raises(ValueError, match="unproven"):
++        module.validate_proof(proof, plan())
++
++
++def test_osmesa_never_loads_an_egl_or_cuda_driver(monkeypatch):
++    monkeypatch.setattr(
++        module, "EGLDevices", lambda: pytest.fail("OSMesa cannot load EGL")
++    )
++    cfg = {
++        "backend": "osmesa",
++        "server_gpu_id": 4,
++        "render_gpu_id": None,
++        "expected_device": None,
++    }
++    proof = module.configure(cfg)
++    assert module.validate_proof(proof, cfg) == proof
++    assert (
++        module.os.environ["MUJOCO_GL"]
++        == module.os.environ["PYOPENGL_PLATFORM"]
++        == "osmesa"
++    )
++    assert module.os.environ["CUDA_VISIBLE_DEVICES"] == ""
++    assert "MUJOCO_EGL_DEVICE_ID" not in module.os.environ
++
++
++@pytest.mark.parametrize("pci", ["00000000:AF:00.0", "0000:af:00.0"])
++def test_pci_domain_and_case_are_normalized(pci):
++    assert module.normalize_pci(pci) == "0000:af:00.0"
++
++
++@pytest.mark.parametrize("pci", [None, "GPU-6", "0000:af:00", "10000000:00:00.0"])
++def test_malformed_pci_identity_is_rejected(pci):
++    with pytest.raises(ValueError):
++        module.normalize_pci(pci)
++
++
++class Function:
++    def __init__(self, callback):
++        self.callback = callback
++
++    def __call__(self, *args):
++        return self.callback(*args)
++
++
++def test_real_ctypes_inventory_and_current_display_parser_with_fake_functions(
++    monkeypatch,
++):
++    class Library:
++        eglGetProcAddress = Function(lambda *a: 0)
++        eglGetCurrentDisplay = Function(lambda: 111)
++        eglGetCurrentContext = Function(lambda: 222)
++        eglGetError = Function(lambda: 0x3000)
++
++    handles = [6006, 4004, 9999]
++
++    def query_devices(capacity, devices, count):
++        ctypes.cast(count, ctypes.POINTER(ctypes.c_int))[0] = len(handles)
++        if capacity:
++            for i, h in enumerate(handles):
++                devices[i] = h
++        return 1
++
++    def query_string(device, attribute):
++        return {6006: b"/dev/dri/renderD6", 4004: b"/dev/dri/renderD4"}.get(device)
++
++    def query_display(display, attribute, result):
++        assert display == 111 and attribute == 0x322C
++        ctypes.cast(result, ctypes.POINTER(ctypes.c_ssize_t))[0] = 6006
++        return 1
++
++    calls = {
++        b"eglQueryDevicesEXT": query_devices,
++        b"eglQueryDeviceStringEXT": query_string,
++        b"eglQueryDisplayAttribEXT": query_display,
++    }
++    monkeypatch.setattr(module.ctypes, "CDLL", lambda name: Library())
++    monkeypatch.setattr(
++        module.EGLDevices, "_function", lambda self, name, *a: calls[name]
++    )
++    original = module.Path.resolve
++
++    def resolve(path, *a, **kw):
++        mapping = {
++            "/sys/class/drm/renderD6/device": "0000:66:00.0",
++            "/sys/class/drm/renderD4/device": "0000:44:00.0",
++        }
++        if str(path) in mapping:
++            return module.Path("/synthetic/sysfs") / mapping[str(path)]
++        return original(path, *a, **kw)
++
++    monkeypatch.setattr(module.Path, "resolve", resolve)
++    driver = module.EGLDevices()
++    inventory = driver.inventory()
++    assert inventory[0]["pci_bus_id"] == "0000:66:00.0"
++    assert inventory[2]["pci_bus_id"] is None
++    proof = module.configure(plan(), api=driver)
++    assert module.verify_current(proof, api=driver)["context_verified"] is True
++
++
++@pytest.mark.parametrize("wrong_context", [False, True])
++def test_production_worker_attests_device_then_context_before_policy(
++    tmp_path, monkeypatch, wrong_context
++):
++    configuration = worker_test.cfg(tmp_path)
++    configuration["rendering"] = plan()
++    driver = Driver()
++    if wrong_context:
++        driver.current_handle = 4004
++    monkeypatch.setattr(module, "EGLDevices", lambda: driver)
++    channel, thread, errors, env = worker_test.run_worker(configuration, monkeypatch)
++    try:
++        ready = receive(channel)
++        assert ready["kind"] == "READY"
++        assert ready["rendering"]["render_gpu_id"] == 6
++        assert ready["rendering"]["egl_device_index"] == 0
++        send(
++            channel,
++            {
++                "nonce": "cpu",
++                "request_id": "start",
++                "op": "start_episode",
++                "attempt": configuration["_test_attempt"],
++                "grant": configuration["_test_grant"],
++            },
++        )
++        assert receive(channel)["state"] == "ENV_READY"
++        send(channel, {"nonce": "cpu", "request_id": "initialize", "op": "initialize"})
++        reply = receive(channel)
++        if wrong_context:
++            assert (
++                reply["kind"] == "FATAL" and "different physical GPU" in reply["error"]
++            )
++        else:
++            assert reply["rendering"]["context_verified"] is True
++            assert reply["initial_success"] is True
++            send(channel, {"nonce": "cpu", "request_id": "close", "op": "close"})
++            assert receive(channel)["closed"] is True
++        assert env.resets == 1 and not env.actions
++    finally:
++        channel.close()
++        thread.join(2)
++    assert not thread.is_alive()
++    assert bool(errors) is wrong_context
+diff --git a/tools/v3/eval_v2_batch_tests/render_mapping_test.py b/tools/v3/eval_v2_batch_tests/render_mapping_test.py
+new file mode 100644
+index 00000000..b86f7770
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/render_mapping_test.py
+@@ -0,0 +1,309 @@
++"""Config, resource admission and real actor-config wiring without GPUs."""
++
++import copy
++import json
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++import yaml
++from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
++from cosmos_framework.evaluation.robocasa_v2.store import Store, save
++from robocasa_eval_v2 import resources
++from robocasa_eval_v2.cli import main
++from robocasa_eval_v2.config import execution, rendering, resolve
++from robocasa_eval_v2.identity import ATOMIC_TASKS
++from robocasa_eval_v2.runtime import Runtime
++
++from tools.v3.eval_v2_batch_tests.rollout_policy_test import configuration
++from tools.v3.eval_v2_production_tests.contract_test import manifest
++
++
++def resolved(tmp_path, **changes):
++    path = configuration(
++        tmp_path,
++        execution_profile="phase_b",
++        gpu_ids=[4, 5],
++        render_gpu_ids=[6, 7],
++        render_backend="egl",
++        sims_per_gpu=8,
++        max_infer_batch_size=2,
++        tasks="all",
++    )
++    raw = yaml.safe_load(path.read_text())
++    raw.update(changes)
++    path.write_text(yaml.safe_dump(raw))
++    return path, resolve(["dry-run", "--config", str(path)])[1]
++
++
++@pytest.mark.parametrize(
++    "gpus,renders,m,b",
++    [([4, 5], [6, 7], 8, 2), ([2], [3], 1, 1), ([2, 3, 4], [5, 5, 6], 3, 4)],
++)
++def test_counts_roles_and_batch_remain_independent(tmp_path, gpus, renders, m, b):
++    _, cfg = resolved(
++        tmp_path,
++        gpu_ids=gpus,
++        render_gpu_ids=renders,
++        sims_per_gpu=m,
++        max_infer_batch_size=b,
++    )
++    slots = resources.physical_slots(cfg, 18)
++    mapping = dict(zip(gpus, renders))
++    assert len(slots) == min(len(gpus) * m, 18)
++    assert resources.render_slots(cfg, 18) == {s: mapping[g] for s, g in slots.items()}
++    assert cfg["max_infer_batch_size"] == b
++
++
++@pytest.mark.parametrize(
++    "field,value",
++    [
++        ("render_backend", "glfw"),
++        ("render_backend", True),
++        ("render_gpu_ids", []),
++        ("render_gpu_ids", [6]),
++        ("render_gpu_ids", [6, -1]),
++        ("render_gpu_ids", [6, True]),
++        ("render_gpu_ids", "6,7"),
++        ("render_gpu_ids", [6.0, 7]),
++        ("server_reserve_bytes", -1),
++        ("server_reserve_bytes", True),
++        ("render_reserve_bytes_per_sim", 0.5),
++    ],
++)
++def test_bad_render_policy_is_rejected_before_runtime(tmp_path, field, value):
++    with pytest.raises(ValueError):
++        resolved(tmp_path, **{field: value})
++    assert not (tmp_path / "run").exists()
++
++
++def test_osmesa_and_legacy_environment_defaults_are_explicit(tmp_path, monkeypatch):
++    path, cfg = resolved(tmp_path, render_backend="osmesa", render_gpu_ids=None)
++    assert rendering(cfg) == {"backend": "osmesa", "gpu_ids": []}
++    assert set(resources.render_slots(cfg, 18).values()) == {None}
++    with pytest.raises(ValueError, match="OSMesa"):
++        resolved(tmp_path, render_backend="osmesa")
++    raw = yaml.safe_load(path.read_text())
++    raw.pop("render_backend")
++    raw.pop("render_gpu_ids")
++    path.write_text(yaml.safe_dump(raw))
++    monkeypatch.setenv("MUJOCO_GL", "osmesa")
++    cfg = resolve(["dry-run", "--config", str(path)])[1]
++    assert cfg["render_backend"] == "osmesa" and cfg["render_gpu_ids"] == []
++    monkeypatch.setenv("MUJOCO_GL", "egl")
++    cfg = resolve(["dry-run", "--config", str(path)])[1]
++    assert cfg["render_gpu_ids"] == cfg["gpu_ids"]
++
++
++def test_cli_render_overrides_and_preview_have_no_hardware_side_effects(
++    tmp_path, capsys
++):
++    path, cfg = resolved(tmp_path)
++    for task in ATOMIC_TASKS:
++        metadata = (
++            tmp_path / f"absent_inputs/dataset/{task}/lerobot/extras/dataset_meta.json"
++        )
++        metadata.parent.mkdir(parents=True)
++        metadata.write_text(json.dumps({"env_args": {"env_name": task}}))
++
++    def forbidden(*a, **k):
++        pytest.fail("preview must not probe a GPU or load a model")
++
++    assert (
++        main(
++            ["dry-run", "--config", str(path), "--render-gpus", "7,6"],
++            prepare_inputs=forbidden,
++            runtime_type=forbidden,
++        )
++        == 0
++    )
++    preview = json.loads(capsys.readouterr().out)
++    assert len(preview["physical_slots"]) == 16
++    assert set(preview["physical_slots"].values()) == {4, 5}
++    assert set(preview["render_slots"].values()) == {6, 7}
++    assert preview["render_slots"]["GPU4_S0"] == 7
++    assert preview["resolved"]["render_gpu_ids"] == [7, 6]
++    assert preview["models_loaded"] == preview["environments_created"] == 0
++    assert not (tmp_path / "run").exists()
++
++
++def store_cfg(tmp_path):
++    _, cfg = resolved(tmp_path)
++    m = manifest(tasks=ATOMIC_TASKS, episodes=50)
++    m = build_manifest(
++        tasks=m["tasks"],
++        episodes=50,
++        seed=m["seed"],
++        horizons=m["horizons"],
++        experiment=m["experiment"],
++        execution=execution(cfg),
++    )
++    store = Store(tmp_path / "run", m)
++    store.create()
++    save(
++        store.root / "_internal/invocations/0001.json",
++        {"mode": "fresh", "resolved": cfg},
++    )
++    return store, cfg
++
++
++@pytest.mark.parametrize(
++    "change",
++    [{"render_gpu_ids": [7, 6]}, {"render_backend": "osmesa", "render_gpu_ids": []}],
++)
++def test_same_run_render_drift_is_rejected_and_correct_resume_still_works(
++    tmp_path, change
++):
++    store, cfg = store_cfg(tmp_path)
++    changed = {**cfg, **change}
++    save(
++        store.root / "_internal/invocations/0000.json",
++        {"mode": "resume", "resolved": changed},
++    )
++    with pytest.raises(ValueError, match="render policy differs"):
++        Runtime(store, changed, {}, {})
++    Runtime(store, cfg, {}, {})
++
++
++def test_old_run_cannot_silently_adopt_explicit_render_roles(tmp_path):
++    store, cfg = store_cfg(tmp_path)
++    old = copy.deepcopy(cfg)
++    old.pop("render_backend")
++    old.pop("render_gpu_ids")
++    path = store.root / "_internal/invocations/0001.json"
++    path.unlink()  # Synthetic record replacement only.
++    save(path, {"mode": "fresh", "resolved": old})
++    with pytest.raises(ValueError, match="requires a new Run"):
++        Runtime(store, cfg, {}, {})
++
++
++def test_actual_actor_configuration_and_environment_use_independent_roles(
++    tmp_path, monkeypatch
++):
++    store, cfg = store_cfg(tmp_path)
++    runtime = Runtime(
++        store,
++        cfg,
++        {
++            "tasks": {t: "/unread/" + t for t in ATOMIC_TASKS},
++            "simulation_libraries": {},
++            "runtime": {"digest": "1" * 64},
++        },
++        {"MUJOCO_EGL_DEVICE_ID": "99"},
++    )
++    monkeypatch.setattr(runtime, "_server", lambda w: (None, {}, 8912))
++    monkeypatch.setattr(
++        resources,
++        "gpu_identity",
++        lambda g: {"gpu_id": g, "uuid": f"GPU-{g}", "pci_bus_id": f"0000:{g:02x}:00.0"},
++    )
++    launches = []
++
++    class BeforeProcess(Exception):
++        pass
++
++    def start(command, **kw):
++        assert command[2:4] == [
++            "-m",
++            "cosmos_framework.simulation.robocasa.eval_v2_worker",
++        ]
++        path = command[command.index("--config") + 1]
++        launches.append((json.loads(Path(path).read_text()), kw["env"]))
++        raise BeforeProcess
++
++    monkeypatch.setattr(runtime.registry, "start", start)
++    try:
++        with store.locked():
++            for worker in runtime.workers:
++                with pytest.raises(BeforeProcess):
++                    runtime._actor({"task": ATOMIC_TASKS[0], "physical_worker": worker})
++    finally:
++        for stream in runtime.logs:
++            stream.close()
++    assert len(launches) == 16
++    for actor, env in launches:
++        server_gpu = actor["gpu_id"]
++        assert server_gpu in (4, 5)
++        assert actor["rendering"]["server_gpu_id"] == server_gpu
++        assert actor["rendering"]["render_gpu_id"] == {4: 6, 5: 7}[server_gpu]
++        assert actor["rendering"]["expected_device"]["gpu_id"] in (6, 7)
++        assert env["CUDA_VISIBLE_DEVICES"] == ""
++        assert env["MUJOCO_GL"] == env["PYOPENGL_PLATFORM"] == "egl"
++        assert (
++            "MUJOCO_EGL_DEVICE_ID" not in env
++        )  # Worker must resolve the EGL enumeration.
++
++
++def resource_cfg():
++    return {
++        "gpu_ids": [4, 5],
++        "render_gpu_ids": [6, 7],
++        "render_backend": "egl",
++        "execution_profile": "phase_b",
++        "sims_per_gpu": 8,
++        "tasks": "all",
++        "max_gpu_fraction": 0.85,
++        "max_rss_bytes": 2**40,
++        "server_reserve_bytes": 10 * 1024**3,
++        "render_reserve_bytes_per_sim": 800 * 1024**2,
++    }
++
++
++def probe(*, missing=False, used_render=0, apps=""):
++    calls = []
++
++    def run(args, **kw):
++        calls.append(args)
++        if any("query-compute-apps" in a for a in args):
++            return SimpleNamespace(stdout=apps)
++        rows = [
++            f"{i}, GPU-{i}, 81920, {used_render if i in (6, 7) else 0}"
++            for i in (4, 5, 6, 7)
++            if not (missing and i == 6)
++        ]
++        return SimpleNamespace(stdout="\n".join(rows))
++
++    return run, calls
++
++
++def test_union_memory_admission_budgets_roles_without_querying_gpu_zero_to_three():
++    run, calls = probe()
++    result = resources.check(resource_cfg(), before_models=True, run=run)
++    assert result["reserves"] == {
++        4: 10 * 1024**3,
++        5: 10 * 1024**3,
++        6: 8 * 800 * 1024**2,
++        7: 8 * 800 * 1024**2,
++    }
++    assert calls[0][1:3] == ["-i", "4,5,6,7"]
++    assert calls[1][1:3] == ["-i", "6,7"]
++
++
++@pytest.mark.parametrize(
++    "options", [{"missing": True}, {"used_render": 70000}, {"apps": "GPU-6, 123456"}]
++)
++def test_missing_render_gpu_budget_or_foreign_cuda_is_blocked(options):
++    run, _ = probe(**options)
++    with pytest.raises(RuntimeError, match="BLOCKED_RESOURCE"):
++        resources.check(resource_cfg(), before_models=True, run=run)
++
++
++def test_owned_model_cuda_on_a_deliberately_shared_render_gpu_is_permitted(monkeypatch):
++    cfg = resource_cfg()
++    cfg["render_gpu_ids"] = [4, 5]
++    run, _ = probe(apps="GPU-4, 123456")
++    monkeypatch.setattr(resources, "group_members", lambda pgid: {123456})
++    result = resources.check(cfg, [SimpleNamespace(pgid=123456)], run=run)
++    assert result["owned_pids"] == [123456]
++
++
++def test_physical_identity_uses_pci_and_uuid_not_an_assumed_egl_index():
++    def run(args, **kw):
++        assert args[1:3] == ["-i", "6"]
++        return SimpleNamespace(stdout="6, GPU-render-six, 00000000:AF:00.0")
++
++    assert resources.gpu_identity(6, run=run) == {
++        "gpu_id": 6,
++        "uuid": "GPU-render-six",
++        "pci_bus_id": "0000:af:00.0",
++    }
+diff --git a/tools/v3/eval_v2_production_tests/worker_test.py b/tools/v3/eval_v2_production_tests/worker_test.py
+index 0f32641e..9e7b4dba 100644
+--- a/tools/v3/eval_v2_production_tests/worker_test.py
++++ b/tools/v3/eval_v2_production_tests/worker_test.py
+@@ -19,6 +19,7 @@ def cfg(tmp_path):
+     metadata = directory / "extras/dataset_meta.json"
+     metadata.write_text('{"env_args":{}}')
+     from cosmos_framework.simulation.robocasa import eval_v2_slot
++    from cosmos_framework.simulation.robocasa import render_devices
+     from tools.v3.eval_v2_production_tests.store_test import fresh
+ 
+     value = fresh(tmp_path, episodes=1)
+@@ -31,6 +32,7 @@ def cfg(tmp_path):
+         "native": Path(native.__file__),
+         "adapter": Path(eval_v2_adapter.__file__),
+         "slot": Path(eval_v2_slot.__file__),
++        "rendering": Path(render_devices.__file__),
+     }
+     return {
+         "nonce": "cpu",
+@@ -54,6 +56,12 @@ def cfg(tmp_path):
+             "server_url": "http://unused",
+             "predict_timeout_s": 0.1,
+         },
++        "rendering": {
++            "backend": "osmesa",
++            "server_gpu_id": 4,
++            "render_gpu_id": None,
++            "expected_device": None,
++        },
+         "runtime_args": {},
+         "dataset_dir": str(directory),
+         "metadata_sha256": hashlib.sha256(metadata.read_bytes()).hexdigest(),

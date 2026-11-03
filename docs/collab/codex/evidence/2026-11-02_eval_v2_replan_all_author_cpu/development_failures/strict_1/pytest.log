@@ -1,0 +1,46 @@
+F
+=================================== FAILURES ===================================
+_____ test_queue_full_and_slow_encoder_wait_for_saved_not_two_second_grace _____
+
+tmp_path = PosixPath('/tmp/psm-eval-replan-all-20261102/strict_1/pytest_tmp/test_queue_full_and_slow_encod0')
+
+    def test_queue_full_and_slow_encoder_wait_for_saved_not_two_second_grace(tmp_path):
+        sink = strict_sink(tmp_path, target=delayed_encoder)
+        # Four actual accepted items fill the bounded queue while the child is gated.
+        for _ in range(4):
+            sink.queue.put(("frame", np.zeros((32, 32, 3), dtype=np.uint8)), timeout=1)
+        result, errors = [], []
+    
+        def save():
+            try:
+                result.append(sink.prediction(0, {"video": png_frames()}))
+            except Exception as error:
+                errors.append(error)
+    
+        thread = threading.Thread(target=save)
+        thread.start()
+        try:
+            time.sleep(0.2)
+            assert thread.is_alive() and not result and not errors
+            assert not (tmp_path / "generated/replan_0000.mp4").exists()
+            (tmp_path / "release").touch()
+            thread.join(15)
+>           assert not thread.is_alive() and not errors
+E           assert (not False and not [RuntimeError("MEDIA_INCOMPLETE: Encoder VIDEO_FAILED: OSError('Could not load meta information\\n=== stderr ===\\n\\n')")])
+E            +  where False = is_alive()
+E            +    where is_alive = <Thread(Thread-1 (save), stopped 139673640326848)>.is_alive
+
+tools/v3/eval_v2_replan_tests/encoder_test.py:68: AssertionError
+----------------------------- Captured stderr call -----------------------------
+/workspace/psm-wma-eval-replan-all/cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py:16: UserWarning: A NumPy version >=1.23.5 and <2.5.0 is required for this version of SciPy (detected version 2.5.4)
+  from scipy.spatial.transform import Rotation as R
+=============================== warnings summary ===============================
+cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py:16
+  /workspace/psm-wma-eval-replan-all/cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py:16: UserWarning: A NumPy version >=1.23.5 and <2.5.0 is required for this version of SciPy (detected version 2.5.4)
+    from scipy.spatial.transform import Rotation as R
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_replan_tests/encoder_test.py::test_queue_full_and_slow_encoder_wait_for_saved_not_two_second_grace
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 warning in 1.91s

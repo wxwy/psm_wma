@@ -1,0 +1,36 @@
+# Future NEW Run only; replace paths and obtain a separate hardware/run authorization.
+schema: psm_robocasa_eval_v2
+execution_profile: phase_b
+local_memory_mode: required
+checkpoint: /EDIT_READONLY/checkpoints/iter_000020000
+config_file: /EDIT_READONLY/config.yaml
+dataset_root: /EDIT_READONLY/robocasa365/target/atomic
+output_dir: /EDIT_NEW_OUTPUT/local_ttt_split_render
+server_python: /EDIT_SERVER_ENV/bin/python
+sim_python: /EDIT_SIM_ENV/bin/python
+vendor_lock: ${PSM_REPO}/third_party/robosuite_patches/vendor.lock.json
+tasks: all
+episodes_per_task: 50
+gpu_ids: [4, 5]
+render_gpu_ids: [6, 7]
+render_backend: egl
+sims_per_gpu: 8
+max_infer_batch_size: 2
+batch_wait_ms: 20
+save_rollout_mp4: true
+rollout_mp4_first_n_per_task: null
+save_generated_video: all
+# Admission estimates only, NOT verified memory peaks. Both remain configurable.
+server_reserve_bytes: 10737418240
+render_reserve_bytes_per_sim: 838860800
+max_gpu_fraction: 0.85
+max_rss_bytes: 137438953472
+base_port: 8912
+seed: 0
+prediction_steps: 30
+guidance: 1.0
+server_start_s: 900
+episode_wall_s: 1800
+request_timeout_s: 600
+terminate_grace_s: 10
+encoder_grace_s: 2

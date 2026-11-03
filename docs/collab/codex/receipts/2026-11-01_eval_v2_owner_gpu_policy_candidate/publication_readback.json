@@ -1,0 +1,26 @@
+{
+  "time": "2026-11-01T20:13:37.632754+08:00",
+  "status": "PASS_READBACK",
+  "formal_root": "4b581493db805c92964cb27e740c736db87c0329",
+  "child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "gitlink": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "candidate_head": "19525faf36bc09a03e2d39e7bcc5d018a1a039bb",
+  "root_refs": {
+    "refs/heads/V3": "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+    "refs/heads/v3-eval-v2-render-media-20261101": "19525faf36bc09a03e2d39e7bcc5d018a1a039bb"
+  },
+  "child_refs": {
+    "refs/heads/v3-eval-v2-render-media-20261101": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+    "refs/heads/v3-local-ttt": "8664267704da3206e719f3c7eef2b5ed86e2a417"
+  },
+  "artifact_hashes_verified": 27,
+  "source_bindings_verified": 6,
+  "author_tests": 70,
+  "child_unchanged": true,
+  "code_equivalent_to_formal": true,
+  "canonical_refs_unchanged": true,
+  "inbox_append_only": true,
+  "request_count": 1,
+  "independent_ds": false,
+  "runtime_authorized": false
+}

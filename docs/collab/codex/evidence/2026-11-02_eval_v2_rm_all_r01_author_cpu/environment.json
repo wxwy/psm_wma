@@ -1,0 +1,13 @@
+{
+  "coordinator_python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "packages": {
+    "pytest": "9.0.2",
+    "numpy": "2.2.4",
+    "imageio": "2.37.2",
+    "imageio-ffmpeg": "0.6.0",
+    "Pillow": "13.0.0",
+    "requests": "2.32.3"
+  },
+  "regression": "See final/regression/invocation.json: Python3.12 CPU Torch; other group Python3.13",
+  "clock": "unchanged real parser with explicit kernel-file doubles, no target-host clock proof"
+}

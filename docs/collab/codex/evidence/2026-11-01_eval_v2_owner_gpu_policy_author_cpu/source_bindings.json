@@ -1,0 +1,44 @@
+[
+  {
+    "path": "cosmos-framework/cosmos_framework/simulation/robocasa/render_devices.py",
+    "commit": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+    "repository": "Child",
+    "blob": "b8b15921351e8fff8e05a4463273427ea080bf74",
+    "sha256": "fbdcb343d1f2f5a3d94ffa7b64d86894e33f325ed769dbffe276327d7f5c5515"
+  },
+  {
+    "path": "scripts/robocasa_eval_v2/resources.py",
+    "commit": "4b581493db805c92964cb27e740c736db87c0329",
+    "repository": "Root",
+    "blob": "704358fd6c49a4a5b024ae9032f639ae2a24d908",
+    "sha256": "acbbe930e8b8ea072d501391459dce3238c5908c5cb53b1aa318be176bf22e8a"
+  },
+  {
+    "path": "tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py",
+    "commit": "4b581493db805c92964cb27e740c736db87c0329",
+    "repository": "Root",
+    "blob": "57bc329ed6cd23f977e555cee552afb6d93c8f4b",
+    "sha256": "374ffec58b28c076b6928d5f1a6293aa5f8b00f26d397945055952ccd75a670a"
+  },
+  {
+    "path": "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+    "commit": "4b581493db805c92964cb27e740c736db87c0329",
+    "repository": "Root",
+    "blob": "8b64d1ab11145d8ef89012829d979dcaba976007",
+    "sha256": "1ffffb65079236dc1a011c8f847eee075f8831a214f0fb0e0b021160fca505f5"
+  },
+  {
+    "path": "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+    "commit": "4b581493db805c92964cb27e740c736db87c0329",
+    "repository": "Root",
+    "blob": "4d11019a004fd5ce533bb1bd8fc0fe05b20d912f",
+    "sha256": "d4cb7c945d4e3e76e16431341d802cd936e7fb7662c767658852585173c55a5d"
+  },
+  {
+    "path": "tools/v3/eval_v2_production_tests/entry_test.py",
+    "commit": "4b581493db805c92964cb27e740c736db87c0329",
+    "repository": "Root",
+    "blob": "6624edb80f88dd976d3257570cdaa06d531684cb",
+    "sha256": "46d43daaf21be272492494232d38c44bbf1342de9b236266ba2b39907851668e"
+  }
+]

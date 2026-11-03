@@ -1,0 +1,16 @@
+{
+  "status": "EXPECTED_FROZEN_OLD_PROFILE_RED",
+  "root": "b19b9edf7f39a83013a853f95c543081e0216b28",
+  "child": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "gitlink": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "root_status": "M SESSION.md\n M TODO.md\n?? tools/v3/eval_v2_replan_tests/media_profile_test.py",
+  "child_status": "",
+  "tests": 2,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "source_unchanged": true,
+  "frozen_test_sha256": "d5f32f29936bebedc94301e7f7a528b8abdcd26d96fa10d5d9b3aa28ca8fab8a",
+  "seconds": 1.7088499579695053
+}

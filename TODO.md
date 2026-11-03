@@ -1,5 +1,11 @@
 # PSM-WMA 任务队列
 
+- **R01-MEDIA-PROFILE-01** — REVIEW; Codex; Formal Root2d1ad80f89ab4cc0e275ff4341f064954870abdd / unchanged Child-Gitlinkc93f2abf4fb27d36176ff8db094379a853cec796. Root production AST only native-profile literal; frozen RED2/new final42 PASS (15+10+17),0failure/error/skip, Ruff/format/syntax2/scope PASS. Evidence/handoff ready; candidate v3-eval-v2-media-profile-20261103 publish/readback then STOP for GPT incremental Code Gate. Actual19 isolated-copy reconciliation DS pending, old R01 FAIL remains; no V3/GPU/model/real simulator/old media/Job/DCP changes, prior379/122 unchanged/not rerun.
+
+- **EVALV2-RM-ALL-R01** — REVIEW; Codex; Formal Root e7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Child-Gitlink c93f2abf4fb27d36176ff8db094379a853cec796. One production file26+/8-, bounded full-Episode ACK identities, End202 retention/acknowledged End release. Same frozen public API tests old RED2/new targeted16 +106 relevant regression =122 clean-Pair author PASS/0failure/error/skip, static/scope/protected old379 PASS. Evidence/handoff prepared; publish Child->Root/readback/request then STOP for GPT fresh incremental Code Gate, no claim finding closed. Candidate v3-eval-v2-replan-ack-r01-20261102; no official V3/GPU/model/RoboCasa/old media/training/DCP/Job actions.
+
+- **EVALV2-REPLAN-ALL-LOSSLESS** — REVIEW; Codex; Owner f49d52e5 all-only contract. Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44 / Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9, isolated v3-eval-v2-replan-all-20261102. Clean-Pair author CPU379 distinct PASS/0failure/error/skip (58+174+129+18), Ruff/format/AST/py_compile22, protected scope and rollover PASS; synthetic10 completed/fully decoded MP4+receipts+ACK. Evidence/handoff archived; publish Child->Root/readback then STOP for GPT incremental Code Gate. Author PASS is not GPT/DS/hardware acceptance; no V3 promotion, GPU/model/real simulator, old H3/out2/NoTTT/Job/training/DCP access.
+
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
@@ -520,3 +526,9 @@
 - **EVALV2-ROLLOUT-FIRST-N** — DONE (Code Gate); Codex; exact fd183f9e8fddfaef93b6ec9484184f071062ae41 / 8664267704da3206e719f3c7eef2b5ed86e2a417 APPROVE_CODE read at candidate11cae65a. Original author69 PASS and failures retained; no rerun. Owner promotion tracked separately; no runtime authorization.
 
 - **EVALV2-ROLLOUT-FIRST-N-PROMOTE** — DONE; Codex; Owner-approved promotion Root ab6b80e08030c1d5835d966a510ea8246944c536 published V3 after official Child fast-forward to 8664267704da3206e719f3c7eef2b5ed86e2a417; Root Gitlink/official Child and fetched/advertised readback match. Source9853/otherChild1269 preserved;42 hashes/11 bindings PASS; original69 PASS and failure history retained without rerun. No active shared runtime/config/media/DCP/log/process or GPU/real MP4/DS operation. Completion receipt docs-only; STOP.
+
+# 2026-11-01 — Owner split render/media candidate
+
+- **EVALV2-RENDER-MAP** — REVIEW (Formal46d3a604/d3b2a29b; author192 PASS; GPT pending); Codex; isolated branch v3-eval-v2-render-media-20261101, base7e2be5ca/86642677. Independent GPU roles/PCI+actual Context proof/OSMesa/admission guards and Manifest binding implemented. Combined development192 PASS/0failure/error/skip, Ruff0.12.7/format/AST PASS. Clean Formal Pair and author evidence frozen; candidate GPT request prepared. Prior118 development evidence preserved; no canonical merge or true GPU/simulation/FFmpeg/live-job action.
+- **EVALV2-MEDIA-LIFECYCLE** — REVIEW (GPT APPROVE_CODE6484dd83/9a8cd618; RM-M01 CLOSED; hardware pending); Codex; prior29 author evidence/GPT verdict/DS reported mixed-interpreter CPU acknowledgment preserved. No new Media change; independent Owner resource-policy delta below. No out2/NoTTT/shared runtime edits or restart.
+- **EVALV2-OWNER-GPU-RESOURCE-POLICY** — REVIEW (Formal4b581493/9a8cd618, author70 PASS, GPT pending); Codex; Owner explicitly retires foreign CUDA and GPU memory/reserve admission. Only resources.py and focused tests; retain selected device existence/UUID/PCI/Context and owned-process safety. New Root/same Child9a8cd618, narrow CPU/review required; no GPU task enumeration/management, GPU0-3, canonical merge or runtime launch.

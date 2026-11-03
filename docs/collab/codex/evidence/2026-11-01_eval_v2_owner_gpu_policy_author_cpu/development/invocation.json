@@ -1,0 +1,38 @@
+{
+  "mode": "development",
+  "command": [
+    "/tmp/psm-eval-render-media-20261101/python313/bin/python",
+    "/tmp/psm-eval-owner-gpu-policy-20261101/run_cpu.py",
+    "development",
+    "/tmp/psm-eval-owner-gpu-policy-20261101/development"
+  ],
+  "cwd": "/workspace/psm-wma-eval-render-media",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LD_LIBRARY_PATH": "",
+    "HF_HOME": "/tmp/psm-eval-owner-gpu-policy-20261101/development/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-eval-owner-gpu-policy-20261101/development/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-owner-gpu-policy-20261101/development/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-eval-owner-gpu-policy-20261101/development/cache/ruff",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "PYTHONPATH": "/workspace/psm-wma-eval-render-media:/workspace/psm-wma-eval-render-media/scripts:/workspace/psm-wma-eval-render-media/cosmos-framework"
+  },
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "versions": {
+    "root": "b0b6e8ca1bf3b4a5ca12771dd71b34b4f9666e72",
+    "child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+    "gitlink": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+    "root_status": "M SESSION.md\n M TODO.md\n M scripts/robocasa_eval_v2/resources.py\n M tools/v3/eval_v2_batch_tests/render_mapping_test.py\n M tools/v3/eval_v2_production_tests/entry_test.py\n?? tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py",
+    "child_status": ""
+  },
+  "inputs": "synthetic nvidia-smi/own-RSS/EGL/HTTP/metadata doubles; no real model/data/DCP",
+  "expected": "all focused tests/static pass, unchanged source and Child, no driver/GPU/process-list access"
+}

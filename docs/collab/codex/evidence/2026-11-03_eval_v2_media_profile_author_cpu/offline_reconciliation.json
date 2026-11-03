@@ -1,0 +1,9 @@
+{
+  "status": "PENDING_DS_ISOLATED_COPY_RECONCILIATION",
+  "actual_R01_outputs_accessed": false,
+  "actual_19_MP4_receipts_reconciled": false,
+  "original_R01_FRESH_EXIT": 1,
+  "original_exit_provenance": "DS report in GPT review, not independently read here",
+  "historical_hardware_gate": "FAIL_RETAINED",
+  "next": "After code review, DS offline publish on isolated copy; inspect any remaining inventory/receipt/SHA errors; no manual status change or new GPU authority"
+}

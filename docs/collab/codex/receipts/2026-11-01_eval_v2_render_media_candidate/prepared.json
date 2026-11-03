@@ -1,0 +1,22 @@
+{
+  "time": "2026-11-01T12:29:25.119937+08:00",
+  "formal_root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+  "formal_child": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "inbox_before_bytes": 114968,
+  "inbox_append_bytes": 3232,
+  "inbox_after_bytes": 118200,
+  "inbox_before_git_blob": "1836473d2f11b16e5f2da0b7d1941635103a69e1",
+  "inbox_after_git_blob": "927a3c65ed4d9eaf3473e143c49889b7fa4e560b",
+  "inbox_prefix_unchanged": true,
+  "rollover_needed": false,
+  "artifacts_verified": 53,
+  "source_bindings_verified": 23,
+  "candidate_only": true,
+  "canonical_promoted": false,
+  "review_requested": "GPT new exact Pair",
+  "independent_gate": "pending",
+  "last_fetched_advertised_root": "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+  "last_fetched_advertised_official_child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "prior_review_scan": "git grep -l -F 46d3a604e66ca139e2f060fd4caaaa0583a1035f origin/V3 -- docs/collab/chatgpt/reviews: exit1/no full-Root match; not an approval",
+  "governance": "Current Owner explicitly selects Codex author -> GPT review -> DS independent CPU -> separately authorized Canary; STOP after this candidate publication, no old V2 three-pane polling/merge/runtime authority."
+}

@@ -1,35 +1,40 @@
-"""Read-only resource admission; allow GPU sharing without managing foreign processes."""
+"""Selected GPU identity and owned RSS checks; GPU placement is the Owner's choice."""
 
 from __future__ import annotations
 
 import subprocess
 from pathlib import Path
 
+from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
 from robocasa_processes import group_members
+
+from robocasa_eval_v2.config import rendering
 
 
 def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+    # Keep the launcher signature; legacy GPU budgets are no longer admission inputs.
+    render = rendering(cfg)
+    selected_ids = sorted(set(cfg["gpu_ids"]) | set(render["gpu_ids"]))
     args = [
         "nvidia-smi",
-        "--query-gpu=index,uuid,memory.total,memory.used",
+        "-i",
+        ",".join(map(str, selected_ids)),
+        "--query-gpu=index,uuid",
         "--format=csv,noheader,nounits",
     ]
     output = run(args, capture_output=True, text=True, check=True, timeout=10).stdout
     devices = {}
     for line in output.splitlines():
-        index, uid, total, used = [x.strip() for x in line.split(",")]
-        devices[int(index)] = (uid, int(total) * 1024**2, int(used) * 1024**2)
+        index, uid = [x.strip() for x in line.split(",")]
+        index = int(index)
+        if index not in selected_ids or index in devices or not uid.startswith("GPU-"):
+            raise RuntimeError("BLOCKED_RESOURCE: invalid selected GPU identity")
+        devices[index] = uid
     allowed = set()
     for p in processes:
         allowed.update(group_members(p.pgid))
-    selected = {devices[g][0] for g in cfg["gpu_ids"] if g in devices}
-    if len(selected) != len(cfg["gpu_ids"]):
+    if any(g not in devices for g in selected_ids):
         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
-    for g in cfg["gpu_ids"]:
-        _, total, used = devices[g]
-        reserve = 20 * 1024**3 if before_models else 0
-        if used + reserve > total * cfg["max_gpu_fraction"]:
-            raise RuntimeError("BLOCKED_RESOURCE: GPU memory budget")
     rss = 0
     for pid in allowed:
         try:
@@ -40,7 +45,11 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
             pass
     if rss > cfg["max_rss_bytes"]:
         raise RuntimeError("BLOCKED_RESOURCE: owned process RSS budget")
-    return {"gpus": devices, "owned_pids": sorted(allowed), "rss_bytes": rss}
+    return {
+        "gpus": devices,
+        "owned_pids": sorted(allowed),
+        "rss_bytes": rss,
+    }
 
 
 def physical_slots(cfg, task_count):
@@ -51,3 +60,39 @@ def physical_slots(cfg, task_count):
         (f"GPU{g}_S{s}", g) for s in range(cfg["sims_per_gpu"]) for g in cfg["gpu_ids"]
     ]
     return dict(pairs[:task_count])
+
+
+def render_slots(cfg, task_count):
+    policy = rendering(cfg)
+    mapping = dict(zip(cfg["gpu_ids"], policy["gpu_ids"]))
+    return {
+        worker: mapping[gpu] if policy["backend"] == "egl" else None
+        for worker, gpu in physical_slots(cfg, task_count).items()
+    }
+
+
+def gpu_identity(gpu, *, run=subprocess.run):
+    """Resolve a physical nvidia-smi ID; never interpret it as an EGL ordinal."""
+    raw = (
+        run(
+            [
+                "nvidia-smi",
+                "-i",
+                str(gpu),
+                "--query-gpu=index,uuid,pci.bus_id",
+                "--format=csv,noheader,nounits",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10,
+        )
+        .stdout.strip()
+        .splitlines()
+    )
+    if len(raw) != 1:
+        raise RuntimeError("one physical render GPU identity required")
+    index, uid, pci = [v.strip() for v in raw[0].split(",")]
+    if index != str(gpu) or not uid.startswith("GPU-"):
+        raise RuntimeError("physical render GPU identity mismatch")
+    return {"gpu_id": gpu, "uuid": uid, "pci_bus_id": normalize_pci(pci)}

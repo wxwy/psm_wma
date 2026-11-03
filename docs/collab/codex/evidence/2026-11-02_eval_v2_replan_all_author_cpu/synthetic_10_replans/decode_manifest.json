@@ -1,0 +1,140 @@
+{
+  "source": "fresh RGB synthetic CPU test, NOT Cosmos/RoboCasa rollout",
+  "expected": 10,
+  "saved": 10,
+  "encoder_receipts": 10,
+  "server_acknowledged": 10,
+  "missing": [],
+  "clips": [
+    {
+      "index": 0,
+      "path": "replan_0000.mp4",
+      "receipt": "replan_0000.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 1,
+      "path": "replan_0001.mp4",
+      "receipt": "replan_0001.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 2,
+      "path": "replan_0002.mp4",
+      "receipt": "replan_0002.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 3,
+      "path": "replan_0003.mp4",
+      "receipt": "replan_0003.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 4,
+      "path": "replan_0004.mp4",
+      "receipt": "replan_0004.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 5,
+      "path": "replan_0005.mp4",
+      "receipt": "replan_0005.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 6,
+      "path": "replan_0006.mp4",
+      "receipt": "replan_0006.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 7,
+      "path": "replan_0007.mp4",
+      "receipt": "replan_0007.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 8,
+      "path": "replan_0008.mp4",
+      "receipt": "replan_0008.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 9,
+      "path": "replan_0009.mp4",
+      "receipt": "replan_0009.receipt.json",
+      "full_frame_decode": true,
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    }
+  ]
+}

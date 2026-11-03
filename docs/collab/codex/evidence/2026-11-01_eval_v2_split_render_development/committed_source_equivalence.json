@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "development_execution_was_on_dirty_source": true,
+  "root_stage_commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+  "child_stage_commit": "f1439ac3a83bf3f7c32d3be204f2723f90231996",
+  "bindings": [
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "scripts/robocasa_eval_v2/config.py",
+      "blob": "e34014c8cf168a6bae0a0f88b765c99dad113b7e",
+      "sha256": "d55a37dd24562ca70468883053b4f824af614e957240ec149d19d4be09940352"
+    },
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "scripts/robocasa_eval_v2/runtime.py",
+      "blob": "d47f8230d615f7991085db9ee013a92dd0649c2d",
+      "sha256": "721e79d3080bbb24218615513cdb1086d0185ec9502cf81a0bea592efc4e514c"
+    },
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "scripts/robocasa_eval_v2/resources.py",
+      "blob": "a2a887d43b60d4396675072227b5f7de8d6df4c0",
+      "sha256": "32802f21a1156e5c33d8953fedf45c2b6ca4f11299b4959f5435baa88178078c"
+    },
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "scripts/robocasa_eval_v2/cli.py",
+      "blob": "83fd755857dac2e157e812b86826062466f4785b",
+      "sha256": "ee1876f619a0b722d4c22ff21ca7f4c2c22aeb37572d7d363bf9a0af0ef61a51"
+    },
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+      "blob": "b86f7770481bdfd6c3a07f39b19a84cdd79e39b3",
+      "sha256": "3890f06b1d52cbe50afc975a4150b2a9b6199cc17f281ad7c925414ee7acc7e3"
+    },
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+      "blob": "8b64d1ab11145d8ef89012829d979dcaba976007",
+      "sha256": "1ffffb65079236dc1a011c8f847eee075f8831a214f0fb0e0b021160fca505f5"
+    },
+    {
+      "repository": "root",
+      "commit": "91896fac2140f6c77dfb440c32253626051eb8f2",
+      "path": "tools/v3/eval_v2_production_tests/worker_test.py",
+      "blob": "9e7b4dba250ac24d32e5f693b2859c214a47c8b6",
+      "sha256": "6870f89c42f8c0312f55085ddbaaf66f92b2efffb0fbb5cb38dc48f27ba4a85c"
+    },
+    {
+      "repository": "child",
+      "commit": "f1439ac3a83bf3f7c32d3be204f2723f90231996",
+      "path": "cosmos_framework/simulation/robocasa/render_devices.py",
+      "blob": "b8b15921351e8fff8e05a4463273427ea080bf74",
+      "sha256": "fbdcb343d1f2f5a3d94ffa7b64d86894e33f325ed769dbffe276327d7f5c5515"
+    },
+    {
+      "repository": "child",
+      "commit": "f1439ac3a83bf3f7c32d3be204f2723f90231996",
+      "path": "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+      "blob": "192611d1c7a4aa7122f3adb8828a8ee87dfeee37",
+      "sha256": "777c93f58271ca78bbdac89788e88e60f9379e46cdba0d9640474ab4c0f1393b"
+    },
+    {
+      "repository": "child",
+      "commit": "f1439ac3a83bf3f7c32d3be204f2723f90231996",
+      "path": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+      "blob": "6f9a1b4fbae467d6aac53e49986d4a52e4459130",
+      "sha256": "855e3b84d537a71efc49208f70ffa70f8d25c090c02af8c6cea74cd5861ad811"
+    }
+  ],
+  "not_a_formal_clean_pair_gate": true
+}

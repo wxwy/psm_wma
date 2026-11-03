@@ -1,0 +1,13 @@
+tools/v3/eval_v2_batch_tests/media_cleanup_test.py:173:5: E731 Do not assign a `lambda` expression, use a `def`
+    |
+171 | def test_actual_unquiesced_encoder_or_feeder_remains_a_process_fault(tmp_path, alive):
+172 |     sink = MediaSink(tmp_path, rollout=False)
+173 |     connection = lambda: SimpleNamespace(close=lambda: None)
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E731
+174 |     thread = SimpleNamespace(
+175 |         join=lambda timeout: None, is_alive=lambda: alive == "feeder"
+    |
+    = help: Rewrite `connection` as a `def`
+
+Found 1 error.
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).

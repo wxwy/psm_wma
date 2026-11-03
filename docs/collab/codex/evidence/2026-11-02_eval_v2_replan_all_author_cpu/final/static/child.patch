@@ -1,0 +1,1394 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/generated_video.py b/cosmos_framework/evaluation/robocasa_v2/generated_video.py
+new file mode 100644
+index 0000000..f6ccc80
+--- /dev/null
++++ b/cosmos_framework/evaluation/robocasa_v2/generated_video.py
+@@ -0,0 +1,161 @@
++"""Durable generated-video receipts; used only by explicit strict all media."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import os
++import uuid
++from pathlib import Path
++
++MAX_VIDEO_BYTES = 512 * 1024**2
++
++
++def canonical(value):
++    return json.dumps(value, sort_keys=True, allow_nan=False, separators=(",", ":")).encode()
++
++
++def sha(value):
++    return hashlib.sha256(canonical(value)).hexdigest()
++
++
++def file_sha(path):
++    value = hashlib.sha256()
++    with Path(path).open("rb") as stream:
++        for block in iter(lambda: stream.read(1024**2), b""):
++            value.update(block)
++    return value.hexdigest()
++
++
++def sync_dir(directory):
++    fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
++    try:
++        os.fsync(fd)
++    finally:
++        os.close(fd)
++
++
++def atomic_json(path, value):
++    path = Path(path)
++    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
++    try:
++        with temporary.open("xb") as stream:
++            stream.write(canonical(value))
++            stream.flush()
++            os.fsync(stream.fileno())
++        os.replace(temporary, path)
++        sync_dir(path.parent)
++    finally:
++        temporary.unlink(missing_ok=True)
++
++
++def inspect_video(path, *, frames, size):
++    """Decode every frame, independently of Core/SR result validation."""
++    import imageio_ffmpeg
++
++    path = Path(path)
++    if path.is_symlink() or not path.is_file() or not 0 < path.stat().st_size <= MAX_VIDEO_BYTES:
++        raise ValueError("ordinary bounded completed generated MP4 required")
++    # read_frames parses FFmpeg's stream metadata from stderr. Suppressing INFO
++    # here would hide that header and reject an otherwise valid completed MP4.
++    stream = imageio_ffmpeg.read_frames(str(path), pix_fmt="rgb24")
++    try:
++        metadata = next(stream)
++        if tuple(metadata["size"]) != tuple(size):
++            raise ValueError("generated MP4 dimensions changed")
++        count = 0
++        for frame in stream:
++            if len(frame) != size[0] * size[1] * 3:
++                raise ValueError("incomplete generated video frame")
++            count += 1
++            if count > frames:
++                raise ValueError("unexpected extra generated video frames")
++        if count != frames:
++            raise ValueError("generated MP4 frame count mismatch")
++    finally:
++        stream.close()
++    return {"frames": frames, "size": list(size), "bytes": path.stat().st_size, "sha256": file_sha(path)}
++
++
++def write_generated(directory, envelope, fps):
++    import base64
++    import io
++
++    import imageio.v2 as imageio
++    import numpy as np
++    from PIL import Image
++
++    index, video, binding = envelope["index"], envelope["video"], envelope["binding"]
++    if type(index) is not int or not 0 <= index <= 100000:
++        raise ValueError("bounded generated-video index required")
++    if not isinstance(video, list) or not 1 <= len(video) <= 65:
++        raise ValueError("bounded generated-video frames required")
++    target = Path(directory) / "generated"
++    target.mkdir(exist_ok=True, parents=True)
++    final = target / f"replan_{index:04d}.mp4"
++    receipt_path = target / f"replan_{index:04d}.receipt.json"
++    if final.exists() or final.is_symlink() or receipt_path.exists():
++        raise ValueError("refusing to overwrite a generated video or receipt")
++    temporary = target / f".replan_{index:04d}.{uuid.uuid4().hex}.tmp.mp4"
++    try:
++        size = None
++        with imageio.get_writer(str(temporary), fps=fps, macro_block_size=1, ffmpeg_log_level="error") as writer:
++            for encoded in video:
++                raw = base64.b64decode(encoded.split(",", 1)[-1], validate=True)
++                with Image.open(io.BytesIO(raw)) as frame:
++                    if frame.width * frame.height > 2 * 1024**2:
++                        raise ValueError("oversized generated frame")
++                    if size is None:
++                        size = frame.size
++                    if frame.size != size:
++                        raise ValueError("inconsistent generated frame dimensions")
++                    writer.append_data(np.asarray(frame.convert("RGB")))
++        details = inspect_video(temporary, frames=len(video), size=size)
++        with temporary.open("rb") as stream:
++            os.fsync(stream.fileno())
++        os.replace(temporary, final)
++        sync_dir(target)
++        receipt = {
++            "status": "VIDEO_SAVED",
++            "index": index,
++            "binding": binding,
++            "binding_sha256": sha(binding),
++            "path": f"generated/{final.name}",
++            **details,
++        }
++        atomic_json(receipt_path, receipt)
++        return receipt
++    finally:
++        temporary.unlink(missing_ok=True)
++
++
++def read_receipt(directory, index, binding):
++    directory = Path(directory)
++    path = directory / "generated" / f"replan_{index:04d}.receipt.json"
++    if path.is_symlink() or not path.is_file() or path.stat().st_size > 65536:
++        raise ValueError("bounded ordinary Encoder receipt required")
++    receipt = json.loads(path.read_bytes())
++    if not isinstance(receipt, dict):
++        raise ValueError("Encoder receipt object required")
++    expected_path = f"generated/replan_{index:04d}.mp4"
++    video = directory / expected_path
++    if (
++        receipt.get("status") != "VIDEO_SAVED"
++        or receipt.get("index") != index
++        or receipt.get("binding") != binding
++        or receipt.get("binding_sha256") != sha(binding)
++        or receipt.get("path") != expected_path
++        or type(receipt.get("frames")) is not int
++        or not 1 <= receipt["frames"] <= 65
++        or not isinstance(receipt.get("size"), list)
++        or len(receipt["size"]) != 2
++        or any(type(n) is not int or n <= 0 for n in receipt["size"])
++        or video.is_symlink()
++        or not video.is_file()
++        or type(receipt.get("bytes")) is not int
++        or not 0 < receipt["bytes"] <= MAX_VIDEO_BYTES
++        or video.stat().st_size != receipt["bytes"]
++        or file_sha(video) != receipt.get("sha256")
++    ):
++        raise ValueError("Encoder receipt/file binding mismatch")
++    return receipt
+diff --git a/cosmos_framework/evaluation/robocasa_v2/media.py b/cosmos_framework/evaluation/robocasa_v2/media.py
+index 7829a2a..cadd8e0 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/media.py
++++ b/cosmos_framework/evaluation/robocasa_v2/media.py
+@@ -1,14 +1,19 @@
+-"""Bounded optional encoder subprocess. Never decodes media in the SR path."""
++"""Bounded diagnostic encoder; all-mode durable completion is independent of SR."""
+ 
+ from __future__ import annotations
+ 
+ import errno
++import json
+ import multiprocessing as mp
+ import os
++import socket
+ import threading
++import time
+ from pathlib import Path
+ from queue import Full
+ 
++from cosmos_framework.evaluation.robocasa_v2.generated_video import canonical, read_receipt, sha, write_generated
++
+ 
+ def _diagnostic(errors, error):
+     if len(errors) < 16:
+@@ -64,7 +69,7 @@ def _guarded_encoder(target, args, parent):
+     target(*args)
+ 
+ 
+-def _encode(queue, directory, fps, rollout):
++def _encode(queue, directory, fps, rollout, acknowledgements=None):
+     # Encoder gets neither CUDA visibility nor a Local session. Parent waits only
+     # AFTER native Local cleanup, and forcibly reaps stalled encoders.
+     os.environ["CUDA_VISIBLE_DEVICES"] = ""
+@@ -90,6 +95,23 @@ def _encode(queue, directory, fps, rollout):
+                 if writer is None:
+                     writer = imageio.get_writer(directory / "rollout.mp4", fps=fps)
+                 writer.append_data(data)
++            elif kind == "strict_prediction":
++                index, binding = data["index"], data["binding"]
++                try:
++                    receipt = write_generated(directory, data, fps)
++                    ack = {"status": "VIDEO_SAVED", "index": index, "binding_sha256": receipt["binding_sha256"]}
++                except Exception as error:
++                    ack = {
++                        "status": "VIDEO_FAILED",
++                        "index": index,
++                        "binding_sha256": sha(binding),
++                        "error": repr(error)[:1024],
++                    }
++                # One atomic, bounded local datagram; never an unbounded feeder.
++                raw = canonical(ack)
++                if len(raw) > 4096:
++                    raise ValueError("bounded Encoder completion datagram required")
++                acknowledgements.send(raw)
+             elif kind == "prediction":
+                 index, video = data
+                 target = directory / "generated"
+@@ -113,7 +135,18 @@ def _encode(queue, directory, fps, rollout):
+ 
+ 
+ class MediaSink:
+-    def __init__(self, directory, *, rollout=True, generated="none", fps=20, grace_s=2.0, target=None):
++    def __init__(
++        self,
++        directory,
++        *,
++        rollout=True,
++        generated="none",
++        fps=20,
++        grace_s=2.0,
++        target=None,
++        drain_timeout_s=300.0,
++        identity=None,
++    ):
+         self.generated, self.rollout, self.grace_s = generated, rollout, grace_s
+         self.dropped = 0
+         self.errors = []
+@@ -121,6 +154,16 @@ class MediaSink:
+         self.process = None
+         self.forced = False
+         self.helpers = []
++        self.directory = Path(directory)
++        self.strict = generated == "all"
++        self.drain_timeout_s = drain_timeout_s
++        if type(drain_timeout_s) not in (int, float) or not 0 < drain_timeout_s <= 3600:
++            raise ValueError("finite bounded media drain timeout required")
++        self.identity = dict(identity or {})
++        self.saved, self.pending = {}, {}
++        self.incomplete = False
++        self._ack = self._ack_sender = None
++        self._drain_deadline = None
+         self._closed = False
+         self._result = None
+         self._reader_guard = None
+@@ -128,17 +171,25 @@ class MediaSink:
+             ctx = mp.get_context("spawn")
+             self.queue = ctx.Queue(maxsize=4)
+             self.queue._ignore_epipe = True
++            if self.strict:
++                self._ack, self._ack_sender = socket.socketpair(socket.AF_UNIX, socket.SOCK_DGRAM)
++                self._ack_sender.settimeout(min(grace_s, drain_timeout_s))
+             from multiprocessing import resource_tracker
+ 
+             if resource_tracker._resource_tracker._pid is not None:
+                 self.helpers.append(resource_tracker._resource_tracker._pid)
++            arguments = (self.queue, str(directory), fps, rollout)
++            if self.strict:
++                arguments += (self._ack_sender,)
+             self.process = ctx.Process(
+                 target=_guarded_encoder,
+-                args=(target or _encode, (self.queue, str(directory), fps, rollout), os.getpid()),
++                args=(target or _encode, arguments, os.getpid()),
+                 daemon=True,
+             )
+             try:
+                 self.process.start()
++                if self._ack_sender is not None:
++                    self._ack_sender.close()
+                 # Install only after Queue was pickled into the child, before
+                 # the first parent put() can start its feeder. No stdlib patch.
+                 self._reader_guard = _ReaderClose(self.queue._reader.close, self.errors, self.grace_s)
+@@ -185,9 +236,73 @@ class MediaSink:
+             ):
+                 if len(self.errors) < 16:
+                     self.errors.append("missing/oversized optional generated video")
++                if self.strict:
++                    self.incomplete = True
++                    raise RuntimeError("MEDIA_INCOMPLETE: missing/oversized generated video")
+                 return
++            if self.strict:
++                return self._save_prediction(index, video, result.get("_media_binding"), result.get("_media_deadline"))
+             self._submit("prediction", (index, video))
+ 
++    def _save_prediction(self, index, video, transfer, upstream_deadline=None):
++        binding = {"episode": self.identity, "index": index, "transfer": transfer, "video_sha256": sha(video)}
++        if index in self.saved:
++            try:
++                return read_receipt(self.directory, index, binding)
++            except Exception as error:
++                self.incomplete = True
++                _diagnostic(self.errors, "MEDIA_INCOMPLETE: replay: " + repr(error))
++                raise RuntimeError("MEDIA_INCOMPLETE: receipt replay mismatch") from error
++        if self._closed or self.incomplete or type(index) is not int or not 0 <= index <= 100000:
++            self.incomplete = True
++            raise RuntimeError("MEDIA_INCOMPLETE: Encoder closed/failed or invalid replan")
++        deadline = time.monotonic() + self.drain_timeout_s
++        if upstream_deadline is not None:
++            deadline = min(deadline, upstream_deadline)
++        self._drain_deadline = deadline
++        self.pending[index] = binding
++        try:
++            while True:
++                if self.process is None or not self.process.is_alive():
++                    raise RuntimeError("Encoder exited before VIDEO_SAVED")
++                remaining = deadline - time.monotonic()
++                if remaining <= 0:
++                    raise TimeoutError("Encoder queue deadline exhausted")
++                try:
++                    self.queue.put(
++                        ("strict_prediction", {"index": index, "video": video, "binding": binding}),
++                        timeout=min(0.05, remaining),
++                    )
++                    break
++                except Full:
++                    continue
++            while True:
++                remaining = deadline - time.monotonic()
++                if remaining <= 0:
++                    raise TimeoutError("Encoder VIDEO_SAVED deadline exhausted")
++                self._ack.settimeout(min(0.05, remaining))
++                try:
++                    raw = self._ack.recv(4097)
++                except socket.timeout:
++                    if self.process is None or not self.process.is_alive():
++                        raise RuntimeError("Encoder exited before VIDEO_SAVED")
++                    continue
++                if len(raw) > 4096:
++                    raise ValueError("oversized Encoder acknowledgement")
++                ack = json.loads(raw)
++                if ack.get("index") != index or ack.get("binding_sha256") != sha(binding):
++                    raise ValueError("foreign/late Encoder acknowledgement")
++                if ack.get("status") != "VIDEO_SAVED":
++                    raise RuntimeError("Encoder VIDEO_FAILED: " + str(ack.get("error")))
++                receipt = read_receipt(self.directory, index, binding)
++                self.saved[index] = receipt
++                del self.pending[index]
++                return receipt
++        except Exception as error:
++            self.incomplete = True
++            _diagnostic(self.errors, "MEDIA_INCOMPLETE: " + repr(error))
++            raise RuntimeError("MEDIA_INCOMPLETE: " + str(error)) from error
++
+     def close(self):
+         if self._result is not None:
+             return dict(self._result, errors=list(self._result["errors"]), helper_pids=list(self.helpers))
+@@ -195,13 +310,20 @@ class MediaSink:
+         encoder_alive = feeder_alive = fd_failed = False
+         if self.process is not None:
+             try:
+-                self.queue.put_nowait(None)
++                if self.strict:
++                    deadline = self._drain_deadline or (time.monotonic() + self.drain_timeout_s)
++                    self.queue.put(None, timeout=max(0, deadline - time.monotonic()))
++                else:
++                    self.queue.put_nowait(None)
+             except (Full, OSError, ValueError) as error:
+                 self.dropped += 1
+                 _diagnostic(self.errors, error)
+-            self.process.join(self.grace_s)
++            self.process.join(max(0, deadline - time.monotonic()) if self.strict else self.grace_s)
+             if self.process.is_alive():
+                 self.forced = True
++                if self.strict:
++                    self.incomplete = True
++                    _diagnostic(self.errors, "MEDIA_INCOMPLETE: Encoder drain deadline exhausted")
+                 try:
+                     self.process.terminate()
+                 except ProcessLookupError:
+@@ -249,6 +371,9 @@ class MediaSink:
+                     # Drop the instance override only after the feeder is gone;
+                     # this breaks its Connection/guard reference cycle.
+                     del self.queue._reader.close
++        for channel in (self._ack, self._ack_sender):
++            if channel is not None:
++                channel.close()
+         self._result = {
+             "dropped": self.dropped,
+             "errors": list(self.errors),
+@@ -259,4 +384,11 @@ class MediaSink:
+             "feeder_alive": feeder_alive,
+             "helper_pids": list(self.helpers),
+         }
++        if self.strict:
++            self._result["generated_media"] = {
++                "status": "MEDIA_INCOMPLETE" if self.incomplete or self.pending else "COMPLETE",
++                "saved": sorted(self.saved),
++                "pending": sorted(self.pending),
++                "encoder_done_receipts": len(self.saved),
++            }
+         return dict(self._result, errors=list(self._result["errors"]))
+diff --git a/cosmos_framework/inference/robocasa_batch_transactions.py b/cosmos_framework/inference/robocasa_batch_transactions.py
+index fef6b39..b2ef96c 100644
+--- a/cosmos_framework/inference/robocasa_batch_transactions.py
++++ b/cosmos_framework/inference/robocasa_batch_transactions.py
+@@ -2,7 +2,7 @@
+ 
+ Only Local preparation may iterate. Each sealed microbatch invokes generate_many
+ once and publishes all Fast/Visual/Response entries in one snapshot. Media is
+-bounded CPU spool, decoded on the SAME executor only when inference is idle.
++bounded CPU spool on the SAME executor; strict all-media gets decode priority.
+ """
+ 
+ from __future__ import annotations
+@@ -14,6 +14,7 @@ import traceback
+ import uuid
+ from collections import Counter
+ from dataclasses import dataclass
++from types import SimpleNamespace
+ 
+ from cosmos_framework.inference.local_memory_state import CachedMemoryResponse
+ from cosmos_framework.inference.robocasa_session_transactions import (
+@@ -21,6 +22,7 @@ from cosmos_framework.inference.robocasa_session_transactions import (
+     MAX_RESPONSE,
+     Reply,
+     SessionTransactions,
++    digest,
+     json_bytes,
+     request_frontier,
+ )
+@@ -46,11 +48,26 @@ class _Media:
+     state: str = "QUEUED"
+     body: bytes | None = None
+     cancelled: bool = False
++    required: bool = False
++    replan: int = 0
++    charge: int = 0
++    error: str | None = None
+ 
+ 
+ class BatchedSessionTransactions(SessionTransactions):
+     def __init__(
+-        self, adapter, generate_many, quiesce, *, max_batch_size=2, batch_wait_ms=20, decode_media=None, **kwargs
++        self,
++        adapter,
++        generate_many,
++        quiesce,
++        *,
++        max_batch_size=2,
++        batch_wait_ms=20,
++        decode_media=None,
++        media_spool_max_jobs=4,
++        media_spool_max_bytes=512 * 1024**2,
++        media_drain_timeout_s=300.0,
++        **kwargs,
+     ):
+         if type(max_batch_size) is not int or not 1 <= max_batch_size <= 8:
+             raise ValueError("native batch cap must be1..8")
+@@ -60,9 +77,21 @@ class BatchedSessionTransactions(SessionTransactions):
+             or not 1 <= batch_wait_ms <= 1000
+         ):
+             raise ValueError("bounded batch wait1..1000ms required")
++        if (
++            type(media_spool_max_jobs) is not int
++            or not 1 <= media_spool_max_jobs <= 64
++            or type(media_spool_max_bytes) is not int
++            or not 1 <= media_spool_max_bytes <= 2**31
++            or type(media_drain_timeout_s) not in (int, float)
++            or not 0 < media_drain_timeout_s <= 3600
++        ):
++            raise ValueError("bounded positive media spool/drain settings required")
+         super().__init__(adapter, None, quiesce, **kwargs)
+         self.generate_many, self.decode_media = generate_many, decode_media
+         self.max_batch_size, self.wait_s = max_batch_size, batch_wait_ms / 1000
++        self.media_spool_max_jobs, self.media_spool_max_bytes = media_spool_max_jobs, media_spool_max_bytes
++        self.media_drain_timeout_s = media_drain_timeout_s
++        self._acked_media = {}
+         self._queue, self._enqueued, self._media = [], {}, {}
+         self._pumping = False
+         self._batch_histogram = Counter()
+@@ -85,12 +114,93 @@ class BatchedSessionTransactions(SessionTransactions):
+                     j.candidate.size if j.candidate else len(j.body or b"") for j in self._media.values()
+                 ),
+                 "generated_media": "bounded_cpu_spool_same_model_executor",
++                "media_spool_max_jobs": self.media_spool_max_jobs,
++                "media_spool_max_bytes": self.media_spool_max_bytes,
++                "media_drain_timeout_s": self.media_drain_timeout_s,
++                "strict_media_item_bytes": min(MAX_BODY, self.media_spool_max_bytes),
+             }
+ 
+     def media_room(self):
+         with self._lock:
+-            used = self.info()["media_cpu_bytes"]
+-            return max(0, 2 - len(self._media)), max(0, 128 * 1024**2 - used)
++            for key, job in list(self._media.items()):
++                if self.clock() >= job.deadline and key not in self._tickets and job.state != "DECODING":
++                    del self._media[key]
++            used = sum(
++                j.charge or (j.candidate.size if j.candidate else len(j.body or b"")) for j in self._media.values()
++            )
++            return max(0, self.media_spool_max_jobs - len(self._media)), max(0, self.media_spool_max_bytes - used)
++
++    def reserve_media(self, proof, key, payload_sha, replan, frontier):
++        """Nonblocking control admission; the client waits, never this executor."""
++        if (
++            type(replan) is not int
++            or not 0 <= replan <= 100000
++            or type(frontier) is not int
++            or not 0 <= frontier <= 100000
++            or not isinstance(payload_sha, str)
++            or len(payload_sha) != 64
++            or any(c not in "0123456789abcdef" for c in payload_sha)
++        ):
++            raise ValueError("bounded media reservation identity required")
++        with self._lock:
++            lease = self._lease(proof)
++            self._usable(lease)
++            if key != digest({"protocol": self.protocol, **lease.identity(), "frontier": frontier}):
++                raise ValueError("media reservation request identity mismatch")
++            acknowledged = self._acked_media.get(lease.session_id)
++            if acknowledged is not None and acknowledged[0] == key:
++                if acknowledged[1] != payload_sha or acknowledged[3] != replan:
++                    raise ValueError("acknowledged media reservation identity reused")
++                return self._reply(
++                    200, {"reserved": True, "already_saved": True, "request_key": key, "payload_sha256": payload_sha}
++                )
++            self.media_room()
++            job = self._media.get(key)
++            if job is not None:
++                if job.ticket.lease != lease or job.ticket.payload_sha256 != payload_sha or job.replan != replan:
++                    raise ValueError("media reservation identity reused")
++                return self._reply(200, {"reserved": True, "request_key": key, "payload_sha256": payload_sha})
++            if self.decode_media is None:
++                return self._reply(
++                    200, {"reserved": False, "media": {"status": "MEDIA_INCOMPLETE", "error": "decoder unavailable"}}
++                )
++            room, byte_room = self.media_room()
++            charge = min(MAX_BODY, self.media_spool_max_bytes)
++            if room < 1 or byte_room < charge:
++                return self._reply(429, {"reserved": False, "media": {"status": "backpressure"}})
++            ticket = SimpleNamespace(key=key, payload_sha256=payload_sha, lease=lease)
++            self._media[key] = _Media(
++                ticket,
++                None,
++                self.clock() + self.media_drain_timeout_s,
++                state="RESERVED",
++                required=True,
++                replan=replan,
++                charge=charge,
++            )
++            return self._reply(200, {"reserved": True, "request_key": key, "payload_sha256": payload_sha})
++
++    def media_capture_budget(self, payload):
++        if not payload.get("media", {}).get("required"):
++            return 0
++        payload_sha = digest(payload)
++        with self._lock:
++            return next(
++                (
++                    j.charge
++                    for j in self._media.values()
++                    if j.required
++                    and j.ticket.payload_sha256 == payload_sha
++                    and j.state in ("RESERVED", "CAPTURING")
++                    and not j.cancelled
++                ),
++                0,
++            )
++
++    def _release(self, ticket):
++        super()._release(ticket)
++        if ticket.state != "COMMITTED":
++            self._media.pop(ticket.key, None)
+ 
+     def submit(self, proof, payload, *, budget):
+         # Independent malformed requests must fail before sealing valid peers.
+@@ -119,7 +229,7 @@ class BatchedSessionTransactions(SessionTransactions):
+         return (
+             super()._payload_keys_valid({k: v for k, v in payload.items() if k != "media"})
+             and isinstance(media, dict)
+-            and set(media) == {"replan"}
++            and (set(media) == {"replan"} or (set(media) == {"replan", "required"} and media["required"] is True))
+             and type(media["replan"]) is int
+             and 0 <= media["replan"] <= 100000
+         )
+@@ -143,7 +253,14 @@ class BatchedSessionTransactions(SessionTransactions):
+     def _pump(self):
+         while True:
+             with self._changed:
+-                if self._queue:
++                # Strict clients cannot fetch until decode runs. Prioritize these
++                # bounded jobs so a busy inference queue cannot starve completion.
++                strict_job = next((j for j in self._media.values() if j.required and j.state == "QUEUED"), None)
++                if strict_job is not None:
++                    members, job = None, strict_job
++                    job.state = "DECODING"
++                    self._busy = True
++                elif self._queue:
+                     oldest = self._queue[0]
+                     remaining = min(
+                         self.wait_s - (time.monotonic() - self._enqueued[oldest.key]), oldest.deadline - self.clock()
+@@ -197,6 +314,8 @@ class BatchedSessionTransactions(SessionTransactions):
+                     for t in members:
+                         t.state = "SEALED"
+                         self._fence(t)
++                        if t.key in self._media and self._media[t.key].required:
++                            self._media[t.key].state = "CAPTURING"
+                 prepare_start = time.monotonic()
+                 for t in members:
+                     if self.mode == "required":
+@@ -229,8 +348,43 @@ class BatchedSessionTransactions(SessionTransactions):
+                     candidate = media_candidates[i] if media_candidates else None
+                     media = {"status": "disabled"}
+                     if t.payload.get("media"):
+-                        media = {"status": "dropped", "reason": "bounded_spool_unavailable"}
+-                        if (
++                        required = t.payload["media"].get("required", False)
++                        if required:
++                            with self._lock:
++                                reservation = self._media.get(t.key)
++                                valid = (
++                                    reservation is not None
++                                    and reservation.required
++                                    and reservation.ticket.lease == t.lease
++                                    and reservation.ticket.payload_sha256 == t.payload_sha256
++                                )
++                            media = {
++                                "status": "MEDIA_INCOMPLETE",
++                                "reason": "reserved media candidate unavailable/oversized",
++                            }
++                            if (
++                                valid
++                                and candidate is not None
++                                and 0 < candidate.size <= reservation.charge
++                                and self.decode_media is not None
++                            ):
++                                new_jobs[t.key] = _Media(
++                                    t,
++                                    candidate,
++                                    self.clock() + self.media_drain_timeout_s,
++                                    required=True,
++                                    replan=reservation.replan,
++                                    charge=reservation.charge,
++                                )
++                                media = {
++                                    "status": "pending",
++                                    "ticket": t.key,
++                                    "required": True,
++                                    "deadline": new_jobs[t.key].deadline,
++                                }
++                        else:
++                            media = {"status": "dropped", "reason": "bounded_spool_unavailable"}
++                        if not required and (
+                             candidate is not None
+                             and room > 0
+                             and 0 < candidate.size <= byte_room
+@@ -272,6 +426,9 @@ class BatchedSessionTransactions(SessionTransactions):
+                     histogram[len(members)] += 1
+                     batches = self._batches + 1
+                     jobs = {**self._media, **new_jobs}  # Respect End/ACK removals while generating.
++                    for t in members:
++                        if t.payload.get("media", {}).get("required") and t.key not in new_jobs:
++                            jobs.pop(t.key, None)
+                     self._commit_responses(members, caches, batch=True)
+                     committed = True
+                     self._media = jobs
+@@ -336,19 +493,27 @@ class BatchedSessionTransactions(SessionTransactions):
+                 else:
+                     video = self.decode_media(job.candidate.value)
+                     value = {"status": "ready", "video": video}
++                    if job.required:
++                        value.update(replan=job.replan, assignment=job.ticket.lease.identity())
+                 body = json_bytes(
+                     {"request_key": job.ticket.key, "payload_sha256": job.ticket.payload_sha256, "media": value}
+                 )
+                 if len(body) > MAX_BODY:
+                     raise ValueError("bounded media response exceeded")
++                if job.required and len(body) > job.charge:
++                    raise ValueError("decoded media exceeds reserved byte budget")
+             except Exception as error:
+-                body = json_bytes(
+-                    {
+-                        "request_key": job.ticket.key,
+-                        "payload_sha256": job.ticket.payload_sha256,
+-                        "media": {"status": "error", "error": str(error)[:1024]},
+-                    }
+-                )
++                if job.required:
++                    job.error = str(error)[:1024]
++                    body = None  # Failure metadata is not cached video data.
++                else:
++                    body = json_bytes(
++                        {
++                            "request_key": job.ticket.key,
++                            "payload_sha256": job.ticket.payload_sha256,
++                            "media": {"status": "error", "error": str(error)[:1024]},
++                        }
++                    )
+             finally:
+                 try:
+                     self.quiesce()
+@@ -361,7 +526,7 @@ class BatchedSessionTransactions(SessionTransactions):
+             elif job.cancelled or self.clock() >= job.deadline or self._stopping:
+                 self._media.pop(job.ticket.key, None)
+             else:
+-                job.body, job.candidate, job.state = body, None, "READY"
++                job.body, job.candidate, job.state = body, None, "FAILED" if job.error else "READY"
+             self._busy = not drained
+             self._changed.notify_all()
+ 
+@@ -373,23 +538,62 @@ class BatchedSessionTransactions(SessionTransactions):
+                 return self._reply(200, {"request_key": key, "payload_sha256": sha, "media": {"status": "unavailable"}})
+             if job.ticket.lease != lease or job.ticket.payload_sha256 != sha:
+                 raise ValueError("foreign media identity")
+-            if self.clock() >= job.deadline and job.state != "DECODING":
++            if self.clock() >= job.deadline and job.state not in ("DECODING", "CAPTURING"):
+                 self._media.pop(key, None)
+                 return self._reply(200, {"request_key": key, "payload_sha256": sha, "media": {"status": "expired"}})
++            if job.error:
++                return self._reply(
++                    200,
++                    {
++                        "request_key": key,
++                        "payload_sha256": sha,
++                        "media": {"status": "MEDIA_INCOMPLETE", "error": job.error},
++                    },
++                )
+             return (
+                 Reply(200, job.body)
+                 if job.body
+                 else self._reply(202, {"request_key": key, "payload_sha256": sha, "media": {"status": "pending"}})
+             )
+ 
+-    def media_ack(self, proof, key, sha):
++    def media_ack(self, proof, key, sha, receipt=None):
+         with self._lock:
+-            self._lease(proof)
++            lease = self._lease(proof)
+             if key in self._media:
+                 job = self._media[key]
+                 if job.ticket.lease != self._lease(proof) or job.ticket.payload_sha256 != sha or job.state != "READY":
+                     raise ValueError("invalid media ACK")
++                if job.required:
++                    transfer = {
++                        "assignment": lease.identity(),
++                        "request_key": key,
++                        "payload_sha256": sha,
++                        "replan": job.replan,
++                    }
++                    if (
++                        not isinstance(receipt, dict)
++                        or len(json_bytes(receipt)) > 16384
++                        or receipt.get("status") != "VIDEO_SAVED"
++                        or receipt.get("index") != job.replan
++                        or receipt.get("binding", {}).get("transfer") != transfer
++                        or receipt.get("path") != f"generated/replan_{job.replan:04d}.mp4"
++                        or type(receipt.get("frames")) is not int
++                        or not 1 <= receipt["frames"] <= 65
++                        or type(receipt.get("bytes")) is not int
++                        or receipt["bytes"] <= 0
++                        or not isinstance(receipt.get("sha256"), str)
++                        or len(receipt["sha256"]) != 64
++                    ):
++                        raise ValueError("strict media ACK requires matching durable VIDEO_SAVED receipt")
++                    self._acked_media[lease.session_id] = (key, sha, digest(receipt), job.replan)
+                 del self._media[key]
++            elif receipt is not None and self._acked_media.get(lease.session_id) != (
++                key,
++                sha,
++                digest(receipt),
++                receipt.get("index"),
++            ):
++                raise ValueError("unknown or changed strict media ACK replay")
+             return self._reply(200, {"acknowledged": True, "request_key": key})
+ 
+     def _cancel_media(self, lease=None):
+@@ -403,6 +607,7 @@ class BatchedSessionTransactions(SessionTransactions):
+         with self._lock:
+             lease = self._lease(proof, closed=True)
+             self._cancel_media(lease)
++            self._acked_media.pop(lease.session_id, None)
+             self._changed.notify_all()
+             return super().end(proof)
+ 
+diff --git a/cosmos_framework/inference/robocasa_batch_transactions_test.py b/cosmos_framework/inference/robocasa_batch_transactions_test.py
+index b12750c..1c96df5 100644
+--- a/cosmos_framework/inference/robocasa_batch_transactions_test.py
++++ b/cosmos_framework/inference/robocasa_batch_transactions_test.py
+@@ -309,7 +309,8 @@ def test_optional_media_cannot_block_action_commit_or_SR_and_is_bounded(make_nat
+     reqs = [{**payload(l), "media": {"replan": 0}} for l in leases]
+     results = group(actor, leases, reqs)
+     assert len(obj.native_calls) == 1 and all(r.status == 200 for r in results)
+-    assert actor.info()["media_jobs"] <= 2 and actor.info()["media_cpu_bytes"] <= 128 * 1024**2
++    assert actor.info()["media_jobs"] <= actor.media_spool_max_jobs == 4
++    assert actor.info()["media_cpu_bytes"] <= actor.media_spool_max_bytes == 512 * 1024**2
+     for l, r in zip(leases, results, strict=True):
+         ack(actor, l, r)
+         data = r.json()
+@@ -483,15 +484,17 @@ def test_optional_spool_failure_or_mapping_error_preserves_valid_actions(make_na
+     obj, actor = make_native(2, 2)
+     leases = [register(actor, f"slot{i}") for i in range(2)]
+     generate = obj.model.generate_samples_from_batch
++    copies = []
+ 
+     class Unavailable:
+         def numel(self):
+-            return 128 * 1024**2 if fault == "spool_bytes" else 1
++            return actor.media_spool_max_bytes // 4 + 1 if fault == "spool_bytes" else 1
+ 
+         def element_size(self):
+             return 4
+ 
+         def detach(self):
++            copies.append(True)
+             raise OSError("injected CPU spool copy failure")
+ 
+     def broken(batch, **kwargs):
+@@ -508,6 +511,10 @@ def test_optional_spool_failure_or_mapping_error_preserves_valid_actions(make_na
+     assert len(obj.native_calls) == 1 and all(r.status == 200 for r in results)
+     assert all(r.json()["media"]["status"] == "dropped" for r in results)
+     assert actor.info()["media_jobs"] == 0
++    if fault == "spool_bytes":
++        assert not copies  # Oversize must be rejected BEFORE copying to CPU.
++    elif fault == "spool_copy":
++        assert len(copies) == 2
+ 
+ 
+ def test_batch_options_cannot_be_ignored_by_legacy_or_B1_preflight(tmp_path):
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index b47e304..aec9abf 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -543,6 +543,9 @@ class ActionServerArgs(pydantic.BaseModel):
+     transaction_slot_ids: str | None = None
+     transaction_max_batch_size: int = 1
+     transaction_batch_wait_ms: float = 20.0
++    media_spool_max_jobs: int = 4
++    media_spool_max_bytes: int = 512 * 1024**2
++    media_drain_timeout_s: float = 300.0
+ 
+     # ----- prompt format ------------------------------------------------------
+     format_prompt_as_json: bool | None = None
+@@ -686,7 +689,27 @@ def _transaction_options(args):
+         wait = getattr(args, "transaction_batch_wait_ms", 20.0)
+         if type(cap) is not int or not 1 <= cap <= 8 or type(wait) not in (int, float) or not 1 <= wait <= 1000:
+             raise ValueError("bounded native batch/wait required")
+-        options.update(max_batch_size=cap, batch_wait_ms=wait)
++        jobs, size, drain = (
++            getattr(args, "media_spool_max_jobs", 4),
++            getattr(args, "media_spool_max_bytes", 512 * 1024**2),
++            getattr(args, "media_drain_timeout_s", 300.0),
++        )
++        if (
++            type(jobs) is not int
++            or not 1 <= jobs <= 64
++            or type(size) is not int
++            or not 1 <= size <= 2**31
++            or type(drain) not in (int, float)
++            or not 0 < drain <= 3600
++        ):
++            raise ValueError("bounded positive media spool/drain settings required")
++        options.update(
++            max_batch_size=cap,
++            batch_wait_ms=wait,
++            media_spool_max_jobs=jobs,
++            media_spool_max_bytes=size,
++            media_drain_timeout_s=drain,
++        )
+     return options
+ 
+ 
+@@ -701,12 +724,24 @@ def transaction_dispatch(service, method, path, record=None, headers=None) -> Re
+         return actor.submit(record["lease"], record["payload"], budget=record["budget"])
+     if method == "POST" and path == "/v2/inference/ack" and set(record) == {"lease", "request_key", "payload_sha256"}:
+         return actor.acknowledge(record["lease"], record["request_key"], record["payload_sha256"])
++    if (
++        method == "POST"
++        and path == "/v2/media/reserve"
++        and set(record) == {"lease", "request_key", "payload_sha256", "replan", "frontier"}
++        and hasattr(actor, "reserve_media")
++    ):
++        return actor.reserve_media(
++            record["lease"], record["request_key"], record["payload_sha256"], record["replan"], record["frontier"]
++        )
+     if (
+         method == "POST"
+         and path == "/v2/media/ack"
+-        and set(record) == {"lease", "request_key", "payload_sha256"}
++        and set(record)
++        in ({"lease", "request_key", "payload_sha256"}, {"lease", "request_key", "payload_sha256", "receipt"})
+         and hasattr(actor, "media_ack")
+     ):
++        if "receipt" in record:
++            return actor.media_ack(record["lease"], record["request_key"], record["payload_sha256"], record["receipt"])
+         return actor.media_ack(record["lease"], record["request_key"], record["payload_sha256"])
+     if method == "POST" and path == "/v2/session/end" and set(record) == {"lease"}:
+         return actor.end(record["lease"])
+@@ -1284,19 +1319,22 @@ class ActionModelService:
+         media = []
+         for i, (req, prep) in enumerate(zip(reqs, preps, strict=True)):
+             candidate = None
+-            if req.get("media") and room:
++            required = req.get("media", {}).get("required", False)
++            budget = self.transactions.media_capture_budget(req) if required else byte_room
++            if req.get("media") and ((required and budget > 0) or (not required and room)):
+                 try:
+                     latent = samples["vision"][i]
+                     size = (
+                         latent.numel() * latent.element_size()
+                         + prep["padded_image_size"].numel() * prep["padded_image_size"].element_size()
+                     )
+-                    if 0 < size <= byte_room:
++                    if 0 < size <= budget:
+                         candidate = MediaCandidate(
+                             (latent.detach().cpu().clone(), prep["padded_image_size"].detach().cpu().clone()), size
+                         )
+-                        room -= 1
+-                        byte_room -= size
++                        if not required:
++                            room -= 1
++                            byte_room -= size
+                 except Exception as error:
+                     log.warning("Optional media spool dropped: %s", type(error).__name__)
+             media.append(candidate)
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+index 80367ac..a1aeda8 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+@@ -121,11 +121,19 @@ class NativeEpisode:
+             http_client = requests.Session()
+             http_client.trust_env = False
+         try:
++            strict = self.settings.get("save_generated_video") == "all"
++            media_options = {}
++            if strict:
++                media_options = {
++                    "drain_timeout_s": self.settings.get("media_drain_timeout_s", 300.0),
++                    "identity": {k: attempt[k] for k in ("task", "episode", "attempt_id", "generation")},
++                }
+             sink = self.media_factory(
+                 directory / "media",
+                 rollout=rollout_enabled,
+                 generated=self.settings.get("save_generated_video", "none"),
+                 grace_s=self.settings.get("encoder_grace_s", 2.0),
++                **media_options,
+             )
+         except Exception as error:
+             media_errors.append(repr(error))
+@@ -134,11 +142,18 @@ class NativeEpisode:
+         def media_call(method, *args):
+             try:
+                 if sink is not None:
+-                    getattr(sink, method)(*args)
++                    return getattr(sink, method)(*args)
+             except Exception as error:
+                 if len(media_errors) < 16:
+                     media_errors.append(repr(error))
+ 
++        def generated(index, result):
++            if strict:
++                if sink is None:
++                    raise RuntimeError("MEDIA_INCOMPLETE: Encoder unavailable")
++                return sink.prediction(index, result)
++            return media_call("prediction", index, result)
++
+         start = time.monotonic()
+         with (
+             (directory / "actions.jsonl").open("x") as actions,
+@@ -182,7 +197,7 @@ class NativeEpisode:
+                 if transactional is None:
+                     media_call("prediction", replans, result)
+                 else:
+-                    transactional.media(result, replans, lambda i, r: media_call("prediction", i, r))
++                    transactional.media(result, replans, generated)
+                 replans += 1
+ 
+             def cleaned(value):
+@@ -261,6 +276,42 @@ class NativeEpisode:
+                 media["rollout_mp4_first_n_per_task"] = limit
+                 if transactional is not None:
+                     media["transaction_fetch"] = transactional.media_diagnostics()
++                completion = None
++                if strict:
++                    saved = media.get("generated_media", {}).get("saved", [])
++                    acknowledged = (
++                        media["transaction_fetch"].get("completion", {}).get("acknowledged", 0)
++                        if transactional is not None
++                        else len(saved)
++                    )
++                    missing = sorted(set(range(replans)) - set(saved))
++                    complete = (
++                        not missing
++                        and len(saved) == replans
++                        and acknowledged == replans
++                        and media.get("generated_media", {}).get("status") == "COMPLETE"
++                        and (
++                            transactional is None
++                            or media["transaction_fetch"].get("completion", {}).get("status") == "COMPLETE"
++                        )
++                    )
++                    completion = {
++                        "schema": "psm_generated_media_completion_v1",
++                        "status": "COMPLETE" if complete else "MEDIA_INCOMPLETE",
++                        "task": attempt["task"],
++                        "episode": attempt["episode"],
++                        "attempt_id": attempt["attempt_id"],
++                        "expected": replans,
++                        "saved": len(saved),
++                        "acknowledged": acknowledged,
++                        "server_ack_required": transactional is not None,
++                        "missing": missing,
++                    }
++                    media["generated_media_completion"] = completion
++                    try:
++                        atomic_json(directory / "generated_media_completion.json", completion)
++                    except OSError as error:
++                        media_errors.append("MEDIA_INCOMPLETE: completion record: " + repr(error))
+                 try:
+                     atomic_json(directory / "media_diagnostics.json", media)
+                 except OSError:
+@@ -281,4 +332,5 @@ class NativeEpisode:
+             "media_process_fault": media.get("process_cleanup_failed", media.get("forced_encoder_cleanup", False))
+             or (transactional is not None and transactional.media_process_fault),
+             "media_helper_pids": media.get("helper_pids", []),
++            **({"generated_media_completion": completion} if strict else {}),
+         }
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+index 429547a..ed0ece7 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+@@ -15,7 +15,7 @@ from urllib.parse import urlsplit
+ 
+ import requests
+ 
+-from cosmos_framework.inference.robocasa_session_transactions import json_bytes
++from cosmos_framework.inference.robocasa_session_transactions import digest, json_bytes
+ from cosmos_framework.inference.robocasa_transaction_client import TransactionPolicyClient
+ from cosmos_framework.simulation.robocasa.local_memory_client import RoboCasaLocalMemoryClient
+ 
+@@ -76,6 +76,12 @@ class PolicyTransport:
+         self._thread = None
+         self.errors = []
+         self.media_status = {}
++        self.strict_media = settings.get("save_generated_video") == "all"
++        self.media_timeout_s = settings.get("media_drain_timeout_s", 300.0)
++        if type(self.media_timeout_s) not in (int, float) or not 0 < self.media_timeout_s <= 3600:
++            raise ValueError("bounded media drain timeout required")
++        self._media_failed = False
++        self._active_media = 0
+ 
+     def _error(self, error):
+         if len(self.errors) < 16:
+@@ -115,6 +121,27 @@ class PolicyTransport:
+         mode = self.settings.get("save_generated_video", "none")
+         if mode == "all" or (mode == "first" and self.replan == 0):
+             record["media"] = {"replan": self.replan}
++        if self.strict_media:
++            record["media"]["required"] = True
++            if not self._media_failed:
++                try:
++                    self._reserve_media(record, frontier)
++                except Exception as error:
++                    self._media_failed = True
++                    self._error("MEDIA_INCOMPLETE: reservation: " + repr(error))
++            if self._media_failed:
++                # No prediction has been submitted for this frontier yet. Stop
++                # diagnostic requests, not native actions or the Local session.
++                record.pop("media", None)
++                self.media_status[self.replan] = {
++                    "status": "MEDIA_INCOMPLETE",
++                    "error": "media reservation/prior diagnostic failed",
++                }
++            remaining = self.episode_deadline - time.monotonic()
++            if remaining <= 0:
++                self._failed = True
++                raise TimeoutError("original Episode deadline exhausted")
++            self.client.timeout_s = min(timeout, self.settings["predict_timeout_s"], remaining)
+         try:
+             result = self.client.predict(record)
+             self._last_delivered = frontier
+@@ -125,6 +152,15 @@ class PolicyTransport:
+             raise
+ 
+     def media(self, result, index, deliver):
++        if self.strict_media:
++            with self._changed:
++                self._active_media += 1
++            try:
++                return self._strict_media(result, index, deliver)
++            finally:
++                with self._changed:
++                    self._active_media -= 1
++                    self._changed.notify_all()
+         media = result.get("media", {})
+         if media.get("status") != "disabled" and len(self.media_status) < 6250:
+             with self._changed:
+@@ -151,6 +187,149 @@ class PolicyTransport:
+                 self._thread.start()
+             self._changed.notify_all()
+ 
++    def _reserve_media(self, payload, frontier):
++        identity = {k: v for k, v in self.lease.items() if k != "capability"}
++        key = digest({"protocol": self.client.protocol, **identity, "frontier": frontier})
++        payload_sha = digest(payload)
++        deadline = min(self.episode_deadline, time.monotonic() + self.media_timeout_s)
++        while True:
++            remaining = deadline - time.monotonic()
++            if remaining <= 0 or self._stop.is_set():
++                raise TimeoutError("media spool backpressure deadline exhausted")
++            try:
++                reply = self.media_http.request(
++                    "POST",
++                    self.base + "/v2/media/reserve",
++                    timeout=min(1.0, remaining),
++                    json={
++                        "lease": self.lease,
++                        "request_key": key,
++                        "payload_sha256": payload_sha,
++                        "replan": self.replan,
++                        "frontier": frontier,
++                    },
++                )
++            except (requests.Timeout, requests.ConnectionError):
++                self._stop.wait(min(0.02, max(0, deadline - time.monotonic())))
++                continue
++            if time.monotonic() >= deadline:
++                raise TimeoutError("late media reservation response")
++            if reply.status_code in (429, 503):
++                self._stop.wait(min(0.02, max(0, deadline - time.monotonic())))
++                continue
++            value = reply.json()
++            if (
++                reply.status_code != 200
++                or value.get("reserved") is not True
++                or value.get("request_key") != key
++                or value.get("payload_sha256") != payload_sha
++            ):
++                raise ValueError("media reservation rejected or binding mismatch")
++            return
++
++    def _strict_media(self, result, index, deliver):
++        key, payload_sha = result.get("request_key"), result.get("payload_sha256")
++        previous = self.media_status.get(index)
++        if previous and previous.get("status") == "VIDEO_SAVED":
++            if previous.get("ticket") != key or previous.get("payload_sha256") != payload_sha:
++                self._media_failed = True
++                self._error("MEDIA_INCOMPLETE: replan identity reused after VIDEO_SAVED")
++                self.media_status[index] = {**previous, "status": "MEDIA_INCOMPLETE", "error": "foreign replay"}
++            return
++        expected = {k: v for k, v in self.lease.items() if k != "capability"}
++        binding = {"assignment": expected, "request_key": key, "payload_sha256": payload_sha, "replan": index}
++        self.media_status[index] = {"status": "pending", "ticket": key, "payload_sha256": payload_sha}
++        try:
++            media = result.get("media", {})
++            if self._media_failed or media.get("status") != "pending" or media.get("ticket") != key:
++                raise RuntimeError("strict generated media unavailable: " + str(media))
++            server_deadline = media.get("deadline", time.monotonic() + self.media_timeout_s)
++            if type(server_deadline) not in (int, float) or not math.isfinite(server_deadline):
++                raise ValueError("bounded strict media deadline required")
++            deadline = min(server_deadline, time.monotonic() + self.media_timeout_s)
++            headers = {"X-Cosmos-Assignment": json_bytes(self.lease).decode(), "X-Cosmos-Payload-SHA256": payload_sha}
++            while True:
++                remaining = deadline - time.monotonic()
++                if remaining <= 0 or self._stop.is_set():
++                    raise TimeoutError("strict generated media deadline exhausted")
++                try:
++                    reply = self.media_http.request(
++                        "GET", self.base + "/v2/media/" + key, headers=headers, timeout=min(1.0, remaining)
++                    )
++                except (requests.Timeout, requests.ConnectionError):
++                    continue
++                if time.monotonic() >= deadline:
++                    raise TimeoutError("late strict media response")
++                value = reply.json()
++                if value.get("request_key") != key or value.get("payload_sha256") != payload_sha:
++                    raise ValueError("strict media response binding mismatch")
++                if reply.status_code == 202:
++                    self._stop.wait(min(0.02, max(0, deadline - time.monotonic())))
++                    continue
++                status = value.get("media", {})
++                if (
++                    reply.status_code != 200
++                    or status.get("status") != "ready"
++                    or status.get("assignment") != expected
++                    or status.get("replan") != index
++                ):
++                    raise RuntimeError("strict media decode failed: " + str(status.get("status")))
++                receipt = deliver(
++                    index, {"video": status.get("video"), "_media_binding": binding, "_media_deadline": deadline}
++                )
++                if (
++                    not isinstance(receipt, dict)
++                    or receipt.get("status") != "VIDEO_SAVED"
++                    or receipt.get("index") != index
++                    or receipt.get("binding", {}).get("transfer") != binding
++                ):
++                    raise ValueError("durable Encoder VIDEO_SAVED receipt required before ACK")
++                # The file/receipt remain on disk if this network ACK is lost.
++                self.media_status[index] = {
++                    "status": "VIDEO_SAVED_ACK_PENDING",
++                    "ticket": key,
++                    "payload_sha256": payload_sha,
++                    "path": receipt["path"],
++                    "sha256": receipt["sha256"],
++                }
++                while True:
++                    remaining = deadline - time.monotonic()
++                    if remaining <= 0:
++                        raise TimeoutError("durable video server ACK deadline exhausted")
++                    try:
++                        ack = self.media_http.request(
++                            "POST",
++                            self.base + "/v2/media/ack",
++                            timeout=min(1.0, remaining),
++                            json={
++                                "lease": self.lease,
++                                "request_key": key,
++                                "payload_sha256": payload_sha,
++                                "receipt": receipt,
++                            },
++                        )
++                    except (requests.Timeout, requests.ConnectionError):
++                        continue
++                    value = ack.json()
++                    if (
++                        time.monotonic() >= deadline
++                        or ack.status_code != 200
++                        or value.get("acknowledged") is not True
++                        or value.get("request_key") != key
++                    ):
++                        raise ValueError("late/invalid durable media server ACK")
++                    self.media_status[index]["status"] = "VIDEO_SAVED"
++                    return receipt
++        except Exception as error:
++            self._media_failed = True
++            self._error("MEDIA_INCOMPLETE: " + repr(error))
++            self.media_status[index] = {
++                **self.media_status[index],
++                "status": "MEDIA_INCOMPLETE",
++                "error": repr(error)[:1024],
++            }
++            return None
++
+     def _media_loop(self):
+         while not self._stop.is_set():
+             with self._changed:
+@@ -207,6 +386,18 @@ class PolicyTransport:
+         self._ended = True
+ 
+     def close_media(self):
++        if self.strict_media:
++            # The normal native caller is synchronous. A concurrent End still
++            # waits for an active delivery, without holding model/actor locks.
++            deadline = time.monotonic() + self.media_timeout_s
++            with self._changed:
++                while self._active_media and time.monotonic() < deadline:
++                    self._changed.wait(min(0.05, max(0, deadline - time.monotonic())))
++                if self._active_media:
++                    self._media_failed = True
++                    self._error("MEDIA_INCOMPLETE: active Encoder delivery did not drain")
++                self._stop.set()
++            return
+         with self._delivery:
+             self._stop.set()
+         with self._changed:
+@@ -222,15 +413,23 @@ class PolicyTransport:
+ 
+     def media_diagnostics(self):
+         with self._changed:
+-            return {
++            value = {
+                 "predictions": {str(k): dict(v) for k, v in self.media_status.items()},
+                 "errors": list(self.errors),
+                 "unquiesced": self.media_process_fault,
+             }
++            if self.strict_media:
++                saved = sum(s["status"] == "VIDEO_SAVED" for s in self.media_status.values())
++                value["completion"] = {
++                    "status": "COMPLETE" if saved == self.replan and not self._media_failed else "MEDIA_INCOMPLETE",
++                    "expected": self.replan,
++                    "acknowledged": saved,
++                }
++            return value
+ 
+     @property
+     def media_process_fault(self):
+-        return self._thread is not None and self._thread.is_alive()
++        return (self.strict_media and self._active_media > 0) or (self._thread is not None and self._thread.is_alive())
+ 
+     def close(self):
+         try:
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py
+index d22ee1c..fa197ca 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py
+@@ -230,3 +230,70 @@ def test_foreign_optional_media_is_diagnostic_and_never_invalidates_actions(make
+     )
+     assert not delivered and client.media_diagnostics()["predictions"]["0"]["status"] == "invalid_media_binding"
+     client.close()
++
++
++@pytest.mark.parametrize("decode_failure", [False, True])
++def test_strict_media_preserves_real_Local_fast_updates_prefix_and_End_ACK(
++    tmp_path, monkeypatch, make_native, decode_failure
++):
++    obj, actor = make_native(1, 1)
++    lease = register(actor)
++    calls = []
++    original = obj.model.generate_samples_from_batch
++
++    def valid_actions(batch, **kwargs):
++        value = original(batch, **kwargs)
++        action = torch.zeros(1, 17, 64)
++        raw = [0.2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5]
++        action[:, 1:, :15] = torch.tensor(raw) * 2 - 1
++        value["action"] = [action.clone()]
++        calls.append(actor.adapter.snapshot)
++        return value
++
++    obj.model.generate_samples_from_batch = valid_actions
++    obj.local_memory_adapter.decode_image = lambda data: torch.from_numpy(
++        np.array(Image.open(io.BytesIO(base64.b64decode(data))), copy=True)
++    ).permute(2, 0, 1)
++    image = io.BytesIO()
++    Image.new("RGB", (32, 32), "green").save(image, format="PNG")
++    encoded = base64.b64encode(image.getvalue()).decode()
++
++    def decode(_):
++        if decode_failure:
++            raise OSError("injected media failure, not Local failure")
++        return [encoded]
++
++    actor.decode_media = decode
++    from cosmos_framework.simulation.robocasa import eval_v2_transactions
++
++    assigned = facade(obj, actor, lease, mode="all")
++    assigned.media_timeout_s = 10
++    monkeypatch.setattr(eval_v2_transactions, "PolicyTransport", lambda *a: assigned)
++    monkeypatch.setattr(native, "build_state_token", lambda _: [0.0] * 15)
++    cfg = {**settings("all"), "media_drain_timeout_s": 10}
++    episode = adapter_module.NativeEpisode(FakeEnv(), cfg)
++    assert episode.initialize()["initial_success"] is False
++    result = episode.execute(
++        dict(
++            task="CloseFridge",
++            episode=0,
++            generation=1,
++            attempt_id="attempt-1",
++            stream_id="stream",
++            seed=0,
++            manifest_digest="a" * 64,
++        ),
++        reset_index=0,
++        directory=tmp_path / "episode",
++        transaction_assignment={"lease": lease},
++        episode_deadline=time.monotonic() + 30,
++    )
++    assert result["observation"]["environment_success"] is True
++    assert result["replans"] == len(obj.native_calls) == len(calls) == 2
++    assert calls[0] is not calls[1]  # A real Local publication preceded replan 1.
++    assert [c["has_local"] for c in obj.native_calls] == [[False], [True]]
++    assert result["local_session"]["reset_ack"] is True and actor.info()["sessions"] == 0
++    assert not obj.local_memory_adapter.snapshot.fast and not result["media_process_fault"]
++    media = result["generated_media_completion"]
++    assert media["status"] == ("MEDIA_INCOMPLETE" if decode_failure else "COMPLETE")
++    assert media["saved"] == (0 if decode_failure else 2)
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index 192611d..4d72f81 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -16,6 +16,7 @@ from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
+ 
+ def serve(channel, cfg, *, factory=None):
+     # Factory is a Python CPU test boundary, never selectable via production CLI.
++    from cosmos_framework.evaluation.robocasa_v2 import generated_video, media
+     from cosmos_framework.simulation.robocasa import closed_loop_eval as native
+     from cosmos_framework.simulation.robocasa import render_devices
+     from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
+@@ -37,6 +38,8 @@ def serve(channel, cfg, *, factory=None):
+                 "adapter": Path(sys.modules[NativeEpisode.__module__].__file__),
+                 "slot": Path(sys.modules[SimSlot.__module__].__file__),
+                 "rendering": Path(render_devices.__file__),
++                "media": Path(media.__file__),
++                "generated_video": Path(generated_video.__file__),
+             }
+             if cfg["settings"].get("execution_profile") == "phase_b":
+                 from cosmos_framework.simulation.robocasa import eval_v2_transactions

@@ -1,0 +1,22 @@
+{
+  "status": "AUTHOR_SCOPED_CPU_PASS",
+  "tests": 192,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+  "child": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "gitlink": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "root_status": "",
+  "child_status": "",
+  "source_unchanged": true,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "ruff": "0.12.7",
+  "real_gpu": false,
+  "real_egl": false,
+  "real_simulator": false,
+  "real_model": false,
+  "real_ffmpeg": false,
+  "independent_ds": false,
+  "scope": "split renderer and Media lifecycle, relevant existing config/slot/native/process/video-policy regressions"
+}

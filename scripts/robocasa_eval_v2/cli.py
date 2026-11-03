@@ -21,10 +21,10 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
 )
 from robocasa_episode_resume.model_identity import verification_record
 
-from robocasa_eval_v2.config import resolve, execution
+from robocasa_eval_v2.config import execution, rendering, resolve
 from robocasa_eval_v2.identity import discover, prepare, runtime_environment
+from robocasa_eval_v2.resources import physical_slots, render_slots
 from robocasa_eval_v2.runtime import Runtime
-from robocasa_eval_v2.resources import physical_slots
 
 
 def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
@@ -40,6 +40,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                 manifest["task_order"] != [t for t, _ in tasks]
                 or manifest["episodes_per_task"] != cfg["episodes_per_task"]
                 or manifest.get("execution") != execution(cfg)
+                or (
+                    manifest.get("rendering") is not None
+                    and manifest["rendering"] != rendering(cfg)
+                )
             ):
                 raise ValueError("dry-run scientific plan differs from frozen Run")
             for ep in range(cfg["episodes_per_task"]):
@@ -57,6 +61,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                     "resolved": cfg,
                     "task_order": [t for t, _ in tasks],
                     "physical_slots": physical_slots(cfg, len(tasks)),
+                    "render_slots": render_slots(cfg, len(tasks)),
                     "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
                     "slots": [
                         [t, ep]
@@ -205,6 +210,28 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
         write(
             root / "_internal/coordination_metrics.json", store.metrics(), replace=True
         )
+        media_incomplete = False
+        if cfg.get("save_generated_video") == "all":
+            from robocasa_eval_v2.generated_media import publish
+
+            try:
+                media_report = publish(store)
+            except (OSError, ValueError) as failed:
+                media_report = {
+                    "status": "MEDIA_INCOMPLETE",
+                    "error": repr(failed)[:1024],
+                    "independent_of_SR": True,
+                }
+            media_incomplete = media_report["status"] != "COMPLETE"
+            report = {**report, "generated_media": media_report}
+            if media_incomplete:
+                import sys
+
+                print(
+                    "[eval-v2] MEDIA_INCOMPLETE: see media_summary.json; Core/SR unchanged",
+                    file=sys.stderr,
+                    flush=True,
+                )
         print(json.dumps(report, ensure_ascii=False))
         if error is not None:
             import sys
@@ -212,4 +239,8 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             print(
                 "[eval-v2] stopped: " + repr(error)[:8192], file=sys.stderr, flush=True
             )
-        return 1 if error is not None or not report["results_qualified"] else 0
+        return (
+            1
+            if error is not None or not report["results_qualified"] or media_incomplete
+            else 0
+        )

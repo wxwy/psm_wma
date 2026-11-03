@@ -1,0 +1,78 @@
+{
+  "old_formal_root": "46d3a604e66ca139e2f060fd4caaaa0583a1035f",
+  "old_child": "d3b2a29b978ff4abef800b9e71fab4422b7a0d23",
+  "formal_root": "6484dd83efc512e6801470790eb84ac7349c127a",
+  "formal_child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "child_changed": [
+    "cosmos_framework/evaluation/robocasa_v2/media.py"
+  ],
+  "root_code_changed": [
+    "cosmos-framework",
+    "tools/v3/eval_v2_batch_tests/media_queue_close_fault_test.py"
+  ],
+  "child_numstat": "2\t1\tcosmos_framework/evaluation/robocasa_v2/media.py\n",
+  "protected": [
+    {
+      "repository": "Root",
+      "path": "scripts",
+      "before": "bb0e0792ad9b275e244ad95e9df0044a77a8657d",
+      "after": "bb0e0792ad9b275e244ad95e9df0044a77a8657d"
+    },
+    {
+      "repository": "Root",
+      "path": "configs",
+      "before": "5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935",
+      "after": "5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935"
+    },
+    {
+      "repository": "Root",
+      "path": "third_party",
+      "before": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "after": "d01633d083298fc5245b5bc97677c5b297700c31"
+    },
+    {
+      "repository": "Root",
+      "path": "docs/build/PSM-WMA_V3_EvalV2_Split_Render_Media_2026-11-01.md",
+      "before": "22ef65ebf3eb9233e94585779c805a5dfec7d600",
+      "after": "22ef65ebf3eb9233e94585779c805a5dfec7d600"
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/inference",
+      "before": "bcecdb9afd5d3c2dd99e8f2db5d8a00efac75a96",
+      "after": "bcecdb9afd5d3c2dd99e8f2db5d8a00efac75a96"
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/data",
+      "before": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5",
+      "after": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5"
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/model",
+      "before": "ae232e9cbe841d41ba5a363400c5f76890b9649e",
+      "after": "ae232e9cbe841d41ba5a363400c5f76890b9649e"
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/trainer",
+      "before": "621320f8a8adc42c92182cd7b0367a4d091707a5",
+      "after": "621320f8a8adc42c92182cd7b0367a4d091707a5"
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/checkpoint",
+      "before": "a544d735bb95024eacca51fb3527955aad91616c",
+      "after": "a544d735bb95024eacca51fb3527955aad91616c"
+    },
+    {
+      "repository": "Child",
+      "path": "cosmos_framework/simulation",
+      "before": "f5fdd9eb74fc0d629358ccff1b5f8fdeee7c74a4",
+      "after": "f5fdd9eb74fc0d629358ccff1b5f8fdeee7c74a4"
+    }
+  ],
+  "review_retained_byte_identical": true,
+  "all_unlisted_child_objects_unchanged": true
+}

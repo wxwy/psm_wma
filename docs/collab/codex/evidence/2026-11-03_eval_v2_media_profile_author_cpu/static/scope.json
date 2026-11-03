@@ -1,0 +1,14 @@
+{
+  "base": "b19b9edf7f39a83013a853f95c543081e0216b28",
+  "root_changes": [
+    "SESSION.md",
+    "TODO.md",
+    "scripts/robocasa_eval_v2/generated_media.py",
+    "tools/v3/eval_v2_replan_tests/media_profile_test.py"
+  ],
+  "child": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "child_unchanged": true,
+  "production_AST_only_native_profile_literal": true,
+  "frozen_test_unchanged": true,
+  "old_379_122_evidence_unchanged": true
+}

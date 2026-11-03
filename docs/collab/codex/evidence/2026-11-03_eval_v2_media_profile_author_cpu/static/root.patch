@@ -1,0 +1,312 @@
+diff --git a/SESSION.md b/SESSION.md
+index 02153f39..bba5413e 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,54 @@
++# 2026-11-03 — Native media-summary literal fixed, development42 PASS, freezing Root
++
++Only Root generated_media.publish comparison literal changes CLI phase_b to
++Manifest phase_b_native_batch_v1 (format2 additions/1 deletion). Child/Gitlink
++c93f2abf4fb27d36176ff8db094379a853cec796 remains untouched, no Child commit.
++Frozen new media_profile_test.py before old RED2: real production execution()
++and Child build_manifest/Store/Core, true native profile/ACK wrongly rejected and
++false ACK wrongly accepted by old e7ce production. Same frozen tests GREEN:
++15 new +10 report +17 config =42 PASS/0failure/error/skip, source/status unchanged.
++Tests prove legal Phase B, Phase A/absence, strict ACK typing, both per-video
++receipt/file hashes on repeat publish, missing/bad receipt/file/hash refusal,
++unknown/CLI profile rejection by existing contract, Core/SR bytes unchanged.
++Only new synthetic CPU media; not DS actual19-record reconciliation.
++
++Ruff0.12.7/format/AST/py_compile2 PASS; AST diff exactly that string constant,
++Child, training/config/Vendor and old379/122 evidence unchanged. No extra source
++changes planned. Logs /tmp/psm-eval-v2-media-profile-20261103; Root implementation
++commit next then clean exact-Pair checks/evidence/request/publish/readback/STOP.
++Original Canary FAIL remains historical; DS isolated-copy offline19 still pending,
++no DS dispatch, GPU/model/RoboCasa/old artifacts/Job/training/DCP or V3 merge.
++
++## Pre-implementation claim retained
++
++# 2026-11-03 — R01-MEDIA-PROFILE-01 narrow Root fix claimed IN_PROGRESS
++
++User Hardware Canary REQUEST_CHANGES received. Fresh explicit candidate/V3 fetch
++and advertised refs matched: before8c0ff2e44fc1765126388a5f3c83bbfad23b6638,
++candidate b19b9edf7f39a83013a853f95c543081e0216b28, official V3 unchanged
++7e2be5ca40891915a1e86eea935ed054ec1984dd. Read all9 new commit subjects;
++diff only docs/Inbox, ancestry0 and safe merge --ff-only succeeded. Read exact
++2026-11-03 R01 Hardware profile Evidence review and Codex Narrow Fix request.
++Also verified previous e7ce99d7a0bbb7a81ea7afcee7253548687dc223 /
++c93f2abf4fb27d36176ff8db094379a853cec796 APPROVE_CODE and DS scoped CPU122
++closed from formal review files, without repeating old technical audits/tests.
++
++Current new Root-only branch v3-eval-v2-media-profile-20261103 in private
++/workspace/psm-wma-eval-replan-all, baseb19b9edf. Child/Gitlink stays
++c93f2abf4fb27d36176ff8db094379a853cec796, no Child branch/code/commit changes.
++Claim only Root scripts/robocasa_eval_v2/generated_media.py manifest literal
++phase_b ->phase_b_native_batch_v1, new focused profile test, necessary evidence/
++handoff/SESSION/TODO/append-only Inbox. No broad constant/manifest refactor.
++Freeze real native Manifest regression before old RED, then exact one-line fix,
++related report/config CPU/static only, new Formal Root SHA, review request, STOP.
++Keep original R01 FAIL and old379/122 evidence intact. Actual DS R01 outputs are
++not available/authorized here: offline19-record reconciliation remains DS-only
++pending on an isolated copy after review; no fabricated reconciliation PASS.
++No GPU/model/RoboCasa/old media/training/DCP/Job/shared source/V3 merge or DS
++dispatch. Owner current roles/STOP override stale V2/tmux/multi-pane rules.
++
++## Prior R01 publication record preserved
++
+ # 2026-11-02 — RM-ALL-R01 candidate published/readback PASS; STOP for incremental review
+ 
+ Fresh2026-11-02T11:42:35Z fetch/advertised refs/Git object readback PASS for
+diff --git a/TODO.md b/TODO.md
+index 0cfb4925..5d728143 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,5 +1,7 @@
+ # PSM-WMA 任务队列
+ 
++- **R01-MEDIA-PROFILE-01** — IN_PROGRESS; Codex; Owner/GPT b19b9edf narrow fix request read after fresh fetch. Root-only generated_media.publish native literal correction + real Manifest profile/ACK/inventory/hash tests, frozen RED/GREEN, relevant CPU/static, new Root Formal then STOP for incremental review. Child/Gitlink fixedc93f2abf4fb27d36176ff8db094379a853cec796. No GPU/V3 merge/old R01 media or training/DCP; offline19-record reconciliation left to DS isolated copy, old Canary FAIL preserved. Candidate v3-eval-v2-media-profile-20261103.
++
+ - **EVALV2-RM-ALL-R01** — REVIEW; Codex; Formal Root e7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Child-Gitlink c93f2abf4fb27d36176ff8db094379a853cec796. One production file26+/8-, bounded full-Episode ACK identities, End202 retention/acknowledged End release. Same frozen public API tests old RED2/new targeted16 +106 relevant regression =122 clean-Pair author PASS/0failure/error/skip, static/scope/protected old379 PASS. Evidence/handoff prepared; publish Child->Root/readback/request then STOP for GPT fresh incremental Code Gate, no claim finding closed. Candidate v3-eval-v2-replan-ack-r01-20261102; no official V3/GPU/model/RoboCasa/old media/training/DCP/Job actions.
+ 
+ - **EVALV2-REPLAN-ALL-LOSSLESS** — REVIEW; Codex; Owner f49d52e5 all-only contract. Formal Root d2041e388eda084e42a2d6b0d115db8beedfab44 / Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9, isolated v3-eval-v2-replan-all-20261102. Clean-Pair author CPU379 distinct PASS/0failure/error/skip (58+174+129+18), Ruff/format/AST/py_compile22, protected scope and rollover PASS; synthetic10 completed/fully decoded MP4+receipts+ACK. Evidence/handoff archived; publish Child->Root/readback then STOP for GPT incremental Code Gate. Author PASS is not GPT/DS/hardware acceptance; no V3 promotion, GPU/model/real simulator, old H3/out2/NoTTT/Job/training/DCP access.
+diff --git a/scripts/robocasa_eval_v2/generated_media.py b/scripts/robocasa_eval_v2/generated_media.py
+index 38af76a5..16a02ac4 100644
+--- a/scripts/robocasa_eval_v2/generated_media.py
++++ b/scripts/robocasa_eval_v2/generated_media.py
+@@ -33,7 +33,8 @@ def publish(store):
+                     or completion.get("attempt_id") != row["attempt_id"]
+                     or completion.get("server_ack_required")
+                     is not (
+-                        store.manifest.get("execution", {}).get("profile") == "phase_b"
++                        store.manifest.get("execution", {}).get("profile")
++                        == "phase_b_native_batch_v1"
+                     )
+                     or any(
+                         type(completion.get(k)) is not int or completion[k] != count
+diff --git a/tools/v3/eval_v2_replan_tests/media_profile_test.py b/tools/v3/eval_v2_replan_tests/media_profile_test.py
+new file mode 100644
+index 00000000..0228127c
+--- /dev/null
++++ b/tools/v3/eval_v2_replan_tests/media_profile_test.py
+@@ -0,0 +1,221 @@
++"""Real Manifest/Store summary profile contract; new synthetic CPU media only."""
++
++import copy
++from types import SimpleNamespace
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2 import generated_video
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    EnvironmentOutcome,
++    build_manifest,
++    result_record,
++    validate_manifest,
++)
++from cosmos_framework.evaluation.robocasa_v2.store import Store
++from robocasa_eval_v2 import generated_media
++from robocasa_eval_v2.config import execution
++
++from tools.v3.eval_v2_production_tests.contract_test import manifest
++from tools.v3.eval_v2_production_tests.store_test import (
++    admitted,
++    close_streams,
++    fixture_core,
++)
++from tools.v3.eval_v2_replan_tests.support import png_frames
++
++
++def manifest_for(profile):
++    seed = manifest(episodes=1)
++    cfg = dict(
++        execution_profile=profile,
++        gpu_ids=[4],
++        sims_per_gpu=1,
++        max_infer_batch_size=1,
++        batch_wait_ms=20,
++    )
++    layout = None if profile == "absent" else execution(cfg)
++    value = build_manifest(
++        tasks=seed["tasks"],
++        episodes=1,
++        seed=seed["seed"],
++        horizons={"CloseFridge": 32},
++        experiment=seed["experiment"],
++        execution=layout,
++    )
++    assert validate_manifest(value) == value
++    if profile == "phase_b":
++        assert value["execution"]["profile"] == "phase_b_native_batch_v1"
++    else:
++        assert "execution" not in value
++    return value
++
++
++def prepared(tmp_path, profile="phase_b"):
++    store = Store(tmp_path / "run", manifest_for(profile))
++    store.create()
++    with store.locked():
++        store.begin_task("CloseFridge")
++        attempt = admitted(store, store.begin_episode("CloseFridge", 0))
++        observation = EnvironmentOutcome(32)
++        for index in range(32):
++            observation.check_after_step(
++                SimpleNamespace(_check_success=lambda: index == 31)
++            )
++        row = result_record(
++            store.manifest,
++            task="CloseFridge",
++            episode=0,
++            generation=attempt["generation"],
++            stream_id=attempt["stream_id"],
++            observation=observation.finish(normal=True),
++            instruction="Synthetic close the fridge",
++            replans=2,
++            elapsed_seconds=0.5,
++            attempt_id=attempt["attempt_id"],
++            worker_id=attempt["worker_id"],
++            seed=attempt["seed"],
++            reset_index=store.events(attempt)[-1]["data"]["reset_index"],
++        )
++        store.commit(row, staging=fixture_core(store, attempt, row))
++        close_streams(store, "CloseFridge")
++        scientific = store.publish_views()
++    assert scientific["success"] == scientific["valid"] == 1
++    directory = store._slot("CloseFridge", 0)
++    identity = {k: row[k] for k in ("task", "episode", "attempt_id", "generation")}
++    frames = png_frames()
++    for index in range(2):
++        video = frames[index:] + frames[:index]
++        generated_video.write_generated(
++            directory / "media",
++            dict(
++                index=index,
++                video=video,
++                binding={
++                    "episode": identity,
++                    "index": index,
++                    "transfer": None,
++                    "video_sha256": generated_video.sha(video),
++                },
++            ),
++            20,
++        )
++    completion = dict(
++        status="COMPLETE",
++        task="CloseFridge",
++        episode=0,
++        attempt_id=row["attempt_id"],
++        expected=2,
++        saved=2,
++        acknowledged=2,
++        missing=[],
++        server_ack_required=profile == "phase_b",
++    )
++    generated_video.atomic_json(
++        directory / "generated_media_completion.json", completion
++    )
++    return store, directory, completion
++
++
++def protected(store, directory):
++    return {
++        p: p.read_bytes()
++        for p in (
++            store.root / "summary.json",
++            directory / "result.json",
++            store.root / "manifest.json",
++        )
++    }
++
++
++@pytest.mark.parametrize("profile", ["phase_b", "phase_a", "absent"])
++def test_real_profile_summary_enters_every_receipt_and_file_hash_check(
++    tmp_path, monkeypatch, profile
++):
++    store, directory, _ = prepared(tmp_path, profile)
++    original = protected(store, directory)
++    receipts, hashes = [], []
++    read_receipt = generated_media.read_receipt
++    file_sha = generated_video.file_sha
++
++    def receipt(media, index, binding):
++        receipts.append(index)
++        return read_receipt(media, index, binding)
++
++    def file_hash(path):
++        hashes.append(path.name)
++        return file_sha(path)
++
++    monkeypatch.setattr(generated_media, "read_receipt", receipt)
++    monkeypatch.setattr(generated_video, "file_sha", file_hash)
++    with store.locked():
++        for _ in range(2):
++            report = generated_media.publish(store)
++            assert report["status"] == "COMPLETE", report
++            assert report["expected"] == report["saved"] == report["acknowledged"] == 2
++            assert report["errors"] == [] and report["independent_of_SR"] is True
++    assert receipts == [0, 1, 0, 1]
++    assert hashes == ["replan_0000.mp4", "replan_0001.mp4"] * 2
++    assert protected(store, directory) == original
++
++
++@pytest.mark.parametrize(
++    "profile,ack",
++    [
++        ("phase_b", False),
++        ("phase_b", None),
++        ("phase_b", 1),
++        ("phase_b", "true"),
++        ("phase_a", True),
++        ("absent", True),
++    ],
++)
++def test_wrong_or_untyped_ACK_authority_remains_incomplete(tmp_path, profile, ack):
++    store, directory, completion = prepared(tmp_path, profile)
++    original = protected(store, directory)
++    generated_video.atomic_json(
++        directory / "generated_media_completion.json",
++        {**completion, "server_ack_required": ack},
++    )
++    with store.locked():
++        report = generated_media.publish(store)
++    assert report["status"] == "MEDIA_INCOMPLETE" and report["errors"]
++    assert protected(store, directory) == original
++
++
++@pytest.mark.parametrize(
++    "damage", ["missing_mp4", "missing_receipt", "receipt_hash", "video_hash"]
++)
++def test_true_native_profile_does_not_bypass_inventory_or_receipt_validation(
++    tmp_path, damage
++):
++    store, directory, _ = prepared(tmp_path)
++    original = protected(store, directory)
++    video = directory / "media/generated/replan_0001.mp4"
++    receipt = directory / "media/generated/replan_0001.receipt.json"
++    if damage == "missing_mp4":
++        video.unlink()
++    elif damage == "missing_receipt":
++        receipt.unlink()
++    elif damage == "receipt_hash":
++        import json
++
++        value = json.loads(receipt.read_bytes())
++        generated_video.atomic_json(receipt, {**value, "sha256": "f" * 64})
++    else:
++        body = video.read_bytes()
++        video.write_bytes(bytes([body[0] ^ 1]) + body[1:])  # Same size: must check SHA.
++    with store.locked():
++        report = generated_media.publish(store)
++    assert report["status"] == "MEDIA_INCOMPLETE" and report["errors"]
++    if damage == "missing_mp4":
++        assert "inventory" in report["errors"][0]["error"]
++    assert protected(store, directory) == original
++
++
++@pytest.mark.parametrize("invalid", ["phase_b", "unknown"])
++def test_contract_refuses_CLI_or_unknown_profile_as_native_manifest(invalid):
++    good = manifest_for("phase_b")
++    broken = copy.deepcopy(good)
++    broken["execution"]["profile"] = invalid
++    with pytest.raises(ValueError, match="native batch execution identity"):
++        validate_manifest(broken)

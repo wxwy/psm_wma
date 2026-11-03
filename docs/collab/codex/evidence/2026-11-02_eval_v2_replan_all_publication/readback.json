@@ -1,0 +1,22 @@
+{
+  "status": "PASS_FRESH_ADVERTISED_REFS_AND_GIT_OBJECT_READBACK",
+  "expected_head": "fc057e6f731d12dbe2b657b0c73859c4b4657677",
+  "formal_root": "d2041e388eda084e42a2d6b0d115db8beedfab44",
+  "formal_child": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "child_advertised": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "official_child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "root_advertised": "fc057e6f731d12dbe2b657b0c73859c4b4657677",
+  "official_root": "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+  "artifact_hashes_verified": 73,
+  "source_bindings_verified": 22,
+  "successors_metadata_only": true,
+  "inbox_bytes": 4770,
+  "rollover_blob_verified": true,
+  "root_head": "fc057e6f731d12dbe2b657b0c73859c4b4657677",
+  "child_head": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "gitlink": "0dd13d3d952aa7cbab39f966dfab04b23551f0c9",
+  "request_unique": true,
+  "worktrees_clean": true,
+  "official_refs_unchanged": true,
+  "observed_utc": "2026-11-02T09:56:31.023122+00:00"
+}

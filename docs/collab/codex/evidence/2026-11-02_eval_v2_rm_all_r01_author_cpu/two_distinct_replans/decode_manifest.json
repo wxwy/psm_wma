@@ -1,0 +1,30 @@
+{
+  "kind": "new synthetic CPU RGB frame sequences, not model/simulator output",
+  "full_frame_decode": true,
+  "clips": [
+    {
+      "index": 0,
+      "video_sha256": "418d047fd972e76ce7cab02090e074bbd3e2f58a64027bd9d3a6dcaaa22e2331",
+      "path": "replan_0000.mp4",
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1656,
+      "sha256": "58d58755ee688a186cd044dbe9e7ca2ea77a35a854aee9401fe1bb07debaa1a0"
+    },
+    {
+      "index": 1,
+      "video_sha256": "aab80019c024ffe1f0c17fafd57c818ac8d14aea9a266c44d5aa8a81b872facc",
+      "path": "replan_0001.mp4",
+      "frames": 3,
+      "size": [
+        32,
+        32
+      ],
+      "bytes": 1655,
+      "sha256": "6ff185b3733c14870bf829509b30584c5f231b1c3b0fb0c40d7a4de356f9e35a"
+    }
+  ]
+}

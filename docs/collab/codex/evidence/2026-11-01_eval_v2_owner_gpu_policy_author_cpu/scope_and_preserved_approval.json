@@ -1,0 +1,56 @@
+{
+  "approved_root": "6484dd83efc512e6801470790eb84ac7349c127a",
+  "child": "9a8cd6183424bfce245fbca393ca25ed59919ea6",
+  "new_formal_root": "4b581493db805c92964cb27e740c736db87c0329",
+  "source_base": "b0b6e8ca1bf3b4a5ca12771dd71b34b4f9666e72",
+  "production_changed": [
+    "scripts/robocasa_eval_v2/resources.py"
+  ],
+  "tests_changed": [
+    "tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py",
+    "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+    "tools/v3/eval_v2_production_tests/entry_test.py"
+  ],
+  "child_unchanged": true,
+  "protected": [
+    {
+      "path": "scripts/robocasa_eval_v2/runtime.py",
+      "old": "c6539752fcf5d04567150c23e5723936dd7641b4",
+      "new": "c6539752fcf5d04567150c23e5723936dd7641b4",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/robocasa_eval_v2/config.py",
+      "old": "e34014c8cf168a6bae0a0f88b765c99dad113b7e",
+      "new": "e34014c8cf168a6bae0a0f88b765c99dad113b7e",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/robocasa_eval_v2/identity.py",
+      "old": "f989a2cb9e055780c7e20d32df3f43836fb267d2",
+      "new": "f989a2cb9e055780c7e20d32df3f43836fb267d2",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/robocasa_eval_v2_processes.py",
+      "old": "d2744ca2d59c52619a0b139329cf03b4ccee41a7",
+      "new": "d2744ca2d59c52619a0b139329cf03b4ccee41a7",
+      "unchanged": true
+    },
+    {
+      "path": "configs",
+      "old": "5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935",
+      "new": "5249fa1b7b72248439bb6ce6ab0eeef7a5cf7935",
+      "unchanged": true
+    },
+    {
+      "path": "third_party",
+      "old": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "new": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "unchanged": true
+    }
+  ],
+  "policy_authority": "Owner explicitly replaces only external-CUDA and GPU-capacity admission; prior exact-Pair APPROVE_CODE remains valid, new policy needs separate incremental review.",
+  "interface": "check signature and before_models keyword retained; GPU evidence now maps index->UUID only; no memory/reserve data collected or returned. Runtime consumes probe success only.",
+  "legacy_configuration": "max_gpu_fraction/server_reserve_bytes/render_reserve_bytes_per_sim remain accepted by unchanged config schema but are ignored by resource admission."
+}
