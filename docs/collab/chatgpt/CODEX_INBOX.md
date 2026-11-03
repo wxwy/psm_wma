@@ -203,3 +203,12 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - DS_PRO 在独立 clean checkout 报告 CPU **66/66 PASS、0失败/错误/跳过**；Ruff0.12.7 check PASS / format--check PASS（`2 files already formatted`），AST PASS、Root/Child/Gitlink/clean/SHA256 PASS；证据在其服务器本地 `/tmp/ds_pro_r02_nv_format_46c08127_20261103/evidence/`。服务器连接中断，GPT未直接读取 DS 原始JUnit/日志，仅通过用户转交 DS报告验收；GPT已独立回验官方GitHub Root/Child/Gitlink/两个源码Git Blob。
 - **`DS_INDEPENDENT_PASS` / `R02_NV_ATTRIB_CPU_STATIC_EVIDENCE=CLOSED`**。上轮 format REQUEST_CHANGES blocker CLOSED；原 format-only `APPROVE_CODE` 不重审。详细记录 `docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_DS_INDEPENDENT_CPU66_GATE_CLOSED.md`。
 - 下一个实测 Gate 是 **Owner另行授权** 的 GPU6 Action Server/GPU4 EGL R02 CloseFridge×1EP（M1/B1，iter20000，video=all，全新 `R02_1ep_nv_attrib_v2` 输出）。须先由Owner释放所选GPU上的gpu_load_sim；不授权DS/GPT自行杀进程或自动启动真实仿真，禁止900EP/B2、正式训练/NoTTT/out2/H2/H3、覆盖历史R01/R02、访问GPU0–3。真实 `ENV_READY` / Context PCI / Core / MP4/ACK / exit0 **仍未验收**。
+
+
+## 2026-11-03 — R02 NV_ATTRIB real GPU1EP Canary: report-supported PASS
+
+- DS_PRO 报告真实 GPU Canary 成功：正式V3 Root `ff9110ce7ac3fe2438603a481ef720326e435c0a` 生产合并点（后续docs HEAD不改变源码），Child/Gitlink `1069fe78841228cadbbfbe6afbd767eaed6225da`。Phase B M1/B1，GPU6 Action Server + GPU4 EGL Renderer、`CloseFridge` ×1EP、`iter_000020000`、`save_generated_video=all`。EGL index4→GPU4 PCI `0000:98:00.0`，`physical_identity_verified=true`、`context_verified=true`、`context_device_handle_verified=true`。
+- DS报告：308 steps/20 replans、84.17s、success1/1、SR1、`results_qualified=true`、`clean_execution=true`；20/20 Generated MP4 + 20 receipts + 20 ACK、`media_summary.status=COMPLETE`、CLI `exit=0`、无 owned进程残留。新隔离 namespace `R02_1ep_nv_attrib_v2`，旧 R01/R02 失败证据保留。
+- **Gate：`R02_1EP_NV_ATTRIB_PASS` / `R02_NV_ATTRIB_REAL_GPU_EVIDENCE=CLOSED_REPORT_SUPPORTED`**。GPT核对官方源码/EGL/Media校验机制和远端 Root/Child/Gitlink；服务器连接再次中断，未直接读本次原始 MP4/proof/log，以上 runtime观测来自用户转交DS报告，不冒充GPT直接逐条复验。
+- 首轮 Fresh vendor preflight 因共享 robosuite树出现 Numba `.nbc/.nbi` 非受信 ignored cache被拒绝；据DS报告清理缓存、隔离bytecode之后 probe RC0 并完成 Canary。**不在本Gate中扩大改代码**；如果900EP预检再次复发，优先让Numba缓存出共享源码树，不能无条件忽略所有`.nbc/.nbi` 或清理别人进程文件。复测与正式900EP、B2、训练均未自动授权。
+- [完整审核记录](docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_Real_EGL_GPU1EP_Canary_Evidence_PASS.md)。下一步是否启动18×50=900EP需Owner明确决定；保持 M1/B1、独立新输出目录、资源/缓存预检。历史R01旧Fresh exit1和R02早期blocker不能改写。
