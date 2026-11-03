@@ -2,6 +2,11 @@
 
 This repository intentionally keeps historical design, Gate and review material. Use the layers below instead of browsing all files alphabetically.
 
+## G2 research — technical survey; detailed design deferred
+
+- [G2 技术调研报告 v1.0：技术路线比较与收敛](build/PSM-WMA_G2_technical_survey_v1.0.md) — 2026-11-02. Preserves the research comparisons, decision history, external evidence, nav_sg reuse rationale, and the Owner-confirmed G2 scope. This is a technical survey, not a detailed design, implementation acceptance, or training authorization.
+- G2 detailed design is deferred pending step-by-step Owner confirmation. Existing G1/No-TTT production code, checkpoints, runtime contracts, and historical frozen documents are unchanged by this publication.
+
 ## 1. Current truth — read these first
 
 - **Phase3.5 numerical supplemental Gate (2026-10-08):** `build/PSM-WMA_V3_phase3p5_numeric_compatibility_gate_v1.0_2026-10-08.md` — bounded held-out 3-task/9-window threshold 0.0625 for pre/post/z0, OPEN until verified; current full-corpus 8×H100 fresh 1-optimizer-step authorized after snapshot10. No formal30k authorization.
@@ -17,7 +22,6 @@ This repository intentionally keeps historical design, Gate and review material.
 - **Closed Corrected V3 Phase 1B authority:** `build/PSM-WMA_V3_phase1b_cache_source_binding_design_v0.4_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; closure review: `collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md`.
 - **V3 supersession:** earlier migration v1.0/v1.1 and their B1/iter500/current-frame/streaming execution Gates are historical and superseded by v3.0. Publishing v3.0 does not approve the existing child implementation or authorize training/evaluation.
 - `../README.md` — project overview and entrypoints
-- `../PROJECT_STATUS.md` — current SHA, readiness and validated metrics
 - `current/architecture.md` — current system architecture
 - `current/local_memory.md` — canonical Local Memory / TTT semantics
 - `current/training.md` — train and resume workflow
