@@ -1,3 +1,28 @@
+# 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
+
+Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:
+Root candidate evidence/request8fab3d135b51f1929134578202d5b7b703176972 /
+Child1069fe78841228cadbbfbe6afbd767eaed6225da, both isolated branch
+v3-eval-v2-r02-format-20261103. Normal new-branch Child push FIRST then Root,
+no force.55/55 author artifact SHA256 and4/4 source/config Blob+SHA bindings,
+Gitlink/Child consistency, metadata-only successor, clean worktrees and bounded
+append-only unique Inbox request verified against fetched remote Git objects.
+Official V3 remains324d6983a068424a0c0c60ad6a94e512e39ed96c;
+official Child v3-local-ttt remainsc93f2abf4fb27d36176ff8db094379a853cec796.
+Publication receipt plus9 hashed artifacts saved in
+docs/collab/codex/evidence/2026-11-03_r02_nv_attrib_format_publication/.
+
+Formal Root STAYS46c08127b2a13155bb22204069a1456cb01424d7 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. This successor adds
+receipt metadata only, no source/test changes or repeat CPU. Author CPU66
+PASS/0fail/error/skip, Ruff0.12.7/format and identical AST2 stand. Publication
+proves request availability, not GPT ACK/approval or DS new-Pair acceptance.
+After final readonly receipt-successor verification STOP, status REVIEW.
+No V3 promotion, GPU/EGL/model/simulator/FFmpeg/1EP/900EP, process queries,
+old122/379/42 rerun, old results/Job/training/DCP/shared source operations.
+
+## Earlier preparation retained
+
 # 2026-11-03 — R02 clean exact Pair CPU66/format/AST PASS; preparing review
 
 Formal Root46c08127b2a13155bb22204069a1456cb01424d7 / Child-Gitlink

@@ -1,0 +1,13 @@
+{
+  "args": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/v3-eval-v2-r02-format-20261103",
+    "refs/heads/v3-local-ttt"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format/cosmos-framework",
+  "returncode": 0,
+  "stdout": "1069fe78841228cadbbfbe6afbd767eaed6225da\trefs/heads/v3-eval-v2-r02-format-20261103\nc93f2abf4fb27d36176ff8db094379a853cec796\trefs/heads/v3-local-ttt\n",
+  "stderr": ""
+}

@@ -1,0 +1,29 @@
+{
+  "artifact_sha256_matches": 55,
+  "branch": "v3-eval-v2-r02-format-20261103",
+  "evidence_successor_metadata_only": true,
+  "formal_child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "formal_root": "46c08127b2a13155bb22204069a1456cb01424d7",
+  "gpu_or_v3_promotion_executed": false,
+  "inbox_append_only_unique_bounded": true,
+  "not_reviewer_approval": true,
+  "official_refs_unchanged": true,
+  "published_child_head": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "published_root_evidence_head": "8fab3d135b51f1929134578202d5b7b703176972",
+  "review_request_published": true,
+  "root_and_child_advertised_refs": {
+    "child": {
+      "refs/heads/v3-eval-v2-r02-format-20261103": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+      "refs/heads/v3-local-ttt": "c93f2abf4fb27d36176ff8db094379a853cec796"
+    },
+    "root": {
+      "refs/heads/V3": "324d6983a068424a0c0c60ad6a94e512e39ed96c",
+      "refs/heads/v3-eval-v2-r02-format-20261103": "8fab3d135b51f1929134578202d5b7b703176972"
+    }
+  },
+  "root_gitlink_matches_child": true,
+  "source_blob_sha256_matches": 4,
+  "status": "REMOTE_READBACK_PASS",
+  "time_utc": "2026-11-03T11:43:20.602350+00:00",
+  "worktrees_clean": true
+}

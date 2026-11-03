@@ -1,0 +1,15 @@
+{
+  "formal_child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "formal_root": "46c08127b2a13155bb22204069a1456cb01424d7",
+  "sha256": {
+    "01_child_push.json": "3ff2efe85a780e84033f382ab25b426b4567c2ebae86dfe8d42ce2065bae92c0",
+    "02_root_push.json": "acd5afd682557b65f2768ebd8a8f1237aa84e4a3069ff376d6a2c0669d2cd1b8",
+    "03_child_fetch.json": "cc0ba9b8fafa64a7c7a0ad3aae1963b9159aa1a897af68d94e8c529de40a63f1",
+    "04_root_fetch.json": "c5688765e9ca6b943c1d5c51fae0b7fc719fd0be352d8e1b8a3efff731366bac",
+    "05_child_advertised.json": "e16685874312c9bcde56787d596aa6439befbd9f129effdfb92483d37240e5e4",
+    "06_root_advertised.json": "ea96adb3fc9f68c74988ba24ed66d78b2e90106a59f71ba369279c8d442b0ff5",
+    "inbox_append.json": "8ed862071b50d4bd4bb0be9cf4d85e5b3597dea9f9074836503ab8beb0cfc714",
+    "publish_readback.py": "487a28a3ecc5ea820a8b6dff82075cc07057f95e0208f0d35b0dd800fcfed4a1",
+    "readback.json": "19c00916c6324319d6af599dcb51c1d9e8fd1d6c4357fbf107c0184e46cdae73"
+  }
+}
