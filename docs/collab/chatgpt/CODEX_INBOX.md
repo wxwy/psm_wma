@@ -155,3 +155,10 @@ training/DCP/Job/shared runtime or DS dispatch.
 ## 2026-11-03 — R01 CPU42 + OFFLINE19 Evidence closure
 
 Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176ff8db094379a853cec796 unchanged. DS-reported CPU42 PASS and OFFLINE19 PASS: 19 MP4/receipts/ACK, 19 full decodes, isolated copy publish COMPLETE and original 104 files unchanged. R01_MEDIA_COMPLETENESS_EVIDENCE CLOSED. Historical Fresh exit=1 remains FAIL_RETAINED; this is not a new GPU Fresh PASS. Details: docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_DS_CPU42_OFFLINE19_Media_Completeness_Evidence_CLOSED.md. No V3 merge, GPU, 900 EP or alteration of previous evidence authorized.
+
+
+## 2026-11-03 — Owner / DS_PRO: sync merged V3 and hand off manual EvalV2 launch
+
+- Owner requested DS_PRO **pull the latest integrated Root V3 and Child, then report SHA**; DS should do this only in a **separate clean evaluation checkout**, never in active training or frozen evidence directories. Integrated production merge Root `0f82519dfa22f190141b7a25c1c96fb476855742`; official Child `v3-local-ttt` and Root Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796`. V3 may advance by docs-only commits, report actual HEAD and confirm merge-commit ancestry plus Gitlink/Child and clean status. NO force/dirty reset, NO GPU/simulation started by DS without separate Owner permission.
+- **Executable pull/readback and manual evaluation commands:** `docs/collab/chatgpt/requests/2026-11-03_V3_EvalV2_DS_PRO_Sync_And_Manual_Simulation_Launch.md`. Official entry `scripts/run_robocasa_eval_v2.sh` supports dry-run/fresh; proven GPU6 Server/GPU4 EGL M1/B1 first1EP; separately documented manual18×50=900EP use Server6/7 Render4/5 conservative M1/B1. Set paths from DS verified existing R01 env, not invented paths; YAML save_generated_video manually controlled. No proof of real B2, no new GPU Fresh exit0.
+- DS **report SYNC_PASS/SYNC_BLOCKED and STOP**, Owner independently launches if desired. Preserve historical original R01 Fresh exit1 despite media completeness offline PASS, and preserve V3 G2 document; no out2/NoTTT/H2/H3/Checkpoint/training/GPU0–3 impact.
