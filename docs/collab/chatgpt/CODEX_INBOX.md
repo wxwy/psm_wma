@@ -150,3 +150,8 @@ training/DCP/Job/shared runtime or DS dispatch.
 - Codex真实旧Root冻结测试 RED2（合法PhaseB true ACK误报失败、非法false ACK误通过）；新Root作者`42/42 PASS`（15 profile+10 report+17 config，0fail/error/skip），Ruff/format/py_compile及literal-only AST、Formal Blob/SHA绑定 PASS。新增真实 `execution()`→Child `build_manifest`→Store+两条合成视频/receipt，PhaseB/PhaseA布尔真伪及文件/哈希负例都覆盖；未重跑旧379/122也没有读取真实R01 out。这是作者CPU，**独立DS尚未验收**。
 - **历史 R01 Canary仍 FAIL**：原 `R01_FRESH_EXIT=1`、`media_summary=MEDIA_INCOMPLETE` 不变；DS报告19 Replan/19视频/19 receipt/19 ACK成功仅为原运行时行为。新代码必须在隔离副本上对真实 R01 19条媒体完整校验后才可报告`OFFLINE19 PASS`；不能把新作者合成2条假充真实19条，也不能篡改原R01历史证据。
 - [完整独立审核](docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_Media_Profile_2d1ad80f_c93f2abf_Incremental_Code_Gate_APPROVE_CODE.md)；[DS执行交接](docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_Media_Profile_DS_CPU42_and_Offline19_Handoff.md)：**CPU42独立定向 + 原R01隔离副本仅CPU离线重算 `publish` + 19/19 ffmpeg全帧/receipt SHA验证**，原out/R01不修改，报告两项独立Gate状态后STOP。未授权重新 GPU Canary、正式900EP或合并 V3；不访问其它GPU/训练、NoTTT/out2、H2/H3、DCP/Checkpoint。候选后续Docs SHA不能代替 Formal Root。
+
+
+## 2026-11-03 — R01 CPU42 + OFFLINE19 Evidence closure
+
+Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176ff8db094379a853cec796 unchanged. DS-reported CPU42 PASS and OFFLINE19 PASS: 19 MP4/receipts/ACK, 19 full decodes, isolated copy publish COMPLETE and original 104 files unchanged. R01_MEDIA_COMPLETENESS_EVIDENCE CLOSED. Historical Fresh exit=1 remains FAIL_RETAINED; this is not a new GPU Fresh PASS. Details: docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_DS_CPU42_OFFLINE19_Media_Completeness_Evidence_CLOSED.md. No V3 merge, GPU, 900 EP or alteration of previous evidence authorized.
