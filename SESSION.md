@@ -1,3 +1,27 @@
+# 2026-11-03 — Media-profile candidate published/readback PASS; STOP for review
+
+Fresh2026-11-03T03:36:14Z advertised-ref/fetch/Git-object readback PASS:
+Root candidate evidence/request2d8b1327ffd0f1585ce883fd272eea050f1ed8f2 on
+v3-eval-v2-media-profile-20261103, unchanged Child-Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796.25/25 artifact SHA and2/2 source Blob/
+SHA bindings, single Root production file, old379/122 evidence untouched, clean
+worktrees/unique request. Official V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd,
+official Child8664267704da3206e719f3c7eef2b5ed86e2a417. No Child push/commit.
+First verifier had old package-layout path final/static, failed without success
+record; fixed external path to static then repeated complete readonly pass.
+Both observations preserved in
+docs/collab/codex/evidence/2026-11-03_eval_v2_media_profile_publication/.
+
+Formal Root stays2d1ad80f89ab4cc0e275ff4341f064954870abdd / Childc93f2abf4fb27d36176ff8db094379a853cec796.
+This receipt successor is metadata only, no code/test changes or further CPU.
+Author exact-Pair42 PASS/0failure/error/skip, old frozen RED2/static scope stand;
+publication is not reviewer ACK/approval. After final readonly successor check
+STOP, status REVIEW. Actual DS19-record offline isolated-copy reconciliation
+pending; original R01 Hardware FAIL/exit1 preserved. No GPU/model/RoboCasa/V3
+promotion/training/DCP/Job/old media/shared runtime or DS dispatch.
+
+## Earlier publication preparation retained
+
 # 2026-11-03 — Media profile exact Root42 PASS, evidence/request publication next
 
 Formal Root2d1ad80f89ab4cc0e275ff4341f064954870abdd, unchanged Child/Gitlink

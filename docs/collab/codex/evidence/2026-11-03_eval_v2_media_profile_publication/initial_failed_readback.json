@@ -1,0 +1,13 @@
+{
+  "status": "FAIL",
+  "expected_head": "2d8b1327ffd0f1585ce883fd272eea050f1ed8f2",
+  "formal_root": "2d1ad80f89ab4cc0e275ff4341f064954870abdd",
+  "formal_child": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "child_advertised": "c93f2abf4fb27d36176ff8db094379a853cec796",
+  "official_child": "8664267704da3206e719f3c7eef2b5ed86e2a417",
+  "root_advertised": "2d8b1327ffd0f1585ce883fd272eea050f1ed8f2",
+  "official_root": "7e2be5ca40891915a1e86eea935ed054ec1984dd",
+  "artifact_hashes_verified": 25,
+  "error": "RuntimeError('git show failed; exit 128')",
+  "observed_utc": "2026-11-03T03:35:44.266042+00:00"
+}

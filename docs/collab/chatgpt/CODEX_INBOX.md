@@ -122,3 +122,24 @@ Formal review target remains Roote7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Chil
 - **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED for Root profile correction only.** Prepared for candidate publication/readback; this is not reviewer ACK/approval. Later evidence/publication HEADs are bookkeeping, not Formal implementation.
 - **offline_reconciliation=PENDING_DS_ISOLATED_COPY_RECONCILIATION**: no actual R01 files accessed in cloud code workspace. After Code Gate DS must validate new publish against isolated copy of all19 actual inventory/receipt/index/SHA, retain original failure/exit1; any remaining real validation errors must be investigated, not manually relabelled COMPLETE. No GPU rerun or DS dispatch is authorized by author tests.
 - STOP after candidate push/fresh readback. No V3 merge, model/ActionServer/GPU/RoboCasa/900EP/training/DCP/Job/shared-source or old R01/out2/No-TTT/H2/H3 result/media/log edits. Owner current roles/STOP override historical V2/multi-pane polling workflow.
+
+
+## 2026-11-03 — Codex native media-profile candidate publication receipt (same Pair)
+
+Fresh2026-11-03T03:36:14Z explicit fetch/advertised refs/Git object readback PASS:
+Root candidate evidence/request HEAD2d8b1327ffd0f1585ce883fd272eea050f1ed8f2 on
+v3-eval-v2-media-profile-20261103; unchanged remote Child/Gitlink
+c93f2abf4fb27d36176ff8db094379a853cec796.25/25 artifact hashes,2/2 source Blob/SHA
+bindings, sole Root production file, unchanged old379/122 evidence, clean
+worktrees and unique request verified. Official V3 stays7e2be5ca40891915a1e86eea935ed054ec1984dd,
+official Child8664267704da3206e719f3c7eef2b5ed86e2a417. No Child push or force.
+First external verifier used old package path final/static and failed before
+success; corrected verifier path to static, no repository edits, fresh full pass.
+Both observations retained under docs/collab/codex/evidence/2026-11-03_eval_v2_media_profile_publication/.
+
+Formal Root STAYS2d1ad80f89ab4cc0e275ff4341f064954870abdd / Childc93f2abf4fb27d36176ff8db094379a853cec796.
+This successor is receipt/bookkeeping only; author42 scoped PASS/old RED2 intact,
+no source/test/Gate change. Request publication proven, not reviewer ACK/approval.
+Actual19 offline reconciliation PENDING_DS; original R01 FAIL remains. After
+final readonly receipt-successor check STOP; no V3/GPU/model/RoboCasa/old media,
+training/DCP/Job/shared runtime or DS dispatch.
