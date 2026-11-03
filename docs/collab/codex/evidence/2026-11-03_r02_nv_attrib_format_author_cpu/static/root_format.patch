@@ -1,0 +1,49 @@
+diff --git a/tools/v3/eval_v2_batch_tests/render_devices_test.py b/tools/v3/eval_v2_batch_tests/render_devices_test.py
+index df3db35c..fe668d73 100644
+--- a/tools/v3/eval_v2_batch_tests/render_devices_test.py
++++ b/tools/v3/eval_v2_batch_tests/render_devices_test.py
+@@ -311,7 +311,10 @@ def test_nvidia_cuda_attribute_maps_permuted_egl_index_to_real_pci(monkeypatch):
+     assert proof["egl_device_handle"] == 6006 and proof["cuda_device"] == 6
+     assert proof["physical_identity_verified"] is True
+     assert module.os.environ["MUJOCO_EGL_DEVICE_ID"] == "1"
+-    assert module.verify_current(proof, api=driver)["context_device_handle_verified"] is True
++    assert (
++        module.verify_current(proof, api=driver)["context_device_handle_verified"]
++        is True
++    )
+     assert driver.queries == ["inventory", "current_context"]
+     assert count == ["cuda_to_pci"]  # Not once again on each Reset.
+ 
+@@ -322,9 +325,7 @@ def test_nvidia_mapping_rejects_missing_ambiguous_or_conflicting_pci(
+ ):
+     driver = NvidiaDriver()
+     if problem == "duplicate":
+-        driver.rows.append(
+-            {**driver.rows[1], "egl_device_index": 2, "handle": 6007}
+-        )
++        driver.rows.append({**driver.rows[1], "egl_device_index": 2, "handle": 6007})
+     if problem == "conflict":
+         driver.rows[1]["pci_bus_id"] = "0000:55:00.0"
+     mapping = (
+@@ -395,7 +396,7 @@ def test_cuda_driver_pci_mapping_is_not_inferred_from_nvidia_smi_ordinal(
+         '{"6":"0000:66:00.0","4":"0000:66:00.0"}',
+         '{"6":"invalid"}',
+         '{"-1":"0000:66:00.0"}',
+-        '{}',
++        "{}",
+     ],
+ )
+ def test_cuda_driver_pci_mapping_refuses_invalid_identity(bad):
+@@ -451,9 +452,9 @@ def test_nvidia_real_ctypes_attribute_query_uses_egl_device_attrib_not_string(
+         module.EGLDevices,
+         "_function",
+         lambda self, name, *args: (
+-            functions[name] if name in functions else (_ for _ in ()).throw(
+-                RuntimeError("unsupported EGL DRM extension")
+-            )
++            functions[name]
++            if name in functions
++            else (_ for _ in ()).throw(RuntimeError("unsupported EGL DRM extension"))
+         ),
+     )
+     monkeypatch.setattr(

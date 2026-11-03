@@ -1,0 +1,7 @@
+{
+  "files": {
+    "cosmos-framework/cosmos_framework/simulation/robocasa/render_devices.py": true,
+    "tools/v3/eval_v2_batch_tests/render_devices_test.py": true
+  },
+  "status": "PASS"
+}

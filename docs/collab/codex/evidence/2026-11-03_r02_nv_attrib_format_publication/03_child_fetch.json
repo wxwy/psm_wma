@@ -1,0 +1,14 @@
+{
+  "args": [
+    "git",
+    "fetch",
+    "--no-recurse-submodules",
+    "origin",
+    "refs/heads/v3-eval-v2-r02-format-20261103:refs/remotes/origin/v3-eval-v2-r02-format-20261103",
+    "refs/heads/v3-local-ttt:refs/remotes/origin/v3-local-ttt"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format/cosmos-framework",
+  "returncode": 0,
+  "stdout": "",
+  "stderr": ""
+}

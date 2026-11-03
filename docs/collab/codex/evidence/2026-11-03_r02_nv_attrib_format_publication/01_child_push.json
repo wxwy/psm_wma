@@ -1,0 +1,13 @@
+{
+  "args": [
+    "git",
+    "push",
+    "--set-upstream",
+    "origin",
+    "HEAD:refs/heads/v3-eval-v2-r02-format-20261103"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format/cosmos-framework",
+  "returncode": 0,
+  "stdout": "branch 'v3-eval-v2-r02-format-20261103' set up to track 'origin/v3-eval-v2-r02-format-20261103'.\n",
+  "stderr": "remote: \nremote: Create a pull request for 'v3-eval-v2-r02-format-20261103' on GitHub by visiting:        \nremote:      https://github.com/wxwy/cosmos-framework/pull/new/v3-eval-v2-r02-format-20261103        \nremote: \nTo https://github.com/wxwy/cosmos-framework.git\n * [new branch]      HEAD -> v3-eval-v2-r02-format-20261103\n"
+}

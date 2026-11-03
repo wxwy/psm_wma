@@ -1,0 +1,34 @@
+{
+  "overrides": {
+    "COSMOS_DEVICE": "cpu",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HOME": "/tmp/psm-eval-v2-r02-format-20261103/cache/hf",
+    "HF_HUB_OFFLINE": "1",
+    "LD_LIBRARY_PATH": "",
+    "MKL_NUM_THREADS": "1",
+    "MPLCONFIGDIR": "/tmp/psm-eval-v2-r02-format-20261103/cache/matplotlib",
+    "MUJOCO_GL": "osmesa",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "PYTEST_ADDOPTS": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/workspace/psm-wma-eval-r02-format:/workspace/psm-wma-eval-r02-format/scripts:/workspace/psm-wma-eval-r02-format/cosmos-framework",
+    "RUFF_CACHE_DIR": "/tmp/psm-eval-v2-r02-format-20261103/cache/ruff",
+    "TMPDIR": "/tmp/psm-eval-v2-r02-format-20261103/tmp",
+    "TRANSFORMERS_OFFLINE": "1",
+    "XDG_CACHE_HOME": "/tmp/psm-eval-v2-r02-format-20261103/cache/xdg"
+  },
+  "packages": {
+    "Pillow": "11.3.0",
+    "PyYAML": "6.0.3",
+    "numpy": "2.2.6",
+    "pytest": "9.0.2",
+    "requests": "2.32.5",
+    "ruff": "0.12.7",
+    "scipy": "1.15.3"
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "python_executable": "/workspace/.venvs/psm-wma-cpu/bin/python",
+  "scope": "CPU synthetic boundary doubles only; no real EGL/CUDA/model/robot"
+}

@@ -1,0 +1,14 @@
+{
+  "args": [
+    "git",
+    "fetch",
+    "--no-recurse-submodules",
+    "origin",
+    "refs/heads/v3-eval-v2-r02-format-20261103:refs/remotes/origin/v3-eval-v2-r02-format-20261103",
+    "refs/heads/V3:refs/remotes/origin/V3"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format",
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "From https://github.com/wxwy/psm_wma\n * [new branch]        v3-eval-v2-r02-format-20261103 -> origin/v3-eval-v2-r02-format-20261103\n"
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "commit": "46c08127b2a13155bb22204069a1456cb01424d7",
+    "git_blob": "fe668d73695718fe0d160bc4134ac8f606465ceb",
+    "path": "tools/v3/eval_v2_batch_tests/render_devices_test.py",
+    "repository": "root",
+    "sha256": "5a40c6ddad0bcc02eff5871e668de19356238ac911a02289617160b3d8ce3d04"
+  },
+  {
+    "commit": "46c08127b2a13155bb22204069a1456cb01424d7",
+    "git_blob": "4d11019a004fd5ce533bb1bd8fc0fe05b20d912f",
+    "path": "tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+    "repository": "root",
+    "sha256": "d4cb7c945d4e3e76e16431341d802cd936e7fb7662c767658852585173c55a5d"
+  },
+  {
+    "commit": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+    "git_blob": "a1016f91650116d156ea8effee09a7413fc30b4d",
+    "path": "cosmos_framework/simulation/robocasa/render_devices.py",
+    "repository": "child",
+    "sha256": "f3fddb62a0d64626e2536ee481a32aaddaa6d359834cad369af85e0c743d6c8e"
+  },
+  {
+    "commit": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+    "git_blob": "a2f76811d278e4981e05d9f40f6e1420c27a281a",
+    "path": ".ruff.toml",
+    "repository": "child",
+    "sha256": "790ec5710cfd967f5a1e90456cd1801bd8ce751b1b1da18b572da79b166ed6b7"
+  }
+]

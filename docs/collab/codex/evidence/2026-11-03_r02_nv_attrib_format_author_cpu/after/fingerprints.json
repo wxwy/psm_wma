@@ -1,0 +1,10 @@
+{
+  "cosmos-framework/cosmos_framework/simulation/robocasa/render_devices.py": {
+    "ast_sha256": "fac04d03a91b432238a1600c63bec4fff974cebae404f36a6efb6a08f62403c8",
+    "sha256": "f3fddb62a0d64626e2536ee481a32aaddaa6d359834cad369af85e0c743d6c8e"
+  },
+  "tools/v3/eval_v2_batch_tests/render_devices_test.py": {
+    "ast_sha256": "2cba0f3071a6fc2f1c4bff00d479e8b45f14c06ce4e851b563513b0b12b2fdaf",
+    "sha256": "5a40c6ddad0bcc02eff5871e668de19356238ac911a02289617160b3d8ce3d04"
+  }
+}

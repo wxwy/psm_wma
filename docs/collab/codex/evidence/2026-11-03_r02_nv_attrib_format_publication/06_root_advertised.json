@@ -1,0 +1,13 @@
+{
+  "args": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/v3-eval-v2-r02-format-20261103",
+    "refs/heads/V3"
+  ],
+  "cwd": "/workspace/psm-wma-eval-r02-format",
+  "returncode": 0,
+  "stdout": "324d6983a068424a0c0c60ad6a94e512e39ed96c\trefs/heads/V3\n8fab3d135b51f1929134578202d5b7b703176972\trefs/heads/v3-eval-v2-r02-format-20261103\n",
+  "stderr": ""
+}

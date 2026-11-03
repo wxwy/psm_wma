@@ -1,3 +1,111 @@
+# 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
+
+Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:
+Root candidate evidence/request8fab3d135b51f1929134578202d5b7b703176972 /
+Child1069fe78841228cadbbfbe6afbd767eaed6225da, both isolated branch
+v3-eval-v2-r02-format-20261103. Normal new-branch Child push FIRST then Root,
+no force.55/55 author artifact SHA256 and4/4 source/config Blob+SHA bindings,
+Gitlink/Child consistency, metadata-only successor, clean worktrees and bounded
+append-only unique Inbox request verified against fetched remote Git objects.
+Official V3 remains324d6983a068424a0c0c60ad6a94e512e39ed96c;
+official Child v3-local-ttt remainsc93f2abf4fb27d36176ff8db094379a853cec796.
+Publication receipt plus9 hashed artifacts saved in
+docs/collab/codex/evidence/2026-11-03_r02_nv_attrib_format_publication/.
+
+Formal Root STAYS46c08127b2a13155bb22204069a1456cb01424d7 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. This successor adds
+receipt metadata only, no source/test changes or repeat CPU. Author CPU66
+PASS/0fail/error/skip, Ruff0.12.7/format and identical AST2 stand. Publication
+proves request availability, not GPT ACK/approval or DS new-Pair acceptance.
+After final readonly receipt-successor verification STOP, status REVIEW.
+No V3 promotion, GPU/EGL/model/simulator/FFmpeg/1EP/900EP, process queries,
+old122/379/42 rerun, old results/Job/training/DCP/shared source operations.
+
+## Earlier preparation retained
+
+# 2026-11-03 — R02 clean exact Pair CPU66/format/AST PASS; preparing review
+
+Formal Root46c08127b2a13155bb22204069a1456cb01424d7 / Child-Gitlink
+1069fe78841228cadbbfbe6afbd767eaed6225da on isolated Root/Child branch
+v3-eval-v2-r02-format-20261103. Child committed first. Root parent is latest
+c4d0a428 request/review/Inbox, preserved without overwriting any prior work.
+Only two intentional format edits and Gitlink; AST byte-string equality
+independently checked from Git objects and saved before/after snapshots.
+
+New clean-Pair CPU66 DISTINCT PASS/0failure/error/skip,0.95s, Python3.12.14 /
+pytest9.0.2. Source and clean state unchanged before/after execution. Scoped
+Ruff0.12.7 check/format, syntax compile, committed diff checks and source scope
+PASS. No old122/379/42 rerun. Original DS66/Python3.13.11/static-FAIL evidence
+remains historical, not relabelled as this author's or independent new PASS.
+
+Evidence docs/collab/codex/evidence/2026-11-03_r02_nv_attrib_format_author_cpu/
+contains55 checksummed artifacts plus manifest, raw JUnit/stdout/commands/env,
+original expected format RED2, full AST/source snapshots, Git-object parity,
+minimal diffs and4 source/config bindings. Author handoff in
+docs/collab/codex/reviews/2026-11-03_R02_NV_ATTRIB_Format_Only_Author_Handoff.md.
+This successor is metadata only; Formal Pair above remains authority. Prepare
+append-only request, publish isolated Child then Root, read back remote objects,
+then STOP for GPT incremental review/DS validation. No approval claim, V3 merge,
+GPU/EGL/model/real simulator/1EP/900EP, GPU/process queries, training/DCP/Job or
+historical results access. Owner current STOP overrides stale V2 pane polling.
+
+## Pre-freeze record retained
+
+# 2026-11-03 — R02 format/AST/static PASS; freezing Pair for CPU66
+
+Ruff0.12.7 formatted exactly the claimed two files, respecting Child120-column
+configuration and Root defaults. Full serialized AST fingerprints match before
+and after for both files. Child source diff4+/15-; Root test9+/8-; changes are
+only wrapping/parentheses/quote style, no assertion or semantic modifications.
+Both-file Ruff check, format --check and both-repo diff --check PASS.
+Original clean baseline and source SHA match the DS report; formatter RED2 and
+before/after source/AST snapshots preserved outside repositories.
+
+Preserved all latest review/request/Inbox changes by successful --ff-only merge
+of c4d0a4281fb57797484a91b9c47387997b967f31 (4 docs only). Child committed FIRST:
+1069fe78841228cadbbfbe6afbd767eaed6225da, single source file. Root format test +
+that exact Gitlink and SESSION/TODO record are being frozen next. No further
+source changes planned; run only CPU66 on that clean Pair, then package original
+logs/JUnit/diffs/AST/source bindings and request GPT incremental review. CPU66
+is pending, not yet PASS. No official branch promotion or hardware execution.
+
+## Initial task claim retained
+
+# 2026-11-03 — R02-NV-FORMAT-01 claimed; format-only candidate IN_PROGRESS
+
+Owner resumed the existing narrow R02 formatting task after the execution
+environment connected. Fresh explicit fetch/advertised refs agree: official V3
+324d6983a068424a0c0c60ad6a94e512e39ed96c; NVIDIA attribute candidate
+c4d0a4281fb57797484a91b9c47387997b967f31. Read its canonical Inbox, exact-pair
+DS CPU66/static REQUEST_CHANGES review and Ruff-format-only Codex request.
+Original worktrees are untouched. New isolated Root and Child branch
+v3-eval-v2-r02-format-20261103, /workspace/psm-wma-eval-r02-format, started
+exactly at Root286573d2d592cbd7449930e6e93f188a3a9b037d /
+Child-Gitlink37558dcc71682304f3de1848923e6cedb9b77837, both initially clean.
+
+Before intentional edits, external evidence matched both original DS source
+SHA256 values, captured source/AST/configuration identity, and reproduced Ruff
+0.12.7 format failure on exactly the two target files. CPU runtime is existing
+Python3.12.14 (DS historical run used3.13.11), pytest9.0.2, Ruff0.12.7;
+no dependency installation or training-environment changes. No GPU queried.
+
+Claim only Child cosmos_framework/simulation/robocasa/render_devices.py and
+Root tools/v3/eval_v2_batch_tests/render_devices_test.py for Ruff formatting,
+then Root Gitlink; necessary SESSION/TODO/evidence/handoff/append-only Inbox.
+Require identical before/after AST, unchanged assertions, two-file Ruff checks,
+scoped CPU66 (not old122/379/42), Child commit first, Root commit second.
+Preserve c4d0a428 follow-up documents via fast-forward before Root commit; those
+successors change only docs, no SESSION/TODO/source/Gitlink conflict.
+Evidence outside repositories: /tmp/psm-eval-v2-r02-format-20261103.
+
+Current Owner/GPT role and STOP instructions override stale V2/multi-pane/polling
+workflow: publish new isolated Pair and request GPT incremental review, then STOP.
+No official V3/v3-local-ttt promotion, old fallback branch edits, GPU/EGL/model/
+real simulator/1EP/900EP, process operations, training/DCP/Job/old results access.
+No code committed yet; CPU66 and final static checks pending.
+
+## Prior completed task record retained
+
 # 2026-11-03 — Media-profile candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T03:36:14Z advertised-ref/fetch/Git-object readback PASS:
