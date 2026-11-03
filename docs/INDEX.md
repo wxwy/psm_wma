@@ -22,6 +22,7 @@ This repository intentionally keeps historical design, Gate and review material.
 - **Closed Corrected V3 Phase 1B authority:** `build/PSM-WMA_V3_phase1b_cache_source_binding_design_v0.4_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; closure review: `collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md`.
 - **V3 supersession:** earlier migration v1.0/v1.1 and their B1/iter500/current-frame/streaming execution Gates are historical and superseded by v3.0. Publishing v3.0 does not approve the existing child implementation or authorize training/evaluation.
 - `../README.md` — project overview and entrypoints
+- `../PROJECT_STATUS.md` — current SHA, readiness and validated metrics
 - `current/architecture.md` — current system architecture
 - `current/local_memory.md` — canonical Local Memory / TTT semantics
 - `current/training.md` — train and resume workflow
