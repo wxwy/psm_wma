@@ -277,6 +277,9 @@ class NoDRMDriver(Driver):
 
     def __init__(self):
         super().__init__()
+        # Base Driver uses an integer named current_handle; this test double
+        # needs the current_handle() protocol implemented by EGLDevices.
+        del self.current_handle
         self.rows = [
             {
                 "egl_device_index": index,
