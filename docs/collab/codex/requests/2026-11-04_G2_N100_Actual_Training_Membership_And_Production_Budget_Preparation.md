@@ -1,5 +1,14 @@
 # G2 N100 — actual training membership and production budget preparation
 
+**SUPERSEDED (2026-11-04):** Owner clarification
+`a8da67f9c69c5936a681b3061d781436911b5f1b` confirms full-source training for
+Local-TTT and No-TTT, with no historical N100 cap. The historical-N100 membership
+prerequisite below is RETIRED. Preserve this earlier proposal as history, not an
+active request to locate such a receipt. Current planning is
+[full target-atomic batched production](2026-11-04_G2_Full_TargetAtomic_Batched_Depth_Pose_Storage_And_Production_Plan.md).
+N100, if used, is a new production batch label; its exact definition is proposed,
+not a training cohort. No export or V3 promotion is implied.
+
 Date: 2026-11-04, Asia/Shanghai. **Preparation only; batch export NOT STARTED
 and not authorized.** Gate C final authority:
 `b68f14b0d73456c0710bbbffa2b3aa0fcef25244`,

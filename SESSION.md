@@ -1,3 +1,55 @@
+# 2026-11-04 — Owner full-source correction consumed; historical N100 blocker CLOSED
+
+Observation 2026-11-04T21:30:03.697745+08:00: before_headffe931360998cd39b7587a883681fe6b0e25e65b;
+fresh fetch/advertised candidatea8da67f9c69c5936a681b3061d781436911b5f1b and
+V39635cefe3208ab6320ba5fa70b0e0d68fd444790 matched tracking refs. Clean
+ff ffe93136->a8da67f9 consumed1282f16b,8e7ad64d,a8da67f9: full-source audit,
+formatting and explicit Owner correction, documentation only. Read both full
+formal reports; source Root3eb8b334150018212ae1f51afb5e954b83fa1186 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged.
+
+CORRECTION: Local-TTT and No-TTT use full target-atomic lineage/no N100 cap.
+G0 selected/accepted9126 == full index/mapping9126,18 classes,2231347 frames,
+2085331 overlapping windows. Full G0 manifest SHA8e63c73b4e07cdbebd6427d9efdd3f2d8b293ecd10511cae25a55c6566f6db88;
+index receipt SHA247e5a853cbc2ddd007cb4b243b492f8337179276fade9b191f6bb4fe0d5798c;
+mapping SHAaa884820494a17f50b41a8a8c2bfa6b6fda11babbbef31c449c1c0ce850e09ed.
+Recorded train/split_seed42/val_ratio0.01 does not imply all source members are
+consumed by train; do not change/recompute the live split. No effective-train
+ID receipt or historical N100 subset is a prerequisite for full-source Depth.
+Previous blocking premise is RETIRED, not pending metadata. Gate C stays closed.
+
+New docs-only full-source staged-production/storage proposal and machine-readable
+reference budget prepared. Original N100 audit/report/readback kept byte-identical;
+old author request receives explicit superseded banner, full old body retained.
+N100 may mean a new production batch only. Proposed policy: at most100 total
+per batch via existing select stride92;18 batches100 and74 batches99 cover9126.
+No batch member file generated, no source sampler/new tool. Exact frame/byte
+counts per batch and the100-total definition still require the production decision.
+
+Local arithmetic from formal Git reports (not fresh server measurement): raw
+878168925320B, NPZ+crude metadata proxy124858564827B, dated free137476116480B.
+10% payload increase+same metadata proxy137038605513B leaves437510967B before
+staging/logs, less than1GiB. Weakest Gate C task compression proxy139.055GB.
+The earlier2R+1GiB=1757411592464B is a conservative scenario, not a requirement
+for two full raw disk copies: code writes one compressed per-episode stage then
+atomic rename. Batching bounds temporary work but not cumulative committed data.
+Need concrete durable server-local placement, reserve/staging policy and batch0
+limits before export. No external transfer/delete-old-assets workaround.
+
+Claimed docs: new full-source plan, new reference_budget.json, explicit old-plan
+supersession, MEMORY decision, TODO/SESSION, append-only canonical Inbox. No
+production/Child/threshold/cache/training changes, no new Code Gate or old121/
+Gate B/C rerun. Current tools still expose no server channel; no new server
+reads/probes/manifests/dry-run/render/export by Codex. Source/index audit results
+are accepted formal server evidence. Documentation validation PASS: one Bash
+block syntax-only, CLI/shard flags static-AST valid, full counts/budget/stress
+math and positional92-shard disjoint union checked (not actual new ID manifests),
+old formal reports byte-identical, old request body preserved under supersession,
+39 existing artifact hashes/13 source bindings intact, protected source/Child
+unchanged, Inbox append-only/under128KiB and diff-check PASS. Publish candidate only;
+stop at actual placement/batch policy and separate execution authority, never
+reopen the retired historical-training-cohort search. No V3/GPU/DCP/nav_sg action.
+
 # 2026-11-04 — Gate C closure / N100 preparation published and read back; actual membership pending
 
 2026-11-04T21:01:44.442009+08:00: ordinary non-force push and fresh fetch/advertised-ref/Git-object

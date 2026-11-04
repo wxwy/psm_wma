@@ -1,5 +1,12 @@
 # 长期工程决策
 
+## G2 全量来源与新生产批次语义（2026-11-04 Owner 更正）
+
+- Authority：`a8da67f9c69c5936a681b3061d781436911b5f1b`，正式记录 `docs/collab/chatgpt/reviews/2026-11-04_G2_Full_RoboCasa_Training_Cohort_Owner_Clarification.md`。
+- Local-TTT、No-TTT 均使用全量 RoboCasa365 v3 target-atomic 来源，无 N100 cap：18类、9126 episodes、2231347完整帧。训练 `split=train`、验证比例0.01与seed42不等于train消费所有来源episode；不得修改冻结split/Config或把验证集混入训练。
+- 历史N100训练清单不是G2前置，原阻塞已撤销；旧审计保留。G2目标为全量来源Depth/Pose，N100仅可作为新的阶段生产批次标签；总计100还是每类100必须明确裁决，不能伪称历史训练成员。
+- GateC三条完整episode的FINAL PASS不重开。当前重点为本机持久存储、明确分批成员/帧数/覆盖、资源限额与单独执行授权。分批不能消除累计占用；不得为腾空间删旧Evidence/DCP，也不得外传服务器传感器文件。nav_sg转换与V3合入仍需后续授权。
+
 ## V3 执行职责最新覆盖（2026-09-27）
 
 - 用户明确调整：cx/Codex 作为构建与技术判断 owner，主动解决实现问题；ds 负责执行验证；ChatGPT 是非在线审核者，由用户不定期激活。旧条目中“等待 ChatGPT 即时设计/审核才可修复”的职责口径不再适用于当前 V3 构建。GPU 验证仍交 ds，正式 8×H100 训练须依次满足 B2-C 与 H3 Gate 的实证条件。

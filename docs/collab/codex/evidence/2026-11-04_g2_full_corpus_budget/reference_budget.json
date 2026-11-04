@@ -1,0 +1,215 @@
+{
+  "schema": "g2_full_target_atomic_production_reference_budget_v1",
+  "computed_at_asia_shanghai": "2026-11-04T21:30:03.697745+08:00",
+  "status": "PLANNING_REFERENCE_NOT_EXECUTION_AUTHORIZATION",
+  "authority_commit": "a8da67f9c69c5936a681b3061d781436911b5f1b",
+  "authority_report": "docs/collab/chatgpt/reviews/2026-11-04_G2_Full_RoboCasa_Training_Cohort_Owner_Clarification.md",
+  "audit_source": {
+    "path": "docs/collab/chatgpt/reviews/2026-11-04_G2_N100_Actual_Training_Membership_Source_Audit_BLOCKED.md",
+    "sha256": "b4ab3971de3532238860fbe62ac7e2f7d68d0ba818122fecf4c67fa7169b008b",
+    "original_report_preserved": true,
+    "obsolete_historical_N100_requirement": "RETIRED_BY_OWNER"
+  },
+  "formal_root": "3eb8b334150018212ae1f51afb5e954b83fa1186",
+  "child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "source": {
+    "task_classes": 18,
+    "episodes": 9126,
+    "full_frames": 2231347,
+    "overlapping_windows": 2085331,
+    "raw_bytes_per_source_frame_for_two_256x256_cameras": 393560,
+    "raw_array_bytes": 878168925320,
+    "per_task": [
+      {
+        "task_class": "CloseBlenderLid",
+        "episodes": 502,
+        "full_frames": 183099
+      },
+      {
+        "task_class": "CloseFridge",
+        "episodes": 513,
+        "full_frames": 155443
+      },
+      {
+        "task_class": "CloseToasterOvenDoor",
+        "episodes": 505,
+        "full_frames": 86401
+      },
+      {
+        "task_class": "CoffeeSetupMug",
+        "episodes": 502,
+        "full_frames": 117168
+      },
+      {
+        "task_class": "NavigateKitchen",
+        "episodes": 500,
+        "full_frames": 72786
+      },
+      {
+        "task_class": "OpenCabinet",
+        "episodes": 500,
+        "full_frames": 184024
+      },
+      {
+        "task_class": "OpenDrawer",
+        "episodes": 514,
+        "full_frames": 137431
+      },
+      {
+        "task_class": "OpenStandMixerHead",
+        "episodes": 502,
+        "full_frames": 58100
+      },
+      {
+        "task_class": "PickPlaceCounterToCabinet",
+        "episodes": 502,
+        "full_frames": 131904
+      },
+      {
+        "task_class": "PickPlaceCounterToStove",
+        "episodes": 501,
+        "full_frames": 129560
+      },
+      {
+        "task_class": "PickPlaceDrawerToCounter",
+        "episodes": 501,
+        "full_frames": 155749
+      },
+      {
+        "task_class": "PickPlaceSinkToCounter",
+        "episodes": 501,
+        "full_frames": 194952
+      },
+      {
+        "task_class": "PickPlaceToasterToCounter",
+        "episodes": 512,
+        "full_frames": 148353
+      },
+      {
+        "task_class": "SlideDishwasherRack",
+        "episodes": 502,
+        "full_frames": 83544
+      },
+      {
+        "task_class": "TurnOffStove",
+        "episodes": 500,
+        "full_frames": 114027
+      },
+      {
+        "task_class": "TurnOnElectricKettle",
+        "episodes": 520,
+        "full_frames": 84679
+      },
+      {
+        "task_class": "TurnOnMicrowave",
+        "episodes": 543,
+        "full_frames": 80439
+      },
+      {
+        "task_class": "TurnOnSinkFaucet",
+        "episodes": 506,
+        "full_frames": 113688
+      }
+    ],
+    "mapping_sha256": "aa884820494a17f50b41a8a8c2bfa6b6fda11babbbef31c449c1c0ce850e09ed",
+    "full_g0_manifest_sha256": "8e63c73b4e07cdbebd6427d9efdd3f2d8b293ecd10511cae25a55c6566f6db88",
+    "verified_index_sha256": "247e5a853cbc2ddd007cb4b243b492f8337179276fade9b191f6bb4fe0d5798c",
+    "train_configuration": {
+      "split": "train",
+      "split_seed": 42,
+      "split_val_ratio": 0.01,
+      "source_equals_effective_train_members": "NOT_ASSERTED_SPLIT_RECORD_ONLY",
+      "effective_train_ids_not_required_for_full_source_depth_production": true
+    }
+  },
+  "disk_snapshot": {
+    "reported_at_utc": "2026-11-04T13:20:00+00:00",
+    "reported_free_bytes": 137476116480,
+    "reported_free_inodes": 157346873,
+    "reported_MemAvailable_bytes": 1788394827776,
+    "fresh_measurement_by_Codex": false
+  },
+  "gate_C_reference": {
+    "full_frames": 852,
+    "raw_array_bytes": 335313120,
+    "compressed_npz_bytes": 46507310,
+    "committed_task_bytes": 47675013,
+    "successful_export_seconds": 220.5,
+    "all_machine_seconds": 329.99,
+    "peak_observed_RSS_KiB": 5051668,
+    "representative_task_count": 3
+  },
+  "derived_proxies": {
+    "full_npz_bytes_exact_per_frame_ratio": 121800406863,
+    "full_metadata_bytes_crude_per_frame_ratio": 3058157965,
+    "audit_rounded_7_2099_ratio_npz_proxy_bytes": 121800430702,
+    "metadata_scales_with_episode_and_chunk_counts_too": true,
+    "scenarios": [
+      {
+        "scenario": "GateC_exact_per_frame_payload_plus_metadata_proxy",
+        "projected_bytes": 124858564827,
+        "decimal_GB": 124.858564827,
+        "free_margin_before_active_staging_logs_reserve_bytes": 12617551653,
+        "margin_after_1GiB_reserve_bytes": 11543809829,
+        "classification": "EMPIRICAL_SCENARIO_NOT_CAPACITY_GUARANTEE"
+      },
+      {
+        "scenario": "payload_10_percent_larger_same_metadata_proxy",
+        "projected_bytes": 137038605514,
+        "decimal_GB": 137.038605514,
+        "free_margin_before_active_staging_logs_reserve_bytes": 437510966,
+        "margin_after_1GiB_reserve_bytes": -636230858,
+        "classification": "EMPIRICAL_SCENARIO_NOT_CAPACITY_GUARANTEE"
+      },
+      {
+        "scenario": "payload_20_percent_larger_same_metadata_proxy",
+        "projected_bytes": 149218646200,
+        "decimal_GB": 149.2186462,
+        "free_margin_before_active_staging_logs_reserve_bytes": -11742529720,
+        "margin_after_1GiB_reserve_bytes": -12816271544,
+        "classification": "EMPIRICAL_SCENARIO_NOT_CAPACITY_GUARANTEE"
+      }
+    ],
+    "least_observed_task_compression_ratio": 6.457264173304292,
+    "full_payload_plus_metadata_at_least_observed_ratio_bytes": 139055215194,
+    "one_worker_export_time_proxy_seconds": 577478.889084507,
+    "old_2R_plus_1GiB_scenario_bytes": 1757411592464,
+    "old_2R_is_not_required_simultaneous_export_disk_footprint": true,
+    "batching_reduces_final_cumulative_storage": false
+  },
+  "proposed_new_production_partition": {
+    "status": "PROPOSAL_NOT_FROZEN_NOT_APPROVED",
+    "episodes_per_batch_max": 100,
+    "size_means": "TOTAL_NOT_PER_TASK",
+    "existing_select_mechanism": "sorted(task_class,global_episode_index)[shard::92]",
+    "num_shards": 92,
+    "shards_with_100_episodes": 18,
+    "shards_with_99_episodes": 74,
+    "batch_ids": {
+      "min": 0,
+      "max": 91
+    },
+    "actual_batch_member_manifests_created": false,
+    "actual_per_batch_frame_totals_known": false
+  },
+  "source_or_training_changes": false,
+  "server_commands_by_Codex": false,
+  "render_export_started": false,
+  "V3_promotion": false,
+  "next_decision": "SERVER_LOCAL_PLACEMENT_AND_EXACT_BATCH0_LIMITS_THEN_SEPARATE_EXECUTION_AUTHORIZATION",
+  "preparation_validation": {
+    "kind": "DOCUMENTATION_STATIC_AND_ARITHMETIC_ONLY",
+    "result": "PASS",
+    "bash_syntax_blocks": 1,
+    "CLI_options_including_dynamic_shard_flags": "STATIC_AST_VALID",
+    "full_source_counts_and_budget_math": "PASS",
+    "positional_92_shard_union_and_disjointness": "PASS_NOT_ACTUAL_MEMBER_MANIFESTS",
+    "historical_formal_reports": "BYTE_IDENTICAL",
+    "old_request_body": "PRESERVED_WITH_EXPLICIT_SUPERSESSION",
+    "existing_artifact_hashes_intact": 39,
+    "source_bindings_intact": 13,
+    "production_source_and_gitlink": "UNCHANGED",
+    "project_tests_rerun": false,
+    "server_execution": false
+  }
+}
