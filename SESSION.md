@@ -1,3 +1,22 @@
+# 2026-11-04 — G2-GATEB-REPLAY candidate published/readback PASS; STOP for fresh review
+
+2026-11-04T05:53:32Z (13:53:32 Asia/Shanghai): normal isolated Root push to
+v3-g2-gateb-replay-fix-20261104, explicit fetch/advertised/readback PASS for
+published Evidence HEAD19fdb601ed5ea1c9eb96300944c054eab699bfaf.61/61 raw
+artifact hashes+11/11 source bindings, exact Gitlink, bounded unique append-only
+Inbox and clean Root/Child verified. Receipt is under
+2026-11-04_g2_gateb_replay_publication/readback.json. Official V3 remains
+083b36ac27ad43b6f5127d9a58aed4fac02eaaa7 and official Child1069fe78; no merge,
+Child push or force. This successor is metadata only.
+
+Formal source STAYS a9ffd313770c5344195f415425124a5075e62b2b /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Author107 CPU/static PASS
+stands; no additional implementation or tests. Canonical fresh GPT request is
+published, not GPT ACK/approval. STOP/REVIEW. Old server GateB remains FAIL and
+RGB cause unresolved. No server file/data transfer or new server replay, no
+GateC/N100/old cache/GPU/RoboCasa/model/training/DCP/nav_sg/active worktree/V3
+promotion. Await explicit fresh Code Gate before a new-namespace server GateB.
+
 # 2026-11-04 — G2-GATEB-REPLAY new Formal Pair107 author PASS; REVIEW
 
 Formal Roota9ffd313770c5344195f415425124a5075e62b2b / unchanged Child-Gitlink
