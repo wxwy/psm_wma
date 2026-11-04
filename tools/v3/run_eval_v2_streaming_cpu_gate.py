@@ -44,6 +44,7 @@ if __name__ == "__main__":
             ],
             extra_static=[
                 "tools/v3/run_eval_v2_streaming_cpu_gate.py",
+                "tools/v3/eval_v2_production_tests/slot_test.py",
                 *sorted(static),
             ],
             extra_tests={

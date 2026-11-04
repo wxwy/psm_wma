@@ -9,6 +9,7 @@ import pytest
 from cosmos_framework.evaluation.robocasa_v2.contract import result_record
 from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
 from robocasa_eval_v2.runtime import Runtime
+from robocasa_eval_v2.config import DEFAULTS
 
 from tools.v3.eval_v2_production_tests.native_test import Env, native, server
 from tools.v3.eval_v2_production_tests.store_test import fresh
@@ -105,6 +106,14 @@ class CpuSlotRuntime(Runtime):
     """Only physical process/GPU/model boundaries are doubles, not Slot behavior."""
 
     def __init__(self, value, cfg, url, events, *, factory=None):
+        cfg = {
+            **DEFAULTS,
+            "render_backend": "osmesa",
+            "render_gpu_ids": [],
+            "save_rollout_mp4": False,
+            "save_generated_video": "none",
+            **cfg,
+        }
         super().__init__(value, cfg, {}, {}, resource_probe=lambda *a, **kw: None)
         self.url, self.events = url, events
         self.factory = factory
