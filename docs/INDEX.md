@@ -2,6 +2,12 @@
 
 This repository intentionally keeps historical design, Gate and review material. Use the layers below instead of browsing all files alphabetically.
 
+## Completed evaluation results
+
+- [R03 900EP 正式评测报告：Local-TTT iter20000](eval/reports/2026-11-04_R03_900EP/README.md) — 2026-11-04；18 Task × 50 EP，454/900成功，SR 50.4444%；配置、任务表现、性能、Local-TTT运行诊断、媒体与Core完整性、来源hash。
+- [R03 全部139组原始语言指令及900 EP成功/失败索引](eval/reports/2026-11-04_R03_900EP/instructions.md) — 按精确Task+instruction统计N/S/F/SR，保留原文和逐组Episode编号；明确小样本及场景/目标混杂限制。
+- [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
+
 ## G2 research — technical survey; detailed design deferred
 
 - [G2 技术调研报告 v1.0：技术路线比较与收敛](build/PSM-WMA_G2_technical_survey_v1.0.md) — 2026-11-02. Preserves the research comparisons, decision history, external evidence, nav_sg reuse rationale, and the Owner-confirmed G2 scope. This is a technical survey, not a detailed design, implementation acceptance, or training authorization.
