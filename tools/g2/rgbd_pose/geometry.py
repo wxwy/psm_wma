@@ -169,6 +169,27 @@ def depth_statistics(depth, valid):
     }
 
 
+def pose_motion(values):
+    values = [pose(value) for value in values]
+    if not values:
+        raise ValueError("pose motion requires at least one calibrated pose")
+    first = values[0]
+    translations, angles = [], []
+    for value in values:
+        translations.append(float(np.linalg.norm(value[:3, 3] - first[:3, 3])))
+        relative = np.linalg.solve(first[:3, :3], value[:3, :3])
+        # Float32 perturbs orthogonality. Measure the nearest proper relative
+        # rotation instead of R.T @ R of an already rounded matrix.
+        u, _, vt = np.linalg.svd(relative)
+        rotation = u @ vt
+        angles.append(float(np.arccos(np.clip((np.trace(rotation) - 1) / 2, -1, 1))))
+    return {
+        "max_translation_m": max(translations),
+        "max_rotation_rad": max(angles),
+        "changed": max(translations) > 1e-6 or max(angles) > 1e-5,
+    }
+
+
 def rgb_metrics(original, rendered):
     """No video encoding: MAE/PSNR plus explicitly specified uniform-window SSIM."""
     from scipy.ndimage import uniform_filter

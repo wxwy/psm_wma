@@ -15,7 +15,7 @@ import numpy as np
 
 from .rgbd_pose import SCHEMA
 from .rgbd_pose.cache import cached_sample, durable_json, verify_episode
-from .rgbd_pose.geometry import depth_statistics, rgb_metrics
+from .rgbd_pose.geometry import depth_statistics, pose_motion, rgb_metrics
 from .rgbd_pose.replay import Replay, original_rgb, reprojection_error
 from .rgbd_pose.source import Episode, load_episode, verify_witnesses
 
@@ -168,25 +168,9 @@ def verify(
             report["frames"].append(frame_report)
     finally:
         backend.close()
-    report["camera_pose_motion"] = {}
-    for camera, values in transforms.items():
-        initial = values[0]
-        translations = [
-            float(np.linalg.norm(v[:3, 3] - initial[:3, 3])) for v in values
-        ]
-        rotations = [
-            float(
-                np.arccos(
-                    np.clip((np.trace(initial[:3, :3].T @ v[:3, :3]) - 1) / 2, -1, 1)
-                )
-            )
-            for v in values
-        ]
-        report["camera_pose_motion"][camera] = {
-            "max_translation_m": max(translations),
-            "max_rotation_rad": max(rotations),
-            "changed": max(translations) > 1e-6 or max(rotations) > 1e-5,
-        }
+    report["camera_pose_motion"] = {
+        camera: pose_motion(values) for camera, values in transforms.items()
+    }
     verify_witnesses(source.witnesses)
     report["timestamp_diagnostic"] = {
         "min_offset_s": min(offsets),

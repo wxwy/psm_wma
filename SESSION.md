@@ -1,3 +1,23 @@
+# 2026-11-04 — Static float32 motion diagnostic corrected; final83 freeze next
+
+After preliminary Root3d163e91d42802efe487deb89286637cc91ed74c CPU82 PASS,
+final inspection reproduced a reachable statistics defect: identical float32
+rotation reported0.00048828125rad motion. It does not alter exported Depth/Pose,
+but would mislead Gate B camera-motion evidence. Frozen external production-path
+regression on unchanged3d source: expected RED1. Corrected relative rotation
+uses float64 solve and nearest proper rotation, instead of rounded R.T @ R.
+Same frozen test GREEN1; function AST/assertions exactly match new repo test.
+Full development suite now83 DISTINCT PASS/0failure/error/skip,1.67s.
+
+This is a narrow numeric diagnostic correction within Stage-1, no new interface
+or architecture. Preliminary3d/82 artifacts preserved unchanged outside repo in
+/tmp/psm-g2-rgbd-stage1-20261104/preliminary_3d163e91_evidence and will be clearly
+labelled superseded in the final evidence; not overwritten/relabelled83.
+New implementation commit next, then clean exact-Pair83/static evidence.
+Child stays1069fe78; server tests remain unexecuted for missing remote tools.
+
+## Preliminary pre-freeze record retained
+
 # 2026-11-04 — G2 Stage-1 pre-freeze verification PASS; implementation commit next
 
 Final development revision dev004:82 DISTINCT PASS/0failure/error/skip,1.69s;
