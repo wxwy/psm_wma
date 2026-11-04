@@ -221,3 +221,12 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **M/B Resume一致性必须保持不变**；不得用预算放宽、删保护或修改科学身份来修复。846 author CPU PASS 是作者证据，不构成此 blocker 的关闭。
 - **Detailed GPT review**: `docs/collab/chatgpt/reviews/2026-11-04_EvalV2_Streaming_M32_B32_00e119cc_82fa270e_REQUEST_CHANGES.md` (docs-only review commit `3b564ae30e364b72497c523720c0089013103442`).
 - **Scope/stop**: candidate not promoted to V3, no DS/H100/GPU authorization, untouched R04/G2. Codex returns new formal pair after narrow remediation for incremental review; absent new pair, do not repeat technical audit.
+
+
+## 2026-11-04 — GPT independent incremental Code Gate: Issue17 NEW-F01 CLOSED
+
+- **Exact Formal Pair**: Root `551b03621507dde52303f54290d4fea89d66e8da` / unchanged Child-Gitlink `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e`. Author evidence/hand-off commit `ebaec6452cb62dd96bae3dcbc313f305ea14c79c` is bookkeeping, **not** technical target.
+- **GPT verdict: `APPROVE_CODE` (NEW-F01 narrow remediation only).** Previous `HIGH NEW-F01 → CLOSED`: in Root `scripts/robocasa_eval_v2/startup.py`, completion now rechecks owned actual RSS/VRAM + all *other* in-flight reservations under version-checked metadata transfer, with bounded fail-closed cleanup. Author RED (old4 FAIL) → new exact pair 35/35 CPU PASS; source/static evidence verified at review scope. Child and all other production sources unchanged.
+- **M/B Resume strict consistency remains unchanged**; no M/B retuning on Resume, no change to frozen Manifest. The larger Issue17 full CPU Gate at new exact Pair and DS independent CPU are still pending. No V3 promotion / G2 merge / GPU / real RoboCasa / R04 action authorized.
+- **Formal detailed review**: `docs/collab/chatgpt/reviews/2026-11-04_EvalV2_Streaming_NEW_F01_551b0362_82fa270e_APPROVE_CODE.md` (review-only commit `03faf8fc4e9ff4af34cfaf9dfc01e9bedd3afeae`). Previous Root00e119cc/Child82fa270e `REQUEST_CHANGES` remains history; it is not applied to this new Pair.
+- **Next**: Codex runs full exact-Pair CPU Gate with actual collected test counts and immutable source evidence, then DS independent CPU only after its proper gate; real hardware requires separate Owner authorization. No repeat technical review if formal pair unchanged and only evidence/ledger commits are added.
