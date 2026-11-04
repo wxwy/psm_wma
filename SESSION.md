@@ -1,3 +1,47 @@
+# 2026-11-04 — G2 Gate C S0 accepted; exact S1–S3 contract prepared, NOT STARTED
+
+Observation 2026-11-04T17:26:11.630124+08:00: fresh candidate/main fetch and advertised refs matched;
+clean candidate fast-forward b1bd9e8c9bf3e3e11ab12690647b1d2074a05e39 ->
+cd143c4bf6322a39cb7855772a944d45a49ffcf8, one independent S0 report only.
+Official V3 observed ea0828c7d45a443cc74ae2582419f14e7782a17e, untouched.
+Full formal report read from Git: `2026-11-04_G2_GateC_S0_Exact_Selection_Budget_Readonly_Freeze_PASS.md`.
+Source remains approved Root3eb8b334150018212ae1f51afb5e954b83fa1186 /
+unchanged Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da.
+
+S0 PASS closes the missing metadata input: CloseFridge local0/global502/429,
+NavigateKitchen local0/global2022/177, PickPlaceCounterToCabinet local0/global4038/246.
+All raw/Flat full-state bindings and dry-run3/3 PASS; 852 frames /1704 camera-frames,
+both cameras256x256. Mapping SHA aa884820494a17f50b41a8a8c2bfa6b6fda11babbbef31c449c1c0ce850e09ed;
+selection SHA10d668ee42b5145a8cad09878c331ef940b06d91a6a9666ae85434b61c225926.
+Selection and raw artifacts stay on server. These are independent reported server
+facts, not Codex server executions. Older S0-pending entries below are historical.
+
+New docs-only contract `docs/collab/codex/requests/2026-11-04_G2_GateC_S1_S3_Exact_ThreeEpisode_Execution_Contract.md`
+freezes samples0/214/428,0/88/176,0/123/245 (18 two-camera spatial checks), full
+852-frame integrity, new external visual evidence, verified skip/hash equality,
+resource measurement and one proposed owned-process interruption/retry requiring approval.
+Unfinished-episode retry starts from0; old staging and completed episodes stay
+immutable. One total45min CPU/OSMesa budget includes retry and all machine checks;
+no per-stage timer reset. Unexpected error/drift/low coverage stops/preserves.
+Actual compression/time/RSS remain UNKNOWN. Recheck capacity before any launch;
+S0 snapshots are raw335313120B, proposed1744368064B, free137937985536B,
+MemAvailable1691043225600B at2026-11-04 08:56UTC, not current measurements.
+
+Claimed files: new execution contract, SESSION/TODO, bounded append-only live Inbox.
+No source/test/Child/config/code-identity changes, no new Formal Pair or duplicate
+Code Gate; prior121 CPU and six-frame B not rerun. Documentation checks PASS:
+three Bash blocks syntax-only, documented flags verified via static AST, exact
+counts/budget/deadline arithmetic, append-only Inbox under128KiB, unchanged39 artifact
+hashes and13 source bindings, protected source/Gitlink/Child clean and diff-check.
+No project code was executed. Final prepublication fetch/advertised refs still
+match cd143c4 candidate and ea0828c7 official V3. This documentation commit is
+bookkeeping, never a replacement implementation identity.
+
+S0 explicitly says it does not authorize full export. STOP for separate S1–S3
+execution decision covering the exact contract and intentional interruption.
+No server process/export/GateC run, GPU/EGL, N100, V3 promotion, nav_sg/PSS,
+training/DCP/active-job or old-cache modification has occurred in this step.
+
 # 2026-11-04 — Spatial-v2 Code Gate and native six-frame Gate B CLOSED; GateC S0 pending
 
 Observation 2026-11-04T16:42:18.004887+08:00: fresh fetch/advertised official V3
