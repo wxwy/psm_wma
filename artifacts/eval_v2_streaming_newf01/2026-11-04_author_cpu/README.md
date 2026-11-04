@@ -18,3 +18,8 @@ are excluded. No remote-server files were accessed/copied. No full author Gate,
 DS/GPU/H100/model/real evaluation, V3/G2 merge, or M/B Resume relaxation occurred.
 Historical846PASS is not new-pair acceptance. Full new-pair collection is expected
 to add23 tests (869 total); it was not run and still requires the next review gate.
+
+Raw JUnit/pytest tracebacks and patch context retain their original whitespace.
+An all-artifacts whitespace diff check can report those forensic originals;
+production/test/doc diff hygiene passed separately. Evidence bytes are not
+normalized after execution.
