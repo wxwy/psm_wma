@@ -126,13 +126,18 @@ injection or claim unfinished-episode recovery was tested.
 1. Fully export CloseFridge 502; verify its COMPLETE/manifest/hashes and save the
    committed episode hash snapshot before proceeding.
 2. Start only NavigateKitchen 2022 in an owned export process. After observing
-   its first durable chunk for both cameras and a matching complete progress
-   row, while its final episode directory is still uncommitted, send SIGTERM
+   both cameras' first complete, closed and fsynced `chunk_000000.npz`
+   (32 frames per camera), while its final episode directory is still
+   uncommitted, send SIGTERM
    only to the confirmed Python PID with matching start-time/command/cache path.
    A shell/time wrapper PID is not automatically the Python PID. Record the
    signal, exit 143 (or subprocess -15), stage paths and before/after COMPLETE
    states. Bound the observation wait by process liveness and the shared deadline.
    Do not target a reused PID, unrelated process or another job's process group.
+   `frames.jsonl` rows are buffered and not fsynced before episode completion;
+   they are not a durability prerequisite for the planned interruption. Record
+   any observed progress line only as nondurable auxiliary evidence. Never
+   assume a partial chunk is resumable: the retry restarts the entire episode.
 3. Confirm the owned exporter has stopped and the 2022 result is not committed.
    Then make **one planned retry of 2022**, same arguments/cache identity. This
    implementation restarts an unfinished episode from frame 0; it does not reuse
