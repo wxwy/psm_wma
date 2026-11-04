@@ -1,10 +1,17 @@
 # G2 Gate C S1–S3 — exact three-episode execution contract
 
-Date: 2026-11-04 (Asia/Shanghai). **Prepared for the separate execution decision;
-NOT STARTED and not an execution authorization.** S0 authority
-`cd143c4bf6322a39cb7855772a944d45a49ffcf8` explicitly authorizes no full export.
-No production implementation change, new Formal Pair or repeated Code Gate is
-needed to execute this contract after approval.
+Date: 2026-11-04 (Asia/Shanghai). **Bounded execution authorized; NOT STARTED.**
+Authority: `d3374c0e35c6d8bfc308b45c399b48cd3870f0f3`, decision
+`APPROVE_BOUNDED_EXECUTION_CONTRACT_WITH_MANDATORY_TRIGGER_CORRECTION` in
+[the formal execution review](../../chatgpt/reviews/2026-11-04_G2_GateC_S1_S3_Execution_Contract_Approval_With_Amendment.md).
+The S0 report `cd143c4bf6322a39cb7855772a944d45a49ffcf8` alone did not authorize
+export; this later review grants the exact S1–S3 scope below after fresh preflight.
+
+This explicit amendment adopts that review's NPZ-only interruption trigger,
+superseding the progress-row prerequisite in contract commit
+`445d177365396bbc5952c3fdc9b59aea459c5caa`. The original contract/report remain
+preserved in Git. No production implementation change, new Formal Pair or
+repeated Code Gate is required. Authorization is not evidence of execution or PASS.
 
 ## Frozen inputs and outputs
 
@@ -74,7 +81,7 @@ automatic command exits 0.
 
 ## Preflight and existing command forms
 
-After explicit approval, verify clean exact Root/Child, both input hashes and
+Under the recorded authorization, verify clean exact Root/Child, both input hashes and
 the exact three-member set/lengths; refresh disk readiness and output absence.
 Use existing approved source resolution, no sampling, state-index shifts or
 corpus expansion. Read the server fetch skill before any necessary isolated fetch.
@@ -118,28 +125,37 @@ review is pending; never cite a not-yet-written record as a completed inspection
 
 ## S1 — full export plus one explicitly approved interruption/retry
 
-The execution decision must cover **exactly one deliberate owned-process
-interruption** below as well as normal exports. It is not permission to retry
-unexpected failures. If only uninterrupted export is approved, do not run the
-injection or claim unfinished-episode recovery was tested.
+The formal review authorizes **exactly one deliberate owned-process interruption**
+below and one same-identity restart, as well as normal exports. It does not permit
+retries of unexpected failures, repeated injection or partial-chunk continuation.
 
 1. Fully export CloseFridge 502; verify its COMPLETE/manifest/hashes and save the
    committed episode hash snapshot before proceeding.
-2. Start only NavigateKitchen 2022 in an owned export process. After observing
-   its first durable chunk for both cameras and a matching complete progress
-   row, while its final episode directory is still uncommitted, send SIGTERM
-   only to the confirmed Python PID with matching start-time/command/cache path.
-   A shell/time wrapper PID is not automatically the Python PID. Record the
-   signal, exit 143 (or subprocess -15), stage paths and before/after COMPLETE
-   states. Bound the observation wait by process liveness and the shared deadline.
-   Do not target a reused PID, unrelated process or another job's process group.
+2. Start only NavigateKitchen 2022 in an owned export process and identify its
+   unique new `.staging/<uuid>` against the prelaunch snapshot. Require the exact
+   Python process alive, verified command/PID/start-time/cache ownership, and
+   its committed episode destination/COMPLETE still absent. Wait for both cameras'
+   first complete, closed, fsynced `chunk_000000.npz` files (indices 0–31);
+   file stability/readability can be checked. Production `flush()` closes each
+   chunk only after its own `fsync`. Then send one SIGTERM only to that confirmed
+   Python PID. A shell/time wrapper PID is not automatically the Python PID.
+   `frames.jsonl` is buffered and explicitly flushed/fsynced only at the end of
+   the episode: an observed row is optional unverified buffered progress, never
+   a durable trigger, checkpoint or required invariant. Record signal/raw exit
+   (143 or subprocess -15 only if actually observed), stage/chunk identities and
+   before/after COMPLETE states. Bound observation by process liveness and the
+   shared deadline. Never target a reused PID, unrelated process or shared group.
 3. Confirm the owned exporter has stopped and the 2022 result is not committed.
    Then make **one planned retry of 2022**, same arguments/cache identity. This
    implementation restarts an unfinished episode from frame 0; it does not reuse
    partial chunks. Old uncommitted staging/failure evidence remains preserved.
+   SIGTERM may leave `.staging` without `.failed/failure.json` because Python
+   exception handling need not run; retain it without manufacturing a failure file.
    Require a complete 177-frame result, no duplicate committed frames and unchanged
    CloseFridge 502 hashes. If 2022 committed before the signal, recovery evidence is
-   INCONCLUSIVE; do not relabel it or automatically repeat the injection.
+   INCONCLUSIVE; do not relabel it or automatically repeat the injection. The same
+   applies whenever no safe trigger is observed. Completed exports can still be
+   reported, but do not claim the full Gate C PASS without the recovery witness.
 4. Export PickPlaceCounterToCabinet 4038 fully. Require all three full lengths,
    source/runtime/mapping identity and complete immutable outputs. No fourth
    episode/member is selected. The one interrupted attempt adds work only from

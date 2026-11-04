@@ -1,3 +1,52 @@
+# 2026-11-04 — Gate C S1–S3 authorization consumed; NPZ trigger amended, server capability BLOCKED
+
+Observation 2026-11-04T17:36:48.993371+08:00: before_head445d177365396bbc5952c3fdc9b59aea459c5caa;
+fresh fetch plus advertised candidated3374c0e35c6d8bfc308b45c399b48cd3870f0f3, official
+V3ea0828c7d45a443cc74ae2582419f14e7782a17e matched tracking refs. Clean
+fast-forward445d1773->d3374c0e, one formal execution review only. Full review
+`docs/collab/chatgpt/reviews/2026-11-04_G2_GateC_S1_S3_Execution_Contract_Approval_With_Amendment.md` read from Git.
+Decision APPROVE_BOUNDED_EXECUTION_CONTRACT_WITH_MANDATORY_TRIGGER_CORRECTION
+matches Root3eb8b334150018212ae1f51afb5e954b83fa1186 / unchanged
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da and contract445d1773.
+Current Owner/GPT roles supersede old V2/multi-pane approval rules.
+
+Authorization is present, no new permission or repeated Code Gate is required
+for this exact scope. Previous S0/no-export and contract-pending notes below
+are historical; the later d3374c0e review grants S1–S3 after fresh preflight.
+Code inspection confirms cache.py per-NPZ fsync/close, but frames.jsonl only
+explicitly flushes/fsyncs after the whole frame loop. Adopted explicit contract
+amendment: trigger from the two closed/fsynced first NPZ chunks (0–31), unique
+owned new staging and verified live Python PID/start-time/command/cache path,
+with destination/COMPLETE absent. Progress rows are optional unverified buffered
+observations, never a required durable trigger. Exactly one signal and restart
+from0; no repeated injection. Missing safe trigger => INCONCLUSIVE. SIGTERM may
+retain staging without failure.json; preserve it, never fabricate an exit/status.
+
+Scope remains three exact full episodes/852 source frames/1704 camera-frames,
+18 sampled native spatial checks, actual external visual evidence, full integrity,
+verified reuse, resources, one CPU/OSMesa process and shared45min. Exact source,
+mapping/selection hashes, both absent output paths and current capacity require
+fresh SERVER preflight before start. Those preconditions have not been checked
+from this runtime. Source/thresholds/sampling/caches and old artifacts unchanged.
+
+Current capability check:21 callable tools, no Remote Desktop Commander, SSH
+or other server-execution tool; managed cloud status observations_current=true,
+connected/running, no capabilities/secret bindings/outbound identities; selected
+executor network snapshot VPN=false and no TCP grants. This diagnoses this Codex
+runtime only, not server availability or other agents' access. No credentials
+inspected, endpoint guessed, remote process launched or server files transferred.
+
+Claimed files: exact execution contract, SESSION/TODO and append-only canonical
+Inbox only; no production/Child/test edits, no new implementation Pair or121/B
+rerun. Documentation validation PASS:3 Bash blocks byte-identical/syntax-only,
+frozen task table/hashes/thresholds/deadline unchanged, corrected NPZ trigger,
+Inbox append-only/under128KiB,39 retained artifact hashes and13 source bindings intact,
+protected source/Child/Gitlink unchanged and diff-check PASS. Publish normal
+candidate-only successor/readback. Stop at actual missing server capability,
+not approval; connected execution role can use the existing authorization and
+amended contract after fresh preflight. No S1–S3/partial export or PASS is claimed.
+No N100/V3 promotion/GPU/EGL/training/DCP/nav_sg/PSS or old-output changes.
+
 # 2026-11-04 — G2 Gate C S0 accepted; exact S1–S3 contract prepared, NOT STARTED
 
 Observation 2026-11-04T17:26:11.630124+08:00: fresh candidate/main fetch and advertised refs matched;
