@@ -1,3 +1,28 @@
+# 2026-11-04 — Gate C contract amendment LOCAL ONLY; GitHub publication blocked
+
+Observation 2026-11-04T17:42:01.435229+08:00: mandatory trigger correction committed locally as
+ d4edb96bcdf64a0635c4f570ce03c1f5c6002264. Three candidate-only non-force push
+attempts exited1 with remote Internal Server Error at09:39:02Z,09:39:21Z,
+09:40:17Z (last uses --no-thin, same commit/ref). Request IDs:
+BC37:27D7A3:46AC1CB:634CB51:6AEAFD35;
+6EF8:85410:44132F6:5FE019A:6AEAFD48;
+A438:94D05:4484569:6064F04:6AEAFD81.
+Final fresh fetch/ls-remote succeeded: candidate still
+ d3374c0e35c6d8bfc308b45c399b48cd3870f0f3, official V3 still
+ ea0828c7d45a443cc74ae2582419f14e7782a17e. No successful publication/readback
+is claimed for the amendment. Preserve local commit and retry ordinary publication
+once GitHub accepts writes; do not force, drop history or change target branch.
+This subsequent receipt is bookkeeping, not an implementation identity.
+
+Execution authorization d3374c0e remains accepted; the NPZ-only amended contract
+is ready locally and its semantics are already specified by that remote review.
+Separate execution block remains absence of a callable server channel in this
+Codex runtime. Gate C export/preflight has NOT STARTED here; no server files read
+or transferred, no production/Child/GPU/training/N100/V3/old-cache change.
+Original39 Evidence hashes/13 bindings and source remain intact; no project
+suite or renderer rerun. Stop with actual publication/capability failures recorded,
+not a missing approval. Current Owner need not approve this scope again.
+
 # 2026-11-04 — Gate C S1–S3 authorization consumed; NPZ trigger amended, server capability BLOCKED
 
 Observation 2026-11-04T17:36:48.993371+08:00: before_head445d177365396bbc5952c3fdc9b59aea459c5caa;
