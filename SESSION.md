@@ -1,3 +1,114 @@
+# 2026-11-04 — G2 Stage-1 pre-freeze verification PASS; implementation commit next
+
+Final development revision dev004:82 DISTINCT PASS/0failure/error/skip,1.69s;
+source hash snapshot unchanged by tests. Ruff0.12.7 check/format PASS,9 Python
+AST/compile PASS, both CLI help/import probes PASS. Lazy imports show torch,
+Cosmos, MuJoCo, RoboCasa, robosuite and LeRobot all absent on CLI import/help.
+Native CPU ray fixtures remain explicit tiny analytic scenes, not sensor data.
+Cache arrays are decompressed once per chunk during verification; no extra
+environment/model/renderer load on verified cache reuse. Code provenance reads
+the actual Root Gitlink from its tree, including when a Child isn't initialized.
+
+All requested code, schema/README, Gate B/C runbook and Owner text/provenance are
+ready. Actual server access remains unavailable (no remote execution tool), so
+no server skill read/fetch/test and no real replay has occurred. Source B/C,
+software/assets/render availability, real source frame policy and N100 actual
+membership remain pending DS. Explicit Owner later server validation grant and
+Git-first maintenance/privacy rules are recorded, not treated as performed work.
+
+Fresh official V3 still083b36ac27ad43b6f5127d9a58aed4fac02eaaa7;
+Child/Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged/clean. Freeze
+only the allowed Root source/docs/SESSION/TODO, then run clean exact-Pair Gate A,
+package text-only evidence and request GPT review on a new isolated Root SHA.
+Do not promote V3, run physical replay, N100 export or training automatically.
+
+## Development implementation record retained
+
+# 2026-11-04 — G2 Stage-1 implemented; development CPU82 PASS, freeze next
+
+Owner clarified the real mapping is EPISODE-major with13 columns/9126 rows,
+not2231347 per-frame rows. Implementation validates half-open intervals and
+expands only the selected episodes; raw/Flat index/frame/state rows are checked
+exactly. Explicit state_index_policy=frame_index, no timestamp-based shift.
+Official recovery is DS's playback_dataset_hdf5.reset_to (supersedes the initial
+playback_dataset reference below). Camera helpers are reused without double
+GL/CV correction; every frame/camera carries independent K and GL/CV poses.
+
+Root-only tools/g2: source geometry/replay/cache modules, export/verify CLIs,
+schema/README and82 synthetic CPU tests. Existing g0 accepted manifest membership
+is consumed without sampler duplication or N/seed defaults; custom exact-ID
+manifest must bind Flat mapping SHA, g0 manifest must bind its source_dataset.
+N100 actual IDs remain unknown, no corpus membership is guessed. Explicit
+original source-dataset disambiguation; no generic column aliases after Owner
+provided actual canonical fields. No LeRobotDataset/model/VAE initialization.
+
+Development suites74,78,82 DISTINCT PASS per corresponding source revision,
+zero failure/error/skip. They are not added into a combined test count. Actual
+CPU MuJoCo3.3.1 tilted-plane ray:64 matching static-geom hits, max Z error
+2.220446049250313e-16m; wrong vertical flip/ray-range encoding fail, unknown
+filters inconclusive. No renderer/GL context/RoboCasa/real recording/GPU access.
+Existing CPU Python3.12.14 reused; MuJoCo/glfw/PyOpenGL/etils installed only into
+/tmp/psm-g2-rgbd-stage1-20261104/cpu_extra (no shared environment edits).
+The initial python -m pip command lacked pip; uv --target succeeded. Independent
+float32 pose inverse, disk reserve, atomic failure/cleanup, exact manifest-source
+identity and full CLI source/retry cases included. Cache verification loads each
+bounded chunk once, not repeated NPZ matrix decompression per frame.
+
+Owner permits later server pull/test using server github-fetch-proxy skill and
+new isolated checkout; never copy server scripts/data/cache into cloud. Current
+tool discovery has no Remote Desktop Commander/SSH/remote execution entry, so
+server skill has NOT been read and server tests have NOT been run. Gate B/C and
+actual N100 selection remain pending, not author CPU acceptance. Runbook contains
+CPU/OSMesa Gate B exact commands, required stats, thresholds, cache recovery and
+explicit no-batch-before-B/C rule. Owner supplied instruction/clarifications
+archived in docs/collab/codex/requests, no server file copied.
+
+Fresh V3 fetch/advertised unchanged083b36ac27ad43b6f5127d9a58aed4fac02eaaa7;
+Child/Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged/clean. Scope
+only tools/g2, new docs and SESSION/TODO/append-only Inbox/Evidence. Next scoped
+static/import/syntax checks, new Root implementation commit, clean exact-Pair
+CPU/static Evidence, isolated publication/review request/readback then STOP.
+No nav_sg/SG/BEV/PSS/Child/recipe/training/DCP/active workspace or V3 promotion.
+
+## Initial task claim retained
+
+# 2026-11-04 — G2-RGBD-STAGE1 claimed; isolated implementation IN_PROGRESS
+
+Owner supplied full Stage-1 contract in pasted text (11024 bytes). Scope:
+target-atomic raw states/XML/episode metadata + existing Flat V3 mapping and
+training episode membership -> RGB references, metric optical Z-depth, K and
+per-frame GL/CV camera poses. No nav_sg/ROS/SG/BEV/PSS/model/recipe/TTT/training
+or Child changes; real replay/Gate B/C and N100 production export remain DS-side
+and are not executed by this cloud author. Gate A only, then submit review/STOP.
+
+Fresh explicit V3 fetch and advertised SHA matched:
+083b36ac27ad43b6f5127d9a58aed4fac02eaaa7; read every added commit since
+324d6983, latest live Inbox, current G2 technical survey and existing g0 cache
+builder/selection manifest conventions. New clean isolated Root branch
+v3-g2-rgbd-pose-stage1-20261104 in /workspace/psm-wma-g2-rgbd-stage1;
+Child/Gitlink remains1069fe78841228cadbbfbe6afbd767eaed6225da, detached/unchanged.
+Existing worktrees, official refs and old results are untouched.
+
+Claim tools/g2/export_robocasa_rgbd_pose.py, verify_robocasa_rgbd_pose.py,
+rgbd_pose/ geometry/source/cache/replay modules and test_rgbd_pose_export.py;
+Stage-1 schema/runbook + Owner contract provenance + author Evidence/handoff,
+SESSION/TODO and append-only canonical Inbox. Reuse existing g0 manifest episode
+membership without any new selection scoring/random sampling; raw input paths
+and mapping columns remain configurable, missing/ambiguous identity fails.
+
+Read pinned official RoboCasa6f90063 playback_dataset.reset_to, lerobot_utils
+extras layout, and robosuite824ac14 camera_utils without importing native libs.
+Confirmed get_camera_extrinsic_matrix is already CV; GL pose must be separately
+recovered/checked, no double axis correction. Reference source only is in
+/tmp/psm-g2-rgbd-stage1-20261104/references, no real sensor data accessed.
+DS temporary g3 scripts and actual Flat mapping schema/N100 manifest aren't in
+this workspace; requested existing references asynchronously. Continue independent
+geometry/storage code and CPU boundary tests; do not claim site data compatibility
+or actual Depth replay until DS Gate B. Current Owner roles/STOP override old V2
+multi-pane waiting, no subagents or GPU execution. No code committed yet.
+
+## Previous task record retained
+
 # 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:
