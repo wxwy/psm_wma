@@ -1,0 +1,327 @@
+"""Deterministic public-reserve completion accounting, without real GPU usage."""
+
+import contextlib
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
+import pytest
+from cosmos_framework.inference.robocasa_session_transactions_test import (
+    clock_kernel as clock_kernel,
+)  # noqa: F401
+from robocasa_eval_v2.startup import StartupBudget
+from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_config
+
+
+def configuration():
+    cfg = streaming_config(max_rss_bytes=100)
+    cfg["streaming_resources"].update(
+        max_owned_gpu_bytes=100,
+        sim_startup_rss_bytes=40,
+        sim_startup_gpu_bytes=40,
+        server_startup_rss_bytes=10,
+        server_startup_gpu_bytes=10,
+    )
+    return cfg
+
+
+def footprint(resource, actual):
+    return {
+        "rss_bytes": actual if resource == "RSS" else 0,
+        "owned_gpu_bytes": {6: actual if resource == "GPU" else 0, 7: 0},
+    }
+
+
+@contextlib.contextmanager
+def pair(budget, *, devices=(6, 6)):
+    """Both real threads stay in reserve() until explicitly released, no sleeps."""
+    ready = {key: threading.Event() for key in "AB"}
+    finish = {key: threading.Event() for key in "AB"}
+
+    def startup(key, device):
+        try:
+            with budget.reserve(key, "sim", device):
+                ready[key].set()
+                assert finish[key].wait(10), "test did not release startup"
+        except RuntimeError as error:
+            return str(error)
+        return None
+
+    with ThreadPoolExecutor(2) as pool:
+        futures = {}
+        try:
+            for key, device in zip("AB", devices):
+                futures[key] = pool.submit(startup, key, device)
+                assert ready[key].wait(10), "startup was not admitted"
+            yield finish, futures
+        finally:
+            for event in finish.values():
+                event.set()
+            for future in futures.values():
+                future.result(10)
+    assert not budget.pending
+
+
+@pytest.mark.parametrize("resource", ["RSS", "GPU"])
+@pytest.mark.parametrize("first", ["A", "B"])
+def test_completion_rejects_actual_plus_other_pending_and_recovers(resource, first):
+    actual = [0]
+    budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+    other = "B" if first == "A" else "A"
+    with pair(budget) as (finish, futures):
+        assert set(budget.pending) == {"A", "B"}
+        actual[0] = 70  # Actual alone fits; actual + the other 40 does not.
+        finish[first].set()
+        assert f"BLOCKED_RESOURCE: startup {resource}" in (
+            futures[first].result(10) or ""
+        )
+        assert set(budget.pending) == {other}  # Only failing owner's cleanup.
+        finish[other].set()
+        assert futures[other].result(10) is None
+    actual[0] = 0  # Processes have been reclaimed before retrying startup.
+    with budget.reserve("recovered", "sim", 6):
+        assert set(budget.pending) == {"recovered"}
+    assert not budget.pending
+
+
+@pytest.mark.parametrize("resource", ["RSS", "GPU"])
+@pytest.mark.parametrize("first", ["A", "B"])
+def test_completion_remeasures_if_pending_changes_after_measurement(resource, first):
+    actual = [0]
+    budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+    captured, release = threading.Event(), threading.Event()
+    samples = []
+
+    def measure():
+        result = footprint(resource, actual[0])
+        samples.append(result)
+        if not captured.is_set():
+            captured.set()
+            assert release.wait(10), "test did not release resource measurement"
+        return result
+
+    with pair(budget) as (finish, futures):
+        budget.measure = measure
+        finish[first].set()
+        assert captured.wait(10)
+        # This admission must finish while the other thread is measuring:
+        # resource measurement cannot hold the reservation metadata lock.
+        third = budget.reserve("C", "server", 6)
+        try:
+            third.__enter__()
+            assert set(budget.pending) == {"A", "B", "C"}
+            actual[0] = 70
+            release.set()
+            assert f"BLOCKED_RESOURCE: startup {resource}" in (
+                futures[first].result(10) or ""
+            )
+            assert len(samples) >= 3 and samples[-1] == footprint(resource, 70)
+            assert set(budget.pending) == ({"A", "B", "C"} - {first})
+        finally:
+            actual[0] = 0
+            release.set()
+            third.__exit__(None, None, None)
+
+
+@pytest.mark.parametrize("resource", ["RSS", "GPU"])
+@pytest.mark.parametrize("first", ["A", "B"])
+def test_completion_excludes_own_reservation_and_accepts_exact_limit(resource, first):
+    actual = [0]
+    budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+    with pair(budget) as (finish, futures):
+        actual[0] = 60  # 60 + other 40 == 100; own 40 must not be charged again.
+        finish[first].set()
+        assert futures[first].result(10) is None
+        other = "B" if first == "A" else "A"
+        assert set(budget.pending) == {other}
+        finish[other].set()
+        assert futures[other].result(10) is None
+
+
+def test_gpu_completion_keeps_separate_device_budgets():
+    actual = [0]
+    budget = StartupBudget(configuration(), lambda: footprint("GPU", actual[0]))
+    with pair(budget, devices=(6, 7)) as (finish, futures):
+        actual[0] = 70  # GPU6 actual70; GPU7 actual0 + pending40, each <= 100.
+        finish["A"].set()
+        assert futures["A"].result(10) is None
+        finish["B"].set()
+        assert futures["B"].result(10) is None
+
+
+def test_concurrent_completions_reconcile_again_after_the_other_transfer():
+    budget = StartupBudget(configuration(), lambda: footprint("RSS", 0))
+    sampled = threading.Barrier(2, timeout=10)
+    samples = []
+    sample_lock = threading.Lock()
+
+    def measure():
+        with sample_lock:
+            samples.append(footprint("RSS", 0))
+            index = len(samples)
+        if index <= 2:
+            sampled.wait()  # Both sampled before either may commit its transfer.
+        return footprint("RSS", 0)
+
+    with pair(budget) as (finish, futures):
+        budget.measure = measure
+        for event in finish.values():
+            event.set()
+        assert all(future.result(10) is None for future in futures.values())
+    assert len(samples) == 3  # Exactly one stale-version sample was retried.
+
+
+def test_continuous_reservation_churn_is_bounded_and_releases_failed_owner():
+    budget = StartupBudget(configuration(), lambda: footprint("RSS", 0))
+    armed = True
+    churn = []
+
+    def measure():
+        nonlocal armed
+        if armed:
+            armed = False
+            try:
+                # Public admission + completion changes the epoch during measurement.
+                with budget.reserve("churn", "server", 6):
+                    churn.append(True)
+            finally:
+                armed = True
+        return footprint("RSS", 0)
+
+    with pytest.raises(
+        RuntimeError, match="BLOCKED_RESOURCE: startup reservation contention"
+    ):
+        with budget.reserve("owner", "sim", 6):
+            budget.measure = measure
+    assert 1 <= len(churn) <= 256
+    assert not budget.pending
+
+
+@pytest.mark.parametrize("resource", ["RSS", "GPU"])
+def test_completion_validates_actual_even_without_other_reservations(resource):
+    actual = [0]
+    budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+    with pytest.raises(RuntimeError, match=f"BLOCKED_RESOURCE: startup {resource}"):
+        with budget.reserve("alone", "sim", 6):
+            actual[0] = 101
+    assert not budget.pending
+
+
+@pytest.mark.parametrize("missing", ["rss_bytes", "owned_gpu_bytes", "selected_gpu"])
+def test_missing_completion_measurement_fails_closed_and_releases_only_owner(missing):
+    measurement = footprint("RSS", 0)
+    budget = StartupBudget(configuration(), lambda: measurement)
+    with pytest.raises(RuntimeError, match="BLOCKED_RESOURCE: missing"):
+        with budget.reserve("owner", "sim", 6):
+            if missing == "selected_gpu":
+                measurement["owned_gpu_bytes"].pop(6)
+            else:
+                measurement.pop(missing)
+    assert not budget.pending
+
+
+def test_completion_measurement_exception_preserves_original_error_and_cleanup():
+    budget = StartupBudget(configuration(), lambda: footprint("RSS", 0))
+
+    def failed():
+        raise OSError("controlled unavailable meter")
+
+    with pytest.raises(OSError, match="controlled unavailable meter"):
+        with budget.reserve("owner", "sim", 6):
+            budget.measure = failed
+    assert not budget.pending
+
+
+@pytest.mark.parametrize("mode", ["off", "required"])
+def test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only(
+    tmp_path, monkeypatch, mode
+):
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    from cosmos_framework.evaluation.robocasa_v2.store import records
+    from robocasa_eval_v2.runtime import Runtime
+    from robocasa_eval_v2_processes import process_identity
+    from tools.v3.eval_v2_batch_tests import runtime_test as old
+
+    original_execution = old.execution
+    completed = [threading.Event(), threading.Event()]
+    overrun = threading.Event()
+
+    def resolved(cfg):
+        settings = configuration()
+        settings["streaming_resources"]["sim_startup_gpu_bytes"] = 0
+        cfg.update(
+            settings,
+            gpu_ids=[0],
+            sims_per_gpu=2,
+            max_infer_batch_size=2,
+            render_backend="osmesa",
+            render_gpu_ids=[],
+        )
+        return original_execution(cfg)
+
+    class OwnedRuntime(Runtime):
+        def __init__(self, *args, **kwargs):
+            kwargs["resource_probe"] = lambda *a, **k: {
+                "rss_bytes": 70 if overrun.is_set() else 0,
+                "owned_gpu_bytes": {0: 0},
+            }
+            super().__init__(*args, **kwargs)
+
+        def _setup_actor(self, claim):
+            result = super()._setup_actor(claim)
+            index = self.workers.index(claim["physical_worker"])
+            completed[index].set()
+            assert completed[1 - index].wait(30), "both Sim Slots must be active"
+            if index == 0:
+                assert len(self.startup_budget.pending) == 2
+                overrun.set()  # Current actual70 + other Sim reservation40 > 100.
+            else:
+                assert self.stop.wait(30), "overrun must cause fail-closed stop"
+            return result
+
+    monkeypatch.setattr(old, "execution", resolved)
+    monkeypatch.setattr(old, "Runtime", OwnedRuntime)
+    monkeypatch.setattr(old, "FIXTURE", Path(__file__).with_name("os_fixture.py"))
+    outsider = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(180)"])
+    try:
+        value, cfg, runtime, report, error = old.cpu_run(
+            tmp_path, monkeypatch, g=1, n=1, episodes=2, local_memory_mode=mode
+        )
+        faults = value.errors("CloseFridge")
+        assert error is not None and report["valid"] == 0
+        assert any("BLOCKED_RESOURCE: startup RSS" in str(fault) for fault in faults)
+        assert not value.rows("CloseFridge") and not report["results_qualified"]
+        assert all(event.is_set() for event in completed)
+        assert runtime.closed and runtime._active_jobs == 0
+        assert not runtime.startup_budget.pending
+        processes = records(value.root / "_internal/processes")
+        assert len(processes) == 3  # One Server plus both real OS Sim processes.
+        for process in processes:
+            assert process_identity(process["identity"]["pid"]) is None
+            assert (
+                value.root / "_internal/process_closed" / f"{process['id']}.json"
+            ).is_file()
+        assert outsider.poll() is None
+        (tmp_path / "newf01_os_evidence.json").write_text(
+            json.dumps(
+                dict(
+                    mode=mode,
+                    error=repr(error),
+                    valid_cores=report["valid"],
+                    both_slots_active=True,
+                    pending_reservations=len(runtime.startup_budget.pending),
+                    active_jobs=runtime._active_jobs,
+                    all_owned_processes_closed=True,
+                    processes=processes,
+                    outsider_pid=outsider.pid,
+                    outsider_alive=True,
+                ),
+                indent=2,
+            )
+        )
+    finally:
+        outsider.terminate()
+        outsider.wait(5)
