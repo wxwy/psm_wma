@@ -1,0 +1,15 @@
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/workspace/work/psm-wma-action-compile/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:902: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+  with torch.autocast("cuda", enabled=True, dtype=torch.float32):
+{
+  "status": "PASS",
+  "mode": "record",
+  "cases": 12,
+  "exact_output_and_gradient_parity": true,
+  "golden_sha256": "92759b23ad770c6e3341e2941ace177295592f50609ac5e7e981cc76a09c0941",
+  "production_sha256": "70fc494d9af8c6fd1b5f93c249781085937fe5471fb4e521bde284f868989df9",
+  "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "torch": "2.10.0+cpu"
+}

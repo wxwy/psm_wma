@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "mode": "record",
+  "cases": 12,
+  "exact_output_and_gradient_parity": true,
+  "golden_sha256": "92759b23ad770c6e3341e2941ace177295592f50609ac5e7e981cc76a09c0941",
+  "production_sha256": "70fc494d9af8c6fd1b5f93c249781085937fe5471fb4e521bde284f868989df9",
+  "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "torch": "2.10.0+cpu"
+}

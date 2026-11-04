@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "root": "c9fa60b7134fda8fb848c29c148f25c7a8901892",
+  "child": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+  "old_child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "child_delta": [
+    "cosmos_framework/model/generator/mot/action_encode_compile_test.py",
+    "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py"
+  ],
+  "root_delta": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "docs/collab/codex/designs/2026-11-04_VFM_Action_Dynamic_Compile_Narrow_Design.md"
+  ],
+  "sha256": {
+    "cosmos_framework/model/generator/mot/action_encode_compile_test.py": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+    "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py": "ab24fe80768681e0865663442eafc770672b706b019073093b1b671cec0ab3f1",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network.py": "8d84929dcc7a1885f4bdb6c0b11153c0ec19742bf9a13318b2c131f4d6b46c39",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py": "23f139ccc5facb6e0e9060a2938f6c0e12a60040f3270549742ad08bf38f5b85"
+  },
+  "checks": [
+    {
+      "name": "ruff",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "cosmos_framework/model/generator/mot/action_encode_compile_test.py",
+        "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--no-cache",
+        "cosmos_framework/model/generator/mot/action_encode_compile_test.py",
+        "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "projection_math_ast_identical": true,
+  "surrounding_encode_ast_identical": true,
+  "compile_options_ast_identical": true,
+  "syntax_files": 4
+}

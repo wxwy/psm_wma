@@ -1,0 +1,28 @@
+[
+  {
+    "dtype": "torch.float32",
+    "backend": "inductor",
+    "calls": 32,
+    "graphs": 2,
+    "targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_decode_action"
+    ]
+  },
+  {
+    "dtype": "torch.bfloat16",
+    "backend": "inductor",
+    "calls": 32,
+    "graphs": 2,
+    "targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_decode_action"
+    ]
+  }
+]

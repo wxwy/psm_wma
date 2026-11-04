@@ -1,0 +1,66 @@
+[
+  {
+    "local_memory": false,
+    "dtype": "torch.float32",
+    "backend": "eager",
+    "calls_completed": 1024,
+    "graph_count": 1,
+    "compile_targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_decode_action"
+    ],
+    "recompile_limit": 8,
+    "seconds": 2.9737579360007658
+  },
+  {
+    "local_memory": true,
+    "dtype": "torch.float32",
+    "backend": "eager",
+    "calls_completed": 1024,
+    "graph_count": 1,
+    "compile_targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_decode_action"
+    ],
+    "recompile_limit": 8,
+    "seconds": 1.8904142910032533
+  },
+  {
+    "local_memory": false,
+    "dtype": "torch.bfloat16",
+    "backend": "eager",
+    "calls_completed": 1024,
+    "graph_count": 1,
+    "compile_targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_decode_action"
+    ],
+    "recompile_limit": 8,
+    "seconds": 2.5249350120066083
+  },
+  {
+    "local_memory": true,
+    "dtype": "torch.bfloat16",
+    "backend": "eager",
+    "calls_completed": 1024,
+    "graph_count": 1,
+    "compile_targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_decode_action"
+    ],
+    "recompile_limit": 8,
+    "seconds": 2.2698401100060437
+  }
+]

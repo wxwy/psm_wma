@@ -1,0 +1,365 @@
+{
+  "status": "AUTHOR_TARGETED_CPU_PASS",
+  "formal_root": "c9fa60b7134fda8fb848c29c148f25c7a8901892",
+  "formal_child_gitlink": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+  "baseline_root": "9635cefe3208ab6320ba5fa70b0e0d68fd444790",
+  "baseline_child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "tests": 51,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "deselected_gpu_l1": 8,
+  "new_cases": 19,
+  "shell_exit": 0,
+  "source_unchanged": true,
+  "source_files": 1227,
+  "old_red_expected_failures": 4,
+  "recompile_limit_unchanged": 8,
+  "long_requests_per_case": 1024,
+  "dynamo_graphs_per_long_case": 1,
+  "cpu_inductor_graphs_per_case": 2,
+  "eager_baseline_comparisons": 12,
+  "eager_output_gradient_bit_exact": true,
+  "projection_math_ast_identical": true,
+  "compile_options_ast_identical": true,
+  "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+  "golden_sha256": "92759b23ad770c6e3341e2941ace177295592f50609ac5e7e981cc76a09c0941",
+  "stages": {
+    "old-red": {
+      "exit_code": 1,
+      "elapsed_seconds": 22.45235907400638,
+      "source_unchanged": true,
+      "source_files": 1222,
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 0,
+      "status": "FAIL",
+      "identities": {
+        "root": "d3a5251f91f217b7385a90e5dfefbd66d018f3b6",
+        "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+        "gitlink": "160000 commit 1069fe78841228cadbbfbe6afbd767eaed6225da\tcosmos-framework",
+        "root_status": "M cosmos-framework",
+        "child_status": "?? cosmos_framework/model/generator/mot/action_encode_compile_test.py"
+      },
+      "long_sequences": [
+        {
+          "local_memory": false,
+          "dtype": "torch.float32",
+          "backend": "eager",
+          "calls_completed": 8,
+          "graph_count": 8,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_encode_action",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 3.8640755790038384
+        },
+        {
+          "local_memory": true,
+          "dtype": "torch.float32",
+          "backend": "eager",
+          "calls_completed": 8,
+          "graph_count": 8,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_encode_action",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 2.582119247999799
+        },
+        {
+          "local_memory": false,
+          "dtype": "torch.bfloat16",
+          "backend": "eager",
+          "calls_completed": 8,
+          "graph_count": 8,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_encode_action",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 3.2266427659997134
+        },
+        {
+          "local_memory": true,
+          "dtype": "torch.bfloat16",
+          "backend": "eager",
+          "calls_completed": 8,
+          "graph_count": 8,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_encode_action",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 2.5788595900012297
+        }
+      ]
+    },
+    "new-green": {
+      "exit_code": 0,
+      "elapsed_seconds": 82.96038378700177,
+      "source_unchanged": true,
+      "source_files": 1226,
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 51,
+      "status": "PASS",
+      "identities": {
+        "root": "d3a5251f91f217b7385a90e5dfefbd66d018f3b6",
+        "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+        "gitlink": "160000 commit 1069fe78841228cadbbfbe6afbd767eaed6225da\tcosmos-framework",
+        "root_status": "M cosmos-framework",
+        "child_status": "M cosmos_framework/model/generator/mot/cosmos3_vfm_network.py\n M cosmos_framework/model/generator/mot/parallelize_vfm_network.py\n M cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py\n?? cosmos_framework/model/generator/mot/action_encode_compile_test.py"
+      },
+      "long_sequences": [
+        {
+          "local_memory": false,
+          "dtype": "torch.float32",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 2.9737579360007658
+        },
+        {
+          "local_memory": true,
+          "dtype": "torch.float32",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 1.8904142910032533
+        },
+        {
+          "local_memory": false,
+          "dtype": "torch.bfloat16",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 2.5249350120066083
+        },
+        {
+          "local_memory": true,
+          "dtype": "torch.bfloat16",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 2.2698401100060437
+        }
+      ]
+    },
+    "formal-targeted": {
+      "exit_code": 0,
+      "elapsed_seconds": 91.04724509100197,
+      "source_unchanged": true,
+      "source_files": 1227,
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 51,
+      "status": "PASS",
+      "identities": {
+        "root": "c9fa60b7134fda8fb848c29c148f25c7a8901892",
+        "child": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+        "gitlink": "160000 commit 4e9c8104ffd15a373b576bc35ee608de1b60eea1\tcosmos-framework",
+        "root_status": "",
+        "child_status": ""
+      },
+      "long_sequences": [
+        {
+          "local_memory": false,
+          "dtype": "torch.float32",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 8.333722590003163
+        },
+        {
+          "local_memory": true,
+          "dtype": "torch.float32",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 3.8965474059950793
+        },
+        {
+          "local_memory": false,
+          "dtype": "torch.bfloat16",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 4.789308813000389
+        },
+        {
+          "local_memory": true,
+          "dtype": "torch.bfloat16",
+          "backend": "eager",
+          "calls_completed": 1024,
+          "graph_count": 1,
+          "compile_targets": [
+            "_encode_text",
+            "_encode_vision",
+            "_project_action_tokens",
+            "_decode_vision",
+            "_decode_action"
+          ],
+          "recompile_limit": 8,
+          "seconds": 5.123906357999658
+        }
+      ]
+    }
+  },
+  "numerics": {
+    "old-eager": {
+      "status": "PASS",
+      "mode": "record",
+      "cases": 12,
+      "exact_output_and_gradient_parity": true,
+      "golden_sha256": "92759b23ad770c6e3341e2941ace177295592f50609ac5e7e981cc76a09c0941",
+      "production_sha256": "70fc494d9af8c6fd1b5f93c249781085937fe5471fb4e521bde284f868989df9",
+      "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+      "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+      "torch": "2.10.0+cpu"
+    },
+    "new-eager": {
+      "status": "PASS",
+      "mode": "verify",
+      "cases": 12,
+      "exact_output_and_gradient_parity": true,
+      "golden_sha256": "92759b23ad770c6e3341e2941ace177295592f50609ac5e7e981cc76a09c0941",
+      "production_sha256": "ab24fe80768681e0865663442eafc770672b706b019073093b1b671cec0ab3f1",
+      "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+      "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+      "torch": "2.10.0+cpu",
+      "baseline_metadata": {
+        "production_sha256": "70fc494d9af8c6fd1b5f93c249781085937fe5471fb4e521bde284f868989df9",
+        "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+        "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+        "torch": "2.10.0+cpu"
+      }
+    },
+    "formal-eager": {
+      "status": "PASS",
+      "mode": "verify",
+      "cases": 12,
+      "exact_output_and_gradient_parity": true,
+      "golden_sha256": "92759b23ad770c6e3341e2941ace177295592f50609ac5e7e981cc76a09c0941",
+      "production_sha256": "ab24fe80768681e0865663442eafc770672b706b019073093b1b671cec0ab3f1",
+      "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+      "child": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+      "torch": "2.10.0+cpu",
+      "baseline_metadata": {
+        "production_sha256": "70fc494d9af8c6fd1b5f93c249781085937fe5471fb4e521bde284f868989df9",
+        "test_sha256": "81486c5ffd75b111a0980fcf9722db472e3e57cce5c438b2045632eb1a3cf34e",
+        "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+        "torch": "2.10.0+cpu"
+      }
+    }
+  },
+  "inductor": [
+    {
+      "dtype": "torch.float32",
+      "backend": "inductor",
+      "calls": 32,
+      "graphs": 2,
+      "targets": [
+        "_encode_text",
+        "_encode_vision",
+        "_project_action_tokens",
+        "_decode_vision",
+        "_decode_action"
+      ]
+    },
+    {
+      "dtype": "torch.bfloat16",
+      "backend": "inductor",
+      "calls": 32,
+      "graphs": 2,
+      "targets": [
+        "_encode_text",
+        "_encode_vision",
+        "_project_action_tokens",
+        "_decode_vision",
+        "_decode_action"
+      ]
+    }
+  ],
+  "GPU_FSDP_capture_full_Local_TTT_real_checkpoint": "NOT_RUN",
+  "R04_server_files": "NOT_ACCESSED_OR_MODIFIED",
+  "R04_Resume": "NOT_RUN",
+  "Issue17_source": "NOT_INCLUDED",
+  "official_V3_merge": "NOT_PERFORMED",
+  "GPT_Code_Gate": "PENDING"
+}
