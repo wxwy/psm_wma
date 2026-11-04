@@ -1,3 +1,38 @@
+# 2026-11-04 — G2 RGB-only provenance follow-up; geometry closed, overall GateB FAIL
+
+Observation 2026-11-04T14:41:32.328469+08:00: fresh origin/V3 fetch/advertised
+083b36ac27ad43b6f5127d9a58aed4fac02eaaa7; candidate advertised
+799199e94c86715abf30b6ab5bb3cd413691d4f5. Clean ff59fb20ec ->799199e9 consumed
+3914ae2c,88b5243c,3054d6ac,799199e9, four docs/Inbox changes only.
+Exact formal Roota9ffd313770c5344195f415425124a5075e62b2b / Child-Gitlink
+1069fe78841228cadbbfbe6afbd767eaed6225da confirmed in formal review3054d6ac:
+APPROVE_CODE for isolated diagnostic. Same Pair: no duplicate technical review.
+Current V3 Owner/GPT/Codex/DS roles supersede historical Kimi/MM/V2 workflow.
+
+Read independent real-server report799199e9 directly: geometry6/6 PASS,
+128 rays each,0.880-4.423mm maxima; opaque-eligible37549-61932/65536. Native
+Depth/cache/K/Pose/runtime PASS. RGB1/6 PASS,5/6 over unchanged MAE5; overall
+PHYSICAL_REPLAY_NOT_ACCEPTED. Current OSMesa old/new constructor kwargs identical;
+RGB/RGBD and segmentation cycles MAE0. These are GPT-reported server facts,
+not new author execution. Earlier failed evidence remains unchanged.
+
+Read-only source audits found no justified RGB production fix. MuJoCo actual
+GL capability/shadowFBO paths can change photometry; this is a concrete hypothesis,
+not proof of EGL/gamma cause. First prove old G3 saved RGB producer (raw vs
+postprocessing/reference) and historical actual GL/light/texture identity.
+Current metadata defaults cannot prove old context. Code remains untouched;
+no renderer/test reruns. New docs-only source audit + minimum server-local
+provenance handoff written. Missing actual historical evidence is the blocker:
+no remote execution tool is exposed, no server file/data read/copied. Do not
+invent a color correction or expand architecture. If old context cannot be
+recovered, reportUNKNOWN then submit one specifically controlled experiment
+for review; no auto replay/GPU/EGL experiment or parameter sweep.
+
+Update TODO/canonical handoff and publish docs only on the isolated candidate.
+Formal implementation staysa9ffd313,107 author CPU historical evidence unchanged.
+No new Formal Pair or repeat107 tests required. No GateC/N100/V3 merge/training,
+Depth/geometry/state-index/threshold/old-artifact/production-code changes.
+
 # 2026-11-04 — G2-GATEB-REPLAY candidate published/readback PASS; STOP for fresh review
 
 2026-11-04T05:53:32Z (13:53:32 Asia/Shanghai): normal isolated Root push to
