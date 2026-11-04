@@ -1,0 +1,58 @@
+{
+  "schema": "g2_gatec_closure_n100_preparation_publication_v1",
+  "observed_at_asia_shanghai": "2026-11-04T21:01:44.442009+08:00",
+  "status": "PASS",
+  "published_documentation_head": "39ed2e0c0117fc7f689f372251fbb0038341ac09",
+  "remote_branch": "v3-g2-spatial-policy-20261104",
+  "formal_implementation_root": "3eb8b334150018212ae1f51afb5e954b83fa1186",
+  "child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "observed_official_V3": "9635cefe3208ab6320ba5fa70b0e0d68fd444790",
+  "official_V3_modified_by_this_work": false,
+  "source_unchanged": true,
+  "both_histories_retained": true,
+  "formal_reports_byte_identical": true,
+  "publication_method": "normal non-force push, then fetch/advertised-ref/Git-object readback",
+  "previous_push_500_status": "historical failures; current publication succeeded, not retroactively relabelled",
+  "documentation_validation": {
+    "new_bash_blocks_syntax_only": 2,
+    "old_command_blocks_unchanged": 3,
+    "cli_flags_static_ast": "PASS",
+    "reference_arithmetic": "PASS",
+    "old_evidence_hashes_intact": 39,
+    "old_source_bindings_intact": 13
+  },
+  "gate_C_status": "FINAL_PASS_ACCEPTED_FROM_FORMAL_INDEPENDENT_SERVER_AND_OWNER_RECORDS",
+  "N100_actual_membership": "NOT_FROZEN",
+  "N100_actual_total_frames": null,
+  "N100_production_budget": "NOT_APPROVED",
+  "N100_export_started": false,
+  "server_metadata_or_native_commands_by_Codex_this_step": false,
+  "project_tests_rerun": false,
+  "published_files": [
+    {
+      "path": "SESSION.md",
+      "git_blob": "40d4d8a22a7c454724ded79adba0d360ade7ca81",
+      "sha256": "5740d1d2288f72cf0f56093fc19a1a05a9cd5fa78824513ec15e8130e67f517a"
+    },
+    {
+      "path": "TODO.md",
+      "git_blob": "608107b9f82d30dbeb9c7e616249a6e26b6742e1",
+      "sha256": "d8e8fd5a98bf70a179377106953a90a4d0d870ba22954c80358cfa1f75979c40"
+    },
+    {
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "git_blob": "449f17908a02edb6a544715eb8eafbbb0cdef090",
+      "sha256": "d617fe6e83b6c5d0722afd0b8fd6041fb58ad763b51ded2fd3034d1fe8706371"
+    },
+    {
+      "path": "docs/collab/codex/requests/2026-11-04_G2_GateC_S1_S3_Exact_ThreeEpisode_Execution_Contract.md",
+      "git_blob": "e4569790cfa003f78bad6732d89a31bb819b2a52",
+      "sha256": "912229eac604920d986a0cf7a92e4f5454aaf94faf229a9265b8bb1707615d68"
+    },
+    {
+      "path": "docs/collab/codex/requests/2026-11-04_G2_N100_Actual_Training_Membership_And_Production_Budget_Preparation.md",
+      "git_blob": "6da095b7ffc0aa69ec14ba25356bf01cd6e81350",
+      "sha256": "286ce4480926ffb82653bc54f939cf1fbf49fdad3232b5ad68c6042544c78c5e"
+    }
+  ]
+}

@@ -1,3 +1,22 @@
+# 2026-11-04 — Gate C closure / N100 preparation published and read back; actual membership pending
+
+2026-11-04T21:01:44.442009+08:00: ordinary non-force push and fresh fetch/advertised-ref/Git-object
+readback PASS for documentation commit39ed2e0c0117fc7f689f372251fbb0038341ac09,
+branch v3-g2-spatial-policy-20261104. Five published files byte-identical;
+source/Child-Gitlink1069fe78 unchanged, old formal reports byte-identical and both
+local/remote histories retained. Receipt:
+`docs/collab/codex/evidence/2026-11-04_g2_gatec_closure_n100_prep/readback.json`.
+Previous GitHub500 publication block is resolved as of this observation, not a
+claim that d4edb96b had published before the actual Gate C execution. Official
+V3 observed9635cefe3208ab6320ba5fa70b0e0d68fd444790, never pushed/merged here.
+
+Formal source stays3eb8b334150018212ae1f51afb5e954b83fa1186 / Child1069fe78;
+G2 Stage-1/Gate C DONE on exact three-episode final authorityb68f14b0. N100
+read-only membership/capacity intake remains pending server metadata, not Code
+or Gate C review. Production batch not started/authorized; no server execution,
+raw data transfer, new project tests, nav_sg converter, V3 promotion or training.
+This publication receipt is bookkeeping and does not replace Formal source SHA.
+
 # 2026-11-04 — G2 Stage-1 Gate C FINAL PASS consumed; N100 metadata/budget preparation only
 
 Observation 2026-11-04T20:57:07.731396+08:00: before_heade4fae0cdc5623d4a6e906eedf10f0e9530d7e092.
