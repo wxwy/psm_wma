@@ -1,0 +1,13 @@
+................................Process SpawnProcess-18:
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/work/psm-wma-streaming-m32/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/media.py", line 69, in _guarded_encoder
+    target(*args)
+  File "/workspace/work/psm-wma-streaming-m32/tools/v3/eval_v2_replan_tests/encoder_test.py", line 24, in dead_encoder
+    raise OSError(errno.ENOSPC, "injected full disk before VIDEO_SAVED")
+OSError: [Errno 28] injected full disk before VIDEO_SAVED
+.........................................................
+89 passed in 75.59s (0:01:15)

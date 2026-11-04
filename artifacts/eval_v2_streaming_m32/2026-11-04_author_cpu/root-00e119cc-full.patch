@@ -1,0 +1,2766 @@
+diff --git a/SESSION.md b/SESSION.md
+index c05a6a24..82635584 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -3146,3 +3146,26 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
+ - V3-EVALV2-PROMOTION IN_PROGRESS / canonical publication pending exact-target resolution, not completedV3 merge. SourceRoot4139ad245b73cc1c16c9d4954241cecb81478992/Child6c83596d6a259e89c4cd3e79424024983426ac3d; Root/Child clean before/after lightCPU84PASS/0fail,error,skip/1deselected/shell0, fixedsourcehashes. Static24/sourceGuard/import/CLI helpPASS. Preserveswholecanonical369+baf and approvedd18+2f objectunion; no production edits.
+ - Independent read-only source audit confirmsChild1270 objects exactunion, 13vs13pathsdisjoint; Rootonly3ledgers/Gitlink overlap. Evidence docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md includesrawsmall/commands/conflict originals/object proof. Twoexternalstatic scope-preflight assumptions failed beforeproject; correctedonlyexternalchecker, noformalcode/testassertion changes.
+ - No canonical V3/v3-local-ttt publication, DS dispatch/execution, OS/GPU/Canary/18task/900/train/realcheckpoint/data access. Willpublishisolatedrefs only forreview; needOwner resolve originalpin2f which woulddropnewbaftraining. Currentrecommendedcandidate preservesbothusingnew6c Child. OldOSMesaCanaryOWNER_ACCEPTED honored withoutrequestingraw/repeatingrun.
++
++## 2026-11-04 — Issue17 streaming M32/B32 isolated implementation claim
++
++- EVALV2-STREAMING-M32 IN_PROGRESS/Codex; fresh advertised/tracking V3 ea0828c7d45a443cc74ae2582419f14e7782a17e, Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da; Root dedicatedbranch9eae18b319f7ba5a4990dc2073cf1b19668e14cf is direct docs-only child, Child dedicatedbranch exact1069. Owner Issue17+requirementGitBloba37f8b39ac7bee3c9af63ffe1292b61ad5251ed2 read directly. No current remote files/data accessed/copied, no R04/G2 worktree mutation.
++- Minimal gap/design docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Minimal_Design.md. Claim Root config/identity/runtime/resources/cli + new stream tests/resource helper as needed; Child contract/scheduler/store/session+batch transactions/client/actionserver/worker/slot/native adapter + focused tests. Main implements, review_requirements independent read-only audit only; no parallel implementation ownership conflict.
++- Explicit new streaming protocol/sampling/resource identity, oldv1 byte/schema behavior retained. New32 caps plus actual64Slot claims/900 unique Core simulated gate, affinity fairness/no round barrier, task metadata serialization with HTTP/READY/make_env outsideglobal lock, exactly-once server and closing spawn gate, request/media fairness/none callbacks/telemetry. Real vendor/runtime/source/render proof never disabled or replaced by fake attestation; retain full perWorker verify but permit concurrent starts. No scope to change local algorithm/training or old budget policies.
++- CPU/static/deterministic synthetic gates only; no real model/GPU/Canary/900 real episodes/data/DCP/remote file transfers, no R04 restart/stop/Resume, no G2 files/promotion. Source later isolatedChild→Root finalPair then freshGPT CodeGateSTOP, DS separate. Current Owner tasks override obsolete V2/multipane waiting. Pending source, no tests run yet.
++
++### Implementation freeze preparation — Issue17
++
++- New protocol and sampling version, explicit `streaming32` transaction capacity with legacy8 default, 64 physical Slot allocation, bounded-affinity StreamingScheduler and physical attempt/grant/Core binding implemented. V2 Store metadata/metrics locks; public CLI Fresh/Resume, same-Task multiple EP, all owned startup/close accounting and cancellation; same Batch owner/Local algorithm, fair strict-media servicing, no no-op rollout frames and bounded telemetry. Full vendor/runtime/source/render verification retained. See `docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Implementation.md`.
++- Original development evidence outside worktree `/workspace/work/eval-streaming-m32-evidence`: capacity80PASS; initial concurrency11PASS/3FAIL (new test helper injected the wrong empty resource probe before any process); corrected streaming54PASS/0fail/skip in394.15s, including two64Slot/900Core runs, B32 and both modes, realOS4Sim overlap/exit23; initial RuffE731 preserved/corrected; focused augmented60PASS/2 explicitly deselected previously completed900 cases in94.88s; final cleanup lock/recovery2PASS in13.48s; Ruff/format/diff checks pass. Counts overlap and are not an aggregate or independent DS result. Exact-pair unified Gate still pending; use new `tools/v3/run_eval_v2_streaming_cpu_gate.py` with the clean frozen pair.
++- Independent `review_requirements` read-only audit required by AGENTS found and re-read closure of five risks: matching missing-EP recovery/idempotency; unpublished owned Server metering; terminal failed Server handshake; fixed cleanup task/attempt snapshot; unavailable NVML handling. No new reachableHIGH found; reviewer did not execute CPU tests. Final cleanup probe runs outside metadata lock and commits under the lock, with deterministic CPU regression.
++- Owner briefly requested allowing changed Resume M/B, then explicitly said “那就不动这个限制了”. All relaxation was withdrawn before any test/commit; `identity.py` has no diff, runtime and dry-run still compare complete execution identity. M/B/protocol/seed/resource/source/model/Task Resume checks remain strict. No R04, G2, live remote/real asset/GPU/train action, remote file copying, official V3/v3-local-ttt update, DS dispatch or approval claim.
++- Re-read advertised Root V3ea0828c7 and dedicated9eae18b3, Child official/dedicated1069fe78: unchanged. Next freeze Child implementation then Root Gitlink, run complete CPU Gate at exact clean pair, publish isolated candidates/evidence/review request, STOP pending fresh GPT/DS authority. This entry is precommit; source SHA follows after freeze.
++
++- First frozen candidate Root9869046dffa0798bf4efe40c0a5043010932e723 / Child82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e. Full author `author-formal-01`: import/Ruff/format64/AST pass; inference182PASS; PhaseA100PASS/1FAIL at unchanged runtime_progress_test. Original fault ledger gives `core_invalid: KeyError('GPU0')`, before the test's ready/finish rendezvous timed out. The legacy in-process CPU Slot fixture inherited EGL from the missing render environment, but never supplies physical EGL context proof. Only common CPU runner env now adds/records MUJOCO_GL=PYOPENGL_PLATFORM=osmesa; production rendering/config/identity and all old assertions stay unchanged. Preserve first failed Gate, recheck targeted case with exact CPU env, then freeze new Root/same Child and repeat full Gate. No canonical push/remote runtime/GPU/R04/M-B relaxation.
++- Targeted OSMesa run (`cpu-render-env.*`) exposed the remaining legacy fixture omission `KeyError('save_generated_video')`. Baselineea0828c7 runtime.py675 already reads this mandatory resolved key; CPU helper had only four fields. Minimal fixture fix merges config.DEFAULTS, explicit CPU render/no-media, then caller overrides; no assertions or production defaults changed. The two-line CPU runner render environment remains recorded. Add changed helper to static Gate; next targeted run and new Root/sameChild full replay required. Original two failed evidence sets retained.
++- Corrected original deterministic progress test `cpu-render-env-02.xml/log`:1PASS in2.87s, snapshot holds writer lock=true, bothGPU0/GPU1 real finish operations completed during progress-file I/O, validCore2, errorNone. Ruff/format all3 affected Python files PASS. Freeze this CPU-fixture-only follow-up in new Root; production scripts and Child identical to9869046d/82fa270e. Complete uniform Gate still required, no pass/DS claim yet.
++
++- Formal02 at a9f9c2d195ac89fd65cad8ab18af00c0338cb759/sameChild: static65/inference182PASS; snapshot and legacy900Core passed, then PhaseA stopped167PASS/1FAIL at legacy socket BridgeRegistry (record has no id). New owned_processes map is only consumed by streaming; `_spawn` now conditions its added registration on streaming, leaving the durable registry/start/closing gate unchanged and restoring the legacy interface. Read-only reviewer confirmed the new-mode unpublished accounting remains complete. Original Formal02 retained; cannot count it as a Gate PASS.
++- Development remainder after that guard:659PASS/2FAIL/3 explicitly excluded900 cases (`remaining.xml/log`,589.61s). Real AST function extraction helper lacked the added transaction_capacity dependency; now binds the exact production helper. Permanent-ACK-loss case lacked a saved path; original failing media stage remains INCONCLUSIVE. Transparent single diagnostic rerun2PASS showed VIDEO_SAVED1.147s then ACK deadline1.995s, not reproduction of original FAIL. Controlled2.1s encoder delay gives old2s-budget RED1FAIL before encoder queue/ACK, proving independent fixture stage coupling, not original causation. Only this CPU case server/client total budget now10s (sink was already10s); added actual ACK-attempt + prior durable file/receipt assertions; all original INCOMPLETE/path/decode/hash/cleanup assertions preserved. Same controlled delay GREEN1PASS in10.34s; full raw plugin/JSONL/JUnit/log preserved outside worktree.
++- Final affected paths8PASS in26.52s (`final-corrections.xml/log`), Ruff/format PASS: legacy socket14Core, real options/spool, permanentACKloss, old/new strict-media fairness, startup ownership races. Child unchanged82fa270e; production media/timeout/identity/M-B checks untouched; final Root production delta aftera9f9 is only the new-mode condition on owned-map accounting. Peer review approved the narrow compatibility and CPU fixture corrections; full exact-pair unified Gate must now run on new Root, with no omitted900 cases. No official branch/GPU/remote/R04/G2 action.
+diff --git a/TODO.md b/TODO.md
+index a569768c..9ddb864f 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -534,3 +534,5 @@
+ - **EVALV2-RENDER-MAP** — REVIEW (Formal46d3a604/d3b2a29b; author192 PASS; GPT pending); Codex; isolated branch v3-eval-v2-render-media-20261101, base7e2be5ca/86642677. Independent GPU roles/PCI+actual Context proof/OSMesa/admission guards and Manifest binding implemented. Combined development192 PASS/0failure/error/skip, Ruff0.12.7/format/AST PASS. Clean Formal Pair and author evidence frozen; candidate GPT request prepared. Prior118 development evidence preserved; no canonical merge or true GPU/simulation/FFmpeg/live-job action.
+ - **EVALV2-MEDIA-LIFECYCLE** — REVIEW (GPT APPROVE_CODE6484dd83/9a8cd618; RM-M01 CLOSED; hardware pending); Codex; prior29 author evidence/GPT verdict/DS reported mixed-interpreter CPU acknowledgment preserved. No new Media change; independent Owner resource-policy delta below. No out2/NoTTT/shared runtime edits or restart.
+ - **EVALV2-OWNER-GPU-RESOURCE-POLICY** — REVIEW (Formal4b581493/9a8cd618, author70 PASS, GPT pending); Codex; Owner explicitly retires foreign CUDA and GPU memory/reserve admission. Only resources.py and focused tests; retain selected device existence/UUID/PCI/Context and owned-process safety. New Root/same Child9a8cd618, narrow CPU/review required; no GPU task enumeration/management, GPU0-3, canonical merge or runtime launch.
++
++- **EVALV2-STREAMING-M32** — IN_PROGRESS (implementation/development CPU complete; exact-pair unified CPU pending); Codex; Owner Issue17, baselineRoot9eae18b3/Child1069fe78 dedicatedbranch. Versioned streaming/64Sim/900logicalCPU/32caps, parallelstartup, owned-resource safety, bounded asyncPolicy/media and telemetry implemented; oldv1/Local/strictM/B Resume preserved. Author development54PASS + augmentedfocused60PASS + final2PASS are overlapping evidence, not DS acceptance. Freeze exactPair→fullCPU/static→GPTfreshreview→DS; noR04/G2/GPU/promotion/remote file transfer.
+diff --git a/cosmos-framework b/cosmos-framework
+index 1069fe78..82fa270e 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 1069fe78841228cadbbfbe6afbd767eaed6225da
++Subproject commit 82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e
+diff --git a/docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Implementation.md b/docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Implementation.md
+new file mode 100644
+index 00000000..c90e0ac1
+--- /dev/null
++++ b/docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Implementation.md
+@@ -0,0 +1,62 @@
++# Issue17 — EvalV2 streaming implementation and CPU replay
++
++Baseline: Root ea0828c7d45a443cc74ae2582419f14e7782a17e; Child 1069fe78841228cadbbfbe6afbd767eaed6225da. Candidate only: `v3-evalv2-streaming-m32-b32-20261104` in both repositories. No V3 promotion, R04 operation, remote file transfer, hardware run or real dataset/checkpoint access is authorized by this document.
++
++## Explicit new Run
++
++Use `execution_profile: phase_b`, `scheduling_protocol: streaming_task_affinity_v2`, `sims_per_gpu: 32`, and independently `max_infer_batch_size: 8` or `16`. B32 is a supported API ceiling, not a hardware recommendation. `local_memory_mode: off|required` remains explicit and must match the model. Two Policy GPUs produce 64 distinct physical Slot identities even with only 18 Task names; a Run with fewer eligible Episodes creates only useful Sim processes. Dry-run distinguishes physical capacity from executable capacity and does not claim processes were started.
++
++The old default protocol keeps M/B<=8, Task-count useful Slots, original sampling literal, strict Episode-major round barrier, and unchanged old Manifest construction. Phase A stays M=B=1. No historical Run silently switches to streaming. New schedule, sampling, M/B, GPU layout, `max_rss_bytes`, and startup budgets are bound into the immutable Manifest. Scene order across old and new protocols is not an exact matched-scene comparison.
++
++New Runs must supply all six integer `streaming_resources` fields:
++
++| Field | Meaning |
++| --- | --- |
++| `max_owned_gpu_bytes` | Hard per-selected-GPU memory ceiling for owned compute and graphics PIDs |
++| `sim_startup_rss_bytes` | Additional RSS reserved while constructing/resetting a Slot environment |
++| `sim_startup_gpu_bytes` | Additional memory reserved on its physical Render GPU (zero allowed for CPU rendering) |
++| `server_startup_rss_bytes` | Additional Policy Server startup RSS reservation |
++| `server_startup_gpu_bytes` | Additional memory reserved on its physical Policy GPU |
++| `initialization_concurrency` | Explicit 1..32 bound on concurrent Slot construction/Task switches |
++
++Select reservations and `max_rss_bytes` from deployment measurements and Owner budgets. The implementation never raises them automatically. Admission combines real owned-process measurements with outstanding startup reservations, then measures again before transferring startup ownership. Unknown meters or exceeded budgets produce `BLOCKED_RESOURCE` and owned cleanup. Foreign GPU occupancy is not a rejection rule. NVML must provide both compute and graphics process measurements; PID/device visibility must be independently verified during the later hardware Gate. RSS uses one `/proc` scan for all owned process groups. CPU fixtures explicitly replace these hardware measurements.
++
++## Ownership and progress
++
++`StreamingScheduler` reuses the current coordinator lease, dispatch tickets, Core validation, finish and cancellation authority. It allocates the earliest pending Episode for a Task, permits multiple different Episodes of the same Task, and never permits duplicate `(task, episode)` or busy physical workers. Task affinity lasts at most four consecutive dispatches before fair selection by dispatched count/rotation. A slow physical Slot does not hold an Episode round barrier.
++
++V2 attempts bind the physical Slot UUID. Environment grants are durable and serially numbered under a Store metadata RLock; actual environment seed/reset provenance remains distinct from the logical Task stream/reset count. Attempt/grant/SimSlot/admitted sampling/Core identities must agree. Short ledger transactions are locked; GPU calls, HTTP, READY, vendor hashing, environment construction and cleanup probes are outside that metadata lock. Task-stream faults remain fail-closed, and cleanup receipts are issued only after all invocation ownership has quiesced. Completed Core is immutable; pending/Owner-pending Resume rules remain in force. Multiple old failed Episodes resolve only through their own replacement Core; concurrent identical health-only resolution is safe and idempotent.
++
++Per-GPU locks cover the complete Server handshake and publication. Invalid identity or startup failure stops the invocation, never automatically spawns a replacement. Every durable spawn is counted in owned resource measurements even before READY. Per-worker locks protect individual physical Slots, with bounded parallel initialization instead of the global startup lock. The closing gate prevents new spawns, reaps unpublished owned processes, waits for in-progress jobs, then publishes cleanup proof. Registration retries observe coordinator cancellation. Full per-worker source/vendor/asset/runtime/render verification remains enabled in production; CPU doubles are selectable only from test code, not the CLI.
++
++The same existing Batch owner serves 32 Sessions per Policy GPU. Explicit `streaming32` capacity is checked in Server startup options, `/info`, registration/assignment ACK and Client; default `legacy8` retains prior limits. Queue, response cache, ACK/frontier, Local update publication, End/reset and strict media durability stay shared across both model modes. Strict media and Ready inference alternate when both have work, preventing an unbounded run of decodes. With rollout disabled, NativeEpisode passes `on_frame=None`; Policy observation and required Local evidence composition are retained.
++
++Bounded telemetry includes owned Slot count, initialization/ready/execution/predicting states, completed Episodes/requests, queue wait p50/p95, recent native generation time and Batch histogram. Worker startup markers split imports/render/vendor/READY; coordinator timers split Server start, make_env assignment, reset and Session register. These diagnostics do not authorize scheduling or certify GPU performance.
++
++## CPU replay and handoff
++
++After freezing the complete Root/Child pair, use the existing read-only Gate engine through:
++
++```bash
++CUDA_VISIBLE_DEVICES='' LD_LIBRARY_PATH='' /workspace/.venvs/psm-wma-cpu/bin/python \
++  tools/v3/run_eval_v2_streaming_cpu_gate.py \
++  --root-worktree /workspace/work/psm-wma-streaming-m32 \
++  --expected-root FULL_ROOT_SHA --expected-child FULL_CHILD_SHA \
++  --evidence-dir NEW_DIRECTORY_OUTSIDE_WORKTREE
++```
++
++The entry point checks clean exact identities, pinned Ruff0.12.7, import origin, Ruff/format/AST, full existing Phase A/B and strict-media suites, and new streaming tests. It saves raw JUnit/logs/environment/commands/source SHA256 and requires shell0, `gate.status=PASS`, zero failure/error/skip, and `source_unchanged=true`. It uses no CUDA or real RoboCasa/model assets. New tests prove two 18×50 runs with 64 distinct actual SimSlot objects and 900 unique public Core results at B8/B16; public Client→dispatcher→native CPU H16/B32 shapes/routing and real CPU Local fast-state isolation; real OS four-Sim overlap at READY/make_env in both modes; Server exit23 with two same-Task Slots, all owned cleanup and external process isolation; public CLI Fresh/Resume; deterministic concurrent fault recovery, startup cancellation, metadata and media fairness. Physics, process/device and diffusion boundaries in the 64-Slot fixture are explicit doubles; separate four-Sim tests use real OS processes.
++
++The common CPU runner also freezes `MUJOCO_GL=osmesa` and `PYOPENGL_PLATFORM=osmesa` in its recorded environment overrides. The first formal replay at Root9869046d/Child82fa270e passed182 inference cases, then stopped at100PASS/1FAIL in Phase A: the legacy CPU Slot fixture inherited the default EGL path without a physical render proof (`core_invalid: KeyError('GPU0')`, followed by its rendezvous timeout). This was a CPU invocation environment omission; production rendering/proof checks and legacy assertions are unchanged. Original `author-formal-01` artifacts remain outside source and must accompany the final evidence.
++
++The targeted OSMesa rerun then exposed the same old fixture's incomplete resolved configuration (`KeyError('save_generated_video')`); the baseline production runtime already required that field. `CpuSlotRuntime` now merges the shared `DEFAULTS` and explicitly selects OSMesa/no-media before applying caller values. Only the test fixture and CPU-runner environment change; old assertions and production defaults stay intact. The targeted failure is retained as `cpu-render-env.*`.
++
++After this fixture correction the unchanged controlled progress test passed1/1 in2.87s: snapshot held the writer lock and both physical workers finished during file I/O, yielding2 valid Core. `cpu-render-env-02.xml/log` preserves this narrow proof; the new Root must still pass the complete unified Gate.
++
++Formal02(a9f9c2d1/82fa270e) retained as FAIL: inference182PASS; PhaseA167PASS/1FAIL after the old900 completed. The legacy socket registry double has no record ID; new owned-map accounting is only needed in streaming, so `_spawn` now adds that map entry only in streaming. Durable spawn and closing gates are unchanged, and new-mode unpublished processes remain measured. A development remainder then gave659PASS/2FAIL/3 excluded900 cases. The AST extraction fixture now injects the exact added `transaction_capacity` dependency. The permanent-ACK-loss failure's internal stage remains INCONCLUSIVE: a transparent diagnostic2PASS did not reproduce it. Its2s total window included a real1.147s Encoder start; a controlled2.1s delay deterministically reproduced pre-ACK failure with the old fixture. Only this CPU case now uses10s for server/client (matching its preexisting sink budget), and additionally requires actual ACK attempts after durable file/receipt publication. Existing INCOMPLETE, path, decode/hash and cleanup assertions stay intact. Same controlled delay gives1PASS in10.34s, and final affected paths8PASS in26.52s. These are development evidence; the final exact pair still requires all five complete test groups, including all900 cases.
++
++Development evidence is retained outside the source tree at `/workspace/work/eval-streaming-m32-evidence`: capacity80 PASS; initial concurrency11 PASS/3 FAIL due to an incorrectly wired test-only resource probe; corrected initial streaming54 PASS (394.15s); an initial Ruff E731 and its correction; augmented focused60 PASS/2 explicitly deselected completed 900 cases (94.88s). These overlapping development counts must not be added together or represented as final exact-pair/DS evidence. Final pair, counts and evidence location belong in the later handoff receipt.
++
++Independent read-only source review found five actionable concurrency/resource risks, all corrected and re-read: same-Task multi-EP recovery scope/idempotency, unpublished Server accounting, terminal Server startup failure, cleanup fault attempt snapshot, and NVML unavailable-meter handling. No new reachable HIGH was found in that read-only review; it is not a substitute for GPT Code Gate or independent DS execution.
++
++Next authority sequence: exact pair + author CPU evidence → fresh GPT review → DS independent CPU/authorized hardware Gate. Both G2 and EvalV2 require their own approvals; integration later uses the latest V3 without overwriting either history or Gitlink. No candidate is automatically promoted.
+diff --git a/docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Minimal_Design.md b/docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Minimal_Design.md
+new file mode 100644
+index 00000000..a7962e7c
+--- /dev/null
++++ b/docs/collab/codex/designs/2026-11-04_EvalV2_Streaming_M32_Minimal_Design.md
+@@ -0,0 +1,12 @@
++# Issue17：gap 与最小实施设计
++
++基线：Root9eae18b3（ea0828c7 V3加Owner需求）、Child1069fe78；隔离双仓分支v3-evalv2-streaming-m32-b32-20261104。仅实现/CPU/静态/候选交接，不接触R04、真实GPU/数据/模型/Checkpoint，不修改G2、不promote V3。旧科学结果不变。
++
++1. **版本**：新增显式`scheduling_protocol: streaming_task_affinity_v2`，仅phase_b；默认仍旧`episode_major_frozen_order_round_barrier_v1`。新execution附加protocol/有界启动和资源策略身份，Manifest明确独立physical Slot环境采样；旧Manifest构建不增字段、不换字面量。旧v1的M/B<=8及phase_a1/1保留，新模式M/B各1..32，Client/Server/Owner扩容32，禁止clamp。M32真实生成每GPU32个独立Slot ID，64Slot仅在足够剩余Episode时全部占用；preview分别报告capacity与可执行工作数，不把配置冒充active进程。
++2. **调度/Store**：复用RoundScheduler的lease/ticket/commit/finish/cancel权威，新增小的StreamingScheduler策略。每Task待办队列，idle Worker立即领取最小待办EP；可连续复用Task但最多4次后按最少已派发/轮转服务其它Task，禁止饥饿。允许同Task多个EP，禁止同(task,ep)和同physical Slot重复持有。新attempt额外冻结physical_slot_id，grant/sampling/Slot校验一致；逻辑Task stream worker和logical reset index仍不是physical环境本地reset。仅新模式放宽begin_episode的“较早EP已终结”规则；Store短元数据RLock保护分配/event/claim/fault/commit。Task-stream fault保持fail-closed，cleanup仅全部owned进程/Session关闭后执行，绝不当单EP release使用。旧Core不重跑，未完成/Owner-pending沿原Resume授权。
++3. **启动/关闭**：每GPU Server锁覆盖完整创建/身份握手后才发布，exactly-once；每Worker RLock保护物理Slot，Worker初始化/make_env/HTTP在全局锁外。共享maps只取短state-lock快照；所有spawn经过关闭门，启动ownership计数在最终cleanup前收束，防晚到PID。故障关联按Worker/claim而非Task latest。vendor逐资产SHA、source和EGL Context核验全部保留，不引入缓存伪证；分阶段marker区分imports/vendor/render/READY/make_env/reset/register。Store timing独立锁取快照、排序锁外。
++4. **资源**：新Run显式`streaming_resources`绑定owned GPU上限、Server/Sim启动RSS/VRAM reservation及初始化并发度；现有max_rss_bytes仍硬限制。NVML仅累加核实owned PID的compute/graphics VRAM，未知测量fail-closed，foreign occupancy不设门。启动预算短锁reservation，测量/启动/HTTP锁外；运行检查按monotonic周期，不依round。旧v1已退休GPU预算继续无效。
++5. **流水/媒体/观测**：复用现有bounded BatchedSessionTransactions单Owner，M32和B8/16/32独立；有限wait、partial batch、one outstanding、response cache/ACK/TTT原子性不变。strict媒体decode与有Ready的推理有界交替，保持all ACK/落盘/End、first诊断；none+无rollout时传on_frame=None，不做逐step no-op compose。少量bounded telemetry：初始化/ready/执行/等待/空闲、queue wait分位、generate wall time、完成请求/EP和batch histogram。
++6. **交付**：依次提交cap+identity→并发startup→streaming/Store→microbatch/media→telemetry（可相邻组合）。新增真实Runtime/Store/Client→Server native CPU边界：18Task×50、64Slot/Session、B8/B16跑900唯一终结；B32形状/路由；慢Slot不阻快Slot、公平/同Task重叠；并发READY/makeenv/server exactly-once/late spawn cleanup；Local状态、Resume/Owner-pending、none/first/all回归。旧断言保留；原始失败、JUnit/log/全diff/source指纹与精确Pair归档。独立作者审查、GPT Code Gate，再DS独立验收；不自行合并V3或运行硬件。G2获各自批准后才按当时最新V3整合。
++
++涉及Root：config/identity/runtime/resources/cli；Child：contract/scheduler/store、transaction client/session/batch、action server、Worker/SimSlot/native adapter；新增专门CPU测试和资源小模块（仅如有必要）。不改Local算法、model.generate数学、训练、vendor verifier、render_devices或原Media durability协议。
+diff --git a/scripts/robocasa_eval_v2/cli.py b/scripts/robocasa_eval_v2/cli.py
+index c1b16b0b..ba57a61a 100644
+--- a/scripts/robocasa_eval_v2/cli.py
++++ b/scripts/robocasa_eval_v2/cli.py
+@@ -61,6 +61,13 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
+                     "resolved": cfg,
+                     "task_order": [t for t, _ in tasks],
+                     "physical_slots": physical_slots(cfg, len(tasks)),
++                    "physical_slot_capacity": len(physical_slots(cfg, len(tasks))),
++                    "executable_slot_capacity": min(
++                        len(physical_slots(cfg, len(tasks))),
++                        sum(d["action"] == "execute_missing" for d in dispositions)
++                        if dispositions
++                        else len(tasks) * cfg["episodes_per_task"],
++                    ),
+                     "render_slots": render_slots(cfg, len(tasks)),
+                     "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
+                     "slots": [
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index 6786c060..5954a818 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -7,10 +7,18 @@ import math
+ import os
+ from pathlib import Path
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    ROUND_SCHEDULE,
++    STREAMING_SCHEDULE,
++    validate_streaming_resources,
++)
++
+ DEFAULTS = {
+     "schema": "psm_robocasa_eval_v2",
+     "execution_profile": "phase_a",
+     "local_memory_mode": "required",
++    "scheduling_protocol": ROUND_SCHEDULE,
++    "streaming_resources": None,
+     "batch_wait_ms": 20,
+     "tasks": "all",
+     "episodes_per_task": 50,
+@@ -63,6 +71,9 @@ def resolve(argv=None):
+     p.add_argument("--render-backend", choices=("egl", "osmesa"))
+     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
+     p.add_argument("--local-memory-mode", choices=("off", "required"))
++    p.add_argument(
++        "--scheduling-protocol", choices=(ROUND_SCHEDULE, STREAMING_SCHEDULE)
++    )
+     p.add_argument("--batch-wait-ms", type=int)
+     p.add_argument("--sims-per-gpu", type=int)
+     p.add_argument("--max-infer-batch-size", type=int)
+@@ -98,6 +109,7 @@ def resolve(argv=None):
+         "execution_profile",
+         "batch_wait_ms",
+         "local_memory_mode",
++        "scheduling_protocol",
+         "media_spool_max_jobs",
+         "media_spool_max_bytes",
+         "media_drain_timeout_s",
+@@ -155,6 +167,23 @@ def resolve(argv=None):
+         raise ValueError("plan/port range")
+     if cfg["execution_profile"] not in ("phase_a", "phase_b"):
+         raise ValueError("explicit execution profile required")
++    if cfg["scheduling_protocol"] not in (ROUND_SCHEDULE, STREAMING_SCHEDULE):
++        raise ValueError("explicit versioned scheduling protocol required")
++    is_streaming = cfg["scheduling_protocol"] == STREAMING_SCHEDULE
++    if is_streaming:
++        if cfg["execution_profile"] != "phase_b":
++            raise ValueError("streaming scheduling requires Phase B")
++        validate_streaming_resources(cfg["streaming_resources"])
++        if (
++            max(
++                cfg["streaming_resources"][k]
++                for k in ("sim_startup_rss_bytes", "server_startup_rss_bytes")
++            )
++            > cfg["max_rss_bytes"]
++        ):
++            raise ValueError("startup RSS reservation exceeds owned RSS budget")
++    elif cfg["streaming_resources"] is not None:
++        raise ValueError("streaming resources require a new streaming Run")
+     if cfg["local_memory_mode"] not in ("off", "required"):
+         raise ValueError("explicit off|required Local-TTT mode required")
+     if cfg["local_memory_mode"] == "off" and cfg["execution_profile"] != "phase_b":
+@@ -162,8 +191,8 @@ def resolve(argv=None):
+             "No-TTT requires the shared transactional phase_b profile (B1 or B2+)"
+         )
+     if (
+-        cfg["sims_per_gpu"] > 8
+-        or cfg["max_infer_batch_size"] > 8
++        cfg["sims_per_gpu"] > (32 if is_streaming else 8)
++        or cfg["max_infer_batch_size"] > (32 if is_streaming else 8)
+         or type(cfg["batch_wait_ms"]) is not int
+         or not 1 <= cfg["batch_wait_ms"] <= 1000
+     ):
+@@ -244,7 +273,7 @@ def resolve(argv=None):
+ def execution(cfg):
+     if cfg.get("execution_profile", "phase_a") == "phase_a":
+         return None
+-    return {
++    result = {
+         "profile": "phase_b_native_batch_v1",
+         "gpu_ids": list(cfg["gpu_ids"]),
+         "sims_per_gpu": cfg["sims_per_gpu"],
+@@ -252,6 +281,13 @@ def execution(cfg):
+         "batch_wait_ms": cfg["batch_wait_ms"],
+         "noise": "literal_cfg_seed_per_sample_v1",
+     }
++    if cfg.get("scheduling_protocol", ROUND_SCHEDULE) == STREAMING_SCHEDULE:
++        result.update(
++            scheduling=STREAMING_SCHEDULE,
++            resources=cfg["streaming_resources"],
++            max_rss_bytes=cfg["max_rss_bytes"],
++        )
++    return result
+ 
+ 
+ def rendering(cfg):
+diff --git a/scripts/robocasa_eval_v2/resources.py b/scripts/robocasa_eval_v2/resources.py
+index 704358fd..3f86c9fd 100644
+--- a/scripts/robocasa_eval_v2/resources.py
++++ b/scripts/robocasa_eval_v2/resources.py
+@@ -6,6 +6,7 @@ import subprocess
+ from pathlib import Path
+ 
+ from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
++from cosmos_framework.evaluation.robocasa_v2.contract import STREAMING_SCHEDULE
+ from robocasa_processes import group_members
+ 
+ from robocasa_eval_v2.config import rendering
+@@ -31,8 +32,11 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+             raise RuntimeError("BLOCKED_RESOURCE: invalid selected GPU identity")
+         devices[index] = uid
+     allowed = set()
+-    for p in processes:
+-        allowed.update(group_members(p.pgid))
++    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE:
++        allowed = owned_group_pids(processes)
++    else:
++        for p in processes:
++            allowed.update(group_members(p.pgid))
+     if any(g not in devices for g in selected_ids):
+         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
+     rss = 0
+@@ -45,11 +49,69 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
+             pass
+     if rss > cfg["max_rss_bytes"]:
+         raise RuntimeError("BLOCKED_RESOURCE: owned process RSS budget")
+-    return {
++    result = {
+         "gpus": devices,
+         "owned_pids": sorted(allowed),
+         "rss_bytes": rss,
+     }
++    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE:
++        result["owned_gpu_bytes"] = owned_gpu_memory(selected_ids, allowed)
++        if any(
++            v > cfg["streaming_resources"]["max_owned_gpu_bytes"]
++            for v in result["owned_gpu_bytes"].values()
++        ):
++            raise RuntimeError("BLOCKED_RESOURCE: owned GPU memory budget")
++    return result
++
++
++def owned_group_pids(processes, *, proc=Path("/proc")):
++    """One /proc scan for all owned groups, rather than one scan per Sim."""
++    groups = {p.pgid for p in processes}
++    result = set()
++    for entry in proc.iterdir() if groups else ():
++        if not entry.name.isdigit():
++            continue
++        try:
++            fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
++            if int(fields[2]) in groups:
++                result.add(int(entry.name))
++        except (FileNotFoundError, ProcessLookupError):
++            continue
++    return result
++
++
++def owned_gpu_memory(selected_ids, allowed, *, nvml=None):
++    """Only our compute/graphics PIDs; unknown measurements fail closed."""
++    result = {}
++    initialized = False
++    try:
++        if nvml is None:
++            import pynvml as nvml
++        nvml.nvmlInit()
++        initialized = True
++        for gpu in selected_ids:
++            handle = nvml.nvmlDeviceGetHandleByIndex(gpu)
++            values = {}
++            for query in (
++                nvml.nvmlDeviceGetComputeRunningProcesses,
++                nvml.nvmlDeviceGetGraphicsRunningProcesses,
++            ):
++                for process in query(handle):
++                    if process.pid not in allowed:
++                        continue
++                    size = process.usedGpuMemory
++                    if type(size) is not int or not 0 <= size < 2**63:
++                        raise ValueError("unavailable owned PID GPU memory")
++                    values[process.pid] = max(values.get(process.pid, 0), size)
++            result[gpu] = sum(values.values())
++    except Exception as error:
++        raise RuntimeError(
++            "BLOCKED_RESOURCE: owned GPU memory measurement unavailable"
++        ) from error
++    finally:
++        if initialized:
++            nvml.nvmlShutdown()
++    return result
+ 
+ 
+ def physical_slots(cfg, task_count):
+@@ -59,7 +121,11 @@ def physical_slots(cfg, task_count):
+     pairs = [
+         (f"GPU{g}_S{s}", g) for s in range(cfg["sims_per_gpu"]) for g in cfg["gpu_ids"]
+     ]
+-    return dict(pairs[:task_count])
++    return dict(
++        pairs
++        if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE
++        else pairs[:task_count]
++    )
+ 
+ 
+ def render_slots(cfg, task_count):
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index f5edb0d7..a0fac847 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import hashlib
++import contextlib
+ import json
+ import os
+ import secrets
+@@ -14,9 +15,10 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+ from pathlib import Path
+ from types import SimpleNamespace
+ 
+-from cosmos_framework.evaluation.robocasa_v2.contract import result_record
++from cosmos_framework.evaluation.robocasa_v2.contract import result_record, streaming
+ from cosmos_framework.evaluation.robocasa_v2.scheduler import (
+     RoundScheduler,
++    StreamingScheduler,
+     slot_disposition,
+ )
+ from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
+@@ -33,6 +35,7 @@ from robocasa_processes import group_members
+ 
+ from robocasa_eval_v2 import identity, resources
+ from robocasa_eval_v2.config import execution, rendering
++from robocasa_eval_v2.startup import StartupBudget
+ 
+ 
+ class Runtime:
+@@ -116,6 +119,59 @@ class Runtime:
+         self.latest_attempts = {}
+         self.phases = {}
+         self.closed = False
++        self.streaming = streaming(store.manifest)
++        self.capacity_profile = "streaming32" if self.streaming else "legacy8"
++        self.state_lock = threading.RLock()
++        self.owned_processes = {}
++        self.starting = threading.Condition()
++        self._closing = False
++        self._active_jobs = 0
++        self.episodes_finished = 0
++        self.worker_locks = {w: threading.RLock() for w in self.workers}
++        self.server_locks = {
++            g: threading.Lock() for g in set(self.worker_gpus.values())
++        }
++        self.startup_budget = (
++            StartupBudget(cfg, self._measure) if self.streaming else None
++        )
++
++    def _snapshot(self, name):
++        with self.state_lock:
++            return dict(getattr(self, name))
++
++    def _processes(self):
++        if self.streaming:
++            return list(self._snapshot("owned_processes").values())
++        return [v[0] for v in self._snapshot("servers").values()] + [
++            a.owned for a in self._snapshot("actors").values()
++        ]
++
++    def _measure(self):
++        return self.resource_probe(self.cfg, self._processes())
++
++    def _spawn(self, *args, **kwargs):
++        # Popen + durable ownership record only; no READY/HTTP/vendor work.
++        with self.starting:
++            if self._closing or self.stop.is_set():
++                raise RuntimeError("cancelled before process creation")
++            owned, record = self.registry.start(*args, **kwargs)
++            if self.streaming:
++                with self.state_lock:
++                    self.owned_processes[record["id"]] = owned
++            return owned, record
++
++    @contextlib.contextmanager
++    def _job(self):
++        with self.starting:
++            if self._closing or self.stop.is_set():
++                raise RuntimeError("cancelled before Slot ownership")
++            self._active_jobs += 1
++        try:
++            yield
++        finally:
++            with self.starting:
++                self._active_jobs -= 1
++                self.starting.notify_all()
+ 
+     def _proof(self, kind, data):
+         name = f"{kind}_{uuid.uuid4().hex}.json"
+@@ -188,6 +244,22 @@ class Runtime:
+                         break
+ 
+     def _server(self, worker):
++        if not self.streaming:
++            return self._create_server(worker)
++        gpu = self.worker_gpus[worker]
++        with self.server_locks[gpu]:
++            if f"GPU{gpu}" in self.servers:
++                return self.servers[f"GPU{gpu}"]
++            if self.stop.is_set():
++                raise RuntimeError("cancelled Policy Server startup")
++            try:
++                with self.startup_budget.reserve(f"server:{gpu}", "server", gpu):
++                    return self._create_server(worker)
++            except BaseException:
++                self.stop.set()  # Invalid READY/INFO/proof is terminal, never a retry.
++                raise
++
++    def _create_server(self, worker):
+         gpu = self.worker_gpus[worker]
+         key = f"GPU{gpu}" if self.batch_profile else worker
+         if key in self.servers:
+@@ -197,7 +269,8 @@ class Runtime:
+         port = self.cfg["base_port"] + index
+         env = dict(self.environment, CUDA_VISIBLE_DEVICES=str(gpu))
+         log = (self.store.root / "logs" / f"{key}_server.log").open("ab")
+-        self.logs.append(log)
++        with self.state_lock:
++            self.logs.append(log)
+         args = SimpleNamespace(
+             server_python=self.cfg["server_python"],
+             num_steps=self.cfg["prediction_steps"],
+@@ -250,7 +323,10 @@ class Runtime:
+                 "--media-drain-timeout-s",
+                 str(self.cfg.get("media_drain_timeout_s", 300.0)),
+             ]
+-        owned, rec = self.registry.start(
++            if self.streaming:
++                command += ["--transaction-capacity-profile", self.capacity_profile]
++        started = time.perf_counter()
++        owned, rec = self._spawn(
+             command,
+             kind="server",
+             env=env,
+@@ -258,7 +334,6 @@ class Runtime:
+             stdout=log,
+             stderr=log,
+         )
+-        self.servers[key] = (owned, rec, port)
+         try:
+             info = wait_server(
+                 owned.proc,
+@@ -303,13 +378,44 @@ class Runtime:
+                 raise ValueError(
+                     "effective Server media spool/drain configuration mismatch"
+                 )
++            if self.streaming and tx.get("capacity_profile") != self.capacity_profile:
++                raise ValueError("effective Server capacity profile mismatch")
+         self._proof("server_identity", {"process": rec, "info": info})
++        self.store.record_timing("server_startup", time.perf_counter() - started)
++        with self.starting:
++            if self._closing or self.stop.is_set():
++                raise RuntimeError("Server startup completed after cancellation")
++            with self.state_lock:
++                self.servers[key] = (owned, rec, port)
+         return self.servers[key]
+ 
+     def _actor(self, claim):
++        if not self.streaming:
++            return self._setup_actor(claim)
++        worker = claim["physical_worker"]
++        with self._job(), self.worker_locks[worker]:
++            while not self.startup_budget.initializers.acquire(timeout=0.05):
++                if self.stop.is_set():
++                    raise RuntimeError("cancelled during initialization admission")
++            try:
++                # A Server is shared and admitted separately, before a Sim reservation.
++                self._server(worker)
++                admission = (
++                    self.startup_budget.reserve(
++                        worker, "sim", self.worker_render_gpus[worker]
++                    )
++                    if self.actor_tasks.get(worker) != claim["task"]
++                    else contextlib.nullcontext()
++                )
++                with admission:
++                    return self._setup_actor(claim)
++            finally:
++                self.startup_budget.initializers.release()
++
++    def _setup_actor(self, claim):
+         task = claim["task"]
+         worker = claim["physical_worker"]
+-        with self.setup_lock:
++        with self.worker_locks[worker] if self.streaming else self.setup_lock:
+             if self.stop.is_set():
+                 raise RuntimeError("cancelled before runtime startup")
+             server, server_rec, port = self._server(claim["physical_worker"])
+@@ -371,6 +477,8 @@ class Runtime:
+                     "local_memory_mode": self.store.manifest["protocol"][
+                         "local_memory"
+                     ],
++                    "capacity_profile": self.capacity_profile,
++                    "sampling_protocol": self.store.manifest["protocol"]["sampling"],
+                     "predict_timeout_s": self.cfg["request_timeout_s"],
+                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
+                     "rollout_mp4_first_n_per_task": self.cfg.get(
+@@ -413,7 +521,8 @@ class Runtime:
+                 "MUJOCO_EGL_DEVICE_ID", None
+             )  # Worker resolves the physical PCI -> EGL index before imports.
+             log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
+-            self.logs.append(log)
++            with self.state_lock:
++                self.logs.append(log)
+             command = [
+                 self.cfg["sim_python"],
+                 "-B",
+@@ -427,7 +536,7 @@ class Runtime:
+                 str(child.fileno()),
+             ]
+             try:
+-                owned, rec = self.registry.start(
++                owned, rec = self._spawn(
+                     command,
+                     kind=f"simulator_slot:{self.slot_ids[worker]}",
+                     env=env,
+@@ -456,8 +565,16 @@ class Runtime:
+                     else 0
+                 ),
+             )
+-            self.actors[worker] = actor
++            with self.state_lock:
++                self.actors[worker] = actor
++            started = time.perf_counter()
+             ready = actor._receive()
++            self.store.record_timing("worker_ready", time.perf_counter() - started)
++            if self.streaming:
++                self._proof(
++                    "worker_startup_timing",
++                    {"worker": worker, "stages": ready.get("startup_timing_ms", {})},
++                )
+             if (
+                 ready.get("kind") != "READY"
+                 or ready.get("pid") != owned.proc.pid
+@@ -472,11 +589,7 @@ class Runtime:
+                 ready.get("rendering"), render_plan
+             )
+             self._proof("render_device", self.actor_rendering[worker])
+-            self.resource_probe(
+-                self.cfg,
+-                [v[0] for v in self.servers.values()]
+-                + [x.owned for x in self.actors.values()],
+-            )
++            self._measure()
+             return self._start_assignment(claim, actor, server_rec)
+ 
+     def _start_assignment(self, claim, actor, server_record):
+@@ -485,9 +598,11 @@ class Runtime:
+         grant = None
+         if self.actor_tasks.get(worker) != task:
+             grant = self.store.allocate_environment(task, self.slot_ids[worker])
++        started = time.perf_counter()
+         ready = actor.request(
+             "start_episode", attempt=a, grant=grant, health_only="attempt_id" not in a
+         )
++        self.store.record_timing("make_env_assignment", time.perf_counter() - started)
+         if (
+             ready.get("task") != task
+             or ready.get("physical_slot_id") != self.slot_ids[worker]
+@@ -513,11 +628,7 @@ class Runtime:
+                 "server": server_record,
+             },
+         )
+-        self.resource_probe(
+-            self.cfg,
+-            [v[0] for v in self.servers.values()]
+-            + [x.owned for x in self.actors.values()],
+-        )
++        self._measure()
+         for error in self.store.errors(task):
+             if error["resolution"] is None and error["stream_id"] != a["stream_id"]:
+                 self.certificates[error["id"]] = self.store.certify_recovery(
+@@ -525,6 +636,7 @@ class Runtime:
+                     error["stream_id"],
+                     lambda _, p=proof: {"probe_id": p, "healthy": True},
+                 )
++        self.phases[worker] = "ready"
+         return actor
+ 
+     def _register_assignment(self, claim, deadline):
+@@ -538,6 +650,7 @@ class Runtime:
+         _, _, port = self.servers[key]
+         self.slot_generations[worker] += 1
+         a = claim["attempt"]
++        started = time.perf_counter()
+         with requests.Session() as transport:
+             transport.trust_env = False
+             client = TransactionPolicyClient(
+@@ -550,6 +663,8 @@ class Runtime:
+                 batch_profile=True,
+                 max_batch_size=self.cfg["max_infer_batch_size"],
+                 local_memory_mode=self.store.manifest["protocol"]["local_memory"],
++                capacity_profile=self.capacity_profile,
++                cancelled=self.stop.is_set,
+             )
+             lease = client.register(
+                 {
+@@ -563,17 +678,28 @@ class Runtime:
+                 },
+                 self.server_owners[key],
+             )
++            self.store.record_timing("session_register", time.perf_counter() - started)
+             return {
+                 "lease": lease,
+                 "prediction_clock_domain": client.clock_domain,
+                 "local_memory_mode": client.mode,
+                 "profile": client.protocol,
++                "capacity_profile": self.capacity_profile,
+             }
+ 
+     def run_slot(self, scheduler, claim):
++        with self._job(), self.worker_locks[claim["physical_worker"]]:
++            if self.stop.is_set():
++                raise RuntimeError("cancelled before Episode execution")
++            result = self._run_slot(scheduler, claim)
++            with self.state_lock:
++                self.episodes_finished += 1
++            return result
++
++    def _run_slot(self, scheduler, claim):
+         a = claim["attempt"]
+         task = a["task"]
+-        self.latest_attempts[task] = a
++        self.latest_attempts[claim["physical_worker"] if self.streaming else task] = a
+         self.slot_claim_tasks[claim["physical_worker"]] = task
+         try:
+             identity.guard(self.cfg, self.store.manifest, self.inputs, source=False)
+@@ -583,7 +709,10 @@ class Runtime:
+                 if self.stop.is_set():
+                     raise RuntimeError("evaluation cancelled")
+                 sample = self.store.begin_initialization(a)
++                self.phases[claim["physical_worker"]] = "environment_initialization"
++                reset_started = time.perf_counter()
+                 response = actor.request("initialize", deadline=deadline)
++                self.store.record_timing("reset", time.perf_counter() - reset_started)
+                 if (
+                     response.get("error") is None
+                     and self.render_policy["backend"] == "egl"
+@@ -713,18 +842,7 @@ class Runtime:
+                 raise RuntimeError(
+                     "owned media/process descendants remain after Core commit: encoder/feeder or server media not quiescent"
+                 )
+-            for error in self.store.errors(task):
+-                cert = self.certificates.get(error["id"])
+-                if error["resolution"] is None and cert:
+-                    self.store.resolve_error(
+-                        task,
+-                        error["id"],
+-                        cert,
+-                        replacement=row
+-                        if error["attempt"] is not None
+-                        and not error["core_committed_at_fault"]
+-                        else None,
+-                    )
++            self._resolve_faults(task, row)
+             scheduler.finish(claim)
+             self.phases[claim["physical_worker"]] = "idle"
+             return {"task": task, "episode": a["episode"], "outcome": row["outcome"]}
+@@ -742,11 +860,28 @@ class Runtime:
+             self.stop.set()
+             raise
+ 
++    def _resolve_faults(self, task, row):
++        for error in self.store.errors(task):
++            cert = self.certificates.get(error["id"])
++            if error["resolution"] is not None or cert is None:
++                continue
++            missing = (
++                error["attempt"] is not None and not error["core_committed_at_fault"]
++            )
++            if missing and error["attempt"]["episode"] != row["episode"]:
++                continue
++            self.store.resolve_error(
++                task, error["id"], cert, replacement=row if missing else None
++            )
++
+     def close(self):
+         if self.closed:
+             return
++        with self.starting:
++            self._closing = True
++            self.stop.set()
+         errors = []
+-        for worker, actor in list(self.actors.items()):
++        for worker, actor in self._snapshot("actors").items():
+             task = self.slot_claim_tasks.get(worker, self.actor_tasks.get(worker))
+             try:
+                 was = actor.owned.proc.poll()
+@@ -755,8 +890,17 @@ class Runtime:
+                     raise RuntimeError(str(proof))
+             except Exception as e:
+                 if task in self.store.active_tasks:
+-                    errors.append((task, repr(e)))
+-        for worker, (owned, record, port) in self.servers.items():
++                    attempt = self.latest_attempts.get(
++                        worker if self.streaming else task
++                    )
++                    errors.append(
++                        (
++                            task,
++                            repr(e),
++                            attempt if attempt and attempt["task"] == task else None,
++                        )
++                    )
++        for worker, (owned, record, port) in self._snapshot("servers").items():
+             try:
+                 was = owned.proc.poll()
+                 self.registry.close(owned, record)
+@@ -772,10 +916,27 @@ class Runtime:
+                 for w in affected:
+                     task = self.slot_claim_tasks.get(w, self.actor_tasks.get(w))
+                     if task in self.store.active_tasks:
+-                        errors.append((task, repr(e)))
+-        for task, message in errors:
++                        attempt = self.latest_attempts.get(
++                            w if self.streaming else task
++                        )
++                        errors.append(
++                            (
++                                task,
++                                repr(e),
++                                attempt
++                                if attempt and attempt["task"] == task
++                                else None,
++                            )
++                        )
++        # The spawn gate is already closed. This also reaps registered Servers
++        # whose READY handshake never completed and therefore were not published.
++        self.registry.recover()
++        with self.starting:
++            while self._active_jobs:
++                self.starting.wait(0.05)
++        for task, message, attempt in errors:
+             self.store.record_process_error(
+-                task, "process_cleanup", message, attempt=self.latest_attempts.get(task)
++                task, "process_cleanup", message, attempt=attempt
+             )
+         self.registry.recover()  # Must succeed before any positive cleanup receipt.
+         proof = self._proof(
+@@ -801,7 +962,7 @@ class Runtime:
+         import requests
+ 
+         values = {}
+-        for key, (owned, rec, port) in self.servers.items():
++        for key, (owned, rec, port) in self._snapshot("servers").items():
+             try:
+                 with requests.Session() as transport:
+                     transport.trust_env = False
+@@ -823,12 +984,16 @@ class Runtime:
+                         "media_spool_max_bytes",
+                         "media_drain_timeout_s",
+                         "quarantined",
++                        "queue_wait_p50_ms",
++                        "queue_wait_p95_ms",
++                        "batch_generate_ms",
++                        "requests_finished",
+                     )
+                 }
+             except Exception as error:
+                 values[key] = {"diagnostic_error": type(error).__name__}
+         try:
+-            save(self.store.root / "_internal/batch_status.json", values)
++            write(self.store.root / "_internal/batch_status.json", values, replace=True)
+         except OSError:
+             pass
+         return values
+@@ -854,12 +1019,17 @@ class Runtime:
+                 for g in set(self.worker_gpus.values())
+             ]
+         )
+-        scheduler = RoundScheduler(self.store, self.workers)
++        scheduler = (
++            StreamingScheduler(self.store, self.slot_ids)
++            if self.streaming
++            else RoundScheduler(self.store, self.workers)
++        )
+         pool = ThreadPoolExecutor(max_workers=len(self.workers))
+         futures = {}
+         original = None
+         last_round = -1
+         last_print = 0
++        last_resource_check = 0
+         try:
+             for task in self.store.manifest["task_order"]:
+                 old_errors = [
+@@ -880,7 +1050,9 @@ class Runtime:
+                         self.store.resolve_error(task, e["id"], cert)
+             while not scheduler.done:
+                 for worker in self.workers:
+-                    if worker not in scheduler.inflight:
++                    with scheduler._lock:
++                        idle = worker not in scheduler.inflight
++                    if idle:
+                         claim = scheduler.dispatch(worker)
+                         if claim:
+                             futures[pool.submit(self.run_slot, scheduler, claim)] = (
+@@ -894,17 +1066,16 @@ class Runtime:
+                         print("[eval-v2] " + json.dumps(result), flush=True)
+                 if self.stop.is_set():
+                     raise RuntimeError("native Worker requested safe stop")
+-                for task, actor in list(self.actors.items()):
++                for task, actor in self._snapshot("actors").items():
+                     if actor.owned.proc.poll() is not None:
+                         raise RuntimeError(f"native Task Worker exited: {task}")
+-                if scheduler.round != last_round:
++                if (self.streaming and time.monotonic() - last_resource_check >= 1) or (
++                    not self.streaming and scheduler.round != last_round
++                ):
+                     identity.guard(self.cfg, self.store.manifest, self.inputs)
+-                    self.resource_probe(
+-                        self.cfg,
+-                        [v[0] for v in self.servers.values()]
+-                        + [x.owned for x in self.actors.values()],
+-                    )
++                    self._measure()
+                     last_round = scheduler.round
++                    last_resource_check = time.monotonic()
+                 if time.monotonic() - last_print >= 5:
+                     from cosmos_framework.evaluation.robocasa_v2.store import read
+ 
+@@ -950,6 +1121,30 @@ class Runtime:
+                         + json.dumps(
+                             {
+                                 "round": scheduler.round + 1,
++                                "scheduling_protocol": self.store.manifest["protocol"][
++                                    "schedule"
++                                ],
++                                "active_sim_slots": len(self._snapshot("actors")),
++                                "slot_phases": {
++                                    stage: sum(
++                                        self.phases.get(w, "idle") == stage
++                                        for w in self.workers
++                                    )
++                                    for stage in (
++                                        "model_loading",
++                                        "environment_initialization",
++                                        "executing",
++                                        "result_validation",
++                                        "idle",
++                                    )
++                                },
++                                "episodes_finished": self.episodes_finished,
++                                "waiting_policy": sum(
++                                    s["stage"] == "predicting" for s in statuses
++                                ),
++                                "ready": sum(
++                                    self.phases.get(w) == "ready" for w in self.workers
++                                ),
+                                 "workers": statuses,
+                                 "native_batches": self._batch_telemetry()
+                                 if self.batch_profile
+@@ -965,10 +1160,11 @@ class Runtime:
+             scheduler.cancel(repr(e))
+             # Keep the approved commit/cancel serialization. A switched-out Task
+             # has no in-flight producer merely because its logical stream is open.
+-            affected = {c["task"] for c in scheduler.inflight.values()}
++            with scheduler._lock:
++                affected = {c["task"] for c in scheduler.inflight.values()}
+             affected.update(
+                 self.slot_claim_tasks[w]
+-                for w in self.actors
++                for w in self._snapshot("actors")
+                 if w in self.slot_claim_tasks
+             )
+             for task in affected:
+@@ -976,11 +1172,11 @@ class Runtime:
+                     task,
+                     "coordinator_stop",
+                     repr(e),
+-                    attempt=self.latest_attempts.get(task),
++                    attempt=None if self.streaming else self.latest_attempts.get(task),
+                 )
+         finally:
+             if original is not None:
+-                for actor in self.actors.values():
++                for actor in self._snapshot("actors").values():
+                     try:
+                         actor.channel.shutdown(socket.SHUT_RDWR)
+                     except OSError:
+diff --git a/scripts/robocasa_eval_v2/startup.py b/scripts/robocasa_eval_v2/startup.py
+new file mode 100644
+index 00000000..599be6b3
+--- /dev/null
++++ b/scripts/robocasa_eval_v2/startup.py
+@@ -0,0 +1,65 @@
++"""Finite startup reservations; measurement and process work stay outside locks."""
++
++from __future__ import annotations
++
++import contextlib
++import threading
++
++
++class StartupBudget:
++    def __init__(self, cfg, measure):
++        self.cfg, self.measure = cfg, measure
++        self.lock = threading.Lock()
++        self.pending = {}
++        self.version = 0
++        self.initializers = threading.BoundedSemaphore(
++            cfg["streaming_resources"]["initialization_concurrency"]
++        )
++
++    @contextlib.contextmanager
++    def reserve(self, key, kind, gpu):
++        settings = self.cfg["streaming_resources"]
++        reservation = (
++            settings[f"{kind}_startup_rss_bytes"],
++            settings[f"{kind}_startup_gpu_bytes"],
++            gpu,
++        )
++        while True:
++            with self.lock:
++                version = self.version
++            measured = self.measure()
++            if "owned_gpu_bytes" not in measured or "rss_bytes" not in measured:
++                raise RuntimeError(
++                    "BLOCKED_RESOURCE: missing owned resource measurements"
++                )
++            with self.lock:
++                if version != self.version:
++                    continue
++                if key in self.pending:
++                    raise RuntimeError("duplicate startup ownership")
++                pending = [*self.pending.values(), reservation]
++                if (
++                    measured["rss_bytes"] + sum(r[0] for r in pending)
++                    > self.cfg["max_rss_bytes"]
++                ):
++                    raise RuntimeError("BLOCKED_RESOURCE: startup RSS reservation")
++                for device in {r[2] for r in pending if r[2] is not None}:
++                    if device not in measured["owned_gpu_bytes"]:
++                        raise RuntimeError(
++                            "BLOCKED_RESOURCE: missing selected GPU measurement"
++                        )
++                    required = measured["owned_gpu_bytes"][device] + sum(
++                        r[1] for r in pending if r[2] == device
++                    )
++                    if required > settings["max_owned_gpu_bytes"]:
++                        raise RuntimeError("BLOCKED_RESOURCE: startup GPU reservation")
++                self.pending[key] = reservation
++                self.version += 1
++                break
++        try:
++            yield
++            self.measure()  # Real post-start footprint must pass before reservation transfer.
++        finally:
++            with self.lock:
++                self.pending.pop(key)
++                self.version += 1
+diff --git a/tools/v3/eval_v2_production_tests/slot_test.py b/tools/v3/eval_v2_production_tests/slot_test.py
+index c2ad5702..e4d13033 100644
+--- a/tools/v3/eval_v2_production_tests/slot_test.py
++++ b/tools/v3/eval_v2_production_tests/slot_test.py
+@@ -9,6 +9,7 @@ import pytest
+ from cosmos_framework.evaluation.robocasa_v2.contract import result_record
+ from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
+ from robocasa_eval_v2.runtime import Runtime
++from robocasa_eval_v2.config import DEFAULTS
+ 
+ from tools.v3.eval_v2_production_tests.native_test import Env, native, server
+ from tools.v3.eval_v2_production_tests.store_test import fresh
+@@ -105,6 +106,14 @@ class CpuSlotRuntime(Runtime):
+     """Only physical process/GPU/model boundaries are doubles, not Slot behavior."""
+ 
+     def __init__(self, value, cfg, url, events, *, factory=None):
++        cfg = {
++            **DEFAULTS,
++            "render_backend": "osmesa",
++            "render_gpu_ids": [],
++            "save_rollout_mp4": False,
++            "save_generated_video": "none",
++            **cfg,
++        }
+         super().__init__(value, cfg, {}, {}, resource_probe=lambda *a, **kw: None)
+         self.url, self.events = url, events
+         self.factory = factory
+diff --git a/tools/v3/eval_v2_replan_tests/support.py b/tools/v3/eval_v2_replan_tests/support.py
+index 915c54ce..fc9df60e 100644
+--- a/tools/v3/eval_v2_replan_tests/support.py
++++ b/tools/v3/eval_v2_replan_tests/support.py
+@@ -63,6 +63,7 @@ def production_function(name, namespace=None):
+         Reply=transactions.Reply,
+         json_bytes=transactions.json_bytes,
+         strict_json=transactions.strict_json,
++        transaction_capacity=transactions.transaction_capacity,
+     )
+     scope.update(namespace or {})
+     exec(compile(ast.Module(body=[node], type_ignores=[]), str(source), "exec"), scope)
+diff --git a/tools/v3/eval_v2_replan_tests/transport_test.py b/tools/v3/eval_v2_replan_tests/transport_test.py
+index ef035a8a..c66d528d 100644
+--- a/tools/v3/eval_v2_replan_tests/transport_test.py
++++ b/tools/v3/eval_v2_replan_tests/transport_test.py
+@@ -297,13 +297,22 @@ def test_lost_server_ACK_retries_same_receipt_without_extra_encode(systems, tmp_
+ 
+ 
+ def test_permanent_ACK_loss_retains_file_and_reports_incomplete(systems, tmp_path):
+-    _, actor, direct = systems(media_drain_timeout_s=2)
+-    value = client(direct, registration(direct), media_drain_timeout_s=2)
++    # This budget includes a real Encoder cold start before the ACK fault.
++    _, actor, direct = systems(media_drain_timeout_s=10)
++    value = client(direct, registration(direct), media_drain_timeout_s=10)
+     sink = sink_at(tmp_path / "media")
+     original = direct.request
++    ack_attempts = []
+ 
+     def lost(method, url, **kwargs):
+         if url.endswith("/v2/media/ack"):
++            receipt = kwargs["json"]["receipt"]
++            final = tmp_path / "media" / receipt["path"]
++            assert final.is_file()
++            assert (
++                json.loads(final.with_suffix(".receipt.json").read_bytes()) == receipt
++            )
++            ack_attempts.append(time.monotonic())
+             time.sleep(0.02)
+             raise requests.ConnectionError("permanent ACK loss")
+         return original(method, url, **kwargs)
+@@ -312,6 +321,7 @@ def test_permanent_ACK_loss_retains_file_and_reports_incomplete(systems, tmp_pat
+     try:
+         result = predict(value)
+         assert value.media(result, 0, sink.prediction) is None
++        assert ack_attempts  # Never pass merely because startup timed out before ACK.
+         diagnostics = value.media_diagnostics()
+         assert diagnostics["completion"]["status"] == "MEDIA_INCOMPLETE"
+         assert diagnostics["predictions"]["0"]["path"] == "generated/replan_0000.mp4"
+diff --git a/tools/v3/eval_v2_streaming_tests/capacity_test.py b/tools/v3/eval_v2_streaming_tests/capacity_test.py
+new file mode 100644
+index 00000000..12219fd9
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/capacity_test.py
+@@ -0,0 +1,136 @@
++"""Versioned M/B capacity, immutable identity and honest physical plans."""
++
++import copy
++
++import pytest
++import yaml
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    STREAMING_SCHEDULE,
++    STREAMING_SAMPLING,
++    build_manifest,
++    validate_manifest,
++)
++from cosmos_framework.inference.robocasa_transaction_client import (
++    TransactionPolicyClient,
++)
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    clock_kernel as clock_kernel,
++)  # noqa: F401
++from robocasa_eval_v2.config import execution, resolve
++from robocasa_eval_v2.resources import physical_slots
++from tools.v3.eval_v2_production_tests.contract_test import manifest
++from tools.v3.eval_v2_production_tests.entry_test import config
++
++
++def streaming_config(**updates):
++    return (
++        dict(
++            execution_profile="phase_b",
++            scheduling_protocol=STREAMING_SCHEDULE,
++            gpu_ids=[6, 7],
++            sims_per_gpu=32,
++            max_infer_batch_size=8,
++            batch_wait_ms=20,
++            max_rss_bytes=16 * 1024**3,
++            streaming_resources=dict(
++                max_owned_gpu_bytes=16 * 1024**3,
++                sim_startup_rss_bytes=1024**2,
++                sim_startup_gpu_bytes=1024**2,
++                server_startup_rss_bytes=1024**2,
++                server_startup_gpu_bytes=1024**2,
++                initialization_concurrency=32,
++            ),
++        )
++        | updates
++    )
++
++
++def streaming_manifest(
++    tasks=("CloseFridge",), episodes=3, cfg=None, mode="off", experiment=None
++):
++    old = manifest(tasks, episodes)
++    return build_manifest(
++        tasks=tasks,
++        episodes=episodes,
++        formal=len(tasks) == 18 and episodes == 50,
++        seed=old["seed"],
++        horizons=old["horizons"],
++        experiment=experiment or old["experiment"],
++        execution=execution(cfg or streaming_config()),
++        local_memory=mode,
++    )
++
++
++@pytest.mark.parametrize("m", [1, 8, 16, 32])
++@pytest.mark.parametrize("b", [1, 8, 16, 32])
++def test_capacity_is_independent_and_bound_to_manifest_and_client(tmp_path, m, b):
++    path, raw = config(tmp_path)
++    raw.update(streaming_config(sims_per_gpu=m, max_infer_batch_size=b))
++    path.write_text(yaml.safe_dump(raw))
++    _, cfg = resolve(["dry-run", "--config", str(path)])
++    value = streaming_manifest(cfg=cfg)
++    assert validate_manifest(value) == value
++    assert value["execution"]["sims_per_gpu"] == m
++    assert value["execution"]["max_infer_batch_size"] == b
++    assert value["protocol"]["schedule"] == STREAMING_SCHEDULE
++    assert value["protocol"]["sampling"] == STREAMING_SAMPLING
++    client = TransactionPolicyClient(
++        "http://unused", max_batch_size=b, capacity_profile="streaming32"
++    )
++    assert client.max_batch_size == b
++    assert len(physical_slots(cfg, 18)) == 2 * m
++
++
++@pytest.mark.parametrize("field", ["sims_per_gpu", "max_infer_batch_size"])
++@pytest.mark.parametrize("invalid", [0, 33, 1.5, True, "32"])
++def test_invalid_capacity_rejected_before_startup(tmp_path, field, invalid):
++    path, raw = config(tmp_path)
++    raw.update(streaming_config(**{field: invalid}))
++    path.write_text(yaml.safe_dump(raw))
++    with pytest.raises(ValueError):
++        resolve(["dry-run", "--config", str(path)])
++    with pytest.raises(ValueError):
++        streaming_manifest(cfg=raw)
++
++
++def test_64_physical_slots_are_real_distinct_plan_identities_not_task_count():
++    actual = physical_slots(streaming_config(), 18)
++    assert len(actual) == 64 and len(set(actual)) == 64
++    assert all(sum(g == gpu for g in actual.values()) == 32 for gpu in (6, 7))
++    legacy = streaming_config(
++        scheduling_protocol="episode_major_frozen_order_round_barrier_v1"
++    )
++    assert len(physical_slots(legacy, 18)) == 18
++
++
++@pytest.mark.parametrize("change", ["schedule", "resources", "capacity"])
++def test_new_protocol_and_budgets_cannot_reinterpret_old_resume(change):
++    value = streaming_manifest()
++    old = manifest()
++    assert old["protocol"]["schedule"] != value["protocol"]["schedule"]
++    altered = copy.deepcopy(value)
++    if change == "schedule":
++        altered["protocol"]["schedule"] = old["protocol"]["schedule"]
++    elif change == "resources":
++        altered["execution"]["resources"]["max_owned_gpu_bytes"] += 1
++    else:
++        altered["execution"]["sims_per_gpu"] = 8
++    with pytest.raises(ValueError):
++        validate_manifest(altered)
++
++
++def test_streaming_requires_explicit_budgets_and_phase_b(tmp_path):
++    path, raw = config(tmp_path)
++    raw.update(streaming_config())
++    raw["streaming_resources"] = None
++    path.write_text(yaml.safe_dump(raw))
++    with pytest.raises(ValueError, match="streaming_resources"):
++        resolve(["dry-run", "--config", str(path)])
++    raw.update(
++        streaming_config(
++            execution_profile="phase_a", sims_per_gpu=1, max_infer_batch_size=1
++        )
++    )
++    path.write_text(yaml.safe_dump(raw))
++    with pytest.raises(ValueError, match="Phase B"):
++        resolve(["dry-run", "--config", str(path)])
+diff --git a/tools/v3/eval_v2_streaming_tests/cli_test.py b/tools/v3/eval_v2_streaming_tests/cli_test.py
+new file mode 100644
+index 00000000..e6aba099
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/cli_test.py
+@@ -0,0 +1,60 @@
++"""Public CLI Fresh/Resume, real input/source identity and native CPU Slot loop."""
++# ruff: noqa: F811 -- pytest resolves imported fixture names.
++
++import json
++
++import pytest
++import yaml
++from robocasa_eval_v2 import identity
++from tools.v3.eval_v2_production_tests.runtime_evidence_test import (
++    real_prepare as real_prepare,
++    public,
++    core_bytes,
++)
++from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_config
++from tools.v3.eval_v2_streaming_tests.pipeline_test import Pipeline, Router
++from tools.v3.eval_v2_production_tests.native_test import native
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    clock_kernel as clock_kernel,
++)  # noqa: F401
++
++
++def test_public_streaming_cli_fresh_resume_and_protocol_change_rejected(
++    real_prepare, monkeypatch
++):
++    case = real_prepare
++    case.cfg.update(
++        streaming_config(gpu_ids=[6], sims_per_gpu=2, max_infer_batch_size=2),
++        local_memory_mode="off",
++        render_backend="osmesa",
++        render_gpu_ids=[],
++        save_rollout_mp4=False,
++        save_generated_video="none",
++    )
++    case.path.write_text(yaml.safe_dump(case.cfg))
++    monkeypatch.setattr(native, "build_state_token", lambda _: [0.0] * 15)
++    monkeypatch.setattr(
++        "robocasa_eval_v2.runtime.group_members", lambda pgid: {pgid: "S"}
++    )
++    monkeypatch.setattr(
++        identity, "clock_environment", lambda *a: {"domain": "CPU-double"}
++    )
++
++    class NativeRuntime(Pipeline):
++        def __init__(self, store, cfg, inputs, environment):
++            super().__init__(store, cfg, monkeypatch, inputs, environment)
++            monkeypatch.setattr("requests.Session", lambda: Router(self))
++
++    case.Runtime = NativeRuntime
++    assert public(case, "fresh") == 0
++    manifest = json.loads((case.root / "manifest.json").read_bytes())
++    assert manifest["protocol"]["schedule"] == case.cfg["scheduling_protocol"]
++    original = core_bytes(case.root)
++    assert len(list(case.root.glob("tasks/*/episodes/*/result.json"))) == 2
++    assert public(case, "resume") == 0
++    assert core_bytes(case.root) == original
++    case.cfg["sims_per_gpu"] = 4
++    case.path.write_text(yaml.safe_dump(case.cfg))
++    with pytest.raises(ValueError, match="immutable"):
++        public(case, "resume")
++    assert core_bytes(case.root) == original
+diff --git a/tools/v3/eval_v2_streaming_tests/media_test.py b/tools/v3/eval_v2_streaming_tests/media_test.py
+new file mode 100644
+index 00000000..aecccd38
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/media_test.py
+@@ -0,0 +1,82 @@
++"""No no-op rollout composition, and neither strict media nor Ready Policy starves."""
++# ruff: noqa: F811 -- imported pytest fixtures.
++
++import threading
++import time
++from concurrent.futures import ThreadPoolExecutor
++
++from tools.v3.eval_v2_production_tests.native_test import native, native_execute
++from tools.v3.eval_v2_replan_tests.support import (
++    systems as systems,
++    clock_kernel as clock_kernel,
++    client,
++    predict,
++    registration,
++)
++
++
++def test_none_without_rollout_has_only_policy_and_required_local_compositions(
++    tmp_path, monkeypatch
++):
++    original = native.compose
++    calls = []
++
++    def compose(obs):
++        calls.append(None)
++        return original(obs)
++
++    monkeypatch.setattr(native, "compose", compose)
++    row, env, requests, value = native_execute(
++        tmp_path, monkeypatch, success_at=17, horizon=20
++    )
++    # One initial view + two Policy observations + 17 completed Local evidence views.
++    assert row["steps"] == 17 and row["replans"] == 2 and len(calls) == 20
++    assert not list(value.root.glob("**/*.mp4"))
++
++
++def test_ready_inference_between_two_strict_decodes_and_strict_decode_not_starved(
++    systems,
++):
++    _, actor, direct = systems(max_batch_size=2, batch_wait_ms=1000)
++    values = [
++        client(
++            direct,
++            registration(direct, i),
++            "all" if i < 2 else "none",
++            max_infer_batch_size=2,
++        )
++        for i in range(3)
++    ]
++    generate, decode = actor.generate_many, actor.decode_media
++    entered, release = threading.Event(), threading.Event()
++    order = []
++
++    def generating(payloads, updates):
++        order.append(f"generate{len(payloads)}")
++        if len(payloads) == 2:
++            entered.set()
++            assert release.wait(5)
++        return generate(payloads, updates)
++
++    def decoding(value):
++        order.append("decode")
++        return decode(value)
++
++    actor.generate_many, actor.decode_media = generating, decoding
++    with ThreadPoolExecutor(3) as pool:
++        first = [pool.submit(predict, value) for value in values[:2]]
++        try:
++            assert entered.wait(3)
++            last = pool.submit(predict, values[2])
++            limit = time.monotonic() + 3
++            while actor.info()["queued"] != 1:
++                assert time.monotonic() < limit
++                time.sleep(0.01)
++            release.set()
++            for task in [*first, last]:
++                assert len(task.result(5)["action"]) == 16
++            assert order == ["generate2", "decode", "generate1", "decode"]
++        finally:
++            release.set()
++            for value in values:
++                value.close()
+diff --git a/tools/v3/eval_v2_streaming_tests/os_fixture.py b/tools/v3/eval_v2_streaming_tests/os_fixture.py
+new file mode 100644
+index 00000000..451d2ffc
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/os_fixture.py
+@@ -0,0 +1,66 @@
++"""New-protocol OS double; reuse the established native CPU fixture unchanged."""
++
++import json
++import sys
++import time
++from pathlib import Path
++
++from tools.v3.eval_v2_batch_tests import os_fixture as old
++
++
++def main():
++    old.kernel_fixture()
++    if sys.argv[1] == "server":
++        from cosmos_framework.inference import robocasa_batch_transactions as batch
++
++        original = batch.BatchedSessionTransactions
++
++        class StreamingBatch(original):
++            def __init__(self, *args, **kwargs):
++                super().__init__(*args, capacity_profile="streaming32", **kwargs)
++
++        batch.BatchedSessionTransactions = StreamingBatch
++        old.run_server(sys.argv[2:])
++        return
++    from cosmos_framework.simulation.robocasa import eval_v2_worker as worker
++
++    original = worker.serve
++
++    def controlled(channel, cfg, *, factory):
++        root = Path(cfg["task_root"]).parents[1]
++        manifest = json.loads((root / "manifest.json").read_bytes())
++        count = (
++            len(manifest["execution"]["gpu_ids"])
++            * manifest["execution"]["sims_per_gpu"]
++        )
++
++        def overlap(stage):
++            directory = root / "_internal/cpu_streaming_startup" / stage
++            directory.mkdir(parents=True, exist_ok=True)
++            path = directory / cfg["physical_slot_id"]
++            if path.exists():
++                return
++            start = time.monotonic()
++            path.write_text(json.dumps({"start": start}))
++            limit = start + 90
++            while len(list(directory.iterdir())) < count:
++                if time.monotonic() >= limit:
++                    raise TimeoutError("controlled concurrent startup did not overlap")
++                time.sleep(0.01)
++            time.sleep(0.3)
++            path.write_text(json.dumps({"start": start, "end": time.monotonic()}))
++
++        overlap("READY")
++
++        def environment(task, spec, grant):
++            overlap("make_env")
++            return factory(task, spec, grant)
++
++        original(channel, cfg, factory=environment)
++
++    worker.serve = controlled
++    old.run_sim(sys.argv[2:])
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/tools/v3/eval_v2_streaming_tests/pipeline_test.py b/tools/v3/eval_v2_streaming_tests/pipeline_test.py
+new file mode 100644
+index 00000000..47934077
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/pipeline_test.py
+@@ -0,0 +1,284 @@
++"""64 real SimSlot FSMs -> public Client/dispatcher -> native CPU carriers -> 900 Core.
++
++Only process/device, physics and diffusion boundaries are doubles. No remote
++assets, CUDA or real RoboCasa result is represented by this CPU evidence.
++"""
++
++import json
++import threading
++from types import SimpleNamespace
++from urllib.parse import urlsplit
++
++import pytest
++import torch
++from torch import nn
++from cosmos_framework.evaluation.robocasa_v2.store import Store, records
++from cosmos_framework.inference.robocasa_batch_transactions import (
++    BatchedSessionTransactions,
++)
++from cosmos_framework.inference.robocasa_local_memory_policy import (
++    RoboCasaLocalMemoryPolicyAdapter,
++)
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    clock_kernel as clock_kernel,
++)  # noqa: F401
++from cosmos_framework.scripts.robocasa_transactions_b1_test import (
++    DirectTransport,
++    service,
++)
++from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
++from robocasa_eval_v2.config import DEFAULTS
++from robocasa_eval_v2.identity import ATOMIC_TASKS
++from robocasa_eval_v2.runtime import Runtime
++from tools.v3.eval_v2_production_tests.native_test import RAW
++from tools.v3.eval_v2_production_tests.slot_test import (
++    CpuActor,
++    TrackedEnv,
++    prepare_monkey,
++    slot_config,
++)
++from tools.v3.eval_v2_streaming_tests.capacity_test import (
++    streaming_config,
++    streaming_manifest,
++)
++
++
++class NativeCpuActor(CpuActor):
++    def __init__(self, slot, pid, barrier):
++        super().__init__(slot, pid)
++        self.barrier = barrier
++
++    def request(self, op, *, deadline=None, **kwargs):
++        if op == "initialize" and self.barrier is not None:
++            barrier, self.barrier = self.barrier, None
++            barrier.wait(
++                30
++            )  # Controlled first wave: prove all 64 Slot objects are live.
++        if op == "execute":
++            return self.slot.execute(**kwargs)
++        return super().request(op, deadline=deadline, **kwargs)
++
++
++class Router:
++    def __init__(self, runtime):
++        self.runtime = runtime
++
++    def __enter__(self):
++        return self
++
++    def __exit__(self, *args):
++        self.close()
++
++    def close(self):
++        pass
++
++    def request(self, method, url, **kwargs):
++        obj = self.runtime.services[urlsplit(url).port]
++        return DirectTransport(obj).request(method, url, **kwargs)
++
++    def get(self, url, **kwargs):
++        obj = self.runtime.services[urlsplit(url).port]
++        return SimpleNamespace(
++            json=lambda: {"session_transactions": obj.transactions.info()}
++        )
++
++
++class Pipeline(Runtime):
++    def __init__(self, store, cfg, monkeypatch, inputs=None, environment=None):
++        def measured(*a, **kw):
++            return {"rss_bytes": 0, "owned_gpu_bytes": {6: 0, 7: 0}}
++
++        super().__init__(
++            store, cfg, inputs or {}, environment or {}, resource_probe=measured
++        )
++        self.services, self.load_count, self.native_calls, self.events = {}, {}, [], []
++        self.monkeypatch = monkeypatch
++        self.barrier = threading.Barrier(len(self.workers))
++        self.slot_template = slot_config(store, "0" * 32, "http://cpu")
++        if inputs is not None:
++            self.slot_template["tasks"] = {
++                task: dict(
++                    dataset_dir=directory,
++                    metadata_sha256=store.manifest["experiment"]["task_metadata"][task],
++                    horizon=store.manifest["horizons"][task],
++                )
++                for task, directory in inputs["tasks"].items()
++            }
++        self.all_slots, self.session_ids = [], set()
++        self.registry.close = lambda *a: None  # CPU process boundary only.
++        self.registry.recover = lambda: None
++
++    def _create_server(self, worker):
++        gpu = self.worker_gpus[worker]
++        key, port = f"GPU{gpu}", self.cfg["base_port"] + self.cfg["gpu_ids"].index(gpu)
++        obj = service(self.monkeypatch)
++        obj.model = nn.Module()
++        obj.model.net = nn.Module()
++        obj.local_memory_adapter = RoboCasaLocalMemoryPolicyAdapter(
++            obj, mode="off", decode_image=lambda _: None, max_sessions=32
++        )
++
++        def generate(batch, **kwargs):
++            n = len(batch["prompt"])
++            assert "_local_memory_prefixes" not in kwargs
++            assert len(batch["action"]) == len(batch["sequence_plan"]) == n
++            assert all(a[0].shape == (17, 64) for a in batch["action"])
++            self.native_calls.append(
++                dict(gpu=gpu, size=n, prompts=list(batch["prompt"]))
++            )
++            action = torch.zeros(1, 17, 64)
++            action[:, 1:, :15] = torch.tensor(RAW) * 2 - 1
++            return {
++                "action": [action.clone() for _ in range(n)],
++                "vision": [torch.zeros(1, 3, 1, 8, 8) for _ in range(n)],
++            }
++
++        obj.model.generate_samples_from_batch = generate
++        obj.transactions = BatchedSessionTransactions(
++            obj.local_memory_adapter,
++            obj._transaction_batch,
++            lambda: None,
++            slot_ids=tuple(
++                self.slot_ids[w] for w in self.workers if self.worker_gpus[w] == gpu
++            ),
++            max_batch_size=self.cfg["max_infer_batch_size"],
++            batch_wait_ms=self.cfg["batch_wait_ms"],
++            capacity_profile="streaming32",
++            owner_token="cpu-owner",
++            run_lease=self.store.lease_id,
++            manifest_digest=self.store.manifest["digest"],
++            model_lock=obj._lock,
++            timeout_s=15,
++        )
++        self.services[port] = obj
++        self.load_count[gpu] = self.load_count.get(gpu, 0) + 1
++        proc = SimpleNamespace(pid=70000 + gpu, poll=lambda: None)
++        owned = SimpleNamespace(proc=proc, pgid=proc.pid)
++        with self.state_lock:
++            self.server_owners[key] = "cpu-owner"
++            self.servers[key] = (owned, {"cpu_policy_owner": gpu}, port)
++        return self.servers[key]
++
++    def _setup_actor(self, claim):
++        worker = claim["physical_worker"]
++        if worker not in self.actors:
++            port = self.servers[f"GPU{self.worker_gpus[worker]}"][2]
++            cfg = dict(self.slot_template, physical_slot_id=self.slot_ids[worker])
++            cfg["settings"] = dict(
++                cfg["settings"],
++                server_url=f"http://cpu:{port}",
++                execution_profile="phase_b",
++                max_infer_batch_size=self.cfg["max_infer_batch_size"],
++                capacity_profile="streaming32",
++                local_memory_mode="off",
++                sampling_protocol=self.store.manifest["protocol"]["sampling"],
++                predict_timeout_s=15,
++            )
++            slot = SimSlot(
++                cfg,
++                factory=lambda t, s, g: TrackedEnv(
++                    t, g["seed"], self.events, success_at=1
++                ),
++            )
++            self.all_slots.append(slot)
++            with self.state_lock:
++                self.actors[worker] = NativeCpuActor(
++                    slot, 80000 + self.workers.index(worker), self.barrier
++                )
++        self.phases[worker] = "environment_initialization"
++        return self._start_assignment(
++            claim, self.actors[worker], {"CPU_native_owner": self.worker_gpus[worker]}
++        )
++
++    def _register_assignment(self, claim, deadline):
++        result = super()._register_assignment(claim, deadline)
++        with self.state_lock:
++            self.session_ids.add(result["lease"]["session_id"])
++        return result
++
++    def close(self):
++        super().close()
++        for obj in self.services.values():
++            assert obj.transactions.close(timeout_s=5)
++            obj.transactions._executor.shutdown(wait=True)
++
++
++@pytest.mark.parametrize("cap", [8, 16])
++def test_18_real_tasks_64_sim_sessions_900_unique_core_and_resume(
++    tmp_path, monkeypatch, cap
++):
++    prepare_monkey(monkeypatch)
++    cfg = dict(
++        DEFAULTS,
++        **streaming_config(max_infer_batch_size=cap),
++        render_backend="osmesa",
++        render_gpu_ids=[],
++        base_port=19600,
++        episodes_per_task=50,
++        local_memory_mode="off",
++        save_rollout_mp4=False,
++        save_generated_video="none",
++    )
++    value = Store(tmp_path / "run", streaming_manifest(ATOMIC_TASKS, 50, cfg))
++    assert value.manifest["scope"] == "formal900"
++    value.create()
++    with value.locked():
++        runtime = Pipeline(value, cfg, monkeypatch)
++        monkeypatch.setattr("requests.Session", lambda: Router(runtime))
++        report, error = runtime.run()
++        if error is not None:
++            raise error
++        assert (
++            report["valid"] == report["success"] == 900 and report["results_qualified"]
++        )
++        assert runtime.load_count == {6: 1, 7: 1}
++        assert len(runtime.all_slots) == len(runtime.slot_ids) == 64
++        assert len(set(runtime.slot_ids.values())) == 64
++        assert len(runtime.session_ids) == 900
++        first_sessions = {next(iter(s.used_sessions)) for s in runtime.all_slots}
++        assert len(first_sessions) == 64
++        assert all(s.state == "CLEAN" and s.env is None for s in runtime.all_slots)
++        assert sum(c["size"] for c in runtime.native_calls) == 900
++        assert all(1 <= c["size"] <= cap for c in runtime.native_calls)
++        assert any(c["size"] > 1 for c in runtime.native_calls)
++        entries = records(
++            value.root
++            / "_internal/scheduler"
++            / next((value.root / "_internal/scheduler").iterdir()).name
++        )
++        dispatched = [x["data"] for x in entries if x["kind"] == "DISPATCH"]
++        assert len({(c["task"], c["episode"]) for c in dispatched}) == 900
++        assert len({c["physical_worker"] for c in dispatched[:64]}) == 64
++        assert not any(x["kind"] == "ROUND_BARRIER" for x in entries)
++        rows = [
++            json.loads(line)
++            for line in (value.root / "episodes.jsonl").read_text().splitlines()
++        ]
++        assert {(r["task"], r["episode"]) for r in rows} == {
++            (t, ep) for t in ATOMIC_TASKS for ep in range(50)
++        }
++        assert len({r["sampling"]["physical_slot_id"] for r in rows}) == 64
++        assert not list(value.root.glob("tasks/**/media/*.mp4"))
++        original = {
++            p: p.read_bytes() for p in value.root.glob("tasks/*/episodes/*/result.json")
++        }
++        summary = {
++            "cap": cap,
++            "slots": 64,
++            "sessions": len(runtime.session_ids),
++            "valid": report["valid"],
++            "native_batches": runtime.native_calls,
++            "stats": [o.transactions.info() for o in runtime.services.values()],
++        }
++        (tmp_path / "cpu_pipeline.json").write_text(json.dumps(summary, indent=2))
++    resumed = Store(value.root, value.manifest)
++    with resumed.locked():
++        again = Pipeline(resumed, cfg, monkeypatch)
++        report, error = again.run()
++        assert (
++            error is None
++            and report["valid"] == 900
++            and not again.all_slots
++            and not again.load_count
++        )
++        assert all(p.read_bytes() == raw for p, raw in original.items())
+diff --git a/tools/v3/eval_v2_streaming_tests/recovery_test.py b/tools/v3/eval_v2_streaming_tests/recovery_test.py
+new file mode 100644
+index 00000000..8c055b5c
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/recovery_test.py
+@@ -0,0 +1,56 @@
++"""Same-Task multi-Episode recovery and concurrent health-only resolution."""
++
++import uuid
++from concurrent.futures import ThreadPoolExecutor
++from types import SimpleNamespace
++
++from cosmos_framework.evaluation.robocasa_v2.scheduler import StreamingScheduler
++from cosmos_framework.evaluation.robocasa_v2.store import Store
++from robocasa_eval_v2.runtime import Runtime
++from tools.v3.eval_v2_production_tests.store_test import close_streams, healthy
++from tools.v3.eval_v2_streaming_tests.scheduler_test import fresh, complete
++
++
++def test_resume_only_resolves_same_episode_and_same_stream_health_is_idempotent(
++    tmp_path,
++):
++    value = fresh(tmp_path, episodes=2)
++    slots = {"a": uuid.uuid4().hex, "b": uuid.uuid4().hex}
++    with value.locked():
++        scheduler = StreamingScheduler(value, slots)
++        claims = [scheduler.dispatch(w) for w in slots]
++        for claim in claims:
++            value.finish_invalid(claim["attempt"], "controlled original failure")
++        wide = value.record_process_error(
++            "CloseFridge", "coordinator_stop", "controlled Task-wide fault"
++        )
++        scheduler.cancel("explicit Resume after complete cleanup")
++        close_streams(value, "CloseFridge")
++    value = Store(value.root, value.manifest)
++    with value.locked():
++        scheduler = StreamingScheduler(value, slots)
++        claims = [scheduler.dispatch(w) for w in slots]
++        certificates = {
++            error["id"]: value.certify_recovery(
++                "CloseFridge", error["stream_id"], healthy
++            )
++            for error in value.errors("CloseFridge")
++        }
++        # Two independently valid Slot health proofs may race for the Task fault.
++        cert2 = value.certify_recovery("CloseFridge", wide["stream_id"], healthy)
++        with ThreadPoolExecutor(2) as pool:
++            futures = [
++                pool.submit(value.resolve_error, "CloseFridge", wide["id"], cert)
++                for cert in (certificates[wide["id"]], cert2)
++            ]
++            assert futures[0].result(5) == futures[1].result(5)
++        runtime = SimpleNamespace(store=value, certificates=certificates)
++        first = complete(scheduler, claims[0])
++        Runtime._resolve_faults(runtime, "CloseFridge", first)
++        unresolved = [e for e in value.errors("CloseFridge") if e["resolution"] is None]
++        assert len(unresolved) == 1 and unresolved[0]["attempt"]["episode"] == 1
++        second = complete(scheduler, claims[1])
++        Runtime._resolve_faults(runtime, "CloseFridge", second)
++        assert all(e["resolution"] is not None for e in value.errors("CloseFridge"))
++        close_streams(value, "CloseFridge")
++        assert value.publish_views()["results_qualified"]
+diff --git a/tools/v3/eval_v2_streaming_tests/resource_test.py b/tools/v3/eval_v2_streaming_tests/resource_test.py
+new file mode 100644
+index 00000000..69c43f1e
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/resource_test.py
+@@ -0,0 +1,112 @@
++"""Owned-only compute+graphics VRAM and bounded concurrent startup admission."""
++
++from types import SimpleNamespace
++from concurrent.futures import ThreadPoolExecutor
++import threading
++
++import pytest
++from robocasa_eval_v2.resources import owned_gpu_memory, owned_group_pids
++from robocasa_eval_v2.startup import StartupBudget
++from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_config
++
++
++class NVML:
++    def nvmlInit(self):
++        pass
++
++    def nvmlShutdown(self):
++        self.shutdown = True
++
++    def nvmlDeviceGetHandleByIndex(self, gpu):
++        return gpu
++
++    def nvmlDeviceGetComputeRunningProcesses(self, handle):
++        return [
++            SimpleNamespace(pid=1, usedGpuMemory=10),
++            SimpleNamespace(pid=999, usedGpuMemory=2**64 - 1),
++        ]
++
++    def nvmlDeviceGetGraphicsRunningProcesses(self, handle):
++        return [
++            SimpleNamespace(pid=1, usedGpuMemory=10),
++            SimpleNamespace(pid=2, usedGpuMemory=20),
++        ]
++
++
++def test_owned_compute_and_graphics_are_counted_once_and_foreign_occupancy_ignored():
++    nvml = NVML()
++    assert owned_gpu_memory([4, 5], {1, 2}, nvml=nvml) == {4: 30, 5: 30}
++    assert nvml.shutdown
++
++
++def test_all_owned_groups_one_proc_snapshot_includes_descendants_not_foreign(tmp_path):
++    for pid, group in ((5, 5), (6, 6), (20, 6), (21, 12)):
++        directory = tmp_path / str(pid)
++        directory.mkdir()
++        (directory / "stat").write_text(f"{pid} (name with spaces) S 0 {group} 0 0")
++    assert owned_group_pids(
++        [SimpleNamespace(pgid=5), SimpleNamespace(pgid=6)], proc=tmp_path
++    ) == {5, 6, 20}
++
++
++@pytest.mark.parametrize("failure", ["init", "unknown", "unsupported"])
++def test_unknown_meter_is_blocked_not_zero_or_foreign_memory_gate(failure):
++    nvml = NVML()
++    if failure == "init":
++        nvml.nvmlInit = lambda: (_ for _ in ()).throw(
++            RuntimeError("driver unavailable")
++        )
++    elif failure == "unknown":
++        nvml.nvmlDeviceGetGraphicsRunningProcesses = lambda _: [
++            SimpleNamespace(pid=2, usedGpuMemory=2**64 - 1)
++        ]
++    else:
++        nvml.nvmlDeviceGetGraphicsRunningProcesses = lambda _: (_ for _ in ()).throw(
++            RuntimeError("unsupported")
++        )
++    with pytest.raises(RuntimeError, match="BLOCKED_RESOURCE"):
++        owned_gpu_memory([4], {1, 2}, nvml=nvml)
++    assert getattr(nvml, "shutdown", False) == (failure != "init")
++
++
++def test_concurrent_startup_reservations_cannot_both_spend_same_budget():
++    cfg = streaming_config(max_rss_bytes=1_500_000)
++    cfg["streaming_resources"]["sim_startup_rss_bytes"] = 1_000_000
++    budget = StartupBudget(cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {6: 0}})
++    entered, release = threading.Event(), threading.Event()
++
++    def first():
++        with budget.reserve("first", "sim", 6):
++            entered.set()
++            assert release.wait(5)
++
++    with ThreadPoolExecutor(2) as pool:
++        task = pool.submit(first)
++        assert entered.wait(5)
++        try:
++            with pytest.raises(RuntimeError, match="startup RSS"):
++                with budget.reserve("second", "sim", 6):
++                    raise AssertionError("must not admit")
++        finally:
++            release.set()
++        task.result(5)
++    assert not budget.pending
++
++
++def test_startup_failure_releases_reservation_and_gpu_limit_stays_strict():
++    cfg = streaming_config()
++    budget = StartupBudget(
++        cfg,
++        lambda: {
++            "rss_bytes": 0,
++            "owned_gpu_bytes": {6: cfg["streaming_resources"]["max_owned_gpu_bytes"]},
++        },
++    )
++    with pytest.raises(RuntimeError, match="startup GPU"):
++        with budget.reserve("too_large", "server", 6):
++            raise AssertionError("must not admit")
++    budget = StartupBudget(cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {6: 0}})
++    with pytest.raises(ValueError, match="controlled"):
++        with budget.reserve("failed", "sim", 6):
++            raise ValueError("controlled startup failure")
++    assert not budget.pending
+diff --git a/tools/v3/eval_v2_streaming_tests/scheduler_test.py b/tools/v3/eval_v2_streaming_tests/scheduler_test.py
+new file mode 100644
+index 00000000..f1590163
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/scheduler_test.py
+@@ -0,0 +1,239 @@
++"""Real leased Store and deterministic streaming concurrency, no model/physics."""
++
++import json
++import uuid
++from concurrent.futures import ThreadPoolExecutor
++from threading import Event
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    EnvironmentOutcome,
++    result_record,
++)
++from cosmos_framework.evaluation.robocasa_v2.scheduler import StreamingScheduler
++from cosmos_framework.evaluation.robocasa_v2.store import Store, records
++from robocasa_eval_v2.identity import ATOMIC_TASKS
++from tools.v3.eval_v2_production_tests.store_test import close_streams, fixture_core
++from tools.v3.eval_v2_production_tests.store_test import cleaned
++from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_manifest
++
++
++def fresh(path, tasks=("CloseFridge",), episodes=4):
++    value = Store(path / "run", streaming_manifest(tasks, episodes))
++    value.create()
++    return value
++
++
++def complete(scheduler, claim):
++    value, a = scheduler.store, claim["attempt"]
++    init = value.begin_initialization(a)
++    assert (
++        value.initialization_outcome(a, initial_success=False)["status"] == "admitted"
++    )
++    grant = value.allocate_environment(a["task"], a["physical_slot_id"])
++    sampling = dict(
++        environment_id=grant["environment_id"],
++        actual_seed=grant["seed"],
++        environment_reset_index=0,
++        physical_slot_id=a["physical_slot_id"],
++        protocol=value.manifest["protocol"]["sampling"],
++    )
++    value.bind_sampling(a, sampling)
++    observed = EnvironmentOutcome(value.manifest["horizons"][a["task"]], [True]).finish(
++        normal=True
++    )
++    row = result_record(
++        value.manifest,
++        **{
++            k: a[k]
++            for k in (
++                "task",
++                "episode",
++                "generation",
++                "stream_id",
++                "attempt_id",
++                "worker_id",
++                "seed",
++            )
++        },
++        reset_index=init["reset_index"],
++        observation=observed,
++        instruction="CPU scene",
++        replans=1,
++        elapsed_seconds=0.01,
++        sampling=sampling,
++    )
++    staging = fixture_core(value, a, row)
++    scene = staging / "scene_provenance.json"
++    scene.write_text(
++        json.dumps(dict(json.loads(scene.read_bytes()), sampling=sampling))
++    )
++    scheduler.commit(claim, row, staging=staging)
++    scheduler.finish(claim)
++    return row
++
++
++def test_64_slots_more_than_18_tasks_no_round_barrier_and_no_duplicate_claims(tmp_path):
++    value = fresh(tmp_path, ATOMIC_TASKS, 50)
++    slots = {f"slot{i}": uuid.uuid4().hex for i in range(64)}
++    with value.locked():
++        scheduler = StreamingScheduler(value, slots)
++        claims = [scheduler.dispatch(w) for w in slots]
++        keys = {(c["task"], c["episode"]) for c in claims}
++        assert len(keys) == len(scheduler.inflight) == 64
++        assert {c["task"] for c in claims} == set(ATOMIC_TASKS)
++        assert len({c["attempt"]["physical_slot_id"] for c in claims}) == 64
++        assert max(c["episode"] for c in claims) >= 3
++        with pytest.raises(ValueError, match="busy"):
++            scheduler.dispatch("slot0")
++        slow = claims[0]
++        fast = claims[18]  # Same Task, later Episode, while Episode0 is still owned.
++        assert fast["task"] == slow["task"] and fast["episode"] > slow["episode"]
++        complete(scheduler, fast)
++        next_claim = scheduler.dispatch(fast["physical_worker"])
++        assert next_claim and scheduler.inflight[slow["physical_worker"]] == slow
++        assert (next_claim["task"], next_claim["episode"]) not in keys
++        assert not any(
++            x["kind"] == "ROUND_BARRIER"
++            for x in records(value.root / "_internal/scheduler" / scheduler.invocation)
++        )
++        scheduler.cancel("CPU controlled stop; unfinished work remains pending")
++        for task in ATOMIC_TASKS:
++            close_streams(value, task)
++
++
++def test_task_affinity_is_bounded_and_all_tasks_make_progress(tmp_path):
++    value = fresh(tmp_path, ATOMIC_TASKS[:3], 12)
++    with value.locked():
++        scheduler = StreamingScheduler(value, {"worker": uuid.uuid4().hex})
++        order = []
++        while not scheduler.done:
++            claim = scheduler.dispatch("worker")
++            if claim:
++                order.append(claim["task"])
++                complete(scheduler, claim)
++        assert set(order[:9]) == set(ATOMIC_TASKS[:3])
++        assert all(order.count(t) == 12 for t in ATOMIC_TASKS[:3])
++        assert all(len(set(order[i : i + 5])) > 1 for i in range(len(order) - 5))
++        for task in ATOMIC_TASKS[:3]:
++            close_streams(value, task)
++        assert value.publish_views()["valid"] == 36
++
++
++def test_concurrent_environment_seed_allocation_and_cross_slot_binding_fail_closed(
++    tmp_path,
++):
++    value = fresh(tmp_path)
++    with value.locked():
++        value.begin_task("CloseFridge")
++        slots = [uuid.uuid4().hex for _ in range(32)]
++        with ThreadPoolExecutor(32) as pool:
++            grants = list(
++                pool.map(
++                    lambda slot: value.allocate_environment("CloseFridge", slot), slots
++                )
++            )
++        assert sorted(g["ordinal"] for g in grants) == list(range(32))
++        assert len({g["seed"] for g in grants}) == 32
++        scheduler = StreamingScheduler(value, {"a": slots[0], "b": slots[1]})
++        a, b = scheduler.dispatch("a"), scheduler.dispatch("b")
++        value.begin_initialization(a["attempt"])
++        value.initialization_outcome(a["attempt"], initial_success=False)
++        sampling = dict(
++            environment_id=grants[1]["environment_id"],
++            actual_seed=grants[1]["seed"],
++            physical_slot_id=slots[1],
++            environment_reset_index=0,
++            protocol=value.manifest["protocol"]["sampling"],
++        )
++        with pytest.raises(ValueError, match="sampling contradicts"):
++            value.bind_sampling(a["attempt"], sampling)
++        with pytest.raises(ValueError, match="misrouted"):
++            scheduler.finish(dict(b, physical_worker="a"))
++        scheduler.cancel("controlled test stop")
++        close_streams(value, "CloseFridge")
++
++
++def test_resume_keeps_core_and_owner_pending_until_explicit_authorization(tmp_path):
++    value = fresh(tmp_path, episodes=3)
++    with value.locked():
++        scheduler = StreamingScheduler(
++            value, {"a": uuid.uuid4().hex, "b": uuid.uuid4().hex}
++        )
++        first, skipped = scheduler.dispatch("a"), scheduler.dispatch("b")
++        complete(scheduler, first)
++        for _ in range(4):
++            value.begin_initialization(skipped["attempt"])
++            value.initialization_outcome(
++                skipped["attempt"],
++                error=ValueError("known sampling"),
++                stage="reset",
++                safe_to_retry=True,
++            )
++        scheduler.finish(skipped)
++        original = (value._slot("CloseFridge", 0) / "result.json").read_bytes()
++        scheduler.cancel("controlled Resume boundary")
++        close_streams(value, "CloseFridge")
++    resumed = Store(value.root, value.manifest)
++    with resumed.locked():
++        scheduler = StreamingScheduler(resumed, {"new": uuid.uuid4().hex})
++        last = scheduler.dispatch("new")
++        assert last["episode"] == 2
++        complete(scheduler, last)
++        assert scheduler.dispatch("new") is None and scheduler.done
++        assert [x[2] for x in scheduler.resume_scan[:2]] == [
++            "skip_valid_core",
++            "skip_owner_pending",
++        ]
++        assert (
++            resumed._slot("CloseFridge", 0) / "result.json"
++        ).read_bytes() == original
++        close_streams(resumed, "CloseFridge")
++
++
++def test_task_fault_blocks_sibling_commit_without_poisoning_other_task(tmp_path):
++    value = fresh(tmp_path, ATOMIC_TASKS[:2], 4)
++    with value.locked():
++        scheduler = StreamingScheduler(
++            value, {f"s{i}": uuid.uuid4().hex for i in range(3)}
++        )
++        a, other, sibling = [scheduler.dispatch(w) for w in scheduler.workers]
++        assert a["task"] == sibling["task"] != other["task"]
++        value.record_process_error(
++            a["task"], "server_exit", "CPU injected exit", attempt=a["attempt"]
++        )
++        with pytest.raises(ValueError, match="fault|unresolved|safe stop"):
++            complete(scheduler, sibling)
++        complete(scheduler, other)
++        assert value.slot(other["task"], 0)["result"] is not None
++        scheduler.cancel("expected task-scoped fault")
++        for task in ATOMIC_TASKS[:2]:
++            close_streams(value, task)
++
++
++def test_cleanup_probe_does_not_hold_store_metadata_lock(tmp_path):
++    value = fresh(tmp_path)
++    entered, release = Event(), Event()
++    with value.locked():
++        stream = value.begin_task("CloseFridge")
++
++        def probe(record):
++            entered.set()
++            assert release.wait(5)
++            return cleaned(record)
++
++        with ThreadPoolExecutor(2) as pool:
++            cleanup = pool.submit(
++                value.cleanup_stream, "CloseFridge", stream["stream_id"], probe
++            )
++            assert entered.wait(3)
++            try:
++                grant = pool.submit(
++                    value.allocate_environment, "CloseFridge", uuid.uuid4().hex
++                ).result(3)
++                assert grant["task"] == "CloseFridge" and not cleanup.done()
++            finally:
++                release.set()
++            assert cleanup.result(3)["stream"] == {
++                k: v for k, v in stream.items() if k != "action"
++            }
+diff --git a/tools/v3/eval_v2_streaming_tests/startup_race_test.py b/tools/v3/eval_v2_streaming_tests/startup_race_test.py
+new file mode 100644
+index 00000000..735dc7f5
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/startup_race_test.py
+@@ -0,0 +1,145 @@
++"""Controlled READY failures/cancellation: unpublished processes still have owners."""
++
++import sys
++import threading
++import uuid
++from concurrent.futures import ThreadPoolExecutor
++from types import SimpleNamespace
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2.store import Store
++from robocasa_eval_v2 import runtime as module
++from robocasa_eval_v2.config import DEFAULTS
++from tools.v3.eval_v2_streaming_tests.capacity_test import (
++    streaming_config,
++    streaming_manifest,
++)
++
++
++class Registry:
++    def __init__(self):
++        self.created = []
++        self.recovered = threading.Event()
++
++    def start(self, command, **kwargs):
++        process = SimpleNamespace(
++            proc=SimpleNamespace(pid=71000, poll=lambda: None), pgid=71000
++        )
++        self.created.append(process)
++        return process, {"id": uuid.uuid4().hex, "cpu_fake_process": True}
++
++    def recover(self):
++        self.recovered.set()
++
++
++def fresh(tmp_path):
++    cfg = dict(
++        DEFAULTS,
++        **streaming_config(gpu_ids=[6], sims_per_gpu=2, max_infer_batch_size=2),
++        render_backend="osmesa",
++        render_gpu_ids=[],
++        local_memory_mode="off",
++        server_python=sys.executable,
++        checkpoint=str(tmp_path / "cpu_checkpoint"),
++        config_file=str(tmp_path / "cpu_config"),
++        prediction_steps=2,
++        save_generated_video="none",
++    )
++    value = Store(tmp_path / "run", streaming_manifest(cfg=cfg))
++    value.create()
++    return value, cfg
++
++
++def test_bad_ready_info_is_terminal_one_spawn_and_unpublished_server_is_measured(
++    tmp_path, monkeypatch
++):
++    value, cfg = fresh(tmp_path)
++    with value.locked():
++        probes = []
++
++        def measure(cfg, processes=(), **kwargs):
++            probes.append(tuple(processes))
++            return {"rss_bytes": 0, "owned_gpu_bytes": {6: 0}}
++
++        runtime = module.Runtime(value, cfg, {}, {}, resource_probe=measure)
++        runtime.registry = Registry()
++        entered, release = threading.Event(), threading.Event()
++
++        def wait_server(*args, **kwargs):
++            entered.set()
++            assert release.wait(4)
++            return {"session_transactions": {"enabled": False}}
++
++        monkeypatch.setattr(module, "wait_server", wait_server)
++        with ThreadPoolExecutor(2) as pool:
++            first = pool.submit(runtime._server, runtime.workers[0])
++            assert entered.wait(3)
++            second = pool.submit(runtime._server, runtime.workers[1])
++            assert not runtime.servers and len(runtime._processes()) == 1
++            runtime._measure()
++            assert probes[-1] == tuple(runtime.registry.created)
++            release.set()
++            with pytest.raises(ValueError, match="Server identity"):
++                first.result(4)
++            with pytest.raises(RuntimeError, match="cancelled"):
++                second.result(4)
++        assert len(runtime.registry.created) == 1 and not runtime.servers
++        assert runtime.stop.is_set() and not runtime.startup_budget.pending
++        runtime.close()
++
++
++def test_stop_during_ready_waits_for_startup_owner_before_final_cleanup(
++    tmp_path, monkeypatch
++):
++    value, cfg = fresh(tmp_path)
++    with value.locked():
++        runtime = module.Runtime(
++            value,
++            cfg,
++            {},
++            {},
++            resource_probe=lambda *a, **k: {"rss_bytes": 0, "owned_gpu_bytes": {6: 0}},
++        )
++        registry = runtime.registry = Registry()
++        entered, release = threading.Event(), threading.Event()
++
++        def wait_server(*args, **kwargs):
++            entered.set()
++            assert release.wait(4)
++            return {
++                "session_transactions": dict(
++                    enabled=True,
++                    local_memory_mode="off",
++                    execution_profile="session_native_batch_v1",
++                    run_lease=value.lease_id,
++                    manifest_digest=value.manifest["digest"],
++                    slot_ids=list(runtime.slot_ids.values()),
++                    max_native_batch=2,
++                    batch_wait_ms=20,
++                    capacity_profile="streaming32",
++                )
++            }
++
++        monkeypatch.setattr(module, "wait_server", wait_server)
++        with ThreadPoolExecutor(2) as pool:
++            actor = pool.submit(
++                runtime._actor,
++                {"physical_worker": runtime.workers[0], "task": "CloseFridge"},
++            )
++            assert entered.wait(3)
++            closing = pool.submit(runtime.close)
++            assert registry.recovered.wait(3)
++            assert runtime._closing and runtime._active_jobs == 1 and not closing.done()
++            release.set()
++            with pytest.raises(RuntimeError, match="after cancellation"):
++                actor.result(4)
++            closing.result(4)
++        assert (
++            runtime.closed
++            and runtime._active_jobs == 0
++            and not runtime.servers
++            and not runtime.actors
++        )
++        assert len(registry.created) == 1 and not runtime.startup_budget.pending
++        with pytest.raises(RuntimeError, match="cancelled before process creation"):
++            runtime._spawn([sys.executable], kind="late")
+diff --git a/tools/v3/eval_v2_streaming_tests/startup_test.py b/tools/v3/eval_v2_streaming_tests/startup_test.py
+new file mode 100644
+index 00000000..6f5b06f8
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/startup_test.py
+@@ -0,0 +1,117 @@
++"""Actual OS ownership/READY/SimSlot/HTTP/native/Store with slow startup doubles."""
++
++import json
++import subprocess
++import sys
++from pathlib import Path
++
++import pytest
++from cosmos_framework.evaluation.robocasa_v2.store import records
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    clock_kernel as clock_kernel,
++)  # noqa: F401
++from robocasa_eval_v2.runtime import Runtime
++from robocasa_eval_v2_processes import process_identity
++from tools.v3.eval_v2_batch_tests import runtime_test as old
++from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_config
++
++
++def cpu_run(tmp_path, monkeypatch, *, mode="off", fail=False):
++    original_execution = old.execution
++
++    def resolved(cfg):
++        cfg.update(
++            streaming_config(
++                gpu_ids=[0],
++                sims_per_gpu=2 if fail else 4,
++                max_infer_batch_size=1 if fail else 2,
++            ),
++            render_backend="osmesa",
++            render_gpu_ids=[],
++        )
++        return original_execution(cfg)
++
++    class OwnedRuntime(Runtime):
++        def __init__(self, *args, **kwargs):
++            kwargs["resource_probe"] = lambda *a, **k: {
++                "rss_bytes": 0,
++                "owned_gpu_bytes": {0: 0},
++            }
++            super().__init__(*args, **kwargs)
++
++    monkeypatch.setattr(old, "execution", resolved)
++    monkeypatch.setattr(old, "FIXTURE", Path(__file__).with_name("os_fixture.py"))
++    monkeypatch.setattr(old, "Runtime", OwnedRuntime)
++    return old.cpu_run(
++        tmp_path,
++        monkeypatch,
++        g=1,
++        n=1 if fail else 2,
++        episodes=2 if fail else 4,
++        fail_server=fail,
++        local_memory_mode=mode,
++    )
++
++
++@pytest.mark.parametrize("mode", ["off", "required"])
++def test_real_os_parallel_ready_make_env_exactly_one_server_and_cleanup(
++    tmp_path, monkeypatch, mode
++):
++    value, cfg, runtime, report, error = cpu_run(tmp_path, monkeypatch, mode=mode)
++    if error:
++        pytest.fail(
++            repr(error)
++            + "\n"
++            + "\n".join(
++                p.read_text()[-10000:] for p in (value.root / "logs").glob("*.log")
++            )
++        )
++    assert report["valid"] == 8 and report["results_qualified"]
++    processes = records(value.root / "_internal/processes")
++    assert sum(p["kind"] == "server" for p in processes) == 1
++    assert sum(p["kind"].startswith("simulator_slot:") for p in processes) == 4
++    assert len(runtime.actors) == len(runtime.slot_ids) == 4
++    for stage in ("READY", "make_env"):
++        stamps = [
++            json.loads(p.read_bytes())
++            for p in (value.root / "_internal/cpu_streaming_startup" / stage).iterdir()
++        ]
++        assert len(stamps) == 4
++        assert max(s["start"] for s in stamps) < min(s["end"] for s in stamps)
++    for process in processes:
++        assert (
++            value.root / "_internal/process_closed" / f"{process['id']}.json"
++        ).is_file()
++        assert process_identity(process["identity"]["pid"]) is None
++    assert runtime._active_jobs == 0 and runtime._closing
++    with pytest.raises(RuntimeError, match="cancelled before process"):
++        runtime._spawn([sys.executable, "-c", "raise SystemExit(99)"], kind="late")
++
++
++def test_streaming_server_exit_23_two_inflight_and_unrelated_process_survives(
++    tmp_path, monkeypatch
++):
++    outsider = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(180)"])
++    try:
++        value, cfg, runtime, report, error = cpu_run(tmp_path, monkeypatch, fail=True)
++        assert error is not None and report["valid"] == 0
++        assert outsider.poll() is None
++        faults = [
++            json.loads(line.removeprefix("CPU_SERVER_FAULT "))
++            for p in (value.root / "logs").glob("*_server.log")
++            for line in p.read_text().splitlines()
++            if line.startswith("CPU_SERVER_FAULT ")
++        ]
++        assert len(faults) == 1 and len(faults[0]["tickets"]) == 2
++        assert next(iter(runtime.servers.values()))[0].proc.returncode == 23
++        processes = records(value.root / "_internal/processes")
++        for process in processes:
++            assert process_identity(process["identity"]["pid"]) is None
++            assert (
++                value.root / "_internal/process_closed" / f"{process['id']}.json"
++            ).exists()
++        errors = value.errors("CloseFridge")
++        assert len({e["attempt"]["episode"] for e in errors if e["attempt"]}) == 2
++    finally:
++        outsider.terminate()
++        outsider.wait(5)
+diff --git a/tools/v3/eval_v2_streaming_tests/transactions_test.py b/tools/v3/eval_v2_streaming_tests/transactions_test.py
+new file mode 100644
+index 00000000..3d7db07f
+--- /dev/null
++++ b/tools/v3/eval_v2_streaming_tests/transactions_test.py
+@@ -0,0 +1,237 @@
++"""32 Sessions through the public client/dispatcher and native H16 B32 carriers."""
++
++import threading
++from concurrent.futures import ThreadPoolExecutor
++from types import SimpleNamespace
++
++import pytest
++import torch
++from torch import nn
++from cosmos_framework.inference.robocasa_batch_transactions import (
++    BatchedSessionTransactions,
++)
++from cosmos_framework.inference.robocasa_dual_mode_test import forbidden, no_ttt_payload
++from cosmos_framework.inference.robocasa_local_memory_policy import (
++    RoboCasaLocalMemoryPolicyAdapter,
++)
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    make_adapter,
++    payload,
++    registration,
++    clock_kernel as clock_kernel,  # noqa: F401
++)
++from cosmos_framework.inference.robocasa_transaction_client import (
++    TransactionPolicyClient,
++)
++from cosmos_framework.scripts.robocasa_transactions_b1_test import (
++    DirectTransport,
++    service,
++    server,
++)
++
++
++@pytest.mark.parametrize("mode", ["off", "required"])
++@pytest.mark.parametrize("cap", [8, 16, 32])
++def test_32_sessions_native_shapes_routing_replay_and_real_fast_state(
++    monkeypatch, mode, cap
++):
++    obj = service(monkeypatch)
++    if mode == "required":
++        obj.local_memory_adapter, obj.model = make_adapter(32)
++    else:
++        obj.model = nn.Module()
++        obj.model.net = nn.Module()
++        obj.local_memory_adapter = RoboCasaLocalMemoryPolicyAdapter(
++            obj, mode="off", decode_image=forbidden, max_sessions=32
++        )
++        for name in (
++            "prepare",
++            "commit",
++            "commit_many",
++            "abort",
++            "reset",
++            "status",
++            "prefixes",
++        ):
++            monkeypatch.setattr(obj.local_memory_adapter, name, forbidden)
++    calls = []
++
++    def generate(batch, **kwargs):
++        n = len(batch["prompt"])
++        prefixes = kwargs.get("_local_memory_prefixes")
++        assert len(batch["action"]) == len(batch["sequence_plan"]) == n
++        assert all(a[0].shape == (17, 64) for a in batch["action"])
++        assert (prefixes is not None) == (mode == "required")
++        calls.append(
++            {
++                "size": n,
++                "hot": [] if prefixes is None else [p is not None for p in prefixes],
++            }
++        )
++        return {
++            "action": [
++                torch.full((1, 17, 64), float(batch["action"][i][0][0, 0]))
++                for i in range(n)
++            ],
++            "vision": [torch.zeros(1, 3, 1, 8, 8) for _ in range(n)],
++        }
++
++    obj.model.generate_samples_from_batch = generate
++    actor = BatchedSessionTransactions(
++        obj.local_memory_adapter,
++        obj._transaction_batch,
++        lambda: None,
++        owner_token="cpu-owner",
++        run_lease="run",
++        manifest_digest="a" * 64,
++        slot_ids=tuple(f"slot{i}" for i in range(32)),
++        capacity_profile="streaming32",
++        max_batch_size=cap,
++        batch_wait_ms=1000,
++        timeout_s=30,
++        model_lock=obj._lock,
++    )
++    obj.transactions = actor
++    clients = [
++        TransactionPolicyClient(
++            "http://cpu",
++            timeout_s=30,
++            transport=DirectTransport(obj),
++            batch_profile=True,
++            max_batch_size=cap,
++            local_memory_mode=mode,
++            capacity_profile="streaming32",
++        )
++        for _ in range(32)
++    ]
++    try:
++        leases = [
++            client.register(registration(f"slot{i}"), "cpu-owner")
++            for i, client in enumerate(clients)
++        ]
++        assert len({a["session_id"] for a in leases}) == 32
++        for wave in range(2):
++            barrier = threading.Barrier(32)
++            requests = [
++                no_ttt_payload(a, wave)
++                if mode == "off"
++                else payload(a, wave * 2, 0, i + 1)
++                for i, a in enumerate(leases)
++            ]
++            for i, request in enumerate(requests):
++                request["state"][0] = i * 0.001
++
++            def predict(i):
++                barrier.wait(10)
++                return clients[i].predict(requests[i])
++
++            with ThreadPoolExecutor(32) as pool:
++                results = list(pool.map(predict, range(32)))
++            for i, result in enumerate(results):
++                assert result["assignment"]["session_id"] == leases[i]["session_id"]
++                assert result["native_batch"]["size"] <= cap
++                assert len(result["action"]) == 16 and len(result["action"][0]) == 15
++                assert result["action"][0][0] == pytest.approx((i * 0.001 + 1) / 2)
++            if wave == 0:
++                before = len(calls)
++                assert clients[0].predict(requests[0]) == results[0]
++                assert (
++                    len(calls) == before
++                )  # Post-ACK replay never runs native generation twice.
++        assert all(1 <= c["size"] <= cap for c in calls)
++        if cap == 32:
++            assert any(c["size"] == 32 for c in calls)
++        if mode == "required":
++            fast = obj.local_memory_adapter.snapshot.fast
++            assert len(fast) == 32 and len({id(v.state) for v in fast.values()}) == 32
++            assert any(any(c["hot"]) for c in calls)
++            others = {
++                sid: state
++                for sid, state in fast.items()
++                if sid != leases[0]["session_id"]
++            }
++            clients[0].end()
++            assert all(
++                obj.local_memory_adapter.snapshot.fast[sid] is state
++                for sid, state in others.items()
++            )
++        else:
++            assert obj.local_memory_adapter.memory is None
++        for client in clients:
++            if client.lease is not None:
++                client.end()
++        info = actor.info()
++        assert info["sessions"] == info["tickets"] == info["encoded_bytes"] == 0
++        assert info["requests_finished"] == 64
++        assert info["queue_wait_p95_ms"] >= info["queue_wait_p50_ms"] >= 0
++        assert info["batch_generate_ms"]["count"] == len(calls)
++        with pytest.raises((ValueError, RuntimeError)):
++            actor.register(registration("slot0", generation=1), "cpu-owner")
++    finally:
++        assert actor.close(timeout_s=5)
++        actor._executor.shutdown(wait=True)
++
++
++def test_server_preflight_explicit_32_capacity_and_client_rejects_bad_batch_or_ack(
++    tmp_path,
++):
++    path = tmp_path / "owner"
++    path.write_text("cpu-private-owner")
++    path.chmod(0o600)
++    args = SimpleNamespace(
++        transaction_profile="batch",
++        transaction_capacity_profile="streaming32",
++        transaction_slot_ids=",".join(f"s{i}" for i in range(32)),
++        transaction_slot_id=None,
++        transaction_max_batch_size=32,
++        transaction_batch_wait_ms=20,
++        local_memory_mode="off",
++        local_memory_max_sessions=32,
++        action_chunk_size=16,
++        transaction_owner_token_file=path,
++        transaction_run_lease="run",
++        transaction_manifest_digest="a" * 64,
++    )
++    actual = server._transaction_options(args)
++    assert (
++        actual["capacity_profile"] == "streaming32"
++        and len(actual["slot_ids"]) == actual["max_batch_size"] == 32
++    )
++    args.transaction_capacity_profile = "legacy8"
++    with pytest.raises(ValueError):
++        server._transaction_options(args)
++    client = TransactionPolicyClient(
++        "http://cpu",
++        batch_profile=True,
++        max_batch_size=32,
++        capacity_profile="streaming32",
++    )
++    assert client._batch_valid({"id": "a" * 32, "size": 32, "index": 31})
++    assert not client._batch_valid({"id": "a" * 32, "size": 33, "index": 0})
++    with pytest.raises(ValueError, match="capacity profile"):
++        client.bind_assignment(
++            {
++                "prediction_clock_domain": client.clock_domain,
++                "capacity_profile": "legacy8",
++            }
++        )
++
++
++def test_coordinator_cancellation_stops_registration_retry_immediately():
++    import requests
++
++    cancelled = threading.Event()
++    calls = []
++
++    class Lost:
++        def request(self, *args, **kwargs):
++            calls.append(kwargs["timeout"])
++            cancelled.set()
++            raise requests.ConnectionError("owned Server stopped during registration")
++
++    client = TransactionPolicyClient(
++        "http://cpu", transport=Lost(), cancelled=cancelled.is_set
++    )
++    with pytest.raises(RuntimeError, match="coordinator cancelled"):
++        client.register(registration(), "cpu-owner")
++    assert len(calls) == 1 and client.lease is None
+diff --git a/tools/v3/run_eval_v2_streaming_cpu_gate.py b/tools/v3/run_eval_v2_streaming_cpu_gate.py
+new file mode 100644
+index 00000000..711873c5
+--- /dev/null
++++ b/tools/v3/run_eval_v2_streaming_cpu_gate.py
+@@ -0,0 +1,57 @@
++"""Exact-pair streaming CPU Gate; includes the established Phase A/B and media suites."""
++
++from pathlib import Path
++
++from run_eval_v2_transactions_b1_cpu_gate import main
++
++
++if __name__ == "__main__":
++    root = Path(__file__).resolve().parents[2]
++    static = [
++        str(path.relative_to(root))
++        for directory in (
++            "scripts/robocasa_eval_v2",
++            "tools/v3/eval_v2_batch_tests",
++            "tools/v3/eval_v2_replan_tests",
++            "tools/v3/eval_v2_streaming_tests",
++        )
++        for path in (root / directory).glob("*.py")
++    ]
++    raise SystemExit(
++        main(
++            extra_production=[
++                "evaluation/robocasa_v2/contract.py",
++                "evaluation/robocasa_v2/scheduler.py",
++                "evaluation/robocasa_v2/store.py",
++                "inference/robocasa_batch_transactions.py",
++                "inference/robocasa_batch_transactions_test.py",
++                "inference/robocasa_dual_mode_test.py",
++                *[
++                    f"simulation/robocasa/eval_v2_{name}.py"
++                    for name in (
++                        "adapter",
++                        "slot",
++                        "worker",
++                        "transactions",
++                        "transactions_test",
++                    )
++                ],
++            ],
++            extra_inference=[
++                "inference/robocasa_batch_transactions_test.py",
++                "inference/robocasa_dual_mode_test.py",
++                "simulation/robocasa/eval_v2_transactions_test.py",
++            ],
++            extra_static=[
++                "tools/v3/run_eval_v2_streaming_cpu_gate.py",
++                "tools/v3/eval_v2_production_tests/slot_test.py",
++                *sorted(static),
++            ],
++            extra_tests={
++                "phase_b_runtime": ["tools/v3/eval_v2_batch_tests"],
++                "media_replans": ["tools/v3/eval_v2_replan_tests"],
++                "streaming": ["tools/v3/eval_v2_streaming_tests"],
++            },
++            gate_name="EVALV2_STREAMING_M32_AUTHOR_OR_DS_CPU_ONLY_SYNTHETIC_NATIVE_BOUNDARIES",
++        )
++    )
+diff --git a/tools/v3/run_eval_v2_transactions_b1_cpu_gate.py b/tools/v3/run_eval_v2_transactions_b1_cpu_gate.py
+index 67381160..0a85e75f 100644
+--- a/tools/v3/run_eval_v2_transactions_b1_cpu_gate.py
++++ b/tools/v3/run_eval_v2_transactions_b1_cpu_gate.py
+@@ -152,6 +152,8 @@ def main(
+         overrides = dict(
+             CUDA_VISIBLE_DEVICES="",
+             COSMOS_DEVICE="cpu",
++            MUJOCO_GL="osmesa",
++            PYOPENGL_PLATFORM="osmesa",
+             HF_HUB_OFFLINE="1",
+             TRANSFORMERS_OFFLINE="1",
+             PYTHONDONTWRITEBYTECODE="1",

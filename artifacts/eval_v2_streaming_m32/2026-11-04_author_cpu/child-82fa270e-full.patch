@@ -1,0 +1,953 @@
+diff --git a/SESSION.md b/SESSION.md
+index 6d1824d..11f797c 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -5,3 +5,9 @@
+ - 静态验收：修改文件 Ruff、format、`py_compile`、`git diff --check` 通过；AST 测试禁止 corrected active modules 导入历史 B1 causal/latent 模块。
+ - 环境：使用已有 `/disk/rl/psm_wma/cosmos-framework/.venv`；本机 `uv run` 不识别 `tool.uv.audit`，首次尝试已中止。
+ - 边界：未运行真实 Wan 数值 parity、GPU、真实服务器、模拟器、18-task 或训练；Phase6B 与生产提升仍待单独授权。
++
++## 2026-11-04 — Issue17 EvalV2 streaming M32 candidate
++
++- Dedicated `v3-evalv2-streaming-m32-b32-20261104`, baseline1069fe78841228cadbbfbe6afbd767eaed6225da. Versioned streaming contract/Scheduler/physical attempt+sampling, short Store metadata lock and safe fault resolution, explicit legacy8/streaming32 Client/Server capacity, bounded Batch/media fairness, no no-op rollout compose and Worker timings. Local model/fast-state algorithms, vendor/render/source verifier, training/G2 and historical results remain untouched.
++- Root `/workspace/work/psm-wma-streaming-m32` owns full integration tests and exact-pair Gate. Author development streaming54PASS includes two64SimSlot/900Core CPU runs and dual-mode32Session/B32 native routing, realOS4Sim initialization and exit23 cleanup; augmentedfocused60PASS plus last2PASS, with overlapping counts and original failures retained outside source. Ruff/format pass. Full exact-pair Gate not yet run; no GPT/DS final approval or official branch promotion.
++- Owner latest steering retains strict M/B Resume identity; proposed relaxation fully withdrawn. Candidate only; do not touch R04, remote data/files, GPU or official v3-local-ttt. Implementation SHA is this subsequent commit; Root Gitlink will bind it before unified CPU replay.
+diff --git a/cosmos_framework/evaluation/robocasa_v2/contract.py b/cosmos_framework/evaluation/robocasa_v2/contract.py
+index 9126939..81f8d0a 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/contract.py
++++ b/cosmos_framework/evaluation/robocasa_v2/contract.py
+@@ -12,6 +12,19 @@ from dataclasses import dataclass, field
+ 
+ SCHEMA = "psm_robocasa_eval_v2"
+ SAMPLING = "dynamic_slot_environment_seed_then_continuous_reset_v3"
++ROUND_SCHEDULE = "episode_major_frozen_order_round_barrier_v1"
++STREAMING_SCHEDULE = "streaming_task_affinity_v2"
++STREAMING_SAMPLING = "independent_slot_environment_seed_then_continuous_reset_v4"
++STREAMING_RESOURCE_FIELDS = frozenset(
++    (
++        "max_owned_gpu_bytes",
++        "sim_startup_rss_bytes",
++        "sim_startup_gpu_bytes",
++        "server_startup_rss_bytes",
++        "server_startup_gpu_bytes",
++        "initialization_concurrency",
++    )
++)
+ RESUME = "retry_missing_episode_no_scene_reproduction_v2"
+ _SHA = re.compile(r"[0-9a-f]{64}\Z")
+ 
+@@ -30,6 +43,25 @@ def integer(value, minimum, maximum, name):
+     return value
+ 
+ 
++def streaming(manifest):
++    return manifest["protocol"]["schedule"] == STREAMING_SCHEDULE
++
++
++def validate_streaming_resources(value):
++    if not isinstance(value, dict) or set(value) != STREAMING_RESOURCE_FIELDS:
++        raise ValueError("explicit complete streaming_resources budget required")
++    for key, entry in value.items():
++        integer(
++            entry,
++            0 if key == "sim_startup_gpu_bytes" else 1,
++            32 if key == "initialization_concurrency" else 2**63 - 1,
++            key,
++        )
++    if any(value[k] > value["max_owned_gpu_bytes"] for k in ("server_startup_gpu_bytes", "sim_startup_gpu_bytes")):
++        raise ValueError("startup GPU reservation exceeds owned GPU budget")
++    return value
++
++
+ def build_manifest(
+     *,
+     tasks,
+@@ -86,7 +118,7 @@ def build_manifest(
+             "sampling": SAMPLING,
+             "resource_architecture": "one_reusable_sim_slot_per_gpu_phase_a",
+             "seed_field": "logical_task_stream; actual environment seed in sampling provenance",
+-            "schedule": "episode_major_frozen_order_round_barrier_v1",
++            "schedule": ROUND_SCHEDULE,
+             "resume": RESUME,
+             "success_latch": 1,
+             "scene_admission": "reject_initial_success_bounded_v1",
+@@ -105,16 +137,18 @@ def build_manifest(
+         },
+     }
+     if execution is not None:
++        is_streaming = isinstance(execution, dict) and execution.get("scheduling") == STREAMING_SCHEDULE
++        extra = {"scheduling", "resources", "max_rss_bytes"} if is_streaming else set()
+         if (
+             not isinstance(execution, dict)
+             or set(execution)
+-            != {"profile", "gpu_ids", "sims_per_gpu", "max_infer_batch_size", "batch_wait_ms", "noise"}
++            != {"profile", "gpu_ids", "sims_per_gpu", "max_infer_batch_size", "batch_wait_ms", "noise"} | extra
+             or execution["profile"] != "phase_b_native_batch_v1"
+             or execution["noise"] != "literal_cfg_seed_per_sample_v1"
+         ):
+             raise ValueError("exact native batch execution identity required")
+-        integer(execution["sims_per_gpu"], 1, 8, "M")
+-        integer(execution["max_infer_batch_size"], 1, 8, "B")
++        integer(execution["sims_per_gpu"], 1, 32 if is_streaming else 8, "M")
++        integer(execution["max_infer_batch_size"], 1, 32 if is_streaming else 8, "B")
+         integer(execution["batch_wait_ms"], 1, 1000, "batch_wait_ms")
+         gpus = execution["gpu_ids"]
+         if (
+@@ -126,6 +160,10 @@ def build_manifest(
+             raise ValueError("distinct physical GPUs required")
+         body["execution"] = execution
+         body["protocol"]["resource_architecture"] = "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b"
++        if is_streaming:
++            validate_streaming_resources(execution["resources"])
++            integer(execution["max_rss_bytes"], 1, 2**63 - 1, "max_rss_bytes")
++            body["protocol"].update(schedule=STREAMING_SCHEDULE, sampling=STREAMING_SAMPLING)
+     if rendering is not None:
+         if (
+             not isinstance(rendering, dict)
+@@ -252,7 +290,7 @@ def result_record(
+         "generation": generation,
+         "stream_id": stream_id,
+         "seed": manifest["seed"] if seed is None else seed,
+-        "sampling_mode": SAMPLING,
++        "sampling_mode": manifest["protocol"]["sampling"],
+         "reset_index": episode if reset_index is None else reset_index,
+         "attempt_id": attempt_id,
+         "worker_id": worker_id,
+@@ -301,13 +339,15 @@ def validate_result(manifest, row):
+         or row["task"] not in manifest["tasks"]
+     ):
+         raise ValueError("invalid Episode identity/schema")
++    if streaming(manifest) and "sampling" not in row:
++        raise ValueError("streaming Core requires physical Slot sampling provenance")
+     if "sampling" in row:
+         sample = row["sampling"]
+         if (
+             not isinstance(sample, dict)
+             or set(sample)
+             != {"environment_id", "actual_seed", "environment_reset_index", "physical_slot_id", "protocol"}
+-            or sample["protocol"] != SAMPLING
++            or sample["protocol"] != manifest["protocol"]["sampling"]
+         ):
+             raise ValueError("invalid native environment sampling provenance")
+         for name in ("environment_id", "physical_slot_id"):
+@@ -319,7 +359,7 @@ def validate_result(manifest, row):
+     integer(row["generation"], 0, 100000, "generation")
+     integer(row["replans"], 0, 100000, "replans")
+     if (
+-        row["sampling_mode"] != SAMPLING
++        row["sampling_mode"] != manifest["protocol"]["sampling"]
+         or type(row["seed"]) is not int
+         or not 0 <= row["seed"] < 2**32
+         or type(row["reset_index"]) is not int
+diff --git a/cosmos_framework/evaluation/robocasa_v2/scheduler.py b/cosmos_framework/evaluation/robocasa_v2/scheduler.py
+index 332c648..0287df7 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/scheduler.py
++++ b/cosmos_framework/evaluation/robocasa_v2/scheduler.py
+@@ -9,7 +9,9 @@ from __future__ import annotations
+ import threading
+ import time
+ import uuid
++from collections import deque
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import streaming
+ from cosmos_framework.evaluation.robocasa_v2.store import save
+ 
+ OWNER_PENDING = ("skipped_init_error", "scene_admission_exhausted")
+@@ -45,6 +47,8 @@ class MeasuredLock:
+ 
+ class RoundScheduler:
+     def __init__(self, store, workers):
++        if type(self) is RoundScheduler and streaming(store.manifest):
++            raise ValueError("streaming manifest requires its versioned scheduler")
+         store._lease()
+         if store.scheduler_attached:
+             raise ValueError("another scheduler owns coordinator")
+@@ -178,3 +182,97 @@ class RoundScheduler:
+     @property
+     def done(self):
+         return not self.cancelled and self.round == self.store.manifest["episodes_per_task"] and not self.inflight
++
++
++class StreamingScheduler(RoundScheduler):
++    """Bounded Task affinity without a round barrier; the same commit authority."""
++
++    def __init__(self, store, slots):
++        if not streaming(store.manifest):
++            raise ValueError("streaming scheduler requires the v2 manifest")
++        if len(set(slots.values())) != len(slots):
++            raise ValueError("distinct physical Slot identities required")
++        super().__init__(store, list(slots))
++        self.slots = dict(slots)
++        self.pending = {
++            task: deque(range(store.manifest["episodes_per_task"])) for task in store.manifest["task_order"]
++        }
++        self.dispatched = dict.fromkeys(self.pending, 0)
++        self.affinity = {}
++        self.fair_cursor = 0
++
++    def dispatch(self, worker):
++        with self._lock:
++            self._check()
++            if worker not in self.slots or worker in self.inflight:
++                raise ValueError("unknown or busy physical worker")
++            tasks = list(self.pending)
++            for task in tasks:
++                queue = self.pending[task]
++                while queue:
++                    ep = queue[0]
++                    disposition = self._disposition(task, ep)
++                    if disposition == "execute":
++                        break
++                    queue.popleft()
++                    self._record(disposition, {"task": task, "episode": ep})
++                    self.resume_scan.append((task, ep, disposition))
++            eligible = [task for task in tasks if self.pending[task]]
++            if not eligible:
++                return None
++            last, streak = self.affinity.get(worker, (None, 0))
++            if last in eligible and streak < 4:
++                task = last
++            else:
++                order = tasks[self.fair_cursor :] + tasks[: self.fair_cursor]
++                task = min(eligible, key=lambda t: (self.dispatched[t], order.index(t)))
++            ep = self.pending[task][0]
++            if task not in self.store.active_tasks:
++                self.store.begin_task(task)
++            ticket = uuid.uuid4().hex
++            key = (task, ep)
++            self.store.dispatch_tickets[key] = ticket
++            self.store.dispatch_slots[key] = self.slots[worker]
++            try:
++                attempt = self.store.begin_episode(task, ep, dispatch_ticket=ticket)
++            except BaseException:
++                self.store.dispatch_tickets.pop(key, None)
++                self.store.dispatch_slots.pop(key, None)
++                raise
++            claim = dict(
++                dispatch_id=ticket,
++                physical_worker=worker,
++                task=task,
++                episode=ep,
++                attempt=attempt,
++                invocation=self.invocation,
++            )
++            self._record("DISPATCH", claim)
++            self.inflight[worker] = claim
++            self.pending[task].popleft()
++            self.dispatched[task] += 1
++            self.affinity[worker] = (task, streak + 1 if last == task else 1)
++            self.fair_cursor = (tasks.index(task) + 1) % len(tasks)
++            self.resume_scan.append((task, ep, "execute"))
++            return claim
++
++    def _owned(self, claim):
++        self._check()
++        worker = claim["physical_worker"]
++        if (
++            self.inflight.get(worker) != claim
++            or claim["invocation"] != self.invocation
++            or claim["attempt"]["physical_slot_id"] != self.slots[worker]
++        ):
++            raise ValueError("stale/duplicate/misrouted scheduler claim")
++
++    def finish(self, claim):
++        super().finish(claim)
++        # Slot tickets contain no replay authority after the terminal receipt.
++        with self._lock:
++            self.store.dispatch_slots.pop((claim["task"], claim["episode"]), None)
++
++    @property
++    def done(self):
++        with self._lock:
++            return not self.cancelled and not self.inflight and not any(self.pending.values())
+diff --git a/cosmos_framework/evaluation/robocasa_v2/store.py b/cosmos_framework/evaluation/robocasa_v2/store.py
+index b423ad8..b1fb16a 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/store.py
++++ b/cosmos_framework/evaluation/robocasa_v2/store.py
+@@ -13,6 +13,7 @@ import json
+ import os
+ import secrets
+ import stat
++import threading
+ import time
+ import uuid
+ from collections import deque
+@@ -23,6 +24,7 @@ from cosmos_framework.evaluation.robocasa_v2.contract import (
+     canonical,
+     digest,
+     integer,
++    streaming,
+     validate_manifest,
+     validate_result,
+ )
+@@ -210,6 +212,19 @@ def timed(name):
+     return decorate
+ 
+ 
++def metadata(method):
++    """Serialize v2 ledger transactions, never simulator/HTTP/model work."""
++
++    @wraps(method)
++    def call(self, *args, **kwargs):
++        if not streaming(self.manifest):
++            return method(self, *args, **kwargs)
++        with self._metadata_lock:
++            return method(self, *args, **kwargs)
++
++    return call
++
++
+ class Store:
+     """Single coordinator; all worker responses require current leased attempt tokens.
+ 
+@@ -226,20 +241,26 @@ class Store:
+         self.fault = fault or (lambda stage: None)
+         self.scheduler_attached = False
+         self.dispatch_tickets = {}
++        self.dispatch_slots = {}
++        self._metadata_lock = threading.RLock()
++        self._metrics_lock = threading.Lock()
+         self._rowcache = {}
+         self._reset_counts = {}
+         self._timings = {}
+         self._read_baseline = dict(READ_METRICS)
+ 
+     def record_timing(self, name, seconds, ok=True):
+-        entry = self._timings.setdefault(name, {"count": 0, "failed": 0, "samples": deque(maxlen=4096)})
+-        entry["count"] += 1
+-        entry["failed"] += not ok
+-        entry["samples"].append(seconds * 1000)
++        with self._metrics_lock:
++            entry = self._timings.setdefault(name, {"count": 0, "failed": 0, "samples": deque(maxlen=4096)})
++            entry["count"] += 1
++            entry["failed"] += not ok
++            entry["samples"].append(seconds * 1000)
+ 
+     def metrics(self):
+         result = {}
+-        for name, entry in self._timings.items():
++        with self._metrics_lock:
++            snapshot = {name: dict(entry, samples=tuple(entry["samples"])) for name, entry in self._timings.items()}
++        for name, entry in snapshot.items():
+             values = sorted(entry["samples"])
+             if not values:
+                 continue
+@@ -294,6 +315,7 @@ class Store:
+                 self.active_attempts.clear()
+                 self.scheduler_attached = False
+                 self.dispatch_tickets.clear()
++                self.dispatch_slots.clear()
+         finally:
+             fcntl.flock(fd, fcntl.LOCK_UN)
+             os.close(fd)
+@@ -400,12 +422,22 @@ class Store:
+             or proof["local_sessions_closed"] is not True
+         ):
+             raise ValueError("unsafe cleanup: ownership/session proof required")
++        return self._complete_cleanup(stream, proof)
++
++    @metadata
++    def _complete_cleanup(self, stream, proof):
++        # The potentially slow ownership probe ran outside the metadata lock.
++        self._lease()
++        task, stream_id = stream["task"], stream["stream_id"]
++        if self._stream(task, stream_id) != stream:
++            raise ValueError("cleanup stream identity changed")
+         value = {"stream": stream, "proof": proof, "time_ns": time.time_ns()}
+         path = self._internal(task) / "cleanup" / f"{stream_id}.json"
+         if safe(path).exists():
+             return load(path)
+         save(path, value)
+-        self.active_tasks.pop(task, None)
++        if self.active_tasks.get(task, {}).get("stream_id") == stream_id:
++            self.active_tasks.pop(task, None)
+         self.active_attempts = {k: a for k, a in self.active_attempts.items() if a["stream_id"] != stream_id}
+         return value
+ 
+@@ -420,10 +452,11 @@ class Store:
+             raise ValueError("invalid cleanup receipt")
+         return value
+ 
++    @metadata
+     def allocate_environment(self, task, physical_slot_id):
+         """Durable per-Task environment seed sequence, including Resume rebuilds.
+ 
+-        Called under the coordinator's Slot startup lock. A claimed but unused
++        Serialized by the v2 metadata lock (v1: coordinator setup lock). An unused
+         grant is retained and consumes its seed, so crashes never reuse it.
+         """
+         self._lease()
+@@ -455,9 +488,11 @@ class Store:
+             or grant["manifest_digest"] != self.manifest["digest"]
+             or grant["seed"] != sampling["actual_seed"]
+             or grant["physical_slot_id"] != sampling["physical_slot_id"]
++            or (streaming(self.manifest) and a["physical_slot_id"] != sampling["physical_slot_id"])
+         ):
+             raise ValueError("scene sampling contradicts durable environment seed grant")
+ 
++    @metadata
+     def bind_sampling(self, a, sampling):
+         self._lease()
+         self._attempt(a)
+@@ -478,6 +513,7 @@ class Store:
+             }:
+                 raise ValueError("Core sampling is not the admitted scene")
+ 
++    @metadata
+     def begin_task(self, task, *, seed=None, recovery_only=False):
+         self._lease()
+         if task in self.active_tasks:
+@@ -523,6 +559,7 @@ class Store:
+                     "authorization",
+                     "time_ns",
+                 }
++                | ({"physical_slot_id"} if streaming(self.manifest) else set())
+                 or a["generation"] != i
+                 or type(a["generation"]) is not int
+                 or a["task"] != task
+@@ -530,6 +567,8 @@ class Store:
+                 or a["manifest_digest"] != self.manifest["digest"]
+             ):
+                 raise ValueError("invalid attempt claim/order")
++            if streaming(self.manifest):
++                identifier(a["physical_slot_id"])
+             if a["authorization"] is not None:
+                 auth = a["authorization"]
+                 identifier(auth["id"])
+@@ -588,6 +627,7 @@ class Store:
+         )
+         self.fault("after_event_" + kind)
+ 
++    @metadata
+     def _healthy_stream(self, task, *, allow_fault=False):
+         stream = self.active_tasks.get(task)
+         if stream is None or stream["lease_id"] != self.lease_id or self._cleaned(task, stream["stream_id"]):
+@@ -685,6 +725,7 @@ class Store:
+             raise ValueError("only valid environment outcomes can Core Commit")
+         return row
+ 
++    @metadata
+     def _result(self, task, ep):
+         from cosmos_framework.evaluation.robocasa_v2.evidence import FILES, validate
+ 
+@@ -710,6 +751,7 @@ class Store:
+         self._rowcache[(task, ep)] = (stamps, copy.deepcopy(row))
+         return row
+ 
++    @metadata
+     def rows(self, task):
+         directory = safe(self._task(task) / "episodes")
+         if not directory.exists():
+@@ -732,6 +774,7 @@ class Store:
+                 values.append(row)
+         return values  # Deliberately permits gaps, unlike superseded r1.
+ 
++    @metadata
+     def slot(self, task, ep):
+         row = self._result(task, ep)
+         if row is not None:
+@@ -741,6 +784,7 @@ class Store:
+             state = dict(state, status="interrupted")
+         return {**state, "result": None}
+ 
++    @metadata
+     def authorize_retry(self, task, ep, *, owner_ref):
+         self._lease()
+         if not isinstance(owner_ref, str) or not owner_ref.strip():
+@@ -764,6 +808,7 @@ class Store:
+         return available[0] if available else None
+ 
+     @timed("claim")
++    @metadata
+     def begin_episode(self, task, ep, *, dispatch_ticket=None):
+         self._lease()
+         if self.scheduler_attached and (
+@@ -777,7 +822,7 @@ class Store:
+         permit = self._permit(task, ep)
+         if status in ("skipped_init_error", "scene_admission_exhausted") and permit is None:
+             raise ValueError("Owner authorization required, no automatic skip retry")
+-        for i in range(ep):
++        for i in range(ep) if not streaming(self.manifest) else ():
+             earlier = self.slot(task, i)
+             if earlier["result"] is None and (
+                 earlier["status"] not in ("skipped_init_error", "scene_admission_exhausted") or self._permit(task, i)
+@@ -799,11 +844,16 @@ class Store:
+             authorization=permit,
+             time_ns=time.time_ns(),
+         )
++        if streaming(self.manifest):
++            if not self.scheduler_attached or (task, ep) not in self.dispatch_slots:
++                raise ValueError("streaming physical Slot authority required")
++            a["physical_slot_id"] = identifier(self.dispatch_slots[(task, ep)])
+         save(self._ledger(task, ep) / "attempts" / f"{len(attempts):06d}.json", a)
+         self.fault("after_attempt_claim")
+         self.active_attempts[(task, ep)] = a
+         return a
+ 
++    @metadata
+     def begin_initialization(self, a):
+         state = self._admission_state(a["task"], a["episode"])
+         if state["status"] in ("admitted", "skipped_init_error", "scene_admission_exhausted", "invalid"):
+@@ -829,6 +879,7 @@ class Store:
+         self._event(a, "INIT_BEGIN", data)
+         return data
+ 
++    @metadata
+     def initialization_outcome(self, a, *, initial_success=None, error=None, stage=None, safe_to_retry=False):
+         events = self.events(a)
+         if not events or events[-1]["kind"] != "INIT_BEGIN":
+@@ -862,12 +913,14 @@ class Store:
+             self._event(a, "DEGENERATE_INITIAL_SUCCESS" if bool(initial_success) else "ADMITTED", data)
+         return self._admission_state(a["task"], a["episode"])
+ 
++    @metadata
+     def finish_invalid(self, a, reason):
+         self.record_process_error(a["task"], "core_invalid", reason, attempt=a)
+         self.fault("after_invalid_fault_before_event")
+         self._event(a, "INVALID", {"reason": reason})
+ 
+     @timed("core_commit")
++    @metadata
+     def commit(self, row, *, staging, dispatch_ticket=None):
+         self._lease()
+         if self.scheduler_attached and (
+@@ -918,6 +971,7 @@ class Store:
+         stream = self._stream(task, stream_id)
+         return self._record_fault(stream, stage, message, None)
+ 
++    @metadata
+     def record_process_error(self, task, stage, message, *, attempt=None):
+         self._lease()
+         stream = self.active_tasks.get(task)
+@@ -925,6 +979,7 @@ class Store:
+             raise ValueError("owned stream required for process fault")
+         return self._record_fault(stream, stage, message, attempt)
+ 
++    @metadata
+     def _record_fault(self, stream, stage, message, attempt):
+         task = stream["task"]
+         if not all(isinstance(x, str) and x for x in (stage, message)):
+@@ -971,6 +1026,7 @@ class Store:
+         save(self._internal(task) / "recovery" / f"{value['id']}.json", value)
+         return value
+ 
++    @metadata
+     def resolve_error(self, task, error_id, certificate, *, replacement=None):
+         self._lease()
+         identifier(error_id)
+@@ -1002,7 +1058,18 @@ class Store:
+             "mode": mode,
+             "time_ns": time.time_ns(),
+         }
+-        save(self._internal(task) / "resolutions" / f"{error_id}.json", value)
++        path = self._internal(task) / "resolutions" / f"{error_id}.json"
++        if streaming(self.manifest) and safe(path).exists():
++            prior = load(path)
++            self._validate_resolution(task, error, prior)
++            if (
++                prior["replacement"] != replacement
++                or prior["mode"] != mode
++                or prior["certificate"]["new"] != cert["new"]
++            ):
++                raise ValueError("conflicting concurrent fault resolution")
++            return prior
++        save(path, value)
+         return value
+ 
+     def _validate_resolution(self, task, error, value):
+@@ -1043,6 +1110,7 @@ class Store:
+         ):
+             raise ValueError("fault resolution replacement mismatch")
+ 
++    @metadata
+     def errors(self, task):
+         values = []
+         for e in records(self._internal(task) / "errors"):
+@@ -1078,6 +1146,7 @@ class Store:
+             values.append({**e, "resolution": r})
+         return values
+ 
++    @metadata
+     def summary(self):
+         expected = self.manifest["episodes_per_task"]
+         for path in (self.root / "tasks").iterdir():
+@@ -1210,6 +1279,7 @@ class Store:
+         }, indexed
+ 
+     @timed("rebuild_views")
++    @metadata
+     def publish_views(self):
+         self._lease()
+         report, rows = self.summary()
+diff --git a/cosmos_framework/inference/robocasa_batch_transactions.py b/cosmos_framework/inference/robocasa_batch_transactions.py
+index 24389b3..751ba45 100644
+--- a/cosmos_framework/inference/robocasa_batch_transactions.py
++++ b/cosmos_framework/inference/robocasa_batch_transactions.py
+@@ -12,7 +12,7 @@ import math
+ import time
+ import traceback
+ import uuid
+-from collections import Counter
++from collections import Counter, deque
+ from dataclasses import dataclass
+ from types import SimpleNamespace
+ 
+@@ -25,6 +25,7 @@ from cosmos_framework.inference.robocasa_session_transactions import (
+     digest,
+     json_bytes,
+     request_frontier,
++    transaction_capacity,
+ )
+ 
+ # Reservation frontiers are bounded to0..100000 by the existing wire contract.
+@@ -73,8 +74,9 @@ class BatchedSessionTransactions(SessionTransactions):
+         media_drain_timeout_s=300.0,
+         **kwargs,
+     ):
+-        if type(max_batch_size) is not int or not 1 <= max_batch_size <= 8:
+-            raise ValueError("native batch cap must be1..8")
++        capacity = transaction_capacity(kwargs.get("capacity_profile", "legacy8"))
++        if type(max_batch_size) is not int or not 1 <= max_batch_size <= capacity:
++            raise ValueError(f"native batch cap must be1..{capacity}")
+         if (
+             type(batch_wait_ms) not in (int, float)
+             or not math.isfinite(batch_wait_ms)
+@@ -101,9 +103,13 @@ class BatchedSessionTransactions(SessionTransactions):
+         self._batch_histogram = Counter()
+         self._batches = 0
+         self._queue_high_water = 0
++        self._queue_wait_ms = deque(maxlen=4096)
++        self._generate_ms = deque(maxlen=4096)
++        self._requests_finished = 0
+ 
+     def info(self):
+         with self._lock:
++            waits = sorted(self._queue_wait_ms)
+             return {
+                 **super().info(),
+                 "execution_profile": "session_native_batch_v1",
+@@ -113,6 +119,14 @@ class BatchedSessionTransactions(SessionTransactions):
+                 "batch_histogram": dict(self._batch_histogram),
+                 "queued": len(self._queue),
+                 "queue_high_water": self._queue_high_water,
++                "queue_wait_p50_ms": waits[int((len(waits) - 1) * 0.5)] if waits else None,
++                "queue_wait_p95_ms": waits[int((len(waits) - 1) * 0.95)] if waits else None,
++                "batch_generate_ms": {
++                    "count": self._batches,
++                    "recent_max": max(self._generate_ms, default=None),
++                    "recent_mean": sum(self._generate_ms) / len(self._generate_ms) if self._generate_ms else None,
++                },
++                "requests_finished": self._requests_finished,
+                 "media_jobs": len(self._media),
+                 "media_cpu_bytes": sum(
+                     j.candidate.size if j.candidate else len(j.body or b"") for j in self._media.values()
+@@ -268,12 +282,13 @@ class BatchedSessionTransactions(SessionTransactions):
+                 raise
+ 
+     def _pump(self):
++        last_was_media = False
+         while True:
+             with self._changed:
+                 # Strict clients cannot fetch until decode runs. Prioritize these
+                 # bounded jobs so a busy inference queue cannot starve completion.
+                 strict_job = next((j for j in self._media.values() if j.required and j.state == "QUEUED"), None)
+-                if strict_job is not None:
++                if strict_job is not None and (not self._queue or not last_was_media):
+                     members, job = None, strict_job
+                     job.state = "DECODING"
+                     self._busy = True
+@@ -313,8 +328,10 @@ class BatchedSessionTransactions(SessionTransactions):
+                     job.state = "DECODING"
+                     self._busy = True  # Reserve media ownership before releasing admission lock.
+             if members:
++                last_was_media = False
+                 self._execute_many(members)
+             else:
++                last_was_media = True
+                 self._decode(job)
+             with self._lock:
+                 if self._quarantined:
+@@ -451,6 +468,9 @@ class BatchedSessionTransactions(SessionTransactions):
+                     self._media = jobs
+                     self._batches = batches
+                     self._batch_histogram = histogram
++                    self._queue_wait_ms.extend(max(0, prepare_start - t.queued_at) * 1000 for t in members)
++                    self._generate_ms.append((generated - prepared) * 1000)
++                    self._requests_finished += len(members)
+                     for t in members:
+                         t.state = "COMMITTED"
+             except BaseException as error:
+diff --git a/cosmos_framework/inference/robocasa_session_transactions.py b/cosmos_framework/inference/robocasa_session_transactions.py
+index 7231dee..76b31ab 100644
+--- a/cosmos_framework/inference/robocasa_session_transactions.py
++++ b/cosmos_framework/inference/robocasa_session_transactions.py
+@@ -30,6 +30,12 @@ MAX_BODY = 32 * 1024**2
+ MAX_RESPONSE = 1024**2
+ 
+ 
++def transaction_capacity(profile):
++    if profile not in ("legacy8", "streaming32"):
++        raise ValueError("explicit transaction capacity profile required")
++    return 32 if profile == "streaming32" else 8
++
++
+ def protocol_for_mode(mode):
+     if mode not in ("off", "required"):
+         raise ValueError("explicit off|required Local-TTT mode required")
+@@ -192,13 +198,16 @@ class SessionTransactions:
+         timeout_s=600.0,
+         max_bytes=128 * 1024**2,
+         clock=time.monotonic,
++        capacity_profile="legacy8",
+     ):
+         self.mode = adapter.mode
+         self.protocol = protocol_for_mode(self.mode)
+         if (adapter.memory is not None) != (self.mode == "required"):
+             raise ValueError("transaction mode must match actual Local-TTT capability")
+-        if not 1 <= len(slot_ids) <= 8 or len(set(slot_ids)) != len(slot_ids):
+-            raise ValueError("one to eight distinct bounded physical Slot identities required")
++        self.capacity_profile = capacity_profile
++        capacity = transaction_capacity(capacity_profile)
++        if not 1 <= len(slot_ids) <= capacity or len(set(slot_ids)) != len(slot_ids):
++            raise ValueError(f"one to {capacity} distinct bounded physical Slot identities required")
+         if not math.isfinite(timeout_s) or timeout_s <= 0 or type(max_bytes) is not int or max_bytes <= 0:
+             raise ValueError("positive finite transaction bounds required")
+         if len(manifest_digest) != 64 or any(c not in "0123456789abcdef" for c in manifest_digest):
+@@ -240,6 +249,7 @@ class SessionTransactions:
+                 "manifest_digest": self.manifest_digest,
+                 "slot_ids": list(self.slot_ids),
+                 "max_native_batch": 1,
++                "capacity_profile": self.capacity_profile,
+                 "sessions": len(self._leases),
+                 "tickets": len(self._tickets),
+                 "encoded_bytes": sum(ticket.size for ticket in self._tickets.values()),
+@@ -266,6 +276,7 @@ class SessionTransactions:
+                 "prediction_clock_domain": self.clock_domain,
+                 "local_memory_mode": self.mode,
+                 "profile": self.protocol,
++                "capacity_profile": self.capacity_profile,
+             },
+         )
+ 
+diff --git a/cosmos_framework/inference/robocasa_transaction_client.py b/cosmos_framework/inference/robocasa_transaction_client.py
+index 75b654c..12e60e5 100644
+--- a/cosmos_framework/inference/robocasa_transaction_client.py
++++ b/cosmos_framework/inference/robocasa_transaction_client.py
+@@ -16,6 +16,7 @@ from cosmos_framework.inference.robocasa_session_transactions import (
+     monotonic_clock_domain,
+     protocol_for_mode,
+     request_frontier,
++    transaction_capacity,
+ )
+ 
+ 
+@@ -29,14 +30,18 @@ class TransactionPolicyClient:
+         batch_profile=False,
+         max_batch_size=1,
+         local_memory_mode="required",
++        capacity_profile="legacy8",
++        cancelled=None,
+         clock=time.monotonic,
+         pause: Callable[[float], None] = time.sleep,
+     ):
+         if not math.isfinite(timeout_s) or timeout_s <= 0:
+             raise ValueError("positive client deadline required")
+-        if type(max_batch_size) is not int or not 1 <= max_batch_size <= 8:
++        if type(max_batch_size) is not int or not 1 <= max_batch_size <= transaction_capacity(capacity_profile):
+             raise ValueError("bounded native batch cap required")
+         self.batch_profile, self.max_batch_size = batch_profile, max_batch_size
++        self.capacity_profile = capacity_profile
++        self.cancelled = cancelled or (lambda: False)
+         self.mode = local_memory_mode
+         self.protocol = protocol_for_mode(self.mode)
+         self.base_url, self.timeout_s = base_url.rstrip("/"), timeout_s
+@@ -48,6 +53,8 @@ class TransactionPolicyClient:
+ 
+     def _call(self, method, path, deadline, **kwargs):
+         while True:
++            if self.cancelled():
++                raise RuntimeError("coordinator cancelled transaction")
+             remaining = deadline - self.clock()
+             if remaining <= 0:
+                 raise TimeoutError("original transaction deadline exhausted")
+@@ -108,6 +115,8 @@ class TransactionPolicyClient:
+         return dict(self.lease)
+ 
+     def _check_mode(self, value):
++        if value.get("capacity_profile", "legacy8") != self.capacity_profile:
++            raise ValueError("assignment transaction capacity profile mismatch")
+         # Existing required v1 ACKs remain readable. The new No-TTT protocol
+         # requires an explicit mode/profile, never an automatic fallback.
+         if self.mode == "off" and ("local_memory_mode" not in value or "profile" not in value):
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index aec9abf..216fe73 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -98,6 +98,7 @@ from cosmos_framework.inference.robocasa_session_transactions import (
+     json_bytes,
+     monotonic_clock_domain,
+     strict_json,
++    transaction_capacity,
+ )
+ from cosmos_framework.scripts.action_policy_server_utils import (
+     DEFAULT_FALLBACK_OUTPUT_DIR,
+@@ -542,6 +543,7 @@ class ActionServerArgs(pydantic.BaseModel):
+     transaction_timeout_s: float = 600.0
+     transaction_slot_ids: str | None = None
+     transaction_max_batch_size: int = 1
++    transaction_capacity_profile: Literal["legacy8", "streaming32"] = "legacy8"
+     transaction_batch_wait_ms: float = 20.0
+     media_spool_max_jobs: int = 4
+     media_spool_max_bytes: int = 512 * 1024**2
+@@ -625,6 +627,10 @@ class ActionServerConfig:
+ 
+ def _transaction_options(args):
+     batch = args.transaction_profile == "batch"
++    capacity_profile = getattr(args, "transaction_capacity_profile", "legacy8")
++    capacity = transaction_capacity(capacity_profile)
++    if not batch and capacity_profile != "legacy8":
++        raise ValueError("streaming capacity requires explicit batch profile")
+     slot_text = getattr(args, "transaction_slot_ids", None)
+     fields = (
+         args.transaction_owner_token_file,
+@@ -656,7 +662,7 @@ def _transaction_options(args):
+     if (
+         args.local_memory_mode not in ("off", "required")
+         or args.local_memory_max_sessions != len(slots)
+-        or not 1 <= len(slots) <= 8
++        or not 1 <= len(slots) <= capacity
+         or len(set(slots)) != len(slots)
+         or args.action_chunk_size != 16
+         or any(v is None for v in fields)
+@@ -683,11 +689,12 @@ def _transaction_options(args):
+         manifest_digest=args.transaction_manifest_digest,
+         slot_ids=tuple(identifier(slot, limit=64) for slot in slots),
+         timeout_s=timeout,
++        capacity_profile=capacity_profile,
+     )
+     if batch:
+         cap = getattr(args, "transaction_max_batch_size", 1)
+         wait = getattr(args, "transaction_batch_wait_ms", 20.0)
+-        if type(cap) is not int or not 1 <= cap <= 8 or type(wait) not in (int, float) or not 1 <= wait <= 1000:
++        if type(cap) is not int or not 1 <= cap <= capacity or type(wait) not in (int, float) or not 1 <= wait <= 1000:
+             raise ValueError("bounded native batch/wait required")
+         jobs, size, drain = (
+             getattr(args, "media_spool_max_jobs", 4),
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+index a1aeda8..9ec4d76 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_adapter.py
+@@ -245,7 +245,7 @@ class NativeEpisode:
+                     on_progress=progress,
+                     language_instruction=instruction,
+                     http_client=http_client,
+-                    on_frame=lambda frame: media_call("frame", frame),
++                    on_frame=(lambda frame: media_call("frame", frame)) if rollout_enabled else None,
+                     video_fps=20,
+                 )
+                 if steps != len(outcome.checks) or success != any(outcome.checks):
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_slot.py b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+index 6f9a1b4..14810b5 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_slot.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_slot.py
+@@ -71,6 +71,8 @@ class SimSlot:
+         if any(attempt[k] != stream[k] for k in ("worker_id", "seed", "lease_id", "manifest_digest")):
+             raise ValueError("foreign logical stream")
+         if not health_only:
++            if attempt.get("physical_slot_id", self.cfg["physical_slot_id"]) != self.cfg["physical_slot_id"]:
++                raise ValueError("foreign physical Slot attempt")
+             from cosmos_framework.evaluation.robocasa_v2.contract import integer
+ 
+             ep = integer(attempt["episode"], 0, self.cfg["episodes_per_task"] - 1, "Episode")
+@@ -149,7 +151,7 @@ class SimSlot:
+             "actual_seed": self.grant["seed"],
+             "environment_reset_index": self.reset_index,
+             "physical_slot_id": self.cfg["physical_slot_id"],
+-            "protocol": SAMPLING,
++            "protocol": self.cfg["settings"].get("sampling_protocol", SAMPLING),
+         }
+ 
+     def finish_without_session(self):
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+index ed0ece7..ac8ff1d 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+@@ -64,6 +64,7 @@ class PolicyTransport:
+             batch_profile=True,
+             max_batch_size=settings["max_infer_batch_size"],
+             local_memory_mode=settings.get("local_memory_mode", "required"),
++            capacity_profile=settings.get("capacity_profile", "legacy8"),
+         )
+         self.lease = self.client.bind_assignment(assignment)
+         self.local = AssignedLocalMemoryClient(self.lease) if self.client.mode == "required" else None
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_worker.py b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+index 4d72f81..dbe4da3 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_worker.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_worker.py
+@@ -8,6 +8,7 @@ import json
+ import os
+ import socket
+ import sys
++import time
+ from pathlib import Path
+ from types import SimpleNamespace
+ 
+@@ -15,6 +16,8 @@ from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
+ 
+ 
+ def serve(channel, cfg, *, factory=None):
++    started = time.perf_counter()
++    timings = {}
+     # Factory is a Python CPU test boundary, never selectable via production CLI.
+     from cosmos_framework.evaluation.robocasa_v2 import generated_video, media
+     from cosmos_framework.simulation.robocasa import closed_loop_eval as native
+@@ -22,6 +25,8 @@ def serve(channel, cfg, *, factory=None):
+     from cosmos_framework.simulation.robocasa.eval_v2_adapter import NativeEpisode
+     from cosmos_framework.simulation.robocasa.eval_v2_slot import SimSlot
+ 
++    timings["imports"] = (time.perf_counter() - started) * 1000
++
+     slot = None
+     os.set_inheritable(channel.fileno(), False)
+     try:
+@@ -54,19 +59,24 @@ def serve(channel, cfg, *, factory=None):
+                     or hashlib.sha256(file.read_bytes()).hexdigest() != expected["sha256"]
+                 ):
+                     raise ValueError("native import origin/source mismatch")
++        stage = time.perf_counter()
+         rendering = render_devices.configure(cfg["rendering"])
++        timings["render_proof"] = (time.perf_counter() - stage) * 1000
+         cfg["rendering"] = rendering
+         if factory is None:
++            stage = time.perf_counter()
+             runtime = native.verify_runtime(SimpleNamespace(**cfg["runtime_args"]), next(iter(cfg["tasks"])))
+             if runtime is None or any(
+                 runtime["protocol"]["official_horizons"][task] != spec["horizon"] for task, spec in cfg["tasks"].items()
+             ):
+                 raise ValueError("missing/incorrect authoritative runtime horizons")
++            timings["vendor_attestation"] = (time.perf_counter() - stage) * 1000
+         slot = SimSlot(cfg, factory=factory)
+         send(
+             channel,
+             {
+                 "kind": "READY",
++                "startup_timing_ms": timings,
+                 "nonce": cfg["nonce"],
+                 "pid": os.getpid(),
+                 "physical_slot_id": cfg["physical_slot_id"],
+@@ -82,6 +92,7 @@ def serve(channel, cfg, *, factory=None):
+                 raise ValueError("actor request identity mismatch")
+             op = message.get("op")
+             response = {"request_id": message["request_id"], "nonce": cfg["nonce"]}
++            stage = time.perf_counter()
+             if op == "start_episode":
+                 response.update(
+                     slot.start_episode(
+@@ -108,6 +119,7 @@ def serve(channel, cfg, *, factory=None):
+                 return
+             else:
+                 raise ValueError("unknown actor operation")
++            response["operation_ms"] = (time.perf_counter() - stage) * 1000
+             send(channel, response)
+     except EOFError:
+         pass

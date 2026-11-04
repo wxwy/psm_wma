@@ -1,0 +1,88 @@
+{
+  "formal_root": "00e119cc20cabe082974bd3495474b589c4b46b6",
+  "formal_child_gitlink": "82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e",
+  "gate": "/workspace/work/eval-streaming-m32-evidence/author-formal-03",
+  "gate_status": "PASS",
+  "shell_exit": 0,
+  "source_unchanged": true,
+  "watched_source_files": 89,
+  "junit": {
+    "tests": 846,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "groups": {
+    "inference": {
+      "tests": 182,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "phase_a_regression": {
+      "tests": 278,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "phase_b_runtime": {
+      "tests": 234,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "media_replans": {
+      "tests": 89,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "streaming": {
+      "tests": 63,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "pipelines": [
+    {
+      "M": 32,
+      "B": 8,
+      "policy_owners": 2,
+      "physical_slots": 64,
+      "unique_Core": 900,
+      "unique_Sessions": 900,
+      "batch_histograms": [
+        {
+          "1": 442,
+          "2": 4
+        },
+        {
+          "2": 6,
+          "1": 438
+        }
+      ]
+    },
+    {
+      "M": 32,
+      "B": 16,
+      "policy_owners": 2,
+      "physical_slots": 64,
+      "unique_Core": 900,
+      "unique_Sessions": 900,
+      "batch_histograms": [
+        {
+          "1": 438,
+          "2": 6
+        },
+        {
+          "1": 444,
+          "2": 3
+        }
+      ]
+    }
+  ],
+  "GPU_real_simulation_training": "NOT_RUN",
+  "remote_server_files": "NOT_ACCESSED_OR_COPIED",
+  "V3_promotion": "NOT_AUTHORIZED_OR_PERFORMED"
+}
