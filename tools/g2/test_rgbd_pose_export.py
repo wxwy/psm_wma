@@ -1036,6 +1036,7 @@ def test_real_cpu_mj_ray_tilted_plane_independent_of_project_unproject(
     z = np.broadcast_to(
         np.cos(angle) / (np.cos(angle) - np.sin(angle) * y), (height, width)
     ).copy()
+    fresh_z = z.copy()
     if violation == "vertical_flip":
         z = z[::-1].copy()
     if violation == "ray_distance":
@@ -1044,12 +1045,37 @@ def test_real_cpu_mj_ray_tilted_plane_independent_of_project_unproject(
     segmentation = np.empty((height, width, 2), dtype=np.int32)
     segmentation[..., 0] = int(mujoco.mjtObj.mjOBJ_GEOM)
     segmentation[..., 1] = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, "surface")
+    near = model.vis.map.znear * model.stat.extent
+    far = model.vis.map.zfar * model.stat.extent
+    raw_buffer = ((1 - near / fresh_z) / (1 - near / far))[::-1]
+
+    def render(**kwargs):
+        if kwargs.get("segmentation"):
+            return segmentation[::-1]
+        rgb = np.zeros((height, width, 3), dtype=np.uint8)
+        return (rgb, raw_buffer) if kwargs.get("depth") else rgb
+
+    options = mujoco.MjvOption()
+    options.geomgroup[:] = [1, 1, 1, 0, 0, 0]
     sim = SimpleNamespace(
         model=model,
         data=data,
-        render=lambda **kw: segmentation[::-1],
+        render=render,
         _render_context_offscreen=SimpleNamespace(
-            vopt=SimpleNamespace(geomgroup=np.array([1, 1, 1, 0, 0, 0], dtype=np.uint8))
+            vopt=options,
+            con=SimpleNamespace(offSamples=0),
+            scn=SimpleNamespace(
+                flags=mujoco.MjvScene().flags.copy(),
+                ngeom=1,
+                geoms=[
+                    SimpleNamespace(
+                        objtype=int(mujoco.mjtObj.mjOBJ_GEOM),
+                        objid=0,
+                        transparent=False,
+                        rgba=np.ones(4),
+                    )
+                ],
+            ),
         ),
     )
     if violation == "unknown_filters":

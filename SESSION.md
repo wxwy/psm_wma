@@ -1,3 +1,44 @@
+# 2026-11-04 — G2-GATEB-REPLAY development107 PASS; source freeze next
+
+One production file replay.py: fresh-render/opacity/MSAA eligibility independent
+of cached depth/ray error; native identity + near-plane start + front-facing
+compiled triangle check for culled mesh; unchanged 0.01m/min16 and RGB MAE5.
+Added scalar same-context RGB-mode/segmentation-cycle/render-options/material
+hash diagnostics only during physical verify, no ordinary-export extra draws.
+No RGB/controller/camera metadata overrides: actual RGB cause still unresolved.
+
+Author development83 legacy +24 native synthetic OSMesa distinct PASS, zero
+fail/error/skip. Frozen new20 old code:9 expected failures/11passes; same frozen
+20 new code PASS. First developmental correction retained3 failed/17passed;
+MSAA interior subpixel footprint fix closes those without changing tests.
+Legacy69 assert ASTs unchanged; frozen20 definitions unchanged. Earlier83 and
+old real Gate B failure preserved; no server source/data accessed, no physical
+acceptance claimed. Runbook documents limited eligibility and mesh CPU cost.
+
+Freeze implementation commit then clean exact-Pair107 CPU/static evidence,
+publish isolated Root/evidence/request and STOP for GPT fresh incremental Code
+Gate. Child/Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged. No real
+RoboCasa/server rerun, GateC/N100/nav_sg/training/GPU/DCP/old-cache/V3 actions.
+
+# 2026-11-04 — G2-GATEB-REPLAY narrow follow-up IN_PROGRESS
+
+Owner supplied Gate B failure; immutable report992cfc2adb3150c573d19206e176bd8a52574949
+and prior Code APPROVE5a3ddbba read directly. Fresh fetch/ls-remote official V3
+both083b36ac27ad43b6f5127d9a58aed4fac02eaaa7; report commit retrieved explicitly,
+not mislabeled as V3 HEAD. New isolated branchv3-g2-gateb-replay-fix-20261104
+starts992cfc2a, includes prior b67 source and both review records. Child/Gitlink
+1069fe78841228cadbbfbe6afbd767eaed6225da remains unchanged.
+
+Claim production scope ONLY tools/g2/rgbd_pose/replay.py, focused new CPU tests,
+new diagnostic/handoff/evidence docs, SESSION/TODO and append-only Inbox. No
+changes to source mapping, codec, cache, model/TTT, training, Child or thresholds.
+Investigate RGB photometric mismatch separately from renderer/ray visibility.
+Prior server Gate B remains FAIL; depth agreement is not physical acceptance.
+No server files accessed or copied. Only synthetic CPU MuJoCo software-render
+probes may execute locally; no real RoboCasa/real source data/GPU/DCP/V3 merge.
+Provide new Formal Root/evidence and stop for GPT review; server Gate B rerun
+requires separately accepted candidate and fresh output namespace.
+
 # 2026-11-04 — G2 Stage-1 candidate published/readback PASS; STOP for Code Gate
 
 Fresh2026-11-04T04:41:28Z (12:41:28 Asia/Shanghai) normal new-branch Root push,
