@@ -1,0 +1,20 @@
+{
+  "status": "REMOTE_READBACK_PASS",
+  "time_utc": "2026-11-04T04:41:28.867577+00:00",
+  "branch": "v3-g2-rgbd-pose-stage1-20261104",
+  "formal_root": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+  "child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "published_evidence_head": "e8a5f92d77e630f42756a75991bd3d6b443dcff6",
+  "artifact_sha256_matches": 114,
+  "source_blob_sha256_matches": 12,
+  "official_v3_unchanged": "083b36ac27ad43b6f5127d9a58aed4fac02eaaa7",
+  "official_child_unchanged": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "child_push_performed": false,
+  "metadata_successor_only": true,
+  "clean_worktrees": true,
+  "unique_bounded_append_only_request": true,
+  "request_remote_published": true,
+  "not_reviewer_ack_or_approval": true,
+  "server_fetch_or_tests_executed": false,
+  "server_files_transferred": false
+}

@@ -1,0 +1,13 @@
+{
+  "args": [
+    "git",
+    "fetch",
+    "--no-recurse-submodules",
+    "origin",
+    "refs/heads/v3-local-ttt:refs/remotes/origin/v3-local-ttt"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1/cosmos-framework",
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "From https://github.com/wxwy/cosmos-framework\n   c93f2ab..1069fe7  v3-local-ttt -> origin/v3-local-ttt\n"
+}

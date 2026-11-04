@@ -1,0 +1,10 @@
+{
+  "before_bytes": 41280,
+  "append_bytes": 4026,
+  "after_bytes": 45306,
+  "append_only": true,
+  "unique": true,
+  "limit": 131072,
+  "old_sha256": "cb6157f6165b0c52bd867077bd540bac705b13f02346da0ae5153ccf331f1c97",
+  "added_sha256": "8eec53c56fcf932ba2f720093a238ccf79041fd66f71cd370aa42ba8f9224e00"
+}

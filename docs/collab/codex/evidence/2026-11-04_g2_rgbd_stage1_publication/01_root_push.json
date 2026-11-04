@@ -1,0 +1,13 @@
+{
+  "args": [
+    "git",
+    "push",
+    "--set-upstream",
+    "origin",
+    "HEAD:refs/heads/v3-g2-rgbd-pose-stage1-20261104"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+  "returncode": 0,
+  "stdout": "branch 'v3-g2-rgbd-pose-stage1-20261104' set up to track 'origin/v3-g2-rgbd-pose-stage1-20261104'.\n",
+  "stderr": "remote: \nremote: Create a pull request for 'v3-g2-rgbd-pose-stage1-20261104' on GitHub by visiting:        \nremote:      https://github.com/wxwy/psm_wma/pull/new/v3-g2-rgbd-pose-stage1-20261104        \nremote: \nTo https://github.com/wxwy/psm_wma.git\n * [new branch]        HEAD -> v3-g2-rgbd-pose-stage1-20261104\n"
+}

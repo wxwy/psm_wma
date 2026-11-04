@@ -1,0 +1,13 @@
+{
+  "args": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/v3-g2-rgbd-pose-stage1-20261104",
+    "refs/heads/V3"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+  "returncode": 0,
+  "stdout": "083b36ac27ad43b6f5127d9a58aed4fac02eaaa7\trefs/heads/V3\ne8a5f92d77e630f42756a75991bd3d6b443dcff6\trefs/heads/v3-g2-rgbd-pose-stage1-20261104\n",
+  "stderr": ""
+}

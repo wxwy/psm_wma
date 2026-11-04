@@ -1,0 +1,12 @@
+{
+  "args": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/v3-local-ttt"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1/cosmos-framework",
+  "returncode": 0,
+  "stdout": "1069fe78841228cadbbfbe6afbd767eaed6225da\trefs/heads/v3-local-ttt\n",
+  "stderr": ""
+}

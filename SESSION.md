@@ -1,3 +1,27 @@
+# 2026-11-04 — G2 Stage-1 candidate published/readback PASS; STOP for Code Gate
+
+Fresh2026-11-04T04:41:28Z (12:41:28 Asia/Shanghai) normal new-branch Root push,
+explicit Root/Child fetch, advertised refs and Git-object readback PASS.
+Published evidence/request Roote8a5f92d77e630f42756a75991bd3d6b443dcff6 on
+v3-g2-rgbd-pose-stage1-20261104, Child/Gitlink1069fe78 unchanged/no Child push.
+114/114 artifact SHA256,12/12 source/config Blob+SHA bindings, exact Gitlink,
+metadata-only successor, clean worktrees and append-only bounded unique Inbox
+request verified. Official V3 stays083b36ac27ad43b6f5127d9a58aed4fac02eaaa7,
+official Child1069fe78841228cadbbfbe6afbd767eaed6225da, no promotion/force.
+Publication8-artifact receipt saved under
+docs/collab/codex/evidence/2026-11-04_g2_rgbd_stage1_publication/.
+
+Formal source STAYSb67bc4ca9a2afb1ff26fac0846f8ee7042a589ab /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. This is receipt metadata
+only, no further source changes/tests. Final83 author CPU/static PASS stands;
+publication is not GPT ACK/approval, DS independent PASS or physical Depth replay.
+After final readonly receipt-successor check STOP/REVIEW. Server fetch/testing
+is authorized but tool unavailable, not performed; server skill not read and no
+server files transferred. Gate B/C and true N100 membership pending. No nav_sg,
+training/DCP/active worktree/GPU/old results/V3 merge or large export actions.
+
+## Earlier publication preparation retained
+
 # 2026-11-04 — G2 final clean Pair83/static PASS; evidence/review publication next
 
 Final Formal Rootb67bc4ca9a2afb1ff26fac0846f8ee7042a589ab /
