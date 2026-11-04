@@ -3,6 +3,8 @@
 Offline cache integrity is not physical geometry acceptance. --replay additionally
 checks original RGB, state restoration, per-frame camera matrices, fresh depth and
 independent, renderer-filtered mj_ray geometry. No RGB/depth images are exported.
+Under the Owner's spatial-v2 policy, re-rendered RGB photometry is diagnostic.
+Automatic spatial checks do not attest to a human RGB/Depth visual inspection.
 """
 
 from __future__ import annotations
@@ -19,6 +21,35 @@ from .rgbd_pose.geometry import depth_statistics, pose_motion, rgb_metrics
 from .rgbd_pose.replay import Replay, original_rgb, reprojection_error
 from .rgbd_pose.source import Episode, load_episode, verify_witnesses
 
+ACCEPTANCE_POLICY = "g2_stage1_spatial_v2"
+POLICY_AUTHORITY = (
+    "https://github.com/wxwy/psm_wma/blob/"
+    "f63454610ec2b95617c670444875339034c3c1c7/"
+    "docs/collab/chatgpt/reviews/"
+    "2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md"
+)
+SPATIAL_SCOPE = "AUTOMATED_CHECKS_ONLY_VISUAL_REVIEW_EXTERNAL"
+
+
+def _owner_visual_review(reference):
+    """Record external provenance without claiming its author, scope or verdict."""
+    return {
+        "status": "EXTERNAL_RECORD_REFERENCED" if reference else "NOT_PROVIDED",
+        "provenance_reference": reference or None,
+        "verified_by_tool": False,
+    }
+
+
+def _photometric_diagnostic(mae_max):
+    return {
+        "status": "NOT_EXECUTED",
+        "blocking": False,
+        # Invalid CLI thresholds must still allow a finite failure report.
+        "mae_max": mae_max if np.isfinite(mae_max) else None,
+        "checked_camera_frames": 0,
+        "failed_camera_frames": 0,
+    }
+
 
 def verify(
     directory,
@@ -32,6 +63,7 @@ def verify(
     geometry_atol_m=0.01,
     min_ray_samples=16,
     rgb_mae_max=5.0,
+    owner_visual_review_ref=None,
     replay_factory=Replay,
     rgb_reader=original_rgb,
 ):
@@ -42,6 +74,11 @@ def verify(
         raise ValueError("numeric verification tolerances must be finite and positive")
     if type(min_ray_samples) is not int or not 1 <= min_ray_samples <= 128:
         raise ValueError("min_ray_samples must be in 1..128")
+    if owner_visual_review_ref is not None and (
+        not isinstance(owner_visual_review_ref, str)
+        or not owner_visual_review_ref.strip()
+    ):
+        raise ValueError("owner review reference must be nonempty text, not a checkbox")
     directory = Path(directory)
     manifest, rows = verify_episode(directory)
     spec = manifest["identity"]
@@ -57,6 +94,12 @@ def verify(
         ],
         "depth_quantization_max_abs_m": manifest["quantization_max_abs_m"],
         "geometry_gate": "NOT_EXECUTED",
+        "acceptance_policy": ACCEPTANCE_POLICY,
+        "acceptance_policy_authority": POLICY_AUTHORITY,
+        "spatial_alignment_gate": "NOT_EXECUTED",
+        "spatial_alignment_scope": SPATIAL_SCOPE,
+        "photometric_diagnostic": _photometric_diagnostic(rgb_mae_max),
+        "owner_visual_review": _owner_visual_review(owner_visual_review_ref),
         "runtime_at_export": manifest["runtime"],
         "thresholds": {
             "geometry_atol_m": geometry_atol_m,
@@ -96,9 +139,9 @@ def verify(
     ):
         raise ValueError("physical replay source binding differs from committed cache")
     backend = replay_factory(source)
-    passed = backend.identity == manifest["runtime"]
+    spatial_passed = backend.identity == manifest["runtime"]
     report["runtime_at_replay"] = backend.identity
-    report["runtime_matches_export"] = passed
+    report["runtime_matches_export"] = spatial_passed
     transforms, offsets = {c: [] for c in spec["cameras"]}, []
     by_frame = {row["frame_index"]: row for row in rows}
     try:
@@ -120,6 +163,11 @@ def verify(
                 saved = cached_sample(directory, manifest, row, camera)
                 original = rgb_reader(source.rgb[camera], row["source_rgb_frame_index"])
                 metrics = rgb_metrics(original, actual["rgb"])
+                photometric_passed = metrics["mae"] <= rgb_mae_max
+                report["photometric_diagnostic"]["checked_camera_frames"] += 1
+                report["photometric_diagnostic"]["failed_camera_frames"] += int(
+                    not photometric_passed
+                )
                 same_mask = np.array_equal(saved["valid"], actual["valid"])
                 valid = saved["valid"] & actual["valid"]
                 depth_error = (
@@ -142,19 +190,20 @@ def verify(
                 quantization_tolerance = max(
                     1e-5, manifest["quantization_max_abs_m"] + 1e-7
                 )
-                camera_pass = (
+                spatial_camera_pass = (
                     same_mask
                     and depth_error is not None
                     and depth_error <= quantization_tolerance
                     and max(matrix_errors.values()) <= 1e-5
-                    and metrics["mae"] <= rgb_mae_max
                     and geometry["status"] == "PASS"
                     and projection is not None
                     and projection <= 1e-7
                 )
-                passed = passed and camera_pass
+                spatial_passed = spatial_passed and spatial_camera_pass
                 frame_report["cameras"][camera] = {
-                    "status": "PASS" if camera_pass else "FAIL",
+                    "status": "PASS" if spatial_camera_pass else "FAIL",
+                    "spatial_alignment_gate": "PASS" if spatial_camera_pass else "FAIL",
+                    "photometric_diagnostic": "PASS" if photometric_passed else "FAIL",
                     "rgb": metrics,
                     "depth": depth_statistics(saved["depth_m"], saved["valid"]),
                     "valid_mask_matches_replay": same_mask,
@@ -181,11 +230,22 @@ def verify(
     report["evidence_kind"] = (
         "SERVER_NATIVE_REPLAY" if native else "CPU_BOUNDARY_DOUBLE"
     )
-    report["geometry_gate"] = "PASS" if passed else "FAIL_OR_INCONCLUSIVE"
+    # Keep the old field as an automatic-spatial alias, explicitly versioned by
+    # acceptance_policy. Never rewrite/relabel reports produced by the old tool.
+    report["geometry_gate"] = report["spatial_alignment_gate"] = (
+        "PASS" if spatial_passed else "FAIL_OR_INCONCLUSIVE"
+    )
+    report["photometric_diagnostic"]["status"] = (
+        "FAIL" if report["photometric_diagnostic"]["failed_camera_frames"] else "PASS"
+    )
     report["status"] = (
-        ("PHYSICAL_REPLAY_PASS" if native else "SYNTHETIC_REPLAY_VERIFIED")
-        if passed
-        else "PHYSICAL_REPLAY_NOT_ACCEPTED"
+        (
+            "SPATIAL_REPLAY_CHECKS_PASS"
+            if native
+            else "SYNTHETIC_SPATIAL_REPLAY_CHECKS_PASS"
+        )
+        if spatial_passed
+        else "SPATIAL_REPLAY_CHECKS_NOT_ACCEPTED"
     )
     return report
 
@@ -210,7 +270,16 @@ def main(argv=None):
     )
     parser.add_argument("--geometry-atol-m", type=float, default=0.01)
     parser.add_argument("--min-ray-samples", type=int, default=16)
-    parser.add_argument("--rgb-mae-max", type=float, default=5.0)
+    parser.add_argument(
+        "--rgb-mae-max",
+        type=float,
+        default=5.0,
+        help="photometric diagnostic threshold only; does not gate spatial checks",
+    )
+    parser.add_argument(
+        "--owner-visual-review-ref",
+        help="external review provenance only; never automatically asserts visual PASS",
+    )
     args = parser.parse_args(argv)
     report_path = args.report.resolve()
     if report_path.exists() or report_path.is_relative_to(args.episode_dir.resolve()):
@@ -229,12 +298,19 @@ def main(argv=None):
             geometry_atol_m=args.geometry_atol_m,
             min_ray_samples=args.min_ray_samples,
             rgb_mae_max=args.rgb_mae_max,
+            owner_visual_review_ref=args.owner_visual_review_ref,
         )
     except Exception as exc:
         result = {
             "schema": SCHEMA,
             "status": "VERIFICATION_FAILED",
             "geometry_gate": "NOT_ACCEPTED",
+            "acceptance_policy": ACCEPTANCE_POLICY,
+            "acceptance_policy_authority": POLICY_AUTHORITY,
+            "spatial_alignment_gate": "NOT_ACCEPTED",
+            "spatial_alignment_scope": SPATIAL_SCOPE,
+            "photometric_diagnostic": _photometric_diagnostic(args.rgb_mae_max),
+            "owner_visual_review": _owner_visual_review(args.owner_visual_review_ref),
             "error_type": type(exc).__name__,
             "error": str(exc),
         }
@@ -243,7 +319,7 @@ def main(argv=None):
     return (
         0
         if result["status"]
-        in {"OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE", "PHYSICAL_REPLAY_PASS"}
+        in {"OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE", "SPATIAL_REPLAY_CHECKS_PASS"}
         else 1
     )
 

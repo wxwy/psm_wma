@@ -981,7 +981,7 @@ def test_verifier_text_statistics_mask_pose_and_half_second_offset(tmp_path):
         rgb_reader=reader,
     )
     assert report["geometry_gate"] == "PASS"
-    assert report["status"] == "SYNTHETIC_REPLAY_VERIFIED"
+    assert report["status"] == "SYNTHETIC_SPATIAL_REPLAY_CHECKS_PASS"
     assert report["timestamp_diagnostic"]["min_offset_s"] == pytest.approx(0.5)
     assert report["camera_pose_motion"][src.CAMERAS[2]]["changed"] is True
     assert report["camera_pose_motion"][src.CAMERAS[0]]["changed"] is False

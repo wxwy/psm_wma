@@ -17,7 +17,13 @@ RoboCasa/robosuite/MuJoCo environment, assets and original recordings on the ser
 of physical alignment. Gate B/C must establish that proof.
 
 - [Input/output schema](rgbd_pose_schema.md)
-- [Design, commands, thresholds, recovery and Gate B/C runbook](../../docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md)
+- [Current spatial-v2 acceptance and bounded Gate C plan](../../docs/build/PSM-WMA_G2_Spatial_Acceptance_v2_and_GateC_Plan_2026-11-04.md)
+- [Original implementation/recovery runbook (historical RGB hard gate)](../../docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md)
+
+The spatial-v2 verifier preserves re-rendered RGB metrics as nonblocking
+diagnostics. Automatic spatial PASS is separate from external human RGB/Depth
+review; an `--owner-visual-review-ref` citation never automatically attests PASS.
+Historical reports remain unchanged.
 
 No default N/seed selection exists. Supply one explicit episode or the exact
 existing training membership manifest. A completed cache is reusable only after

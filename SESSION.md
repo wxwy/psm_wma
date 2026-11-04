@@ -1,3 +1,56 @@
+# 2026-11-04 — G2-SPATIAL-POLICY development121 PASS; freeze new implementation
+
+Minimal verifier-only spatial-v2 acceptance split implemented under Ownerf634.
+New report statuses distinguish automatic spatial/native/synthetic checks from
+legacy physical statuses. Numeric RGB metrics/MAE5 remain complete diagnostic
+PASS/FAIL; unchanged hard source/cache/runtime/Depth/mask/K/Pose/projection/ray
+criteria. Owner review reference is metadata only, never automatic PASS.
+
+Development121 distinct author CPU PASS (83 legacy +38 policy),0fail/error/skip,
+3.51s. Frozen35 old-contract RED31/PASS4; same35 definition ASTs preserved in
+new38. Only one legacy status assertion changes;68/69 original assert ASTs and
+the full numeric spatial predicate except the authorized RGB clause unchanged.
+Invalid NaN/Inf thresholds still emit finite non-success JSON. Ruff0.12.7 and
+check/format/AST/compile11 PASS. No renderer/real RoboCasa/server/GPU data used;
+unchanged prior24 OSMesa tests not rerun/aggregated, old107 evidence retained.
+
+New current-policy/GateC runbook and README pointer ready; old runbooks/reports
+unchanged. GateC design caps3–5 full distinct-task episodes, source-bound exact
+manifest, independent geometry/visual evidence, measured storage/RSS/reuse.
+Actual task IDs remain execution-side input before separately reviewed plan.
+Freeze source then clean exact-Pair121 CPU/static evidence, isolated Root publish
+and GPT fresh review. Child/Gitlink1069fe78 unchanged. No server/GateC/N100/V3,
+Depth/replay/codec/color/state/training/DCP changes or historical rewrites.
+
+# 2026-11-04 — G2-SPATIAL-POLICY Owner-authorized minimal verifier split IN_PROGRESS
+
+Fresh V3 fetch/advertised ea0828c7d45a443cc74ae2582419f14e7782a17e; new V3
+commits3337176e,25e51f6e,f20c2689,ea0828c7 are unrelated R03 documents, preserved
+on official V3. Candidate advertised f63454610ec2b95617c670444875339034c3c1c7;
+read exact Owner visual/contract revision at that commit, matching approved
+Roota9ffd313770c5344195f415425124a5075e62b2b and Child1069fe78. Created clean
+isolated v3-g2-spatial-policy-20261104 fromf634, no active worktree/main changes.
+
+Owner accepts original RGB/new Depth boundaries for six reviewed images;
+perceptual distinction is jagged edges, not a confirmed global brightness shift.
+Geometry6/6PASS and original mapping/depth/runtime evidence stand. Old raw RGB
+MAE failures remain true under old contract, retained unchanged. RGB provenance
+investigation is diagnostic-only/no longer blocks spatial Stage-1. No claim of
+unique aliasing/color cause, no color/antialiasing/state/Depth fix authorized.
+
+Claim ONLY production tools/g2/verify_robocasa_rgbd_pose.py; new focused CPU
+policy tests and minimal existing legacy status-assert update; new policy/GateC
+runbook, author evidence/handoff, SESSION/TODO and bounded append-only Inbox.
+Split spatial checks from photometric diagnostics, version status/authority,
+retain all numbers, hard geometric/cache/source/runtime checks. Owner visual
+provenance is external referenced evidence, never automatic pass/checkbox.
+Ordinary source videos/Depth/codecs/replay.py/Child/model/training unchanged.
+
+CPU/static only; new immutable text output required for later server acceptance
+logic validation. Prepare bounded GateC design for3–5 full episodes from distinct
+tasks after explicit review/approval; no execution here. No N100, V3 merge,
+GPU/RoboCasa/training/DCP, server file transfer or historical report rewriting.
+
 # 2026-11-04 — G2 RGB-only provenance follow-up; geometry closed, overall GateB FAIL
 
 Observation 2026-11-04T14:41:32.328469+08:00: fresh origin/V3 fetch/advertised
