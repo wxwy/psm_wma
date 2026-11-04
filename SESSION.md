@@ -1,3 +1,62 @@
+# 2026-11-04 — G2 Stage-1 Gate C FINAL PASS consumed; N100 metadata/budget preparation only
+
+Observation 2026-11-04T20:57:07.731396+08:00: before_heade4fae0cdc5623d4a6e906eedf10f0e9530d7e092.
+Fresh fetch/advertised candidateb68f14b0d73456c0710bbbffa2b3aa0fcef25244 and
+official V3470577f33db9a106d19cc3e477394f4ba278e538 matched tracking refs.
+Remote additions59beb9fe,5f647bb7,3dce9e3b,edec4d29,b68f14b0 are Gate C
+contract/report documentation; main V3 is only observed/fetched, never merged.
+Local d4edb96b/e4fae0cd receipts and remote branch had common base d3374c0e.
+Docs-only two-parent merge f105f18e9a2adeffa5ec5b9bfe86d9efa077ab10 preserves
+both histories; sole contract-wording conflict resolved to the agreed NPZ-only
+trigger and explicit separate59beb9fe provenance. This does not rewrite the fact
+that local d4ed push failed before the server run; server used remote59beb9fe.
+Both incoming formal reports byte-identical to remote (including its existing
+Markdown hard-break whitespace); no source/Child changes or forced history.
+
+Read exact final report `docs/collab/chatgpt/reviews/2026-11-04_G2_GateC_ThreeEpisode_Owner_Visual_Signoff_FINAL_PASS.md` and independent automated5f647bb7 report.
+Formal Root3eb8b334150018212ae1f51afb5e954b83fa1186 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged.
+Final GATE_C_PASS: three full episodes852/1704 camera-frames,18/18 sampled
+native spatial checks128rays/group/max0.004660357m,3/3 external Owner visual
+sheets, one owned SIGTERM/restart and3/3 verified reuse. Original machine report
+remains VISUAL_PENDING; separate human sidecar SHA
+faa553c8acc1eb922a90ed929dc7487826aa9d0833c2254359d98123c1a1fbd7.
+RGB6/18 diagnostic FAIL remains nonblocking. These are accepted formal server
+and Owner results, not new Codex native/visual execution. Gate C/Stage-1 tasks
+are DONE; earlier capability/pending-approval blocks below are historical for
+that completed Gate and must not reopen it.
+
+Reported resource references: successful export220.50s/852frames, all-machine
+329.99s incl abort/checks/previews/skips, raw335313120B/compressed46507310B,
+committed task47675013B/whole cache49389714B, staging1703729B, peak5051668KiB.
+They are three-task observations, not N100 capacity/performance guarantees.
+
+Claimed docs only: new N100 preparation handoff `docs/collab/codex/requests/2026-11-04_G2_N100_Actual_Training_Membership_And_Production_Budget_Preparation.md`, completion addendum
+to the existing Gate C contract, SESSION/TODO, bounded append-only Inbox.
+Source audit confirms actual g0 accepted tasks[].episodes IDs are the selection
+input; selected_episode_ids may include skipped-short episodes. Reconcile the
+actual consumer/index, no resampling/default100/seed42. Full-frame budget uses
+sum(mapping.length), not overlapping window_count*17. Existing CLI/selection
+schema/Depth-K-Pose interface reused; no new implementation or nav_sg converter.
+
+N100 exact training manifest/index/path/accepted/effective IDs and totals remain
+UNCONFIRMED. New read-only server metadata/dry-run handoff has one proposed30min
+outer ceiling and no renderer; production export still needs its own concrete
+budget and authorization. No server tool now exposed (cloud connected, current
+capabilities/identities empty, VPN/TCP grants absent); no actual server intake,
+cache creation, data transfer or N100 execution performed here. No121/GateB/C
+rerun or new Code Gate for unchanged Pair. Documentation validation PASS:
+2 new preparation Bash blocks syntax-only/CLI flags static-AST-valid,3 unchanged
+contract blocks, arithmetic/reference values, both histories retained, incoming
+formal reports byte-identical,39 old artifact hashes/13 source bindings intact,
+append-only Inbox under128KiB, protected source/Gitlink/Child unchanged, diff-check.
+Publish candidate only and read back; no V3 merge/GPU/EGL/training/DCP/old-cache mutation.
+
+Prepublication refresh: advertised candidate remainsb68f14b0; official V3 advanced
+470577f3->9635cefe3208ab6320ba5fa70b0e0d68fd444790 through two unrelated
+NEW-F01 review/Inbox documentation commits03faf8fc,9635cefe. Fetched/preserved,
+not merged; no tools/g2 or Child change. Candidate remains ancestor of this work.
+
 # 2026-11-04 — Gate C contract amendment LOCAL ONLY; GitHub publication blocked
 
 Observation 2026-11-04T17:42:01.435229+08:00: mandatory trigger correction committed locally as

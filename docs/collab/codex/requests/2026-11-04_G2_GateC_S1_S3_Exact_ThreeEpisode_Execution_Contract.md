@@ -1,5 +1,13 @@
 # G2 Gate C S1–S3 — exact three-episode execution contract
 
+**Completion addendum (2026-11-04):** this bounded contract has been executed by
+the connected server role and closed as `GATE_C_PASS` in final authority
+`b68f14b0d73456c0710bbbffa2b3aa0fcef25244`,
+[the separate external visual sign-off](../../chatgpt/reviews/2026-11-04_G2_GateC_ThreeEpisode_Owner_Visual_Signoff_FINAL_PASS.md).
+The pre-execution text below is preserved as provenance, not the current runtime
+state or permission to rerun. Machine VISUAL_PENDING reports remain unchanged;
+no N100 production or V3 merge follows from this completion.
+
 Date: 2026-11-04 (Asia/Shanghai). **Bounded execution authorized; NOT STARTED.**
 Authority: `d3374c0e35c6d8bfc308b45c399b48cd3870f0f3`, decision
 `APPROVE_BOUNDED_EXECUTION_CONTRACT_WITH_MANDATORY_TRIGGER_CORRECTION` in
