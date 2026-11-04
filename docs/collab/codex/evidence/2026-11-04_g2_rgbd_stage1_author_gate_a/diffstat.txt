@@ -1,0 +1,18 @@
+ SESSION.md                                         |  131 +++
+ TODO.md                                            |    2 +
+ ...-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md |  218 ++++
+ .../2026-11-04_G2_Stage1_Owner_Clarifications.md   |   36 +
+ .../2026-11-04_G2_Stage1_Owner_Instruction.md      |  347 ++++++
+ ...-04_G2_Stage1_Owner_Instruction.provenance.json |   10 +
+ tools/g2/README.md                                 |   24 +
+ tools/g2/__init__.py                               |    1 +
+ tools/g2/export_robocasa_rgbd_pose.py              |  254 +++++
+ tools/g2/rgbd_pose/__init__.py                     |    3 +
+ tools/g2/rgbd_pose/cache.py                        |  480 +++++++++
+ tools/g2/rgbd_pose/geometry.py                     |  224 ++++
+ tools/g2/rgbd_pose/replay.py                       |  255 +++++
+ tools/g2/rgbd_pose/source.py                       |  499 +++++++++
+ tools/g2/rgbd_pose_schema.md                       |  126 +++
+ tools/g2/test_rgbd_pose_export.py                  | 1124 ++++++++++++++++++++
+ tools/g2/verify_robocasa_rgbd_pose.py              |  252 +++++
+ 17 files changed, 3986 insertions(+)

@@ -1,0 +1,37 @@
+{
+  "args": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tools/g2/test_rgbd_pose_export.py",
+    "--basetemp",
+    "/tmp/psm-g2-rgbd-stage1-20261104/final_cpu/pytest_tmp",
+    "--junitxml",
+    "/tmp/psm-g2-rgbd-stage1-20261104/final_cpu/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+  "environment_overrides": {
+    "PYTHONPATH": "/workspace/psm-wma-g2-rgbd-stage1:/tmp/psm-g2-rgbd-stage1-20261104/cpu_extra",
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "MUJOCO_GL": "disable",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "LD_LIBRARY_PATH": "",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-g2-rgbd-stage1-20261104/final_cpu/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-g2-rgbd-stage1-20261104/final_cpu/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-g2-rgbd-stage1-20261104/final_cpu/cache/xdg",
+    "RUFF_CACHE_DIR": "/tmp/psm-g2-rgbd-stage1-20261104/final_cpu/cache/ruff"
+  }
+}

@@ -1,0 +1,3308 @@
+diff --git a/tools/g2/README.md b/tools/g2/README.md
+new file mode 100644
+index 00000000..133efb89
+--- /dev/null
++++ b/tools/g2/README.md
+@@ -0,0 +1,24 @@
++# RoboCasa365 G2 Stage-1 RGB-D/Pose cache
++
++This is offline data preparation, with no Cosmos model/recipe changes and no
++nav_sg integration. Original RGB videos are referenced, never re-encoded.
++
++From the Root checkout:
++
++```bash
++python -m tools.g2.export_robocasa_rgbd_pose --help
++python -m tools.g2.verify_robocasa_rgbd_pose --help
++```
++
++Use `--dry-run` to verify the episode mapping and nonvisual raw/Flat rows without
++creating a renderer or writing the output directory. Real export requires the
++RoboCasa/robosuite/MuJoCo environment, assets and original recordings on the server.
++`--state-index-policy frame_index` is an explicit mapping declaration, not proof
++of physical alignment. Gate B/C must establish that proof.
++
++- [Input/output schema](rgbd_pose_schema.md)
++- [Design, commands, thresholds, recovery and Gate B/C runbook](../../docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md)
++
++No default N/seed selection exists. Supply one explicit episode or the exact
++existing training membership manifest. A completed cache is reusable only after
++its identity, file checksums, arrays and frame references validate.
+diff --git a/tools/g2/__init__.py b/tools/g2/__init__.py
+new file mode 100644
+index 00000000..d72507b3
+--- /dev/null
++++ b/tools/g2/__init__.py
+@@ -0,0 +1 @@
++"""Offline G2 data preparation; no model or training initialization."""
+diff --git a/tools/g2/export_robocasa_rgbd_pose.py b/tools/g2/export_robocasa_rgbd_pose.py
+new file mode 100644
+index 00000000..d2562eeb
+--- /dev/null
++++ b/tools/g2/export_robocasa_rgbd_pose.py
+@@ -0,0 +1,254 @@
++"""Export original RGB references, metric Depth and camera Pose by episode.
++
++Run from the Root checkout: python -m tools.g2.export_robocasa_rgbd_pose --help
++Real replay is server-side only. --dry-run loads mapping/nonvisual source rows,
++but never imports RoboCasa/MuJoCo or creates a renderer.
++"""
++
++from __future__ import annotations
++
++import argparse
++import json
++import subprocess
++import time
++import uuid
++from dataclasses import asdict
++from pathlib import Path
++
++from .rgbd_pose import SCHEMA
++from .rgbd_pose.cache import durable_json, ensure_cache_manifest, export_episode
++from .rgbd_pose.geometry import CONVENTIONS, DEPTH_FORMATS
++from .rgbd_pose.replay import Replay
++from .rgbd_pose.source import (
++    CAMERAS,
++    digest,
++    integer,
++    load_episode,
++    mapping_episodes,
++    select,
++    sha256,
++    verify_selection_source,
++    witness,
++)
++
++
++def code_identity():
++    directory = Path(__file__).resolve().parent
++    files = [
++        directory / "export_robocasa_rgbd_pose.py",
++        *sorted((directory / "rgbd_pose").glob("*.py")),
++        directory.parent / "g0/robocasa_work_queue.py",
++    ]
++    return {p.relative_to(directory.parent.parent).as_posix(): sha256(p) for p in files}
++
++
++def provenance():
++    root = Path(__file__).resolve().parents[2]
++    values = {}
++    for name, ref in [("root", "HEAD"), ("child_gitlink", "HEAD:cosmos-framework")]:
++        result = subprocess.run(
++            ["git", "rev-parse", ref], cwd=root, capture_output=True, text=True
++        )
++        values[name] = result.stdout.strip() if result.returncode == 0 else "UNKNOWN"
++    return values
++
++
++def parser():
++    result = argparse.ArgumentParser(description=__doc__)
++    result.add_argument("--raw-root", type=Path, required=True)
++    result.add_argument("--flat-root", type=Path, required=True)
++    result.add_argument("--output-root", type=Path, required=True)
++    result.add_argument("--mapping-file", type=Path)
++    result.add_argument(
++        "--source-dataset",
++        type=Path,
++        help="explicit original lerobot directory when Task has multiple datasets",
++    )
++    choice = result.add_mutually_exclusive_group(required=True)
++    choice.add_argument(
++        "--selection-manifest",
++        type=Path,
++        help="existing g0 accepted cache manifest or explicit global-ID manifest",
++    )
++    choice.add_argument("--global-episode", type=int)
++    choice.add_argument("--local-episode", type=int)
++    result.add_argument("--task-class")
++    result.add_argument("--cameras", default="robot0_agentview_left,robot0_eye_in_hand")
++    result.add_argument(
++        "--state-index-policy",
++        required=True,
++        choices=["frame_index"],
++        help="explicit assertion to be physically verified by DS; never inferred from timestamps",
++    )
++    result.add_argument("--depth-format", choices=DEPTH_FORMATS, default="uint16_mm")
++    result.add_argument(
++        "--frames",
++        help="comma-separated frame indices; omitted exports the full mapped episode",
++    )
++    result.add_argument(
++        "--image-size",
++        type=int,
++        help="optional assertion of original square RGB size; never resizes source RGB",
++    )
++    result.add_argument("--chunk-frames", type=int, default=32)
++    result.add_argument(
++        "--min-free-bytes",
++        type=int,
++        default=1024**3,
++        help="disk reserve checked before replay and each chunk",
++    )
++    for label in ["task", "episode"]:
++        result.add_argument(f"--{label}-shard", type=int)
++        result.add_argument(f"--num-{label}-shards", type=int)
++    result.add_argument("--dry-run", action="store_true")
++    return result
++
++
++def main(argv=None, *, replay_factory=Replay):
++    args = parser().parse_args(argv)
++    root, raw, flat = (
++        p.resolve() for p in (args.output_root, args.raw_root, args.flat_root)
++    )
++    if any(root.is_relative_to(p) or p.is_relative_to(root) for p in (raw, flat)):
++        raise ValueError("output-root must be separate from raw/Flat source trees")
++    cameras = args.cameras.split(",")
++    if not cameras or len(set(cameras)) != len(cameras) or set(cameras) - set(CAMERAS):
++        raise ValueError("unsupported/duplicate camera list")
++    integer(args.chunk_frames, "chunk_frames", minimum=1)
++    integer(args.min_free_bytes, "min_free_bytes")
++    if args.chunk_frames > 256:
++        raise ValueError("chunk_frames must not exceed 256")
++    requested_frames = (
++        None if args.frames is None else [int(v) for v in args.frames.split(",")]
++    )
++    if requested_frames is not None and (
++        not requested_frames or requested_frames != sorted(set(requested_frames))
++    ):
++        raise ValueError("--frames must be a sorted unique nonempty list")
++    for name in ["global_episode", "local_episode", "image_size"]:
++        if getattr(args, name) is not None:
++            integer(getattr(args, name), name, minimum=1 if name == "image_size" else 0)
++    mapping = (args.mapping_file or flat / "flat_v3_mapping.parquet").resolve()
++    mapping_proof = witness(mapping)
++    if args.selection_manifest is not None:
++        verify_selection_source(args.selection_manifest, flat, mapping_proof["sha256"])
++    episodes, selection_proof = select(
++        mapping_episodes(mapping),
++        manifest=args.selection_manifest,
++        task=args.task_class,
++        global_episode=args.global_episode,
++        local_episode=args.local_episode,
++        task_shard=args.task_shard,
++        num_task_shards=args.num_task_shards,
++        episode_shard=args.episode_shard,
++        num_episode_shards=args.num_episode_shards,
++    )
++    frame_plan = {}
++    for episode in episodes:
++        frames = (
++            list(range(episode.length))
++            if requested_frames is None
++            else requested_frames
++        )
++        for frame in frames:
++            episode.frame(frame)
++        frame_plan[episode.global_episode_index] = frames
++    recipe = {"mapping": mapping_proof, "code": code_identity()}
++    contract = {
++        "schema": SCHEMA,
++        "raw_root": str(raw),
++        "flat_root": str(flat),
++        "recipe": recipe,
++        "cameras": cameras,
++        "frames": requested_frames,
++        "state_index_policy": args.state_index_policy,
++        "depth_format": args.depth_format,
++        "chunk_frames": args.chunk_frames,
++        "image_size": args.image_size,
++        "conventions": CONVENTIONS,
++    }
++    started = time.monotonic()
++    if not args.dry_run:
++        ensure_cache_manifest(root, contract)
++    results, estimated_bytes = [], 0
++    for episode in episodes:
++        frames = frame_plan[episode.global_episode_index]
++        try:
++            source = load_episode(
++                raw,
++                flat,
++                episode,
++                cameras,
++                state_index_policy=args.state_index_policy,
++                source_dataset=args.source_dataset,
++                image_size=args.image_size,
++            )
++            estimated_bytes += sum(
++                len(frames)
++                * (h * w * (3 if args.depth_format == "uint16_mm" else 5) + 41 * 4 + 8)
++                for h, w in source.camera_shapes.values()
++            )
++            if args.dry_run:
++                value = {
++                    "status": "PLANNED_NONVISUAL_ALIGNMENT_VERIFIED",
++                    "frame_count": len(frames),
++                    "camera_shapes": {
++                        k: list(v) for k, v in source.camera_shapes.items()
++                    },
++                }
++            else:
++                value = export_episode(
++                    root,
++                    source,
++                    frames,
++                    storage=args.depth_format,
++                    chunk_frames=args.chunk_frames,
++                    recipe=recipe,
++                    replay_factory=replay_factory,
++                    min_free_bytes=args.min_free_bytes,
++                )
++            value["episode"] = asdict(episode)
++            results.append(value)
++            if not args.dry_run:
++                print(json.dumps({"g2_episode": value}, ensure_ascii=False), flush=True)
++        except Exception as exc:
++            value = {
++                "status": "FAILED",
++                "episode": asdict(episode),
++                "error_type": type(exc).__name__,
++                "error": str(exc),
++            }
++            results.append(value)
++            if not args.dry_run:
++                print(json.dumps({"g2_episode": value}, ensure_ascii=False), flush=True)
++    failed = sum(r["status"] == "FAILED" for r in results)
++    report = {
++        "schema": SCHEMA,
++        "mode": "dry_run" if args.dry_run else "export",
++        "status": "FAILED"
++        if failed
++        else "COMPLETED_EXPORT_NOT_PHYSICAL_GATE_ACCEPTANCE",
++        "selected_episode_count": len(episodes),
++        "selected_frame_count": sum(map(len, frame_plan.values())),
++        "completed_frame_count": sum(r.get("frame_count", 0) for r in results),
++        "failed_episode_count": failed,
++        "uncompressed_array_bytes_estimate": estimated_bytes,
++        "compression_estimate": "NOT_ASSUMED_measure_actual_episode_manifests",
++        "selection_manifest": selection_proof,
++        "selection_policy": "existing_manifest_or_explicit_ID_no_sampling",
++        "state_index_policy": "frame_index_explicit_pending_DS_physical_validation",
++        "contract_digest": digest(contract),
++        "code_provenance": provenance(),
++        "duration_s": time.monotonic() - started,
++        "episodes": results,
++        "geometry_gate": "PENDING_DS_GATE_B_C",
++        "min_free_bytes": args.min_free_bytes,
++    }
++    if not args.dry_run:
++        durable_json(root / "_runs" / f"{uuid.uuid4().hex}.json", report)
++    print(json.dumps(report, ensure_ascii=False, indent=2), flush=True)
++    return 1 if failed else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/g2/rgbd_pose/__init__.py b/tools/g2/rgbd_pose/__init__.py
+new file mode 100644
+index 00000000..ac9f2169
+--- /dev/null
++++ b/tools/g2/rgbd_pose/__init__.py
+@@ -0,0 +1,3 @@
++"""Episode-level RGB references, optical Z-depth and calibrated camera poses."""
++
++SCHEMA = "psm_wma_robocasa_rgbd_pose_v1"
+diff --git a/tools/g2/rgbd_pose/cache.py b/tools/g2/rgbd_pose/cache.py
+new file mode 100644
+index 00000000..e4ec6883
+--- /dev/null
++++ b/tools/g2/rgbd_pose/cache.py
+@@ -0,0 +1,480 @@
++"""Bounded per-camera chunks and immutable episode directory commits."""
++
++from __future__ import annotations
++
++import errno
++import fcntl
++import json
++import os
++import shutil
++import uuid
++from contextlib import contextmanager
++from dataclasses import asdict
++from pathlib import Path
++
++import numpy as np
++
++from tools.g0.robocasa_work_queue import atomic_write_json
++
++from . import SCHEMA
++from .geometry import (
++    CONVENTIONS,
++    check_calibration,
++    decode_depth,
++    depth_statistics,
++    encode_depth,
++)
++from .source import (
++    Episode,
++    canonical,
++    digest,
++    integer,
++    read_json,
++    sha256,
++    verify_witnesses,
++)
++
++
++def sync_directory(path):
++    descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
++    try:
++        os.fsync(descriptor)
++    finally:
++        os.close(descriptor)
++
++
++def durable_json(path, value):
++    # Reuse the existing g0 JSON publisher; validate finite JSON and add durability.
++    canonical(value)
++    atomic_write_json(Path(path), value)
++    with Path(path).open("rb") as stream:
++        os.fsync(stream.fileno())
++    sync_directory(Path(path).parent)
++
++
++def ensure_cache_manifest(root, contract):
++    root = Path(root)
++    root.mkdir(parents=True, exist_ok=True)
++    with (root / ".manifest.lock").open("ab") as stream:
++        fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
++        path = root / "cache_manifest.json"
++        if path.exists():
++            if read_json(path) != contract:
++                raise ValueError(
++                    "cache configuration drift; choose a new output namespace"
++                )
++        else:
++            durable_json(path, contract)
++
++
++def episode_directory(root, episode):
++    return (
++        Path(root)
++        / "tasks"
++        / episode.task_class
++        / "episodes"
++        / f"episode_{episode.global_episode_index:06d}"
++    )
++
++
++@contextmanager
++def episode_lock(root, episode):
++    directory = Path(root) / ".locks"
++    directory.mkdir(parents=True, exist_ok=True)
++    with (
++        directory / f"{episode.task_class}_{episode.global_episode_index:06d}.lock"
++    ).open("ab") as stream:
++        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
++        try:
++            yield
++        finally:
++            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
++
++
++def identity(source, frames, storage, chunk_frames, recipe):
++    return {
++        "schema": SCHEMA,
++        "episode": asdict(source.episode),
++        "frames": list(frames),
++        "cameras": list(source.camera_shapes),
++        "camera_shapes": {k: list(v) for k, v in source.camera_shapes.items()},
++        "depth_storage": storage,
++        "chunk_frames": chunk_frames,
++        "source_files": source.witnesses,
++        "alignment": source.alignment,
++        "conventions": CONVENTIONS,
++        "recipe": recipe,
++    }
++
++
++def _safe_file(directory, relative):
++    relative = Path(relative)
++    if relative.is_absolute() or ".." in relative.parts:
++        raise ValueError("cache artifact path escapes episode")
++    path = directory / relative
++    if (
++        path.is_symlink()
++        or not path.resolve().is_relative_to(directory.resolve())
++        or not path.is_file()
++    ):
++        raise ValueError("cache artifact missing/unsafe")
++    return path
++
++
++def read_frames(path):
++    rows = []
++    with Path(path).open("rb") as stream:
++        for line in stream:
++            if len(line) > 128 * 1024 or not line.endswith(b"\n"):
++                raise ValueError("truncated/oversized frame index record")
++            rows.append(json.loads(line.decode("utf-8")))
++    return rows
++
++
++def verify_episode(directory, *, expected_digest=None):
++    directory = Path(directory)
++    marker = read_json(directory / "COMPLETE.json")
++    manifest = read_json(directory / "manifest.json")
++    if (
++        marker.get("schema") != SCHEMA
++        or manifest.get("schema") != SCHEMA
++        or manifest.get("status") != "COMPLETE"
++        or sha256(directory / "manifest.json") != marker.get("manifest_sha256")
++        or digest(manifest["identity"]) != marker.get("export_digest")
++        or marker["export_digest"] != manifest.get("export_digest")
++    ):
++        raise ValueError("incomplete/corrupt episode commit")
++    if expected_digest is not None and manifest["export_digest"] != expected_digest:
++        raise ValueError("episode export identity differs; use a new output namespace")
++    spec = manifest["identity"]
++    episode = Episode(**spec["episode"])
++    frames = spec["frames"]
++    if not frames or frames != sorted(set(frames)):
++        raise ValueError("invalid committed frame selection")
++    if (
++        spec["conventions"] != CONVENTIONS
++        or spec["alignment"]["state_index_policy"] != "explicit_frame_index"
++    ):
++        raise ValueError("cache coordinate/state mapping convention mismatch")
++    files = manifest["files"]
++    expected_paths = set(files) | {"manifest.json", "COMPLETE.json"}
++    actual_paths = {
++        p.relative_to(directory).as_posix() for p in directory.rglob("*") if p.is_file()
++    }
++    if actual_paths != expected_paths or "frames.jsonl" not in files:
++        raise ValueError(
++            "cache artifact set is incomplete or contains unexpected files"
++        )
++    for relative, record in files.items():
++        path = _safe_file(directory, relative)
++        if path.stat().st_size != record["size"] or sha256(path) != record["sha256"]:
++            raise ValueError(f"cache artifact checksum mismatch: {relative}")
++    rows = read_frames(directory / "frames.jsonl")
++    if len(rows) != len(frames) or manifest["frame_count"] != len(frames):
++        raise ValueError("frame index count mismatch")
++    seen_chunks = {}
++    for ordinal, (frame, row) in enumerate(zip(frames, rows, strict=True)):
++        if any(row.get(k) != v for k, v in episode.frame(frame).items()):
++            raise ValueError("frame/global/local/state mapping drift")
++        if set(row["cameras"]) != set(spec["cameras"]):
++            raise ValueError("frame camera membership drift")
++        for camera, reference in row["cameras"].items():
++            chunk_index, offset = divmod(
++                ordinal, integer(spec["chunk_frames"], "chunk_frames", minimum=1)
++            )
++            path = f"cameras/{camera}/chunk_{chunk_index:06d}.npz"
++            if reference["chunk"] != path or reference["offset"] != offset:
++                raise ValueError("chunk/offset frame mapping drift")
++            if reference["rgb"] != {
++                "video": manifest["rgb_references"][camera]["video"],
++                "frame_index": frame,
++            }:
++                raise ValueError("RGB reference/index mismatch")
++            seen_chunks.setdefault((camera, path), []).append(frame)
++    if set(files) != {"frames.jsonl"} | {path for _, path in seen_chunks}:
++        raise ValueError("missing/unreferenced camera chunks")
++    total_raw_bytes = 0
++    for (camera, relative), expected_frames in seen_chunks.items():
++        with np.load(_safe_file(directory, relative), allow_pickle=False) as archive:
++            if set(archive.files) != {
++                "depth",
++                "valid",
++                "K",
++                "T_world_camera_gl",
++                "T_world_camera_cv",
++                "frame_indices",
++            }:
++                raise ValueError("unexpected depth chunk arrays")
++            # NpzFile indexing decompresses each time. Keep just this bounded
++            # chunk in memory instead of re-decoding its matrices for every row.
++            chunk = {key: archive[key] for key in archive.files}
++            n = len(expected_frames)
++            height, width = spec["camera_shapes"][camera]
++            if chunk["depth"].shape != (n, height, width) or chunk["valid"].shape != (
++                n,
++                height,
++                width,
++            ):
++                raise ValueError("depth chunk frame/shape mismatch")
++            decode_depth(chunk["depth"], chunk["valid"], spec["depth_storage"])
++            if chunk["frame_indices"].dtype != np.int64 or not np.array_equal(
++                chunk["frame_indices"], expected_frames
++            ):
++                raise ValueError("depth chunk frame indices disagree")
++            for key, shape in [
++                ("K", (n, 3, 3)),
++                ("T_world_camera_gl", (n, 4, 4)),
++                ("T_world_camera_cv", (n, 4, 4)),
++            ]:
++                if chunk[key].dtype != np.float32 or chunk[key].shape != shape:
++                    raise ValueError("camera calibration must be per-frame float32")
++            for index in range(n):
++                check_calibration(
++                    chunk["K"][index],
++                    chunk["T_world_camera_gl"][index],
++                    chunk["T_world_camera_cv"][index],
++                )
++            total_raw_bytes += sum(value.nbytes for value in chunk.values())
++    if manifest["raw_array_bytes"] != total_raw_bytes:
++        raise ValueError("cache capacity accounting mismatch")
++    return manifest, rows
++
++
++def cached_sample(directory, manifest, row, camera):
++    reference = row["cameras"][camera]
++    with np.load(Path(directory) / reference["chunk"], allow_pickle=False) as chunk:
++        i = reference["offset"]
++        depth = decode_depth(
++            chunk["depth"][i], chunk["valid"][i], manifest["identity"]["depth_storage"]
++        )
++        return {
++            "depth_m": depth,
++            "valid": chunk["valid"][i].copy(),
++            **{
++                key: chunk[key][i].copy()
++                for key in ("K", "T_world_camera_gl", "T_world_camera_cv")
++            },
++        }
++
++
++def require_disk_space(root, payload_bytes, min_free_bytes):
++    integer(min_free_bytes, "min_free_bytes")
++    required = int(payload_bytes * 1.002) + 16384 + min_free_bytes
++    if shutil.disk_usage(root).free < required:
++        raise OSError(
++            errno.ENOSPC,
++            "insufficient disk space for next chunk plus configured reserve",
++        )
++
++
++def export_episode(
++    root,
++    source,
++    frames,
++    *,
++    storage,
++    chunk_frames,
++    recipe,
++    replay_factory,
++    min_free_bytes=0,
++):
++    frames = list(frames)
++    if not frames or frames != sorted(set(frames)):
++        raise ValueError("requested frames must be unique, sorted and nonempty")
++    for frame in frames:
++        source.episode.frame(frame)
++    integer(chunk_frames, "chunk_frames", minimum=1)
++    if chunk_frames > 256:
++        raise ValueError("chunk_frames cannot exceed the bounded 256-frame buffer")
++    root = Path(root).resolve()
++    for input_file in source.witnesses:
++        source_path = Path(input_file["path"]).resolve()
++        if source_path.is_relative_to(root) or root.is_relative_to(source_path.parent):
++            raise ValueError("cache output overlaps source inputs")
++    spec = identity(source, frames, storage, chunk_frames, recipe)
++    export_digest = digest(spec)
++    destination = episode_directory(root, source.episode)
++    with episode_lock(root, source.episode):
++        verify_witnesses(source.witnesses)
++        if destination.exists():
++            manifest, _ = verify_episode(destination, expected_digest=export_digest)
++            return {
++                "status": "SKIPPED_VERIFIED",
++                "directory": str(destination),
++                "frame_count": manifest["frame_count"],
++            }
++        staging = root / ".staging" / uuid.uuid4().hex
++        staging.mkdir(parents=True)
++        files, buffers, raw_bytes, max_error = (
++            {},
++            {c: [] for c in source.camera_shapes},
++            0,
++            0.0,
++        )
++
++        def record_file(path):
++            files[path.relative_to(staging).as_posix()] = {
++                "sha256": sha256(path),
++                "size": path.stat().st_size,
++            }
++
++        def flush(camera, number):
++            nonlocal raw_bytes
++            batch = buffers[camera]
++            if not batch:
++                return
++            arrays = {key: np.stack([row[key] for row in batch]) for key in batch[0]}
++            arrays["frame_indices"] = arrays["frame_indices"].astype(np.int64)
++            chunk_bytes = sum(a.nbytes for a in arrays.values())
++            require_disk_space(root, chunk_bytes, min_free_bytes)
++            raw_bytes += chunk_bytes
++            path = staging / f"cameras/{camera}/chunk_{number:06d}.npz"
++            path.parent.mkdir(parents=True, exist_ok=True)
++            with path.open("wb") as stream:
++                np.savez_compressed(stream, **arrays)
++                stream.flush()
++                os.fsync(stream.fileno())
++            record_file(path)
++            buffers[camera] = []
++
++        try:
++            largest = max(
++                min(chunk_frames, len(frames))
++                * (h * w * (3 if storage == "uint16_mm" else 5) + 41 * 4 + 8)
++                for h, w in source.camera_shapes.values()
++            )
++            require_disk_space(root, largest, min_free_bytes)
++            backend = replay_factory(source)
++            try:
++                with (staging / "frames.jsonl").open("wb") as stream:
++                    for ordinal, frame in enumerate(frames):
++                        row = source.episode.frame(frame)
++                        row.update(backend.restore(frame))
++                        row["flat_timestamp"] = float(source.flat_timestamps[frame])
++                        row["cameras"] = {}
++                        number, offset = divmod(ordinal, chunk_frames)
++                        for camera in source.camera_shapes:
++                            sample = backend.render(camera)
++                            check_calibration(
++                                sample["K"],
++                                sample["T_world_camera_gl"],
++                                sample["T_world_camera_cv"],
++                            )
++                            encoded, valid, error = encode_depth(
++                                sample["depth_m"], sample["valid"], storage
++                            )
++                            if valid.shape != tuple(source.camera_shapes[camera]):
++                                raise ValueError(
++                                    "rendered camera dimensions differ from source binding"
++                                )
++                            max_error = max(max_error, error)
++                            buffers[camera].append(
++                                {
++                                    "depth": encoded,
++                                    "valid": valid,
++                                    "frame_indices": np.array(frame, dtype=np.int64),
++                                    **{
++                                        key: np.asarray(sample[key], dtype=np.float32)
++                                        for key in (
++                                            "K",
++                                            "T_world_camera_gl",
++                                            "T_world_camera_cv",
++                                        )
++                                    },
++                                }
++                            )
++                            row["cameras"][camera] = {
++                                "chunk": f"cameras/{camera}/chunk_{number:06d}.npz",
++                                "offset": offset,
++                                "rgb": {
++                                    "video": source.rgb[camera]["video"],
++                                    "frame_index": frame,
++                                },
++                                "depth": depth_statistics(sample["depth_m"], valid),
++                                "quantization_max_abs_m": error,
++                            }
++                            if len(buffers[camera]) == chunk_frames:
++                                flush(camera, number)
++                        stream.write(canonical(row) + b"\n")
++                    stream.flush()
++                    os.fsync(stream.fileno())
++                for camera in source.camera_shapes:
++                    flush(camera, (len(frames) - 1) // chunk_frames)
++                runtime = backend.identity
++            finally:
++                backend.close()
++            verify_witnesses(source.witnesses)
++            record_file(staging / "frames.jsonl")
++            payload_bytes = sum(
++                row["size"] for name, row in files.items() if name.endswith(".npz")
++            )
++            manifest = {
++                "schema": SCHEMA,
++                "status": "COMPLETE",
++                "export_digest": export_digest,
++                "identity": spec,
++                "frame_count": len(frames),
++                "full_episode": frames == list(range(source.episode.length)),
++                "runtime": runtime,
++                "rgb_references": source.rgb,
++                "files": files,
++                "raw_array_bytes": raw_bytes,
++                "compressed_payload_bytes": payload_bytes,
++                "compression_ratio_raw_over_stored": raw_bytes / payload_bytes,
++                "quantization_max_abs_m": max_error,
++                "physical_geometry_gate": "PENDING_DS_GATE_B_C",
++            }
++            durable_json(staging / "manifest.json", manifest)
++            durable_json(
++                staging / "COMPLETE.json",
++                {
++                    "schema": SCHEMA,
++                    "export_digest": export_digest,
++                    "manifest_sha256": sha256(staging / "manifest.json"),
++                },
++            )
++            verify_episode(staging, expected_digest=export_digest)
++            for path in sorted(
++                (p for p in staging.rglob("*") if p.is_dir()), reverse=True
++            ):
++                sync_directory(path)
++            sync_directory(staging)
++            destination.parent.mkdir(parents=True, exist_ok=True)
++            if destination.exists():
++                raise FileExistsError("episode appeared outside its exclusive lock")
++            os.rename(staging, destination)
++            parent = destination.parent
++            while parent.is_relative_to(root):
++                sync_directory(parent)
++                if parent == root:
++                    break
++                parent = parent.parent
++            return {
++                "status": "EXPORTED",
++                "directory": str(destination),
++                "frame_count": len(frames),
++                "compressed_payload_bytes": payload_bytes,
++                "quantization_max_abs_m": max_error,
++            }
++        except BaseException as exc:
++            failed = root / ".failed" / staging.name
++            failed.parent.mkdir(parents=True, exist_ok=True)
++            if staging.exists():
++                os.rename(staging, failed)
++            try:
++                durable_json(
++                    failed / "failure.json",
++                    {
++                        "schema": SCHEMA,
++                        "status": "FAILED",
++                        "episode": asdict(source.episode),
++                        "export_digest": export_digest,
++                        "error_type": type(exc).__name__,
++                        "error": str(exc),
++                    },
++                )
++            except OSError as record_error:
++                exc.add_note(
++                    f"failure record could not be persisted: {record_error}; owned staging retained"
++                )
++            raise
+diff --git a/tools/g2/rgbd_pose/geometry.py b/tools/g2/rgbd_pose/geometry.py
+new file mode 100644
+index 00000000..c4d9b878
+--- /dev/null
++++ b/tools/g2/rgbd_pose/geometry.py
+@@ -0,0 +1,224 @@
++"""Explicit camera conventions and checked, losslessly compressed depth payloads.
++
++Images are upright, with pixel centers (column + .5, row + .5). CV axes are
++right/down/forward; GL axes are right/up/backward. A T_world_camera matrix maps
++camera coordinates into world coordinates, never the inverse transform.
++"""
++
++from __future__ import annotations
++
++import numpy as np
++
++GL_FROM_CV = np.diag([1.0, -1.0, -1.0, 1.0])
++DEPTH_FORMATS = ("uint16_mm", "float32_m")
++CONVENTIONS = {
++    "image_origin": "top_left",
++    "pixel_center": "column_plus_0.5_row_plus_0.5",
++    "depth": "metric_optical_axis_Z_not_ray_distance",
++    "camera_gl": "X_right_Y_up_minusZ_forward",
++    "camera_cv": "X_right_Y_down_Z_forward",
++    "pose_direction": "T_world_camera_maps_camera_to_world",
++    "T_world_camera_cv": "T_world_camera_gl @ diag(1,-1,-1,1)",
++    "invalid_depth": "zero_storage_plus_explicit_false_valid_mask",
++    "uint16_valid_range_m": [0.001, 65.535],
++    "uint16_max_quantization_error_m": 0.0005001,
++}
++
++
++def pose(value, *, atol=1e-5):
++    value = np.asarray(value, dtype=np.float64)
++    if value.shape != (4, 4) or not np.isfinite(value).all():
++        raise ValueError("camera pose must be a finite 4x4 matrix")
++    rotation = value[:3, :3]
++    if (
++        not np.allclose(value[3], [0, 0, 0, 1], atol=atol, rtol=0)
++        or not np.allclose(rotation.T @ rotation, np.eye(3), atol=atol, rtol=0)
++        or not np.isclose(np.linalg.det(rotation), 1, atol=atol, rtol=0)
++    ):
++        raise ValueError("camera pose must contain a proper rigid rotation")
++    return value
++
++
++def intrinsics(value):
++    value = np.asarray(value, dtype=np.float64)
++    if (
++        value.shape != (3, 3)
++        or not np.isfinite(value).all()
++        or value[0, 0] <= 0
++        or value[1, 1] <= 0
++        or not np.allclose(value[2], [0, 0, 1], atol=1e-7, rtol=0)
++        or abs(np.linalg.det(value)) < 1e-12
++    ):
++        raise ValueError("K must be a finite invertible optical intrinsic matrix")
++    return value
++
++
++def check_calibration(K, T_gl, T_cv):
++    K, T_gl, T_cv = intrinsics(K), pose(T_gl), pose(T_cv)
++    if not np.allclose(T_gl @ GL_FROM_CV, T_cv, atol=1e-5, rtol=0):
++        raise ValueError("GL/CV camera poses disagree; possible double axis correction")
++    return K, T_gl, T_cv
++
++
++def depth_buffer_to_z(buffer, near, far):
++    """MuJoCo perspective buffer -> optical-axis meters; background is invalid."""
++    buffer = np.asarray(buffer, dtype=np.float64)
++    if buffer.ndim != 2 or not buffer.size:
++        raise ValueError("depth buffer must be a nonempty HxW image")
++    if not np.isfinite([near, far]).all() or not 0 < near < far:
++        raise ValueError("invalid metric clipping planes")
++    finite = np.isfinite(buffer)
++    if np.any(finite & ((buffer < 0) | (buffer > 1))):
++        raise ValueError("expected a normalized OpenGL depth buffer, not metric depth")
++    valid = finite & (buffer < 1)
++    safe = np.where(valid, buffer, 0)
++    depth = near / (1 - safe * (1 - near / far))
++    return np.where(valid, depth, 0), valid
++
++
++def encode_depth(depth_m, valid, storage):
++    depth = np.asarray(depth_m, dtype=np.float64)
++    valid = np.asarray(valid)
++    if valid.dtype != np.bool_ or depth.shape != valid.shape or depth.ndim != 2:
++        raise ValueError("depth/boolean-valid shapes must match HxW")
++    if np.any(valid & (~np.isfinite(depth) | (depth <= 0))):
++        raise ValueError("valid depth must be finite and positive")
++    if storage == "uint16_mm":
++        if np.any(valid & ((depth < 0.001) | (depth > 65.535))):
++            raise ValueError(
++                "uint16_mm depth overflow/underflow; use explicit float32_m"
++            )
++        encoded = np.rint(np.where(valid, depth, 0) * 1000).astype(np.uint16)
++    elif storage == "float32_m":
++        if np.any(valid & (depth > np.finfo(np.float32).max)):
++            raise ValueError("float32_m depth overflow")
++        encoded = np.where(valid, depth, 0).astype(np.float32)
++        if np.any(valid & (~np.isfinite(encoded) | (encoded <= 0))):
++            raise ValueError("float32_m depth not representable")
++    else:
++        raise ValueError(f"unsupported depth storage: {storage}")
++    restored = decode_depth(encoded, valid, storage)
++    error = (
++        float(np.max(np.abs(restored[valid] - depth[valid]))) if valid.any() else 0.0
++    )
++    if storage == "uint16_mm" and error > 0.0005001:
++        raise ValueError("millimeter quantization exceeded half a millimeter")
++    return encoded, valid.copy(), error
++
++
++def decode_depth(encoded, valid, storage):
++    encoded, valid = np.asarray(encoded), np.asarray(valid)
++    expected = {"uint16_mm": np.dtype("uint16"), "float32_m": np.dtype("float32")}
++    if (
++        storage not in expected
++        or encoded.dtype != expected[storage]
++        or valid.dtype != np.bool_
++        or encoded.shape != valid.shape
++        or encoded.ndim not in (2, 3)
++        or not np.isfinite(encoded).all()
++        or np.any(encoded[~valid] != 0)
++        or np.any(encoded[valid] <= 0)
++    ):
++        raise ValueError("corrupt depth payload, dtype or invalid-pixel mask")
++    return encoded.astype(np.float64) / (1000 if storage == "uint16_mm" else 1)
++
++
++def rays_cv(K, pixels):
++    pixels = np.asarray(pixels, dtype=np.float64)
++    if pixels.ndim != 2 or pixels.shape[1] != 2 or not np.isfinite(pixels).all():
++        raise ValueError("pixel centers must be finite Nx2")
++    return np.c_[pixels, np.ones(len(pixels))] @ np.linalg.inv(intrinsics(K)).T
++
++
++def backproject_world(K, T_world_camera_cv, pixels, depth_z):
++    rays = rays_cv(K, pixels)
++    depth_z = np.asarray(depth_z, dtype=np.float64)
++    if (
++        depth_z.shape != (len(rays),)
++        or not np.isfinite(depth_z).all()
++        or np.any(depth_z <= 0)
++    ):
++        raise ValueError("one finite positive optical Z per pixel is required")
++    T = pose(T_world_camera_cv)
++    return (rays * depth_z[:, None]) @ T[:3, :3].T + T[:3, 3]
++
++
++def project_world(K, T_world_camera_cv, points):
++    T = pose(T_world_camera_cv)
++    points = np.asarray(points, dtype=np.float64)
++    if points.ndim != 2 or points.shape[1] != 3 or not np.isfinite(points).all():
++        raise ValueError("world points must be finite Nx3")
++    # Float32 serialization slightly perturbs orthogonality; solve the stored
++    # transform instead of treating its transpose as an exact matrix inverse.
++    camera = np.linalg.solve(T[:3, :3], (points - T[:3, 3]).T).T
++    if np.any(camera[:, 2] <= 0):
++        raise ValueError("world point is behind optical camera")
++    projected = camera @ intrinsics(K).T
++    return projected[:, :2] / projected[:, 2:3]
++
++
++def depth_statistics(depth, valid):
++    values = np.asarray(depth)[valid]
++    return {
++        "valid_pixels": int(valid.sum()),
++        "total_pixels": int(valid.size),
++        "valid_fraction": float(valid.mean()),
++        "min_m": float(values.min()) if len(values) else None,
++        "median_m": float(np.median(values)) if len(values) else None,
++        "max_m": float(values.max()) if len(values) else None,
++    }
++
++
++def pose_motion(values):
++    values = [pose(value) for value in values]
++    if not values:
++        raise ValueError("pose motion requires at least one calibrated pose")
++    first = values[0]
++    translations, angles = [], []
++    for value in values:
++        translations.append(float(np.linalg.norm(value[:3, 3] - first[:3, 3])))
++        relative = np.linalg.solve(first[:3, :3], value[:3, :3])
++        # Float32 perturbs orthogonality. Measure the nearest proper relative
++        # rotation instead of R.T @ R of an already rounded matrix.
++        u, _, vt = np.linalg.svd(relative)
++        rotation = u @ vt
++        angles.append(float(np.arccos(np.clip((np.trace(rotation) - 1) / 2, -1, 1))))
++    return {
++        "max_translation_m": max(translations),
++        "max_rotation_rad": max(angles),
++        "changed": max(translations) > 1e-6 or max(angles) > 1e-5,
++    }
++
++
++def rgb_metrics(original, rendered):
++    """No video encoding: MAE/PSNR plus explicitly specified uniform-window SSIM."""
++    from scipy.ndimage import uniform_filter
++
++    original, rendered = np.asarray(original), np.asarray(rendered)
++    if (
++        original.dtype != np.uint8
++        or rendered.dtype != np.uint8
++        or original.shape != rendered.shape
++        or original.ndim != 3
++        or original.shape[-1] != 3
++        or min(original.shape[:2]) < 7
++    ):
++        raise ValueError("RGB comparison requires matching uint8 HxWx3, H/W >=7")
++    a, b = original.astype(np.float64), rendered.astype(np.float64)
++    ma, mb = (uniform_filter(x, size=(7, 7, 1), mode="reflect") for x in (a, b))
++    covariance = 49 / 48
++    va = covariance * (uniform_filter(a * a, size=(7, 7, 1)) - ma * ma)
++    vb = covariance * (uniform_filter(b * b, size=(7, 7, 1)) - mb * mb)
++    cov = covariance * (uniform_filter(a * b, size=(7, 7, 1)) - ma * mb)
++    c1, c2 = (0.01 * 255) ** 2, (0.03 * 255) ** 2
++    ssim = ((2 * ma * mb + c1) * (2 * cov + c2)) / (
++        (ma * ma + mb * mb + c1) * (va + vb + c2)
++    )
++    mse = float(np.mean((a - b) ** 2))
++    return {
++        "mae": float(np.mean(np.abs(a - b))),
++        "psnr_db": float(10 * np.log10(255**2 / mse)) if mse else None,
++        "psnr_exact_match": mse == 0,
++        "ssim": float(np.mean(ssim[3:-3, 3:-3])),
++        "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop",
++    }
+diff --git a/tools/g2/rgbd_pose/replay.py b/tools/g2/rgbd_pose/replay.py
+new file mode 100644
+index 00000000..3e07df49
+--- /dev/null
++++ b/tools/g2/rgbd_pose/replay.py
+@@ -0,0 +1,255 @@
++"""Thin adapter around RoboCasa's official state playback and camera helpers.
++
++Native dependencies are imported only by the explicit server-side replay path.
++A fresh environment per episode avoids cross-episode model/object residue.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import importlib.metadata
++import inspect
++import json
++from copy import deepcopy
++
++import numpy as np
++
++from .geometry import backproject_world, check_calibration, depth_buffer_to_z, rays_cv
++
++
++def function_identity(function):
++    return {
++        "module": function.__module__,
++        "name": function.__name__,
++        "source_sha256": hashlib.sha256(
++            inspect.getsource(function).encode()
++        ).hexdigest(),
++    }
++
++
++class Replay:
++    def __init__(self, source, *, make=None, reset_to=None, camera_utils=None):
++        injected = make is not None or reset_to is not None or camera_utils is not None
++        if injected and any(x is None for x in (make, reset_to, camera_utils)):
++            raise ValueError(
++                "CPU boundary injection requires make/reset_to/camera_utils together"
++            )
++        if not injected:
++            import robocasa  # noqa: F401 (registers task environments)
++            import robosuite
++            from robocasa.scripts.dataset_scripts.playback_dataset_hdf5 import reset_to
++            from robosuite.utils import camera_utils
++
++            make = robosuite.make
++        self.source, self.reset_to, self.camera_utils = source, reset_to, camera_utils
++        self.env = None
++        self.identity = (
++            {"kind": "explicit_cpu_test_double"}
++            if injected
++            else {
++                "kind": "official_state_replay",
++                "packages": {
++                    name: importlib.metadata.version(name)
++                    for name in ("robocasa", "robosuite", "mujoco", "numpy")
++                },
++                "functions": [
++                    function_identity(f)
++                    for f in (
++                        reset_to,
++                        camera_utils.get_camera_intrinsic_matrix,
++                        camera_utils.get_camera_extrinsic_matrix,
++                        camera_utils.get_real_depth_map,
++                    )
++                ],
++            }
++        )
++        kwargs = deepcopy(source.env_metadata["env_kwargs"])
++        cameras = list(source.camera_shapes)
++        kwargs.update(
++            env_name=source.env_metadata["env_name"],
++            has_renderer=False,
++            has_offscreen_renderer=True,
++            use_camera_obs=False,
++            camera_depths=True,
++            camera_names=cameras,
++            camera_heights=[source.camera_shapes[c][0] for c in cameras],
++            camera_widths=[source.camera_shapes[c][1] for c in cameras],
++        )
++        try:
++            self.env = make(**kwargs)
++            self.reset_to(
++                self.env,
++                {
++                    "model": source.model_xml,
++                    "ep_meta": json.dumps(source.ep_meta),
++                    "states": source.states[0],
++                },
++            )
++        except BaseException:
++            self.close()
++            raise
++
++    def restore(self, frame):
++        requested = self.source.states[frame]
++        self.reset_to(self.env, {"states": requested})
++        actual = np.asarray(self.env.sim.get_state().flatten())
++        if actual.shape != requested.shape or not np.isfinite(actual).all():
++            raise ValueError("restored simulator state shape/finite mismatch")
++        error = float(np.max(np.abs(actual - requested)))
++        if error > 1e-8:
++            raise ValueError(f"restored simulator state differs: max_abs={error}")
++        return {"state_max_abs_error": error, "sim_time": float(self.env.sim.data.time)}
++
++    def render(self, camera):
++        sim = self.env.sim
++        height, width = self.source.camera_shapes[camera]
++        rgb, raw_buffer = sim.render(
++            height=height, width=width, camera_name=camera, depth=True
++        )
++        rgb, buffer = (
++            np.asarray(rgb)[::-1].copy(),
++            np.asarray(raw_buffer, dtype=np.float64)[::-1].copy(),
++        )
++        if (
++            rgb.shape != (height, width, 3)
++            or rgb.dtype != np.uint8
++            or buffer.shape != (height, width)
++        ):
++            raise ValueError(
++                "renderer RGB/depth dimensions or dtype differ from source camera"
++            )
++        near = float(sim.model.vis.map.znear * sim.model.stat.extent)
++        far = float(sim.model.vis.map.zfar * sim.model.stat.extent)
++        depth, valid = depth_buffer_to_z(buffer, near, far)
++        official = self.camera_utils.get_real_depth_map(sim, np.where(valid, buffer, 0))
++        if not np.allclose(official[valid], depth[valid], rtol=1e-6, atol=1e-6):
++            raise ValueError(
++                "metric depth disagrees with official robosuite conversion"
++            )
++        K = self.camera_utils.get_camera_intrinsic_matrix(sim, camera, height, width)
++        index = sim.model.camera_name2id(camera)
++        T_gl = np.eye(4)
++        T_gl[:3, :3] = np.asarray(sim.data.cam_xmat[index]).reshape(3, 3)
++        T_gl[:3, 3] = np.asarray(sim.data.cam_xpos[index])
++        # The official helper ALREADY corrects GL to the CV optical frame.
++        T_cv = self.camera_utils.get_camera_extrinsic_matrix(sim, camera)
++        check_calibration(K, T_gl, T_cv)
++        return {
++            "rgb": rgb,
++            "depth_m": depth,
++            "valid": valid,
++            "K": K,
++            "T_world_camera_gl": T_gl,
++            "T_world_camera_cv": T_cv,
++            "clip_near_m": near,
++            "clip_far_m": far,
++        }
++
++    def ray_check(self, camera, sample, *, atol_m=0.01, min_samples=16):
++        """Independent geometry check; renderer/ray visibility mismatch is inconclusive.
++
++        mj_ray returns distance along a UNIT ray, not optical-axis Z. Only hits
++        matching the renderer's actual geom identity are compared. Render geom
++        group options must be available; an unknown filter never means PASS.
++        """
++        try:
++            import mujoco
++
++            sim = self.env.sim
++            context = sim._render_context_offscreen
++            groups = np.asarray(context.vopt.geomgroup, dtype=np.uint8).copy()
++            if groups.shape != (6,):
++                raise ValueError("unknown renderer geometry-group filter")
++            height, width = sample["valid"].shape
++            segmentation = np.asarray(
++                sim.render(
++                    height=height, width=width, camera_name=camera, segmentation=True
++                )
++            )[::-1]
++            if segmentation.shape != (height, width, 2):
++                raise ValueError("unknown rendered geometry identity representation")
++            rows, columns = np.nonzero(sample["valid"])
++            picks = (
++                np.unique(np.linspace(0, len(rows) - 1, min(128, len(rows)), dtype=int))
++                if len(rows)
++                else []
++            )
++            positions = np.array(
++                [[columns[i] + 0.5, rows[i] + 0.5] for i in picks]
++            ).reshape(-1, 2)
++            T = sample["T_world_camera_cv"]
++            rays = rays_cv(sample["K"], positions)
++            norms = np.linalg.norm(rays, axis=1)
++            directions = (rays / norms[:, None]) @ T[:3, :3].T
++            origin = np.asarray(T[:3, 3], dtype=np.float64)
++            errors, mismatches = [], 0
++            model = getattr(sim.model, "_model", sim.model)
++            data = getattr(sim.data, "_data", sim.data)
++            for j, pick in enumerate(picks):
++                rendered_type, rendered_id = segmentation[rows[pick], columns[pick]]
++                if rendered_type != int(mujoco.mjtObj.mjOBJ_GEOM) or rendered_id < 0:
++                    mismatches += 1
++                    continue
++                hit = np.array([-1], dtype=np.int32)
++                distance = mujoco.mj_ray(
++                    model, data, origin, directions[j].copy(), groups, True, -1, hit
++                )
++                if distance < 0 or hit[0] != rendered_id:
++                    mismatches += 1
++                    continue
++                # Convert ray distance back to optical Z before comparing.
++                z = float(sample["depth_m"][rows[pick], columns[pick]])
++                errors.append(abs(float(distance) / norms[j] - z))
++            enough = len(errors) >= min_samples
++            maximum = max(errors) if errors else None
++            status = (
++                "INCONCLUSIVE"
++                if not enough
++                else ("PASS" if maximum <= atol_m else "FAIL")
++            )
++            return {
++                "status": status,
++                "matching_geom_samples": len(errors),
++                "visibility_filter_mismatches": mismatches,
++                "max_abs_z_error_m": maximum,
++                "atol_m": atol_m,
++                "min_samples": min_samples,
++                "geomgroup": groups.tolist(),
++                "static_geoms_included": True,
++                "bodyexclude": -1,
++                "distance_converted_to_optical_Z": True,
++            }
++        except (AttributeError, ImportError, ValueError, RuntimeError) as exc:
++            return {"status": "INCONCLUSIVE", "reason": f"{type(exc).__name__}: {exc}"}
++
++    def close(self):
++        if self.env is not None:
++            env, self.env = self.env, None
++            env.close()
++
++
++def original_rgb(reference, frame):
++    """Decode an explicit original frame index; never re-encode RGB or seek by state time."""
++    import imageio.v2 as imageio
++
++    with imageio.get_reader(reference["video"], format="ffmpeg") as reader:
++        return np.asarray(reader.get_data(frame))
++
++
++def reprojection_error(sample):
++    from .geometry import project_world
++
++    rows, columns = np.nonzero(sample["valid"])
++    if not len(rows):
++        return None
++    picks = np.unique(np.linspace(0, len(rows) - 1, min(32, len(rows)), dtype=int))
++    pixels = np.c_[columns[picks] + 0.5, rows[picks] + 0.5]
++    z = sample["depth_m"][rows[picks], columns[picks]]
++    world = backproject_world(sample["K"], sample["T_world_camera_cv"], pixels, z)
++    return float(
++        np.max(
++            np.abs(
++                project_world(sample["K"], sample["T_world_camera_cv"], world) - pixels
++            )
++        )
++    )
+diff --git a/tools/g2/rgbd_pose/source.py b/tools/g2/rgbd_pose/source.py
+new file mode 100644
+index 00000000..91171887
+--- /dev/null
++++ b/tools/g2/rgbd_pose/source.py
+@@ -0,0 +1,499 @@
++"""Read the existing episode mapping and accepted training-manifest membership.
++
++There is deliberately no episode sampler here. Row intervals are half-open;
++timestamps are diagnostic data and never determine a simulator state index.
++"""
++
++from __future__ import annotations
++
++import gzip
++import hashlib
++import json
++import re
++from dataclasses import dataclass
++from pathlib import Path
++
++import numpy as np
++
++CAMERAS = (
++    "robot0_agentview_left",
++    "robot0_agentview_right",
++    "robot0_eye_in_hand",
++)
++CORE_COLUMNS = (
++    "task_class",
++    "local_episode_index",
++    "global_episode_index",
++    "local_row_from",
++    "local_row_to",
++    "global_row_from",
++    "global_row_to",
++    "length",
++)
++
++
++def canonical(value):
++    return json.dumps(
++        value,
++        ensure_ascii=False,
++        sort_keys=True,
++        separators=(",", ":"),
++        allow_nan=False,
++    ).encode()
++
++
++def digest(value):
++    return hashlib.sha256(canonical(value)).hexdigest()
++
++
++def sha256(path):
++    result = hashlib.sha256()
++    with Path(path).open("rb") as stream:
++        for data in iter(lambda: stream.read(1024 * 1024), b""):
++            result.update(data)
++    return result.hexdigest()
++
++
++def read_json(path):
++    path = Path(path)
++    if path.stat().st_size > 32 * 1024**2:
++        raise ValueError(f"JSON exceeds 32 MiB: {path}")
++    return json.loads(path.read_text(encoding="utf-8"))
++
++
++def integer(value, name, *, minimum=0):
++    if type(value) is not int or value < minimum:
++        raise ValueError(f"{name} must be an integer >= {minimum}")
++    return value
++
++
++def task_name(value):
++    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", value):
++        raise ValueError("invalid underlying task class")
++    return value
++
++
++def witness(path, *, content=True):
++    path = Path(path).resolve(strict=True)
++    info = path.stat()
++    if not path.is_file():
++        raise ValueError(f"not a regular source file: {path}")
++    result = {
++        "path": str(path),
++        "size": info.st_size,
++        "mtime_ns": info.st_mtime_ns,
++        "ctime_ns": info.st_ctime_ns,
++        "device": info.st_dev,
++        "inode": info.st_ino,
++    }
++    if content:
++        result["sha256"] = sha256(path)
++    return result
++
++
++def verify_witnesses(records):
++    for record in records:
++        if witness(record["path"], content="sha256" in record) != record:
++            raise ValueError(f"source changed during export: {record['path']}")
++
++
++def selected_episodes(path):
++    """Consume existing g0 accepted cache rows, or an explicit global-ID list."""
++    value = read_json(path)
++    accepted = []
++    if value.get("schema") == "psm_wma_rgbd_episode_selection_v1":
++        if value.get("episode_namespace") != "global_episode_index":
++            raise ValueError("selection must explicitly use global_episode_index")
++        for row in value["episodes"]:
++            accepted.append(
++                (
++                    task_name(row["task_class"]),
++                    integer(row["global_episode_index"], "global episode"),
++                )
++            )
++    elif (
++        value.get("schema_version") == "exact_window_v1"
++        and value.get("source_format") == "lerobot_v3"
++    ):
++        # These are the actual accepted members produced by g0, not a newly
++        # sampled prefix. selected_episode_ids can also contain skipped-short eps.
++        for task in value["tasks"]:
++            name = task_name(task["task_class"])
++            rows = task.get("episodes")
++            if not isinstance(rows, list) or not rows:
++                raise ValueError("training manifest must declare accepted episode rows")
++            ids = [
++                integer(row["episode_index"], "accepted global episode") for row in rows
++            ]
++            if any(row.get("task_class", name) != name for row in rows):
++                raise ValueError("accepted episode belongs to another task")
++            if "selected_episode_ids" in task:
++                selected = [
++                    integer(i, "selected global episode")
++                    for i in task["selected_episode_ids"]
++                ]
++                if selected != sorted(set(selected)) or not set(ids).issubset(selected):
++                    raise ValueError("accepted/selected episode membership disagrees")
++                checksum = hashlib.sha256(
++                    ",".join(map(str, selected)).encode()
++                ).hexdigest()
++                if task.get("selected_episode_digest") != checksum:
++                    raise ValueError("g0 selected_episode_digest mismatch")
++            accepted.extend((name, i) for i in ids)
++        if "episode_count" in value and value["episode_count"] != len(accepted):
++            raise ValueError("training manifest accepted episode count mismatch")
++    else:
++        raise ValueError("unsupported selection manifest; no implicit N/seed sampling")
++    if not accepted or len(set(accepted)) != len(accepted):
++        raise ValueError("empty or duplicate selected episodes")
++    if len({index for _, index in accepted}) != len(accepted):
++        raise ValueError("one global episode cannot belong to two tasks")
++    return set(accepted), witness(path)
++
++
++def verify_selection_source(path, flat_root, mapping_sha256):
++    value = read_json(path)
++    if value.get("schema_version") == "exact_window_v1":
++        recorded = value.get("source_dataset")
++        if (
++            not isinstance(recorded, str)
++            or Path(recorded).resolve() != Path(flat_root).resolve()
++        ):
++            raise ValueError("training selection source_dataset differs from Flat root")
++    elif value.get("schema") == "psm_wma_rgbd_episode_selection_v1":
++        if value.get("flat_mapping_sha256") != mapping_sha256:
++            raise ValueError(
++                "external episode selection must bind the exact Flat mapping SHA256"
++            )
++    else:
++        raise ValueError("unknown episode selection source identity")
++
++
++@dataclass(frozen=True)
++class Episode:
++    task_class: str
++    local_episode_index: int
++    global_episode_index: int
++    local_row_from: int
++    local_row_to: int
++    global_row_from: int
++    global_row_to: int
++    length: int
++
++    def frame(self, index):
++        integer(index, "frame index")
++        if index >= self.length:
++            raise ValueError("frame outside mapped episode")
++        return {
++            "task_class": self.task_class,
++            "global_episode_index": self.global_episode_index,
++            "local_episode_index": self.local_episode_index,
++            "frame_index": index,
++            "local_row_index": self.local_row_from + index,
++            "global_row_index": self.global_row_from + index,
++            "source_state_index": index,
++            "source_rgb_frame_index": index,
++        }
++
++
++def mapping_episodes(path):
++    import pyarrow.parquet as pq
++
++    table = pq.read_table(path)
++    if set(CORE_COLUMNS) - set(table.column_names):
++        raise ValueError(
++            f"episode mapping lacks columns: {sorted(set(CORE_COLUMNS) - set(table.column_names))}"
++        )
++    episodes, global_ids, local_ids = [], set(), set()
++    for row in table.to_pylist():
++        values = {k: row[k] for k in CORE_COLUMNS}
++        values["task_class"] = task_name(values["task_class"])
++        for key in CORE_COLUMNS[1:]:
++            integer(values[key], key, minimum=1 if key == "length" else 0)
++        episode = Episode(**values)
++        if (
++            episode.local_row_to - episode.local_row_from != episode.length
++            or episode.global_row_to - episode.global_row_from != episode.length
++        ):
++            raise ValueError("mapping row intervals must be half-open and match length")
++        if row.get("resolved_task_class", episode.task_class) != episode.task_class:
++            raise ValueError(
++                "task_class/resolved_task_class disagree; explicit source audit required"
++            )
++        local_id = (episode.task_class, episode.local_episode_index)
++        if episode.global_episode_index in global_ids or local_id in local_ids:
++            raise ValueError("mapping contains duplicate episode identities")
++        global_ids.add(episode.global_episode_index)
++        local_ids.add(local_id)
++        episodes.append(episode)
++    if not episodes:
++        raise ValueError("empty episode mapping")
++    intervals = [(e.global_row_from, e.global_row_to) for e in episodes]
++    for name in sorted({e.task_class for e in episodes}):
++        rows = sorted(
++            (e.local_row_from, e.local_row_to) for e in episodes if e.task_class == name
++        )
++        if any(a[1] > b[0] for a, b in zip(rows, rows[1:])):
++            raise ValueError("overlapping local row intervals")
++    intervals.sort()
++    if any(a[1] > b[0] for a, b in zip(intervals, intervals[1:])):
++        raise ValueError("overlapping global row intervals")
++    return sorted(episodes, key=lambda e: (e.task_class, e.global_episode_index))
++
++
++def select(
++    episodes,
++    *,
++    manifest=None,
++    task=None,
++    global_episode=None,
++    local_episode=None,
++    task_shard=None,
++    num_task_shards=None,
++    episode_shard=None,
++    num_episode_shards=None,
++):
++    for value in (global_episode, local_episode):
++        if value is not None:
++            integer(value, "explicit episode index")
++    if (manifest is None) == (global_episode is None and local_episode is None):
++        raise ValueError(
++            "provide a selection manifest OR one explicit episode, never an implicit corpus"
++        )
++    if global_episode is not None and local_episode is not None:
++        raise ValueError("global and local episode selectors are mutually exclusive")
++    if local_episode is not None and task is None:
++        raise ValueError("local episode requires its task class")
++    records = {(e.task_class, e.global_episode_index): e for e in episodes}
++    if manifest is not None:
++        members, selection = selected_episodes(manifest)
++        if members - records.keys():
++            raise ValueError(
++                "selection contains episodes absent from the authoritative mapping"
++            )
++        picked = [records[key] for key in sorted(members)]
++    else:
++        selection = None
++        picked = [
++            e
++            for e in episodes
++            if (global_episode is None or e.global_episode_index == global_episode)
++            and (local_episode is None or e.local_episode_index == local_episode)
++        ]
++    if task is not None:
++        task_name(task)
++        picked = [e for e in picked if e.task_class == task]
++    if not picked:
++        raise ValueError("selection matched no mapped episode")
++    if manifest is None and len(picked) != 1:
++        raise ValueError("explicit episode selector must resolve uniquely")
++    for shard, count, label in [
++        (task_shard, num_task_shards, "task"),
++        (episode_shard, num_episode_shards, "episode"),
++    ]:
++        if (shard is None) != (count is None):
++            raise ValueError(f"both {label} shard/count are required")
++        if count is not None:
++            integer(count, "shard count", minimum=1)
++            integer(shard, "shard")
++            if shard >= count:
++                raise ValueError("shard must be below its count")
++    if task_shard is not None:
++        names = sorted({e.task_class for e in picked})[task_shard::num_task_shards]
++        picked = [e for e in picked if e.task_class in names]
++    if episode_shard is not None:
++        picked = picked[episode_shard::num_episode_shards]
++    return picked, selection
++
++
++def _rows(path, episode_index):
++    import pyarrow.dataset as ds
++
++    table = ds.dataset(path, format="parquet").to_table(
++        columns=[
++            "index",
++            "episode_index",
++            "frame_index",
++            "observation.state",
++            "timestamp",
++            "__filename",
++        ],
++        filter=ds.field("episode_index") == episode_index,
++    )
++    if not len(table):
++        raise ValueError("mapped episode has no source parquet rows")
++    order = np.argsort(table["frame_index"].to_numpy(), kind="stable")
++    values = {
++        k: np.asarray(table[k].to_pylist())[order]
++        for k in table.column_names
++        if k != "observation.state"
++    }
++    values["observation.state"] = np.asarray(
++        table["observation.state"].to_pylist(), dtype=np.float64
++    )[order]
++    return values
++
++
++@dataclass
++class SourceEpisode:
++    episode: Episode
++    dataset_dir: Path
++    states: np.ndarray
++    env_metadata: dict
++    ep_meta: dict
++    model_xml: str
++    rgb: dict
++    camera_shapes: dict
++    witnesses: list
++    alignment: dict
++    flat_timestamps: np.ndarray
++
++
++def load_episode(
++    raw_root,
++    flat_root,
++    episode,
++    cameras,
++    *,
++    state_index_policy=None,
++    source_dataset=None,
++    image_size=None,
++):
++    if state_index_policy != "frame_index":
++        raise ValueError(
++            "state/frame policy must be explicitly declared as frame_index and verified by DS"
++        )
++    raw_root, flat_root = Path(raw_root).resolve(), Path(flat_root).resolve()
++    flat_info_path = flat_root / "meta/info.json"
++    flat_info = read_json(flat_info_path)
++    if not str(flat_info.get("codebase_version", "")).startswith("v3"):
++        raise ValueError("Flat source must explicitly declare LeRobot v3")
++    if not cameras or len(set(cameras)) != len(cameras) or set(cameras) - set(CAMERAS):
++        raise ValueError("unsupported or duplicate source cameras")
++    if source_dataset is not None:
++        candidates = [Path(source_dataset).resolve()]
++    elif (raw_root / "extras/dataset_meta.json").is_file():
++        candidates = [raw_root]
++    else:
++        candidates = [
++            p.parent.parent
++            for p in (raw_root / episode.task_class).glob("**/extras/dataset_meta.json")
++        ]
++    candidates = [
++        p
++        for p in candidates
++        if (
++            p / f"extras/episode_{episode.local_episode_index:06d}/states.npz"
++        ).is_file()
++    ]
++    if len(candidates) != 1:
++        raise ValueError(
++            "source dataset binding missing/ambiguous; provide --source-dataset explicitly"
++        )
++    dataset = candidates[0].resolve()
++    if not dataset.is_relative_to(raw_root):
++        raise ValueError("source dataset escapes raw-root")
++    extra = dataset / f"extras/episode_{episode.local_episode_index:06d}"
++    paths = [
++        extra / "states.npz",
++        extra / "model.xml.gz",
++        extra / "ep_meta.json",
++        dataset / "extras/dataset_meta.json",
++        dataset / "meta/info.json",
++    ]
++    witnesses = [witness(p) for p in paths]
++    witnesses.append(witness(flat_info_path))
++    metadata, info = read_json(paths[3]), read_json(paths[4])
++    env_metadata = metadata["env_args"]
++    if env_metadata["env_name"] != episode.task_class:
++        raise ValueError("source dataset env_name differs from mapped task")
++    with np.load(paths[0], allow_pickle=False) as saved:
++        states = np.asarray(saved["states"])
++    if (
++        states.ndim != 2
++        or states.shape[0] != episode.length
++        or not np.isfinite(states).all()
++    ):
++        raise ValueError(
++            "states length/shape/finite check disagrees with episode mapping"
++        )
++    raw_rows = _rows(dataset / "data", episode.local_episode_index)
++    flat_rows = _rows(flat_root / "data", episode.global_episode_index)
++    for label, rows, start in [
++        ("raw", raw_rows, episode.local_row_from),
++        ("flat", flat_rows, episode.global_row_from),
++    ]:
++        if not np.issubdtype(
++            rows["frame_index"].dtype, np.integer
++        ) or not np.issubdtype(rows["index"].dtype, np.integer):
++            raise ValueError(f"{label} frame/index columns must be integers")
++        if not np.array_equal(
++            rows["frame_index"], np.arange(episode.length)
++        ) or not np.array_equal(rows["index"], start + np.arange(episode.length)):
++            raise ValueError(f"{label} frame/index rows do not match episode intervals")
++        if not np.isfinite(rows["timestamp"]).all():
++            raise ValueError("non-finite source timestamp")
++        for path in np.unique(rows["__filename"]):
++            witnesses.append(witness(path, content=label == "raw"))
++    if not np.array_equal(
++        raw_rows["observation.state"], flat_rows["observation.state"]
++    ):
++        raise ValueError(
++            "raw/Flat observation.state mismatch; refusing frame alignment"
++        )
++    with gzip.open(paths[1], "rt", encoding="utf-8") as stream:
++        xml = stream.read(64 * 1024**2 + 1)
++    if not xml or len(xml) > 64 * 1024**2:
++        raise ValueError("model XML empty or exceeds 64 MiB")
++    rgb, shapes = {}, {}
++    for camera in cameras:
++        key = "observation.images." + camera
++        feature = info["features"][key]
++        shape = feature["shape"]
++        if len(shape) != 3 or shape[2] != 3:
++            raise ValueError("source RGB feature must declare HxWx3")
++        height, width = [integer(int(v), "camera size", minimum=1) for v in shape[:2]]
++        if image_size is not None:
++            size = integer(image_size, "image size", minimum=1)
++            if (height, width) != (size, size):
++                raise ValueError(
++                    "requested image size differs from original RGB; implicit resampling is forbidden"
++                )
++        relative = info["video_path"].format(
++            episode_chunk=episode.local_episode_index
++            // integer(info["chunks_size"], "chunks_size", minimum=1),
++            episode_index=episode.local_episode_index,
++            video_key=key,
++        )
++        video = (dataset / relative).resolve()
++        if not video.is_relative_to(dataset):
++            raise ValueError("RGB video path escapes source dataset")
++        proof = witness(video, content=False)
++        witnesses.append(proof)
++        rgb[camera] = {
++            "video": str(video),
++            "feature": key,
++            "frame_index_policy": "mapped_local_frame_index_no_timestamp_shift",
++            "witness": proof,
++        }
++        shapes[camera] = (height, width)
++    verify_witnesses(witnesses)
++    return SourceEpisode(
++        episode,
++        dataset,
++        states,
++        env_metadata,
++        read_json(paths[2]),
++        xml,
++        rgb,
++        shapes,
++        witnesses,
++        {
++            "raw_flat_state_exact_equal": True,
++            "frame_rows_verified": episode.length,
++            "state_index_policy": "explicit_frame_index",
++            "timestamp_shift_applied": False,
++            "state_frame_physical_alignment": "PENDING_DS_GATE_B_C",
++        },
++        flat_rows["timestamp"].astype(np.float64),
++    )
+diff --git a/tools/g2/rgbd_pose_schema.md b/tools/g2/rgbd_pose_schema.md
+new file mode 100644
+index 00000000..cd248d6b
+--- /dev/null
++++ b/tools/g2/rgbd_pose_schema.md
+@@ -0,0 +1,126 @@
++# Stage-1 input/output schema — psm_wma_robocasa_rgbd_pose_v1
++
++## Inputs
++
++`--raw-root` and `--flat-root` are read-only local directories; `--output-root`
++must be separate. `--mapping-file` defaults to Flat's `flat_v3_mapping.parquet`.
++Flat `meta/info.json` must explicitly declare a LeRobot v3 codebase version.
++This is an **episode-level table**, not a frame-level table. Required columns:
++
++| Column | Meaning enforced by the tool |
++| --- | --- |
++| task_class | Underlying environment class; portable task name |
++| global_episode_index | Unique Flat V3 episode ID |
++| local_episode_index | Episode ID in the original task dataset |
++| local_row_from, local_row_to | Half-open original parquet row interval |
++| global_row_from, global_row_to | Half-open Flat parquet row interval |
++| length | Positive episode length; both interval lengths must match |
++
++The real table additionally has `task_slot`, `local_annotation`,
++`global_annotation`, `resolved_task_class`, `tasks_phrasing`. These are not frame
++indices. If present, `resolved_task_class` must agree with `task_class`; the tool
++does not infer a different class or state offset from annotation/timestamps.
++Full table SHA256 is pinned in the cache contract.
++
++For frame `i`, `0 <= i < length`, verify raw/Flat `frame_index == i`, original
++`index == local_row_from+i`, Flat `index == global_row_from+i`, and exact
++`observation.state` equality. The explicit `frame_index` state policy additionally
++requires exactly `length` simulator states and uses `states[i]`, not a timestamp
++offset. Raw/Flat observation-state equality is **not** proof that the simulator
++state restores the correct image; that remains Gate B/C.
++
++Original dataset layout follows official RoboCasa `lerobot_utils`:
++
++```text
++<raw-root>/<Task>/<recording>/lerobot/
++  data/*/episode_*.parquet
++  meta/info.json
++  extras/dataset_meta.json
++  extras/episode_000000/{states.npz,model.xml.gz,ep_meta.json}
++  videos/<paths described by meta/info.json>
++```
++
++More than one possible original dataset is an error; `--source-dataset` selects
++an explicit directory beneath raw-root. Per-camera original RGB HWC dimensions
++come from info.json. `--image-size` can assert that size, never silently resize it.
++
++## Selection
++
++One explicit global episode, or a task + local episode, needs no sampler.
++Batch selection uses the **existing** g0 `exact_window_v1`/`lerobot_v3` manifest
++and its accepted `tasks[].episodes[].episode_index` rows, which are global IDs.
++The source_dataset header must match the supplied Flat root. If present, the
++original `selected_episode_ids`/digest are validated, but selected short episodes
++absent from accepted cache rows are not reintroduced.
++
++An external list made from independently verified training membership is also
++accepted:
++
++```json
++{
++  "schema": "psm_wma_rgbd_episode_selection_v1",
++  "episode_namespace": "global_episode_index",
++  "flat_mapping_sha256": "<SHA256 of the exact flat_v3_mapping.parquet>",
++  "episodes": [
++    {"task_class": "CloseFridge", "global_episode_index": 0}
++  ]
++}
++```
++
++The ID above is illustrative, not a frozen N100 selection. No hash-ranking code,
++random seed or episode-limit default is duplicated. Task/episode sharding is a
++deterministic partition of the supplied members, never a new sampling step.
++
++## Committed output
++
++```text
++<output-root>/
++  cache_manifest.json                  # Effective immutable cache configuration
++  tasks/<Task>/episodes/episode_<global:06d>/
++    manifest.json                      # Identity, sources, runtime, array/file hashes
++    COMPLETE.json                      # Manifest hash; published last in staging
++    frames.jsonl                       # One row per selected frame, in source order
++    cameras/<camera>/chunk_000000.npz   # Bounded lossless ZIP/NumPy container
++  _runs/<uuid>.json                     # Process/export summaries, not sensor data
++  .locks/                              # OS-released advisory locks
++  .staging/                            # Uncommitted data after abrupt interruption
++  .failed/<uuid>/failure.json           # Isolated failed episode plus local artifacts
++```
++
++Each camera chunk has:
++
++| Array | Type / shape / meaning |
++| --- | --- |
++| depth | uint16 millimeters **or** float32 meters, `[N,H,W]` |
++| valid | bool `[N,H,W]`, invalid depth stored as zero |
++| K | float32 `[N,3,3]`, one calibrated intrinsic matrix per frame/camera |
++| T_world_camera_gl | float32 `[N,4,4]`, GL camera-to-world |
++| T_world_camera_cv | float32 `[N,4,4]`, optical CV camera-to-world |
++| frame_indices | int64 `[N]`, original episode-local frame indices |
++
++Default chunk size32, configurable1..256. `uint16_mm` valid range is
++`[0.001,65.535]` meters, rounding-to-nearest, error <=0.0005001m. Overflow and
++underflow fail; rerun in a **new namespace** with explicit `float32_m` if needed.
++ZIP is lossless with respect to these encoded arrays; millimeter quantization is
++not lossless with respect to the original floating depth. Masked non-finite/far
++background pixels remain explicitly invalid. No silent saturation/fallback.
++
++Frames JSONL carries task, global/local episode, frame, source-state/RGB-frame
++indices, global/local row indices, flat timestamp, actual simulator time/state
++roundtrip error and each camera's chunk/offset, original video path/frame,
++depth statistics and quantization error. It contains no RGB pixel payload.
++
++Camera axes: GL right/up/backward; CV right/down/forward. Upright image origin is
++top-left, centers `(column+.5,row+.5)`. Depth is **optical-axis Z**, not unit-ray
++range. `T_world_camera_cv = T_world_camera_gl @ diag(1,-1,-1,1)`.
++robosuite's extrinsic helper already returns CV. Both raw RGB and buffer are
++flipped vertically once after `sim.render`; poses are read anew after every state.
++
++Manifest records actual software versions and official helper source hashes,
++raw input hashes, Flat parquet/video stat witnesses, mapping SHA and code-content
++hashes. Source files must stay immutable during an episode. Code commit IDs are
++provenance; docs-only successors do not invalidate identical code-content caches.
++
++`full_episode=false` distinguishes the three-frame Gate B cache from full exports.
++Neither a COMPLETE marker nor an offline checksum pass closes the physical
++geometry Gate. Native replay reports are separate immutable text evidence.
+diff --git a/tools/g2/test_rgbd_pose_export.py b/tools/g2/test_rgbd_pose_export.py
+new file mode 100644
+index 00000000..c7d2dce2
+--- /dev/null
++++ b/tools/g2/test_rgbd_pose_export.py
+@@ -0,0 +1,1124 @@
++"""Gate A: synthetic inputs only, plus native CPU mj_ray on a tiny analytic scene.
++
++No real RoboCasa, GL context, source recording, CUDA driver or GPU is loaded.
++"""
++
++import gzip
++import hashlib
++import json
++import shutil
++from pathlib import Path
++from types import SimpleNamespace
++
++import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
++import pytest
++from scipy.spatial.transform import Rotation
++
++from tools.g2 import export_robocasa_rgbd_pose as cli
++from tools.g2 import verify_robocasa_rgbd_pose as checker
++from tools.g2.rgbd_pose import cache
++from tools.g2.rgbd_pose import geometry as g
++from tools.g2.rgbd_pose import source as src
++from tools.g2.rgbd_pose.replay import Replay
++
++
++def write_json(path, value):
++    path.parent.mkdir(parents=True, exist_ok=True)
++    path.write_text(json.dumps(value), encoding="utf-8")
++
++
++def fixture_tree(tmp_path, count=1):
++    raw, flat = tmp_path / "raw", tmp_path / "flat"
++    mapping, flattened = [], []
++    for n in range(count):
++        task = ["CloseFridge", "OpenCabinet", "CloseBlenderLid"][n]
++        dataset = raw / task / "recorded-date/lerobot"
++        extra = dataset / "extras/episode_000000"
++        extra.mkdir(parents=True)
++        states = np.c_[0.5 + np.arange(4) * 0.05, np.arange(4), np.zeros((4, 2))]
++        np.savez_compressed(extra / "states.npz", states=states)
++        with gzip.open(extra / "model.xml.gz", "wt") as stream:
++            stream.write('<mujoco model="synthetic_not_recorded"/>')
++        write_json(extra / "ep_meta.json", {"lang": "synthetic instruction"})
++        write_json(
++            dataset / "extras/dataset_meta.json",
++            {"env_args": {"env_name": task, "env_kwargs": {"robots": "synthetic"}}},
++        )
++        features = {
++            "observation.images." + c: {"shape": [8, 8, 3]} for c in src.CAMERAS
++        }
++        write_json(
++            dataset / "meta/info.json",
++            {
++                "features": features,
++                "chunks_size": 1000,
++                "video_path": "videos/chunk-{episode_chunk:03d}/{video_key}/episode_{episode_index:06d}.mp4",
++            },
++        )
++        for camera in src.CAMERAS:
++            path = (
++                dataset
++                / f"videos/chunk-000/observation.images.{camera}/episode_000000.mp4"
++            )
++            path.parent.mkdir(parents=True)
++            path.write_bytes(b"synthetic-reference-only-not-an-actual-video")
++        rows = [
++            {
++                "index": i,
++                "episode_index": 0,
++                "frame_index": i,
++                "timestamp": i * 0.05,
++                "observation.state": [float(i), float(n), 0.1],
++            }
++            for i in range(4)
++        ]
++        data = dataset / "data/chunk-000"
++        data.mkdir(parents=True)
++        pq.write_table(pa.Table.from_pylist(rows), data / "episode_000000.parquet")
++        flattened.extend(
++            {**r, "episode_index": n, "index": n * 4 + r["index"]} for r in rows
++        )
++        mapping.append(
++            {
++                "task_class": task,
++                "task_slot": n,
++                "local_episode_index": 0,
++                "global_episode_index": n,
++                "local_row_from": 0,
++                "local_row_to": 4,
++                "global_row_from": n * 4,
++                "global_row_to": (n + 1) * 4,
++                "length": 4,
++                "resolved_task_class": task,
++                "local_annotation": 0,
++                "global_annotation": n,
++                "tasks_phrasing": ["synthetic"],
++            }
++        )
++    (flat / "data/chunk-000").mkdir(parents=True)
++    write_json(flat / "meta/info.json", {"codebase_version": "v3.0", "fps": 20})
++    pq.write_table(
++        pa.Table.from_pylist(flattened), flat / "data/chunk-000/file-000.parquet"
++    )
++    pq.write_table(pa.Table.from_pylist(mapping), flat / "flat_v3_mapping.parquet")
++    return raw, flat
++
++
++def bound(tmp_path, *, count=1):
++    raw, flat = fixture_tree(tmp_path, count=count)
++    episodes = src.mapping_episodes(flat / "flat_v3_mapping.parquet")
++    result = src.load_episode(
++        raw,
++        flat,
++        episodes[0],
++        src.CAMERAS[:1] + src.CAMERAS[2:],
++        state_index_policy="frame_index",
++    )
++    return raw, flat, result
++
++
++class FakeReplay:
++    identity = {
++        "kind": "explicit_cpu_test_double",
++        "name": "deterministic_calibration_fixture",
++    }
++    created, closed = [], []
++
++    def __init__(self, source):
++        self.source, self.frame = source, None
++        self.created.append(source.episode.global_episode_index)
++
++    def restore(self, frame):
++        self.frame = frame
++        return {
++            "state_max_abs_error": 0.0,
++            "sim_time": float(self.source.states[frame, 0]),
++        }
++
++    def render(self, camera):
++        height, width = self.source.camera_shapes[camera]
++        T = np.eye(4)
++        T[:3, 3] = [self.frame * 0.1 if camera == src.CAMERAS[2] else 0, 0, 1]
++        valid = np.ones((height, width), dtype=bool)
++        valid[0, 0] = False
++        return {
++            "K": np.array([[4, 0, width / 2], [0, 4, height / 2], [0, 0, 1.0]]),
++            "T_world_camera_gl": T,
++            "T_world_camera_cv": T @ g.GL_FROM_CV,
++            "depth_m": np.full((height, width), 1.2347 + self.frame * 0.01),
++            "valid": valid,
++            "rgb": np.full((height, width, 3), 7 + self.frame, dtype=np.uint8),
++        }
++
++    def ray_check(self, camera, sample, **kwargs):
++        return {"status": "PASS", "matching_geom_samples": 32, "test_double": True}
++
++    def close(self):
++        self.closed.append(self.source.episode.global_episode_index)
++
++
++@pytest.fixture(autouse=True)
++def reset_fake():
++    FakeReplay.created, FakeReplay.closed = [], []
++
++
++def exported(tmp_path, *, frames=(0, 1, 3), storage="uint16_mm"):
++    raw, flat, source = bound(tmp_path)
++    result = cache.export_episode(
++        tmp_path / "cache",
++        source,
++        frames,
++        storage=storage,
++        chunk_frames=2,
++        recipe={"synthetic": True},
++        replay_factory=FakeReplay,
++    )
++    return raw, flat, source, Path(result["directory"])
++
++
++def test_pixel_center_y_sign_and_camera_to_world_direction():
++    K = np.array([[2, 0, 2], [0, 2, 2], [0, 0, 1.0]])
++    T_gl = np.eye(4)
++    T_gl[:3, 3] = [10, 20, 30]
++    points = g.backproject_world(K, T_gl @ g.GL_FROM_CV, [[2.5, 3.5]], [4.0])
++    np.testing.assert_allclose(
++        points, [[11, 17, 26]]
++    )  # Downward image y is negative GL y.
++    np.testing.assert_allclose(
++        g.project_world(K, T_gl @ g.GL_FROM_CV, points), [[2.5, 3.5]]
++    )
++
++
++def test_float32_rotated_pose_roundtrip_uses_stored_matrix_inverse():
++    from scipy.spatial.transform import Rotation
++
++    T = np.eye(4)
++    T[:3, :3] = Rotation.from_euler("xyz", [0.3, 0.7, -0.8]).as_matrix()
++    T[:3, 3] = [1.4, -2.7, 0.9]
++    T = T.astype(np.float32)
++    K = np.array([[132, 0, 128], [0, 132, 128], [0, 0, 1]], dtype=np.float32)
++    pixels = np.array([[0.5, 0.5], [255.5, 255.5], [128.5, 90.5]])
++    world = g.backproject_world(K, T, pixels, [1.3, 2.7, 0.3])
++    np.testing.assert_allclose(g.project_world(K, T, world), pixels, atol=1e-10, rtol=0)
++
++
++@pytest.mark.parametrize("violation", ["double_flip", "inverse", "reflection", "bad_K"])
++def test_calibration_rejects_wrong_conventions(violation):
++    K, T_gl = np.eye(3), np.eye(4)
++    T_gl[0, 3] = 2
++    T_cv = T_gl @ g.GL_FROM_CV
++    if violation == "double_flip":
++        T_cv = T_gl.copy()
++    if violation == "inverse":
++        T_cv = np.linalg.inv(T_cv)
++    if violation == "reflection":
++        T_gl[0, 0] = -1
++    if violation == "bad_K":
++        K[0, 0] = -1
++    with pytest.raises(ValueError):
++        g.check_calibration(K, T_gl, T_cv)
++
++
++def test_optical_buffer_background_and_known_clip_distances():
++    depth, valid = g.depth_buffer_to_z([[0, 0.5, 1, np.nan]], 0.1, 10)
++    np.testing.assert_allclose(depth, [[0.1, 0.1 / 0.505, 0, 0]])
++    np.testing.assert_array_equal(valid, [[True, True, False, False]])
++
++
++@pytest.mark.parametrize(
++    "near,far,buffer",
++    [(0, 10, [[0]]), (1, 1, [[0]]), (0.1, 10, [[1.1]]), (0.1, 10, [[-0.01]])],
++)
++def test_invalid_depth_buffer_or_planes_rejected(near, far, buffer):
++    with pytest.raises(ValueError):
++        g.depth_buffer_to_z(buffer, near, far)
++
++
++@pytest.mark.parametrize("storage", g.DEPTH_FORMATS)
++def test_depth_codec_round_trip_mask_and_quantization(storage):
++    random = np.random.default_rng(23)
++    depth = random.uniform(0.001, 65.535, (13, 17))
++    valid = random.random(depth.shape) > 0.2
++    depth[~valid] = np.nan
++    encoded, mask, error = g.encode_depth(depth, valid, storage)
++    decoded = g.decode_depth(encoded, mask, storage)
++    assert np.all(encoded[~valid] == 0) and np.array_equal(mask, valid)
++    assert error <= (0.0005001 if storage == "uint16_mm" else 4e-6)
++    np.testing.assert_allclose(decoded[valid], depth[valid], atol=0.0005001, rtol=0)
++
++
++@pytest.mark.parametrize("distance", [0.0004, 0.00099, 65.5351, 100.0])
++def test_uint16_overflow_never_saturates(distance):
++    with pytest.raises(ValueError, match="overflow/underflow"):
++        g.encode_depth([[distance]], np.array([[True]]), "uint16_mm")
++
++
++def test_float_storage_is_explicit_fallback_and_invalid_not_a_valid_range():
++    encoded, valid, error = g.encode_depth(
++        [[100.0, np.inf]], np.array([[True, False]]), "float32_m"
++    )
++    assert encoded.tolist() == [[100.0, 0.0]] and error == 0
++    assert g.decode_depth(encoded, valid, "float32_m").tolist() == [[100.0, 0.0]]
++
++
++@pytest.mark.parametrize(
++    "bad", ["invalid_nonzero", "zero_valid", "wrong_dtype", "mask_not_bool"]
++)
++def test_corrupt_depth_payload_rejected(bad):
++    value, mask = np.array([[1000, 0]], dtype=np.uint16), np.array([[True, False]])
++    if bad == "invalid_nonzero":
++        value[0, 1] = 1
++    if bad == "zero_valid":
++        value[0, 0] = 0
++    if bad == "wrong_dtype":
++        value = value.astype(np.int32)
++    if bad == "mask_not_bool":
++        mask = mask.astype(np.uint8)
++    with pytest.raises(ValueError):
++        g.decode_depth(value, mask, "uint16_mm")
++
++
++def test_existing_g0_accepted_membership_no_new_sampling(tmp_path):
++    path = tmp_path / "training_manifest.json"
++    selected = [0, 1]
++    value = {
++        "schema_version": "exact_window_v1",
++        "source_format": "lerobot_v3",
++        "episode_count": 1,
++        "tasks": [
++            {
++                "task_class": "CloseFridge",
++                "selected_episode_ids": selected,
++                "selected_episode_digest": hashlib.sha256(b"0,1").hexdigest(),
++                "episodes": [{"episode_index": 1, "task_class": "CloseFridge"}],
++            }
++        ],
++    }
++    write_json(path, value)
++    assert src.selected_episodes(path)[0] == {("CloseFridge", 1)}
++    value["tasks"][0]["selected_episode_digest"] = "0" * 64
++    write_json(path, value)
++    with pytest.raises(ValueError, match="digest"):
++        src.selected_episodes(path)
++
++
++@pytest.mark.parametrize(
++    "bad", ["duplicate", "local_namespace", "implicit_seed", "cross_task_global"]
++)
++def test_selection_refuses_ambiguous_or_unproven_membership(tmp_path, bad):
++    path = tmp_path / "select.json"
++    value = {
++        "schema": "psm_wma_rgbd_episode_selection_v1",
++        "episode_namespace": "global_episode_index",
++        "episodes": [{"task_class": "CloseFridge", "global_episode_index": 0}],
++    }
++    if bad == "duplicate":
++        value["episodes"] *= 2
++    if bad == "local_namespace":
++        value["episode_namespace"] = "local_episode_index"
++    if bad == "implicit_seed":
++        value = {"episode_limit": 100, "episode_seed": 42}
++    if bad == "cross_task_global":
++        value["episodes"].append(
++            {"task_class": "OpenCabinet", "global_episode_index": 0}
++        )
++    write_json(path, value)
++    with pytest.raises(ValueError):
++        src.selected_episodes(path)
++
++
++@pytest.mark.parametrize(
++    "bad", ["length", "duplicate", "overlap", "resolved", "missing", "negative"]
++)
++def test_mapping_intervals_identity_and_schema_fail_closed(tmp_path, bad):
++    _, flat = fixture_tree(tmp_path, count=2)
++    path = flat / "flat_v3_mapping.parquet"
++    rows = pq.read_table(path).to_pylist()
++    if bad == "length":
++        rows[0]["local_row_to"] -= 1
++    if bad == "duplicate":
++        rows.append(rows[0])
++    if bad == "overlap":
++        rows[1].update(global_row_from=3, global_row_to=7)
++    if bad == "resolved":
++        rows[0]["resolved_task_class"] = "WrongTask"
++    if bad == "missing":
++        [r.pop("length") for r in rows]
++    if bad == "negative":
++        rows[0]["local_episode_index"] = -1
++    pq.write_table(pa.Table.from_pylist(rows), path)
++    with pytest.raises(ValueError):
++        src.mapping_episodes(path)
++
++
++def test_mapping_expands_exact_rows_and_shards_without_sampling(tmp_path):
++    _, flat = fixture_tree(tmp_path, count=3)
++    episodes = src.mapping_episodes(flat / "flat_v3_mapping.parquet")
++    selection = tmp_path / "selection.json"
++    write_json(
++        selection,
++        {
++            "schema": "psm_wma_rgbd_episode_selection_v1",
++            "episode_namespace": "global_episode_index",
++            "episodes": [
++                {
++                    "task_class": e.task_class,
++                    "global_episode_index": e.global_episode_index,
++                }
++                for e in episodes
++            ],
++        },
++    )
++    left = src.select(episodes, manifest=selection, task_shard=0, num_task_shards=2)[0]
++    right = src.select(episodes, manifest=selection, task_shard=1, num_task_shards=2)[0]
++    assert set(left).isdisjoint(right) and set(left + right) == set(episodes)
++    row = next(e for e in episodes if e.global_episode_index == 2).frame(3)
++    assert (
++        row["global_row_index"] == 11
++        and row["local_row_index"] == row["source_state_index"] == 3
++    )
++    with pytest.raises(ValueError):
++        src.select(episodes, local_episode=0)
++    with pytest.raises(ValueError):
++        src.select(episodes)
++    with pytest.raises(ValueError):
++        src.select(episodes, global_episode=0, task_shard=0)
++
++
++def test_source_checks_all_nonvisual_rows_and_never_corrects_half_second_offset(
++    tmp_path,
++):
++    raw, flat, source = bound(tmp_path)
++    assert source.states[0, 0] == 0.5 and source.flat_timestamps[0] == 0
++    assert source.alignment["timestamp_shift_applied"] is False
++    assert source.episode.frame(0)["source_state_index"] == 0
++    with pytest.raises(ValueError, match="explicitly"):
++        src.load_episode(raw, flat, source.episode, [src.CAMERAS[0]])
++
++
++@pytest.mark.parametrize(
++    "bad",
++    [
++        "flat_state",
++        "flat_index",
++        "flat_version",
++        "states_length",
++        "source_ambiguous",
++        "wrong_task",
++        "rgb_missing",
++        "resize",
++    ],
++)
++def test_source_inconsistency_is_not_hidden_by_replay(tmp_path, bad):
++    raw, flat, source = bound(tmp_path)
++    if bad in {"flat_state", "flat_index"}:
++        path = flat / "data/chunk-000/file-000.parquet"
++        rows = pq.read_table(path).to_pylist()
++        if bad == "flat_state":
++            rows[2]["observation.state"][0] += 0.1
++        else:
++            rows[2]["index"] += 1
++        pq.write_table(pa.Table.from_pylist(rows), path)
++    if bad == "flat_version":
++        write_json(flat / "meta/info.json", {"codebase_version": "v2.1"})
++    if bad == "states_length":
++        np.savez_compressed(
++            source.dataset_dir / "extras/episode_000000/states.npz",
++            states=source.states[:-1],
++        )
++    if bad == "source_ambiguous":
++        shutil.copytree(
++            source.dataset_dir, source.dataset_dir.parent.parent / "second/lerobot"
++        )
++    if bad == "wrong_task":
++        write_json(
++            source.dataset_dir / "extras/dataset_meta.json",
++            {"env_args": {"env_name": "Wrong", "env_kwargs": {}}},
++        )
++    if bad == "rgb_missing":
++        Path(source.rgb[src.CAMERAS[0]]["video"]).unlink()
++    with pytest.raises((ValueError, FileNotFoundError)):
++        src.load_episode(
++            raw,
++            flat,
++            source.episode,
++            list(source.rgb),
++            state_index_policy="frame_index",
++            image_size=16 if bad == "resize" else None,
++        )
++
++
++@pytest.mark.parametrize("storage", g.DEPTH_FORMATS)
++def test_chunk_roundtrip_partial_terminal_frame_camera_pose_and_actual_capacity(
++    tmp_path, storage
++):
++    _, _, source, directory = exported(tmp_path, storage=storage)
++    manifest, rows = cache.verify_episode(directory)
++    assert [r["frame_index"] for r in rows] == [0, 1, 3]
++    assert not manifest["full_episode"] and manifest["frame_count"] == 3
++    assert len(list(directory.glob("cameras/*/*.npz"))) == 4
++    assert FakeReplay.created == FakeReplay.closed == [0]
++    left = cache.cached_sample(directory, manifest, rows[-1], src.CAMERAS[0])
++    wrist = cache.cached_sample(directory, manifest, rows[-1], src.CAMERAS[2])
++    assert left["T_world_camera_cv"][0, 3] == 0
++    assert wrist["T_world_camera_cv"][0, 3] == pytest.approx(0.3)
++    expected = 3 * 2 * (8 * 8 * (3 if storage == "uint16_mm" else 5) + 41 * 4 + 8)
++    assert manifest["raw_array_bytes"] == expected
++    assert manifest["compression_ratio_raw_over_stored"] == pytest.approx(
++        expected / manifest["compressed_payload_bytes"]
++    )
++    assert rows[-1]["cameras"][src.CAMERAS[0]]["rgb"]["frame_index"] == 3
++
++
++def test_resume_verifies_before_skip_and_never_opens_another_environment(tmp_path):
++    _, _, source, directory = exported(tmp_path)
++    before = {
++        p.relative_to(directory): src.sha256(p)
++        for p in directory.rglob("*")
++        if p.is_file()
++    }
++    result = cache.export_episode(
++        tmp_path / "cache",
++        source,
++        [0, 1, 3],
++        storage="uint16_mm",
++        chunk_frames=2,
++        recipe={"synthetic": True},
++        replay_factory=FakeReplay,
++    )
++    assert result["status"] == "SKIPPED_VERIFIED" and FakeReplay.created == [0]
++    assert before == {
++        p.relative_to(directory): src.sha256(p)
++        for p in directory.rglob("*")
++        if p.is_file()
++    }
++    with pytest.raises(ValueError, match="identity"):
++        cache.export_episode(
++            tmp_path / "cache",
++            source,
++            [0, 1, 3],
++            storage="float32_m",
++            chunk_frames=2,
++            recipe={"synthetic": True},
++            replay_factory=FakeReplay,
++        )
++
++
++@pytest.mark.parametrize("bad", ["marker", "chunk", "checksum", "extra"])
++def test_missing_corrupt_and_extra_committed_files_are_not_reused(tmp_path, bad):
++    _, _, _, directory = exported(tmp_path)
++    if bad == "marker":
++        (directory / "COMPLETE.json").unlink()
++    if bad == "chunk":
++        next(directory.glob("cameras/*/*.npz")).unlink()
++    if bad == "checksum":
++        next(directory.glob("cameras/*/*.npz")).write_bytes(b"corrupt")
++    if bad == "extra":
++        (directory / "uncommitted.tmp").write_text("unexpected")
++    with pytest.raises((ValueError, FileNotFoundError)):
++        cache.verify_episode(directory)
++
++
++def reseal_frame_index(directory, payload):
++    path = directory / "frames.jsonl"
++    path.write_bytes(payload)
++    manifest = src.read_json(directory / "manifest.json")
++    manifest["files"]["frames.jsonl"] = {
++        "sha256": src.sha256(path),
++        "size": path.stat().st_size,
++    }
++    write_json(directory / "manifest.json", manifest)
++    marker = src.read_json(directory / "COMPLETE.json")
++    marker["manifest_sha256"] = src.sha256(directory / "manifest.json")
++    write_json(directory / "COMPLETE.json", marker)
++
++
++@pytest.mark.parametrize(
++    "bad", ["utf8", "truncated", "duplicate", "state_index", "rgb_index", "offset"]
++)
++def test_semantic_frame_corruption_even_with_updated_file_checksums(tmp_path, bad):
++    _, _, _, directory = exported(tmp_path)
++    rows = cache.read_frames(directory / "frames.jsonl")
++    if bad == "utf8":
++        payload = b"\xff\n"
++    elif bad == "truncated":
++        payload = src.canonical(rows[0])
++    else:
++        if bad == "duplicate":
++            rows[1] = rows[0]
++        if bad == "state_index":
++            rows[0]["source_state_index"] = 3
++        if bad == "rgb_index":
++            rows[0]["cameras"][src.CAMERAS[0]]["rgb"]["frame_index"] = 3
++        if bad == "offset":
++            rows[0]["cameras"][src.CAMERAS[0]]["offset"] = 1
++        payload = b"".join(src.canonical(row) + b"\n" for row in rows)
++    reseal_frame_index(directory, payload)
++    with pytest.raises((ValueError, UnicodeError)):
++        cache.verify_episode(directory)
++
++
++@pytest.mark.parametrize("failure", ["frame", "close", "source_change"])
++def test_failure_before_commit_is_isolated_and_successful_retry_is_single_copy(
++    tmp_path, failure
++):
++    _, _, source = bound(tmp_path)
++
++    class Broken(FakeReplay):
++        def render(self, camera):
++            if self.frame == 1:
++                if failure == "frame":
++                    raise RuntimeError("injected frame failure")
++                if failure == "source_change":
++                    # Change a pinned synthetic source metadata file instead.
++                    path = source.dataset_dir / "extras/episode_000000/ep_meta.json"
++                    path.write_text('{"changed":true}')
++            return super().render(camera)
++
++        def close(self):
++            super().close()
++            if failure == "close":
++                raise RuntimeError("injected cleanup failure")
++
++    with pytest.raises((ValueError, RuntimeError)):
++        cache.export_episode(
++            tmp_path / "cache",
++            source,
++            [0, 1, 3],
++            storage="uint16_mm",
++            chunk_frames=2,
++            recipe={},
++            replay_factory=Broken,
++        )
++    assert not cache.episode_directory(tmp_path / "cache", source.episode).exists()
++    assert len(list((tmp_path / "cache/.failed").glob("*/failure.json"))) == 1
++    if failure != "source_change":
++        cache.export_episode(
++            tmp_path / "cache",
++            source,
++            [0, 1, 3],
++            storage="uint16_mm",
++            chunk_frames=2,
++            recipe={},
++            replay_factory=FakeReplay,
++        )
++        assert len(list((tmp_path / "cache/tasks").glob("*/episodes/episode_*"))) == 1
++
++
++def test_exclusive_episode_lock_is_bounded_and_released(tmp_path):
++    _, _, source = bound(tmp_path)
++    with cache.episode_lock(tmp_path / "cache", source.episode):
++        with pytest.raises(BlockingIOError):
++            with cache.episode_lock(tmp_path / "cache", source.episode):
++                pytest.fail("duplicate owner")
++    with cache.episode_lock(tmp_path / "cache", source.episode):
++        pass
++
++
++@pytest.mark.parametrize("failure", ["marker_publish", "directory_rename"])
++def test_crash_at_commit_boundaries_never_publishes_partial_episode(
++    tmp_path, monkeypatch, failure
++):
++    _, _, source = bound(tmp_path)
++    destination = cache.episode_directory(tmp_path / "cache", source.episode)
++    original_json, original_rename = cache.durable_json, cache.os.rename
++
++    def publish(path, value):
++        if Path(path).name == "COMPLETE.json":
++            raise OSError("injected marker write failure")
++        return original_json(path, value)
++
++    def rename(old, new):
++        if Path(new) == destination:
++            raise OSError("injected commit rename failure")
++        return original_rename(old, new)
++
++    if failure == "marker_publish":
++        monkeypatch.setattr(cache, "durable_json", publish)
++    else:
++        monkeypatch.setattr(cache.os, "rename", rename)
++    with pytest.raises(OSError, match="injected"):
++        cache.export_episode(
++            tmp_path / "cache",
++            source,
++            [0, 3],
++            storage="uint16_mm",
++            chunk_frames=2,
++            recipe={},
++            replay_factory=FakeReplay,
++        )
++    assert not destination.exists() and list(
++        (tmp_path / "cache/.failed").glob("*/failure.json")
++    )
++
++
++def test_existing_incomplete_target_is_preserved_not_silently_overwritten(tmp_path):
++    _, _, source = bound(tmp_path)
++    destination = cache.episode_directory(tmp_path / "cache", source.episode)
++    destination.mkdir(parents=True)
++    (destination / "unknown_evidence.txt").write_text("preserve")
++    with pytest.raises(FileNotFoundError):
++        cache.export_episode(
++            tmp_path / "cache",
++            source,
++            [0],
++            storage="uint16_mm",
++            chunk_frames=2,
++            recipe={},
++            replay_factory=FakeReplay,
++        )
++    assert (
++        destination / "unknown_evidence.txt"
++    ).read_text() == "preserve" and not FakeReplay.created
++
++
++def native_boundary(source):
++    calls, constructions = [], []
++    model = SimpleNamespace(
++        camera_name2id=lambda name: list(source.camera_shapes).index(name),
++        vis=SimpleNamespace(map=SimpleNamespace(znear=0.1, zfar=10)),
++        stat=SimpleNamespace(extent=1),
++    )
++    data = SimpleNamespace(
++        time=0.0,
++        cam_xmat=np.array([np.eye(3).flatten()] * 2),
++        cam_xpos=np.array([[0.0, 0.0, 1.0], [0.2, 0.0, 1.0]]),
++    )
++    sim = SimpleNamespace(model=model, data=data, saved=None)
++    sim.get_state = lambda: np.array(sim.saved)
++
++    def render(**kw):
++        h, w = kw["height"], kw["width"]
++        rgb = np.broadcast_to(
++            np.arange(h, dtype=np.uint8)[:, None, None], (h, w, 3)
++        ).copy()
++        depth = np.broadcast_to(np.linspace(0.1, 0.6, h)[:, None], (h, w)).copy()
++        return rgb, depth
++
++    sim.render = render
++    env = SimpleNamespace(sim=sim, closed=False)
++    env.close = lambda: setattr(env, "closed", True)
++
++    def make(**kwargs):
++        constructions.append(kwargs)
++        return env
++
++    def reset_to(instance, value):
++        assert instance is env
++        calls.append(value)
++        sim.saved = value["states"].copy()
++        data.time = sim.saved[0]
++
++    def extrinsic(sim, camera):
++        T = np.eye(4)
++        T[:3, 3] = sim.data.cam_xpos[sim.model.camera_name2id(camera)]
++        return T @ np.diag([1.0, -1.0, -1.0, 1.0])
++
++    helpers = SimpleNamespace(
++        get_real_depth_map=lambda sim, b: 0.1 / (1 - b * 0.99),
++        get_camera_intrinsic_matrix=lambda sim, camera, h, w: np.array(
++            [[4, 0, w / 2], [0, 4, h / 2], [0, 0, 1.0]]
++        ),
++        get_camera_extrinsic_matrix=extrinsic,
++    )
++    return env, calls, constructions, make, reset_to, helpers
++
++
++def test_production_replay_adapter_full_model_then_state_only_and_one_flip(tmp_path):
++    _, _, source = bound(tmp_path)
++    original_meta = json.dumps(source.env_metadata, sort_keys=True)
++    env, calls, constructions, make, reset, helpers = native_boundary(source)
++    replay = Replay(source, make=make, reset_to=reset, camera_utils=helpers)
++    try:
++        assert set(calls[0]) == {"model", "ep_meta", "states"}
++        assert calls[0]["model"] == source.model_xml
++        assert json.loads(calls[0]["ep_meta"]) == source.ep_meta
++        replay.restore(3)
++        assert set(calls[-1]) == {"states"} and calls[-1]["states"][0] == pytest.approx(
++            0.65
++        )
++        sample = replay.render(src.CAMERAS[0])
++        assert sample["rgb"][0, 0, 0] == 7  # Exactly one bottom-left -> top-left flip.
++        assert sample["depth_m"][0, 0] == pytest.approx(0.1 / (1 - 0.6 * 0.99))
++        np.testing.assert_allclose(
++            sample["T_world_camera_cv"], sample["T_world_camera_gl"] @ g.GL_FROM_CV
++        )
++        assert (
++            constructions[0]["has_renderer"] is False
++            and constructions[0]["use_camera_obs"] is False
++        )
++        assert constructions[0]["camera_depths"] is True
++        assert json.dumps(source.env_metadata, sort_keys=True) == original_meta
++    finally:
++        replay.close()
++    assert env.closed
++
++
++def test_replay_initialization_error_closes_owned_environment(tmp_path):
++    _, _, source = bound(tmp_path)
++    env, _, _, make, _, helpers = native_boundary(source)
++
++    def broken(*args):
++        raise RuntimeError("injected official reset failure")
++
++    with pytest.raises(RuntimeError):
++        Replay(source, make=make, reset_to=broken, camera_utils=helpers)
++    assert env.closed
++
++
++def test_replay_does_not_accept_failed_state_restoration(tmp_path):
++    _, _, source = bound(tmp_path)
++    env, _, _, make, reset, helpers = native_boundary(source)
++    replay = Replay(source, make=make, reset_to=reset, camera_utils=helpers)
++    env.sim.get_state = lambda: env.sim.saved + 1
++    try:
++        with pytest.raises(ValueError, match="differs"):
++            replay.restore(0)
++    finally:
++        replay.close()
++
++
++def test_dry_run_real_mapping_path_has_no_renderer_or_output_side_effect(
++    tmp_path, capsys
++):
++    raw, flat = fixture_tree(tmp_path)
++
++    def forbidden(*args):
++        pytest.fail("dry-run cannot construct a simulator")
++
++    command = [
++        "--raw-root",
++        str(raw),
++        "--flat-root",
++        str(flat),
++        "--output-root",
++        str(tmp_path / "out"),
++        "--local-episode",
++        "0",
++        "--task-class",
++        "CloseFridge",
++        "--frames",
++        "0,1,3",
++        "--state-index-policy",
++        "frame_index",
++        "--dry-run",
++    ]
++    assert cli.main(command, replay_factory=forbidden) == 0
++    result = json.loads(capsys.readouterr().out)
++    assert result["selected_frame_count"] == 3 and not (tmp_path / "out").exists()
++    assert result["uncompressed_array_bytes_estimate"] == 3 * 2 * (
++        8 * 8 * 3 + 41 * 4 + 8
++    )
++
++
++def test_cache_contract_no_implicit_configuration_drift(tmp_path):
++    root = tmp_path / "cache"
++    cache.ensure_cache_manifest(root, {"cameras": ["left"]})
++    cache.ensure_cache_manifest(root, {"cameras": ["left"]})
++    with pytest.raises(ValueError, match="drift"):
++        cache.ensure_cache_manifest(root, {"cameras": ["wrist"]})
++
++
++def test_disk_budget_stops_before_environment_creation(tmp_path, monkeypatch):
++    _, _, source = bound(tmp_path)
++    monkeypatch.setattr(
++        cache.shutil, "disk_usage", lambda path: SimpleNamespace(free=32)
++    )
++    with pytest.raises(OSError, match="disk space"):
++        cache.export_episode(
++            tmp_path / "cache",
++            source,
++            [0, 1],
++            storage="uint16_mm",
++            chunk_frames=2,
++            recipe={},
++            replay_factory=FakeReplay,
++            min_free_bytes=1024,
++        )
++    assert not FakeReplay.created
++    assert not cache.episode_directory(tmp_path / "cache", source.episode).exists()
++
++
++def test_full_export_cli_resume_and_input_overlap_refusal(tmp_path, capsys):
++    raw, flat = fixture_tree(tmp_path)
++    output = tmp_path / "out"
++    command = [
++        "--raw-root",
++        str(raw),
++        "--flat-root",
++        str(flat),
++        "--output-root",
++        str(output),
++        "--global-episode",
++        "0",
++        "--state-index-policy",
++        "frame_index",
++        "--chunk-frames",
++        "2",
++        "--min-free-bytes",
++        "0",
++    ]
++    assert cli.main(command, replay_factory=FakeReplay) == 0
++    first = list(output.glob("_runs/*.json"))[0]
++    report = src.read_json(first)
++    assert report["selected_frame_count"] == report["completed_frame_count"] == 4
++    assert FakeReplay.created == [0]
++    assert cli.main(command, replay_factory=FakeReplay) == 0
++    assert FakeReplay.created == [0] and len(list(output.glob("_runs/*.json"))) == 2
++    bad = command.copy()
++    bad[bad.index("--output-root") + 1] = str(raw / "forbidden")
++    with pytest.raises(ValueError, match="separate"):
++        cli.main(bad, replay_factory=FakeReplay)
++    assert not (raw / "forbidden").exists()
++    capsys.readouterr()
++
++
++def test_cli_failure_isolated_other_episode_commits_and_nonzero_final_report(
++    tmp_path, capsys
++):
++    raw, flat = fixture_tree(tmp_path, count=2)
++    selection = tmp_path / "selection.json"
++    write_json(
++        selection,
++        {
++            "schema": "psm_wma_rgbd_episode_selection_v1",
++            "episode_namespace": "global_episode_index",
++            "flat_mapping_sha256": src.sha256(flat / "flat_v3_mapping.parquet"),
++            "episodes": [
++                {"task_class": "CloseFridge", "global_episode_index": 0},
++                {"task_class": "OpenCabinet", "global_episode_index": 1},
++            ],
++        },
++    )
++
++    class FailOne(FakeReplay):
++        def render(self, camera):
++            if self.source.episode.global_episode_index == 0:
++                raise RuntimeError("owned episode only")
++            return super().render(camera)
++
++    output = tmp_path / "out"
++    assert (
++        cli.main(
++            [
++                "--raw-root",
++                str(raw),
++                "--flat-root",
++                str(flat),
++                "--output-root",
++                str(output),
++                "--selection-manifest",
++                str(selection),
++                "--state-index-policy",
++                "frame_index",
++                "--min-free-bytes",
++                "0",
++            ],
++            replay_factory=FailOne,
++        )
++        == 1
++    )
++    report = src.read_json(next(output.glob("_runs/*.json")))
++    assert report["failed_episode_count"] == 1 and report["selected_frame_count"] == 8
++    assert report["completed_frame_count"] == 4
++    assert list(output.glob("tasks/OpenCabinet/episodes/episode_000001/COMPLETE.json"))
++    assert not list(output.glob("tasks/CloseFridge/episodes/*/COMPLETE.json"))
++    capsys.readouterr()
++
++
++@pytest.mark.parametrize(
++    "kind", ["g0_wrong_source", "external_wrong_mapping", "correct"]
++)
++def test_selection_identity_cannot_mix_datasets_with_same_numeric_ids(tmp_path, kind):
++    raw, flat = fixture_tree(tmp_path)
++    path = tmp_path / "membership.json"
++    value = {
++        "schema": "psm_wma_rgbd_episode_selection_v1",
++        "episode_namespace": "global_episode_index",
++        "flat_mapping_sha256": src.sha256(flat / "flat_v3_mapping.parquet"),
++        "episodes": [{"task_class": "CloseFridge", "global_episode_index": 0}],
++    }
++    if kind == "g0_wrong_source":
++        value = {"schema_version": "exact_window_v1", "source_dataset": str(raw)}
++    if kind == "external_wrong_mapping":
++        value["flat_mapping_sha256"] = "0" * 64
++    write_json(path, value)
++    if kind == "correct":
++        src.verify_selection_source(
++            path, flat, src.sha256(flat / "flat_v3_mapping.parquet")
++        )
++    else:
++        with pytest.raises(ValueError):
++            src.verify_selection_source(
++                path, flat, src.sha256(flat / "flat_v3_mapping.parquet")
++            )
++
++
++def test_verifier_failure_always_writes_new_non_success_report(tmp_path, capsys):
++    directory, report = tmp_path / "incomplete", tmp_path / "report.json"
++    directory.mkdir()
++    assert checker.main(["--episode-dir", str(directory), "--report", str(report)]) == 1
++    assert src.read_json(report)["status"] == "VERIFICATION_FAILED"
++    with pytest.raises(ValueError, match="new"):
++        checker.main(["--episode-dir", str(directory), "--report", str(report)])
++
++
++def test_verifier_text_statistics_mask_pose_and_half_second_offset(tmp_path):
++    raw, flat, _, directory = exported(tmp_path)
++
++    def reader(ref, frame):
++        return np.full((8, 8, 3), 7 + frame, dtype=np.uint8)
++
++    report = checker.verify(
++        directory,
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=FakeReplay,
++        rgb_reader=reader,
++    )
++    assert report["geometry_gate"] == "PASS"
++    assert report["status"] == "SYNTHETIC_REPLAY_VERIFIED"
++    assert report["timestamp_diagnostic"]["min_offset_s"] == pytest.approx(0.5)
++    assert report["camera_pose_motion"][src.CAMERAS[2]]["changed"] is True
++    assert report["camera_pose_motion"][src.CAMERAS[0]]["changed"] is False
++    assert all(
++        c["rgb"]["mae"] == 0 and c["rgb"]["ssim"] == pytest.approx(1)
++        for r in report["frames"]
++        for c in r["cameras"].values()
++    )
++
++
++@pytest.mark.parametrize("status", ["FAIL", "INCONCLUSIVE"])
++def test_unproven_ray_geometry_cannot_pass_physical_gate(tmp_path, status):
++    raw, flat, _, directory = exported(tmp_path)
++
++    class Unproven(FakeReplay):
++        def ray_check(self, *args, **kwargs):
++            return {"status": status}
++
++    report = checker.verify(
++        directory,
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=Unproven,
++        rgb_reader=lambda ref, i: np.full((8, 8, 3), 7 + i, dtype=np.uint8),
++    )
++    assert report["geometry_gate"] == "FAIL_OR_INCONCLUSIVE"
++
++
++@pytest.mark.parametrize(
++    "violation", ["none", "vertical_flip", "ray_distance", "unknown_filters"]
++)
++def test_real_cpu_mj_ray_tilted_plane_independent_of_project_unproject(
++    violation, monkeypatch, tmp_path
++):
++    monkeypatch.setenv("MUJOCO_GL", "disable")
++    import mujoco
++
++    angle = 0.3
++    model = mujoco.MjModel.from_xml_string(f'''<mujoco><worldbody>
++      <geom name="surface" type="plane" size="3 3 .1" euler="{np.degrees(angle)} 0 0" group="1"/>
++      <geom name="hidden_occluder" type="sphere" size=".2" pos="0 0 .6" group="5"/>
++    </worldbody></mujoco>''')
++    data = mujoco.MjData(model)
++    mujoco.mj_forward(model, data)
++    height = width = 8
++    K = np.array([[8, 0, 4], [0, 8, 4], [0, 0, 1.0]])
++    T_gl = np.eye(4)
++    T_gl[2, 3] = 1
++    y = (np.arange(height)[:, None] + 0.5 - 4) / 8
++    z = np.broadcast_to(
++        np.cos(angle) / (np.cos(angle) - np.sin(angle) * y), (height, width)
++    ).copy()
++    if violation == "vertical_flip":
++        z = z[::-1].copy()
++    if violation == "ray_distance":
++        x = (np.arange(width)[None, :] + 0.5 - 4) / 8
++        z *= np.sqrt(1 + x * x + y * y)
++    segmentation = np.empty((height, width, 2), dtype=np.int32)
++    segmentation[..., 0] = int(mujoco.mjtObj.mjOBJ_GEOM)
++    segmentation[..., 1] = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, "surface")
++    sim = SimpleNamespace(
++        model=model,
++        data=data,
++        render=lambda **kw: segmentation[::-1],
++        _render_context_offscreen=SimpleNamespace(
++            vopt=SimpleNamespace(geomgroup=np.array([1, 1, 1, 0, 0, 0], dtype=np.uint8))
++        ),
++    )
++    if violation == "unknown_filters":
++        sim._render_context_offscreen = None
++    replay = object.__new__(Replay)
++    replay.env = SimpleNamespace(sim=sim)
++    sample = {
++        "depth_m": z,
++        "valid": np.ones_like(z, dtype=bool),
++        "K": K,
++        "T_world_camera_cv": T_gl @ g.GL_FROM_CV,
++    }
++    result = replay.ray_check("synthetic", sample, atol_m=1e-7, min_samples=32)
++    write_json(
++        tmp_path / "native_cpu_ray.json",
++        {
++            "synthetic_scene": True,
++            "real_renderer_executed": False,
++            "mujoco_version": mujoco.__version__,
++            "violation": violation,
++            **result,
++        },
++    )
++    assert result["status"] == (
++        {"none": "PASS", "unknown_filters": "INCONCLUSIVE"}.get(violation, "FAIL")
++    )
++    if violation == "none":
++        assert result["matching_geom_samples"] == 64
++        assert result["max_abs_z_error_m"] < 1e-10
++        assert result["static_geoms_included"] is True and result["geomgroup"][5] == 0
++
++
++def test_static_float32_camera_rotation_is_not_reported_as_motion(tmp_path):
++    raw, flat, source = bound(tmp_path)
++    rotation = (
++        Rotation.from_euler(
++            "xyz", [-2.6178494833854566, 1.7480055403415324, 2.8816979303657675]
++        )
++        .as_matrix()
++        .astype(np.float32)
++    )
++
++    class Rotated(FakeReplay):
++        def render(self, camera):
++            sample = super().render(camera)
++            sample["T_world_camera_gl"][:3, :3] = rotation
++            sample["T_world_camera_cv"] = sample["T_world_camera_gl"] @ np.diag(
++                [1.0, -1.0, -1.0, 1.0]
++            )
++            return sample
++
++    result = cache.export_episode(
++        tmp_path / "out",
++        source,
++        [0, 1, 3],
++        storage="uint16_mm",
++        chunk_frames=2,
++        recipe={"regression": "static_f32_pose"},
++        replay_factory=Rotated,
++    )
++    report = checker.verify(
++        result["directory"],
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=Rotated,
++        rgb_reader=lambda ref, i: np.full((8, 8, 3), 7 + i, dtype=np.uint8),
++    )
++    motion = report["camera_pose_motion"][src.CAMERAS[0]]
++    assert motion["changed"] is False
++    assert motion["max_rotation_rad"] < 1e-7
+diff --git a/tools/g2/verify_robocasa_rgbd_pose.py b/tools/g2/verify_robocasa_rgbd_pose.py
+new file mode 100644
+index 00000000..a475d0d2
+--- /dev/null
++++ b/tools/g2/verify_robocasa_rgbd_pose.py
+@@ -0,0 +1,252 @@
++"""Validate a committed RGB-D/Pose episode; optionally replay it on the server.
++
++Offline cache integrity is not physical geometry acceptance. --replay additionally
++checks original RGB, state restoration, per-frame camera matrices, fresh depth and
++independent, renderer-filtered mj_ray geometry. No RGB/depth images are exported.
++"""
++
++from __future__ import annotations
++
++import argparse
++import json
++from pathlib import Path
++
++import numpy as np
++
++from .rgbd_pose import SCHEMA
++from .rgbd_pose.cache import cached_sample, durable_json, verify_episode
++from .rgbd_pose.geometry import depth_statistics, pose_motion, rgb_metrics
++from .rgbd_pose.replay import Replay, original_rgb, reprojection_error
++from .rgbd_pose.source import Episode, load_episode, verify_witnesses
++
++
++def verify(
++    directory,
++    *,
++    replay=False,
++    raw_root=None,
++    flat_root=None,
++    state_index_policy=None,
++    source_dataset=None,
++    frames=None,
++    geometry_atol_m=0.01,
++    min_ray_samples=16,
++    rgb_mae_max=5.0,
++    replay_factory=Replay,
++    rgb_reader=original_rgb,
++):
++    if (
++        not np.isfinite([geometry_atol_m, rgb_mae_max]).all()
++        or min(geometry_atol_m, rgb_mae_max) <= 0
++    ):
++        raise ValueError("numeric verification tolerances must be finite and positive")
++    if type(min_ray_samples) is not int or not 1 <= min_ray_samples <= 128:
++        raise ValueError("min_ray_samples must be in 1..128")
++    directory = Path(directory)
++    manifest, rows = verify_episode(directory)
++    spec = manifest["identity"]
++    report = {
++        "schema": SCHEMA,
++        "cache_integrity": "PASS",
++        "export_digest": manifest["export_digest"],
++        "frame_count": manifest["frame_count"],
++        "full_episode": manifest["full_episode"],
++        "compressed_payload_bytes": manifest["compressed_payload_bytes"],
++        "compression_ratio_raw_over_stored": manifest[
++            "compression_ratio_raw_over_stored"
++        ],
++        "depth_quantization_max_abs_m": manifest["quantization_max_abs_m"],
++        "geometry_gate": "NOT_EXECUTED",
++        "runtime_at_export": manifest["runtime"],
++        "thresholds": {
++            "geometry_atol_m": geometry_atol_m,
++            "min_ray_samples": min_ray_samples,
++            "rgb_mae_max": rgb_mae_max,
++        },
++        "frames": [],
++    }
++    if not replay:
++        report["status"] = "OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE"
++        return report
++    if raw_root is None or flat_root is None or state_index_policy != "frame_index":
++        raise ValueError(
++            "physical replay requires raw/Flat roots and explicit state-index-policy"
++        )
++    selected = spec["frames"] if frames is None else frames
++    if (
++        not selected
++        or selected != sorted(set(selected))
++        or set(selected) - set(spec["frames"])
++    ):
++        raise ValueError(
++            "verification frames must be a nonempty ordered subset of committed frames"
++        )
++    verify_witnesses(spec["source_files"])
++    source = load_episode(
++        raw_root,
++        flat_root,
++        Episode(**spec["episode"]),
++        spec["cameras"],
++        state_index_policy=state_index_policy,
++        source_dataset=source_dataset,
++    )
++    if (
++        source.witnesses != spec["source_files"]
++        or source.alignment != spec["alignment"]
++    ):
++        raise ValueError("physical replay source binding differs from committed cache")
++    backend = replay_factory(source)
++    passed = backend.identity == manifest["runtime"]
++    report["runtime_at_replay"] = backend.identity
++    report["runtime_matches_export"] = passed
++    transforms, offsets = {c: [] for c in spec["cameras"]}, []
++    by_frame = {row["frame_index"]: row for row in rows}
++    try:
++        for frame in selected:
++            row = by_frame[frame]
++            restoration = backend.restore(frame)
++            offset = restoration["sim_time"] - row["flat_timestamp"]
++            offsets.append(offset)
++            frame_report = {
++                "frame_index": frame,
++                "source_state_index": row["source_state_index"],
++                "global_row_index": row["global_row_index"],
++                **restoration,
++                "sim_time_minus_flat_timestamp_s": offset,
++                "cameras": {},
++            }
++            for camera in spec["cameras"]:
++                actual = backend.render(camera)
++                saved = cached_sample(directory, manifest, row, camera)
++                original = rgb_reader(source.rgb[camera], row["source_rgb_frame_index"])
++                metrics = rgb_metrics(original, actual["rgb"])
++                same_mask = np.array_equal(saved["valid"], actual["valid"])
++                valid = saved["valid"] & actual["valid"]
++                depth_error = (
++                    float(
++                        np.max(
++                            np.abs(saved["depth_m"][valid] - actual["depth_m"][valid])
++                        )
++                    )
++                    if valid.any()
++                    else None
++                )
++                matrix_errors = {
++                    k: float(np.max(np.abs(saved[k] - actual[k])))
++                    for k in ("K", "T_world_camera_gl", "T_world_camera_cv")
++                }
++                geometry = backend.ray_check(
++                    camera, saved, atol_m=geometry_atol_m, min_samples=min_ray_samples
++                )
++                projection = reprojection_error(saved)
++                quantization_tolerance = max(
++                    1e-5, manifest["quantization_max_abs_m"] + 1e-7
++                )
++                camera_pass = (
++                    same_mask
++                    and depth_error is not None
++                    and depth_error <= quantization_tolerance
++                    and max(matrix_errors.values()) <= 1e-5
++                    and metrics["mae"] <= rgb_mae_max
++                    and geometry["status"] == "PASS"
++                    and projection is not None
++                    and projection <= 1e-7
++                )
++                passed = passed and camera_pass
++                frame_report["cameras"][camera] = {
++                    "status": "PASS" if camera_pass else "FAIL",
++                    "rgb": metrics,
++                    "depth": depth_statistics(saved["depth_m"], saved["valid"]),
++                    "valid_mask_matches_replay": same_mask,
++                    "fresh_depth_max_abs_m": depth_error,
++                    "fresh_depth_tolerance_m": quantization_tolerance,
++                    "camera_matrix_max_abs": matrix_errors,
++                    "corrected_backprojection_max_abs_pixels": projection,
++                    "independent_geometry": geometry,
++                }
++                transforms[camera].append(saved["T_world_camera_cv"])
++            report["frames"].append(frame_report)
++    finally:
++        backend.close()
++    report["camera_pose_motion"] = {
++        camera: pose_motion(values) for camera, values in transforms.items()
++    }
++    verify_witnesses(source.witnesses)
++    report["timestamp_diagnostic"] = {
++        "min_offset_s": min(offsets),
++        "max_offset_s": max(offsets),
++        "index_shift_applied": False,
++    }
++    native = backend.identity.get("kind") == "official_state_replay"
++    report["evidence_kind"] = (
++        "SERVER_NATIVE_REPLAY" if native else "CPU_BOUNDARY_DOUBLE"
++    )
++    report["geometry_gate"] = "PASS" if passed else "FAIL_OR_INCONCLUSIVE"
++    report["status"] = (
++        ("PHYSICAL_REPLAY_PASS" if native else "SYNTHETIC_REPLAY_VERIFIED")
++        if passed
++        else "PHYSICAL_REPLAY_NOT_ACCEPTED"
++    )
++    return report
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--episode-dir", type=Path, required=True)
++    parser.add_argument(
++        "--report",
++        type=Path,
++        required=True,
++        help="new text-only JSON outside the immutable episode",
++    )
++    parser.add_argument("--replay", action="store_true")
++    parser.add_argument("--raw-root", type=Path)
++    parser.add_argument("--flat-root", type=Path)
++    parser.add_argument("--source-dataset", type=Path)
++    parser.add_argument("--state-index-policy", choices=["frame_index"])
++    parser.add_argument(
++        "--frames",
++        help="subset of committed frame indices; default all committed frames",
++    )
++    parser.add_argument("--geometry-atol-m", type=float, default=0.01)
++    parser.add_argument("--min-ray-samples", type=int, default=16)
++    parser.add_argument("--rgb-mae-max", type=float, default=5.0)
++    args = parser.parse_args(argv)
++    report_path = args.report.resolve()
++    if report_path.exists() or report_path.is_relative_to(args.episode_dir.resolve()):
++        raise ValueError("report must be new and outside the immutable episode")
++    try:
++        result = verify(
++            args.episode_dir,
++            replay=args.replay,
++            raw_root=args.raw_root,
++            flat_root=args.flat_root,
++            source_dataset=args.source_dataset,
++            state_index_policy=args.state_index_policy,
++            frames=None
++            if args.frames is None
++            else [int(v) for v in args.frames.split(",")],
++            geometry_atol_m=args.geometry_atol_m,
++            min_ray_samples=args.min_ray_samples,
++            rgb_mae_max=args.rgb_mae_max,
++        )
++    except Exception as exc:
++        result = {
++            "schema": SCHEMA,
++            "status": "VERIFICATION_FAILED",
++            "geometry_gate": "NOT_ACCEPTED",
++            "error_type": type(exc).__name__,
++            "error": str(exc),
++        }
++    durable_json(report_path, result)
++    print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
++    return (
++        0
++        if result["status"]
++        in {"OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE", "PHYSICAL_REPLAY_PASS"}
++        else 1
++    )
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

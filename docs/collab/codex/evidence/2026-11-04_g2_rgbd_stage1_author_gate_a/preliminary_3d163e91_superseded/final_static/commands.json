@@ -1,0 +1,64 @@
+[
+  {
+    "name": "ruff_version",
+    "args": [
+      "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+      "--version"
+    ],
+    "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+    "returncode": 0
+  },
+  {
+    "name": "ruff_check",
+    "args": [
+      "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+      "check",
+      "tools/g2"
+    ],
+    "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+    "returncode": 0
+  },
+  {
+    "name": "ruff_format",
+    "args": [
+      "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+      "format",
+      "--check",
+      "tools/g2"
+    ],
+    "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+    "returncode": 0
+  },
+  {
+    "name": "export_help",
+    "args": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "tools.g2.export_robocasa_rgbd_pose",
+      "--help"
+    ],
+    "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+    "returncode": 0
+  },
+  {
+    "name": "verify_help",
+    "args": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "tools.g2.verify_robocasa_rgbd_pose",
+      "--help"
+    ],
+    "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+    "returncode": 0
+  },
+  {
+    "name": "lazy_imports",
+    "args": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-c",
+      "import json,sys; import tools.g2.export_robocasa_rgbd_pose; import tools.g2.verify_robocasa_rgbd_pose; names=[\"torch\",\"cosmos_framework\",\"mujoco\",\"robocasa\",\"robosuite\",\"lerobot\"]; result={n:n in sys.modules for n in names}; print(json.dumps(result)); assert not any(result.values())"
+    ],
+    "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+    "returncode": 0
+  }
+]

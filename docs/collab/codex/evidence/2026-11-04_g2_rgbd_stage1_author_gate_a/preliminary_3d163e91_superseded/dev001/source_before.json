@@ -1,0 +1,11 @@
+{
+  "tools/g2/__init__.py": "09e084066fe35efb77870f57f3cf54ee6896bcbf8e673fa13fc3a79b78b912c7",
+  "tools/g2/export_robocasa_rgbd_pose.py": "c4c1aa703961df6061e309804fddd3c346be12c686b58301f03ee2cbe0910fa2",
+  "tools/g2/rgbd_pose/__init__.py": "cdc30f9f53be503f3ea16d566db9d510c812c7d45110b6fcdcbf0f61bc614fed",
+  "tools/g2/rgbd_pose/cache.py": "20bb386fa95c6602216caa01ef75a7cae3b7fa415ea4a167dea0615731ad74af",
+  "tools/g2/rgbd_pose/geometry.py": "e7cac3f1f0e044ce8130ffcb4808dc2482d5f400c9ce84c055e89c21fc6ccd7a",
+  "tools/g2/rgbd_pose/replay.py": "0d5a0219c40b2ceef570e63dad77f50fd4364b8dc3017b83cf2d55a88c6bd9c2",
+  "tools/g2/rgbd_pose/source.py": "f1c311860efb809b63a57bb1037589e07fdc8c53a1703c1aeb0b3b12f9ca04d0",
+  "tools/g2/test_rgbd_pose_export.py": "421989862e82afcb80ee6e0d82e4d2a0b36fc549a54a422d0c7277f3a2194070",
+  "tools/g2/verify_robocasa_rgbd_pose.py": "e6f005f167e7b9f7ff976fe9b8b76ba0696637c81111eee3ee9e235fa5a2c714"
+}

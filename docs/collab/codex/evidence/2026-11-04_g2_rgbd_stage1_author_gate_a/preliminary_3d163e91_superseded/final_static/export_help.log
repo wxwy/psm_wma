@@ -1,0 +1,57 @@
+usage: export_robocasa_rgbd_pose.py [-h] --raw-root RAW_ROOT --flat-root
+                                    FLAT_ROOT --output-root OUTPUT_ROOT
+                                    [--mapping-file MAPPING_FILE]
+                                    [--source-dataset SOURCE_DATASET]
+                                    (--selection-manifest SELECTION_MANIFEST | --global-episode GLOBAL_EPISODE | --local-episode LOCAL_EPISODE)
+                                    [--task-class TASK_CLASS]
+                                    [--cameras CAMERAS] --state-index-policy
+                                    {frame_index}
+                                    [--depth-format {uint16_mm,float32_m}]
+                                    [--frames FRAMES]
+                                    [--image-size IMAGE_SIZE]
+                                    [--chunk-frames CHUNK_FRAMES]
+                                    [--min-free-bytes MIN_FREE_BYTES]
+                                    [--task-shard TASK_SHARD]
+                                    [--num-task-shards NUM_TASK_SHARDS]
+                                    [--episode-shard EPISODE_SHARD]
+                                    [--num-episode-shards NUM_EPISODE_SHARDS]
+                                    [--dry-run]
+
+Export original RGB references, metric Depth and camera Pose by episode. Run
+from the Root checkout: python -m tools.g2.export_robocasa_rgbd_pose --help
+Real replay is server-side only. --dry-run loads mapping/nonvisual source
+rows, but never imports RoboCasa/MuJoCo or creates a renderer.
+
+options:
+  -h, --help            show this help message and exit
+  --raw-root RAW_ROOT
+  --flat-root FLAT_ROOT
+  --output-root OUTPUT_ROOT
+  --mapping-file MAPPING_FILE
+  --source-dataset SOURCE_DATASET
+                        explicit original lerobot directory when Task has
+                        multiple datasets
+  --selection-manifest SELECTION_MANIFEST
+                        existing g0 accepted cache manifest or explicit
+                        global-ID manifest
+  --global-episode GLOBAL_EPISODE
+  --local-episode LOCAL_EPISODE
+  --task-class TASK_CLASS
+  --cameras CAMERAS
+  --state-index-policy {frame_index}
+                        explicit assertion to be physically verified by DS;
+                        never inferred from timestamps
+  --depth-format {uint16_mm,float32_m}
+  --frames FRAMES       comma-separated frame indices; omitted exports the
+                        full mapped episode
+  --image-size IMAGE_SIZE
+                        optional assertion of original square RGB size; never
+                        resizes source RGB
+  --chunk-frames CHUNK_FRAMES
+  --min-free-bytes MIN_FREE_BYTES
+                        disk reserve checked before replay and each chunk
+  --task-shard TASK_SHARD
+  --num-task-shards NUM_TASK_SHARDS
+  --episode-shard EPISODE_SHARD
+  --num-episode-shards NUM_EPISODE_SHARDS
+  --dry-run

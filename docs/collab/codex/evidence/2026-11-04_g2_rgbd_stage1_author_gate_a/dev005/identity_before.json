@@ -1,0 +1,7 @@
+{
+  "root": "3d163e91d42802efe487deb89286637cc91ed74c",
+  "gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "root_status": "M tools/g2/rgbd_pose/geometry.py\n M tools/g2/test_rgbd_pose_export.py\n M tools/g2/verify_robocasa_rgbd_pose.py",
+  "child_status": ""
+}

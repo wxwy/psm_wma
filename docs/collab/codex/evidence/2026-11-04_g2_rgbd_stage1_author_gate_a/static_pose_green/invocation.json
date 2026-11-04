@@ -1,0 +1,20 @@
+{
+  "args": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "/tmp/psm-g2-rgbd-stage1-20261104/static_pose_motion_regression_test.py",
+    "--basetemp",
+    "/tmp/psm-g2-rgbd-stage1-20261104/static_pose_green/pytest_tmp",
+    "--junitxml",
+    "/tmp/psm-g2-rgbd-stage1-20261104/static_pose_green/junit.xml"
+  ],
+  "returncode": 0,
+  "frozen_function_AST_matches_production_test": true
+}

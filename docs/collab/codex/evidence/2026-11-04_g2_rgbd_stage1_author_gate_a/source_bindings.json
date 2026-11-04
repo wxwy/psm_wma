@@ -1,0 +1,74 @@
+[
+  {
+    "path": "tools/g2/README.md",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "133efb890cc0dfe63dfade79348af2d51a2dcf57",
+    "sha256": "ba8e9640f227fa9d35299737fb87f6b7a4494a3cbabee166f9f544b3d751d15b"
+  },
+  {
+    "path": "tools/g2/__init__.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "d72507b35209571d1ddf75aad568d66f264c9e04",
+    "sha256": "09e084066fe35efb77870f57f3cf54ee6896bcbf8e673fa13fc3a79b78b912c7"
+  },
+  {
+    "path": "tools/g2/export_robocasa_rgbd_pose.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "d2562eeb4c2b9055d01806a9eeacffe0141153e8",
+    "sha256": "d9846ff856d3f842ac1243ef84cf519b13f89b9502657603243caa2feb47c507"
+  },
+  {
+    "path": "tools/g2/rgbd_pose/__init__.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "ac9f2169158887948e1a1fff41d03a4111b6ad6d",
+    "sha256": "cdc30f9f53be503f3ea16d566db9d510c812c7d45110b6fcdcbf0f61bc614fed"
+  },
+  {
+    "path": "tools/g2/rgbd_pose/cache.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "e4ec6883bf723f8856c21472920dd95d322a316d",
+    "sha256": "04fc24f88dbc628dc12f38f70d6da4c46599c9945f9fcb75db7509f8dbafe4e4"
+  },
+  {
+    "path": "tools/g2/rgbd_pose/geometry.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "c4d9b878b3c6e9121b793ae1d597b15633be2da6",
+    "sha256": "c86ae66dabf686eb402544a174de397a2d74d9e579422bdf59559d7ad58fa5fc"
+  },
+  {
+    "path": "tools/g2/rgbd_pose/replay.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "3e07df4927f79eb8a7a25ba2117c5e125f55afc9",
+    "sha256": "0d5a0219c40b2ceef570e63dad77f50fd4364b8dc3017b83cf2d55a88c6bd9c2"
+  },
+  {
+    "path": "tools/g2/rgbd_pose/source.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "91171887148b99a1a3d88bcc2383c410fb2f2904",
+    "sha256": "c30958fcbb1d7be53b587fc2d6f0b9c932a1de14de3676aa63660015615be9e2"
+  },
+  {
+    "path": "tools/g2/rgbd_pose_schema.md",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "cd248d6b8dbd2cfe644e902e48b4c0bd71ea111a",
+    "sha256": "72014ee25f66b0905fb3cebb0e7590627c414fe80f03fef71d3f37ee60b75700"
+  },
+  {
+    "path": "tools/g2/test_rgbd_pose_export.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "c7d2dce27b45cbf2f784ee86a40e07f99366fc2a",
+    "sha256": "5bbb2a713d10a937fdc651daceeefdcaa8ad836247f48bc75215f2e5b639f267"
+  },
+  {
+    "path": "tools/g2/verify_robocasa_rgbd_pose.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "a475d0d201997be4a373c4e27243ccf41412c693",
+    "sha256": "d3852ec98483b606b9671891c08d3af299cbbb1525ac8b3d40edd4a5a76c56ff"
+  },
+  {
+    "path": "tools/g0/robocasa_work_queue.py",
+    "root_commit": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+    "git_blob": "3c5058ab0c62e7ca20839f0d40be019fd0c32b11",
+    "sha256": "4962bccbca7c6b9e7d6efce3e2d9385cc8842418b269daf2638f52763acce386"
+  }
+]

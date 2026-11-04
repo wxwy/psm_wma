@@ -1,0 +1,7 @@
+{
+  "preliminary_root": "3d163e91d42802efe487deb89286637cc91ed74c",
+  "preliminary_tests": 82,
+  "final_root": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+  "final_tests": 83,
+  "reason": "reachable static float32 rotation misreported motion; same frozen production regression RED1/GREEN1; no sensor payload changes"
+}

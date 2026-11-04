@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.681" timestamp="2026-11-04T04:28:41.745611+00:00" hostname="8b544c1107bc"><testcase classname="" name="test_static_float32_camera_rotation_is_not_reported_as_motion" time="0.299"><failure message="assert True is False">tmp_path = PosixPath('/tmp/psm-g2-rgbd-stage1-20261104/static_pose_red/pytest_tmp/test_static_float32_camera_rot0')
+
+    def test_static_float32_camera_rotation_is_not_reported_as_motion(tmp_path):
+        raw, flat, source = bound(tmp_path)
+        rotation = Rotation.from_euler('xyz', [-2.6178494833854566, 1.7480055403415324, 2.8816979303657675]).as_matrix().astype(np.float32)
+        class Rotated(FakeReplay):
+            def render(self, camera):
+                sample = super().render(camera)
+                sample['T_world_camera_gl'][:3, :3] = rotation
+                sample['T_world_camera_cv'] = sample['T_world_camera_gl'] @ np.diag([1.,-1.,-1.,1.])
+                return sample
+        result = cache.export_episode(tmp_path/'out', source, [0,1,3], storage='uint16_mm', chunk_frames=2,
+            recipe={'regression':'static_f32_pose'}, replay_factory=Rotated)
+        report = checker.verify(result['directory'], replay=True, raw_root=raw, flat_root=flat,
+            state_index_policy='frame_index', replay_factory=Rotated,
+            rgb_reader=lambda ref, i: np.full((8,8,3), 7+i, dtype=np.uint8))
+        motion = report['camera_pose_motion'][src.CAMERAS[0]]
+&gt;       assert motion['changed'] is False
+E       assert True is False
+
+/tmp/psm-g2-rgbd-stage1-20261104/static_pose_motion_regression_test.py:24: AssertionError</failure></testcase></testsuite></testsuites>

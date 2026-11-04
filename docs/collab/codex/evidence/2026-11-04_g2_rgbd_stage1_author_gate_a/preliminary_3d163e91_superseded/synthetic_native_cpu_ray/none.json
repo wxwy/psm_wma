@@ -1,0 +1,23 @@
+{
+  "synthetic_scene": true,
+  "real_renderer_executed": false,
+  "mujoco_version": "3.3.1",
+  "violation": "none",
+  "status": "PASS",
+  "matching_geom_samples": 64,
+  "visibility_filter_mismatches": 0,
+  "max_abs_z_error_m": 2.220446049250313e-16,
+  "atol_m": 1e-07,
+  "min_samples": 32,
+  "geomgroup": [
+    1,
+    1,
+    1,
+    0,
+    0,
+    0
+  ],
+  "static_geoms_included": true,
+  "bodyexclude": -1,
+  "distance_converted_to_optical_Z": true
+}

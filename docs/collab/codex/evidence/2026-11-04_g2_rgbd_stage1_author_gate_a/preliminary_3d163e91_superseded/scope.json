@@ -1,0 +1,67 @@
+{
+  "formal_root": "3d163e91d42802efe487deb89286637cc91ed74c",
+  "parent": "083b36ac27ad43b6f5127d9a58aed4fac02eaaa7",
+  "child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "changed_files": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md",
+    "docs/collab/codex/requests/2026-11-04_G2_Stage1_Owner_Clarifications.md",
+    "docs/collab/codex/requests/2026-11-04_G2_Stage1_Owner_Instruction.md",
+    "docs/collab/codex/requests/2026-11-04_G2_Stage1_Owner_Instruction.provenance.json",
+    "tools/g2/README.md",
+    "tools/g2/__init__.py",
+    "tools/g2/export_robocasa_rgbd_pose.py",
+    "tools/g2/rgbd_pose/__init__.py",
+    "tools/g2/rgbd_pose/cache.py",
+    "tools/g2/rgbd_pose/geometry.py",
+    "tools/g2/rgbd_pose/replay.py",
+    "tools/g2/rgbd_pose/source.py",
+    "tools/g2/rgbd_pose_schema.md",
+    "tools/g2/test_rgbd_pose_export.py",
+    "tools/g2/verify_robocasa_rgbd_pose.py"
+  ],
+  "protected_trees": {
+    "scripts": {
+      "before": "82c53cc83e8f1803f70550b2f620b8dfadefcaef",
+      "after": "82c53cc83e8f1803f70550b2f620b8dfadefcaef",
+      "unchanged": true
+    },
+    "configs": {
+      "before": "334a2ffe1e48d5183951f54a17e0a53f7cc87712",
+      "after": "334a2ffe1e48d5183951f54a17e0a53f7cc87712",
+      "unchanged": true
+    },
+    "cosmos-framework": {
+      "before": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+      "after": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+      "unchanged": true
+    },
+    "third_party": {
+      "before": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "after": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "unchanged": true
+    },
+    "tools/g0": {
+      "before": "9c811e57e8dc09f85f052d1aa81ce44bcb055863",
+      "after": "9c811e57e8dc09f85f052d1aa81ce44bcb055863",
+      "unchanged": true
+    },
+    "tools/v3": {
+      "before": "dce22f9769f434a3c5f132e415d3efff9ef6f382",
+      "after": "dce22f9769f434a3c5f132e415d3efff9ef6f382",
+      "unchanged": true
+    },
+    ".codex": {
+      "before": "6c398fcca470a95cd2f73042437b3edd9d74793c",
+      "after": "6c398fcca470a95cd2f73042437b3edd9d74793c",
+      "unchanged": true
+    },
+    "MEMORY": {
+      "before": "95816c48870c8837c269e6290e9df966e84a7f47",
+      "after": "95816c48870c8837c269e6290e9df966e84a7f47",
+      "unchanged": true
+    }
+  },
+  "status": "PASS"
+}

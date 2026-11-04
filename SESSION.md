@@ -1,3 +1,35 @@
+# 2026-11-04 — G2 final clean Pair83/static PASS; evidence/review publication next
+
+Final Formal Rootb67bc4ca9a2afb1ff26fac0846f8ee7042a589ab /
+unchanged Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da, isolated
+v3-g2-rgbd-pose-stage1-20261104. Cumulative implementation base083b36ac,
+feature3d163e91 plus narrow float32-motion correctionb67bc4ca; review full
+cumulative17-file feature, not only the last follow-up diff.
+
+Clean exact final Pair:83 DISTINCT PASS/0failure/error/skip,1.66s; nine-file
+Ruff0.12.7/check/format/AST/compile and CLI help/lazy-import probes PASS. Root,
+Child and watched source unchanged during checks. Main gate and final83 JUnit
+bindb67bc4ca.12 source/config Blob+SHA bindings; all protected trees byte-identical
+to083b36ac, Child1069 unchanged. No physical replay/renderer or GPU performed.
+
+Evidence docs/collab/codex/evidence/2026-11-04_g2_rgbd_stage1_author_gate_a/
+contains114 hashed TEXT artifacts+manifest, final83 logs/JUnit/commands/versions,
+synthetic native CPU ray stats, frozen motion RED1/GREEN1, scope and source diff.
+Preliminary3d/82 package retained byte-for-byte under a marked superseded subtree;
+not relabelled or added to83. No server recordings/cache/reversible payload copied.
+Handoff docs/collab/codex/reviews/2026-11-04_G2_Stage1_RGBD_Pose_Author_Handoff.md
+and tool schema/runbook provide Gate B exact commands/recovery/risks.
+
+This successor is metadata only, not a new implementation SHA. Append bounded
+canonical request, publish isolated Root only (Child already available/unchanged),
+fresh remote source/artifact/Gitlink readback, then STOP for GPT Code Gate.
+Owner has allowed future server fetch/tests via server github-fetch-proxy skill,
+but no remote execution tool is available; no skill read/server fetch/test has
+occurred. Gate B/C and N100 exact membership remain pending; no V3 promotion,
+nav_sg/training/DCP/active worktree changes, real data transfer or batch export.
+
+## Prior freeze correction record retained
+
 # 2026-11-04 — Static float32 motion diagnostic corrected; final83 freeze next
 
 After preliminary Root3d163e91d42802efe487deb89286637cc91ed74c CPU82 PASS,

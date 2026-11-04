@@ -1,0 +1,23 @@
+{
+  "args": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "/tmp/psm-g2-rgbd-stage1-20261104/static_pose_motion_regression_test.py",
+    "--basetemp",
+    "/tmp/psm-g2-rgbd-stage1-20261104/static_pose_red/pytest_tmp",
+    "--junitxml",
+    "/tmp/psm-g2-rgbd-stage1-20261104/static_pose_red/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+  "source_root": "3d163e91d42802efe487deb89286637cc91ed74c",
+  "test_sha256": "1896f05496ab520312f1e7f90f25acfc8d9293c96db97b09e625365e742debfd",
+  "expected_returncode": 1,
+  "actual_returncode": 1
+}

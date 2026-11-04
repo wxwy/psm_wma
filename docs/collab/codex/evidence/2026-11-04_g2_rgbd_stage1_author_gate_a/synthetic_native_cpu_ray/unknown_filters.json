@@ -1,0 +1,8 @@
+{
+  "synthetic_scene": true,
+  "real_renderer_executed": false,
+  "mujoco_version": "3.3.1",
+  "violation": "unknown_filters",
+  "status": "INCONCLUSIVE",
+  "reason": "AttributeError: 'NoneType' object has no attribute 'vopt'"
+}

@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "path": "tools/g2/__init__.py",
+      "sha256": "09e084066fe35efb77870f57f3cf54ee6896bcbf8e673fa13fc3a79b78b912c7"
+    },
+    {
+      "path": "tools/g2/export_robocasa_rgbd_pose.py",
+      "sha256": "d9846ff856d3f842ac1243ef84cf519b13f89b9502657603243caa2feb47c507"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/__init__.py",
+      "sha256": "cdc30f9f53be503f3ea16d566db9d510c812c7d45110b6fcdcbf0f61bc614fed"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/cache.py",
+      "sha256": "04fc24f88dbc628dc12f38f70d6da4c46599c9945f9fcb75db7509f8dbafe4e4"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/geometry.py",
+      "sha256": "2ca67291932e1c83a184c210ec55cc21326265f333c7df4727e847dd881b52e2"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/replay.py",
+      "sha256": "0d5a0219c40b2ceef570e63dad77f50fd4364b8dc3017b83cf2d55a88c6bd9c2"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/source.py",
+      "sha256": "c30958fcbb1d7be53b587fc2d6f0b9c932a1de14de3676aa63660015615be9e2"
+    },
+    {
+      "path": "tools/g2/test_rgbd_pose_export.py",
+      "sha256": "3d57f4acf87fdbe8c1dd2b93d0615fc8df8e938cec03ef7560bff053e748f3e5"
+    },
+    {
+      "path": "tools/g2/verify_robocasa_rgbd_pose.py",
+      "sha256": "e6f005f167e7b9f7ff976fe9b8b76ba0696637c81111eee3ee9e235fa5a2c714"
+    }
+  ],
+  "count": 9
+}
