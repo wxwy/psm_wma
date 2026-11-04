@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checked_at_utc": "2026-11-04T08:00:46.684663+00:00",
+  "checked_at_cst": "2026-11-04T16:00:46.684663+08:00",
+  "published_evidence_head": "ee64882257ead3bfc64f75b1106b30e2674fa794",
+  "formal_root": "3eb8b334150018212ae1f51afb5e954b83fa1186",
+  "child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "official_v3": "ea0828c7d45a443cc74ae2582419f14e7782a17e",
+  "artifact_hashes_matched": 39,
+  "source_bindings_matched": 13,
+  "source_unchanged_since_formal": true,
+  "inbox_unique_bounded_append_only": true,
+  "root_clean": true,
+  "child_clean": true,
+  "server_policy_report_or_gate_c_executed": false,
+  "v3_promoted": false
+}

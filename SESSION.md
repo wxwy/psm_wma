@@ -1,3 +1,23 @@
+# 2026-11-04 — G2 spatial-v2 published/readback PASS; STOP for fresh review
+
+2026-11-04 16:00:46 Asia/Shanghai: normal new-branch Root push, explicit fetch/
+advertised/readback PASS for published Evidence HEAD
+ee64882257ead3bfc64f75b1106b30e2674fa794 on v3-g2-spatial-policy-20261104.
+39/39 artifact hashes+13/13 source bindings, exact Gitlink, unique bounded
+append-only canonical request and clean Root/Child verified. Receipt saved in
+2026-11-04_g2_spatial_policy_publication/readback.json. Official V3 remains
+ea0828c7d45a443cc74ae2582419f14e7782a17e; Child1069fe78 unchanged/no Child push,
+no force or promotion. This successor records publication only.
+
+Formal implementation STAYS3eb8b334150018212ae1f51afb5e954b83fa1186 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Author121/static PASS
+stands, no additional code/tests. Review request is published, not GPT ACK or
+approval. STOP/REVIEW for new Pair. GateC3–5 full distinct-task design prepared;
+actual selection/native policy report/multi-episode execution remain pending
+review and execution role. No new server/GPU/RoboCasa/training/DCP/N100/V3 or
+historical-output changes. Ownerf634 spatial acceptance and old numerical RGB
+FAIL diagnostics remain separate facts; no unique AA/brightness cause claimed.
+
 # 2026-11-04 — G2 spatial-v2 new clean Formal Pair121 PASS; REVIEW handoff
 
 Formal Root3eb8b334150018212ae1f51afb5e954b83fa1186 /
