@@ -155,8 +155,9 @@ class Runtime:
             if self._closing or self.stop.is_set():
                 raise RuntimeError("cancelled before process creation")
             owned, record = self.registry.start(*args, **kwargs)
-            with self.state_lock:
-                self.owned_processes[record["id"]] = owned
+            if self.streaming:
+                with self.state_lock:
+                    self.owned_processes[record["id"]] = owned
             return owned, record
 
     @contextlib.contextmanager

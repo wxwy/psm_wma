@@ -297,13 +297,22 @@ def test_lost_server_ACK_retries_same_receipt_without_extra_encode(systems, tmp_
 
 
 def test_permanent_ACK_loss_retains_file_and_reports_incomplete(systems, tmp_path):
-    _, actor, direct = systems(media_drain_timeout_s=2)
-    value = client(direct, registration(direct), media_drain_timeout_s=2)
+    # This budget includes a real Encoder cold start before the ACK fault.
+    _, actor, direct = systems(media_drain_timeout_s=10)
+    value = client(direct, registration(direct), media_drain_timeout_s=10)
     sink = sink_at(tmp_path / "media")
     original = direct.request
+    ack_attempts = []
 
     def lost(method, url, **kwargs):
         if url.endswith("/v2/media/ack"):
+            receipt = kwargs["json"]["receipt"]
+            final = tmp_path / "media" / receipt["path"]
+            assert final.is_file()
+            assert (
+                json.loads(final.with_suffix(".receipt.json").read_bytes()) == receipt
+            )
+            ack_attempts.append(time.monotonic())
             time.sleep(0.02)
             raise requests.ConnectionError("permanent ACK loss")
         return original(method, url, **kwargs)
@@ -312,6 +321,7 @@ def test_permanent_ACK_loss_retains_file_and_reports_incomplete(systems, tmp_pat
     try:
         result = predict(value)
         assert value.media(result, 0, sink.prediction) is None
+        assert ack_attempts  # Never pass merely because startup timed out before ACK.
         diagnostics = value.media_diagnostics()
         assert diagnostics["completion"]["status"] == "MEDIA_INCOMPLETE"
         assert diagnostics["predictions"]["0"]["path"] == "generated/replan_0000.mp4"
