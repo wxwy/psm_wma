@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
+from cosmos_framework.evaluation.robocasa_v2.contract import STREAMING_SCHEDULE
 from robocasa_processes import group_members
 
 from robocasa_eval_v2.config import rendering
@@ -31,8 +32,11 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
             raise RuntimeError("BLOCKED_RESOURCE: invalid selected GPU identity")
         devices[index] = uid
     allowed = set()
-    for p in processes:
-        allowed.update(group_members(p.pgid))
+    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE:
+        allowed = owned_group_pids(processes)
+    else:
+        for p in processes:
+            allowed.update(group_members(p.pgid))
     if any(g not in devices for g in selected_ids):
         raise RuntimeError("BLOCKED_RESOURCE: missing selected GPU")
     rss = 0
@@ -45,11 +49,69 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
             pass
     if rss > cfg["max_rss_bytes"]:
         raise RuntimeError("BLOCKED_RESOURCE: owned process RSS budget")
-    return {
+    result = {
         "gpus": devices,
         "owned_pids": sorted(allowed),
         "rss_bytes": rss,
     }
+    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE:
+        result["owned_gpu_bytes"] = owned_gpu_memory(selected_ids, allowed)
+        if any(
+            v > cfg["streaming_resources"]["max_owned_gpu_bytes"]
+            for v in result["owned_gpu_bytes"].values()
+        ):
+            raise RuntimeError("BLOCKED_RESOURCE: owned GPU memory budget")
+    return result
+
+
+def owned_group_pids(processes, *, proc=Path("/proc")):
+    """One /proc scan for all owned groups, rather than one scan per Sim."""
+    groups = {p.pgid for p in processes}
+    result = set()
+    for entry in proc.iterdir() if groups else ():
+        if not entry.name.isdigit():
+            continue
+        try:
+            fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
+            if int(fields[2]) in groups:
+                result.add(int(entry.name))
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+    return result
+
+
+def owned_gpu_memory(selected_ids, allowed, *, nvml=None):
+    """Only our compute/graphics PIDs; unknown measurements fail closed."""
+    result = {}
+    initialized = False
+    try:
+        if nvml is None:
+            import pynvml as nvml
+        nvml.nvmlInit()
+        initialized = True
+        for gpu in selected_ids:
+            handle = nvml.nvmlDeviceGetHandleByIndex(gpu)
+            values = {}
+            for query in (
+                nvml.nvmlDeviceGetComputeRunningProcesses,
+                nvml.nvmlDeviceGetGraphicsRunningProcesses,
+            ):
+                for process in query(handle):
+                    if process.pid not in allowed:
+                        continue
+                    size = process.usedGpuMemory
+                    if type(size) is not int or not 0 <= size < 2**63:
+                        raise ValueError("unavailable owned PID GPU memory")
+                    values[process.pid] = max(values.get(process.pid, 0), size)
+            result[gpu] = sum(values.values())
+    except Exception as error:
+        raise RuntimeError(
+            "BLOCKED_RESOURCE: owned GPU memory measurement unavailable"
+        ) from error
+    finally:
+        if initialized:
+            nvml.nvmlShutdown()
+    return result
 
 
 def physical_slots(cfg, task_count):
@@ -59,7 +121,11 @@ def physical_slots(cfg, task_count):
     pairs = [
         (f"GPU{g}_S{s}", g) for s in range(cfg["sims_per_gpu"]) for g in cfg["gpu_ids"]
     ]
-    return dict(pairs[:task_count])
+    return dict(
+        pairs
+        if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE
+        else pairs[:task_count]
+    )
 
 
 def render_slots(cfg, task_count):

@@ -61,6 +61,13 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                     "resolved": cfg,
                     "task_order": [t for t, _ in tasks],
                     "physical_slots": physical_slots(cfg, len(tasks)),
+                    "physical_slot_capacity": len(physical_slots(cfg, len(tasks))),
+                    "executable_slot_capacity": min(
+                        len(physical_slots(cfg, len(tasks))),
+                        sum(d["action"] == "execute_missing" for d in dispositions)
+                        if dispositions
+                        else len(tasks) * cfg["episodes_per_task"],
+                    ),
                     "render_slots": render_slots(cfg, len(tasks)),
                     "used_gpus": sorted(set(physical_slots(cfg, len(tasks)).values())),
                     "slots": [
