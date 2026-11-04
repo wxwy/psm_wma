@@ -13,6 +13,11 @@ superseding the progress-row prerequisite in contract commit
 preserved in Git. No production implementation change, new Formal Pair or
 repeated Code Gate is required. Authorization is not evidence of execution or PASS.
 
+The same NPZ-only correction was separately published remotely as
+`59beb9fe5b3e893d6b86254f00524672638bd49f` before the actual Gate C run.
+Preserving the local amendment history does not assert that its previously failed
+push succeeded before execution; the server used the remote reviewed contract.
+
 ## Frozen inputs and outputs
 
 - Formal Root `3eb8b334150018212ae1f51afb5e954b83fa1186`;
