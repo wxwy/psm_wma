@@ -1,0 +1,10 @@
+{
+  "legacy_assertion_ast_count": 69,
+  "legacy_assertions_unchanged": true,
+  "frozen20_definitions_unchanged": true,
+  "frozen20_sha256": "f08df93edb883bfe00f5b01b87ada1ec9160d048a8b4f39ddbe335bf68ad2293",
+  "extra_test_functions": [
+    "test_one_bad_eligible_ray_is_not_removed_to_make_a_pass",
+    "test_unsupported_or_changing_visibility_options_are_inconclusive"
+  ]
+}

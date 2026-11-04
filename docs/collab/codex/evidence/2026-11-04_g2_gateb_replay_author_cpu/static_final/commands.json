@@ -1,0 +1,76 @@
+{
+  "cwd": "/workspace/psm-wma-g2-gateb-fix",
+  "commands": [
+    {
+      "name": "ruff_version",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "--version"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "tools/g2"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "tools/g2"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "export_help",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "tools.g2.export_robocasa_rgbd_pose",
+        "--help"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "verify_help",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "tools.g2.verify_robocasa_rgbd_pose",
+        "--help"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "lazy_import",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import sys,json; import tools.g2.export_robocasa_rgbd_pose; import tools.g2.verify_robocasa_rgbd_pose; names=[\"torch\",\"mujoco\",\"robosuite\",\"robocasa\",\"lerobot\",\"cosmos_framework\"]; loaded=[n for n in names if n in sys.modules]; print(json.dumps({\"unexpected_native_imports\":loaded})); assert not loaded"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0
+    }
+  ]
+}

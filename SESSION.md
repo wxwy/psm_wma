@@ -1,3 +1,23 @@
+# 2026-11-04 — G2-GATEB-REPLAY new Formal Pair107 author PASS; REVIEW
+
+Formal Roota9ffd313770c5344195f415425124a5075e62b2b / unchanged Child-Gitlink
+1069fe78841228cadbbfbe6afbd767eaed6225da, isolated v3-g2-gateb-replay-fix-20261104.
+Clean exact-Pair83 legacy +24 native CPU OSMesa =107 DISTINCT PASS,0fail/error/skip;
+Ruff0.12.7/check/format10/AST/compile/help/lazy imports PASS. Native renderer Mesa
+llvmpipe/LLVM19.1.7, no GPU/real RoboCasa/server data. Frozen20 old RED9/newGREEN20
+preserved,69 old assertion ASTs unchanged; superseded first correction3 failures
+kept, not aggregated.61 hashed TEXT artifacts+11 source Blob/SHA bindings in
+2026-11-04_g2_gateb_replay_author_cpu; protected scripts/configs/third_party/Child
+unchanged. New visibility eligibility and front-face triangle path need explicit
+fresh GPT review. RGB remains unresolved; diagnostics added, no guessed flags.
+
+Author handoff2026-11-04_G2_GateB_Replay_Visibility_Author_Handoff.md and new
+follow-up runbook describe exact scope/counters/remaining RGB probe and mesh CPU
+cost risk. Append bounded unique canonical request, publish isolated Root only,
+read back exact Pair/source/artifacts and STOP. This metadata successor is not a
+new Formal Root. Old real GateB FAIL preserved; no GateC/N100/old-cache/server
+rerun/GPU/model/training/DCP/nav_sg/active-worktree/V3 promotion authorized.
+
 # 2026-11-04 — G2-GATEB-REPLAY development107 PASS; source freeze next
 
 One production file replay.py: fresh-render/opacity/MSAA eligibility independent

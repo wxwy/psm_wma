@@ -1,0 +1,16 @@
+{
+  "mesh_outward": {
+    "all_faces_distance": 1.1499999940395362,
+    "front_faces_mt_distance": 1.1499999940395362,
+    "expected_front_face_distance": 1.15,
+    "det_sign": "positive_for_front_faces",
+    "eligible_triangle_count": 2
+  },
+  "mesh_inward": {
+    "all_faces_distance": 1.1499999940395362,
+    "front_faces_mt_distance": 1.450000005960464,
+    "expected_front_face_distance": 1.45,
+    "det_sign": "positive_for_front_faces",
+    "eligible_triangle_count": 2
+  }
+}

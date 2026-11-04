@@ -1,0 +1,229 @@
+....F.FF.FFF.....FFF                                                     [100%]
+=================================== FAILURES ===================================
+___ test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs4] ____
+
+kind = 'inward', kwargs = {}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'geomgroup': [1, 1, 1, 0, 0, 0], ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:232: AssertionError
+___ test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs6] ____
+
+kind = 'inward', kwargs = {'rotation': '9 -12 13'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'geomgroup': [1, 1, 1, 0, 0, 0], ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:232: AssertionError
+___ test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs7] ____
+
+kind = 'inward', kwargs = {'rotation': '5 7 13', 'scale': '1.4 .8 .7'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'geomgroup': [1, 1, 1, 0, 0, 0], ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:232: AssertionError
+__ test_native_render_depth_and_visible_ray_surfaces_agree[compound-kwargs9] ___
+
+kind = 'compound', kwargs = {'offsamples': 4, 'rotation': '0 0 13'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'geomgroup': [1, 1, 1, 0, 0, 0], ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:232: AssertionError
+_ test_native_render_depth_and_visible_ray_surfaces_agree[transparent-kwargs10] _
+
+kind = 'transparent', kwargs = {}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'geomgroup': [1, 1, 1, 0, 0, 0], ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:232: AssertionError
+________ test_only_transparent_segmentation_cannot_create_geometry_pass ________
+
+    def test_only_transparent_segmentation_cannot_create_geometry_pass():
+        with software_scene("transparent_full") as sim:
+            result = sim.check()
+>       assert result["status"] == "INCONCLUSIVE", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'geomgroup': [1, 1, 1, 0, 0, 0], ...}
+E       assert 'FAIL' == 'INCONCLUSIVE'
+E         
+E         - INCONCLUSIVE
+E         + FAIL
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:241: AssertionError
+_____ test_software_render_diagnostics_are_scalar_json_and_rgb_modes_agree _____
+
+    def test_software_render_diagnostics_are_scalar_json_and_rgb_modes_agree():
+        with software_scene("compound", rotation="0 0 13") as sim:
+            result = sim.check()
+>       diagnostics = result["rgb_render_diagnostics"]
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'rgb_render_diagnostics'
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:283: KeyError
+_ test_rgb_diagnostics_expose_mode_or_segmentation_fault[depth_mode-rgb_vs_rgbd] _
+
+fault = 'depth_mode', key = 'rgb_vs_rgbd'
+
+    @pytest.mark.parametrize(
+        ("fault", "key"),
+        [
+            ("depth_mode", "rgb_vs_rgbd"),
+            ("segmentation", "segmentation_before_after"),
+        ],
+    )
+    def test_rgb_diagnostics_expose_mode_or_segmentation_fault(fault, key):
+        with software_scene("plane", rgb_fault=fault) as sim:
+            result = sim.check()
+>       diagnostics = result["rgb_render_diagnostics"]
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'rgb_render_diagnostics'
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:302: KeyError
+_ test_rgb_diagnostics_expose_mode_or_segmentation_fault[segmentation-segmentation_before_after] _
+
+fault = 'segmentation', key = 'segmentation_before_after'
+
+    @pytest.mark.parametrize(
+        ("fault", "key"),
+        [
+            ("depth_mode", "rgb_vs_rgbd"),
+            ("segmentation", "segmentation_before_after"),
+        ],
+    )
+    def test_rgb_diagnostics_expose_mode_or_segmentation_fault(fault, key):
+        with software_scene("plane", rgb_fault=fault) as sim:
+            result = sim.check()
+>       diagnostics = result["rgb_render_diagnostics"]
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'rgb_render_diagnostics'
+
+/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py:302: KeyError
+=========================== short test summary info ============================
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs4]
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs6]
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs7]
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[compound-kwargs9]
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[transparent-kwargs10]
+FAILED ../../dev::test_only_transparent_segmentation_cannot_create_geometry_pass
+FAILED ../../dev::test_software_render_diagnostics_are_scalar_json_and_rgb_modes_agree
+FAILED ../../dev::test_rgb_diagnostics_expose_mode_or_segmentation_fault[depth_mode-rgb_vs_rgbd]
+FAILED ../../dev::test_rgb_diagnostics_expose_mode_or_segmentation_fault[segmentation-segmentation_before_after]
+9 failed, 11 passed in 2.48s

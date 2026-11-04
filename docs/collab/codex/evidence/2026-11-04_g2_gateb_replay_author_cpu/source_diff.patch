@@ -1,0 +1,669 @@
+diff --git a/tools/g2/rgbd_pose/replay.py b/tools/g2/rgbd_pose/replay.py
+index 3e07df49..e8155a18 100644
+--- a/tools/g2/rgbd_pose/replay.py
++++ b/tools/g2/rgbd_pose/replay.py
+@@ -27,6 +27,57 @@ def function_identity(function):
+     }
+ 
+ 
++def _rgb_difference(first, second):
++    first, second = np.asarray(first), np.asarray(second)
++    if (
++        first.shape != second.shape
++        or first.ndim != 3
++        or first.shape[2] != 3
++        or first.dtype != np.uint8
++        or second.dtype != np.uint8
++    ):
++        raise ValueError("RGB diagnostic requires matching uint8 HWC images")
++    difference = np.abs(first.astype(np.int16) - second.astype(np.int16))
++    return {
++        "identical": bool(not difference.any()),
++        "mae": float(difference.mean()),
++        "max_abs": int(difference.max()),
++    }
++
++
++def _front_face_mesh_distance(model, data, geom, origin, direction):
++    """Independent ray/triangle intersection matching GL back-face culling.
++
++    MuJoCo's mj_rayMesh intersects both sides. Compiled mesh vertices are already
++    centered, rotated and scaled; only the live geom transform is applied here.
++    Selection never uses the cached depth or the observed validation error.
++    """
++    mesh = int(model.geom_dataid[geom])
++    vertex_start, face_start = model.mesh_vertadr[mesh], model.mesh_faceadr[mesh]
++    vertices = model.mesh_vert[vertex_start : vertex_start + model.mesh_vertnum[mesh]]
++    faces = model.mesh_face[face_start : face_start + model.mesh_facenum[mesh]]
++    triangles = vertices[faces].astype(np.float64)
++    rotation = np.asarray(data.geom_xmat[geom]).reshape(3, 3)
++    point = (origin - data.geom_xpos[geom]) @ rotation
++    vector = direction @ rotation
++    edge1, edge2 = triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0]
++    cross = np.cross(vector, edge2)
++    determinant = np.einsum("ij,ij->i", edge1, cross)
++    nonparallel_front = determinant > (
++        1e-12 * np.linalg.norm(edge1, axis=1) * np.linalg.norm(edge2, axis=1)
++    )
++    if not nonparallel_front.any():
++        return None
++    delta = point - triangles[nonparallel_front, 0]
++    inverse = 1.0 / determinant[nonparallel_front]
++    u = np.einsum("ij,ij->i", delta, cross[nonparallel_front]) * inverse
++    q = np.cross(delta, edge1[nonparallel_front])
++    v = (q @ vector) * inverse
++    distance = np.einsum("ij,ij->i", edge2[nonparallel_front], q) * inverse
++    inside = (u >= 0) & (v >= 0) & (u + v <= 1) & (distance >= 0)
++    return float(distance[inside].min()) if inside.any() else None
++
++
+ class Replay:
+     def __init__(self, source, *, make=None, reset_to=None, camera_utils=None):
+         injected = make is not None or reset_to is not None or camera_utils is not None
+@@ -148,10 +199,12 @@ class Replay:
+     def ray_check(self, camera, sample, *, atol_m=0.01, min_samples=16):
+         """Independent geometry check; renderer/ray visibility mismatch is inconclusive.
+ 
+-        mj_ray returns distance along a UNIT ray, not optical-axis Z. Only hits
+-        matching the renderer's actual geom identity are compared. Render geom
+-        group options must be available; an unknown filter never means PASS.
++        mj_ray is double-sided and sees translucent geoms; the RGB depth pass
++        culls back faces and does not write transparent surfaces to its buffer.
++        Eligibility uses only the fresh renderer, never cached depth/ray errors.
++        The unchanged tolerance and sample minimum apply after those filters.
+         """
++        diagnostics = {}
+         try:
+             import mujoco
+ 
+@@ -161,14 +214,109 @@ class Replay:
+             if groups.shape != (6,):
+                 raise ValueError("unknown renderer geometry-group filter")
+             height, width = sample["valid"].shape
+-            segmentation = np.asarray(
+-                sim.render(
+-                    height=height, width=width, camera_name=camera, segmentation=True
+-                )
+-            )[::-1]
++            render_args = dict(height=height, width=width, camera_name=camera)
++            rgb_before = sim.render(**render_args)
++            rgb_with_depth, raw = sim.render(**render_args, depth=True)
++            scene = context.scn
++            flags_before = np.asarray(scene.flags).copy()
++            segmentation = np.asarray(sim.render(**render_args, segmentation=True))[
++                ::-1
++            ]
++            rgb_after = sim.render(**render_args)
++            flags_after = np.asarray(scene.flags).copy()
++            model = getattr(sim.model, "_model", sim.model)
++            data = getattr(sim.data, "_data", sim.data)
++            diagnostics = {
++                "rgb_vs_rgbd": _rgb_difference(rgb_before, rgb_with_depth),
++                "segmentation_before_after": _rgb_difference(rgb_before, rgb_after),
++                "render_context": {
++                    "geomgroup": groups.tolist(),
++                    "sitegroup": np.asarray(context.vopt.sitegroup).tolist(),
++                    "vopt_flags": np.asarray(context.vopt.flags).tolist(),
++                    "scene_flags_before": flags_before.tolist(),
++                    "scene_flags_after": flags_after.tolist(),
++                    "offscreen_samples": int(context.con.offSamples),
++                },
++                "model_visual_fingerprints": {
++                    field: {
++                        "shape": list(value.shape),
++                        "dtype": str(value.dtype),
++                        "sha256": hashlib.sha256(value.tobytes()).hexdigest(),
++                    }
++                    for field in (
++                        "geom_rgba",
++                        "mat_rgba",
++                        "light_pos",
++                        "light_dir",
++                        "light_diffuse",
++                        "light_specular",
++                        "site_rgba",
++                    )
++                    if (value := np.ascontiguousarray(getattr(model, field))).size
++                },
++            }
++            if (
++                not np.array_equal(flags_before, flags_after)
++                or not np.array_equal(groups, context.vopt.geomgroup)
++                or context.vopt.flags[mujoco.mjtVisFlag.mjVIS_CONVEXHULL]
++                or scene.flags[mujoco.mjtRndFlag.mjRND_WIREFRAME]
++            ):
++                raise ValueError("unsupported or changing renderer visibility options")
+             if segmentation.shape != (height, width, 2):
+                 raise ValueError("unknown rendered geometry identity representation")
+-            rows, columns = np.nonzero(sample["valid"])
++            near = float(sim.model.vis.map.znear * sim.model.stat.extent)
++            far = float(sim.model.vis.map.zfar * sim.model.stat.extent)
++            fresh, fresh_valid = depth_buffer_to_z(np.asarray(raw)[::-1], near, far)
++            if fresh.shape != (height, width):
++                raise ValueError("fresh diagnostic depth shape mismatch")
++            opaque = {}
++            for geom in list(scene.geoms)[: scene.ngeom]:
++                if geom.objtype == int(mujoco.mjtObj.mjOBJ_GEOM):
++                    acceptable = not geom.transparent and geom.rgba[3] >= 1
++                    opaque[geom.objid] = opaque.get(geom.objid, True) and acceptable
++            # Segmentation disables MSAA, normal depth does not. Even one mesh
++            # can contain two depth layers with the SAME geom id at an edge.
++            # Use fresh (not cached) depth to choose stable interior pixels.
++            # Inverse Z is affine across a planar surface, so this does not
++            # reject a correctly slanted plane merely for having a large slope.
++            eligible = fresh_valid & sample["valid"]
++            stable = fresh_valid.copy()
++            if context.con.offSamples:
++                stable[[0, -1], :] = False
++                stable[:, [0, -1]] = False
++                inverse = np.divide(
++                    1, fresh, out=np.zeros_like(fresh), where=fresh_valid
++                )
++                for dy, dx in ((0, 1), (1, 0), (1, 1), (1, -1)):
++                    for sign in (-1, 1):
++                        shift = (sign * dy, sign * dx)
++                        stable &= np.roll(fresh_valid, shift, axis=(0, 1))
++                        # MSAA depth resolve can choose an off-center sample,
++                        # even inside one smooth face. Bound that footprint
++                        # before comparing against a pixel-center ray.
++                        stable &= (
++                            np.abs(np.roll(fresh, shift, axis=(0, 1)) - fresh) <= atol_m
++                        )
++                        stable &= np.all(
++                            segmentation == np.roll(segmentation, shift, axis=(0, 1)),
++                            axis=2,
++                        )
++                    predicted_inverse = (
++                        np.roll(inverse, (dy, dx), axis=(0, 1))
++                        + np.roll(inverse, (-dy, -dx), axis=(0, 1))
++                    ) / 2
++                    predicted = np.divide(
++                        1,
++                        predicted_inverse,
++                        out=np.zeros_like(fresh),
++                        where=predicted_inverse > 0,
++                    )
++                    stable &= np.abs(predicted - fresh) <= atol_m / 2
++            known_opaque = np.isin(
++                segmentation[..., 1], [int(g) for g, value in opaque.items() if value]
++            ) & (segmentation[..., 0] == int(mujoco.mjtObj.mjOBJ_GEOM))
++            eligible &= stable & known_opaque
++            rows, columns = np.nonzero(eligible)
+             picks = (
+                 np.unique(np.linspace(0, len(rows) - 1, min(128, len(rows)), dtype=int))
+                 if len(rows)
+@@ -182,24 +330,36 @@ class Replay:
+             norms = np.linalg.norm(rays, axis=1)
+             directions = (rays / norms[:, None]) @ T[:3, :3].T
+             origin = np.asarray(T[:3, 3], dtype=np.float64)
+-            errors, mismatches = [], 0
+-            model = getattr(sim.model, "_model", sim.model)
+-            data = getattr(sim.data, "_data", sim.data)
++            errors, mismatches, mesh_corrections = [], 0, 0
++            cull_faces = bool(scene.flags[mujoco.mjtRndFlag.mjRND_CULL_FACE])
+             for j, pick in enumerate(picks):
+                 rendered_type, rendered_id = segmentation[rows[pick], columns[pick]]
+                 if rendered_type != int(mujoco.mjtObj.mjOBJ_GEOM) or rendered_id < 0:
+                     mismatches += 1
+                     continue
+                 hit = np.array([-1], dtype=np.int32)
++                near_distance = near * norms[j]
++                ray_origin = origin + directions[j] * near_distance
+                 distance = mujoco.mj_ray(
+-                    model, data, origin, directions[j].copy(), groups, True, -1, hit
++                    model, data, ray_origin, directions[j].copy(), groups, True, -1, hit
+                 )
+                 if distance < 0 or hit[0] != rendered_id:
+                     mismatches += 1
+                     continue
++                if (
++                    cull_faces
++                    and model.geom_type[rendered_id] == mujoco.mjtGeom.mjGEOM_MESH
++                ):
++                    distance = _front_face_mesh_distance(
++                        model, data, rendered_id, ray_origin, directions[j]
++                    )
++                    if distance is None:
++                        mismatches += 1
++                        continue
++                    mesh_corrections += 1
+                 # Convert ray distance back to optical Z before comparing.
+                 z = float(sample["depth_m"][rows[pick], columns[pick]])
+-                errors.append(abs(float(distance) / norms[j] - z))
++                errors.append(abs((float(distance) + near_distance) / norms[j] - z))
+             enough = len(errors) >= min_samples
+             maximum = max(errors) if errors else None
+             status = (
+@@ -218,9 +378,25 @@ class Replay:
+                 "static_geoms_included": True,
+                 "bodyexclude": -1,
+                 "distance_converted_to_optical_Z": True,
++                "front_face_mesh_samples": mesh_corrections,
++                "renderer_eligibility": {
++                    "fresh_valid_pixels": int(fresh_valid.sum()),
++                    "stable_interior_pixels": int((fresh_valid & stable).sum()),
++                    "opaque_eligible_pixels": int(eligible.sum()),
++                    "selection_uses_cached_depth": False,
++                    "fresh_plane_prediction_max_error_m": atol_m / 2,
++                    "fresh_neighborhood_center_max_change_m": atol_m,
++                    "back_face_culling": cull_faces,
++                    "near_clip_m": near,
++                },
++                "rgb_render_diagnostics": diagnostics,
+             }
+         except (AttributeError, ImportError, ValueError, RuntimeError) as exc:
+-            return {"status": "INCONCLUSIVE", "reason": f"{type(exc).__name__}: {exc}"}
++            return {
++                "status": "INCONCLUSIVE",
++                "reason": f"{type(exc).__name__}: {exc}",
++                "rgb_render_diagnostics": diagnostics,
++            }
+ 
+     def close(self):
+         if self.env is not None:
+diff --git a/tools/g2/test_replay_render_visibility.py b/tools/g2/test_replay_render_visibility.py
+new file mode 100644
+index 00000000..0956c6d2
+--- /dev/null
++++ b/tools/g2/test_replay_render_visibility.py
+@@ -0,0 +1,348 @@
++"""Native CPU software-render regressions on tiny, synthetic MuJoCo scenes.
++
++Run separately from the non-rendering Gate A suite with MUJOCO_GL=osmesa and
++LIBGL_ALWAYS_SOFTWARE=1. No RoboCasa, recording, video or server data is used.
++"""
++
++from contextlib import contextmanager
++import json
++from types import SimpleNamespace
++
++import mujoco
++import numpy as np
++import pytest
++
++from tools.g2.rgbd_pose.replay import Replay
++
++
++HEIGHT = WIDTH = 96
++VERTICES = np.array(
++    [
++        [-0.4, -0.4, -0.15],
++        [0.4, -0.4, -0.15],
++        [0.4, 0.4, -0.15],
++        [-0.4, 0.4, -0.15],
++        [-0.4, -0.4, 0.15],
++        [0.4, -0.4, 0.15],
++        [0.4, 0.4, 0.15],
++        [-0.4, 0.4, 0.15],
++    ]
++)
++FACES = np.array(
++    [
++        [0, 2, 1],
++        [0, 3, 2],
++        [4, 5, 6],
++        [4, 6, 7],
++        [0, 1, 5],
++        [0, 5, 4],
++        [1, 2, 6],
++        [1, 6, 5],
++        [2, 3, 7],
++        [2, 7, 6],
++        [3, 0, 4],
++        [3, 4, 7],
++    ]
++)
++
++
++def _numbers(array):
++    return " ".join(str(value) for value in np.asarray(array).ravel())
++
++
++def _scene(kind, *, offsamples=4, rotation="0 0 0", scale="1 1 1"):
++    asset = ""
++    background = (
++        '<geom name="background" type="box" pos="0 0 -.1" '
++        'size="3 3 .1" rgba=".2 .2 .7 1"/>'
++    )
++    foreground = ""
++    if kind == "tilted_plane":
++        background = (
++            '<geom name="background" type="plane" size="3 3 .1" '
++            'euler="15 7 0" rgba=".2 .2 .7 1"/>'
++        )
++    elif kind in ("opaque", "transparent", "transparent_full"):
++        alpha = ".3" if kind.startswith("transparent") else "1"
++        size = "3 3 .15" if kind == "transparent_full" else ".4 .4 .15"
++        foreground = (
++            '<geom name="foreground" type="box" pos="0 0 .7" '
++            f'size="{size}" rgba=".7 .1 .1 {alpha}"/>'
++        )
++    elif kind in ("outward", "inward", "compound"):
++        vertices = VERTICES.copy()
++        faces = FACES[:, ::-1] if kind == "inward" else FACES
++        position = "0 0 .7"
++        if kind == "compound":
++            # The near box and far plate share one geom ID. Segmentation alone
++            # cannot identify their multisampled depth discontinuity.
++            near = VERTICES * [0.9, 0.9, 1] + [0.13, 0, 0.7]
++            far = VERTICES * [5, 5, 1] + [0, 0, -0.15]
++            vertices = np.concatenate([near, far])
++            faces = np.concatenate([FACES, FACES + len(VERTICES)])
++            position = "0 0 0"
++            background = ""
++        asset = (
++            f'<asset><mesh name="test_mesh" vertex="{_numbers(vertices)}" '
++            f'face="{_numbers(faces)}" scale="{scale}"/></asset>'
++        )
++        foreground = (
++            '<geom name="foreground" type="mesh" mesh="test_mesh" '
++            f'pos="{position}" euler="{rotation}" rgba=".7 .1 .1 1"/>'
++        )
++    elif kind != "plane":
++        raise ValueError(kind)
++    return (
++        '<mujoco><visual><global offwidth="96" offheight="96"/>'
++        f'<quality offsamples="{offsamples}"/><map znear=".01" zfar="30"/>'
++        "</visual>"
++        f'{asset}<worldbody><light pos="0 0 3"/>'
++        '<camera name="test_camera" pos="0 0 2" fovy="60"/>'
++        f"{background}{foreground}</worldbody></mujoco>"
++    )
++
++
++class SoftwareSim:
++    """Small native renderer with the pinned robosuite readback conventions."""
++
++    def __init__(self, xml, *, cull_face=True, rgb_fault=None):
++        self.model = mujoco.MjModel.from_xml_string(xml)
++        self.data = mujoco.MjData(self.model)
++        mujoco.mj_forward(self.model, self.data)
++        self.gl = mujoco.GLContext(WIDTH, HEIGHT)
++        self.gl.make_current()
++        self.scn = mujoco.MjvScene(self.model, maxgeom=100)
++        self.scn.flags[mujoco.mjtRndFlag.mjRND_CULL_FACE] = int(cull_face)
++        self.camera = mujoco.MjvCamera()
++        self.camera.type = mujoco.mjtCamera.mjCAMERA_FIXED
++        self.camera.fixedcamid = 0
++        self.vopt = mujoco.MjvOption()
++        self.vopt.geomgroup[:] = [1, 1, 1, 0, 0, 0]
++        self.con = mujoco.MjrContext(self.model, mujoco.mjtFontScale.mjFONTSCALE_100)
++        mujoco.mjr_setBuffer(mujoco.mjtFramebuffer.mjFB_OFFSCREEN, self.con)
++        self.viewport = mujoco.MjrRect(0, 0, WIDTH, HEIGHT)
++        self._render_context_offscreen = SimpleNamespace(
++            vopt=self.vopt, scn=self.scn, con=self.con
++        )
++        self.rgb_fault = rgb_fault
++        self.segmented = False
++        self.render_calls = []
++
++    def render(self, *, segmentation=False, depth=False, **kwargs):
++        self.render_calls.append({"segmentation": segmentation, "depth": depth})
++        mujoco.mjv_updateScene(
++            self.model,
++            self.data,
++            self.vopt,
++            None,
++            self.camera,
++            mujoco.mjtCatBit.mjCAT_ALL,
++            self.scn,
++        )
++        if segmentation:
++            self.scn.flags[mujoco.mjtRndFlag.mjRND_SEGMENT] = 1
++            self.scn.flags[mujoco.mjtRndFlag.mjRND_IDCOLOR] = 1
++        try:
++            mujoco.mjr_render(self.viewport, self.scn, self.con)
++        finally:
++            if segmentation:
++                self.scn.flags[mujoco.mjtRndFlag.mjRND_SEGMENT] = 0
++                self.scn.flags[mujoco.mjtRndFlag.mjRND_IDCOLOR] = 0
++        rgb = np.empty((HEIGHT, WIDTH, 3), dtype=np.uint8)
++        buffer = np.empty((HEIGHT, WIDTH), dtype=np.float32) if depth else None
++        mujoco.mjr_readPixels(rgb, buffer, self.viewport, self.con)
++        if segmentation:
++            packed = rgb.astype(np.int32)
++            ids = packed[:, :, 0] + 256 * packed[:, :, 1] + 65536 * packed[:, :, 2]
++            ids[ids >= self.scn.ngeom + 1] = 0
++            lookup = np.full((self.scn.ngeom + 1, 2), -1, dtype=np.int32)
++            for geom in self.scn.geoms[: self.scn.ngeom]:
++                if geom.segid != -1:
++                    lookup[geom.segid + 1] = [geom.objtype, geom.objid]
++            rgb = lookup[ids]
++            self.segmented = True
++        elif (depth and self.rgb_fault == "depth_mode") or (
++            self.segmented and self.rgb_fault == "segmentation"
++        ):
++            rgb = np.minimum(rgb.astype(np.int16) + 7, 255).astype(np.uint8)
++        return (rgb, buffer) if depth else rgb
++
++    def sample(self):
++        _, buffer = self.render(depth=True)
++        buffer = buffer[::-1].copy()
++        near = float(self.model.vis.map.znear * self.model.stat.extent)
++        far = float(self.model.vis.map.zfar * self.model.stat.extent)
++        depth = near / (1 - buffer.astype(np.float64) * (1 - near / far))
++        focal = HEIGHT / (2 * np.tan(np.pi / 6))
++        transform = np.eye(4)
++        transform[:3, :3] = self.data.cam_xmat[0].reshape(3, 3) @ np.diag([1, -1, -1])
++        transform[:3, 3] = self.data.cam_xpos[0]
++        return {
++            "depth_m": depth,
++            "valid": buffer < 1,
++            "K": np.array([[focal, 0, WIDTH / 2], [0, focal, HEIGHT / 2], [0, 0, 1.0]]),
++            "T_world_camera_cv": transform,
++            "clip_near_m": near,
++            "clip_far_m": far,
++        }
++
++    def check(self, sample=None):
++        sample = self.sample() if sample is None else sample
++        replay = object.__new__(Replay)
++        replay.env = SimpleNamespace(sim=self)
++        return replay.ray_check("test_camera", sample)
++
++    def close(self):
++        self.gl.make_current()
++        self.con.free()
++        self.gl.free()
++
++
++@contextmanager
++def software_scene(kind, **kwargs):
++    render_kwargs = {
++        key: kwargs.pop(key) for key in ("cull_face", "rgb_fault") if key in kwargs
++    }
++    sim = SoftwareSim(_scene(kind, **kwargs), **render_kwargs)
++    try:
++        yield sim
++    finally:
++        sim.close()
++
++
++@pytest.mark.parametrize(
++    ("kind", "kwargs"),
++    [
++        ("plane", {}),
++        ("tilted_plane", {}),
++        ("opaque", {}),
++        ("outward", {}),
++        ("inward", {}),
++        ("inward", {"cull_face": False}),
++        ("inward", {"rotation": "9 -12 13"}),
++        ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
++        ("compound", {"rotation": "0 0 13", "offsamples": 0}),
++        ("compound", {"rotation": "0 0 13", "offsamples": 4}),
++        ("transparent", {}),
++    ],
++)
++def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
++    with software_scene(kind, **kwargs) as sim:
++        result = sim.check()
++    assert result["status"] == "PASS", result
++    assert result["matching_geom_samples"] >= 16
++    assert result["max_abs_z_error_m"] <= 0.01
++    assert result["distance_converted_to_optical_Z"] is True
++
++
++def test_only_transparent_segmentation_cannot_create_geometry_pass():
++    with software_scene("transparent_full") as sim:
++        result = sim.check()
++    assert result["status"] == "INCONCLUSIVE", result
++    assert result["matching_geom_samples"] < 16
++
++
++@pytest.mark.parametrize("corruption", ["constant", "range", "vertical_flip"])
++def test_wrong_cached_depth_is_rejected_without_cherry_picking(corruption):
++    with software_scene("tilted_plane") as sim:
++        sample = sim.sample()
++        if corruption == "constant":
++            sample["depth_m"] += 0.2
++        elif corruption == "range":
++            yy, xx = np.mgrid[:HEIGHT, :WIDTH]
++            focal = sample["K"][0, 0]
++            scale = np.sqrt(
++                1
++                + ((xx + 0.5 - WIDTH / 2) / focal) ** 2
++                + ((yy + 0.5 - HEIGHT / 2) / focal) ** 2
++            )
++            sample["depth_m"] *= scale
++        else:
++            sample["depth_m"] = sample["depth_m"][::-1].copy()
++        result = sim.check(sample)
++    assert result["matching_geom_samples"] >= 16, result
++    assert result["status"] == "FAIL", result
++    assert result["max_abs_z_error_m"] > 0.01
++
++
++@pytest.mark.parametrize("corruption", ["mirrored", "translated"])
++def test_wrong_camera_pose_is_not_accepted(corruption):
++    with software_scene("tilted_plane") as sim:
++        sample = sim.sample()
++        if corruption == "mirrored":
++            sample["T_world_camera_cv"][:3, 0] *= -1
++        else:
++            sample["T_world_camera_cv"][2, 3] += 0.2
++        result = sim.check(sample)
++    assert result["status"] != "PASS", result
++
++
++def test_software_render_diagnostics_are_scalar_json_and_rgb_modes_agree():
++    with software_scene("compound", rotation="0 0 13") as sim:
++        result = sim.check()
++    diagnostics = result["rgb_render_diagnostics"]
++    assert diagnostics["rgb_vs_rgbd"]["mae"] == 0.0
++    assert diagnostics["segmentation_before_after"]["mae"] == 0.0
++    assert diagnostics["rgb_vs_rgbd"]["identical"] is True
++    assert diagnostics["segmentation_before_after"]["identical"] is True
++    serialized = json.dumps(result, allow_nan=False)
++    assert len(serialized) < 100_000
++
++
++@pytest.mark.parametrize(
++    ("fault", "key"),
++    [
++        ("depth_mode", "rgb_vs_rgbd"),
++        ("segmentation", "segmentation_before_after"),
++    ],
++)
++def test_rgb_diagnostics_expose_mode_or_segmentation_fault(fault, key):
++    with software_scene("plane", rgb_fault=fault) as sim:
++        result = sim.check()
++    diagnostics = result["rgb_render_diagnostics"]
++    assert diagnostics[key]["identical"] is False
++    assert diagnostics[key]["mae"] > 0
++    # RGB diagnostics do not redefine the independent geometry result.
++    assert result["status"] == "PASS", result
++
++
++@pytest.mark.parametrize("option", ["wireframe", "convex_hull", "changing_groups"])
++def test_unsupported_or_changing_visibility_options_are_inconclusive(option):
++    with software_scene("plane") as sim:
++        if option == "wireframe":
++            sim.scn.flags[mujoco.mjtRndFlag.mjRND_WIREFRAME] = 1
++        elif option == "convex_hull":
++            sim.vopt.flags[mujoco.mjtVisFlag.mjVIS_CONVEXHULL] = 1
++        else:
++            render = sim.render
++
++            def changing(**kwargs):
++                output = render(**kwargs)
++                if kwargs.get("segmentation"):
++                    sim.vopt.geomgroup[0] = 0
++                return output
++
++            sim.render = changing
++        result = sim.check()
++    assert result["status"] == "INCONCLUSIVE", result
++    assert "unsupported or changing" in result["reason"]
++
++
++def test_one_bad_eligible_ray_is_not_removed_to_make_a_pass(monkeypatch):
++    original = mujoco.mj_ray
++    calls = []
++
++    def one_bad_ray(*args, **kwargs):
++        distance = original(*args, **kwargs)
++        if distance >= 0:
++            calls.append(distance)
++            if len(calls) == 1:
++                return distance + 0.2
++        return distance
++
++    monkeypatch.setattr(mujoco, "mj_ray", one_bad_ray)
++    with software_scene("plane") as sim:
++        result = sim.check()
++    assert len(calls) == result["matching_geom_samples"] >= 16
++    assert result["status"] == "FAIL", result
++    assert result["max_abs_z_error_m"] > 0.01
+diff --git a/tools/g2/test_rgbd_pose_export.py b/tools/g2/test_rgbd_pose_export.py
+index c7d2dce2..1978a69f 100644
+--- a/tools/g2/test_rgbd_pose_export.py
++++ b/tools/g2/test_rgbd_pose_export.py
+@@ -1036,6 +1036,7 @@ def test_real_cpu_mj_ray_tilted_plane_independent_of_project_unproject(
+     z = np.broadcast_to(
+         np.cos(angle) / (np.cos(angle) - np.sin(angle) * y), (height, width)
+     ).copy()
++    fresh_z = z.copy()
+     if violation == "vertical_flip":
+         z = z[::-1].copy()
+     if violation == "ray_distance":
+@@ -1044,12 +1045,37 @@ def test_real_cpu_mj_ray_tilted_plane_independent_of_project_unproject(
+     segmentation = np.empty((height, width, 2), dtype=np.int32)
+     segmentation[..., 0] = int(mujoco.mjtObj.mjOBJ_GEOM)
+     segmentation[..., 1] = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, "surface")
++    near = model.vis.map.znear * model.stat.extent
++    far = model.vis.map.zfar * model.stat.extent
++    raw_buffer = ((1 - near / fresh_z) / (1 - near / far))[::-1]
++
++    def render(**kwargs):
++        if kwargs.get("segmentation"):
++            return segmentation[::-1]
++        rgb = np.zeros((height, width, 3), dtype=np.uint8)
++        return (rgb, raw_buffer) if kwargs.get("depth") else rgb
++
++    options = mujoco.MjvOption()
++    options.geomgroup[:] = [1, 1, 1, 0, 0, 0]
+     sim = SimpleNamespace(
+         model=model,
+         data=data,
+-        render=lambda **kw: segmentation[::-1],
++        render=render,
+         _render_context_offscreen=SimpleNamespace(
+-            vopt=SimpleNamespace(geomgroup=np.array([1, 1, 1, 0, 0, 0], dtype=np.uint8))
++            vopt=options,
++            con=SimpleNamespace(offSamples=0),
++            scn=SimpleNamespace(
++                flags=mujoco.MjvScene().flags.copy(),
++                ngeom=1,
++                geoms=[
++                    SimpleNamespace(
++                        objtype=int(mujoco.mjtObj.mjOBJ_GEOM),
++                        objid=0,
++                        transparent=False,
++                        rgba=np.ones(4),
++                    )
++                ],
++            ),
+         ),
+     )
+     if violation == "unknown_filters":

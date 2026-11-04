@@ -1,0 +1,54 @@
+{
+  "kind": "synthetic_native_cpu_osmesa_probe_not_server_gate",
+  "baseline_root": "b67bc4ca9a2afb1ff26fac0846f8ee7042a589ab",
+  "mujoco": "3.3.1",
+  "real_data": false,
+  "gpu": false,
+  "files": {
+    "probe.py": {
+      "sha256": "d3ebc5785d8a9da7cf4aeee67d2831957e0f6bc3a81f878114dff201585d3af7",
+      "bytes": 5151
+    },
+    "probe.json": {
+      "sha256": "ff0d4925158ffa2ddebfbb8f8b3216c0a2dceb2bac31e9201bacff96ab7f8d30",
+      "bytes": 4994
+    },
+    "boundary_probe.py": {
+      "sha256": "f36a40b580782b0ed4f1351bb0276194399fa215444d33ce3b0370997ed80d18",
+      "bytes": 2818
+    },
+    "boundary_probe.json": {
+      "sha256": "75953256052363b76a5a2b7d0a9b82574a73b70e7e3bb2f100e36c11e121fd43",
+      "bytes": 550
+    },
+    "boundary_probe.stdout.json": {
+      "sha256": "69c1d9acd6b9b1f3e56c962dbed3a00796a5bb6f9be286f62e48905364650e2b",
+      "bytes": 5555
+    },
+    "native_sim_fixture.py": {
+      "sha256": "4f733ac14f611e13f82ea905b320891f4dba6556a730242da1e8d10010cff534",
+      "bytes": 2061
+    },
+    "engine_ray.c": {
+      "sha256": "388542843b53e4cd127f38700e5b0fb6ca5d0f1f79bdf4ccf7ce886c9c60e93a",
+      "bytes": 39506
+    },
+    "render_gl3.c": {
+      "sha256": "196422ae58773a87a43e485e0e381a950e999f8e45c151662a4cf3dac9c7c7fe",
+      "bytes": 46213
+    },
+    "engine_vis_init.c": {
+      "sha256": "3bc3120cd9e2cc783533e11ad8ff4151f8e0c775eb4b55c2ea8685ecf3bfe884",
+      "bytes": 12622
+    },
+    "engine_vis_visualize.c": {
+      "sha256": "e8bef118c8748c8822fce3d2148b0a02a9a23e085ac8bc170af844e04857f463",
+      "bytes": 94043
+    }
+  },
+  "unfrozen_unsuccessful_exploration": [
+    "frontface_probe.py",
+    "frontface_probe.stdout.json"
+  ],
+  "note": "The original synthetic probe and boundary results have not been modified. The frontface experimental attempt failed due mju_raySkin Python pointer binding and provides no validation result."
+}

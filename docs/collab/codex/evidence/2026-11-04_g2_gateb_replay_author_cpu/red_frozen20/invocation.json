@@ -1,0 +1,38 @@
+{
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "/tmp/psm-g2-gateb-replay-20261104/frozen/test_replay_render_visibility.py",
+    "--basetemp",
+    "/tmp/psm-g2-gateb-replay-20261104/red_frozen20/pytest_tmp",
+    "--junitxml",
+    "/tmp/psm-g2-gateb-replay-20261104/red_frozen20/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-g2-rgbd-stage1",
+  "environment_overrides": {
+    "PYTHONPATH": "/workspace/psm-wma-g2-rgbd-stage1:/tmp/psm-g2-rgbd-stage1-20261104/cpu_extra",
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "LIBGL_ALWAYS_SOFTWARE": "1",
+    "LD_LIBRARY_PATH": "/tmp/psm-g2-gateb-replay-20261104/native/extracted/usr/lib/x86_64-linux-gnu",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_HOME": "/tmp/psm-g2-gateb-replay-20261104/red_frozen20/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-g2-gateb-replay-20261104/red_frozen20/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-g2-gateb-replay-20261104/red_frozen20/cache/xdg"
+  }
+}

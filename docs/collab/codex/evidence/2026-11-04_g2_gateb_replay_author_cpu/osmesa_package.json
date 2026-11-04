@@ -1,0 +1,6 @@
+{
+  "url": "https://deb.debian.org/debian/pool/main/m/mesa/libosmesa6_25.0.7-2+deb13u1_amd64.deb",
+  "bytes": 3197344,
+  "sha256": "d0260a10601b816e3ba5249efa68116d830c8af474b4e92349a0ea8670574cea",
+  "scope": "temporary extraction only, no system package installation"
+}

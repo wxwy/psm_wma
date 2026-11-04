@@ -1,0 +1,822 @@
+{
+  "native_cpu_osmesa": true,
+  "mujoco_version": "3.3.1",
+  "gpu_or_server_data_used": false,
+  "driver": {
+    "vendor": "Mesa",
+    "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+    "version": "4.5 (Compatibility Profile) Mesa 25.0.7-2+deb13u1"
+  },
+  "cases": {
+    "plane": {
+      "wall_s": 0.15437347200349905,
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 5.309392099306365e-07,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "front_face_mesh_samples": 0,
+      "renderer_eligibility": {
+        "fresh_valid_pixels": 9216,
+        "stable_interior_pixels": 8836,
+        "opaque_eligible_pixels": 8836,
+        "selection_uses_cached_depth": false,
+        "fresh_plane_prediction_max_error_m": 0.005,
+        "fresh_neighborhood_center_max_change_m": 0.01,
+        "back_face_culling": true,
+        "near_clip_m": 0.08487637879855683
+      },
+      "rgb_render_diagnostics": {
+        "rgb_vs_rgbd": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "segmentation_before_after": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "render_context": {
+          "geomgroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "sitegroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "vopt_flags": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scene_flags_before": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "scene_flags_after": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "offscreen_samples": 4
+        },
+        "model_visual_fingerprints": {
+          "geom_rgba": {
+            "shape": [
+              1,
+              4
+            ],
+            "dtype": "float32",
+            "sha256": "f2cfb6540f3b404ec64c5912ff97bc8c340964ca0bcf2c28a59f7d13e1fc6d99"
+          },
+          "light_pos": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "19cf58ce85377ea420aa7e53cc829dc8fb1c41fd1ee1b04e9e68f0cdf7c086f3"
+          },
+          "light_dir": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "cf639d4868a9dbde979b7c29a0fcf077ac8aabf5daf99e48dcfbcc1faae0cd9e"
+          },
+          "light_diffuse": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "d6df51bc95c02dbbffb63bab802170482e2a7982f21fddbd52e71fd2abf017ff"
+          },
+          "light_specular": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "c4be0f035fc77ce3b797c6acf4ead43bec2d631e9e4eae87a5a18397bfe5e312"
+          }
+        }
+      }
+    },
+    "tilted_plane": {
+      "wall_s": 0.13368573700427078,
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 0.002162820591624648,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "front_face_mesh_samples": 0,
+      "renderer_eligibility": {
+        "fresh_valid_pixels": 9216,
+        "stable_interior_pixels": 5053,
+        "opaque_eligible_pixels": 5053,
+        "selection_uses_cached_depth": false,
+        "fresh_plane_prediction_max_error_m": 0.005,
+        "fresh_neighborhood_center_max_change_m": 0.01,
+        "back_face_culling": true,
+        "near_clip_m": 0.00599999986588955
+      },
+      "rgb_render_diagnostics": {
+        "rgb_vs_rgbd": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "segmentation_before_after": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "render_context": {
+          "geomgroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "sitegroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "vopt_flags": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scene_flags_before": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "scene_flags_after": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "offscreen_samples": 4
+        },
+        "model_visual_fingerprints": {
+          "geom_rgba": {
+            "shape": [
+              1,
+              4
+            ],
+            "dtype": "float32",
+            "sha256": "f2cfb6540f3b404ec64c5912ff97bc8c340964ca0bcf2c28a59f7d13e1fc6d99"
+          },
+          "light_pos": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "19cf58ce85377ea420aa7e53cc829dc8fb1c41fd1ee1b04e9e68f0cdf7c086f3"
+          },
+          "light_dir": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "cf639d4868a9dbde979b7c29a0fcf077ac8aabf5daf99e48dcfbcc1faae0cd9e"
+          },
+          "light_diffuse": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "d6df51bc95c02dbbffb63bab802170482e2a7982f21fddbd52e71fd2abf017ff"
+          },
+          "light_specular": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "c4be0f035fc77ce3b797c6acf4ead43bec2d631e9e4eae87a5a18397bfe5e312"
+          }
+        }
+      }
+    },
+    "transparent": {
+      "wall_s": 0.17673970100440783,
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 5.309392099306365e-07,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "front_face_mesh_samples": 0,
+      "renderer_eligibility": {
+        "fresh_valid_pixels": 9216,
+        "stable_interior_pixels": 8372,
+        "opaque_eligible_pixels": 5236,
+        "selection_uses_cached_depth": false,
+        "fresh_plane_prediction_max_error_m": 0.005,
+        "fresh_neighborhood_center_max_change_m": 0.01,
+        "back_face_culling": true,
+        "near_clip_m": 0.08487637879855683
+      },
+      "rgb_render_diagnostics": {
+        "rgb_vs_rgbd": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "segmentation_before_after": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "render_context": {
+          "geomgroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "sitegroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "vopt_flags": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scene_flags_before": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "scene_flags_after": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "offscreen_samples": 4
+        },
+        "model_visual_fingerprints": {
+          "geom_rgba": {
+            "shape": [
+              2,
+              4
+            ],
+            "dtype": "float32",
+            "sha256": "2e5ca5d0df132e887da7527dd7dcb1a3b8e9ba2e1f511899a16f6ef88fa0af43"
+          },
+          "light_pos": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "19cf58ce85377ea420aa7e53cc829dc8fb1c41fd1ee1b04e9e68f0cdf7c086f3"
+          },
+          "light_dir": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "cf639d4868a9dbde979b7c29a0fcf077ac8aabf5daf99e48dcfbcc1faae0cd9e"
+          },
+          "light_diffuse": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "d6df51bc95c02dbbffb63bab802170482e2a7982f21fddbd52e71fd2abf017ff"
+          },
+          "light_specular": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "c4be0f035fc77ce3b797c6acf4ead43bec2d631e9e4eae87a5a18397bfe5e312"
+          }
+        }
+      }
+    },
+    "inward": {
+      "wall_s": 0.16564859000209253,
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 5.309392094865473e-07,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "front_face_mesh_samples": 35,
+      "renderer_eligibility": {
+        "fresh_valid_pixels": 9216,
+        "stable_interior_pixels": 7172,
+        "opaque_eligible_pixels": 7172,
+        "selection_uses_cached_depth": false,
+        "fresh_plane_prediction_max_error_m": 0.005,
+        "fresh_neighborhood_center_max_change_m": 0.01,
+        "back_face_culling": true,
+        "near_clip_m": 0.08487637879855683
+      },
+      "rgb_render_diagnostics": {
+        "rgb_vs_rgbd": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "segmentation_before_after": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "render_context": {
+          "geomgroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "sitegroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "vopt_flags": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scene_flags_before": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "scene_flags_after": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "offscreen_samples": 4
+        },
+        "model_visual_fingerprints": {
+          "geom_rgba": {
+            "shape": [
+              2,
+              4
+            ],
+            "dtype": "float32",
+            "sha256": "bc2df51827777054f85e81c61acfdea0db9f761e4cdb35a373fbb8ef4ac9c137"
+          },
+          "light_pos": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "19cf58ce85377ea420aa7e53cc829dc8fb1c41fd1ee1b04e9e68f0cdf7c086f3"
+          },
+          "light_dir": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "cf639d4868a9dbde979b7c29a0fcf077ac8aabf5daf99e48dcfbcc1faae0cd9e"
+          },
+          "light_diffuse": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "d6df51bc95c02dbbffb63bab802170482e2a7982f21fddbd52e71fd2abf017ff"
+          },
+          "light_specular": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "c4be0f035fc77ce3b797c6acf4ead43bec2d631e9e4eae87a5a18397bfe5e312"
+          }
+        }
+      }
+    },
+    "compound": {
+      "wall_s": 0.19338052999955835,
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 1.1197348086522396e-06,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "front_face_mesh_samples": 128,
+      "renderer_eligibility": {
+        "fresh_valid_pixels": 9216,
+        "stable_interior_pixels": 8416,
+        "opaque_eligible_pixels": 8416,
+        "selection_uses_cached_depth": false,
+        "fresh_plane_prediction_max_error_m": 0.005,
+        "fresh_neighborhood_center_max_change_m": 0.01,
+        "back_face_culling": true,
+        "near_clip_m": 0.059809589528338196
+      },
+      "rgb_render_diagnostics": {
+        "rgb_vs_rgbd": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "segmentation_before_after": {
+          "identical": true,
+          "mae": 0.0,
+          "max_abs": 0
+        },
+        "render_context": {
+          "geomgroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "sitegroup": [
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "vopt_flags": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "scene_flags_before": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "scene_flags_after": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "offscreen_samples": 4
+        },
+        "model_visual_fingerprints": {
+          "geom_rgba": {
+            "shape": [
+              1,
+              4
+            ],
+            "dtype": "float32",
+            "sha256": "034f59a80aae1cd27d0bc9528d484e2156bf784bcfba99798ee3549b276339c9"
+          },
+          "light_pos": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "19cf58ce85377ea420aa7e53cc829dc8fb1c41fd1ee1b04e9e68f0cdf7c086f3"
+          },
+          "light_dir": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "sha256": "cf639d4868a9dbde979b7c29a0fcf077ac8aabf5daf99e48dcfbcc1faae0cd9e"
+          },
+          "light_diffuse": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "d6df51bc95c02dbbffb63bab802170482e2a7982f21fddbd52e71fd2abf017ff"
+          },
+          "light_specular": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float32",
+            "sha256": "c4be0f035fc77ce3b797c6acf4ead43bec2d631e9e4eae87a5a18397bfe5e312"
+          }
+        }
+      }
+    }
+  }
+}

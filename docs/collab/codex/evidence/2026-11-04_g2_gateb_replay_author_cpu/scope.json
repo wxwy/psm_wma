@@ -1,0 +1,34 @@
+{
+  "parent": "992cfc2adb3150c573d19206e176bd8a52574949",
+  "formal_root": "a9ffd313770c5344195f415425124a5075e62b2b",
+  "changed": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_G2_GateB_Replay_Visibility_Followup_2026-11-04.md",
+    "tools/g2/rgbd_pose/replay.py",
+    "tools/g2/test_replay_render_visibility.py",
+    "tools/g2/test_rgbd_pose_export.py"
+  ],
+  "protected": {
+    "cosmos-framework": {
+      "before": "160000 commit 1069fe78841228cadbbfbe6afbd767eaed6225da\tcosmos-framework",
+      "after": "160000 commit 1069fe78841228cadbbfbe6afbd767eaed6225da\tcosmos-framework"
+    },
+    "scripts": {
+      "before": "040000 tree 82c53cc83e8f1803f70550b2f620b8dfadefcaef\tscripts",
+      "after": "040000 tree 82c53cc83e8f1803f70550b2f620b8dfadefcaef\tscripts"
+    },
+    "configs": {
+      "before": "040000 tree 334a2ffe1e48d5183951f54a17e0a53f7cc87712\tconfigs",
+      "after": "040000 tree 334a2ffe1e48d5183951f54a17e0a53f7cc87712\tconfigs"
+    },
+    "examples": {
+      "before": "ABSENT",
+      "after": "ABSENT"
+    },
+    "third_party": {
+      "before": "040000 tree d01633d083298fc5245b5bc97677c5b297700c31\tthird_party",
+      "after": "040000 tree d01633d083298fc5245b5bc97677c5b297700c31\tthird_party"
+    }
+  }
+}

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="20" time="4.698" timestamp="2026-11-04T05:42:50.668727+00:00" hostname="8b544c1107bc"><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[plane-kwargs0]" time="0.454" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[tilted_plane-kwargs1]" time="0.176" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[opaque-kwargs2]" time="0.193" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[outward-kwargs3]" time="0.235" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs4]" time="0.248"><failure message="AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 40, ...}&#10;assert 'FAIL' == 'PASS'&#10;  &#10;  - PASS&#10;  + FAIL">kind = 'inward', kwargs = {}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+&gt;       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 40, ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tools/g2/test_replay_render_visibility.py:232: AssertionError</failure></testcase><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs5]" time="0.222" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs6]" time="0.256"><failure message="AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 43, ...}&#10;assert 'FAIL' == 'PASS'&#10;  &#10;  - PASS&#10;  + FAIL">kind = 'inward', kwargs = {'rotation': '9 -12 13'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+&gt;       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 43, ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tools/g2/test_replay_render_visibility.py:232: AssertionError</failure></testcase><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs7]" time="0.203"><failure message="AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 43, ...}&#10;assert 'FAIL' == 'PASS'&#10;  &#10;  - PASS&#10;  + FAIL">kind = 'inward', kwargs = {'rotation': '5 7 13', 'scale': '1.4 .8 .7'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+&gt;       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 43, ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tools/g2/test_replay_render_visibility.py:232: AssertionError</failure></testcase><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[compound-kwargs8]" time="0.215" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[compound-kwargs9]" time="0.207" /><testcase classname="" name="test_native_render_depth_and_visible_ray_surfaces_agree[transparent-kwargs10]" time="0.312" /><testcase classname="" name="test_only_transparent_segmentation_cannot_create_geometry_pass" time="0.257" /><testcase classname="" name="test_wrong_cached_depth_is_rejected_without_cherry_picking[constant]" time="0.167" /><testcase classname="" name="test_wrong_cached_depth_is_rejected_without_cherry_picking[range]" time="0.177" /><testcase classname="" name="test_wrong_cached_depth_is_rejected_without_cherry_picking[vertical_flip]" time="0.169" /><testcase classname="" name="test_wrong_camera_pose_is_not_accepted[mirrored]" time="0.173" /><testcase classname="" name="test_wrong_camera_pose_is_not_accepted[translated]" time="0.179" /><testcase classname="" name="test_software_render_diagnostics_are_scalar_json_and_rgb_modes_agree" time="0.239" /><testcase classname="" name="test_rgb_diagnostics_expose_mode_or_segmentation_fault[depth_mode-rgb_vs_rgbd]" time="0.186" /><testcase classname="" name="test_rgb_diagnostics_expose_mode_or_segmentation_fault[segmentation-segmentation_before_after]" time="0.185" /></testsuite></testsuites>

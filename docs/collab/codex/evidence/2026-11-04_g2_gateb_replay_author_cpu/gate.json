@@ -1,0 +1,34 @@
+{
+  "formal_root": "a9ffd313770c5344195f415425124a5075e62b2b",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "status": "AUTHOR_CPU_PASS_NOT_PHYSICAL_ACCEPTANCE",
+  "tests": 107,
+  "distinct_tests": 107,
+  "legacy": 83,
+  "native_software_render": 24,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "frozen20_baseline": {
+    "tests": 20,
+    "failed": 9,
+    "passed": 11,
+    "expected_red": true
+  },
+  "ruff_version": "0.12.7",
+  "ruff_check": "PASS",
+  "ruff_format": "PASS",
+  "ast_compile_files": 10,
+  "legacy_assertions_unchanged": true,
+  "server_gate_b": "FAIL_PRESERVED_NOT_RERUN",
+  "server_rgb_root_cause": "UNRESOLVED_DIAGNOSTICS_ADDED",
+  "actual_gpu_or_robocasa_or_server_data": false,
+  "evidence_limits": [
+    "CPU Mesa software synthetic scenes only; no DS/GPT independent test pass",
+    "Eligibility and front-face mesh protocol require fresh Code Gate",
+    "No proof that synthetic artifacts explain all six real Gate B failures",
+    "No source RGB rendering parameter changes or threshold relaxation",
+    "No V3 promotion, GateC, N100, server replay or training authorization"
+  ]
+}

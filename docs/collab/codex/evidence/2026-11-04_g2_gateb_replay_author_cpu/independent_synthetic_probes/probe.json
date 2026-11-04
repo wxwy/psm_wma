@@ -1,0 +1,221 @@
+{
+  "native_cpu_osmesa": true,
+  "mujoco_version": "3.3.1",
+  "real_data": false,
+  "cases": {
+    "plane": {
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 5.309392094865473e-07,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "rgb_depth_mode_mae": 0.0,
+      "rgb_segmentation_cycle_mae": 0.0,
+      "near": 0.08487637879855683,
+      "far": 254.62914208707534,
+      "center_depth": 1.9999994690607905,
+      "center_segmentation": [
+        5,
+        0
+      ],
+      "context_cull_face": 1,
+      "offscreen_samples": 4,
+      "render_scene": [
+        {
+          "objid": 0,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        }
+      ]
+    },
+    "opaque": {
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 5.309392094865473e-07,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "rgb_depth_mode_mae": 0.0,
+      "rgb_segmentation_cycle_mae": 0.0,
+      "near": 0.08487637879855683,
+      "far": 254.62914208707534,
+      "center_depth": 1.1500002028945,
+      "center_segmentation": [
+        5,
+        1
+      ],
+      "context_cull_face": 1,
+      "offscreen_samples": 4,
+      "render_scene": [
+        {
+          "objid": 0,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        },
+        {
+          "objid": 1,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        }
+      ]
+    },
+    "transparent": {
+      "status": "FAIL",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 0.8499994690607906,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "rgb_depth_mode_mae": 0.0,
+      "rgb_segmentation_cycle_mae": 0.0,
+      "near": 0.08487637879855683,
+      "far": 254.62914208707534,
+      "center_depth": 1.9999994690607905,
+      "center_segmentation": [
+        5,
+        1
+      ],
+      "context_cull_face": 1,
+      "offscreen_samples": 4,
+      "render_scene": [
+        {
+          "objid": 0,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        },
+        {
+          "objid": 1,
+          "type": 5,
+          "alpha": 0.30000001192092896,
+          "transparent": true
+        }
+      ]
+    },
+    "mesh_outward": {
+      "status": "PASS",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 5.309392094865473e-07,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "rgb_depth_mode_mae": 0.0,
+      "rgb_segmentation_cycle_mae": 0.0,
+      "near": 0.08487637879855683,
+      "far": 254.62914208707534,
+      "center_depth": 1.1500002028945,
+      "center_segmentation": [
+        5,
+        1
+      ],
+      "context_cull_face": 1,
+      "offscreen_samples": 4,
+      "render_scene": [
+        {
+          "objid": 0,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        },
+        {
+          "objid": 1,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        }
+      ]
+    },
+    "mesh_inward": {
+      "status": "FAIL",
+      "matching_geom_samples": 128,
+      "visibility_filter_mismatches": 0,
+      "max_abs_z_error_m": 0.29999972127563934,
+      "atol_m": 0.01,
+      "min_samples": 16,
+      "geomgroup": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "static_geoms_included": true,
+      "bodyexclude": -1,
+      "distance_converted_to_optical_Z": true,
+      "rgb_depth_mode_mae": 0.0,
+      "rgb_segmentation_cycle_mae": 0.0,
+      "near": 0.08487637879855683,
+      "far": 254.62914208707534,
+      "center_depth": 1.4499997153151754,
+      "center_segmentation": [
+        5,
+        1
+      ],
+      "context_cull_face": 1,
+      "offscreen_samples": 4,
+      "render_scene": [
+        {
+          "objid": 0,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        },
+        {
+          "objid": 1,
+          "type": 5,
+          "alpha": 1.0,
+          "transparent": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,100 @@
+....F.FF............                                                     [100%]
+=================================== FAILURES ===================================
+___ test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs4] ____
+
+kind = 'inward', kwargs = {}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 40, ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tools/g2/test_replay_render_visibility.py:232: AssertionError
+___ test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs6] ____
+
+kind = 'inward', kwargs = {'rotation': '9 -12 13'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 43, ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tools/g2/test_replay_render_visibility.py:232: AssertionError
+___ test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs7] ____
+
+kind = 'inward', kwargs = {'rotation': '5 7 13', 'scale': '1.4 .8 .7'}
+
+    @pytest.mark.parametrize(
+        ("kind", "kwargs"),
+        [
+            ("plane", {}),
+            ("tilted_plane", {}),
+            ("opaque", {}),
+            ("outward", {}),
+            ("inward", {}),
+            ("inward", {"cull_face": False}),
+            ("inward", {"rotation": "9 -12 13"}),
+            ("inward", {"scale": "1.4 .8 .7", "rotation": "5 7 13"}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 0}),
+            ("compound", {"rotation": "0 0 13", "offsamples": 4}),
+            ("transparent", {}),
+        ],
+    )
+    def test_native_render_depth_and_visible_ray_surfaces_agree(kind, kwargs):
+        with software_scene(kind, **kwargs) as sim:
+            result = sim.check()
+>       assert result["status"] == "PASS", result
+E       AssertionError: {'atol_m': 0.01, 'bodyexclude': -1, 'distance_converted_to_optical_Z': True, 'front_face_mesh_samples': 43, ...}
+E       assert 'FAIL' == 'PASS'
+E         
+E         - PASS
+E         + FAIL
+
+tools/g2/test_replay_render_visibility.py:232: AssertionError
+=========================== short test summary info ============================
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs4]
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs6]
+FAILED ../../dev::test_native_render_depth_and_visible_ray_surfaces_agree[inward-kwargs7]
+3 failed, 17 passed in 4.70s

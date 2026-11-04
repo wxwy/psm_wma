@@ -1,0 +1,14 @@
+{
+  "returncode": 0,
+  "tests": 83,
+  "distinct": 83,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_unchanged": true,
+  "identity_unchanged": true,
+  "native_cpu_software_render": false,
+  "real_source_or_server_data": false,
+  "gpu_used": false,
+  "expected_baseline_red": false
+}
