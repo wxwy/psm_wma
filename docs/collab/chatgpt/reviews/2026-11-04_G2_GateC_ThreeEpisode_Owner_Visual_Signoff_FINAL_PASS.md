@@ -43,6 +43,15 @@ Server preview paths:
 
 **Closure result:** **G2 Stage-1 Gate C is now PASS for the exact three representative complete episodes**. The earlier machine report remains literally `AUTOMATED_S1_S3_PASS_VISUAL_PENDING` as its historically correct snapshot; this later independent human sign-off completes the acceptance chain. Likewise the original pre-v2 photometric-hard Gate B failure report is preserved as a historical verdict, not overwritten.
 
+## Independent server-side Owner review sidecar
+
+A **new** server-local JSON signoff was created after the human statement, without modifying the earlier machine `review_pending.json` or per-episode artifacts:
+
+- Server-local path: `/tmp/g2_gate_c_s1_s3_3eb8_20261104/visual/owner_visual_acceptance_20261104.json`
+- SHA256: `faa553c8acc1eb922a90ed929dc7487826aa9d0833c2254359d98123c1a1fbd7`
+- `external_visual_status=PASS`, `final_bounded_gate_c_status=PASS`, `verified_by_tool=false`, with exact 3 task/ID/frame/camera bindings and hashed previews/native reports.
+- Formal source checkout remained `3eb8b334`, clean, after signoff; previous machine report remains historically `VISUAL_PENDING`.
+
 ## Data, limits, next gate
 
 - Native compressed sensor payload: **46,507,310 bytes** (~46.5 MB, 7.2099× raw-array compression), with complete committed output at `/mnt/data1/data_v2_0617/g2_rgbd_pose/gpt_gate_c_candidate_s0_20261104`.
