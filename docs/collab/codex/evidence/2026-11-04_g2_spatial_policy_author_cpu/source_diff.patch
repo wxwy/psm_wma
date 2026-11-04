@@ -1,0 +1,584 @@
+diff --git a/tools/g2/README.md b/tools/g2/README.md
+index 133efb89..79570be3 100644
+--- a/tools/g2/README.md
++++ b/tools/g2/README.md
+@@ -17,7 +17,13 @@ RoboCasa/robosuite/MuJoCo environment, assets and original recordings on the ser
+ of physical alignment. Gate B/C must establish that proof.
+ 
+ - [Input/output schema](rgbd_pose_schema.md)
+-- [Design, commands, thresholds, recovery and Gate B/C runbook](../../docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md)
++- [Current spatial-v2 acceptance and bounded Gate C plan](../../docs/build/PSM-WMA_G2_Spatial_Acceptance_v2_and_GateC_Plan_2026-11-04.md)
++- [Original implementation/recovery runbook (historical RGB hard gate)](../../docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md)
++
++The spatial-v2 verifier preserves re-rendered RGB metrics as nonblocking
++diagnostics. Automatic spatial PASS is separate from external human RGB/Depth
++review; an `--owner-visual-review-ref` citation never automatically attests PASS.
++Historical reports remain unchanged.
+ 
+ No default N/seed selection exists. Supply one explicit episode or the exact
+ existing training membership manifest. A completed cache is reusable only after
+diff --git a/tools/g2/test_rgbd_pose_export.py b/tools/g2/test_rgbd_pose_export.py
+index 1978a69f..7c8728e9 100644
+--- a/tools/g2/test_rgbd_pose_export.py
++++ b/tools/g2/test_rgbd_pose_export.py
+@@ -981,7 +981,7 @@ def test_verifier_text_statistics_mask_pose_and_half_second_offset(tmp_path):
+         rgb_reader=reader,
+     )
+     assert report["geometry_gate"] == "PASS"
+-    assert report["status"] == "SYNTHETIC_REPLAY_VERIFIED"
++    assert report["status"] == "SYNTHETIC_SPATIAL_REPLAY_CHECKS_PASS"
+     assert report["timestamp_diagnostic"]["min_offset_s"] == pytest.approx(0.5)
+     assert report["camera_pose_motion"][src.CAMERAS[2]]["changed"] is True
+     assert report["camera_pose_motion"][src.CAMERAS[0]]["changed"] is False
+diff --git a/tools/g2/test_spatial_photometric_policy.py b/tools/g2/test_spatial_photometric_policy.py
+new file mode 100644
+index 00000000..3dc4d55a
+--- /dev/null
++++ b/tools/g2/test_spatial_photometric_policy.py
+@@ -0,0 +1,341 @@
++"""Owner spatial-v2 contract on synthetic caches and explicit replay doubles.
++
++No real images, server files, renderer, RoboCasa or GPU are used. Native-kind
++fixtures only exercise the CLI protocol; they are not physical acceptance.
++"""
++
++import json
++from pathlib import Path
++
++import numpy as np
++import pytest
++
++from tools.g2 import verify_robocasa_rgbd_pose as checker
++from tools.g2.rgbd_pose import cache
++from tools.g2.test_rgbd_pose_export import FakeReplay, bound, exported
++
++POLICY = "g2_stage1_spatial_v2"
++OWNER_REFERENCE = (
++    "https://github.com/wxwy/psm_wma/blob/"
++    "f63454610ec2b95617c670444875339034c3c1c7/"
++    "docs/collab/chatgpt/reviews/"
++    "2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md"
++)
++
++
++@pytest.fixture(autouse=True)
++def reset_boundary_double():
++    FakeReplay.created, FakeReplay.closed = [], []
++
++
++def reader(delta=0):
++    return lambda ref, frame: np.full((8, 8, 3), 7 + frame + delta, np.uint8)
++
++
++def replay_report(tmp_path, *, backend=FakeReplay, delta=0, **kwargs):
++    raw, flat, _, directory = exported(tmp_path)
++    return checker.verify(
++        directory,
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=backend,
++        rgb_reader=reader(delta),
++        **kwargs,
++    )
++
++
++@pytest.mark.parametrize("delta", [0, 5, 6, 200])
++def test_photometric_threshold_is_reported_without_blocking_spatial_checks(
++    tmp_path, delta
++):
++    report = replay_report(tmp_path, delta=delta)
++    assert report["acceptance_policy"] == POLICY
++    assert (
++        "f63454610ec2b95617c670444875339034c3c1c7"
++        in report["acceptance_policy_authority"]
++    )
++    assert report["spatial_alignment_gate"] == report["geometry_gate"] == "PASS"
++    assert report["status"] == "SYNTHETIC_SPATIAL_REPLAY_CHECKS_PASS"
++    photo = report["photometric_diagnostic"]
++    assert photo["status"] == ("PASS" if delta <= 5 else "FAIL")
++    assert photo["blocking"] is False and photo["mae_max"] == 5
++    cameras = [c for f in report["frames"] for c in f["cameras"].values()]
++    assert photo["checked_camera_frames"] == len(cameras) == 6
++    assert photo["failed_camera_frames"] == (0 if delta <= 5 else 6)
++    assert all(
++        c["rgb"]["mae"] == delta and "psnr_db" in c["rgb"] and "ssim" in c["rgb"]
++        for c in cameras
++    )
++    assert all(c["spatial_alignment_gate"] == "PASS" for c in cameras)
++    assert report["thresholds"] == {
++        "geometry_atol_m": 0.01,
++        "min_ray_samples": 16,
++        "rgb_mae_max": 5.0,
++    }
++
++
++def test_mixed_photometric_results_keep_each_original_metric(tmp_path):
++    raw, flat, _, directory = exported(tmp_path)
++
++    def mixed(ref, frame):
++        delta = 50 if frame == 1 and "agentview_left" in ref["feature"] else 0
++        return np.full((8, 8, 3), 7 + frame + delta, np.uint8)
++
++    report = checker.verify(
++        directory,
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=FakeReplay,
++        rgb_reader=mixed,
++    )
++    assert report["spatial_alignment_gate"] == "PASS"
++    assert report["photometric_diagnostic"]["failed_camera_frames"] == 1
++    assert report["photometric_diagnostic"]["status"] == "FAIL"
++    assert sorted(
++        c["rgb"]["mae"] for f in report["frames"] for c in f["cameras"].values()
++    ) == [0, 0, 0, 0, 0, 50]
++
++
++@pytest.mark.parametrize(
++    "fault",
++    [
++        "runtime",
++        "mask",
++        "depth",
++        "K",
++        "T_world_camera_gl",
++        "T_world_camera_cv",
++        "ray_fail",
++        "ray_inconclusive",
++        "projection",
++    ],
++)
++@pytest.mark.parametrize("delta", [0, 50])
++def test_spatial_failures_remain_blocking_independently_of_photometry(
++    tmp_path, monkeypatch, fault, delta
++):
++    class Broken(FakeReplay):
++        def render(self, camera):
++            value = super().render(camera)
++            if fault == "mask":
++                value["valid"][0, 0] = True
++            elif fault == "depth":
++                value["depth_m"] += 0.2
++            elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
++                value[fault][0, 0] += 0.1
++            return value
++
++        def ray_check(self, *args, **kwargs):
++            assert kwargs == {"atol_m": 0.01, "min_samples": 16}
++            if fault in ("ray_fail", "ray_inconclusive"):
++                return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
++            return super().ray_check(*args, **kwargs)
++
++    if fault == "runtime":
++        Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
++    if fault == "projection":
++        monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
++    report = replay_report(tmp_path, backend=Broken, delta=delta)
++    assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
++    assert report["geometry_gate"] == "FAIL_OR_INCONCLUSIVE"
++    assert report["status"] == "SPATIAL_REPLAY_CHECKS_NOT_ACCEPTED"
++    assert report["photometric_diagnostic"]["status"] == (
++        "PASS" if delta == 0 else "FAIL"
++    )
++
++
++@pytest.mark.parametrize(
++    "fault", ["source_changed", "cache_corrupt", "rgb_unreadable", "rgb_shape"]
++)
++def test_source_integrity_and_rgb_input_abi_are_not_waived(tmp_path, fault):
++    raw, flat, source, directory = exported(tmp_path)
++    rgb_reader = reader(50)
++    if fault == "source_changed":
++        with Path(source.witnesses[0]["path"]).open("ab") as stream:
++            stream.write(b"changed synthetic source")
++    elif fault == "cache_corrupt":
++        path = next(directory.glob("cameras/*/*.npz"))
++        path.write_bytes(path.read_bytes() + b"corrupt")
++    elif fault == "rgb_unreadable":
++
++        def rgb_reader(ref, frame):
++            raise OSError("synthetic RGB input unavailable")
++    else:
++
++        def rgb_reader(ref, frame):
++            return np.zeros((7, 8, 3), dtype=np.uint8)
++
++    with pytest.raises((OSError, ValueError)):
++        checker.verify(
++            directory,
++            replay=True,
++            raw_root=raw,
++            flat_root=flat,
++            state_index_policy="frame_index",
++            replay_factory=FakeReplay,
++            rgb_reader=rgb_reader,
++        )
++
++
++@pytest.mark.parametrize("reference", [None, OWNER_REFERENCE])
++def test_owner_review_reference_never_becomes_automatic_visual_acceptance(
++    tmp_path, reference
++):
++    report = replay_report(tmp_path, delta=50, owner_visual_review_ref=reference)
++    visual = report["owner_visual_review"]
++    assert visual["status"] == (
++        "NOT_PROVIDED" if reference is None else "EXTERNAL_RECORD_REFERENCED"
++    )
++    assert visual["provenance_reference"] == reference
++    assert visual["verified_by_tool"] is False
++    assert "PASS" not in visual["status"]
++    assert (
++        report["spatial_alignment_scope"]
++        == "AUTOMATED_CHECKS_ONLY_VISUAL_REVIEW_EXTERNAL"
++    )
++
++
++def test_offline_cache_and_external_review_cannot_claim_spatial_execution(tmp_path):
++    _, _, _, directory = exported(tmp_path)
++    report = checker.verify(directory, owner_visual_review_ref=OWNER_REFERENCE)
++    assert report["status"] == "OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE"
++    assert report["spatial_alignment_gate"] == report["geometry_gate"] == "NOT_EXECUTED"
++    assert report["photometric_diagnostic"]["status"] == "NOT_EXECUTED"
++    assert report["owner_visual_review"]["verified_by_tool"] is False
++
++
++@pytest.mark.parametrize("reference", [True, ""])
++def test_owner_reference_must_be_explicit_text_not_a_checkbox(tmp_path, reference):
++    with pytest.raises(ValueError, match="review reference"):
++        replay_report(tmp_path, owner_visual_review_ref=reference)
++
++
++@pytest.mark.parametrize("delta", [0, 50])
++def test_native_cli_protocol_returns_new_spatial_status_and_preserves_old_report(
++    tmp_path, monkeypatch, capsys, delta
++):
++    # Explicit native-kind boundary double: tests exit policy, never a real replay.
++    class NativeProtocolDouble(FakeReplay):
++        identity = dict(
++            FakeReplay.identity, kind="official_state_replay", cpu_test_double=True
++        )
++
++    raw, flat, source = bound(tmp_path)
++    exported_result = cache.export_episode(
++        tmp_path / "cache",
++        source,
++        [0, 1, 3],
++        storage="uint16_mm",
++        chunk_frames=2,
++        recipe={"synthetic": True},
++        replay_factory=NativeProtocolDouble,
++    )
++    directory = Path(exported_result["directory"])
++    legacy_path = tmp_path / "legacy_report.json"
++    legacy = b'{"status":"PHYSICAL_REPLAY_NOT_ACCEPTED","geometry_gate":"FAIL_OR_INCONCLUSIVE"}\n'
++    legacy_path.write_bytes(legacy)
++    report_path = tmp_path / "new_spatial_report.json"
++    original_verify = checker.verify
++
++    def verify_with_boundary(*args, **kwargs):
++        return original_verify(
++            *args,
++            **kwargs,
++            replay_factory=NativeProtocolDouble,
++            rgb_reader=reader(delta),
++        )
++
++    monkeypatch.setattr(checker, "verify", verify_with_boundary)
++    command = [
++        "--episode-dir",
++        str(directory),
++        "--report",
++        str(report_path),
++        "--replay",
++        "--raw-root",
++        str(raw),
++        "--flat-root",
++        str(flat),
++        "--state-index-policy",
++        "frame_index",
++        "--owner-visual-review-ref",
++        OWNER_REFERENCE,
++    ]
++    assert checker.main(command) == 0
++    report = json.loads(report_path.read_text())
++    assert report["status"] == "SPATIAL_REPLAY_CHECKS_PASS"
++    assert report["status"] not in {
++        "PHYSICAL_REPLAY_PASS",
++        "PHYSICAL_REPLAY_NOT_ACCEPTED",
++    }
++    assert report["acceptance_policy"] == POLICY
++    assert report["photometric_diagnostic"]["status"] == (
++        "PASS" if delta == 0 else "FAIL"
++    )
++    assert report["owner_visual_review"]["verified_by_tool"] is False
++    assert legacy_path.read_bytes() == legacy
++    before = report_path.read_bytes()
++    with pytest.raises(ValueError, match="new"):
++        checker.main(command)
++    assert report_path.read_bytes() == before
++    capsys.readouterr()
++
++
++def test_cli_error_report_retains_new_policy_and_non_success(tmp_path, capsys):
++    directory = tmp_path / "missing"
++    directory.mkdir()
++    output = tmp_path / "new_failure.json"
++    assert (
++        checker.main(
++            [
++                "--episode-dir",
++                str(directory),
++                "--report",
++                str(output),
++                "--owner-visual-review-ref",
++                OWNER_REFERENCE,
++            ]
++        )
++        == 1
++    )
++    result = json.loads(output.read_text())
++    assert result["acceptance_policy"] == POLICY
++    assert result["spatial_alignment_gate"] == "NOT_ACCEPTED"
++    assert result["status"] == "VERIFICATION_FAILED"
++    assert result["photometric_diagnostic"]["status"] == "NOT_EXECUTED"
++    assert result["owner_visual_review"]["verified_by_tool"] is False
++    capsys.readouterr()
++
++
++@pytest.mark.parametrize("threshold", ["nan", "inf", "0"])
++def test_invalid_threshold_still_writes_finite_non_success_json(
++    tmp_path, capsys, threshold
++):
++    directory = tmp_path / "missing"
++    directory.mkdir()
++    output = tmp_path / "invalid_threshold.json"
++    assert (
++        checker.main(
++            [
++                "--episode-dir",
++                str(directory),
++                "--report",
++                str(output),
++                "--rgb-mae-max",
++                threshold,
++            ]
++        )
++        == 1
++    )
++    result = json.loads(output.read_text())
++    assert result["status"] == "VERIFICATION_FAILED"
++    assert result["spatial_alignment_gate"] == "NOT_ACCEPTED"
++    assert result["photometric_diagnostic"]["status"] == "NOT_EXECUTED"
++    expected = 0 if threshold == "0" else None
++    assert result["photometric_diagnostic"]["mae_max"] == expected
++    json.dumps(result, allow_nan=False)
++    capsys.readouterr()
+diff --git a/tools/g2/verify_robocasa_rgbd_pose.py b/tools/g2/verify_robocasa_rgbd_pose.py
+index a475d0d2..49aff911 100644
+--- a/tools/g2/verify_robocasa_rgbd_pose.py
++++ b/tools/g2/verify_robocasa_rgbd_pose.py
+@@ -3,6 +3,8 @@
+ Offline cache integrity is not physical geometry acceptance. --replay additionally
+ checks original RGB, state restoration, per-frame camera matrices, fresh depth and
+ independent, renderer-filtered mj_ray geometry. No RGB/depth images are exported.
++Under the Owner's spatial-v2 policy, re-rendered RGB photometry is diagnostic.
++Automatic spatial checks do not attest to a human RGB/Depth visual inspection.
+ """
+ 
+ from __future__ import annotations
+@@ -19,6 +21,35 @@ from .rgbd_pose.geometry import depth_statistics, pose_motion, rgb_metrics
+ from .rgbd_pose.replay import Replay, original_rgb, reprojection_error
+ from .rgbd_pose.source import Episode, load_episode, verify_witnesses
+ 
++ACCEPTANCE_POLICY = "g2_stage1_spatial_v2"
++POLICY_AUTHORITY = (
++    "https://github.com/wxwy/psm_wma/blob/"
++    "f63454610ec2b95617c670444875339034c3c1c7/"
++    "docs/collab/chatgpt/reviews/"
++    "2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md"
++)
++SPATIAL_SCOPE = "AUTOMATED_CHECKS_ONLY_VISUAL_REVIEW_EXTERNAL"
++
++
++def _owner_visual_review(reference):
++    """Record external provenance without claiming its author, scope or verdict."""
++    return {
++        "status": "EXTERNAL_RECORD_REFERENCED" if reference else "NOT_PROVIDED",
++        "provenance_reference": reference or None,
++        "verified_by_tool": False,
++    }
++
++
++def _photometric_diagnostic(mae_max):
++    return {
++        "status": "NOT_EXECUTED",
++        "blocking": False,
++        # Invalid CLI thresholds must still allow a finite failure report.
++        "mae_max": mae_max if np.isfinite(mae_max) else None,
++        "checked_camera_frames": 0,
++        "failed_camera_frames": 0,
++    }
++
+ 
+ def verify(
+     directory,
+@@ -32,6 +63,7 @@ def verify(
+     geometry_atol_m=0.01,
+     min_ray_samples=16,
+     rgb_mae_max=5.0,
++    owner_visual_review_ref=None,
+     replay_factory=Replay,
+     rgb_reader=original_rgb,
+ ):
+@@ -42,6 +74,11 @@ def verify(
+         raise ValueError("numeric verification tolerances must be finite and positive")
+     if type(min_ray_samples) is not int or not 1 <= min_ray_samples <= 128:
+         raise ValueError("min_ray_samples must be in 1..128")
++    if owner_visual_review_ref is not None and (
++        not isinstance(owner_visual_review_ref, str)
++        or not owner_visual_review_ref.strip()
++    ):
++        raise ValueError("owner review reference must be nonempty text, not a checkbox")
+     directory = Path(directory)
+     manifest, rows = verify_episode(directory)
+     spec = manifest["identity"]
+@@ -57,6 +94,12 @@ def verify(
+         ],
+         "depth_quantization_max_abs_m": manifest["quantization_max_abs_m"],
+         "geometry_gate": "NOT_EXECUTED",
++        "acceptance_policy": ACCEPTANCE_POLICY,
++        "acceptance_policy_authority": POLICY_AUTHORITY,
++        "spatial_alignment_gate": "NOT_EXECUTED",
++        "spatial_alignment_scope": SPATIAL_SCOPE,
++        "photometric_diagnostic": _photometric_diagnostic(rgb_mae_max),
++        "owner_visual_review": _owner_visual_review(owner_visual_review_ref),
+         "runtime_at_export": manifest["runtime"],
+         "thresholds": {
+             "geometry_atol_m": geometry_atol_m,
+@@ -96,9 +139,9 @@ def verify(
+     ):
+         raise ValueError("physical replay source binding differs from committed cache")
+     backend = replay_factory(source)
+-    passed = backend.identity == manifest["runtime"]
++    spatial_passed = backend.identity == manifest["runtime"]
+     report["runtime_at_replay"] = backend.identity
+-    report["runtime_matches_export"] = passed
++    report["runtime_matches_export"] = spatial_passed
+     transforms, offsets = {c: [] for c in spec["cameras"]}, []
+     by_frame = {row["frame_index"]: row for row in rows}
+     try:
+@@ -120,6 +163,11 @@ def verify(
+                 saved = cached_sample(directory, manifest, row, camera)
+                 original = rgb_reader(source.rgb[camera], row["source_rgb_frame_index"])
+                 metrics = rgb_metrics(original, actual["rgb"])
++                photometric_passed = metrics["mae"] <= rgb_mae_max
++                report["photometric_diagnostic"]["checked_camera_frames"] += 1
++                report["photometric_diagnostic"]["failed_camera_frames"] += int(
++                    not photometric_passed
++                )
+                 same_mask = np.array_equal(saved["valid"], actual["valid"])
+                 valid = saved["valid"] & actual["valid"]
+                 depth_error = (
+@@ -142,19 +190,20 @@ def verify(
+                 quantization_tolerance = max(
+                     1e-5, manifest["quantization_max_abs_m"] + 1e-7
+                 )
+-                camera_pass = (
++                spatial_camera_pass = (
+                     same_mask
+                     and depth_error is not None
+                     and depth_error <= quantization_tolerance
+                     and max(matrix_errors.values()) <= 1e-5
+-                    and metrics["mae"] <= rgb_mae_max
+                     and geometry["status"] == "PASS"
+                     and projection is not None
+                     and projection <= 1e-7
+                 )
+-                passed = passed and camera_pass
++                spatial_passed = spatial_passed and spatial_camera_pass
+                 frame_report["cameras"][camera] = {
+-                    "status": "PASS" if camera_pass else "FAIL",
++                    "status": "PASS" if spatial_camera_pass else "FAIL",
++                    "spatial_alignment_gate": "PASS" if spatial_camera_pass else "FAIL",
++                    "photometric_diagnostic": "PASS" if photometric_passed else "FAIL",
+                     "rgb": metrics,
+                     "depth": depth_statistics(saved["depth_m"], saved["valid"]),
+                     "valid_mask_matches_replay": same_mask,
+@@ -181,11 +230,22 @@ def verify(
+     report["evidence_kind"] = (
+         "SERVER_NATIVE_REPLAY" if native else "CPU_BOUNDARY_DOUBLE"
+     )
+-    report["geometry_gate"] = "PASS" if passed else "FAIL_OR_INCONCLUSIVE"
++    # Keep the old field as an automatic-spatial alias, explicitly versioned by
++    # acceptance_policy. Never rewrite/relabel reports produced by the old tool.
++    report["geometry_gate"] = report["spatial_alignment_gate"] = (
++        "PASS" if spatial_passed else "FAIL_OR_INCONCLUSIVE"
++    )
++    report["photometric_diagnostic"]["status"] = (
++        "FAIL" if report["photometric_diagnostic"]["failed_camera_frames"] else "PASS"
++    )
+     report["status"] = (
+-        ("PHYSICAL_REPLAY_PASS" if native else "SYNTHETIC_REPLAY_VERIFIED")
+-        if passed
+-        else "PHYSICAL_REPLAY_NOT_ACCEPTED"
++        (
++            "SPATIAL_REPLAY_CHECKS_PASS"
++            if native
++            else "SYNTHETIC_SPATIAL_REPLAY_CHECKS_PASS"
++        )
++        if spatial_passed
++        else "SPATIAL_REPLAY_CHECKS_NOT_ACCEPTED"
+     )
+     return report
+ 
+@@ -210,7 +270,16 @@ def main(argv=None):
+     )
+     parser.add_argument("--geometry-atol-m", type=float, default=0.01)
+     parser.add_argument("--min-ray-samples", type=int, default=16)
+-    parser.add_argument("--rgb-mae-max", type=float, default=5.0)
++    parser.add_argument(
++        "--rgb-mae-max",
++        type=float,
++        default=5.0,
++        help="photometric diagnostic threshold only; does not gate spatial checks",
++    )
++    parser.add_argument(
++        "--owner-visual-review-ref",
++        help="external review provenance only; never automatically asserts visual PASS",
++    )
+     args = parser.parse_args(argv)
+     report_path = args.report.resolve()
+     if report_path.exists() or report_path.is_relative_to(args.episode_dir.resolve()):
+@@ -229,12 +298,19 @@ def main(argv=None):
+             geometry_atol_m=args.geometry_atol_m,
+             min_ray_samples=args.min_ray_samples,
+             rgb_mae_max=args.rgb_mae_max,
++            owner_visual_review_ref=args.owner_visual_review_ref,
+         )
+     except Exception as exc:
+         result = {
+             "schema": SCHEMA,
+             "status": "VERIFICATION_FAILED",
+             "geometry_gate": "NOT_ACCEPTED",
++            "acceptance_policy": ACCEPTANCE_POLICY,
++            "acceptance_policy_authority": POLICY_AUTHORITY,
++            "spatial_alignment_gate": "NOT_ACCEPTED",
++            "spatial_alignment_scope": SPATIAL_SCOPE,
++            "photometric_diagnostic": _photometric_diagnostic(args.rgb_mae_max),
++            "owner_visual_review": _owner_visual_review(args.owner_visual_review_ref),
+             "error_type": type(exc).__name__,
+             "error": str(exc),
+         }
+@@ -243,7 +319,7 @@ def main(argv=None):
+     return (
+         0
+         if result["status"]
+-        in {"OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE", "PHYSICAL_REPLAY_PASS"}
++        in {"OFFLINE_CACHE_VALID_NOT_PHYSICAL_ACCEPTANCE", "SPATIAL_REPLAY_CHECKS_PASS"}
+         else 1
+     )
+ 

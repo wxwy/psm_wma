@@ -1,3 +1,35 @@
+# 2026-11-04 — G2 spatial-v2 new clean Formal Pair121 PASS; REVIEW handoff
+
+Formal Root3eb8b334150018212ae1f51afb5e954b83fa1186 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged, isolated
+v3-g2-spatial-policy-20261104, parent/Owner authorityf6345461. Only production
+verifier changes; explicit spatial-v2 automatic scope/status, separate unchanged
+RGB MAE5 diagnostic metrics, inert external visual-review provenance, no auto
+Owner PASS. All hard spatial/cache/source/runtime checks and geometry defaults
+retained; replay.py/geometry/export/cache/Child/scripts/configs unchanged.
+
+Clean exact-Pair121 author CPU PASS,0failure/error/skip,3.44s (83+38).
+Ruff0.12.7/check/format/AST/compile11/help/lazy native imports PASS. Frozen35
+old-contract expectedRED31/PASS4; same35 definitions in final38 unchanged.
+Old69 assert ASTs:68 identical, one deliberate status literal update. Spatial
+predicate only removes authorized photometric clause. Prior24 OSMesa source
+and old107 evidence unchanged, not rerun/added. No real renderer/server data/GPU.
+Evidence2026-11-04_g2_spatial_policy_author_cpu:39 hashed TEXT artifacts,
+13 source Blob/SHA bindings, syntax2 blocks and synthetic CLI report example
+explicitly labelled boundary double, not server/Owner visual acceptance.
+
+New runbook/README and author handoff document same accepted six-image evidence,
+old immutable physical FAIL reports, new statuses and bounded GateC design.
+Actual3–5 distinct-task IDs require server mapping inspection before reviewed
+execution. New immutable server policy report can be first GateC evidence;
+old-cache replay command is an optional policy check, no automatic reopening of
+six-image geometry review. No GateC/N100/V3/GPU/training execution authorized.
+
+Append bounded unique canonical request, publish isolated Root/evidence then
+fresh readback and STOP for GPT incremental Code Gate/plan review. This metadata
+successor does not replace Formal3eb8b334. No server files accessed/transferred,
+no Depth/color/AA/frames/state changes, no cache migration or historical rewrite.
+
 # 2026-11-04 — G2-SPATIAL-POLICY development121 PASS; freeze new implementation
 
 Minimal verifier-only spatial-v2 acceptance split implemented under Ownerf634.

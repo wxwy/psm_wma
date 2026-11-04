@@ -1,0 +1,304 @@
+{
+  "fixture_kind": "SYNTHETIC_NATIVE_PROTOCOL_BOUNDARY_DOUBLE_NOT_SERVER",
+  "source_test_artifact": "/tmp/psm-g2-spatial-policy-20261104/final_cpu/pytest_tmp/test_native_cli_protocol_retur1/new_spatial_report.json",
+  "artifact_sha256": "1ac3584d51bc9bc10a224fa903e73b1d671f00d365ef57afa9cecf0067c369dd",
+  "owner_reference_is_inert_test_input_not_attested_for_fixture": true,
+  "report": {
+    "schema": "psm_wma_robocasa_rgbd_pose_v1",
+    "cache_integrity": "PASS",
+    "export_digest": "e6bd5ec65e4a5110a9c48fc2e7bc12e3f44458e67d0ee42bb26688de4bb637ff",
+    "frame_count": 3,
+    "full_episode": false,
+    "compressed_payload_bytes": 5035,
+    "compression_ratio_raw_over_stored": 0.43376365441906656,
+    "depth_quantization_max_abs_m": 0.000300000000000189,
+    "geometry_gate": "PASS",
+    "acceptance_policy": "g2_stage1_spatial_v2",
+    "acceptance_policy_authority": "https://github.com/wxwy/psm_wma/blob/f63454610ec2b95617c670444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md",
+    "spatial_alignment_gate": "PASS",
+    "spatial_alignment_scope": "AUTOMATED_CHECKS_ONLY_VISUAL_REVIEW_EXTERNAL",
+    "photometric_diagnostic": {
+      "status": "FAIL",
+      "blocking": false,
+      "mae_max": 5.0,
+      "checked_camera_frames": 6,
+      "failed_camera_frames": 6
+    },
+    "owner_visual_review": {
+      "status": "EXTERNAL_RECORD_REFERENCED",
+      "provenance_reference": "https://github.com/wxwy/psm_wma/blob/f63454610ec2b95617c670444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md",
+      "verified_by_tool": false
+    },
+    "runtime_at_export": {
+      "kind": "official_state_replay",
+      "name": "deterministic_calibration_fixture",
+      "cpu_test_double": true
+    },
+    "thresholds": {
+      "geometry_atol_m": 0.01,
+      "min_ray_samples": 16,
+      "rgb_mae_max": 5.0
+    },
+    "frames": [
+      {
+        "frame_index": 0,
+        "source_state_index": 0,
+        "global_row_index": 0,
+        "state_max_abs_error": 0.0,
+        "sim_time": 0.5,
+        "sim_time_minus_flat_timestamp_s": 0.5,
+        "cameras": {
+          "robot0_agentview_left": {
+            "status": "PASS",
+            "spatial_alignment_gate": "PASS",
+            "photometric_diagnostic": "FAIL",
+            "rgb": {
+              "mae": 50.0,
+              "psnr_db": 14.151403521958727,
+              "psnr_exact_match": false,
+              "ssim": 0.2434564658371419,
+              "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop"
+            },
+            "depth": {
+              "valid_pixels": 63,
+              "total_pixels": 64,
+              "valid_fraction": 0.984375,
+              "min_m": 1.235,
+              "median_m": 1.235,
+              "max_m": 1.235
+            },
+            "valid_mask_matches_replay": true,
+            "fresh_depth_max_abs_m": 0.000300000000000189,
+            "fresh_depth_tolerance_m": 0.000300100000000189,
+            "camera_matrix_max_abs": {
+              "K": 0.0,
+              "T_world_camera_gl": 0.0,
+              "T_world_camera_cv": 0.0
+            },
+            "corrected_backprojection_max_abs_pixels": 8.881784197001252e-16,
+            "independent_geometry": {
+              "status": "PASS",
+              "matching_geom_samples": 32,
+              "test_double": true
+            }
+          },
+          "robot0_eye_in_hand": {
+            "status": "PASS",
+            "spatial_alignment_gate": "PASS",
+            "photometric_diagnostic": "FAIL",
+            "rgb": {
+              "mae": 50.0,
+              "psnr_db": 14.151403521958727,
+              "psnr_exact_match": false,
+              "ssim": 0.2434564658371419,
+              "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop"
+            },
+            "depth": {
+              "valid_pixels": 63,
+              "total_pixels": 64,
+              "valid_fraction": 0.984375,
+              "min_m": 1.235,
+              "median_m": 1.235,
+              "max_m": 1.235
+            },
+            "valid_mask_matches_replay": true,
+            "fresh_depth_max_abs_m": 0.000300000000000189,
+            "fresh_depth_tolerance_m": 0.000300100000000189,
+            "camera_matrix_max_abs": {
+              "K": 0.0,
+              "T_world_camera_gl": 0.0,
+              "T_world_camera_cv": 0.0
+            },
+            "corrected_backprojection_max_abs_pixels": 8.881784197001252e-16,
+            "independent_geometry": {
+              "status": "PASS",
+              "matching_geom_samples": 32,
+              "test_double": true
+            }
+          }
+        }
+      },
+      {
+        "frame_index": 1,
+        "source_state_index": 1,
+        "global_row_index": 1,
+        "state_max_abs_error": 0.0,
+        "sim_time": 0.55,
+        "sim_time_minus_flat_timestamp_s": 0.5,
+        "cameras": {
+          "robot0_agentview_left": {
+            "status": "PASS",
+            "spatial_alignment_gate": "PASS",
+            "photometric_diagnostic": "FAIL",
+            "rgb": {
+              "mae": 50.0,
+              "psnr_db": 14.151403521958727,
+              "psnr_exact_match": false,
+              "ssim": 0.27209253741990297,
+              "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop"
+            },
+            "depth": {
+              "valid_pixels": 63,
+              "total_pixels": 64,
+              "valid_fraction": 0.984375,
+              "min_m": 1.245,
+              "median_m": 1.245,
+              "max_m": 1.245
+            },
+            "valid_mask_matches_replay": true,
+            "fresh_depth_max_abs_m": 0.000300000000000189,
+            "fresh_depth_tolerance_m": 0.000300100000000189,
+            "camera_matrix_max_abs": {
+              "K": 0.0,
+              "T_world_camera_gl": 0.0,
+              "T_world_camera_cv": 0.0
+            },
+            "corrected_backprojection_max_abs_pixels": 4.440892098500626e-16,
+            "independent_geometry": {
+              "status": "PASS",
+              "matching_geom_samples": 32,
+              "test_double": true
+            }
+          },
+          "robot0_eye_in_hand": {
+            "status": "PASS",
+            "spatial_alignment_gate": "PASS",
+            "photometric_diagnostic": "FAIL",
+            "rgb": {
+              "mae": 50.0,
+              "psnr_db": 14.151403521958727,
+              "psnr_exact_match": false,
+              "ssim": 0.27209253741990297,
+              "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop"
+            },
+            "depth": {
+              "valid_pixels": 63,
+              "total_pixels": 64,
+              "valid_fraction": 0.984375,
+              "min_m": 1.245,
+              "median_m": 1.245,
+              "max_m": 1.245
+            },
+            "valid_mask_matches_replay": true,
+            "fresh_depth_max_abs_m": 0.000300000000000189,
+            "fresh_depth_tolerance_m": 0.000300100000000189,
+            "camera_matrix_max_abs": {
+              "K": 0.0,
+              "T_world_camera_gl": 1.4901161138336505e-09,
+              "T_world_camera_cv": 1.4901161138336505e-09
+            },
+            "corrected_backprojection_max_abs_pixels": 4.440892098500626e-16,
+            "independent_geometry": {
+              "status": "PASS",
+              "matching_geom_samples": 32,
+              "test_double": true
+            }
+          }
+        }
+      },
+      {
+        "frame_index": 3,
+        "source_state_index": 3,
+        "global_row_index": 3,
+        "state_max_abs_error": 0.0,
+        "sim_time": 0.65,
+        "sim_time_minus_flat_timestamp_s": 0.5,
+        "cameras": {
+          "robot0_agentview_left": {
+            "status": "PASS",
+            "spatial_alignment_gate": "PASS",
+            "photometric_diagnostic": "FAIL",
+            "rgb": {
+              "mae": 50.0,
+              "psnr_db": 14.151403521958727,
+              "psnr_exact_match": false,
+              "ssim": 0.3255096954608826,
+              "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop"
+            },
+            "depth": {
+              "valid_pixels": 63,
+              "total_pixels": 64,
+              "valid_fraction": 0.984375,
+              "min_m": 1.265,
+              "median_m": 1.265,
+              "max_m": 1.265
+            },
+            "valid_mask_matches_replay": true,
+            "fresh_depth_max_abs_m": 0.00029999999999996696,
+            "fresh_depth_tolerance_m": 0.000300100000000189,
+            "camera_matrix_max_abs": {
+              "K": 0.0,
+              "T_world_camera_gl": 0.0,
+              "T_world_camera_cv": 0.0
+            },
+            "corrected_backprojection_max_abs_pixels": 8.881784197001252e-16,
+            "independent_geometry": {
+              "status": "PASS",
+              "matching_geom_samples": 32,
+              "test_double": true
+            }
+          },
+          "robot0_eye_in_hand": {
+            "status": "PASS",
+            "spatial_alignment_gate": "PASS",
+            "photometric_diagnostic": "FAIL",
+            "rgb": {
+              "mae": 50.0,
+              "psnr_db": 14.151403521958727,
+              "psnr_exact_match": false,
+              "ssim": 0.3255096954608826,
+              "ssim_definition": "uniform_7x7_sample_covariance_rgb_mean_valid_crop"
+            },
+            "depth": {
+              "valid_pixels": 63,
+              "total_pixels": 64,
+              "valid_fraction": 0.984375,
+              "min_m": 1.265,
+              "median_m": 1.265,
+              "max_m": 1.265
+            },
+            "valid_mask_matches_replay": true,
+            "fresh_depth_max_abs_m": 0.00029999999999996696,
+            "fresh_depth_tolerance_m": 0.000300100000000189,
+            "camera_matrix_max_abs": {
+              "K": 0.0,
+              "T_world_camera_gl": 1.1920928910669204e-08,
+              "T_world_camera_cv": 1.1920928910669204e-08
+            },
+            "corrected_backprojection_max_abs_pixels": 8.881784197001252e-16,
+            "independent_geometry": {
+              "status": "PASS",
+              "matching_geom_samples": 32,
+              "test_double": true
+            }
+          }
+        }
+      }
+    ],
+    "runtime_at_replay": {
+      "kind": "official_state_replay",
+      "name": "deterministic_calibration_fixture",
+      "cpu_test_double": true
+    },
+    "runtime_matches_export": true,
+    "camera_pose_motion": {
+      "robot0_agentview_left": {
+        "max_translation_m": 0.0,
+        "max_rotation_rad": 0.0,
+        "changed": false
+      },
+      "robot0_eye_in_hand": {
+        "max_translation_m": 0.30000001192092896,
+        "max_rotation_rad": 0.0,
+        "changed": true
+      }
+    },
+    "timestamp_diagnostic": {
+      "min_offset_s": 0.5,
+      "max_offset_s": 0.5,
+      "index_shift_applied": false
+    },
+    "evidence_kind": "SERVER_NATIVE_REPLAY",
+    "status": "SPATIAL_REPLAY_CHECKS_PASS"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "formal_root": "3eb8b334150018212ae1f51afb5e954b83fa1186",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "status": "AUTHOR_CPU_PASS_SPATIAL_V2_NOT_SERVER_ACCEPTANCE",
+  "acceptance_policy": "g2_stage1_spatial_v2",
+  "owner_policy_authority": "f63454610ec2b95617c670444875339034c3c1c7",
+  "tests": 121,
+  "distinct_tests": 121,
+  "legacy_tests": 83,
+  "policy_tests": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "frozen35_old_contract": {
+    "expected_red": true,
+    "failures": 31,
+    "passed": 4
+  },
+  "unchanged_old_assertions": 68,
+  "intentional_legacy_status_assertion_updates": 1,
+  "ruff_version": "0.12.7",
+  "ruff_check": "PASS",
+  "ruff_format": "PASS",
+  "ast_compile_files": 11,
+  "prior_native24_source_unchanged_not_rerun": true,
+  "owner_visual_review_mode": "EXTERNAL_REFERENCE_ONLY_NEVER_AUTOMATIC_PASS",
+  "real_renderer_or_robocasa_or_server_data_used": false,
+  "new_server_report": "NOT_EXECUTED",
+  "gate_c": "PLAN_ONLY_PENDING_APPROVAL_AND_EXACT_3_TO_5_TASK_SELECTION",
+  "n100_or_v3_promotion": false,
+  "limits": [
+    "Prior six-frame geometry/Owner visual evidence remains separate from this author test result",
+    "Old RGB photometric FAIL metrics and legacy physical verdicts are unchanged",
+    "Old-contract RED is expected under a superseded Owner policy, not evidence old geometry was wrong",
+    "Synthetic native-kind CLI fixture tests protocol only; does not authenticate an Owner or a real renderer",
+    "No new hardware/DS independent result or GateC closure is claimed"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "formal_root": "3eb8b334150018212ae1f51afb5e954b83fa1186",
+  "child_gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "files": [
+    {
+      "path": "tools/g2/__init__.py",
+      "git_blob": "d72507b35209571d1ddf75aad568d66f264c9e04",
+      "sha256": "09e084066fe35efb77870f57f3cf54ee6896bcbf8e673fa13fc3a79b78b912c7"
+    },
+    {
+      "path": "tools/g2/export_robocasa_rgbd_pose.py",
+      "git_blob": "d2562eeb4c2b9055d01806a9eeacffe0141153e8",
+      "sha256": "d9846ff856d3f842ac1243ef84cf519b13f89b9502657603243caa2feb47c507"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/__init__.py",
+      "git_blob": "ac9f2169158887948e1a1fff41d03a4111b6ad6d",
+      "sha256": "cdc30f9f53be503f3ea16d566db9d510c812c7d45110b6fcdcbf0f61bc614fed"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/cache.py",
+      "git_blob": "e4ec6883bf723f8856c21472920dd95d322a316d",
+      "sha256": "04fc24f88dbc628dc12f38f70d6da4c46599c9945f9fcb75db7509f8dbafe4e4"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/geometry.py",
+      "git_blob": "c4d9b878b3c6e9121b793ae1d597b15633be2da6",
+      "sha256": "c86ae66dabf686eb402544a174de397a2d74d9e579422bdf59559d7ad58fa5fc"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/replay.py",
+      "git_blob": "e8155a1850597e327e03578360188778de09fe12",
+      "sha256": "5305c71e9e5639ec8b619b374381207c00c5a98ce8dc7fc7b794bef276c9d56f"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/source.py",
+      "git_blob": "91171887148b99a1a3d88bcc2383c410fb2f2904",
+      "sha256": "c30958fcbb1d7be53b587fc2d6f0b9c932a1de14de3676aa63660015615be9e2"
+    },
+    {
+      "path": "tools/g2/test_replay_render_visibility.py",
+      "git_blob": "0956c6d2e0aa52fed0b8dd51b6f5aabc6ced5eb6",
+      "sha256": "121f3eb988ea5fa191c4ea7175a7f6a3a7e51ea44b32eadba62cf866b32c31bd"
+    },
+    {
+      "path": "tools/g2/test_rgbd_pose_export.py",
+      "git_blob": "7c8728e988604664284ae9601b40909f99bcb912",
+      "sha256": "b8dd760572ac5572355530f02468394b1a4a05c7c307965806abb90924763dad"
+    },
+    {
+      "path": "tools/g2/test_spatial_photometric_policy.py",
+      "git_blob": "3dc4d55a8f7c4399121f5fc875d90a6d3fcf388b",
+      "sha256": "0da61de8bfbd8d21b3676b8b1e4d8f4ec3b37aa25eae3b70f3e356ae70f57c95"
+    },
+    {
+      "path": "tools/g2/verify_robocasa_rgbd_pose.py",
+      "git_blob": "49aff91128a4efaa973d07a4792aa9ff58890482",
+      "sha256": "3b5fa9e05e7957af485330669c1857db8684f3a5597e08466c28d09d98c753ec"
+    },
+    {
+      "path": "tools/g2/README.md",
+      "git_blob": "79570be35cffc0b4c5d02446b0096a626f35292b",
+      "sha256": "c9fea7f75d14699923de3819cd2986c9b050c3571a93d8724f011b7370f07292"
+    },
+    {
+      "path": "docs/build/PSM-WMA_G2_Spatial_Acceptance_v2_and_GateC_Plan_2026-11-04.md",
+      "git_blob": "84332055301b7a84b6624f3b20af70c9b0521965",
+      "sha256": "12eb79a65512cc08bf4d00f478dab5b980113a77df244faad7657048b2ff9943"
+    }
+  ]
+}

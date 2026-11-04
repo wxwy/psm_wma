@@ -1,0 +1,49 @@
+{
+  "ast_compile_pass": 11,
+  "files": [
+    {
+      "path": "tools/g2/__init__.py",
+      "sha256": "09e084066fe35efb77870f57f3cf54ee6896bcbf8e673fa13fc3a79b78b912c7"
+    },
+    {
+      "path": "tools/g2/export_robocasa_rgbd_pose.py",
+      "sha256": "d9846ff856d3f842ac1243ef84cf519b13f89b9502657603243caa2feb47c507"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/__init__.py",
+      "sha256": "cdc30f9f53be503f3ea16d566db9d510c812c7d45110b6fcdcbf0f61bc614fed"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/cache.py",
+      "sha256": "04fc24f88dbc628dc12f38f70d6da4c46599c9945f9fcb75db7509f8dbafe4e4"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/geometry.py",
+      "sha256": "c86ae66dabf686eb402544a174de397a2d74d9e579422bdf59559d7ad58fa5fc"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/replay.py",
+      "sha256": "5305c71e9e5639ec8b619b374381207c00c5a98ce8dc7fc7b794bef276c9d56f"
+    },
+    {
+      "path": "tools/g2/rgbd_pose/source.py",
+      "sha256": "c30958fcbb1d7be53b587fc2d6f0b9c932a1de14de3676aa63660015615be9e2"
+    },
+    {
+      "path": "tools/g2/test_replay_render_visibility.py",
+      "sha256": "121f3eb988ea5fa191c4ea7175a7f6a3a7e51ea44b32eadba62cf866b32c31bd"
+    },
+    {
+      "path": "tools/g2/test_rgbd_pose_export.py",
+      "sha256": "b8dd760572ac5572355530f02468394b1a4a05c7c307965806abb90924763dad"
+    },
+    {
+      "path": "tools/g2/test_spatial_photometric_policy.py",
+      "sha256": "0da61de8bfbd8d21b3676b8b1e4d8f4ec3b37aa25eae3b70f3e356ae70f57c95"
+    },
+    {
+      "path": "tools/g2/verify_robocasa_rgbd_pose.py",
+      "sha256": "3b5fa9e05e7957af485330669c1857db8684f3a5597e08466c28d09d98c753ec"
+    }
+  ]
+}

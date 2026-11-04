@@ -1,0 +1,1279 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="31" skipped="0" tests="35" time="2.356" timestamp="2026-11-04T07:39:35.980936+00:00" hostname="8b544c1107bc"><testcase classname="" name="test_photometric_threshold_is_reported_without_blocking_spatial_checks[0]" time="0.301"><failure message="KeyError: 'acceptance_policy'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_photometric_threshold_is_0')
+delta = 0
+
+    @pytest.mark.parametrize("delta", [0, 5, 6, 200])
+    def test_photometric_threshold_is_reported_without_blocking_spatial_checks(
+        tmp_path, delta
+    ):
+        report = replay_report(tmp_path, delta=delta)
+&gt;       assert report["acceptance_policy"] == POLICY
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'acceptance_policy'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:54: KeyError</failure></testcase><testcase classname="" name="test_photometric_threshold_is_reported_without_blocking_spatial_checks[5]" time="0.051"><failure message="KeyError: 'acceptance_policy'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_photometric_threshold_is_1')
+delta = 5
+
+    @pytest.mark.parametrize("delta", [0, 5, 6, 200])
+    def test_photometric_threshold_is_reported_without_blocking_spatial_checks(
+        tmp_path, delta
+    ):
+        report = replay_report(tmp_path, delta=delta)
+&gt;       assert report["acceptance_policy"] == POLICY
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'acceptance_policy'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:54: KeyError</failure></testcase><testcase classname="" name="test_photometric_threshold_is_reported_without_blocking_spatial_checks[6]" time="0.049"><failure message="KeyError: 'acceptance_policy'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_photometric_threshold_is_2')
+delta = 6
+
+    @pytest.mark.parametrize("delta", [0, 5, 6, 200])
+    def test_photometric_threshold_is_reported_without_blocking_spatial_checks(
+        tmp_path, delta
+    ):
+        report = replay_report(tmp_path, delta=delta)
+&gt;       assert report["acceptance_policy"] == POLICY
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'acceptance_policy'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:54: KeyError</failure></testcase><testcase classname="" name="test_photometric_threshold_is_reported_without_blocking_spatial_checks[200]" time="0.048"><failure message="KeyError: 'acceptance_policy'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_photometric_threshold_is_3')
+delta = 200
+
+    @pytest.mark.parametrize("delta", [0, 5, 6, 200])
+    def test_photometric_threshold_is_reported_without_blocking_spatial_checks(
+        tmp_path, delta
+    ):
+        report = replay_report(tmp_path, delta=delta)
+&gt;       assert report["acceptance_policy"] == POLICY
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'acceptance_policy'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:54: KeyError</failure></testcase><testcase classname="" name="test_mixed_photometric_results_keep_each_original_metric" time="0.047"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_mixed_photometric_results0')
+
+    def test_mixed_photometric_results_keep_each_original_metric(tmp_path):
+        raw, flat, _, directory = exported(tmp_path)
+    
+        def mixed(ref, frame):
+            delta = 50 if frame == 1 and "agentview_left" in ref["feature"] else 0
+            return np.full((8, 8, 3), 7 + frame + delta, np.uint8)
+    
+        report = checker.verify(
+            directory,
+            replay=True,
+            raw_root=raw,
+            flat_root=flat,
+            state_index_policy="frame_index",
+            replay_factory=FakeReplay,
+            rgb_reader=mixed,
+        )
+&gt;       assert report["spatial_alignment_gate"] == "PASS"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:95: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-runtime]" time="0.049"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840ef440&gt;
+fault = 'runtime', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-mask]" time="0.048"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a8557ede0&gt;
+fault = 'mask', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-depth]" time="0.047"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840efe60&gt;
+fault = 'depth', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-K]" time="0.047"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a85542d50&gt;
+fault = 'K', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-T_world_camera_gl]" time="0.046"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b4')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840ef5c0&gt;
+fault = 'T_world_camera_gl', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-T_world_camera_cv]" time="0.046"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b5')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840e3c80&gt;
+fault = 'T_world_camera_cv', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-ray_fail]" time="0.050"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b6')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840ef6b0&gt;
+fault = 'ray_fail', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-ray_inconclusive]" time="0.047"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b7')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a8557eba0&gt;
+fault = 'ray_inconclusive', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[0-projection]" time="0.044"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b8')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840e1730&gt;
+fault = 'projection', delta = 0
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-runtime]" time="0.048"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b9')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840ed7c0&gt;
+fault = 'runtime', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-mask]" time="0.048"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b10')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840ede20&gt;
+fault = 'mask', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-depth]" time="0.049"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b11')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a8557ed20&gt;
+fault = 'depth', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-K]" time="0.053"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b12')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840e2240&gt;
+fault = 'K', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-T_world_camera_gl]" time="0.048"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b13')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840f1dc0&gt;
+fault = 'T_world_camera_gl', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-T_world_camera_cv]" time="0.048"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b14')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840f29c0&gt;
+fault = 'T_world_camera_cv', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-ray_fail]" time="0.048"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b15')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840ee930&gt;
+fault = 'ray_fail', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-ray_inconclusive]" time="0.050"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b16')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a8557d520&gt;
+fault = 'ray_inconclusive', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_spatial_failures_remain_blocking_independently_of_photometry[50-projection]" time="0.045"><failure message="KeyError: 'spatial_alignment_gate'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_spatial_failures_remain_b17')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a840f13d0&gt;
+fault = 'projection', delta = 50
+
+    @pytest.mark.parametrize(
+        "fault",
+        [
+            "runtime",
+            "mask",
+            "depth",
+            "K",
+            "T_world_camera_gl",
+            "T_world_camera_cv",
+            "ray_fail",
+            "ray_inconclusive",
+            "projection",
+        ],
+    )
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_spatial_failures_remain_blocking_independently_of_photometry(
+        tmp_path, monkeypatch, fault, delta
+    ):
+        class Broken(FakeReplay):
+            def render(self, camera):
+                value = super().render(camera)
+                if fault == "mask":
+                    value["valid"][0, 0] = True
+                elif fault == "depth":
+                    value["depth_m"] += 0.2
+                elif fault in ("K", "T_world_camera_gl", "T_world_camera_cv"):
+                    value[fault][0, 0] += 0.1
+                return value
+    
+            def ray_check(self, *args, **kwargs):
+                assert kwargs == {"atol_m": 0.01, "min_samples": 16}
+                if fault in ("ray_fail", "ray_inconclusive"):
+                    return {"status": "FAIL" if fault == "ray_fail" else "INCONCLUSIVE"}
+                return super().ray_check(*args, **kwargs)
+    
+        if fault == "runtime":
+            Broken.identity = dict(FakeReplay.identity, mismatch="wrong_runtime")
+        if fault == "projection":
+            monkeypatch.setattr(checker, "reprojection_error", lambda sample: 1.0)
+        report = replay_report(tmp_path, backend=Broken, delta=delta)
+&gt;       assert report["spatial_alignment_gate"] == "FAIL_OR_INCONCLUSIVE"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'spatial_alignment_gate'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:143: KeyError</failure></testcase><testcase classname="" name="test_source_integrity_and_rgb_input_abi_are_not_waived[source_changed]" time="0.031" /><testcase classname="" name="test_source_integrity_and_rgb_input_abi_are_not_waived[cache_corrupt]" time="0.026" /><testcase classname="" name="test_source_integrity_and_rgb_input_abi_are_not_waived[rgb_unreadable]" time="0.038" /><testcase classname="" name="test_source_integrity_and_rgb_input_abi_are_not_waived[rgb_shape]" time="0.038" /><testcase classname="" name="test_owner_review_reference_never_becomes_automatic_visual_acceptance[None]" time="0.024"><failure message="TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne0')
+reference = None
+
+    @pytest.mark.parametrize("reference", [None, OWNER_REFERENCE])
+    def test_owner_review_reference_never_becomes_automatic_visual_acceptance(
+        tmp_path, reference
+    ):
+&gt;       report = replay_report(tmp_path, delta=50, owner_visual_review_ref=reference)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:188: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne0')
+backend = &lt;class 'tools.g2.test_rgbd_pose_export.FakeReplay'&gt;, delta = 50
+kwargs = {'owner_visual_review_ref': None}
+raw = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne0/raw')
+flat = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne0/flat')
+_ = SourceEpisode(episode=Episode(task_class='CloseFridge', local_episode_index=0, global_episode_index=0, local_row_from=...ied': False, 'state_frame_physical_alignment': 'PENDING_DS_GATE_B_C'}, flat_timestamps=array([0.  , 0.05, 0.1 , 0.15]))
+directory = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne0/cache/tasks/CloseFridge/episodes/episode_000000')
+
+    def replay_report(tmp_path, *, backend=FakeReplay, delta=0, **kwargs):
+        raw, flat, _, directory = exported(tmp_path)
+&gt;       return checker.verify(
+            directory,
+            replay=True,
+            raw_root=raw,
+            flat_root=flat,
+            state_index_policy="frame_index",
+            replay_factory=backend,
+            rgb_reader=reader(delta),
+            **kwargs,
+        )
+E       TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:37: TypeError</failure></testcase><testcase classname="" name="test_owner_review_reference_never_becomes_automatic_visual_acceptance[https://github.com/wxwy/psm_wma/blob/f63454610ec2b95617c670444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md]" time="0.024"><failure message="TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne1')
+reference = 'https://github.com/wxwy/psm_wma/blob/f63454610ec2b95617c670444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md'
+
+    @pytest.mark.parametrize("reference", [None, OWNER_REFERENCE])
+    def test_owner_review_reference_never_becomes_automatic_visual_acceptance(
+        tmp_path, reference
+    ):
+&gt;       report = replay_report(tmp_path, delta=50, owner_visual_review_ref=reference)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:188: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne1')
+backend = &lt;class 'tools.g2.test_rgbd_pose_export.FakeReplay'&gt;, delta = 50
+kwargs = {'owner_visual_review_ref': 'https://github.com/wxwy/psm_wma/blob/f63454610ec2b95617c670444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md'}
+raw = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne1/raw')
+flat = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne1/flat')
+_ = SourceEpisode(episode=Episode(task_class='CloseFridge', local_episode_index=0, global_episode_index=0, local_row_from=...ied': False, 'state_frame_physical_alignment': 'PENDING_DS_GATE_B_C'}, flat_timestamps=array([0.  , 0.05, 0.1 , 0.15]))
+directory = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_review_reference_ne1/cache/tasks/CloseFridge/episodes/episode_000000')
+
+    def replay_report(tmp_path, *, backend=FakeReplay, delta=0, **kwargs):
+        raw, flat, _, directory = exported(tmp_path)
+&gt;       return checker.verify(
+            directory,
+            replay=True,
+            raw_root=raw,
+            flat_root=flat,
+            state_index_policy="frame_index",
+            replay_factory=backend,
+            rgb_reader=reader(delta),
+            **kwargs,
+        )
+E       TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:37: TypeError</failure></testcase><testcase classname="" name="test_offline_cache_and_external_review_cannot_claim_spatial_execution" time="0.023"><failure message="TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_offline_cache_and_externa0')
+
+    def test_offline_cache_and_external_review_cannot_claim_spatial_execution(tmp_path):
+        _, _, _, directory = exported(tmp_path)
+&gt;       report = checker.verify(directory, owner_visual_review_ref=OWNER_REFERENCE)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:204: TypeError</failure></testcase><testcase classname="" name="test_owner_reference_must_be_explicit_text_not_a_checkbox[True]" time="0.024"><failure message="TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e0')
+reference = True
+
+    @pytest.mark.parametrize("reference", [True, ""])
+    def test_owner_reference_must_be_explicit_text_not_a_checkbox(tmp_path, reference):
+        with pytest.raises(ValueError, match="review reference"):
+&gt;           replay_report(tmp_path, owner_visual_review_ref=reference)
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e0')
+backend = &lt;class 'tools.g2.test_rgbd_pose_export.FakeReplay'&gt;, delta = 0
+kwargs = {'owner_visual_review_ref': True}
+raw = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e0/raw')
+flat = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e0/flat')
+_ = SourceEpisode(episode=Episode(task_class='CloseFridge', local_episode_index=0, global_episode_index=0, local_row_from=...ied': False, 'state_frame_physical_alignment': 'PENDING_DS_GATE_B_C'}, flat_timestamps=array([0.  , 0.05, 0.1 , 0.15]))
+directory = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e0/cache/tasks/CloseFridge/episodes/episode_000000')
+
+    def replay_report(tmp_path, *, backend=FakeReplay, delta=0, **kwargs):
+        raw, flat, _, directory = exported(tmp_path)
+&gt;       return checker.verify(
+            directory,
+            replay=True,
+            raw_root=raw,
+            flat_root=flat,
+            state_index_policy="frame_index",
+            replay_factory=backend,
+            rgb_reader=reader(delta),
+            **kwargs,
+        )
+E       TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:37: TypeError</failure></testcase><testcase classname="" name="test_owner_reference_must_be_explicit_text_not_a_checkbox[]" time="0.024"><failure message="TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e1')
+reference = ''
+
+    @pytest.mark.parametrize("reference", [True, ""])
+    def test_owner_reference_must_be_explicit_text_not_a_checkbox(tmp_path, reference):
+        with pytest.raises(ValueError, match="review reference"):
+&gt;           replay_report(tmp_path, owner_visual_review_ref=reference)
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e1')
+backend = &lt;class 'tools.g2.test_rgbd_pose_export.FakeReplay'&gt;, delta = 0
+kwargs = {'owner_visual_review_ref': ''}
+raw = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e1/raw')
+flat = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e1/flat')
+_ = SourceEpisode(episode=Episode(task_class='CloseFridge', local_episode_index=0, global_episode_index=0, local_row_from=...ied': False, 'state_frame_physical_alignment': 'PENDING_DS_GATE_B_C'}, flat_timestamps=array([0.  , 0.05, 0.1 , 0.15]))
+directory = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_owner_reference_must_be_e1/cache/tasks/CloseFridge/episodes/episode_000000')
+
+    def replay_report(tmp_path, *, backend=FakeReplay, delta=0, **kwargs):
+        raw, flat, _, directory = exported(tmp_path)
+&gt;       return checker.verify(
+            directory,
+            replay=True,
+            raw_root=raw,
+            flat_root=flat,
+            state_index_policy="frame_index",
+            replay_factory=backend,
+            rgb_reader=reader(delta),
+            **kwargs,
+        )
+E       TypeError: verify() got an unexpected keyword argument 'owner_visual_review_ref'
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:37: TypeError</failure></testcase><testcase classname="" name="test_native_cli_protocol_returns_new_spatial_status_and_preserves_old_report[0]" time="0.025"><failure message="SystemExit: 2">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_native_cli_protocol_retur0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a85542fc0&gt;
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x7f1a85542e40&gt;, delta = 0
+
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_native_cli_protocol_returns_new_spatial_status_and_preserves_old_report(
+        tmp_path, monkeypatch, capsys, delta
+    ):
+        # Explicit native-kind boundary double: tests exit policy, never a real replay.
+        class NativeProtocolDouble(FakeReplay):
+            identity = dict(
+                FakeReplay.identity, kind="official_state_replay", cpu_test_double=True
+            )
+    
+        raw, flat, source = bound(tmp_path)
+        exported_result = cache.export_episode(
+            tmp_path / "cache",
+            source,
+            [0, 1, 3],
+            storage="uint16_mm",
+            chunk_frames=2,
+            recipe={"synthetic": True},
+            replay_factory=NativeProtocolDouble,
+        )
+        directory = Path(exported_result["directory"])
+        legacy_path = tmp_path / "legacy_report.json"
+        legacy = b'{"status":"PHYSICAL_REPLAY_NOT_ACCEPTED","geometry_gate":"FAIL_OR_INCONCLUSIVE"}\n'
+        legacy_path.write_bytes(legacy)
+        report_path = tmp_path / "new_spatial_report.json"
+        original_verify = checker.verify
+    
+        def verify_with_boundary(*args, **kwargs):
+            return original_verify(
+                *args,
+                **kwargs,
+                replay_factory=NativeProtocolDouble,
+                rgb_reader=reader(delta),
+            )
+    
+        monkeypatch.setattr(checker, "verify", verify_with_boundary)
+        command = [
+            "--episode-dir",
+            str(directory),
+            "--report",
+            str(report_path),
+            "--replay",
+            "--raw-root",
+            str(raw),
+            "--flat-root",
+            str(flat),
+            "--state-index-policy",
+            "frame_index",
+            "--owner-visual-review-ref",
+            OWNER_REFERENCE,
+        ]
+&gt;       assert checker.main(command) == 0
+               ^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:268: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/g2/verify_robocasa_rgbd_pose.py:214: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:1908: in parse_args
+    self.error(msg)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='Validate a committed RGB-D/Pose episode; optionally replay...pth images are exported.\n', formatter_class=&lt;class 'argparse.HelpFormatter'&gt;, conflict_handler='error', add_help=True)
+status = 2
+message = '__main__.py: error: unrecognized arguments: --owner-visual-review-ref https://github.com/wxwy/psm_wma/blob/f63454610e...444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+&gt;       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2637: SystemExit</failure></testcase><testcase classname="" name="test_native_cli_protocol_returns_new_spatial_status_and_preserves_old_report[50]" time="0.026"><failure message="SystemExit: 2">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_native_cli_protocol_retur1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f1a841a5100&gt;
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x7f1a841a7680&gt;, delta = 50
+
+    @pytest.mark.parametrize("delta", [0, 50])
+    def test_native_cli_protocol_returns_new_spatial_status_and_preserves_old_report(
+        tmp_path, monkeypatch, capsys, delta
+    ):
+        # Explicit native-kind boundary double: tests exit policy, never a real replay.
+        class NativeProtocolDouble(FakeReplay):
+            identity = dict(
+                FakeReplay.identity, kind="official_state_replay", cpu_test_double=True
+            )
+    
+        raw, flat, source = bound(tmp_path)
+        exported_result = cache.export_episode(
+            tmp_path / "cache",
+            source,
+            [0, 1, 3],
+            storage="uint16_mm",
+            chunk_frames=2,
+            recipe={"synthetic": True},
+            replay_factory=NativeProtocolDouble,
+        )
+        directory = Path(exported_result["directory"])
+        legacy_path = tmp_path / "legacy_report.json"
+        legacy = b'{"status":"PHYSICAL_REPLAY_NOT_ACCEPTED","geometry_gate":"FAIL_OR_INCONCLUSIVE"}\n'
+        legacy_path.write_bytes(legacy)
+        report_path = tmp_path / "new_spatial_report.json"
+        original_verify = checker.verify
+    
+        def verify_with_boundary(*args, **kwargs):
+            return original_verify(
+                *args,
+                **kwargs,
+                replay_factory=NativeProtocolDouble,
+                rgb_reader=reader(delta),
+            )
+    
+        monkeypatch.setattr(checker, "verify", verify_with_boundary)
+        command = [
+            "--episode-dir",
+            str(directory),
+            "--report",
+            str(report_path),
+            "--replay",
+            "--raw-root",
+            str(raw),
+            "--flat-root",
+            str(flat),
+            "--state-index-policy",
+            "frame_index",
+            "--owner-visual-review-ref",
+            OWNER_REFERENCE,
+        ]
+&gt;       assert checker.main(command) == 0
+               ^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:268: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/g2/verify_robocasa_rgbd_pose.py:214: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:1908: in parse_args
+    self.error(msg)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='Validate a committed RGB-D/Pose episode; optionally replay...pth images are exported.\n', formatter_class=&lt;class 'argparse.HelpFormatter'&gt;, conflict_handler='error', add_help=True)
+status = 2
+message = '__main__.py: error: unrecognized arguments: --owner-visual-review-ref https://github.com/wxwy/psm_wma/blob/f63454610e...444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+&gt;       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2637: SystemExit</failure></testcase><testcase classname="" name="test_cli_error_report_retains_new_policy_and_non_success" time="0.002"><failure message="SystemExit: 2">tmp_path = PosixPath('/tmp/psm-g2-spatial-policy-20261104/red_old_contract/pytest_tmp/test_cli_error_report_retains_0')
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x7f1a840ee8d0&gt;
+
+    def test_cli_error_report_retains_new_policy_and_non_success(tmp_path, capsys):
+        directory = tmp_path / "missing"
+        directory.mkdir()
+        output = tmp_path / "new_failure.json"
+        assert (
+&gt;           checker.main(
+                [
+                    "--episode-dir",
+                    str(directory),
+                    "--report",
+                    str(output),
+                    "--owner-visual-review-ref",
+                    OWNER_REFERENCE,
+                ]
+            )
+            == 1
+        )
+
+/tmp/psm-g2-spatial-policy-20261104/frozen/test_spatial_photometric_policy.py:293: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/g2/verify_robocasa_rgbd_pose.py:214: in main
+    args = parser.parse_args(argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:1908: in parse_args
+    self.error(msg)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2650: in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ArgumentParser(prog='__main__.py', usage=None, description='Validate a committed RGB-D/Pose episode; optionally replay...pth images are exported.\n', formatter_class=&lt;class 'argparse.HelpFormatter'&gt;, conflict_handler='error', add_help=True)
+status = 2
+message = '__main__.py: error: unrecognized arguments: --owner-visual-review-ref https://github.com/wxwy/psm_wma/blob/f63454610e...444875339034c3c1c7/docs/collab/chatgpt/reviews/2026-11-04_G2_GateB_Owner_Visual_Alignment_Acceptance_and_Revision.md\n'
+
+    def exit(self, status=0, message=None):
+        if message:
+            self._print_message(message, _sys.stderr)
+&gt;       _sys.exit(status)
+E       SystemExit: 2
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/argparse.py:2637: SystemExit</failure></testcase></testsuite></testsuites>

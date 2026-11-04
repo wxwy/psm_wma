@@ -1,0 +1,38 @@
+usage: verify_robocasa_rgbd_pose.py [-h] --episode-dir EPISODE_DIR --report
+                                    REPORT [--replay] [--raw-root RAW_ROOT]
+                                    [--flat-root FLAT_ROOT]
+                                    [--source-dataset SOURCE_DATASET]
+                                    [--state-index-policy {frame_index}]
+                                    [--frames FRAMES]
+                                    [--geometry-atol-m GEOMETRY_ATOL_M]
+                                    [--min-ray-samples MIN_RAY_SAMPLES]
+                                    [--rgb-mae-max RGB_MAE_MAX]
+                                    [--owner-visual-review-ref OWNER_VISUAL_REVIEW_REF]
+
+Validate a committed RGB-D/Pose episode; optionally replay it on the server.
+Offline cache integrity is not physical geometry acceptance. --replay
+additionally checks original RGB, state restoration, per-frame camera
+matrices, fresh depth and independent, renderer-filtered mj_ray geometry. No
+RGB/depth images are exported. Under the Owner's spatial-v2 policy, re-
+rendered RGB photometry is diagnostic. Automatic spatial checks do not attest
+to a human RGB/Depth visual inspection.
+
+options:
+  -h, --help            show this help message and exit
+  --episode-dir EPISODE_DIR
+  --report REPORT       new text-only JSON outside the immutable episode
+  --replay
+  --raw-root RAW_ROOT
+  --flat-root FLAT_ROOT
+  --source-dataset SOURCE_DATASET
+  --state-index-policy {frame_index}
+  --frames FRAMES       subset of committed frame indices; default all
+                        committed frames
+  --geometry-atol-m GEOMETRY_ATOL_M
+  --min-ray-samples MIN_RAY_SAMPLES
+  --rgb-mae-max RGB_MAE_MAX
+                        photometric diagnostic threshold only; does not gate
+                        spatial checks
+  --owner-visual-review-ref OWNER_VISUAL_REVIEW_REF
+                        external review provenance only; never automatically
+                        asserts visual PASS

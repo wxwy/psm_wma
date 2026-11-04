@@ -1,0 +1,12 @@
+{
+  "returncode": 0,
+  "tests": 121,
+  "distinct": 121,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_unchanged": true,
+  "identity_unchanged": true,
+  "expected_old_contract_red": false,
+  "actual_renderer_or_gpu_or_server_data_used": false
+}

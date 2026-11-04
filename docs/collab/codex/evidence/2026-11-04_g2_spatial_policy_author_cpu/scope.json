@@ -1,0 +1,51 @@
+{
+  "parent": "f63454610ec2b95617c670444875339034c3c1c7",
+  "formal_root": "3eb8b334150018212ae1f51afb5e954b83fa1186",
+  "changed": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_G2_Spatial_Acceptance_v2_and_GateC_Plan_2026-11-04.md",
+    "tools/g2/README.md",
+    "tools/g2/test_rgbd_pose_export.py",
+    "tools/g2/test_spatial_photometric_policy.py",
+    "tools/g2/verify_robocasa_rgbd_pose.py"
+  ],
+  "protected": {
+    "tools/g2/rgbd_pose": {
+      "before": "23a27f7a33ab90c34b54ba7f776a26cb591e1779",
+      "after": "23a27f7a33ab90c34b54ba7f776a26cb591e1779"
+    },
+    "tools/g2/export_robocasa_rgbd_pose.py": {
+      "before": "d2562eeb4c2b9055d01806a9eeacffe0141153e8",
+      "after": "d2562eeb4c2b9055d01806a9eeacffe0141153e8"
+    },
+    "tools/g2/test_replay_render_visibility.py": {
+      "before": "0956c6d2e0aa52fed0b8dd51b6f5aabc6ced5eb6",
+      "after": "0956c6d2e0aa52fed0b8dd51b6f5aabc6ced5eb6"
+    },
+    "cosmos-framework": {
+      "before": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+      "after": "1069fe78841228cadbbfbe6afbd767eaed6225da"
+    },
+    "scripts": {
+      "before": "82c53cc83e8f1803f70550b2f620b8dfadefcaef",
+      "after": "82c53cc83e8f1803f70550b2f620b8dfadefcaef"
+    },
+    "configs": {
+      "before": "334a2ffe1e48d5183951f54a17e0a53f7cc87712",
+      "after": "334a2ffe1e48d5183951f54a17e0a53f7cc87712"
+    },
+    "third_party": {
+      "before": "d01633d083298fc5245b5bc97677c5b297700c31",
+      "after": "d01633d083298fc5245b5bc97677c5b297700c31"
+    },
+    "tools/g0": {
+      "before": "9c811e57e8dc09f85f052d1aa81ce44bcb055863",
+      "after": "9c811e57e8dc09f85f052d1aa81ce44bcb055863"
+    }
+  },
+  "production_changed": [
+    "tools/g2/verify_robocasa_rgbd_pose.py"
+  ],
+  "old_native24_not_rerun": true
+}

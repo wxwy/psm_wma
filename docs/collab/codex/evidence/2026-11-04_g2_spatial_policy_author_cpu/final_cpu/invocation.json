@@ -1,0 +1,37 @@
+{
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tools/g2/test_spatial_photometric_policy.py",
+    "tools/g2/test_rgbd_pose_export.py",
+    "--basetemp",
+    "/tmp/psm-g2-spatial-policy-20261104/final_cpu/pytest_tmp",
+    "--junitxml",
+    "/tmp/psm-g2-spatial-policy-20261104/final_cpu/junit.xml"
+  ],
+  "cwd": "/workspace/psm-wma-g2-spatial-policy",
+  "environment_overrides": {
+    "PYTHONPATH": "/workspace/psm-wma-g2-spatial-policy:/tmp/psm-g2-rgbd-stage1-20261104/cpu_extra",
+    "CUDA_VISIBLE_DEVICES": "",
+    "MUJOCO_GL": "disable",
+    "COSMOS_DEVICE": "cpu",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-g2-spatial-policy-20261104/final_cpu/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-g2-spatial-policy-20261104/final_cpu/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-g2-spatial-policy-20261104/final_cpu/cache/xdg"
+  },
+  "runner_sha256": "dbfe6bef222ff7e06b74bd321013b4e43d60722688504952db4b961065a8228c"
+}
