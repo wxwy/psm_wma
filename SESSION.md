@@ -1,3 +1,35 @@
+# 2026-11-04 — Spatial-v2 Code Gate and native six-frame Gate B CLOSED; GateC S0 pending
+
+Observation 2026-11-04T16:42:18.004887+08:00: fresh fetch/advertised official V3
+ ea0828c7d45a443cc74ae2582419f14e7782a17e and candidate
+ df3d2c5027ab40da8b953a7c5f8ee5b8a703fe41. Clean fast-forward2c326f14->df3d2c50
+consumed544b656b,df3d2c50, two review documents only. Read full exact-pair
+Code APPROVE544b and native-server PASSdf3 from Git objects. Formal Root remains
+3eb8b334150018212ae1f51afb5e954b83fa1186 / unchanged Child-Gitlink
+1069fe78841228cadbbfbe6afbd767eaed6225da. Current Owner/GPT/Codex/DS roles
+apply; same Pair, no duplicated technical review or author test rerun.
+
+Accepted independent server report: native exit0, SPATIAL_REPLAY_CHECKS_PASS,
+spatial/cache/runtime PASS,6/6 ray checks128each, frozen0.01m/min16; RGB5/6
+FAIL remains diagnostic/nonblocking; external Owner visual ref/not tool-verified.
+This closes the limited six-image Spatial-v2 GateB, not full-map accuracy,
+GateC or N100. These are formal reported server results, not new Codex runs.
+Old caches and legacy physical FAIL reports remain immutable.
+
+GateC S0 next: freeze3 (up to5 after review) full episodes/distinct actual task
+classes, mapping/selection hashes, exact local/global IDs/full lengths/camera
+shapes, dry-run nonvisual binding and disk/time/resource budget. Git reports
+provide CloseFridge0/502 and sampled0/214/428, not an authoritative current full
+length or other episode memberships. Do not infer429 or use synthetic/R03 IDs.
+No callable remote execution tool is available here; no server files were read
+or transferred. Exact selection/capacity are genuine missing server-side inputs.
+New docs-only S0 freeze handoff prepares that read-only work; no production fix,
+new Formal Pair,121/24 rerun, render/export or batch execution is needed now.
+
+Publish docs/state/append-only canonical handoff on isolated candidate; STOP at
+missing server metadata and separate GateC execution approval. No GateC/N100,
+GPU/EGL/RoboCasa/model/training/DCP/active-worktree/V3 or history changes.
+
 # 2026-11-04 — G2 spatial-v2 published/readback PASS; STOP for fresh review
 
 2026-11-04 16:00:46 Asia/Shanghai: normal new-branch Root push, explicit fetch/
