@@ -212,3 +212,12 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **Gate：`R02_1EP_NV_ATTRIB_PASS` / `R02_NV_ATTRIB_REAL_GPU_EVIDENCE=CLOSED_REPORT_SUPPORTED`**。GPT核对官方源码/EGL/Media校验机制和远端 Root/Child/Gitlink；服务器连接再次中断，未直接读本次原始 MP4/proof/log，以上 runtime观测来自用户转交DS报告，不冒充GPT直接逐条复验。
 - 首轮 Fresh vendor preflight 因共享 robosuite树出现 Numba `.nbc/.nbi` 非受信 ignored cache被拒绝；据DS报告清理缓存、隔离bytecode之后 probe RC0 并完成 Canary。**不在本Gate中扩大改代码**；如果900EP预检再次复发，优先让Numba缓存出共享源码树，不能无条件忽略所有`.nbc/.nbi` 或清理别人进程文件。复测与正式900EP、B2、训练均未自动授权。
 - [完整审核记录](docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_Real_EGL_GPU1EP_Canary_Evidence_PASS.md)。下一步是否启动18×50=900EP需Owner明确决定；保持 M1/B1、独立新输出目录、资源/缓存预检。历史R01旧Fresh exit1和R02早期blocker不能改写。
+
+
+## 2026-11-04 — GPT independent Code Gate: Issue17 EvalV2 Streaming M32/B32
+
+- **Formal implementation pair**: Root `00e119cc20cabe082974bd3495474b589c4b46b6` / Child-Gitlink `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e`; evidence/ledger commit `1c6f66ab14eabcd3d1637ebcf5af8d77c8c60188` is not the technical target.
+- **GPT technical verdict: `REQUEST_CHANGES`**. NEW-F01 HIGH — Root `scripts/robocasa_eval_v2/startup.py:56–65`: post-start `self.measure()` ignores other in-flight reservations before dropping current reservation; owned actual + outstanding reservations may exceed RSS/VRAM budgets. Requires concurrency-aware completion/transfer check and deterministic CPU regression for overlapping startup (RSS + VRAM).
+- **M/B Resume一致性必须保持不变**；不得用预算放宽、删保护或修改科学身份来修复。846 author CPU PASS 是作者证据，不构成此 blocker 的关闭。
+- **Detailed GPT review**: `docs/collab/chatgpt/reviews/2026-11-04_EvalV2_Streaming_M32_B32_00e119cc_82fa270e_REQUEST_CHANGES.md` (docs-only review commit `3b564ae30e364b72497c523720c0089013103442`).
+- **Scope/stop**: candidate not promoted to V3, no DS/H100/GPU authorization, untouched R04/G2. Codex returns new formal pair after narrow remediation for incremental review; absent new pair, do not repeat technical audit.
