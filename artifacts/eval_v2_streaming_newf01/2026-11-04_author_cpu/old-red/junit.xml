@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="14.514" timestamp="2026-11-04T11:44:11.309056+00:00" hostname="9d714f82f885"><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[A-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.004"><failure message="AssertionError: assert 'BLOCKED_RESOURCE: startup RSS' in ((None or ''))&#10; +  where None = result(10)&#10; +    where result = &lt;Future at 0x7fadce22cb30 state=finished returned NoneType&gt;.result">resource = 'RSS', first = 'A'
+
+    @pytest.mark.parametrize("resource", ["RSS", "GPU"])
+    @pytest.mark.parametrize("first", ["A", "B"])
+    def test_completion_rejects_actual_plus_other_pending_and_recovers(resource, first):
+        actual = [0]
+        budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+        other = "B" if first == "A" else "A"
+        with pair(budget) as (finish, futures):
+            assert set(budget.pending) == {"A", "B"}
+            actual[0] = 70  # Actual alone fits; actual + the other 40 does not.
+            finish[first].set()
+&gt;           assert f"BLOCKED_RESOURCE: startup {resource}" in (
+                futures[first].result(10) or ""
+            )
+E           AssertionError: assert 'BLOCKED_RESOURCE: startup RSS' in ((None or ''))
+E            +  where None = result(10)
+E            +    where result = &lt;Future at 0x7fadce22cb30 state=finished returned NoneType&gt;.result
+
+../eval-streaming-newf01-evidence/startup_completion_test.py:74: AssertionError</failure></testcase><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[A-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.011"><failure message="AssertionError: assert 'BLOCKED_RESOURCE: startup GPU' in ((None or ''))&#10; +  where None = result(10)&#10; +    where result = &lt;Future at 0x7fadce22d730 state=finished returned NoneType&gt;.result">resource = 'GPU', first = 'A'
+
+    @pytest.mark.parametrize("resource", ["RSS", "GPU"])
+    @pytest.mark.parametrize("first", ["A", "B"])
+    def test_completion_rejects_actual_plus_other_pending_and_recovers(resource, first):
+        actual = [0]
+        budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+        other = "B" if first == "A" else "A"
+        with pair(budget) as (finish, futures):
+            assert set(budget.pending) == {"A", "B"}
+            actual[0] = 70  # Actual alone fits; actual + the other 40 does not.
+            finish[first].set()
+&gt;           assert f"BLOCKED_RESOURCE: startup {resource}" in (
+                futures[first].result(10) or ""
+            )
+E           AssertionError: assert 'BLOCKED_RESOURCE: startup GPU' in ((None or ''))
+E            +  where None = result(10)
+E            +    where result = &lt;Future at 0x7fadce22d730 state=finished returned NoneType&gt;.result
+
+../eval-streaming-newf01-evidence/startup_completion_test.py:74: AssertionError</failure></testcase><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[B-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.002"><failure message="AssertionError: assert 'BLOCKED_RESOURCE: startup RSS' in ((None or ''))&#10; +  where None = result(10)&#10; +    where result = &lt;Future at 0x7fadce22d2b0 state=finished returned NoneType&gt;.result">resource = 'RSS', first = 'B'
+
+    @pytest.mark.parametrize("resource", ["RSS", "GPU"])
+    @pytest.mark.parametrize("first", ["A", "B"])
+    def test_completion_rejects_actual_plus_other_pending_and_recovers(resource, first):
+        actual = [0]
+        budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+        other = "B" if first == "A" else "A"
+        with pair(budget) as (finish, futures):
+            assert set(budget.pending) == {"A", "B"}
+            actual[0] = 70  # Actual alone fits; actual + the other 40 does not.
+            finish[first].set()
+&gt;           assert f"BLOCKED_RESOURCE: startup {resource}" in (
+                futures[first].result(10) or ""
+            )
+E           AssertionError: assert 'BLOCKED_RESOURCE: startup RSS' in ((None or ''))
+E            +  where None = result(10)
+E            +    where result = &lt;Future at 0x7fadce22d2b0 state=finished returned NoneType&gt;.result
+
+../eval-streaming-newf01-evidence/startup_completion_test.py:74: AssertionError</failure></testcase><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[B-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.005"><failure message="AssertionError: assert 'BLOCKED_RESOURCE: startup GPU' in ((None or ''))&#10; +  where None = result(10)&#10; +    where result = &lt;Future at 0x7fadce22e120 state=finished returned NoneType&gt;.result">resource = 'GPU', first = 'B'
+
+    @pytest.mark.parametrize("resource", ["RSS", "GPU"])
+    @pytest.mark.parametrize("first", ["A", "B"])
+    def test_completion_rejects_actual_plus_other_pending_and_recovers(resource, first):
+        actual = [0]
+        budget = StartupBudget(configuration(), lambda: footprint(resource, actual[0]))
+        other = "B" if first == "A" else "A"
+        with pair(budget) as (finish, futures):
+            assert set(budget.pending) == {"A", "B"}
+            actual[0] = 70  # Actual alone fits; actual + the other 40 does not.
+            finish[first].set()
+&gt;           assert f"BLOCKED_RESOURCE: startup {resource}" in (
+                futures[first].result(10) or ""
+            )
+E           AssertionError: assert 'BLOCKED_RESOURCE: startup GPU' in ((None or ''))
+E            +  where None = result(10)
+E            +    where result = &lt;Future at 0x7fadce22e120 state=finished returned NoneType&gt;.result
+
+../eval-streaming-newf01-evidence/startup_completion_test.py:74: AssertionError</failure></testcase></testsuite></testsuites>

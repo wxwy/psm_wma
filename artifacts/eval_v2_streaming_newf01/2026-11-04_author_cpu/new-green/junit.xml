@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="35" time="68.367" timestamp="2026-11-04T11:45:06.870822+00:00" hostname="9d714f82f885"><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[A-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.002" /><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[A-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.005" /><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[B-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.004" /><testcase classname="" name="test_completion_rejects_actual_plus_other_pending_and_recovers[B-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="63" time="0.002" /><testcase classname="" name="test_completion_remeasures_if_pending_changes_after_measurement[A-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="85" time="0.004" /><testcase classname="" name="test_completion_remeasures_if_pending_changes_after_measurement[A-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="85" time="0.003" /><testcase classname="" name="test_completion_remeasures_if_pending_changes_after_measurement[B-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="85" time="0.003" /><testcase classname="" name="test_completion_remeasures_if_pending_changes_after_measurement[B-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="85" time="0.006" /><testcase classname="" name="test_completion_excludes_own_reservation_and_accepts_exact_limit[A-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="124" time="0.004" /><testcase classname="" name="test_completion_excludes_own_reservation_and_accepts_exact_limit[A-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="124" time="0.004" /><testcase classname="" name="test_completion_excludes_own_reservation_and_accepts_exact_limit[B-RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="124" time="0.002" /><testcase classname="" name="test_completion_excludes_own_reservation_and_accepts_exact_limit[B-GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="124" time="0.003" /><testcase classname="" name="test_gpu_completion_keeps_separate_device_budgets" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="139" time="0.003" /><testcase classname="" name="test_concurrent_completions_reconcile_again_after_the_other_transfer" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="150" time="0.003" /><testcase classname="" name="test_continuous_reservation_churn_is_bounded_and_releases_failed_owner" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="172" time="0.004" /><testcase classname="" name="test_completion_validates_actual_even_without_other_reservations[RSS]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="198" time="0.003" /><testcase classname="" name="test_completion_validates_actual_even_without_other_reservations[GPU]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="198" time="0.003" /><testcase classname="" name="test_missing_completion_measurement_fails_closed_and_releases_only_owner[rss_bytes]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="208" time="0.000" /><testcase classname="" name="test_missing_completion_measurement_fails_closed_and_releases_only_owner[owned_gpu_bytes]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="208" time="0.000" /><testcase classname="" name="test_missing_completion_measurement_fails_closed_and_releases_only_owner[selected_gpu]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="208" time="0.001" /><testcase classname="" name="test_completion_measurement_exception_preserves_original_error_and_cleanup" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="221" time="0.000" /><testcase classname="" name="test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only[off]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="233" time="0.322"><failure message="assert False&#10; +  where False = any(&lt;generator object test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only.&lt;locals&gt;.&lt;genexpr&gt; at 0x7eff656c2880&gt;)">tmp_path = PosixPath('/workspace/work/eval-streaming-newf01-evidence/new-green/pytest-temp/test_real_os_completion_overru0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7eff658aeae0&gt;
+mode = 'off'
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    def test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only(
+        tmp_path, monkeypatch, mode
+    ):
+        import json
+        import subprocess
+        import sys
+        from pathlib import Path
+    
+        from cosmos_framework.evaluation.robocasa_v2.store import records
+        from robocasa_eval_v2.runtime import Runtime
+        from robocasa_eval_v2_processes import process_identity
+        from tools.v3.eval_v2_batch_tests import runtime_test as old
+    
+        original_execution = old.execution
+        completed = [threading.Event(), threading.Event()]
+        overrun = threading.Event()
+    
+        def resolved(cfg):
+            settings = configuration()
+            settings["streaming_resources"]["sim_startup_gpu_bytes"] = 0
+            cfg.update(
+                settings,
+                gpu_ids=[0],
+                sims_per_gpu=2,
+                max_infer_batch_size=2,
+                render_backend="osmesa",
+                render_gpu_ids=[],
+            )
+            return original_execution(cfg)
+    
+        class OwnedRuntime(Runtime):
+            def __init__(self, *args, **kwargs):
+                kwargs["resource_probe"] = lambda *a, **k: {
+                    "rss_bytes": 70 if overrun.is_set() else 0,
+                    "owned_gpu_bytes": {0: 0},
+                }
+                super().__init__(*args, **kwargs)
+    
+            def _setup_actor(self, claim):
+                result = super()._setup_actor(claim)
+                index = self.workers.index(claim["physical_worker"])
+                completed[index].set()
+                assert completed[1 - index].wait(30), "both Sim Slots must be active"
+                if index == 0:
+                    assert len(self.startup_budget.pending) == 2
+                    overrun.set()  # Current actual70 + other Sim reservation40 &gt; 100.
+                else:
+                    assert self.stop.wait(30), "overrun must cause fail-closed stop"
+                return result
+    
+        monkeypatch.setattr(old, "execution", resolved)
+        monkeypatch.setattr(old, "Runtime", OwnedRuntime)
+        monkeypatch.setattr(old, "FIXTURE", Path(__file__).with_name("os_fixture.py"))
+        outsider = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(180)"])
+        try:
+            value, cfg, runtime, report, error = old.cpu_run(
+                tmp_path, monkeypatch, g=1, n=1, episodes=2, local_memory_mode=mode
+            )
+            faults = value.errors("CloseFridge")
+            assert error is not None and report["valid"] == 0
+&gt;           assert any("BLOCKED_RESOURCE: startup RSS" in str(fault) for fault in faults)
+E           assert False
+E            +  where False = any(&lt;generator object test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only.&lt;locals&gt;.&lt;genexpr&gt; at 0x7eff656c2880&gt;)
+
+../eval-streaming-newf01-evidence/startup_completion_test.py:295: AssertionError</failure></testcase><testcase classname="" name="test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only[required]" file="../workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py" line="233" time="0.602"><failure message="assert False&#10; +  where False = any(&lt;generator object test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only.&lt;locals&gt;.&lt;genexpr&gt; at 0x7eff65520200&gt;)">tmp_path = PosixPath('/workspace/work/eval-streaming-newf01-evidence/new-green/pytest-temp/test_real_os_completion_overru1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7eff65732660&gt;
+mode = 'required'
+
+    @pytest.mark.parametrize("mode", ["off", "required"])
+    def test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only(
+        tmp_path, monkeypatch, mode
+    ):
+        import json
+        import subprocess
+        import sys
+        from pathlib import Path
+    
+        from cosmos_framework.evaluation.robocasa_v2.store import records
+        from robocasa_eval_v2.runtime import Runtime
+        from robocasa_eval_v2_processes import process_identity
+        from tools.v3.eval_v2_batch_tests import runtime_test as old
+    
+        original_execution = old.execution
+        completed = [threading.Event(), threading.Event()]
+        overrun = threading.Event()
+    
+        def resolved(cfg):
+            settings = configuration()
+            settings["streaming_resources"]["sim_startup_gpu_bytes"] = 0
+            cfg.update(
+                settings,
+                gpu_ids=[0],
+                sims_per_gpu=2,
+                max_infer_batch_size=2,
+                render_backend="osmesa",
+                render_gpu_ids=[],
+            )
+            return original_execution(cfg)
+    
+        class OwnedRuntime(Runtime):
+            def __init__(self, *args, **kwargs):
+                kwargs["resource_probe"] = lambda *a, **k: {
+                    "rss_bytes": 70 if overrun.is_set() else 0,
+                    "owned_gpu_bytes": {0: 0},
+                }
+                super().__init__(*args, **kwargs)
+    
+            def _setup_actor(self, claim):
+                result = super()._setup_actor(claim)
+                index = self.workers.index(claim["physical_worker"])
+                completed[index].set()
+                assert completed[1 - index].wait(30), "both Sim Slots must be active"
+                if index == 0:
+                    assert len(self.startup_budget.pending) == 2
+                    overrun.set()  # Current actual70 + other Sim reservation40 &gt; 100.
+                else:
+                    assert self.stop.wait(30), "overrun must cause fail-closed stop"
+                return result
+    
+        monkeypatch.setattr(old, "execution", resolved)
+        monkeypatch.setattr(old, "Runtime", OwnedRuntime)
+        monkeypatch.setattr(old, "FIXTURE", Path(__file__).with_name("os_fixture.py"))
+        outsider = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(180)"])
+        try:
+            value, cfg, runtime, report, error = old.cpu_run(
+                tmp_path, monkeypatch, g=1, n=1, episodes=2, local_memory_mode=mode
+            )
+            faults = value.errors("CloseFridge")
+            assert error is not None and report["valid"] == 0
+&gt;           assert any("BLOCKED_RESOURCE: startup RSS" in str(fault) for fault in faults)
+E           assert False
+E            +  where False = any(&lt;generator object test_real_os_completion_overrun_stops_without_core_and_cleans_owned_only.&lt;locals&gt;.&lt;genexpr&gt; at 0x7eff65520200&gt;)
+
+../eval-streaming-newf01-evidence/startup_completion_test.py:295: AssertionError</failure></testcase><testcase classname="" name="test_owned_compute_and_graphics_are_counted_once_and_foreign_occupancy_ignored" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="35" time="0.001" /><testcase classname="" name="test_all_owned_groups_one_proc_snapshot_includes_descendants_not_foreign" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="41" time="0.001" /><testcase classname="" name="test_unknown_meter_is_blocked_not_zero_or_foreign_memory_gate[init]" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="51" time="0.001" /><testcase classname="" name="test_unknown_meter_is_blocked_not_zero_or_foreign_memory_gate[unknown]" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="51" time="0.000" /><testcase classname="" name="test_unknown_meter_is_blocked_not_zero_or_foreign_memory_gate[unsupported]" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="51" time="0.000" /><testcase classname="" name="test_concurrent_startup_reservations_cannot_both_spend_same_budget" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="71" time="0.003" /><testcase classname="" name="test_startup_failure_releases_reservation_and_gpu_limit_stays_strict" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/resource_test.py" line="95" time="0.001" /><testcase classname="" name="test_bad_ready_info_is_terminal_one_spawn_and_unpublished_server_is_measured" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/startup_race_test.py" line="52" time="0.018" /><testcase classname="" name="test_stop_during_ready_waits_for_startup_owner_before_final_cleanup" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/startup_race_test.py" line="90" time="0.022" /><testcase classname="" name="test_real_os_parallel_ready_make_env_exactly_one_server_and_cleanup[off]" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/startup_test.py" line="55" time="23.038" /><testcase classname="" name="test_real_os_parallel_ready_make_env_exactly_one_server_and_cleanup[required]" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/startup_test.py" line="55" time="17.459" /><testcase classname="" name="test_streaming_server_exit_23_two_inflight_and_unrelated_process_survives" file="../workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/startup_test.py" line="90" time="14.331" /></testsuite></testsuites>

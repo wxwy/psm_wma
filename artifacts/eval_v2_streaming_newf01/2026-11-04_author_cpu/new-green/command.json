@@ -1,0 +1,38 @@
+{
+  "cwd": "/workspace/work/psm-wma-streaming-newf01",
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-p",
+    "no:cacheprovider",
+    "-o",
+    "junit_family=legacy",
+    "-q",
+    "--basetemp",
+    "/workspace/work/eval-streaming-newf01-evidence/new-green/pytest-temp",
+    "--junitxml",
+    "/workspace/work/eval-streaming-newf01-evidence/new-green/junit.xml",
+    "/workspace/work/eval-streaming-newf01-evidence/startup_completion_test.py",
+    "tools/v3/eval_v2_streaming_tests/resource_test.py",
+    "tools/v3/eval_v2_streaming_tests/startup_race_test.py",
+    "tools/v3/eval_v2_streaming_tests/startup_test.py"
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "LD_LIBRARY_PATH": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "COSMOS_DEVICE": "cpu",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "/workspace/work/psm-wma-streaming-newf01:/workspace/work/psm-wma-streaming-newf01/scripts:/workspace/work/psm-wma-streaming-newf01/cosmos-framework"
+  }
+}

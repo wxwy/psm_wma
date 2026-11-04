@@ -1,0 +1,240 @@
+[
+  {
+    "mode": "off",
+    "error": "RuntimeError('BLOCKED_RESOURCE: startup RSS reservation')",
+    "valid_cores": 0,
+    "both_slots_active": true,
+    "pending_reservations": 0,
+    "active_jobs": 0,
+    "all_owned_processes_closed": true,
+    "processes": [
+      {
+        "command": [
+          "/workspace/.venvs/psm-wma-cpu/bin/python",
+          "-B",
+          "/workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+          "sim",
+          "--config",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru0/run/_internal/actor_configs/5e94148a7b3a4e7f93c9fc086db18b29.json",
+          "--config-sha256",
+          "ce4dc867e3f48c9e56165d13434a1b03d984f0366a6769cab12d9ebafdaa7148",
+          "--control-fd",
+          "15"
+        ],
+        "id": "c1c1d64539c24710a8901b3732cadeb9",
+        "identity": {
+          "pgid": 46532,
+          "pid": 46532,
+          "session": 46532,
+          "start_ticks": 3774582
+        },
+        "kind": "simulator_slot:4b288581e1c5493995263e34a3fac85b"
+      },
+      {
+        "command": [
+          "/workspace/.venvs/psm-wma-cpu/bin/python",
+          "-B",
+          "/workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+          "server",
+          "--checkpoint-path",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru0/inputs/checkpoint",
+          "--config-file",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru0/inputs/config.yaml",
+          "--port",
+          "56523",
+          "--raw-action-dim",
+          "15",
+          "--action-chunk-size",
+          "16",
+          "--local-memory-mode",
+          "off",
+          "--local-memory-max-sessions",
+          "2",
+          "--num-steps",
+          "2",
+          "--guidance",
+          "1.0",
+          "--fps",
+          "20",
+          "--no-guardrails",
+          "--http-400-on-error",
+          "--transaction-profile",
+          "batch",
+          "--transaction-owner-token-file",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru0/run/_internal/server_capabilities/GPU0_5358dfaa276f499d86e11824b35c1707.txt",
+          "--transaction-run-lease",
+          "67b41d2ab16842cdb32ed1e3d7cc8f8c",
+          "--transaction-manifest-digest",
+          "0d50beb45e7c91296e47f0ac416cf365d948848cc69f3056130eedc4dc6dab35",
+          "--transaction-slot-ids",
+          "4b288581e1c5493995263e34a3fac85b,72d26020b9cf456c840887c943cc09ea",
+          "--transaction-max-batch-size",
+          "2",
+          "--transaction-batch-wait-ms",
+          "20",
+          "--transaction-timeout-s",
+          "30",
+          "--media-spool-max-jobs",
+          "4",
+          "--media-spool-max-bytes",
+          "536870912",
+          "--media-drain-timeout-s",
+          "300.0",
+          "--transaction-capacity-profile",
+          "streaming32"
+        ],
+        "id": "c735ab62794048238283711abecd6c2a",
+        "identity": {
+          "pgid": 46480,
+          "pid": 46480,
+          "session": 46480,
+          "start_ticks": 3773209
+        },
+        "kind": "server"
+      },
+      {
+        "command": [
+          "/workspace/.venvs/psm-wma-cpu/bin/python",
+          "-B",
+          "/workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+          "sim",
+          "--config",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru0/run/_internal/actor_configs/45ab664e130f444e8bcad36d2301425a.json",
+          "--config-sha256",
+          "15ad67a9111974595b68b9c440fb7719a6c1b3fce489dfda864d18902b2edd9e",
+          "--control-fd",
+          "17"
+        ],
+        "id": "f41c988731124fb5aa0ade0c4ebcf00e",
+        "identity": {
+          "pgid": 46534,
+          "pid": 46534,
+          "session": 46534,
+          "start_ticks": 3774583
+        },
+        "kind": "simulator_slot:72d26020b9cf456c840887c943cc09ea"
+      }
+    ],
+    "outsider_pid": 46478,
+    "outsider_alive": true
+  },
+  {
+    "mode": "required",
+    "error": "RuntimeError('BLOCKED_RESOURCE: startup RSS reservation')",
+    "valid_cores": 0,
+    "both_slots_active": true,
+    "pending_reservations": 0,
+    "active_jobs": 0,
+    "all_owned_processes_closed": true,
+    "processes": [
+      {
+        "command": [
+          "/workspace/.venvs/psm-wma-cpu/bin/python",
+          "-B",
+          "/workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+          "server",
+          "--checkpoint-path",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru1/inputs/checkpoint",
+          "--config-file",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru1/inputs/config.yaml",
+          "--port",
+          "52271",
+          "--raw-action-dim",
+          "15",
+          "--action-chunk-size",
+          "16",
+          "--local-memory-mode",
+          "required",
+          "--local-memory-max-sessions",
+          "2",
+          "--num-steps",
+          "2",
+          "--guidance",
+          "1.0",
+          "--fps",
+          "20",
+          "--no-guardrails",
+          "--http-400-on-error",
+          "--transaction-profile",
+          "batch",
+          "--transaction-owner-token-file",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru1/run/_internal/server_capabilities/GPU0_7079005db5c44e5195805227031b47b0.txt",
+          "--transaction-run-lease",
+          "448af8a74db74d9c9e174908d9f8fedd",
+          "--transaction-manifest-digest",
+          "6c8abeb347e7bae2bebc4376d2a947cb5168e23ac2afab1544dd457cc9c3b063",
+          "--transaction-slot-ids",
+          "7f909a0c0ac740fa8adf5bfc3f8f9008,9dbd347beaeb46979198dc7f1c75015f",
+          "--transaction-max-batch-size",
+          "2",
+          "--transaction-batch-wait-ms",
+          "20",
+          "--transaction-timeout-s",
+          "30",
+          "--media-spool-max-jobs",
+          "4",
+          "--media-spool-max-bytes",
+          "536870912",
+          "--media-drain-timeout-s",
+          "300.0",
+          "--transaction-capacity-profile",
+          "streaming32"
+        ],
+        "id": "0633dedc11664e8691a048a875919fcc",
+        "identity": {
+          "pgid": 46563,
+          "pid": 46563,
+          "session": 46563,
+          "start_ticks": 3774800
+        },
+        "kind": "server"
+      },
+      {
+        "command": [
+          "/workspace/.venvs/psm-wma-cpu/bin/python",
+          "-B",
+          "/workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+          "sim",
+          "--config",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru1/run/_internal/actor_configs/48e6d1477a0244b49e2aace79b5e793f.json",
+          "--config-sha256",
+          "ec47fada7a71e8131424954e17c567a45fd5b52d606d3fbad1ef153fad096f95",
+          "--control-fd",
+          "18"
+        ],
+        "id": "d551f9e893664e28af80089c2d006e06",
+        "identity": {
+          "pgid": 46588,
+          "pid": 46588,
+          "session": 46588,
+          "start_ticks": 3775891
+        },
+        "kind": "simulator_slot:9dbd347beaeb46979198dc7f1c75015f"
+      },
+      {
+        "command": [
+          "/workspace/.venvs/psm-wma-cpu/bin/python",
+          "-B",
+          "/workspace/work/psm-wma-streaming-newf01/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+          "sim",
+          "--config",
+          "/workspace/work/eval-streaming-newf01-evidence/formal-targeted/pytest-temp/test_real_os_completion_overru1/run/_internal/actor_configs/aeb71698e9ab40c2a9eab6c7afd5b385.json",
+          "--config-sha256",
+          "32718622349334c98220e4899c433fd3413a35e1c49a0e210636d31208957bfb",
+          "--control-fd",
+          "14"
+        ],
+        "id": "fe65982e116a49b5a950d2314bb57427",
+        "identity": {
+          "pgid": 46586,
+          "pid": 46586,
+          "session": 46586,
+          "start_ticks": 3775890
+        },
+        "kind": "simulator_slot:7f909a0c0ac740fa8adf5bfc3f8f9008"
+      }
+    ],
+    "outsider_pid": 46561,
+    "outsider_alive": true
+  }
+]

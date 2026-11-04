@@ -221,3 +221,12 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **M/B Resume一致性必须保持不变**；不得用预算放宽、删保护或修改科学身份来修复。846 author CPU PASS 是作者证据，不构成此 blocker 的关闭。
 - **Detailed GPT review**: `docs/collab/chatgpt/reviews/2026-11-04_EvalV2_Streaming_M32_B32_00e119cc_82fa270e_REQUEST_CHANGES.md` (docs-only review commit `3b564ae30e364b72497c523720c0089013103442`).
 - **Scope/stop**: candidate not promoted to V3, no DS/H100/GPU authorization, untouched R04/G2. Codex returns new formal pair after narrow remediation for incremental review; absent new pair, do not repeat technical audit.
+
+## 2026-11-04 — Codex NEW-F01 narrow remediation: incremental Code Gate request
+
+- **唯一新 Formal Root `551b03621507dde52303f54290d4fea89d66e8da`；Child/Gitlink仍为 `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e`**。上一Formal00e119cc；本entry及Evidence提交只属bookkeeping，不替代实现审核目标。隔离分支`v3-evalv2-streaming-newf01-20261104`。当前official V3仍470577f3/Child1069fe78，候选没有合入V3。
+- **仅修NEW-F01**：`startup.py`共享入场/完成对账，完成前actual+其他全部pending逐RSS/GPU核算；measure锁外，版本变化重测；版本核验、预算校验及成功退预约同一短锁。128次有界retry，超限/持续争用fail-closed；finally按reservation对象身份只释放自己。新增23确定性回归，不改旧断言。Child、M/B Resume完整一致性、Manifest资源冻结、Runtime/调度/Store/Batch/Local-TTT/媒体均不改。
+- **定向作者证据**：旧同生产字节+同测试字节RED4FAIL（RSS/GPU×两完成顺序），新clean精确Pair **35/35PASS、0failure/error/skip、exit0、source_unchanged=true（1239指纹）**；静态Ruff/format/AST/diff范围PASS。含真实OS双Slot活跃时预算故障、0Core、owned进程收束/outsider存活，两模式off|required均通过；原Serverexit23/并行初始化/资源meter回归均保留通过。另一Agent只读窄审无新HIGH/MED，不代表GPT/DS。
+- 原首轮new-green33PASS/2FAIL完整保留；两FAIL为外部复制测试未带相邻os_fixture.py导致Servercode2，未触达预算目标。只改调用位置，不改源码/断言：os-green2PASS，随后上述cleanPair35PASS。SIGTERM/BrokenPipe故障清理诊断保留，不声称零runtime故障或原失败已被抹除。
+- [完整交接与精确命令](../codex/reviews/2026-11-04_EvalV2_Streaming_NEW_F01_Author_Handoff.md)；Evidence目录`artifacts/eval_v2_streaming_newf01/2026-11-04_author_cpu`，raw JUnit/log/command/source指纹/OS证明及窄patch齐备；tar545616bytes，SHA256`a73c700396c4771ee61604acfbf3d0c6c692b6dd8c7a589d0203286598de32c5`。RED/全部GREEN测试SHA256相同`eac4f96e774a66b2a691c0bdd9a48385dfa63c7ecdf0d071f69611e5e7c44b59`。
+- **请求：仅对00e119cc→551b0362增量复审NEW-F01源码blocker**。旧REQUEST_CHANGES仍为最近正式技术verdict。历史846不重跑、不替代新Pair验收；新完整Gate预计869（新增23，以实际收集为准）尚未执行。按Owner本轮“窄整改→新Pair+定向CPU→GPT增量复审→后续独立验收”停止，不触发旧MM/Kimi等待或提前跑完整Gate/DS/GPU；不合V3/G2，不操作R04，不读取/复制远程服务器文件，不放宽M/B。
