@@ -1,0 +1,6414 @@
+{
+  "cap": 16,
+  "slots": 64,
+  "sessions": 900,
+  "valid": 900,
+  "native_batches": [
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 2,
+      "prompts": [
+        "actual CoffeeSetupMug",
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 2,
+      "prompts": [
+        "actual CloseFridge",
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 2,
+      "prompts": [
+        "actual CloseBlenderLid",
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 2,
+      "prompts": [
+        "actual OpenCabinet",
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 2,
+      "prompts": [
+        "actual CloseBlenderLid",
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 2,
+      "prompts": [
+        "actual CoffeeSetupMug",
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 2,
+      "prompts": [
+        "actual CloseToasterOvenDoor",
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 2,
+      "prompts": [
+        "actual TurnOffStove",
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceSinkToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceDrawerToCounter"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 2,
+      "prompts": [
+        "actual PickPlaceSinkToCounter",
+        "actual SlideDishwasherRack"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceToasterToCounter"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnMicrowave"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnSinkFaucet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual TurnOffStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual TurnOnElectricKettle"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CloseFridge"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseBlenderLid"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual CloseToasterOvenDoor"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual CoffeeSetupMug"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual NavigateKitchen"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenCabinet"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual OpenDrawer"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual OpenStandMixerHead"
+      ]
+    },
+    {
+      "gpu": 6,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToStove"
+      ]
+    },
+    {
+      "gpu": 7,
+      "size": 1,
+      "prompts": [
+        "actual PickPlaceCounterToCabinet"
+      ]
+    }
+  ],
+  "stats": [
+    {
+      "enabled": true,
+      "profile": "robocasa.session-transactions.no-ttt.v1",
+      "local_memory_mode": "off",
+      "server_epoch": "c923b11e589c455f91e55619f269ae19",
+      "run_lease": "4e95e621688d48b1a21b7f1b14bcd2d5",
+      "manifest_digest": "bac081df2de782541f2b3b355dd4d8ea244288e8555b930720588448734d404b",
+      "slot_ids": [
+        "f9ab85e159914826bf7d76e413906746",
+        "3138c998d85e40429bdd6428be0aa51f",
+        "29d11677d6a247d3acfc4e333ad2d6fd",
+        "6a3760db23434943be6e8b3c99d08600",
+        "d19802bd1b584b1389a09c684c158988",
+        "da8b8f7b30c044e1967c9a91a6ec7195",
+        "3bb9653eef974ef187a0e5cdd4e792cd",
+        "76c874ed3eb446aabb8385a2098d3946",
+        "1f0aefad5e48475f934cea66bc3c23d9",
+        "740403c855334db9b9b4a2434221907e",
+        "b6bf9c3ce4344bf799681c08620067ff",
+        "9f41106da63c4f6484c398831fee6c8d",
+        "a9aa3697c71f4d9296976ec00fddad93",
+        "24a7f196136b49909fedc8bb988c53ba",
+        "b0876618f039467899e7648bc1381f75",
+        "2490d0898f954818b653e917b39b0308",
+        "27fa3157922c4d6a9a56d81b6e596beb",
+        "1ae310a3055347009f7f0975d7cc05fd",
+        "810290c62c8349f28fb10f15f4c567e8",
+        "f4c5d445d62a43e9bc5d4eff2a578cd6",
+        "b3265cab0c204e59acc0a3c173a29c6f",
+        "af5913f671244f4b9e2b6cb47ffe9c3f",
+        "392758855a8d4aa3b7d2d9c69c174c05",
+        "03598f2473da491190e0bb25d623303a",
+        "7cd440ed9caa4bc7803e7b96a091547d",
+        "0c514c4e02c140b9b73a7a0d6781af98",
+        "3cc1efc23deb43278b2ebb17f77b4d86",
+        "654631b69c754daf9ca9adbe2a199de3",
+        "759df76bc4d74ff1874fe60577358c43",
+        "15b83a1ed7c84aa0a5a9d4873059a5f5",
+        "509cedee8fa24f498106155cf88ef9a5",
+        "bf9f9fcb7c0743709d1240b855eb8680"
+      ],
+      "max_native_batch": 16,
+      "capacity_profile": "streaming32",
+      "sessions": 0,
+      "tickets": 0,
+      "encoded_bytes": 0,
+      "busy": false,
+      "quarantined": false,
+      "stopping": true,
+      "generated_media": "bounded_cpu_spool_same_model_executor",
+      "timeout_s": 15,
+      "prediction_clock_domain": "e1bca2f422f8b7eb82d52a8a29ad11f7aa823b2aea829c5fc57ef227981a6575",
+      "max_encoded_bytes": 134217728,
+      "max_item_bytes": 33554432,
+      "max_http_requests": 33,
+      "execution_profile": "session_native_batch_v1",
+      "batch_wait_ms": 20.0,
+      "batches": 446,
+      "batch_histogram": {
+        "1": 441,
+        "2": 5
+      },
+      "queued": 0,
+      "queue_high_water": 2,
+      "queue_wait_p50_ms": 20.492424002441112,
+      "queue_wait_p95_ms": 24.493181001162156,
+      "batch_generate_ms": {
+        "count": 446,
+        "recent_max": 465.1376239999081,
+        "recent_mean": 14.910442224313373
+      },
+      "requests_finished": 451,
+      "media_jobs": 0,
+      "media_cpu_bytes": 0,
+      "media_spool_max_jobs": 4,
+      "media_spool_max_bytes": 536870912,
+      "media_drain_timeout_s": 300.0,
+      "strict_media_item_bytes": 33554432
+    },
+    {
+      "enabled": true,
+      "profile": "robocasa.session-transactions.no-ttt.v1",
+      "local_memory_mode": "off",
+      "server_epoch": "fcc9ba78f987420e9ab5c86fd2a38206",
+      "run_lease": "4e95e621688d48b1a21b7f1b14bcd2d5",
+      "manifest_digest": "bac081df2de782541f2b3b355dd4d8ea244288e8555b930720588448734d404b",
+      "slot_ids": [
+        "df10250d324248fd89fd04d6ebc09a1e",
+        "319533fbec5c4644b85f55c104aa907c",
+        "01c06e118308400994fa6e78ed65e353",
+        "6ece02140e5749989ba500a32904b273",
+        "285b4137e4bf46c897e6cb9c978ec4a2",
+        "2f1d76bbb40e4b3896b620d8553edea8",
+        "fb412be3965d4b46a6662d74bd9c4a67",
+        "800adde74b774cc9aa4ec260ec754440",
+        "f0a2cb7ccaf84a2a8c5d9f6b6ed04e66",
+        "7f0584ea42ca4e758271e9adf4b02df5",
+        "9986b2f4615540abb95f1e2329868666",
+        "b97267c61ce2460887fa23d2a78fb14f",
+        "e3715e59abae4f4480fa91849ecf3152",
+        "96e865b130fb4cf88ac4a79186a8ed78",
+        "78b4dbc7845e4541a0e83aff79bb2ed7",
+        "5a1336b92f694ea9b30d50c0f119777a",
+        "bdfb6419d0774efd8c3f45e0b56d0909",
+        "66c7adf9ff624e919876c8d45bdacea1",
+        "2effe131260a4412829e50613cfd0dc0",
+        "53caa17699d541bc955d5aa798f5f29f",
+        "095bab2f11974f409ff01b85919987b5",
+        "2def60f4ab954a559c1df6894d155e62",
+        "97928496a60842658bb75a3e862d12f8",
+        "356d18a28d4d4d50afdd505d6fed574e",
+        "dae265a706424d5c80f40659a92e7e6d",
+        "d4bd4a7d89234a7b856b4506cace0301",
+        "3ee5ee93b361455b87f10b2f74376545",
+        "882f217f22bc4600a94388ba0b1872bd",
+        "6481729c5c384ebf97800f2fc4d8fc3b",
+        "4c302386bc33482087832d1afb63c4cb",
+        "1943a5f06dae47518159f261efa2b306",
+        "b09ad5b2f7f542089b1e8c297042b8bc"
+      ],
+      "max_native_batch": 16,
+      "capacity_profile": "streaming32",
+      "sessions": 0,
+      "tickets": 0,
+      "encoded_bytes": 0,
+      "busy": false,
+      "quarantined": false,
+      "stopping": true,
+      "generated_media": "bounded_cpu_spool_same_model_executor",
+      "timeout_s": 15,
+      "prediction_clock_domain": "e1bca2f422f8b7eb82d52a8a29ad11f7aa823b2aea829c5fc57ef227981a6575",
+      "max_encoded_bytes": 134217728,
+      "max_item_bytes": 33554432,
+      "max_http_requests": 33,
+      "execution_profile": "session_native_batch_v1",
+      "batch_wait_ms": 20.0,
+      "batches": 445,
+      "batch_histogram": {
+        "1": 441,
+        "2": 4
+      },
+      "queued": 0,
+      "queue_high_water": 2,
+      "queue_wait_p50_ms": 20.474945995374583,
+      "queue_wait_p95_ms": 23.66857299784897,
+      "batch_generate_ms": {
+        "count": 445,
+        "recent_max": 1010.8800640009576,
+        "recent_mean": 14.97777981547576
+      },
+      "requests_finished": 449,
+      "media_jobs": 0,
+      "media_cpu_bytes": 0,
+      "media_spool_max_jobs": 4,
+      "media_spool_max_bytes": 536870912,
+      "media_drain_timeout_s": 300.0,
+      "strict_media_item_bytes": 33554432
+    }
+  ]
+}

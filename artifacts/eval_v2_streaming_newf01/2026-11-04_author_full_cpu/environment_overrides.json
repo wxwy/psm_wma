@@ -1,0 +1,19 @@
+{
+  "CUDA_VISIBLE_DEVICES": "",
+  "COSMOS_DEVICE": "cpu",
+  "MUJOCO_GL": "osmesa",
+  "PYOPENGL_PLATFORM": "osmesa",
+  "HF_HUB_OFFLINE": "1",
+  "TRANSFORMERS_OFFLINE": "1",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "HF_HOME": "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/cache/hf",
+  "MPLCONFIGDIR": "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/cache/mpl",
+  "XDG_CACHE_HOME": "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/cache/xdg",
+  "RUFF_CACHE_DIR": "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/cache/ruff",
+  "TRITON_CACHE_DIR": "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/cache/triton",
+  "PYTEST_ADDOPTS": "",
+  "PYTHONPATH": "/workspace/work/psm-wma-streaming-newf01-formal:/workspace/work/psm-wma-streaming-newf01-formal/cosmos-framework:/workspace/work/psm-wma-streaming-newf01-formal/scripts"
+}

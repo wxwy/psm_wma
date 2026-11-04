@@ -1,0 +1,119 @@
+{
+  "mode": "off",
+  "error": "RuntimeError('BLOCKED_RESOURCE: startup RSS reservation')",
+  "valid_cores": 0,
+  "both_slots_active": true,
+  "pending_reservations": 0,
+  "active_jobs": 0,
+  "all_owned_processes_closed": true,
+  "processes": [
+    {
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-B",
+        "/workspace/work/psm-wma-streaming-newf01-formal/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+        "server",
+        "--checkpoint-path",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru0/inputs/checkpoint",
+        "--config-file",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru0/inputs/config.yaml",
+        "--port",
+        "58073",
+        "--raw-action-dim",
+        "15",
+        "--action-chunk-size",
+        "16",
+        "--local-memory-mode",
+        "off",
+        "--local-memory-max-sessions",
+        "2",
+        "--num-steps",
+        "2",
+        "--guidance",
+        "1.0",
+        "--fps",
+        "20",
+        "--no-guardrails",
+        "--http-400-on-error",
+        "--transaction-profile",
+        "batch",
+        "--transaction-owner-token-file",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru0/run/_internal/server_capabilities/GPU0_a82558b9ff154d1f8862143f2f961e0b.txt",
+        "--transaction-run-lease",
+        "c53775c0540d40f5a8d06524fb9f04c2",
+        "--transaction-manifest-digest",
+        "0d50beb45e7c91296e47f0ac416cf365d948848cc69f3056130eedc4dc6dab35",
+        "--transaction-slot-ids",
+        "e9462bb7a48744238c77a9e34ea34fd4,6340f59e570347e0980de021bf61437e",
+        "--transaction-max-batch-size",
+        "2",
+        "--transaction-batch-wait-ms",
+        "20",
+        "--transaction-timeout-s",
+        "30",
+        "--media-spool-max-jobs",
+        "4",
+        "--media-spool-max-bytes",
+        "536870912",
+        "--media-drain-timeout-s",
+        "300.0",
+        "--transaction-capacity-profile",
+        "streaming32"
+      ],
+      "id": "3d702c2c74aa449ea7cdbef12d8cba94",
+      "identity": {
+        "pgid": 67826,
+        "pid": 67826,
+        "session": 67826,
+        "start_ticks": 4284928
+      },
+      "kind": "server"
+    },
+    {
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-B",
+        "/workspace/work/psm-wma-streaming-newf01-formal/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+        "sim",
+        "--config",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru0/run/_internal/actor_configs/e0d6efdf1bbd407983c5e0d89e87026f.json",
+        "--config-sha256",
+        "1b8a53c4328cb31a5b36a68061ef20a31d5806142f6641e62af3b8c1964b6df0",
+        "--control-fd",
+        "9"
+      ],
+      "id": "74efd5ece92b4d8ba225075a70472977",
+      "identity": {
+        "pgid": 67840,
+        "pid": 67840,
+        "session": 67840,
+        "start_ticks": 4286294
+      },
+      "kind": "simulator_slot:e9462bb7a48744238c77a9e34ea34fd4"
+    },
+    {
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-B",
+        "/workspace/work/psm-wma-streaming-newf01-formal/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+        "sim",
+        "--config",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru0/run/_internal/actor_configs/54a78fa425c2443588a73e0c28c3e10f.json",
+        "--config-sha256",
+        "fe70249dea98a06d31015e496b387c3a14d30daa99dd0d45db5ba8036af5d006",
+        "--control-fd",
+        "13"
+      ],
+      "id": "98113dce47df461598423a726b78277f",
+      "identity": {
+        "pgid": 67842,
+        "pid": 67842,
+        "session": 67842,
+        "start_ticks": 4286295
+      },
+      "kind": "simulator_slot:6340f59e570347e0980de021bf61437e"
+    }
+  ],
+  "outsider_pid": 67824,
+  "outsider_alive": true
+}

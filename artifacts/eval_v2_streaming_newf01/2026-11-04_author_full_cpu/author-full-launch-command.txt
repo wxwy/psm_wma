@@ -1,0 +1,19 @@
+Observed execution cwd: /workspace/work/psm-wma-streaming-newf01-formal
+Executed once after fresh exact-pair APPROVE_CODE readback and Owner CPU authorization.
+This file records the command; it is not a wrapper or modified Gate entry.
+
+CUDA_VISIBLE_DEVICES='' LD_LIBRARY_PATH='' PYTHONDONTWRITEBYTECODE=1 \
+  /workspace/.venvs/psm-wma-cpu/bin/python \
+  tools/v3/run_eval_v2_streaming_cpu_gate.py \
+  --root-worktree /workspace/work/psm-wma-streaming-newf01-formal \
+  --expected-root 551b03621507dde52303f54290d4fea89d66e8da \
+  --expected-child 82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e \
+  --evidence-dir /workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review \
+  > /workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review.shell.log 2>&1
+
+The actual shell captured $? immediately after Python in variable newf01_gate_exit,
+wrote its numeric value to author-full-after-code-review.shell.exit, and exited
+with the same code. The source/evidence directory guards ran before launch.
+Original Gate records all inner per-stage argv/cwd/timeouts and exit codes in
+gate.json and its explicit CPU/offline environment in environment_overrides.json.
+Source code and assertions were not wrapped, modified or replaced.

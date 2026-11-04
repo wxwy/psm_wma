@@ -1,0 +1,119 @@
+{
+  "formal_root": "551b03621507dde52303f54290d4fea89d66e8da",
+  "formal_child_gitlink": "82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e",
+  "gate_status": "PASS",
+  "shell_exit": 0,
+  "junit": {
+    "tests": 869,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "groups": {
+    "inference": {
+      "tests": 182,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "phase_a_regression": {
+      "tests": 278,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "phase_b_runtime": {
+      "tests": 234,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "media_replans": {
+      "tests": 89,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "streaming": {
+      "tests": 86,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "source_unchanged": true,
+  "watched_source_files": 90,
+  "syntax_files": 66,
+  "exact_worktrees_clean": true,
+  "pipelines": [
+    {
+      "M": 32,
+      "B": 8,
+      "physical_slots": 64,
+      "unique_Core": 900,
+      "unique_Sessions": 900,
+      "policy_owners": 2,
+      "batch_histograms": [
+        {
+          "1": 439,
+          "2": 6
+        },
+        {
+          "1": 434,
+          "2": 6,
+          "3": 1
+        }
+      ],
+      "evidence": "streaming_tmp/test_18_real_tasks_64_sim_sess0/cpu_pipeline.json"
+    },
+    {
+      "M": 32,
+      "B": 16,
+      "physical_slots": 64,
+      "unique_Core": 900,
+      "unique_Sessions": 900,
+      "policy_owners": 2,
+      "batch_histograms": [
+        {
+          "1": 441,
+          "2": 5
+        },
+        {
+          "1": 441,
+          "2": 4
+        }
+      ],
+      "evidence": "streaming_tmp/test_18_real_tasks_64_sim_sess1/cpu_pipeline.json"
+    }
+  ],
+  "newf01_os_faults": [
+    {
+      "mode": "off",
+      "valid_Core": 0,
+      "both_slots_active": true,
+      "owned_processes": 3,
+      "all_owned_closed": true,
+      "outsider_alive": true,
+      "evidence": "streaming_tmp/test_real_os_completion_overru0/newf01_os_evidence.json"
+    },
+    {
+      "mode": "required",
+      "valid_Core": 0,
+      "both_slots_active": true,
+      "owned_processes": 3,
+      "all_owned_closed": true,
+      "outsider_alive": true,
+      "evidence": "streaming_tmp/test_real_os_completion_overru1/newf01_os_evidence.json"
+    }
+  ],
+  "CPU_only": "synthetic model/process/physics boundaries; real OS fixture subprocesses",
+  "DS_independent": "NOT_RUN",
+  "GPU_real_simulation_training": "NOT_RUN",
+  "remote_server_files": "NOT_ACCESSED_OR_COPIED",
+  "V3_promotion": "NOT_PERFORMED",
+  "resume_mb_and_manifest": "UNCHANGED_STRICT",
+  "historical_846": "NOT_REUSED",
+  "archive": "cpu_evidence.tar.gz",
+  "archive_bytes": 13664718,
+  "archive_sha256": "763f6e9105ae3ea5358edff2d7f90ab99b24517467c6750caa41672fce080b4a"
+}

@@ -1,0 +1,119 @@
+{
+  "mode": "required",
+  "error": "RuntimeError('BLOCKED_RESOURCE: startup RSS reservation')",
+  "valid_cores": 0,
+  "both_slots_active": true,
+  "pending_reservations": 0,
+  "active_jobs": 0,
+  "all_owned_processes_closed": true,
+  "processes": [
+    {
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-B",
+        "/workspace/work/psm-wma-streaming-newf01-formal/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+        "sim",
+        "--config",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru1/run/_internal/actor_configs/f05fd217740f483cb4e586b12e8576e1.json",
+        "--config-sha256",
+        "2215fc1a20abd522861b092319207b7341a62dc8046edf49f425e693177f16e7",
+        "--control-fd",
+        "9"
+      ],
+      "id": "597f4ba397b146a6b5a84580d0b30954",
+      "identity": {
+        "pgid": 67891,
+        "pid": 67891,
+        "session": 67891,
+        "start_ticks": 4287707
+      },
+      "kind": "simulator_slot:f7dbb039c7ff4848824589d9ccd266ad"
+    },
+    {
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-B",
+        "/workspace/work/psm-wma-streaming-newf01-formal/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+        "sim",
+        "--config",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru1/run/_internal/actor_configs/73514ffc2a8a4059976772911c7b1075.json",
+        "--config-sha256",
+        "5004e3c658637b4e5d757b5aeb2d1da3bb66b4b6b8342a46f0b95c3bce610d34",
+        "--control-fd",
+        "13"
+      ],
+      "id": "fc9a97b4501b48749d08430aeba5b956",
+      "identity": {
+        "pgid": 67893,
+        "pid": 67893,
+        "session": 67893,
+        "start_ticks": 4287709
+      },
+      "kind": "simulator_slot:57c15f22cb904e13a20607814d853a09"
+    },
+    {
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-B",
+        "/workspace/work/psm-wma-streaming-newf01-formal/tools/v3/eval_v2_streaming_tests/os_fixture.py",
+        "server",
+        "--checkpoint-path",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru1/inputs/checkpoint",
+        "--config-file",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru1/inputs/config.yaml",
+        "--port",
+        "42859",
+        "--raw-action-dim",
+        "15",
+        "--action-chunk-size",
+        "16",
+        "--local-memory-mode",
+        "required",
+        "--local-memory-max-sessions",
+        "2",
+        "--num-steps",
+        "2",
+        "--guidance",
+        "1.0",
+        "--fps",
+        "20",
+        "--no-guardrails",
+        "--http-400-on-error",
+        "--transaction-profile",
+        "batch",
+        "--transaction-owner-token-file",
+        "/workspace/work/eval-streaming-newf01-evidence/author-full-after-code-review/streaming_tmp/test_real_os_completion_overru1/run/_internal/server_capabilities/GPU0_2f5cace5b21b493dba0692de2c08134a.txt",
+        "--transaction-run-lease",
+        "ec2cbf836247422585db115f6ebafdcc",
+        "--transaction-manifest-digest",
+        "6c8abeb347e7bae2bebc4376d2a947cb5168e23ac2afab1544dd457cc9c3b063",
+        "--transaction-slot-ids",
+        "f7dbb039c7ff4848824589d9ccd266ad,57c15f22cb904e13a20607814d853a09",
+        "--transaction-max-batch-size",
+        "2",
+        "--transaction-batch-wait-ms",
+        "20",
+        "--transaction-timeout-s",
+        "30",
+        "--media-spool-max-jobs",
+        "4",
+        "--media-spool-max-bytes",
+        "536870912",
+        "--media-drain-timeout-s",
+        "300.0",
+        "--transaction-capacity-profile",
+        "streaming32"
+      ],
+      "id": "fe7dd7c6229c429a82521bb9cc2cea7f",
+      "identity": {
+        "pgid": 67850,
+        "pid": 67850,
+        "session": 67850,
+        "start_ticks": 4286522
+      },
+      "kind": "server"
+    }
+  ],
+  "outsider_pid": 67848,
+  "outsider_alive": true
+}
