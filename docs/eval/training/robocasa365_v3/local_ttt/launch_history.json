@@ -1,0 +1,384 @@
+{
+  "entries": [
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": null,
+        "phase": "resume",
+        "semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b"
+      },
+      "launch_id": "49223633590e470a8d32f756adc9efdd",
+      "launch_json_sha256": "b7951238b6c83c435233566b730d36ada1c40f0758bdb17572ad2c2db760bcff"
+    },
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "effective_data_source": {
+          "action_horizon": 16,
+          "chunk_length": 16,
+          "fps": 20.0,
+          "legacy_chunk_fields": {
+            "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+          },
+          "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+          "legacy_dataset_contract": {
+            "action_normalization": null,
+            "base_encoding": "raw",
+            "camera_set": "left_wrist",
+            "fps": 20.0,
+            "max_action_dim": 64,
+            "mode": "wam",
+            "use_base_action": true,
+            "use_state": true
+          },
+          "local_ttt_tbptt_steps": 16,
+          "observation_frames": 17,
+          "producer_chain": [
+            "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+            "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+            "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"
+          ],
+          "raw_action_dim": 15,
+          "schema": "corrected_phase5_effective_data_v1",
+          "state_dim": 15
+        },
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": 30000,
+        "owner_cross_pair_resume": {
+          "canonical_config_sha256": {
+            "config.pkl": "458403787b50506b6a948e5b4a17e073ab459f864ed3c3abd42d9da4da3a2bd2",
+            "config.yaml": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e"
+          },
+          "checkpoint": "/mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000022400",
+          "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+          "frozen_launch": {
+            "path": "/mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/launches/c4029f82178745ee81f529f16dd6990b/launch.json",
+            "sha256": "5e307191087073203bf16bf8f30f491167dffa590f3c1a9fbcabb989056ef5a2"
+          },
+          "frozen_semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b",
+          "frozen_source": {
+            "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+            "root": "e0121d34592d10323ede480eb3409468a07371ba"
+          },
+          "iteration": 22400,
+          "owner_authorization": "standing_named_g1_same_job_resume",
+          "owner_flag": null,
+          "owner_override": true,
+          "phase5_digest": "1ab2bbe4df9954467bb0acf0d371dce40dff8bd04cfa3c81ca0ec6fe76a94b4a",
+          "rank_sidecars": {
+            "0": {
+              "bytes": 812410,
+              "sha256": "7d9478a463f80f53034046d17d95705677729fd285303cae2444cacd946d4c38"
+            },
+            "1": {
+              "bytes": 834827,
+              "sha256": "fc6a4b1bc3b029f8dbc0fecbd154d53d7769d4d31c9fe891c516d706dc5df4bb"
+            },
+            "2": {
+              "bytes": 738654,
+              "sha256": "bb0cf36b7b677f7a77a62f6e00b712d5d34ac8c24545313cff6f8f7082ff637e"
+            },
+            "3": {
+              "bytes": 723506,
+              "sha256": "c9d281ffa1cce0d3ddee8d01834096e888889a98c4c62123caa19217d9fd1e8c"
+            },
+            "4": {
+              "bytes": 708845,
+              "sha256": "d85c2b72d2d383ff3499d3b8bedbc5ae92df677ef1478ded9922856da7f1aa12"
+            },
+            "5": {
+              "bytes": 814002,
+              "sha256": "40e5a6d7686b1b55ff0135967f78afd304406195ea7dde1898b9bee30c3f3385"
+            },
+            "6": {
+              "bytes": 818812,
+              "sha256": "f660e5aa12a47655595f16b815e8c545d4c1cc33b394c47a1ecb1bfd376669fc"
+            },
+            "7": {
+              "bytes": 609380,
+              "sha256": "eb3fb76b2b842547a0139e72f663b161fb1b3992125b06a8122f82a117002769"
+            }
+          },
+          "runtime_semantic_digest": "3c2cec6ce0b98477cc56a86611567a17ed701636bb0f379705049bd2d4a785b1",
+          "runtime_source": {
+            "allowed_root_noncode_change_paths": [],
+            "allowed_root_noncode_changes": 0,
+            "child": "208a18592e455b32ef44f7e8d162bff5733389ef",
+            "gitlink": "208a18592e455b32ef44f7e8d162bff5733389ef",
+            "root": "33ddbd9c86db320d1f745b95bf9d2250df9c9028",
+            "runtime_base_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586"
+          },
+          "schema": "g1_iter8900_owner_cross_pair_resume_v1",
+          "validation": {
+            "all_rank_digest_iteration_source_provenance": "PASS",
+            "full_component_presence": "PASS",
+            "non_source_semantics": "PASS",
+            "optimizer_scheduler_rng_cursor_fast_state_restoration": "PENDING_UNCHANGED_STRICT_RUNTIME_LOAD"
+          }
+        },
+        "phase": "resume",
+        "semantic_digest": "3c2cec6ce0b98477cc56a86611567a17ed701636bb0f379705049bd2d4a785b1"
+      },
+      "launch_id": "632d2592cc674d39874c9fd2c39bdd2d",
+      "launch_json_sha256": "d053600d224c3c1b5dc84593a16c783aada20951505d3cb61fe5b4693a10faf8"
+    },
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "effective_data_source": {
+          "action_horizon": 16,
+          "chunk_length": 16,
+          "fps": 20.0,
+          "legacy_chunk_fields": {
+            "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+          },
+          "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+          "legacy_dataset_contract": {
+            "action_normalization": null,
+            "base_encoding": "raw",
+            "camera_set": "left_wrist",
+            "fps": 20.0,
+            "max_action_dim": 64,
+            "mode": "wam",
+            "use_base_action": true,
+            "use_state": true
+          },
+          "local_ttt_tbptt_steps": 16,
+          "observation_frames": 17,
+          "producer_chain": [
+            "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+            "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+            "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"
+          ],
+          "raw_action_dim": 15,
+          "schema": "corrected_phase5_effective_data_v1",
+          "state_dim": 15
+        },
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": 30000,
+        "owner_cross_pair_resume": {
+          "canonical_config_sha256": {
+            "config.pkl": "458403787b50506b6a948e5b4a17e073ab459f864ed3c3abd42d9da4da3a2bd2",
+            "config.yaml": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e"
+          },
+          "checkpoint": "/mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000022400",
+          "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+          "frozen_launch": {
+            "path": "/mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/launches/c4029f82178745ee81f529f16dd6990b/launch.json",
+            "sha256": "5e307191087073203bf16bf8f30f491167dffa590f3c1a9fbcabb989056ef5a2"
+          },
+          "frozen_semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b",
+          "frozen_source": {
+            "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+            "root": "e0121d34592d10323ede480eb3409468a07371ba"
+          },
+          "iteration": 22400,
+          "owner_authorization": "standing_named_g1_same_job_resume",
+          "owner_flag": null,
+          "owner_override": true,
+          "phase5_digest": "1ab2bbe4df9954467bb0acf0d371dce40dff8bd04cfa3c81ca0ec6fe76a94b4a",
+          "rank_sidecars": {
+            "0": {
+              "bytes": 812410,
+              "sha256": "7d9478a463f80f53034046d17d95705677729fd285303cae2444cacd946d4c38"
+            },
+            "1": {
+              "bytes": 834827,
+              "sha256": "fc6a4b1bc3b029f8dbc0fecbd154d53d7769d4d31c9fe891c516d706dc5df4bb"
+            },
+            "2": {
+              "bytes": 738654,
+              "sha256": "bb0cf36b7b677f7a77a62f6e00b712d5d34ac8c24545313cff6f8f7082ff637e"
+            },
+            "3": {
+              "bytes": 723506,
+              "sha256": "c9d281ffa1cce0d3ddee8d01834096e888889a98c4c62123caa19217d9fd1e8c"
+            },
+            "4": {
+              "bytes": 708845,
+              "sha256": "d85c2b72d2d383ff3499d3b8bedbc5ae92df677ef1478ded9922856da7f1aa12"
+            },
+            "5": {
+              "bytes": 814002,
+              "sha256": "40e5a6d7686b1b55ff0135967f78afd304406195ea7dde1898b9bee30c3f3385"
+            },
+            "6": {
+              "bytes": 818812,
+              "sha256": "f660e5aa12a47655595f16b815e8c545d4c1cc33b394c47a1ecb1bfd376669fc"
+            },
+            "7": {
+              "bytes": 609380,
+              "sha256": "eb3fb76b2b842547a0139e72f663b161fb1b3992125b06a8122f82a117002769"
+            }
+          },
+          "runtime_semantic_digest": "3c2cec6ce0b98477cc56a86611567a17ed701636bb0f379705049bd2d4a785b1",
+          "runtime_source": {
+            "allowed_root_noncode_change_paths": [],
+            "allowed_root_noncode_changes": 0,
+            "child": "208a18592e455b32ef44f7e8d162bff5733389ef",
+            "gitlink": "208a18592e455b32ef44f7e8d162bff5733389ef",
+            "root": "33ddbd9c86db320d1f745b95bf9d2250df9c9028",
+            "runtime_base_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586"
+          },
+          "schema": "g1_iter8900_owner_cross_pair_resume_v1",
+          "validation": {
+            "all_rank_digest_iteration_source_provenance": "PASS",
+            "full_component_presence": "PASS",
+            "non_source_semantics": "PASS",
+            "optimizer_scheduler_rng_cursor_fast_state_restoration": "PENDING_UNCHANGED_STRICT_RUNTIME_LOAD"
+          }
+        },
+        "phase": "resume",
+        "semantic_digest": "3c2cec6ce0b98477cc56a86611567a17ed701636bb0f379705049bd2d4a785b1"
+      },
+      "launch_id": "a066ae13ab1048c695c25ee933692793",
+      "launch_json_sha256": "d053600d224c3c1b5dc84593a16c783aada20951505d3cb61fe5b4693a10faf8"
+    },
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": null,
+        "phase": "fresh",
+        "semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b"
+      },
+      "launch_id": "c4029f82178745ee81f529f16dd6990b",
+      "launch_json_sha256": "5e307191087073203bf16bf8f30f491167dffa590f3c1a9fbcabb989056ef5a2"
+    },
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "effective_data_source": {
+          "action_horizon": 16,
+          "chunk_length": 16,
+          "fps": 20.0,
+          "legacy_chunk_fields": {
+            "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+          },
+          "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+          "legacy_dataset_contract": {
+            "action_normalization": null,
+            "base_encoding": "raw",
+            "camera_set": "left_wrist",
+            "fps": 20.0,
+            "max_action_dim": 64,
+            "mode": "wam",
+            "use_base_action": true,
+            "use_state": true
+          },
+          "local_ttt_tbptt_steps": 16,
+          "observation_frames": 17,
+          "producer_chain": [
+            "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+            "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+            "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"
+          ],
+          "raw_action_dim": 15,
+          "schema": "corrected_phase5_effective_data_v1",
+          "state_dim": 15
+        },
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": 30000,
+        "owner_cross_pair_resume": {
+          "canonical_config_sha256": {
+            "config.pkl": "458403787b50506b6a948e5b4a17e073ab459f864ed3c3abd42d9da4da3a2bd2",
+            "config.yaml": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e"
+          },
+          "checkpoint": "/mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000008900",
+          "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+          "frozen_launch": {
+            "path": "/mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/launches/c4029f82178745ee81f529f16dd6990b/launch.json",
+            "sha256": "5e307191087073203bf16bf8f30f491167dffa590f3c1a9fbcabb989056ef5a2"
+          },
+          "frozen_semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b",
+          "frozen_source": {
+            "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+            "root": "e0121d34592d10323ede480eb3409468a07371ba"
+          },
+          "iteration": 8900,
+          "owner_flag": "--owner-authorized-g1-cross-pair-resume",
+          "owner_override": true,
+          "phase5_digest": "1ab2bbe4df9954467bb0acf0d371dce40dff8bd04cfa3c81ca0ec6fe76a94b4a",
+          "rank_sidecars": {
+            "0": {
+              "bytes": 723630,
+              "sha256": "d32c5664990885096969650c04351a74623f72249fa5ca324f96fa92c26d73df"
+            },
+            "1": {
+              "bytes": 816366,
+              "sha256": "b6778a756793b3c29f9bbae695ad2375ee8b91667df24ad4660b124d32c8637e"
+            },
+            "2": {
+              "bytes": 834349,
+              "sha256": "bc4f3b280281d9af43c145e53ed17a3d03cf8cc0e18a626582e450b71935f513"
+            },
+            "3": {
+              "bytes": 843588,
+              "sha256": "907935866db560c962b41002f42b3fb502cb91a6d43f0c85bd0851cdea9734c0"
+            },
+            "4": {
+              "bytes": 823540,
+              "sha256": "8cbe78a1fb28143549230334d32158398f8597c5501403a841280b3b0439c9ee"
+            },
+            "5": {
+              "bytes": 723825,
+              "sha256": "98aeb7f15a92a1681d77daea47d1f70a9c598db7744aaf92c25c216642a822f4"
+            },
+            "6": {
+              "bytes": 725428,
+              "sha256": "8214f0dd55f91633c6862efdad1aa028c1d81c7f8c7f5ee4c9e8f5a6a2da3c3b"
+            },
+            "7": {
+              "bytes": 823437,
+              "sha256": "53f760b08b5eca0eec2a1acfd5a38f17f0ea4d7d750b4c40b9f655ce57aaf0d6"
+            }
+          },
+          "runtime_semantic_digest": "6636517bd8e246fba40006ee2cf46cad2fc5fb276c86fff0caba5815a9942238",
+          "runtime_source": {
+            "allowed_root_noncode_change_paths": [],
+            "allowed_root_noncode_changes": 0,
+            "child": "7dd696efb4807e7338a5e420db2a1ede6cec67d0",
+            "gitlink": "7dd696efb4807e7338a5e420db2a1ede6cec67d0",
+            "root": "38d385ba73ba991eddbfb99a74111fece744a7d3",
+            "runtime_base_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586"
+          },
+          "schema": "g1_iter8900_owner_cross_pair_resume_v1",
+          "validation": {
+            "all_rank_digest_iteration_source_provenance": "PASS",
+            "full_component_presence": "PASS",
+            "non_source_semantics": "PASS",
+            "optimizer_scheduler_rng_cursor_fast_state_restoration": "PENDING_UNCHANGED_STRICT_RUNTIME_LOAD"
+          }
+        },
+        "phase": "resume",
+        "semantic_digest": "6636517bd8e246fba40006ee2cf46cad2fc5fb276c86fff0caba5815a9942238"
+      },
+      "launch_id": "cdba6eb574d645d08f35eed200f4c0ef",
+      "launch_json_sha256": "989a2e84af3bf104ef299607a143db3aed2e73f20a17be958a6b16d0acc05a39"
+    },
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": null,
+        "phase": "resume",
+        "semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b"
+      },
+      "launch_id": "e9dde4e4c95a41e0b3bc91e670c34ea2",
+      "launch_json_sha256": "b7951238b6c83c435233566b730d36ada1c40f0758bdb17572ad2c2db760bcff"
+    },
+    {
+      "body": {
+        "config_digest": "757de96fa07179dbffc85e9ecf8708959164dc367db68769668cfe9d56ad51e6",
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": null,
+        "phase": "resume",
+        "semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b"
+      },
+      "launch_id": "fffdec769bcb495680314fab7227412d",
+      "launch_json_sha256": "b7951238b6c83c435233566b730d36ada1c40f0758bdb17572ad2c2db760bcff"
+    }
+  ],
+  "schema": "psm_wma_v3_train_launch_history_v1"
+}
