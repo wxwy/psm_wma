@@ -1,0 +1,69 @@
+{
+  "status": "PUBLICATION_READBACK_PASS",
+  "utc": "2026-11-05T04:06:15.726347+00:00",
+  "formal_root": "f4871059cf28a7e2142325738decbf1d53c3148b",
+  "formal_child_gitlink": "b3098008375c275a36dd2f50cbaf757bedf493ea",
+  "evidence_ledger_commit": "461bdfeb49e48a242d55c3b1c7f87ccaeee0dc6a",
+  "branch": "v3-r05-action-decode-compile-20261105",
+  "official_root_V3": "48ebeee15f7bd9fa634c395a426fadc91d052299",
+  "official_child_v3_local_ttt": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "api_readback": [
+    {
+      "path": "artifacts/vfm_action_decode/2026-11-05_cpu/formal-targeted/summary.json",
+      "git_blob": "5057149079ac237a76d6c86ee88dcd78b18ef31e",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/461bdfeb49e48a242d55c3b1c7f87ccaeee0dc6a/artifacts/vfm_action_decode/2026-11-05_cpu/formal-targeted/summary.json"
+    },
+    {
+      "path": "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+      "git_blob": "e0c8aba48bb6b74f8afe6e60408963f837a6ba63",
+      "display_url": "https://github.com/wxwy/cosmos-framework/blob/b3098008375c275a36dd2f50cbaf757bedf493ea/cosmos_framework/model/generator/mot/parallelize_vfm_network.py"
+    },
+    {
+      "path": "docs/collab/codex/reviews/2026-11-05_Issue18_R05_Action_Decode_f4871059_b3098008_Code_Gate_Request.md",
+      "git_blob": "4a09f9b2e6341a94f2ab6e7ea0d1ab393c997cec",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/461bdfeb49e48a242d55c3b1c7f87ccaeee0dc6a/docs/collab/codex/reviews/2026-11-05_Issue18_R05_Action_Decode_f4871059_b3098008_Code_Gate_Request.md"
+    },
+    {
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "git_blob": "3d7e532e624c4f7d42a46f23318e74ee099f21fc",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/v3-r05-action-decode-compile-20261105/docs/collab/chatgpt/CODEX_INBOX.md"
+    },
+    {
+      "path": "artifacts/vfm_action_decode/2026-11-05_cpu/formal-targeted/junit.xml",
+      "git_blob": "8d896dfb953077769e21c7bd0cb9e1de65f65ddd",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/v3-r05-action-decode-compile-20261105/artifacts/vfm_action_decode/2026-11-05_cpu/formal-targeted/junit.xml"
+    },
+    {
+      "path": "artifacts/vfm_action_decode/2026-11-05_cpu/archive_manifest.json",
+      "git_blob": "06cbc75e79f8feb30806036f64084fac7f763a9c",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/v3-r05-action-decode-compile-20261105/artifacts/vfm_action_decode/2026-11-05_cpu/archive_manifest.json"
+    },
+    {
+      "path": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+      "git_blob": "185e3df3849f2294f5cd96d5a4f60ffdcef5f425",
+      "display_url": "https://github.com/wxwy/cosmos-framework/blob/b3098008375c275a36dd2f50cbaf757bedf493ea/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py"
+    }
+  ],
+  "fetched_artifacts_sha256_verified": 33,
+  "archive": {
+    "file": "cpu_evidence.tar.gz",
+    "bytes": 574289,
+    "sha256": "9caa0a858ace6e83412c7f68b1ea9df5ab8fa8e041bdd7e01c66e76cc5ddff42"
+  },
+  "original_junit": {
+    "tests": 77,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_fingerprints_verified": 1229,
+  "inbox": {
+    "prefix_preserved": true,
+    "before_bytes": 44322,
+    "after_bytes": 46194,
+    "request_unique": true
+  },
+  "source_and_tests_after_formal": "UNCHANGED",
+  "GPT_Code_Gate": "PENDING",
+  "real_gpu": "NOT_RUN"
+}
