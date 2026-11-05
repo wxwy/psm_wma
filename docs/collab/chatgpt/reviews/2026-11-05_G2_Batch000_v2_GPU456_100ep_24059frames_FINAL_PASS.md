@@ -1,0 +1,21 @@
+# G2 RoboCasa target-atomic — Batch000 v2 GPU4/5/6 FINAL PASS
+
+Date: 2026-11-05, completed at 2026-11-05 07:42:44 UTC (15:42:44 China Standard Time). Verified against the connected `data` server via the actual production manifests, 100 per-episode receipts, the live and final monitor report, and exit marker.
+
+**Result: PASS.** Exactly **100/100** episodes with **24,059/24,059** source frames, all full, schema `psm_wma_robocasa_rgbd_pose_v2`. Every one of the 100 committed episode global/task identities matches the frozen Batch000 manifest, with **0 missing and 0 extra**. The two cameras are `robot0_agentview_left` and `robot0_eye_in_hand` only; each NPZ stores uint16-mm Depth with zero sentinel and calibration/pose/frame indices, without a persisted valid array.
+
+- Frozen cohort manifest: `/tmp/g2_full_atomic_batches_prep_20261104/batches/batch_000_selection.json`, SHA256 `8561c81b0382bf79d360f5028d6fa67ab2848589bf77199f9d3f97861e760080`.
+- Author/approved implementation: Root `5e6903b9dd09828f725dc61dcd6e98012fae87b3`, Child/Gitlink `1069fe78841228cadbbfbe6afbd767eaed6225da`. Remained unchanged.
+- Physical production output: `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth`. The preexisting 7 v1 episodes were successfully rebuilt as v2 and verified; the production runner then correctly **skipped all 7 with `SKIPPED_VERIFIED`**, plus **93 newly exported** and validated episodes.
+- v1 rollback (preserved, DO NOT DELETE): `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth-v1-rollback-20261105`. Its 214 original files had passed immutable SHA256 checks in the separate migration receipt.
+- Original failure reproducer `CloseFridge` global736/local234 **full 230-frame episode** was successfully reexported on GPU6 in the official v2 cache with zero sentinel and an accurate raw far-range pixel exclusion count. No overflow failure.
+- Final exit marker `/tmp/g2_batch000_v2_gpu456_resume_20261105.exit`: **0**. Tmux production session has exited. Final status `COMPLETE_VERIFIED`.
+- Final production receipt: `/tmp/g2_batch000_v2_gpu456_resume_20261105/final_batch000.json`. Log: `/tmp/g2_batch000_v2_gpu456_resume_20261105.log`. Server 10-minute progress/failure history: `/tmp/g2_batch000_v2_gpu456_resume_20261105/events.jsonl`.
+- Server final confirmed compressed NPZ sensor payload **1,137,839,720 bytes** (~1.138 GB decimal), and snapshot free filesystem bytes **291,342,938,112** (~291.34 GB). This is payload, not all metadata/filesystem bytes.
+- At final completion log the process reported **750.2 seconds** elapsed (~12 min 30 sec, including skip/check/initialization), equivalent to ~**32.1 full-cohort source frames/s** amortized, or ~**28.9 newly exported source frames/s** for the 21,706 newly rendered source frames. These are batch-specific measured average rates across three parallel processes; not a guarantee for all tasks/batches.
+- Renderers configured on **physical GPUs 4, 5, 6 only**, via per-child `MUJOCO_GL=egl`, `MUJOCO_EGL_DEVICE_ID=<gpu>`, and `CUDA_VISIBLE_DEVICES=<gpu>`. The exporter is an EGL graphics renderer, so `nvidia-smi --query-compute-apps` (CUDA compute-only) is not a reliable way to detect it. Observed actual GPU4 exporter PID `2050425` with `MUJOCO_GL=egl`, `MUJOCO_EGL_DEVICE_ID=4`, `CUDA_VISIBLE_DEVICES=4`, `PYOPENGL_PLATFORM=egl`. Export processes were short-lived per episode (~20–30 seconds) and have stopped now that Batch000 finished.
+- **No GPU7 or GPU0–3 were targeted by this producer.** No 25 GiB batch storage cap or four-hour global deadline, retaining an independent 100 GiB free disk reserve.
+- The v1→v2 migration previously used atomic renameat2 exchange and a read-only recovery receipt after an unrelated final-report variable typo; official v2 root and archived v1 rollback were verified intact.
+- A scheduled one-time Batch000 status check was disabled after direct final verification to prevent duplicate notifications.
+
+**Scope boundary:** No Batch001–Batch091 started automatically, no source RGB duplication, no original Flat/raw modification, no new nav_sg adapter, no V3 or V2 main branch merge. The remaining full corpus and any new production tranche require their own monitored launch decision, independent storage forecasting and native-geometry spot checks appropriate to the wider task distribution.
