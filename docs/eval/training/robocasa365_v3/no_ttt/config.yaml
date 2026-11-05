@@ -1,0 +1,529 @@
+checkpoint:
+  broadcast_via_filesystem: false
+  dcp_async_mode_enabled: false
+  dcp_load_dedup: true
+  enable_gcs_patch_in_boto3: true
+  hf_export:
+    enabled: false
+    export_every_n: 1
+    hf_repo_id: null
+    upload_to_object_store:
+      bucket: ''
+      credentials: ''
+      enabled: false
+  jit:
+    device: cuda
+    dtype: bfloat16
+    enabled: false
+    input_shape: null
+    strict: true
+  keys_not_to_resume: []
+  keys_to_skip_loading:
+  - net_ema.
+  - local_memory
+  load_ema_to_reg: false
+  load_from_object_store:
+    bucket: ''
+    credentials: ''
+    enabled: false
+  load_path: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/models/Cosmos3-Edge-Policy-DROID-dcp
+  load_training_state: false
+  only_load_scheduler_state: false
+  save_iter: 100
+  save_to_object_store:
+    bucket: ''
+    credentials: ''
+    enabled: false
+  strict_resume: true
+  type:
+    _target_: cosmos_framework.checkpoint.dcp.SafeLocalDistributedCheckpointer
+    callbacks: null
+    coordination_timeout_seconds: 1800
+  verbose: true
+data_setting:
+  qwen_max_video_token_length: 8192
+dataloader_train:
+  _target_: cosmos_framework.data.generator.joint_dataloader.PackingDataLoader
+  audio_sample_rate: 48000
+  dataloader:
+    _target_: cosmos_framework.data.generator.joint_dataloader.RankPartitionedDataLoader
+    batch_size: 1
+    datasets:
+      robocasa:
+        dataset:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_robocasa_sft_dataset
+          action_normalization: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          base_encoding: raw
+          camera_set: left_wrist
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          iterable_shuffle: true
+          max_action_dim: 64
+          mode: wam
+          resolution: null
+          root: /mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic
+          split: train
+          split_seed: 42
+          split_val_ratio: 0.01
+          task_names:
+          - CloseBlenderLid
+          - CloseFridge
+          - CloseToasterOvenDoor
+          - CoffeeSetupMug
+          - NavigateKitchen
+          - OpenCabinet
+          - OpenDrawer
+          - OpenStandMixerHead
+          - PickPlaceCounterToCabinet
+          - PickPlaceCounterToStove
+          - PickPlaceDrawerToCounter
+          - PickPlaceSinkToCounter
+          - PickPlaceToasterToCounter
+          - SlideDishwasherRack
+          - TurnOffStove
+          - TurnOnElectricKettle
+          - TurnOnMicrowave
+          - TurnOnSinkFaucet
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/models/Cosmos3-Edge-Policy-DROID
+          use_base_action: true
+          use_state: true
+          viewpoint: concat_view
+        ratio: 1
+    in_order: false
+    num_workers: 4
+    persistent_workers: true
+    pin_memory: true
+    prefetch_factor: 4
+    sampler: null
+  dataset_name: action_robocasa
+  iteration_time_budget: null
+  lookahead_limit: 10
+  max_samples_per_batch: 1
+  max_sequence_length: null
+  patch_spatial: 2
+  sound_latent_fps: 0
+  tokenizer_spatial_compression_factor: 16
+  tokenizer_temporal_compression_factor: 4
+  uniae_chunk_frames: null
+  uniae_pad_frames: null
+dataloader_val: null
+defaults:
+- _self_
+- model: mot_fsdp
+- data_train: null
+- data_val: null
+- optimizer: adamw
+- scheduler: warmup_cosine_lr
+- checkpoint: s3
+- callbacks:
+  - basic
+  - optimization
+  - job_monitor
+  - generation
+- ema: power
+- tokenizer: wan2pt2_tokenizer
+- sound_tokenizer: null
+- vlm_config: null
+- ckpt_type: dcp
+- experiment: null
+job:
+  cluster: null
+  group: corrected_phase5
+  name: no_ttt_packed128_droid_fresh_30k_world4_ga4
+  project: psm_wma_v3
+  wandb_mode: disabled
+model:
+  _recursive_: false
+  _target_: cosmos_framework.model.generator.omni_mot_model.OmniMoTModel
+  config:
+    action_gen: true
+    action_io_projector_type: domain_aware
+    activation_checkpointing:
+      determinism_check: default
+      mode: selective
+      preserve_rng_state: true
+      save_only_marked_ops: false
+      save_ops_regex:
+      - fmha_forward
+      - _flash_attn_varlen_forward
+      - _flash_attn_forward
+    attention_io_layout: sequence_sharded
+    causal_training_strategy: none
+    compile:
+      ar_post_saturation_mode: default
+      compile_dynamic: true
+      compiled_region: language
+      coordinate_descent_tuning: false
+      cuda_graph_scope: block
+      enabled: false
+      mark_unbacked: false
+      max_autotune_pointwise: false
+      use_cuda_graphs: false
+    correct_cp_gradients: false
+    diffusion_expert_config:
+      base_fps: 24
+      enable_action_modality_embedding: true
+      enable_fps_modulation: true
+      enable_media_modality_embedding: false
+      enable_sound_modality_embedding: true
+      enable_vision_modality_embeddings: false
+      lidar_patch_spatial_hw: null
+      load_weights_from_pretrained: false
+      max_vae_latent_side_after_patchify: 20
+      num_view_embeddings: 0
+      patch_spatial: 2
+      radar_patch_spatial_hw: null
+      sound_base_temporal_compression_factor: null
+      timestep_range: 1.0
+      unified_3d_mrope_reset_spatial_ids: true
+      unified_3d_mrope_temporal_modality_margin: 15000
+      vision_temporal_position_mode: latent_index
+    ema:
+      enabled: false
+      iteration_shift: 0
+      rate: 0.1
+    enable_input_bias: true
+    exclude_reasoner_weights_from_checkpoint: false
+    fixed_step_sampler_config: null
+    input_caption_key: ai_caption
+    input_image_key: images
+    input_video_key: video
+    joint_attn_implementation: two_way
+    latent_downsample_factor: 16
+    lbl:
+      coeff_gen: null
+      coeff_und: null
+      method: local
+    lidar_fps: null
+    lidar_state_ch: null
+    lidar_tokenizer: null
+    load_vision_tokenizer: true
+    local_memory_action_dim: 15
+    local_memory_dim: 32
+    local_memory_enabled: false
+    local_memory_evidence_dim: 256
+    local_memory_fast_hidden_dim: 256
+    local_memory_inner_lr: 0.1
+    local_memory_k_local: 4
+    local_memory_ttt_dim: 64
+    local_memory_ttt_tbptt_steps: 16
+    lora_alpha: 32
+    lora_enabled: false
+    lora_rank: 16
+    lora_target_modules: q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen
+    max_action_dim: 64
+    max_num_tokens_after_packing: 74000
+    multiview_attention:
+      backend: auto
+      mask:
+        attention_scope: all_views
+        control_attends_sensor: false
+        decomposed_temporal_window_seconds: null
+        lidar_attends_captions: true
+        radar_attends_captions: true
+    natten_parameter_list: null
+    net: null
+    num_embodiment_domains: 32
+    parallelism:
+      cfg_parallel_shard_degree: 1
+      context_parallel_shard_degree: 1
+      data_parallel_replicate_degree: 1
+      data_parallel_shard_degree: 4
+      enable_inference_mode: false
+      fsdp_cpu_offload: false
+      fsdp_master_dtype: float32
+      fsdp_reduce_dtype: bfloat16
+      vae_load_balance_group_size: 1
+    precision: bfloat16
+    quantization:
+      exclude_regex: []
+      fp8_granularity: per_row
+      include_regex: []
+      method: null
+      mixed_precision_first_steps: 0
+      mixed_precision_last_steps: 0
+      mixed_precision_reasoner_policy: high_precision
+      mixed_precision_w8a16_cache: none
+      modelopt_fp8_checkpoint_path: null
+      modelopt_fp8_target_fqns: []
+    radar_fps: null
+    radar_state_ch: null
+    radar_tokenizer: null
+    rectified_flow_inference_config:
+      num_train_timesteps: 1000
+      scheduler_type: unipc
+      shift: 1
+      use_dynamic_shifting: false
+    rectified_flow_training_config:
+      action_loss_weight: 10.0
+      exclude_fully_conditioned_items: null
+      image_loss_scale: null
+      independent_action_schedule: false
+      independent_sound_schedule: false
+      lidar_loss_scale: null
+      loss_scale: 10.0
+      normalize_loss_by_active: false
+      radar_loss_scale: null
+      sample_level_loss_averaging: false
+      shift:
+        '256': 3
+        '480': 5
+        '720': 10
+      shift_action: null
+      shift_image: null
+      shift_lidar: null
+      shift_sound: null
+      sound_loss_scale: 2.0
+      train_time_action_distribution: logitnormal
+      train_time_image_distribution: logitnormal
+      train_time_sound_distribution: logitnormal
+      train_time_video_distribution: waver
+      train_time_weight: uniform
+      use_discrete_rf: false
+      use_dynamic_shift: false
+    resolution: '480'
+    sound_dim: null
+    sound_gen: false
+    sound_latent_fps: 25
+    sound_tokenizer: null
+    sr_latent_condition_noise: null
+    state_ch: 48
+    state_t: 300
+    tokenizer:
+      _target_: cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface
+      bucket_name: ''
+      causal: true
+      chunk_duration: 93
+      encode_bucket_multiple: null
+      encode_chunk_frames:
+        '256': 68
+        '480': 24
+        '720': 8
+        '768': 8
+      encode_exact_durations:
+      - 17
+      - 61
+      - 73
+      keep_decoder_cache: false
+      object_store_credential_path_pretrained: ''
+      spatial_compression_factor: 16
+      temporal_compression_factor: 4
+      temporal_window: null
+      use_streaming_encode: false
+      vae_path: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+    video_temporal_causal: false
+    vision_gen: true
+    vlm_config:
+      layer_module: null
+      model_instance:
+        _target_: cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM
+        config:
+          _target_: cosmos_framework.configs.base.defaults.reasoner.create_vlm_config
+          base_config:
+            _target_: cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig.from_json_file
+            json_file: cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json
+          freeze_und: false
+          include_visual: null
+          layer_module: MoTDecoderLayer
+          qk_norm_for_text: false
+          tie_word_embeddings: true
+          use_und_k_norm_for_gen: true
+      model_name: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/models/Cosmos3-Edge-Policy-DROID
+      pretrained_weights:
+        backbone_path: s3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/
+        checkpoint_format: null
+        credentials_path: ''
+        enable_gcs_patch_in_boto3: true
+        enabled: false
+      qk_norm: false
+      safetensors_path: ''
+      tie_word_embeddings: false
+      tokenizer:
+        _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+        repository: null
+        revision: null
+        subdir: ''
+        tokenizer_type: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/models/Cosmos3-Edge-Policy-DROID
+      use_system_prompt: false
+model_parallel:
+  _cpu_offloading_context: null
+  async_tensor_model_parallel_allreduce: false
+  autocast_dtype: torch.float32
+  barrier_with_L1_time: true
+  batch_p2p_comm: true
+  batch_p2p_sync: true
+  bf16: false
+  context_parallel_size: 1
+  cpu_offloading: false
+  cpu_offloading_activations: true
+  cpu_offloading_double_buffering: false
+  cpu_offloading_num_layers: 0
+  cpu_offloading_weights: false
+  cross_entropy_fusion_impl: native
+  cross_entropy_loss_fusion: false
+  deallocate_pipeline_outputs: false
+  defer_embedding_wgrad_compute: false
+  delay_wgrad_compute: false
+  deterministic_mode: false
+  enable_autocast: false
+  ep_overlap_early_attn_memory_release: false
+  expert_model_parallel_size: 1
+  expert_tensor_parallel_size: 1
+  finalize_model_grads_func: null
+  fp16: false
+  grad_scale_func: null
+  grad_sync_func: null
+  gradient_accumulation_fusion: false
+  hierarchical_context_parallel_sizes: null
+  microbatch_group_size_per_vp_stage: 1
+  moe_extended_tp: false
+  no_sync_func: null
+  num_microbatches_with_partial_activation_checkpoints: null
+  overlap_moe_expert_parallel_comm: false
+  overlap_p2p_comm: false
+  overlap_p2p_comm_warmup_flush: false
+  param_sync_func: null
+  params_dtype: torch.float32
+  perform_initialization: true
+  pipeline_dtype: null
+  pipeline_model_parallel_comm_backend: null
+  pipeline_model_parallel_size: 1
+  sequence_parallel: false
+  tensor_model_parallel_size: 1
+  timers: null
+  tp_comm_atomic_ag: false
+  tp_comm_atomic_rs: false
+  tp_comm_bootstrap_backend: nccl
+  tp_comm_bulk_dgrad: true
+  tp_comm_bulk_wgrad: true
+  tp_comm_overlap: false
+  tp_comm_overlap_ag: true
+  tp_comm_overlap_disable_fc1: false
+  tp_comm_overlap_disable_qkv: false
+  tp_comm_overlap_rs: true
+  tp_comm_overlap_rs_dgrad: false
+  tp_comm_split_ag: true
+  tp_comm_split_rs: true
+  use_cpu_initialization: false
+  use_ring_exchange_p2p: false
+  use_te_rng_tracker: false
+  variable_seq_lengths: false
+  virtual_pipeline_model_parallel_size: null
+  wgrad_deferral_limit: 0
+optimizer:
+  _target_: cosmos_framework.utils.generator.optimizer.build_optimizer
+  betas:
+  - 0.9
+  - 0.99
+  disable_weight_decay_for_1d_params: false
+  eps: 1.0e-08
+  fused: true
+  keys_to_select:
+  - moe_gen
+  - time_embedder
+  - vae2llm
+  - llm2vae
+  - action2llm
+  - llm2action
+  - action_modality_embed
+  lr: 5.0e-05
+  lr_multipliers:
+    action2llm: 5.0
+    action_modality_embed: 5.0
+    llm2action: 5.0
+  model: null
+  optimizer_type: FusedAdam
+  weight_decay: 0.05
+  weight_decay_multipliers_for_1d_params: {}
+  weight_decay_skip_patterns:
+  - action2llm\.(fc|bias)\.weight$
+  - llm2action\.(fc|bias)\.weight$
+scheduler:
+  _target_: cosmos_framework.utils.generator.optimizer.build_lr_scheduler
+  cycle_lengths:
+  - 30000
+  f_max:
+  - 1.0
+  f_min:
+  - 0.0
+  f_start:
+  - 1.0e-06
+  lr_scheduler_type: LambdaLinear
+  optimizer: null
+  verbosity_interval: 0
+  warm_up_steps:
+  - 500
+trainer:
+  callbacks: {}
+  compile_config:
+    recompile_limit: 8
+    use_duck_shape: false
+  cp_input_direct_broadcast_min_bytes: 9223372036854775807
+  cudnn:
+    benchmark: true
+    deterministic: false
+  ddp:
+    broadcast_buffers: true
+    find_unused_parameters: false
+    static_graph: true
+  distributed_parallelism: fsdp
+  grad_accum_iter: 4
+  grad_scaler_args:
+    enabled: false
+  logging_iter: 1
+  max_iter: 30000
+  max_val_iter: null
+  memory_format: torch.preserve_format
+  prefetch_validation: false
+  profiling:
+    enable_memory_snapshot: false
+    enable_nsys: false
+    enable_profiling: false
+    profile_active: 1
+    profile_freq: 100
+    profile_memory: false
+    profile_warmup: 3
+    record_shape: false
+    save_s3: false
+    target_ranks:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    with_modules: false
+    with_stack: false
+  run_validation: false
+  run_validation_on_start: false
+  save_zero_checkpoint: false
+  seed: 42
+  straggler_detection:
+    analyze_backward: true
+    analyze_dataloading: true
+    analyze_forward: true
+    analyze_optimizer: true
+    enabled: false
+    max_diff: 2.0
+    profile_freq: 1
+    raise_error: true
+    report_freq: 100
+    save_s3: false
+  timeout_period: 999999999
+  type: cosmos_framework.trainer.matched_no_ttt.MatchedNoTTTTrainer
+  validation_iter: 100
+upload_reproducible_setup: false
