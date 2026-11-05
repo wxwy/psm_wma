@@ -120,6 +120,14 @@
       "split_val_ratio": 0.01,
       "source_equals_effective_train_members": "NOT_ASSERTED_SPLIT_RECORD_ONLY",
       "effective_train_ids_not_required_for_full_source_depth_production": true
+    },
+    "camera_scope": {
+      "authority": "2db5df9a279e58b641e418943dae1dee422e31c9",
+      "cameras": [
+        "robot0_agentview_left",
+        "robot0_eye_in_hand"
+      ],
+      "right_camera_in_scope": false
     }
   },
   "disk_snapshot": {
@@ -178,7 +186,7 @@
     "batching_reduces_final_cumulative_storage": false
   },
   "proposed_new_production_partition": {
-    "status": "PROPOSAL_NOT_FROZEN_NOT_APPROVED",
+    "status": "COUNT_POLICY_RECORDED_IN_2db5df9a_ACTUAL_MEMBER_MANIFESTS_PENDING",
     "episodes_per_batch_max": 100,
     "size_means": "TOTAL_NOT_PER_TASK",
     "existing_select_mechanism": "sorted(task_class,global_episode_index)[shard::92]",
@@ -190,7 +198,8 @@
       "max": 91
     },
     "actual_batch_member_manifests_created": false,
-    "actual_per_batch_frame_totals_known": false
+    "actual_per_batch_frame_totals_known": false,
+    "count_and_camera_scope_authority": "2db5df9a279e58b641e418943dae1dee422e31c9"
   },
   "source_or_training_changes": false,
   "server_commands_by_Codex": false,
@@ -211,5 +220,35 @@
     "production_source_and_gitlink": "UNCHANGED",
     "project_tests_rerun": false,
     "server_execution": false
+  },
+  "output_placement": {
+    "owner_decision_date_asia_shanghai": "2026-11-05",
+    "logical_output_root": "/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth",
+    "flat_source_root": "/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic",
+    "layout": "NORMAL_SIBLING_DIRECTORY_NO_SYMLINK_REQUESTED",
+    "empty_directory_creation_authorized": true,
+    "authorized_operation_when_absent": [
+      "mkdir",
+      "--",
+      "/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth"
+    ],
+    "missing_parent_auto_creation_allowed": false,
+    "existing_entries_overwrite_or_cleanup_allowed": false,
+    "server_resolved_output_path": null,
+    "server_filesystem_and_free_space_checked": false,
+    "server_directory_status": "NOT_CHECKED_OR_CREATED_BY_CODEX",
+    "export_authorized_by_directory_decision": false,
+    "additional_disk_capacity_implied": false,
+    "documentation_validation": {
+      "status": "PASS",
+      "scope": "LEXICAL_SIBLING_PATH_AND_DOCUMENTATION_ONLY_NOT_SERVER_PREFLIGHT",
+      "bash_syntax_only_blocks": 2,
+      "existing_dry_run": "UNCHANGED_EXCEPT_BOUND_OUTPUT_PATH",
+      "budget_values": "UNCHANGED",
+      "old_source_bindings_intact": 13,
+      "existing_artifact_hashes_intact": 39,
+      "production_code_change": false,
+      "server_mkdir_or_export_run": false
+    }
   }
 }

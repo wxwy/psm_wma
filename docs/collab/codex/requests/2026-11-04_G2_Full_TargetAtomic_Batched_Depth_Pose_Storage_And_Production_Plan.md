@@ -76,8 +76,41 @@ CPU/OSMesa replay process; parallelism needs its own measured resource budget.
 
 ## Placement and retention decision before rendering
 
-Preferred: allocate/expand durable **local storage on the authorized server**,
-then approve a concrete full-coverage quota plus headroom and output path.
+**Owner placement decision (2026-11-05):** the normal sibling output directory is
+
+```text
+/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth
+```
+
+Bind `NEW_PRODUCTION_CACHE` to this exact path. It is alongside
+`robocasa365-target-atomic`, not inside that source directory. No symlink layout,
+source relocation or exporter path-protection exception is requested. Existing
+code resolves all three paths and rejects either-direction ancestry; a normal
+sibling passes that protection without a production change.
+
+The Owner has authorized **creating this empty directory**, separately from any
+Depth export. A connected server execution role may do so without asking again:
+first confirm the existing parent/source on the actual server and resolve output,
+raw and Flat paths. Do not manufacture missing source parents, replace symlinks,
+remove existing entries or change source files. If the target is already a
+directory, report it and leave contents unchanged; if it is a different file or
+unverified symlink, stop and report its identity. For a confirmed absent target:
+
+```bash
+mkdir -- /mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth
+```
+
+No `-p`, cleanup, renderer or automatic export follows this mkdir. Record actual
+created/existing status, resolved path and filesystem/free space on server.
+**Codex has not performed this server operation:** no server command capability
+is currently exposed. Do not interpret the recorded path as an existing cache.
+Dry-run may use the absent root or the confirmed newly created empty directory;
+it must not create cache contents. Existing nonempty cache reuse requires its
+identity verification and the separate run decision, never overwrite/cleanup.
+
+Placement is now decided; **capacity/quota/headroom are not**. This sibling path
+does not by itself add disk space. Allocate/expand durable local storage if needed,
+then approve a concrete full-coverage quota plus headroom for the chosen output.
 Current free space does not justify unattended full-corpus execution based only
 on the mean compression proxy. No other volume's path/capacity is assumed.
 
@@ -93,9 +126,12 @@ later retention decision.
 
 ## Proposed first batch policy — explicit new production partition
 
-Recommend **at most 100 episodes total per batch**, not 100 per task. This is a
-proposal for the next decision, not a frozen selection or historical training
-identity. Reuse existing `source.select()` episode sharding of the full manifest:
+The later Owner scope record `2db5df9a279e58b641e418943dae1dee422e31c9` retains
+the92-batch/two-camera scope: Left and Wrist only, Right out of scope. Use
+**at most 100 episodes total per batch**, not 100 per task. Exact batch manifests
+and frame/resource budgets still need server-side freezing; this is not a
+historical training identity or execution authorization. Reuse existing
+`source.select()` episode sharding of the full manifest:
 `num_episode_shards=ceil(9126/100)=92`, shard IDs 0..91. Current source sorts
 `(task_class,global_episode_index)` and takes `picked[shard::count]`; no sampler
 implementation is needed. This yields 18 batches of 100 and 74 of 99, collectively
@@ -117,7 +153,8 @@ Connected execution role's next **read-only** preparation:
    the previous free-space snapshot is current.
 4. Run only the existing non-rendering CLI for proposed batch 0, in a clean exact
    approved checkout, with private caches, empty CUDA and one numeric thread.
-   Use a new external evidence directory and an absent proposed cache root.
+   Use a new external evidence directory and the Owner-chosen sibling cache root,
+   either absent or verified empty after the separately authorized mkdir.
    Discovery plus dry-run may use one 30min outer preparation watchdog (TERM at
    1785s, KILL 15s later), never a renewed timer per substep. Server temporary
    validation scripts are allowed; record their command/SHA and keep them local.
@@ -126,6 +163,7 @@ Prepared command **inside** that bounded metadata runner, not executed here:
 
 ```bash
 cd "$CODE_ROOT"
+NEW_PRODUCTION_CACHE=/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth
 env CUDA_VISIBLE_DEVICES='' MUJOCO_GL=disable \
   OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   "$SIM_PYTHON" -m tools.g2.export_robocasa_rgbd_pose \
@@ -139,9 +177,10 @@ env CUDA_VISIBLE_DEVICES='' MUJOCO_GL=disable \
 ```
 
 Omit `--frames` for full episodes. No output cache should be created by dry-run.
-This freezes a new proposed batch, not a training split. If Owner/GPT chooses a
-different batch size/policy, refreeze metadata before rendering; do not substitute
-another cohort silently. The 100-total/92-partition proposal is not yet approved.
+This freezes the production batch identities, not a training split. If Owner/GPT
+changes the recorded batch size/policy, refreeze metadata before rendering; do not
+substitute another cohort silently. Directory/camera/count decisions do not grant
+permission to start batch0 or an automatic loop of all92 batches.
 
 ## Execution and coverage contract still to approve
 

@@ -1,3 +1,47 @@
+# 2026-11-05 — Owner sibling Depth output selected; mkdir authorized, server execution unavailable
+
+Observation 2026-11-05T10:14:53.131629+08:00: before_head2db5df9a279e58b641e418943dae1dee422e31c9;
+fresh fetch/advertised candidate same2db5df9a, official
+V330efbabe6d956b584e8730ea755a2f50956d2681 matched tracking refs, no candidate
+advance this turn. Latest camera/count scope record2db5df9a read: Left+Wrist
+only, Right excluded,92 deterministic <=100-total batches; actual member/frame
+manifests still pending. Formal source3eb8b334150018212ae1f51afb5e954b83fa1186 /
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged.
+
+Owner now explicitly chose `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth`
+and authorized creating that directory. This is a normal sibling of Flat source
+`/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic`,
+not nested under it; no symlink/relocation or source-path policy exception needed.
+Source export main() resolves all paths and checks both ancestor directions.
+Lexical sibling compatibility is known; actual server resolved path/device and
+existence must still be checked before mkdir/run. Placement decision is closed,
+empty mkdir needs no repeated approval, but it grants no renderer/export job.
+
+Current capability rechecked:21 callable cloud/shell tools, no Remote Desktop
+Commander or server command tool, managed runtime connected/current but no server
+capabilities/identity, executor VPN=false/TCP grants empty. This is a current
+Codex capability block, not missing Owner permission or a claim that the server
+itself is offline. No server mkdir/read/probe or cloud-local copy of that path
+has been executed. Connected execution role may create only the confirmed absent
+root with mkdir -- (no -p); existing entries remain unchanged, symlink/file
+conflicts reported. Authorized action is written concretely in the plan.
+
+Claimed docs only: placement/creation paragraph and bound dry-run output in full
+production plan, budget JSON placement/scope fields, MEMORY/TODO/SESSION and
+append-only Inbox. Budget numbers and past formal reports remain unchanged;
+output may be absent or created empty for dry-run, never a silent cache overwrite.
+Same partition placement does not add capacity. Actual storage quota/headroom,
+first-batch exact metadata/time/RSS/stop limits and export authorization remain.
+No production source/Child/algorithm/sampling/threshold/Config/cache or old GateC
+change; no new implementation Pair or Code/Gate B/C tests. Documentation/path
+validation PASS: lexical sibling/ancestor checks only (not server resolution),2
+Bash blocks syntax-only, existing dry-run unchanged except the bound output,
+original budget/proxy/evidence fields unchanged,39 artifact hashes/13 source
+bindings intact, all G2 formal reviews byte-identical, append-only Inbox under
+128KiB, protected source/Child and diff-check PASS. Publish candidate/readback
+and stop at missing server command channel.
+No GPU/EGL/training/DCP/nav_sg/V3 promotion or Depth generation performed.
+
 # 2026-11-04 — Owner full-source correction consumed; historical N100 blocker CLOSED
 
 Observation 2026-11-04T21:30:03.697745+08:00: before_headffe931360998cd39b7587a883681fe6b0e25e65b;

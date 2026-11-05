@@ -1,5 +1,12 @@
 # 长期工程决策
 
+## G2 Depth/Pose 输出目录（2026-11-05 Owner 指定）
+
+- 统一输出根为 `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth`，与 Flat 源目录 `robocasa365-target-atomic` 同级，使用普通目录；不要求 symlink 或修改导出器路径保护。
+- Owner 已授权创建该空目录，无须重复询问；当前 Codex 没有服务器命令通道，尚未实际创建/检查。服务器执行方须核对真实解析路径与父目录；已有目录/文件不覆盖、不清理，已有非空 cache 仍须单独验身份。
+- 选择路径、创建空目录不等于 Depth 导出授权，不改变现有训练 SOURCE_ROOT/CACHE_ROOT/Index/Config/DCP，也不会增加 `/mnt/data1` 容量。存储配额、首批具体限额及运行授权仍须落实。
+- 摄像头/92批范围沿用 Owner 记录 `2db5df9a279e58b641e418943dae1dee422e31c9`：只做 Left+Wrist，不加入 Right。保留所有历史 Gate C、审计与缓存。
+
 ## G2 全量来源与新生产批次语义（2026-11-04 Owner 更正）
 
 - Authority：`a8da67f9c69c5936a681b3061d781436911b5f1b`，正式记录 `docs/collab/chatgpt/reviews/2026-11-04_G2_Full_RoboCasa_Training_Cohort_Owner_Clarification.md`。
