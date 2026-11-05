@@ -1,0 +1,65 @@
+{
+  "cwd": "/workspace/psm-wma-g2-depth-v2",
+  "commands": [
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tools/g2/test_depth_zero_sentinel.py",
+        "tools/g2/test_rgbd_pose_export.py",
+        "tools/g2/test_spatial_photometric_policy.py",
+        "--basetemp",
+        "/tmp/g2_issue19_depth_v2_author_cpu/final/pytest_tmp",
+        "--junitxml",
+        "/tmp/g2_issue19_depth_v2_author_cpu/final/junit.xml"
+      ]
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "tools/g2"
+      ]
+    },
+    {
+      "name": "ruff_format_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "tools/g2"
+      ]
+    },
+    {
+      "name": "ast",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import ast,pathlib; paths=sorted(pathlib.Path(\"tools/g2\").rglob(\"*.py\")); [(ast.parse(p.read_text(encoding=\"utf-8\"),filename=str(p)),print(\"PASS\",p)) for p in paths]; print(\"AST files:\",len(paths))"
+      ]
+    },
+    {
+      "name": "diff_check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "e531af5c1825f7af0bc94ac2010bae2a04ad11ec",
+        "fbe578908a840a5f4e5b351f1c2e8fb019def6e5"
+      ]
+    }
+  ]
+}

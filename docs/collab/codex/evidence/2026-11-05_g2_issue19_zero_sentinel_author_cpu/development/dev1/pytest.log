@@ -1,0 +1,46 @@
+........................................................................ [ 41%]
+...............................................F........................ [ 82%]
+..............................                                           [100%]
+=================================== FAILURES ===================================
+_____ test_dry_run_real_mapping_path_has_no_renderer_or_output_side_effect _____
+
+tmp_path = PosixPath('/tmp/g2_issue19_depth_v2_author_cpu/dev1/pytest_tmp/test_dry_run_real_mapping_path0')
+capsys = <_pytest.capture.CaptureFixture object at 0x7f2e40323020>
+
+    def test_dry_run_real_mapping_path_has_no_renderer_or_output_side_effect(
+        tmp_path, capsys
+    ):
+        raw, flat = fixture_tree(tmp_path)
+    
+        def forbidden(*args):
+            pytest.fail("dry-run cannot construct a simulator")
+    
+        command = [
+            "--raw-root",
+            str(raw),
+            "--flat-root",
+            str(flat),
+            "--output-root",
+            str(tmp_path / "out"),
+            "--local-episode",
+            "0",
+            "--task-class",
+            "CloseFridge",
+            "--frames",
+            "0,1,3",
+            "--state-index-policy",
+            "frame_index",
+            "--dry-run",
+        ]
+        assert cli.main(command, replay_factory=forbidden) == 0
+        result = json.loads(capsys.readouterr().out)
+        assert result["selected_frame_count"] == 3 and not (tmp_path / "out").exists()
+>       assert result["uncompressed_array_bytes_estimate"] == 3 * 2 * (
+            8 * 8 * 3 + 41 * 4 + 8
+        )
+E       assert 1800 == ((3 * 2) * ((((8 * 8) * 3) + (41 * 4)) + 8))
+
+tools/g2/test_rgbd_pose_export.py:813: AssertionError
+=========================== short test summary info ============================
+FAILED ../../dev::test_dry_run_real_mapping_path_has_no_renderer_or_output_side_effect
+1 failed, 173 passed in 5.46s

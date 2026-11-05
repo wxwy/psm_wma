@@ -1,0 +1,1325 @@
+diff --git a/SESSION.md b/SESSION.md
+index c80b5164..8429b4c0 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,22 @@
++# 2026-11-05 — Issue19 zero-sentinel codec v2 implementation IN_PROGRESS
++
++Implementation step (before source freeze): v2 uses depth-only NPZ, zero sentinel
++for uint16 range exclusions and renderer-invalid pixels, disjoint source counts,
++storage-mask spatial comparison and unchanged geometry thresholds. Legacy roots
++are refused before writes by CLI/direct writer; new runbook is a transition
++proposal only, no converter or server action. Related files claimed above only.
++Author development CPU dev1: 173 passed/1 failed (old dry-run byte expectation
++still included bool mask); corrected that expected accounting without weakening
++mapping/no-renderer assertions. dev2: 174 passed, 0 failure/error/skip in 5.40s.
++Ruff 0.12.7 check/format all12 G2 Python files PASS. Raw development artifacts:
++/tmp/g2_issue19_depth_v2_author_cpu/dev1 and dev2. Both are synthetic cloud CPU,
++not native CloseFridge736 evidence. Source commit and final clean verification
++still pending; no review/production acceptance claimed.
++
++2026-11-05T12:44:25.706229+08:00: fresh fetch/advertised G2 base9568723fd19d008be180c7b3e4126e1176c07d26, PR20 head e531af5c1825f7af0bc94ac2010bae2a04ad11ec, official V38586b30c observed only. Full Issue19/PR20 bodies and Owner9568723f/failure76b7d708 read via GitHub API/Git. Created isolated worktree /workspace/psm-wma-g2-depth-v2 on exact requested PR branch, no code yet; same Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Runtime cloud connected/Git operational; GitHub robot's repository-environment binding is a separate channel and does not prevent current authorized implementation.
++
++Claim geometry.py/cache.py/export/verify/__init__, schema/README and related current tests, new focused tests, migration plan and CPU evidence/state/handoff. Preserve archived tests/evidence and all server7legacy episodes/staging. Central representability mask, depth-only v2 exact NPZ arrays, source count diagnostics and filtered fresh comparison with unchanged ray/projection thresholds. Plan only for old7 transition; no server files/real model/GPU/production. No migration/new namespace or root swap performed. Current server tool unavailable; native736 frame73/74 must remain explicitly pending unless authorized connected resources appear.
++
+ # 2026-11-05 — Owner sibling Depth output selected; mkdir authorized, server execution unavailable
+ 
+ Observation 2026-11-05T10:14:53.131629+08:00: before_head2db5df9a279e58b641e418943dae1dee422e31c9;
+diff --git a/TODO.md b/TODO.md
+index 0517d2d5..d8462af3 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,5 +1,7 @@
+ # PSM-WMA 任务队列
+ 
++- **G2-ISSUE19-DEPTH-V2** — IN_PROGRESS; Codex; Issue19/PR20, isolated branch v3-g2-codex-depth-zero-sentinel-20261105 at e531af5c, G2 base9568723f, Child1069fe78 unchanged. Claim geometry/cache/export/verifier/schema+README and focused tests, new migration plan and author CPU evidence/SESSION/TODO/Inbox only. uint16 zero sentinel/no persisted mask, compact range diagnostics, strict v2 identity, safe seven-episode transition plan; no server migration/export/GPU/V3/nav_sg/training.
++
+ - **G2-DEPTH-OUTPUT-DIR** — BLOCKED (Owner directory choice/empty mkdir authorized; no server command channel in this Codex runtime); connected server execution role. Exact ordinary sibling root `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth`. No new Owner approval or path-guard code change needed. Confirm real parent/source and canonical path separation; create only when absent without -p, or report existing directory unchanged. Do not replace existing files/symlinks, clean contents, modify raw/Flat/latent/index/Config, or start export. Server existence/resolved path/filesystem have NOT been observed here; no local imitation directory created.
+ 
+ - **G2-FULL-DEPTH-PLAN** — REVIEW (capacity/first-batch resource contract; export NOT AUTHORIZED); Codex plan / connected server execution role / Owner-GPT run decision. `docs/collab/codex/requests/2026-11-04_G2_Full_TargetAtomic_Batched_Depth_Pose_Storage_And_Production_Plan.md`; full18 classes/9126 episodes/2231347 frames, train split unchanged. Owner selected sibling output `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth` and authorized empty mkdir (G2-DEPTH-OUTPUT-DIR). Camera/count scope2db5df9a: Left+Wrist only,92 deterministic <=100-total batches; exact ID/frame metadata and byte/time/RSS limits still pending server intake. Budget proxy124.859GB vs dated137.476GB free leaves unsafe uncertainty; sibling placement adds no space. Existing exporter guard accepts canonical nonoverlapping siblings without source change; real path/device/capacity still to verify. No new tools, V3/GPU/training/DCP/old-asset action or data transfer.
+diff --git a/docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md b/docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md
+new file mode 100644
+index 00000000..5c3b2bbf
+--- /dev/null
++++ b/docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md
+@@ -0,0 +1,129 @@
++# G2 Issue #19 — Depth v2 and seven-episode transition plan
++
++Status: implementation candidate; author CPU evidence and fresh review required.
++Scope: isolated `v3-g2-codex-depth-zero-sentinel-20261105`, Draft PR #20 against
++`v3-g2-spatial-policy-20261104`. No V3 merge, nav_sg, training, source-data edit,
++GPU execution, legacy conversion or production resume is authorized here.
++
++## Authority and frozen inputs
++
++- Issue #19: https://github.com/wxwy/psm_wma/issues/19
++- Owner decision: `docs/collab/chatgpt/reviews/2026-11-05_G2_Uint16_Depth_ZeroSentinel_No_Stored_Valid_Owner_Decision.md`
++- Stopped batch evidence: `docs/collab/chatgpt/reviews/2026-11-05_G2_Batch000_GPU456_Export_Stopped_Uint16DepthRange.md`
++- G2 base Root: `9568723fd19d008be180c7b3e4126e1176c07d26`.
++- Historical spatial-v2 implementation: `3eb8b334150018212ae1f51afb5e954b83fa1186`.
++- Child/Gitlink unchanged: `1069fe78841228cadbbfbe6afbd767eaed6225da`.
++- Owner output root remains
++  `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth`.
++- Batch000 selection: 100 episodes / 24,059 frames; SHA256
++  `8561c81b0382bf79d360f5028d6fa67ab2848589bf77199f9d3f97861e760080`.
++- Reported retained v1 output: seven completed episodes / 2,353 frames, plus
++  `.failed` and `.staging`. These are server facts supplied by the review, not
++  an inventory independently read or migrated by the cloud author.
++- The active production reserve is 100 GiB per the stopped-batch contract.
++  Older exploratory 1 GiB reserves or four-hour/25 GiB limits are not reinstated.
++
++## Codec and verification contract
++
++`psm_wma_robocasa_rgbd_pose_v2` is a new, incompatible cache schema. Each NPZ has
++exactly `depth`, `K`, `T_world_camera_gl`, `T_world_camera_cv`, `frame_indices`.
++K and both poses stay float32; frame indices stay int64. No persistent boolean
++mask or alternative per-pixel JSON mask is added.
++
++For uint16, finite renderer-valid optical Z in [0.001, 65.535] m is rounded to
++nearest millimeter. Renderer-invalid and out-of-range values become 0. There is
++no clipping, modulo conversion, rescaling, camera-plane change or format fallback.
++The in-memory mask is `depth > 0`, and quantization error remains <=0.0005001 m.
++A nonfinite value marked renderer-valid remains a malformed-input error. The
++native buffer conversion already marks nonfinite/background pixels invalid.
++
++Float32 retains finite positive representable Z, including >65.535 m and <1 mm;
++its validity is also derived from positive depth. Float32 overflow or underflow
++to zero is rejected. Compression is lossless for encoded arrays, not for the
++original floating depth quantized to millimeters.
++
++Frames record disjoint source counts (renderer-invalid, below 1 mm, above
++65.535 m, encoded-valid), raw finite min/max and the exclusion fraction. A >1%
++range-exclusion diagnostic is explicit; lower fractions and counts remain visible.
++Episode manifests aggregate counts per camera. Offline verification checks the
++counts, totals, five-array set, dtypes, file hashes and identity. Only native
++replay can validate the claimed source classifications against the renderer.
++
++Spatial verification compares saved validity with representability-filtered
++renderer validity. Independent rays, K/Pose, source binding, frame ordering and
++projection remain mandatory with unchanged thresholds (1 cm, minimum 16 rays).
++Filtering every point cannot yield PASS. RGB MAE/PSNR/SSIM remain nonblocking
++photometric diagnostics; external human review is never synthesized by the tool.
++
++Two 256x256 cameras require 262,488 raw array bytes/frame for uint16, or 524,632
++for float32, including calibration and indices. Compressed disk cost must be
++measured anew; removing a compressible boolean array does not establish a fixed
++compressed-size saving.
++
++## Auditable transition proposal — NOT an executed migration
++
++The current implementation **rejects v1**, including direct per-episode export
++into a root with a v1 manifest, before creating locks or new data. An unidentified
++nonempty CLI output root is also rejected. No seven-episode rewrite, deletion,
++new production namespace or automatic cache adoption is implemented.
++
++A conversion/promotion tool is a follow-up only after separate approval. Its
++minimum auditable procedure is:
++
++1. Freeze a server-local, read-only inventory: seven exact IDs, 2,353 frames,
++   all file hashes, root/episode manifests, original producer code identities,
++   `.failed` and `.staging`. Stop only an owned exporter if separately authorized.
++   Verify the retained v1 format using its frozen reader; preserve the inventory.
++2. For every frame and camera, prove `legacy_valid == (legacy_depth > 0)` and
++   expected uint16 dtype/shape, calibration, frame indices and complete source
++   bindings. Reject any mismatch. Do not guess whether an old positive depth is
++   valid, saturated or wrapped; the original strict producer must be identified.
++3. Build a separate server-local staging generation, never edit the current
++   root. Remove only the redundant mask and preserve depth/K/poses/indices
++   bit-for-bit. Derive counts from verified legacy arrays and original frame
++   statistics **only if** the frozen producer proves all valid pixels were in
++   range (the v1 encoder rejected such overflow). Otherwise replay that episode
++   under a separately authorized native check; do not invent exclusion counts.
++4. Record original root/episode hashes, actual legacy producer, conversion code,
++   new codec and conversion time as lineage. Regenerate all v2 identities,
++   checksums and COMPLETE markers coherently. A separately reviewed tool must
++   demonstrate that its target root contract/recipe and episode digests match
++   subsequent v2 CLI expectations without pretending that migration was native
++   re-rendering. This proposal alone does not establish that compatibility.
++5. Verify the new generation with the strict v2 reader, compare all retained
++   numeric arrays and indices bitwise, and compare seven IDs/frame totals. A
++   synthetic fixture or offline checksum does not replace the native 736 check.
++6. A later approved promoter may switch complete directory generations on the
++   same filesystem using supported atomic `renameat2(RENAME_EXCHANGE)`, with a
++   durable journal and parent-directory fsync. The old generation remains intact
++   under its exchanged staging/archive path, including failures and staging.
++   Recover by journal and hashes after a crash. **Two ordinary renames are not
++   claimed atomic**. If atomic exchange is unavailable, stop for an explicitly
++   approved alternative namespace/promotion design; do not silently improvise.
++7. Retain the old generation and audit receipt for rollback. Do not delete it or
++   resume Batch000 as part of conversion. Production resume needs its own
++   authorization after new code/native acceptance and capacity checks.
++
++This plan supplies the safe transition deliverable requested by Issue #19;
++there is deliberately no automatic or in-place converter in this PR.
++
++## Author CPU checks and native acceptance boundary
++
++The author suite executes the real exporter, cache reader and spatial verifier
++with synthetic parquet/state/RGB fixtures. It covers representability boundaries,
++raw source counts, both formats, chunk32/terminal chunks, all-zero rejection,
++identity/schema corruption, unchanged K/Pose/indices, immutable skip and v1
++root/episode refusal. Existing failure/recovery, disk, source and spatial-policy
++regressions remain in the suite.
++
++The synthetic global-ID-736 fixture places 25 values of 591.547 m at wrist frame
++73 and 230 values of 614.359 m at 74, reflecting the reported failure. It is not
++the real episode (local ID 234, 230 frames). Native acceptance must later use
++that exact recorded episode on the server, verify excluded pixels are zero,
++inspect fresh renderer/source counts, retain unchanged calibration and mapping,
++and pass independent geometry on representable pixels. No sensor data leaves
++the server. Historical Gate B/C reports remain immutable and do not certify v2.
++
++Deliver exact implementation Root + unchanged Child/Gitlink, diff, raw CPU JUnit
++and lint logs, this proposal and a fresh review request. Stop at review; no
++server export, migration, production resume or V3 merge follows automatically.
+diff --git a/tools/g2/README.md b/tools/g2/README.md
+index 79570be3..2b3aa8d3 100644
+--- a/tools/g2/README.md
++++ b/tools/g2/README.md
+@@ -17,6 +17,7 @@ RoboCasa/robosuite/MuJoCo environment, assets and original recordings on the ser
+ of physical alignment. Gate B/C must establish that proof.
+ 
+ - [Input/output schema](rgbd_pose_schema.md)
++- [Depth v2 zero sentinel and seven-episode transition plan](../../docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md)
+ - [Current spatial-v2 acceptance and bounded Gate C plan](../../docs/build/PSM-WMA_G2_Spatial_Acceptance_v2_and_GateC_Plan_2026-11-04.md)
+ - [Original implementation/recovery runbook (historical RGB hard gate)](../../docs/build/PSM-WMA_G2_Stage1_RGBD_Pose_Cache_r1_2026-11-04.md)
+ 
+@@ -25,6 +26,13 @@ diagnostics. Automatic spatial PASS is separate from external human RGB/Depth
+ review; an `--owner-visual-review-ref` citation never automatically attests PASS.
+ Historical reports remain unchanged.
+ 
+-No default N/seed selection exists. Supply one explicit episode or the exact
+-existing training membership manifest. A completed cache is reusable only after
++No default N/seed selection exists. Supply one explicit episode or an exact
++external batch/membership manifest. A completed cache is reusable only after
+ its identity, file checksums, arrays and frame references validate.
++
++Issue #19 uses schema `psm_wma_robocasa_rgbd_pose_v2`: uint16 out-of-range and
++renderer-invalid pixels are 0; NPZ has depth/K/GL-CV poses/frame indices only.
++Validity is derived in memory. v1 directories fail before new export writes;
++the seven existing production episodes require a separately reviewed transition.
++This change does not perform migration or authorize production resume. Synthetic
++73/74 far-floor regressions do not replace native CloseFridge 736 acceptance.
+diff --git a/tools/g2/export_robocasa_rgbd_pose.py b/tools/g2/export_robocasa_rgbd_pose.py
+index d2562eeb..fbc2c117 100644
+--- a/tools/g2/export_robocasa_rgbd_pose.py
++++ b/tools/g2/export_robocasa_rgbd_pose.py
+@@ -185,7 +185,7 @@ def main(argv=None, *, replay_factory=Replay):
+             )
+             estimated_bytes += sum(
+                 len(frames)
+-                * (h * w * (3 if args.depth_format == "uint16_mm" else 5) + 41 * 4 + 8)
++                * (h * w * (2 if args.depth_format == "uint16_mm" else 4) + 41 * 4 + 8)
+                 for h, w in source.camera_shapes.values()
+             )
+             if args.dry_run:
+diff --git a/tools/g2/rgbd_pose/__init__.py b/tools/g2/rgbd_pose/__init__.py
+index ac9f2169..0e6968fc 100644
+--- a/tools/g2/rgbd_pose/__init__.py
++++ b/tools/g2/rgbd_pose/__init__.py
+@@ -1,3 +1,4 @@
+ """Episode-level RGB references, optical Z-depth and calibrated camera poses."""
+ 
+-SCHEMA = "psm_wma_robocasa_rgbd_pose_v1"
++LEGACY_SCHEMA = "psm_wma_robocasa_rgbd_pose_v1"
++SCHEMA = "psm_wma_robocasa_rgbd_pose_v2"
+diff --git a/tools/g2/rgbd_pose/cache.py b/tools/g2/rgbd_pose/cache.py
+index e4ec6883..ee0c42ee 100644
+--- a/tools/g2/rgbd_pose/cache.py
++++ b/tools/g2/rgbd_pose/cache.py
+@@ -16,13 +16,16 @@ import numpy as np
+ 
+ from tools.g0.robocasa_work_queue import atomic_write_json
+ 
+-from . import SCHEMA
++from . import LEGACY_SCHEMA, SCHEMA
+ from .geometry import (
+     CONVENTIONS,
++    ENCODING_COUNTS,
+     check_calibration,
+     decode_depth,
+     depth_statistics,
+     encode_depth,
++    encoding_statistics,
++    validate_encoding_statistics,
+ )
+ from .source import (
+     Episode,
+@@ -52,8 +55,25 @@ def durable_json(path, value):
+     sync_directory(Path(path).parent)
+ 
+ 
++def _check_root_schema(root):
++    existing = root / "cache_manifest.json"
++    if existing.exists() and read_json(existing).get("schema") != SCHEMA:
++        raise ValueError(
++            "legacy/unknown root cache schema; explicit verified transition required"
++        )
++
++
+ def ensure_cache_manifest(root, contract):
+     root = Path(root)
++    if contract.get("schema") != SCHEMA:
++        raise ValueError("requested root cache schema must be v2")
++    _check_root_schema(root)
++    if not (root / "cache_manifest.json").exists() and any(
++        (root / name).exists() for name in ("tasks", ".staging", ".failed")
++    ):
++        raise ValueError(
++            "unversioned cache contents; explicit verified transition required"
++        )
+     root.mkdir(parents=True, exist_ok=True)
+     with (root / ".manifest.lock").open("ab") as stream:
+         fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+@@ -135,6 +155,10 @@ def verify_episode(directory, *, expected_digest=None):
+     directory = Path(directory)
+     marker = read_json(directory / "COMPLETE.json")
+     manifest = read_json(directory / "manifest.json")
++    if marker.get("schema") == LEGACY_SCHEMA or manifest.get("schema") == LEGACY_SCHEMA:
++        raise ValueError(
++            "legacy v1 cache requires explicit verified transition; no automatic migration"
++        )
+     if (
+         marker.get("schema") != SCHEMA
+         or manifest.get("schema") != SCHEMA
+@@ -152,7 +176,8 @@ def verify_episode(directory, *, expected_digest=None):
+     if not frames or frames != sorted(set(frames)):
+         raise ValueError("invalid committed frame selection")
+     if (
+-        spec["conventions"] != CONVENTIONS
++        spec.get("schema") != SCHEMA
++        or spec["conventions"] != CONVENTIONS
+         or spec["alignment"]["state_index_policy"] != "explicit_frame_index"
+     ):
+         raise ValueError("cache coordinate/state mapping convention mismatch")
+@@ -194,11 +219,15 @@ def verify_episode(directory, *, expected_digest=None):
+     if set(files) != {"frames.jsonl"} | {path for _, path in seen_chunks}:
+         raise ValueError("missing/unreferenced camera chunks")
+     total_raw_bytes = 0
++    by_frame = {row["frame_index"]: row for row in rows}
++    encoding_totals = {
++        c: {**dict.fromkeys(ENCODING_COUNTS, 0), "warning_frames": 0}
++        for c in spec["cameras"]
++    }
+     for (camera, relative), expected_frames in seen_chunks.items():
+         with np.load(_safe_file(directory, relative), allow_pickle=False) as archive:
+             if set(archive.files) != {
+                 "depth",
+-                "valid",
+                 "K",
+                 "T_world_camera_gl",
+                 "T_world_camera_cv",
+@@ -210,13 +239,19 @@ def verify_episode(directory, *, expected_digest=None):
+             chunk = {key: archive[key] for key in archive.files}
+             n = len(expected_frames)
+             height, width = spec["camera_shapes"][camera]
+-            if chunk["depth"].shape != (n, height, width) or chunk["valid"].shape != (
+-                n,
+-                height,
+-                width,
+-            ):
++            if chunk["depth"].shape != (n, height, width):
+                 raise ValueError("depth chunk frame/shape mismatch")
+-            decode_depth(chunk["depth"], chunk["valid"], spec["depth_storage"])
++            decode_depth(chunk["depth"], spec["depth_storage"])
++            for index, frame in enumerate(expected_frames):
++                stats = by_frame[frame]["cameras"][camera]["encoding"]
++                validate_encoding_statistics(
++                    stats, chunk["depth"][index], spec["depth_storage"]
++                )
++                for key in ENCODING_COUNTS:
++                    encoding_totals[camera][key] += stats[key]
++                encoding_totals[camera]["warning_frames"] += int(
++                    stats["warning"] is not None
++                )
+             if chunk["frame_indices"].dtype != np.int64 or not np.array_equal(
+                 chunk["frame_indices"], expected_frames
+             ):
+@@ -235,6 +270,8 @@ def verify_episode(directory, *, expected_digest=None):
+                     chunk["T_world_camera_cv"][index],
+                 )
+             total_raw_bytes += sum(value.nbytes for value in chunk.values())
++    if manifest.get("depth_encoding") != encoding_totals:
++        raise ValueError("episode depth encoding totals mismatch")
+     if manifest["raw_array_bytes"] != total_raw_bytes:
+         raise ValueError("cache capacity accounting mismatch")
+     return manifest, rows
+@@ -244,12 +281,10 @@ def cached_sample(directory, manifest, row, camera):
+     reference = row["cameras"][camera]
+     with np.load(Path(directory) / reference["chunk"], allow_pickle=False) as chunk:
+         i = reference["offset"]
+-        depth = decode_depth(
+-            chunk["depth"][i], chunk["valid"][i], manifest["identity"]["depth_storage"]
+-        )
++        depth = decode_depth(chunk["depth"][i], manifest["identity"]["depth_storage"])
+         return {
+             "depth_m": depth,
+-            "valid": chunk["valid"][i].copy(),
++            "valid": depth > 0,
+             **{
+                 key: chunk[key][i].copy()
+                 for key in ("K", "T_world_camera_gl", "T_world_camera_cv")
+@@ -287,6 +322,7 @@ def export_episode(
+     if chunk_frames > 256:
+         raise ValueError("chunk_frames cannot exceed the bounded 256-frame buffer")
+     root = Path(root).resolve()
++    _check_root_schema(root)
+     for input_file in source.witnesses:
+         source_path = Path(input_file["path"]).resolve()
+         if source_path.is_relative_to(root) or root.is_relative_to(source_path.parent):
+@@ -305,6 +341,10 @@ def export_episode(
+             }
+         staging = root / ".staging" / uuid.uuid4().hex
+         staging.mkdir(parents=True)
++        encoding_totals = {
++            c: {**dict.fromkeys(ENCODING_COUNTS, 0), "warning_frames": 0}
++            for c in source.camera_shapes
++        }
+         files, buffers, raw_bytes, max_error = (
+             {},
+             {c: [] for c in source.camera_shapes},
+@@ -340,7 +380,7 @@ def export_episode(
+         try:
+             largest = max(
+                 min(chunk_frames, len(frames))
+-                * (h * w * (3 if storage == "uint16_mm" else 5) + 41 * 4 + 8)
++                * (h * w * (2 if storage == "uint16_mm" else 4) + 41 * 4 + 8)
+                 for h, w in source.camera_shapes.values()
+             )
+             require_disk_space(root, largest, min_free_bytes)
+@@ -367,11 +407,18 @@ def export_episode(
+                                 raise ValueError(
+                                     "rendered camera dimensions differ from source binding"
+                                 )
++                            stats = encoding_statistics(
++                                sample["depth_m"], sample["valid"], storage
++                            )
++                            for key in ENCODING_COUNTS:
++                                encoding_totals[camera][key] += stats[key]
++                            encoding_totals[camera]["warning_frames"] += int(
++                                stats["warning"] is not None
++                            )
+                             max_error = max(max_error, error)
+                             buffers[camera].append(
+                                 {
+                                     "depth": encoded,
+-                                    "valid": valid,
+                                     "frame_indices": np.array(frame, dtype=np.int64),
+                                     **{
+                                         key: np.asarray(sample[key], dtype=np.float32)
+@@ -392,6 +439,7 @@ def export_episode(
+                                 },
+                                 "depth": depth_statistics(sample["depth_m"], valid),
+                                 "quantization_max_abs_m": error,
++                                "encoding": stats,
+                             }
+                             if len(buffers[camera]) == chunk_frames:
+                                 flush(camera, number)
+@@ -418,6 +466,7 @@ def export_episode(
+                 "runtime": runtime,
+                 "rgb_references": source.rgb,
+                 "files": files,
++                "depth_encoding": encoding_totals,
+                 "raw_array_bytes": raw_bytes,
+                 "compressed_payload_bytes": payload_bytes,
+                 "compression_ratio_raw_over_stored": raw_bytes / payload_bytes,
+@@ -454,6 +503,7 @@ def export_episode(
+                 "directory": str(destination),
+                 "frame_count": len(frames),
+                 "compressed_payload_bytes": payload_bytes,
++                "depth_encoding": encoding_totals,
+                 "quantization_max_abs_m": max_error,
+             }
+         except BaseException as exc:
+diff --git a/tools/g2/rgbd_pose/geometry.py b/tools/g2/rgbd_pose/geometry.py
+index c4d9b878..5dc4dee4 100644
+--- a/tools/g2/rgbd_pose/geometry.py
++++ b/tools/g2/rgbd_pose/geometry.py
+@@ -11,6 +11,14 @@ import numpy as np
+ 
+ GL_FROM_CV = np.diag([1.0, -1.0, -1.0, 1.0])
+ DEPTH_FORMATS = ("uint16_mm", "float32_m")
++ENCODING_COUNTS = (
++    "total_pixels",
++    "renderer_invalid",
++    "below_1mm",
++    "above_65_535m",
++    "encoded_valid",
++)
++RANGE_WARNING_FRACTION = 0.01
+ CONVENTIONS = {
+     "image_origin": "top_left",
+     "pixel_center": "column_plus_0.5_row_plus_0.5",
+@@ -19,7 +27,9 @@ CONVENTIONS = {
+     "camera_cv": "X_right_Y_down_Z_forward",
+     "pose_direction": "T_world_camera_maps_camera_to_world",
+     "T_world_camera_cv": "T_world_camera_gl @ diag(1,-1,-1,1)",
+-    "invalid_depth": "zero_storage_plus_explicit_false_valid_mask",
++    "invalid_depth": "zero_sentinel_valid_is_depth_gt_zero_no_persisted_mask",
++    "uint16_out_of_range": "zero_not_saturated_or_wrapped",
++    "range_exclusion_warning_fraction": RANGE_WARNING_FRACTION,
+     "uint16_valid_range_m": [0.001, 65.535],
+     "uint16_max_quantization_error_m": 0.0005001,
+ }
+@@ -76,27 +86,38 @@ def depth_buffer_to_z(buffer, near, far):
+     return np.where(valid, depth, 0), valid
+ 
+ 
+-def encode_depth(depth_m, valid, storage):
++def _storage_mask(depth_m, valid, storage):
+     depth = np.asarray(depth_m, dtype=np.float64)
+     valid = np.asarray(valid)
+-    if valid.dtype != np.bool_ or depth.shape != valid.shape or depth.ndim != 2:
++    if (
++        valid.dtype != np.bool_
++        or depth.shape != valid.shape
++        or depth.ndim != 2
++        or not depth.size
++    ):
+         raise ValueError("depth/boolean-valid shapes must match HxW")
+-    if np.any(valid & (~np.isfinite(depth) | (depth <= 0))):
+-        raise ValueError("valid depth must be finite and positive")
++    if np.any(valid & ~np.isfinite(depth)):
++        raise ValueError("renderer-valid depth must be finite")
+     if storage == "uint16_mm":
+-        if np.any(valid & ((depth < 0.001) | (depth > 65.535))):
+-            raise ValueError(
+-                "uint16_mm depth overflow/underflow; use explicit float32_m"
+-            )
+-        encoded = np.rint(np.where(valid, depth, 0) * 1000).astype(np.uint16)
++        mask = valid & (depth >= 0.001) & (depth <= 65.535)
+     elif storage == "float32_m":
+-        if np.any(valid & (depth > np.finfo(np.float32).max)):
++        if np.any(valid & ((depth <= 0) | (depth > np.finfo(np.float32).max))):
+             raise ValueError("float32_m depth overflow")
++        mask = valid.copy()
++    else:
++        raise ValueError(f"unsupported depth storage: {storage}")
++    return depth, valid, mask
++
++
++def encode_depth(depth_m, valid, storage):
++    """Encode v2 depth; the returned mask is transient, never a chunk array."""
++    depth, _, valid = _storage_mask(depth_m, valid, storage)
++    if storage == "uint16_mm":
++        encoded = np.rint(np.where(valid, depth, 0) * 1000).astype(np.uint16)
++    else:
+         encoded = np.where(valid, depth, 0).astype(np.float32)
+         if np.any(valid & (~np.isfinite(encoded) | (encoded <= 0))):
+             raise ValueError("float32_m depth not representable")
+-    else:
+-        raise ValueError(f"unsupported depth storage: {storage}")
+     restored = decode_depth(encoded, valid, storage)
+     error = (
+         float(np.max(np.abs(restored[valid] - depth[valid]))) if valid.any() else 0.0
+@@ -106,23 +127,106 @@ def encode_depth(depth_m, valid, storage):
+     return encoded, valid.copy(), error
+ 
+ 
+-def decode_depth(encoded, valid, storage):
+-    encoded, valid = np.asarray(encoded), np.asarray(valid)
++def decode_depth(encoded, valid_or_storage, storage=None):
++    """Depth-only reader; optional old calling form checks a transient mask."""
++    encoded = np.asarray(encoded)
++    supplied_mask = None if storage is None else np.asarray(valid_or_storage)
++    storage = valid_or_storage if storage is None else storage
+     expected = {"uint16_mm": np.dtype("uint16"), "float32_m": np.dtype("float32")}
+     if (
+         storage not in expected
+         or encoded.dtype != expected[storage]
+-        or valid.dtype != np.bool_
+-        or encoded.shape != valid.shape
+         or encoded.ndim not in (2, 3)
++        or not encoded.size
+         or not np.isfinite(encoded).all()
+-        or np.any(encoded[~valid] != 0)
+-        or np.any(encoded[valid] <= 0)
++        or np.any(encoded < 0)
+     ):
+         raise ValueError("corrupt depth payload, dtype or invalid-pixel mask")
++    if supplied_mask is not None and (
++        supplied_mask.dtype != np.bool_
++        or supplied_mask.shape != encoded.shape
++        or not np.array_equal(supplied_mask, encoded > 0)
++    ):
++        raise ValueError("transient mask disagrees with zero-sentinel depth")
+     return encoded.astype(np.float64) / (1000 if storage == "uint16_mm" else 1)
+ 
+ 
++def _encoding_summary(counts, storage, minimum, maximum):
++    renderer_valid = counts["total_pixels"] - counts["renderer_invalid"]
++    fraction = (counts["below_1mm"] + counts["above_65_535m"]) / max(renderer_valid, 1)
++    return {
++        **counts,
++        "range_filter_applied": storage == "uint16_mm",
++        "finite_raw_min_m": minimum,
++        "finite_raw_max_m": maximum,
++        "range_excluded_fraction_of_renderer_valid": fraction,
++        "warning_threshold_fraction": RANGE_WARNING_FRACTION,
++        "warning": "RANGE_EXCLUSION_GT_1_PERCENT"
++        if fraction > RANGE_WARNING_FRACTION
++        else None,
++    }
++
++
++def encoding_statistics(depth_m, renderer_valid, storage):
++    """Disjoint source classifications, including values not stored in v2."""
++    depth, renderer_valid, valid = _storage_mask(depth_m, renderer_valid, storage)
++    counts = {
++        "total_pixels": int(valid.size),
++        "renderer_invalid": int((~renderer_valid).sum()),
++        "below_1mm": int((renderer_valid & (depth < 0.001)).sum())
++        if storage == "uint16_mm"
++        else 0,
++        "above_65_535m": int((renderer_valid & (depth > 65.535)).sum())
++        if storage == "uint16_mm"
++        else 0,
++        "encoded_valid": int(valid.sum()),
++    }
++    values = depth[renderer_valid]
++    return _encoding_summary(
++        counts,
++        storage,
++        float(values.min()) if values.size else None,
++        float(values.max()) if values.size else None,
++    )
++
++
++def validate_encoding_statistics(stats, encoded, storage):
++    """Offline consistency only; native replay validates source classifications."""
++    decode_depth(encoded, storage)
++    required = set(ENCODING_COUNTS) | {"finite_raw_min_m", "finite_raw_max_m"}
++    if not isinstance(stats, dict) or not required.issubset(stats):
++        raise ValueError("missing depth encoding counts")
++    counts = {key: stats[key] for key in ENCODING_COUNTS}
++    if any(type(value) is not int or value < 0 for value in counts.values()):
++        raise ValueError("invalid depth encoding counts")
++    if (
++        counts["total_pixels"] != encoded.size
++        or counts["encoded_valid"] != int((encoded > 0).sum())
++        or sum(counts[k] for k in ENCODING_COUNTS[1:]) != encoded.size
++        or (storage == "float32_m" and (counts["below_1mm"] or counts["above_65_535m"]))
++    ):
++        raise ValueError("depth encoding counts disagree with payload")
++    minimum, maximum = stats["finite_raw_min_m"], stats["finite_raw_max_m"]
++    renderer_valid = counts["total_pixels"] - counts["renderer_invalid"]
++    if renderer_valid:
++        if (
++            not all(
++                type(v) in (int, float) and np.isfinite(v) for v in (minimum, maximum)
++            )
++            or minimum > maximum
++        ):
++            raise ValueError("invalid finite raw depth range")
++        if storage == "uint16_mm" and (
++            (minimum < 0.001) != bool(counts["below_1mm"])
++            or (maximum > 65.535) != bool(counts["above_65_535m"])
++        ):
++            raise ValueError("range exclusions disagree with raw extrema")
++    elif minimum is not None or maximum is not None:
++        raise ValueError("renderer-invalid frame cannot declare raw depth extrema")
++    if stats != _encoding_summary(counts, storage, minimum, maximum):
++        raise ValueError("depth encoding diagnostic contract mismatch")
++
++
+ def rays_cv(K, pixels):
+     pixels = np.asarray(pixels, dtype=np.float64)
+     if pixels.ndim != 2 or pixels.shape[1] != 2 or not np.isfinite(pixels).all():
+diff --git a/tools/g2/rgbd_pose_schema.md b/tools/g2/rgbd_pose_schema.md
+index cd248d6b..873bf028 100644
+--- a/tools/g2/rgbd_pose_schema.md
++++ b/tools/g2/rgbd_pose_schema.md
+@@ -1,4 +1,8 @@
+-# Stage-1 input/output schema — psm_wma_robocasa_rgbd_pose_v1
++# Stage-1 input/output schema — psm_wma_robocasa_rgbd_pose_v2
++
++Issue #19 changes the codec and cache identity. v1 caches are rejected explicitly,
++never accepted by relaxing v2 verification. See the
++[v2 contract and seven-episode transition plan](../../docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md).
+ 
+ ## Inputs
+ 
+@@ -53,8 +57,8 @@ The source_dataset header must match the supplied Flat root. If present, the
+ original `selected_episode_ids`/digest are validated, but selected short episodes
+ absent from accepted cache rows are not reintroduced.
+ 
+-An external list made from independently verified training membership is also
+-accepted:
++An external explicit batch/membership list frozen against the exact mapping is
++also accepted:
+ 
+ ```json
+ {
+@@ -87,28 +91,45 @@ deterministic partition of the supplied members, never a new sampling step.
+   .failed/<uuid>/failure.json           # Isolated failed episode plus local artifacts
+ ```
+ 
+-Each camera chunk has:
++Each camera chunk has exactly these five arrays; no `valid` array is stored:
+ 
+ | Array | Type / shape / meaning |
+ | --- | --- |
+ | depth | uint16 millimeters **or** float32 meters, `[N,H,W]` |
+-| valid | bool `[N,H,W]`, invalid depth stored as zero |
+ | K | float32 `[N,3,3]`, one calibrated intrinsic matrix per frame/camera |
+ | T_world_camera_gl | float32 `[N,4,4]`, GL camera-to-world |
+ | T_world_camera_cv | float32 `[N,4,4]`, optical CV camera-to-world |
+ | frame_indices | int64 `[N]`, original episode-local frame indices |
+ 
+ Default chunk size32, configurable1..256. `uint16_mm` valid range is
+-`[0.001,65.535]` meters, rounding-to-nearest, error <=0.0005001m. Overflow and
+-underflow fail; rerun in a **new namespace** with explicit `float32_m` if needed.
+-ZIP is lossless with respect to these encoded arrays; millimeter quantization is
+-not lossless with respect to the original floating depth. Masked non-finite/far
+-background pixels remain explicitly invalid. No silent saturation/fallback.
++`[0.001,65.535]` meters, inclusive, rounding-to-nearest, error <=0.0005001m.
++Renderer-invalid pixels and finite renderer-valid values outside this interval
++are stored as **0**, never wrapped or saturated to 65535. Readers derive the
++transient boolean mask from `depth > 0`. The renderer mask itself is not stored.
++No camera near/far plane is changed to force representability.
++
++`float32_m` retains finite, positive, float32-representable depths outside the
++uint16 interval; it does not inherit the uint16 range filter. Renderer-invalid
++pixels are also 0. A renderer-valid nonfinite value, or a nonpositive/overflowing
++or underflow-to-zero float32 value, is malformed input and fails closed. ZIP is
++lossless with respect to the encoded arrays; millimeter quantization is not
++lossless with respect to the original floating depth.
++
++Each frame/camera `encoding` object has disjoint integer counts: `total_pixels`,
++`renderer_invalid`, `below_1mm`, `above_65_535m`, `encoded_valid`. The last four
++sum to `total_pixels`; `encoded_valid` equals the positive payload count. The two
++range counts apply only to uint16 and are 0 for float32. Finite raw min/max,
++`range_filter_applied` and excluded fraction of renderer-valid pixels are recorded.
++Exclusion above 1% produces `RANGE_EXCLUSION_GT_1_PERCENT`, a diagnostic, not a
++relaxed geometry PASS. The fraction and threshold are explicit even below 1%.
++The episode manifest aggregates these counts and `warning_frames` per camera.
++No per-pixel diagnostic bitmap is persisted in NPZ or JSON.
+ 
+ Frames JSONL carries task, global/local episode, frame, source-state/RGB-frame
+ indices, global/local row indices, flat timestamp, actual simulator time/state
+ roundtrip error and each camera's chunk/offset, original video path/frame,
+-depth statistics and quantization error. It contains no RGB pixel payload.
++depth statistics, quantization error and encoding diagnostics. It contains no
++RGB pixel payload. Depth statistics describe storage-representable pixels.
+ 
+ Camera axes: GL right/up/backward; CV right/down/forward. Upright image origin is
+ top-left, centers `(column+.5,row+.5)`. Depth is **optical-axis Z**, not unit-ray
+@@ -124,3 +145,10 @@ provenance; docs-only successors do not invalidate identical code-content caches
+ `full_episode=false` distinguishes the three-frame Gate B cache from full exports.
+ Neither a COMPLETE marker nor an offline checksum pass closes the physical
+ geometry Gate. Native replay reports are separate immutable text evidence.
++
++The replay verifier compares the saved mask against a fresh **storage** mask,
++not against the raw renderer mask. Source classification counts must also match;
++independent geometry still requires at least 16 rays and <=1 cm error, with the
++existing K/Pose/projection thresholds. An all-zero frame cannot obtain spatial
++PASS. RGB photometry remains a separate diagnostic; human visual acceptance is
++an external record.
+diff --git a/tools/g2/test_depth_zero_sentinel.py b/tools/g2/test_depth_zero_sentinel.py
+new file mode 100644
+index 00000000..410ca24f
+--- /dev/null
++++ b/tools/g2/test_depth_zero_sentinel.py
+@@ -0,0 +1,484 @@
++"""Issue19 production paths with synthetic data; no server recording or GPU.
++
++The 736/73/74 fixtures reproduce reported counts/ranges, not real CloseFridge.
++Native recorded-scene acceptance remains a separate server gate.
++"""
++
++from pathlib import Path
++
++import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
++import pytest
++
++from tools.g2 import verify_robocasa_rgbd_pose as checker
++from tools.g2.rgbd_pose import LEGACY_SCHEMA, SCHEMA
++from tools.g2.rgbd_pose import cache, geometry as g, source as src
++from tools.g2.test_rgbd_pose_export import (
++    FakeReplay,
++    bound,
++    cli,
++    exported,
++    fixture_tree,
++    reseal_frame_index,
++    write_json,
++)
++
++
++@pytest.mark.parametrize(
++    "distance,expected",
++    [
++        (-1.0, 0),
++        (0.0, 0),
++        (0.0009999, 0),
++        (0.001, 1),
++        (0.00149, 1),
++        (65.5349, 65535),
++        (65.535, 65535),
++        (65.5350001, 0),
++        (591.547, 0),
++        (614.359, 0),
++    ],
++)
++def test_uint16_boundary_never_wraps_or_saturates(distance, expected):
++    encoded, valid, error = g.encode_depth(
++        [[distance]], np.array([[True]]), "uint16_mm"
++    )
++    assert encoded.dtype == np.uint16 and encoded.item() == expected
++    assert valid.item() == (expected > 0)
++    assert error <= 0.0005001
++    decoded = g.decode_depth(encoded, "uint16_mm")
++    assert decoded.item() == expected / 1000
++    if not expected:
++        assert error == 0 and not np.any(decoded > 0)
++
++
++@pytest.mark.parametrize("distance", [np.nan, np.inf, -np.inf, -100, 600])
++@pytest.mark.parametrize("storage", g.DEPTH_FORMATS)
++def test_renderer_invalid_is_zero_without_persisted_mask(distance, storage):
++    encoded, mask, error = g.encode_depth([[distance]], np.array([[False]]), storage)
++    assert encoded.item() == 0 and not mask.item() and error == 0
++    stats = g.encoding_statistics([[distance]], np.array([[False]]), storage)
++    assert stats["renderer_invalid"] == 1 and stats["encoded_valid"] == 0
++    assert stats["below_1mm"] == stats["above_65_535m"] == 0
++    g.validate_encoding_statistics(stats, encoded, storage)
++
++
++@pytest.mark.parametrize("distance", [np.nan, np.inf, -np.inf])
++def test_nonfinite_claimed_renderer_valid_remains_malformed_input(distance):
++    with pytest.raises(ValueError, match="finite"):
++        g.encode_depth([[distance]], np.array([[True]]), "uint16_mm")
++
++
++def test_source_range_counts_disjoint_and_large_fraction_explicit():
++    depth = np.array([[np.nan, 0, 0.0001, 65.5351, 591.547, 0.001, 65.535]])
++    renderer = np.array([[False, True, True, True, True, True, True]])
++    encoded, _, _ = g.encode_depth(depth, renderer, "uint16_mm")
++    stats = g.encoding_statistics(depth, renderer, "uint16_mm")
++    assert {k: stats[k] for k in g.ENCODING_COUNTS} == {
++        "total_pixels": 7,
++        "renderer_invalid": 1,
++        "below_1mm": 2,
++        "above_65_535m": 2,
++        "encoded_valid": 2,
++    }
++    assert stats["warning"] == "RANGE_EXCLUSION_GT_1_PERCENT"
++    assert stats["range_excluded_fraction_of_renderer_valid"] == 4 / 6
++    assert stats["finite_raw_max_m"] == 591.547
++    g.validate_encoding_statistics(stats, encoded, "uint16_mm")
++
++
++def test_float32_retains_far_and_submillimeter_values_without_uint16_filter():
++    depth = np.array([[0.00001, 614.359, 1.0]])
++    renderer = np.ones(depth.shape, bool)
++    encoded, mask, _ = g.encode_depth(depth, renderer, "float32_m")
++    assert mask.all() and encoded.dtype == np.float32
++    np.testing.assert_allclose(g.decode_depth(encoded, "float32_m"), depth, rtol=1e-7)
++    stats = g.encoding_statistics(depth, renderer, "float32_m")
++    assert not stats["range_filter_applied"] and stats["encoded_valid"] == 3
++    assert stats["below_1mm"] == stats["above_65_535m"] == 0
++    g.validate_encoding_statistics(stats, encoded, "float32_m")
++
++
++@pytest.mark.parametrize("bad", ["negative", "nan", "inf", "dtype", "empty"])
++def test_depth_only_decoder_rejects_malformed_payload(bad):
++    value = np.array([[1.0, 0.0]], np.float32)
++    if bad == "negative":
++        value[0, 0] = -1
++    if bad == "nan":
++        value[0, 0] = np.nan
++    if bad == "inf":
++        value[0, 0] = np.inf
++    if bad == "dtype":
++        value = value.astype(np.float64)
++    if bad == "empty":
++        value = np.empty((0, 2), np.float32)
++    with pytest.raises(ValueError):
++        g.decode_depth(value, "float32_m")
++
++
++@pytest.mark.parametrize(
++    "bad",
++    ["negative", "bool", "count", "fraction", "extra", "extrema", "missing_extrema"],
++)
++def test_encoding_diagnostic_corruption_rejected(bad):
++    encoded = np.array([[1000, 0]], np.uint16)
++    stats = g.encoding_statistics([[1.0, 600]], np.ones((1, 2), bool), "uint16_mm")
++    if bad == "negative":
++        stats["above_65_535m"] = -1
++    if bad == "bool":
++        stats["above_65_535m"] = True
++    if bad == "count":
++        stats["encoded_valid"] = 2
++    if bad == "fraction":
++        stats["range_excluded_fraction_of_renderer_valid"] = 0
++    if bad == "extra":
++        stats["valid"] = [[True, False]]
++    if bad == "extrema":
++        stats["finite_raw_max_m"] = 1.0
++    if bad == "missing_extrema":
++        del stats["finite_raw_min_m"]
++    with pytest.raises(ValueError):
++        g.validate_encoding_statistics(stats, encoded, "uint16_mm")
++
++
++def long_source(tmp_path):
++    raw, flat = fixture_tree(tmp_path)
++    dataset = raw / "CloseFridge/recorded-date/lerobot"
++    info = src.read_json(dataset / "meta/info.json")
++    for feature in info["features"].values():
++        feature["shape"] = [256, 256, 3]
++    write_json(dataset / "meta/info.json", info)
++    count = 75
++    states = np.c_[
++        0.5 + np.arange(count) * 0.05, np.arange(count), np.zeros((count, 2))
++    ]
++    np.savez_compressed(dataset / "extras/episode_000000/states.npz", states=states)
++    rows = [
++        {
++            "index": i,
++            "episode_index": 0,
++            "frame_index": i,
++            "timestamp": i * 0.05,
++            "observation.state": [float(i), 0.0, 0.1],
++        }
++        for i in range(count)
++    ]
++    pq.write_table(
++        pa.Table.from_pylist(rows), dataset / "data/chunk-000/episode_000000.parquet"
++    )
++    pq.write_table(
++        pa.Table.from_pylist([{**r, "episode_index": 736} for r in rows]),
++        flat / "data/chunk-000/file-000.parquet",
++    )
++    mapping = pq.read_table(flat / "flat_v3_mapping.parquet").to_pylist()
++    mapping[0].update(
++        global_episode_index=736, length=count, local_row_to=count, global_row_to=count
++    )
++    pq.write_table(pa.Table.from_pylist(mapping), flat / "flat_v3_mapping.parquet")
++    source = src.load_episode(
++        raw,
++        flat,
++        src.mapping_episodes(flat / "flat_v3_mapping.parquet")[0],
++        [src.CAMERAS[0], src.CAMERAS[2]],
++        state_index_policy="frame_index",
++    )
++    return raw, flat, source
++
++
++class ReportedFarFloor(FakeReplay):
++    def render(self, camera):
++        value = super().render(camera)
++        if camera == src.CAMERAS[2] and self.frame in (73, 74):
++            count, far = (25, 591.547) if self.frame == 73 else (230, 614.359)
++            value["depth_m"].ravel()[1 : count + 1] = far
++        return value
++
++    def ray_check(self, camera, sample, **kwargs):
++        # Production verifier must send only representable depths to geometry.
++        assert sample["depth_m"][sample["valid"]].max() <= 65.535
++        assert np.all(sample["depth_m"][~sample["valid"]] == 0)
++        return super().ray_check(camera, sample, **kwargs)
++
++
++def test_reported_736_frames_73_74_through_export_and_spatial_verifier(tmp_path):
++    raw, flat, source = long_source(tmp_path)
++    result = cache.export_episode(
++        tmp_path / "v2",
++        source,
++        [73, 74],
++        storage="uint16_mm",
++        chunk_frames=32,
++        recipe={},
++        replay_factory=ReportedFarFloor,
++    )
++    directory = Path(result["directory"])
++    manifest, rows = cache.verify_episode(directory)
++    assert manifest["schema"] == SCHEMA and [r["frame_index"] for r in rows] == [73, 74]
++    wrist = src.CAMERAS[2]
++    assert [r["cameras"][wrist]["encoding"]["above_65_535m"] for r in rows] == [25, 230]
++    for row, count in zip(rows, (25, 230), strict=True):
++        saved = cache.cached_sample(directory, manifest, row, wrist)
++        assert np.count_nonzero(~saved["valid"]) == count + 1
++        assert np.count_nonzero(saved["depth_m"] == 65.535) == 0
++    report = checker.verify(
++        directory,
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=ReportedFarFloor,
++        rgb_reader=lambda ref, frame: np.full((256, 256, 3), 7 + frame, np.uint8),
++    )
++    assert report["status"] == "SYNTHETIC_SPATIAL_REPLAY_CHECKS_PASS"
++    assert report["depth_encoding"][wrist]["above_65_535m"] == 255
++    for frame in report["frames"]:
++        stats = frame["cameras"][wrist]
++        assert (
++            stats["valid_mask_matches_replay"] and stats["encoding_counts_match_replay"]
++        )
++        assert stats["renderer_valid_pixels"] > stats["depth"]["valid_pixels"]
++        assert stats["independent_geometry"]["status"] == "PASS"
++
++
++@pytest.mark.parametrize("storage", g.DEPTH_FORMATS)
++def test_chunk32_terminal_full_coverage_no_stored_mask_and_immutable_skip(
++    tmp_path, storage
++):
++    _, _, source = long_source(tmp_path)
++    root = tmp_path / "cache"
++    args = dict(
++        storage=storage, chunk_frames=32, recipe={}, replay_factory=ReportedFarFloor
++    )
++    result = cache.export_episode(root, source, range(75), **args)
++    directory = Path(result["directory"])
++    manifest, rows = cache.verify_episode(directory)
++    assert manifest["full_episode"] and len(rows) == 75
++    for camera in source.camera_shapes:
++        frames = []
++        for path in sorted((directory / "cameras" / camera).glob("*.npz")):
++            with np.load(path, allow_pickle=False) as chunk:
++                assert set(chunk.files) == {
++                    "depth",
++                    "K",
++                    "T_world_camera_gl",
++                    "T_world_camera_cv",
++                    "frame_indices",
++                }
++                assert len(chunk["depth"]) <= 32
++                frames.extend(chunk["frame_indices"].tolist())
++                for i, frame in enumerate(chunk["frame_indices"]):
++                    fake = ReportedFarFloor(source)
++                    fake.restore(int(frame))
++                    original = fake.render(camera)
++                    for key in ("K", "T_world_camera_gl", "T_world_camera_cv"):
++                        np.testing.assert_array_equal(
++                            chunk[key][i], original[key].astype(np.float32)
++                        )
++        assert frames == list(range(75))
++    before = {p: src.sha256(p) for p in directory.rglob("*") if p.is_file()}
++    assert (
++        cache.export_episode(root, source, range(75), **args)["status"]
++        == "SKIPPED_VERIFIED"
++    )
++    assert before == {p: src.sha256(p) for p in before}
++
++
++def reseal_chunk(directory, path, arrays):
++    np.savez_compressed(path, **arrays)
++    manifest = src.read_json(directory / "manifest.json")
++    manifest["files"][path.relative_to(directory).as_posix()] = {
++        "size": path.stat().st_size,
++        "sha256": src.sha256(path),
++    }
++    write_json(directory / "manifest.json", manifest)
++    marker = src.read_json(directory / "COMPLETE.json")
++    marker["manifest_sha256"] = src.sha256(directory / "manifest.json")
++    write_json(directory / "COMPLETE.json", marker)
++
++
++@pytest.mark.parametrize(
++    "bad", ["legacy_valid", "missing_K", "depth_dtype", "frame_indices", "pose_dtype"]
++)
++def test_v2_rejects_mixed_or_malformed_chunks_even_with_updated_hashes(tmp_path, bad):
++    _, _, _, directory = exported(tmp_path)
++    path = next(directory.glob("cameras/*/*.npz"))
++    with np.load(path, allow_pickle=False) as chunk:
++        arrays = {k: chunk[k] for k in chunk.files}
++    if bad == "legacy_valid":
++        arrays["valid"] = arrays["depth"] > 0
++    if bad == "missing_K":
++        del arrays["K"]
++    if bad == "depth_dtype":
++        arrays["depth"] = arrays["depth"].astype(np.int32)
++    if bad == "frame_indices":
++        arrays["frame_indices"][0] += 1
++    if bad == "pose_dtype":
++        arrays["T_world_camera_cv"] = arrays["T_world_camera_cv"].astype(np.float64)
++    reseal_chunk(directory, path, arrays)
++    with pytest.raises(ValueError):
++        cache.verify_episode(directory)
++
++
++def test_legacy_episode_schema_is_explicitly_rejected(tmp_path):
++    _, _, _, directory = exported(tmp_path)
++    marker = src.read_json(directory / "COMPLETE.json")
++    marker["schema"] = LEGACY_SCHEMA
++    write_json(directory / "COMPLETE.json", marker)
++    with pytest.raises(ValueError, match="legacy v1"):
++        cache.verify_episode(directory)
++
++
++def test_v1_root_with_seven_old_episodes_failure_and_staging_is_never_modified(
++    tmp_path,
++):
++    raw, flat, _ = bound(tmp_path / "sources")
++    root = tmp_path / "legacy"
++    write_json(root / "cache_manifest.json", {"schema": LEGACY_SCHEMA})
++    for i in range(7):
++        write_json(
++            root / f"tasks/CloseFridge/episodes/episode_{i:06d}/manifest.json",
++            {"schema": LEGACY_SCHEMA, "untouched_fixture": i},
++        )
++    write_json(root / ".failed/retained/failure.json", {"old": True})
++    write_json(root / ".staging/retained/progress.json", {"old": True})
++    before = {
++        p.relative_to(root): src.sha256(p) for p in root.rglob("*") if p.is_file()
++    }
++    with pytest.raises(ValueError, match="legacy/unknown root"):
++        cli.main(
++            [
++                "--raw-root",
++                str(raw),
++                "--flat-root",
++                str(flat),
++                "--output-root",
++                str(root),
++                "--global-episode",
++                "0",
++                "--state-index-policy",
++                "frame_index",
++            ],
++            replay_factory=FakeReplay,
++        )
++    assert before == {
++        p.relative_to(root): src.sha256(p) for p in root.rglob("*") if p.is_file()
++    }
++    assert not (root / ".manifest.lock").exists()
++
++
++def test_missing_source_encoding_diagnostics_not_accepted(tmp_path):
++    _, _, _, directory = exported(tmp_path)
++    rows = cache.read_frames(directory / "frames.jsonl")
++    rows[0]["cameras"][src.CAMERAS[0]]["encoding"]["encoded_valid"] = 0
++    reseal_frame_index(directory, b"".join(src.canonical(r) + b"\n" for r in rows))
++    with pytest.raises(ValueError, match="counts disagree"):
++        cache.verify_episode(directory)
++
++
++def test_v1_contract_cannot_be_requested_even_in_new_namespace(tmp_path):
++    with pytest.raises(ValueError, match="must be v2"):
++        cache.ensure_cache_manifest(tmp_path / "cache", {"schema": LEGACY_SCHEMA})
++    assert not (tmp_path / "cache").exists()
++
++
++def test_direct_episode_writer_also_rejects_legacy_root_before_writes(tmp_path):
++    _, _, source = bound(tmp_path / "sources")
++    root = tmp_path / "old"
++    write_json(root / "cache_manifest.json", {"schema": LEGACY_SCHEMA})
++    before = src.sha256(root / "cache_manifest.json")
++    with pytest.raises(ValueError, match="legacy/unknown root"):
++        cache.export_episode(
++            root,
++            source,
++            [0],
++            storage="uint16_mm",
++            chunk_frames=32,
++            recipe={},
++            replay_factory=FakeReplay,
++        )
++    assert list(root.iterdir()) == [root / "cache_manifest.json"]
++    assert src.sha256(root / "cache_manifest.json") == before
++
++
++def test_missing_root_manifest_cannot_relabel_existing_cache_contents(tmp_path):
++    root = tmp_path / "old"
++    write_json(root / "tasks/CloseFridge/manifest.json", {"schema": LEGACY_SCHEMA})
++    before = {p: src.sha256(p) for p in root.rglob("*") if p.is_file()}
++    with pytest.raises(ValueError, match="unversioned cache contents"):
++        cache.ensure_cache_manifest(root, {"schema": SCHEMA})
++    assert {p: src.sha256(p) for p in root.rglob("*") if p.is_file()} == before
++
++
++def test_replay_rejects_wrong_zero_classification_even_when_storage_mask_matches(
++    tmp_path,
++):
++    raw, flat, source, directory = exported(tmp_path)
++    rows = cache.read_frames(directory / "frames.jsonl")
++    camera = src.CAMERAS[0]
++    fake = FakeReplay(source)
++    fake.restore(0)
++    sample = fake.render(camera)
++    sample["depth_m"][0, 0] = 0.0004
++    sample["valid"][0, 0] = True
++    rows[0]["cameras"][camera]["encoding"] = g.encoding_statistics(
++        sample["depth_m"], sample["valid"], "uint16_mm"
++    )
++    manifest = src.read_json(directory / "manifest.json")
++    totals = manifest["depth_encoding"][camera]
++    totals["renderer_invalid"] -= 1
++    totals["below_1mm"] += 1
++    totals["warning_frames"] += 1
++    write_json(directory / "manifest.json", manifest)
++    reseal_frame_index(directory, b"".join(src.canonical(r) + b"\n" for r in rows))
++    cache.verify_episode(
++        directory
++    )  # Self-consistent offline claims need source replay.
++    report = checker.verify(
++        directory,
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=FakeReplay,
++        rgb_reader=lambda ref, frame: np.full((8, 8, 3), 7 + frame, np.uint8),
++    )
++    checked = report["frames"][0]["cameras"][camera]
++    assert (
++        checked["valid_mask_matches_replay"]
++        and not checked["encoding_counts_match_replay"]
++    )
++    assert report["status"] == "SPATIAL_REPLAY_CHECKS_NOT_ACCEPTED"
++
++
++def test_all_range_excluded_frame_cannot_claim_spatial_pass(tmp_path):
++    class AllFar(FakeReplay):
++        def render(self, camera):
++            sample = super().render(camera)
++            sample["depth_m"][:] = 600.0
++            return sample
++
++    raw, flat, source = bound(tmp_path / "source")
++    result = cache.export_episode(
++        tmp_path / "cache",
++        source,
++        [0],
++        storage="uint16_mm",
++        chunk_frames=32,
++        recipe={},
++        replay_factory=AllFar,
++    )
++    report = checker.verify(
++        result["directory"],
++        replay=True,
++        raw_root=raw,
++        flat_root=flat,
++        state_index_policy="frame_index",
++        replay_factory=AllFar,
++        rgb_reader=lambda ref, frame: np.full((8, 8, 3), 7, np.uint8),
++    )
++    assert report["status"] == "SPATIAL_REPLAY_CHECKS_NOT_ACCEPTED"
++    for camera in source.camera_shapes:
++        checked = report["frames"][0]["cameras"][camera]
++        assert checked["depth"]["valid_pixels"] == 0
++        assert checked["fresh_depth_max_abs_m"] is None
+diff --git a/tools/g2/test_rgbd_pose_export.py b/tools/g2/test_rgbd_pose_export.py
+index 7c8728e9..fee5d39d 100644
+--- a/tools/g2/test_rgbd_pose_export.py
++++ b/tools/g2/test_rgbd_pose_export.py
+@@ -251,8 +251,10 @@ def test_depth_codec_round_trip_mask_and_quantization(storage):
+ 
+ @pytest.mark.parametrize("distance", [0.0004, 0.00099, 65.5351, 100.0])
+ def test_uint16_overflow_never_saturates(distance):
+-    with pytest.raises(ValueError, match="overflow/underflow"):
+-        g.encode_depth([[distance]], np.array([[True]]), "uint16_mm")
++    encoded, valid, error = g.encode_depth(
++        [[distance]], np.array([[True]]), "uint16_mm"
++    )
++    assert encoded.tolist() == [[0]] and valid.tolist() == [[False]] and error == 0
+ 
+ 
+ def test_float_storage_is_explicit_fallback_and_invalid_not_a_valid_range():
+@@ -464,7 +466,7 @@ def test_chunk_roundtrip_partial_terminal_frame_camera_pose_and_actual_capacity(
+     wrist = cache.cached_sample(directory, manifest, rows[-1], src.CAMERAS[2])
+     assert left["T_world_camera_cv"][0, 3] == 0
+     assert wrist["T_world_camera_cv"][0, 3] == pytest.approx(0.3)
+-    expected = 3 * 2 * (8 * 8 * (3 if storage == "uint16_mm" else 5) + 41 * 4 + 8)
++    expected = 3 * 2 * (8 * 8 * (2 if storage == "uint16_mm" else 4) + 41 * 4 + 8)
+     assert manifest["raw_array_bytes"] == expected
+     assert manifest["compression_ratio_raw_over_stored"] == pytest.approx(
+         expected / manifest["compressed_payload_bytes"]
+@@ -809,16 +811,18 @@ def test_dry_run_real_mapping_path_has_no_renderer_or_output_side_effect(
+     result = json.loads(capsys.readouterr().out)
+     assert result["selected_frame_count"] == 3 and not (tmp_path / "out").exists()
+     assert result["uncompressed_array_bytes_estimate"] == 3 * 2 * (
+-        8 * 8 * 3 + 41 * 4 + 8
++        8 * 8 * 2 + 41 * 4 + 8
+     )
+ 
+ 
+ def test_cache_contract_no_implicit_configuration_drift(tmp_path):
+     root = tmp_path / "cache"
+-    cache.ensure_cache_manifest(root, {"cameras": ["left"]})
+-    cache.ensure_cache_manifest(root, {"cameras": ["left"]})
++    cache.ensure_cache_manifest(root, {"schema": cache.SCHEMA, "cameras": ["left"]})
++    cache.ensure_cache_manifest(root, {"schema": cache.SCHEMA, "cameras": ["left"]})
+     with pytest.raises(ValueError, match="drift"):
+-        cache.ensure_cache_manifest(root, {"cameras": ["wrist"]})
++        cache.ensure_cache_manifest(
++            root, {"schema": cache.SCHEMA, "cameras": ["wrist"]}
++        )
+ 
+ 
+ def test_disk_budget_stops_before_environment_creation(tmp_path, monkeypatch):
+diff --git a/tools/g2/verify_robocasa_rgbd_pose.py b/tools/g2/verify_robocasa_rgbd_pose.py
+index 49aff911..ccf65ceb 100644
+--- a/tools/g2/verify_robocasa_rgbd_pose.py
++++ b/tools/g2/verify_robocasa_rgbd_pose.py
+@@ -17,7 +17,14 @@ import numpy as np
+ 
+ from .rgbd_pose import SCHEMA
+ from .rgbd_pose.cache import cached_sample, durable_json, verify_episode
+-from .rgbd_pose.geometry import depth_statistics, pose_motion, rgb_metrics
++from .rgbd_pose.geometry import (
++    ENCODING_COUNTS,
++    depth_statistics,
++    encode_depth,
++    encoding_statistics,
++    pose_motion,
++    rgb_metrics,
++)
+ from .rgbd_pose.replay import Replay, original_rgb, reprojection_error
+ from .rgbd_pose.source import Episode, load_episode, verify_witnesses
+ 
+@@ -93,6 +100,8 @@ def verify(
+             "compression_ratio_raw_over_stored"
+         ],
+         "depth_quantization_max_abs_m": manifest["quantization_max_abs_m"],
++        "depth_storage": spec["depth_storage"],
++        "depth_encoding": manifest["depth_encoding"],
+         "geometry_gate": "NOT_EXECUTED",
+         "acceptance_policy": ACCEPTANCE_POLICY,
+         "acceptance_policy_authority": POLICY_AUTHORITY,
+@@ -168,8 +177,18 @@ def verify(
+                 report["photometric_diagnostic"]["failed_camera_frames"] += int(
+                     not photometric_passed
+                 )
+-                same_mask = np.array_equal(saved["valid"], actual["valid"])
+-                valid = saved["valid"] & actual["valid"]
++                _, storage_valid, _ = encode_depth(
++                    actual["depth_m"], actual["valid"], spec["depth_storage"]
++                )
++                fresh_encoding = encoding_statistics(
++                    actual["depth_m"], actual["valid"], spec["depth_storage"]
++                )
++                recorded_encoding = row["cameras"][camera]["encoding"]
++                same_encoding_counts = all(
++                    fresh_encoding[k] == recorded_encoding[k] for k in ENCODING_COUNTS
++                )
++                same_mask = np.array_equal(saved["valid"], storage_valid)
++                valid = saved["valid"] & storage_valid
+                 depth_error = (
+                     float(
+                         np.max(
+@@ -192,6 +211,7 @@ def verify(
+                 )
+                 spatial_camera_pass = (
+                     same_mask
++                    and same_encoding_counts
+                     and depth_error is not None
+                     and depth_error <= quantization_tolerance
+                     and max(matrix_errors.values()) <= 1e-5
+@@ -207,6 +227,10 @@ def verify(
+                     "rgb": metrics,
+                     "depth": depth_statistics(saved["depth_m"], saved["valid"]),
+                     "valid_mask_matches_replay": same_mask,
++                    "valid_mask_scope": "STORAGE_REPRESENTABLE_NOT_RAW_RENDERER",
++                    "renderer_valid_pixels": int(actual["valid"].sum()),
++                    "fresh_encoding": fresh_encoding,
++                    "encoding_counts_match_replay": same_encoding_counts,
+                     "fresh_depth_max_abs_m": depth_error,
+                     "fresh_depth_tolerance_m": quantization_tolerance,
+                     "camera_matrix_max_abs": matrix_errors,

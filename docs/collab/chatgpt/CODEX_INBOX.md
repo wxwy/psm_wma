@@ -332,3 +332,18 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - Current Codex cannot perform the requested server mkdir: available tools/runtime expose no server command channel, even though cloud/Git connectivity works. Actual directory existence/resolution/device/free space are unobserved; no server operation or local mirror was created. Connected server execution role may perform only this already authorized filesystem action and return status. No separate message was sent to DS.
 - Docs-only validation PASS: lexical sibling/ancestry checks (not real server canonical paths),2 Bash blocks syntax-only, dry-run unchanged except fixed output, numeric budget/old Evidence unchanged,39 artifact hashes/13 source bindings intact, G2 reviews byte-identical, Inbox append-only/under128KiB and production/Child unchanged. No project tests or mkdir executed.
 - Latest scope authority2db5df9a279e58b641e418943dae1dee422e31c9 consumed: Left+Wrist only/Right out,92 <=100-total batch count policy recorded, actual member/frame freeze and export limits still pending. Current plan/MEMORY/TODO/SESSION/budget placement fields updated, past source audit/GateC/Evidence and numeric budget retained. No code/test/Child change, historical N100 search, server data transfer, GPU/model/Config/DCP/training/nav_sg or V3 merge.
+
+
+## 2026-11-05 — G2 Issue19 / Draft PR20 depth v2 fresh Code Gate request
+
+- State: REVIEW; author implementation and CPU evidence delivered, not an independent Gate closure.
+- Formal implementation Root: `fbe578908a840a5f4e5b351f1c2e8fb019def6e5`.
+- Child / Gitlink: `1069fe78841228cadbbfbe6afbd767eaed6225da` (unchanged).
+- Head branch: `v3-g2-codex-depth-zero-sentinel-20261105`; PR https://github.com/wxwy/psm_wma/pull/20 against G2 `v3-g2-spatial-policy-20261104` at9568723f. V3/V2 untouched.
+- Complete Issue19 and Owner9568723f/failure76b7d708 read and ACKed. Implemented uint16 zero sentinel for renderer-invalid/out-of-range, no persisted valid, exact five-array NPZ, strict incompatible v2 identity, compact source-range counts and storage-mask replay comparison. Float32 and independent geometry contracts retained; replay.py/source/Child/nav_sg/training/historical evidence unchanged.
+- Final clean author CPU:174 PASS,0 failures/errors/skips;53 Issue19+83 exporter/source+38 spatial-policy. Ruff0.12.7 check/format,AST12,diff PASS; before/after clean and source hashes equal. This is synthetic author CPU, not DS/GPT native replay.
+- Raw evidence: `docs/collab/codex/evidence/2026-11-05_g2_issue19_zero_sentinel_author_cpu/` (gate.json/JUnit/commands/versions/full diff/Git Blob+SHA256/logs/SHA256SUMS; dev1 accounting failure preserved).
+- Handoff: `docs/collab/codex/reviews/2026-11-05_G2_Issue19_Depth_ZeroSentinel_v2_Author_Handoff.md`.
+- Schema/transition proposal: `docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md`. All7 legacy episodes/failures/staging preserved; pixelwise mask equality, staged conversion/verification, coherent identity and atomic generation promotion required by a later approved tool. No converter/migration/new production namespace performed.
+- Native real CloseFridge global736/local234 frames73/74 remains pending; synthetic25/230 far-pixel tests explicitly labeled. No server sensor/data file accessed or transferred, no GPU/export/resume/root switch/V3 merge.
+- Request: GPT/Owner fresh incremental Code Gate for this precise implementation pair and transition proposal. After publication stop per Issue19; native checks/migration/production require separate authorization. Ledger/Evidence HEAD does not replace the Formal Root.

@@ -1,4 +1,22 @@
-# 2026-11-05 — Issue19 zero-sentinel codec v2 implementation IN_PROGRESS
+# 2026-11-05 — Issue19 depth v2 REVIEW (author CPU PASS, native pending)
+
+Final source Root fbe578908a840a5f4e5b351f1c2e8fb019def6e5 / unchanged
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Clean final CPU run
+2026-11-05T04:55:32–04:55:38Z:174 PASS,0 fail/error/skip (new53+original83+
+spatial38); pytest5.26s, Ruff0.12.7/check/format all12,AST12,diff check PASS.
+Before/after clean and source hashes identical. Text evidence archived under
+docs/collab/codex/evidence/2026-11-05_g2_issue19_zero_sentinel_author_cpu/;
+commands/environment/JUnit/source bindings/diff and both development runs retained.
+Transition runbook is proposal only. Native real736/local234 frames73/74 and
+actual7legacy validation/migration pending; no remote tool available, no server
+file accessed/transferred. No GPU/native renderer/V3/child/nav_sg/training or
+production changes. Next: publish existing Draft PR20 branch, canonical Inbox
+request for GPT/Owner fresh Code Gate, then stop per Issue19. Evidence/ledger
+successor does not replace the formal implementation SHA above.
+
+Prior implementation-start and development observations follow unchanged.
+
+# 2026-11-05 — Issue19 zero-sentinel codec v2 implementation IN_PROGRESS (historical)
 
 Implementation step (before source freeze): v2 uses depth-only NPZ, zero sentinel
 for uint16 range exclusions and renderer-invalid pixels, disjoint source counts,
