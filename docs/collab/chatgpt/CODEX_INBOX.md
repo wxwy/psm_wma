@@ -239,3 +239,14 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **Independent detailed review:** `docs/collab/chatgpt/reviews/2026-11-04_R04_VFM_Action_Compile_c9fa60b7_4e9c8104_APPROVE_CODE.md` (docs-only review commit `1a005b8bfa20d0917db62fdb25e010752144b1d2`).
 - **Boundary:** This does not authorize GPU/H100, V3/G2 merge, using new source in frozen R04 Resume, real checkpoint/model, training or formal900. DS independent CPU first; GPU Canary only with Owner authorization.
 - **Separately Issue#17**: unchanged Pair Root `551b03621507dde52303f54290d4fea89d66e8da` / Child `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e` now has author full CPU869/869 PASS at `docs/collab/codex/reviews/2026-11-04_EvalV2_Streaming_551b0362_82fa270e_Author_Full_CPU_PASS_DS_Handoff.md`; technical formal pair unchanged, so **no repeat technical review**. Its next Gate is DS independent CPU; not GPU/V3 promotion.
+
+
+## 2026-11-05 — Codex implementation request: R05 VFM _decode_action dynamic compile
+
+- **Owner instruction**: Codex alone changes production code; GPT owns review and independent CPU/H100/RoboCasa verification.
+- **GitHub issue**: https://github.com/wxwy/psm_wma/issues/18
+- **Frozen start pair**: Root `c9fa60b7134fda8fb848c29c148f25c7a8901892` / Child-Gitlink `4e9c8104ffd15a373b576bc35ee608de1b60eea1`.
+- **Two isolated development branches created**: `v3-r05-action-decode-compile-20261105` in both root and child; detailed request at `docs/collab/chatgpt/requests/2026-11-05_R05_VFM_Action_Decode_Dynamic_Compile_Codex.md` (request-only Root commit `8004106fd3c1e357439c53c3f134933e5c1a5bf0`).
+- **Observed R05 blocker**: actual M16/B8, original iter27700, 15D/H16 Local-TTT produced 12 valid Core then `FailOnRecompileLimitHit`; GPU6 identifies `_decode_action` list guard `len(packed_seq.action.tokens)==5`. Fix the list/metadata vs Tensor compilation boundary, not the already closed `_encode_action` case.
+- **Acceptance**: preserve decode math, dummy no-noisy gradient, Torch default recompilation cap 8, FSDP/CUDA-graph and M/B Resume identity; demonstrate old-RED/new-GREEN with B1–8, parity and CPU test evidence; return NEW Root/Child formal pair for GPT review.
+- **Stop**: do not mutate/Resume original R04 or failed R05, do not merge V3/G2 or launch GPU until GPT Code Gate. Issue creation and branch readiness do not mean Codex has started execution.
