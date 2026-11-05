@@ -185,7 +185,7 @@ def main(argv=None, *, replay_factory=Replay):
             )
             estimated_bytes += sum(
                 len(frames)
-                * (h * w * (3 if args.depth_format == "uint16_mm" else 5) + 41 * 4 + 8)
+                * (h * w * (2 if args.depth_format == "uint16_mm" else 4) + 41 * 4 + 8)
                 for h, w in source.camera_shapes.values()
             )
             if args.dry_run:

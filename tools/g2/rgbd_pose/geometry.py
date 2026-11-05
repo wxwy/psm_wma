@@ -11,6 +11,14 @@ import numpy as np
 
 GL_FROM_CV = np.diag([1.0, -1.0, -1.0, 1.0])
 DEPTH_FORMATS = ("uint16_mm", "float32_m")
+ENCODING_COUNTS = (
+    "total_pixels",
+    "renderer_invalid",
+    "below_1mm",
+    "above_65_535m",
+    "encoded_valid",
+)
+RANGE_WARNING_FRACTION = 0.01
 CONVENTIONS = {
     "image_origin": "top_left",
     "pixel_center": "column_plus_0.5_row_plus_0.5",
@@ -19,7 +27,9 @@ CONVENTIONS = {
     "camera_cv": "X_right_Y_down_Z_forward",
     "pose_direction": "T_world_camera_maps_camera_to_world",
     "T_world_camera_cv": "T_world_camera_gl @ diag(1,-1,-1,1)",
-    "invalid_depth": "zero_storage_plus_explicit_false_valid_mask",
+    "invalid_depth": "zero_sentinel_valid_is_depth_gt_zero_no_persisted_mask",
+    "uint16_out_of_range": "zero_not_saturated_or_wrapped",
+    "range_exclusion_warning_fraction": RANGE_WARNING_FRACTION,
     "uint16_valid_range_m": [0.001, 65.535],
     "uint16_max_quantization_error_m": 0.0005001,
 }
@@ -76,27 +86,38 @@ def depth_buffer_to_z(buffer, near, far):
     return np.where(valid, depth, 0), valid
 
 
-def encode_depth(depth_m, valid, storage):
+def _storage_mask(depth_m, valid, storage):
     depth = np.asarray(depth_m, dtype=np.float64)
     valid = np.asarray(valid)
-    if valid.dtype != np.bool_ or depth.shape != valid.shape or depth.ndim != 2:
+    if (
+        valid.dtype != np.bool_
+        or depth.shape != valid.shape
+        or depth.ndim != 2
+        or not depth.size
+    ):
         raise ValueError("depth/boolean-valid shapes must match HxW")
-    if np.any(valid & (~np.isfinite(depth) | (depth <= 0))):
-        raise ValueError("valid depth must be finite and positive")
+    if np.any(valid & ~np.isfinite(depth)):
+        raise ValueError("renderer-valid depth must be finite")
     if storage == "uint16_mm":
-        if np.any(valid & ((depth < 0.001) | (depth > 65.535))):
-            raise ValueError(
-                "uint16_mm depth overflow/underflow; use explicit float32_m"
-            )
-        encoded = np.rint(np.where(valid, depth, 0) * 1000).astype(np.uint16)
+        mask = valid & (depth >= 0.001) & (depth <= 65.535)
     elif storage == "float32_m":
-        if np.any(valid & (depth > np.finfo(np.float32).max)):
+        if np.any(valid & ((depth <= 0) | (depth > np.finfo(np.float32).max))):
             raise ValueError("float32_m depth overflow")
+        mask = valid.copy()
+    else:
+        raise ValueError(f"unsupported depth storage: {storage}")
+    return depth, valid, mask
+
+
+def encode_depth(depth_m, valid, storage):
+    """Encode v2 depth; the returned mask is transient, never a chunk array."""
+    depth, _, valid = _storage_mask(depth_m, valid, storage)
+    if storage == "uint16_mm":
+        encoded = np.rint(np.where(valid, depth, 0) * 1000).astype(np.uint16)
+    else:
         encoded = np.where(valid, depth, 0).astype(np.float32)
         if np.any(valid & (~np.isfinite(encoded) | (encoded <= 0))):
             raise ValueError("float32_m depth not representable")
-    else:
-        raise ValueError(f"unsupported depth storage: {storage}")
     restored = decode_depth(encoded, valid, storage)
     error = (
         float(np.max(np.abs(restored[valid] - depth[valid]))) if valid.any() else 0.0
@@ -106,21 +127,104 @@ def encode_depth(depth_m, valid, storage):
     return encoded, valid.copy(), error
 
 
-def decode_depth(encoded, valid, storage):
-    encoded, valid = np.asarray(encoded), np.asarray(valid)
+def decode_depth(encoded, valid_or_storage, storage=None):
+    """Depth-only reader; optional old calling form checks a transient mask."""
+    encoded = np.asarray(encoded)
+    supplied_mask = None if storage is None else np.asarray(valid_or_storage)
+    storage = valid_or_storage if storage is None else storage
     expected = {"uint16_mm": np.dtype("uint16"), "float32_m": np.dtype("float32")}
     if (
         storage not in expected
         or encoded.dtype != expected[storage]
-        or valid.dtype != np.bool_
-        or encoded.shape != valid.shape
         or encoded.ndim not in (2, 3)
+        or not encoded.size
         or not np.isfinite(encoded).all()
-        or np.any(encoded[~valid] != 0)
-        or np.any(encoded[valid] <= 0)
+        or np.any(encoded < 0)
     ):
         raise ValueError("corrupt depth payload, dtype or invalid-pixel mask")
+    if supplied_mask is not None and (
+        supplied_mask.dtype != np.bool_
+        or supplied_mask.shape != encoded.shape
+        or not np.array_equal(supplied_mask, encoded > 0)
+    ):
+        raise ValueError("transient mask disagrees with zero-sentinel depth")
     return encoded.astype(np.float64) / (1000 if storage == "uint16_mm" else 1)
+
+
+def _encoding_summary(counts, storage, minimum, maximum):
+    renderer_valid = counts["total_pixels"] - counts["renderer_invalid"]
+    fraction = (counts["below_1mm"] + counts["above_65_535m"]) / max(renderer_valid, 1)
+    return {
+        **counts,
+        "range_filter_applied": storage == "uint16_mm",
+        "finite_raw_min_m": minimum,
+        "finite_raw_max_m": maximum,
+        "range_excluded_fraction_of_renderer_valid": fraction,
+        "warning_threshold_fraction": RANGE_WARNING_FRACTION,
+        "warning": "RANGE_EXCLUSION_GT_1_PERCENT"
+        if fraction > RANGE_WARNING_FRACTION
+        else None,
+    }
+
+
+def encoding_statistics(depth_m, renderer_valid, storage):
+    """Disjoint source classifications, including values not stored in v2."""
+    depth, renderer_valid, valid = _storage_mask(depth_m, renderer_valid, storage)
+    counts = {
+        "total_pixels": int(valid.size),
+        "renderer_invalid": int((~renderer_valid).sum()),
+        "below_1mm": int((renderer_valid & (depth < 0.001)).sum())
+        if storage == "uint16_mm"
+        else 0,
+        "above_65_535m": int((renderer_valid & (depth > 65.535)).sum())
+        if storage == "uint16_mm"
+        else 0,
+        "encoded_valid": int(valid.sum()),
+    }
+    values = depth[renderer_valid]
+    return _encoding_summary(
+        counts,
+        storage,
+        float(values.min()) if values.size else None,
+        float(values.max()) if values.size else None,
+    )
+
+
+def validate_encoding_statistics(stats, encoded, storage):
+    """Offline consistency only; native replay validates source classifications."""
+    decode_depth(encoded, storage)
+    required = set(ENCODING_COUNTS) | {"finite_raw_min_m", "finite_raw_max_m"}
+    if not isinstance(stats, dict) or not required.issubset(stats):
+        raise ValueError("missing depth encoding counts")
+    counts = {key: stats[key] for key in ENCODING_COUNTS}
+    if any(type(value) is not int or value < 0 for value in counts.values()):
+        raise ValueError("invalid depth encoding counts")
+    if (
+        counts["total_pixels"] != encoded.size
+        or counts["encoded_valid"] != int((encoded > 0).sum())
+        or sum(counts[k] for k in ENCODING_COUNTS[1:]) != encoded.size
+        or (storage == "float32_m" and (counts["below_1mm"] or counts["above_65_535m"]))
+    ):
+        raise ValueError("depth encoding counts disagree with payload")
+    minimum, maximum = stats["finite_raw_min_m"], stats["finite_raw_max_m"]
+    renderer_valid = counts["total_pixels"] - counts["renderer_invalid"]
+    if renderer_valid:
+        if (
+            not all(
+                type(v) in (int, float) and np.isfinite(v) for v in (minimum, maximum)
+            )
+            or minimum > maximum
+        ):
+            raise ValueError("invalid finite raw depth range")
+        if storage == "uint16_mm" and (
+            (minimum < 0.001) != bool(counts["below_1mm"])
+            or (maximum > 65.535) != bool(counts["above_65_535m"])
+        ):
+            raise ValueError("range exclusions disagree with raw extrema")
+    elif minimum is not None or maximum is not None:
+        raise ValueError("renderer-invalid frame cannot declare raw depth extrema")
+    if stats != _encoding_summary(counts, storage, minimum, maximum):
+        raise ValueError("depth encoding diagnostic contract mismatch")
 
 
 def rays_cv(K, pixels):

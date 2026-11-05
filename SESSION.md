@@ -1,3 +1,22 @@
+# 2026-11-05 — Issue19 zero-sentinel codec v2 implementation IN_PROGRESS
+
+Implementation step (before source freeze): v2 uses depth-only NPZ, zero sentinel
+for uint16 range exclusions and renderer-invalid pixels, disjoint source counts,
+storage-mask spatial comparison and unchanged geometry thresholds. Legacy roots
+are refused before writes by CLI/direct writer; new runbook is a transition
+proposal only, no converter or server action. Related files claimed above only.
+Author development CPU dev1: 173 passed/1 failed (old dry-run byte expectation
+still included bool mask); corrected that expected accounting without weakening
+mapping/no-renderer assertions. dev2: 174 passed, 0 failure/error/skip in 5.40s.
+Ruff 0.12.7 check/format all12 G2 Python files PASS. Raw development artifacts:
+/tmp/g2_issue19_depth_v2_author_cpu/dev1 and dev2. Both are synthetic cloud CPU,
+not native CloseFridge736 evidence. Source commit and final clean verification
+still pending; no review/production acceptance claimed.
+
+2026-11-05T12:44:25.706229+08:00: fresh fetch/advertised G2 base9568723fd19d008be180c7b3e4126e1176c07d26, PR20 head e531af5c1825f7af0bc94ac2010bae2a04ad11ec, official V38586b30c observed only. Full Issue19/PR20 bodies and Owner9568723f/failure76b7d708 read via GitHub API/Git. Created isolated worktree /workspace/psm-wma-g2-depth-v2 on exact requested PR branch, no code yet; same Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Runtime cloud connected/Git operational; GitHub robot's repository-environment binding is a separate channel and does not prevent current authorized implementation.
+
+Claim geometry.py/cache.py/export/verify/__init__, schema/README and related current tests, new focused tests, migration plan and CPU evidence/state/handoff. Preserve archived tests/evidence and all server7legacy episodes/staging. Central representability mask, depth-only v2 exact NPZ arrays, source count diagnostics and filtered fresh comparison with unchanged ray/projection thresholds. Plan only for old7 transition; no server files/real model/GPU/production. No migration/new namespace or root swap performed. Current server tool unavailable; native736 frame73/74 must remain explicitly pending unless authorized connected resources appear.
+
 # 2026-11-05 — Owner sibling Depth output selected; mkdir authorized, server execution unavailable
 
 Observation 2026-11-05T10:14:53.131629+08:00: before_head2db5df9a279e58b641e418943dae1dee422e31c9;

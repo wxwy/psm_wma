@@ -1,4 +1,8 @@
-# Stage-1 input/output schema — psm_wma_robocasa_rgbd_pose_v1
+# Stage-1 input/output schema — psm_wma_robocasa_rgbd_pose_v2
+
+Issue #19 changes the codec and cache identity. v1 caches are rejected explicitly,
+never accepted by relaxing v2 verification. See the
+[v2 contract and seven-episode transition plan](../../docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md).
 
 ## Inputs
 
@@ -53,8 +57,8 @@ The source_dataset header must match the supplied Flat root. If present, the
 original `selected_episode_ids`/digest are validated, but selected short episodes
 absent from accepted cache rows are not reintroduced.
 
-An external list made from independently verified training membership is also
-accepted:
+An external explicit batch/membership list frozen against the exact mapping is
+also accepted:
 
 ```json
 {
@@ -87,28 +91,45 @@ deterministic partition of the supplied members, never a new sampling step.
   .failed/<uuid>/failure.json           # Isolated failed episode plus local artifacts
 ```
 
-Each camera chunk has:
+Each camera chunk has exactly these five arrays; no `valid` array is stored:
 
 | Array | Type / shape / meaning |
 | --- | --- |
 | depth | uint16 millimeters **or** float32 meters, `[N,H,W]` |
-| valid | bool `[N,H,W]`, invalid depth stored as zero |
 | K | float32 `[N,3,3]`, one calibrated intrinsic matrix per frame/camera |
 | T_world_camera_gl | float32 `[N,4,4]`, GL camera-to-world |
 | T_world_camera_cv | float32 `[N,4,4]`, optical CV camera-to-world |
 | frame_indices | int64 `[N]`, original episode-local frame indices |
 
 Default chunk size32, configurable1..256. `uint16_mm` valid range is
-`[0.001,65.535]` meters, rounding-to-nearest, error <=0.0005001m. Overflow and
-underflow fail; rerun in a **new namespace** with explicit `float32_m` if needed.
-ZIP is lossless with respect to these encoded arrays; millimeter quantization is
-not lossless with respect to the original floating depth. Masked non-finite/far
-background pixels remain explicitly invalid. No silent saturation/fallback.
+`[0.001,65.535]` meters, inclusive, rounding-to-nearest, error <=0.0005001m.
+Renderer-invalid pixels and finite renderer-valid values outside this interval
+are stored as **0**, never wrapped or saturated to 65535. Readers derive the
+transient boolean mask from `depth > 0`. The renderer mask itself is not stored.
+No camera near/far plane is changed to force representability.
+
+`float32_m` retains finite, positive, float32-representable depths outside the
+uint16 interval; it does not inherit the uint16 range filter. Renderer-invalid
+pixels are also 0. A renderer-valid nonfinite value, or a nonpositive/overflowing
+or underflow-to-zero float32 value, is malformed input and fails closed. ZIP is
+lossless with respect to the encoded arrays; millimeter quantization is not
+lossless with respect to the original floating depth.
+
+Each frame/camera `encoding` object has disjoint integer counts: `total_pixels`,
+`renderer_invalid`, `below_1mm`, `above_65_535m`, `encoded_valid`. The last four
+sum to `total_pixels`; `encoded_valid` equals the positive payload count. The two
+range counts apply only to uint16 and are 0 for float32. Finite raw min/max,
+`range_filter_applied` and excluded fraction of renderer-valid pixels are recorded.
+Exclusion above 1% produces `RANGE_EXCLUSION_GT_1_PERCENT`, a diagnostic, not a
+relaxed geometry PASS. The fraction and threshold are explicit even below 1%.
+The episode manifest aggregates these counts and `warning_frames` per camera.
+No per-pixel diagnostic bitmap is persisted in NPZ or JSON.
 
 Frames JSONL carries task, global/local episode, frame, source-state/RGB-frame
 indices, global/local row indices, flat timestamp, actual simulator time/state
 roundtrip error and each camera's chunk/offset, original video path/frame,
-depth statistics and quantization error. It contains no RGB pixel payload.
+depth statistics, quantization error and encoding diagnostics. It contains no
+RGB pixel payload. Depth statistics describe storage-representable pixels.
 
 Camera axes: GL right/up/backward; CV right/down/forward. Upright image origin is
 top-left, centers `(column+.5,row+.5)`. Depth is **optical-axis Z**, not unit-ray
@@ -124,3 +145,10 @@ provenance; docs-only successors do not invalidate identical code-content caches
 `full_episode=false` distinguishes the three-frame Gate B cache from full exports.
 Neither a COMPLETE marker nor an offline checksum pass closes the physical
 geometry Gate. Native replay reports are separate immutable text evidence.
+
+The replay verifier compares the saved mask against a fresh **storage** mask,
+not against the raw renderer mask. Source classification counts must also match;
+independent geometry still requires at least 16 rays and <=1 cm error, with the
+existing K/Pose/projection thresholds. An all-zero frame cannot obtain spatial
+PASS. RGB photometry remains a separate diagnostic; human visual acceptance is
+an external record.
