@@ -1,0 +1,207 @@
+{
+  "entries": [
+    {
+      "body": {
+        "config_digest": "3b2b5a2dce80f7d94b2c7a19664334619f03648d6058db63181c7319da226be3",
+        "cpu_loader_runtime": {
+          "max_cache_bytes": 2147483648,
+          "max_packet_bytes": 33554432,
+          "persistent_workers": true,
+          "pin_memory": false,
+          "prefetch_factor": 1,
+          "schema": "nottt_cpu_raw_dataloader_v1",
+          "source_packet_limit_bytes": 1048576,
+          "source_reader": "parent_verified_source",
+          "start_method": "spawn",
+          "timeout_s": 120.0,
+          "transform": "parent_legacy_global",
+          "workers": 8
+        },
+        "effective_data_source": {
+          "action_horizon": 16,
+          "chunk_length": 16,
+          "consumer_block_steps": 16,
+          "cpu_raw_loader": {
+            "lifecycle": "configured_not_started_during_preflight",
+            "max_cache_bytes": 2147483648,
+            "max_packet_bytes": 33554432,
+            "persistent_workers": true,
+            "pin_memory": false,
+            "prefetch_factor": 1,
+            "raw_cache_policy": "spawned_cpu_workers",
+            "schema": "nottt_cpu_raw_dataloader_v1",
+            "source_identity_reads": "parent_bounded_mmap",
+            "source_packet_limit_bytes": 1048576,
+            "source_reader": "parent_verified_source",
+            "start_method": "spawn",
+            "timeout_s": 120.0,
+            "transform": "parent_legacy_global",
+            "workers": 8
+          },
+          "fps": 20.0,
+          "legacy_chunk_fields": {
+            "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+          },
+          "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+          "legacy_dataset_contract": {
+            "action_normalization": null,
+            "base_encoding": "raw",
+            "camera_set": "left_wrist",
+            "fps": 20.0,
+            "max_action_dim": 64,
+            "mode": "wam",
+            "use_base_action": true,
+            "use_state": true
+          },
+          "local_memory_enabled": false,
+          "local_ttt_tbptt_steps": null,
+          "observation_frames": 17,
+          "producer_chain": [
+            "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+            "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+            "cosmos_framework.trainer.matched_no_ttt.MatchedNoTTTTrainer.bind_grouped_stream"
+          ],
+          "raw_action_dim": 15,
+          "schema": "corrected_phase5_effective_data_v1",
+          "state_dim": 15
+        },
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": 30000,
+        "nottt4_legacy_source_resume": {
+          "frozen_config_checksum_not_revalidated": true,
+          "frozen_semantic_digest": "bd78980877840bd42f0d7cec929cbaeac13db7e1f7412747ff2951067ce8baca",
+          "identity_gate": "disabled_for_existing_formal_nottt4_resume",
+          "runtime_source_validation": "owner_disabled_for_nottt_world4_ga4",
+          "schema": "nottt4_owner_skipped_job_identity_v1"
+        },
+        "phase": "resume",
+        "semantic_digest": "bd78980877840bd42f0d7cec929cbaeac13db7e1f7412747ff2951067ce8baca"
+      },
+      "launch_id": "5dd6271622c24a6cbae5e16953d7afa8",
+      "launch_json_sha256": "e4db134736299dc5074e413d22f0c1d1ade01a17283a72ff3a63cbd1942f915e"
+    },
+    {
+      "body": {
+        "config_digest": "3b2b5a2dce80f7d94b2c7a19664334619f03648d6058db63181c7319da226be3",
+        "cpu_loader_runtime": {
+          "max_cache_bytes": 2147483648,
+          "max_packet_bytes": 33554432,
+          "persistent_workers": true,
+          "pin_memory": false,
+          "prefetch_factor": 1,
+          "schema": "nottt_cpu_raw_dataloader_v1",
+          "source_packet_limit_bytes": 1048576,
+          "source_reader": "parent_verified_source",
+          "start_method": "spawn",
+          "timeout_s": 120.0,
+          "transform": "parent_legacy_global",
+          "workers": 8
+        },
+        "effective_data_source": {
+          "action_horizon": 16,
+          "chunk_length": 16,
+          "consumer_block_steps": 16,
+          "cpu_raw_loader": {
+            "lifecycle": "configured_not_started_during_preflight",
+            "max_cache_bytes": 2147483648,
+            "max_packet_bytes": 33554432,
+            "persistent_workers": true,
+            "pin_memory": false,
+            "prefetch_factor": 1,
+            "raw_cache_policy": "spawned_cpu_workers",
+            "schema": "nottt_cpu_raw_dataloader_v1",
+            "source_identity_reads": "parent_bounded_mmap",
+            "source_packet_limit_bytes": 1048576,
+            "source_reader": "parent_verified_source",
+            "start_method": "spawn",
+            "timeout_s": 120.0,
+            "transform": "parent_legacy_global",
+            "workers": 8
+          },
+          "fps": 20.0,
+          "legacy_chunk_fields": {
+            "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+          },
+          "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+          "legacy_dataset_contract": {
+            "action_normalization": null,
+            "base_encoding": "raw",
+            "camera_set": "left_wrist",
+            "fps": 20.0,
+            "max_action_dim": 64,
+            "mode": "wam",
+            "use_base_action": true,
+            "use_state": true
+          },
+          "local_memory_enabled": false,
+          "local_ttt_tbptt_steps": null,
+          "observation_frames": 17,
+          "producer_chain": [
+            "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+            "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+            "cosmos_framework.trainer.matched_no_ttt.MatchedNoTTTTrainer.bind_grouped_stream"
+          ],
+          "raw_action_dim": 15,
+          "schema": "corrected_phase5_effective_data_v1",
+          "state_dim": 15
+        },
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": 30000,
+        "nottt4_legacy_source_resume": {
+          "frozen_config_checksum_not_revalidated": true,
+          "frozen_semantic_digest": "bd78980877840bd42f0d7cec929cbaeac13db7e1f7412747ff2951067ce8baca",
+          "identity_gate": "disabled_for_existing_formal_nottt4_resume",
+          "runtime_source_validation": "owner_disabled_for_nottt_world4_ga4",
+          "schema": "nottt4_owner_skipped_job_identity_v1"
+        },
+        "phase": "resume",
+        "semantic_digest": "bd78980877840bd42f0d7cec929cbaeac13db7e1f7412747ff2951067ce8baca"
+      },
+      "launch_id": "ba7da61a75914429b26355e50a829d11",
+      "launch_json_sha256": "e4db134736299dc5074e413d22f0c1d1ade01a17283a72ff3a63cbd1942f915e"
+    },
+    {
+      "body": {
+        "config_digest": "3b2b5a2dce80f7d94b2c7a19664334619f03648d6058db63181c7319da226be3",
+        "effective_data_source": {
+          "action_horizon": 16,
+          "chunk_length": 16,
+          "consumer_block_steps": 16,
+          "fps": 20.0,
+          "legacy_chunk_fields": {
+            "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+          },
+          "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+          "legacy_dataset_contract": {
+            "action_normalization": null,
+            "base_encoding": "raw",
+            "camera_set": "left_wrist",
+            "fps": 20.0,
+            "max_action_dim": 64,
+            "mode": "wam",
+            "use_base_action": true,
+            "use_state": true
+          },
+          "local_memory_enabled": false,
+          "local_ttt_tbptt_steps": null,
+          "observation_frames": 17,
+          "producer_chain": [
+            "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+            "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+            "cosmos_framework.trainer.matched_no_ttt.MatchedNoTTTTrainer.bind_grouped_stream"
+          ],
+          "raw_action_dim": 15,
+          "schema": "corrected_phase5_effective_data_v1",
+          "state_dim": 15
+        },
+        "execution_stop_after_iter": 30000,
+        "formal_execution_until": 30000,
+        "phase": "fresh",
+        "semantic_digest": "bd78980877840bd42f0d7cec929cbaeac13db7e1f7412747ff2951067ce8baca"
+      },
+      "launch_id": "de2ff00d3861463187342ae70b6e8709",
+      "launch_json_sha256": "f6258802116fc2a991dfd0fc50a4d64b918e09107c4b0b7274ebdbd5177856bf"
+    }
+  ],
+  "schema": "psm_wma_v3_train_launch_history_v1"
+}
