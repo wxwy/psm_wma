@@ -1,0 +1,66 @@
+{
+  "tools/g2/README.md": {
+    "git_blob": "2b3aa8d37d5dd1350b8d4fa791be40f08b265a93",
+    "sha256": "4070966ff9c476c83ae075d6a19b9a465305614e102800eefaa8d8b059b68be2"
+  },
+  "tools/g2/__init__.py": {
+    "git_blob": "d72507b35209571d1ddf75aad568d66f264c9e04",
+    "sha256": "09e084066fe35efb77870f57f3cf54ee6896bcbf8e673fa13fc3a79b78b912c7"
+  },
+  "tools/g2/export_robocasa_rgbd_pose.py": {
+    "git_blob": "fbc2c117e95f87e9926c4835676b90f7fa948b06",
+    "sha256": "fd67859999dd88585b8aaa96e32ba17a295ed50b6644328a29120f8a21e33adf"
+  },
+  "tools/g2/rgbd_pose/__init__.py": {
+    "git_blob": "0e6968fcbf235e78da403da6d79b31ed74de9901",
+    "sha256": "b7d29af618d3b12993f01369d8da9b437fd825e8d97215580691e57fdada98e4"
+  },
+  "tools/g2/rgbd_pose/cache.py": {
+    "git_blob": "8995d389e673d62a1d88ca2bc3b2cc0b8cb34153",
+    "sha256": "e74a511a376ef5a6eda50f4b8d509e83be205dac3135c92d0332ff0a95c8f76a"
+  },
+  "tools/g2/rgbd_pose/geometry.py": {
+    "git_blob": "5dc4dee4a107f2feac30f799e0513d38ea2cbeb0",
+    "sha256": "0179a80ddc74c36570f9037d0a37c135d294894303fe27a68ebf614e1974aa04"
+  },
+  "tools/g2/rgbd_pose/replay.py": {
+    "git_blob": "e8155a1850597e327e03578360188778de09fe12",
+    "sha256": "5305c71e9e5639ec8b619b374381207c00c5a98ce8dc7fc7b794bef276c9d56f"
+  },
+  "tools/g2/rgbd_pose/source.py": {
+    "git_blob": "91171887148b99a1a3d88bcc2383c410fb2f2904",
+    "sha256": "c30958fcbb1d7be53b587fc2d6f0b9c932a1de14de3676aa63660015615be9e2"
+  },
+  "tools/g2/rgbd_pose_schema.md": {
+    "git_blob": "873bf0285d23220a4d0075a23fc8ef3acf97d1fc",
+    "sha256": "0fc18e1edcfe1240d87dbb71d93d8b08c00e7a97838ba21dfd792e5d741ab61b"
+  },
+  "tools/g2/test_cache_root_preflight.py": {
+    "git_blob": "79fdfe41bcae48124181d3a3a2f8e89426296d4d",
+    "sha256": "4977404d55641ae4ab2c7c672032ba44ac2d7079ec0048bceed28fc11a1915b5"
+  },
+  "tools/g2/test_depth_zero_sentinel.py": {
+    "git_blob": "410ca24fc7cbc5fc0a0bb3d5b67e15d027b845e7",
+    "sha256": "549f96bda7d45760d23d59f68c9ab793a5cb334318595c67f271cbb37d1eb3ce"
+  },
+  "tools/g2/test_replay_render_visibility.py": {
+    "git_blob": "0956c6d2e0aa52fed0b8dd51b6f5aabc6ced5eb6",
+    "sha256": "121f3eb988ea5fa191c4ea7175a7f6a3a7e51ea44b32eadba62cf866b32c31bd"
+  },
+  "tools/g2/test_rgbd_pose_export.py": {
+    "git_blob": "65bd32efe78743afb641c567ce59a12acf2120b9",
+    "sha256": "6ba0f7823ee641b0a52001b589a970b3c3f4af872c91338eb57f4c9702787050"
+  },
+  "tools/g2/test_spatial_photometric_policy.py": {
+    "git_blob": "3dc4d55a8f7c4399121f5fc875d90a6d3fcf388b",
+    "sha256": "0da61de8bfbd8d21b3676b8b1e4d8f4ec3b37aa25eae3b70f3e356ae70f57c95"
+  },
+  "tools/g2/verify_robocasa_rgbd_pose.py": {
+    "git_blob": "ccf65ceb9f7bbe9c1c1e42a0fd696d7170221887",
+    "sha256": "f3464d8385273e821cd1d2dee210e814be9878763d90006b210b67c59d00488f"
+  },
+  "docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md": {
+    "git_blob": "5c3b2bbfaba069224d71a8807501a2a3ecdb61ac",
+    "sha256": "cc2b922cae7c6a200d21b40b206542e865a72d63c03c27e36c787abb45e922b3"
+  }
+}

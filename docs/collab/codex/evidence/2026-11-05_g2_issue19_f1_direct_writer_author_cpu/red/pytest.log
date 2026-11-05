@@ -1,0 +1,259 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_direct_writer_rejects_unversioned_root_before_any_write[legacy_episode] _
+
+tmp_path = PosixPath('/tmp/g2_issue19_f1_20261105_author_cpu/red/pytest_tmp/test_direct_writer_rejects_unv0')
+artifact = 'legacy_episode'
+
+    @pytest.mark.parametrize(
+        "artifact",
+        [
+            "legacy_episode",
+            "unversioned_v2_episode",
+            "unknown_episode",
+            "staging",
+            "failed",
+        ],
+    )
+    def test_direct_writer_rejects_unversioned_root_before_any_write(tmp_path, artifact):
+        _, _, source = bound(tmp_path / "sources")
+        root = tmp_path / "existing"
+        if artifact.endswith("episode"):
+            episode = root / "tasks/OldLegacy/episodes/episode_987654"
+            if artifact == "unknown_episode":
+                episode.mkdir(parents=True)
+                (episode / "unknown.bin").write_bytes(b"retain unverified episode evidence")
+            else:
+                schema = LEGACY_SCHEMA if artifact == "legacy_episode" else SCHEMA
+                write_json(episode / "manifest.json", {"schema": schema})
+                write_json(episode / "COMPLETE.json", {"schema": schema})
+                # Synthetic legacy-style arrays must remain byte-identical too.
+                np.savez_compressed(
+                    episode / "old.npz",
+                    depth=np.ones((2, 2), np.uint16),
+                    valid=np.ones((2, 2), bool),
+                )
+        else:
+            write_json(
+                root / ("." + artifact) / "owned-evidence/progress.json", {"preserve": True}
+            )
+        assert not (root / "cache_manifest.json").exists()
+        before = tree_fingerprint(root)
+        calls = []
+    
+        def factory(bound_source):
+            calls.append(bound_source)
+            return FakeReplay(bound_source)
+    
+>       with pytest.raises(ValueError, match="unversioned cache contents"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/g2/test_cache_root_preflight.py:65: Failed
+_ test_direct_writer_rejects_unversioned_root_before_any_write[unversioned_v2_episode] _
+
+tmp_path = PosixPath('/tmp/g2_issue19_f1_20261105_author_cpu/red/pytest_tmp/test_direct_writer_rejects_unv1')
+artifact = 'unversioned_v2_episode'
+
+    @pytest.mark.parametrize(
+        "artifact",
+        [
+            "legacy_episode",
+            "unversioned_v2_episode",
+            "unknown_episode",
+            "staging",
+            "failed",
+        ],
+    )
+    def test_direct_writer_rejects_unversioned_root_before_any_write(tmp_path, artifact):
+        _, _, source = bound(tmp_path / "sources")
+        root = tmp_path / "existing"
+        if artifact.endswith("episode"):
+            episode = root / "tasks/OldLegacy/episodes/episode_987654"
+            if artifact == "unknown_episode":
+                episode.mkdir(parents=True)
+                (episode / "unknown.bin").write_bytes(b"retain unverified episode evidence")
+            else:
+                schema = LEGACY_SCHEMA if artifact == "legacy_episode" else SCHEMA
+                write_json(episode / "manifest.json", {"schema": schema})
+                write_json(episode / "COMPLETE.json", {"schema": schema})
+                # Synthetic legacy-style arrays must remain byte-identical too.
+                np.savez_compressed(
+                    episode / "old.npz",
+                    depth=np.ones((2, 2), np.uint16),
+                    valid=np.ones((2, 2), bool),
+                )
+        else:
+            write_json(
+                root / ("." + artifact) / "owned-evidence/progress.json", {"preserve": True}
+            )
+        assert not (root / "cache_manifest.json").exists()
+        before = tree_fingerprint(root)
+        calls = []
+    
+        def factory(bound_source):
+            calls.append(bound_source)
+            return FakeReplay(bound_source)
+    
+>       with pytest.raises(ValueError, match="unversioned cache contents"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/g2/test_cache_root_preflight.py:65: Failed
+_ test_direct_writer_rejects_unversioned_root_before_any_write[unknown_episode] _
+
+tmp_path = PosixPath('/tmp/g2_issue19_f1_20261105_author_cpu/red/pytest_tmp/test_direct_writer_rejects_unv2')
+artifact = 'unknown_episode'
+
+    @pytest.mark.parametrize(
+        "artifact",
+        [
+            "legacy_episode",
+            "unversioned_v2_episode",
+            "unknown_episode",
+            "staging",
+            "failed",
+        ],
+    )
+    def test_direct_writer_rejects_unversioned_root_before_any_write(tmp_path, artifact):
+        _, _, source = bound(tmp_path / "sources")
+        root = tmp_path / "existing"
+        if artifact.endswith("episode"):
+            episode = root / "tasks/OldLegacy/episodes/episode_987654"
+            if artifact == "unknown_episode":
+                episode.mkdir(parents=True)
+                (episode / "unknown.bin").write_bytes(b"retain unverified episode evidence")
+            else:
+                schema = LEGACY_SCHEMA if artifact == "legacy_episode" else SCHEMA
+                write_json(episode / "manifest.json", {"schema": schema})
+                write_json(episode / "COMPLETE.json", {"schema": schema})
+                # Synthetic legacy-style arrays must remain byte-identical too.
+                np.savez_compressed(
+                    episode / "old.npz",
+                    depth=np.ones((2, 2), np.uint16),
+                    valid=np.ones((2, 2), bool),
+                )
+        else:
+            write_json(
+                root / ("." + artifact) / "owned-evidence/progress.json", {"preserve": True}
+            )
+        assert not (root / "cache_manifest.json").exists()
+        before = tree_fingerprint(root)
+        calls = []
+    
+        def factory(bound_source):
+            calls.append(bound_source)
+            return FakeReplay(bound_source)
+    
+>       with pytest.raises(ValueError, match="unversioned cache contents"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/g2/test_cache_root_preflight.py:65: Failed
+____ test_direct_writer_rejects_unversioned_root_before_any_write[staging] _____
+
+tmp_path = PosixPath('/tmp/g2_issue19_f1_20261105_author_cpu/red/pytest_tmp/test_direct_writer_rejects_unv3')
+artifact = 'staging'
+
+    @pytest.mark.parametrize(
+        "artifact",
+        [
+            "legacy_episode",
+            "unversioned_v2_episode",
+            "unknown_episode",
+            "staging",
+            "failed",
+        ],
+    )
+    def test_direct_writer_rejects_unversioned_root_before_any_write(tmp_path, artifact):
+        _, _, source = bound(tmp_path / "sources")
+        root = tmp_path / "existing"
+        if artifact.endswith("episode"):
+            episode = root / "tasks/OldLegacy/episodes/episode_987654"
+            if artifact == "unknown_episode":
+                episode.mkdir(parents=True)
+                (episode / "unknown.bin").write_bytes(b"retain unverified episode evidence")
+            else:
+                schema = LEGACY_SCHEMA if artifact == "legacy_episode" else SCHEMA
+                write_json(episode / "manifest.json", {"schema": schema})
+                write_json(episode / "COMPLETE.json", {"schema": schema})
+                # Synthetic legacy-style arrays must remain byte-identical too.
+                np.savez_compressed(
+                    episode / "old.npz",
+                    depth=np.ones((2, 2), np.uint16),
+                    valid=np.ones((2, 2), bool),
+                )
+        else:
+            write_json(
+                root / ("." + artifact) / "owned-evidence/progress.json", {"preserve": True}
+            )
+        assert not (root / "cache_manifest.json").exists()
+        before = tree_fingerprint(root)
+        calls = []
+    
+        def factory(bound_source):
+            calls.append(bound_source)
+            return FakeReplay(bound_source)
+    
+>       with pytest.raises(ValueError, match="unversioned cache contents"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/g2/test_cache_root_preflight.py:65: Failed
+_____ test_direct_writer_rejects_unversioned_root_before_any_write[failed] _____
+
+tmp_path = PosixPath('/tmp/g2_issue19_f1_20261105_author_cpu/red/pytest_tmp/test_direct_writer_rejects_unv4')
+artifact = 'failed'
+
+    @pytest.mark.parametrize(
+        "artifact",
+        [
+            "legacy_episode",
+            "unversioned_v2_episode",
+            "unknown_episode",
+            "staging",
+            "failed",
+        ],
+    )
+    def test_direct_writer_rejects_unversioned_root_before_any_write(tmp_path, artifact):
+        _, _, source = bound(tmp_path / "sources")
+        root = tmp_path / "existing"
+        if artifact.endswith("episode"):
+            episode = root / "tasks/OldLegacy/episodes/episode_987654"
+            if artifact == "unknown_episode":
+                episode.mkdir(parents=True)
+                (episode / "unknown.bin").write_bytes(b"retain unverified episode evidence")
+            else:
+                schema = LEGACY_SCHEMA if artifact == "legacy_episode" else SCHEMA
+                write_json(episode / "manifest.json", {"schema": schema})
+                write_json(episode / "COMPLETE.json", {"schema": schema})
+                # Synthetic legacy-style arrays must remain byte-identical too.
+                np.savez_compressed(
+                    episode / "old.npz",
+                    depth=np.ones((2, 2), np.uint16),
+                    valid=np.ones((2, 2), bool),
+                )
+        else:
+            write_json(
+                root / ("." + artifact) / "owned-evidence/progress.json", {"preserve": True}
+            )
+        assert not (root / "cache_manifest.json").exists()
+        before = tree_fingerprint(root)
+        calls = []
+    
+        def factory(bound_source):
+            calls.append(bound_source)
+            return FakeReplay(bound_source)
+    
+>       with pytest.raises(ValueError, match="unversioned cache contents"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tools/g2/test_cache_root_preflight.py:65: Failed
+=========================== short test summary info ============================
+FAILED ../../dev::test_direct_writer_rejects_unversioned_root_before_any_write[legacy_episode]
+FAILED ../../dev::test_direct_writer_rejects_unversioned_root_before_any_write[unversioned_v2_episode]
+FAILED ../../dev::test_direct_writer_rejects_unversioned_root_before_any_write[unknown_episode]
+FAILED ../../dev::test_direct_writer_rejects_unversioned_root_before_any_write[staging]
+FAILED ../../dev::test_direct_writer_rejects_unversioned_root_before_any_write[failed]
+5 failed, 2 deselected in 0.85s

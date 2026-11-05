@@ -1,0 +1,24 @@
+{
+  "cwd": "/workspace/psm-wma-g2-depth-v2",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tools/g2/test_cache_root_preflight.py",
+    "-k",
+    "rejects_unversioned",
+    "--basetemp",
+    "/tmp/g2_issue19_f1_20261105_author_cpu/red/pytest_tmp",
+    "--junitxml",
+    "/tmp/g2_issue19_f1_20261105_author_cpu/red/junit.xml"
+  ],
+  "expected_returncode": 1,
+  "expected_failures": 5,
+  "note": "Command recorded from executed invocation; frozen_before.json was saved before execution."
+}

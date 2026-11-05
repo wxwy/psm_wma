@@ -1,3 +1,114 @@
+# 2026-11-05 — Issue19 G2-I19-F1 REVIEW, clean exact-pair CPU PASS
+
+Publication readback PASS: normal PR20-only push64ee6c6e→b2655619603e2e9717b49387242fb95fcb5e28f3;
+GitHub API reread confirms OPEN/DRAFT, G2 base99ad0de0, new source Formal5e6903b9
+and Child1069fe78841228cadbbfbe6afbd767eaed6225da on both source/evidence trees.
+Updated PR title/body describe only F1 increment,181 CPU PASS, frozen RED5,
+accepted prior native evidence and no migration/production authority. Remote
+gate.json and canonical Inbox bytes equal local; remote cache.py Blob equals
+the formal source. Current receipt is bookkeeping, not another implementation.
+Canonical request is published; next only GPT/Owner incremental Code Gate.
+Stop without native rerun, server access, old-cache transition or V3 promotion.
+
+New Formal Root5e6903b9dd09828f725dc61dcd6e98012fae87b3 / unchanged
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Final clean run
+2026-11-05 14:42:40–14:42:47 CST:181 passed (53+83+38 original174,new7),
+0 failure/error/skip; pytest5.65s, Ruff0.12.7/check/format13,AST13 and
+implementation diff check PASS. Before/after clean and source hashes equal.
+Only cache.py production delta; new frozen test unchanged from old-code RED5,
+original83-case assertion AST unchanged (one fixture init), previous20 evidence
+SHA256 checks still PASS. Text records under docs/collab/codex/evidence/
+2026-11-05_g2_issue19_f1_direct_writer_author_cpu/; new author handoff
+docs/collab/codex/reviews/2026-11-05_G2_Issue19_F1_DirectWriter_RootGuard_Author_Handoff.md.
+Source merge8d3a5b29 preserves exact independent99ad0de0 report; native736
+and7legacy read-only results accepted as reviewer evidence, not rerun by Codex.
+No encoder/replay/source/Child/V3/nav_sg/training changes or server access,
+migration/export/resume. Next: append fresh exact-pair review request, publish
+existing Draft PR20 branch/body and stop. Evidence/ledger successor is not a new
+implementation target. Prior implementation/development observations follow.
+
+# 2026-11-05 14:37 CST — Issue19 G2-I19-F1 narrow remediation IN_PROGRESS (historical)
+
+Implementation development step: shared _check_root_schema now rejects missing
+root manifest plus tasks/.staging/.failed before writes; only a genuinely fresh
+direct-library root receives a minimal v2 schema marker via existing atomic
+manifest publisher, preserving skip/retry. CLI full contract remains unchanged.
+Existing incomplete-target fixture now first declares its v2 root; all original
+assertions and174 test cases preserved. New7 cases cover5 refusal shapes with
+whole-tree/file/mtime preservation and2 fresh/skip paths. Frozen test SHA256
+4977404d55641ae4ab2c7c672032ba44ac2d7079ec0048bceed28fc11a1915b5:
+old fbe57890 cache.py5/5 expected RED (0 error/skip), new working-tree181/181
+PASS in5.66s. Ruff0.12.7/check/format13 PASS. External raw red/green artifacts
+under /tmp/g2_issue19_f1_20261105_author_cpu. Source freeze/clean exact-pair
+evidence and publication pending; no server run/legacy conversion performed.
+
+Fresh before_head64ee6c6e4778d6c79f033b39877dc06360b31312; fetch and
+advertised PR branch64ee6c6e/G2base99ad0de0249a660d46642c3ae849129733b3c503/
+V33bd1404cf065cc6eae4a07bde6ad0da024596e07 matched. Fetch's unrelated V3
+submodule recursion warning was not used as Child evidence; G2 gitlink remains
+1069fe78841228cadbbfbe6afbd767eaed6225da. Read exact-pair formal review
+docs/collab/chatgpt/reviews/2026-11-05_G2_Issue19_CodeGate_independent_CPU_native_PASS_direct_writer_v1_mixing_REQUEST_CHANGES.md:
+REQUEST_CHANGES only G2-I19-F1, independent174 CPU PASS/native real736f73/74
+and4 geometry groups PASS/legacy7 masks308412416 equality PASS accepted as
+reviewer execution, not Codex runs. Legacy7 migration remains unexecuted.
+Merged docs-only G2 review into PR candidate as8d3a5b297d9b3339c16a873a7e1e04941a20a745;
+zero tools/g2 or Gitlink difference. No V3 worktree/promotion or server access.
+Claim only cache.py shared root preflight and fresh direct root version marker,
+test_cache_root_preflight.py, one incomplete-target fixture setup with existing
+assertions preserved, evidence/state and fresh review request. First freeze/run
+new refusal cases against unchanged fbe57890 production cache.py, then fix and
+rerun original174 plus focused cases, Ruff0.12.7 and AST. No encoder, replay,
+geometry or server/migration/resume changes. Current step uncommitted.
+
+# 2026-11-05 — Issue19 depth v2 REVIEW (historical author publication)
+
+Publication confirmed 2026-11-05: normal non-force push advanced only the existing
+PR20 head frome531af5c to evidence/handoff434541890e65bb138f160b276d9ce1f54cf222b1.
+GitHub API reread: PR20 OPEN/DRAFT, correct G2 head/base; title/body replaced the
+kickoff status with actual implementation/test/pending-native facts. Both remote
+formal/evidence trees retain Child1069fe78841228cadbbfbe6afbd767eaed6225da;
+remote gate.json bytes match local (SHA256 f447b1ea10f043b71dc30120156fb31c8dc271698857b91496ca27b81e1f7f90).
+Advertised V38586b30cdfef802cff56d1463e989cb7b62559b8 and G2 base9568723f
+remain unchanged. The following publication receipt is bookkeeping only; stop
+for GPT/Owner fresh Code Gate, no automatic production action or review polling.
+Verbatim raw trace/unified-diff evidence includes whitespace; the PASS diff
+check is bound to the formal implementation, not normalization of raw evidence.
+
+Final source Root fbe578908a840a5f4e5b351f1c2e8fb019def6e5 / unchanged
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Clean final CPU run
+2026-11-05T04:55:32–04:55:38Z:174 PASS,0 fail/error/skip (new53+original83+
+spatial38); pytest5.26s, Ruff0.12.7/check/format all12,AST12,diff check PASS.
+Before/after clean and source hashes identical. Text evidence archived under
+docs/collab/codex/evidence/2026-11-05_g2_issue19_zero_sentinel_author_cpu/;
+commands/environment/JUnit/source bindings/diff and both development runs retained.
+Transition runbook is proposal only. Native real736/local234 frames73/74 and
+actual7legacy validation/migration pending; no remote tool available, no server
+file accessed/transferred. No GPU/native renderer/V3/child/nav_sg/training or
+production changes. Next: publish existing Draft PR20 branch, canonical Inbox
+request for GPT/Owner fresh Code Gate, then stop per Issue19. Evidence/ledger
+successor does not replace the formal implementation SHA above.
+
+Prior implementation-start and development observations follow unchanged.
+
+# 2026-11-05 — Issue19 zero-sentinel codec v2 implementation IN_PROGRESS (historical)
+
+Implementation step (before source freeze): v2 uses depth-only NPZ, zero sentinel
+for uint16 range exclusions and renderer-invalid pixels, disjoint source counts,
+storage-mask spatial comparison and unchanged geometry thresholds. Legacy roots
+are refused before writes by CLI/direct writer; new runbook is a transition
+proposal only, no converter or server action. Related files claimed above only.
+Author development CPU dev1: 173 passed/1 failed (old dry-run byte expectation
+still included bool mask); corrected that expected accounting without weakening
+mapping/no-renderer assertions. dev2: 174 passed, 0 failure/error/skip in 5.40s.
+Ruff 0.12.7 check/format all12 G2 Python files PASS. Raw development artifacts:
+/tmp/g2_issue19_depth_v2_author_cpu/dev1 and dev2. Both are synthetic cloud CPU,
+not native CloseFridge736 evidence. Source commit and final clean verification
+still pending; no review/production acceptance claimed.
+
+2026-11-05T12:44:25.706229+08:00: fresh fetch/advertised G2 base9568723fd19d008be180c7b3e4126e1176c07d26, PR20 head e531af5c1825f7af0bc94ac2010bae2a04ad11ec, official V38586b30c observed only. Full Issue19/PR20 bodies and Owner9568723f/failure76b7d708 read via GitHub API/Git. Created isolated worktree /workspace/psm-wma-g2-depth-v2 on exact requested PR branch, no code yet; same Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Runtime cloud connected/Git operational; GitHub robot's repository-environment binding is a separate channel and does not prevent current authorized implementation.
+
+Claim geometry.py/cache.py/export/verify/__init__, schema/README and related current tests, new focused tests, migration plan and CPU evidence/state/handoff. Preserve archived tests/evidence and all server7legacy episodes/staging. Central representability mask, depth-only v2 exact NPZ arrays, source count diagnostics and filtered fresh comparison with unchanged ray/projection thresholds. Plan only for old7 transition; no server files/real model/GPU/production. No migration/new namespace or root swap performed. Current server tool unavailable; native736 frame73/74 must remain explicitly pending unless authorized connected resources appear.
+
 # 2026-11-05 — Owner sibling Depth output selected; mkdir authorized, server execution unavailable
 
 Observation 2026-11-05T10:14:53.131629+08:00: before_head2db5df9a279e58b641e418943dae1dee422e31c9;

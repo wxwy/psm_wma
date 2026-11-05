@@ -17,7 +17,14 @@ import numpy as np
 
 from .rgbd_pose import SCHEMA
 from .rgbd_pose.cache import cached_sample, durable_json, verify_episode
-from .rgbd_pose.geometry import depth_statistics, pose_motion, rgb_metrics
+from .rgbd_pose.geometry import (
+    ENCODING_COUNTS,
+    depth_statistics,
+    encode_depth,
+    encoding_statistics,
+    pose_motion,
+    rgb_metrics,
+)
 from .rgbd_pose.replay import Replay, original_rgb, reprojection_error
 from .rgbd_pose.source import Episode, load_episode, verify_witnesses
 
@@ -93,6 +100,8 @@ def verify(
             "compression_ratio_raw_over_stored"
         ],
         "depth_quantization_max_abs_m": manifest["quantization_max_abs_m"],
+        "depth_storage": spec["depth_storage"],
+        "depth_encoding": manifest["depth_encoding"],
         "geometry_gate": "NOT_EXECUTED",
         "acceptance_policy": ACCEPTANCE_POLICY,
         "acceptance_policy_authority": POLICY_AUTHORITY,
@@ -168,8 +177,18 @@ def verify(
                 report["photometric_diagnostic"]["failed_camera_frames"] += int(
                     not photometric_passed
                 )
-                same_mask = np.array_equal(saved["valid"], actual["valid"])
-                valid = saved["valid"] & actual["valid"]
+                _, storage_valid, _ = encode_depth(
+                    actual["depth_m"], actual["valid"], spec["depth_storage"]
+                )
+                fresh_encoding = encoding_statistics(
+                    actual["depth_m"], actual["valid"], spec["depth_storage"]
+                )
+                recorded_encoding = row["cameras"][camera]["encoding"]
+                same_encoding_counts = all(
+                    fresh_encoding[k] == recorded_encoding[k] for k in ENCODING_COUNTS
+                )
+                same_mask = np.array_equal(saved["valid"], storage_valid)
+                valid = saved["valid"] & storage_valid
                 depth_error = (
                     float(
                         np.max(
@@ -192,6 +211,7 @@ def verify(
                 )
                 spatial_camera_pass = (
                     same_mask
+                    and same_encoding_counts
                     and depth_error is not None
                     and depth_error <= quantization_tolerance
                     and max(matrix_errors.values()) <= 1e-5
@@ -207,6 +227,10 @@ def verify(
                     "rgb": metrics,
                     "depth": depth_statistics(saved["depth_m"], saved["valid"]),
                     "valid_mask_matches_replay": same_mask,
+                    "valid_mask_scope": "STORAGE_REPRESENTABLE_NOT_RAW_RENDERER",
+                    "renderer_valid_pixels": int(actual["valid"].sum()),
+                    "fresh_encoding": fresh_encoding,
+                    "encoding_counts_match_replay": same_encoding_counts,
                     "fresh_depth_max_abs_m": depth_error,
                     "fresh_depth_tolerance_m": quantization_tolerance,
                     "camera_matrix_max_abs": matrix_errors,

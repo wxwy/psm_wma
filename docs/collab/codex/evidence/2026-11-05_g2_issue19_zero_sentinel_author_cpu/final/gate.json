@@ -1,0 +1,67 @@
+{
+  "schema": "psm_wma_g2_issue19_author_cpu_v1",
+  "status": "PASS",
+  "started_utc": "2026-11-05T04:55:32.150792+00:00",
+  "ended_utc": "2026-11-05T04:55:38.338438+00:00",
+  "formal_root": "fbe578908a840a5f4e5b351f1c2e8fb019def6e5",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "pr_head_before": "e531af5c1825f7af0bc94ac2010bae2a04ad11ec",
+  "branch": "v3-g2-codex-depth-zero-sentinel-20261105",
+  "changed_files": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/build/PSM-WMA_G2_Depth_ZeroSentinel_v2_and_SevenEpisode_Transition_2026-11-05.md",
+    "tools/g2/README.md",
+    "tools/g2/export_robocasa_rgbd_pose.py",
+    "tools/g2/rgbd_pose/__init__.py",
+    "tools/g2/rgbd_pose/cache.py",
+    "tools/g2/rgbd_pose/geometry.py",
+    "tools/g2/rgbd_pose_schema.md",
+    "tools/g2/test_depth_zero_sentinel.py",
+    "tools/g2/test_rgbd_pose_export.py",
+    "tools/g2/verify_robocasa_rgbd_pose.py"
+  ],
+  "steps": [
+    {
+      "name": "pytest",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_check",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format_check",
+      "returncode": 0
+    },
+    {
+      "name": "ast",
+      "returncode": 0
+    },
+    {
+      "name": "diff_check",
+      "returncode": 0
+    }
+  ],
+  "junit": {
+    "tests": 174,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "per_file_tests": {
+    "tools/g2/test_depth_zero_sentinel.py": 53,
+    "tools/g2/test_rgbd_pose_export.py": 83,
+    "tools/g2/test_spatial_photometric_policy.py": 38
+  },
+  "source_unchanged": true,
+  "scope": "AUTHOR_SYNTHETIC_CPU_NOT_INDEPENDENT_NATIVE_ACCEPTANCE",
+  "not_run": [
+    "real CloseFridge global736/local234 frames73,74",
+    "GPU/EGL/RoboCasa",
+    "seven legacy episodes validation/migration",
+    "production resume",
+    "V3 merge"
+  ]
+}

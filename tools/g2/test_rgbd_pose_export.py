@@ -251,8 +251,10 @@ def test_depth_codec_round_trip_mask_and_quantization(storage):
 
 @pytest.mark.parametrize("distance", [0.0004, 0.00099, 65.5351, 100.0])
 def test_uint16_overflow_never_saturates(distance):
-    with pytest.raises(ValueError, match="overflow/underflow"):
-        g.encode_depth([[distance]], np.array([[True]]), "uint16_mm")
+    encoded, valid, error = g.encode_depth(
+        [[distance]], np.array([[True]]), "uint16_mm"
+    )
+    assert encoded.tolist() == [[0]] and valid.tolist() == [[False]] and error == 0
 
 
 def test_float_storage_is_explicit_fallback_and_invalid_not_a_valid_range():
@@ -464,7 +466,7 @@ def test_chunk_roundtrip_partial_terminal_frame_camera_pose_and_actual_capacity(
     wrist = cache.cached_sample(directory, manifest, rows[-1], src.CAMERAS[2])
     assert left["T_world_camera_cv"][0, 3] == 0
     assert wrist["T_world_camera_cv"][0, 3] == pytest.approx(0.3)
-    expected = 3 * 2 * (8 * 8 * (3 if storage == "uint16_mm" else 5) + 41 * 4 + 8)
+    expected = 3 * 2 * (8 * 8 * (2 if storage == "uint16_mm" else 4) + 41 * 4 + 8)
     assert manifest["raw_array_bytes"] == expected
     assert manifest["compression_ratio_raw_over_stored"] == pytest.approx(
         expected / manifest["compressed_payload_bytes"]
@@ -656,6 +658,7 @@ def test_crash_at_commit_boundaries_never_publishes_partial_episode(
 
 def test_existing_incomplete_target_is_preserved_not_silently_overwritten(tmp_path):
     _, _, source = bound(tmp_path)
+    cache.ensure_cache_manifest(tmp_path / "cache", {"schema": cache.SCHEMA})
     destination = cache.episode_directory(tmp_path / "cache", source.episode)
     destination.mkdir(parents=True)
     (destination / "unknown_evidence.txt").write_text("preserve")
@@ -809,16 +812,18 @@ def test_dry_run_real_mapping_path_has_no_renderer_or_output_side_effect(
     result = json.loads(capsys.readouterr().out)
     assert result["selected_frame_count"] == 3 and not (tmp_path / "out").exists()
     assert result["uncompressed_array_bytes_estimate"] == 3 * 2 * (
-        8 * 8 * 3 + 41 * 4 + 8
+        8 * 8 * 2 + 41 * 4 + 8
     )
 
 
 def test_cache_contract_no_implicit_configuration_drift(tmp_path):
     root = tmp_path / "cache"
-    cache.ensure_cache_manifest(root, {"cameras": ["left"]})
-    cache.ensure_cache_manifest(root, {"cameras": ["left"]})
+    cache.ensure_cache_manifest(root, {"schema": cache.SCHEMA, "cameras": ["left"]})
+    cache.ensure_cache_manifest(root, {"schema": cache.SCHEMA, "cameras": ["left"]})
     with pytest.raises(ValueError, match="drift"):
-        cache.ensure_cache_manifest(root, {"cameras": ["wrist"]})
+        cache.ensure_cache_manifest(
+            root, {"schema": cache.SCHEMA, "cameras": ["wrist"]}
+        )
 
 
 def test_disk_budget_stops_before_environment_creation(tmp_path, monkeypatch):

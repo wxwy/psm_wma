@@ -16,13 +16,16 @@ import numpy as np
 
 from tools.g0.robocasa_work_queue import atomic_write_json
 
-from . import SCHEMA
+from . import LEGACY_SCHEMA, SCHEMA
 from .geometry import (
     CONVENTIONS,
+    ENCODING_COUNTS,
     check_calibration,
     decode_depth,
     depth_statistics,
     encode_depth,
+    encoding_statistics,
+    validate_encoding_statistics,
 )
 from .source import (
     Episode,
@@ -52,8 +55,26 @@ def durable_json(path, value):
     sync_directory(Path(path).parent)
 
 
+def _check_root_schema(root):
+    existing = root / "cache_manifest.json"
+    if existing.exists():
+        if read_json(existing).get("schema") != SCHEMA:
+            raise ValueError(
+                "legacy/unknown root cache schema; explicit verified transition required"
+            )
+        return True
+    if any((root / name).exists() for name in ("tasks", ".staging", ".failed")):
+        raise ValueError(
+            "unversioned cache contents; explicit verified transition required"
+        )
+    return False
+
+
 def ensure_cache_manifest(root, contract):
     root = Path(root)
+    if contract.get("schema") != SCHEMA:
+        raise ValueError("requested root cache schema must be v2")
+    _check_root_schema(root)
     root.mkdir(parents=True, exist_ok=True)
     with (root / ".manifest.lock").open("ab") as stream:
         fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
@@ -135,6 +156,10 @@ def verify_episode(directory, *, expected_digest=None):
     directory = Path(directory)
     marker = read_json(directory / "COMPLETE.json")
     manifest = read_json(directory / "manifest.json")
+    if marker.get("schema") == LEGACY_SCHEMA or manifest.get("schema") == LEGACY_SCHEMA:
+        raise ValueError(
+            "legacy v1 cache requires explicit verified transition; no automatic migration"
+        )
     if (
         marker.get("schema") != SCHEMA
         or manifest.get("schema") != SCHEMA
@@ -152,7 +177,8 @@ def verify_episode(directory, *, expected_digest=None):
     if not frames or frames != sorted(set(frames)):
         raise ValueError("invalid committed frame selection")
     if (
-        spec["conventions"] != CONVENTIONS
+        spec.get("schema") != SCHEMA
+        or spec["conventions"] != CONVENTIONS
         or spec["alignment"]["state_index_policy"] != "explicit_frame_index"
     ):
         raise ValueError("cache coordinate/state mapping convention mismatch")
@@ -194,11 +220,15 @@ def verify_episode(directory, *, expected_digest=None):
     if set(files) != {"frames.jsonl"} | {path for _, path in seen_chunks}:
         raise ValueError("missing/unreferenced camera chunks")
     total_raw_bytes = 0
+    by_frame = {row["frame_index"]: row for row in rows}
+    encoding_totals = {
+        c: {**dict.fromkeys(ENCODING_COUNTS, 0), "warning_frames": 0}
+        for c in spec["cameras"]
+    }
     for (camera, relative), expected_frames in seen_chunks.items():
         with np.load(_safe_file(directory, relative), allow_pickle=False) as archive:
             if set(archive.files) != {
                 "depth",
-                "valid",
                 "K",
                 "T_world_camera_gl",
                 "T_world_camera_cv",
@@ -210,13 +240,19 @@ def verify_episode(directory, *, expected_digest=None):
             chunk = {key: archive[key] for key in archive.files}
             n = len(expected_frames)
             height, width = spec["camera_shapes"][camera]
-            if chunk["depth"].shape != (n, height, width) or chunk["valid"].shape != (
-                n,
-                height,
-                width,
-            ):
+            if chunk["depth"].shape != (n, height, width):
                 raise ValueError("depth chunk frame/shape mismatch")
-            decode_depth(chunk["depth"], chunk["valid"], spec["depth_storage"])
+            decode_depth(chunk["depth"], spec["depth_storage"])
+            for index, frame in enumerate(expected_frames):
+                stats = by_frame[frame]["cameras"][camera]["encoding"]
+                validate_encoding_statistics(
+                    stats, chunk["depth"][index], spec["depth_storage"]
+                )
+                for key in ENCODING_COUNTS:
+                    encoding_totals[camera][key] += stats[key]
+                encoding_totals[camera]["warning_frames"] += int(
+                    stats["warning"] is not None
+                )
             if chunk["frame_indices"].dtype != np.int64 or not np.array_equal(
                 chunk["frame_indices"], expected_frames
             ):
@@ -235,6 +271,8 @@ def verify_episode(directory, *, expected_digest=None):
                     chunk["T_world_camera_cv"][index],
                 )
             total_raw_bytes += sum(value.nbytes for value in chunk.values())
+    if manifest.get("depth_encoding") != encoding_totals:
+        raise ValueError("episode depth encoding totals mismatch")
     if manifest["raw_array_bytes"] != total_raw_bytes:
         raise ValueError("cache capacity accounting mismatch")
     return manifest, rows
@@ -244,12 +282,10 @@ def cached_sample(directory, manifest, row, camera):
     reference = row["cameras"][camera]
     with np.load(Path(directory) / reference["chunk"], allow_pickle=False) as chunk:
         i = reference["offset"]
-        depth = decode_depth(
-            chunk["depth"][i], chunk["valid"][i], manifest["identity"]["depth_storage"]
-        )
+        depth = decode_depth(chunk["depth"][i], manifest["identity"]["depth_storage"])
         return {
             "depth_m": depth,
-            "valid": chunk["valid"][i].copy(),
+            "valid": depth > 0,
             **{
                 key: chunk[key][i].copy()
                 for key in ("K", "T_world_camera_gl", "T_world_camera_cv")
@@ -287,6 +323,7 @@ def export_episode(
     if chunk_frames > 256:
         raise ValueError("chunk_frames cannot exceed the bounded 256-frame buffer")
     root = Path(root).resolve()
+    has_root_manifest = _check_root_schema(root)
     for input_file in source.witnesses:
         source_path = Path(input_file["path"]).resolve()
         if source_path.is_relative_to(root) or root.is_relative_to(source_path.parent):
@@ -294,6 +331,10 @@ def export_episode(
     spec = identity(source, frames, storage, chunk_frames, recipe)
     export_digest = digest(spec)
     destination = episode_directory(root, source.episode)
+    if not has_root_manifest:
+        # Bootstrap only fresh library roots; never adopt existing artifacts.
+        # CLI roots already carry their full immutable configuration contract.
+        ensure_cache_manifest(root, {"schema": SCHEMA})
     with episode_lock(root, source.episode):
         verify_witnesses(source.witnesses)
         if destination.exists():
@@ -305,6 +346,10 @@ def export_episode(
             }
         staging = root / ".staging" / uuid.uuid4().hex
         staging.mkdir(parents=True)
+        encoding_totals = {
+            c: {**dict.fromkeys(ENCODING_COUNTS, 0), "warning_frames": 0}
+            for c in source.camera_shapes
+        }
         files, buffers, raw_bytes, max_error = (
             {},
             {c: [] for c in source.camera_shapes},
@@ -340,7 +385,7 @@ def export_episode(
         try:
             largest = max(
                 min(chunk_frames, len(frames))
-                * (h * w * (3 if storage == "uint16_mm" else 5) + 41 * 4 + 8)
+                * (h * w * (2 if storage == "uint16_mm" else 4) + 41 * 4 + 8)
                 for h, w in source.camera_shapes.values()
             )
             require_disk_space(root, largest, min_free_bytes)
@@ -367,11 +412,18 @@ def export_episode(
                                 raise ValueError(
                                     "rendered camera dimensions differ from source binding"
                                 )
+                            stats = encoding_statistics(
+                                sample["depth_m"], sample["valid"], storage
+                            )
+                            for key in ENCODING_COUNTS:
+                                encoding_totals[camera][key] += stats[key]
+                            encoding_totals[camera]["warning_frames"] += int(
+                                stats["warning"] is not None
+                            )
                             max_error = max(max_error, error)
                             buffers[camera].append(
                                 {
                                     "depth": encoded,
-                                    "valid": valid,
                                     "frame_indices": np.array(frame, dtype=np.int64),
                                     **{
                                         key: np.asarray(sample[key], dtype=np.float32)
@@ -392,6 +444,7 @@ def export_episode(
                                 },
                                 "depth": depth_statistics(sample["depth_m"], valid),
                                 "quantization_max_abs_m": error,
+                                "encoding": stats,
                             }
                             if len(buffers[camera]) == chunk_frames:
                                 flush(camera, number)
@@ -418,6 +471,7 @@ def export_episode(
                 "runtime": runtime,
                 "rgb_references": source.rgb,
                 "files": files,
+                "depth_encoding": encoding_totals,
                 "raw_array_bytes": raw_bytes,
                 "compressed_payload_bytes": payload_bytes,
                 "compression_ratio_raw_over_stored": raw_bytes / payload_bytes,
@@ -454,6 +508,7 @@ def export_episode(
                 "directory": str(destination),
                 "frame_count": len(frames),
                 "compressed_payload_bytes": payload_bytes,
+                "depth_encoding": encoding_totals,
                 "quantization_max_abs_m": max_error,
             }
         except BaseException as exc:
