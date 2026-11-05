@@ -306,6 +306,13 @@ class Runtime:
         command = server_argv(
             args, Path(self.cfg["checkpoint"]), Path(self.cfg["config_file"]), port
         )
+        # The eval Client/Actors always use 127.0.0.1. Do not expose the
+        # transaction-owning Policy Server on all network interfaces.
+        # Both concurrent evaluation runs must bind distinct local TCP ports.
+        if self.streaming:
+            if "--host" in command:
+                raise ValueError("ambiguous Policy Server listen host")
+            command.extend(("--host", "127.0.0.1"))
         command[command.index("--local-memory-mode") + 1] = self.store.manifest[
             "protocol"
         ]["local_memory"]
