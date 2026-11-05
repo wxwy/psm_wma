@@ -1,0 +1,14 @@
+PASS tools/g2/__init__.py
+PASS tools/g2/export_robocasa_rgbd_pose.py
+PASS tools/g2/rgbd_pose/__init__.py
+PASS tools/g2/rgbd_pose/cache.py
+PASS tools/g2/rgbd_pose/geometry.py
+PASS tools/g2/rgbd_pose/replay.py
+PASS tools/g2/rgbd_pose/source.py
+PASS tools/g2/test_cache_root_preflight.py
+PASS tools/g2/test_depth_zero_sentinel.py
+PASS tools/g2/test_replay_render_visibility.py
+PASS tools/g2/test_rgbd_pose_export.py
+PASS tools/g2/test_spatial_photometric_policy.py
+PASS tools/g2/verify_robocasa_rgbd_pose.py
+AST files: 13

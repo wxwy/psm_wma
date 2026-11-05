@@ -1,0 +1,9 @@
+{
+  "tested_production_formal": "fbe578908a840a5f4e5b351f1c2e8fb019def6e5",
+  "checkout_head": "8d3a5b297d9b3339c16a873a7e1e04941a20a745",
+  "frozen_before_run": true,
+  "files": {
+    "tools/g2/rgbd_pose/cache.py": "471afe00330e16b718aecb39fe333d617befd93638082afb03f5fd76f65430c7",
+    "tools/g2/test_cache_root_preflight.py": "4977404d55641ae4ab2c7c672032ba44ac2d7079ec0048bceed28fc11a1915b5"
+  }
+}

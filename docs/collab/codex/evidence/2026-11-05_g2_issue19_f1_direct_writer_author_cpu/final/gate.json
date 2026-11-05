@@ -1,0 +1,61 @@
+{
+  "schema": "psm_wma_g2_issue19_f1_author_cpu_v1",
+  "status": "PASS",
+  "started_utc": "2026-11-05T06:42:40.819793+00:00",
+  "ended_utc": "2026-11-05T06:42:47.439105+00:00",
+  "formal_root": "5e6903b9dd09828f725dc61dcd6e98012fae87b3",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "gitlink": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "remediation_parent": "8d3a5b297d9b3339c16a873a7e1e04941a20a745",
+  "branch": "v3-g2-codex-depth-zero-sentinel-20261105",
+  "changed_files": [
+    "SESSION.md",
+    "TODO.md",
+    "tools/g2/rgbd_pose/cache.py",
+    "tools/g2/test_cache_root_preflight.py",
+    "tools/g2/test_rgbd_pose_export.py"
+  ],
+  "steps": [
+    {
+      "name": "pytest",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_check",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format_check",
+      "returncode": 0
+    },
+    {
+      "name": "ast",
+      "returncode": 0
+    },
+    {
+      "name": "diff_check",
+      "returncode": 0
+    }
+  ],
+  "junit": {
+    "tests": 181,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "per_file_tests": {
+    "tools/g2/test_depth_zero_sentinel.py": 53,
+    "tools/g2/test_rgbd_pose_export.py": 83,
+    "tools/g2/test_spatial_photometric_policy.py": 38,
+    "tools/g2/test_cache_root_preflight.py": 7
+  },
+  "source_unchanged": true,
+  "scope": "AUTHOR_SYNTHETIC_CPU_NOT_INDEPENDENT_NATIVE_ACCEPTANCE",
+  "not_run": [
+    "real CloseFridge global736/local234 frames73,74",
+    "GPU/EGL/RoboCasa",
+    "seven legacy episodes validation/migration",
+    "production resume",
+    "V3 merge"
+  ]
+}

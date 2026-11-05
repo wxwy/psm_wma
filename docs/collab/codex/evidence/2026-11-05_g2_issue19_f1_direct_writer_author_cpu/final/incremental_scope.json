@@ -1,0 +1,19 @@
+{
+  "previous_formal_root": "fbe578908a840a5f4e5b351f1c2e8fb019def6e5",
+  "source_delta": [
+    "tools/g2/rgbd_pose/cache.py",
+    "tools/g2/test_cache_root_preflight.py",
+    "tools/g2/test_rgbd_pose_export.py"
+  ],
+  "original_assertions_unchanged": true,
+  "regression_unchanged_from_red": true,
+  "previous_independent_review": "99ad0de0249a660d46642c3ae849129733b3c503",
+  "native_rerun": false,
+  "expected_old_code_red": {
+    "tests": 5,
+    "failures": 5,
+    "errors": 0,
+    "skipped": 0,
+    "frozen_inputs_unchanged": true
+  }
+}

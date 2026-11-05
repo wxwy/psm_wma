@@ -1,4 +1,23 @@
-# 2026-11-05 14:37 CST — Issue19 G2-I19-F1 narrow remediation IN_PROGRESS
+# 2026-11-05 — Issue19 G2-I19-F1 REVIEW, clean exact-pair CPU PASS
+
+New Formal Root5e6903b9dd09828f725dc61dcd6e98012fae87b3 / unchanged
+Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Final clean run
+2026-11-05 14:42:40–14:42:47 CST:181 passed (53+83+38 original174,new7),
+0 failure/error/skip; pytest5.65s, Ruff0.12.7/check/format13,AST13 and
+implementation diff check PASS. Before/after clean and source hashes equal.
+Only cache.py production delta; new frozen test unchanged from old-code RED5,
+original83-case assertion AST unchanged (one fixture init), previous20 evidence
+SHA256 checks still PASS. Text records under docs/collab/codex/evidence/
+2026-11-05_g2_issue19_f1_direct_writer_author_cpu/; new author handoff
+docs/collab/codex/reviews/2026-11-05_G2_Issue19_F1_DirectWriter_RootGuard_Author_Handoff.md.
+Source merge8d3a5b29 preserves exact independent99ad0de0 report; native736
+and7legacy read-only results accepted as reviewer evidence, not rerun by Codex.
+No encoder/replay/source/Child/V3/nav_sg/training changes or server access,
+migration/export/resume. Next: append fresh exact-pair review request, publish
+existing Draft PR20 branch/body and stop. Evidence/ledger successor is not a new
+implementation target. Prior implementation/development observations follow.
+
+# 2026-11-05 14:37 CST — Issue19 G2-I19-F1 narrow remediation IN_PROGRESS (historical)
 
 Implementation development step: shared _check_root_schema now rejects missing
 root manifest plus tasks/.staging/.failed before writes; only a genuinely fresh

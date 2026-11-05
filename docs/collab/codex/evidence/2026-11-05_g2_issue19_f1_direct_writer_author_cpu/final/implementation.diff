@@ -1,0 +1,236 @@
+diff --git a/SESSION.md b/SESSION.md
+index 7ee2a295..db3ec198 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,4 +1,37 @@
+-# 2026-11-05 — Issue19 depth v2 REVIEW (author CPU PASS, native pending)
++# 2026-11-05 14:37 CST — Issue19 G2-I19-F1 narrow remediation IN_PROGRESS
++
++Implementation development step: shared _check_root_schema now rejects missing
++root manifest plus tasks/.staging/.failed before writes; only a genuinely fresh
++direct-library root receives a minimal v2 schema marker via existing atomic
++manifest publisher, preserving skip/retry. CLI full contract remains unchanged.
++Existing incomplete-target fixture now first declares its v2 root; all original
++assertions and174 test cases preserved. New7 cases cover5 refusal shapes with
++whole-tree/file/mtime preservation and2 fresh/skip paths. Frozen test SHA256
++4977404d55641ae4ab2c7c672032ba44ac2d7079ec0048bceed28fc11a1915b5:
++old fbe57890 cache.py5/5 expected RED (0 error/skip), new working-tree181/181
++PASS in5.66s. Ruff0.12.7/check/format13 PASS. External raw red/green artifacts
++under /tmp/g2_issue19_f1_20261105_author_cpu. Source freeze/clean exact-pair
++evidence and publication pending; no server run/legacy conversion performed.
++
++Fresh before_head64ee6c6e4778d6c79f033b39877dc06360b31312; fetch and
++advertised PR branch64ee6c6e/G2base99ad0de0249a660d46642c3ae849129733b3c503/
++V33bd1404cf065cc6eae4a07bde6ad0da024596e07 matched. Fetch's unrelated V3
++submodule recursion warning was not used as Child evidence; G2 gitlink remains
++1069fe78841228cadbbfbe6afbd767eaed6225da. Read exact-pair formal review
++docs/collab/chatgpt/reviews/2026-11-05_G2_Issue19_CodeGate_independent_CPU_native_PASS_direct_writer_v1_mixing_REQUEST_CHANGES.md:
++REQUEST_CHANGES only G2-I19-F1, independent174 CPU PASS/native real736f73/74
++and4 geometry groups PASS/legacy7 masks308412416 equality PASS accepted as
++reviewer execution, not Codex runs. Legacy7 migration remains unexecuted.
++Merged docs-only G2 review into PR candidate as8d3a5b297d9b3339c16a873a7e1e04941a20a745;
++zero tools/g2 or Gitlink difference. No V3 worktree/promotion or server access.
++Claim only cache.py shared root preflight and fresh direct root version marker,
++test_cache_root_preflight.py, one incomplete-target fixture setup with existing
++assertions preserved, evidence/state and fresh review request. First freeze/run
++new refusal cases against unchanged fbe57890 production cache.py, then fix and
++rerun original174 plus focused cases, Ruff0.12.7 and AST. No encoder, replay,
++geometry or server/migration/resume changes. Current step uncommitted.
++
++# 2026-11-05 — Issue19 depth v2 REVIEW (historical author publication)
+ 
+ Publication confirmed 2026-11-05: normal non-force push advanced only the existing
+ PR20 head frome531af5c to evidence/handoff434541890e65bb138f160b276d9ce1f54cf222b1.
+diff --git a/TODO.md b/TODO.md
+index 67a05e70..acc31d0e 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,6 +1,6 @@
+ # PSM-WMA 任务队列
+ 
+-- **G2-ISSUE19-DEPTH-V2** — REVIEW; Codex implementation / GPT-Owner Code Gate; Issue19/PR20 isolated branch v3-g2-codex-depth-zero-sentinel-20261105, Formal Root fbe578908a840a5f4e5b351f1c2e8fb019def6e5, Child/Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da unchanged. Implemented zero sentinel/no persisted mask, compact range diagnostics, strict v2 and safe seven-episode transition proposal. Clean author CPU174/174 PASS (53 new+83+38), no fail/error/skip; Ruff0.12.7/check/format/AST PASS. Evidence docs/collab/codex/evidence/2026-11-05_g2_issue19_zero_sentinel_author_cpu/. Acceptance pending fresh exact-pair Code Gate; native736f73/74, legacy7 validation/migration and production resume not executed. No server/GPU/V3/nav_sg/training changes.
++- **G2-ISSUE19-DEPTH-V2** — IN_PROGRESS (G2-I19-F1 only); Codex implementation / GPT-Owner Code Gate; PR20 isolated branch v3-g2-codex-depth-zero-sentinel-20261105. Review99ad0de0 binds prior Formal Root fbe578908a840a5f4e5b351f1c2e8fb019def6e5 / Child1069fe78841228cadbbfbe6afbd767eaed6225da: independent174 CPU/native736f73/74/7legacy read-only accepted, Code Gate REQUEST_CHANGES for manifest-less direct writer only. Claim cache.py shared preflight/bootstrap, new test_cache_root_preflight.py, existing incomplete-target fixture setup (assertions unchanged), author CPU evidence and SESSION/TODO/Inbox/handoff only. No encoder/replay/threshold/Child changes; no native rerun, migration, V3/nav_sg/training/export/resume.
+ 
+ - **G2-DEPTH-OUTPUT-DIR** — BLOCKED (Owner directory choice/empty mkdir authorized; no server command channel in this Codex runtime); connected server execution role. Exact ordinary sibling root `/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-depth`. No new Owner approval or path-guard code change needed. Confirm real parent/source and canonical path separation; create only when absent without -p, or report existing directory unchanged. Do not replace existing files/symlinks, clean contents, modify raw/Flat/latent/index/Config, or start export. Server existence/resolved path/filesystem have NOT been observed here; no local imitation directory created.
+ 
+diff --git a/tools/g2/rgbd_pose/cache.py b/tools/g2/rgbd_pose/cache.py
+index ee0c42ee..8995d389 100644
+--- a/tools/g2/rgbd_pose/cache.py
++++ b/tools/g2/rgbd_pose/cache.py
+@@ -57,10 +57,17 @@ def durable_json(path, value):
+ 
+ def _check_root_schema(root):
+     existing = root / "cache_manifest.json"
+-    if existing.exists() and read_json(existing).get("schema") != SCHEMA:
++    if existing.exists():
++        if read_json(existing).get("schema") != SCHEMA:
++            raise ValueError(
++                "legacy/unknown root cache schema; explicit verified transition required"
++            )
++        return True
++    if any((root / name).exists() for name in ("tasks", ".staging", ".failed")):
+         raise ValueError(
+-            "legacy/unknown root cache schema; explicit verified transition required"
++            "unversioned cache contents; explicit verified transition required"
+         )
++    return False
+ 
+ 
+ def ensure_cache_manifest(root, contract):
+@@ -68,12 +75,6 @@ def ensure_cache_manifest(root, contract):
+     if contract.get("schema") != SCHEMA:
+         raise ValueError("requested root cache schema must be v2")
+     _check_root_schema(root)
+-    if not (root / "cache_manifest.json").exists() and any(
+-        (root / name).exists() for name in ("tasks", ".staging", ".failed")
+-    ):
+-        raise ValueError(
+-            "unversioned cache contents; explicit verified transition required"
+-        )
+     root.mkdir(parents=True, exist_ok=True)
+     with (root / ".manifest.lock").open("ab") as stream:
+         fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+@@ -322,7 +323,7 @@ def export_episode(
+     if chunk_frames > 256:
+         raise ValueError("chunk_frames cannot exceed the bounded 256-frame buffer")
+     root = Path(root).resolve()
+-    _check_root_schema(root)
++    has_root_manifest = _check_root_schema(root)
+     for input_file in source.witnesses:
+         source_path = Path(input_file["path"]).resolve()
+         if source_path.is_relative_to(root) or root.is_relative_to(source_path.parent):
+@@ -330,6 +331,10 @@ def export_episode(
+     spec = identity(source, frames, storage, chunk_frames, recipe)
+     export_digest = digest(spec)
+     destination = episode_directory(root, source.episode)
++    if not has_root_manifest:
++        # Bootstrap only fresh library roots; never adopt existing artifacts.
++        # CLI roots already carry their full immutable configuration contract.
++        ensure_cache_manifest(root, {"schema": SCHEMA})
+     with episode_lock(root, source.episode):
+         verify_witnesses(source.witnesses)
+         if destination.exists():
+diff --git a/tools/g2/test_cache_root_preflight.py b/tools/g2/test_cache_root_preflight.py
+new file mode 100644
+index 00000000..79fdfe41
+--- /dev/null
++++ b/tools/g2/test_cache_root_preflight.py
+@@ -0,0 +1,106 @@
++"""G2-I19-F1 direct-writer root guard; all inputs are synthetic CPU fixtures."""
++
++from pathlib import Path
++
++import numpy as np
++import pytest
++
++from tools.g2.rgbd_pose import LEGACY_SCHEMA, SCHEMA, cache
++from tools.g2.rgbd_pose import source as src
++from tools.g2.test_rgbd_pose_export import FakeReplay, bound, write_json
++
++
++def tree_fingerprint(root):
++    """Include directories/mtimes, so even an empty new lock directory fails."""
++    return {
++        path.relative_to(root).as_posix(): (
++            path.is_dir(),
++            path.stat().st_mtime_ns,
++            src.sha256(path) if path.is_file() else None,
++        )
++        for path in [root, *sorted(root.rglob("*"))]
++    }
++
++
++@pytest.mark.parametrize(
++    "artifact",
++    [
++        "legacy_episode",
++        "unversioned_v2_episode",
++        "unknown_episode",
++        "staging",
++        "failed",
++    ],
++)
++def test_direct_writer_rejects_unversioned_root_before_any_write(tmp_path, artifact):
++    _, _, source = bound(tmp_path / "sources")
++    root = tmp_path / "existing"
++    if artifact.endswith("episode"):
++        episode = root / "tasks/OldLegacy/episodes/episode_987654"
++        if artifact == "unknown_episode":
++            episode.mkdir(parents=True)
++            (episode / "unknown.bin").write_bytes(b"retain unverified episode evidence")
++        else:
++            schema = LEGACY_SCHEMA if artifact == "legacy_episode" else SCHEMA
++            write_json(episode / "manifest.json", {"schema": schema})
++            write_json(episode / "COMPLETE.json", {"schema": schema})
++            # Synthetic legacy-style arrays must remain byte-identical too.
++            np.savez_compressed(
++                episode / "old.npz",
++                depth=np.ones((2, 2), np.uint16),
++                valid=np.ones((2, 2), bool),
++            )
++    else:
++        write_json(
++            root / ("." + artifact) / "owned-evidence/progress.json", {"preserve": True}
++        )
++    assert not (root / "cache_manifest.json").exists()
++    before = tree_fingerprint(root)
++    calls = []
++
++    def factory(bound_source):
++        calls.append(bound_source)
++        return FakeReplay(bound_source)
++
++    with pytest.raises(ValueError, match="unversioned cache contents"):
++        cache.export_episode(
++            root,
++            source,
++            [0],
++            storage="uint16_mm",
++            chunk_frames=32,
++            recipe={},
++            replay_factory=factory,
++        )
++    assert not calls
++    assert tree_fingerprint(root) == before
++    assert not (root / "cache_manifest.json").exists()
++    assert not (root / ".manifest.lock").exists()
++    assert not (root / ".locks").exists()
++
++
++@pytest.mark.parametrize("preexisting_empty", [False, True])
++def test_fresh_direct_writer_versions_root_and_preserves_verified_skip(
++    tmp_path, preexisting_empty
++):
++    _, _, source = bound(tmp_path / "sources")
++    root = tmp_path / "new"
++    if preexisting_empty:
++        root.mkdir()
++    calls = []
++
++    def factory(bound_source):
++        calls.append(bound_source)
++        return FakeReplay(bound_source)
++
++    args = dict(storage="uint16_mm", chunk_frames=32, recipe={}, replay_factory=factory)
++    result = cache.export_episode(root, source, [0], **args)
++    assert result["status"] == "EXPORTED"
++    assert src.read_json(root / "cache_manifest.json") == {"schema": SCHEMA}
++    cache.verify_episode(Path(result["directory"]))
++    before = tree_fingerprint(root)
++    assert (
++        cache.export_episode(root, source, [0], **args)["status"] == "SKIPPED_VERIFIED"
++    )
++    assert len(calls) == 1
++    assert tree_fingerprint(root) == before
+diff --git a/tools/g2/test_rgbd_pose_export.py b/tools/g2/test_rgbd_pose_export.py
+index fee5d39d..65bd32ef 100644
+--- a/tools/g2/test_rgbd_pose_export.py
++++ b/tools/g2/test_rgbd_pose_export.py
+@@ -658,6 +658,7 @@ def test_crash_at_commit_boundaries_never_publishes_partial_episode(
+ 
+ def test_existing_incomplete_target_is_preserved_not_silently_overwritten(tmp_path):
+     _, _, source = bound(tmp_path)
++    cache.ensure_cache_manifest(tmp_path / "cache", {"schema": cache.SCHEMA})
+     destination = cache.episode_directory(tmp_path / "cache", source.episode)
+     destination.mkdir(parents=True)
+     (destination / "unknown_evidence.txt").write_text("preserve")

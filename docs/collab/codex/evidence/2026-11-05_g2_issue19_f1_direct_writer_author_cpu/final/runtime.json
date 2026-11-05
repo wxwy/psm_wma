@@ -1,0 +1,33 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "executable": "/workspace/.venvs/psm-wma-cpu/bin/python",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "packages": {
+    "numpy": "2.2.6",
+    "pyarrow": "26.0.0",
+    "scipy": "1.15.3",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7",
+    "mujoco": "3.3.1"
+  },
+  "environment": {
+    "PYTHONPATH": "/workspace/psm-wma-g2-depth-v2:/tmp/psm-g2-rgbd-stage1-20261104/cpu_extra",
+    "CUDA_VISIBLE_DEVICES": "",
+    "MUJOCO_GL": "disable",
+    "COSMOS_DEVICE": "cpu",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/g2_issue19_f1_20261105_author_cpu/cache/hf",
+    "MPLCONFIGDIR": "/tmp/g2_issue19_f1_20261105_author_cpu/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/g2_issue19_f1_20261105_author_cpu/cache/xdg",
+    "NUMBA_CACHE_DIR": "/tmp/g2_issue19_f1_20261105_author_cpu/cache/numba"
+  },
+  "native_robocasa": false,
+  "gpu_used": false,
+  "server_data_accessed_or_transferred": false
+}
