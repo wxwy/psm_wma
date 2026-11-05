@@ -1,5 +1,15 @@
 # 2026-11-05 — Issue19 G2-I19-F1 REVIEW, clean exact-pair CPU PASS
 
+Publication readback PASS: normal PR20-only push64ee6c6e→b2655619603e2e9717b49387242fb95fcb5e28f3;
+GitHub API reread confirms OPEN/DRAFT, G2 base99ad0de0, new source Formal5e6903b9
+and Child1069fe78841228cadbbfbe6afbd767eaed6225da on both source/evidence trees.
+Updated PR title/body describe only F1 increment,181 CPU PASS, frozen RED5,
+accepted prior native evidence and no migration/production authority. Remote
+gate.json and canonical Inbox bytes equal local; remote cache.py Blob equals
+the formal source. Current receipt is bookkeeping, not another implementation.
+Canonical request is published; next only GPT/Owner incremental Code Gate.
+Stop without native rerun, server access, old-cache transition or V3 promotion.
+
 New Formal Root5e6903b9dd09828f725dc61dcd6e98012fae87b3 / unchanged
 Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Final clean run
 2026-11-05 14:42:40–14:42:47 CST:181 passed (53+83+38 original174,new7),
