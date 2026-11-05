@@ -22,6 +22,8 @@ DEFAULTS = {
     "batch_wait_ms": 20,
     "tasks": "all",
     "episodes_per_task": 50,
+    # Runtime-only dispatch ceiling. Scientific manifest always freezes all episodes.
+    "stage_episode_limit_per_task": None,
     "gpu_ids": [4, 5, 6],
     "render_gpu_ids": None,
     "render_backend": None,
@@ -165,6 +167,14 @@ def resolve(argv=None):
         or cfg["base_port"] + len(cfg["gpu_ids"]) - 1 > 65535
     ):
         raise ValueError("plan/port range")
+    stage_cap = cfg["stage_episode_limit_per_task"]
+    if stage_cap is not None and (
+        type(stage_cap) is not int
+        or not 1 <= stage_cap < cfg["episodes_per_task"]
+        or cfg["execution_profile"] != "phase_b"
+        or cfg["scheduling_protocol"] != STREAMING_SCHEDULE
+    ):
+        raise ValueError("stage_episode_limit_per_task requires streaming Phase B and a strict positive prefix")
     if cfg["execution_profile"] not in ("phase_a", "phase_b"):
         raise ValueError("explicit execution profile required")
     if cfg["scheduling_protocol"] not in (ROUND_SCHEDULE, STREAMING_SCHEDULE):
