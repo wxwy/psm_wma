@@ -1,0 +1,15 @@
+{
+  "python": "3.12.14",
+  "torch": "2.10.0+cpu",
+  "pytest": "9.0.2",
+  "ruff": "0.12.7",
+  "transformers": "4.57.1",
+  "numpy": "2.2.6",
+  "einops": "0.8.2",
+  "torchvision": "0.25.0+cpu",
+  "timm": "NOT_INSTALLED",
+  "flash-attn": "NOT_INSTALLED",
+  "liger-kernel": "NOT_INSTALLED",
+  "dependencies_modified_this_task": false,
+  "real_gpu_accessed": false
+}

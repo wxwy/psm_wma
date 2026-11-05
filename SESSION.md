@@ -1,3 +1,13 @@
+# 2026-11-05 — Issue18 decode author CPU PASS; REVIEW preparation
+
+Formal Root `f4871059cf28a7e2142325738decbf1d53c3148b` / Child-Gitlink `b3098008375c275a36dd2f50cbaf757bedf493ea` on isolated `v3-r05-action-decode-compile-20261105`. Final clean-Pair77/77 PASS,0failure/error/skip,8GPU-L1deselected,exit0;1229 source fingerprints unchanged. Four1024-request groups2graphs each, cap8; twoCPUInductor forward/back32calls3graphs;96old/neweager bit-exact output/fullgradient(None-vs-zero)/dtype. OldRED4actualcompilelimitFAIL and identical test bytes preserved. Ruff/format/AST4PASS; separate author-side read-only audit no new blocker (not GPT/DS). Evidence `artifacts/vfm_action_decode/2026-11-05_cpu` and handoff `docs/collab/codex/reviews/2026-11-05_Issue18_R05_Action_Decode_f4871059_b3098008_Code_Gate_Request.md`.
+
+Current reviewer: GPT independent incremental Code Gate; later real GPU/RoboCasa validation owned by GPT/Owner under Issue18. This explicit Owner role and task order supersede obsolete V2/MM/Kimi/pane-wait policy; no additional reviewer or GPU dispatch. No GPT verdict exists for this new Pair. New commits only evidence/task state/append-only Inbox. Publish Child then Root non-force, read back exact source/artifacts/Inbox, then return for GPT review. Strict cap8/M-BResume/sourceManifest preserved; no official V3/G2/Issue17 integration, no server/DCP/R04R05 access, no ordinary old-run Resume.
+
+Latest prepublication official refs advertised and fetched RootV3 `48ebeee15f7bd9fa634c395a426fadc91d052299`; Child official `1069fe78841228cadbbfbe6afbd767eaed6225da`. Candidate remote8004106f/4e9 untouched at check. Read-only local governance self-check: no unsupported GPT/DS approval claim or unauthorized next Gate. Publication receipt still pending.
+
+## Retained earlier session records
+
 # 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:

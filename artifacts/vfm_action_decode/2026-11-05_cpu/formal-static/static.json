@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "root": "f4871059cf28a7e2142325738decbf1d53c3148b",
+  "child": "b3098008375c275a36dd2f50cbaf757bedf493ea",
+  "baseline_root": "c9fa60b7134fda8fb848c29c148f25c7a8901892",
+  "baseline_child": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+  "child_delta": [
+    "cosmos_framework/model/generator/mot/action_decode_compile_test.py",
+    "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py"
+  ],
+  "root_delta": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "docs/collab/chatgpt/requests/2026-11-05_R05_VFM_Action_Decode_Dynamic_Compile_Codex.md"
+  ],
+  "sha256": {
+    "cosmos_framework/model/generator/mot/action_decode_compile_test.py": "a3f8b194bd4cc6145b0d97fd68c308479cd61f8918beabe40adcdd7abab64554",
+    "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py": "12216ef9ffdf4ed8ff9359f89c4437a0280baf375ae19720bc6126f3467b2c87",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network.py": "b3ba82844891f9707691de88705f1ab0192ba3b57ed7bdd418ed5c6152c8a812",
+    "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py": "ee4f7274733b9cb405762aa6b325812693723cf4895e0f83762940455c9624e3"
+  },
+  "checks": [
+    {
+      "name": "ruff",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "cosmos_framework/model/generator/mot/action_decode_compile_test.py",
+        "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--no-cache",
+        "cosmos_framework/model/generator/mot/action_decode_compile_test.py",
+        "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "syntax_files": 4,
+  "decode_projection_call_replacements": 2,
+  "surrounding_decode_ast_identical": true,
+  "helper_only_returns_llm2action": true,
+  "encode_methods_ast_identical": true,
+  "encode_test_bytes_identical": true,
+  "compile_options_and_other_targets_ast_identical": true,
+  "old_scope_assertions_preserved": true,
+  "no_cache_reset_inside_long_sequence": true
+}

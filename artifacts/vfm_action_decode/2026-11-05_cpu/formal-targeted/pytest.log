@@ -1,0 +1,132 @@
+........................................................................ [ 93%]
+.....                                                                    [100%]
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/model/generator/mot/action_encode_compile_test.py:23
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/action_encode_compile_test.py:23: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0, pytest.mark.CPU]
+
+cosmos-framework/cosmos_framework/model/generator/mot/action_encode_compile_test.py:23
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/action_encode_compile_test.py:23: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0, pytest.mark.CPU]
+
+cosmos-framework/cosmos_framework/model/generator/mot/action_decode_compile_test.py:20
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/action_decode_compile_test.py:20: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0, pytest.mark.CPU]
+
+cosmos-framework/cosmos_framework/model/generator/mot/action_decode_compile_test.py:20
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/action_decode_compile_test.py:20: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0, pytest.mark.CPU]
+
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:12
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:12: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:13
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:13: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:23
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:23: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:24
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:24: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:35
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:35: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:36
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network_action_domain_test.py:36: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/action_io_projector_test.py:21
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/action_io_projector_test.py:21: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0, pytest.mark.CPU]
+
+cosmos-framework/cosmos_framework/model/generator/mot/action_io_projector_test.py:21
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/action_io_projector_test.py:21: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0, pytest.mark.CPU]
+
+cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:13
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:13: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:44
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:44: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:59
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:59: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:96
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:96: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:114
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/domain_aware_linear_test.py:114: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:30
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:30: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.L0]
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:77
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:77: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:88
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:88: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:96
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:96: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:104
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:104: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:123
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:123: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:132
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:132: PytestUnknownMarkWarning: Unknown pytest.mark.GPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.GPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:168
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:168: PytestUnknownMarkWarning: Unknown pytest.mark.GPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.GPU
+
+cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:198
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/parallelize_vfm_network_test.py:198: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+: 14 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+::test_alternating_B1_to_B8_metadata_long_run_stays_below_default_compile_limit[dtype0-False]
+::test_alternating_B1_to_B8_metadata_long_run_stays_below_default_compile_limit[dtype0-True]
+::test_alternating_B1_to_B8_metadata_long_run_stays_below_default_compile_limit[dtype1-False]
+::test_alternating_B1_to_B8_metadata_long_run_stays_below_default_compile_limit[dtype1-True]
+::test_cpu_inductor_alternating_batch_outputs_match_eager[dtype0]
+::test_cpu_inductor_alternating_batch_outputs_match_eager[dtype0]
+::test_cpu_inductor_alternating_batch_outputs_match_eager[dtype1]
+::test_cpu_inductor_alternating_batch_outputs_match_eager[dtype1]
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:911: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+    with torch.autocast("cuda", enabled=True, dtype=torch.float32):
+
+: 28 warnings
+  /workspace/work/psm-wma-action-decode/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:902: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+    with torch.autocast("cuda", enabled=True, dtype=torch.float32):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+77 passed, 8 deselected, 77 warnings in 61.60s (0:01:01)

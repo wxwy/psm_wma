@@ -1,0 +1,34 @@
+[
+  {
+    "dtype": "torch.float32",
+    "action_dim": 15,
+    "normal_horizon": 16,
+    "backend": "inductor",
+    "calls": 32,
+    "graph_count": 3,
+    "compile_targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_project_action_predictions"
+    ],
+    "recompile_limit": 8
+  },
+  {
+    "dtype": "torch.bfloat16",
+    "action_dim": 15,
+    "normal_horizon": 16,
+    "backend": "inductor",
+    "calls": 32,
+    "graph_count": 3,
+    "compile_targets": [
+      "_encode_text",
+      "_encode_vision",
+      "_project_action_tokens",
+      "_decode_vision",
+      "_project_action_predictions"
+    ],
+    "recompile_limit": 8
+  }
+]

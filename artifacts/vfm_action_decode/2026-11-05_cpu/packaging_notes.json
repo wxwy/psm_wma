@@ -1,0 +1,36 @@
+{
+  "raw_artifact_diff_check_exit": 2,
+  "raw_whitespace_paths": [
+    "artifacts/vfm_action_decode/2026-11-05_cpu/formal-static/child_delta.patch",
+    "artifacts/vfm_action_decode/2026-11-05_cpu/old-red/junit.xml",
+    "artifacts/vfm_action_decode/2026-11-05_cpu/old-red/pytest.log"
+  ],
+  "reason": "Original pytest traceback/JUnit and unified diff context whitespace retained byte-for-byte. No raw evidence modified or global whitespace rule changed.",
+  "source_and_docs_checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        "SESSION.md",
+        "TODO.md",
+        "docs"
+      ],
+      "cwd": "/workspace/work/psm-wma-action-decode",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+        "b3098008375c275a36dd2f50cbaf757bedf493ea",
+        "--check"
+      ],
+      "cwd": "/workspace/work/psm-wma-action-decode/cosmos-framework",
+      "exit_code": 0
+    }
+  ]
+}

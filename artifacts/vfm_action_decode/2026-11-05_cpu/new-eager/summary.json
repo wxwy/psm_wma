@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "mode": "verify",
+  "cases": 96,
+  "exact_output_and_gradient_parity": true,
+  "golden_sha256": "abdfe3824f44c347ada18834913d7abfbf175a25bca096241158ec6bba8be86c",
+  "production_sha256": "12216ef9ffdf4ed8ff9359f89c4437a0280baf375ae19720bc6126f3467b2c87",
+  "test_sha256": "a3f8b194bd4cc6145b0d97fd68c308479cd61f8918beabe40adcdd7abab64554",
+  "child": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+  "torch": "2.10.0+cpu",
+  "action_dim": 15,
+  "horizon": 16,
+  "baseline_metadata": {
+    "production_sha256": "ab24fe80768681e0865663442eafc770672b706b019073093b1b671cec0ab3f1",
+    "test_sha256": "a3f8b194bd4cc6145b0d97fd68c308479cd61f8918beabe40adcdd7abab64554",
+    "child": "4e9c8104ffd15a373b576bc35ee608de1b60eea1",
+    "torch": "2.10.0+cpu",
+    "action_dim": 15,
+    "horizon": 16
+  }
+}
