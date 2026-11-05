@@ -57,10 +57,17 @@ def durable_json(path, value):
 
 def _check_root_schema(root):
     existing = root / "cache_manifest.json"
-    if existing.exists() and read_json(existing).get("schema") != SCHEMA:
+    if existing.exists():
+        if read_json(existing).get("schema") != SCHEMA:
+            raise ValueError(
+                "legacy/unknown root cache schema; explicit verified transition required"
+            )
+        return True
+    if any((root / name).exists() for name in ("tasks", ".staging", ".failed")):
         raise ValueError(
-            "legacy/unknown root cache schema; explicit verified transition required"
+            "unversioned cache contents; explicit verified transition required"
         )
+    return False
 
 
 def ensure_cache_manifest(root, contract):
@@ -68,12 +75,6 @@ def ensure_cache_manifest(root, contract):
     if contract.get("schema") != SCHEMA:
         raise ValueError("requested root cache schema must be v2")
     _check_root_schema(root)
-    if not (root / "cache_manifest.json").exists() and any(
-        (root / name).exists() for name in ("tasks", ".staging", ".failed")
-    ):
-        raise ValueError(
-            "unversioned cache contents; explicit verified transition required"
-        )
     root.mkdir(parents=True, exist_ok=True)
     with (root / ".manifest.lock").open("ab") as stream:
         fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
@@ -322,7 +323,7 @@ def export_episode(
     if chunk_frames > 256:
         raise ValueError("chunk_frames cannot exceed the bounded 256-frame buffer")
     root = Path(root).resolve()
-    _check_root_schema(root)
+    has_root_manifest = _check_root_schema(root)
     for input_file in source.witnesses:
         source_path = Path(input_file["path"]).resolve()
         if source_path.is_relative_to(root) or root.is_relative_to(source_path.parent):
@@ -330,6 +331,10 @@ def export_episode(
     spec = identity(source, frames, storage, chunk_frames, recipe)
     export_digest = digest(spec)
     destination = episode_directory(root, source.episode)
+    if not has_root_manifest:
+        # Bootstrap only fresh library roots; never adopt existing artifacts.
+        # CLI roots already carry their full immutable configuration contract.
+        ensure_cache_manifest(root, {"schema": SCHEMA})
     with episode_lock(root, source.episode):
         verify_witnesses(source.witnesses)
         if destination.exists():

@@ -658,6 +658,7 @@ def test_crash_at_commit_boundaries_never_publishes_partial_episode(
 
 def test_existing_incomplete_target_is_preserved_not_silently_overwritten(tmp_path):
     _, _, source = bound(tmp_path)
+    cache.ensure_cache_manifest(tmp_path / "cache", {"schema": cache.SCHEMA})
     destination = cache.episode_directory(tmp_path / "cache", source.episode)
     destination.mkdir(parents=True)
     (destination / "unknown_evidence.txt").write_text("preserve")

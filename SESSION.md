@@ -1,4 +1,37 @@
-# 2026-11-05 — Issue19 depth v2 REVIEW (author CPU PASS, native pending)
+# 2026-11-05 14:37 CST — Issue19 G2-I19-F1 narrow remediation IN_PROGRESS
+
+Implementation development step: shared _check_root_schema now rejects missing
+root manifest plus tasks/.staging/.failed before writes; only a genuinely fresh
+direct-library root receives a minimal v2 schema marker via existing atomic
+manifest publisher, preserving skip/retry. CLI full contract remains unchanged.
+Existing incomplete-target fixture now first declares its v2 root; all original
+assertions and174 test cases preserved. New7 cases cover5 refusal shapes with
+whole-tree/file/mtime preservation and2 fresh/skip paths. Frozen test SHA256
+4977404d55641ae4ab2c7c672032ba44ac2d7079ec0048bceed28fc11a1915b5:
+old fbe57890 cache.py5/5 expected RED (0 error/skip), new working-tree181/181
+PASS in5.66s. Ruff0.12.7/check/format13 PASS. External raw red/green artifacts
+under /tmp/g2_issue19_f1_20261105_author_cpu. Source freeze/clean exact-pair
+evidence and publication pending; no server run/legacy conversion performed.
+
+Fresh before_head64ee6c6e4778d6c79f033b39877dc06360b31312; fetch and
+advertised PR branch64ee6c6e/G2base99ad0de0249a660d46642c3ae849129733b3c503/
+V33bd1404cf065cc6eae4a07bde6ad0da024596e07 matched. Fetch's unrelated V3
+submodule recursion warning was not used as Child evidence; G2 gitlink remains
+1069fe78841228cadbbfbe6afbd767eaed6225da. Read exact-pair formal review
+docs/collab/chatgpt/reviews/2026-11-05_G2_Issue19_CodeGate_independent_CPU_native_PASS_direct_writer_v1_mixing_REQUEST_CHANGES.md:
+REQUEST_CHANGES only G2-I19-F1, independent174 CPU PASS/native real736f73/74
+and4 geometry groups PASS/legacy7 masks308412416 equality PASS accepted as
+reviewer execution, not Codex runs. Legacy7 migration remains unexecuted.
+Merged docs-only G2 review into PR candidate as8d3a5b297d9b3339c16a873a7e1e04941a20a745;
+zero tools/g2 or Gitlink difference. No V3 worktree/promotion or server access.
+Claim only cache.py shared root preflight and fresh direct root version marker,
+test_cache_root_preflight.py, one incomplete-target fixture setup with existing
+assertions preserved, evidence/state and fresh review request. First freeze/run
+new refusal cases against unchanged fbe57890 production cache.py, then fix and
+rerun original174 plus focused cases, Ruff0.12.7 and AST. No encoder, replay,
+geometry or server/migration/resume changes. Current step uncommitted.
+
+# 2026-11-05 — Issue19 depth v2 REVIEW (historical author publication)
 
 Publication confirmed 2026-11-05: normal non-force push advanced only the existing
 PR20 head frome531af5c to evidence/handoff434541890e65bb138f160b276d9ce1f54cf222b1.
