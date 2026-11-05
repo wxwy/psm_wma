@@ -1,5 +1,17 @@
 # 2026-11-05 — Issue19 depth v2 REVIEW (author CPU PASS, native pending)
 
+Publication confirmed 2026-11-05: normal non-force push advanced only the existing
+PR20 head frome531af5c to evidence/handoff434541890e65bb138f160b276d9ce1f54cf222b1.
+GitHub API reread: PR20 OPEN/DRAFT, correct G2 head/base; title/body replaced the
+kickoff status with actual implementation/test/pending-native facts. Both remote
+formal/evidence trees retain Child1069fe78841228cadbbfbe6afbd767eaed6225da;
+remote gate.json bytes match local (SHA256 f447b1ea10f043b71dc30120156fb31c8dc271698857b91496ca27b81e1f7f90).
+Advertised V38586b30cdfef802cff56d1463e989cb7b62559b8 and G2 base9568723f
+remain unchanged. The following publication receipt is bookkeeping only; stop
+for GPT/Owner fresh Code Gate, no automatic production action or review polling.
+Verbatim raw trace/unified-diff evidence includes whitespace; the PASS diff
+check is bound to the formal implementation, not normalization of raw evidence.
+
 Final source Root fbe578908a840a5f4e5b351f1c2e8fb019def6e5 / unchanged
 Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Clean final CPU run
 2026-11-05T04:55:32–04:55:38Z:174 PASS,0 fail/error/skip (new53+original83+
