@@ -1,0 +1,2903 @@
+{
+  "batch": {
+    "B6_to_8_batch_fraction": 0.6697782963827305,
+    "B6_to_8_requests_fraction": 0.7642181021669404,
+    "exact_average_batch_size": 5.966394399066511,
+    "exact_batches": 4285,
+    "exact_total_native_requests": 25566,
+    "exact_unique_batch_id_histogram": {
+      "1": 44,
+      "2": 85,
+      "3": 125,
+      "4": 366,
+      "5": 795,
+      "6": 1206,
+      "7": 1010,
+      "8": 654
+    },
+    "server_last_snapshot_batches": {
+      "GPU6": 2170,
+      "GPU7": 2113
+    },
+    "server_status_last_snapshot_time_beijing": "2026-11-05 16:25:54+0800"
+  },
+  "comparison": {
+    "delta_pp": 14.000000000000002,
+    "prohibited_causal_claim": "Model checkpoint, formal source, Batch/Sim concurrency, scene-sampling version and media saving differ.",
+    "r03_sr_pct": 50.44444444444445,
+    "r03_success": 454,
+    "r07_sr_pct": 64.44444444444444,
+    "r07_success": 580
+  },
+  "file_provenance": {
+    "core_result_file_inventory_sha256": "2812ddd3b2a2f3dc09414b3c96c267cb66032056df5331b9c714e06475a5ed42",
+    "fully_verified_core_inventory_linked_files": false,
+    "saved_result_records": 900,
+    "source_file_sha256": {
+      "R07_LOG": "a7382ef051ee40a7481de561bb35164c5e3bfbcdd51ce9c822885ebb78d04226",
+      "_internal/batch_status.json": "bdfc5453f1a00a86d8c7701dd8f3f6c463a7906795d8926114defcab7b88b604",
+      "_internal/coordination_metrics.json": "089894c934c0aa142a7e9b9ece1e0c9ad72a28338e0eb8196f35f2714332a36a",
+      "_internal/run_inputs.json": "a40341dab2b1dac7d845d432e18afbe20fb645ec343ba2c50ae31f5cbfec13f7",
+      "manifest.json": "6cc03918ad21e17f6644842a1b2dec2b83f716a5df42fe9723d381b244b72f7f",
+      "summary.json": "604c0a2cbf5098f38fb2f80000c234526cf90bf9a141015ea0c6a481c1e0d6b5"
+    }
+  },
+  "generated_beijing": "2026-11-05T16:42:26.275450+08:00",
+  "identity": {
+    "checkpoint": "iter_000027700",
+    "child_sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+    "config_sha256": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+    "manifest_digest": "a07bfa652d8ae1f71cfd041afe7c12b9f7cde0ca3145c79121fdb80d3227f369",
+    "model_digest": "0d9ddc6b938379a13a410f8826c5537a118f37da0df5ecdbfa8c726295061944",
+    "root_sha": "3bd1404cf065cc6eae4a07bde6ad0da024596e07",
+    "runtime_digest": "27d2fcfe9e2b10c8f691c26f3e5c3941ba8799d1074fef1b4d7db2a77a754fe8"
+  },
+  "instruction_groups": [
+    {
+      "failure": 36,
+      "failure_ep": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        26,
+        29,
+        32,
+        33,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        43,
+        44,
+        45,
+        46,
+        49
+      ],
+      "instruction": "Close the lid blender by securely placing the lid on top.",
+      "n": 50,
+      "sr": 0.28,
+      "success": 14,
+      "success_ep": [
+        2,
+        10,
+        11,
+        14,
+        16,
+        25,
+        27,
+        28,
+        30,
+        31,
+        34,
+        42,
+        47,
+        48
+      ],
+      "task": "CloseBlenderLid"
+    },
+    {
+      "failure": 10,
+      "failure_ep": [
+        7,
+        18,
+        20,
+        24,
+        25,
+        30,
+        32,
+        35,
+        36,
+        49
+      ],
+      "instruction": "Close the fridge door.",
+      "n": 31,
+      "sr": 0.6774193548387096,
+      "success": 21,
+      "success_ep": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        8,
+        10,
+        12,
+        13,
+        16,
+        17,
+        21,
+        28,
+        29,
+        33,
+        38,
+        40,
+        42,
+        43,
+        45,
+        46
+      ],
+      "task": "CloseFridge"
+    },
+    {
+      "failure": 9,
+      "failure_ep": [
+        9,
+        11,
+        14,
+        15,
+        22,
+        31,
+        34,
+        39,
+        44
+      ],
+      "instruction": "Close the fridge doors.",
+      "n": 19,
+      "sr": 0.5263157894736842,
+      "success": 10,
+      "success_ep": [
+        3,
+        6,
+        19,
+        23,
+        26,
+        27,
+        37,
+        41,
+        47,
+        48
+      ],
+      "task": "CloseFridge"
+    },
+    {
+      "failure": 6,
+      "failure_ep": [
+        14,
+        19,
+        28,
+        29,
+        39,
+        44
+      ],
+      "instruction": "Close the toaster oven door.",
+      "n": 50,
+      "sr": 0.88,
+      "success": 44,
+      "success_ep": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        17,
+        18,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        40,
+        41,
+        42,
+        43,
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      "task": "CloseToasterOvenDoor"
+    },
+    {
+      "failure": 19,
+      "failure_ep": [
+        0,
+        6,
+        8,
+        11,
+        12,
+        13,
+        15,
+        18,
+        22,
+        24,
+        25,
+        28,
+        33,
+        34,
+        38,
+        39,
+        41,
+        42,
+        48
+      ],
+      "instruction": "Pick the mug from the counter and place it under the coffee machine dispenser.",
+      "n": 50,
+      "sr": 0.62,
+      "success": 31,
+      "success_ep": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        9,
+        10,
+        14,
+        16,
+        17,
+        19,
+        20,
+        21,
+        23,
+        26,
+        27,
+        29,
+        30,
+        31,
+        32,
+        35,
+        36,
+        37,
+        40,
+        43,
+        44,
+        45,
+        46,
+        47,
+        49
+      ],
+      "task": "CoffeeSetupMug"
+    },
+    {
+      "failure": 8,
+      "failure_ep": [
+        4,
+        5,
+        21,
+        27,
+        32,
+        34,
+        39,
+        42
+      ],
+      "instruction": "Navigate to the stand mixer.",
+      "n": 10,
+      "sr": 0.2,
+      "success": 2,
+      "success_ep": [
+        19,
+        33
+      ],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 5,
+      "failure_ep": [
+        1,
+        12,
+        15,
+        40,
+        45
+      ],
+      "instruction": "Navigate to the electric kettle.",
+      "n": 7,
+      "sr": 0.2857142857142857,
+      "success": 2,
+      "success_ep": [
+        25,
+        49
+      ],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 4,
+      "failure_ep": [
+        17,
+        26,
+        28,
+        47
+      ],
+      "instruction": "Navigate to the toaster.",
+      "n": 6,
+      "sr": 0.3333333333333333,
+      "success": 2,
+      "success_ep": [
+        31,
+        41
+      ],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 4,
+      "failure_ep": [
+        16,
+        18,
+        20,
+        38
+      ],
+      "instruction": "Navigate to the shelves.",
+      "n": 4,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        3,
+        30,
+        48
+      ],
+      "instruction": "Navigate to the toaster oven.",
+      "n": 4,
+      "sr": 0.25,
+      "success": 1,
+      "success_ep": [
+        44
+      ],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        29,
+        35,
+        37
+      ],
+      "instruction": "Navigate to the fridge.",
+      "n": 3,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        11,
+        13,
+        23
+      ],
+      "instruction": "Navigate to the range hood.",
+      "n": 3,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        36,
+        43,
+        46
+      ],
+      "instruction": "Navigate to the sink.",
+      "n": 3,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        6,
+        7,
+        10
+      ],
+      "instruction": "Navigate to the stove.",
+      "n": 3,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 2,
+      "failure_ep": [
+        0,
+        2
+      ],
+      "instruction": "Navigate to the dishwasher.",
+      "n": 2,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 2,
+      "failure_ep": [
+        14,
+        22
+      ],
+      "instruction": "Navigate to the microwave.",
+      "n": 2,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        8
+      ],
+      "instruction": "Navigate to the oven.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        9
+      ],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        24
+      ],
+      "instruction": "Navigate to the coffee machine.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "NavigateKitchen"
+    },
+    {
+      "failure": 7,
+      "failure_ep": [
+        4,
+        8,
+        11,
+        18,
+        24,
+        46,
+        47
+      ],
+      "instruction": "Open the cabinet doors.",
+      "n": 35,
+      "sr": 0.8,
+      "success": 28,
+      "success_ep": [
+        0,
+        1,
+        2,
+        5,
+        9,
+        10,
+        12,
+        13,
+        14,
+        16,
+        17,
+        20,
+        22,
+        26,
+        27,
+        28,
+        32,
+        33,
+        34,
+        36,
+        38,
+        39,
+        40,
+        41,
+        43,
+        44,
+        45,
+        48
+      ],
+      "task": "OpenCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Open the cabinet door.",
+      "n": 15,
+      "sr": 1.0,
+      "success": 15,
+      "success_ep": [
+        3,
+        6,
+        7,
+        15,
+        19,
+        21,
+        23,
+        25,
+        29,
+        30,
+        31,
+        35,
+        37,
+        42,
+        49
+      ],
+      "task": "OpenCabinet"
+    },
+    {
+      "failure": 11,
+      "failure_ep": [
+        3,
+        11,
+        14,
+        15,
+        17,
+        18,
+        25,
+        26,
+        27,
+        46,
+        48
+      ],
+      "instruction": "Open the right drawer.",
+      "n": 28,
+      "sr": 0.6071428571428571,
+      "success": 17,
+      "success_ep": [
+        1,
+        2,
+        7,
+        8,
+        13,
+        16,
+        21,
+        23,
+        24,
+        29,
+        30,
+        31,
+        38,
+        41,
+        42,
+        43,
+        45
+      ],
+      "task": "OpenDrawer"
+    },
+    {
+      "failure": 7,
+      "failure_ep": [
+        0,
+        5,
+        12,
+        19,
+        28,
+        32,
+        36
+      ],
+      "instruction": "Open the left drawer.",
+      "n": 22,
+      "sr": 0.6818181818181818,
+      "success": 15,
+      "success_ep": [
+        4,
+        6,
+        9,
+        10,
+        20,
+        22,
+        33,
+        34,
+        35,
+        37,
+        39,
+        40,
+        44,
+        47,
+        49
+      ],
+      "task": "OpenDrawer"
+    },
+    {
+      "failure": 18,
+      "failure_ep": [
+        4,
+        5,
+        10,
+        15,
+        16,
+        22,
+        25,
+        26,
+        27,
+        28,
+        30,
+        33,
+        35,
+        39,
+        40,
+        42,
+        43,
+        48
+      ],
+      "instruction": "Open the stand mixer head.",
+      "n": 50,
+      "sr": 0.64,
+      "success": 32,
+      "success_ep": [
+        0,
+        1,
+        2,
+        3,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        17,
+        18,
+        19,
+        20,
+        21,
+        23,
+        24,
+        29,
+        31,
+        32,
+        34,
+        36,
+        37,
+        38,
+        41,
+        44,
+        45,
+        46,
+        47,
+        49
+      ],
+      "task": "OpenStandMixerHead"
+    },
+    {
+      "failure": 2,
+      "failure_ep": [
+        2,
+        36
+      ],
+      "instruction": "Pick the straw from the counter and place it in the cabinet.",
+      "n": 3,
+      "sr": 0.3333333333333333,
+      "success": 1,
+      "success_ep": [
+        23
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        4
+      ],
+      "instruction": "Pick the boxed food from the counter and place it in the cabinet.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        30
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        37
+      ],
+      "instruction": "Pick the condiment bottle from the counter and place it in the cabinet.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        48
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        7
+      ],
+      "instruction": "Pick the eggplant from the counter and place it in the cabinet.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        31
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        18
+      ],
+      "instruction": "Pick the mug from the counter and place it in the cabinet.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        3
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        34
+      ],
+      "instruction": "Pick the tongs from the counter and place it in the cabinet.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        11
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        17
+      ],
+      "instruction": "Pick the aluminum foil from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        39
+      ],
+      "instruction": "Pick the avocado from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the beer from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        41
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the bottled water from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        10
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the can from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        6
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        13
+      ],
+      "instruction": "Pick the candle from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the carrot from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        45
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the cereal from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        15
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the cheese from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        25
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the chicken drumstick from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        0
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        19
+      ],
+      "instruction": "Pick the honey bottle from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the hotdog bun from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        40
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the ice cube from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        24
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        26
+      ],
+      "instruction": "Pick the jar from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        46
+      ],
+      "instruction": "Pick the jug from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        28
+      ],
+      "instruction": "Pick the ketchup from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the kiwi from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        44
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the ladle from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        16
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the mango from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        21
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the measuring cup from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        33
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        42
+      ],
+      "instruction": "Pick the milk from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the mushroom from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        47
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        35
+      ],
+      "instruction": "Pick the mustard from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        38
+      ],
+      "instruction": "Pick the paprika from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the peach from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        5
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        12
+      ],
+      "instruction": "Pick the pear from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the peeler from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        8
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        27
+      ],
+      "instruction": "Pick the pitcher from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        22
+      ],
+      "instruction": "Pick the pot from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the reamer from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        1
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the rolling pin from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        9
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        29
+      ],
+      "instruction": "Pick the saucepan lid from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the sugar cube from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        43
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        49
+      ],
+      "instruction": "Pick the teapot from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the tomato from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        14
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the turmeric from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        20
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the water bottle from the counter and place it in the cabinet.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        32
+      ],
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        41
+      ],
+      "instruction": "Pick the chicken drumstick from the plate and place it in the pan.",
+      "n": 7,
+      "sr": 0.8571428571428571,
+      "success": 6,
+      "success_ep": [
+        1,
+        4,
+        10,
+        18,
+        33,
+        44
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        3
+      ],
+      "instruction": "Pick the lemon from the plate and place it in the pan.",
+      "n": 5,
+      "sr": 0.8,
+      "success": 4,
+      "success_ep": [
+        0,
+        5,
+        9,
+        11
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        7
+      ],
+      "instruction": "Pick the bell pepper from the plate and place it in the pan.",
+      "n": 4,
+      "sr": 0.75,
+      "success": 3,
+      "success_ep": [
+        2,
+        36,
+        43
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 2,
+      "failure_ep": [
+        39,
+        48
+      ],
+      "instruction": "Pick the lemon wedge from the plate and place it in the pan.",
+      "n": 4,
+      "sr": 0.5,
+      "success": 2,
+      "success_ep": [
+        25,
+        45
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        24
+      ],
+      "instruction": "Pick the garlic from the plate and place it in the pan.",
+      "n": 3,
+      "sr": 0.6666666666666666,
+      "success": 2,
+      "success_ep": [
+        22,
+        30
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        49
+      ],
+      "instruction": "Pick the squash from the plate and place it in the pan.",
+      "n": 3,
+      "sr": 0.6666666666666666,
+      "success": 2,
+      "success_ep": [
+        21,
+        40
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the tomato from the plate and place it in the pan.",
+      "n": 3,
+      "sr": 1.0,
+      "success": 3,
+      "success_ep": [
+        27,
+        34,
+        46
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the egg from the plate and place it in the pan.",
+      "n": 2,
+      "sr": 1.0,
+      "success": 2,
+      "success_ep": [
+        6,
+        23
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the lime from the plate and place it in the pan.",
+      "n": 2,
+      "sr": 1.0,
+      "success": 2,
+      "success_ep": [
+        29,
+        47
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        32
+      ],
+      "instruction": "Pick the marshmallow from the plate and place it in the pan.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        8
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the mushroom from the plate and place it in the pan.",
+      "n": 2,
+      "sr": 1.0,
+      "success": 2,
+      "success_ep": [
+        12,
+        19
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the apple from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        28
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        37
+      ],
+      "instruction": "Pick the broccoli from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the carrot from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        42
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the cheese from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        14
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the corn from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        38
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the fish from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        31
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the hot dog from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        35
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the hotdog bun from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        15
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the mango from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        20
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the potato from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        16
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        13
+      ],
+      "instruction": "Pick the shrimp from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the steak from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        26
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the sweet potato from the plate and place it in the pan.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        17
+      ],
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "failure": 6,
+      "failure_ep": [
+        14,
+        18,
+        20,
+        24,
+        27,
+        29
+      ],
+      "instruction": "Pick the peeler from the drawer and place it on the counter.",
+      "n": 10,
+      "sr": 0.4,
+      "success": 4,
+      "success_ep": [
+        33,
+        38,
+        39,
+        46
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 4,
+      "failure_ep": [
+        9,
+        11,
+        19,
+        21
+      ],
+      "instruction": "Pick the rolling pin from the drawer and place it on the counter.",
+      "n": 9,
+      "sr": 0.5555555555555556,
+      "success": 5,
+      "success_ep": [
+        5,
+        17,
+        31,
+        34,
+        42
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        26,
+        28,
+        47
+      ],
+      "instruction": "Pick the ladle from the drawer and place it on the counter.",
+      "n": 7,
+      "sr": 0.5714285714285714,
+      "success": 4,
+      "success_ep": [
+        0,
+        1,
+        13,
+        43
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the measuring cup from the drawer and place it on the counter.",
+      "n": 7,
+      "sr": 1.0,
+      "success": 7,
+      "success_ep": [
+        2,
+        3,
+        25,
+        35,
+        40,
+        41,
+        44
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 3,
+      "failure_ep": [
+        32,
+        36,
+        48
+      ],
+      "instruction": "Pick the pizza cutter from the drawer and place it on the counter.",
+      "n": 5,
+      "sr": 0.4,
+      "success": 2,
+      "success_ep": [
+        30,
+        37
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 4,
+      "failure_ep": [
+        4,
+        6,
+        7,
+        12
+      ],
+      "instruction": "Pick the wooden spoon from the drawer and place it on the counter.",
+      "n": 4,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the dish brush from the drawer and place it on the counter.",
+      "n": 3,
+      "sr": 1.0,
+      "success": 3,
+      "success_ep": [
+        15,
+        16,
+        23
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        45
+      ],
+      "instruction": "Pick the whisk from the drawer and place it on the counter.",
+      "n": 3,
+      "sr": 0.6666666666666666,
+      "success": 2,
+      "success_ep": [
+        10,
+        49
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        22
+      ],
+      "instruction": "Pick the tongs from the drawer and place it on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        8
+      ],
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the avocado from the sink and place it on the plate located on the counter.",
+      "n": 4,
+      "sr": 1.0,
+      "success": 4,
+      "success_ep": [
+        2,
+        22,
+        37,
+        46
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the carrot from the sink and place it on the plate located on the counter.",
+      "n": 4,
+      "sr": 1.0,
+      "success": 4,
+      "success_ep": [
+        1,
+        3,
+        17,
+        44
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the banana from the sink and place it on the plate located on the counter.",
+      "n": 3,
+      "sr": 1.0,
+      "success": 3,
+      "success_ep": [
+        27,
+        29,
+        30
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the cream cheese stick from the sink and place it on the plate located on the counter.",
+      "n": 3,
+      "sr": 1.0,
+      "success": 3,
+      "success_ep": [
+        11,
+        23,
+        34
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        12
+      ],
+      "instruction": "Pick the lemon from the sink and place it on the plate located on the counter.",
+      "n": 3,
+      "sr": 0.6666666666666666,
+      "success": 2,
+      "success_ep": [
+        13,
+        33
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        36
+      ],
+      "instruction": "Pick the onion from the sink and place it on the plate located on the counter.",
+      "n": 3,
+      "sr": 0.6666666666666666,
+      "success": 2,
+      "success_ep": [
+        6,
+        26
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the potato from the sink and place it on the plate located on the counter.",
+      "n": 3,
+      "sr": 1.0,
+      "success": 3,
+      "success_ep": [
+        24,
+        28,
+        35
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the tomato from the sink and place it on the plate located on the counter.",
+      "n": 3,
+      "sr": 1.0,
+      "success": 3,
+      "success_ep": [
+        19,
+        21,
+        41
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        25
+      ],
+      "instruction": "Pick the apple from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        14
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        18
+      ],
+      "instruction": "Pick the chicken drumstick from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        31
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        38
+      ],
+      "instruction": "Pick the garlic from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        5
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        45
+      ],
+      "instruction": "Pick the lemon wedge from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        47
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        9
+      ],
+      "instruction": "Pick the milk from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        0
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        40
+      ],
+      "instruction": "Pick the peach from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        48
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        20
+      ],
+      "instruction": "Pick the steak from the sink and place it on the plate located on the counter.",
+      "n": 2,
+      "sr": 0.5,
+      "success": 1,
+      "success_ep": [
+        4
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the bell pepper from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        15
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the cheese from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        10
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the cucumber from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        43
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the eggplant from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        42
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the mushroom from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        7
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the orange from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        32
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the pear from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        8
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the sweet potato from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        39
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Pick the tangerine from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        16
+      ],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        49
+      ],
+      "instruction": "Pick the yogurt from the sink and place it on the plate located on the counter.",
+      "n": 1,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        25
+      ],
+      "instruction": "Place the toasted item on a plate.",
+      "n": 50,
+      "sr": 0.98,
+      "success": 49,
+      "success_ep": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      "task": "PickPlaceToasterToCounter"
+    },
+    {
+      "failure": 11,
+      "failure_ep": [
+        2,
+        5,
+        17,
+        18,
+        21,
+        25,
+        31,
+        33,
+        35,
+        38,
+        40
+      ],
+      "instruction": "Fully slide the top dishwasher rack in.",
+      "n": 27,
+      "sr": 0.5925925925925926,
+      "success": 16,
+      "success_ep": [
+        1,
+        3,
+        4,
+        7,
+        10,
+        11,
+        12,
+        13,
+        20,
+        22,
+        24,
+        28,
+        32,
+        34,
+        42,
+        48
+      ],
+      "task": "SlideDishwasherRack"
+    },
+    {
+      "failure": 2,
+      "failure_ep": [
+        14,
+        36
+      ],
+      "instruction": "Fully slide the top dishwasher rack out.",
+      "n": 23,
+      "sr": 0.9130434782608695,
+      "success": 21,
+      "success_ep": [
+        0,
+        6,
+        8,
+        9,
+        15,
+        16,
+        19,
+        23,
+        26,
+        27,
+        29,
+        30,
+        37,
+        39,
+        41,
+        43,
+        44,
+        45,
+        46,
+        47,
+        49
+      ],
+      "task": "SlideDishwasherRack"
+    },
+    {
+      "failure": 11,
+      "failure_ep": [
+        3,
+        5,
+        14,
+        15,
+        22,
+        28,
+        31,
+        34,
+        37,
+        38,
+        39
+      ],
+      "instruction": "Turn off the front right burner of the stove.",
+      "n": 14,
+      "sr": 0.21428571428571427,
+      "success": 3,
+      "success_ep": [
+        29,
+        32,
+        40
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 6,
+      "failure_ep": [
+        10,
+        16,
+        18,
+        19,
+        25,
+        27
+      ],
+      "instruction": "Turn off the rear right burner of the stove.",
+      "n": 12,
+      "sr": 0.5,
+      "success": 6,
+      "success_ep": [
+        6,
+        12,
+        13,
+        21,
+        33,
+        46
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 7,
+      "failure_ep": [
+        7,
+        23,
+        26,
+        30,
+        35,
+        41,
+        42
+      ],
+      "instruction": "Turn off the front left burner of the stove.",
+      "n": 8,
+      "sr": 0.125,
+      "success": 1,
+      "success_ep": [
+        20
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 6,
+      "failure_ep": [
+        0,
+        2,
+        4,
+        9,
+        24,
+        48
+      ],
+      "instruction": "Turn off the front center burner of the stove.",
+      "n": 6,
+      "sr": 0.0,
+      "success": 0,
+      "success_ep": [],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 4,
+      "failure_ep": [
+        1,
+        11,
+        36,
+        49
+      ],
+      "instruction": "Turn off the rear left burner of the stove.",
+      "n": 5,
+      "sr": 0.2,
+      "success": 1,
+      "success_ep": [
+        8
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 1,
+      "failure_ep": [
+        43
+      ],
+      "instruction": "Turn off the left burner of the stove.",
+      "n": 3,
+      "sr": 0.6666666666666666,
+      "success": 2,
+      "success_ep": [
+        17,
+        47
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Turn off the center burner of the stove.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        45
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 0,
+      "failure_ep": [],
+      "instruction": "Turn off the rear center burner of the stove.",
+      "n": 1,
+      "sr": 1.0,
+      "success": 1,
+      "success_ep": [
+        44
+      ],
+      "task": "TurnOffStove"
+    },
+    {
+      "failure": 19,
+      "failure_ep": [
+        3,
+        4,
+        6,
+        7,
+        11,
+        12,
+        19,
+        20,
+        22,
+        23,
+        25,
+        27,
+        28,
+        31,
+        33,
+        39,
+        41,
+        48,
+        49
+      ],
+      "instruction": "Press down the lever to turn on the electric kettle.",
+      "n": 50,
+      "sr": 0.62,
+      "success": 31,
+      "success_ep": [
+        0,
+        1,
+        2,
+        5,
+        8,
+        9,
+        10,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        21,
+        24,
+        26,
+        29,
+        30,
+        32,
+        34,
+        35,
+        36,
+        37,
+        38,
+        40,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "task": "TurnOnElectricKettle"
+    },
+    {
+      "failure": 5,
+      "failure_ep": [
+        3,
+        8,
+        27,
+        29,
+        44
+      ],
+      "instruction": "Press the start button on the microwave.",
+      "n": 50,
+      "sr": 0.9,
+      "success": 45,
+      "success_ep": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        28,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        45,
+        46,
+        47,
+        48,
+        49
+      ],
+      "task": "TurnOnMicrowave"
+    },
+    {
+      "failure": 18,
+      "failure_ep": [
+        2,
+        9,
+        11,
+        15,
+        19,
+        20,
+        23,
+        25,
+        26,
+        27,
+        29,
+        31,
+        32,
+        34,
+        35,
+        36,
+        44,
+        47
+      ],
+      "instruction": "Turn on the sink faucet.",
+      "n": 50,
+      "sr": 0.64,
+      "success": 32,
+      "success_ep": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        12,
+        13,
+        14,
+        16,
+        17,
+        18,
+        21,
+        22,
+        24,
+        28,
+        30,
+        33,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        45,
+        46,
+        48,
+        49
+      ],
+      "task": "TurnOnSinkFaucet"
+    }
+  ],
+  "instructions": {
+    "different_exact_strings": 138,
+    "distinct_task_instruction_groups": 138,
+    "frequency_distribution": {
+      "1": 63,
+      "2": 20,
+      "3": 17,
+      "4": 7,
+      "5": 3,
+      "6": 2,
+      "7": 4,
+      "8": 1,
+      "9": 1,
+      "10": 2,
+      "12": 1,
+      "14": 1,
+      "15": 1,
+      "19": 1,
+      "22": 1,
+      "23": 1,
+      "27": 1,
+      "28": 1,
+      "31": 1,
+      "35": 1,
+      "50": 8
+    },
+    "groups_below_5": 107,
+    "groups_one_ep": 63
+  },
+  "limitations": [
+    "No matched No-TTT control in this result; R08 iter28000 underway",
+    "R03 and R07 have different runtime/source/scene sampling and media; not a controlled ablation",
+    "R07 media intentionally disabled, unlike R03; no rollout mp4 review",
+    "Per-instruction group sizes are often too small; avoid causal language conclusions",
+    "Individual 4 core files were not rehashed here; inventory entries and 900 result envelopes verified.",
+    "No full fast-weight tensor snapshots; scalar telemetry proves nonzero updates not downstream effect."
+  ],
+  "local_memory": {
+    "adapted_steps": 16,
+    "fast_state_norm": {
+      "count": 24666,
+      "max": 9.589969792091283,
+      "mean": 9.574127076151964,
+      "min": 9.558388594408326,
+      "p50": 9.57438557326564,
+      "p95": 9.578756271679929
+    },
+    "fast_update_norm": {
+      "count": 24666,
+      "max": 0.08664116263389587,
+      "mean": 0.010385685062689989,
+      "min": 0.0013152493629604578,
+      "p50": 0.008966636378318071,
+      "p95": 0.02392398938536644
+    },
+    "first_predictions": 900,
+    "first_prefix_present": 0,
+    "follow_prefix_present": 24666,
+    "follow_up_predictions": 24666,
+    "follow_zero_fast_update_norm": 0,
+    "inner_loss_mean": {
+      "count": 24666,
+      "max": 0.08860154449939728,
+      "mean": 0.002228108708021899,
+      "min": 9.207195944327395e-06,
+      "p50": 0.0005460752872750163,
+      "p95": 0.00981583259999752
+    },
+    "replay_true": 0,
+    "unique_sessions": 900
+  },
+  "performance": {
+    "avg_replans_per_ep": 28.406666666666666,
+    "avg_steps_per_ep": 446.53,
+    "executed_steps": 401877,
+    "first_result_beijing": "2026-11-05 13:41:50+0800",
+    "last_result_beijing": "2026-11-05 16:25:57+0800",
+    "manifest_beijing": "2026-11-05 13:37:30+0800",
+    "manifest_to_summary_ep_per_hour": 319.2404632460369,
+    "manifest_to_summary_s": 10149.089395046234,
+    "metrics": {
+      "batch_prepare_ms": {
+        "count": 25566,
+        "max": 6114.476868882775,
+        "mean": 2876.65293213571,
+        "min": 0.29302574694156647,
+        "p50": 2860.459951683879,
+        "p95": 4714.989084750414
+      },
+      "episode_elapsed_s": {
+        "count": 900,
+        "max": 946.7987800072879,
+        "mean": 336.37376730617757,
+        "min": 72.87496148981154,
+        "p50": 310.80010665301234,
+        "p95": 607.9378809201531
+      },
+      "native_generation_ms": {
+        "count": 25566,
+        "max": 25083.52151326835,
+        "mean": 1956.1609826070005,
+        "min": 979.5692153275013,
+        "p50": 1918.681664392352,
+        "p95": 2210.004784166813
+      },
+      "queue_ms": {
+        "count": 25566,
+        "max": 25478.08945737779,
+        "mean": 3157.7910536080967,
+        "min": 3.002382814884186,
+        "p50": 3132.8472746536136,
+        "p95": 5190.659844782203
+      },
+      "request_latency_ms": {
+        "count": 25566,
+        "max": 30909.335682168603,
+        "mean": 8131.499346120391,
+        "min": 1305.00628054142,
+        "p50": 8050.367347896099,
+        "p95": 11351.752754300833
+      }
+    },
+    "r03_manifest_to_summary_ep_per_hour": 58.02882354397742,
+    "replans": 25566,
+    "start_beijing": "2026-11-05 13:35:53+0800",
+    "start_to_summary_ep_per_hour": 316.1923844266505,
+    "start_to_summary_s": 10246.926110744476,
+    "summary_beijing": "2026-11-05 16:26:39+0800"
+  },
+  "results": {
+    "all_per_task_episode_ids_verified": true,
+    "clean_execution": true,
+    "closed_owner_processes": [
+      34,
+      34
+    ],
+    "core_inventory_entries_reported": 3600,
+    "expected": 900,
+    "failure": 320,
+    "interrupted": 0,
+    "invalid": 0,
+    "pending": 0,
+    "reset_ok": 900,
+    "result_envelope_sha256_verified": 900,
+    "results_qualified": true,
+    "sr": 0.6444444444444445,
+    "status": "complete",
+    "success": 580,
+    "valid": 900
+  },
+  "run_name": "R07_900ep_iter27700_m16b8_v3_nomedia_20261105",
+  "run_root": "/mnt/data1/data_v2_0617/robocasa_eval_runs/local_ttt_robocasa_raw15/packed128_droid_fresh_g1_20261019/R07_900ep_iter27700_m16b8_v3_nomedia_20261105",
+  "sampling": {
+    "independent_slot_environment_seed_then_continuous_reset_v4": 900
+  },
+  "schema": "psm_local_ttt_r07_900ep_aggregates_v1",
+  "scope": "read_only_completed_run_analysis",
+  "tasks": [
+    {
+      "delta_pct_points": 20,
+      "failure": 36,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 900,
+      "r03_sr_pct": 8,
+      "r03_success": 4,
+      "sr_pct": 28,
+      "success": 14,
+      "task": "CloseBlenderLid"
+    },
+    {
+      "delta_pct_points": 18,
+      "failure": 19,
+      "instruction_groups": 2,
+      "n": 50,
+      "official_horizon": 900,
+      "r03_sr_pct": 44,
+      "r03_success": 22,
+      "sr_pct": 62,
+      "success": 31,
+      "task": "CloseFridge"
+    },
+    {
+      "delta_pct_points": 28,
+      "failure": 6,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 450,
+      "r03_sr_pct": 60,
+      "r03_success": 30,
+      "sr_pct": 88,
+      "success": 44,
+      "task": "CloseToasterOvenDoor"
+    },
+    {
+      "delta_pct_points": 8,
+      "failure": 19,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 600,
+      "r03_sr_pct": 54,
+      "r03_success": 27,
+      "sr_pct": 62,
+      "success": 31,
+      "task": "CoffeeSetupMug"
+    },
+    {
+      "delta_pct_points": 14,
+      "failure": 42,
+      "instruction_groups": 13,
+      "n": 50,
+      "official_horizon": 450,
+      "r03_sr_pct": 2,
+      "r03_success": 1,
+      "sr_pct": 16,
+      "success": 8,
+      "task": "NavigateKitchen"
+    },
+    {
+      "delta_pct_points": 12,
+      "failure": 7,
+      "instruction_groups": 2,
+      "n": 50,
+      "official_horizon": 1050,
+      "r03_sr_pct": 74,
+      "r03_success": 37,
+      "sr_pct": 86,
+      "success": 43,
+      "task": "OpenCabinet"
+    },
+    {
+      "delta_pct_points": 26,
+      "failure": 18,
+      "instruction_groups": 2,
+      "n": 50,
+      "official_horizon": 750,
+      "r03_sr_pct": 38,
+      "r03_success": 19,
+      "sr_pct": 64,
+      "success": 32,
+      "task": "OpenDrawer"
+    },
+    {
+      "delta_pct_points": -2,
+      "failure": 18,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 450,
+      "r03_sr_pct": 66,
+      "r03_success": 33,
+      "sr_pct": 64,
+      "success": 32,
+      "task": "OpenStandMixerHead"
+    },
+    {
+      "delta_pct_points": 8,
+      "failure": 22,
+      "instruction_groups": 43,
+      "n": 50,
+      "official_horizon": 750,
+      "r03_sr_pct": 48,
+      "r03_success": 24,
+      "sr_pct": 56,
+      "success": 28,
+      "task": "PickPlaceCounterToCabinet"
+    },
+    {
+      "delta_pct_points": 2,
+      "failure": 10,
+      "instruction_groups": 24,
+      "n": 50,
+      "official_horizon": 600,
+      "r03_sr_pct": 78,
+      "r03_success": 39,
+      "sr_pct": 80,
+      "success": 40,
+      "task": "PickPlaceCounterToStove"
+    },
+    {
+      "delta_pct_points": 26,
+      "failure": 22,
+      "instruction_groups": 9,
+      "n": 50,
+      "official_horizon": 750,
+      "r03_sr_pct": 30,
+      "r03_success": 15,
+      "sr_pct": 56,
+      "success": 28,
+      "task": "PickPlaceDrawerToCounter"
+    },
+    {
+      "delta_pct_points": 22,
+      "failure": 10,
+      "instruction_groups": 25,
+      "n": 50,
+      "official_horizon": 900,
+      "r03_sr_pct": 58,
+      "r03_success": 29,
+      "sr_pct": 80,
+      "success": 40,
+      "task": "PickPlaceSinkToCounter"
+    },
+    {
+      "delta_pct_points": 24,
+      "failure": 1,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 600,
+      "r03_sr_pct": 74,
+      "r03_success": 37,
+      "sr_pct": 98,
+      "success": 49,
+      "task": "PickPlaceToasterToCounter"
+    },
+    {
+      "delta_pct_points": 22,
+      "failure": 13,
+      "instruction_groups": 2,
+      "n": 50,
+      "official_horizon": 450,
+      "r03_sr_pct": 52,
+      "r03_success": 26,
+      "sr_pct": 74,
+      "success": 37,
+      "task": "SlideDishwasherRack"
+    },
+    {
+      "delta_pct_points": 8,
+      "failure": 35,
+      "instruction_groups": 8,
+      "n": 50,
+      "official_horizon": 750,
+      "r03_sr_pct": 22,
+      "r03_success": 11,
+      "sr_pct": 30,
+      "success": 15,
+      "task": "TurnOffStove"
+    },
+    {
+      "delta_pct_points": 20,
+      "failure": 19,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 450,
+      "r03_sr_pct": 42,
+      "r03_success": 21,
+      "sr_pct": 62,
+      "success": 31,
+      "task": "TurnOnElectricKettle"
+    },
+    {
+      "delta_pct_points": 0,
+      "failure": 5,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 450,
+      "r03_sr_pct": 90,
+      "r03_success": 45,
+      "sr_pct": 90,
+      "success": 45,
+      "task": "TurnOnMicrowave"
+    },
+    {
+      "delta_pct_points": -4,
+      "failure": 18,
+      "instruction_groups": 1,
+      "n": 50,
+      "official_horizon": 600,
+      "r03_sr_pct": 68,
+      "r03_success": 34,
+      "sr_pct": 64,
+      "success": 32,
+      "task": "TurnOnSinkFaucet"
+    }
+  ]
+}
