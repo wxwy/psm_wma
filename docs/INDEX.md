@@ -4,6 +4,7 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## Completed evaluation results
 
+- **[RoboCasa365 Local-TTT / No-TTT 训练监控与配置归档](eval/training/robocasa365_v3/README.md)** — 真实训练配置/身份、Fresh/Resume历史、每100步Loss和梯度/Fast Weight/吞吐/显存曲线及Checkpoint保留策略；两组全分辨率逐步档案仍在服务器，GitHub只存已获准的小型摘要。
 - **[RoboCasa365 Local-TTT 正式评测总报告（跨Checkpoint）](eval/reports/PSM-WMA_V3_RoboCasa365_Local_TTT_Evaluation_Report.md)** — 统一入口；R03 iter20000：454/900、SR 50.44%；R07 iter27700：580/900、SR 64.44%。包含18 Task的完整对比、Local-TTT Fast Weight证据、真实Batch/吞吐、语言覆盖差异及不可直接因果归因的说明。
 - [R07 原始语言指令与900EP索引（138组）](eval/reports/2026-11-05_R07_900EP/instructions.md) — 全量原始Task+instruction分组、各组N/S/F/SR及成功/失败EP编号。
 - [R07 机器可读审计归档](eval/reports/2026-11-05_R07_900EP/audit_summary.json) — 原始Run身份、900份结果校验、25,566次Replan、4,285个真实Native Batch、Online Fast State统计与源SHA；独立只读聚合。
