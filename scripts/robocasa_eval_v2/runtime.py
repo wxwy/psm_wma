@@ -11,6 +11,7 @@ import socket
 import threading
 import time
 import uuid
+from collections import deque
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 from types import SimpleNamespace
@@ -36,6 +37,32 @@ from robocasa_processes import group_members
 from robocasa_eval_v2 import identity, resources
 from robocasa_eval_v2.config import execution, rendering
 from robocasa_eval_v2.startup import StartupBudget
+
+
+def limit_streaming_scheduler_to_prefix(scheduler, max_episode_index_exclusive):
+    """Bound Fresh/Resume dispatch only; leave frozen 50EP scientific Run intact.
+
+    For 10/50 stage, only EP0..9 are eligible. A later Resume without the
+    ceiling scans all 50 and reuses committed Core without reexecuting them.
+    """
+    if max_episode_index_exclusive is None:
+        return
+    if not isinstance(scheduler, StreamingScheduler):
+        raise ValueError("stage prefix requires streaming scheduler")
+    if scheduler.inflight or scheduler.resume_scan:
+        raise ValueError("stage ceiling must be installed before first dispatch")
+    limit = max_episode_index_exclusive
+    if type(limit) is not int or not 1 <= limit < scheduler.store.manifest["episodes_per_task"]:
+        raise ValueError("invalid stage prefix ceiling")
+    with scheduler._lock:
+        scheduler.pending = {
+            task: deque(ep for ep in queue if ep < limit)
+            for task, queue in scheduler.pending.items()
+        }
+        scheduler._record("STAGE_PREFIX_LIMIT", {
+            "dispatch_episode_index_exclusive": limit,
+            "manifest_episodes_per_task": scheduler.store.manifest["episodes_per_task"],
+        })
 
 
 class Runtime:
@@ -1023,6 +1050,9 @@ class Runtime:
             StreamingScheduler(self.store, self.slot_ids)
             if self.streaming
             else RoundScheduler(self.store, self.workers)
+        )
+        limit_streaming_scheduler_to_prefix(
+            scheduler, self.cfg.get("stage_episode_limit_per_task")
         )
         pool = ThreadPoolExecutor(max_workers=len(self.workers))
         futures = {}
