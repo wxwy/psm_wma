@@ -7,10 +7,18 @@ import math
 import os
 from pathlib import Path
 
+from cosmos_framework.evaluation.robocasa_v2.contract import (
+    ROUND_SCHEDULE,
+    STREAMING_SCHEDULE,
+    validate_streaming_resources,
+)
+
 DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
     "local_memory_mode": "required",
+    "scheduling_protocol": ROUND_SCHEDULE,
+    "streaming_resources": None,
     "batch_wait_ms": 20,
     "tasks": "all",
     "episodes_per_task": 50,
@@ -63,6 +71,9 @@ def resolve(argv=None):
     p.add_argument("--render-backend", choices=("egl", "osmesa"))
     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
     p.add_argument("--local-memory-mode", choices=("off", "required"))
+    p.add_argument(
+        "--scheduling-protocol", choices=(ROUND_SCHEDULE, STREAMING_SCHEDULE)
+    )
     p.add_argument("--batch-wait-ms", type=int)
     p.add_argument("--sims-per-gpu", type=int)
     p.add_argument("--max-infer-batch-size", type=int)
@@ -98,6 +109,7 @@ def resolve(argv=None):
         "execution_profile",
         "batch_wait_ms",
         "local_memory_mode",
+        "scheduling_protocol",
         "media_spool_max_jobs",
         "media_spool_max_bytes",
         "media_drain_timeout_s",
@@ -155,6 +167,23 @@ def resolve(argv=None):
         raise ValueError("plan/port range")
     if cfg["execution_profile"] not in ("phase_a", "phase_b"):
         raise ValueError("explicit execution profile required")
+    if cfg["scheduling_protocol"] not in (ROUND_SCHEDULE, STREAMING_SCHEDULE):
+        raise ValueError("explicit versioned scheduling protocol required")
+    is_streaming = cfg["scheduling_protocol"] == STREAMING_SCHEDULE
+    if is_streaming:
+        if cfg["execution_profile"] != "phase_b":
+            raise ValueError("streaming scheduling requires Phase B")
+        validate_streaming_resources(cfg["streaming_resources"])
+        if (
+            max(
+                cfg["streaming_resources"][k]
+                for k in ("sim_startup_rss_bytes", "server_startup_rss_bytes")
+            )
+            > cfg["max_rss_bytes"]
+        ):
+            raise ValueError("startup RSS reservation exceeds owned RSS budget")
+    elif cfg["streaming_resources"] is not None:
+        raise ValueError("streaming resources require a new streaming Run")
     if cfg["local_memory_mode"] not in ("off", "required"):
         raise ValueError("explicit off|required Local-TTT mode required")
     if cfg["local_memory_mode"] == "off" and cfg["execution_profile"] != "phase_b":
@@ -162,8 +191,8 @@ def resolve(argv=None):
             "No-TTT requires the shared transactional phase_b profile (B1 or B2+)"
         )
     if (
-        cfg["sims_per_gpu"] > 8
-        or cfg["max_infer_batch_size"] > 8
+        cfg["sims_per_gpu"] > (32 if is_streaming else 8)
+        or cfg["max_infer_batch_size"] > (32 if is_streaming else 8)
         or type(cfg["batch_wait_ms"]) is not int
         or not 1 <= cfg["batch_wait_ms"] <= 1000
     ):
@@ -244,7 +273,7 @@ def resolve(argv=None):
 def execution(cfg):
     if cfg.get("execution_profile", "phase_a") == "phase_a":
         return None
-    return {
+    result = {
         "profile": "phase_b_native_batch_v1",
         "gpu_ids": list(cfg["gpu_ids"]),
         "sims_per_gpu": cfg["sims_per_gpu"],
@@ -252,6 +281,13 @@ def execution(cfg):
         "batch_wait_ms": cfg["batch_wait_ms"],
         "noise": "literal_cfg_seed_per_sample_v1",
     }
+    if cfg.get("scheduling_protocol", ROUND_SCHEDULE) == STREAMING_SCHEDULE:
+        result.update(
+            scheduling=STREAMING_SCHEDULE,
+            resources=cfg["streaming_resources"],
+            max_rss_bytes=cfg["max_rss_bytes"],
+        )
+    return result
 
 
 def rendering(cfg):

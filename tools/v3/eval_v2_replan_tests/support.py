@@ -63,6 +63,7 @@ def production_function(name, namespace=None):
         Reply=transactions.Reply,
         json_bytes=transactions.json_bytes,
         strict_json=transactions.strict_json,
+        transaction_capacity=transactions.transaction_capacity,
     )
     scope.update(namespace or {})
     exec(compile(ast.Module(body=[node], type_ignores=[]), str(source), "exec"), scope)

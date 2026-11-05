@@ -152,6 +152,8 @@ def main(
         overrides = dict(
             CUDA_VISIBLE_DEVICES="",
             COSMOS_DEVICE="cpu",
+            MUJOCO_GL="osmesa",
+            PYOPENGL_PLATFORM="osmesa",
             HF_HUB_OFFLINE="1",
             TRANSFORMERS_OFFLINE="1",
             PYTHONDONTWRITEBYTECODE="1",

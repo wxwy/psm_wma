@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import contextlib
 import json
 import os
 import secrets
@@ -14,9 +15,10 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 from types import SimpleNamespace
 
-from cosmos_framework.evaluation.robocasa_v2.contract import result_record
+from cosmos_framework.evaluation.robocasa_v2.contract import result_record, streaming
 from cosmos_framework.evaluation.robocasa_v2.scheduler import (
     RoundScheduler,
+    StreamingScheduler,
     slot_disposition,
 )
 from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
@@ -33,6 +35,7 @@ from robocasa_processes import group_members
 
 from robocasa_eval_v2 import identity, resources
 from robocasa_eval_v2.config import execution, rendering
+from robocasa_eval_v2.startup import StartupBudget
 
 
 class Runtime:
@@ -116,6 +119,59 @@ class Runtime:
         self.latest_attempts = {}
         self.phases = {}
         self.closed = False
+        self.streaming = streaming(store.manifest)
+        self.capacity_profile = "streaming32" if self.streaming else "legacy8"
+        self.state_lock = threading.RLock()
+        self.owned_processes = {}
+        self.starting = threading.Condition()
+        self._closing = False
+        self._active_jobs = 0
+        self.episodes_finished = 0
+        self.worker_locks = {w: threading.RLock() for w in self.workers}
+        self.server_locks = {
+            g: threading.Lock() for g in set(self.worker_gpus.values())
+        }
+        self.startup_budget = (
+            StartupBudget(cfg, self._measure) if self.streaming else None
+        )
+
+    def _snapshot(self, name):
+        with self.state_lock:
+            return dict(getattr(self, name))
+
+    def _processes(self):
+        if self.streaming:
+            return list(self._snapshot("owned_processes").values())
+        return [v[0] for v in self._snapshot("servers").values()] + [
+            a.owned for a in self._snapshot("actors").values()
+        ]
+
+    def _measure(self):
+        return self.resource_probe(self.cfg, self._processes())
+
+    def _spawn(self, *args, **kwargs):
+        # Popen + durable ownership record only; no READY/HTTP/vendor work.
+        with self.starting:
+            if self._closing or self.stop.is_set():
+                raise RuntimeError("cancelled before process creation")
+            owned, record = self.registry.start(*args, **kwargs)
+            if self.streaming:
+                with self.state_lock:
+                    self.owned_processes[record["id"]] = owned
+            return owned, record
+
+    @contextlib.contextmanager
+    def _job(self):
+        with self.starting:
+            if self._closing or self.stop.is_set():
+                raise RuntimeError("cancelled before Slot ownership")
+            self._active_jobs += 1
+        try:
+            yield
+        finally:
+            with self.starting:
+                self._active_jobs -= 1
+                self.starting.notify_all()
 
     def _proof(self, kind, data):
         name = f"{kind}_{uuid.uuid4().hex}.json"
@@ -188,6 +244,22 @@ class Runtime:
                         break
 
     def _server(self, worker):
+        if not self.streaming:
+            return self._create_server(worker)
+        gpu = self.worker_gpus[worker]
+        with self.server_locks[gpu]:
+            if f"GPU{gpu}" in self.servers:
+                return self.servers[f"GPU{gpu}"]
+            if self.stop.is_set():
+                raise RuntimeError("cancelled Policy Server startup")
+            try:
+                with self.startup_budget.reserve(f"server:{gpu}", "server", gpu):
+                    return self._create_server(worker)
+            except BaseException:
+                self.stop.set()  # Invalid READY/INFO/proof is terminal, never a retry.
+                raise
+
+    def _create_server(self, worker):
         gpu = self.worker_gpus[worker]
         key = f"GPU{gpu}" if self.batch_profile else worker
         if key in self.servers:
@@ -197,7 +269,8 @@ class Runtime:
         port = self.cfg["base_port"] + index
         env = dict(self.environment, CUDA_VISIBLE_DEVICES=str(gpu))
         log = (self.store.root / "logs" / f"{key}_server.log").open("ab")
-        self.logs.append(log)
+        with self.state_lock:
+            self.logs.append(log)
         args = SimpleNamespace(
             server_python=self.cfg["server_python"],
             num_steps=self.cfg["prediction_steps"],
@@ -250,7 +323,10 @@ class Runtime:
                 "--media-drain-timeout-s",
                 str(self.cfg.get("media_drain_timeout_s", 300.0)),
             ]
-        owned, rec = self.registry.start(
+            if self.streaming:
+                command += ["--transaction-capacity-profile", self.capacity_profile]
+        started = time.perf_counter()
+        owned, rec = self._spawn(
             command,
             kind="server",
             env=env,
@@ -258,7 +334,6 @@ class Runtime:
             stdout=log,
             stderr=log,
         )
-        self.servers[key] = (owned, rec, port)
         try:
             info = wait_server(
                 owned.proc,
@@ -303,13 +378,44 @@ class Runtime:
                 raise ValueError(
                     "effective Server media spool/drain configuration mismatch"
                 )
+            if self.streaming and tx.get("capacity_profile") != self.capacity_profile:
+                raise ValueError("effective Server capacity profile mismatch")
         self._proof("server_identity", {"process": rec, "info": info})
+        self.store.record_timing("server_startup", time.perf_counter() - started)
+        with self.starting:
+            if self._closing or self.stop.is_set():
+                raise RuntimeError("Server startup completed after cancellation")
+            with self.state_lock:
+                self.servers[key] = (owned, rec, port)
         return self.servers[key]
 
     def _actor(self, claim):
+        if not self.streaming:
+            return self._setup_actor(claim)
+        worker = claim["physical_worker"]
+        with self._job(), self.worker_locks[worker]:
+            while not self.startup_budget.initializers.acquire(timeout=0.05):
+                if self.stop.is_set():
+                    raise RuntimeError("cancelled during initialization admission")
+            try:
+                # A Server is shared and admitted separately, before a Sim reservation.
+                self._server(worker)
+                admission = (
+                    self.startup_budget.reserve(
+                        worker, "sim", self.worker_render_gpus[worker]
+                    )
+                    if self.actor_tasks.get(worker) != claim["task"]
+                    else contextlib.nullcontext()
+                )
+                with admission:
+                    return self._setup_actor(claim)
+            finally:
+                self.startup_budget.initializers.release()
+
+    def _setup_actor(self, claim):
         task = claim["task"]
         worker = claim["physical_worker"]
-        with self.setup_lock:
+        with self.worker_locks[worker] if self.streaming else self.setup_lock:
             if self.stop.is_set():
                 raise RuntimeError("cancelled before runtime startup")
             server, server_rec, port = self._server(claim["physical_worker"])
@@ -371,6 +477,8 @@ class Runtime:
                     "local_memory_mode": self.store.manifest["protocol"][
                         "local_memory"
                     ],
+                    "capacity_profile": self.capacity_profile,
+                    "sampling_protocol": self.store.manifest["protocol"]["sampling"],
                     "predict_timeout_s": self.cfg["request_timeout_s"],
                     "save_rollout_mp4": self.cfg["save_rollout_mp4"],
                     "rollout_mp4_first_n_per_task": self.cfg.get(
@@ -413,7 +521,8 @@ class Runtime:
                 "MUJOCO_EGL_DEVICE_ID", None
             )  # Worker resolves the physical PCI -> EGL index before imports.
             log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
-            self.logs.append(log)
+            with self.state_lock:
+                self.logs.append(log)
             command = [
                 self.cfg["sim_python"],
                 "-B",
@@ -427,7 +536,7 @@ class Runtime:
                 str(child.fileno()),
             ]
             try:
-                owned, rec = self.registry.start(
+                owned, rec = self._spawn(
                     command,
                     kind=f"simulator_slot:{self.slot_ids[worker]}",
                     env=env,
@@ -456,8 +565,16 @@ class Runtime:
                     else 0
                 ),
             )
-            self.actors[worker] = actor
+            with self.state_lock:
+                self.actors[worker] = actor
+            started = time.perf_counter()
             ready = actor._receive()
+            self.store.record_timing("worker_ready", time.perf_counter() - started)
+            if self.streaming:
+                self._proof(
+                    "worker_startup_timing",
+                    {"worker": worker, "stages": ready.get("startup_timing_ms", {})},
+                )
             if (
                 ready.get("kind") != "READY"
                 or ready.get("pid") != owned.proc.pid
@@ -472,11 +589,7 @@ class Runtime:
                 ready.get("rendering"), render_plan
             )
             self._proof("render_device", self.actor_rendering[worker])
-            self.resource_probe(
-                self.cfg,
-                [v[0] for v in self.servers.values()]
-                + [x.owned for x in self.actors.values()],
-            )
+            self._measure()
             return self._start_assignment(claim, actor, server_rec)
 
     def _start_assignment(self, claim, actor, server_record):
@@ -485,9 +598,11 @@ class Runtime:
         grant = None
         if self.actor_tasks.get(worker) != task:
             grant = self.store.allocate_environment(task, self.slot_ids[worker])
+        started = time.perf_counter()
         ready = actor.request(
             "start_episode", attempt=a, grant=grant, health_only="attempt_id" not in a
         )
+        self.store.record_timing("make_env_assignment", time.perf_counter() - started)
         if (
             ready.get("task") != task
             or ready.get("physical_slot_id") != self.slot_ids[worker]
@@ -513,11 +628,7 @@ class Runtime:
                 "server": server_record,
             },
         )
-        self.resource_probe(
-            self.cfg,
-            [v[0] for v in self.servers.values()]
-            + [x.owned for x in self.actors.values()],
-        )
+        self._measure()
         for error in self.store.errors(task):
             if error["resolution"] is None and error["stream_id"] != a["stream_id"]:
                 self.certificates[error["id"]] = self.store.certify_recovery(
@@ -525,6 +636,7 @@ class Runtime:
                     error["stream_id"],
                     lambda _, p=proof: {"probe_id": p, "healthy": True},
                 )
+        self.phases[worker] = "ready"
         return actor
 
     def _register_assignment(self, claim, deadline):
@@ -538,6 +650,7 @@ class Runtime:
         _, _, port = self.servers[key]
         self.slot_generations[worker] += 1
         a = claim["attempt"]
+        started = time.perf_counter()
         with requests.Session() as transport:
             transport.trust_env = False
             client = TransactionPolicyClient(
@@ -550,6 +663,8 @@ class Runtime:
                 batch_profile=True,
                 max_batch_size=self.cfg["max_infer_batch_size"],
                 local_memory_mode=self.store.manifest["protocol"]["local_memory"],
+                capacity_profile=self.capacity_profile,
+                cancelled=self.stop.is_set,
             )
             lease = client.register(
                 {
@@ -563,17 +678,28 @@ class Runtime:
                 },
                 self.server_owners[key],
             )
+            self.store.record_timing("session_register", time.perf_counter() - started)
             return {
                 "lease": lease,
                 "prediction_clock_domain": client.clock_domain,
                 "local_memory_mode": client.mode,
                 "profile": client.protocol,
+                "capacity_profile": self.capacity_profile,
             }
 
     def run_slot(self, scheduler, claim):
+        with self._job(), self.worker_locks[claim["physical_worker"]]:
+            if self.stop.is_set():
+                raise RuntimeError("cancelled before Episode execution")
+            result = self._run_slot(scheduler, claim)
+            with self.state_lock:
+                self.episodes_finished += 1
+            return result
+
+    def _run_slot(self, scheduler, claim):
         a = claim["attempt"]
         task = a["task"]
-        self.latest_attempts[task] = a
+        self.latest_attempts[claim["physical_worker"] if self.streaming else task] = a
         self.slot_claim_tasks[claim["physical_worker"]] = task
         try:
             identity.guard(self.cfg, self.store.manifest, self.inputs, source=False)
@@ -583,7 +709,10 @@ class Runtime:
                 if self.stop.is_set():
                     raise RuntimeError("evaluation cancelled")
                 sample = self.store.begin_initialization(a)
+                self.phases[claim["physical_worker"]] = "environment_initialization"
+                reset_started = time.perf_counter()
                 response = actor.request("initialize", deadline=deadline)
+                self.store.record_timing("reset", time.perf_counter() - reset_started)
                 if (
                     response.get("error") is None
                     and self.render_policy["backend"] == "egl"
@@ -713,18 +842,7 @@ class Runtime:
                 raise RuntimeError(
                     "owned media/process descendants remain after Core commit: encoder/feeder or server media not quiescent"
                 )
-            for error in self.store.errors(task):
-                cert = self.certificates.get(error["id"])
-                if error["resolution"] is None and cert:
-                    self.store.resolve_error(
-                        task,
-                        error["id"],
-                        cert,
-                        replacement=row
-                        if error["attempt"] is not None
-                        and not error["core_committed_at_fault"]
-                        else None,
-                    )
+            self._resolve_faults(task, row)
             scheduler.finish(claim)
             self.phases[claim["physical_worker"]] = "idle"
             return {"task": task, "episode": a["episode"], "outcome": row["outcome"]}
@@ -742,11 +860,28 @@ class Runtime:
             self.stop.set()
             raise
 
+    def _resolve_faults(self, task, row):
+        for error in self.store.errors(task):
+            cert = self.certificates.get(error["id"])
+            if error["resolution"] is not None or cert is None:
+                continue
+            missing = (
+                error["attempt"] is not None and not error["core_committed_at_fault"]
+            )
+            if missing and error["attempt"]["episode"] != row["episode"]:
+                continue
+            self.store.resolve_error(
+                task, error["id"], cert, replacement=row if missing else None
+            )
+
     def close(self):
         if self.closed:
             return
+        with self.starting:
+            self._closing = True
+            self.stop.set()
         errors = []
-        for worker, actor in list(self.actors.items()):
+        for worker, actor in self._snapshot("actors").items():
             task = self.slot_claim_tasks.get(worker, self.actor_tasks.get(worker))
             try:
                 was = actor.owned.proc.poll()
@@ -755,8 +890,17 @@ class Runtime:
                     raise RuntimeError(str(proof))
             except Exception as e:
                 if task in self.store.active_tasks:
-                    errors.append((task, repr(e)))
-        for worker, (owned, record, port) in self.servers.items():
+                    attempt = self.latest_attempts.get(
+                        worker if self.streaming else task
+                    )
+                    errors.append(
+                        (
+                            task,
+                            repr(e),
+                            attempt if attempt and attempt["task"] == task else None,
+                        )
+                    )
+        for worker, (owned, record, port) in self._snapshot("servers").items():
             try:
                 was = owned.proc.poll()
                 self.registry.close(owned, record)
@@ -772,10 +916,27 @@ class Runtime:
                 for w in affected:
                     task = self.slot_claim_tasks.get(w, self.actor_tasks.get(w))
                     if task in self.store.active_tasks:
-                        errors.append((task, repr(e)))
-        for task, message in errors:
+                        attempt = self.latest_attempts.get(
+                            w if self.streaming else task
+                        )
+                        errors.append(
+                            (
+                                task,
+                                repr(e),
+                                attempt
+                                if attempt and attempt["task"] == task
+                                else None,
+                            )
+                        )
+        # The spawn gate is already closed. This also reaps registered Servers
+        # whose READY handshake never completed and therefore were not published.
+        self.registry.recover()
+        with self.starting:
+            while self._active_jobs:
+                self.starting.wait(0.05)
+        for task, message, attempt in errors:
             self.store.record_process_error(
-                task, "process_cleanup", message, attempt=self.latest_attempts.get(task)
+                task, "process_cleanup", message, attempt=attempt
             )
         self.registry.recover()  # Must succeed before any positive cleanup receipt.
         proof = self._proof(
@@ -801,7 +962,7 @@ class Runtime:
         import requests
 
         values = {}
-        for key, (owned, rec, port) in self.servers.items():
+        for key, (owned, rec, port) in self._snapshot("servers").items():
             try:
                 with requests.Session() as transport:
                     transport.trust_env = False
@@ -823,12 +984,16 @@ class Runtime:
                         "media_spool_max_bytes",
                         "media_drain_timeout_s",
                         "quarantined",
+                        "queue_wait_p50_ms",
+                        "queue_wait_p95_ms",
+                        "batch_generate_ms",
+                        "requests_finished",
                     )
                 }
             except Exception as error:
                 values[key] = {"diagnostic_error": type(error).__name__}
         try:
-            save(self.store.root / "_internal/batch_status.json", values)
+            write(self.store.root / "_internal/batch_status.json", values, replace=True)
         except OSError:
             pass
         return values
@@ -854,12 +1019,17 @@ class Runtime:
                 for g in set(self.worker_gpus.values())
             ]
         )
-        scheduler = RoundScheduler(self.store, self.workers)
+        scheduler = (
+            StreamingScheduler(self.store, self.slot_ids)
+            if self.streaming
+            else RoundScheduler(self.store, self.workers)
+        )
         pool = ThreadPoolExecutor(max_workers=len(self.workers))
         futures = {}
         original = None
         last_round = -1
         last_print = 0
+        last_resource_check = 0
         try:
             for task in self.store.manifest["task_order"]:
                 old_errors = [
@@ -880,7 +1050,9 @@ class Runtime:
                         self.store.resolve_error(task, e["id"], cert)
             while not scheduler.done:
                 for worker in self.workers:
-                    if worker not in scheduler.inflight:
+                    with scheduler._lock:
+                        idle = worker not in scheduler.inflight
+                    if idle:
                         claim = scheduler.dispatch(worker)
                         if claim:
                             futures[pool.submit(self.run_slot, scheduler, claim)] = (
@@ -894,17 +1066,16 @@ class Runtime:
                         print("[eval-v2] " + json.dumps(result), flush=True)
                 if self.stop.is_set():
                     raise RuntimeError("native Worker requested safe stop")
-                for task, actor in list(self.actors.items()):
+                for task, actor in self._snapshot("actors").items():
                     if actor.owned.proc.poll() is not None:
                         raise RuntimeError(f"native Task Worker exited: {task}")
-                if scheduler.round != last_round:
+                if (self.streaming and time.monotonic() - last_resource_check >= 1) or (
+                    not self.streaming and scheduler.round != last_round
+                ):
                     identity.guard(self.cfg, self.store.manifest, self.inputs)
-                    self.resource_probe(
-                        self.cfg,
-                        [v[0] for v in self.servers.values()]
-                        + [x.owned for x in self.actors.values()],
-                    )
+                    self._measure()
                     last_round = scheduler.round
+                    last_resource_check = time.monotonic()
                 if time.monotonic() - last_print >= 5:
                     from cosmos_framework.evaluation.robocasa_v2.store import read
 
@@ -950,6 +1121,30 @@ class Runtime:
                         + json.dumps(
                             {
                                 "round": scheduler.round + 1,
+                                "scheduling_protocol": self.store.manifest["protocol"][
+                                    "schedule"
+                                ],
+                                "active_sim_slots": len(self._snapshot("actors")),
+                                "slot_phases": {
+                                    stage: sum(
+                                        self.phases.get(w, "idle") == stage
+                                        for w in self.workers
+                                    )
+                                    for stage in (
+                                        "model_loading",
+                                        "environment_initialization",
+                                        "executing",
+                                        "result_validation",
+                                        "idle",
+                                    )
+                                },
+                                "episodes_finished": self.episodes_finished,
+                                "waiting_policy": sum(
+                                    s["stage"] == "predicting" for s in statuses
+                                ),
+                                "ready": sum(
+                                    self.phases.get(w) == "ready" for w in self.workers
+                                ),
                                 "workers": statuses,
                                 "native_batches": self._batch_telemetry()
                                 if self.batch_profile
@@ -965,10 +1160,11 @@ class Runtime:
             scheduler.cancel(repr(e))
             # Keep the approved commit/cancel serialization. A switched-out Task
             # has no in-flight producer merely because its logical stream is open.
-            affected = {c["task"] for c in scheduler.inflight.values()}
+            with scheduler._lock:
+                affected = {c["task"] for c in scheduler.inflight.values()}
             affected.update(
                 self.slot_claim_tasks[w]
-                for w in self.actors
+                for w in self._snapshot("actors")
                 if w in self.slot_claim_tasks
             )
             for task in affected:
@@ -976,11 +1172,11 @@ class Runtime:
                     task,
                     "coordinator_stop",
                     repr(e),
-                    attempt=self.latest_attempts.get(task),
+                    attempt=None if self.streaming else self.latest_attempts.get(task),
                 )
         finally:
             if original is not None:
-                for actor in self.actors.values():
+                for actor in self._snapshot("actors").values():
                     try:
                         actor.channel.shutdown(socket.SHUT_RDWR)
                     except OSError:
