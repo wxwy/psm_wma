@@ -4,6 +4,9 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## Completed evaluation results
 
+- **[RoboCasa365 Local-TTT 正式评测总报告（跨Checkpoint）](eval/reports/PSM-WMA_V3_RoboCasa365_Local_TTT_Evaluation_Report.md)** — 统一入口；R03 iter20000：454/900、SR 50.44%；R07 iter27700：580/900、SR 64.44%。包含18 Task的完整对比、Local-TTT Fast Weight证据、真实Batch/吞吐、语言覆盖差异及不可直接因果归因的说明。
+- [R07 原始语言指令与900EP索引（138组）](eval/reports/2026-11-05_R07_900EP/instructions.md) — 全量原始Task+instruction分组、各组N/S/F/SR及成功/失败EP编号。
+- [R07 机器可读审计归档](eval/reports/2026-11-05_R07_900EP/audit_summary.json) — 原始Run身份、900份结果校验、25,566次Replan、4,285个真实Native Batch、Online Fast State统计与源SHA；独立只读聚合。
 - [R03 900EP 正式评测报告：Local-TTT iter20000](eval/reports/2026-11-04_R03_900EP/README.md) — 2026-11-04；18 Task × 50 EP，454/900成功，SR 50.4444%；配置、任务表现、性能、Local-TTT运行诊断、媒体与Core完整性、来源hash。
 - [R03 全部139组原始语言指令及900 EP成功/失败索引](eval/reports/2026-11-04_R03_900EP/instructions.md) — 按精确Task+instruction统计N/S/F/SR，保留原文和逐组Episode编号；明确小样本及场景/目标混杂限制。
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
