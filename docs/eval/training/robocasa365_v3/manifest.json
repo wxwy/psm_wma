@@ -1,0 +1,1453 @@
+{
+  "archive_format_version": "sharded gzip CSV per 5000 telemetry rows, text configs",
+  "archive_root_repository_path": "docs/eval/training/robocasa365_v3",
+  "file_catalog_scope": "The files hash catalog includes SERVER-ONLY derived artifacts; only repository_files_to_publish are committed to V3.",
+  "files": {
+    "README.md": {
+      "sha256": "e97b7ab82471cc0b8d194afb661fc8269d69672ac8ca166b7de89779d3f1f653",
+      "size_bytes": 6658
+    },
+    "local_ttt/config.yaml": {
+      "sha256": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+      "size_bytes": 15544
+    },
+    "local_ttt/curve_100step.csv": {
+      "sha256": "f45305757a81a2cacba6e11323f687d31bdc56e21593f382830bc22806bdca6a",
+      "size_bytes": 63004
+    },
+    "local_ttt/launch_history.json": {
+      "sha256": "7ca2efd359371b5dfd8435edda8186c9e2f069ccaeddf44d0934ba3315bf6e9c",
+      "size_bytes": 18160
+    },
+    "local_ttt/scalars/rows_00001_05000.csv.gz": {
+      "sha256": "2cf99f9d8b3e0f9bf3fe18f9b5379b160fa8a27b59e7f84893576d22308abc12",
+      "size_bytes": 2093780
+    },
+    "local_ttt/scalars/rows_05001_10000.csv.gz": {
+      "sha256": "0af563f2a64246e583274f49096e76ba31790ad3a1cb465d1391170b890a2ec1",
+      "size_bytes": 2092463
+    },
+    "local_ttt/scalars/rows_10001_15000.csv.gz": {
+      "sha256": "0f9305b94a980367d798f4a224e6b7dae9882ffe178605f9f407aef4dbacca0c",
+      "size_bytes": 2098334
+    },
+    "local_ttt/scalars/rows_15001_20000.csv.gz": {
+      "sha256": "3d32b442061d6a53ecf1f2b999a2efb050d011f0d8d47dfe6ef0ef37a90338e3",
+      "size_bytes": 2097663
+    },
+    "local_ttt/scalars/rows_20001_25000.csv.gz": {
+      "sha256": "59ff01249171319ab19f5ac85c2bb3f962c758dc0ae184883394c10bed38a325",
+      "size_bytes": 2090257
+    },
+    "local_ttt/scalars/rows_25001_27835.csv.gz": {
+      "sha256": "110c9ef64a355fb16ff5c6833a89129708da8af2d63f1070674707c73a2f7c1d",
+      "size_bytes": 1186740
+    },
+    "local_ttt/sparse_diagnostics.jsonl.gz": {
+      "sha256": "f637fb17ecfc2bc587e4354272574c8f0f4a3c0113268c617fc8548f699b1ad9",
+      "size_bytes": 4034
+    },
+    "local_ttt/task_exposure.csv.gz": {
+      "sha256": "61fb1d474638cddec971c45af4045100f98df827c248bff7301186f9493b6385",
+      "size_bytes": 1057556
+    },
+    "local_ttt/v3_job_identity.json": {
+      "sha256": "19dcb4ec5cf5e8233ffae2a035344541be0287bbee0d768d5b16a2c0d9b3ac1a",
+      "size_bytes": 18287
+    },
+    "no_ttt/config.yaml": {
+      "sha256": "d061da7ce11f59cec11262e02dc87681389996cad6217a01b9ff30f68aaf2f14",
+      "size_bytes": 15424
+    },
+    "no_ttt/curve_100step.csv": {
+      "sha256": "7b45a227874698c6861bc407c1d7249d3f3e713969a2a7b2b49132f7b4ac2525",
+      "size_bytes": 54275
+    },
+    "no_ttt/launch_history.json": {
+      "sha256": "61c99dce9fba62624b95b225359ce8d49eab13f2cde52ce471014638b1842a5d",
+      "size_bytes": 8922
+    },
+    "no_ttt/scalars/rows_00001_05000.csv.gz": {
+      "sha256": "d9560ff3e20751b2d2ce7d508470f99abb1fe78cb599820884c9ea37a8cca356",
+      "size_bytes": 1414124
+    },
+    "no_ttt/scalars/rows_05001_10000.csv.gz": {
+      "sha256": "668a233ae9bb068007072e11fd6ea2bbd2e17c7cb1403a970e8518b58608f772",
+      "size_bytes": 1412505
+    },
+    "no_ttt/scalars/rows_10001_15000.csv.gz": {
+      "sha256": "3f0b2f4c3d41def6aa515769fb86e4f11e0ea2b9ade38322cc057af441085c5d",
+      "size_bytes": 1411959
+    },
+    "no_ttt/scalars/rows_15001_20000.csv.gz": {
+      "sha256": "c1f0a76cb415e243f91dde5a6d5534d0dcc185f7e00915ef674ce485430aaa42",
+      "size_bytes": 1411184
+    },
+    "no_ttt/scalars/rows_20001_25000.csv.gz": {
+      "sha256": "88ad0865761c133e7f94dd6fda4a37d486aa9553888b3ce14364804e48ab9fc7",
+      "size_bytes": 1410316
+    },
+    "no_ttt/scalars/rows_25001_30000.csv.gz": {
+      "sha256": "22c6de1ba88c12b19d375015f79c7abbc98e17ee768143ea82bb3b8f26e27b22",
+      "size_bytes": 1413098
+    },
+    "no_ttt/scalars/rows_30001_30011.csv.gz": {
+      "sha256": "4dccf1a9f9a274fe1458f921fda0d74f54b76125da7f70983a4d02c3b0748cd6",
+      "size_bytes": 4494
+    },
+    "no_ttt/sparse_diagnostics.jsonl.gz": {
+      "sha256": "7673680469cabbdaa9775e8478ca5c8848b756f47defd7968fd88eb53127d36b",
+      "size_bytes": 4834
+    },
+    "no_ttt/task_exposure.csv.gz": {
+      "sha256": "f6f00ac8561505b3abde0c0bd690fc22b867f40a68a4b7280373c1a8dedb77f0",
+      "size_bytes": 1392400
+    },
+    "no_ttt/v3_job_identity.json": {
+      "sha256": "3842d93c66bc4d90b9ce1e4b6ef3e114290158f1b1e30983d05b05e144b5e679",
+      "size_bytes": 18193
+    }
+  },
+  "generated_utc": "2026-11-05T09:08:37.049483+00:00",
+  "policy": "All non-null, scalar metric fields per raw rank0 telemetry row, no downsampling; duplicate iteration rows retained; auxiliary nested task counters and sparse memory audits separately; no raw model/optimizer/complete rank0.log/JSONL originals transferred",
+  "repository_archive_mode": "summary_only_pending_authorized_bulk_export",
+  "repository_files_to_publish": [
+    "README.md",
+    "manifest.json",
+    "local_ttt/config.yaml",
+    "local_ttt/v3_job_identity.json",
+    "local_ttt/launch_history.json",
+    "local_ttt/curve_100step.csv",
+    "no_ttt/config.yaml",
+    "no_ttt/v3_job_identity.json",
+    "no_ttt/launch_history.json",
+    "no_ttt/curve_100step.csv"
+  ],
+  "restriction": "Remote desktop upload policy blocks large telemetry artifacts; do not split to evade policy.",
+  "runs": {
+    "local_ttt": {
+      "checkpoints": {
+        "iter_000020000": {
+          "checkpoint_complete_marker_at_save": true,
+          "current_components": {
+            "model": {
+              "expected_files": 8,
+              "expected_total_bytes": 13486462029,
+              "missing_files": [],
+              "present_files": 8,
+              "size_mismatch": []
+            },
+            "optim": {
+              "expected_files": 8,
+              "expected_total_bytes": 11399340240,
+              "missing_files": [
+                "__0_0.distcp",
+                "__1_0.distcp",
+                "__2_0.distcp",
+                "__3_0.distcp",
+                "__4_0.distcp",
+                "__5_0.distcp",
+                "__6_0.distcp",
+                "__7_0.distcp"
+              ],
+              "present_files": 0,
+              "size_mismatch": []
+            },
+            "scheduler": {
+              "expected_files": 1,
+              "expected_total_bytes": 14506,
+              "missing_files": [],
+              "present_files": 1,
+              "size_mismatch": []
+            },
+            "trainer": {
+              "expected_files": 8,
+              "expected_total_bytes": 220789,
+              "missing_files": [],
+              "present_files": 8,
+              "size_mismatch": []
+            }
+          },
+          "marker_sha256": "1cc22c96af4b559c64c6493b00f46600b216b224aaabf05f26e4bab052d2750e",
+          "note": "intermediate optimizer intentionally removed by retention policy"
+        },
+        "iter_000027700": {
+          "checkpoint_complete_marker_at_save": true,
+          "current_components": {
+            "model": {
+              "expected_files": 8,
+              "expected_total_bytes": 13486462029,
+              "missing_files": [],
+              "present_files": 8,
+              "size_mismatch": []
+            },
+            "optim": {
+              "expected_files": 8,
+              "expected_total_bytes": 11399340240,
+              "missing_files": [],
+              "present_files": 8,
+              "size_mismatch": []
+            },
+            "scheduler": {
+              "expected_files": 1,
+              "expected_total_bytes": 14506,
+              "missing_files": [],
+              "present_files": 1,
+              "size_mismatch": []
+            },
+            "trainer": {
+              "expected_files": 8,
+              "expected_total_bytes": 220789,
+              "missing_files": [],
+              "present_files": 8,
+              "size_mismatch": []
+            }
+          },
+          "marker_sha256": "63a5917711c7b7646cefd4f87d487c16bf0d92f8321f6aa40bd37167311633ea",
+          "note": "latest retained with optimizer for possible resume"
+        }
+      },
+      "dataset": "RoboCasa365 Target-Atomic full 9,126 episodes",
+      "duplicate_iterations": [
+        {
+          "iter": 4301,
+          "rows": 2
+        },
+        {
+          "iter": 4302,
+          "rows": 2
+        },
+        {
+          "iter": 4303,
+          "rows": 2
+        },
+        {
+          "iter": 4304,
+          "rows": 2
+        },
+        {
+          "iter": 4305,
+          "rows": 2
+        },
+        {
+          "iter": 4306,
+          "rows": 2
+        },
+        {
+          "iter": 4307,
+          "rows": 2
+        },
+        {
+          "iter": 7201,
+          "rows": 3
+        },
+        {
+          "iter": 7202,
+          "rows": 3
+        },
+        {
+          "iter": 7203,
+          "rows": 3
+        },
+        {
+          "iter": 7204,
+          "rows": 3
+        },
+        {
+          "iter": 7205,
+          "rows": 3
+        },
+        {
+          "iter": 7206,
+          "rows": 3
+        },
+        {
+          "iter": 7207,
+          "rows": 3
+        },
+        {
+          "iter": 7208,
+          "rows": 3
+        },
+        {
+          "iter": 8901,
+          "rows": 2
+        },
+        {
+          "iter": 8902,
+          "rows": 2
+        },
+        {
+          "iter": 22401,
+          "rows": 3
+        },
+        {
+          "iter": 22402,
+          "rows": 3
+        },
+        {
+          "iter": 22403,
+          "rows": 3
+        },
+        {
+          "iter": 22404,
+          "rows": 3
+        },
+        {
+          "iter": 22405,
+          "rows": 3
+        },
+        {
+          "iter": 22406,
+          "rows": 2
+        },
+        {
+          "iter": 22407,
+          "rows": 2
+        },
+        {
+          "iter": 22408,
+          "rows": 2
+        },
+        {
+          "iter": 22409,
+          "rows": 2
+        },
+        {
+          "iter": 22410,
+          "rows": 2
+        },
+        {
+          "iter": 22411,
+          "rows": 2
+        },
+        {
+          "iter": 22412,
+          "rows": 2
+        },
+        {
+          "iter": 22413,
+          "rows": 2
+        },
+        {
+          "iter": 22414,
+          "rows": 2
+        },
+        {
+          "iter": 22415,
+          "rows": 2
+        },
+        {
+          "iter": 22416,
+          "rows": 2
+        },
+        {
+          "iter": 22417,
+          "rows": 2
+        },
+        {
+          "iter": 22418,
+          "rows": 2
+        },
+        {
+          "iter": 22419,
+          "rows": 2
+        },
+        {
+          "iter": 22420,
+          "rows": 2
+        },
+        {
+          "iter": 22421,
+          "rows": 2
+        },
+        {
+          "iter": 22422,
+          "rows": 2
+        },
+        {
+          "iter": 22423,
+          "rows": 2
+        },
+        {
+          "iter": 22424,
+          "rows": 2
+        },
+        {
+          "iter": 22425,
+          "rows": 2
+        },
+        {
+          "iter": 22426,
+          "rows": 2
+        },
+        {
+          "iter": 22427,
+          "rows": 2
+        },
+        {
+          "iter": 22428,
+          "rows": 2
+        },
+        {
+          "iter": 22429,
+          "rows": 2
+        },
+        {
+          "iter": 22430,
+          "rows": 2
+        },
+        {
+          "iter": 22431,
+          "rows": 2
+        },
+        {
+          "iter": 22432,
+          "rows": 2
+        },
+        {
+          "iter": 22433,
+          "rows": 2
+        },
+        {
+          "iter": 22434,
+          "rows": 2
+        },
+        {
+          "iter": 22435,
+          "rows": 2
+        },
+        {
+          "iter": 22436,
+          "rows": 2
+        },
+        {
+          "iter": 22437,
+          "rows": 2
+        },
+        {
+          "iter": 22438,
+          "rows": 2
+        },
+        {
+          "iter": 22439,
+          "rows": 2
+        },
+        {
+          "iter": 22440,
+          "rows": 2
+        },
+        {
+          "iter": 22441,
+          "rows": 2
+        },
+        {
+          "iter": 22442,
+          "rows": 2
+        },
+        {
+          "iter": 22443,
+          "rows": 2
+        },
+        {
+          "iter": 22444,
+          "rows": 2
+        },
+        {
+          "iter": 22445,
+          "rows": 2
+        },
+        {
+          "iter": 22446,
+          "rows": 2
+        },
+        {
+          "iter": 22447,
+          "rows": 2
+        },
+        {
+          "iter": 22448,
+          "rows": 2
+        },
+        {
+          "iter": 22449,
+          "rows": 2
+        },
+        {
+          "iter": 22450,
+          "rows": 2
+        },
+        {
+          "iter": 22451,
+          "rows": 2
+        },
+        {
+          "iter": 22452,
+          "rows": 2
+        },
+        {
+          "iter": 22453,
+          "rows": 2
+        },
+        {
+          "iter": 22454,
+          "rows": 2
+        },
+        {
+          "iter": 22455,
+          "rows": 2
+        },
+        {
+          "iter": 22456,
+          "rows": 2
+        },
+        {
+          "iter": 22457,
+          "rows": 2
+        },
+        {
+          "iter": 22458,
+          "rows": 2
+        },
+        {
+          "iter": 22459,
+          "rows": 2
+        },
+        {
+          "iter": 22460,
+          "rows": 2
+        },
+        {
+          "iter": 22461,
+          "rows": 2
+        },
+        {
+          "iter": 22462,
+          "rows": 2
+        },
+        {
+          "iter": 22463,
+          "rows": 2
+        },
+        {
+          "iter": 22464,
+          "rows": 2
+        },
+        {
+          "iter": 22465,
+          "rows": 2
+        },
+        {
+          "iter": 22466,
+          "rows": 2
+        },
+        {
+          "iter": 22467,
+          "rows": 2
+        },
+        {
+          "iter": 22468,
+          "rows": 2
+        },
+        {
+          "iter": 22469,
+          "rows": 2
+        },
+        {
+          "iter": 22470,
+          "rows": 2
+        },
+        {
+          "iter": 22471,
+          "rows": 2
+        },
+        {
+          "iter": 22472,
+          "rows": 2
+        },
+        {
+          "iter": 22473,
+          "rows": 2
+        },
+        {
+          "iter": 22474,
+          "rows": 2
+        },
+        {
+          "iter": 22475,
+          "rows": 2
+        },
+        {
+          "iter": 22476,
+          "rows": 2
+        },
+        {
+          "iter": 22477,
+          "rows": 2
+        },
+        {
+          "iter": 22478,
+          "rows": 2
+        },
+        {
+          "iter": 22479,
+          "rows": 2
+        },
+        {
+          "iter": 22480,
+          "rows": 2
+        },
+        {
+          "iter": 22481,
+          "rows": 2
+        },
+        {
+          "iter": 22482,
+          "rows": 2
+        },
+        {
+          "iter": 22483,
+          "rows": 2
+        },
+        {
+          "iter": 22484,
+          "rows": 2
+        },
+        {
+          "iter": 22485,
+          "rows": 2
+        },
+        {
+          "iter": 22486,
+          "rows": 2
+        },
+        {
+          "iter": 22487,
+          "rows": 2
+        },
+        {
+          "iter": 22488,
+          "rows": 2
+        },
+        {
+          "iter": 22489,
+          "rows": 2
+        },
+        {
+          "iter": 22490,
+          "rows": 2
+        },
+        {
+          "iter": 22491,
+          "rows": 2
+        },
+        {
+          "iter": 22492,
+          "rows": 2
+        },
+        {
+          "iter": 22493,
+          "rows": 2
+        },
+        {
+          "iter": 22494,
+          "rows": 2
+        },
+        {
+          "iter": 22495,
+          "rows": 2
+        },
+        {
+          "iter": 22496,
+          "rows": 2
+        },
+        {
+          "iter": 22497,
+          "rows": 2
+        },
+        {
+          "iter": 22498,
+          "rows": 2
+        },
+        {
+          "iter": 22499,
+          "rows": 2
+        },
+        {
+          "iter": 22500,
+          "rows": 2
+        }
+      ],
+      "duplicate_rows_extra": 130,
+      "duplicate_rows_preserved_for_audit": true,
+      "effective_action_horizon": 16,
+      "global_consumer_proxy_rank0_times_world_size": 54950616.0,
+      "gpu_world_size": 8,
+      "identity_file_sha256": "19dcb4ec5cf5e8233ffae2a035344541be0287bbee0d768d5b16a2c0d9b3ac1a",
+      "identity_root_child": {
+        "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+        "root": "e0121d34592d10323ede480eb3409468a07371ba",
+        "semantic_digest": "bd4e6d780bc46ea9166f24d7aef8b5985991d0482357e3389f1b71d61b9d489b"
+      },
+      "iteration_duplicate_count": 117,
+      "launch_count": 7,
+      "loss_fields_present": [
+        "action_contribution",
+        "action_loss",
+        "action_loss_consumer_weight_coverage",
+        "action_loss_weight",
+        "aux_loss_gen",
+        "aux_loss_gen_coverage",
+        "aux_loss_und",
+        "aux_loss_und_coverage",
+        "flow_matching_loss_action",
+        "flow_matching_loss_action_coverage",
+        "flow_matching_loss_vision",
+        "flow_matching_loss_vision_coverage",
+        "inner_loss_count",
+        "inner_loss_max",
+        "inner_loss_mean",
+        "loss_scope",
+        "outer_loss",
+        "vision_contribution",
+        "vision_loss",
+        "vision_loss_consumer_weight_coverage",
+        "vision_loss_weight"
+      ],
+      "loss_stats": {
+        "action_loss": {
+          "first": 1.2183616161346436,
+          "last": 0.0030945483595132828,
+          "max": 1.248565673828125,
+          "mean_first_100": 1.0734312587976456,
+          "mean_last_100": 0.0035897648916579784,
+          "min": 0.0009449211065657437
+        },
+        "fast_update_norm_mean": {
+          "first": 0.03164487500344553,
+          "last": 0.021513537565867106,
+          "max": 0.03164487500344553,
+          "mean_first_100": 0.016393818397063626,
+          "mean_last_100": 0.018393422965782502,
+          "min": 0.009103409945964813
+        },
+        "flow_matching_loss_action": {
+          "first": 1.2183616161346436,
+          "last": 0.0030945483595132828,
+          "max": 1.248565673828125,
+          "mean_first_100": 1.0734312587976456,
+          "mean_last_100": 0.0035897648916579784,
+          "min": 0.0009449211065657437
+        },
+        "flow_matching_loss_vision": {
+          "first": 0.28071871399879456,
+          "last": 0.06537333875894547,
+          "max": 0.28071871399879456,
+          "mean_first_100": 0.18015023186802864,
+          "mean_last_100": 0.071205964833498,
+          "min": 0.0441022664308548
+        },
+        "inner_loss_mean": {
+          "first": 0.06896998036292291,
+          "last": 0.008644407987594605,
+          "max": 0.06896998036292291,
+          "mean_first_100": 0.01897798028958766,
+          "mean_last_100": 0.005248109137620938,
+          "min": 0.0006737413350492716
+        },
+        "local_grad_norm_rank_local": {
+          "first": 0.10491596162319183,
+          "last": 0.12691901624202728,
+          "max": 1.7901681661605835,
+          "mean_first_100": 0.0963292227126658,
+          "mean_last_100": 0.11145807731896638,
+          "min": 0.008717473596334457
+        },
+        "outer_loss": {
+          "first": 14.990804672241211,
+          "last": 0.6846789121627808,
+          "max": 15.056665420532227,
+          "mean_first_100": 12.535814847946167,
+          "mean_last_100": 0.7479572993516922,
+          "min": 0.4625679850578308
+        },
+        "vision_loss": {
+          "first": 0.28071871399879456,
+          "last": 0.06537333875894547,
+          "max": 0.28071871399879456,
+          "mean_first_100": 0.18015023186802864,
+          "mean_last_100": 0.071205964833498,
+          "min": 0.0441022664308548
+        }
+      },
+      "mean_valid_consumers_per_rank0_step": 247.92734163508393,
+      "metric_column_exclusions": [
+        "raw action/video data",
+        "none-only metrics",
+        "non-scalar task dictionaries (kept in task_exposure)",
+        "sparse memory_inventory and telemetry_errors (kept in sparse diagnostics)"
+      ],
+      "missing_iterations": 0,
+      "range": [
+        1,
+        27705
+      ],
+      "rank0_committed_rows": 27835,
+      "rank0_consumer_sum_dedup_last_occurrence": 6868827.0,
+      "rank0_nonzero_gradient_missing_or_nonfinite_iters": 0,
+      "record_order_rewind_count": 6,
+      "run_name": "packed128_droid_fresh_g1_20261019",
+      "scalar_column_names": [
+        "record_index",
+        "iteration",
+        "iteration_occurrence",
+        "ts_local",
+        "ts_epoch",
+        "epoch",
+        "status",
+        "outer_loss",
+        "action_loss",
+        "vision_loss",
+        "flow_matching_loss_action",
+        "flow_matching_loss_vision",
+        "inner_loss_mean",
+        "inner_loss_max",
+        "action_contribution",
+        "action_grad_norm_rank_local",
+        "action_grad_tensor_count_rank_local",
+        "action_loss_consumer_weight_coverage",
+        "action_loss_weight",
+        "action_param_norm_rank_local",
+        "active_slots",
+        "actual_consumer_identity_count",
+        "actual_consumer_identity_sha256",
+        "aux_loss_gen",
+        "aux_loss_gen_coverage",
+        "aux_loss_und",
+        "aux_loss_und_coverage",
+        "backward_cuda_event_ms",
+        "backward_ms",
+        "batch_collate_ms",
+        "batch_transfer_cuda_event_ms",
+        "batch_transfer_ms",
+        "committed_fast_state_sha256",
+        "consumer_audit_status",
+        "cpu_timing_scope",
+        "cuda_sampled",
+        "cuda_timing_scope",
+        "data_pipeline_compact_cached_video",
+        "data_pipeline_num_workers",
+        "data_pipeline_rank_shared_episode_reader",
+        "data_pipeline_state_audit_every",
+        "data_prepare_ms",
+        "data_wait_ms",
+        "data_wait_reason",
+        "exposure_scope",
+        "fast_state_norm_count",
+        "fast_state_norm_max",
+        "fast_state_norm_mean",
+        "fast_update_norm_count",
+        "fast_update_norm_max",
+        "fast_update_norm_mean",
+        "flow_matching_loss_action_coverage",
+        "flow_matching_loss_vision_coverage",
+        "forward_cuda_event_ms",
+        "forward_ms",
+        "full_segment_prefetch",
+        "generation_grad_norm_rank_local",
+        "generation_grad_tensor_count_rank_local",
+        "generation_param_norm_rank_local",
+        "gpu_compute_cuda_event_ms",
+        "gpu_data_stall_ms",
+        "gpu_data_stall_sampled",
+        "gpu_data_stall_scope",
+        "gpu_data_stall_status",
+        "grad_norm_scope",
+        "inner_loss_count",
+        "local2llm_grad_norm_rank_local",
+        "local2llm_grad_tensor_count_rank_local",
+        "local2llm_param_norm_rank_local",
+        "local_core_grad_norm_rank_local",
+        "local_core_grad_tensor_count_rank_local",
+        "local_core_param_norm_rank_local",
+        "local_encoder_grad_norm_rank_local",
+        "local_encoder_grad_tensor_count_rank_local",
+        "local_encoder_param_norm_rank_local",
+        "local_grad_norm_rank_local",
+        "local_grad_tensor_count_rank_local",
+        "local_modality_embed_grad_norm_rank_local",
+        "local_modality_embed_grad_tensor_count_rank_local",
+        "local_modality_embed_param_norm_rank_local",
+        "local_param_norm_rank_local",
+        "local_scan_cuda_event_ms",
+        "local_scan_ms",
+        "loss_scope",
+        "lr_max",
+        "lr_min",
+        "lr_scope",
+        "missing_grad_tensors_rank_local",
+        "native_backward_calls",
+        "native_batch_layout",
+        "native_forward_calls",
+        "nonfinite_grad_tensors_rank_local",
+        "num_workers",
+        "nvtx_stage_ranges_enabled",
+        "optimizer_cuda_event_ms",
+        "optimizer_ms",
+        "other_host_overhead_ms",
+        "param_norm_sampled",
+        "peak_allocated_gib",
+        "peak_reserved_gib",
+        "rank",
+        "rank_scope",
+        "state_fingerprint_ms",
+        "state_fingerprint_sampled",
+        "step_wall_ms",
+        "step_wall_s",
+        "step_wall_scope",
+        "task_exposure_start_iteration",
+        "total_grad_norm_rank_local",
+        "total_grad_tensor_count_rank_local",
+        "total_param_norm_rank_local",
+        "valid_consumers",
+        "valid_consumers_per_second_rank_local",
+        "vision_contribution",
+        "vision_loss_consumer_weight_coverage",
+        "vision_loss_weight"
+      ],
+      "scalar_columns": 116,
+      "scalar_shard_count": 6,
+      "scalar_shards": [
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 2093780,
+          "iteration_first_last": [
+            1,
+            4993
+          ],
+          "path": "local_ttt/scalars/rows_00001_05000.csv.gz",
+          "record_index_range": [
+            0,
+            4999
+          ],
+          "sha256": "2cf99f9d8b3e0f9bf3fe18f9b5379b160fa8a27b59e7f84893576d22308abc12"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 2092463,
+          "iteration_first_last": [
+            4994,
+            9975
+          ],
+          "path": "local_ttt/scalars/rows_05001_10000.csv.gz",
+          "record_index_range": [
+            5000,
+            9999
+          ],
+          "sha256": "0af563f2a64246e583274f49096e76ba31790ad3a1cb465d1391170b890a2ec1"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 2098334,
+          "iteration_first_last": [
+            9976,
+            14975
+          ],
+          "path": "local_ttt/scalars/rows_10001_15000.csv.gz",
+          "record_index_range": [
+            10000,
+            14999
+          ],
+          "sha256": "0f9305b94a980367d798f4a224e6b7dae9882ffe178605f9f407aef4dbacca0c"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 2097663,
+          "iteration_first_last": [
+            14976,
+            19975
+          ],
+          "path": "local_ttt/scalars/rows_15001_20000.csv.gz",
+          "record_index_range": [
+            15000,
+            19999
+          ],
+          "sha256": "3d32b442061d6a53ecf1f2b999a2efb050d011f0d8d47dfe6ef0ef37a90338e3"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 2090257,
+          "iteration_first_last": [
+            19976,
+            24870
+          ],
+          "path": "local_ttt/scalars/rows_20001_25000.csv.gz",
+          "record_index_range": [
+            20000,
+            24999
+          ],
+          "sha256": "59ff01249171319ab19f5ac85c2bb3f962c758dc0ae184883394c10bed38a325"
+        },
+        {
+          "csv_rows": 2835,
+          "gzip_bytes": 1186740,
+          "iteration_first_last": [
+            24871,
+            27705
+          ],
+          "path": "local_ttt/scalars/rows_25001_27835.csv.gz",
+          "record_index_range": [
+            25000,
+            27834
+          ],
+          "sha256": "110c9ef64a355fb16ff5c6833a89129708da8af2d63f1070674707c73a2f7c1d"
+        }
+      ],
+      "scalar_source_uncompressed_sha256": "e891a7dc1e878dd510bca296a899163150d035a1794e5fa10d685f4cdf232d92",
+      "source_metrics_bytes": 137411218,
+      "source_metrics_sha256": "d1835527c095ab6b16ec649cda4b7190b53adc104f2663f1377d3a2aa76d0e35",
+      "source_rank0_log_sha256": "24d145a147262dd075b1984e3a792d8e691a4c6e81c09e692acfe8b35a179922",
+      "source_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma_v3/outputs/local_ttt_robocasa_raw15/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019",
+      "sparse_diagnostics_rows": 278,
+      "task_exposure_columns": 39,
+      "telemetry_rows": 27835,
+      "training_config_sha256": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+      "unique_iterations": 27705
+    },
+    "no_ttt": {
+      "checkpoints": {
+        "iter_000028000": {
+          "checkpoint_complete_marker_at_save": true,
+          "current_components": {
+            "model": {
+              "expected_files": 4,
+              "expected_total_bytes": 13482091188,
+              "missing_files": [],
+              "present_files": 4,
+              "size_mismatch": []
+            },
+            "optim": {
+              "expected_files": 4,
+              "expected_total_bytes": 11393620138,
+              "missing_files": [
+                "__0_0.distcp",
+                "__1_0.distcp",
+                "__2_0.distcp",
+                "__3_0.distcp"
+              ],
+              "present_files": 0,
+              "size_mismatch": []
+            },
+            "scheduler": {
+              "expected_files": 1,
+              "expected_total_bytes": 14506,
+              "missing_files": [],
+              "present_files": 1,
+              "size_mismatch": []
+            },
+            "trainer": {
+              "expected_files": 4,
+              "expected_total_bytes": 111025,
+              "missing_files": [],
+              "present_files": 4,
+              "size_mismatch": []
+            }
+          },
+          "marker_sha256": "17296c38bae5cbb7f564e59f08c4dcdb43f2f7f6096d80489d6f8023f5caf8b0",
+          "note": "intermediate optimizer intentionally removed by retention policy"
+        },
+        "iter_000030000": {
+          "checkpoint_complete_marker_at_save": true,
+          "current_components": {
+            "model": {
+              "expected_files": 4,
+              "expected_total_bytes": 13482091188,
+              "missing_files": [],
+              "present_files": 4,
+              "size_mismatch": []
+            },
+            "optim": {
+              "expected_files": 4,
+              "expected_total_bytes": 11393620138,
+              "missing_files": [],
+              "present_files": 4,
+              "size_mismatch": []
+            },
+            "scheduler": {
+              "expected_files": 1,
+              "expected_total_bytes": 14506,
+              "missing_files": [],
+              "present_files": 1,
+              "size_mismatch": []
+            },
+            "trainer": {
+              "expected_files": 4,
+              "expected_total_bytes": 111025,
+              "missing_files": [],
+              "present_files": 4,
+              "size_mismatch": []
+            }
+          },
+          "marker_sha256": "8420c4a51e7cb695d09e886afd7b96c89b840a41660d8bab689b122a2376b05b",
+          "note": "latest retained with optimizer for possible resume"
+        }
+      },
+      "dataset": "RoboCasa365 Target-Atomic full 9,126 episodes",
+      "duplicate_iterations": [
+        {
+          "iter": 601,
+          "rows": 2
+        },
+        {
+          "iter": 602,
+          "rows": 2
+        },
+        {
+          "iter": 603,
+          "rows": 2
+        },
+        {
+          "iter": 604,
+          "rows": 2
+        },
+        {
+          "iter": 605,
+          "rows": 2
+        },
+        {
+          "iter": 606,
+          "rows": 2
+        },
+        {
+          "iter": 607,
+          "rows": 2
+        },
+        {
+          "iter": 608,
+          "rows": 2
+        },
+        {
+          "iter": 609,
+          "rows": 2
+        },
+        {
+          "iter": 610,
+          "rows": 2
+        },
+        {
+          "iter": 12201,
+          "rows": 2
+        }
+      ],
+      "duplicate_rows_extra": 11,
+      "duplicate_rows_preserved_for_audit": true,
+      "effective_action_horizon": 16,
+      "global_consumer_proxy_rank0_times_world_size": 59516476.0,
+      "gpu_world_size": 4,
+      "identity_file_sha256": "3842d93c66bc4d90b9ce1e4b6ef3e114290158f1b1e30983d05b05e144b5e679",
+      "identity_root_child": {
+        "child": "a4bc0c728b57ee8aaf49f951f6aed1a17b986573",
+        "root": "215305ecb9ab9631af44cbb3469bc4179dd4aeab",
+        "semantic_digest": "bd78980877840bd42f0d7cec929cbaeac13db7e1f7412747ff2951067ce8baca"
+      },
+      "iteration_duplicate_count": 11,
+      "launch_count": 3,
+      "loss_fields_present": [
+        "action_contribution",
+        "action_loss",
+        "action_loss_consumer_weight_coverage",
+        "action_loss_weight",
+        "aux_loss_gen",
+        "aux_loss_gen_coverage",
+        "aux_loss_und",
+        "aux_loss_und_coverage",
+        "flow_matching_loss_action",
+        "flow_matching_loss_action_coverage",
+        "flow_matching_loss_vision",
+        "flow_matching_loss_vision_coverage",
+        "loss_scope",
+        "outer_loss",
+        "vision_contribution",
+        "vision_loss",
+        "vision_loss_consumer_weight_coverage",
+        "vision_loss_weight"
+      ],
+      "loss_stats": {
+        "action_loss": {
+          "first": 1.2275960445404053,
+          "last": 0.0030004011932760477,
+          "max": 1.2370582818984985,
+          "mean_first_100": 1.0755361533164978,
+          "mean_last_100": 0.0039299278776161375,
+          "min": 0.001616065390408039
+        },
+        "flow_matching_loss_action": {
+          "first": 1.2275960445404053,
+          "last": 0.0030004011932760477,
+          "max": 1.2370582818984985,
+          "mean_first_100": 1.0755361533164978,
+          "mean_last_100": 0.0039299278776161375,
+          "min": 0.001616065390408039
+        },
+        "flow_matching_loss_vision": {
+          "first": 0.2661505937576294,
+          "last": 0.0673842802643776,
+          "max": 0.2661505937576294,
+          "mean_first_100": 0.17901185616850854,
+          "mean_last_100": 0.0716445229947567,
+          "min": 0.048958100378513336
+        },
+        "outer_loss": {
+          "first": 14.937467575073242,
+          "last": 0.70384681224823,
+          "max": 14.937467575073242,
+          "mean_first_100": 12.545480012893677,
+          "mean_last_100": 0.7557445037364959,
+          "min": 0.5214107036590576
+        },
+        "vision_loss": {
+          "first": 0.2661505937576294,
+          "last": 0.0673842802643776,
+          "max": 0.2661505937576294,
+          "mean_first_100": 0.17901185616850854,
+          "mean_last_100": 0.0716445229947567,
+          "min": 0.048958100378513336
+        }
+      },
+      "mean_valid_consumers_per_rank0_step": 495.97063333333335,
+      "metric_column_exclusions": [
+        "raw action/video data",
+        "none-only metrics",
+        "non-scalar task dictionaries (kept in task_exposure)",
+        "sparse memory_inventory and telemetry_errors (kept in sparse diagnostics)"
+      ],
+      "missing_iterations": 0,
+      "range": [
+        1,
+        30000
+      ],
+      "rank0_committed_rows": 30011,
+      "rank0_consumer_sum_dedup_last_occurrence": 14879119.0,
+      "rank0_nonzero_gradient_missing_or_nonfinite_iters": 0,
+      "record_order_rewind_count": 1,
+      "run_name": "no_ttt_packed128_droid_fresh_30k_world4_ga4",
+      "scalar_column_names": [
+        "record_index",
+        "iteration",
+        "iteration_occurrence",
+        "ts_local",
+        "ts_epoch",
+        "epoch",
+        "status",
+        "outer_loss",
+        "action_loss",
+        "vision_loss",
+        "flow_matching_loss_action",
+        "flow_matching_loss_vision",
+        "action_contribution",
+        "action_grad_norm_rank_local",
+        "action_grad_tensor_count_rank_local",
+        "action_loss_consumer_weight_coverage",
+        "action_loss_weight",
+        "action_param_norm_rank_local",
+        "active_slots",
+        "actual_consumer_identity_count",
+        "actual_consumer_identity_sha256",
+        "aux_loss_gen",
+        "aux_loss_gen_coverage",
+        "aux_loss_und",
+        "aux_loss_und_coverage",
+        "backward_cuda_event_ms",
+        "backward_ms",
+        "batch_collate_ms",
+        "batch_transfer_cuda_event_ms",
+        "batch_transfer_ms",
+        "consumer_audit_status",
+        "cpu_timing_scope",
+        "cuda_sampled",
+        "cuda_timing_scope",
+        "data_pipeline_compact_cached_video",
+        "data_pipeline_num_workers",
+        "data_pipeline_rank_shared_episode_reader",
+        "data_pipeline_state_audit_every",
+        "data_prepare_ms",
+        "data_wait_reason",
+        "exposure_scope",
+        "fast_state_status",
+        "flow_matching_loss_action_coverage",
+        "flow_matching_loss_vision_coverage",
+        "forward_cuda_event_ms",
+        "forward_ms",
+        "full_segment_prefetch",
+        "generation_grad_norm_rank_local",
+        "generation_grad_tensor_count_rank_local",
+        "generation_param_norm_rank_local",
+        "gpu_data_stall_ms",
+        "gpu_data_stall_sampled",
+        "gpu_data_stall_scope",
+        "gpu_data_stall_status",
+        "grad_norm_scope",
+        "local2llm_grad_tensor_count_rank_local",
+        "local_core_grad_tensor_count_rank_local",
+        "local_encoder_grad_tensor_count_rank_local",
+        "local_grad_tensor_count_rank_local",
+        "local_memory_enabled",
+        "local_modality_embed_grad_tensor_count_rank_local",
+        "loss_scope",
+        "lr_max",
+        "lr_min",
+        "lr_scope",
+        "missing_grad_tensors_rank_local",
+        "native_backward_calls",
+        "native_batch_layout",
+        "native_forward_calls",
+        "nonfinite_grad_tensors_rank_local",
+        "num_workers",
+        "nvtx_stage_ranges_enabled",
+        "optimizer_cuda_event_ms",
+        "optimizer_ms",
+        "other_host_overhead_ms",
+        "param_norm_sampled",
+        "peak_allocated_gib",
+        "peak_reserved_gib",
+        "rank",
+        "rank_scope",
+        "state_fingerprint_sampled",
+        "step_wall_ms",
+        "step_wall_s",
+        "step_wall_scope",
+        "task_exposure_start_iteration",
+        "total_grad_norm_rank_local",
+        "total_grad_tensor_count_rank_local",
+        "total_param_norm_rank_local",
+        "valid_consumers",
+        "valid_consumers_per_second_rank_local",
+        "vision_contribution",
+        "vision_loss_consumer_weight_coverage",
+        "vision_loss_weight"
+      ],
+      "scalar_columns": 93,
+      "scalar_shard_count": 7,
+      "scalar_shards": [
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 1414124,
+          "iteration_first_last": [
+            1,
+            4990
+          ],
+          "path": "no_ttt/scalars/rows_00001_05000.csv.gz",
+          "record_index_range": [
+            0,
+            4999
+          ],
+          "sha256": "d9560ff3e20751b2d2ce7d508470f99abb1fe78cb599820884c9ea37a8cca356"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 1412505,
+          "iteration_first_last": [
+            4991,
+            9990
+          ],
+          "path": "no_ttt/scalars/rows_05001_10000.csv.gz",
+          "record_index_range": [
+            5000,
+            9999
+          ],
+          "sha256": "668a233ae9bb068007072e11fd6ea2bbd2e17c7cb1403a970e8518b58608f772"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 1411959,
+          "iteration_first_last": [
+            9991,
+            14989
+          ],
+          "path": "no_ttt/scalars/rows_10001_15000.csv.gz",
+          "record_index_range": [
+            10000,
+            14999
+          ],
+          "sha256": "3f0b2f4c3d41def6aa515769fb86e4f11e0ea2b9ade38322cc057af441085c5d"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 1411184,
+          "iteration_first_last": [
+            14990,
+            19989
+          ],
+          "path": "no_ttt/scalars/rows_15001_20000.csv.gz",
+          "record_index_range": [
+            15000,
+            19999
+          ],
+          "sha256": "c1f0a76cb415e243f91dde5a6d5534d0dcc185f7e00915ef674ce485430aaa42"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 1410316,
+          "iteration_first_last": [
+            19990,
+            24989
+          ],
+          "path": "no_ttt/scalars/rows_20001_25000.csv.gz",
+          "record_index_range": [
+            20000,
+            24999
+          ],
+          "sha256": "88ad0865761c133e7f94dd6fda4a37d486aa9553888b3ce14364804e48ab9fc7"
+        },
+        {
+          "csv_rows": 5000,
+          "gzip_bytes": 1413098,
+          "iteration_first_last": [
+            24990,
+            29989
+          ],
+          "path": "no_ttt/scalars/rows_25001_30000.csv.gz",
+          "record_index_range": [
+            25000,
+            29999
+          ],
+          "sha256": "22c6de1ba88c12b19d375015f79c7abbc98e17ee768143ea82bb3b8f26e27b22"
+        },
+        {
+          "csv_rows": 11,
+          "gzip_bytes": 4494,
+          "iteration_first_last": [
+            29990,
+            30000
+          ],
+          "path": "no_ttt/scalars/rows_30001_30011.csv.gz",
+          "record_index_range": [
+            30000,
+            30010
+          ],
+          "sha256": "4dccf1a9f9a274fe1458f921fda0d74f54b76125da7f70983a4d02c3b0748cd6"
+        }
+      ],
+      "scalar_source_uncompressed_sha256": "fd46c9197b6265d84037b9d159cc7769829f8c0f3ee9277e5dadf18671d9a3e6",
+      "source_metrics_bytes": 139849741,
+      "source_metrics_sha256": "f659b340d760970dad0181cd369b1c6152d3bea1b830f85d0866a957f5dece5b",
+      "source_rank0_log_sha256": "1b2135518245ac021e692857be3368487e9b5f72520ddab13dc9ec768d7cba83",
+      "source_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma_v3/outputs/no_ttt_robocasa_raw15/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4",
+      "sparse_diagnostics_rows": 300,
+      "task_exposure_columns": 39,
+      "telemetry_rows": 30011,
+      "training_config_sha256": "d061da7ce11f59cec11262e02dc87681389996cad6217a01b9ff30f68aaf2f14",
+      "unique_iterations": 30000
+    }
+  },
+  "schema": "psm_wma_v3_training_archive_v1",
+  "server_archive_path": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/training_archive_stage_20261105",
+  "server_only_full_resolution_file_patterns": [
+    "local_ttt/scalars/*.csv.gz",
+    "no_ttt/scalars/*.csv.gz",
+    "local_ttt/task_exposure.csv.gz",
+    "no_ttt/task_exposure.csv.gz",
+    "local_ttt/sparse_diagnostics.jsonl.gz",
+    "no_ttt/sparse_diagnostics.jsonl.gz"
+  ]
+}
