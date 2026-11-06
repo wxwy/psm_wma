@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2 详细设计 v0.8：仿真—真机空间视图可生成性约束](build/PSM-WMA_G2_detailed_design_v0.8_2026-11-07_sim_real_renderability_contract.md)** — **最新硬性约束**：所有进入 Cosmos 的 Lower/Upper BEV、房间方向图及其他空间视图，都必须能由真实 nav_sg 三维地图产物经同一 Renderer 生成；MuJoCo 仅代替 GT 数据源。区分已实现 XYZ/Occupancy 与尚缺的 RGB 外观融合、未知/遮挡 mask、共同 L2/L3 ABI 和真机可生成性 Gate；覆盖旧文档中“MuJoCo 能渲染就能用”的过强假设。仅为设计。
+
 - **[G2 详细设计 v0.7：上下正交 BEV 与自适应房间规范视角](build/PSM-WMA_G2_detailed_design_v0.7_2026-11-07_orthographic_bev_canonical_views.md)** — **最新讨论修正**：顶部 perspective 是房间固定备选；优先上下正交几何投影，**不另建 Costmap/Traversability 标签**；方向图是只借鉴 Left 高度的共光心**规范虚拟相机**，FOV/pitch 可调，45°×8 只是初始采样而非保证覆盖。提出 Room 几何中心→自由空间候选→低分辨率可见性评价→必要时加角度/俯仰/第二锚点的自动流程。覆盖 v0.6 的对应旧表述，仍为待验证设计。
 
 - **[G2 详细设计 v0.6：分层正交 BEV + 房间中心方向视图](build/PSM-WMA_G2_detailed_design_v0.6_2026-11-06_layered_bev_room_directional_views.md)** — **最新视图方案讨论**：主 BEV 优先空间位置/可通行性，讨论 Left 高度上下正交分层与高位透视对照；每房间在有效锚点按世界/房间绝对方向每 45° 生成 8 张 Left 参数视图，90° 4 张为子集；严格区分 room canonical view 与真实机器人历史 Left，全部可选视图均需 L2/L3 cache。尚未冻结选型或执行。
