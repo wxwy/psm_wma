@@ -12,12 +12,15 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 全部139组原始语言指令及900 EP成功/失败索引](eval/reports/2026-11-04_R03_900EP/instructions.md) — 按精确Task+instruction统计N/S/F/SR，保留原文和逐组Episode编号；明确小样本及场景/目标混杂限制。
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
-## G2 — technical survey and detailed design working draft
+## G2 — canonical dataflow design, earlier drafts, optional visual research
 
-- **[G2 详细设计 v0.2：大实体场景图、Left 机器人视角与历史照片维护](build/PSM-WMA_G2_detailed_design_v0.2_2026-11-06.md)** — 当前补充与纠正：仅独立、通常固定且相对较大的实体进入 SG 并维护图片；小物件只保留语义关系/必要状态，不建专属图库；全部历史图必须来自原 robot0_agentview_left、合法相机高度与机器人可达配置，并保存拍摄机器人位姿。自然保留机械臂、按大实体/状态/可达视角维护有界代表图、事件触发区域上下文刷新等是讨论建议，尚未授权实施。
-- [G2 详细设计 v0.1：空间记忆初始化、时序维护与历史视觉训练数据](build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md) — 保留四种初始化×两种维护、**Full Map + MuJoCo GT Update 优先**、基图+状态增量+关系事件+时间索引等无冲突决定；其中自由相机、给所有对象补图等图像建议已由 v0.2 覆盖。
-- [G2 技术调研报告 v1.0：技术路线比较与收敛](build/PSM-WMA_G2_technical_survey_v1.0.md) — 2026-11-02. Preserves the research comparisons, decision history, external evidence, nav_sg reuse rationale, and the Owner-confirmed G2 scope. This is a technical survey, not a detailed design, implementation acceptance, or training authorization.
-- The Owner's 2026-11-06 corrections in v0.2 take precedence over conflicting v0.1 image-memory proposals. Confirmed decisions and proposed implementation choices remain separate. Existing G1/No-TTT production code, checkpoints, runtime contracts, historical frozen documents, and nav_sg PRs remain unchanged. No render/training/implementation authorization is implied by these docs-only updates.
+- **[G2 详细设计 v0.3：nav_sg 原生数据流与 MuJoCo GT 替换边界](build/PSM-WMA_G2_detailed_design_v0.3_2026-11-06_navsg_mujoco_dataflow.md)** — **当前优先设计**。用户最新修正：SG 构建阶段不再按“大而固定”筛除对象；大小/重要性筛选留到 Cosmos BEV/空间读出。明确原生几何/占据→RoomPipeline、YOLOE/SigLIP→ObjectMap3D→SGManager 与 G2 on/inside 证据链，区分 MuJoCo GT 占据导入、GT 实例/状态导入和缺失的 GT 关系适配层。当前只讨论 Full Map + MuJoCo GT Update，没有代码、训练或仿真授权。
+- **[历史视觉记忆专项技术调研：OPTIONAL](build/PSM-WMA_G2_historical_visual_memory_OPTIONAL_survey_v1.0_2026-11-06.md)** — 独立研究比较与备选实现依据。历史多视角图库**不是**当前 Full-GT 主线前置条件。调查中的“大实体有图库”只记录为历史备选设定，不约束当前 SG 构建。
+- [历史 Left 图像自动采集/维护备选方案](build/PSM-WMA_G2_Left_history_capture_automation_proposal_v0.1_2026-11-06.md) — 备选设计材料，不代表现在要实现。
+- [G2 详细设计 v0.2：历史阶段大实体/Left 视角方案](build/PSM-WMA_G2_detailed_design_v0.2_2026-11-06.md) — **部分已被 v0.3 覆盖**；其中“只有大实体进入 SG”的早期约束已撤销。不能用 v0.2 限制 G2 的对象入图。
+- [G2 详细设计 v0.1：初始化×更新与时序数据](build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md) — 继续继承四种初始化×两种维护和基图+状态增量+关系事件+时间索引等不冲突原则；部分历史图像设想已降级备选。
+- [G2 技术调研报告 v1.0：路线来源与机制比较](build/PSM-WMA_G2_technical_survey_v1.0.md) — 保留早期背景，不覆盖后来的 Owner 设计调整。
+- 历史 V3/G1/Local-TTT frozen 文档、现有生产数据、nav_sg PR 与训练/评测任务均未因本轮文档调整而变更。
 
 ## 1. Current truth — read these first
 
