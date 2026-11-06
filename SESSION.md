@@ -1,3 +1,15 @@
+# 2026-11-07 — Issue22 Child candidate frozen; final targeted CPU pending
+
+Frozen candidate Child `5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6`, parent `1ca308055fc41fb69efaeb9efaa23808f164a18e`, branch `v3-local-ttt-pipeline-issue22-20261107`. Only20 Child Python files (12 inference/simulation/server source,8 tests), no model/training/Checkpoint/cache-schema/Manifest/Resume source delta. G0 actual tinyWan CPU6PASS; first development426 collected422PASS/4test-fixtureFAIL preserved, no errors/skips and source_unchanged1273; corrected spy install order and partial-drain helper without relaxing assertions. Focused35/35PASS (including 15 actual model scan proofs,15 actor integration,3 first-error/3.10 fallback and two controls), source_unchanged1253. Public service B2 current capture1/1PASS, source_unchanged1250. Static20 Ruff/format/AST PASS. Final full targeted list23 files expected about428actualcases remains PENDING, not yet PASS.
+
+Numeric witnesses:12 actual model scan groups FP32/BF16/fresh/continuation/n1,4,16 have state/prefix max abs0; telemetry-sum max abs3.814697265625e-6. Online3 cases state/prefix/action maxabs0; innerloss sum maxabs2.905726432800293e-7, within declared rtol2e-5/atol2e-6. Tiny generated CPU weights only. Three author-side static MEDs (primary error masking, pre-Replan worker cause propagation, Python3.10 add_note compatibility) corrected and reviewed closed; not independent GPT acceptance. No GPU/DCP/full Local-TTT or performance closure.
+
+Issue22 scope is Child Draft PR against v3-local-ttt. Root is integration/evidence context only: baselineV3 `8aeb2442993620ee4513834a73064a4ea1eca38c`, actual Root Gitlink intentionally STAYS `1ca308055fc41fb69efaeb9efaa23808f164a18e`. Candidate Child differs in this disposable nested checkout for CPU tests; expected Root status contains only the Child Gitlink working-tree drift. Do not call this a new matching Formal Root/Child Pair, cleanRoot or production-CLI identity acceptance. Child itself is committed/clean. No source guard is bypassed; GPT must integrate/commit a new Root Gitlink and freeze a new scientific run before actual execution. Official V3 and shared L2000/L4000 paths are untouched.
+
+Next: final targeted author CPU on this unchanged Child/context; package raw evidence, exact scope/numeric/profiling limits, append canonical Inbox below128KiB, publish isolated Child +Root docs only, create Child Draft PR, readback, handoff GPT. No automatic merge/GPU/DS/900EP or old-run Resume. Real GPU P50/P95/Ep/h comparison is OPEN until Owner authorizes hardware resources; call-count reduction/CPU overlap are not H100 speedup claims.
+
+## Retained prior records
+
 # Issue22 G0 author CPU PASS — 2026-11-07
 
 Unchanged-production prerequisite6/6 PASS,0failure/error/skip,exit0/source_unchanged1239. Real RoboCasa prep→actual Omni get_data_and_condition→real tiny Wan BF16 (48latent) current pre-crop z0/Visual96 bit-exact with independentEncode1; A→B→A, B2, image128/256 numerical +128/192/256/320 spatial; crop-after negative PASS. Random tiny weights/no realDCP/GPU. Evidence external /workspace/work/issue22-pipeline-evidence/g0-visual; actual full6run19.44s, recorder28.74s. This closes CPU source-boundary G0 only, not hardware parity/performance.
@@ -3170,3 +3182,11 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 ### Issue22 parallel proof preparation (production still unchanged)
 
 - mkdir_race_design agent is assigned ONLY new Child inference/local_memory_pipeline_scan_test.py for deterministic actual model-owned T16 vs sixteenT1 scan proof; no execution. decode_test_design still solely owns visual parity test. These tests exercise unchanged baseline mathematics, not pipeline integration. Main runs both after command announcement. All production implementation remains gated by G0; fixture_review/review_requirements read-only findings recorded as design constraints, not independent acceptance.
+
+### Issue22 integration-test delegation
+
+review_requirements agent now owns ONLY new Child inference/robocasa_local_pipeline_transactions_test.py for deterministic actual actor/adapter CPU integration and failure/cleanup proof; no execution. Main retains all server/service files. This is author-side implementation work, not independent GPT acceptance.
+
+### Issue22 profiling-only source extension
+
+Main owns closed_loop_eval.py and eval_v2_adapter.py for opt-in streaming-client composite/Sim timing and non-authoritative per-Episode local_pipeline_profile.json only. No Core/result/cache/Manifest/Resume schema change. Legacy and No-TTT do not collect/create pipeline metrics. New pure bounded DurationWindow adds recent-window P50/P95; PipelineTiming records completed CUDA events or explicit CPU perf_counter source. Real hardware before/after throughput remains unrun; no CPU timing is promoted to H100/RoboCasa evidence.
