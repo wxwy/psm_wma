@@ -12,10 +12,11 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 全部139组原始语言指令及900 EP成功/失败索引](eval/reports/2026-11-04_R03_900EP/instructions.md) — 按精确Task+instruction统计N/S/F/SR，保留原文和逐组Episode编号；明确小样本及场景/目标混杂限制。
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
-## G2 research — technical survey; detailed design deferred
+## G2 — technical survey and detailed design working draft
 
+- **[G2 详细设计 v0.1：空间记忆初始化、时序维护与历史视觉训练数据](build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md)** — 2026-11-06 用户确认：四种初始化（Full / Partial / Pre-scan / Zero）× 两种维护（MuJoCo GT / nav_sg Left RGB-D）是独立维度；当前仅优先 **Full Map + MuJoCo GT Update**。记录基图+状态增量+关系事件+时间索引、共享 Capture、历史多角度/状态图像；明确已确认、建议、待定和后置需求。新图像获取方案仍在讨论，不授权代码/渲染/训练。
 - [G2 技术调研报告 v1.0：技术路线比较与收敛](build/PSM-WMA_G2_technical_survey_v1.0.md) — 2026-11-02. Preserves the research comparisons, decision history, external evidence, nav_sg reuse rationale, and the Owner-confirmed G2 scope. This is a technical survey, not a detailed design, implementation acceptance, or training authorization.
-- G2 detailed design is deferred pending step-by-step Owner confirmation. Existing G1/No-TTT production code, checkpoints, runtime contracts, and historical frozen documents are unchanged by this publication.
+- The earlier decision to defer detailed design is updated by the Owner's 2026-11-06 request to record confirmed decisions in the working draft above. Existing G1/No-TTT production code, checkpoints, runtime contracts, historical frozen documents, and nav_sg PRs remain unchanged. Do not treat proposed camera/image-memory recipes as frozen or implemented.
 
 ## 1. Current truth — read these first
 
@@ -26,10 +27,11 @@ This repository intentionally keeps historical design, Gate and review material.
 - **Corrected V3 design authority:** `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — Owner-confirmed latest Cosmos RoboCasa/raw15 host + V2 Local-TTT; cache-first shared composite latent; H_pred/R default16. Phase4/5/6 corrected implementation has been promoted to production child `8c380056...`.
 - **Current Corrected V3 Phase 5 authority:** `build/PSM-WMA_V3_phase5_trainer_dcp_resume_design_v1.0_2026-10-05.md` — trainer/optimizer/DCP/resume scratch is CLOSED and included in production child `8c380056...`. Production-pair strict snapshot10 preflight PASS. Formal training remains unauthorized pending H100 readiness sequence.
 - **Current Corrected V3 Phase 4 authority:** `build/PSM-WMA_V3_phase4_local_ttt_corrected_integration_design_v1.2_2026-10-05.md` — exact-window Local-TTT scratch is CLOSED and included in production child `8c380056...`; grouped B8/GA2/T16 and real no-policy Online Local evidence are green.
-- **Corrected V3 Phase 3.5 authority / Owner refreeze:** `build/PSM-WMA_V3_phase3p5_real_cache_online_vae_parity_design_v1.1_2026-10-05.md` plus `build/PSM-WMA_V3_phase3p5_owner_refreeze_v1.0_2026-10-05.md` — CloseFridge parity is exact; the historical >=3 task classes / >=9 windows coverage requirement is no longer a production-promotion blocker and is deferred to a pre-formal-training supplemental Evidence Gate.
-- **Current Corrected V3 Phase 3 authority:** `build/PSM-WMA_V3_phase3_cached_latent_sft_model_cache_hit_design_v1.0_2026-10-05.md` — GPT-frozen cache-driven ActionSFT transport and optional OmniMoT cache-hit seam; inner collate Tensor and packed model list ABIs are distinct. This docs-only freeze does not implement Phase 3 or authorize ds/GPU, training or simulation.
+- **Current Corrected V3 Phase 3 authority:** `build/PSM-WMA_V3_phase3_cached_latent_sft_model_cache_hit_design_v1.0_2026-10-05.md` — GPT-frozen cache-driven SFT transport and optional OmniMoT cache-hit seam; inner collate Tensor and packed model list ABIs are distinct. This docs-only freeze does not implement Phase 3 or authorize ds/GPU, training or simulation.
 - **Closed Corrected V3 Phase 2 authority:** `build/PSM-WMA_V3_phase2_raw15_state15_hpred16_design_v1.1_2026-10-05.md` — official raw15/state15 and H_pred16/VAE cache contract; closure review: `collab/chatgpt/reviews/2026-10-05_V3_phase2_closure_471b7fec_ce07cb6f.md`.
-- **Closed Corrected V3 Phase 1B authority:** `build/PSM-WMA_V3_phase1b_cache_source_binding_design_v0.4_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; closure review: `collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md`.
+- **Current Corrected V3 Phase 3.5 authority / Owner refreeze:** `build/PSM-WMA_V3_phase3p5_real_cache_online_vae_parity_design_v1.1_2026-10-05.md` plus `build/PSM-WMA_V3_phase3p5_owner_refreeze_v1.0_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; closure review `collab/chatgpt/reviews/2026-10-05_V3_phase3p5_refreeze_closure_cb3681b5_b673ceda.md`; latest Owner refreeze supersedes old 3-task blocker for production promotion.
+- **Closed Corrected V3 Phase 1B authority:** `build/PSM-WMA_V3_phase1b_cache_source_binding_design_v0.4_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; closure review `collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md`.
+- **Closed Corrected V3 Phase 1A authority:** `build/PSM-WMA_V3_phase1a_cache_catalog_design_v0.3_2026-10-05.md` — verified source-bound VAE cache inventory and fail-closed catalog contract.
 - **V3 supersession:** earlier migration v1.0/v1.1 and their B1/iter500/current-frame/streaming execution Gates are historical and superseded by v3.0. Publishing v3.0 does not approve the existing child implementation or authorize training/evaluation.
 - `../README.md` — project overview and entrypoints
 - `../PROJECT_STATUS.md` — current SHA, readiness and validated metrics
@@ -52,6 +54,7 @@ For Corrected V3, read v3.0 first; conflicting older operational summaries do no
 - `build/PSM-WMA_Local_Memory_A2_delivery_runbook_2026-09-18.md`
 - `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — current Corrected V3 design authority; production conformance requires subsequent implementation and Evidence.
 - `build/PSM-WMA_V3_migration_detailed_design_v1.1_2026-10-04.md` — historical B1/iter500 migration design, superseded by v3.0; not an execution authority.
+- `build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md` — G2 working draft; confirmed initialization/update axes and Full-GT priority, with historical-image proposals explicitly not frozen.
 
 ## 3. Historical engineering record
 
