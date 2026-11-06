@@ -176,7 +176,43 @@ SceneFrameGT:
 
 下一步集中讨论两件相连的接口设计：**GT Occupancy/Free 导入方式**和**GT Instance/State 导入方式**。不要跳过这两个接口直接讨论 Cosmos 历史视角选图。
 
-## 8. 本次证据范围
+
+## 8. 跨 Episode 的静态场景图复用（PROPOSED；2026-11-06 补充）
+
+**结论：每条 Episode 需要独立的初始状态、关系与时序增量记录，但不需要独立重复存储整份静态 SG。** 共享须按严格场景静态身份判定，不可仅凭任务名或 layout/style ID 决定。
+
+共享模板 SceneTemplate(scene_template_id) 包含：
+- 静态几何和资产、Room/Space、Fixture 实例 ID、类别、固定位置、部件结构、静态拓扑。
+- 跨 Episode 可共享的固定几何缓存、GT 占据/空闲基图、RoomPipeline 静态空间结构。
+- 不包含特定 Episode 的可移动物体位置、抽屉开度、目标物、机器人姿态或变化后的关系。
+
+Episode(eid) 独立保存：
+- scene_template_id 引用共享模板；
+- InitialState S0：当前 Episode 的可移动物件、放置关系、门/抽屉关节状态以及完整当前空间知识（Full-GT）；
+- Delta[t]：仅变化物体的 Pose、Joint 和关系 Event；
+- FrameIndex[t]：以模板 + S0 + 截至 t 的 Delta 重建当前逻辑 SG 和关系状态。
+- Cosmos 时刻 t 的空间输入按需从逻辑 SG_t/Relation_t/State_t 读出。即使内部接口要求完整快照，也只需按需在内存物化，不必每 Episode 在磁盘复制全图。
+
+**共享判据和边界**
+
+1. scene_template_id 建议基于归一化的静态场景指纹（Fixture/Asset 身份、几何、固定 Pose、关节/部件拓扑、Room 结构和需要一致的材质/资产版本）。layout_id 和 style_id 只能作候选分组，不能替代静态等价核验。
+2. 完整 MJCF 的文件 hash 不是理想的模板键，因为包含机器人和可移动目标物等 Episode 差异；同一个模板可引用多个 MJCF 变体。相同 Mesh 资产可以跨不同模板进一步复用。
+3. 区分固定 template_instance_id 与 episode_instance_id，建立显式映射；不要把 ObjectMap3D 的逐次聚类 ID 当成跨 Episode 不变的 GT ID。
+4. 关系也分为静态结构关系和 Episode 动态关系；inside/on 等必须按该 Episode 初始状态和更新计算，不把一个 Episode 结尾状态自动传给另一个独立 Episode。
+5. 几何占据需要区分静态模板与动态物体 overlay，更新移动物体时不能保留旧位置的幽灵占据。
+6. 只有数据明确表示多个 Episode 为同一世界连续运行且没有重置，才能跨 Episode 继承动态状态。当前 RoboCasa365 独立示教不可默认如此。
+
+**真实数据抽查（只读，尚非完整等价 Gate）**：
+
+在当前服务器 PickPlaceDrawerToCounter/20250820 目录：
+- 原始 local episode_000033、episode_000034、episode_000037 的 layout_id=4、style_id=4、Fixture 数都是 79，按 fixture_name→(cls,pos,rot) 计算的 SHA256 摘要前缀均为 f059669ff0919596；但操作目标类别、干扰物体不同，完整 MJCF 内容也不同。
+- episode_000036 的 layout_id=1、style_id=1、49 个 Fixture，摘要 c114632585f4f421，与上述不是同一已发现布局候选。
+- 以上仅证明模板复用的实际候选存在；尚未比较所有 Mesh/Geom/Material/Joint 和关节初始状态，不能直接宣布可以共享。
+
+本节仅记录设计建议与只读局部检查；没有执行地图缓存构建、静态全量等价验收、训练和仿真。
+
+
+## 9. 本次证据范围
 
 原生源码及真实运行查验：`wxwy/nav_sg` 独立 PR #4 服务器候选目录 `mapping_8_3/mapping`、`g2/semantic/relations.py`，2026-11-06。路径可追溯；非当前生产分支原地修改。
 
