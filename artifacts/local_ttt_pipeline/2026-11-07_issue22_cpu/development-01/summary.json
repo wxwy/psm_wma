@@ -1,0 +1,12 @@
+{
+  "exit_code": 1,
+  "elapsed_seconds": 77.52729118100001,
+  "source_unchanged": true,
+  "source_files": 1273,
+  "tests": 426,
+  "failures": 4,
+  "errors": 0,
+  "skipped": 0,
+  "passed": 422,
+  "status": "FAIL"
+}

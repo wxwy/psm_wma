@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "ruff",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--no-cache",
+        "cosmos_framework/inference/local_memory_online.py",
+        "cosmos_framework/inference/local_memory_pipeline.py",
+        "cosmos_framework/inference/local_memory_pipeline_metrics.py",
+        "cosmos_framework/inference/local_memory_pipeline_scan_test.py",
+        "cosmos_framework/inference/local_memory_pipeline_timing.py",
+        "cosmos_framework/inference/local_memory_pipeline_timing_test.py",
+        "cosmos_framework/inference/robocasa_batch_transactions.py",
+        "cosmos_framework/inference/robocasa_composite_visual.py",
+        "cosmos_framework/inference/robocasa_current_visual_capture_test.py",
+        "cosmos_framework/inference/robocasa_local_memory_pipeline_test.py",
+        "cosmos_framework/inference/robocasa_local_memory_policy.py",
+        "cosmos_framework/inference/robocasa_local_pipeline_parity_test.py",
+        "cosmos_framework/inference/robocasa_local_pipeline_transactions_test.py",
+        "cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+        "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "cosmos_framework/simulation/robocasa/local_memory_pipeline_client.py",
+        "cosmos_framework/simulation/robocasa/local_memory_pipeline_client_test.py",
+        "cosmos_framework/simulation/robocasa/local_memory_pipeline_primary_error_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "--no-cache",
+        "cosmos_framework/inference/local_memory_online.py",
+        "cosmos_framework/inference/local_memory_pipeline.py",
+        "cosmos_framework/inference/local_memory_pipeline_metrics.py",
+        "cosmos_framework/inference/local_memory_pipeline_scan_test.py",
+        "cosmos_framework/inference/local_memory_pipeline_timing.py",
+        "cosmos_framework/inference/local_memory_pipeline_timing_test.py",
+        "cosmos_framework/inference/robocasa_batch_transactions.py",
+        "cosmos_framework/inference/robocasa_composite_visual.py",
+        "cosmos_framework/inference/robocasa_current_visual_capture_test.py",
+        "cosmos_framework/inference/robocasa_local_memory_pipeline_test.py",
+        "cosmos_framework/inference/robocasa_local_memory_policy.py",
+        "cosmos_framework/inference/robocasa_local_pipeline_parity_test.py",
+        "cosmos_framework/inference/robocasa_local_pipeline_transactions_test.py",
+        "cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+        "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+        "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "cosmos_framework/simulation/robocasa/local_memory_pipeline_client.py",
+        "cosmos_framework/simulation/robocasa/local_memory_pipeline_client_test.py",
+        "cosmos_framework/simulation/robocasa/local_memory_pipeline_primary_error_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+        "5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "syntax_files": 20,
+  "protected_trees_identical": {
+    "cosmos_framework/model": "33f9d5df212661e93a234beb7f511977b339223b",
+    "cosmos_framework/trainer": "621320f8a8adc42c92182cd7b0367a4d091707a5",
+    "cosmos_framework/configs": "e24a02df6fa009c6f206bccb18925d9d0facf6aa",
+    "cosmos_framework/checkpoint": "a544d735bb95024eacca51fb3527955aad91616c",
+    "cosmos_framework/data": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5",
+    "cosmos_framework/evaluation": "9c199e320d7a71d4449cd9877e1762dedd483197"
+  }
+}

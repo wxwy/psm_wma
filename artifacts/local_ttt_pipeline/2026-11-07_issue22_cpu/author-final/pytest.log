@@ -1,0 +1,37 @@
+........................................................................ [ 16%]
+........................................................................ [ 33%]
+........................................................................ [ 50%]
+........................................................................ [ 67%]
+........................................................................ [ 84%]
+....................................................................     [100%]
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+428 passed, 18 warnings in 55.99s

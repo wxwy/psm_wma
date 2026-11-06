@@ -1,0 +1,491 @@
+{
+  "status": "AUTHOR_TARGETED_CPU_PASS",
+  "candidate_child": "5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6",
+  "baseline_child": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "root_integration_context": "631a36225f4d4d93ffe30076ea95a2f890085363",
+  "baseline_root_at_start": "8aeb2442993620ee4513834a73064a4ea1eca38c",
+  "root_gitlink_unchanged": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "matching_new_root_child_pair": false,
+  "root_expected_worktree_gitlink_drift": true,
+  "child_clean": true,
+  "tests": 428,
+  "new_tests": 155,
+  "prior_tests": 273,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "shell_exit": 0,
+  "source_unchanged": true,
+  "source_fingerprint_entries": 1273,
+  "new_test_counts": {
+    "local_memory_pipeline_client_test.py": 31,
+    "local_memory_pipeline_primary_error_test.py": 3,
+    "local_memory_pipeline_scan_test.py": 15,
+    "local_memory_pipeline_timing_test.py": 5,
+    "robocasa_current_visual_capture_test.py": 43,
+    "robocasa_local_memory_pipeline_test.py": 37,
+    "robocasa_local_pipeline_parity_test.py": 6,
+    "robocasa_local_pipeline_transactions_test.py": 15
+  },
+  "independent_encode1_per_16_history": 15,
+  "completed_updates_per_16_history": 16,
+  "current_visual_capture": "full padded PRE-CROP Wan return; exact T1 input/output and Visual96 CPU proof",
+  "numeric_witnesses": {
+    "issue22_g0_actual_wan_cpu": [
+      {
+        "cases": [
+          {
+            "crop_visual96_differs": true,
+            "image_size": 128,
+            "index": 0,
+            "input_dtype": "torch.float32",
+            "input_sha256": "d05de9e43e142ad90f18a6fc6d4361ac1186133a135ae4a280e7657179a00bc1",
+            "input_shape": [
+              1,
+              3,
+              1,
+              192,
+              320
+            ],
+            "latent_sha256": "1b760a2000d8b3f55c4f8f2031a606b2a14d7d5d78319d0c2c97cf3d3817de37",
+            "latent_shape": [
+              1,
+              48,
+              1,
+              12,
+              20
+            ],
+            "policy_crop_shape": [
+              1,
+              48,
+              5,
+              8,
+              16
+            ],
+            "visual96_sha256": "61ef4c6c8b8a80a45697f661f28237d3d5ee2dd2f27fe54f7e96a29fa9188718"
+          },
+          {
+            "crop_visual96_differs": true,
+            "image_size": 128,
+            "index": 1,
+            "input_dtype": "torch.float32",
+            "input_sha256": "fd09c82b7661efedbd20aca2fae8b1f9030f87d898428be616573fb11fd67ac0",
+            "input_shape": [
+              1,
+              3,
+              1,
+              192,
+              320
+            ],
+            "latent_sha256": "0913f1263410d02b9523d218d550a29378cc8b9febe806061d92742ab8068bff",
+            "latent_shape": [
+              1,
+              48,
+              1,
+              12,
+              20
+            ],
+            "policy_crop_shape": [
+              1,
+              48,
+              5,
+              8,
+              16
+            ],
+            "visual96_sha256": "442cdc8ab8f89755120194212cc0f88c33df920b1e241abb1c8be579ce3ece23"
+          },
+          {
+            "crop_visual96_differs": true,
+            "image_size": 128,
+            "index": 2,
+            "input_dtype": "torch.float32",
+            "input_sha256": "d05de9e43e142ad90f18a6fc6d4361ac1186133a135ae4a280e7657179a00bc1",
+            "input_shape": [
+              1,
+              3,
+              1,
+              192,
+              320
+            ],
+            "latent_sha256": "1b760a2000d8b3f55c4f8f2031a606b2a14d7d5d78319d0c2c97cf3d3817de37",
+            "latent_shape": [
+              1,
+              48,
+              1,
+              12,
+              20
+            ],
+            "policy_crop_shape": [
+              1,
+              48,
+              5,
+              8,
+              16
+            ],
+            "visual96_sha256": "61ef4c6c8b8a80a45697f661f28237d3d5ee2dd2f27fe54f7e96a29fa9188718"
+          }
+        ],
+        "checkpoint_loaded": false,
+        "encode_calls": 6,
+        "gpu_validated": false,
+        "latent_channels": 48,
+        "prime_calls": 6,
+        "wan_weight_dtype": "torch.bfloat16"
+      },
+      {
+        "cases": [
+          {
+            "crop_visual96_differs": true,
+            "image_size": 256,
+            "index": 0,
+            "input_dtype": "torch.float32",
+            "input_sha256": "8341b32f041dbfa1d23eb70270722b08f5bdac1d430f38d26ec4b39c298af2d9",
+            "input_shape": [
+              1,
+              3,
+              1,
+              192,
+              320
+            ],
+            "latent_sha256": "48634b504b7ddcd3eb160f46e4426db3c35ee52757b7fccefd0aa29f498559d1",
+            "latent_shape": [
+              1,
+              48,
+              1,
+              12,
+              20
+            ],
+            "policy_crop_shape": [
+              1,
+              48,
+              5,
+              10,
+              20
+            ],
+            "visual96_sha256": "0df68127fa0c5535147fe45da0ca11ce5099065f7b9a99c79f446b08bae43d98"
+          },
+          {
+            "crop_visual96_differs": true,
+            "image_size": 256,
+            "index": 1,
+            "input_dtype": "torch.float32",
+            "input_sha256": "b301e7e79c37e06f97a2fa7551b201d1c3d772cb320181462c78b18328ae5115",
+            "input_shape": [
+              1,
+              3,
+              1,
+              192,
+              320
+            ],
+            "latent_sha256": "9eb0a46650b8450f21800c15233a4f14d47a85ec901fb19720e1a3ea5a5dac6d",
+            "latent_shape": [
+              1,
+              48,
+              1,
+              12,
+              20
+            ],
+            "policy_crop_shape": [
+              1,
+              48,
+              5,
+              10,
+              20
+            ],
+            "visual96_sha256": "fc25fce9ed9456c485934be580ed23272f02d1c677feb31ee6e08636c9c6f1d9"
+          },
+          {
+            "crop_visual96_differs": true,
+            "image_size": 256,
+            "index": 2,
+            "input_dtype": "torch.float32",
+            "input_sha256": "8341b32f041dbfa1d23eb70270722b08f5bdac1d430f38d26ec4b39c298af2d9",
+            "input_shape": [
+              1,
+              3,
+              1,
+              192,
+              320
+            ],
+            "latent_sha256": "48634b504b7ddcd3eb160f46e4426db3c35ee52757b7fccefd0aa29f498559d1",
+            "latent_shape": [
+              1,
+              48,
+              1,
+              12,
+              20
+            ],
+            "policy_crop_shape": [
+              1,
+              48,
+              5,
+              10,
+              20
+            ],
+            "visual96_sha256": "0df68127fa0c5535147fe45da0ca11ce5099065f7b9a99c79f446b08bae43d98"
+          }
+        ],
+        "checkpoint_loaded": false,
+        "encode_calls": 6,
+        "gpu_validated": false,
+        "latent_channels": 48,
+        "prime_calls": 6,
+        "wan_weight_dtype": "torch.bfloat16"
+      }
+    ],
+    "issue22_scan_parity": [
+      {
+        "atol": 2e-06,
+        "continuation": false,
+        "dtype": "torch.float32",
+        "length": 1,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": false,
+        "dtype": "torch.bfloat16",
+        "length": 1,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": true,
+        "dtype": "torch.float32",
+        "length": 1,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": true,
+        "dtype": "torch.bfloat16",
+        "length": 1,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": false,
+        "dtype": "torch.float32",
+        "length": 4,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": false,
+        "dtype": "torch.bfloat16",
+        "length": 4,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": true,
+        "dtype": "torch.float32",
+        "length": 4,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": true,
+        "dtype": "torch.bfloat16",
+        "length": 4,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 0.0
+      },
+      {
+        "atol": 2e-06,
+        "continuation": false,
+        "dtype": "torch.float32",
+        "length": 16,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 4.76837158203125e-07
+      },
+      {
+        "atol": 2e-06,
+        "continuation": false,
+        "dtype": "torch.bfloat16",
+        "length": 16,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 3.814697265625e-06
+      },
+      {
+        "atol": 2e-06,
+        "continuation": true,
+        "dtype": "torch.float32",
+        "length": 16,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 1.1920928955078125e-07
+      },
+      {
+        "atol": 2e-06,
+        "continuation": true,
+        "dtype": "torch.bfloat16",
+        "length": 16,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0,
+        "telemetry_max_abs": 2.384185791015625e-07
+      }
+    ],
+    "issue22_online_parity": [
+      {
+        "action_max_abs": 0.0,
+        "adapted_steps": 1.0,
+        "atol": 2e-06,
+        "inner_loss_sum_abs": 0.0,
+        "length": 1,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0
+      },
+      {
+        "action_max_abs": 0.0,
+        "adapted_steps": 4.0,
+        "atol": 2e-06,
+        "inner_loss_sum_abs": 5.960464477539063e-08,
+        "length": 4,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0
+      },
+      {
+        "action_max_abs": 0.0,
+        "adapted_steps": 16.0,
+        "atol": 2e-06,
+        "inner_loss_sum_abs": 2.905726432800293e-07,
+        "length": 16,
+        "prefix_max_abs": 0.0,
+        "rtol": 2e-05,
+        "state_max_abs": 0.0
+      }
+    ]
+  },
+  "stages": {
+    "g0-visual": {
+      "exit_code": 0,
+      "elapsed_seconds": 28.74044392199994,
+      "source_unchanged": true,
+      "source_files": 1239,
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 6,
+      "status": "PASS"
+    },
+    "development-01": {
+      "exit_code": 1,
+      "elapsed_seconds": 77.52729118100001,
+      "source_unchanged": true,
+      "source_files": 1273,
+      "tests": 426,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 422,
+      "status": "FAIL"
+    },
+    "focused-02": {
+      "exit_code": 0,
+      "elapsed_seconds": 15.889008684000146,
+      "source_unchanged": true,
+      "source_files": 1253,
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 35,
+      "status": "PASS"
+    },
+    "service-wiring": {
+      "exit_code": 0,
+      "elapsed_seconds": 21.20762634499988,
+      "source_unchanged": true,
+      "source_files": 1250,
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1,
+      "status": "PASS"
+    },
+    "author-final": {
+      "exit_code": 0,
+      "elapsed_seconds": 61.06608000299957,
+      "source_unchanged": true,
+      "source_files": 1273,
+      "tests": 428,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 428,
+      "status": "PASS"
+    }
+  },
+  "static_status": "PASS",
+  "changed_child_python_files": [
+    "cosmos_framework/inference/local_memory_online.py",
+    "cosmos_framework/inference/local_memory_pipeline.py",
+    "cosmos_framework/inference/local_memory_pipeline_metrics.py",
+    "cosmos_framework/inference/local_memory_pipeline_scan_test.py",
+    "cosmos_framework/inference/local_memory_pipeline_timing.py",
+    "cosmos_framework/inference/local_memory_pipeline_timing_test.py",
+    "cosmos_framework/inference/robocasa_batch_transactions.py",
+    "cosmos_framework/inference/robocasa_composite_visual.py",
+    "cosmos_framework/inference/robocasa_current_visual_capture_test.py",
+    "cosmos_framework/inference/robocasa_local_memory_pipeline_test.py",
+    "cosmos_framework/inference/robocasa_local_memory_policy.py",
+    "cosmos_framework/inference/robocasa_local_pipeline_parity_test.py",
+    "cosmos_framework/inference/robocasa_local_pipeline_transactions_test.py",
+    "cosmos_framework/scripts/action_policy_server_robocasa.py",
+    "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+    "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+    "cosmos_framework/simulation/robocasa/local_memory_pipeline_client.py",
+    "cosmos_framework/simulation/robocasa/local_memory_pipeline_client_test.py",
+    "cosmos_framework/simulation/robocasa/local_memory_pipeline_primary_error_test.py"
+  ],
+  "protected_trees_identical": {
+    "cosmos_framework/model": "33f9d5df212661e93a234beb7f511977b339223b",
+    "cosmos_framework/trainer": "621320f8a8adc42c92182cd7b0367a4d091707a5",
+    "cosmos_framework/configs": "e24a02df6fa009c6f206bccb18925d9d0facf6aa",
+    "cosmos_framework/checkpoint": "a544d735bb95024eacca51fb3527955aad91616c",
+    "cosmos_framework/data": "9a6b486bfbabd591d25575a5729ab2f2989ee2f5",
+    "cosmos_framework/evaluation": "9c199e320d7a71d4449cd9877e1762dedd483197"
+  },
+  "pipeline_metrics": "bounded recent nearest-rank P50/P95; CUDA events finalized before elapsed_time; CPU source labelled",
+  "GPU_DCP_FSDP_capture_full_Local_TTT": "NOT_RUN",
+  "real_H100_RoboCasa_before_after_latency_Ep_per_hour": "OPEN_NOT_AUTHORIZED",
+  "L2000_L4000_shared_source_results_checkpoints": "NOT_ACCESSED_OR_MODIFIED",
+  "No_TTT_related_regressions": "PASS",
+  "official_V3_Gitlink_update": "NOT_PERFORMED",
+  "independent_GPT_Code_Gate": "PENDING"
+}

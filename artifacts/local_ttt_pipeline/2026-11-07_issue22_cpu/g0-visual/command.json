@@ -1,0 +1,42 @@
+{
+  "cwd": "/workspace/work/psm-wma-local-ttt-pipeline-issue22",
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "-p",
+    "no:cacheprovider",
+    "-o",
+    "junit_family=legacy",
+    "-q",
+    "--basetemp",
+    "/workspace/work/issue22-pipeline-evidence/g0-visual/pytest-temp",
+    "--junitxml",
+    "/workspace/work/issue22-pipeline-evidence/g0-visual/junit.xml",
+    "cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py"
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "LD_LIBRARY_PATH": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "COSMOS_DEVICE": "cpu",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "/workspace/work/psm-wma-local-ttt-pipeline-issue22:/workspace/work/psm-wma-local-ttt-pipeline-issue22/scripts:/workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework",
+    "TORCHINDUCTOR_CACHE_DIR": "/workspace/work/issue22-pipeline-evidence/g0-visual/cache/inductor",
+    "TORCHINDUCTOR_COMPILE_THREADS": "1",
+    "TRITON_CACHE_DIR": "/workspace/work/issue22-pipeline-evidence/g0-visual/cache/triton",
+    "XDG_CACHE_HOME": "/workspace/work/issue22-pipeline-evidence/g0-visual/cache/xdg",
+    "HF_HOME": "/workspace/work/issue22-pipeline-evidence/g0-visual/cache/hf",
+    "MPLCONFIGDIR": "/workspace/work/issue22-pipeline-evidence/g0-visual/cache/mpl",
+    "RUFF_CACHE_DIR": "/workspace/work/issue22-pipeline-evidence/g0-visual/cache/ruff"
+  }
+}

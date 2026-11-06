@@ -1,0 +1,29 @@
+{
+  "review_kind": "author-side read-only cross-component review",
+  "reviewer": "pipeline_safety_review agent, distinct from implementation authors",
+  "candidate_child": "5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6",
+  "findings": [
+    {
+      "id": "MED-PRIMARY",
+      "problem": "rollout primary exception masked by pipeline cleanup",
+      "source_state": "CLOSED",
+      "tests": "3 actual NativeEpisode primary propagation cases incl simulated no-add_note API"
+    },
+    {
+      "id": "MED-ASYNC-CAUSE",
+      "problem": "worker failure before Replan has no Ticket and loses original cause",
+      "source_state": "CLOSED",
+      "tests": "queued/unsubmitted Replan plus completed upload preserve original fault under exact lease"
+    },
+    {
+      "id": "MED-PY310",
+      "problem": "BaseException.add_note absent on supported Python3.10",
+      "source_state": "CLOSED",
+      "tests": "safe bounded diagnostic fallback; tested branch on3.12"
+    }
+  ],
+  "remaining_confirmed_HIGH_MED": 0,
+  "reviewer_ran_tests": false,
+  "reviewer_modified_files": false,
+  "independent_GPT_or_DS_Gate": "NOT_REPLACED"
+}

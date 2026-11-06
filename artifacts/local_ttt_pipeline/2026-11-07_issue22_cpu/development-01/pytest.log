@@ -1,0 +1,155 @@
+........................................................................ [ 16%]
+..................F.........F.....F.......F............................. [ 33%]
+........................................................................ [ 50%]
+........................................................................ [ 67%]
+........................................................................ [ 84%]
+..................................................................       [100%]
+=================================== FAILURES ===================================
+_____ test_replan_requires_full_completed_frontier_and_exact_original_rows _____
+
+make_adapter = <function make_adapter.<locals>.make at 0x7f224b04b380>
+
+    def test_replan_requires_full_completed_frontier_and_exact_original_rows(make_adapter):
+        adapter, model = make_adapter()
+        lease = _lease()
+        _cold(adapter, lease)
+        for step in range(2):
+            adapter.admit_completed(lease, _completed(lease, step))
+>       _drain(adapter, 1)
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_memory_pipeline_test.py:402: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+adapter = <cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7f224b23b2f0>
+count = 1
+
+    def _drain(adapter, count: int):
+        timings = []
+        for _ in range(count):
+            work = adapter.next_completed()
+            assert work is not None
+            timings.append(adapter.run_completed(work))
+>       assert adapter.next_completed() is None
+E       AssertionError: assert CompletedWork(lease={'server_epoch': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'run_lease': 'run', 'manifest_digest': 'bbbbb...ean': 0.3493228554725647}), cancelled=False, failed=None, encoded_steps=0), charged=True, state='ACTIVE', profile=None) is None
+E        +  where CompletedWork(lease={'server_epoch': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'run_lease': 'run', 'manifest_digest': 'bbbbb...ean': 0.3493228554725647}), cancelled=False, failed=None, encoded_steps=0), charged=True, state='ACTIVE', profile=None) = next_completed()
+E        +    where next_completed = <cosmos_framework.inference.robocasa_local_memory_policy.RoboCasaLocalMemoryPolicyAdapter object at 0x7f224b23b2f0>.next_completed
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_memory_pipeline_test.py:176: AssertionError
+____ test_sixteen_completed_rows_feed_real_replan_and_publish_one_snapshot _____
+
+make_pipeline = <function make_pipeline.<locals>.make at 0x7f224a470900>
+
+    def test_sixteen_completed_rows_feed_real_replan_and_publish_one_snapshot(make_pipeline):
+        harness = make_pipeline(slots=1, cap=1)
+        actor, adapter, model = harness.actor, harness.adapter, harness.model
+        lease = register(actor)
+        _cold(harness, [lease])
+        before = adapter.snapshot
+        parameters = {name: value.detach().clone() for name, value in model.state_dict().items()}
+        rows = [_completed(lease, index) for index in range(16)]
+        _admit(harness, lease, rows)
+        _wait(lambda: adapter.pipeline_ready(lease["session_id"], 16))
+        assert adapter.snapshot is before
+        assert before.fast[lease["session_id"]].state is None
+        assert model.encoded == 15
+>       assert harness.scan_calls == [{"steps": 1, "grad": True, "inference": False, "create_graph": False}] * 16
+E       AssertionError: assert [] == [{'create_gra...eps': 1}, ...]
+E         
+E         Right contains 16 more items, first extra item: {'create_graph': False, 'grad': True, 'inference': False, 'steps': 1}
+E         Use -v to get more diff
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_transactions_test.py:236: AssertionError
+_ test_inflight_device_work_does_not_hold_same_or_other_session_admission[scan] _
+
+make_pipeline = <function make_pipeline.<locals>.make at 0x7f224a471d00>
+blocked_stage = 'scan'
+
+    @pytest.mark.parametrize("blocked_stage", ["scan", "encode"])
+    def test_inflight_device_work_does_not_hold_same_or_other_session_admission(make_pipeline, blocked_stage):
+        harness = make_pipeline()
+        actor, adapter = harness.actor, harness.adapter
+        leases = [register(actor, f"slot{index}") for index in range(2)]
+        _cold(harness, leases)
+        before = adapter.snapshot
+        entered, release = threading.Event(), threading.Event()
+        harness.releases.append(release)
+    
+        def blocked(*args):
+            entered.set()
+            assert release.wait(5)
+    
+        if blocked_stage == "encode":
+            _admit(harness, leases[0], [_completed(leases[0], 0)])
+            _wait(lambda: adapter.pipeline_ready(leases[0]["session_id"], 1))
+            harness.before_encode = blocked
+            blocked_step = 1
+        else:
+            harness.before_scan = blocked
+            blocked_step = 0
+        _admit(harness, leases[0], [_completed(leases[0], blocked_step)])
+>       assert entered.wait(5)
+E       assert False
+E        +  where False = wait(5)
+E        +    where wait = <threading.Event at 0x7f224b3118b0: unset>.wait
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_transactions_test.py:397: AssertionError
+____ test_close_waits_for_active_scan_then_releases_all_completed_ownership ____
+
+make_pipeline = <function make_pipeline.<locals>.make at 0x7f224a463880>
+
+    def test_close_waits_for_active_scan_then_releases_all_completed_ownership(make_pipeline):
+        harness = make_pipeline(slots=1, cap=1)
+        actor, adapter = harness.actor, harness.adapter
+        lease = register(actor)
+        _cold(harness, [lease])
+        entered, release = threading.Event(), threading.Event()
+        harness.releases.append(release)
+    
+        def blocked(*args):
+            entered.set()
+            assert release.wait(5)
+    
+        harness.before_scan = blocked
+        _admit(harness, lease, [_completed(lease, 0)])
+>       assert entered.wait(5)
+E       assert False
+E        +  where False = wait(5)
+E        +    where wait = <threading.Event at 0x7f224b380800: unset>.wait
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_transactions_test.py:572: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_local_pipeline_parity_test.py:38: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27
+  /workspace/work/psm-wma-local-ttt-pipeline-issue22/cosmos-framework/cosmos_framework/inference/robocasa_current_visual_capture_test.py:27: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_replan_requires_full_completed_frontier_and_exact_original_rows
+FAILED ../../../dev::test_sixteen_completed_rows_feed_real_replan_and_publish_one_snapshot
+FAILED ../../../dev::test_inflight_device_work_does_not_hold_same_or_other_session_admission[scan]
+FAILED ../../../dev::test_close_waits_for_active_scan_then_releases_all_completed_ownership
+4 failed, 422 passed, 18 warnings in 72.01s (0:01:12)
