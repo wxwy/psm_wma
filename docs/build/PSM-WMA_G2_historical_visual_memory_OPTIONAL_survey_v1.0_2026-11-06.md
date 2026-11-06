@@ -4,11 +4,14 @@
 **关联设计** [G2 详细设计 v0.1](./PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md)；[G2 详细设计 v0.2](./PSM-WMA_G2_detailed_design_v0.2_2026-11-06.md)；[G2 技术调研 v1.0](./PSM-WMA_G2_technical_survey_v1.0.md)  
 **当前优先级** Full Map + MuJoCo GT Update 的**无专门历史 RGB 图库**主线先行；本调研仅保留未来可检验的增强方案。没有实现、渲染、训练和评测授权。
 
+
+> **后续 Owner 修订（2026-11-06，参见 [G2 v0.3 数据流](./PSM-WMA_G2_detailed_design_v0.3_2026-11-06_navsg_mujoco_dataflow.md)）：** “只有较大、通常固定的实体才能进入 SG”已明确撤销。该限定仅反映过去的**备选照片索引方案**，不约束当前 nav_sg SG 建图或 MuJoCo GT 实例导入。实体是否筛减，后续在 Cosmos BEV/空间读出阶段讨论。历史 RGB 图库继续 OPTIONAL。
+
 ## 摘要与技术决定
 
 历史观测 RGB 并非 PSM-WMA 必需定义的一部分。早期 Global Memory 为缓解纯几何／语义关系摘要的视觉细节损失，曾纳入“地图 + 空间可索引的历史 RGB”的组合，2026-11-02 版调研记录了“一张 BEV + 多张历史 RGB + 空间条件支路”的当时选型。但至今**尚未证明历史照片相对于完美完整空间状态、当前观测及已有 Local-TTT 有额外动作收益**。现在用户将它从 Full-GT 数据准备前置条件改为备选，完整自动巡视拍摄／状态参考库／关键帧维护均后置。
 
-当前主实验输入应优先为：**大实体 SG/几何 + 小物件关系/必要位置状态 + 时序状态增量 + 当前 RGB 与本体状态 + 原有 Local Memory**，进入 Cosmos Action Path。历史照片既不是 SG 的前置依赖，也不是 Persistent Memory 成立的判据。
+当前主实验输入应优先为：**未按物体大小预先删减的 SG/几何 + 全部必要的对象状态/空间关系 + 时序状态增量 + 当前 RGB 与本体状态 + 原有 Local Memory**，进入 Cosmos Action Path。历史照片既不是 SG 的前置依赖，也不是 Persistent Memory 成立的判据。
 
 ## 1. 思路来源及证据范围
 
