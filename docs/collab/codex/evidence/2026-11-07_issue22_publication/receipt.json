@@ -1,0 +1,73 @@
+{
+  "status": "PUBLICATION_READBACK_PASS",
+  "utc": "2026-11-06T17:12:57.258983+00:00",
+  "candidate_child": "5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6",
+  "child_parent": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "root_evidence_commit": "39ba3eb4bf49dbbbe77d4e1bc85407c369820746",
+  "root_cpu_context": "631a36225f4d4d93ffe30076ea95a2f890085363",
+  "root_gitlink_unchanged": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "matching_integrated_pair": false,
+  "official_V3": "2ff873bde87465a2cc8815eb801d69692f54a396",
+  "official_child_v3_local_ttt": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "draft_pr": {
+    "url": "https://github.com/wxwy/cosmos-framework/pull/4",
+    "number": 4,
+    "draft": true,
+    "merged": false,
+    "head_sha": "5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6",
+    "base_sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e"
+  },
+  "artifacts_sha256_verified": 34,
+  "api_blobs_verified": [
+    {
+      "path": "cosmos_framework/inference/local_memory_pipeline.py",
+      "git_blob": "f65888c3a57a48e3334726e9f69ea0220722f68a",
+      "display_url": "https://github.com/wxwy/cosmos-framework/blob/5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6/cosmos_framework/inference/local_memory_pipeline.py"
+    },
+    {
+      "path": "cosmos_framework/inference/robocasa_composite_visual.py",
+      "git_blob": "75d0c7914dfb4a1941911a3dbeccf52daf175e9e",
+      "display_url": "https://github.com/wxwy/cosmos-framework/blob/5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6/cosmos_framework/inference/robocasa_composite_visual.py"
+    },
+    {
+      "path": "artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/summary.json",
+      "git_blob": "24a60ca9b85a776a7820620d78187bf4e9199a92",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/summary.json"
+    },
+    {
+      "path": "artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/junit.xml",
+      "git_blob": "a1cebedba79352409e9bdc1457721978a349d21b",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/junit.xml"
+    },
+    {
+      "path": "docs/collab/codex/reviews/2026-11-07_Issue22_Local_TTT_Pipeline_5fe2b8de_Author_Handoff.md",
+      "git_blob": "8b351dcdfb1b829c836800964ccf33a1e2add7dd",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/docs/collab/codex/reviews/2026-11-07_Issue22_Local_TTT_Pipeline_5fe2b8de_Author_Handoff.md"
+    },
+    {
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "git_blob": "d2133c99030c2bc54fe46beae91fd4f0158132c5",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/docs/collab/chatgpt/CODEX_INBOX.md"
+    }
+  ],
+  "source_fingerprint_entries_verified": 1273,
+  "junit": {
+    "tests": 428,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "archive": {
+    "file": "cpu_evidence.tar.gz",
+    "bytes": 1056204,
+    "sha256": "11780ebe29957ca8342b778e49f58f1ef734937987f062f947ea3b5b308ad1d8"
+  },
+  "inbox": {
+    "prefix_preserved": true,
+    "before_bytes": 51157,
+    "after_bytes": 53224
+  },
+  "source_tests_after_frozen_child": "UNCHANGED",
+  "independent_GPT_Code_Gate": "PENDING",
+  "real_hardware_performance": "OPEN_NOT_RUN"
+}

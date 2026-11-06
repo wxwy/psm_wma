@@ -277,3 +277,10 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **Author final targeted CPU428/428 PASS** (155new+273prior),0fail/error/skip,exit0/source_unchanged1273. Actual tiny-Wan input/precrop latent/Visual96 exact; T16-vs-T1 state/Prefix/action projection maxabs0; telemetry float-sum residuals explicitly archived. Static20PASS. First426 run422PASS/4fixtureFAIL retained; focused35/service1 not double-counted.
 - **Handoff:** `docs/collab/codex/reviews/2026-11-07_Issue22_Local_TTT_Pipeline_5fe2b8de_Author_Handoff.md`. **Raw:** `artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/` (JUnit/log/commands/fingerprints/numeric/scope/archive). Requested independent GPT **APPROVE_CODE / REQUEST_CHANGES** on Child only. Author peer source review corrected3MED; not independent acceptance.
 - **Boundary:** hardware performance P50/P95/Ep/h remains OPEN, realDCP/GPU/FSDP/capture/fullmodel Local-TTT NOT_RUN. L2000/L4000 shared directories/servers/checkpoints/results untouched. No official ref promotion, G2/training change, GPU/DS dispatch,900EP or source-switch Resume. Later integrate approvedChild into then-currentV3 with new matching Pair/Fresh identity and separate authorized real before/after evidence.
+
+
+### 2026-11-07 — Issue22 publication receipt (same Child target, no new code request)
+
+- **Draft PR:** https://github.com/wxwy/cosmos-framework/pull/4 — open/draft/unmerged, head `5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6`, base `v3-local-ttt` / `1ca308055fc41fb69efaeb9efaa23808f164a18e`. API readback confirmed.
+- Root evidence/hand-off39ba3eb4; receipt `docs/collab/codex/evidence/2026-11-07_issue22_publication/receipt.json`. Child pushed before Root docs;34artifact SHA256/6API GitBlobs/raw428JUnit/1273source fingerprints and append-only Inbox prefix verified.
+- OfficialV3 `2ff873bd` and Child `1ca30805` remain unchanged by this publication; Root branch Gitlink stays1ca. Receipt successor is docs only. Independent GPT review PENDING; real GPU performance OPEN. No new tests, merge or hardware execution.

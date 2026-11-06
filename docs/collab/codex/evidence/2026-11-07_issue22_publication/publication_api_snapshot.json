@@ -1,0 +1,72 @@
+{
+  "api_readback": [
+    {
+      "path": "cosmos_framework/inference/local_memory_pipeline.py",
+      "git_blob": "f65888c3a57a48e3334726e9f69ea0220722f68a",
+      "display_url": "https://github.com/wxwy/cosmos-framework/blob/5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6/cosmos_framework/inference/local_memory_pipeline.py"
+    },
+    {
+      "path": "cosmos_framework/inference/robocasa_composite_visual.py",
+      "git_blob": "75d0c7914dfb4a1941911a3dbeccf52daf175e9e",
+      "display_url": "https://github.com/wxwy/cosmos-framework/blob/5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6/cosmos_framework/inference/robocasa_composite_visual.py"
+    },
+    {
+      "path": "artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/summary.json",
+      "git_blob": "24a60ca9b85a776a7820620d78187bf4e9199a92",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/summary.json"
+    },
+    {
+      "path": "artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/junit.xml",
+      "git_blob": "a1cebedba79352409e9bdc1457721978a349d21b",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/junit.xml"
+    },
+    {
+      "path": "docs/collab/codex/reviews/2026-11-07_Issue22_Local_TTT_Pipeline_5fe2b8de_Author_Handoff.md",
+      "git_blob": "8b351dcdfb1b829c836800964ccf33a1e2add7dd",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/docs/collab/codex/reviews/2026-11-07_Issue22_Local_TTT_Pipeline_5fe2b8de_Author_Handoff.md"
+    },
+    {
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "git_blob": "d2133c99030c2bc54fe46beae91fd4f0158132c5",
+      "display_url": "https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/docs/collab/chatgpt/CODEX_INBOX.md"
+    }
+  ],
+  "pr_snapshot": {
+    "url": "https://github.com/wxwy/cosmos-framework/pull/4",
+    "number": 4,
+    "state": "open",
+    "merged": false,
+    "mergeable": false,
+    "draft": true,
+    "body": "Local-TTT 目前在 Sim 停止等待 Replan 后才串行编码整段 history 并更新 Fast Weight。本增量把已完成的 pre-action RGB + canonical raw15 有界异步上传，交给现有单模型执行器逐帧计算未发布候选；Replan 仍沿原事务路径生成并原子发布 Fast/Visual/Response。\n\n- 从实际 Policy 的 Wan **裁切前**当前帧 latent 捕获 Visual96，严格绑定输入、profile 与 Session；16 条 history 只需 **15 次独立 Encode1、16 次合法 T1 更新**。缺失或不匹配时 fail-closed，无重编码 fallback。\n- 同一模型执行器调度 Encode1、model-owned scan、native generation 和 media；保留 grad/create_graph=False、detach carry、租约/epoch/Slot 隔离、retry/replay/ACK、abort/reset/End/drain/quarantine。上传接收 ACK 不清除预测 ledger。\n- No-TTT 不创建流水线；训练、模型树/参数键、持久缓存 schema、Manifest/source verification 和 M/B Resume 严格一致性不变。\n- 增加 CPU/CUDA-event 分项计时、有界近期 P50/P95 和独立诊断文件，明确标注计时来源。\n\n作者最终定向 CPU **428/428 PASS**（155 新例 + 273 既有回归，零失败/错误/跳过，exit0，1273 项源码指纹不变）；20 文件 Ruff/format/AST 通过。真实 tiny Wan 的输入/裁前 latent/Visual96 逐位一致；12 组 T16-vs-T1 实际模型扫描的 Fast Weight/Prefix 最大绝对差0，动作投影差0。浮点遥测求和残差及容差、最初426项中的4个夹具失败和修复均完整归档，未重复计数。另覆盖真实 Service B2 接线、并发 admission、Session 故障归属及清理首错。\n\n**精确 Child 候选**：`5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6`；父版本 `1ca308055fc41fb69efaeb9efaa23808f164a18e`。基于开工时 Root V3 `8aeb2442` 的真实 Gitlink，新分支不是 main/V2。Root 文档分支保留原 Gitlink；本 PR 不是新的匹配 Root/Child Formal Pair。\n\n[作者交接](https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/docs/collab/codex/reviews/2026-11-07_Issue22_Local_TTT_Pipeline_5fe2b8de_Author_Handoff.md) · [原始 JUnit](https://github.com/wxwy/psm_wma/blob/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu/author-final/junit.xml) · [证据与复跑说明](https://github.com/wxwy/psm_wma/tree/39ba3eb4bf49dbbbe77d4e1bc85407c369820746/artifacts/local_ttt_pipeline/2026-11-07_issue22_cpu)\n\n保持 **Draft**，请 GPT 做独立增量源码审核；作者检查不替代独立验收。真实 DCP、H100/RoboCasa、FSDP/capture/full Local-TTT 及 before/after P50/P95/Ep/h **未执行、仍开放**。L2000/L4000 正式评测、服务器共享源码/结果/checkpoint 均未访问或修改；未启动 GPU 基准或900EP。没有自动合并、更新 V3 Gitlink 或 source-switch Resume；审核后再以当时最新 V3 构造新的集成 Pair/Fresh Run。\n\nRelated: wxwy/psm_wma#22.",
+    "title": "feat(inference): pipeline completed Local-TTT evidence and reuse policy frames (Issue22)",
+    "base": "v3-local-ttt",
+    "base_sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+    "head": "v3-local-ttt-pipeline-issue22-20261107",
+    "head_sha": "5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6",
+    "head_repo_id": 1331571025,
+    "head_repo_full_name": "wxwy/cosmos-framework",
+    "merge_commit_sha": null,
+    "user": {
+      "login": "wxwy",
+      "name": "wxwy",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/38684249?v=4",
+      "id": 38684249
+    },
+    "requested_reviewers": null,
+    "requested_team_reviewers": null,
+    "diff": null,
+    "comments": null,
+    "created_at": "2026-11-06T17:10:42Z",
+    "updated_at": "2026-11-06T17:10:42Z",
+    "closed_at": null,
+    "merged_at": null,
+    "commits": 1,
+    "changed_files": 20,
+    "additions": 4936,
+    "deletions": 45,
+    "display_url": "https://github.com/wxwy/cosmos-framework/pull/4",
+    "display_title": "feat(inference): pipeline completed Local-TTT evidence and reuse policy frames (Issue22)"
+  }
+}
