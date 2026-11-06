@@ -1,3 +1,17 @@
+# 2026-11-07 — Issue22 online Local-TTT pipeline claim (CPU/design only)
+
+Owner/GitHub Issue22 grants implementation on isolated Child branch and Draft PR, not official V3 promotion or GPU execution. Start observation: fetched+advertised Root V3 `8aeb2442993620ee4513834a73064a4ea1eca38c`; actual Gitlink/Child `1ca308055fc41fb69efaeb9efaa23808f164a18e`. New isolated Root and Child worktrees `/workspace/work/psm-wma-local-ttt-pipeline-issue22`, branch `v3-local-ttt-pipeline-issue22-20261107`. Both clean at creation. No active server/source/results/checkpoint/process/GPU access; L2000/L4000 untouched. Root production and official Gitlink stay unchanged; Root branch only task/design/evidence/Inbox.
+
+Gate G0 before production changes: prove the Policy current frame's PRE-CROP Wan latent produces the same Visual96 as the existing independent Encode1, using actual preparation/normalization/causal-prefix/Wan CPU routes. Crop-after-policy Visual96 is not an interchangeable seam. If actual equivalence fails, preserve evidence and report BLOCKED, no repeat-encode fallback or training semantic changes. Real DCP/H100 remains unrun and not implied by tiny generated CPU weights.
+
+Claimed Child scope after G0: inference robocasa_composite_visual.py/current-latent collector; robocasa_local_memory_policy.py and local_memory_online.py narrow staged candidate integration; new bounded pipeline helper; robocasa_batch_transactions.py and scripts/action_policy_server_robocasa.py single-executor queue/current-encode capture; simulation/robocasa/local_memory_client.py and closed_loop_eval.py async completed-evidence sender; corresponding CPU tests and profiling summaries. No model/training/Checkpoint/cache-schema/Manifest/Resume/No-TTT behavior change. Current G0 test ownership: decode_test_design agent ONLY new inference/robocasa_local_pipeline_parity_test.py; no execution by agent. Main owns all production/docs/evidence and runs announced CPU commands. review_requirements/fixture_review agents read only.
+
+Streaming work must be unpublished candidate state, never per-frame commit. Existing commit_many ONE Snapshot publication after successful generation remains authoritative; completed/queued/evaluated/committed frontiers, exact lease/session/epoch/digest/retry/abort/end/close and bounded failure propagation must be explicit. Same GPU executor schedules generation and single-step work fairly; no waiting for own futures under model lock. Keep gradient-enabled model-owned scan and detached carry; telemetry aggregates all steps. No-TTT stays off. No GPU benchmarks/900EP; real performance claims require later authorized evidence.
+
+Status IN_PROGRESS, G0 pending. Latest direct Owner task/role order overrides obsolete V2/MM/Kimi/pane polling requirements. No new reviewer approval asserted; no tests or production code edits for Issue22 yet. Read actual Issue22+comments, Root/Child governance, latest canonical Inbox, TODO/Memory and corrected shared composite contract. Environment currently connected, HTTP restricted/enforced Github allowed, VPN false, no secrets; no reconfiguration required.
+
+## Retained earlier records
+
 # 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:
