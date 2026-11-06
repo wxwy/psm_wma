@@ -14,9 +14,10 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## G2 — technical survey and detailed design working draft
 
-- **[G2 详细设计 v0.1：空间记忆初始化、时序维护与历史视觉训练数据](build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md)** — 2026-11-06 用户确认：四种初始化（Full / Partial / Pre-scan / Zero）× 两种维护（MuJoCo GT / nav_sg Left RGB-D）是独立维度；当前仅优先 **Full Map + MuJoCo GT Update**。记录基图+状态增量+关系事件+时间索引、共享 Capture、历史多角度/状态图像；明确已确认、建议、待定和后置需求。新图像获取方案仍在讨论，不授权代码/渲染/训练。
+- **[G2 详细设计 v0.2：大实体场景图、Left 机器人视角与历史照片维护](build/PSM-WMA_G2_detailed_design_v0.2_2026-11-06.md)** — 当前补充与纠正：仅独立、通常固定且相对较大的实体进入 SG 并维护图片；小物件只保留语义关系/必要状态，不建专属图库；全部历史图必须来自原 robot0_agentview_left、合法相机高度与机器人可达配置，并保存拍摄机器人位姿。自然保留机械臂、按大实体/状态/可达视角维护有界代表图、事件触发区域上下文刷新等是讨论建议，尚未授权实施。
+- [G2 详细设计 v0.1：空间记忆初始化、时序维护与历史视觉训练数据](build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md) — 保留四种初始化×两种维护、**Full Map + MuJoCo GT Update 优先**、基图+状态增量+关系事件+时间索引等无冲突决定；其中自由相机、给所有对象补图等图像建议已由 v0.2 覆盖。
 - [G2 技术调研报告 v1.0：技术路线比较与收敛](build/PSM-WMA_G2_technical_survey_v1.0.md) — 2026-11-02. Preserves the research comparisons, decision history, external evidence, nav_sg reuse rationale, and the Owner-confirmed G2 scope. This is a technical survey, not a detailed design, implementation acceptance, or training authorization.
-- The earlier decision to defer detailed design is updated by the Owner's 2026-11-06 request to record confirmed decisions in the working draft above. Existing G1/No-TTT production code, checkpoints, runtime contracts, historical frozen documents, and nav_sg PRs remain unchanged. Do not treat proposed camera/image-memory recipes as frozen or implemented.
+- The Owner's 2026-11-06 corrections in v0.2 take precedence over conflicting v0.1 image-memory proposals. Confirmed decisions and proposed implementation choices remain separate. Existing G1/No-TTT production code, checkpoints, runtime contracts, historical frozen documents, and nav_sg PRs remain unchanged. No render/training/implementation authorization is implied by these docs-only updates.
 
 ## 1. Current truth — read these first
 
@@ -49,11 +50,10 @@ For Corrected V3, read v3.0 first; conflicting older operational summaries do no
 - `build/PSM-WMA_02_detailed_design_v2.1_frozen.md`
 - `build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.5.md`
 - `build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.9.md`
-- `build/PSM-WMA_Local_Memory_v0.3.5_active_route_member_shape_refreeze_design_v0.3.md`
 - `build/PSM-WMA_Local_Memory_A2_delivery_runbook_2026-09-18.md`
 - `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — current Corrected V3 design authority; production conformance requires subsequent implementation and Evidence.
 - `build/PSM-WMA_V3_migration_detailed_design_v1.1_2026-10-04.md` — historical B1/iter500 migration design, superseded by v3.0; not an execution authority.
-- `build/PSM-WMA_G2_detailed_design_v0.1_2026-11-06.md` — G2 working draft; confirmed initialization/update axes and Full-GT priority, with historical-image proposals explicitly not frozen.
+- `build/PSM-WMA_G2_detailed_design_v0.2_2026-11-06.md` — current G2 image-memory constraints and maintenance proposal; v0.1 retains non-conflicting initialization/update and temporal-storage decisions.
 
 ## 3. Historical engineering record
 
