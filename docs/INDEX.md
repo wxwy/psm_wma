@@ -14,6 +14,9 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
 
+- **[G2 详细设计 v0.4：空间视图及 Latent Cache](build/PSM-WMA_G2_detailed_design_v0.4_2026-11-06_spatial_view_latent_cache.md)** — **当前训练数据缓存设计草案**：对 Full Map + MuJoCo GT 预生成 BEV 和可选房间方向/三视图，并独立缓存冻结视觉编码器 latent；按状态/视图内容去重，严格绑定既有 G1 accepted cache corpus 与真实帧时序；Global Spatial Encoder 保持可训练。具体视图和模型接线待确认，不授权构建/训练。
+
+
 - **[G2 详细设计 v0.3：nav_sg 原生数据流与 MuJoCo GT 替换边界](build/PSM-WMA_G2_detailed_design_v0.3_2026-11-06_navsg_mujoco_dataflow.md)** — **当前优先设计**。用户最新修正：SG 构建阶段不再按“大而固定”筛除对象；大小/重要性筛选留到 Cosmos BEV/空间读出。明确原生几何/占据→RoomPipeline、YOLOE/SigLIP→ObjectMap3D→SGManager 与 G2 on/inside 证据链，区分 MuJoCo GT 占据导入、GT 实例/状态导入和缺失的 GT 关系适配层。当前只讨论 Full Map + MuJoCo GT Update，没有代码、训练或仿真授权。
 - **[历史视觉记忆专项技术调研：OPTIONAL](build/PSM-WMA_G2_historical_visual_memory_OPTIONAL_survey_v1.0_2026-11-06.md)** — 独立研究比较与备选实现依据。历史多视角图库**不是**当前 Full-GT 主线前置条件。调查中的“大实体有图库”只记录为历史备选设定，不约束当前 SG 构建。
 - [历史 Left 图像自动采集/维护备选方案](build/PSM-WMA_G2_Left_history_capture_automation_proposal_v0.1_2026-11-06.md) — 备选设计材料，不代表现在要实现。
