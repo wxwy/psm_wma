@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2 详细设计 v0.7：上下正交 BEV 与自适应房间规范视角](build/PSM-WMA_G2_detailed_design_v0.7_2026-11-07_orthographic_bev_canonical_views.md)** — **最新讨论修正**：顶部 perspective 是房间固定备选；优先上下正交几何投影，**不另建 Costmap/Traversability 标签**；方向图是只借鉴 Left 高度的共光心**规范虚拟相机**，FOV/pitch 可调，45°×8 只是初始采样而非保证覆盖。提出 Room 几何中心→自由空间候选→低分辨率可见性评价→必要时加角度/俯仰/第二锚点的自动流程。覆盖 v0.6 的对应旧表述，仍为待验证设计。
+
 - **[G2 详细设计 v0.6：分层正交 BEV + 房间中心方向视图](build/PSM-WMA_G2_detailed_design_v0.6_2026-11-06_layered_bev_room_directional_views.md)** — **最新视图方案讨论**：主 BEV 优先空间位置/可通行性，讨论 Left 高度上下正交分层与高位透视对照；每房间在有效锚点按世界/房间绝对方向每 45° 生成 8 张 Left 参数视图，90° 4 张为子集；严格区分 room canonical view 与真实机器人历史 Left，全部可选视图均需 L2/L3 cache。尚未冻结选型或执行。
 
 - **[G2 详细设计 v0.5：可渲染三维空间地图→真实视觉 BEV](build/PSM-WMA_G2_detailed_design_v0.5_2026-11-06_renderable_spatial_bev.md)** — **最新可视化输入约束**：BEV 必须从真实三维几何/纹理/材质渲染，不能由节点名称/坐标画示意图；SG 负责实体与关系，不是 RGB 渲染源。记录 nav_sg 原生 PointXYZ/SG 缺失渲染资产的接口差距、MuJoCo 正交顶视参考、遮挡策略与 L2/L3 缓存绑定。覆盖 v0.4 中可能被理解为“简化语义绘图即可”的建议；尚未实施。
