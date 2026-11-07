@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2 已执行真实数据 Gate：Room footprint vs MJCF 实体墙（2026-11-07）](build/PSM-WMA_G2_room_footprint_vs_MJCF_walls_pilot_gate_2026-11-07.md)** — Read-only **PARTIAL_PASS / native Room 比较受阻**：Episode 5077 的 27 个原生采样快照 Room 节点为零，Left-only 占据覆盖不足；18 tasks×3 episodes 中 50 条四墙、4 条五墙；Layout 10 真实 L 形地板凸包额外覆盖 ~7.2%。源码发现 RoomBuilder 2D BFS 可穿过 OCCUPIED-only 网格，需先做原生隔墙回归；避免 fake-sensor raycast。实际脚本、JSON、诊断图均保存在授权 data 服务器独立审计目录。不是完整 native Full-GT Gate PASS。
+
 - **[G2 详细设计 v1.6：实体墙/开放边界与斜墙投影](build/PSM-WMA_G2_detailed_design_v1.6_2026-11-07_wall_detection_room_axes_oblique_walls.md)** — **最新源码核查及设计**：nav_sg 的 Room 聚类与 wall 实体是不同层，`boundary_hull_2d` 仅为拓扑凸包；原生 `FloorSegmenter` 有 1.6m 高度占据切片但没有独立 WallSegment/开放边界分类。建议多高度占据＋有限垂直面识别；Room ±X/±Y 改为稳定**局部 Room Frame**，斜置矩形房间仍固定四向；单斜墙可选墙法向正交，避免世界 AABB 对斜墙造成近邻误连接。无执行。
 
 - **[G2 详细设计 v1.5（补充：Room 是拓扑/语义区域，Island 是派生分组）](build/PSM-WMA_G2_detailed_design_v1.5_2026-11-07_room_island_view_assets.md)** — Room→Object 原有实体父子层级不变；Object 仅持有可空 `island_id`，RoomAssets 下另存 Island 分组/四向视图引用，不增加物理 SG 父节点。源码核查：nav_sg 的 Room 由 ESDF/GVD 拓扑与 TopoCut 语义聚类生成，**不要求四面实墙**，开放式客餐厅可能切成 1 或 2+ Room，且 `boundary_hull_2d` 不是真实墙。±X/±Y 是固定方向槽，实际墙段 0..N，开放边界须标记，不凭空构墙；v1.4 孤岛混入墙图已覆盖。
