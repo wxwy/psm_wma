@@ -1,3 +1,17 @@
+# 2026-11-07 — Issue23 Stage0 design claimed; implementation not started
+
+Owner Issue23 explicitly requires Stage0 design and acceptance matrix review before implementation. Current task is independent from Issue22/PR4. Fresh fetched/advertised RootV3 `a77f3d4bd8a691435d1935025cc1a9766da646a1`; actual Child/Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`. New isolated Root/Child worktrees `/workspace/work/psm-wma-sim-shared-vae-issue23`, both branch `v3-sim-shared-vae-issue23-stage0-20261107`, initially clean. No main/V2 or PR4 branch used/modified.
+
+Claim Root SESSION/TODO/canonical append-only Inbox and design handoff/evidence only; Child ONLY docs/designs/issue23_sim_shared_vae_stage0/{DESIGN.md,acceptance_matrix.json,recipes/single_latency.json,recipes/multi_sr_throughput.json,trace.schema.json,feature_envelope.schema.json}. All are non-executable Stage0 specifications, not production flags/launchers. Main owns all writes. Four agents inspect base source and Issue23 read-only; no project/test execution. No production source, model/training/cache/checkpoint, officialRootGitlink, server/process/GPU/real simulation or historical evaluation data operations.
+
+P0 first matrix is strict1Server1Sim/PolicyB1/H16/raw15/state15/fps20 A(nativeNoTTT),B(oldServer16Encode1+T16),C(sameLocalcheckpoint asB,SimWorkerB1/wait0,15Encode1+Policyboundaryreuse,16T1). D sameLocalcheckpoint off is currently unsupported by strict config/runtime/DCP mode validator; design may propose explicit future ablation, not bypass guards. Multi performance is separate. Hardware timing/SR/results all NOT_RUN;18x2 smoke never proves SRgain.
+
+Stage0 must define bounded independent per-SimGPU Worker owner, VAE READY microbatch clock, Policy READY batching without inherited admitted-age regression, frozen original deadlines before boundary waits, trusted signed feature producer, causal no-future/lease/epoch/idempotence/end/quiescence, numerical gates and immutable experiment identity. Shared VAE numeric realBF16 B1/B4/B8 vsEncode1/GPU-EGL contention remain unproven; no posthoc tolerance relaxation. Stage1 standaloneWorker/CPU comes only after Stage0review; Stage2hardware and Stage3action-path integration require separate gates.
+
+Current Owner scope excludes evaluation-incident diagnosis. Environment current connected/enforcedrestricted/GitHuballowed/VPNfalse, no repository environment reconfiguration needed for this design task. Root/Child governance, Memory, currentInbox and actual Issue23+4comments read; latestOwner staged ordering overrides obsolete V2/MM/Kimi live polling. Plan publish docs-only Child Draft PR for Stage0 review, Root metadata only; no code implementation authorization inferred from design submission.
+
+## Retained earlier records
+
 # 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:

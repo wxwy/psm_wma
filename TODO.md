@@ -534,3 +534,11 @@
 - **EVALV2-RENDER-MAP** — REVIEW (Formal46d3a604/d3b2a29b; author192 PASS; GPT pending); Codex; isolated branch v3-eval-v2-render-media-20261101, base7e2be5ca/86642677. Independent GPU roles/PCI+actual Context proof/OSMesa/admission guards and Manifest binding implemented. Combined development192 PASS/0failure/error/skip, Ruff0.12.7/format/AST PASS. Clean Formal Pair and author evidence frozen; candidate GPT request prepared. Prior118 development evidence preserved; no canonical merge or true GPU/simulation/FFmpeg/live-job action.
 - **EVALV2-MEDIA-LIFECYCLE** — REVIEW (GPT APPROVE_CODE6484dd83/9a8cd618; RM-M01 CLOSED; hardware pending); Codex; prior29 author evidence/GPT verdict/DS reported mixed-interpreter CPU acknowledgment preserved. No new Media change; independent Owner resource-policy delta below. No out2/NoTTT/shared runtime edits or restart.
 - **EVALV2-OWNER-GPU-RESOURCE-POLICY** — REVIEW (Formal4b581493/9a8cd618, author70 PASS, GPT pending); Codex; Owner explicitly retires foreign CUDA and GPU memory/reserve admission. Only resources.py and focused tests; retain selected device existence/UUID/PCI/Context and owned-process safety. New Root/same Child9a8cd618, narrow CPU/review required; no GPU task enumeration/management, GPU0-3, canonical merge or runtime launch.
+
+
+# 2026-11-07 — Issue23 independent Sim-side shared VAE
+
+- **ISSUE23-STAGE0-DESIGN** — IN_PROGRESS; Codex; baseRoota77f3d4b/Child1ca30805; docs-only design+P0 singleA/B/C matrix, single/multi recipes, trust/READY/deadline/ownership and numerical/trace/paired-SR gates; submit exact design SHA to GPT before code.
+- **ISSUE23-STAGE1-WORKER-CPU** — TODO; Codex; requires GPT Stage0 design approval; independent Worker+microbatch protocol/CPU/synthetic only, new candidate PR, no Policy production integration/realGPU.
+- **ISSUE23-STAGE2-HARDWARE** — TODO (not authorized); Owner/GPT; real WanBF16 B1/B4/B8 andEGLcompetition Gate, no inference Feature transport before proof.
+- **ISSUE23-STAGE3-P0-AND-MULTI** — TODO (not authorized); Owner/GPT; strict1x1 A/B/C latency/SR paired design and multi throughput independent, reviewed newSourcePair andFresh identities required;18x2smoke noSRbenefitclaim, largerSRrequiresnewOwnerpermission.
