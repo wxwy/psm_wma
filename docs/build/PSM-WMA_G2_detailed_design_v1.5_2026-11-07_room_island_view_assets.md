@@ -50,3 +50,50 @@ House / SceneTemplate
 在一个有中央独立柜/岛台的场景检查 4 张 Room 立面**不叠岛台**、Island 的 4 张独立视图呈现柜门/抽屉/把手，并保存同一 Island 的世界 BBox 与 Floor Top 对齐。对无孤岛房间：`Room.Islands={}`，而 `Room.cardinal_views` 仍固定四张。验收 2 个孤岛时相同的结构仍成立，仅 `Room.Islands` 多一组属性。与真机 nav_sg 已有彩色点云相同 renderer 的生成能力作为硬约束。
 
 **当前收敛：House floor/up + Room ±X/±Y + Room.Islands[*].±X/±Y（各自独立 L2/L3）**。存储与模型一次性输入的数量是两回事；首要设计意图是保持墙面图无遮挡的语义纯度与孤岛属性的完整性。
+
+
+## 5. 2026-11-07 源码实证：Island 是虚拟分组，不是物理实体层级
+
+**推荐最终约定**（对前文示意图作语义消歧）：
+
+```text
+SceneGraph (physical/semantic entity hierarchy):
+Building
+  └── Room(room_uid, spatial footprint / semantic label)
+        ├── Object_A (island_id = null)
+        ├── Object_B (island_id = island_01)
+        ├── Object_C (island_id = island_01)
+        └── Object_D (island_id = island_02)
+
+Room spatial-view assets (derived index; NOT an additional physical SG parent):
+RoomAssets[room_uid]
+  ├── cardinal_views: {+X, -X, +Y, -Y}
+  └── island_groups
+        ├── island_01: {member_object_ids:[B,C], bbox, views:{+X,-X,+Y,-Y}}
+        └── island_02: {member_object_ids:[D],   bbox, views:{+X,-X,+Y,-Y}}
+```
+
+- `Island` 不代表一个真实物体、机械装配关系或者一个新的结构 parent；它只是同一 Room 下的**空间近邻连通分组 + 独立四向图像资产索引**。实体对象仍是 `Room → Object`。
+- 对象的 `island_id` 是**派生属性/关系引用**，允许为空；`RoomAssets.island_groups` 维护 members、可见性/场景版本、四向 L2 与 L3 refs，避免重复拷贝 Object。第一版无需修改 C++ `SceneGraphManager` 的 Building→Room→Object 结构。
+- 岛分组由独立对象图的三维 BBox 最近距离 `distance_3d<d` 构成；**不要通过共同 Floor 根把全部家具误归一个大组件**。只有没有任何 Wall 归属的近邻组件是岛候选。
+- 当前时序变化可能导致分组拆分/合并；建议保存 `island_id` 的稳定主体锚点/场景版本，并以 per-frame membership 保存变化。正式如何稳定命名仍待确认，不能假设 ObjectMap3D 的 cluster_id 绝对稳定。
+
+## 6. 2026-11-07 源码实证：原生 Room 不要求四面物理墙
+
+当前 nav_sg PR #4 候选源码：
+- `src/room_pipeline/room_pipeline.cpp:553-574`：`setupWindow → updateGvd → updateGraph → computeSemantics → runClustering → buildRooms`。**没有**“房间必须由四面墙围住”的判据。
+- 真机与仿真 `launch/params_{real,sim}/room_pipeline_params.xml` 当前都设 `source=esdf_grid`、`clustering_method=topocut`、`clustering/geometry_only=false`、`clustering/feature_projection=room_similarity`。即先从已知自由空间构图、受几何瓶颈和视觉语义证据影响，再按 TopoCut 聚类。见 `src/room_pipeline/clusterer/embedding_clusterer.cpp:21-48,86-150` 及 `src/room_pipeline/clusterer/topocut_clusterer.cpp:24-58`。
+- `src/room_pipeline/room_pipeline_room.cpp:344-413` 只按 `node.cluster_id` 分组得 Room；`Room` 可有语义标签。它**可能**把开放客餐厅分成 Living Room 与 Dining Area 两个 Room，也可能因证据不足合为一个；不能声称当前算法一定切得正确，或切出来的每个 Room 都至少有三面真实墙。
+- `RoomBuilder::computeHull2d`（同文件约 681-724）直接计算拓扑节点 XY **凸包**，不是实际建筑墙面，不可直接据此生成 Wall 正交图。
+- `RoomBuilder::detectPortals`（约 728-800）处理**已划分 Room 之间**的跨簇边/瓶颈；当前 real/sim `room/compute_portals=false`，门信息非划分必备条件。对于完全开放的客餐厅，跨区域边界可能不存在物理门。
+- `Room` 存 `uid, node_ids, center, label, boundary_hull_2d, portals`，**没有**可靠的四堵墙实例、法向、物理墙颜色几何的内置列表。因此需要单独的 wall-surface/segment 解析映射，不得把 `Room.boundary_hull_2d` 的凸包边冒充四堵墙。
+
+**对固定 ±X/±Y 正交立面的影响**：
+
+- 固定的是**四个方向槽位** `{+X,-X,+Y,-Y}`，并非物理世界每个 Room 都有四堵墙；
+- 每个方向保留 `boundary_type = physical_wall | open_boundary | unknown`、`wall_segment_refs[]`、`view_validity` 等元数据。房间/餐厅开放的一侧可以没有真实墙面，不能为凑数创建虚构的墙颜色或壁挂物体；
+- 若只允许显示墙面及其 d 近邻链，开放侧的 Room Cardinal View 可能只有空/unknown，该方向保持保留槽位和 mask。是否将开放侧用另一种“面向房间内部的方向立面”显示，属于**待确认的读出规则**，不能未经用户确认自行扩大对象集合、把 Island 叠回 Wall 图；
+- 真实墙可斜向或位于同一方向的多个片段；方向槽与 `wall_segment_refs[]` 分开。与邻接 Room 共享的真实墙只存一个物理实体 ID，多 Room 的视图可引用它，不能按各 Room 随意复制不同墙；
+- 建议在一个开放客餐厅样例中输出 `nav_sg room_uid/semantic label/cluster footprint` 与 `physical wall segments` 两套覆盖图，再做立面图缓存规范。**本次未运行该开放场景验证**。
+
+以上是对现有 G2 v1.5 的模型语义与源码事实补充，不表示新 SG Island 节点或 Wall 分段已实现。
