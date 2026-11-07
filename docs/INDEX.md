@@ -13,9 +13,11 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
-- **[G2 详细设计 v1.4：固定六视图＋孤岛进入四方向立面](build/PSM-WMA_G2_detailed_design_v1.4_2026-11-07_fixed_six_views_island_overlay.md)** — **最新推荐候选**：取消 v1.3 每个岛额外 4 张的可变输入；固定 Floor/Upper/四方向正交图，将所有不归属任意墙的独立物体组件补入现有四方向图。保持 d=30cm 三维 BBox、跨建筑根隔离及 real-nav_sg 可生成性；真实前景遮挡仍待单场景审图。未实施。
+- **[G2 详细设计 v1.5：Room→Island 独立四向正交视图](build/PSM-WMA_G2_detailed_design_v1.5_2026-11-07_room_island_view_assets.md)** — **最新确认**：Room 固定 ±X/±Y 四张正交立面，孤岛图不得叠加到墙视图；每个 Island 额外存储自己的 ±X/±Y 四张图和 L2/L3 缓存，挂在 Room.Islands 下。整屋 Floor/Upper 保持。原生 C++ SG 不必为此重构，G2 可先用 room/island/object 引用作视图资产层；存储数量不固定，不代表 Cosmos 必须一次读取全部。v1.4“孤岛叠入墙图”已被覆盖。
 
-- **[G2 历史方案 v1.3（已被 v1.4 覆盖）：中央孤岛组件的正交侧视补充](build/PSM-WMA_G2_detailed_design_v1.3_2026-11-07_island_component_views.md)** — 解决独立岛台、桌柜不属于任何墙视图时缺少柜门/抽屉侧视的问题。复用 d=30cm 三维 BBox 近邻，**排除 Floor 根作为组件连通中继**；没有 Wall 归属且值得展示立面的组，可按需生成世界轴四向局部正交图；不为每个小件都新增四张，完整 SG 不受限制。保持 Sim/Real 彩色点云可生成与 L2/L3 缓存设计，尚待单场景验收。
+- **[G2 历史方案 v1.4（已被 v1.5 覆盖）：固定六视图＋孤岛进入四方向立面](build/PSM-WMA_G2_detailed_design_v1.4_2026-11-07_fixed_six_views_island_overlay.md)** — **最新推荐候选**：取消 v1.3 每个岛额外 4 张的可变输入；固定 Floor/Upper/四方向正交图，将所有不归属任意墙的独立物体组件补入现有四方向图。保持 d=30cm 三维 BBox、跨建筑根隔离及 real-nav_sg 可生成性；真实前景遮挡仍待单场景审图。未实施。
+
+- **[G2 历史方案 v1.3（独立孤岛方向已在 v1.5 恢复）：中央孤岛组件的正交侧视补充](build/PSM-WMA_G2_detailed_design_v1.3_2026-11-07_island_component_views.md)** — 解决独立岛台、桌柜不属于任何墙视图时缺少柜门/抽屉侧视的问题。复用 d=30cm 三维 BBox 近邻，**排除 Floor 根作为组件连通中继**；没有 Wall 归属且值得展示立面的组，可按需生成世界轴四向局部正交图；不为每个小件都新增四张，完整 SG 不受限制。保持 Sim/Real 彩色点云可生成与 L2/L3 缓存设计，尚待单场景验收。
 
 - **[G2 详细设计 v1.2：单一三维 BBox 欧氏距离连接阈值](build/PSM-WMA_G2_detailed_design_v1.2_2026-11-07_single_3d_bbox_distance.md)** — **最新已确认**：统一采用 3D BBox 最近距离 `sqrt(gx²+gy²+gz²)<d`，候选 d=30cm，**不按 XYZ 分轴判断，也不使用 d_xy/d_z 双阈值**；直接/间接近邻归属与建筑根隔离保留。覆盖 v1.1 的错误双阈值建议；实际图像和 d 数值仍待单厨房验证。
 
