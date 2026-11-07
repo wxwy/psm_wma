@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2 详细设计 v0.9：整屋上下正交图与房间锚点验收](build/PSM-WMA_G2_detailed_design_v0.9_2026-11-07_house_bev_room_anchor_acceptance.md)** — 最新候选验证：统一整屋 XY 正交投影、Left 实际世界高度作为分割起点；Room.center 附近自由位置候选与低分辨率视角覆盖评分；固定房间轴 0°，试 45°×8、FOV/pitch 自适应；2Hz 彩色背景与高频 SG 的版本/过期内容分离。先单 Episode 审图，通过后再批量 L2/L3。仅为设计，尚未执行。
+
 - **[G2 彩色点云、10Hz 更新与 3DGS 对比源码审计](build/PSM-WMA_G2_colored_pointcloud_10Hz_vs_3DGS_audit_2026-11-07.md)** — **新增已验证源码事实**：nav_sg 自带 ColorCloudMap<PointXYZRGB> 真实 RGB-D 颜色体素融合，区别于 ObjectMap3D<PointXYZ> 及按 ID 伪彩；真机/仿真彩色云默认发布2Hz，G2 当前 offline 回放禁用。审计全量复制发布、仅最新帧异步队列、动态 voxel 擦除缺口、10Hz 真机性能 Gate，与 3DGS 快渲染但优化较贵的文献对比。v0.8 的“缺少 RGB 融合”旧表述已纠正。当前**无实测10Hz结论**。
 
 - **[G2 详细设计 v0.8：仿真—真机空间视图可生成性约束](build/PSM-WMA_G2_detailed_design_v0.8_2026-11-07_sim_real_renderability_contract.md)** — **最新硬性约束**：所有进入 Cosmos 的 Lower/Upper BEV、房间方向图及其他空间视图，都必须能由真实 nav_sg 三维地图产物经同一 Renderer 生成；MuJoCo 仅代替 GT 数据源。区分已实现 XYZ/Occupancy 与尚缺的 RGB 外观融合、未知/遮挡 mask、共同 L2/L3 ABI 和真机可生成性 Gate；覆盖旧文档中“MuJoCo 能渲染就能用”的过强假设。仅为设计。
