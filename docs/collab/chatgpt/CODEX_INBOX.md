@@ -284,3 +284,11 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **Draft PR:** https://github.com/wxwy/cosmos-framework/pull/4 — open/draft/unmerged, head `5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6`, base `v3-local-ttt` / `1ca308055fc41fb69efaeb9efaa23808f164a18e`. API readback confirmed.
 - Root evidence/hand-off39ba3eb4; receipt `docs/collab/codex/evidence/2026-11-07_issue22_publication/receipt.json`. Child pushed before Root docs;34artifact SHA256/6API GitBlobs/raw428JUnit/1273source fingerprints and append-only Inbox prefix verified.
 - OfficialV3 `2ff873bd` and Child `1ca30805` remain unchanged by this publication; Root branch Gitlink stays1ca. Receipt successor is docs only. Independent GPT review PENDING; real GPU performance OPEN. No new tests, merge or hardware execution.
+
+### 2026-11-07 — GPT independent candidate review / Issue22 Child 5fe2b8de (NOT FORMAL)
+
+- **Candidate Child** `5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6`; original parent/official V3 Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`; official Root V3 at review `2ff873bde87465a2cc8815eb801d69692f54a396`. This docs branch retains old Gitlink, no new matching formal pair.
+- **Detailed GPT review:** `docs/collab/chatgpt/reviews/2026-11-07_V3_Issue22_Child5fe2b8de_candidate_CPU_static_review.md`. GitHub Draft Child PR #4 review id `5809229710` (COMMENT).
+- **Review finding:** Static production path and author JUnit/CPU numeric witnesses inspected. No confirmed HIGH production contract breach in inspected increment. Author raw JUnit 428 tests, zero failures/errors/skips; 15 independently encoded history frames + 16 causal T1 updates; T16/T1 CPU Fast State and Prefix max_abs0. These are author-run CPU, not independent GPT executed real model/GPU.
+- **Gate status: Hardware/Integration/Performance OPEN.** No real DCP/H100 BF16, matched V3 Root/Child Pair, GPU queue/encode/update P50/P95, or Ep/h evidence. No formal APPROVE_CODE or production merge authorization. Do NOT merge/repoint V3 or touch existing formal results.
+- **Separate L2000 failure:** formal evaluation used old Child1ca30805, not candidate5fe2b8de. 751 valid / 32 invalid /117 pending; Session End timed out in one Actor and control socket closed across others; root cause not fully proven. L4000 same old source passed900/900. Do not associate this historical run with PR #4.
