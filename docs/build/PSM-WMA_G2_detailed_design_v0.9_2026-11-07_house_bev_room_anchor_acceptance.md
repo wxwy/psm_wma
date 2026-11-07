@@ -15,6 +15,7 @@
 
 ## 1. 整屋上下正交图：应先冻结哪些空间规则
 
+- **nav_sg 真实数据边界**：当前 `ColorCloudMapWorker` 发布给 RViz 的彩色点云经过 `vis_filter_max_z` 高度裁剪（`src/utils/color_cloud_map_worker.cpp:425-445`）；验证上层视图时必须使用未被显示过滤截断的底层彩色点云快照，或显式调整导出范围。不能从 RViz 当前只显示的低层点云推断高柜/吊柜不存在。地图真机 2cm 与仿真配置 5cm 叶尺寸也须在渲染质量比对时单独记录。
 - 地图框架：固定 World XY；一个 SceneTemplate 的全部 Episode 共用 XY bounds（含必要外边距）、轴朝向与米/像素比例；两张视图逐像素 XY 对齐。房间坐标可另外提供与 World 的变换，机器人底盘位姿作为独立输入，不因它移动而重绘整屋图。
 - 分界高度 `h_split`：从训练对象实际 Left 光心的**世界高度**作为第一个候选。当前已核实 episode_000036 `ep_meta.cam_configs.robot0_agentview_left.pos=[-0.5,0.35,1.05]` 是相对 `mobilebase0_support` 的局部安装位置，不可以直接宣称世界高度恒为 1.05m；须用对应 MJCF/状态正向运动学求出实际参考高度。
 - Lower：裁剪 `z<h_split` 的已知三维几何，从 `h_split` 往 `-Z` 做正交投影，生成真实几何/彩色表面视图与深度/高度和 validity 参考。
