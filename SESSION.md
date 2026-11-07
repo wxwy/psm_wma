@@ -1,3 +1,7 @@
+# 2026-11-07 — Issue23 first focused Gate failed on umask-dependent fixture
+
+Exact first CPU pair Root4495399d23381e93e80a5ea98354a7f8529b8af8/Childf64a0396859f8a205caf0cce2318045d479ac844: staticcheck+formatPASS, standalone172pass1fail/185subtestsPASS, legacy notexecuted,source_unchanged=true. Raw artifacts `/workspace/work/issue23-stage1-evidence/author-01`. Solefailuretest_start_rejects_unsafe_or_foreign_paths[public_directory] expected0755 butinheritedumask0077 yields0700. Readumask0077 andactualmkdircode confirmedfixtureassumption. Fixedonlyclient_test toexplicitlychmod0755+assertfixturemode; noprotocol/Worker/IPCproduction changes. NewChildtestcommit tobefrozeninRootcandidate, thenrepeatfocusedGateonnewPair/newoutputdir. RetaininitialFAILunaltered; notGateclosure.
+
 # 2026-11-07 — Issue23 Stage1 implementation frozen for first focused CPU Gate
 
 New Child implementation `f64a0396859f8a205caf0cce2318045d479ac844`, parent approveddesign8a170d56. Delta exactly8 new inference modules/tests plusStage1README, no existingChildPolicy/model/trainingfiles or approveddesign edits. Main formatting command (CUDA_VISIBLE_DEVICES='' python-mruffcheck--fix+format on8newfiles) fixed2 imports, formatted8; finalstaticcheckclean. Read-only internalreviews and deterministic regression additions cover nullcap authorization, concurrentEnd, crossdispatchfairness, shortbudgetdispatch, signaturebinding, boundedcapacity, IPCshutdown/handler/startfailure cleanup, typeddevice-drainquarantine. These are author-side checks, not GPT codeapproval.
