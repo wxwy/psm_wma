@@ -13,7 +13,7 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
-- **[G2 详细设计 v1.5：Room→Island 独立四向正交视图](build/PSM-WMA_G2_detailed_design_v1.5_2026-11-07_room_island_view_assets.md)** — **最新确认**：Room 固定 ±X/±Y 四张正交立面，孤岛图不得叠加到墙视图；每个 Island 额外存储自己的 ±X/±Y 四张图和 L2/L3 缓存，挂在 Room.Islands 下。整屋 Floor/Upper 保持。原生 C++ SG 不必为此重构，G2 可先用 room/island/object 引用作视图资产层；存储数量不固定，不代表 Cosmos 必须一次读取全部。v1.4“孤岛叠入墙图”已被覆盖。
+- **[G2 详细设计 v1.5（补充：Room 是拓扑/语义区域，Island 是派生分组）](build/PSM-WMA_G2_detailed_design_v1.5_2026-11-07_room_island_view_assets.md)** — Room→Object 原有实体父子层级不变；Object 仅持有可空 `island_id`，RoomAssets 下另存 Island 分组/四向视图引用，不增加物理 SG 父节点。源码核查：nav_sg 的 Room 由 ESDF/GVD 拓扑与 TopoCut 语义聚类生成，**不要求四面实墙**，开放式客餐厅可能切成 1 或 2+ Room，且 `boundary_hull_2d` 不是真实墙。±X/±Y 是固定方向槽，实际墙段 0..N，开放边界须标记，不凭空构墙；v1.4 孤岛混入墙图已覆盖。
 
 - **[G2 历史方案 v1.4（已被 v1.5 覆盖）：固定六视图＋孤岛进入四方向立面](build/PSM-WMA_G2_detailed_design_v1.4_2026-11-07_fixed_six_views_island_overlay.md)** — **最新推荐候选**：取消 v1.3 每个岛额外 4 张的可变输入；固定 Floor/Upper/四方向正交图，将所有不归属任意墙的独立物体组件补入现有四方向图。保持 d=30cm 三维 BBox、跨建筑根隔离及 real-nav_sg 可生成性；真实前景遮挡仍待单场景审图。未实施。
 
