@@ -268,3 +268,18 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **Evidence**: GPT independent full Streaming CPU869/869 PASS and Action CPU77/77 PASS on exact local integrated source; CPU869 used disclosed isolated Python pidfd runtime shim. Real RoboCasa/H100 R06 with verified original iter27700, M16/B8, raw Action[16,15], Local-TTT required: 36/36 Core, 29 success/7 behavioral failures, 0 invalid/interrupt/pending, clean execution true, 34/34 owned closed, zero compiler-limit failures.
 - **Formal promotion review**: `docs/collab/chatgpt/reviews/2026-11-05_R06_Issue17_Issue18_V3_95f75658_1ca30805_PROMOTION_VERIFIED.md` (docs-only commit `204270b0c0d945c26602d6397d2aa1bc1f7d8fad`). Verdict `APPROVE_CODE` for incremental object-level merge; `PROMOTION_VERIFIED` published. New docs-only commit SHA is not a new implementation target.
 - **Boundaries**: No R04/R05/R06 source-switch Resume, no G2 merge, no auto 900EP launch, no M/B Resume parameter changes. New experimental runs must use their own Manifest and source identity.
+
+
+## 2026-11-07 - Issue23 Stage0 design review request (P0 single-instance cost/benefit)
+
+- Gate: independent GPT DESIGN review; requested verdict APPROVE_DESIGN_STAGE0 or REQUEST_CHANGES. No APPROVE_CODE claim.
+- Supporting Root docs target: `696b3ee8e14339d3eaca448db17c2432f6694e13`; official/base Root V3 at task start: `a77f3d4bd8a691435d1935025cc1a9766da646a1`.
+- Primary Child DESIGN target: `8a170d56014af937b146b35e2b89753313614785`; six docs/spec files only. Actual Root Gitlink remains `1ca308055fc41fb69efaeb9efaa23808f164a18e`. This is not a new runnable Formal Pair.
+- Both isolated branches: `v3-sim-shared-vae-issue23-stage0-20261107`. Independent of PR4; no code, checkpoint, current run, official V3/Gitlink or PR4 modifications.
+- Requirement: https://github.com/wxwy/psm_wma/issues/23 including P0 Owner addendum. Root handoff: `docs/collab/codex/reviews/2026-11-07_Issue23_Stage0_SharedVAE_P0_Design_Review_Request.md`.
+- Child package: `docs/designs/issue23_sim_shared_vae_stage0/` (DESIGN.md, acceptance_matrix.json, recipes/single_latency.json, recipes/multi_sr_throughput.json, feature_envelope.schema.json, trace.schema.json).
+- First matrix is strict 1Server/1Sim/PolicyB1/H16 A(native No-TTT), B(original official server_vae/T16), C(same Local checkpoint as B, WorkerB1/wait0, boundary1+15Encode1/16T1). Optional same-Local checkpoint ablation D unsupported and separately reviewed. No weakened off/required or M/B Resume validation.
+- Timing: raw correlated CPU/GPU spans; P50/P95/P99/mean/CI; first/steady/terminal and same/split GPU separate; background compute vs foreground critical path and Sim/EGL contention. Paired SR, checkpoint confounding, full outcomes/CI; 18x2 smoke cannot establish gain. Multi throughput independently gated, not a substitute.
+- Evidence: `docs/collab/codex/evidence/2026-11-07_issue23_stage0/`; one announced external document validation: exit0,20 consistency checks PASS, content hashes and protected source trees frozen. No project/Worker CPU, real Wan numerical, GPU, RoboCasa, latency, throughput or SR tests executed: NOT_RUN. No hardware result claimed.
+- Please review trust/loaded-VAE identity/HMAC isolation, full Lease and canonical RGB binding, immutable deadline before payload, READY batching, private candidate and End/recovery, P0 latency/paired-SR design. Internal read-only audits are not GPT final approval.
+- Approval unlocks standalone Worker/protocol focused CPU implementation only. Stage2 GPU/EGL and Stage3 Action Path/real single+multi/larger SR require their extra Gates. No automatic merge or running-job operation. Evidence/Inbox successor commits are ledger only; primary design SHA remains above.
