@@ -1,0 +1,131 @@
+{
+  "scope": "ISSUE23_STAGE1_STANDALONE_PUBLICATION",
+  "status": "PUBLISHED_AND_READ_BACK",
+  "formal_root": "3ab4578475d8df5ce93b7bde6c4f2073a46f777e",
+  "formal_child_gitlink": "0a2119782fb5078fee3359f9ef7383d788744458",
+  "evidence_root_commit": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+  "canonical_request_root_commit": "9fdaf98d8bf32518d7c29083b22b4964075fdd67",
+  "pr6": {
+    "url": "https://github.com/wxwy/cosmos-framework/pull/6",
+    "head_sha": "0a2119782fb5078fee3359f9ef7383d788744458",
+    "base_sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+    "draft": true,
+    "merged": false,
+    "changed_files": 15
+  },
+  "unchanged_design_pr5": {
+    "url": "https://github.com/wxwy/cosmos-framework/pull/5",
+    "head_sha": "8a170d56014af937b146b35e2b89753313614785",
+    "base_sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+    "draft": true,
+    "merged": false,
+    "changed_files": 6
+  },
+  "remote_verified_child_files": [
+    {
+      "sha": "290b9f59991e8889a6e6ba669aec1878cb064a17",
+      "path": "cosmos_framework/inference/robocasa_vae_client.py",
+      "match": true
+    },
+    {
+      "sha": "a83846b97405bc8c2e284020380aee8b1ca0aa67",
+      "path": "cosmos_framework/inference/robocasa_vae_client_test.py",
+      "match": true
+    },
+    {
+      "sha": "9fdc007dd8c04c531c74bbd447e5cd4c71286226",
+      "path": "cosmos_framework/inference/robocasa_vae_encoder.py",
+      "match": true
+    },
+    {
+      "sha": "1f7396f729fd5be9f1410948dbb87a8fa7812d6d",
+      "path": "cosmos_framework/inference/robocasa_vae_encoder_test.py",
+      "match": true
+    },
+    {
+      "sha": "fa3081e4413523c0e764939960f7dbc29fc9cb69",
+      "path": "cosmos_framework/inference/robocasa_vae_protocol.py",
+      "match": true
+    },
+    {
+      "sha": "17ab4966b22925b6117ec20993f724c887d2390d",
+      "path": "cosmos_framework/inference/robocasa_vae_protocol_test.py",
+      "match": true
+    },
+    {
+      "sha": "bc84dfc2a928f1d67187e1539d279e41cffdaa69",
+      "path": "cosmos_framework/inference/robocasa_vae_worker.py",
+      "match": true
+    },
+    {
+      "sha": "bfd0196af63887967b99adb8a99e639c68f985c6",
+      "path": "cosmos_framework/inference/robocasa_vae_worker_test.py",
+      "match": true
+    },
+    {
+      "sha": "207dd23699b7e75e7d4c03cf870a3ebeaa31ee92",
+      "path": "docs/designs/issue23_sim_shared_vae_stage1/README.md",
+      "match": true
+    }
+  ],
+  "remote_verified_root_files": [
+    {
+      "sha": "1958456e8b555e4208b3e75d3bf8d9f67f1673bc",
+      "path": "docs/collab/codex/evidence/2026-11-07_issue23_stage1/author-02/gate.json",
+      "ref": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+      "match": true
+    },
+    {
+      "sha": "408e7ceb523e9fa7ae110da33fbed7edec8073c1",
+      "path": "docs/collab/codex/evidence/2026-11-07_issue23_stage1/author-02/legacy_protection.xml",
+      "ref": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+      "match": true
+    },
+    {
+      "sha": "27fb6fa026d791381d95f7aa7dca4d57a4f97146",
+      "path": "docs/collab/codex/evidence/2026-11-07_issue23_stage1/author-02/os_lifecycle.json",
+      "ref": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+      "match": true
+    },
+    {
+      "sha": "d1f983bcea4d9682397916f45faf295572f9efe2",
+      "path": "docs/collab/codex/evidence/2026-11-07_issue23_stage1/author-02/standalone.xml",
+      "ref": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+      "match": true
+    },
+    {
+      "sha": "34b36bc1cb5ec657dfb3b6527597deb2a092823c",
+      "path": "docs/collab/codex/evidence/2026-11-07_issue23_stage1/author_result.json",
+      "ref": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+      "match": true
+    },
+    {
+      "sha": "4fac945955aba0b5a51704410cc4151db4bdf3b3",
+      "path": "docs/collab/codex/reviews/2026-11-07_Issue23_Stage1_3ab45784_0a211978_Standalone_CPU_Code_Review_Request.md",
+      "ref": "e1230a303ce01526d19ae963a2b02ed5eb4e3d38",
+      "match": true
+    },
+    {
+      "sha": "b54776382e83c352728e8ee05c43a71cdcbfdf75",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "ref": "9fdaf98d8bf32518d7c29083b22b4964075fdd67",
+      "match": true
+    }
+  ],
+  "author_cpu": {
+    "status": "PASS",
+    "top_level_tests": 247,
+    "subtests": 185,
+    "junit_rows": 432,
+    "shell_exit": 0,
+    "source_unchanged": true
+  },
+  "real_weights_gpu_egl_sim_sr": "NOT_RUN",
+  "policy_action_path": "NOT_CONNECTED",
+  "future_policy_boundary_cache_and_sparse_source_range": "NOT_IMPLEMENTED_STAGE3",
+  "independent_GPT_code_verdict": "REQUESTED_NOT_CLAIMED",
+  "official_v3_observed": "30380d74806aa02173ab2dc52f17eef7cc2f1fdb",
+  "official_gitlink_observed": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "official_refs_modified_by_this_work": false,
+  "canonical_inbox_bytes": 58633
+}
