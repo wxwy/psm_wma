@@ -1,0 +1,95 @@
+"""External Stage0 document validation only; imports no project/model code."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+import jsonschema
+
+
+def git(path, *args):
+    return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--root", type=Path, required=True)
+parser.add_argument("--evidence-dir", type=Path, required=True)
+args = parser.parse_args()
+args.evidence_dir.mkdir(parents=True, exist_ok=False)
+root = args.root.resolve()
+child = root / "cosmos-framework"
+prefix = "docs/designs/issue23_sim_shared_vae_stage0/"
+base_root = "a77f3d4bd8a691435d1935025cc1a9766da646a1"
+base_child = "1ca308055fc41fb69efaeb9efaa23808f164a18e"
+package = child / prefix
+checks = []
+
+
+def check(name, condition):
+    if not condition:
+        raise AssertionError(name)
+    checks.append(name)
+
+
+try:
+    files = sorted(package.rglob("*.json"))
+    documents = {str(p.relative_to(package)): json.loads(p.read_text(), object_pairs_hook=unique_object) for p in files}
+    check("five_json_specs_parse_without_duplicate_keys", len(documents) == 5)
+    schemas = [documents["trace.schema.json"], documents["feature_envelope.schema.json"]]
+    for schema in schemas:
+        jsonschema.Draft202012Validator.check_schema(schema)
+        for match in re.finditer(r'"\$ref":\s*"(#/[^\"]+)"', json.dumps(schema)):
+            value = schema
+            for part in match.group(1)[2:].split("/"):
+                value = value[part.replace("~1", "/").replace("~0", "~")]
+    check("draft202012_schemas_and_local_refs_valid", True)
+    matrix = documents["acceptance_matrix.json"]
+    single = documents["recipes/single_latency.json"]
+    multi = documents["recipes/multi_sr_throughput.json"]
+    check("all_specs_nonrunnable_and_no_execution_results", all(d.get("execution_ready") is False for d in (matrix, single, multi)) and single["result"] == multi["result"] == "NOT_RUN")
+    check("p0_is_first_gate_and_strict_single", matrix["gates"][0]["priority"] == "P0" and single["topology"]["policy_servers"] == single["topology"]["sims"] == single["topology"]["policy_bmax"] == 1)
+    arms = {a["id"]: a for a in single["arms"]}
+    check("mandatory_ABC_and_A_zero_history_worker", set(arms) == {"A", "B", "C"} and arms["A"]["history_workers"] == 0 and arms["A"]["fast_weight"] == "none")
+    check("BC_same_checkpoint_and_original_B", arms["B"]["checkpoint_ref"] == arms["C"]["checkpoint_ref"] and arms["B"]["pr4_baseline"] is False and arms["B"]["history_encodes_per_full_chunk"] == 16)
+    check("C_B1_wait0_plus15_and_owned_boundary", arms["C"]["vae_bmax"] == 1 and arms["C"]["vae_wait_ms"] == 0 and arms["C"]["history_encodes_per_full_chunk"] == 15 and arms["C"]["policy_owned_boundary_features"] == 1)
+    check("optional_D_not_claimed_supported", single["optional_D"]["status"] == "UNSUPPORTED_NOT_RUN" and matrix["optional_ablation_D"]["current_off_validator_must_remain"])
+    check("separate_topology_strata_and_p99", single["topology"]["report_separately"] == ["same_gpu", "split_gpu"] and "p99" in single["timing"]["statistics"])
+    check("raw_and_overlapping_time_semantics", single["timing"]["raw_ns_required"] and single["timing"]["foreground_vs_background_separate"] and single["timing"]["overlapping_durations_not_additive"])
+    check("recipe_phases_are_valid_raw_trace_phases", set(single["timing"]["phases"]) <= set(documents["trace.schema.json"]["properties"]["phase"]["enum"]))
+    check("paired_SR_smoke_not_efficacy_and_large_separate_gate", not single["sr"]["smoke_proves_sr_gain"] and single["sr"]["larger_requires_separate_owner_gate"] and len(single["sr"]["outcomes"]) == 4)
+    check("seven_legal_independent_vae_sweep_points", {(v["bmax"], v["wait_ms"]) for v in multi["vae_sweep"]} == {(1, 0), (4, 0), (4, 2), (4, 5), (8, 0), (8, 2), (8, 5)} and multi["batching"]["vae_policy_independent"])
+    check("multi_not_single_substitute", "single_latency_P0" in multi["cannot_substitute_for"] and multi["topology_proposed"]["total_sim_slots"] == 32)
+    check("strict_resume_preserved_in_both_recipes", single["invariants"]["resume_mb_strict"] and multi["invariants"]["resume_mb_strict"])
+    design = (package / "DESIGN.md").read_text()
+    links = re.findall(r"\]\(([^)]+)\)", design)
+    check("all_local_design_links_resolve", all((package / link.split("#")[0]).is_file() for link in links if not link.startswith("https://")))
+    child_changed = git(child, "diff", "--name-only", base_child).splitlines()
+    child_untracked = git(child, "ls-files", "--others", "--exclude-standard").splitlines()
+    check("child_changes_docs_only", all(p.startswith(prefix) for p in child_changed + child_untracked))
+    root_changed = git(root, "diff", "--ignore-submodules=all", "--name-only", base_root).splitlines()
+    root_untracked = git(root, "ls-files", "--others", "--exclude-standard").splitlines()
+    check("root_changes_ledger_docs_only", all(p in {"SESSION.md", "TODO.md", "docs/collab/chatgpt/CODEX_INBOX.md"} or p.startswith("docs/collab/codex/") for p in root_changed + root_untracked))
+    check("official_gitlink_unchanged", git(root, "rev-parse", "HEAD:cosmos-framework") == base_child)
+    protected = {"root_scripts": git(root, "rev-parse", "HEAD:scripts"), "root_tools": git(root, "rev-parse", "HEAD:tools"), "child_package": git(child, "rev-parse", "HEAD:cosmos_framework")}
+    check("protected_tree_ids_identical_to_baseline", protected == {"root_scripts": git(root, "rev-parse", f"{base_root}:scripts"), "root_tools": git(root, "rev-parse", f"{base_root}:tools"), "child_package": git(child, "rev-parse", f"{base_child}:cosmos_framework")})
+    hashes = {str(p.relative_to(package)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(package.rglob("*")) if p.is_file()}
+    report = {"scope": "STAGE0_DOCUMENT_VALIDATION_ONLY", "status": "PASS", "checks": checks, "root_head_at_validation": git(root, "rev-parse", "HEAD"), "child_head_at_validation": git(child, "rev-parse", "HEAD"), "official_gitlink": base_child, "protected_tree_ids": protected, "design_sha256": hashes, "implementation": "NOT_STARTED", "worker_cpu_gpu_sim_latency_throughput_sr": "NOT_RUN", "independent_design_review": "REQUIRED_NOT_CLAIMED"}
+    (args.evidence_dir / "design_validation.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(f"PASS: {len(checks)} document checks; project/Worker/GPU/Sim tests NOT_RUN")
+except Exception as error:
+    report = {"scope": "STAGE0_DOCUMENT_VALIDATION_ONLY", "status": "FAIL", "checks_completed": checks, "error": repr(error)}
+    (args.evidence_dir / "design_validation.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps(report), file=sys.stderr)
+    raise

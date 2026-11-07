@@ -538,7 +538,7 @@
 
 # 2026-11-07 — Issue23 independent Sim-side shared VAE
 
-- **ISSUE23-STAGE0-DESIGN** — IN_PROGRESS; Codex; baseRoota77f3d4b/Child1ca30805; docs-only design+P0 singleA/B/C matrix, single/multi recipes, trust/READY/deadline/ownership and numerical/trace/paired-SR gates; submit exact design SHA to GPT before code.
+- **ISSUE23-STAGE0-DESIGN** — REVIEW; Codex author/GPT independent reviewer; baseRoota77f3d4b/Child1ca30805; exact Child docs target8a170d56014af937b146b35e2b89753313614785; P0 singleA/B/C + independent multi recipes and schemas complete,20 document checks PASS; GPT APPROVE_DESIGN_STAGE0 required before code. Worker/GPU/SR NOT_RUN.
 - **ISSUE23-STAGE1-WORKER-CPU** — TODO; Codex; requires GPT Stage0 design approval; independent Worker+microbatch protocol/CPU/synthetic only, new candidate PR, no Policy production integration/realGPU.
 - **ISSUE23-STAGE2-HARDWARE** — TODO (not authorized); Owner/GPT; real WanBF16 B1/B4/B8 andEGLcompetition Gate, no inference Feature transport before proof.
 - **ISSUE23-STAGE3-P0-AND-MULTI** — TODO (not authorized); Owner/GPT; strict1x1 A/B/C latency/SR paired design and multi throughput independent, reviewed newSourcePair andFresh identities required;18x2smoke noSRbenefitclaim, largerSRrequiresnewOwnerpermission.
