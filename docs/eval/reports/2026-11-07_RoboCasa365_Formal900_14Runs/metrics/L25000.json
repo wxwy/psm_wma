@@ -1,0 +1,306 @@
+{
+  "key": "L25000",
+  "checkpoint": 25000,
+  "mode": "Local-TTT",
+  "run_dir": "/mnt/data1/data_v2_0617/robocasa_eval_runs/local_ttt_robocasa_raw15/packed128_droid_fresh_g1_20261019/R16C_900ep_iter25000_exclusive_gpu67_egl45_m16b8_20261105",
+  "root": "c447d9f4cc1bb5fe2dd79ca527c5a8e246565ada",
+  "child": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "manifest": "49322b4581a61833bc300268873578fd94d0d18e956bfb158447acedee2acf0a",
+  "model_digest": "e89ed5d59f4d4b1120ae96a4c681d6265138c7773353f4496b44065f30d16e4e",
+  "config_sha": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+  "runtime_manifest": "716f029c8b1c65c8d99ab66d8d29ee2e2a2cafac766a009ac86d40605126d8b7",
+  "runtime_probe": "ac5c054d8a289c0327b6251a47978f664cf3799a1e27fe7e8d18c12ce91a8f4c",
+  "summary_sha256": "afb1d44471200d4a26e82d704f809a714a31a0ab917765b9649fcb8a6909238a",
+  "manifest_sha256": "3097da82c2d6164b3c67bb4b6e700bad131842bcf717f217a7b7da837121bdad",
+  "status": {
+    "status": "complete",
+    "valid": 900,
+    "success": 550,
+    "failure": 350,
+    "invalid": 0,
+    "pending": 0,
+    "results_qualified": true,
+    "clean_execution": true,
+    "unresolved_process_errors": 0
+  },
+  "protocol": {
+    "action_chunk_size": 16,
+    "admission_limit": 32,
+    "camera": "left_wrist",
+    "consecutive_init_errors_to_skip": 4,
+    "fps": 20,
+    "local_memory": "required",
+    "media_participates_in_SR": false,
+    "observation_frames": 17,
+    "raw_action_dim": 15,
+    "resource_architecture": "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b",
+    "resume": "retry_missing_episode_no_scene_reproduction_v2",
+    "sampling": "independent_slot_environment_seed_then_continuous_reset_v4",
+    "scene_admission": "reject_initial_success_bounded_v1",
+    "schedule": "streaming_task_affinity_v2",
+    "seed_field": "logical_task_stream; actual environment seed in sampling provenance",
+    "skipped_retry": "explicit_owner_authorization_only",
+    "state_dim": 15,
+    "success_authority": "env._check_success",
+    "success_latch": 1
+  },
+  "execution": {
+    "batch_wait_ms": 20,
+    "gpu_ids": [
+      6,
+      7
+    ],
+    "max_infer_batch_size": 8,
+    "max_rss_bytes": 412316860416,
+    "noise": "literal_cfg_seed_per_sample_v1",
+    "profile": "phase_b_native_batch_v1",
+    "resources": {
+      "initialization_concurrency": 8,
+      "max_owned_gpu_bytes": 42949672960,
+      "server_startup_gpu_bytes": 12884901888,
+      "server_startup_rss_bytes": 8589934592,
+      "sim_startup_gpu_bytes": 1073741824,
+      "sim_startup_rss_bytes": 4294967296
+    },
+    "scheduling": "streaming_task_affinity_v2",
+    "sims_per_gpu": 16
+  },
+  "rendering": {
+    "backend": "egl",
+    "gpu_ids": [
+      4,
+      5
+    ]
+  },
+  "sampling": "independent_slot_environment_seed_then_continuous_reset_v4",
+  "seed": 0,
+  "manifest_bj": "2026-11-06 10:34:23",
+  "summary_bj": "2026-11-06 13:38:05",
+  "elapsed_span_hr": 3.061542595293787,
+  "invocation_count": 1,
+  "process_count": 34,
+  "closed_count": 34,
+  "core_inventory_present": 900,
+  "n_instr": 134,
+  "single_instr": 48,
+  "small_instr": 102,
+  "tasks": {
+    "CloseBlenderLid": {
+      "success": 6,
+      "failure": 44,
+      "n_instruction": 1,
+      "mean_steps": 865.16,
+      "mean_replans": 54.76
+    },
+    "CloseFridge": {
+      "success": 28,
+      "failure": 22,
+      "n_instruction": 2,
+      "mean_steps": 658.92,
+      "mean_replans": 41.76
+    },
+    "CloseToasterOvenDoor": {
+      "success": 32,
+      "failure": 18,
+      "n_instruction": 1,
+      "mean_steps": 330.26,
+      "mean_replans": 21.28
+    },
+    "CoffeeSetupMug": {
+      "success": 28,
+      "failure": 22,
+      "n_instruction": 1,
+      "mean_steps": 441.5,
+      "mean_replans": 28.08
+    },
+    "NavigateKitchen": {
+      "success": 5,
+      "failure": 45,
+      "n_instruction": 13,
+      "mean_steps": 420.36,
+      "mean_replans": 27.1
+    },
+    "OpenCabinet": {
+      "success": 37,
+      "failure": 13,
+      "n_instruction": 2,
+      "mean_steps": 565.92,
+      "mean_replans": 35.86
+    },
+    "OpenDrawer": {
+      "success": 31,
+      "failure": 19,
+      "n_instruction": 2,
+      "mean_steps": 505.72,
+      "mean_replans": 31.98
+    },
+    "OpenStandMixerHead": {
+      "success": 40,
+      "failure": 10,
+      "n_instruction": 1,
+      "mean_steps": 218.28,
+      "mean_replans": 14.22
+    },
+    "PickPlaceCounterToCabinet": {
+      "success": 22,
+      "failure": 28,
+      "n_instruction": 37,
+      "mean_steps": 562.72,
+      "mean_replans": 35.5
+    },
+    "PickPlaceCounterToStove": {
+      "success": 45,
+      "failure": 5,
+      "n_instruction": 25,
+      "mean_steps": 324.98,
+      "mean_replans": 20.82
+    },
+    "PickPlaceDrawerToCounter": {
+      "success": 25,
+      "failure": 25,
+      "n_instruction": 9,
+      "mean_steps": 584.9,
+      "mean_replans": 36.88
+    },
+    "PickPlaceSinkToCounter": {
+      "success": 30,
+      "failure": 20,
+      "n_instruction": 26,
+      "mean_steps": 707.1,
+      "mean_replans": 44.8
+    },
+    "PickPlaceToasterToCounter": {
+      "success": 44,
+      "failure": 6,
+      "n_instruction": 1,
+      "mean_steps": 436.8,
+      "mean_replans": 27.8
+    },
+    "SlideDishwasherRack": {
+      "success": 37,
+      "failure": 13,
+      "n_instruction": 2,
+      "mean_steps": 269.94,
+      "mean_replans": 17.44
+    },
+    "TurnOffStove": {
+      "success": 19,
+      "failure": 31,
+      "n_instruction": 8,
+      "mean_steps": 575.28,
+      "mean_replans": 36.16
+    },
+    "TurnOnElectricKettle": {
+      "success": 39,
+      "failure": 11,
+      "n_instruction": 1,
+      "mean_steps": 295.0,
+      "mean_replans": 19.0
+    },
+    "TurnOnMicrowave": {
+      "success": 44,
+      "failure": 6,
+      "n_instruction": 1,
+      "mean_steps": 195.78,
+      "mean_replans": 12.8
+    },
+    "TurnOnSinkFaucet": {
+      "success": 38,
+      "failure": 12,
+      "n_instruction": 1,
+      "mean_steps": 418.12,
+      "mean_replans": 26.6
+    }
+  },
+  "mean_steps": 465.37444444444446,
+  "mean_replans": 29.602222222222224,
+  "mean_elapsed_seconds": 367.1482463411945,
+  "episode_elapsed": {
+    "n": 900,
+    "mean": 367.1482463411945,
+    "p50": 336.0476304637268,
+    "p95": 663.1150176499037
+  },
+  "episode_steps": {
+    "n": 900,
+    "mean": 465.37444444444446,
+    "p50": 450.0,
+    "p95": 900.0
+  },
+  "episode_replans": {
+    "n": 900,
+    "mean": 29.602222222222224,
+    "p50": 29.0,
+    "p95": 57.0
+  },
+  "completion_counts": {
+    "official_horizon": 350,
+    "success_latch": 550
+  },
+  "prediction_count": 26642,
+  "prediction_metrics": {
+    "latency_ms": {
+      "n": 26642,
+      "mean": 8618.835661350975,
+      "p50": 8349.302852526307,
+      "p95": 13288.63985920325
+    },
+    "batch_prepare_ms": {
+      "n": 26642,
+      "mean": 3119.3504594355904,
+      "p50": 2986.9323214516044,
+      "p95": 5707.691775634885
+    },
+    "native_generation_ms": {
+      "n": 26642,
+      "mean": 1979.285653638405,
+      "p50": 1940.8717285841703,
+      "p95": 2299.6292524039745
+    },
+    "queue_ms": {
+      "n": 26642,
+      "mean": 3378.511212646268,
+      "p50": 3250.1617427915335,
+      "p95": 6121.256023272869
+    }
+  },
+  "batch_hist": {
+    "1": 77,
+    "2": 63,
+    "3": 182,
+    "4": 410,
+    "5": 790,
+    "6": 1088,
+    "7": 1065,
+    "8": 790
+  },
+  "batch_count": 4465,
+  "batch_incomplete_groups": 0,
+  "local": {
+    "reset_count": 900,
+    "first_count": 900,
+    "first_without": 900,
+    "later": 25742,
+    "later_prefix": 25742,
+    "later_adapt": 25742,
+    "later_nonzero": 25742,
+    "fast_update_norm": {
+      "n": 25742,
+      "mean": 0.010256009922359536,
+      "p50": 0.008728818036615849,
+      "p95": 0.023674225155264076
+    },
+    "fast_state_norm": {
+      "n": 25742,
+      "mean": 9.579773921979143,
+      "p50": 9.580179914561729,
+      "p95": 9.5839941375629
+    },
+    "inner_loss_mean": {
+      "n": 25742,
+      "mean": 0.00211169276762113,
+      "p50": 0.000510146957822144,
+      "p95": 0.009016672708094108
+    }
+  }
+}

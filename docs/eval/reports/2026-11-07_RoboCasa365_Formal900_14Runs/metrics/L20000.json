@@ -1,0 +1,289 @@
+{
+  "key": "L20000",
+  "checkpoint": 20000,
+  "mode": "Local-TTT",
+  "run_dir": "/mnt/data1/data_v2_0617/robocasa_eval_runs/local_ttt_robocasa_raw15/packed128_droid_fresh_g1_20261019/R03_900ep_nv_attrib_m1b1",
+  "root": "083b36ac27ad43b6f5127d9a58aed4fac02eaaa7",
+  "child": "1069fe78841228cadbbfbe6afbd767eaed6225da",
+  "manifest": "6b96faae57bdd65345588c40aa384b7ab6e2fc2ec9192b43919eed653d2ee155",
+  "model_digest": "9190bdb20658fec2847693e3aa7d6bb3ebed85e2b1a5c69691304c9b5b4cef21",
+  "config_sha": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+  "runtime_manifest": "0dded4f1c2b672919667bbc79af3f10c4f2eb63db1be60cd7f0858e728727a92",
+  "runtime_probe": "fb8733fb8d3ee67f2d34de91077f17b55bac3f67a0468763ef05298f81718b0d",
+  "summary_sha256": "f8959c940023d3de3c213ec23fe0080d20b9927a87854e4bc61ce98f641ac3b6",
+  "manifest_sha256": "36db433a786be7c594cb0b1df8f3f02b3f1d0d8b07a8b5888201af4e9aaa2fc4",
+  "status": {
+    "status": "complete",
+    "valid": 900,
+    "success": 454,
+    "failure": 446,
+    "invalid": 0,
+    "pending": 0,
+    "results_qualified": true,
+    "clean_execution": true,
+    "unresolved_process_errors": 0
+  },
+  "protocol": {
+    "action_chunk_size": 16,
+    "admission_limit": 32,
+    "camera": "left_wrist",
+    "consecutive_init_errors_to_skip": 4,
+    "fps": 20,
+    "local_memory": "required",
+    "media_participates_in_SR": false,
+    "observation_frames": 17,
+    "raw_action_dim": 15,
+    "resource_architecture": "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b",
+    "resume": "retry_missing_episode_no_scene_reproduction_v2",
+    "sampling": "dynamic_slot_environment_seed_then_continuous_reset_v3",
+    "scene_admission": "reject_initial_success_bounded_v1",
+    "schedule": "episode_major_frozen_order_round_barrier_v1",
+    "seed_field": "logical_task_stream; actual environment seed in sampling provenance",
+    "skipped_retry": "explicit_owner_authorization_only",
+    "state_dim": 15,
+    "success_authority": "env._check_success",
+    "success_latch": 1
+  },
+  "execution": {
+    "batch_wait_ms": 20,
+    "gpu_ids": [
+      6,
+      7
+    ],
+    "max_infer_batch_size": 1,
+    "noise": "literal_cfg_seed_per_sample_v1",
+    "profile": "phase_b_native_batch_v1",
+    "sims_per_gpu": 1
+  },
+  "rendering": {
+    "backend": "egl",
+    "gpu_ids": [
+      4,
+      5
+    ]
+  },
+  "sampling": "dynamic_slot_environment_seed_then_continuous_reset_v3",
+  "seed": 0,
+  "manifest_bj": "2026-11-03 23:10:36",
+  "summary_bj": "2026-11-04 14:41:10",
+  "elapsed_span_hr": 15.509533797767427,
+  "invocation_count": 1,
+  "process_count": 4,
+  "closed_count": 4,
+  "core_inventory_present": 900,
+  "n_instr": 139,
+  "single_instr": 62,
+  "small_instr": 108,
+  "tasks": {
+    "CloseBlenderLid": {
+      "success": 4,
+      "failure": 46,
+      "n_instruction": 1,
+      "mean_steps": 878.68,
+      "mean_replans": 55.64
+    },
+    "CloseFridge": {
+      "success": 22,
+      "failure": 28,
+      "n_instruction": 2,
+      "mean_steps": 680.24,
+      "mean_replans": 43.1
+    },
+    "CloseToasterOvenDoor": {
+      "success": 30,
+      "failure": 20,
+      "n_instruction": 1,
+      "mean_steps": 342.7,
+      "mean_replans": 21.98
+    },
+    "CoffeeSetupMug": {
+      "success": 27,
+      "failure": 23,
+      "n_instruction": 1,
+      "mean_steps": 450.3,
+      "mean_replans": 28.6
+    },
+    "NavigateKitchen": {
+      "success": 1,
+      "failure": 49,
+      "n_instruction": 13,
+      "mean_steps": 443.26,
+      "mean_replans": 28.58
+    },
+    "OpenCabinet": {
+      "success": 37,
+      "failure": 13,
+      "n_instruction": 2,
+      "mean_steps": 584.8,
+      "mean_replans": 36.96
+    },
+    "OpenDrawer": {
+      "success": 19,
+      "failure": 31,
+      "n_instruction": 2,
+      "mean_steps": 610.2,
+      "mean_replans": 38.42
+    },
+    "OpenStandMixerHead": {
+      "success": 33,
+      "failure": 17,
+      "n_instruction": 1,
+      "mean_steps": 272.08,
+      "mean_replans": 17.64
+    },
+    "PickPlaceCounterToCabinet": {
+      "success": 24,
+      "failure": 26,
+      "n_instruction": 43,
+      "mean_steps": 569.7,
+      "mean_replans": 35.88
+    },
+    "PickPlaceCounterToStove": {
+      "success": 39,
+      "failure": 11,
+      "n_instruction": 21,
+      "mean_steps": 365.66,
+      "mean_replans": 23.32
+    },
+    "PickPlaceDrawerToCounter": {
+      "success": 15,
+      "failure": 35,
+      "n_instruction": 9,
+      "mean_steps": 645.42,
+      "mean_replans": 40.56
+    },
+    "PickPlaceSinkToCounter": {
+      "success": 29,
+      "failure": 21,
+      "n_instruction": 29,
+      "mean_steps": 684.24,
+      "mean_replans": 43.34
+    },
+    "PickPlaceToasterToCounter": {
+      "success": 37,
+      "failure": 13,
+      "n_instruction": 1,
+      "mean_steps": 463.9,
+      "mean_replans": 29.42
+    },
+    "SlideDishwasherRack": {
+      "success": 26,
+      "failure": 24,
+      "n_instruction": 2,
+      "mean_steps": 340.1,
+      "mean_replans": 21.9
+    },
+    "TurnOffStove": {
+      "success": 11,
+      "failure": 39,
+      "n_instruction": 8,
+      "mean_steps": 643.24,
+      "mean_replans": 40.4
+    },
+    "TurnOnElectricKettle": {
+      "success": 21,
+      "failure": 29,
+      "n_instruction": 1,
+      "mean_steps": 370.9,
+      "mean_replans": 23.86
+    },
+    "TurnOnMicrowave": {
+      "success": 45,
+      "failure": 5,
+      "n_instruction": 1,
+      "mean_steps": 206.28,
+      "mean_replans": 13.52
+    },
+    "TurnOnSinkFaucet": {
+      "success": 34,
+      "failure": 16,
+      "n_instruction": 1,
+      "mean_steps": 410.42,
+      "mean_replans": 26.16
+    }
+  },
+  "mean_steps": 497.8955555555556,
+  "mean_replans": 31.626666666666665,
+  "mean_elapsed_seconds": 109.43192050848778,
+  "episode_elapsed": {
+    "n": 900,
+    "mean": 109.43192050848778,
+    "p50": 99.19274963531643,
+    "p95": 204.64910182086751
+  },
+  "episode_steps": {
+    "n": 900,
+    "mean": 497.8955555555556,
+    "p50": 450.0,
+    "p95": 900.0
+  },
+  "episode_replans": {
+    "n": 900,
+    "mean": 31.626666666666665,
+    "p50": 29.0,
+    "p95": 57.0
+  },
+  "completion_counts": {
+    "official_horizon": 446,
+    "success_latch": 454
+  },
+  "prediction_count": 28464,
+  "prediction_metrics": {
+    "latency_ms": {
+      "n": 28464,
+      "mean": 1406.9467725068255,
+      "p50": 1347.7464187890291,
+      "p95": 1872.1272052265704
+    },
+    "batch_prepare_ms": {
+      "n": 28464,
+      "mean": 253.88260026224964,
+      "p50": 215.93012753874063,
+      "p95": 590.1241746731099
+    },
+    "native_generation_ms": {
+      "n": 28464,
+      "mean": 1058.852798116727,
+      "p50": 1028.6105861887336,
+      "p95": 1400.3452386707067
+    },
+    "queue_ms": {
+      "n": 28464,
+      "mean": 0.2686383709559629,
+      "p50": 0.28187036514282227,
+      "p95": 0.3986530937254429
+    }
+  },
+  "batch_hist": {
+    "1": 28464
+  },
+  "batch_count": 28464,
+  "batch_incomplete_groups": 0,
+  "local": {
+    "reset_count": 900,
+    "first_count": 900,
+    "first_without": 900,
+    "later": 27564,
+    "later_prefix": 27564,
+    "later_adapt": 27564,
+    "later_nonzero": 27564,
+    "fast_update_norm": {
+      "n": 27564,
+      "mean": 0.008945298784396833,
+      "p50": 0.007277688710018992,
+      "p95": 0.02211363548412918
+    },
+    "fast_state_norm": {
+      "n": 27564,
+      "mean": 9.604836909978303,
+      "p50": 9.605092107773586,
+      "p95": 9.608524561811342
+    },
+    "inner_loss_mean": {
+      "n": 27564,
+      "mean": 0.0017872657978544849,
+      "p50": 0.0003395811654627323,
+      "p95": 0.007998003484681248
+    }
+  }
+}

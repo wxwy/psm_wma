@@ -1,0 +1,306 @@
+{
+  "key": "L27700",
+  "checkpoint": 27700,
+  "mode": "Local-TTT",
+  "run_dir": "/mnt/data1/data_v2_0617/robocasa_eval_runs/local_ttt_robocasa_raw15/packed128_droid_fresh_g1_20261019/R07_900ep_iter27700_m16b8_v3_nomedia_20261105",
+  "root": "3bd1404cf065cc6eae4a07bde6ad0da024596e07",
+  "child": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "manifest": "a07bfa652d8ae1f71cfd041afe7c12b9f7cde0ca3145c79121fdb80d3227f369",
+  "model_digest": "0d9ddc6b938379a13a410f8826c5537a118f37da0df5ecdbfa8c726295061944",
+  "config_sha": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+  "runtime_manifest": "27d2fcfe9e2b10c8f691c26f3e5c3941ba8799d1074fef1b4d7db2a77a754fe8",
+  "runtime_probe": "927ff38b813e6dbf79274a407d93ffe42ba1d71917f95bcadf77bac3ba94e382",
+  "summary_sha256": "604c0a2cbf5098f38fb2f80000c234526cf90bf9a141015ea0c6a481c1e0d6b5",
+  "manifest_sha256": "6cc03918ad21e17f6644842a1b2dec2b83f716a5df42fe9723d381b244b72f7f",
+  "status": {
+    "status": "complete",
+    "valid": 900,
+    "success": 580,
+    "failure": 320,
+    "invalid": 0,
+    "pending": 0,
+    "results_qualified": true,
+    "clean_execution": true,
+    "unresolved_process_errors": 0
+  },
+  "protocol": {
+    "action_chunk_size": 16,
+    "admission_limit": 32,
+    "camera": "left_wrist",
+    "consecutive_init_errors_to_skip": 4,
+    "fps": 20,
+    "local_memory": "required",
+    "media_participates_in_SR": false,
+    "observation_frames": 17,
+    "raw_action_dim": 15,
+    "resource_architecture": "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b",
+    "resume": "retry_missing_episode_no_scene_reproduction_v2",
+    "sampling": "independent_slot_environment_seed_then_continuous_reset_v4",
+    "scene_admission": "reject_initial_success_bounded_v1",
+    "schedule": "streaming_task_affinity_v2",
+    "seed_field": "logical_task_stream; actual environment seed in sampling provenance",
+    "skipped_retry": "explicit_owner_authorization_only",
+    "state_dim": 15,
+    "success_authority": "env._check_success",
+    "success_latch": 1
+  },
+  "execution": {
+    "batch_wait_ms": 20,
+    "gpu_ids": [
+      6,
+      7
+    ],
+    "max_infer_batch_size": 8,
+    "max_rss_bytes": 412316860416,
+    "noise": "literal_cfg_seed_per_sample_v1",
+    "profile": "phase_b_native_batch_v1",
+    "resources": {
+      "initialization_concurrency": 8,
+      "max_owned_gpu_bytes": 42949672960,
+      "server_startup_gpu_bytes": 12884901888,
+      "server_startup_rss_bytes": 8589934592,
+      "sim_startup_gpu_bytes": 1073741824,
+      "sim_startup_rss_bytes": 4294967296
+    },
+    "scheduling": "streaming_task_affinity_v2",
+    "sims_per_gpu": 16
+  },
+  "rendering": {
+    "backend": "egl",
+    "gpu_ids": [
+      4,
+      5
+    ]
+  },
+  "sampling": "independent_slot_environment_seed_then_continuous_reset_v4",
+  "seed": 0,
+  "manifest_bj": "2026-11-05 13:37:30",
+  "summary_bj": "2026-11-05 16:26:39",
+  "elapsed_span_hr": 2.819191498623954,
+  "invocation_count": 1,
+  "process_count": 34,
+  "closed_count": 34,
+  "core_inventory_present": 900,
+  "n_instr": 138,
+  "single_instr": 63,
+  "small_instr": 107,
+  "tasks": {
+    "CloseBlenderLid": {
+      "success": 14,
+      "failure": 36,
+      "n_instruction": 1,
+      "mean_steps": 802.0,
+      "mean_replans": 50.78
+    },
+    "CloseFridge": {
+      "success": 31,
+      "failure": 19,
+      "n_instruction": 2,
+      "mean_steps": 588.64,
+      "mean_replans": 37.36
+    },
+    "CloseToasterOvenDoor": {
+      "success": 44,
+      "failure": 6,
+      "n_instruction": 1,
+      "mean_steps": 262.58,
+      "mean_replans": 16.94
+    },
+    "CoffeeSetupMug": {
+      "success": 31,
+      "failure": 19,
+      "n_instruction": 1,
+      "mean_steps": 404.36,
+      "mean_replans": 25.7
+    },
+    "NavigateKitchen": {
+      "success": 8,
+      "failure": 42,
+      "n_instruction": 13,
+      "mean_steps": 409.2,
+      "mean_replans": 26.38
+    },
+    "OpenCabinet": {
+      "success": 43,
+      "failure": 7,
+      "n_instruction": 2,
+      "mean_steps": 514.06,
+      "mean_replans": 32.58
+    },
+    "OpenDrawer": {
+      "success": 32,
+      "failure": 18,
+      "n_instruction": 2,
+      "mean_steps": 500.28,
+      "mean_replans": 31.62
+    },
+    "OpenStandMixerHead": {
+      "success": 32,
+      "failure": 18,
+      "n_instruction": 1,
+      "mean_steps": 270.18,
+      "mean_replans": 17.48
+    },
+    "PickPlaceCounterToCabinet": {
+      "success": 28,
+      "failure": 22,
+      "n_instruction": 43,
+      "mean_steps": 531.88,
+      "mean_replans": 33.54
+    },
+    "PickPlaceCounterToStove": {
+      "success": 40,
+      "failure": 10,
+      "n_instruction": 24,
+      "mean_steps": 354.86,
+      "mean_replans": 22.66
+    },
+    "PickPlaceDrawerToCounter": {
+      "success": 28,
+      "failure": 22,
+      "n_instruction": 9,
+      "mean_steps": 548.36,
+      "mean_replans": 34.58
+    },
+    "PickPlaceSinkToCounter": {
+      "success": 40,
+      "failure": 10,
+      "n_instruction": 25,
+      "mean_steps": 597.24,
+      "mean_replans": 37.88
+    },
+    "PickPlaceToasterToCounter": {
+      "success": 49,
+      "failure": 1,
+      "n_instruction": 1,
+      "mean_steps": 406.32,
+      "mean_replans": 25.86
+    },
+    "SlideDishwasherRack": {
+      "success": 37,
+      "failure": 13,
+      "n_instruction": 2,
+      "mean_steps": 272.72,
+      "mean_replans": 17.66
+    },
+    "TurnOffStove": {
+      "success": 15,
+      "failure": 35,
+      "n_instruction": 8,
+      "mean_steps": 624.6,
+      "mean_replans": 39.26
+    },
+    "TurnOnElectricKettle": {
+      "success": 31,
+      "failure": 19,
+      "n_instruction": 1,
+      "mean_steps": 323.84,
+      "mean_replans": 20.88
+    },
+    "TurnOnMicrowave": {
+      "success": 45,
+      "failure": 5,
+      "n_instruction": 1,
+      "mean_steps": 187.58,
+      "mean_replans": 12.26
+    },
+    "TurnOnSinkFaucet": {
+      "success": 32,
+      "failure": 18,
+      "n_instruction": 1,
+      "mean_steps": 438.84,
+      "mean_replans": 27.9
+    }
+  },
+  "mean_steps": 446.53,
+  "mean_replans": 28.406666666666666,
+  "mean_elapsed_seconds": 336.37376730617757,
+  "episode_elapsed": {
+    "n": 900,
+    "mean": 336.37376730617757,
+    "p50": 310.80010665301234,
+    "p95": 607.9378809201531
+  },
+  "episode_steps": {
+    "n": 900,
+    "mean": 446.53,
+    "p50": 435.5,
+    "p95": 900.0
+  },
+  "episode_replans": {
+    "n": 900,
+    "mean": 28.406666666666666,
+    "p50": 28.0,
+    "p95": 57.0
+  },
+  "completion_counts": {
+    "official_horizon": 320,
+    "success_latch": 580
+  },
+  "prediction_count": 25566,
+  "prediction_metrics": {
+    "latency_ms": {
+      "n": 25566,
+      "mean": 8131.499346120391,
+      "p50": 8050.367347896099,
+      "p95": 11351.752754300833
+    },
+    "batch_prepare_ms": {
+      "n": 25566,
+      "mean": 2876.65293213571,
+      "p50": 2860.459951683879,
+      "p95": 4714.989084750414
+    },
+    "native_generation_ms": {
+      "n": 25566,
+      "mean": 1956.1609826070005,
+      "p50": 1918.681664392352,
+      "p95": 2210.004784166813
+    },
+    "queue_ms": {
+      "n": 25566,
+      "mean": 3157.7910536080967,
+      "p50": 3132.8472746536136,
+      "p95": 5190.659844782203
+    }
+  },
+  "batch_hist": {
+    "1": 44,
+    "2": 85,
+    "3": 125,
+    "4": 366,
+    "5": 795,
+    "6": 1206,
+    "7": 1010,
+    "8": 654
+  },
+  "batch_count": 4285,
+  "batch_incomplete_groups": 0,
+  "local": {
+    "reset_count": 900,
+    "first_count": 900,
+    "first_without": 900,
+    "later": 24666,
+    "later_prefix": 24666,
+    "later_adapt": 24666,
+    "later_nonzero": 24666,
+    "fast_update_norm": {
+      "n": 24666,
+      "mean": 0.010385685062689989,
+      "p50": 0.008966636378318071,
+      "p95": 0.02392398938536644
+    },
+    "fast_state_norm": {
+      "n": 24666,
+      "mean": 9.574127076151964,
+      "p50": 9.57438557326564,
+      "p95": 9.578756271679929
+    },
+    "inner_loss_mean": {
+      "n": 24666,
+      "mean": 0.002228108708021899,
+      "p50": 0.0005460752872750163,
+      "p95": 0.00981583259999752
+    }
+  }
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "local": "L5000",
+    "no_ttt": "N5000",
+    "delta_success": 61,
+    "same_instruction": 564,
+    "same_seed": 173,
+    "same_environment_id": 0,
+    "same_root": true,
+    "same_child": true,
+    "same_protocol": false,
+    "same_execution": true
+  },
+  {
+    "local": "L10000",
+    "no_ttt": "N10000",
+    "delta_success": 192,
+    "same_instruction": 603,
+    "same_seed": 329,
+    "same_environment_id": 0,
+    "same_root": true,
+    "same_child": true,
+    "same_protocol": false,
+    "same_execution": true
+  },
+  {
+    "local": "L15000",
+    "no_ttt": "N15000",
+    "delta_success": 194,
+    "same_instruction": 557,
+    "same_seed": 334,
+    "same_environment_id": 0,
+    "same_root": true,
+    "same_child": true,
+    "same_protocol": false,
+    "same_execution": true
+  },
+  {
+    "local": "L20000",
+    "no_ttt": "N20000",
+    "delta_success": 122,
+    "same_instruction": 547,
+    "same_seed": 27,
+    "same_environment_id": 0,
+    "same_root": false,
+    "same_child": false,
+    "same_protocol": false,
+    "same_execution": false
+  },
+  {
+    "local": "L25000",
+    "no_ttt": "N25000",
+    "delta_success": 147,
+    "same_instruction": 568,
+    "same_seed": 321,
+    "same_environment_id": 0,
+    "same_root": true,
+    "same_child": true,
+    "same_protocol": false,
+    "same_execution": true
+  },
+  {
+    "local": "L27700",
+    "no_ttt": "N28000",
+    "delta_success": 144,
+    "same_instruction": 546,
+    "same_seed": 337,
+    "same_environment_id": 0,
+    "same_root": true,
+    "same_child": true,
+    "same_protocol": false,
+    "same_execution": true
+  }
+]

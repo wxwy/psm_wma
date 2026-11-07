@@ -1,0 +1,321 @@
+{
+  "key": "L2000",
+  "checkpoint": 2000,
+  "mode": "Local-TTT",
+  "run_dir": "/mnt/data1/data_v2_0617/robocasa_eval_runs/local_ttt_robocasa_raw15/packed128_droid_fresh_g1_20261019/R20_local_ttt_iter2000_fresh900_gpu67_egl45_m16b8_20261106",
+  "root": "c447d9f4cc1bb5fe2dd79ca527c5a8e246565ada",
+  "child": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "manifest": "c0ed06be257e42272e7d2c0ff3915d9b5b756a93b160201e4d042f4f77bc9e80",
+  "model_digest": "de6d369346379a47271274f35aa8b1faa5feb7415ea5a00d45b0a9a6274fc8cd",
+  "config_sha": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+  "runtime_manifest": "716f029c8b1c65c8d99ab66d8d29ee2e2a2cafac766a009ac86d40605126d8b7",
+  "runtime_probe": "ac5c054d8a289c0327b6251a47978f664cf3799a1e27fe7e8d18c12ce91a8f4c",
+  "summary_sha256": "e468cd5e2ec0fa5c96a82e3f882573983c206a30b475c181bf2bdc328c2e80f4",
+  "manifest_sha256": "8896d8262ba71fa2c59b53949c6a0cda2590dd7b912bd8a65d9c4a2b70a12a5b",
+  "status": {
+    "status": "complete",
+    "valid": 900,
+    "success": 27,
+    "failure": 873,
+    "invalid": 0,
+    "pending": 0,
+    "results_qualified": true,
+    "clean_execution": true,
+    "unresolved_process_errors": 0
+  },
+  "protocol": {
+    "action_chunk_size": 16,
+    "admission_limit": 32,
+    "camera": "left_wrist",
+    "consecutive_init_errors_to_skip": 4,
+    "fps": 20,
+    "local_memory": "required",
+    "media_participates_in_SR": false,
+    "observation_frames": 17,
+    "raw_action_dim": 15,
+    "resource_architecture": "multi_reusable_sim_slots_one_native_model_owner_per_gpu_phase_b",
+    "resume": "retry_missing_episode_no_scene_reproduction_v2",
+    "sampling": "independent_slot_environment_seed_then_continuous_reset_v4",
+    "scene_admission": "reject_initial_success_bounded_v1",
+    "schedule": "streaming_task_affinity_v2",
+    "seed_field": "logical_task_stream; actual environment seed in sampling provenance",
+    "skipped_retry": "explicit_owner_authorization_only",
+    "state_dim": 15,
+    "success_authority": "env._check_success",
+    "success_latch": 1
+  },
+  "execution": {
+    "batch_wait_ms": 20,
+    "gpu_ids": [
+      6,
+      7
+    ],
+    "max_infer_batch_size": 8,
+    "max_rss_bytes": 412316860416,
+    "noise": "literal_cfg_seed_per_sample_v1",
+    "profile": "phase_b_native_batch_v1",
+    "resources": {
+      "initialization_concurrency": 8,
+      "max_owned_gpu_bytes": 42949672960,
+      "server_startup_gpu_bytes": 12884901888,
+      "server_startup_rss_bytes": 8589934592,
+      "sim_startup_gpu_bytes": 1073741824,
+      "sim_startup_rss_bytes": 4294967296
+    },
+    "scheduling": "streaming_task_affinity_v2",
+    "sims_per_gpu": 16
+  },
+  "rendering": {
+    "backend": "egl",
+    "gpu_ids": [
+      4,
+      5
+    ]
+  },
+  "sampling": "independent_slot_environment_seed_then_continuous_reset_v4",
+  "seed": 0,
+  "manifest_bj": "2026-11-06 23:01:32",
+  "summary_bj": "2026-11-07 11:12:57",
+  "elapsed_span_hr": 12.190330384506119,
+  "invocation_count": 2,
+  "process_count": 68,
+  "closed_count": 68,
+  "core_inventory_present": 900,
+  "n_instr": 139,
+  "single_instr": 56,
+  "small_instr": 105,
+  "tasks": {
+    "CloseBlenderLid": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 1,
+      "mean_steps": 900.0,
+      "mean_replans": 57.0
+    },
+    "CloseFridge": {
+      "success": 8,
+      "failure": 42,
+      "n_instruction": 2,
+      "mean_steps": 820.34,
+      "mean_replans": 51.96
+    },
+    "CloseToasterOvenDoor": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 1,
+      "mean_steps": 450.0,
+      "mean_replans": 29.0
+    },
+    "CoffeeSetupMug": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 1,
+      "mean_steps": 600.0,
+      "mean_replans": 38.0
+    },
+    "NavigateKitchen": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 12,
+      "mean_steps": 450.0,
+      "mean_replans": 29.0
+    },
+    "OpenCabinet": {
+      "success": 2,
+      "failure": 48,
+      "n_instruction": 2,
+      "mean_steps": 1020.72,
+      "mean_replans": 64.16
+    },
+    "OpenDrawer": {
+      "success": 1,
+      "failure": 49,
+      "n_instruction": 2,
+      "mean_steps": 740.02,
+      "mean_replans": 46.38
+    },
+    "OpenStandMixerHead": {
+      "success": 10,
+      "failure": 40,
+      "n_instruction": 1,
+      "mean_steps": 385.84,
+      "mean_replans": 24.92
+    },
+    "PickPlaceCounterToCabinet": {
+      "success": 2,
+      "failure": 48,
+      "n_instruction": 42,
+      "mean_steps": 729.44,
+      "mean_replans": 45.72
+    },
+    "PickPlaceCounterToStove": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 25,
+      "mean_steps": 600.0,
+      "mean_replans": 38.0
+    },
+    "PickPlaceDrawerToCounter": {
+      "success": 1,
+      "failure": 49,
+      "n_instruction": 9,
+      "mean_steps": 747.2,
+      "mean_replans": 46.84
+    },
+    "PickPlaceSinkToCounter": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 27,
+      "mean_steps": 900.0,
+      "mean_replans": 57.0
+    },
+    "PickPlaceToasterToCounter": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 1,
+      "mean_steps": 600.0,
+      "mean_replans": 38.0
+    },
+    "SlideDishwasherRack": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 2,
+      "mean_steps": 450.0,
+      "mean_replans": 29.0
+    },
+    "TurnOffStove": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 8,
+      "mean_steps": 750.0,
+      "mean_replans": 47.0
+    },
+    "TurnOnElectricKettle": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 1,
+      "mean_steps": 450.0,
+      "mean_replans": 29.0
+    },
+    "TurnOnMicrowave": {
+      "success": 3,
+      "failure": 47,
+      "n_instruction": 1,
+      "mean_steps": 441.0,
+      "mean_replans": 28.42
+    },
+    "TurnOnSinkFaucet": {
+      "success": 0,
+      "failure": 50,
+      "n_instruction": 1,
+      "mean_steps": 600.0,
+      "mean_replans": 38.0
+    }
+  },
+  "mean_steps": 646.3644444444444,
+  "mean_replans": 40.96666666666667,
+  "mean_elapsed_seconds": 518.8083884403213,
+  "episode_elapsed": {
+    "n": 900,
+    "mean": 518.8083884403213,
+    "p50": 506.4693372612819,
+    "p95": 793.1714543431997
+  },
+  "episode_steps": {
+    "n": 900,
+    "mean": 646.3644444444444,
+    "p50": 600.0,
+    "p95": 1050.0
+  },
+  "episode_replans": {
+    "n": 900,
+    "mean": 40.96666666666667,
+    "p50": 38.0,
+    "p95": 66.0
+  },
+  "completion_counts": {
+    "official_horizon": 873,
+    "success_latch": 27
+  },
+  "prediction_count": 36870,
+  "prediction_metrics": {
+    "latency_ms": {
+      "n": 36870,
+      "mean": 9267.750389989418,
+      "p50": 9066.178769804537,
+      "p95": 13456.094860937443
+    },
+    "batch_prepare_ms": {
+      "n": 36870,
+      "mean": 3421.5959923662163,
+      "p50": 3355.2002031356096,
+      "p95": 5696.714211255312
+    },
+    "native_generation_ms": {
+      "n": 36870,
+      "mean": 2007.7697423704783,
+      "p50": 1945.7683712244034,
+      "p95": 2275.4157409071922
+    },
+    "queue_ms": {
+      "n": 36870,
+      "mean": 3690.4068046018324,
+      "p50": 3605.4092878475785,
+      "p95": 6068.451141752302
+    }
+  },
+  "batch_hist": {
+    "1": 105,
+    "2": 92,
+    "3": 116,
+    "4": 211,
+    "5": 752,
+    "6": 1506,
+    "7": 1805,
+    "8": 1301
+  },
+  "batch_count": 5888,
+  "batch_incomplete_groups": 152,
+  "local": {
+    "reset_count": 900,
+    "first_count": 900,
+    "first_without": 900,
+    "later": 35970,
+    "later_prefix": 35970,
+    "later_adapt": 35970,
+    "later_nonzero": 35970,
+    "fast_update_norm": {
+      "n": 35970,
+      "mean": 0.00885735879081809,
+      "p50": 0.0071490618865936995,
+      "p95": 0.017881881166249503
+    },
+    "fast_state_norm": {
+      "n": 35970,
+      "mean": 9.819338665185693,
+      "p50": 9.818953054314758,
+      "p95": 9.825156155005708
+    },
+    "inner_loss_mean": {
+      "n": 35970,
+      "mean": 0.0017491586948212758,
+      "p50": 0.00046402946463786066,
+      "p95": 0.004062141315080225
+    }
+  },
+  "resume": {
+    "status": "complete",
+    "valid": 900,
+    "success": 27,
+    "failure": 873,
+    "invalid": 0,
+    "pending": 0,
+    "sr": 0.03,
+    "results_qualified": true,
+    "clean_execution": true,
+    "unresolved_process_errors": 0,
+    "immutable_results_changed": 0,
+    "original_result_count": 751,
+    "new_result_count": 149
+  }
+}
