@@ -58,3 +58,31 @@
 6. 真机来源：同一真实 ColorCloudMap + SDF/Occupancy 可产生实际 WallSegment 和四方向图；未观察到的墙面与高柜背面标 `unknown`。
 
 **本文件是下一轮源码适配与数据审查输入，未承诺当前 nav_sg 已实现 WallSegment 检测，也未冻结新模型或训练。**
+
+
+## 6. 2026-11-07 补充核查：boundary_hull_2d 实际只是节点凸包，最小墙面判别可更简单
+
+**源码事实，更正可能的误解**：
+
+1. `RoomBuilder::build()`：`src/room_pipeline/room_pipeline_room.cpp:344-413` 根据聚类后的 `cluster_id` 将自由空间拓扑节点分组为 Room。
+2. **C++ 内存字段** `Room.boundary_hull_2d`：`room_pipeline_room.cpp:681-725` 仅收集每个 Room 拓扑节点的 `(x,y)`，使用 Graham Scan 风格求二维凸包。它**不**检测墙体、不跟随真实非凸墙边界，可能跨越 L 形凹槽及开放式语义分界。
+3. `RoomBuilderConfig::compute_hull_2d=false` 是**默认值**，`src/room_pipeline/room_pipeline.cpp:1347-1349` 仅当显式启用才计算；目前检查过的 real/sim room_pipeline_params.xml 未显式启用。
+4. 已有 **`RoomBuilder::recoverVoxelsFull()` 二维 Room 标签图**：`room_pipeline_room.cpp:452-590` 从 Room 拓扑节点向二维自由空间网格多源 BFS 扩张，生成 `voxel_labels_2d_`，`computeFootprintFromVoxels()` 从已标记的二维单元得到 Room footprint。比凸包更适合作边界检测的**输入**，但仍是近似分区，不应当冒充建筑墙体。
+5. **导出 JSON 的命名陷阱**：`src/room_pipeline/room_pipeline_export_json.cpp:163-185` 的 `rooms.json["boundary_hull"]` 实际写的是 `computeFootprintFromVoxels()` 的二维 footprint 点集合，而非 C++ `Room.boundary_hull_2d` 的凸包。读者不能仅凭 JSON 字段名推断有墙体多边形或 Graham Scan 结果。
+
+**更轻量的首版建议（优先于前文完整多高度墙面提取设计）**：
+
+```text
+Room voxel_labels_2d_ (每个二维单元的 room_id)
+   → 查找 Room 标签区域的边界单元（格点邻居不同/无标签）
+   → 在边界附近查询已存在的 SDFMap3D FREE/OCCUPIED/UNKNOWN
+      优先用 FloorSegmenter 既有 floor+1.6m occupancy slice 初筛
+   → 连续占据且有适当垂直支持：physical_wall_candidate
+   → 相邻已知 Room/free 直接连续，无占据隔断：open_boundary
+   → 其余：unknown
+   → 同一结构中的连续候选再拟合有限墙段 normal/extent
+```
+
+这个方案重用原生 Room 区域与占据数据，**不需要先实现完整 3D 平面语义分割或新的学习模型**。`floor+1.6m` 的单切片可能把冰箱/高柜当墙，因此在候选验证时才按需检查另一高度或邻接 ObjectMap3D 实例；门洞、窗户、薄墙、开放空间和观测空洞依然需要 `unknown` 分支，不能只用“是否有点”二值判断。前文完整 WallSegment 平面法向解析应作为斜墙投影与高精度渲染时的逐步增强，而非初版必选先决条件。
+
+**仍未测试**：room footprint 在真实开放场景中的准确性；边界判别的假阳/假阴；是否足以支持彩色墙面投影。
