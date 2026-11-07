@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2 详细设计 v1.2：单一三维 BBox 欧氏距离连接阈值](build/PSM-WMA_G2_detailed_design_v1.2_2026-11-07_single_3d_bbox_distance.md)** — **最新已确认**：统一采用 3D BBox 最近距离 `sqrt(gx²+gy²+gz²)<d`，候选 d=30cm，**不按 XYZ 分轴判断，也不使用 d_xy/d_z 双阈值**；直接/间接近邻归属与建筑根隔离保留。覆盖 v1.1 的错误双阈值建议；实际图像和 d 数值仍待单厨房验证。
+
 - **[G2 详细设计 v1.1：BBox 近邻连接与水平/垂直阈值](build/PSM-WMA_G2_detailed_design_v1.1_2026-11-07_bbox_proximity_root_affiliation.md)** — **最新连接定义**：实体到墙/地板/其他实体的 BBox 最短距离小于可配置 d 即归属，不要求物理固定；冰箱距北墙近也属于北墙，近邻链递归传递。建议用 d_xy、d_z 两参数作候选（初值 30cm、10cm），保留统一 3D d 作对照；建筑根不能充当传递中继，注意巨型连接分量。优先六张正交图。尚未做实际渲染/验收。
 
 - **[G2 详细设计 v1.0：连接归属驱动的上下／四墙正交视图](build/PSM-WMA_G2_detailed_design_v1.0_2026-11-07_root_affiliation_orthographic_wall_views.md)** — **最新视图候选**：Floor 支撑/包含链及其子物件进入俯视；非 Floor 链进入含天花板背景的仰视；每面墙仅展示该墙的直接/间接连接链。明确连接**可递归传递归属**、跨 Floor/Wall/Ceiling 建筑根不可自动传播、连接≠接近、机器人握持例外；推荐四墙正交立面优先于房间中心 45°×8 透视，同时记录真机 nav_sg 墙面实例分割/关系能力的现有缺口。仍未执行渲染。
