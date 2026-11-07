@@ -46,16 +46,21 @@ MuJoCo 的作用是替代仿真阶段的**感知来源**，提供完整 GT 的�
 
 **主输入不得默认直接使用 MuJoCo 原生渲染器生成的真实 RGB、或 MuJoCo 专属的封闭 Mesh/纹理渲染功能**，除非验证 nav_sg 的现实路径通过相同的规范几何/外观表示也可以生成同类型视图。MuJoCo 原生渲染可做独立的 GT 对照和人工核验，但不能未经共通性检验就作为训练缓存的正式输入。
 
-## 2. 当前 nav_sg 的真实能力缺口（SOURCE-CONFIRMED）
+## 2. 当前 nav_sg 的真实能力与尚存缺口（SOURCE-CONFIRMED，2026-11-07 追加纠正）
 
-2026-11-06 只读核查 `nav_sg` 的 PR #4 候选：
-- `mapping_8_3/mapping/include/mapping/object_mapping/object_cluster3d.h`: `ObjectCluster3D::cloud` 为 `pcl::PointCloud<pcl::PointXYZ>`，没有逐点颜色、RGB/UV/材质 Mesh；
-- `mapping_8_3/mapping/include/mapping/scene_graph/scene_graph_manager.h`: `SceneGraphObject` 主要记录 room/cluster/centroid/AABB/prob，不含可渲染纹理几何；
-- `mapping_8_3/mapping/src/map_ros_visualizer.cpp`: 现有 RViz 体素/点云发布不等于可从任意规范相机生成 RGB 视图。
+**更正**：2026-11-07 进一步核查，nav_sg 早已包含独立的 `ColorCloudMap` 真彩色 RGB-D 融合功能，先前把系统笼统称为“只有 XYZ，缺乏颜色融合”是不完整的。应区分两条现有支路：
 
-因此：**从现有 XYZ/occupancy 可生成几何投影视图，但不能声称已经能生成具有真实场景颜色和纹理的房间中心规范 RGB 图。** 真实路径需要增强 RGB-D 几何颜色融合（例如每点颜色、Surfel/TSDF 的颜色、后续可选纹理网格）或明确降低视图要求为三维几何伪彩色/深度/实例图。
+- `mapping_8_3/mapping/include/mapping/utils/color_cloud_map.h` 及 `src/utils/color_cloud_map.cpp`：`pcl::PointCloud<pcl::PointXYZRGB>` + 体素 `VoxelAccum(sr,sg,sb,w)`，通过 RGB 图像与像素索引的世界点云在 voxel 级融合真实 RGB，`toPointCloud()` 导出。不是伪彩。
+- `src/utils/color_cloud_map_worker.cpp` 和 `src/map_ros.cpp`：独立异步 RGB/Depth/Pose worker，按配置发布 `/color_cloud_map`；real/sim 参数 XML 默认启用、发布 2Hz，真机/仿真体素叶分别 0.02m/0.05m。当前 `g2/offline/replay_robocasa.py` 明确禁用彩色云，故这条路径还未进入现有 G2 离线构建证据。
+- `include/mapping/object_mapping/object_cluster3d.h`：**另一条语义对象链** 的 `ObjectCluster3D::cloud` 仍为 `pcl::PointCloud<pcl::PointXYZ>`；`object_map3d_visualizer.cpp` 可按 cluster ID 生成 RGB(A) 伪颜色，但那不是观测 RGB。
+- `include/mapping/scene_graph/scene_graph_manager.h`：`SceneGraphObject` 主要为 room/cluster/centroid/AABB/prob，没有直接引用颜色、姿态版本或带纹理表面；当前 ColorCloudMap 没有自动与对象实例、SG、关系及任意 room camera 的渲染器对齐。
+- `src/map_ros_visualizer.cpp` 的 RViz 点云显示不等于已具有任意规范虚拟相机的 RGB 新视角渲染。仅存在颜色点云也不能保证隐藏面被观察、遮挡和空洞可合理恢复。
 
-不要把一个 PointXYZ 经过语义标签绘图就标为“视觉真实的房间照片”；若采用 geometry-only 版本，训练与真机统一使用 geometry-only recipe。
+**修正后的技术缺口不是“从零实现 RGB-D 彩色点云”**，而是：彩色点云与 SG/实例/时序状态的绑定、移动对象旧 voxel 撤销、低空洞的正交/房间虚拟相机投影渲染、缓存/latency。绝不能因为 ColorCloudMap 已有就宣称 10Hz 或完整三维 RGB 视图已通过 Gate。
+
+详细源码/2Hz 与 ≥10Hz 性能/3DGS 对比归档：[彩色点云与 10Hz/3DGS 专项审计](./PSM-WMA_G2_colored_pointcloud_10Hz_vs_3DGS_audit_2026-11-07.md)。
+
+不要把一个 PointXYZ 按语义标签着色当作“真实彩色场景”；未来空间图像必须来自已知真实颜色表面或显式 geometry-only recipe，并对未知/未见区域保留有效性标记。
 
 ## 3. 三类当前候选视图的现实可生成性要求
 
@@ -105,9 +110,9 @@ SpatialSceneFrame:
 ## 6. 最新取舍摘要
 
 - **Owner confirmed**：所有空间视图都必须在真实世界能用 nav_sg 产物生成。这是 G2 视图方案与缓存方案的硬门槛。
-- **Source confirmed**：nav_sg 当前 PointXYZ + 现有 SG 节点并不等于真实颜色/纹理重建；完整 RGB Room Views **尚不具备**确认可用的生成条件。
-- **Proposed**：两个来源共享 `Canonical Spatial Map → Shared Spatial View Renderer → L2/L3`。几何下/上视图优先落地，Room RGB 依赖颜色/纹理支持后再决定是否成为 P0；门槛是技术可行性而非单场景仿真效果。
-- **Still open**：RGB-D 颜色融合结构、从彩色点云/Surfel/TSDF/纹理 Mesh 到规范虚拟方向图的质量、unknown mask 输入形式、上/下图的剖切高度与编码器选型。
+- **Source confirmed（2026-11-07 修正）**：nav_sg 自带基于 RGB-D 的 `ColorCloudMap<PointXYZRGB>` 真彩色体素融合和 ROS 发布，另有 `ObjectMap3D<PointXYZ>`/SG 语义链；**缺口是两支路的关联、动态更新和任意规范相机新视角渲染**，不是完全没有 RGB。完整 Room RGB 视图质量/≥10Hz 仍未经实测。
+- **Proposed**：两个来源共享 `Canonical Spatial Map → Shared Spatial View Renderer → L2/L3`。先复用现有 ColorCloudMap 的真实颜色表面作为候选渲染输入，与 SG/State 绑定后核实 Lower/Upper/Room 新视角的空洞、动态更新及延迟；是否成为 P0 取决于真机可生成性和性能 Gate。
+- **Still open**：现有 RGB-D 彩色体素与 SG 实例/动态状态如何对齐、从现有彩色点云到规范视图的孔洞及画质、动态 voxel 撤销、≥10Hz 实际时延、unknown mask、上下剖切高度和编码器选型。
 - **Not authorized**：任何生产构建、真机渲染、GPU 训练或数据全量编码。
 
 本稿覆盖此前“只要 MuJoCo 可渲染即可把图片作为 Cosmos 主输入”的表述，明确 Sim/Real 图像可生成性和共用 ABI 是入选视图模态的前置验证。
