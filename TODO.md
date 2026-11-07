@@ -539,7 +539,7 @@
 # 2026-11-07 — Issue22 online Local-TTT pipeline
 
 - **ISSUE22-G0-VISUAL-PARITY** — DONE (author CPU6PASS; tiny actual Wan, hardware unrun); Codex; baseline Root8aeb2442/Child1ca30805; prove PRE-CROP Policy current latent/Visual96 and independent Encode1 parity using actual production routes/tiny actual Wan CPU, old crop wrong-seam negative. If fails BLOCKED, no fallback. Agent owns new parity test only; main executes CPU.
-- **ISSUE22-PIPELINE** — REVIEW; Codex; G0 required; bounded single-executor causal per-frame completed-evidence encoding/candidate scan, cache boundary current latent, atomic Replan commit/abort/replay/ACK/session/End/cleanup unchanged. CPU equivalence/fault/concurrency/profiling evidence→isolated Child Draft PR/GPT review. No L2000/L4000, realGPU, training, cache-schema/identity/M-BResume change or official merge.
+- **ISSUE22-PIPELINE** — REVIEW (GPT candidate COMMENTED received; no specific code remediation; no formal APPROVE_CODE); Codex code-only scope; G0 required; bounded single-executor causal per-frame completed-evidence encoding/candidate scan, cache boundary current latent, atomic Replan commit/abort/replay/ACK/session/End/cleanup unchanged. CPU equivalence/fault/concurrency/profiling evidence→isolated Child Draft PR/GPT review. No L2000/L4000, realGPU, training, cache-schema/identity/M-BResume change or official merge.
 
 - **ISSUE22-AUTHOR-CPU-FINAL** — DONE (author428/428PASS, finalFrozenChild5fe2b8de); Codex; frozenChild5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6, Rootintegrationcontext retains baselineGitlink1ca30805; final23file targetedCPU/JUnit0fail/error/skip/source_unchanged then ChildDraftPR/GPTreview. Real performanceGPU GateOPEN.
 

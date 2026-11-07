@@ -1,3 +1,17 @@
+# 2026-11-07 — Issue22 GPT candidate feedback received; code-only scope
+
+Owner explicitly limits Codex to GPT feedback about code. Formal evaluation failure diagnosis, logs, process control, runtime recovery and server actions are outside this turn. No runtime or hardware activity performed.
+
+Fresh fetched/advertised isolated Root branch `e7a7b3261e118cd0859fd9f8f6e3e074c03d800a`; official Root V3 `2ff873bde87465a2cc8815eb801d69692f54a396`. Fast-forward4d8e8520→e7a7b326 consumed only review0fd7fc98 and Inboxe7a7b326. Child remains clean `5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6`; Root index/Gitlink stays `1ca308055fc41fb69efaeb9efaa23808f164a18e`, with the expected nested candidate drift. No matching new Formal Pair claimed.
+
+Read exact candidate review docs/collab/chatgpt/reviews/2026-11-07_V3_Issue22_Child5fe2b8de_candidate_CPU_static_review.md (Git blob138ba242a4597bf21bf8c6bd93dcef1c1e36b176), canonical Inbox, and PR4 review https://github.com/wxwy/cosmos-framework/pull/4#pullrequestreview-5809229710 . Live review state COMMENTED, one review/no inline threads, open/Draft/unmerged at exactChild5fe2b8de; not APPROVE_CODE or formal closure. GPT independently inspected source/author evidence but did not rerun the author's428 CPU cases.
+
+Code disposition: no specific remediation request or confirmed source defect is listed. Full-history PNG decode/hash in adapter._parse and shared model-executor contention are explicitly unmeasured performance risks, not findings to silently rewrite this frozen candidate. Keep source/tests/Child SHA and historical author428PASS unchanged; no CPU rerun, no new review request or PR comment. Status REVIEW. Future Codex work requires concrete code feedback; integration/hardware/performance evidence remain separate, not actions dispatched by this acknowledgement.
+
+This docs-only receipt records current feedback and the Owner's narrowed scope. It changes neither canonical Inbox nor GPT review, and does not request approval/merge/deployment or investigate any evaluation incident. Current Owner Issue22/candidate-only workflow still supersedes obsolete V2/multi-pane waiting. Read-only governance self-check: no approval inferred from absence of HIGH findings.
+
+## Retained earlier records
+
 # Publication complete — 2026-11-07
 
 Child Draft PR https://github.com/wxwy/cosmos-framework/pull/4 is open/draft/unmerged, exacthead5fe2b8def58f4caae8c63581ed3649ac8fb3e0c6 / base1ca308055fc41fb69efaeb9efaa23808f164a18e. AuthorCPU428 and static20 stand, no source/test changes or rerun after freeze. Root evidence39ba3eb4bf49dbbbe77d4e1bc85407c369820746 and receipt docs/collab/codex/evidence/2026-11-07_issue22_publication/receipt.json readback PASS:34artifactSHA/6APIblobs/428JUnit/1273source fingerprints, append-only Inbox51157→53224bytes before supplement. Normal isolatedChild-first/Rootdocs-second pushes only; officialV32ff873bd and Child1ca30805 retained. RootGitlinkstays1ca, notnewintegratedPair. This successor onlyrecordsreceipt/link/state.
