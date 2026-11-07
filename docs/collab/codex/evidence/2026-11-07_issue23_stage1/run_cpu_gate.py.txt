@@ -1,0 +1,120 @@
+"""Focused standalone Issue23 Stage1 author CPU gate; no model or simulation launch."""
+import argparse
+import hashlib
+import importlib.metadata
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import sys
+import time
+import xml.etree.ElementTree as ET
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--root", required=True, type=Path)
+parser.add_argument("--evidence-dir", required=True, type=Path)
+parser.add_argument("--expected-root", required=True)
+parser.add_argument("--expected-child", required=True)
+args = parser.parse_args()
+root = args.root.resolve()
+child = root / "cosmos-framework"
+out = args.evidence_dir.resolve()
+out.mkdir(parents=True, exist_ok=False)
+
+
+def git(directory, *arguments):
+    return subprocess.check_output(["git", "-C", str(directory), *arguments], text=True).strip()
+
+
+identity = {"root": git(root, "rev-parse", "HEAD"), "child": git(child, "rev-parse", "HEAD"),
+            "gitlink": git(root, "rev-parse", "HEAD:cosmos-framework")}
+assert identity == {"root": args.expected_root, "child": args.expected_child, "gitlink": args.expected_child}, identity
+assert not git(root, "status", "--porcelain") and not git(child, "status", "--porcelain"), "clean exact worktrees required"
+(out / "source_identity.json").write_text(json.dumps(identity, indent=2) + "\n")
+(out / "versions.json").write_text(json.dumps({"python": sys.version, "packages": {
+    name: importlib.metadata.version(name) for name in ("torch", "pytest", "ruff")}}, indent=2) + "\n")
+new = sorted((child / "cosmos_framework/inference").glob("robocasa_vae_*.py"))
+tests = [p for p in new if p.name.endswith("_test.py")]
+legacy = [child / "cosmos_framework/inference" / p for p in (
+    "robocasa_session_transactions_test.py",
+    "robocasa_dual_mode_test.py",
+    "local_memory_online_test.py",
+    "robocasa_composite_visual_test.py",
+)]
+assert len(tests) == 4 and len(new) == 8, "expected exactly four standalone modules and four tests"
+env = os.environ.copy()
+overrides = dict(
+    CUDA_VISIBLE_DEVICES="", PYTEST_DISABLE_PLUGIN_AUTOLOAD="1", PYTEST_ADDOPTS="",
+    HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", PYTHONDONTWRITEBYTECODE="1",
+    OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1",
+    PYTHONPATH=os.pathsep.join(map(str, (root, child, root / "scripts"))),
+    RUFF_CACHE_DIR=str(out / "cache/ruff"), XDG_CACHE_HOME=str(out / "cache/xdg"),
+)
+env.update(overrides)
+(out / "environment_overrides.json").write_text(json.dumps(overrides, indent=2) + "\n")
+
+
+def snapshot():
+    files = [p for p in child.rglob("*.py") if ".git" not in p.parts and "__pycache__" not in p.parts]
+    for package in sorted((child / "docs/designs").glob("issue23_sim_shared_vae_stage*")):
+        files += list(package.rglob("*"))
+    for folder in (root / "scripts", root / "tools"):
+        files += list(folder.rglob("*.py"))
+    return {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files if p.is_file()}
+
+
+before = snapshot()
+(out / "source_before.json").write_text(json.dumps(before, indent=2) + "\n")
+state = {"scope": "ISSUE23_STAGE1_STANDALONE_FOCUSED_AUTHOR_CPU", "status": "RUNNING", "steps": [],
+         "real_weights_gpu_egl_sim_policy_integration_sr": "NOT_RUN"}
+
+
+def save():
+    (out / "gate.json").write_text(json.dumps(state, indent=2) + "\n")
+
+
+def run(name, command, timeout=180):
+    step = dict(name=name, argv=list(map(str, command)), cwd=str(root), timeout_s=timeout)
+    state["steps"].append(step)
+    save()
+    start = time.monotonic()
+    with (out / f"{name}.log").open("wb") as log:
+        result = subprocess.Popen(step["argv"], cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT,
+                                  start_new_session=True)
+        try:
+            result.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            os.killpg(result.pid, signal.SIGKILL)
+            result.wait(timeout=5)
+            raise
+    step.update(exit_code=result.returncode, elapsed_s=round(time.monotonic() - start, 3))
+    print(f"{name}: exit={result.returncode}", flush=True)
+    save()
+    if result.returncode:
+        raise RuntimeError(f"{name} failed; see {name}.log")
+
+
+try:
+    run("ruff_check", [sys.executable, "-m", "ruff", "check", *new])
+    run("ruff_format", [sys.executable, "-m", "ruff", "format", "--check", *new])
+    for name, paths in (("standalone", tests), ("legacy_protection", legacy)):
+        run(name, [sys.executable, "-m", "pytest", "--noconftest", "-c", "/dev/null", "-p", "no:cacheprovider",
+                   "-q", *paths, f"--basetemp={out / (name + '_tmp')}", f"--junitxml={out / (name + '.xml')}"], 240)
+        suites = list(ET.parse(out / f"{name}.xml").getroot().iter("testsuite"))
+        counts = {key: sum(int(s.get(key, "0")) for s in suites) for key in ("tests", "failures", "errors", "skipped")}
+        state[name] = counts
+        if not counts["tests"] or any(counts[key] for key in ("failures", "errors", "skipped")):
+            raise RuntimeError(f"nonclean JUnit: {counts}")
+    state["status"] = "PASS"
+except Exception as error:
+    state.update(status="FAIL", error=repr(error))
+finally:
+    after = snapshot()
+    (out / "source_after.json").write_text(json.dumps(after, indent=2) + "\n")
+    state["source_unchanged"] = before == after
+    if before != after:
+        state.update(status="FAIL", error="source changed during validation")
+    save()
+print(json.dumps({key: state.get(key) for key in ("status", "standalone", "legacy_protection", "source_unchanged")}))
+raise SystemExit(0 if state["status"] == "PASS" else 1)
