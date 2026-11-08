@@ -1,3 +1,32 @@
+# 2026-11-08 — Issue24 H4 Actor source-witness remedy claimed
+
+Owner latest instruction + exact H4 report/Issue24 comment6720302846 authorize
+only Child Actor C-mode source-witness contract repair and CPU/static evidence.
+Existing approved/tested source Pair Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e /
+Child11e1855d58cb9f017243a08d610fb33a4443b773; H2/H3 CPU and real startup now
+PASS historically; H4 real Actor blocked before rendering/reset/step. Original
+hardware evidence stays on data, not accessed/copied by Codex. No new SR claim.
+
+Remote candidateRoot878f1bb6d6f61996850d57c75f1d70502e04886b fetched and verified
+fast-forward from480317f4; four reviewer docs/Inbox commits preserved. Created
+isolated worktrees /workspace/work/psm-wma-stage3a-h4-formal and Child, local
+branches v3-stage3a-h4-source-20261108, startRoot878f1bb6/Child11e1855d. Official
+V3 7b8b733e/Child1ca30805 unchanged; prior worktrees/PR4/5/6 untouched.
+
+Main owns ONLY Child simulation/robocasa/eval_v2_worker.py production; new Root
+tools/v3/eval_v2_batch_tests/actor_source_witness_test.py integration regression;
+Root Gitlink/SESSION/TODO/evidence/append-only Inbox. No delegation or agents.
+Add exact source-defined ten imports only for explicit phase_b+sim_shared_vae+
+required; preserve exact label-set and imported path/SHA checks. Unknown profile,
+missing/extra/wrong source/checkout/changed mode must fail before rendering/reset.
+A/off and B/server_vae exact legacy8, original PhaseA7/factory path unchanged.
+No new source map derived from cfg, no Root production edits, no model/TTT/VAE/
+Batch/Resume changes. Test actual Root._setup_actor sealed config through actual
+Child serve(factory=None) with only model/renderer/env boundary doubles; actual
+imports/origins/wire/source guards stay real. First controlled old-code RED,
+then minimal patch/new Pair/CPU original regressions and metadata publication.
+No GPU/server/checkpoint/realSim/training/B8/SR/900EP/V3 merge operations.
+
 # 2026-11-08 — H2/H3 publication and remote readback PASS; independent Code Gate handoff
 
 Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink
