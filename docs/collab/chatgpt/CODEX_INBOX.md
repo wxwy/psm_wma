@@ -268,3 +268,24 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 - **Evidence**: GPT independent full Streaming CPU869/869 PASS and Action CPU77/77 PASS on exact local integrated source; CPU869 used disclosed isolated Python pidfd runtime shim. Real RoboCasa/H100 R06 with verified original iter27700, M16/B8, raw Action[16,15], Local-TTT required: 36/36 Core, 29 success/7 behavioral failures, 0 invalid/interrupt/pending, clean execution true, 34/34 owned closed, zero compiler-limit failures.
 - **Formal promotion review**: `docs/collab/chatgpt/reviews/2026-11-05_R06_Issue17_Issue18_V3_95f75658_1ca30805_PROMOTION_VERIFIED.md` (docs-only commit `204270b0c0d945c26602d6397d2aa1bc1f7d8fad`). Verdict `APPROVE_CODE` for incremental object-level merge; `PROMOTION_VERIFIED` published. New docs-only commit SHA is not a new implementation target.
 - **Boundaries**: No R04/R05/R06 source-switch Resume, no G2 merge, no auto 900EP launch, no M/B Resume parameter changes. New experimental runs must use their own Manifest and source identity.
+
+
+## 2026-11-08 — G2-N6 independent Draft prototype / GPT server handoff
+
+- Owner task: https://github.com/wxwy/psm_wma/issues/26; workflow: independent Draft PR → GPT server recheck → reviewed merge. This is a new G2 source/view task, with no V3 execution/promotion request.
+- Fixed PSM implementation: `c7ebb429074be5726ff9abead0e0d930a7e2138d`, tree `6aa4204f81fa5360cf07f487d986c88087478ac9`, branch `codex/g2-n6-prescan-native-views`, based on V3 `7b8b733e1f585bb44a0eac7c14ad545c29355a86`.
+- Fixed native implementation: `2009fae35d86579bb22c273fb97ec1bf0835b533`, tree `9fc89f461f9edbdd3ebae3684412eb3bd20c1b3f`, branch `codex/g2-n6-native-snapshot`, stacked on unchanged PR #7 `e86c3844325b13092e1713290b079cfb63466cfb`. Native is a separate repository, not the Cosmos submodule.
+- Child/Gitlink remains `1ca308055fc41fb69efaeb9efaa23808f164a18e`. Runtime source-byte inventory: 15 PSM + 43 native files verified against fetched published commits; publication/Inbox ledger successor is metadata only and does not change these implementation targets.
+- Scope: G2 MuJoCo visual-source export, genuine-recorded plan adapter, actual native 3D snapshot sealing and metric six+independent Island previews. Source labels are diagnostic provenance. Native owns map/Room/ObjectMap/SG/grouping.
+- Evidence: `docs/evidence/g2_n6_2026-11-08/`; commands and contracts: `docs/build/PSM-WMA_G2_N6_implementation_runbook_2026-11-08.md`; native `docs/G2_N6_NATIVE_SNAPSHOT.md`. Author G2 CPU64/64; C++129 distinct/129 (18 XMLs, zero failures/errors/skips; wrapper total258); native Python449 passed/73 optional CPU-torch skips; TEST_ONLY native6 invocations and12 frame0/200 sealed/rendered snapshots; ordinary prebuilt geometry4-frame smoke PASS without model acceptance.
+- Read-only independent author-agent review closed reported findings for the Draft scope. This is not GPT/server approval.
+- OPEN/BLOCKED: ordinary native structural roots are not implemented; genuine recorded RGB-D/YOLOE/SigLIP execution, whole-house material/source review, original Layout1/10 frame0/200 and H1 remain NOT_RUN/pending. L-shaped affiliation is conservative/incomplete; doorway still yields one Room. Issue26 stays OPEN.
+- GPT request: inspect the exact fixed implementation pair and reproduce the documented fresh CPU/native/source checks; replay original Layout1/10 with verified source roles/state at frame0/200; report actual semantic/structural/material/H1 gates separately. No approval or all-scene claim is inferred from author tests.
+- Keep Draft/unmerged. No GPU, simulator evaluation, model/training execution, production source/Gitlink/cache changes or old PR #2/#4/#6/#7 edits are requested.
+
+
+### G2-N6 publication receipt correction — GitHub account blocker
+
+Both exact implementation branches above were published and fetched successfully.
+Draft creation was rejected by GitHub HTTP403: `At least one email address must be verified to do that.`
+**No N6 Draft PR was created.** The preceding entry is a prepared handoff, not evidence of PR creation or delivered formal server review. Exact PR bodies/API requests are saved in `docs/evidence/g2_n6_2026-11-08/draft_pr_*`. Source targets/trees and all CPU evidence remain unchanged. User email verification is required before retrying creation; no issue is closed, no production/parent ref changes, no server approval or merge.

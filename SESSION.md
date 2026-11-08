@@ -1,3 +1,26 @@
+# 2026-11-08 — Draft PR creation blocked by GitHub email verification
+
+BLOCKED publication. Both source branches are published and fetched byte-for-byte,
+but GitHub create_pull_request returned HTTP403:
+`At least one email address must be verified to do that.`
+No Draft PR exists for this N6 implementation. User must verify a GitHub account
+email before the same prepared requests can be submitted. Source implementation
+commits remain PSM `c7ebb429074be5726ff9abead0e0d930a7e2138d` and native
+`2009fae35d86579bb22c273fb97ec1bf0835b533`; all runtime bytes remain frozen.
+Prepared exact bodies/API requests: docs/evidence/g2_n6_2026-11-08/draft_pr_*.
+No server review/acceptance is claimed and no formal review polling is running.
+
+# 2026-11-08 — G2-N6 fixed implementation publication / Draft handoff
+
+REVIEW. Published PSM implementation `c7ebb429074be5726ff9abead0e0d930a7e2138d`
+and separate native implementation `2009fae35d86579bb22c273fb97ec1bf0835b533`.
+GitHub API trees exactly match authored/tested trees; fetched source-byte readback
+passed 15 PSM + 43 native files. Child/Gitlink remains
+`1ca308055fc41fb69efaeb9efaa23808f164a18e`. This successor changes handoff/evidence
+metadata only; implementation targets stay fixed above. Canonical bounded Inbox
+contains the GPT server request and explicit OPEN/BLOCKED acceptance limits.
+No formal server approval, merge, GPU/model execution or V3 promotion is claimed.
+
 # 2026-11-08 — G2-N6 implementation claim (Issue #26)
 
 Owner hands off independent implementation after nav_sg P0 PR #7 at exact
