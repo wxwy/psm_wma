@@ -1,3 +1,23 @@
+# 2026-11-08 — H4 Child source fix frozen; preparing exact Pair CPU
+
+New Child00f30235da6ffb085a9304ef6501ede509203092 changes only Actor25lines:
+fixed ten module imports/origins for explicit phase_b+sim_shared_vae+required,
+unknown/inconsistent evidence profiles fail closed, original exact source-label
+and imported path/SHA verification unchanged. Root production untouched; new
+Root integration test uses real Runtime._setup_actor sealed source config and
+actual Child serve(factory=None), only execution/renderer/env boundaries doubled.
+
+First RED harness attempt retained red-old-code/: Store fixture forgot lock and
+failed lease_id before Actor. Only new test fixture corrected to store.locked;
+original test/runner snapshots preserved. Successful red-old-code-02 proves old
+production byte-identical, actual RootC18 rejected by old Actor base8 with exact
+incomplete native source witnesses, pytest1FAIL expected. That final test SHA
+will be identical for GREEN; Root sealed config remains unchanged in all tests.
+Formatter2files unchanged. Next exact clean Pair author CPU includes new80 H4
+cases, original default-worker3 and original Stage3A/H1/H2/H3/A-B protections;
+zero fail/error/skip, static and source fingerprint/nativeidentity equality.
+No GPU/data-server/checkpoint/realSim/merge/training or old-job operations.
+
 # 2026-11-08 — Issue24 H4 Actor source-witness remedy claimed
 
 Owner latest instruction + exact H4 report/Issue24 comment6720302846 authorize
