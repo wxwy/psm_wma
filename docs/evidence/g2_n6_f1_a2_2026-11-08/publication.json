@@ -1,0 +1,16 @@
+{
+  "GPT_new_SHA_acceptance": "PENDING",
+  "all_match_tested_source": true,
+  "exact_body_readback": true,
+  "implementation_commit": "e73083324055af459d2c6c65bb52bda142bb4833",
+  "implementation_tree": "0f430e6929f04f94d3a5c278eac2987f040283d7",
+  "issue_recheck_request": "https://github.com/wxwy/psm_wma/issues/26#issuecomment-6720741286",
+  "metadata_successor_changes_runtime": false,
+  "new_Draft_PR_created": false,
+  "schema": "g2_n6_f1_a2_publication_v1",
+  "server_files_accessed_or_transferred": false,
+  "unchanged_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "unchanged_native": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "utc": "2026-11-08T11:12:41.167835+00:00",
+  "verified_source_files": 19
+}

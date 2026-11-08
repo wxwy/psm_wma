@@ -1,3 +1,17 @@
+# 2026-11-08 — G2-N6-F1-A2 published / STOP for GPT new-SHA recheck
+
+REVIEW. Fixed Root e73083324055af459d2c6c65bb52bda142bb4833, tree
+0f430e6929f04f94d3a5c278eac2987f040283d7.19 source/test hashes read back
+from fetched Git objects and match tested inventory. Actual Issue26 recheck
+request6720741286 posted and exact body read back. This successor only updates
+metadata; implementation target remains the fixed source above.
+GPT7c12 REQUEST_CHANGES was consumed; it is not upgraded to PASS by author
+160/160 or code review. Real obj/distr new-SHA recheck remains GPT pending.
+Native2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. No server files accessed
+or transferred, no production/GPU/model/structure/whole-house/view/training
+actions. Per F1-A2 stage instruction STOP here; no new Draft PR or merge.
+
 # 2026-11-08 — G2-N6-F1-A2 info.cat author fix frozen
 
 REVIEW. Owner F1A-B1 minimal correction only, derived08a1bbb1/runtime7c12caea
