@@ -41,10 +41,17 @@
       "status": "FAIL",
       "source_unchanged": true,
       "groups": {
-        "stage3_focused": "NOT_RUN",
+        "stage3_focused": {
+          "tests": 566,
+          "failures": 2,
+          "errors": 0,
+          "skipped": 0,
+          "testcase_elements": 359
+        },
         "root_lifecycle_config": "NOT_RUN",
         "legacy_protection": "NOT_RUN"
-      }
+      },
+      "group_counts_source": "original JUnit; failed runner step may omit its group from gate.json"
     },
     {
       "directory": "author-02",
@@ -60,16 +67,25 @@
           "tests": 566,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 359
         },
         "root_lifecycle_config": {
           "tests": 152,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 152
         },
-        "legacy_protection": "NOT_RUN"
-      }
+        "legacy_protection": {
+          "tests": 143,
+          "failures": 8,
+          "errors": 0,
+          "skipped": 0,
+          "testcase_elements": 143
+        }
+      },
+      "group_counts_source": "original JUnit; failed runner step may omit its group from gate.json"
     },
     {
       "directory": "author-03",
@@ -85,16 +101,25 @@
           "tests": 566,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 359
         },
         "root_lifecycle_config": {
           "tests": 152,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 152
         },
-        "legacy_protection": "NOT_RUN"
-      }
+        "legacy_protection": {
+          "tests": 143,
+          "failures": 8,
+          "errors": 0,
+          "skipped": 0,
+          "testcase_elements": 143
+        }
+      },
+      "group_counts_source": "original JUnit; failed runner step may omit its group from gate.json"
     },
     {
       "directory": "author-04",
@@ -110,21 +135,25 @@
           "tests": 566,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 359
         },
         "root_lifecycle_config": {
           "tests": 152,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 152
         },
         "legacy_protection": {
           "tests": 143,
           "failures": 0,
           "errors": 0,
-          "skipped": 0
+          "skipped": 0,
+          "testcase_elements": 143
         }
-      }
+      },
+      "group_counts_source": "original JUnit; failed runner step may omit its group from gate.json"
     }
   ],
   "independent_code_gate": "REQUESTED_NOT_YET_REVIEWED",
@@ -137,5 +166,6 @@
     "private FD bootstraps",
     "actor configs",
     "inherited environment"
-  ]
+  ],
+  "archive_summary_correction": "Prior failed-step counts derived from original JUnit instead of treating omitted gate.json summary as NOT_RUN; original gate files unchanged."
 }

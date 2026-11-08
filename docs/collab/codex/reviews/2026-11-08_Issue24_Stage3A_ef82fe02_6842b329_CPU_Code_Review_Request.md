@@ -122,6 +122,12 @@ Archive: `docs/collab/codex/evidence/2026-11-08_issue24_stage3a/`.
 JUnit XML/log pairs, original source identity/snapshots, version/env/static logs
 are authoritative author output. `artifact_sha256.json` inventories archive bytes.
 The exact runner/formatter are archived as `.py.txt`, not installed as new launchers.
+Additional Registry process/process_closed records and synthetic complete/overflow-negative
+raw traces are included with provenance. Registry process_closed records are not a
+Root IPC CLOSED receipt; that Root receipt was asserted in memory. Overflow trace
+is deliberately incomplete. Earlier gate.json files omit the failing group summary
+on early exit; corrected machine attempt counts derive from the original JUnit,
+not from absent gate fields. The raw gate/JUnit/log bytes remain unchanged.
 Tmp caches/bootstrap/actor configs/inherited env are excluded; no private key or
 real server file is published. Actual local process/FD/IPC lifecycle records are under `author-04/os_lifecycle/`,
 with original-path provenance. Both report external process survival and owned exit0;
