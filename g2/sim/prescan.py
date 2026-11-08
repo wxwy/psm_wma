@@ -78,6 +78,7 @@ def source_binding(spec, name, ep_meta, *, body_names=None):
     record = pointer(ep_meta, spec["ep_meta_pointer"])
     if not isinstance(record, dict):
         raise ContractError("official source record must be an object")
+    category_details = {}
     if collection == "fixtures":
         matches = tokens[1] == instance and record.get("name", instance) == instance
         field = spec.get("source_category_field", "cls")
@@ -86,21 +87,34 @@ def source_binding(spec, name, ep_meta, *, body_names=None):
     else:
         matches = record.get("name") == instance and sum(
             isinstance(item, dict) and item.get("name") == instance for item in values) == 1
+        info = record.get("info", {})
+        if not isinstance(info, dict):
+            raise ContractError("official object info must be an object")
+        if "cat" in info:
+            if not source_text(info["cat"]):
+                raise ContractError("official object info.cat must be nonempty text")
+            category_details["fine_category"] = {"field":"info.cat", "value":info["cat"]}
+        if "type" in record:
+            if not source_text(record["type"]):
+                raise ContractError("official object coarse type must be nonempty text")
+            category_details["coarse_type"] = {"field":"type", "value":record["type"]}
         field = spec.get("source_category_field")
         if field is None:
             field = next((key for key in ("obj_groups", "obj_type", "cls") if key in record), None)
-        if field not in ("obj_groups", "obj_type", "cls"):
+            if field is None and "cat" in info:
+                field = "info.cat"
+        if field not in ("obj_groups", "obj_type", "cls", "info.cat"):
             raise ContractError("official object category provenance is missing")
     if not matches:
         raise ContractError("official fixture/object cfg identity mismatch")
-    category = record.get(field)
+    category = record.get("info", {}).get("cat") if field == "info.cat" else record.get(field)
     valid_category = source_text(category) or (field == "obj_groups" and isinstance(category, list)
                                               and bool(category) and all(source_text(v) for v in category))
     if not valid_category or ("source_category" in spec and spec["source_category"] != category):
         raise ContractError("official fixture/object category mismatch or malformed source")
     return {"kind":"ep_meta", "pointer":spec["ep_meta_pointer"], "collection":collection,
             "instance_name":instance, "category":{"field":field,"value":category},
-            "record":record, "body_binding":body_binding}
+            "record":record, "body_binding":body_binding, **category_details}
 
 
 def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):

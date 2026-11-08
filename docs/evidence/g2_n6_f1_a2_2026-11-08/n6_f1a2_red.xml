@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="31" time="0.315" timestamp="2026-11-08T11:02:03.209184+00:00" hostname="e74a0ac08a28"><testcase classname="g2.tests.test_object_category" name="test_default_retains_groups_fine_category_and_coarse_type[0-whisk]" time="0.001"><failure message="KeyError: 'fine_category'">ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+index = 0, category = 'whisk'
+
+    @pytest.mark.parametrize("index,category",[(0,"whisk"),(1,"soap_dispenser")])
+    def test_default_retains_groups_fine_category_and_coarse_type(ep_meta,index,category):
+        before=copy.deepcopy(ep_meta)
+        b=source_binding(spec(index),"TEST_ONLY_geom",ep_meta)
+&gt;       assert b["fine_category"]=={"field":"info.cat","value":category}
+               ^^^^^^^^^^^^^^^^^^
+E       KeyError: 'fine_category'
+
+g2/tests/test_object_category.py:24: KeyError</failure></testcase><testcase classname="g2.tests.test_object_category" name="test_default_retains_groups_fine_category_and_coarse_type[1-soap_dispenser]" time="0.001"><failure message="g2.io.ContractError: official object category provenance is missing">ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+index = 1, category = 'soap_dispenser'
+
+    @pytest.mark.parametrize("index,category",[(0,"whisk"),(1,"soap_dispenser")])
+    def test_default_retains_groups_fine_category_and_coarse_type(ep_meta,index,category):
+        before=copy.deepcopy(ep_meta)
+&gt;       b=source_binding(spec(index),"TEST_ONLY_geom",ep_meta)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_object_category.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'ep_meta_pointer': '/object_cfgs/1', 'role': 'visual', 'source_instance_name': 'distr', 'source_kind': 'ep_meta'}
+name = 'TEST_ONLY_geom'
+ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+
+    def source_binding(spec, name, ep_meta, *, body_names=None):
+        if not isinstance(spec, dict) or spec.get("role") not in ("visual", "collision", "robot", "auxiliary"):
+            raise ContractError("explicit valid geom role required")
+        body = spec.get("source_body_name")
+        if body is not None and (not source_text(body) or body_names is None or body not in body_names):
+            raise ContractError("source body is absent from actual geom ancestry")
+        body_binding = {"status":"VERIFIED", "body_name":body,
+                        "basis":"DECLARED_BODY_MATCHES_COMPILED_GEOM_ANCESTRY"} if body is not None else {"status":"UNSPECIFIED"}
+        if spec.get("source_kind") == "mjcf":
+            official_fields = ("ep_meta_pointer", "source_instance_name", "source_collection",
+                               "source_category", "source_category_field")
+            if any(key in spec for key in official_fields):
+                raise ContractError("MJCF source cannot replace official ep_meta assertions")
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind":"mjcf", "geom_name":name, "body_binding":body_binding}
+        if spec.get("source_kind") != "ep_meta" or not isinstance(ep_meta, dict):
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        tokens = pointer_tokens(spec.get("ep_meta_pointer"))
+        instance = spec.get("source_instance_name")
+        if len(tokens) != 2 or tokens[0] not in ("fixtures", "object_cfgs") or not source_text(instance):
+            raise ContractError("official source requires a fixture entry or object_cfgs entry")
+        collection = tokens[0]
+        if spec.get("source_collection", collection) != collection or spec["role"] == "robot":
+            raise ContractError("official fixture/object collection and role conflict")
+        values = ep_meta.get(collection)
+        if (collection == "fixtures" and not isinstance(values, dict)) or (collection == "object_cfgs" and not isinstance(values, list)):
+            raise ContractError("official fixtures must be a dict and object_cfgs a list")
+        record = pointer(ep_meta, spec["ep_meta_pointer"])
+        if not isinstance(record, dict):
+            raise ContractError("official source record must be an object")
+        if collection == "fixtures":
+            matches = tokens[1] == instance and record.get("name", instance) == instance
+            field = spec.get("source_category_field", "cls")
+            if field != "cls":
+                raise ContractError("official fixture category must come from cls")
+        else:
+            matches = record.get("name") == instance and sum(
+                isinstance(item, dict) and item.get("name") == instance for item in values) == 1
+            field = spec.get("source_category_field")
+            if field is None:
+                field = next((key for key in ("obj_groups", "obj_type", "cls") if key in record), None)
+            if field not in ("obj_groups", "obj_type", "cls"):
+&gt;               raise ContractError("official object category provenance is missing")
+E               g2.io.ContractError: official object category provenance is missing
+
+g2/sim/prescan.py:93: ContractError</failure></testcase><testcase classname="g2.tests.test_object_category" name="test_explicit_nested_category_matches_exact_original_value[0-whisk]" time="0.000"><failure message="g2.io.ContractError: official object category provenance is missing">ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+index = 0, category = 'whisk'
+
+    @pytest.mark.parametrize("index,category",[(0,"whisk"),(1,"soap_dispenser")])
+    def test_explicit_nested_category_matches_exact_original_value(ep_meta,index,category):
+&gt;       b=source_binding(spec(index,source_category_field="info.cat",source_category=category),"g",ep_meta)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_object_category.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'ep_meta_pointer': '/object_cfgs/0', 'role': 'visual', 'source_category': 'whisk', 'source_category_field': 'info.cat', ...}
+name = 'g'
+ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+
+    def source_binding(spec, name, ep_meta, *, body_names=None):
+        if not isinstance(spec, dict) or spec.get("role") not in ("visual", "collision", "robot", "auxiliary"):
+            raise ContractError("explicit valid geom role required")
+        body = spec.get("source_body_name")
+        if body is not None and (not source_text(body) or body_names is None or body not in body_names):
+            raise ContractError("source body is absent from actual geom ancestry")
+        body_binding = {"status":"VERIFIED", "body_name":body,
+                        "basis":"DECLARED_BODY_MATCHES_COMPILED_GEOM_ANCESTRY"} if body is not None else {"status":"UNSPECIFIED"}
+        if spec.get("source_kind") == "mjcf":
+            official_fields = ("ep_meta_pointer", "source_instance_name", "source_collection",
+                               "source_category", "source_category_field")
+            if any(key in spec for key in official_fields):
+                raise ContractError("MJCF source cannot replace official ep_meta assertions")
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind":"mjcf", "geom_name":name, "body_binding":body_binding}
+        if spec.get("source_kind") != "ep_meta" or not isinstance(ep_meta, dict):
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        tokens = pointer_tokens(spec.get("ep_meta_pointer"))
+        instance = spec.get("source_instance_name")
+        if len(tokens) != 2 or tokens[0] not in ("fixtures", "object_cfgs") or not source_text(instance):
+            raise ContractError("official source requires a fixture entry or object_cfgs entry")
+        collection = tokens[0]
+        if spec.get("source_collection", collection) != collection or spec["role"] == "robot":
+            raise ContractError("official fixture/object collection and role conflict")
+        values = ep_meta.get(collection)
+        if (collection == "fixtures" and not isinstance(values, dict)) or (collection == "object_cfgs" and not isinstance(values, list)):
+            raise ContractError("official fixtures must be a dict and object_cfgs a list")
+        record = pointer(ep_meta, spec["ep_meta_pointer"])
+        if not isinstance(record, dict):
+            raise ContractError("official source record must be an object")
+        if collection == "fixtures":
+            matches = tokens[1] == instance and record.get("name", instance) == instance
+            field = spec.get("source_category_field", "cls")
+            if field != "cls":
+                raise ContractError("official fixture category must come from cls")
+        else:
+            matches = record.get("name") == instance and sum(
+                isinstance(item, dict) and item.get("name") == instance for item in values) == 1
+            field = spec.get("source_category_field")
+            if field is None:
+                field = next((key for key in ("obj_groups", "obj_type", "cls") if key in record), None)
+            if field not in ("obj_groups", "obj_type", "cls"):
+&gt;               raise ContractError("official object category provenance is missing")
+E               g2.io.ContractError: official object category provenance is missing
+
+g2/sim/prescan.py:93: ContractError</failure></testcase><testcase classname="g2.tests.test_object_category" name="test_explicit_nested_category_matches_exact_original_value[1-soap_dispenser]" time="0.000"><failure message="g2.io.ContractError: official object category provenance is missing">ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+index = 1, category = 'soap_dispenser'
+
+    @pytest.mark.parametrize("index,category",[(0,"whisk"),(1,"soap_dispenser")])
+    def test_explicit_nested_category_matches_exact_original_value(ep_meta,index,category):
+&gt;       b=source_binding(spec(index,source_category_field="info.cat",source_category=category),"g",ep_meta)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_object_category.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'ep_meta_pointer': '/object_cfgs/1', 'role': 'visual', 'source_category': 'soap_dispenser', 'source_category_field': 'info.cat', ...}
+name = 'g'
+ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+
+    def source_binding(spec, name, ep_meta, *, body_names=None):
+        if not isinstance(spec, dict) or spec.get("role") not in ("visual", "collision", "robot", "auxiliary"):
+            raise ContractError("explicit valid geom role required")
+        body = spec.get("source_body_name")
+        if body is not None and (not source_text(body) or body_names is None or body not in body_names):
+            raise ContractError("source body is absent from actual geom ancestry")
+        body_binding = {"status":"VERIFIED", "body_name":body,
+                        "basis":"DECLARED_BODY_MATCHES_COMPILED_GEOM_ANCESTRY"} if body is not None else {"status":"UNSPECIFIED"}
+        if spec.get("source_kind") == "mjcf":
+            official_fields = ("ep_meta_pointer", "source_instance_name", "source_collection",
+                               "source_category", "source_category_field")
+            if any(key in spec for key in official_fields):
+                raise ContractError("MJCF source cannot replace official ep_meta assertions")
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind":"mjcf", "geom_name":name, "body_binding":body_binding}
+        if spec.get("source_kind") != "ep_meta" or not isinstance(ep_meta, dict):
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        tokens = pointer_tokens(spec.get("ep_meta_pointer"))
+        instance = spec.get("source_instance_name")
+        if len(tokens) != 2 or tokens[0] not in ("fixtures", "object_cfgs") or not source_text(instance):
+            raise ContractError("official source requires a fixture entry or object_cfgs entry")
+        collection = tokens[0]
+        if spec.get("source_collection", collection) != collection or spec["role"] == "robot":
+            raise ContractError("official fixture/object collection and role conflict")
+        values = ep_meta.get(collection)
+        if (collection == "fixtures" and not isinstance(values, dict)) or (collection == "object_cfgs" and not isinstance(values, list)):
+            raise ContractError("official fixtures must be a dict and object_cfgs a list")
+        record = pointer(ep_meta, spec["ep_meta_pointer"])
+        if not isinstance(record, dict):
+            raise ContractError("official source record must be an object")
+        if collection == "fixtures":
+            matches = tokens[1] == instance and record.get("name", instance) == instance
+            field = spec.get("source_category_field", "cls")
+            if field != "cls":
+                raise ContractError("official fixture category must come from cls")
+        else:
+            matches = record.get("name") == instance and sum(
+                isinstance(item, dict) and item.get("name") == instance for item in values) == 1
+            field = spec.get("source_category_field")
+            if field is None:
+                field = next((key for key in ("obj_groups", "obj_type", "cls") if key in record), None)
+            if field not in ("obj_groups", "obj_type", "cls"):
+&gt;               raise ContractError("official object category provenance is missing")
+E               g2.io.ContractError: official object category provenance is missing
+
+g2/sim/prescan.py:93: ContractError</failure></testcase><testcase classname="g2.tests.test_object_category" name="test_legacy_fields_without_info_keep_existing_binding[obj_groups]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_legacy_fields_without_info_keep_existing_binding[obj_type]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_legacy_fields_without_info_keep_existing_binding[cls]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_coarse_type_and_arbitrary_paths_are_not_fine_categories[type]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_coarse_type_and_arbitrary_paths_are_not_fine_categories[info/cat]" time="0.001" /><testcase classname="g2.tests.test_object_category" name="test_coarse_type_and_arbitrary_paths_are_not_fine_categories[info.cat.extra]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[missing_info]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[missing_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[null_info]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[list_info]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[text_info]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[null_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[empty_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[blank_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[list_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[int_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_missing_or_malformed_nested_category_fails_closed[bool_cat]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_bad_expected_fine_category_cannot_use_group_or_type[0]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_bad_expected_fine_category_cannot_use_group_or_type[1]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_legacy_groups_cannot_hide_malformed_fine_category" time="0.000"><failure message="Failed: DID NOT RAISE &lt;class 'g2.io.ContractError'&gt;">ep_meta = {'object_cfgs': [{'info': {'cat': None}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+
+    def test_legacy_groups_cannot_hide_malformed_fine_category(ep_meta):
+        ep_meta["object_cfgs"][0]["info"]["cat"]=None
+&gt;       with pytest.raises(ContractError):source_binding(spec(0),"g",ep_meta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'g2.io.ContractError'&gt;
+
+g2/tests/test_object_category.py:72: Failed</failure></testcase><testcase classname="g2.tests.test_object_category" name="test_duplicate_object_name_remains_ambiguous" time="0.001" /><testcase classname="g2.tests.test_object_category" name="test_wrong_or_noncanonical_source_pointer_is_rejected[/object_cfgs/0]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_wrong_or_noncanonical_source_pointer_is_rejected[/object_cfgs/01]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_wrong_or_noncanonical_source_pointer_is_rejected[/object_cfgs/1/info]" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_flat_dotted_key_cannot_replace_nested_info" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_official_object_cannot_be_silently_switched_to_mjcf" time="0.000" /><testcase classname="g2.tests.test_object_category" name="test_nested_categories_survive_full_geom_audit_without_promoting_scope" time="0.087"><failure message="g2.io.ContractError: official object category provenance is missing">ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-62/test_nested_categories_survive0')
+
+    def test_nested_categories_survive_full_geom_audit_without_promoting_scope(ep_meta,tmp_path):
+        from g2.sim.source_scope import verify_full_scene_review
+        from g2.tests.test_source_scope import review_for
+        source=tmp_path/"source";source.mkdir()
+        model=source/"model.xml";metadata=source/"roles.json";ep=source/"ep_meta.json"
+        model.write_text('''&lt;mujoco&gt;&lt;worldbody&gt;
+          &lt;body name="obj_body"&gt;&lt;geom name="obj_visual" type="box" size=".1 .1 .1" rgba=".1 .2 .3 1"/&gt;&lt;/body&gt;
+          &lt;body name="distr_body" pos="1 0 0"&gt;&lt;geom name="distr_visual" type="box" size=".1 .1 .1" rgba=".3 .4 .5 1"/&gt;&lt;/body&gt;
+          &lt;/worldbody&gt;&lt;/mujoco&gt;''')
+        geoms={name+"_visual":spec(index,source_category_field="info.cat",source_body_name=name+"_body",
+            classification_reason="TEST_ONLY explicit source-authored visual") for index,name in enumerate(("obj","distr"))}
+        write_json(metadata,{"schema":"g2_sim_prescan_v1","scene_id":"TEST_ONLY_nested_category","geoms":geoms})
+        write_json(ep,ep_meta);out=tmp_path/"out"
+&gt;       m=export(model,metadata,out,ep_meta=ep,spacing=.2)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_object_category.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/sim/prescan.py:215: in export
+    row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/sim/prescan.py:115: in geom_audit_row
+    binding = source_binding(spec, name, ep_meta,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'classification_reason': 'TEST_ONLY explicit source-authored visual', 'ep_meta_pointer': '/object_cfgs/0', 'role': 'visual', 'source_body_name': 'obj_body', ...}
+name = 'obj_visual'
+ep_meta = {'object_cfgs': [{'info': {'cat': 'whisk'}, 'name': 'obj', 'obj_groups': ['tool', 'utensil'], 'type': 'object'}, {'info': {'cat': 'soap_dispenser'}, 'name': 'distr', 'type': 'object'}]}
+
+    def source_binding(spec, name, ep_meta, *, body_names=None):
+        if not isinstance(spec, dict) or spec.get("role") not in ("visual", "collision", "robot", "auxiliary"):
+            raise ContractError("explicit valid geom role required")
+        body = spec.get("source_body_name")
+        if body is not None and (not source_text(body) or body_names is None or body not in body_names):
+            raise ContractError("source body is absent from actual geom ancestry")
+        body_binding = {"status":"VERIFIED", "body_name":body,
+                        "basis":"DECLARED_BODY_MATCHES_COMPILED_GEOM_ANCESTRY"} if body is not None else {"status":"UNSPECIFIED"}
+        if spec.get("source_kind") == "mjcf":
+            official_fields = ("ep_meta_pointer", "source_instance_name", "source_collection",
+                               "source_category", "source_category_field")
+            if any(key in spec for key in official_fields):
+                raise ContractError("MJCF source cannot replace official ep_meta assertions")
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind":"mjcf", "geom_name":name, "body_binding":body_binding}
+        if spec.get("source_kind") != "ep_meta" or not isinstance(ep_meta, dict):
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        tokens = pointer_tokens(spec.get("ep_meta_pointer"))
+        instance = spec.get("source_instance_name")
+        if len(tokens) != 2 or tokens[0] not in ("fixtures", "object_cfgs") or not source_text(instance):
+            raise ContractError("official source requires a fixture entry or object_cfgs entry")
+        collection = tokens[0]
+        if spec.get("source_collection", collection) != collection or spec["role"] == "robot":
+            raise ContractError("official fixture/object collection and role conflict")
+        values = ep_meta.get(collection)
+        if (collection == "fixtures" and not isinstance(values, dict)) or (collection == "object_cfgs" and not isinstance(values, list)):
+            raise ContractError("official fixtures must be a dict and object_cfgs a list")
+        record = pointer(ep_meta, spec["ep_meta_pointer"])
+        if not isinstance(record, dict):
+            raise ContractError("official source record must be an object")
+        if collection == "fixtures":
+            matches = tokens[1] == instance and record.get("name", instance) == instance
+            field = spec.get("source_category_field", "cls")
+            if field != "cls":
+                raise ContractError("official fixture category must come from cls")
+        else:
+            matches = record.get("name") == instance and sum(
+                isinstance(item, dict) and item.get("name") == instance for item in values) == 1
+            field = spec.get("source_category_field")
+            if field is None:
+                field = next((key for key in ("obj_groups", "obj_type", "cls") if key in record), None)
+            if field not in ("obj_groups", "obj_type", "cls"):
+&gt;               raise ContractError("official object category provenance is missing")
+E               g2.io.ContractError: official object category provenance is missing
+
+g2/sim/prescan.py:93: ContractError</failure></testcase></testsuite></testsuites>

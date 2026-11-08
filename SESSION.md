@@ -1,3 +1,30 @@
+# 2026-11-08 — G2-N6-F1-A2 info.cat author fix frozen
+
+REVIEW. Owner F1A-B1 minimal correction only, derived08a1bbb1/runtime7c12caea
+on codex/g2-n6-f1-a2-info-cat. Read actual formal GPT review from separate
+branch a79a8051eb9bf0faae920c8aa9d204c2e2934f02, file blob
+7defb0d480332dac1913e8319c9c2cc563e4c828 and Issue26 comment6720601972.
+GPT verdict on7c12 remains REQUEST_CHANGES: fixture/subscope/four real
+accessory frames partial PASS; info.cat coverage needs independent new-SHA check.
+
+Runtime change only g2/sim/prescan.py (17 insertions/3 deletions): preserve
+legacy groups→obj_type→cls precedence; absent old fields fall back to nested
+info.cat; explicit info.cat supported; fine_category and coarse_type retained
+separately. Strict identity/Pointer/category/MJCF restrictions and scope gates
+unchanged. Added public-schema/own-MJCF31 tests, old6FAIL/25PASS→new31PASS;
+full G2 Python160/160 zero failure/error/skip. Original129 testcase IDs retained.
+Same new test bytes used before/after. Read-only independent code review closed
+reported scope without open P0/P1/P2; not GPT/server acceptance.
+
+Evidence docs/evidence/g2_n6_f1_a2_2026-11-08/; handoff
+docs/build/PSM-WMA_G2_N6_F1_A2_info_cat_2026-11-08.md. Code/test SHA256 in
+source_inventory.json; runtime hash308a9de606a815670f69725a8328556c56348b7fccac75fc77d64b2697a5e118.
+Native2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged; no Catkin rerun claimed.
+No server access/files/download/outward transfer, GPU/model inference,
+production refs, whole-house/structure/six-view/PSS/Cosmos/training.
+Publish new fixed SHA and Issue26 handoff then STOP for GPT recheck.
+
 # 2026-11-08 — G2-N6-F1-A published fixed source; STOP for independent server check
 
 REVIEW. Fixed Root `7c12caea2c0a4b9acc24d40da9e7c5a5345888f3`, tree
