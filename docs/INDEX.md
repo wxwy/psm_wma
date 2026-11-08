@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2-N5 MuJoCo 带标签 GT → 原生 nav_sg C++ Gate 与 Codex 交接](build/PSM-WMA_G2_N5_MuJoCo_GT_to_nav_sg_Codex_handoff_2026-11-08.md)** — GPT 已在 data 独立工作区实际编译并跑通 native SDFMap3D 三态导入、RoomPipeline 与 GT ID→SceneGraph（Layout 1/10），Native Room footprint 对 MJCF 地板 IoU 95.09%/91.05%，Wall BFS 隔墙回归通过。**非正式 PR，Full Solid GT／真实纹理颜色与 GVD 重入仍未验收**；已开 [nav_sg Issue #5](https://github.com/wxwy/nav_sg/issues/5) 交接 Codex 正式实现，尚未分派/启动 Codex。
+
 - **[G2 已执行真实数据 Gate：Room footprint vs MJCF 实体墙（2026-11-07）](build/PSM-WMA_G2_room_footprint_vs_MJCF_walls_pilot_gate_2026-11-07.md)** — Read-only **PARTIAL_PASS / native Room 比较受阻**：Episode 5077 的 27 个原生采样快照 Room 节点为零，Left-only 占据覆盖不足；18 tasks×3 episodes 中 50 条四墙、4 条五墙；Layout 10 真实 L 形地板凸包额外覆盖 ~7.2%。源码发现 RoomBuilder 2D BFS 可穿过 OCCUPIED-only 网格，需先做原生隔墙回归；避免 fake-sensor raycast。实际脚本、JSON、诊断图均保存在授权 data 服务器独立审计目录。不是完整 native Full-GT Gate PASS。
 
 - **[G2 详细设计 v1.6：实体墙/开放边界与斜墙投影](build/PSM-WMA_G2_detailed_design_v1.6_2026-11-07_wall_detection_room_axes_oblique_walls.md)** — **最新源码核查及设计**：nav_sg 的 Room 聚类与 wall 实体是不同层，`boundary_hull_2d` 仅为拓扑凸包；原生 `FloorSegmenter` 有 1.6m 高度占据切片但没有独立 WallSegment/开放边界分类。建议多高度占据＋有限垂直面识别；Room ±X/±Y 改为稳定**局部 Room Frame**，斜置矩形房间仍固定四向；单斜墙可选墙法向正交，避免世界 AABB 对斜墙造成近邻误连接。无执行。
