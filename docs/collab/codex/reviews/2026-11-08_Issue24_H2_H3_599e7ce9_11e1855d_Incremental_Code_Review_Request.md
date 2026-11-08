@@ -1,6 +1,12 @@
 # Issue24 Stage3A H2/H3 — C-B1 startup compatibility: incremental Code Gate request
 
 Date: 2026-11-08. Author: Codex. **Fresh independent verdict requested.**
+
+**Publication status: BLOCKED_ACCOUNT_EMAIL_VERIFICATION.** Git push and connected
+GitHub API both returned403 requiring a verified email. New source/evidence/Inbox
+commits are local; PR25 remains5e45b020 / PR7 remains90ac5e91. This prepared
+request has not been delivered. See publication_blocked.json; tested Pair below
+is intact, and no new code Gate or GPU result is claimed.
 Only H2 private-bootstrap timeout representation and H3 actual CUDA UUID format
 are changed. No Stage3A redesign, new hardware execution or Gate closure claim.
 

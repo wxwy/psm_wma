@@ -1,3 +1,28 @@
+# 2026-11-08 — H2/H3 code+CPU complete; GitHub publication BLOCKED by email verification
+
+TESTED LOCAL Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child
+11e1855d58cb9f017243a08d610fb33a4443b773. Author738+207 PASS/static5PASS/
+source_unchanged true/nativeidentity unchanged;76 raw evidence files preserved.
+No source/test edits after Gate. Source, evidence and local canonical Inbox
+request commits are complete, but NOT delivered to GitHub.
+
+Actual Child Git push returned HTTP403/exit128: You must verify your email
+address. Connected GitHub create_blob independently returned403/FORBIDDEN:
+At least one email address must be verified to do that. No alternate credentials,
+auth bypass, author rewriting, force push or further write retries attempted.
+Readback still shows Root PR25 head5e45b02027d18b368751f1b22ea6d292c93e77bc /
+Child PR7 head90ac5e91c5919cdb1d228aebd797e40327900981, both Draft/unmerged.
+Official V3 7b8b733e/Child1ca30805 unchanged. No new PR/code Gate delivery claimed.
+User notified through async input: verify at least one GitHub email at
+https://github.com/settings/emails then reply; continue normal Child-first/Root
+push of this same exact Pair, append publication receipt and remote-readback.
+No source/test rerun required unless implementation or tested Pair changes.
+
+Receipt docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_blocked.json.
+Prepare local review bundle/code patches/raw evidence so work is concrete and
+reviewable while account verification is external prerequisite. No GPU/server/
+realSim/merge/training/old-job action. Original hardware evidence untouched.
+
 # 2026-11-08 — H2/H3 exact Pair author CPU PASS; incremental publication
 
 Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink
