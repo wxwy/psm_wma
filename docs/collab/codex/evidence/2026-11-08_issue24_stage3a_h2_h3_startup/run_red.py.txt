@@ -1,0 +1,61 @@
+"""H2/H3 controlled old-code CPU witness; never accesses CUDA or a real model."""
+from pathlib import Path
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import xml.etree.ElementTree as ET
+
+root = Path('/workspace/work/psm-wma-stage3a-h2h3-formal')
+child = root / 'cosmos-framework'
+out = Path('/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code')
+out.mkdir(exist_ok=False)
+env = os.environ.copy()
+overrides = dict(CUDA_VISIBLE_DEVICES='', PYTEST_DISABLE_PLUGIN_AUTOLOAD='1', PYTEST_ADDOPTS='',
+                 HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', PYTHONDONTWRITEBYTECODE='1',
+                 OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1',
+                 PYTHONPATH=os.pathsep.join(map(str, (root, child, root/'scripts'))),
+                 RUFF_CACHE_DIR=str(out/'cache/ruff'), XDG_CACHE_HOME=str(out/'cache/xdg'))
+env.update(overrides)
+(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+tests = [child/'cosmos_framework/inference/robocasa_vae_daemon_test.py',
+         root/'tools/v3/eval_v2_batch_tests/shared_vae_test.py',
+         root/'tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py']
+commands=[]
+def run(name,args):
+    with (out/(name+'.log')).open('w') as log:
+        result=subprocess.run(list(map(str,args)),cwd=root,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=120)
+    commands.append(dict(name=name,argv=list(map(str,args)),cwd=str(root),exit_code=result.returncode))
+    return result.returncode
+assert run('ruff_fix',[sys.executable,'-m','ruff','check','--fix',*tests])==0
+assert run('ruff_format',[sys.executable,'-m','ruff','format',*tests])==0
+sources={}
+for local,ref,path in [(root,'ea64c26f7738f2efba5c33c78f18eab475230a61','scripts/robocasa_eval_v2/shared_vae.py'),
+                       (child,'90ac5e91c5919cdb1d228aebd797e40327900981','cosmos_framework/inference/robocasa_vae_daemon.py')]:
+    old=subprocess.check_output(['git','-C',str(local),'show',ref+':'+path])
+    assert (local/path).read_bytes()==old
+    sources[str((local/path).relative_to(root))]=hashlib.sha256(old).hexdigest()
+cases=[
+    ('h2_float_fd',[str(tests[1])+'::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof','-k','default10float and False']),
+    ('h2_fractional_preflight',[str(tests[1])+'::test_c_fractional_timeout_rejected_by_public_resolve_before_fresh_namespace']),
+    ('h3_bare_uuid',[str(tests[0])+'::test_cuda_uuid_full_identity_accepts_only_equivalent_prefix[bare]']),
+]
+for name,selection in cases:
+    args=[sys.executable,'-m','pytest','--noconftest','-c','/dev/null','-p','no:cacheprovider','-q',*selection,
+          '--basetemp='+str(out/(name+'_tmp')),'--junitxml='+str(out/(name+'.xml'))]
+    code=run(name,args)
+    suite=next(ET.parse(out/(name+'.xml')).getroot().iter('testsuite'))
+    assert code==1 and suite.attrib['tests']=='1' and suite.attrib['failures']=='1' and suite.attrib['errors']=='0', (name,suite.attrib)
+worker_logs=list((out/'h2_float_fd_tmp').rglob('vae_*.log'))
+assert len(worker_logs)==1 and 'float/non-finite JSON token forbidden' in worker_logs[0].read_text()
+assert 'DID NOT RAISE' in (out/'h2_fractional_preflight.log').read_text()
+assert 'actual Worker CUDA UUID differs' in (out/'h3_bare_uuid.log').read_text()
+assert all(hashlib.sha256((root/p).read_bytes()).hexdigest()==sha for p,sha in sources.items())
+(out/'result.json').write_text(json.dumps(dict(status='RED_EXPECTED',expected_failures=3,pytest_exit_each=1,
+    old_root='ea64c26f7738f2efba5c33c78f18eab475230a61',old_child='90ac5e91c5919cdb1d228aebd797e40327900981',
+    production_sha256_before=sources,production_sha256_after=sources,
+    test_sha256={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in tests},
+    tests_injected=True,source_note='Old production byte-identical; new tests/fixture injected, not a clean old Formal Pair gate.',
+    worker_log=str(worker_logs[0]),commands=commands),indent=2)+'\n')
+print(json.dumps(dict(status='RED_EXPECTED',failures=3,old_production_unchanged=True,output=str(out))))

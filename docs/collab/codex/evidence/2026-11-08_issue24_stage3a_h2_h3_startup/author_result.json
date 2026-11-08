@@ -1,0 +1,132 @@
+{
+  "scope": "ISSUE24_STAGE3A_H2_H3_STARTUP_AUTHOR_CPU",
+  "formal_root": "599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e",
+  "child_gitlink": "11e1855d58cb9f017243a08d610fb33a4443b773",
+  "root_parent_preserving_reviews": "5e45b02027d18b368751f1b22ea6d292c93e77bc",
+  "previous_approved_formal_root": "ea64c26f7738f2efba5c33c78f18eab475230a61",
+  "previous_child": "90ac5e91c5919cdb1d228aebd797e40327900981",
+  "status": "PASS",
+  "shell_exit": 0,
+  "top_level_tests_passed": 738,
+  "subtests_passed": 207,
+  "junit_suite_tests": 945,
+  "groups": {
+    "stage3_focused": {
+      "tests": 636,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 429
+    },
+    "root_lifecycle_config": {
+      "tests": 166,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 166
+    },
+    "legacy_protection": {
+      "tests": 143,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 143
+    }
+  },
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_unchanged": true,
+  "native_constructor_and_identity_unchanged": true,
+  "red_old_code": {
+    "status": "RED_EXPECTED",
+    "pytest_exit_each": 1,
+    "failures": 3,
+    "old_production_identical": true,
+    "tests_injected": true,
+    "red_green_test_files_identical": true
+  },
+  "private_fd_ready_cases": [
+    {
+      "case": "test_registry_worker_is_peer_s0",
+      "configured": 3,
+      "wire": 3,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s1",
+      "configured": 3,
+      "wire": 3,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s2",
+      "configured": 10.0,
+      "wire": 10,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s3",
+      "configured": 10.0,
+      "wire": 10,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s4",
+      "configured": 15.0,
+      "wire": 15,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s5",
+      "configured": 15.0,
+      "wire": 15,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s6",
+      "configured": 15,
+      "wire": 15,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    },
+    {
+      "case": "test_registry_worker_is_peer_s7",
+      "configured": 15,
+      "wire": 15,
+      "worker_returncode": 0,
+      "external_alive": true,
+      "worker_survived_sim_end": true
+    }
+  ],
+  "static": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS",
+    "changed_python_files": 5
+  },
+  "original_hardware_failure": {
+    "review_path": "docs/collab/chatgpt/reviews/2026-11-08_Issue24_C_B1_1x1_RealStartup_H2_H3_REQUEST_CHANGES.md",
+    "review_sha256": "fdfb1320aa6a44e8c320b2b444776faa0dfcd173ed593f85a9564bda5ee050c7",
+    "raw_directory": "data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_c_b1_1x1_real_egl_20261108/",
+    "original_summary_sha256": "6eefae77600f910050d0078b947f078e7879ae8ddfae2e69bd3eaf9c221c213a",
+    "originals_untouched": true,
+    "remote_server_not_accessed": true,
+    "raw_server_files_not_copied": true
+  },
+  "independent_code_gate": "REQUESTED_NOT_YET_REVIEWED",
+  "real_c_b1_gpu_retry": "NOT_RUN",
+  "v3_merge": "NOT_PERFORMED"
+}

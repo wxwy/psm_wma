@@ -1,0 +1,165 @@
+{
+  "scope": "ISSUE24_STAGE3A_H2_H3_STARTUP_FOCUSED_AUTHOR_CPU",
+  "status": "PASS",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/scripts/robocasa_eval_v2/shared_vae.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.065
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/scripts/robocasa_eval_v2/shared_vae.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.115
+    },
+    {
+      "name": "native_baseline",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import json\nfrom cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer\nfrom cosmos_framework.inference.robocasa_vae_daemon import worker_constructor_config, loaded_vae_identity\nfrom cosmos_framework.inference.robocasa_vae_protocol import canonical_json\nt=_tokenizer()\nprint(json.dumps({'constructor':worker_constructor_config(t),'canonical_constructor':canonical_json(worker_constructor_config(t)).decode(),'identity':loaded_vae_identity(t)},sort_keys=True))\n"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 1.82
+    },
+    {
+      "name": "stage3_focused",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_feature_trace_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "--basetemp=/workspace/work/issue24-stage3a-h2h3-evidence/author-01/stage3_focused_tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h2h3-evidence/author-01/stage3_focused.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "timeout_s": 240,
+      "exit_code": 0,
+      "elapsed_s": 24.795
+    },
+    {
+      "name": "root_lifecycle_config",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/config_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/render_mapping_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/render_devices_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/owner_gpu_resource_policy_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_production_tests/contract_test.py",
+        "--basetemp=/workspace/work/issue24-stage3a-h2h3-evidence/author-01/root_lifecycle_config_tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h2h3-evidence/author-01/root_lifecycle_config.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "timeout_s": 240,
+      "exit_code": 0,
+      "elapsed_s": 10.673
+    },
+    {
+      "name": "legacy_protection",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/local_memory_online_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_composite_visual_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_contract_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py",
+        "--basetemp=/workspace/work/issue24-stage3a-h2h3-evidence/author-01/legacy_protection_tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h2h3-evidence/author-01/legacy_protection.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "timeout_s": 240,
+      "exit_code": 0,
+      "elapsed_s": 18.697
+    }
+  ],
+  "real_weights_gpu_egl_sim_policy_integration_sr": "NOT_RUN",
+  "native_constructor_and_identity_unchanged": true,
+  "stage3_focused": {
+    "tests": 636,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "testcase_elements": 429
+  },
+  "root_lifecycle_config": {
+    "tests": 166,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "testcase_elements": 166
+  },
+  "legacy_protection": {
+    "tests": 143,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "testcase_elements": 143
+  },
+  "source_unchanged": true
+}

@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py", line 206, in strict_json
+    value = json.loads(raw.decode("utf-8"), object_pairs_hook=pairs, parse_float=invalid, parse_constant=invalid)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 359, in loads
+    return cls(**kw).decode(s)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 354, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py", line 203, in invalid
+    raise ProtocolError("float/non-finite JSON token forbidden")
+cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: float/non-finite JSON token forbidden
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py", line 34, in <module>
+    run_daemon(
+  File "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py", line 284, in run_daemon
+    private = _read_private(bootstrap_fd)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py", line 210, in _read_private
+    return strict_json(bytes(raw), max_bytes=131072)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py", line 208, in strict_json
+    raise ProtocolError("invalid strict JSON") from error
+cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: invalid strict JSON
