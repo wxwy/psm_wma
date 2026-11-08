@@ -1,3 +1,30 @@
+# 2026-11-08 — Issue24 H2/H3 real C-B1 startup remediation claimed
+
+Latest Owner+formal review and Issue24 comment6719277972 authorize only H2 Root
+whole-second private-FD timeout normalization/preflight, H3 Child strict actual
+CUDA UUID prefix canonicalization, and CPU/static RED/GREEN/READY regressions.
+Read exact formal review for existing Pair Root ea64c26f7738f2efba5c33c78f18eab475230a61
+/ Child90ac5e91c5919cdb1d228aebd797e40327900981. Candidate Rootremote
+5e45b02027d18b368751f1b22ea6d292c93e77bc fetched, descendant of161cdd8e,
+six new reviewer docs/Inbox commits retained. New isolated worktrees
+/workspace/work/psm-wma-stage3a-h2h3-formal and Child; both local branches
+v3-stage3a-h2h3-startup-20261108, start Root5e45b020/Child90ac5e91. Original
+worktrees untouched, official V3 7b8b733e and Child1ca30805 unchanged.
+
+Main owns Root scripts/robocasa_eval_v2/shared_vae.py plus shared_vae_test.py /
+shared_vae_daemon_fixture.py, Child inference/robocasa_vae_daemon.py+daemon_test.py,
+Root Gitlink/SESSION/TODO/evidence/append-only Inbox. No agents/delegation.
+C accepts positive whole seconds including default10.0/15.0, encodes int only
+on private wire, rejects fractional before starting; A/B/config identity/Resume
+and Child strict_json unchanged. CUDA actual full128-bit UUID gets only standard
+prefix normalization; still compare Rootexpected and actual nvidia-smi index,
+UUID/PCI, unique visible CUDA and all loaded parameters same physical device.
+Only CPU test doubles, no GPU/checkpoint/real Sim, no server access/cache changes,
+B8/SR/training/old-job/V3 merge. Original H100 failure evidence untouched.
+Next freeze tests -> controlled old-code RED -> narrow fix/new Pair -> complete
+Stage3A/H1/legacy focused CPU+Ruff -> existing Draft PR25/7 incremental request.
+Current usable Cloud workspace needs no environment/credential configuration.
+
 # 2026-11-08 — Issue24 H1 exact Pair published/readback PASS; incremental review handoff
 
 Formal Root ea64c26f7738f2efba5c33c78f18eab475230a61 / Child-Gitlink
