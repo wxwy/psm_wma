@@ -13,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - [R03 机器可读汇总](eval/reports/2026-11-04_R03_900EP/audit_summary.json) — 已完成Run的只读数据归档；不授权新实验，不代表No-TTT增益、M8/B8或Resume已验证。
 
 ## G2 — canonical dataflow design, earlier drafts, optional visual research
+- **[G2 人工审图 Gate：MuJoCo 原始 RGB × nav_sg 原生 Room 分割（2026-11-08）](build/PSM-WMA_G2_room_visual_human_review_gate_2026-11-08.md)** — data 服务器已生成 Layout 1 / Layout 10 两套并排视觉审核包：原始 MuJoCo 带纹理顶视/斜视、真实 MJCF 墙线、原生 C++ Room 标签叠图和差异图；**PENDING_HUMAN**。Layout 10 第二 Room 约 1.52㎡，需要人工决定是否误分割；IoU 0.9509/0.9105 仅辅助。静态包校验通过；不是生产 SG/GT 关系闭环完成。
+
 - **[G2-N5 MuJoCo 带标签 GT → 原生 nav_sg C++ Gate 与 Codex 交接](build/PSM-WMA_G2_N5_MuJoCo_GT_to_nav_sg_Codex_handoff_2026-11-08.md)** — GPT 已在 data 独立工作区实际编译并跑通 native SDFMap3D 三态导入、RoomPipeline 与 GT ID→SceneGraph（Layout 1/10），Native Room footprint 对 MJCF 地板 IoU 95.09%/91.05%，Wall BFS 隔墙回归通过。**非正式 PR，Full Solid GT／真实纹理颜色与 GVD 重入仍未验收**；已开 [nav_sg Issue #5](https://github.com/wxwy/nav_sg/issues/5) 交接 Codex 正式实现，尚未分派/启动 Codex。
 
 - **[G2 已执行真实数据 Gate：Room footprint vs MJCF 实体墙（2026-11-07）](build/PSM-WMA_G2_room_footprint_vs_MJCF_walls_pilot_gate_2026-11-07.md)** — Read-only **PARTIAL_PASS / native Room 比较受阻**：Episode 5077 的 27 个原生采样快照 Room 节点为零，Left-only 占据覆盖不足；18 tasks×3 episodes 中 50 条四墙、4 条五墙；Layout 10 真实 L 形地板凸包额外覆盖 ~7.2%。源码发现 RoomBuilder 2D BFS 可穿过 OCCUPIED-only 网格，需先做原生隔墙回归；避免 fake-sensor raycast。实际脚本、JSON、诊断图均保存在授权 data 服务器独立审计目录。不是完整 native Full-GT Gate PASS。
