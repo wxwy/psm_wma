@@ -1,3 +1,25 @@
+# 2026-11-08 — G2-N6-F1-B published / STOP for GPT fixed-source check
+
+REVIEW. Fixed Root 029122268ea535d8b3c74c0b3fb2b0d0302a828f, tree
+2ffc96cfc6af9232c4e89837e8415a8c9bd0e469. Connected GitHub Git-data API published
+exact tested tree and23/23 source/test blob SHAs read back identical. Exact
+API commit Git object imported locally only after SHA verification; authored
+identical-tree backup retained. Actual Issue26 handoff6721290490 body read
+back exactly: https://github.com/wxwy/psm_wma/issues/26#issuecomment-6721290490 .
+
+This successor is metadata only. Runtime/sampler/inventory/tests stay frozen
+at Root above; final207/207, old160 IDs preserved, own positive6-type0/200
+byte parity and code-review P1/P2 closures remain author evidence only.
+Protected original N6/F1/A2, GPT review, V3 and native6 remote refs read via
+connector unchanged. Native2009fae35d86579bb22c273fb97ec1bf0835b533 and
+Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged.
+
+F1-B private distr/whole-house/material and all downstream native structure,
+model perception, six-view/Island human and Cosmos gates remain OPEN/pending.
+No server files accessed/downloaded/transferred, GPU/models/rollouts/training,
+production merge, prior PR edit or new Draft PR. Per Owner instruction STOP
+at fixed-SHA handoff and await GPT server-local independent verification.
+
 # 2026-11-08 — G2-N6-F1-B source frozen / GPT server handoff preparation
 
 REVIEW. Exact-zero compiled local-face sampling and all-geom source preflight

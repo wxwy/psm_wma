@@ -1,0 +1,121 @@
+{
+  "fixed_source": "029122268ea535d8b3c74c0b3fb2b0d0302a828f",
+  "tree": "2ffc96cfc6af9232c4e89837e8415a8c9bd0e469",
+  "files": [
+    {
+      "path": "g2/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/io.py",
+      "sha": "7001277536b49468fcab3e113f7f4cb5ad672bfc",
+      "match": true
+    },
+    {
+      "path": "g2/nav_bridge/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/nav_bridge/recorded.py",
+      "sha": "f1196410a324370095ae8a659c0ccff1170cb7b8",
+      "match": true
+    },
+    {
+      "path": "g2/nav_bridge/snapshot.py",
+      "sha": "6554a437048f07e3ffc017210ea0c461c16a59c7",
+      "match": true
+    },
+    {
+      "path": "g2/sim/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/sim/asset_inventory.py",
+      "sha": "19378721677543c51dc9df4f7a4353e2f65f5c09",
+      "match": true
+    },
+    {
+      "path": "g2/sim/prescan.py",
+      "sha": "38ebc88b9bd2eddbc6141b4f2218afee5374604f",
+      "match": true
+    },
+    {
+      "path": "g2/sim/source_geometry.py",
+      "sha": "6c142e244e9cba3f9a3bb2e30f5dba2f0fd831cb",
+      "match": true
+    },
+    {
+      "path": "g2/sim/source_scope.py",
+      "sha": "92d4275484569e41b8b20ef19f3039c8d36190f9",
+      "match": true
+    },
+    {
+      "path": "g2/sim/surface_sampling.py",
+      "sha": "9999eed9c48e4b7e348c65c3c3961d394f7a3c07",
+      "match": true
+    },
+    {
+      "path": "g2/tests/conftest.py",
+      "sha": "2a365c4425b4ee47de65c47f2049fb6b53e6d1af",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_bridge.py",
+      "sha": "8f8b21fc3c3211b0bbb7f60ebe8485e6f7889446",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_mesh_asset_audit.py",
+      "sha": "e9802c4dd280de962b268c568412e539dcb29c5a",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_object_category.py",
+      "sha": "5c12df2b6d6d2f0b3a0cd5b8836c3f59cde595cc",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_prescan.py",
+      "sha": "5b441b0cc54db2a9c3aefc94aa9f8d462e5921e3",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_recorded.py",
+      "sha": "492a1a3188fcb08df4eed8cff512db7969a2949a",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_source_identity.py",
+      "sha": "d1c79d5051bc27ccf858c7278dbdc9c248bf6e58",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_source_scope.py",
+      "sha": "c5e134f123202bc98b9e4f15edd0817ff723c434",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_surface_sampling.py",
+      "sha": "8aed4e41ad77a7e38208e7800ba9dda4d83eb1bb",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_views.py",
+      "sha": "7cfc082420b08cc1a59f0b053f03d6823d48f63b",
+      "match": true
+    },
+    {
+      "path": "g2/views/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/views/render.py",
+      "sha": "cd080493ca1e82affae58ffd723914c6dabfbb41",
+      "match": true
+    }
+  ]
+}
