@@ -25,7 +25,7 @@ Single-frame B1 **does** preserve exact source numerical equivalence. Stage0's g
 All artifacts under `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/v3_issue23_stage2_resource_gate_20261108/`:
 
 - `stage2_real_wan_microbatch.py` (isolated test harness, SHA256 `bece0660d2ce4fbff4efb04dd0a9ba67273550f72d09a9ce508e2a63b21812b4`).
-- `stage2_real_wan_microbatch.log`, `stage2_real_wan_microbatch.json` (SHA256 `42d611738c738a3ea085c01356cdd04f02db2c2471a324c0c33527ea329f1a349d2310fa5fb4471a324c`), `stage2_real_wan_microbatch.exit`.
+- `stage2_real_wan_microbatch.log`, `stage2_real_wan_microbatch.json` (SHA256 `42d611738c738a3ea085c01356cdd04f02db2c247c90d254830b2d738342a4f`), `stage2_real_wan_microbatch.exit`.
 - `stage2_numerical_gate_result.json` with `result=BLOCKED_NUMERICAL_PARITY`; explicit `egl_16sim_contention=NOT_RUN_BLOCKED_BY_NUMERICAL_GATE`.
 - GPU4–7 post-test: all 0 MiB, GPU 0–3 unrelated train untouched.
 - Note: harness shell exit0 means test ran/computed and **properly recorded a FAILED NUMERICAL GATE**, not approval. Machine-readable `status` is the authority.
