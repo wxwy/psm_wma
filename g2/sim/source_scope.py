@@ -16,6 +16,7 @@ SUBSET_SCOPE = "DECLARED_SUBSET_NOT_CERTIFIED"
 EVIDENCE_MANIFEST = "source_evidence/manifest.json"
 EVIDENCE_REVIEW = "source_evidence/review.json"
 EVIDENCE_CLOUD = "source_evidence/precolored.txt"
+EVIDENCE_COLOR_AUDIT = "source_evidence/color_audit.npz"
 EVIDENCE_FILES = {EVIDENCE_MANIFEST, EVIDENCE_REVIEW, EVIDENCE_CLOUD}
 
 
@@ -32,13 +33,15 @@ def audit_summary(rows):
         if not isinstance(row,dict):raise ContractError("invalid geom audit row")
         role=row.get("role");status=row.get("color_status");n=row.get("surface_points")
         source=row.get("source",{})
-        if (role not in ("visual","collision","robot","auxiliary") or not isinstance(source,dict)
-            or source.get("kind") not in ("mjcf","ep_meta") or type(n) is not int or n<0
+        if (role not in ("visual","collision","robot","auxiliary","UNCLASSIFIED") or not isinstance(source,dict)
+            or source.get("kind") not in ("mjcf","ep_meta","unclassified")
+            or ((role=="UNCLASSIFIED")!=(source.get("kind")=="unclassified")) or type(n) is not int or n<0
             or (role=="visual" and (status not in ("VALID","UNSUPPORTED_APPEARANCE","TRANSPARENT")
                 or (n==0)!=(status=="TRANSPARENT")))
             or (role!="visual" and (status!="EXCLUDED_"+role.upper() or n!=0))):
             raise ContractError("invalid geom role/color audit")
         roles[role]+=1;colors[status]+=1
+        if role=="UNCLASSIFIED":eligibility.append({"geom_id":row["geom_id"],"reason":"UNCLASSIFIED_SOURCE_ROLE"})
         if source.get("category"):
             categories[canonical(source["category"]).decode()]+=1
         if not text(row.get("classification_reason")):
@@ -46,7 +49,15 @@ def audit_summary(rows):
         if source["kind"]=="ep_meta" and source.get("body_binding",{}).get("status")!="VERIFIED":
             eligibility.append({"geom_id":row["geom_id"],"reason":"OFFICIAL_SOURCE_BODY_UNVERIFIED"})
         points+=n
-        if status=="VALID":valid_points+=n
+        coverage=row.get("color_coverage")
+        if coverage is not None:
+            if not isinstance(coverage,dict):raise ContractError("invalid sampled color coverage")
+            valid=coverage.get("color_valid_points")
+            if (type(valid) is not int or not 0<=valid<=n or coverage.get("sampled_points")!=n
+                or coverage.get("color_invalid_points")!=n-valid or (status=="VALID" and valid!=n)):
+                raise ContractError("inconsistent sampled color coverage")
+            valid_points+=valid
+        elif status=="VALID":valid_points+=n
         appearance=row.get("appearance",{})
         if appearance:modes[appearance["mode"]]+=1
         if status=="UNSUPPORTED_APPEARANCE":
@@ -98,6 +109,7 @@ def verify_full_scene_review(manifest_path, review_path):
         raise ContractError("full-scene audit does not match source identity or point count")
     from .prescan import source_binding
     from .source_geometry import model_source_hash
+    from .source_roles import verify_embedded_role_evidence
     if model_source_hash(m.get("sources",[]))!=identity.get("model_source_sha256"):
         raise ContractError("complete asset closure differs from original source identity")
     for row in rows:
@@ -110,6 +122,7 @@ def verify_full_scene_review(manifest_path, review_path):
         binding=source_binding(spec,row["geom_name"],identity.get("ep_meta"),body_names=body_names)
         if row["source"]!=binding or row.get("classification_reason")!=spec.get("classification_reason"):
             raise ContractError("geom audit contradicts original source identity or classification")
+        verify_embedded_role_evidence(m,row,spec)
     sha(m.get("source_sha256"))
     if m.get("file",{}).get("path")!="precolored.txt":
         raise ContractError("unexpected pre-scan transport path")
@@ -123,6 +136,8 @@ def verify_full_scene_review(manifest_path, review_path):
             if fields!=[key,expected_value]:
                 raise ContractError("reviewed source transport header mismatch: "+key)
         if stream.readline().strip()!="data":raise ContractError("invalid source data header")
+    from .color_evidence import verify_color_evidence
+    color_evidence_sha=verify_color_evidence(Path(manifest_path).parent,m,cloud)
     if sha(m.get("geom_audit_sha256"))!=expected or not summary["full_scene_review_eligible"]:
         raise ContractError("full-scene source inventory is unverified or incomplete")
     if (r.get("schema")!="g2_full_scene_source_review_v1" or r.get("decision")!="APPROVED"
@@ -140,6 +155,7 @@ def verify_full_scene_review(manifest_path, review_path):
                       "geom_audit_sha256":expected,"frame_id":m["frame_id"]}.items():
         if r.get(key)!=value:raise ContractError("full-scene review belongs to another artifact: "+key)
     return {"status":REVIEWED_SCOPE,"review_sha256":digest(review_path),
+            **({"color_audit_sha256":color_evidence_sha} if color_evidence_sha else {}),
             "manifest_sha256":digest(manifest_path),"geom_audit_sha256":expected,
             "scene_id":m["scene_id"],"source_sha256":m["source_sha256"],
             "world_frame":m["world_frame"],

@@ -8,7 +8,7 @@ import re
 import shutil
 from g2.io import parse_json
 from g2.sim.source_scope import (REVIEWED_SCOPE, EVIDENCE_FILES, EVIDENCE_MANIFEST,
-    EVIDENCE_REVIEW, EVIDENCE_CLOUD, verify_full_scene_review, verify_sealed_scope)
+    EVIDENCE_REVIEW, EVIDENCE_CLOUD, EVIDENCE_COLOR_AUDIT, verify_full_scene_review, verify_sealed_scope)
 from g2.io import ContractError, canonical, digest, new_output, read_json, sha, write_json, verified_file
 
 ENTITY = re.compile(r"entity_[0-9]+\Z")
@@ -236,6 +236,8 @@ def capture(native_directory,output,*,native_run=None,allow_oracle_diagnostic=Fa
     if prescan_manifest:
         source_paths.update({EVIDENCE_MANIFEST:Path(prescan_manifest),EVIDENCE_REVIEW:Path(full_scene_review),
                              EVIDENCE_CLOUD:Path(prescan_manifest).parent/"precolored.txt"})
+        if read_json(prescan_manifest).get("color_audit_file"):
+            source_paths[EVIDENCE_COLOR_AUDIT]=Path(prescan_manifest).parent/"color_audit.npz"
     for name,p in source_paths.items():
         if p.is_symlink() or not p.is_file():
             raise ContractError("native snapshot files must be regular files")
@@ -283,6 +285,8 @@ def load_bundle(directory):
     scope=manifest.get("source_scope",{})
     if not isinstance(scope,dict):raise ContractError("invalid source scope packet")
     if scope.get("status")==REVIEWED_SCOPE:expected_files|=EVIDENCE_FILES
+    if scope.get("status")==REVIEWED_SCOPE and scope.get("color_audit_sha256"):
+        expected_files.add(EVIDENCE_COLOR_AUDIT)
     if manifest.get("schema")!="g2_native_bundle_v1" or set(manifest.get("files",{}))!=expected_files:
         raise ContractError("invalid native bundle file inventory")
     for name,record in manifest["files"].items():

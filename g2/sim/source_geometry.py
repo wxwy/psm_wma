@@ -78,7 +78,8 @@ def load_model(mjcf, asset_roots=()):
             raise ContractError("cyclic MJCF include")
         active.add(path)
         raw = path.read_bytes()
-        source_records[str(path)] = {"logical_id":names.get(path,"root.xml"),"path": str(path), "sha256": digest(raw), "bytes": len(raw)}
+        source_records[str(path)] = {"logical_id":names.get(path,"root.xml"),"path": str(path),
+            "sha256": digest(raw), "bytes": len(raw),"source_kind":"mjcf_xml","includes":[]}
         try:
             doc = ET.fromstring(xml_payload(path))
         except ET.ParseError as exc:
@@ -89,16 +90,19 @@ def load_model(mjcf, asset_roots=()):
                     node.attrib.pop(key, None)
             if "file" not in node.attrib:
                 continue
-            resolved = resolve(node.get("file"), path.parent, node.tag)
+            reference=node.get("file")
+            resolved = resolve(reference, path.parent, node.tag)
             if resolved not in names:
                 names[resolved] = "asset_%06d%s" % (len(names), resolved.suffix)
             alias = names[resolved]
             node.set("file", alias)
             if node.tag == "include":
+                source_records[str(path)]["includes"].append({"reference":reference,"logical_id":alias})
                 assets[alias] = xml(resolved)
             else:
                 payload = resolved.read_bytes()
-                source_records[str(resolved)] = {"logical_id":alias,"path": str(resolved), "sha256": digest(payload), "bytes": len(payload)}
+                source_records[str(resolved)] = {"logical_id":alias,"path": str(resolved),
+                    "sha256": digest(payload), "bytes": len(payload),"source_kind":"asset"}
                 assets[alias] = payload
         active.remove(path)
         return ET.tostring(doc, encoding="utf-8")
@@ -216,7 +220,7 @@ def effective_rgba(model,g):
     return rgba
 
 
-def surface_colors(model,g,kind,face_ids,weights):
+def _legacy_surface_colors(model,g,kind,face_ids,weights):
     """Asset albedo only, with explicit invalid flags for unsupported projection.
 
     MuJoCo compiled 2D mesh UVs and repeat/bilinear filtering are supported.
@@ -261,7 +265,34 @@ def surface_colors(model,g,kind,face_ids,weights):
         weight=(fraction[:,0] if dx else 1-fraction[:,0])*(fraction[:,1] if dy else 1-fraction[:,1])
         colors+=pixels[(lower[:,1]+dy)%height,(lower[:,0]+dx)%width]*weight[:,None]
     rgba[:,:3]*=colors[:,:3]
-    if channels == 4 and full >= 0:
+    if channels == 4:
         rgba[:,3]*=colors[:,3]
     return rgba,True,{"mode":"mesh_uv_bilinear_asset_albedo","texture_id":texture,"texture_sampled":True,
                       "filter":"repeat_bilinear","texrepeat":model.mat_texrepeat[mat].tolist(),"camera_observation":False}
+
+
+def surface_colors(model, g, kind, face_ids, weights, *, local_points=None, with_diagnostics=False):
+    """Legacy mesh UVs plus pinned primitive projection and per-point validity."""
+    import mujoco
+    from .texture_projection import primitive_colors
+    mat = int(model.geom_matid[g])
+    textured = mat >= 0 and (int(model.mat_texid[mat, int(mujoco.mjtTextureRole.mjTEXROLE_RGB)]) >= 0
+                             or int(model.mat_texid[mat, int(mujoco.mjtTextureRole.mjTEXROLE_RGBA)]) >= 0)
+    if kind != "mesh" and textured:
+        rgba = np.repeat(effective_rgba(model, g)[None], len(face_ids), axis=0)
+        rgba, valid, appearance, reasons = primitive_colors(model, g, kind, local_points, len(face_ids), rgba)
+    else:
+        rgba, ok, appearance = _legacy_surface_colors(model, g, kind, face_ids, weights)
+        valid = np.full(len(face_ids), bool(ok)); reasons = np.where(valid, 0, 1).astype(np.uint8)
+        if kind=="mesh" and mat>=0 and int(model.mat_texid[mat,int(mujoco.mjtTextureRole.mjTEXROLE_RGBA)])>=0:
+            valid[:]=False;reasons[:]=1
+            rgba[:,:3]=0
+            appearance=dict(appearance,mode="UNSUPPORTED_TEXTURE_PROJECTION",texture_sampled=False,
+                            reason="RGBA mesh layer not verified by legacy UV path")
+    translucent = rgba[:, 3] < 1 - 1e-7
+    if np.any(translucent):
+        valid[translucent] = False; reasons[translucent] = 3
+        appearance = dict(appearance, unsupported="translucent_surface_requires_alpha_transport")
+    if with_diagnostics:
+        return rgba, valid, appearance, reasons
+    return rgba, bool(np.all(valid)) if kind == "mesh" or not textured else valid, appearance

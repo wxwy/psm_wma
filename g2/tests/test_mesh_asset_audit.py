@@ -217,7 +217,7 @@ def test_inventory_continues_after_unsupported_surface_and_material(mesh_scene, 
     _, model, metadata = mesh_scene
     text = model.read_text().replace('</worldbody>',
         '<geom name="plane" type="plane" size="0 0 .1"/>'
-        '<geom name="textured_primitive" type="box" size=".1 .1 .1" material="mat"/>'
+        '<geom name="textured_primitive" type="capsule" size=".1 .2" material="mat"/>'
         '<geom name="later" type="sphere" size=".1"/></worldbody>')
     model.write_text(text)
     meta = read_json(metadata)

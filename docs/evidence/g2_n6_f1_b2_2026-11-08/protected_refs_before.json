@@ -1,0 +1,37 @@
+[
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "V3",
+    "sha": "7b8b733e1f585bb44a0eac7c14ad545c29355a86"
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-prescan-native-views",
+    "sha": "f1e4f1f0e3f2a48c3361987fabf58e406b313c7b"
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1-source-gate",
+    "sha": "08a1bbb14db4aa5b05a51724f27a60c72f826c87"
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1-a2-info-cat",
+    "sha": "28926f6c64db37e9cc71e9cdf24e4f6ad42a4674"
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1b-mesh-audit",
+    "sha": "6bbd1e43ec1cab988af1c6aebf43cb60d8322b13"
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "gpt/review-g2-n6-f1b-02912226-20261108",
+    "sha": "48f33dd36a0f79e98a9437d0c4e3eb145c1b1692"
+  },
+  {
+    "repository": "wxwy/nav_sg",
+    "branch": "codex/g2-n6-native-snapshot",
+    "sha": "2009fae35d86579bb22c273fb97ec1bf0835b533"
+  }
+]

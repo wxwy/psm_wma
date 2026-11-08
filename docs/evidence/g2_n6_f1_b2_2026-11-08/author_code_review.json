@@ -1,0 +1,77 @@
+{
+  "reviewer": "/root/n6_independent_review",
+  "kind": "READ_ONLY_AUTHOR_AGENT_CODE_REVIEW_NOT_GPT_SERVER_ACCEPTANCE",
+  "decision": "CLOSED_NO_OPEN_P0_P1_P2_IN_SCOPED_CODE",
+  "findings": [
+    {
+      "severity": "P1",
+      "finding": "RGB/RGBA slot selection",
+      "resolution": "Pinned RGB binding only; RGBA-only/mesh unsupported conservatively; actual dual-layer CPU reference",
+      "status": "CLOSED"
+    },
+    {
+      "severity": "P1",
+      "finding": "RGB-slot four-channel alpha",
+      "resolution": "All selected four-channel albedo applies alpha and unknown mask",
+      "status": "CLOSED"
+    },
+    {
+      "severity": "P2",
+      "finding": "Area cancellation evidence",
+      "resolution": "Reuse frozen exact cross for candidate area statistics, no geometry policy change",
+      "status": "CLOSED"
+    },
+    {
+      "severity": "P2",
+      "finding": "Source include extension/body context",
+      "resolution": "Loader records actual XML/include roles; root traversal includes .inc/.mjcf/body ancestry",
+      "status": "CLOSED"
+    },
+    {
+      "severity": "P2",
+      "finding": "Excluded plane/hfield signature mismatch",
+      "resolution": "Shared geometry type facts including numeric type ID; separate finite sampling set",
+      "status": "CLOSED"
+    },
+    {
+      "severity": "P2",
+      "finding": "Point artifact sealing and downgrade",
+      "resolution": "Validate/conditionally seal NPZ; required protocol marker inside hashed producer identity; genuine legacy compatibility",
+      "status": "CLOSED"
+    },
+    {
+      "severity": "P2",
+      "finding": "Explicit sRGB unsupported boundary",
+      "resolution": "New primitive path mask0; CPU software128->55 demonstrates decode domain difference",
+      "status": "CLOSED"
+    }
+  ],
+  "reviewer_supplied_runtime_inventory_sha256": "c6ef80d9daf4aad9bfa8d9993426dd955d4d197973d2ec20c8d6b7dfbe31e2ad",
+  "independent_execution": "PURE_SCHEMA_NUMPY_COUNTEREXAMPLES_ONLY",
+  "read_author_evidence": [
+    "259/259 JUnit",
+    "old207 IDs",
+    "software llvmpipe54/864",
+    "frozen sampler and identity helpers"
+  ],
+  "no_server_private_GPU_model_native_execution": true,
+  "current_runtime_source_sha256": {
+    "g2/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "g2/io.py": "93ca182893ee415cd4bb2a82c5530bb51a3df5e918c4f17a14bcd7dbadca5dfc",
+    "g2/nav_bridge/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "g2/nav_bridge/recorded.py": "a5e5d37ab786885aecdd2a93b97786365d06757fea2cc1be7764eceb42f3222e",
+    "g2/nav_bridge/snapshot.py": "70cf14614d6562c343c457dc92615f23ad24696a28297a7c3b3c74819b7ebf29",
+    "g2/sim/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "g2/sim/asset_inventory.py": "1782eab7dbb785d80d1805798292bf1f0e38b8521dc5e3241b8c3353bbb8be03",
+    "g2/sim/color_evidence.py": "a8ffba8b1a61dff08e15a674f19cf81716436e09b089ef4d5337af0bf2e20bec",
+    "g2/sim/prescan.py": "433b2ae3600eb6f943e7f918145339d54a0568782f7e46a9ae057f9500271fa7",
+    "g2/sim/source_geometry.py": "0d6ab9b7f9addbb110375b3155da6b8fc9a9cc0c409d7f171b24a4847a99d783",
+    "g2/sim/source_roles.py": "388a651325c6aad290c49ab18946b35d5c05af9949fe8574dcd274c00715b333",
+    "g2/sim/source_scope.py": "8b8931e173eab1760410290a44740efd401a1de13d4b1ed490bdae9e25bb2149",
+    "g2/sim/surface_coverage.py": "9363ba095c5b46b635faa97a276fd2d36e6ca7737dfa16d6c3e0ed95acae86a6",
+    "g2/sim/surface_sampling.py": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967",
+    "g2/sim/texture_projection.py": "cd31f9ac4ccb6bfeef1feeccb79003a6ac0f5f1a7cd21c65227175aa389d607e",
+    "g2/views/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "g2/views/render.py": "225190a79d1a26d32af491a95bdea4f1ce691e7768d576b843c34520b277cebe"
+  }
+}

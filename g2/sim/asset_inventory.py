@@ -12,10 +12,11 @@ from pathlib import Path
 import numpy as np
 
 from g2.io import ContractError, canonical, digest, new_output, read_json, write_json
-from .prescan import (adapter_source_sha256, compiled_geom_row, geom_surface_mesh,
+from .prescan import (adapter_source_sha256, analytic_surface, compiled_geom_row, geom_surface_mesh,geometry_type_names,
                       quote, source_binding, source_text)
 from .source_geometry import apply_state, load_model, model_source_hash, surface_colors
 from .surface_sampling import audit_surface
+from .source_roles import source_geom_nodes, role_evidence, proof_template
 
 
 def _material(model, g):
@@ -35,6 +36,7 @@ def _material(model, g):
         textures.append({"role_id": role, "role_name": roles.get(role), "texture_id": texture,
             "texture_name": mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_TEXTURE, texture),
             "type_id": int(model.tex_type[texture]), "width": width, "height": height,
+            "colorspace_id":int(model.tex_colorspace[texture]),
             "channels": channels, "compiled_pixels_sha256": hashlib.sha256(pixels.tobytes()).hexdigest()})
     return {"mode": "MATERIAL", "rgba": model.mat_rgba[mat].astype(float).tolist(),
             "texuniform": bool(model.mat_texuniform[mat]), "texrepeat": model.mat_texrepeat[mat].tolist(),
@@ -57,6 +59,7 @@ def inventory(mjcf, output, *, metadata=None, scene_id=None, ep_meta=None,
     quote(scene_id); quote(world_frame)
     ep = read_json(ep_meta) if ep_meta else None
     model, sources = load_model(mjcf, asset_roots)
+    source_nodes=source_geom_nodes(sources)
     closure = model_source_hash(sources)
     if states and meta.get("state_source") != {"model_source_sha256": closure, "states_sha256": digest(states)}:
         raise ContractError("state_source must bind full model closure and states archive")
@@ -66,8 +69,7 @@ def inventory(mjcf, output, *, metadata=None, scene_id=None, ep_meta=None,
         raise ContractError("compiled geom names are not unique")
     if set(meta["geoms"]) - set(names):
         raise ContractError("role map includes unknown geom names")
-    kinds = {int(getattr(mujoco.mjtGeom, "mjGEOM_" + kind.upper())): kind
-             for kind in ("box", "sphere", "ellipsoid", "capsule", "cylinder", "mesh", "plane", "hfield")}
+    kinds=geometry_type_names()
     supported = {"box", "sphere", "ellipsoid", "capsule", "cylinder", "mesh"}
     rows, template, blockers = [], {}, []
     for g, name in enumerate(names):
@@ -91,6 +93,9 @@ def inventory(mjcf, output, *, metadata=None, scene_id=None, ep_meta=None,
                 row.update(declaration_status="INVALID", declaration_error=str(error), rejected_declaration=spec)
         if row["declaration_status"] != "DECLARED":
             blockers.append({"geom_id": g, "reason": row["declaration_status"] + "_ROLE_DECLARATION"})
+        evidence=role_evidence(model,g,row,source_nodes,spec)
+        row["role_evidence"]=evidence
+        template[name]=dict(template[name],role_evidence=proof_template(evidence))
         kind = row["geometry_type"]
         row["material_probe"] = {"status": "NOT_RUN", "basis": "ONE_RETAINED_FACE_CENTROID_ONLY",
                                  "surface_color_coverage_measured": False}
@@ -104,8 +109,11 @@ def inventory(mjcf, output, *, metadata=None, scene_id=None, ep_meta=None,
                 if sampling["status"] != "REJECTED":
                     discarded = set(sampling["discarded_zero_area_face_ids"])
                     face_id = next(i for i in range(len(faces)) if i not in discarded)
+                    point=vertices[faces[face_id]].astype(float).mean(axis=0)[None]
+                    if kind!="mesh":point=analytic_surface(point,kind,model.geom_size[g],np.asarray([face_id]))
                     colors, valid, appearance = surface_colors(model, g, kind, np.asarray([face_id]),
-                                                               np.asarray([[1 / 3, 1 / 3, 1 / 3]]))
+                        np.asarray([[1 / 3, 1 / 3, 1 / 3]]),local_points=point)
+                    valid=bool(np.all(valid))
                     opaque = bool(np.all(colors[:, 3] >= 1 - 1e-7))
                     row["material_probe"].update(status="PROBE_VALID" if valid and opaque else "UNSUPPORTED_OR_TRANSLUCENT",
                         original_face_id=face_id, appearance=appearance, rgba=colors[0].tolist())
@@ -131,7 +139,8 @@ def inventory(mjcf, output, *, metadata=None, scene_id=None, ep_meta=None,
     result = {"schema": "g2_sim_asset_inventory_v1", "status": "AUDIT_ONLY", "training_ready": False,
         "scene_id": scene_id, "world_frame": world_frame, "frame_id": frame, "state": state,
         "source_identity": identity, "source_identity_sha256": hashlib.sha256(canonical(identity)).hexdigest(),
-        "sources": sources, "geom_audit": rows, "geom_audit_sha256": hashlib.sha256(canonical(rows)).hexdigest(),
+        "sources": sources,"source_role_documents":source_nodes["documents"],
+        "geom_audit": rows, "geom_audit_sha256": hashlib.sha256(canonical(rows)).hexdigest(),
         "summary": summary, "point_cloud_created": False, "completion_scope": "NONE_AUDIT_ONLY",
         "semantic_role": "SOURCE_PROVENANCE_ONLY_NOT_NATIVE_OBJECT_DETECTIONS",
         "input_files": {name: {"path": str(Path(path).resolve()), "sha256": digest(path)}

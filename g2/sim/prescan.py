@@ -12,6 +12,9 @@ from g2.io import ContractError, canonical, digest, new_output, read_json, sha, 
 from .source_geometry import (load_model, model_source_hash, apply_state,
                               primitive_mesh, surface_colors, effective_rgba)
 from .surface_sampling import SamplingFailure, sample_surface, geometry_sha256
+from .surface_coverage import color_coverage
+from .texture_projection import REASONS
+from .source_roles import source_geom_nodes, role_evidence, verify_role_assertion
 
 
 def pointer_tokens(path):
@@ -118,6 +121,12 @@ def source_binding(spec, name, ep_meta, *, body_names=None):
             "record":record, "body_binding":body_binding, **category_details}
 
 
+def geometry_type_names():
+    import mujoco
+    return {int(getattr(mujoco.mjtGeom,"mjGEOM_"+kind.upper())):kind
+            for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh","plane","hfield")}
+
+
 def compiled_geom_row(model, data, g, name, geometry_types):
     import mujoco
     ancestry = []
@@ -130,6 +139,7 @@ def compiled_geom_row(model, data, g, name, geometry_types):
     mat = int(model.geom_matid[g])
     return {"geom_id":g, "geom_name":name,
             "body_ancestry":ancestry, "geometry_type":geometry_types.get(int(model.geom_type[g]), "unsupported"),
+            "geometry_type_id":int(model.geom_type[g]),
             "geometry_data_id":int(model.geom_dataid[g]), "geom_size":model.geom_size[g].astype(float).tolist(),
             "world_position":data.geom_xpos[g].tolist(), "world_rotation":data.geom_xmat[g].tolist(),
             "group":int(model.geom_group[g]), "contype":int(model.geom_contype[g]),
@@ -150,7 +160,8 @@ def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):
 
 def adapter_source_sha256():
     return hashlib.sha256(b"".join(Path(__file__).with_name(name).read_bytes() for name in
-        ("prescan.py", "source_geometry.py", "source_scope.py", "surface_sampling.py"))).hexdigest()
+        ("prescan.py", "source_geometry.py", "source_scope.py", "surface_sampling.py",
+         "texture_projection.py", "surface_coverage.py", "source_roles.py", "color_evidence.py"))).hexdigest()
 
 
 def geom_surface_mesh(model, g, kind):
@@ -187,7 +198,8 @@ def quote(value):
 
 def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
            asset_roots=(), ep_meta=None, state_format="qpos", world_frame="map",
-           native_manifest=None, allow_partial_color=False, max_points=5_000_000):
+           native_manifest=None, allow_partial_color=False, max_points=5_000_000,
+           allow_unclassified=False, require_role_evidence=False):
     import mujoco
     mjcf, metadata = Path(mjcf).resolve(), Path(metadata).resolve()
     paths = [mjcf, metadata] + [Path(p).resolve() for p in (states, ep_meta, native_manifest) if p]
@@ -201,6 +213,7 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
     quote(scene_id); quote(world_frame)
     ep = read_json(ep_meta) if ep_meta else None
     model, sources = load_model(mjcf, asset_roots)
+    source_nodes=source_geom_nodes(sources)
     closure = model_source_hash(sources)
     if states:
         if meta.get("state_source") != {"model_source_sha256": closure, "states_sha256": digest(states)}:
@@ -208,19 +221,29 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
     data, state = apply_state(model, states, frame, state_format)
     names = [mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, i) or "geom_%d"%i
              for i in range(model.ngeom)]
-    if set(meta["geoms"]) != set(names):
+    if len(set(names))!=len(names):raise ContractError("compiled geom names must be unique")
+    if (set(meta["geoms"])-set(names) or (not allow_unclassified and set(meta["geoms"])!=set(names))):
         raise ContractError("every geom needs an explicit visual/collision/robot/auxiliary role")
-    geometry_types = {int(getattr(mujoco.mjtGeom, "mjGEOM_"+kind.upper())):kind
-                      for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh")}
-    surfaces, records, excluded, audit = [], [], [], []
-    count = 0
+    geometry_types=geometry_type_names()
+    surfaces, records, excluded, audit, color_audits = [], [], [], [], []
+    count = 0; unclassified_count=0
     for g, name in enumerate(names):
-        spec = meta["geoms"][name]
-        if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
-        role = spec.get("role")
-        if role not in ("visual","collision","robot","auxiliary"):
-            raise ContractError("invalid or absent geom role")
-        row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+        spec=meta["geoms"].get(name)
+        raw_row=compiled_geom_row(model,data,g,name,geometry_types)
+        evidence=role_evidence(model,g,raw_row,source_nodes,spec)
+        try:
+            if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
+            role=spec.get("role")
+            if role not in ("visual","collision","robot","auxiliary"):
+                raise ContractError("invalid or absent geom role")
+            row=geom_audit_row(model,data,g,name,spec,geometry_types,ep)
+            if require_role_evidence:verify_role_assertion(spec,evidence)
+        except ContractError as error:
+            if not allow_unclassified:raise
+            role="UNCLASSIFIED";unclassified_count+=1
+            row=dict(raw_row,role=role,source={"kind":"unclassified","declared_spec":spec},
+                classification_reason="Unconfirmed source role: "+str(error),declaration_error=str(error))
+        row["role_evidence"]=dict(evidence,assertion_checked=bool(require_role_evidence and role!="UNCLASSIFIED"))
         audit.append(row)
         binding = row["source"]
         if role != "visual" or effective_rgba(model,g)[3] <= 0:
@@ -229,7 +252,7 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
             excluded.append({"geom_name":name,"role":role,"reason":"explicit_role_or_transparency","source":binding})
             continue
         kind = geometry_types.get(int(model.geom_type[g]))
-        if kind is None:
+        if kind not in ("box","sphere","ellipsoid","capsule","cylinder","mesh"):
             raise ContractError("finite visual surface required; infinite plane/hfield is unsupported")
         vertices,faces = geom_surface_mesh(model, g, kind)
         try:
@@ -251,30 +274,33 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
             raise
         if kind!="mesh":
             points=analytic_surface(points,kind,model.geom_size[g],face_ids)
-        colors,valid,appearance = surface_colors(model,g,kind,face_ids,weights)
-        if np.any(colors[:,3] < 1-1e-7):
-            valid=False
-            appearance=dict(appearance,unsupported="translucent_surface_requires_alpha_transport")
+        colors,valid,appearance,reasons = surface_colors(model,g,kind,face_ids,weights,
+                                                        local_points=points,with_diagnostics=True)
+        area_weights,coverage = color_coverage(vertices,faces,face_ids,valid,reasons)
         world = points @ data.geom_xmat[g].reshape(3,3).T + data.geom_xpos[g]
         if not np.isfinite(world).all():
             raise ContractError("nonfinite world surface")
         rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
-        surfaces.append((world,rgba,bool(valid)))
-        row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
-                   appearance=appearance, sampling=sampling)
+        surfaces.append((world,rgba,valid))
+        color_audits.append((np.full(len(world),g,np.int32),face_ids.astype(np.int32),reasons,area_weights))
+        row.update(surface_points=len(world), color_status="VALID" if np.all(valid) else "UNSUPPORTED_APPEARANCE",
+                   appearance=appearance, sampling=sampling, color_coverage=coverage)
         count += len(world)
         records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
-                        "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
+                        "surface_points":len(world),"color_valid":bool(np.all(valid)),"appearance":appearance,
+                        "color_coverage":coverage,
                         "sampling":sampling, "local_geometry_sha256":geometry_sha256(vertices,faces)})
     if not count:
         raise ContractError("no visual surface samples")
-    complete = all(item[2] for item in surfaces)
-    if not complete and not allow_partial_color:
+    color_complete = all(np.all(item[2]) for item in surfaces)
+    complete=color_complete and not unclassified_count
+    if not color_complete and not allow_partial_color:
         raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
     adapter_sha=adapter_source_sha256()
     visual_identity = {"schema":"g2_prescan_source_v1","adapter_source_sha256":adapter_sha,"model_source_sha256":closure,
                        "metadata":meta,"ep_meta":ep,"spacing_m":spacing,"world_frame":world_frame,
-                       "mujoco_version":mujoco.__version__}
+                       "mujoco_version":mujoco.__version__,"require_role_evidence":bool(require_role_evidence),
+                       "allow_unclassified":bool(allow_unclassified),"color_evidence_protocol":"g2_sample_color_audit_v1"}
     visual_sha = hashlib.sha256(canonical(visual_identity)).hexdigest()
     source_sha = visual_sha
     native_binding = None
@@ -300,16 +326,21 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
         stream.write("NAV_SG_PRECOLORED_CLOUD_V1\nscene_id %s\nsource_sha256 %s\nframe_id %d\nworld_frame %s\npoints %d\ndata\n"%
                      (quote(scene_id),source_sha,frame,quote(world_frame),count))
         for points,colors,valid in surfaces:
-            for p,c in zip(points,colors):
-                stream.write("%.17g %.17g %.17g %d %d %d %d\n"%(*p,int(c[0]),int(c[1]),int(c[2]),int(valid)))
+            for p,c,flag in zip(points,colors,valid):
+                stream.write("%.17g %.17g %.17g %d %d %d %d\n"%(*p,int(c[0]),int(c[1]),int(c[2]),int(flag)))
+    color_audit_path=out/"color_audit.npz"
+    np.savez_compressed(color_audit_path,**{
+        key:np.concatenate([values[index] for values in color_audits])
+        for index,key in enumerate(("geom_id","local_face_id","reason_code","input_triangle_area_weight_m2"))})
     from .source_scope import audit_summary
     summary = audit_summary(audit)
-    manifest = {"schema":"g2_prescan_manifest_v1","status":"COMPLETE" if complete else "PARTIAL_COLOR",
+    manifest = {"schema":"g2_prescan_manifest_v1","status":"PARTIAL_SOURCE" if unclassified_count else "COMPLETE" if complete else "PARTIAL_COLOR",
                 "completion_scope":"DECLARED_VISUAL_GEOMS_ONLY", "training_ready":False,
                 "compiled_geom_count":int(model.ngeom), "geom_audit":audit,
                 "geom_audit_sha256":hashlib.sha256(canonical(audit)).hexdigest(), "source_audit":summary,
                 "scene_id":scene_id,"source_sha256":source_sha,"visual_source_sha256":visual_sha,
                 "source_identity":visual_identity,"sources":sources,"state":state,"frame_id":frame,
+                "source_role_documents":source_nodes["documents"],"unclassified_geom_count":unclassified_count,
                 "world_frame":world_frame,"bounds_min":bounds.min(axis=0).tolist(),
                 "bounds_max":bounds.max(axis=0).tolist(),"point_count":count,"visual_geoms":records,
                 "excluded":excluded,"native_geometry_binding":native_binding,
@@ -318,6 +349,9 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
                 "semantic_role":"SOURCE_PROVENANCE_ONLY_NOT_NATIVE_OBJECT_DETECTIONS",
                 "appearance":"SOURCE_ASSET_ALBEDO_NOT_CAMERA_RGB","free_space":"NOT_INFERRED_FROM_COLOR_CLOUD",
                 "file":{"path":"precolored.txt","bytes":cloud.stat().st_size,"sha256":digest(cloud)},
+                "color_audit_file":{"path":"color_audit.npz","bytes":color_audit_path.stat().st_size,
+                                    "sha256":digest(color_audit_path),"row_order":"SAME_AS_PRECOLORED_DATA_ROWS"},
+                "color_reason_codes":REASONS,
                 "gates":{"object_perception":"REQUIRES_REAL_RGBD_POSE","declared_visual_geoms_complete":complete,
                          "full_scene_visual":"PENDING_SOURCE_ROLE_AND_VISUAL_REVIEW",
                          "full_scene_source_certified":False,
@@ -336,11 +370,13 @@ def main():
     p.add_argument("--spacing",type=float,default=.05);p.add_argument("--world-frame",default="map")
     p.add_argument("--state-format",choices=("qpos","mujoco_fullphysics"),default="qpos")
     p.add_argument("--native-manifest");p.add_argument("--allow-partial-color",action="store_true")
+    p.add_argument("--allow-unclassified",action="store_true");p.add_argument("--require-role-evidence",action="store_true")
     args=p.parse_args()
     result=export(args.mjcf,args.metadata,args.output,states=args.states,frame=args.frame,
                   spacing=args.spacing,asset_roots=args.asset_root,ep_meta=args.ep_meta,
                   state_format=args.state_format,world_frame=args.world_frame,
-                  native_manifest=args.native_manifest,allow_partial_color=args.allow_partial_color)
+                  native_manifest=args.native_manifest,allow_partial_color=args.allow_partial_color,
+                  allow_unclassified=args.allow_unclassified,require_role_evidence=args.require_role_evidence)
     print(result["status"],result["point_count"])
 
 

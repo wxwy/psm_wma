@@ -1,0 +1,512 @@
+{
+  "scope": "OWN_FIXTURES_CPU_SOFTWARE_OPENGL_NOT_REAL_LAYOUT_ACCEPTANCE",
+  "status": "PASS",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "mujoco": "3.3.7",
+  "numpy": "2.3.5",
+  "cases": [
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": true,
+      "texrepeat": "2 3",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": false,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "cube",
+      "texuniform": true,
+      "texrepeat": "7 11",
+      "dual_rgb_rgba_roles": false,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 0
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": true,
+      "face": "+Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": true,
+      "face": "-Z",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": true,
+      "face": "+X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": true,
+      "face": "-X",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": true,
+      "face": "+Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    },
+    {
+      "texture": "2d",
+      "texuniform": false,
+      "texrepeat": "1 1",
+      "dual_rgb_rgba_roles": true,
+      "face": "-Y",
+      "points": 16,
+      "max_rgb_byte_error": 1
+    }
+  ],
+  "rendered_faces": 54,
+  "compared_surface_points": 864,
+  "max_rgb_byte_error": 1,
+  "explicit_srgb_boundary": {
+    "unsupported_mask_preserved": true,
+    "rendered_rgb": [
+      55,
+      55,
+      55
+    ],
+    "raw_asset_rgb": [
+      128,
+      128,
+      128
+    ]
+  },
+  "training_ready": false
+}

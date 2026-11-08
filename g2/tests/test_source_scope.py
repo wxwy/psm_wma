@@ -134,7 +134,7 @@ def test_capture_retains_and_revalidates_actual_review_artifacts(native_factory,
     packet=capture(native,tmp_path/"bundle",native_run=run/"native_run.json",
         prescan_manifest=out/"manifest.json",full_scene_review=review_for(out,m))
     sealed=load_bundle(tmp_path/"bundle")[0]
-    assert len(packet["files"])==7
+    assert len(packet["files"])==8
     assert sealed["source_scope"]["status"]==REVIEWED_SCOPE
     assert (tmp_path/"bundle/source_evidence/precolored.txt").read_bytes()==(out/"precolored.txt").read_bytes()
     assert sealed["training_ready"] is False
@@ -241,7 +241,8 @@ def test_partial_texture_audit_reports_missing_color_and_no_complete(exported,tm
     _,model,meta,ep,_,_=exported
     xml=model.read_text().replace('<worldbody>','''<asset><texture name="checker" type="2d"
         builtin="checker" width="2" height="2"/><material name="m" texture="checker"/></asset><worldbody>''')
-    model.write_text(xml.replace('name="visual" type="box"','name="visual" material="m" type="box"'))
+    model.write_text(xml.replace('name="visual" type="box" size=".1 .1 .1"',
+                                'name="visual" material="m" type="capsule" size=".1 .1"'))
     out=tmp_path/"partial"
     m=export(model,meta,out,ep_meta=ep,spacing=.2,allow_partial_color=True)
     assert m["status"]=="PARTIAL_COLOR" and not (out/"COMPLETE").exists()

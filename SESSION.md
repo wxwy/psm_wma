@@ -1,3 +1,85 @@
+# 2026-11-08 (CST) — G2-N6-F1-B2 source frozen / handoff preparation
+
+REVIEW. Owner Issue26 comment6722340254 and actual GPT F1-B review commit
+48f33dd36a0f79e98a9437d0c4e3eb145c1b1692/file blob
+5ab23b76b25eced9f19f3a8feb609d20e5daa700 consumed. Original02912226 is
+APPROVE for exact-zero and inventory-AUDIT_ONLY only; real whole-house source
+role/material remains BLOCKED. Source branch codex/g2-n6-f1b2-texture-role
+from6bbd1e43 ledger/runtime029122268ea535d8b3c74c0b3fb2b0d0302a828f.
+
+Implemented verified MuJoCo3.3.7 box/cylinder/sphere/ellipsoid planar/cube
+asset-albedo projections, actual RGB material binding/alpha, per-point masks,
+reasons and explicitly approximate area coverage. Cube direction ambiguity,
+explicit2D sRGB, opacity/unsupported transforms retain unknown/partial state.
+Source-role evidence traces hashed XML/defaults/include(.inc/.mjcf)/body and
+compiled signatures; no auto role inference or independent certification.
+Strict evidence check plus explicit unknown-role candidate PARTIAL_SOURCE;
+known visual nonzero-near geometry still rejects. Legacy source/UV math kept
+for approved RGB cases; 4-channel alpha safety/unknown RGBA layer explicit.
+
+Review-required scope adjustment g2/nav_bridge/snapshot.py only seals new
+color_audit.npz evidence. New hashed producer protocol requires this artifact;
+source_scope revalidates point masks/face/reasons/area/coverage and sealed
+bundles retain it. True legacy producer remains7-file compatible; new has8.
+No native structure/frontend/view algorithm changes. Four identity helpers
+and model_source_hash/apply_state/primitive_mesh/effective_rgba source exact;
+surface_sampling.py frozen763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967.
+
+Same13 tests old13FAIL ->13PASS; final259/259,0failure/error/skip, all prior207
+case IDs retained. Two prior negative fixtures now use unsupported capsule
+instead of newly supported box; old sealing count8 and explicit true legacy7
+covered. CPU llvmpipe54directions/material variants/864points max1 RGBbyte;
+sRGB128 actually renders55 and remains unsupported. Own6 old valid shapes
+0/200 each6244 XYZ/RGB/valid rows byte-identical to029; state/bounds/geometry
+hashes identical. Rotated textured body+12cm preserves source colors/identity.
+Read-only Agent closed RGB/RGBA, alpha, area cancellation, include/body,
+plane signatures, evidence closure/downgrade and sRGB findings; no open
+P0/P1/P2 in scoped code. Author code/software evidence is not GPT server PASS.
+
+Evidence docs/evidence/g2_n6_f1_b2_2026-11-08/;34 G2 source/config/test hashes
+frozen, adapter source42da095bf24de7f41736c6e9cba6b6a0a4cc06566fe209edc8adf21d2f2d4d31.
+Runbook docs/build/PSM-WMA_G2_N6_F1_B2_texture_role_2026-11-08.md.
+No data-server file access/download/outward transfer, no GPU/checkpoints/model
+inference/rollout/native build or training. Actual Layout1/10 roles/materials,
+paper-towel nonzero triage and four-frame native ColorCloudMap remain GPT
+server work; source assertions are not semantic role truth or house GT.
+Native2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged; original refs checked via
+GitHub connector. Publish fixed SHA/Issue26 handoff and STOP for independent
+server check. No Draft retry on known email restriction; no prior PR edit or
+V3/production merge. Ordinary roots/real perception/six+Island human/PSS/
+Cosmos/learning stay OPEN/not started.
+
+# 2026-11-08 — G2-N6-F1-B2 texture/role claim
+
+IN_PROGRESS. Exact target029122268ea535d8b3c74c0b3fb2b0d0302a828f
+GPT APPROVE limited zero-face/inventory Gate consumed from review branch
+48f33dd36a0f79e98a9437d0c4e3eb145c1b1692, file blob
+5ab23b76b25eced9f19f3a8feb609d20e5daa700 and Issue26 comment6722340254.
+Actual207/207 server test and obj/distr/four-frame subset PASS are GPT facts,
+not new author runs. Full-house role/material/source Gate still BLOCKED.
+New branch codex/g2-n6-f1b2-texture-role derives6bbd1e43 ledger/runtime02912226.
+
+Planned paths: G2 source_geometry/small texture-projection helper,
+prescan/asset_inventory full sampled color accounting and role-evidence
+helper, focused own CPU fixtures/reference tests, docs/evidence/handoff.
+Use upstream MuJoCo3.3.7 projection semantics as the reference; no invented
+UVs or geom_rgba replacement for unsupported textures. Compiled and MJCF
+source closure/body/official identity evidence must be separate from role
+assertions; unknown/ambiguous remains visible for independent source review.
+Keep surface_sampling.py exact-zero/near-positive policy and original IDs
+frozen. No threshold loosening for paper_towel or robot; exclusion requires
+verifiable source evidence. F1-A2 Pointer/category source helpers stay frozen.
+
+No access/download/outward transfer of any private server assets/states,
+images/clouds/audits. Only own local CPU MJCF/texture/state fixtures and public
+pinned renderer source. No GPU/models/rollouts/V3/native/Gitlink/production
+PR/cache/learning changes. Native2009fae35d86579bb22c273fb97ec1bf0835b533,
+Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e remain unchanged.
+One scoped code Gate then fixed SHA/test/evidence/GPT server recheck and STOP;
+actual source-specific roles, paper towel and four real layouts remain private
+server acceptance, not inferred from own fixtures or Group1.
+
 # 2026-11-08 — G2-N6-F1-B published / STOP for GPT fixed-source check
 
 REVIEW. Fixed Root 029122268ea535d8b3c74c0b3fb2b0d0302a828f, tree
