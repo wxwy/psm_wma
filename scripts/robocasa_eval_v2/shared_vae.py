@@ -12,6 +12,7 @@ import base64
 import copy
 import hashlib
 import json
+import math
 import os
 import secrets
 import select
@@ -64,6 +65,18 @@ def public_profile(cfg):
     }
 
 
+def _worker_drain_timeout_s(value):
+    if (
+        type(value) not in (int, float)
+        or not math.isfinite(value)
+        or value <= 0
+        or value != int(value)
+    ):
+        raise ValueError("C Worker terminate_grace_s requires positive whole seconds")
+    # Normalize the private wire only; leave resolved config/Resume identity intact.
+    return int(value)
+
+
 def validate_profile(cfg):
     if cfg.get("local_evidence_profile", "server_vae") not in (
         "server_vae",
@@ -90,6 +103,7 @@ def validate_profile(cfg):
         if cfg.get("sim_shared_vae") is not None:
             raise ValueError("A/B create zero historical VAE Workers")
     else:
+        _worker_drain_timeout_s(cfg["terminate_grace_s"])
         shared = cfg.get("sim_shared_vae")
         if type(shared) is not dict:
             raise ValueError(
@@ -603,7 +617,7 @@ class SharedVAESupervisor:
                 "bmax": 1,
                 "wait_ms": 0,
                 "physical_device": runtime._shared_gpu_identity(gpu),
-                "drain_timeout_s": cfg["terminate_grace_s"],
+                "drain_timeout_s": _worker_drain_timeout_s(cfg["terminate_grace_s"]),
             }
             secret_read, secret_write = os.pipe()
             ready_read, ready_write = os.pipe()

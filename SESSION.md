@@ -1,3 +1,20 @@
+# 2026-11-08 — H2/H3 candidate source frozen for exact Pair author CPU
+
+Child11e1855d58cb9f017243a08d610fb33a4443b773: strict full128-bit actual CUDA
+UUID syntax, add only GPU- when absent, then unchanged expected UUID + actual
+NVML physical index/UUID/PCI verification. Unique CUDA/all parameters same GPU
+checks remain unchanged. H2 Root adds C-only positive whole-second preflight
+and equivalent int private-FD encoding; leaves resolved cfg/Manifest/A-B/Resume
+and global Child strict_json unchanged. No other production source changes.
+Controlled RED3 on byte-identical old Root ea64/shared_vae and Child90ac/daemon:
+default10.0 actual private FD fails strict JSON;10.5 not rejected by resolve;
+bare actual CUDA UUID wrongly rejected. RED expected3 failures pytest exit1 each,
+source unchanged; injected test/fixture SHA256 preserved. Production formatter
+2files unchanged. New regressions include whole-second READY via original private
+FD/Registry process path and strict CUDA/NVML negatives, all synthetic CPU only.
+Next clean new Pair Gate includes original Stage3A/H1/A-B regressions and native
+constructor/loaded identity old-baseline equality. No GPU/server/realSim/merge.
+
 # 2026-11-08 — Issue24 H2/H3 real C-B1 startup remediation claimed
 
 Latest Owner+formal review and Issue24 comment6719277972 authorize only H2 Root

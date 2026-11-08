@@ -165,6 +165,43 @@ def test_explicit_single_profile_is_frozen_and_default_has_no_worker(tmp_path, a
     assert "single_latency" not in execution(old) and not module.enabled(old)
 
 
+@pytest.mark.parametrize("seconds", [10.0, 15.0, 15])
+def test_c_whole_second_timeout_keeps_resolved_config_and_manifest(tmp_path, seconds):
+    cfg = profile_config(tmp_path)
+    cfg["terminate_grace_s"] = seconds
+    frozen = execution(cfg)
+    module.validate_profile(cfg)
+    assert cfg["terminate_grace_s"] == seconds
+    assert type(cfg["terminate_grace_s"]) is type(seconds)
+    assert execution(cfg) == frozen
+
+
+def test_c_fractional_timeout_rejected_by_public_resolve_before_fresh_namespace(
+    tmp_path,
+):
+    import yaml
+
+    from robocasa_eval_v2.config import resolve
+    from tools.v3.eval_v2_production_tests.entry_test import config
+
+    path, inputs = config(tmp_path)
+    cfg = {**profile_config(tmp_path), **inputs, "terminate_grace_s": 10.5}
+    path.write_text(yaml.safe_dump(cfg))
+    with pytest.raises(ValueError, match="whole.*second"):
+        resolve(["fresh", "--config", str(path)])
+    assert not Path(cfg["output_dir"]).exists()
+
+
+@pytest.mark.parametrize("arm", [None, "A", "B"])
+def test_legacy_and_a_b_fractional_cleanup_timeout_remains_valid(tmp_path, arm):
+    cfg = copy.deepcopy(DEFAULTS) if arm is None else profile_config(tmp_path, arm)
+    cfg["terminate_grace_s"] = 10.5
+    frozen = execution(cfg)
+    module.validate_profile(cfg)
+    assert cfg["terminate_grace_s"] == 10.5 and type(cfg["terminate_grace_s"]) is float
+    assert execution(cfg) == frozen
+
+
 @pytest.mark.parametrize(
     "change", ["B8", "wait", "trust", "mode", "slots", "secret", "file"]
 )
@@ -516,12 +553,20 @@ def test_buffered_close_event_is_read_after_normal_process_exit():
 
 
 @pytest.mark.parametrize("omega_constructor", [False, True])
+@pytest.mark.parametrize(
+    "grace_s",
+    [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+    ids=["original3", "default10float", "explicit15float", "integer15"],
+)
 def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
     tmp_path,
     omega_constructor,
+    grace_s,
 ):
     cfg = profile_config(tmp_path)
-    cfg.update(server_python=sys.executable, server_start_s=10, terminate_grace_s=3)
+    cfg.update(
+        server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+    )
     identity, constructor = IDENTITY, {}
     if omega_constructor:
         from cosmos_framework.inference.robocasa_vae_daemon import (
@@ -617,6 +662,8 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
         assert parent == os.getpid() and parent != sim.proc.pid
         assert handle.record["kind"].startswith("shared_vae_worker:")
         assert handle.proof["attestation"]["backend"] == "synthetic_cpu_test"
+        wire_timeout = handle.proof["attestation"]["bootstrap_drain_timeout_s"]
+        assert type(wire_timeout) is int and wire_timeout == grace_s
         assert "signing_key" not in json.dumps(runtime.commands)
         assert handle.signing_key.hex() not in json.dumps(
             runtime.commands + runtime.proofs
@@ -641,6 +688,8 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
                     "backend": "synthetic_cpu_test",
                     "zero_gpu_execution": True,
                     "credential_delivery": "inherited_fds_only",
+                    "configured_drain_timeout_s": grace_s,
+                    "bootstrap_drain_timeout_s": wire_timeout,
                     "ready": handle.proof,
                 },
                 sort_keys=True,

@@ -26,6 +26,7 @@ def fake_encoder(config):
         ).hexdigest(),
         "backend": "synthetic_cpu_test",
         "device_type": "cpu",
+        "bootstrap_drain_timeout_s": config["drain_timeout_s"],
     }
 
 
