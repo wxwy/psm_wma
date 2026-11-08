@@ -1,0 +1,56 @@
+{
+  "scope": "ISSUE24_STAGE3A_H1_OMEGACONF_FOCUSED_AUTHOR_CPU",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.118
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.225
+    },
+    {
+      "name": "native_baseline",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import json\nfrom cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer\nfrom cosmos_framework.inference.robocasa_vae_daemon import worker_constructor_config, loaded_vae_identity\nfrom cosmos_framework.inference.robocasa_vae_protocol import canonical_json\nt=_tokenizer()\nprint(json.dumps({'constructor':worker_constructor_config(t),'canonical_constructor':canonical_json(worker_constructor_config(t)).decode(),'identity':loaded_vae_identity(t)},sort_keys=True))\n"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 1.994
+    }
+  ],
+  "real_weights_gpu_egl_sim_policy_integration_sr": "NOT_RUN",
+  "error": "JSONDecodeError('Expecting value: line 1 column 1 (char 0)')",
+  "source_unchanged": true
+}

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="1.459" timestamp="2026-11-08T07:10:56.807893+00:00" hostname="f82e45f755b2"><testcase classname="" name="test_real_omegaconf_constructor_equals_native_without_mutating_order_or_values" time="0.003"><failure message="cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: invalid canonical JSON">value = {'causal': True, 'chunk_duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [73, 17, 61, 17], ...}
+
+    def canonical_json(value: Any) -&gt; bytes:
+        """The approved canonical encoding, after the caller's strict schema validation."""
+        try:
+&gt;           return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                "utf-8"
+            )
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:258: in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;json.encoder.JSONEncoder object at 0x7f7384e7be60&gt;, o = [73, 17, 61, 17]
+
+    def default(self, o):
+        """Implement this method in a subclass such that it returns
+        a serializable object for ``o``, or calls the base implementation
+        (to raise a ``TypeError``).
+    
+        For example, to support arbitrary iterators, you could
+        implement default like this::
+    
+            def default(self, o):
+                try:
+                    iterable = iter(o)
+                except TypeError:
+                    pass
+                else:
+                    return list(iterable)
+                # Let the base class default method raise the TypeError
+                return super().default(o)
+    
+        """
+&gt;       raise TypeError(f'Object of type {o.__class__.__name__} '
+                        f'is not JSON serializable')
+E       TypeError: Object of type ListConfig is not JSON serializable
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:180: TypeError
+
+The above exception was the direct cause of the following exception:
+
+    def test_real_omegaconf_constructor_equals_native_without_mutating_order_or_values():
+        tokenizer = _tokenizer(omega=True, durations=(73, 17, 61, 17))
+        assert isinstance(tokenizer.encode_exact_durations, ListConfig)
+        assert isinstance(tokenizer.encode_chunk_frames, DictConfig)
+        before = OmegaConf.to_container(tokenizer.encode_exact_durations)
+&gt;       actual = daemon.worker_constructor_config(tokenizer)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py:66: in worker_constructor_config
+    return strict_json(canonical_json(config), max_bytes=65536)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'causal': True, 'chunk_duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [73, 17, 61, 17], ...}
+
+    def canonical_json(value: Any) -&gt; bytes:
+        """The approved canonical encoding, after the caller's strict schema validation."""
+        try:
+            return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode(
+                "utf-8"
+            )
+        except (TypeError, ValueError, UnicodeError, RecursionError) as error:
+&gt;           raise ProtocolError("invalid canonical JSON") from error
+E           cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: invalid canonical JSON
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py:186: ProtocolError</failure></testcase><testcase classname="" name="test_real_omegaconf_loaded_identity_matches_native_and_preserves_weight_authority" time="0.007"><failure message="cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: invalid canonical JSON">value = {'causal': True, 'chunk_duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [17, 61, 73], ...}
+
+    def canonical_json(value: Any) -&gt; bytes:
+        """The approved canonical encoding, after the caller's strict schema validation."""
+        try:
+&gt;           return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                "utf-8"
+            )
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:258: in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;json.encoder.JSONEncoder object at 0x7f73856c8bf0&gt;, o = [17, 61, 73]
+
+    def default(self, o):
+        """Implement this method in a subclass such that it returns
+        a serializable object for ``o``, or calls the base implementation
+        (to raise a ``TypeError``).
+    
+        For example, to support arbitrary iterators, you could
+        implement default like this::
+    
+            def default(self, o):
+                try:
+                    iterable = iter(o)
+                except TypeError:
+                    pass
+                else:
+                    return list(iterable)
+                # Let the base class default method raise the TypeError
+                return super().default(o)
+    
+        """
+&gt;       raise TypeError(f'Object of type {o.__class__.__name__} '
+                        f'is not JSON serializable')
+E       TypeError: Object of type ListConfig is not JSON serializable
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:180: TypeError
+
+The above exception was the direct cause of the following exception:
+
+    def test_real_omegaconf_loaded_identity_matches_native_and_preserves_weight_authority():
+        tokenizer = _tokenizer(omega=True)
+        expected = daemon.loaded_vae_identity(_tokenizer())
+&gt;       actual = daemon.loaded_vae_identity(tokenizer)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py:97: in loaded_vae_identity
+    effective = worker_constructor_config(tokenizer)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py:66: in worker_constructor_config
+    return strict_json(canonical_json(config), max_bytes=65536)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = {'causal': True, 'chunk_duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [17, 61, 73], ...}
+
+    def canonical_json(value: Any) -&gt; bytes:
+        """The approved canonical encoding, after the caller's strict schema validation."""
+        try:
+            return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode(
+                "utf-8"
+            )
+        except (TypeError, ValueError, UnicodeError, RecursionError) as error:
+&gt;           raise ProtocolError("invalid canonical JSON") from error
+E           cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: invalid canonical JSON
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py:186: ProtocolError</failure></testcase></testsuite></testsuites>

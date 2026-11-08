@@ -1,0 +1,78 @@
+{
+  "status": "RED_EXPECTED",
+  "pytest_exit": 1,
+  "old_child": "6842b329f71fff8b9813b2d00b83edfc61e3e505",
+  "production_sha256_before": "c12f27ee4a99fcda41d104fff0bb391e33f5660a2fc319f1d2f80264ac289c87",
+  "production_sha256_after": "c12f27ee4a99fcda41d104fff0bb391e33f5660a2fc319f1d2f80264ac289c87",
+  "tests_injected": true,
+  "source_note": "Old production byte-identical; new tests injected into isolated worktree; not a clean Formal Pair gate.",
+  "test_sha256": {
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py": "8e4a1d2d59776ec4255c4f65e9ecb3b67384d54118a9c3b6085295221067ffaa",
+    "cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py": "52034fae4018325283a7ae0620bf2cd8596893309ffca097b0782ed34c5a597e",
+    "tools/v3/eval_v2_batch_tests/shared_vae_test.py": "a515b0cdc734c9f515718432c9c35893f0f0683651b22ce60b0acd6e9ba8ce04"
+  },
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "commands": [
+    {
+      "name": "ruff_fix",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--fix",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+        "/workspace/work/psm-wma-stage3a-h1-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "native_baseline",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import json\nfrom cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer\nfrom cosmos_framework.inference.robocasa_vae_daemon import worker_constructor_config, loaded_vae_identity\nfrom cosmos_framework.inference.robocasa_vae_protocol import canonical_json\nt=_tokenizer()\nprint(json.dumps({'constructor':worker_constructor_config(t),'canonical_constructor':canonical_json(worker_constructor_config(t)).decode(),'identity':loaded_vae_identity(t)},sort_keys=True))\n"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py::test_real_omegaconf_constructor_equals_native_without_mutating_order_or_values",
+        "/workspace/work/psm-wma-stage3a-h1-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py::test_real_omegaconf_loaded_identity_matches_native_and_preserves_weight_authority",
+        "--basetemp=/workspace/work/issue24-stage3a-h1-evidence/red-old-code/tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h1-evidence/red-old-code/junit.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h1-formal",
+      "exit_code": 1
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "actual synthetic CPU OS processes, not GPU or model attestation",
+  "files": {
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s0/lifecycle.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/lifecycle.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s0/run/_internal/processes/3f6ff20068e84570a43e96b7706beb88.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/processes/3f6ff20068e84570a43e96b7706beb88.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s0/run/_internal/processes/c3a6bb3af4f94b3aa967c9ec758ceac3.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/processes/c3a6bb3af4f94b3aa967c9ec758ceac3.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s0/run/_internal/process_closed/3f6ff20068e84570a43e96b7706beb88.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/process_closed/3f6ff20068e84570a43e96b7706beb88.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s0/run/_internal/process_closed/c3a6bb3af4f94b3aa967c9ec758ceac3.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/process_closed/c3a6bb3af4f94b3aa967c9ec758ceac3.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s1/lifecycle.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s1/lifecycle.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s1/run/_internal/processes/05a9b48d749449d0b41a60eede644200.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s1/run/_internal/processes/05a9b48d749449d0b41a60eede644200.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s1/run/_internal/processes/6a56bf6e3beb41dd8026d031a3001b5b.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s1/run/_internal/processes/6a56bf6e3beb41dd8026d031a3001b5b.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s1/run/_internal/process_closed/05a9b48d749449d0b41a60eede644200.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s1/run/_internal/process_closed/05a9b48d749449d0b41a60eede644200.json",
+    "author-02/os_lifecycle/test_registry_worker_is_peer_s1/run/_internal/process_closed/6a56bf6e3beb41dd8026d031a3001b5b.json": "/workspace/work/issue24-stage3a-h1-evidence/author-02/root_lifecycle_config_tmp/test_registry_worker_is_peer_s1/run/_internal/process_closed/6a56bf6e3beb41dd8026d031a3001b5b.json"
+  }
+}

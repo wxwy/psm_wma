@@ -1,0 +1,75 @@
+{
+  "scope": "ISSUE24_STAGE3A_H1_OMEGACONF_AUTHOR_CPU",
+  "formal_root": "ea64c26f7738f2efba5c33c78f18eab475230a61",
+  "child_gitlink": "90ac5e91c5919cdb1d228aebd797e40327900981",
+  "root_parent_preserving_reviews": "1882959a9ba88a00f4914a4657c07dc203d573a2",
+  "previous_approved_formal_root": "ef82fe02ee73e3c804b83ffbd68c5123c1377fa2",
+  "previous_child": "6842b329f71fff8b9813b2d00b83edfc61e3e505",
+  "status": "PASS",
+  "shell_exit": 0,
+  "top_level_tests_passed": 696,
+  "subtests_passed": 207,
+  "junit_suite_tests": 903,
+  "groups": {
+    "stage3_focused": {
+      "tests": 607,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 400
+    },
+    "root_lifecycle_config": {
+      "tests": 153,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 153
+    },
+    "legacy_protection": {
+      "tests": 143,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 143
+    }
+  },
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_unchanged": true,
+  "native_constructor_bytes_and_identity_unchanged": true,
+  "red_old_code": {
+    "status": "RED_EXPECTED",
+    "pytest_exit": 1,
+    "failures": 2,
+    "production_byte_identical": true,
+    "tests_injected": true,
+    "red_green_test_files_identical": true
+  },
+  "author_01": {
+    "status": "FAIL",
+    "reason": "external evidence parser tried to parse warning-prefixed log as one JSON object; pytest NOT_RUN",
+    "source_unchanged": true
+  },
+  "author_02": {
+    "status": "PASS",
+    "same_formal_pair": true,
+    "only_external_runner_parser_changed": true
+  },
+  "static": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS",
+    "changed_python_files": 4
+  },
+  "original_h100_evidence": {
+    "review_path": "docs/collab/chatgpt/reviews/2026-11-08_Issue24_Stage3A_RealWanDCP_ListConfig_REQUEST_CHANGES.md",
+    "review_sha256": "4be8969e7fb8dcb11016eea0e78d5821f5a320c3343ec2e3bde02c9fb3957dee",
+    "remote_original_directory": "data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_real_gpu_b1_parity_20261108/",
+    "untouched": true,
+    "remote_server_not_accessed": true,
+    "raw_server_files_not_copied": true
+  },
+  "independent_code_gate": "REQUESTED_NOT_YET_REVIEWED",
+  "real_h100_retry": "NOT_RUN",
+  "v3_merge": "NOT_PERFORMED"
+}
