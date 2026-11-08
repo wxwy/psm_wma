@@ -289,3 +289,15 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 Both exact implementation branches above were published and fetched successfully.
 Draft creation was rejected by GitHub HTTP403: `At least one email address must be verified to do that.`
 **No N6 Draft PR was created.** The preceding entry is a prepared handoff, not evidence of PR creation or delivered formal server review. Exact PR bodies/API requests are saved in `docs/evidence/g2_n6_2026-11-08/draft_pr_*`. Source targets/trees and all CPU evidence remain unchanged. User email verification is required before retrying creation; no issue is closed, no production/parent ref changes, no server approval or merge.
+
+
+## 2026-11-08 — G2-N6-F1-A fixed source / GPT server handoff
+
+- Fixed implementation Root `7c12caea2c0a4b9acc24d40da9e7c5a5345888f3`, tree `26e6a5004b2325aec2e5aeb656a511c1acf4a13d`; independent derived branch `codex/g2-n6-f1-source-gate`, base unchanged handoff `f1e4f1f0e3f2a48c3361987fabf58e406b313c7b`. Later ledger successor changes metadata only.
+- Native companion unchanged `2009fae35d86579bb22c273fb97ec1bf0835b533`; Child/Gitlink unchanged `1ca308055fc41fb69efaeb9efaa23808f164a18e`. Native #8 not implemented in this source-first batch; no C++ test rerun claimed.
+- Official fixtures dict-key/cls and object_cfgs unique-name/category, strict JSON Pointer, compiled geom/body/material/role/color audit, declared subset COMPLETE and independently reviewed source evidence gate implemented. Legacy native-run reviewed fields cannot promote scope; actual source manifest/review/cloud sealed and revalidated.
+- Author G2 Python129/129, zero fail/error/skip; same frozen31 probe bytes old17fail/14pass → new31pass. Synthetic FULLPHYSICS0/200 IDs/0.2m motion, source/audit/world contradiction and forged-review/rehashed-bundle negatives pass. 18 source/test hashes verified against fetched published Git objects. Read-only code review closed reported findings; not formal GPT/server acceptance.
+- Runbook: `docs/build/PSM-WMA_G2_N6_F1_A_source_scope_2026-11-08.md`; raw RED/JUnit/source inventory: `docs/evidence/g2_n6_f1_a_2026-11-08/`. Raw pytest captures retain original whitespace; source/docs whitespace check passes with raw log/XML captures excluded.
+- Actual Issue26 handoff posted and exact body read back: https://github.com/wxwy/psm_wma/issues/26#issuecomment-6720329495 . Request GPT replay original Layout1/10 four frames in existing isolated server CPU environment, reviewing all roles/body/state/color; no transfer of private inputs, images or reports off server.
+- Gate statuses: real four-frame/source/material acceptance NOT_RUN_HERE/pending; normal roots #8 OPEN; real model execution NOT_RUN; six-view H1 HUMAN_PENDING; PSS/Cosmos NOT_STARTED. No production, Gitlink, parent PR, GPU, evaluation, training or data-server file changes/access/download/outward transfer.
+- STOP after this F1-A batch per Owner Issue26 instruction; wait for independent server acceptance before next batch. Keep Draft/unmerged; exact Draft request saved for known verified-email PR restriction.

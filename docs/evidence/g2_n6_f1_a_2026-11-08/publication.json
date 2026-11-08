@@ -1,0 +1,17 @@
+{
+  "all_match_test_inventory": true,
+  "data_server_files_transferred": false,
+  "draft_pr_created": false,
+  "draft_request": "draft_pr_request.json",
+  "exact_comment_body_readback": true,
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "implementation_commit": "7c12caea2c0a4b9acc24d40da9e7c5a5345888f3",
+  "implementation_tree": "26e6a5004b2325aec2e5aeb656a511c1acf4a13d",
+  "issue_handoff": "https://github.com/wxwy/psm_wma/issues/26#issuecomment-6720329495",
+  "native_commit": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "runtime_changed_in_ledger": false,
+  "schema": "g2_n6_f1_a_publication_v1",
+  "server_acceptance": "PENDING_NOT_RUN_HERE",
+  "source_files_readback": 18,
+  "utc": "2026-11-08T10:28:02.023769+00:00"
+}
