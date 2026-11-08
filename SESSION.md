@@ -1,3 +1,17 @@
+# 2026-11-08 — Stage3A new Draft PRs published; exact-pair GPT Code Gate requested
+
+Formal implementation Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child
+`6842b329f71fff8b9813b2d00b83edfc61e3e505` unchanged. Root Draft PR25:
+https://github.com/wxwy/psm_wma/pull/25 ; Child Draft PR7:
+https://github.com/wxwy/cosmos-framework/pull/7 . Both are open/draft/unmerged,
+created through GitHub connector; next publication readback verifies exact heads.
+Evidence commit3c796fbb4ee214b3e9dafda596b04ab8745bf0fd archives77 hashed files,
+including all raw failure attempts, real synthetic CPU OS Registry/IPC lifecycle,
+complete/overflow-negative CPU traces. Earlier failed group counts come from raw
+JUnit because runner early exit omits failed group summary; raw originals unchanged.
+Canonical Inbox append byte-checked/append-only; exact author654+207 PASS retained.
+No new project execution after final author-04; official V3/Child/PR4/5/6 untouched.
+
 # 2026-11-08 — Issue24 Stage3A author CPU PASS; publication/Code Gate handoff
 
 Formal Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child-Gitlink
