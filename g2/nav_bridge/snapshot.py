@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import shutil
 from g2.io import parse_json
+from g2.sim.source_scope import (REVIEWED_SCOPE, EVIDENCE_FILES, EVIDENCE_MANIFEST,
+    EVIDENCE_REVIEW, EVIDENCE_CLOUD, verify_full_scene_review, verify_sealed_scope)
 from g2.io import ContractError, canonical, digest, new_output, read_json, sha, write_json, verified_file
 
 ENTITY = re.compile(r"entity_[0-9]+\Z")
@@ -147,14 +149,23 @@ def observation_witness(run_path,snapshot):
             run.get("model_runtime")!="recorded_model_prediction"):
         raise ContractError("ordinary perception requires genuine native recorded RGB-D/model run")
     binding=run.get("prescan_recorded_binding")
+    source_scope={"status":"SENSOR_INCREMENTAL_PARTIAL_COVERAGE"}
+    prescan_source_binding=None
     if binding:
+        if not isinstance(binding,dict):raise ContractError("invalid native prescan binding")
         if (binding.get("scene_id")!=snapshot["scene_id"] or binding.get("source_sha256")!=snapshot["source_sha256"]
             or binding.get("episode")!=run.get("episode") or binding.get("camera")!=run.get("camera")
             or binding.get("recorded_manifest_sha256")!=run.get("source_digests",{}).get("manifest.json")
             or binding.get("recorded_frames_sha256")!=run.get("source_digests",{}).get("frames.jsonl")):
             raise ContractError("prescan/recorded dataset witness mismatch")
+        # A claimed review in native_run is not source review evidence.
+        source_scope={"status":"LEGACY_PRESCAN_SOURCE_UNREVIEWED"}
+        prescan_source_binding={key:sha(binding.get(key)) for key in
+            ("prescan_cloud_sha256","visual_source_sha256")}
     elif snapshot["scene_id"]!=run.get("episode") or snapshot["source_sha256"]!=run.get("source_digests",{}).get("manifest.json"):
         raise ContractError("recorded-only scene identity mismatch")
+    if snapshot["geometry_source_mode"]=="PRESCAN_PREBUILT" and not binding:
+        raise ContractError("prebuilt map requires its original prescan source binding")
     audit=run_path.parent/"native_semantic_audit.jsonl"
     if digest(audit)!=run.get("audit_sha256"):
         raise ContractError("native semantic audit hash mismatch")
@@ -190,13 +201,17 @@ def observation_witness(run_path,snapshot):
             raise ContractError("native semantic geometry/Room assignment differs from snapshot")
     return {"run_sha256":digest(run_path),"audit_sha256":digest(audit),"frame_id":row["frame_index"],
             "stamp_ns":row["stamp_ns"],"episode":run.get("episode"),"camera":run.get("camera"),
-            "model_runtime":run["model_runtime"]}
+            "model_runtime":run["model_runtime"],"source_scope":source_scope,
+            "prescan_source_binding":prescan_source_binding}
 
 
 def capture(native_directory,output,*,native_run=None,allow_oracle_diagnostic=False,
-            expected_build_source_sha256=None):
+            expected_build_source_sha256=None,prescan_manifest=None,full_scene_review=None):
     native=Path(native_directory).resolve()
-    out=new_output(output,[native])
+    if (prescan_manifest is None)!=(full_scene_review is None):
+        raise ContractError("source manifest and full-scene review must be provided together")
+    sources=[native]+([Path(prescan_manifest).resolve().parent,Path(full_scene_review)] if prescan_manifest else [])
+    out=new_output(output,sources)
     marker=native/"SNAPSHOT_COMPLETE"
     if marker.read_text()!="nav_sg_spatial_snapshot_v1\n":
         raise ContractError("native snapshot has no valid completion marker")
@@ -205,6 +220,7 @@ def capture(native_directory,output,*,native_run=None,allow_oracle_diagnostic=Fa
         raise ContractError("native build source mismatch")
     witness=None
     if s["source_mode"]=="oracle_diagnostic":
+        if prescan_manifest:raise ContractError("oracle snapshot cannot certify ordinary full-scene source")
         if not allow_oracle_diagnostic:
             raise ContractError("oracle snapshot forbidden in normal perception; explicit diagnostic opt-in required")
         if native_run:
@@ -213,9 +229,14 @@ def capture(native_directory,output,*,native_run=None,allow_oracle_diagnostic=Fa
         if (not native_run or s["completed_rgbd_observations"]<1 or s["object_frontend_status"]!="OBSERVED"):
             raise ContractError("BLOCKED_REAL_RGBD_OBSERVATIONS")
         witness=observation_witness(native_run,s)
+    if prescan_manifest:
+        witness["source_scope"]=verify_full_scene_review(prescan_manifest,full_scene_review)
     files={}
-    for name in ("snapshot.json","surfaces.csv","grid_states.raw","SNAPSHOT_COMPLETE"):
-        p=native/name
+    source_paths={name:native/name for name in ("snapshot.json","surfaces.csv","grid_states.raw","SNAPSHOT_COMPLETE")}
+    if prescan_manifest:
+        source_paths.update({EVIDENCE_MANIFEST:Path(prescan_manifest),EVIDENCE_REVIEW:Path(full_scene_review),
+                             EVIDENCE_CLOUD:Path(prescan_manifest).parent/"precolored.txt"})
+    for name,p in source_paths.items():
         if p.is_symlink() or not p.is_file():
             raise ContractError("native snapshot files must be regular files")
         files[name]={"path":name,"bytes":p.stat().st_size,"sha256":digest(p)}
@@ -225,18 +246,22 @@ def capture(native_directory,output,*,native_run=None,allow_oracle_diagnostic=Fa
     count=sum(1 for _ in iter_surfaces(native/"surfaces.csv",{e["id"] for e in s["entities"]}))
     out.mkdir(parents=True)
     for name,record in files.items():
-        shutil.copyfile(native/name,out/name)
+        (out/name).parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(source_paths[name],out/name)
         verified_file(out,record)
-        if digest(native/name)!=record["sha256"]:
+        if digest(source_paths[name])!=record["sha256"]:
             raise ContractError("native snapshot changed during capture")
     manifest={"schema":"g2_native_bundle_v1","scene_id":s["scene_id"],"source_sha256":s["source_sha256"],
               "frame_id":s["frame_id"],"timestamp_ns":s["timestamp_ns"],"world_frame":s["world_frame"],
               "native_build_source_sha256":s["native_build_source_sha256"],"source_mode":s["source_mode"],
               "geometry_source_mode":s["geometry_source_mode"],
+              "source_scope":witness["source_scope"] if witness else
+                 {"status":"ORACLE_DIAGNOSTIC_NOT_FULL_SCENE_CERTIFICATION"},
               "files":files,"surface_points":count,"observation_witness":witness,
               "semantic_stage":"ORACLE_DIAGNOSTIC" if witness is None else "REAL_RECORDED_INPUT_OBSERVED",
               "structural_stage":"AVAILABLE" if s["affiliations_complete"] else "BLOCKED_NATIVE_WALL_ROOTS",
               "training_ready":False}
+    verify_sealed_scope(out,manifest)
     manifest["version_sha256"]=hashlib.sha256(canonical(manifest)).hexdigest()
     write_json(out/"bundle.json",manifest)
     (out/"BUNDLE_COMPLETE").write_text("SOURCE_BOUND_NATIVE_SNAPSHOT\n")
@@ -254,7 +279,11 @@ def load_bundle(directory):
     manifest["version_sha256"]=expected
     if type(manifest.get("surface_points")) is not int or not 0<manifest["surface_points"]<=5_000_000:
         raise ContractError("invalid sealed surface count")
-    if manifest.get("schema")!="g2_native_bundle_v1" or set(manifest.get("files",{}))!={"snapshot.json","surfaces.csv","grid_states.raw","SNAPSHOT_COMPLETE"}:
+    expected_files={"snapshot.json","surfaces.csv","grid_states.raw","SNAPSHOT_COMPLETE"}
+    scope=manifest.get("source_scope",{})
+    if not isinstance(scope,dict):raise ContractError("invalid source scope packet")
+    if scope.get("status")==REVIEWED_SCOPE:expected_files|=EVIDENCE_FILES
+    if manifest.get("schema")!="g2_native_bundle_v1" or set(manifest.get("files",{}))!=expected_files:
         raise ContractError("invalid native bundle file inventory")
     for name,record in manifest["files"].items():
         if record.get("path")!=name:raise ContractError("bundle file identity mismatch")
@@ -263,6 +292,7 @@ def load_bundle(directory):
     for k in ("scene_id","source_sha256","frame_id","timestamp_ns","world_frame","source_mode","native_build_source_sha256","geometry_source_mode"):
         if snapshot[k]!=manifest[k]:
             raise ContractError("bundle/source frame mismatch")
+    verify_sealed_scope(root,manifest)
     return manifest,snapshot
 
 
@@ -271,10 +301,12 @@ def main():
     p.add_argument("--native-directory",required=True);p.add_argument("--output",required=True)
     p.add_argument("--native-run");p.add_argument("--allow-oracle-diagnostic",action="store_true")
     p.add_argument("--expected-build-source-sha256")
+    p.add_argument("--prescan-manifest");p.add_argument("--full-scene-review")
     a=p.parse_args()
     r=capture(a.native_directory,a.output,native_run=a.native_run,
               allow_oracle_diagnostic=a.allow_oracle_diagnostic,
-              expected_build_source_sha256=a.expected_build_source_sha256)
+              expected_build_source_sha256=a.expected_build_source_sha256,
+              prescan_manifest=a.prescan_manifest,full_scene_review=a.full_scene_review)
     print(r["semantic_stage"],r["structural_stage"])
 
 

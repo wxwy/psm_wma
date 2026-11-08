@@ -1,3 +1,30 @@
+# 2026-11-08 — G2-N6-F1-A author batch frozen / server handoff preparation
+
+REVIEW. Source-only batch from published f1e4f1f0; branch
+codex/g2-n6-f1-source-gate. Official fixture dict-key/cls and object_cfgs
+unique-name/category binding, strict JSON Pointer, complete compiled-geom
+source audit, declared-only COMPLETE, independent actual source-review
+evidence and downstream sealed revalidation implemented. No normal native
+structure, Room/Island algorithm or Cosmos/production implementation change.
+
+Author evidence: 31 frozen probe tests on old source 17 expected failures/14 pass;
+the exact same test bytes on new source 31/31 pass. Full G2 Python129/129, zero
+failure/error/skip. Synthetic FULLPHYSICS frame0/200 preserves source IDs and
+reports 0.2m motion. Source-class/body/world contradictions, arbitrary reviewed
+fields, missing/rejected review artifacts and self-rehashed bundles reject.
+Read-only second-agent code review closed reported issues for this limited batch;
+this is not GPT/server approval. Evidence docs/evidence/g2_n6_f1_a_2026-11-08/;
+handoff docs/build/PSM-WMA_G2_N6_F1_A_source_scope_2026-11-08.md.
+
+Native remains2009fae35d86579bb22c273fb97ec1bf0835b533, clean; C++ not rerun
+in this PSM-only batch. Gitlink unchanged1ca308055fc41fb69efaeb9efaa23808f164a18e.
+No data-server access, private file download/outward transfer, GPU/model
+inference, simulator evaluation, training or parent/production ref updates.
+Real Layout1/10 source/role/material four-frame checks stay NOT_RUN_HERE;
+normal structures #8, genuine model execution and six-view H1 stay OPEN.
+Stop after fixed-source publication and Issue26 handoff, per its F1 batch
+instruction. Existing verified-email PR blocker does not block source changes.
+
 # 2026-11-08 — Draft PR creation blocked by GitHub email verification
 
 BLOCKED publication. Both source branches are published and fetched byte-for-byte,

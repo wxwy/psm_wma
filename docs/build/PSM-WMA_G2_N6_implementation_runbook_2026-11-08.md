@@ -35,8 +35,11 @@ The explicit `g2_sim_prescan_v1` role file must list every compiled geom. Exampl
     "exact_visual_geom": {
       "role": "visual",
       "source_kind": "ep_meta",
-      "ep_meta_pointer": "/fixtures/0",
-      "source_instance_name": "<official cfg name>"
+      "ep_meta_pointer": "/fixtures/outlet_room",
+      "source_instance_name": "outlet_room",
+      "source_category": "WallAccessory",
+      "source_body_name": "<verified compiled fixture body>",
+      "classification_reason": "<source evidence for this visual role>"
     },
     "exact_collision_geom": {
       "role": "collision",
@@ -47,7 +50,7 @@ The explicit `g2_sim_prescan_v1` role file must list every compiled geom. Exampl
 }
 ```
 
-Permitted roles are `visual`, `collision`, `robot`, `auxiliary`; all require explicit source provenance. `ep_meta` pointers retain the actual official record after checking its `name`. Exact `mjcf` binding is available for genuinely source-authored geoms and TEST_ONLY fixtures. Names/group IDs are not silently treated as semantic classes. Collision red is excluded by the explicit role declaration; the role mapping itself requires human source review.
+Permitted roles are `visual`, `collision`, `robot`, `auxiliary`; all require explicit source provenance. F1-A supports official `fixtures` dictionaries by exact decoded key and `cls`, and `object_cfgs` lists by unique `name` plus the original `obj_groups`/`obj_type`/`cls` field. Fixture-list surrogates are rejected. RFC 6901 escapes and canonical list indices are strict. Category expectations must match the source; groups are retained as groups, not inferred object classes. Exact `mjcf` binding is available for source-authored geoms and TEST_ONLY fixtures; it cannot silently retain/replace ep_meta assertions. Names/group IDs never select visual/collision roles automatically. The role mapping requires independent source review. See the [F1-A source/scope handoff](PSM-WMA_G2_N6_F1_A_source_scope_2026-11-08.md).
 
 All XML/includes/assets are loaded read-only into a private VFS and hashed. Gzip XML is supported with bounds. References must resolve uniquely inside explicit approved asset roots; unavailable absolute paths need a reviewed source/root mapping, not silent basename matching. Saved `qpos` or MuJoCo FULLPHYSICS state is restored with `mj_forward`, never `mj_step`; nonzero frames require the archive. Missing archive time is `null`/`missing`, not fabricated.
 
@@ -69,7 +72,7 @@ python -m g2.sim.prescan --mjcf "$MODEL" --metadata "$VISUAL_ROLES" \
   --native-manifest "$GT/frame200/manifest.json" --output "$NEW_COLOR200"
 ```
 
-The native manifest binding checks complete model closure, MuJoCo version, scene, archive hash and exact restored state format/row/time. It adopts the shared native geometry `source_sha256` and separately retains `visual_source_sha256`. Without a native manifest, the visual source identity is used directly.
+The native manifest binding checks complete model closure, MuJoCo version, scene, archive hash and exact restored state format/row/time. It adopts the shared native geometry `source_sha256` and separately retains `visual_source_sha256`. Without a native manifest, the visual source identity is used directly. F1-A adds a complete compiled geom/body/role/material/world-pose/color audit and digest. `COMPLETE` is explicitly `DECLARED_VISUAL_GEOMS_ONLY`; it never certifies whole-house scope, even when sampled color validity is 100%.
 
 Outputs: `precolored.txt` (`NAV_SG_PRECOLORED_CLOUD_V1`), `manifest.json`, and only for supported declared visual surfaces, `COMPLETE`. Manifest includes bounds, counts, source closure, adapter source SHA, actual appearance records, excluded roles, state and source raw-file hashes. No RGB image, robot trajectory, camera pose or native object detection is synthesized.
 
@@ -102,9 +105,9 @@ python -m g2.views.render --bundle "$NEW_BUNDLE0" \
   --output "$NEW_VIEWS0" --meters-per-pixel .05 --allow-oracle-diagnostic
 ```
 
-Repeat for frame 200. The diagnostic switch is required at both boundaries. Ordinary capture instead requires `--native-run "$RUN/native_run.json"` and a genuine matching native audit; no diagnostic switch promotes GT semantics.
+Repeat for frame 200. The diagnostic switch is required at both boundaries. Ordinary capture requires `--native-run "$RUN/native_run.json"` and a genuine matching native audit. To preserve reviewed full-scene source scope, additionally supply `--prescan-manifest "$NEW_WORLD_COLOR0/manifest.json" --full-scene-review "$SOURCE_REVIEW0"`. Otherwise prescan scope remains unreviewed. No diagnostic switch promotes GT semantics.
 
-Sealing validates actual native IDs/references/finite geometry, point colors/masks, raw grid encoding and complete output, hashes every artifact before/after copying, and creates a content-addressed `bundle.json` plus `BUNDLE_COMPLETE`. The retained 3D bundle is the source for later multilayer/container queries; images do not replace it. This protocol binds evidence but is not a cryptographic model-execution attestation.
+Sealing validates actual native IDs/references/finite geometry, point colors/masks, raw grid encoding and complete output, hashes every artifact before/after copying, and creates a content-addressed `bundle.json` plus `BUNDLE_COMPLETE`. A reviewed ordinary bundle also retains three server-local `source_evidence/` files: the original prescan manifest, source review and original precolored input. Capture, load and render revalidate them against the actual initial input hashes, source identity and geom audit. A reviewed status field alone cannot certify scope. These private artifacts stay on the data server. This protocol binds external review assertions; it is not cryptographic execution attestation or human view acceptance.
 
 Rendering follows user-confirmed v1.5. House Floor top and Upper upward views are shared. Every Room references those plus four world-axis cardinal assets; no unsupported wall-aligned axis or four physical walls are invented. Missing boundaries reserve unknown slots. Native Island members are excluded from Room cardinals and receive four independent absolute-scale crops. Island grouping is never recomputed in G2.
 
@@ -120,12 +123,13 @@ python -m g2.nav_bridge.recorded --prescan-manifest "$NEW_COLOR0/manifest.json" 
   --grid "$GT/frame0/grid.txt" --nav-repo "$NAV_REPO" \
   --dataset-root "$RECORDED_ROOT" --episode "$EPISODE" --camera "$CAMERA" \
   --sidecar "$GENUINE_SIDECAR" --frames 201 \
+  --full-scene-review "$SOURCE_REVIEW0" \
   --projection-min-z .2 --projection-max-z 1.8 --output "$NEW_PLAN"
 ```
 
 For this ordinary recorded path, first re-export frame 0 with `--world-frame world` to a separate `$NEW_WORLD_COLOR0` and use that manifest in place of `$NEW_COLOR0` above. The legacy N1/N3 recorded pose messages and native parameters both use `world`; a diagnostic `map` cloud is rejected rather than silently relabelled. The original source geometry/coordinates must match the recorded Episode.
 
-This writes `PLAN_ONLY_NOT_EXECUTED`, `recorded_binding.json`, parameter/replay argv arrays, native working directory and launch plan. It requires exact original `model.xml.gz`, `states.npz`, `ep_meta.json` SHA equality with recorded source manifests, complete frame-0 visual input, matching grid/cloud and actual recorded files. It does not launch ROS or models. Both repositories have a `g2` package: execute each argv in the specified native cwd, not a combined Python path.
+This writes `PLAN_ONLY_NOT_EXECUTED`, `recorded_binding.json`, parameter/replay argv arrays, native working directory and launch plan. It requires an explicit source/role/material review bound to the exact prescan manifest, full geom audit, scene/frame and source SHA; `COMPLETE` alone is rejected. For a legitimate subset diagnostic, replace `--full-scene-review` with `--allow-declared-subset`; that emits `DIAGNOSTIC_SUBSET_PLAN_ONLY_NOT_EXECUTED` and cannot establish full-scene source scope. Exact original `model.xml.gz`, `states.npz`, `ep_meta.json` SHA equality with recorded manifests, matching grid/cloud and recorded files still apply. No ROS or model is launched. Execute each repository's `g2` modules in its own cwd.
 
 On an independently approved server runtime, run `parameters_argv`, launch `mapping g2_semantic_review.launch` with its emitted params, start the genuine matching sidecar service using the existing N3 procedure, then run `replay_argv`. The genuine sidecar must cover the bounded first/final frames (0/200 for 201 frames); a 459-frame sidecar cannot be silently truncated. Snapshot export waits for the actual native ACK, successful semantic audit and exact color-worker frame. Normal source initialization does not disable live RGB-D updates or switch the map to oracle mode.
 

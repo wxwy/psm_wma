@@ -31,13 +31,15 @@ def inputs(tmp_path):
     (episode/"frames.jsonl").write_text("{}\n")
     sidecar=tmp_path/"sidecar";sidecar.mkdir()
     return manifest,grid,dict(nav_repo=nav,dataset_root=dataset,episode=episode.name,
-                             camera="TEST_ONLY_camera",sidecar=sidecar,output=tmp_path/"plan")
+                             camera="TEST_ONLY_camera",sidecar=sidecar,output=tmp_path/"plan",
+                             allow_declared_subset=True)
 
 
 def test_plan_binds_original_sources_and_uses_native_launch(inputs):
     manifest,grid,kwargs=inputs
     plan=prepare(manifest,grid,**kwargs)
-    assert plan["status"]=="PLAN_ONLY_NOT_EXECUTED"
+    assert plan["status"]=="DIAGNOSTIC_SUBSET_PLAN_ONLY_NOT_EXECUTED"
+    assert plan["source_scope"]["status"]=="DECLARED_SUBSET_NOT_CERTIFIED"
     assert plan["cwd"]==str(kwargs["nav_repo"])
     assert plan["native_launch"]["launch"]=="g2_semantic_review.launch"
     assert "--prescan-recorded-binding" in plan["replay_argv"]
@@ -78,4 +80,11 @@ def test_plan_requires_completed_source_identity(inputs,fault):
     else:
         data=read_json(manifest);data["source_identity"]={"tampered":True};write_json(manifest,data)
     with pytest.raises(ContractError):prepare(manifest,grid,**kwargs)
+    assert not kwargs["output"].exists()
+
+
+def test_complete_marker_alone_cannot_create_full_scene_plan(inputs):
+    manifest,grid,kwargs=inputs;kwargs.pop("allow_declared_subset")
+    with pytest.raises(ContractError,match="BLOCKED_FULL_SCENE_SOURCE_REVIEW"):
+        prepare(manifest,grid,**kwargs)
     assert not kwargs["output"].exists()

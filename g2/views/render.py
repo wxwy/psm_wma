@@ -8,6 +8,7 @@ import numpy as np
 from PIL import Image
 from g2.io import ContractError, canonical, digest, new_output, write_json
 from g2.nav_bridge.snapshot import iter_surfaces, load_bundle
+from g2.sim.source_scope import REVIEWED_SCOPE, SUBSET_SCOPE
 
 AXES={
     "floor_top":([1,0,0],[0,1,0],[0,0,-1]),
@@ -194,8 +195,15 @@ def render(bundle,output,*,meters_per_pixel=.05,allow_oracle_diagnostic=False):
     recipe={"schema":"g2_six_island_recipe_v1","contract":"G2-v1.5-independent-islands",
             "meters_per_pixel":meters_per_pixel,"axes":AXES,"occlusion":"nearest_surface_including_uncolored_geometry",
             "room_frame":"world_axes_explicit","islands_in_room_cardinals":False}
-    result={"schema":"g2_spatial_views_v1","status":"ORACLE_DIAGNOSTIC_ONLY" if oracle else
-            "RECORDED_SPATIAL_PREVIEW" if s["affiliations_complete"] else "BLOCKED_NATIVE_STRUCTURAL_ROOTS",
+    scope=manifest.get("source_scope",{"status":"LEGACY_PRESCAN_SOURCE_UNREVIEWED"})
+    status="ORACLE_DIAGNOSTIC_ONLY" if oracle else "BLOCKED_NATIVE_STRUCTURAL_ROOTS"
+    if not oracle and s["affiliations_complete"]:
+        status="RECORDED_SPATIAL_PREVIEW"
+        if ((s["geometry_source_mode"]=="PRESCAN_PREBUILT" and scope["status"]!=REVIEWED_SCOPE)
+            or scope["status"] in (SUBSET_SCOPE,"LEGACY_PRESCAN_SOURCE_UNREVIEWED")):
+            status="BLOCKED_FULL_SCENE_SOURCE_REVIEW"
+    result={"schema":"g2_spatial_views_v1","status":status,
+            "source_scope":scope,"full_scene_source_certified":not oracle and scope["status"]==REVIEWED_SCOPE,
             "scene_id":s["scene_id"],"source_sha256":s["source_sha256"],"frame_id":s["frame_id"],
             "native_bundle_version_sha256":manifest["version_sha256"],
             "entity_index_to_native_id":sorted(by_id),

@@ -1,0 +1,286 @@
+FFFF.............FFFFFFFFFF.FFF                                          [100%]
+=================================== FAILURES ===================================
+_______ test_official_fixture_identity_lives_in_dict_key[WallAccessory] ________
+
+fixture_class = 'WallAccessory'
+
+    @pytest.mark.parametrize("fixture_class",["WallAccessory","HingeCabinet"])
+    def test_official_fixture_identity_lives_in_dict_key(fixture_class):
+        ep={"fixtures":{"outlet_room":{"cls":fixture_class}}}
+>       result=source_binding(spec(),"TEST_ONLY_geom",ep)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'ep_meta_pointer': '/fixtures/outlet_room', 'role': 'visual', 'source_instance_name': 'outlet_room', 'source_kind': 'ep_meta'}
+name = 'TEST_ONLY_geom'
+ep_meta = {'fixtures': {'outlet_room': {'cls': 'WallAccessory'}}}
+
+    def source_binding(spec, name, ep_meta):
+        if spec.get("source_kind") == "mjcf":
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind": "mjcf", "geom_name": name}
+        if spec.get("source_kind") != "ep_meta" or ep_meta is None:
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        record = pointer(ep_meta, spec.get("ep_meta_pointer"))
+        if not isinstance(record, dict) or record.get("name") != spec.get("source_instance_name"):
+>           raise ContractError("official fixture/object cfg identity mismatch")
+E           g2.io.ContractError: official fixture/object cfg identity mismatch
+
+g2/sim/prescan.py:37: ContractError
+________ test_official_fixture_identity_lives_in_dict_key[HingeCabinet] ________
+
+fixture_class = 'HingeCabinet'
+
+    @pytest.mark.parametrize("fixture_class",["WallAccessory","HingeCabinet"])
+    def test_official_fixture_identity_lives_in_dict_key(fixture_class):
+        ep={"fixtures":{"outlet_room":{"cls":fixture_class}}}
+>       result=source_binding(spec(),"TEST_ONLY_geom",ep)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'ep_meta_pointer': '/fixtures/outlet_room', 'role': 'visual', 'source_instance_name': 'outlet_room', 'source_kind': 'ep_meta'}
+name = 'TEST_ONLY_geom'
+ep_meta = {'fixtures': {'outlet_room': {'cls': 'HingeCabinet'}}}
+
+    def source_binding(spec, name, ep_meta):
+        if spec.get("source_kind") == "mjcf":
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind": "mjcf", "geom_name": name}
+        if spec.get("source_kind") != "ep_meta" or ep_meta is None:
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        record = pointer(ep_meta, spec.get("ep_meta_pointer"))
+        if not isinstance(record, dict) or record.get("name") != spec.get("source_instance_name"):
+>           raise ContractError("official fixture/object cfg identity mismatch")
+E           g2.io.ContractError: official fixture/object cfg identity mismatch
+
+g2/sim/prescan.py:37: ContractError
+________ test_object_cfg_list_binds_name_and_original_group_provenance _________
+
+    def test_object_cfg_list_binds_name_and_original_group_provenance():
+        ep={"object_cfgs":[{"name":"obj","obj_groups":["cup","mug"]}]}
+        result=source_binding(spec(instance="obj",path="/object_cfgs/0"),"g",ep)
+>       assert result["category"]=={"field":"obj_groups","value":["cup","mug"]}
+               ^^^^^^^^^^^^^^^^^^
+E       KeyError: 'category'
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:25: KeyError
+__________________ test_escaped_fixture_key_is_exact_identity __________________
+
+    def test_escaped_fixture_key_is_exact_identity():
+        ep={"fixtures":{"a/b~c":{"cls":"WallAccessory"}}}
+>       result=source_binding(spec(instance="a/b~c",path="/fixtures/a~1b~0c"),"g",ep)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+spec = {'ep_meta_pointer': '/fixtures/a~1b~0c', 'role': 'visual', 'source_instance_name': 'a/b~c', 'source_kind': 'ep_meta'}
+name = 'g', ep_meta = {'fixtures': {'a/b~c': {'cls': 'WallAccessory'}}}
+
+    def source_binding(spec, name, ep_meta):
+        if spec.get("source_kind") == "mjcf":
+            if spec.get("geom_name") != name:
+                raise ContractError("MJCF provenance must name the exact geom")
+            return {"kind": "mjcf", "geom_name": name}
+        if spec.get("source_kind") != "ep_meta" or ep_meta is None:
+            raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
+        record = pointer(ep_meta, spec.get("ep_meta_pointer"))
+        if not isinstance(record, dict) or record.get("name") != spec.get("source_instance_name"):
+>           raise ContractError("official fixture/object cfg identity mismatch")
+E           g2.io.ContractError: official fixture/object cfg identity mismatch
+
+g2/sim/prescan.py:37: ContractError
+_________ test_fixtures_list_is_not_silently_treated_as_official_dict __________
+
+    def test_fixtures_list_is_not_silently_treated_as_official_dict():
+>       with pytest.raises(ContractError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:52: Failed
+_________________ test_object_cfgs_fail_closed[wrong_category] _________________
+
+fault = 'wrong_category'
+
+    @pytest.mark.parametrize("fault",["wrong_category","duplicate_name","robot_role","missing_category"])
+    def test_object_cfgs_fail_closed(fault):
+        ep={"object_cfgs":[{"name":"obj","obj_groups":"cup"}]}
+        s=spec(instance="obj",path="/object_cfgs/0")
+        if fault=="wrong_category":s["source_category"]="plate"
+        elif fault=="duplicate_name":ep["object_cfgs"].append(dict(ep["object_cfgs"][0]))
+        elif fault=="robot_role":s["role"]="robot"
+        else:ep["object_cfgs"][0].pop("obj_groups")
+>       with pytest.raises(ContractError):source_binding(s,"g",ep)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:64: Failed
+_________________ test_object_cfgs_fail_closed[duplicate_name] _________________
+
+fault = 'duplicate_name'
+
+    @pytest.mark.parametrize("fault",["wrong_category","duplicate_name","robot_role","missing_category"])
+    def test_object_cfgs_fail_closed(fault):
+        ep={"object_cfgs":[{"name":"obj","obj_groups":"cup"}]}
+        s=spec(instance="obj",path="/object_cfgs/0")
+        if fault=="wrong_category":s["source_category"]="plate"
+        elif fault=="duplicate_name":ep["object_cfgs"].append(dict(ep["object_cfgs"][0]))
+        elif fault=="robot_role":s["role"]="robot"
+        else:ep["object_cfgs"][0].pop("obj_groups")
+>       with pytest.raises(ContractError):source_binding(s,"g",ep)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:64: Failed
+___________________ test_object_cfgs_fail_closed[robot_role] ___________________
+
+fault = 'robot_role'
+
+    @pytest.mark.parametrize("fault",["wrong_category","duplicate_name","robot_role","missing_category"])
+    def test_object_cfgs_fail_closed(fault):
+        ep={"object_cfgs":[{"name":"obj","obj_groups":"cup"}]}
+        s=spec(instance="obj",path="/object_cfgs/0")
+        if fault=="wrong_category":s["source_category"]="plate"
+        elif fault=="duplicate_name":ep["object_cfgs"].append(dict(ep["object_cfgs"][0]))
+        elif fault=="robot_role":s["role"]="robot"
+        else:ep["object_cfgs"][0].pop("obj_groups")
+>       with pytest.raises(ContractError):source_binding(s,"g",ep)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:64: Failed
+________________ test_object_cfgs_fail_closed[missing_category] ________________
+
+fault = 'missing_category'
+
+    @pytest.mark.parametrize("fault",["wrong_category","duplicate_name","robot_role","missing_category"])
+    def test_object_cfgs_fail_closed(fault):
+        ep={"object_cfgs":[{"name":"obj","obj_groups":"cup"}]}
+        s=spec(instance="obj",path="/object_cfgs/0")
+        if fault=="wrong_category":s["source_category"]="plate"
+        elif fault=="duplicate_name":ep["object_cfgs"].append(dict(ep["object_cfgs"][0]))
+        elif fault=="robot_role":s["role"]="robot"
+        else:ep["object_cfgs"][0].pop("obj_groups")
+>       with pytest.raises(ContractError):source_binding(s,"g",ep)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:64: Failed
+______ test_json_pointer_rejects_invalid_escapes_and_array_tokens[/a~2b] _______
+
+path = '/a~2b'
+
+    @pytest.mark.parametrize("path",["/a~2b","/list/-1","/list/00","/list/+0","/list/ 0","/list/-"])
+    def test_json_pointer_rejects_invalid_escapes_and_array_tokens(path):
+>       with pytest.raises(ContractError):pointer({"a~2b":1,"list":[1]},path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:69: Failed
+_____ test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/-1] _____
+
+path = '/list/-1'
+
+    @pytest.mark.parametrize("path",["/a~2b","/list/-1","/list/00","/list/+0","/list/ 0","/list/-"])
+    def test_json_pointer_rejects_invalid_escapes_and_array_tokens(path):
+>       with pytest.raises(ContractError):pointer({"a~2b":1,"list":[1]},path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:69: Failed
+_____ test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/00] _____
+
+path = '/list/00'
+
+    @pytest.mark.parametrize("path",["/a~2b","/list/-1","/list/00","/list/+0","/list/ 0","/list/-"])
+    def test_json_pointer_rejects_invalid_escapes_and_array_tokens(path):
+>       with pytest.raises(ContractError):pointer({"a~2b":1,"list":[1]},path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:69: Failed
+_____ test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/+0] _____
+
+path = '/list/+0'
+
+    @pytest.mark.parametrize("path",["/a~2b","/list/-1","/list/00","/list/+0","/list/ 0","/list/-"])
+    def test_json_pointer_rejects_invalid_escapes_and_array_tokens(path):
+>       with pytest.raises(ContractError):pointer({"a~2b":1,"list":[1]},path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:69: Failed
+_____ test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/ 0] _____
+
+path = '/list/ 0'
+
+    @pytest.mark.parametrize("path",["/a~2b","/list/-1","/list/00","/list/+0","/list/ 0","/list/-"])
+    def test_json_pointer_rejects_invalid_escapes_and_array_tokens(path):
+>       with pytest.raises(ContractError):pointer({"a~2b":1,"list":[1]},path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:69: Failed
+__________________ test_json_pointer_root_and_escaped_tokens ___________________
+
+    def test_json_pointer_root_and_escaped_tokens():
+        document={"a/b":{"~key":[42]}}
+>       assert pointer(document,"") is document
+               ^^^^^^^^^^^^^^^^^^^^
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+document = {'a/b': {'~key': [42]}}, path = ''
+
+    def pointer(document, path):
+        if not isinstance(path, str) or not path.startswith("/"):
+>           raise ContractError("ep_meta_pointer must be an explicit JSON pointer")
+E           g2.io.ContractError: ep_meta_pointer must be an explicit JSON pointer
+
+g2/sim/prescan.py:17: ContractError
+_________ test_mjcf_cannot_silently_keep_official_identity_assertions __________
+
+    def test_mjcf_cannot_silently_keep_official_identity_assertions():
+>       with pytest.raises(ContractError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_source_identity_frozen.py:79: Failed
+___________ test_complete_marker_alone_cannot_create_full_scene_plan ___________
+
+inputs = (PosixPath('/tmp/pytest-of-agent/pytest-60/test_complete_marker_alone_can0/prescan/manifest.json'), PosixPath('/tmp/py...'TEST_ONLY_episode', 'nav_repo': PosixPath('/tmp/pytest-of-agent/pytest-60/test_complete_marker_alone_can0/nav'), ...})
+
+    def test_complete_marker_alone_cannot_create_full_scene_plan(inputs):
+        manifest,grid,kwargs=inputs;kwargs.pop("allow_declared_subset")
+>       with pytest.raises(ContractError,match="BLOCKED_FULL_SCENE_SOURCE_REVIEW"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'g2.io.ContractError'>
+
+../n6_f1_probe_tests/test_recorded_scope.py:88: Failed
+-------- generated xml file: /workspace/work/n6_f1_frozen_probe_old.xml --------
+=========================== short test summary info ============================
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_official_fixture_identity_lives_in_dict_key[WallAccessory]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_official_fixture_identity_lives_in_dict_key[HingeCabinet]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_object_cfg_list_binds_name_and_original_group_provenance
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_escaped_fixture_key_is_exact_identity
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_fixtures_list_is_not_silently_treated_as_official_dict
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_object_cfgs_fail_closed[wrong_category]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_object_cfgs_fail_closed[duplicate_name]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_object_cfgs_fail_closed[robot_role]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_object_cfgs_fail_closed[missing_category]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_json_pointer_rejects_invalid_escapes_and_array_tokens[/a~2b]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/-1]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/00]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/+0]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_json_pointer_rejects_invalid_escapes_and_array_tokens[/list/ 0]
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_json_pointer_root_and_escaped_tokens
+FAILED ../n6_f1_probe_tests/test_source_identity_frozen.py::test_mjcf_cannot_silently_keep_official_identity_assertions
+FAILED ../n6_f1_probe_tests/test_recorded_scope.py::test_complete_marker_alone_cannot_create_full_scene_plan
+17 failed, 14 passed in 0.22s

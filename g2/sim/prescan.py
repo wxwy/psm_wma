@@ -6,36 +6,127 @@ Source labels remain provenance; no GT class is sent as normal perception.
 import argparse
 import hashlib
 from pathlib import Path
+import re
 import numpy as np
 from g2.io import ContractError, canonical, digest, new_output, read_json, sha, write_json
 from .source_geometry import (load_model, model_source_hash, apply_state,
                               primitive_mesh, surface_colors, effective_rgba)
 
 
+def pointer_tokens(path):
+    if not isinstance(path, str) or (path and not path.startswith("/")):
+        raise ContractError("expected RFC 6901 JSON Pointer")
+    if path == "":
+        return []
+    tokens = path[1:].split("/")
+    if any(re.search(r"~(?:[^01]|$)", token) for token in tokens):
+        raise ContractError("invalid JSON Pointer escape")
+    return [token.replace("~1", "/").replace("~0", "~") for token in tokens]
+
+
 def pointer(document, path):
-    if not isinstance(path, str) or not path.startswith("/"):
-        raise ContractError("ep_meta_pointer must be an explicit JSON pointer")
     current = document
     try:
-        for key in path[1:].split("/"):
-            key = key.replace("~1", "/").replace("~0", "~")
-            current = current[int(key)] if isinstance(current, list) else current[key]
+        for key in pointer_tokens(path):
+            if isinstance(current, list):
+                if not re.fullmatch(r"0|[1-9][0-9]*", key):
+                    raise ContractError("invalid JSON Pointer array index")
+                current = current[int(key)]
+            elif isinstance(current, dict):
+                current = current[key]
+            else:
+                raise ContractError("JSON Pointer traverses a scalar")
+    except ContractError:
+        raise
     except (KeyError, IndexError, ValueError, TypeError) as error:
         raise ContractError("missing ep_meta record: " + path) from error
     return current
 
 
-def source_binding(spec, name, ep_meta):
+def source_text(value):
+    return isinstance(value, str) and bool(value.strip()) and not any(ord(c) < 32 for c in value)
+
+
+def source_binding(spec, name, ep_meta, *, body_names=None):
+    if not isinstance(spec, dict) or spec.get("role") not in ("visual", "collision", "robot", "auxiliary"):
+        raise ContractError("explicit valid geom role required")
+    body = spec.get("source_body_name")
+    if body is not None and (not source_text(body) or body_names is None or body not in body_names):
+        raise ContractError("source body is absent from actual geom ancestry")
+    body_binding = {"status":"VERIFIED", "body_name":body,
+                    "basis":"DECLARED_BODY_MATCHES_COMPILED_GEOM_ANCESTRY"} if body is not None else {"status":"UNSPECIFIED"}
     if spec.get("source_kind") == "mjcf":
+        official_fields = ("ep_meta_pointer", "source_instance_name", "source_collection",
+                           "source_category", "source_category_field")
+        if any(key in spec for key in official_fields):
+            raise ContractError("MJCF source cannot replace official ep_meta assertions")
         if spec.get("geom_name") != name:
             raise ContractError("MJCF provenance must name the exact geom")
-        return {"kind": "mjcf", "geom_name": name}
-    if spec.get("source_kind") != "ep_meta" or ep_meta is None:
+        return {"kind":"mjcf", "geom_name":name, "body_binding":body_binding}
+    if spec.get("source_kind") != "ep_meta" or not isinstance(ep_meta, dict):
         raise ContractError("visual geom requires official ep_meta or exact MJCF provenance")
-    record = pointer(ep_meta, spec.get("ep_meta_pointer"))
-    if not isinstance(record, dict) or record.get("name") != spec.get("source_instance_name"):
+    tokens = pointer_tokens(spec.get("ep_meta_pointer"))
+    instance = spec.get("source_instance_name")
+    if len(tokens) != 2 or tokens[0] not in ("fixtures", "object_cfgs") or not source_text(instance):
+        raise ContractError("official source requires a fixture entry or object_cfgs entry")
+    collection = tokens[0]
+    if spec.get("source_collection", collection) != collection or spec["role"] == "robot":
+        raise ContractError("official fixture/object collection and role conflict")
+    values = ep_meta.get(collection)
+    if (collection == "fixtures" and not isinstance(values, dict)) or (collection == "object_cfgs" and not isinstance(values, list)):
+        raise ContractError("official fixtures must be a dict and object_cfgs a list")
+    record = pointer(ep_meta, spec["ep_meta_pointer"])
+    if not isinstance(record, dict):
+        raise ContractError("official source record must be an object")
+    if collection == "fixtures":
+        matches = tokens[1] == instance and record.get("name", instance) == instance
+        field = spec.get("source_category_field", "cls")
+        if field != "cls":
+            raise ContractError("official fixture category must come from cls")
+    else:
+        matches = record.get("name") == instance and sum(
+            isinstance(item, dict) and item.get("name") == instance for item in values) == 1
+        field = spec.get("source_category_field")
+        if field is None:
+            field = next((key for key in ("obj_groups", "obj_type", "cls") if key in record), None)
+        if field not in ("obj_groups", "obj_type", "cls"):
+            raise ContractError("official object category provenance is missing")
+    if not matches:
         raise ContractError("official fixture/object cfg identity mismatch")
-    return {"kind": "ep_meta", "pointer": spec["ep_meta_pointer"], "record": record}
+    category = record.get(field)
+    valid_category = source_text(category) or (field == "obj_groups" and isinstance(category, list)
+                                              and bool(category) and all(source_text(v) for v in category))
+    if not valid_category or ("source_category" in spec and spec["source_category"] != category):
+        raise ContractError("official fixture/object category mismatch or malformed source")
+    return {"kind":"ep_meta", "pointer":spec["ep_meta_pointer"], "collection":collection,
+            "instance_name":instance, "category":{"field":field,"value":category},
+            "record":record, "body_binding":body_binding}
+
+
+def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):
+    import mujoco
+    ancestry = []
+    body = int(model.geom_bodyid[g])
+    while True:
+        ancestry.append({"body_id":body, "body_name":mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, body)})
+        if body == 0:
+            break
+        body = int(model.body_parentid[body])
+    binding = source_binding(spec, name, ep_meta,
+                             body_names=[b["body_name"] for b in ancestry
+                                         if spec.get("source_kind")=="mjcf" or b["body_id"]!=0])
+    mat = int(model.geom_matid[g])
+    return {"geom_id":g, "geom_name":name, "role":spec["role"], "source":binding,
+            "body_ancestry":ancestry, "geometry_type":geometry_types.get(int(model.geom_type[g]), "unsupported"),
+            "geometry_data_id":int(model.geom_dataid[g]), "geom_size":model.geom_size[g].astype(float).tolist(),
+            "world_position":data.geom_xpos[g].tolist(), "world_rotation":data.geom_xmat[g].tolist(),
+            "group":int(model.geom_group[g]), "contype":int(model.geom_contype[g]),
+            "conaffinity":int(model.geom_conaffinity[g]), "material_id":mat,
+            "material_name":mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_MATERIAL, mat) if mat >= 0 else None,
+            "compiled_rgba":model.geom_rgba[g].astype(float).tolist(),
+            "effective_rgba":effective_rgba(model,g).tolist(),
+            "classification_reason":spec.get("classification_reason"),
+            "color_status":"NOT_SAMPLED"}
 
 
 def sample_surface(vertices, faces, spacing, remaining):
@@ -113,15 +204,20 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
         raise ContractError("every geom needs an explicit visual/collision/robot/auxiliary role")
     geometry_types = {int(getattr(mujoco.mjtGeom, "mjGEOM_"+kind.upper())):kind
                       for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh")}
-    surfaces, records, excluded = [], [], []
+    surfaces, records, excluded, audit = [], [], [], []
     count = 0
     for g, name in enumerate(names):
         spec = meta["geoms"][name]
+        if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
         role = spec.get("role")
         if role not in ("visual","collision","robot","auxiliary"):
             raise ContractError("invalid or absent geom role")
-        binding = source_binding(spec, name, ep)
+        row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+        audit.append(row)
+        binding = row["source"]
         if role != "visual" or effective_rgba(model,g)[3] <= 0:
+            row["color_status"] = "TRANSPARENT" if role == "visual" else "EXCLUDED_" + role.upper()
+            row["surface_points"] = 0
             excluded.append({"geom_name":name,"role":role,"reason":"explicit_role_or_transparency","source":binding})
             continue
         kind = geometry_types.get(int(model.geom_type[g]))
@@ -147,6 +243,8 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
             raise ContractError("nonfinite world surface")
         rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
         surfaces.append((world,rgba,bool(valid)))
+        row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
+                   appearance=appearance)
         count += len(world)
         records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
                         "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
@@ -156,7 +254,8 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
     complete = all(item[2] for item in surfaces)
     if not complete and not allow_partial_color:
         raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
-    adapter_sha=hashlib.sha256(Path(__file__).read_bytes()+Path(__file__).with_name("source_geometry.py").read_bytes()).hexdigest()
+    adapter_sha=hashlib.sha256(b"".join(Path(__file__).with_name(name).read_bytes() for name in
+        ("prescan.py","source_geometry.py","source_scope.py"))).hexdigest()
     visual_identity = {"schema":"g2_prescan_source_v1","adapter_source_sha256":adapter_sha,"model_source_sha256":closure,
                        "metadata":meta,"ep_meta":ep,"spacing_m":spacing,"world_frame":world_frame,
                        "mujoco_version":mujoco.__version__}
@@ -187,7 +286,12 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
         for points,colors,valid in surfaces:
             for p,c in zip(points,colors):
                 stream.write("%.17g %.17g %.17g %d %d %d %d\n"%(*p,int(c[0]),int(c[1]),int(c[2]),int(valid)))
+    from .source_scope import audit_summary
+    summary = audit_summary(audit)
     manifest = {"schema":"g2_prescan_manifest_v1","status":"COMPLETE" if complete else "PARTIAL_COLOR",
+                "completion_scope":"DECLARED_VISUAL_GEOMS_ONLY", "training_ready":False,
+                "compiled_geom_count":int(model.ngeom), "geom_audit":audit,
+                "geom_audit_sha256":hashlib.sha256(canonical(audit)).hexdigest(), "source_audit":summary,
                 "scene_id":scene_id,"source_sha256":source_sha,"visual_source_sha256":visual_sha,
                 "source_identity":visual_identity,"sources":sources,"state":state,"frame_id":frame,
                 "world_frame":world_frame,"bounds_min":bounds.min(axis=0).tolist(),
@@ -200,6 +304,7 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
                 "file":{"path":"precolored.txt","bytes":cloud.stat().st_size,"sha256":digest(cloud)},
                 "gates":{"object_perception":"REQUIRES_REAL_RGBD_POSE","declared_visual_geoms_complete":complete,
                          "full_scene_visual":"PENDING_SOURCE_ROLE_AND_VISUAL_REVIEW",
+                         "full_scene_source_certified":False,
                          "private_layout_acceptance":"NOT_RUN"}}
     write_json(out/"manifest.json",manifest)
     if complete:

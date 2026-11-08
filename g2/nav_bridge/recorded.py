@@ -4,10 +4,12 @@ import hashlib
 from pathlib import Path
 import shlex
 from g2.io import ContractError, canonical, digest, new_output, read_json, sha, verified_file, write_json
+from g2.sim.source_scope import SUBSET_SCOPE, verify_full_scene_review
 
 
 def prepare(prescan_manifest, grid, *, nav_repo, dataset_root, episode, camera,
-            sidecar, output, native_python="python3", min_z=.15,max_z=1.8,frames=201):
+            sidecar, output, native_python="python3", min_z=.15,max_z=1.8,frames=201,
+            full_scene_review=None, allow_declared_subset=False):
     import math
     manifest_path=Path(prescan_manifest).resolve()
     m=read_json(manifest_path)
@@ -21,6 +23,9 @@ def prepare(prescan_manifest, grid, *, nav_repo, dataset_root, episode, camera,
     if hashlib.sha256(canonical(m.get("source_identity"))).hexdigest()!=sha(m.get("visual_source_sha256")):
         raise ContractError("pre-scan visual source identity hash mismatch")
     cloud=verified_file(manifest_path.parent,m["file"])
+    source_scope=(verify_full_scene_review(manifest_path,full_scene_review)
+                  if full_scene_review is not None or not allow_declared_subset else
+                  {"status":SUBSET_SCOPE,"meaning":"EXPLICIT_DIAGNOSTIC_SUBSET_ONLY"})
     grid=Path(grid).resolve()
     with grid.open(encoding="utf-8") as f:
         if f.readline().strip()!="NAV_SG_ORACLE_GRID_V1":
@@ -66,9 +71,11 @@ def prepare(prescan_manifest, grid, *, nav_repo, dataset_root, episode, camera,
              "episode":episode,"camera":camera,"recorded_manifest_sha256":digest(episode_path/"manifest.json"),
              "recorded_frames_sha256":digest(episode_path/"frames.jsonl"),"prescan_cloud_sha256":digest(cloud),
              "prescan_grid_sha256":digest(grid),"original_sources":expected,
-             "visual_source_sha256":m["visual_source_sha256"]}
+             "visual_source_sha256":m["visual_source_sha256"],"source_scope":source_scope}
     base += ["--prescan-recorded-binding",str(out/"recorded_binding.json")]
-    plan={"schema":"g2_recorded_adapter_plan_v1","status":"PLAN_ONLY_NOT_EXECUTED","cwd":str(nav_repo),
+    plan={"schema":"g2_recorded_adapter_plan_v1","status":"DIAGNOSTIC_SUBSET_PLAN_ONLY_NOT_EXECUTED"
+          if source_scope["status"]==SUBSET_SCOPE else "PLAN_ONLY_NOT_EXECUTED","cwd":str(nav_repo),
+          "source_scope":source_scope,
           "scene_id":m["scene_id"],"source_sha256":m["source_sha256"],
           "inputs":{"prescan_manifest_sha256":digest(manifest_path),"grid_sha256":digest(grid)},
           "parameters_argv":base+["--output-dir",str(out/"params"),"--params-only"],
@@ -92,10 +99,13 @@ def main():
     p.add_argument("--frames",type=int,default=201)
     p.add_argument("--projection-min-z",type=float,default=.15)
     p.add_argument("--projection-max-z",type=float,default=1.8)
+    p.add_argument("--full-scene-review",help="server-local review bound to exact source/geom/material manifest")
+    p.add_argument("--allow-declared-subset",action="store_true",help="explicit diagnostic plan; never certify full-scene coverage")
     a=p.parse_args()
     r=prepare(a.prescan_manifest,a.grid,nav_repo=a.nav_repo,dataset_root=a.dataset_root,
               episode=a.episode,camera=a.camera,sidecar=a.sidecar,output=a.output,
-              frames=a.frames,min_z=a.projection_min_z,max_z=a.projection_max_z)
+              frames=a.frames,min_z=a.projection_min_z,max_z=a.projection_max_z,
+              full_scene_review=a.full_scene_review,allow_declared_subset=a.allow_declared_subset)
     print(r["status"])
 
 

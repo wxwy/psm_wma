@@ -1,0 +1,20 @@
+{
+  "g2/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "g2/io.py": "93ca182893ee415cd4bb2a82c5530bb51a3df5e918c4f17a14bcd7dbadca5dfc",
+  "g2/nav_bridge/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "g2/nav_bridge/recorded.py": "a5e5d37ab786885aecdd2a93b97786365d06757fea2cc1be7764eceb42f3222e",
+  "g2/nav_bridge/snapshot.py": "21d1788c501b4d941d308e5002d14d76fb954254dafcd9eca1b27ab9659700f9",
+  "g2/sim/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "g2/sim/prescan.py": "962e516be26b4d503573f7e0bc6705a3e1d44ac06b259337bf9c6c6dbeacb088",
+  "g2/sim/source_geometry.py": "876bbae3723a82804d7a0bf88c86273598a7475c6c81b34f127fdc7bbc303db4",
+  "g2/sim/source_scope.py": "4fa49a3abfb1312bb4ebd6825792a9767b94d4ba14d51fa8b4d0cf66474862d0",
+  "g2/tests/conftest.py": "a37d96eaed81ab73cadc3f4619e297138f8421b95017b4450f9fe5657def01a6",
+  "g2/tests/test_bridge.py": "00b05998f0d39fe94908796570f01737193a608318c2d100a1c440876cb2e551",
+  "g2/tests/test_prescan.py": "90512299e3f28ea064678852a71364ddfb7b45b5f28f091afbaf2860414cbe45",
+  "g2/tests/test_recorded.py": "d5dd3be3defc88f7153d8ca0752eeb4812f3508bc988387fcb352e28ff6edbbc",
+  "g2/tests/test_source_identity.py": "4e1b5e64f3ea88211cc205c08df4da7c0c1778d400f8bd4a5327579dc9f5507d",
+  "g2/tests/test_source_scope.py": "1feb6d69acfc3ff88b982bedffea26ff5989c96a18d8d5bc72c366ac315541fb",
+  "g2/tests/test_views.py": "621ba4e6e041a3435bc300de7240d14970f48e5a988bc0fbfb456b7b8ab0b706",
+  "g2/views/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "g2/views/render.py": "225190a79d1a26d32af491a95bdea4f1ce691e7768d576b843c34520b277cebe"
+}

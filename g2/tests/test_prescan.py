@@ -67,12 +67,12 @@ def test_invalid_source_declarations_never_complete(scene,tmp_path,fault):
 
 def test_official_ep_meta_pointer_is_provenance_only(scene,tmp_path):
     root,model,meta=scene;ep=root/"ep_meta.json"
-    write_json(ep,{"fixtures":[{"name":"cabinet_source","category":"test_source_label"}]})
+    write_json(ep,{"fixtures":{"cabinet_source":{"cls":"test_source_label"}}})
     m=read_json(meta);m["geoms"]["visual"]={"role":"visual","source_kind":"ep_meta",
-        "ep_meta_pointer":"/fixtures/0","source_instance_name":"cabinet_source"}
+        "ep_meta_pointer":"/fixtures/cabinet_source","source_instance_name":"cabinet_source"}
     write_json(meta,m)
     result=export(model,meta,tmp_path/"out",ep_meta=ep,spacing=.1)
-    assert result["visual_geoms"][0]["source"]["record"]["category"]=="test_source_label"
+    assert result["visual_geoms"][0]["source"]["category"]=={"field":"cls","value":"test_source_label"}
     assert "test_source_label" not in (tmp_path/"out/precolored.txt").read_text()
 
 
