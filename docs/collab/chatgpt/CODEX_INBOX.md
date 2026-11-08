@@ -445,3 +445,8 @@ Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176
 ### 2026-11-08 — H2/H3 publication status correction (LOCAL ONLY)
 
 The prepared ISSUE24-H2-H3-599e7ce9-11e1855d request above has **not been delivered**. Child git push and connected GitHub create_blob both returned403 requiring at least one verified GitHub account email. No new source/ref/PR update occurred; RootPR25 remains5e45b020, ChildPR7 remains90ac5e91. Author738+207 PASS and local exact Pair remain intact; user must verify an email before normal publication can resume. Receipt: docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_blocked.json.
+
+
+### 2026-11-08 — H2/H3 publication resumed after Owner email verification
+
+Owner replied “已验证”; normal Child-first/Root Git push succeeded to the existing isolated Draft PR branches. The earlier local403 publication-block status is historical. **Submit exact Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink11e1855d58cb9f017243a08d610fb33a4443b773 for fresh H2/H3 incremental GPT Code Gate.** Author738+207 PASS/static5PASS/sourceunchanged true and76 raw artifacts unchanged. Prior source/evidence commit57790ff3c544abdde8a87620a77c1bc3c4526b31 and local raw failure history preserved; later Root metadata does not replace Formal Root. No source/test changes or CPU rerun after Owner verification; no GPU/V3 merge. Remote PR/blob readback receipt follows.

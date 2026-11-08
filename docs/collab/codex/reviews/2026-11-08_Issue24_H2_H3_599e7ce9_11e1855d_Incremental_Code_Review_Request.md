@@ -2,11 +2,11 @@
 
 Date: 2026-11-08. Author: Codex. **Fresh independent verdict requested.**
 
-**Publication status: BLOCKED_ACCOUNT_EMAIL_VERIFICATION.** Git push and connected
-GitHub API both returned403 requiring a verified email. New source/evidence/Inbox
-commits are local; PR25 remains5e45b020 / PR7 remains90ac5e91. This prepared
-request has not been delivered. See publication_blocked.json; tested Pair below
-is intact, and no new code Gate or GPU result is claimed.
+**Publication resumed after Owner verified the GitHub account email.** Normal
+Child-first/Root pushes succeeded for the same tested Pair. Prior403 and local
+recovery bundle records remain historical in publication_blocked.json/local_bundle.json.
+Existing Draft PR25/7 now carry the submitted source; later Root documentation
+commits do not replace the Formal Root. No new Code Gate or GPU approval claimed.
 Only H2 private-bootstrap timeout representation and H3 actual CUDA UUID format
 are changed. No Stage3A redesign, new hardware execution or Gate closure claim.
 
