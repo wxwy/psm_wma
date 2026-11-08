@@ -1,0 +1,141 @@
+"""Bounded surface sampling with exact-zero rejection evidence.
+
+Face IDs always index the input triangle table (the compiled local mesh for
+MuJoCo), including skipped faces. This is independent of room segmentation.
+"""
+from fractions import Fraction
+import hashlib
+import math
+from numbers import Real
+
+import numpy as np
+
+from g2.io import ContractError
+
+
+class SamplingFailure(ContractError):
+    def __init__(self, message, audit):
+        super().__init__(message)
+        self.audit = dict(audit, status="REJECTED", rejection_reason=message)
+
+
+def geometry_sha256(vertices, faces):
+    """Hash every original vertex/face; discarded faces remain source evidence."""
+    return hashlib.sha256(vertices.astype("<f8").tobytes() + faces.astype("<i8").tobytes()).hexdigest()
+
+
+def _exact_cross(triangle):
+    # float32 -> Python float is exact too. Fractions preserve the represented
+    # input coordinates; neither an epsilon nor a rounded cross proves zero.
+    xyz = [[Fraction(float(v)) for v in point] for point in triangle]
+    a = [xyz[1][i] - xyz[0][i] for i in range(3)]
+    b = [xyz[2][i] - xyz[0][i] for i in range(3)]
+    return tuple(a[i] * b[j] - a[j] * b[i] for i, j in ((1, 2), (2, 0), (0, 1)))
+
+
+def audit_surface(vertices, faces):
+    """Inspect all triangles without allocating a cloud; never hide bad faces."""
+    if (not isinstance(vertices, np.ndarray) or vertices.ndim != 2 or vertices.shape[1] != 3
+            or vertices.dtype.kind != "f" or vertices.dtype.itemsize not in (4, 8)
+            or not np.isfinite(vertices).all() or not isinstance(faces, np.ndarray)
+            or faces.ndim != 2 or faces.shape[1] != 3 or not len(faces)
+            or faces.dtype.kind not in "iu" or np.any(faces < 0) or np.any(faces >= len(vertices))):
+        raise ContractError("invalid visual mesh")
+    discarded, near, nonfinite, areas = [], [], [], []
+    for index, triangle in enumerate(vertices[faces]):
+        with np.errstate(over="ignore", invalid="ignore", under="ignore"):
+            tri64 = triangle.astype(np.float64)
+            cross = np.cross(tri64[1] - tri64[0], tri64[2] - tri64[0])
+            norm64 = float(np.hypot.reduce(cross))
+            # A conservative forward-error bound for differences/products of
+            # finite coordinates. Only candidates pay for exact rational math.
+            magnitude = np.max(np.abs(tri64))
+            bound = max(1e-14, float(64 * np.finfo(np.float64).eps * magnitude * magnitude))
+            candidate = not np.isfinite(norm64) or float(np.max(np.abs(cross))) <= bound
+        exact_near = False
+        if candidate:
+            exact = _exact_cross(triangle)
+            if not any(exact):
+                discarded.append(index)
+                continue
+            # Float32 cancellation can produce a large rounded legacy norm for
+            # a truly tiny positive face. Exact squares avoid underflow and
+            # retain the positive-face threshold even in this case.
+            exact_near = sum(component * component for component in exact) <= Fraction(1e-14) ** 2
+            try:
+                norm64 = math.hypot(*(float(component) for component in exact))
+            except OverflowError:
+                norm64 = math.inf
+        # Preserve the old positive-face guard in the original input dtype,
+        # as well as its subsequent sampling arithmetic/order.
+        with np.errstate(over="ignore", invalid="ignore", under="ignore"):
+            legacy_norm = float(np.linalg.norm(np.cross(triangle[1] - triangle[0], triangle[2] - triangle[0])))
+        if not math.isfinite(norm64) or not math.isfinite(legacy_norm):
+            nonfinite.append(index)
+        elif exact_near or legacy_norm <= 1e-14:
+            near.append(index)
+        areas.append(norm64 / 2 if math.isfinite(norm64) else 0.)
+    try:
+        area = math.fsum(areas)
+    except OverflowError:
+        area = None
+    audit = {
+        "schema": "g2_surface_sampling_audit_v1", "status": "GEOMETRY_VALID",
+        "policy": "EXACT_ZERO_ONLY_KEEP_POSITIVE_GUARD", "coordinate_dtype": vertices.dtype.str,
+        "zero_predicate": "EXACT_RATIONAL_CROSS_OF_REPRESENTED_INPUT_COORDINATES",
+        "positive_face_cross_norm_min_exclusive": 1e-14,
+        "face_id_basis": "INPUT_LOCAL_TRIANGLE_INDEX", "input_face_count": len(faces),
+        "retained_face_count": len(faces) - len(discarded),
+        "discarded_zero_area_face_ids": discarded, "discarded_zero_area_face_count": len(discarded),
+        "discarded_face_fraction": len(discarded) / len(faces),
+        "discarded_area_m2": 0., "discarded_area_fraction": 0. if area else None,
+        "retained_area_m2": area, "area_measurement": "FLOAT64_APPROXIMATION_OF_INPUT_LOCAL_COORDINATES",
+        "rejected_nonzero_near_degenerate_face_ids": near, "rejected_nonfinite_face_ids": nonfinite,
+        "local_geometry_sha256": geometry_sha256(vertices, faces), "sampled_point_count": 0,
+    }
+    reason = ("nonfinite visual triangle geometry" if nonfinite or area is None else
+              "nonzero near-degenerate visual triangle" if near else
+              "visual mesh has no nonzero-area triangles" if len(discarded) == len(faces) else None)
+    if reason:
+        audit.update(status="REJECTED", rejection_reason=reason)
+    return audit
+
+
+def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+    """Sample every retained face in original order, within a hard point budget."""
+    audit = audit_surface(vertices, faces)
+    if audit["status"] == "REJECTED":
+        raise SamplingFailure(audit["rejection_reason"], audit)
+    if (not isinstance(spacing, Real) or isinstance(spacing, bool)
+            or not math.isfinite(spacing) or spacing <= 0):
+        raise SamplingFailure("invalid surface spacing", audit)
+    if type(remaining) is not int or remaining < 0:
+        raise SamplingFailure("invalid pre-scan point budget", audit)
+    audit.update(spacing_m=float(spacing), point_budget=remaining)
+    points, face_ids, weights = [], [], []
+    discarded = set(audit["discarded_zero_area_face_ids"])
+    total = 0
+    for index, tri in enumerate(vertices[faces]):
+        if index in discarded:
+            continue
+        with np.errstate(over="ignore", invalid="ignore", under="ignore"):
+            edge = max(np.linalg.norm(tri[i] - tri[j]) for i, j in ((0, 1), (1, 2), (2, 0)))
+            ratio = edge / spacing
+        if not np.isfinite(edge) or not np.isfinite(ratio):
+            audit.update(rejection_face_id=index, allocated_point_count_before_rejection=total)
+            raise SamplingFailure("nonfinite surface subdivision", audit)
+        steps = max(1, int(np.ceil(ratio)))
+        count = (steps + 1) * (steps + 2) // 2
+        if total + count > remaining:
+            audit.update(rejection_face_id=index, allocated_point_count_before_rejection=total,
+                         required_points_at_rejection=total + count)
+            raise SamplingFailure("pre-scan point budget exceeded; choose coarser spacing", audit)
+        bary = np.asarray([[i / steps, j / steps, 1 - (i + j) / steps]
+                           for i in range(steps + 1) for j in range(steps + 1 - i)])
+        points.append(bary @ tri)
+        face_ids.extend([index] * count)
+        weights.append(bary)
+        total += count
+    audit.update(status="SAMPLED", sampled_point_count=total)
+    result = np.concatenate(points), np.asarray(face_ids), np.concatenate(weights)
+    return (*result, audit) if with_audit else result

@@ -1,0 +1,52 @@
+{
+  "scope": "AUTHOR_CPU_SELF_CREATED_FIXTURES_ONLY_NOT_SERVER_ACCEPTANCE",
+  "baseline_runtime": "e73083324055af459d2c6c65bb52bda142bb4833",
+  "red": {
+    "test_cases": 24,
+    "failed": 11,
+    "passed": 13,
+    "frozen_test_sha256": "85774524589af459093c8b03bab1ca3bf0acc44759708b367699e188607a4415"
+  },
+  "review_counterexample_red": {
+    "failed": 1,
+    "stage": "FIRST_UNCOMMITTED_CANDIDATE_NOT_A_FIXED_RELEASE",
+    "case": "test_float32_cancellation_cannot_promote_an_exact_tiny_positive_face"
+  },
+  "green": {
+    "total": 207,
+    "passed": 207,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "original_case_ids": 160,
+    "original_case_ids_retained": 160,
+    "new_cases": 47
+  },
+  "identity_functions_byte_identical_to_e7308332": {
+    "pointer_tokens": "eff100c8f097498f75cacd10fa5da502eeed060fcdb2e5491c6df57932feffc9",
+    "pointer": "1d6e38358c79a302bf4f07e5ad8458acd1e62ada242a37028318605bb61ade4d",
+    "source_text": "4d9b5c983e5bff341455ea1440cd986db8e1a3f23339a54b0fad06c2ae4516dd",
+    "source_binding": "c4292ed958555dd104696c877ddb0d996a2dce087d9704eea6b9fc6a6f54236c"
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "mujoco": "3.3.7",
+    "numpy": "2.3.5",
+    "Pillow": "11.3.0",
+    "pytest": "8.4.2",
+    "new_dependencies": false,
+    "execution": "LOCAL_CPU_NO_ROLLOUT_OR_MODEL_INFERENCE"
+  },
+  "source_review_read": {
+    "review_branch_commit": "35d57d4e5e15fb2589395d42599a913018c8c198",
+    "review_file_blob": "a47215ef342a09fda01fc228965024486a0c1670",
+    "verdict": "APPROVE_F1_A2_LIMITED_SCOPE",
+    "issue_comment": 6720997620
+  },
+  "native_companion_unchanged": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "gitlink_unchanged": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "real_layout_server_acceptance": "PENDING_GPT_NEW_FIXED_SHA",
+  "whole_house_source_certified": false,
+  "training_ready": false,
+  "server_files_accessed_or_transferred": false
+}

@@ -1,0 +1,43 @@
+{
+  "reviewer": "/root/n6_independent_review",
+  "kind": "READ_ONLY_AUTHOR_AGENT_CODE_REVIEW_NOT_GPT_SERVER_ACCEPTANCE",
+  "decision": "CLOSED_NO_OPEN_P0_P1_P2_IN_SCOPED_IMPLEMENTATION",
+  "source_sha256": {
+    "g2/sim/asset_inventory.py": "861948883c790fa68cec926e7ad36f4e94c955dff6c57d6b594c6f8f535fba4f",
+    "g2/sim/prescan.py": "a260327711436a47a3c78bb062cc7989b6c438f2a12fbf37f29b044e91b8ca53",
+    "g2/sim/surface_sampling.py": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967"
+  },
+  "findings": [
+    {
+      "severity": "P1",
+      "status": "CLOSED",
+      "location": "g2/sim/surface_sampling.py:55",
+      "issue": "float32 cancellation could promote tiny exact-positive geometry",
+      "resolution": "Exact rational cross squared-norm threshold plus unchanged original-dtype guard; true zero separately proved and discarded",
+      "independent_reproduction": "Pure NumPy/stdlib exact-positive and exactly-collinear variants, no model/private scene"
+    },
+    {
+      "severity": "P2",
+      "status": "CLOSED",
+      "location": "g2/sim/surface_sampling.py:114 and g2/sim/prescan.py:246",
+      "issue": "Budget failure lacked replay configuration and triggering original face",
+      "resolution": "Spacing/local budget/original face/prefix/required count plus global max/previous geom count sealed",
+      "independent_reproduction": "spacing=.8 budget=11 original face3 prefix6 required12"
+    }
+  ],
+  "verified": {
+    "final_junit": 207,
+    "retained_old_case_ids": 160,
+    "failure_error_skip": 0,
+    "frozen_new_24_sha256": "85774524589af459093c8b03bab1ca3bf0acc44759708b367699e188607a4415",
+    "identity_functions_exact_to_e730": 4,
+    "inventory_promotion": false
+  },
+  "not_executed": [
+    "SERVER_OR_PRIVATE_FILES",
+    "GPU",
+    "MODELS",
+    "NATIVE",
+    "REAL_ROBOCASA_ACCEPTANCE"
+  ]
+}

@@ -1,3 +1,69 @@
+# 2026-11-08 — G2-N6-F1-B source frozen / GPT server handoff preparation
+
+REVIEW. Exact-zero compiled local-face sampling and all-geom source preflight
+implemented on codex/g2-n6-f1b-mesh-audit from28926f6c/runtimee7308332.
+Actual F1-A2 GPT APPROVE limited identity review file blob
+a47215ef342a09fda01fc228965024486a0c1670 consumed; TODO F1-A2 closed only
+in that scope. F1-B real whole-house/material source Gate remains OPEN.
+
+Only proved exact-zero faces skipped; original local face IDs/UV/full geometry
+hash retained, positive-near/all-zero/nonfinite/budget failures refused.
+Structured per-geom discard statistics and source/state-bound budget failure
+proof retained. All-geom inventory never assigns missing roles or certifies
+single-point probes/full colors; default role template remains unfilled.
+F1-A2 Pointer/source helpers byte-identical4/4. No native implementation edit.
+
+Frozen24 tests old11FAIL/13PASS ->24PASS; final207/207 with original160 IDs
+retained,0 failure/error/skip. Own MuJoCo14-face mesh IDs1/13, UV colors,
+FULLPHYSICS0/200+12cm, invalid sources/roles/state and partial-color refusal
+covered. Review P1 cancellation counterexample RED retained then exact square
+norm fixed; P2 budget replay evidence fixed and reviewer confirmed closure.
+Read-only Agent code review no open P0/P1/P2; not GPT server acceptance.
+After final fixes6 normal geometry types,0/200 each6244 XYZ/RGB/valid rows
+byte-identical to olde730; original geometry hashes/state/bounds identical.
+
+Evidence docs/evidence/g2_n6_f1_b_2026-11-08/ includes raw RED/JUnit,
+CPU/code review/source hashes and own positive parity. Handoff commands in
+docs/build/PSM-WMA_G2_N6_F1_B_mesh_audit_2026-11-08.md.
+Only source/docs publication to independent GitHub branch authorized; tree
+will be checked against tested local tree and remote source readback. Plain
+git remote auth unavailable this round; use connected GitHub Git-data API,
+not credentials or server access. No Draft retry on known verified-email
+restriction; prior PR request remains historical and none is newly created.
+
+Native2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. No server file
+access/download/outward transfer, GPU/model/rollout/train, production refs,
+ordinary structure/Room changes, GT-label perception, six-view certification
+or PSS/Cosmos implementation. Publish fixed SHA and Issue26 request then STOP
+for GPT original Layout1/10 four-frame/full-role/material server verification.
+
+# 2026-11-08 — G2-N6-F1-B mesh/source audit claim
+
+IN_PROGRESS. Owner new F1-B instruction Issue26 comment6720997620 and actual
+GPT review file blob a47215ef342a09fda01fc228965024486a0c1670 consumed.
+Frozen e7308332 info.cat/source identity is APPROVE in its limited scope;
+whole-house/material/normal-structure/view/model gates remain open.
+New branch codex/g2-n6-f1b-mesh-audit derives from28926f6c handoff/runtime
+e73083324055af459d2c6c65bb52bda142bb4833. Native2009fae35d86579bb22c273fb97ec1bf0835b533
+and Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e stay unchanged.
+
+Planned files: G2 sim surface-sampling helper plus prescan integration, zero
+area audit/failure evidence; read-only all-geom inventory/role template/probe
+entrypoint; focused geometry/UV/inventory tests, docs/evidence/handoff.
+Skip only proved zero-area faces, retain original local face IDs and UV,
+keep nonzero near-degenerate/anomalous geometry fail-closed. Full-asset
+inventory never classifies by name or certifies a house/probe as full color.
+Source_binding info.cat behavior stays frozen; no generic native changes.
+
+Only self-created local schema/MJCF/mesh/texture/state fixtures; no access,
+download or outward transfer of server assets/data. Actual distr_g0 and
+Layout1/10 four-frame/all-role/material validation remains GPT server work
+using existing private assets and environment. No GPU/models/rollouts,
+V3/Gitlink/caches/parent refs, native structures, PSS/Cosmos or training.
+Tests start RED on unchanged e730 sampler then same tests/full regression.
+Stop at fixed-source publication and independent-server handoff.
+
 # 2026-11-08 — G2-N6-F1-A2 published / STOP for GPT new-SHA recheck
 
 REVIEW. Fixed Root e73083324055af459d2c6c65bb52bda142bb4833, tree

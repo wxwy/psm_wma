@@ -1,0 +1,10 @@
+{
+  "baseline_runtime": "e73083324055af459d2c6c65bb52bda142bb4833",
+  "baseline_head": "28926f6c64db37e9cc71e9cdf24e4f6ad42a4674",
+  "new_tests": "g2/tests/test_surface_sampling.py",
+  "test_sha256": "85774524589af459093c8b03bab1ca3bf0acc44759708b367699e188607a4415",
+  "red_log_sha256": "ea041400d0ebba9894e2bade262f09f41cbcc73f02013e1c1949c9ccfe582b35",
+  "red_xml_sha256": "d7bafcf90a2e2050ba198e92567b50ecb4350858521e4acc5a772962adcb6697",
+  "failed": 11,
+  "passed": 13
+}

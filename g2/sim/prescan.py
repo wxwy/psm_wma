@@ -11,6 +11,7 @@ import numpy as np
 from g2.io import ContractError, canonical, digest, new_output, read_json, sha, write_json
 from .source_geometry import (load_model, model_source_hash, apply_state,
                               primitive_mesh, surface_colors, effective_rgba)
+from .surface_sampling import SamplingFailure, sample_surface, geometry_sha256
 
 
 def pointer_tokens(path):
@@ -117,7 +118,7 @@ def source_binding(spec, name, ep_meta, *, body_names=None):
             "record":record, "body_binding":body_binding, **category_details}
 
 
-def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):
+def compiled_geom_row(model, data, g, name, geometry_types):
     import mujoco
     ancestry = []
     body = int(model.geom_bodyid[g])
@@ -126,11 +127,8 @@ def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):
         if body == 0:
             break
         body = int(model.body_parentid[body])
-    binding = source_binding(spec, name, ep_meta,
-                             body_names=[b["body_name"] for b in ancestry
-                                         if spec.get("source_kind")=="mjcf" or b["body_id"]!=0])
     mat = int(model.geom_matid[g])
-    return {"geom_id":g, "geom_name":name, "role":spec["role"], "source":binding,
+    return {"geom_id":g, "geom_name":name,
             "body_ancestry":ancestry, "geometry_type":geometry_types.get(int(model.geom_type[g]), "unsupported"),
             "geometry_data_id":int(model.geom_dataid[g]), "geom_size":model.geom_size[g].astype(float).tolist(),
             "world_position":data.geom_xpos[g].tolist(), "world_rotation":data.geom_xmat[g].tolist(),
@@ -138,34 +136,30 @@ def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):
             "conaffinity":int(model.geom_conaffinity[g]), "material_id":mat,
             "material_name":mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_MATERIAL, mat) if mat >= 0 else None,
             "compiled_rgba":model.geom_rgba[g].astype(float).tolist(),
-            "effective_rgba":effective_rgba(model,g).tolist(),
-            "classification_reason":spec.get("classification_reason"),
-            "color_status":"NOT_SAMPLED"}
+            "effective_rgba":effective_rgba(model,g).tolist()}
 
 
-def sample_surface(vertices, faces, spacing, remaining):
-    """Bounded barycentric sampling; retains even sub-resolution small surfaces."""
-    if (vertices.ndim != 2 or vertices.shape[1] != 3 or not np.isfinite(vertices).all()
-            or faces.ndim != 2 or faces.shape[1] != 3 or not len(faces)
-            or np.any(faces < 0) or np.any(faces >= len(vertices))):
-        raise ContractError("invalid visual mesh")
-    points, face_ids, weights = [], [], []
-    total = 0
-    for index, tri in enumerate(vertices[faces]):
-        if np.linalg.norm(np.cross(tri[1]-tri[0], tri[2]-tri[0])) <= 1e-14:
-            raise ContractError("degenerate visual triangle")
-        edge = max(np.linalg.norm(tri[i]-tri[j]) for i,j in ((0,1),(1,2),(2,0)))
-        steps = max(1, int(np.ceil(edge / spacing)))
-        count = (steps+1)*(steps+2)//2
-        if total + count > remaining:
-            raise ContractError("pre-scan point budget exceeded; choose coarser spacing")
-        bary = np.asarray([[i/steps, j/steps, 1-(i+j)/steps]
-                           for i in range(steps+1) for j in range(steps+1-i)])
-        points.append(bary @ tri)
-        face_ids.extend([index] * count)
-        weights.append(bary)
-        total += count
-    return np.concatenate(points), np.asarray(face_ids), np.concatenate(weights)
+def geom_audit_row(model, data, g, name, spec, geometry_types, ep_meta):
+    row = compiled_geom_row(model, data, g, name, geometry_types)
+    binding = source_binding(spec, name, ep_meta,
+                             body_names=[b["body_name"] for b in row["body_ancestry"]
+                                         if spec.get("source_kind")=="mjcf" or b["body_id"]!=0])
+    return dict(row, role=spec["role"], source=binding,
+                classification_reason=spec.get("classification_reason"), color_status="NOT_SAMPLED")
+
+
+def adapter_source_sha256():
+    return hashlib.sha256(b"".join(Path(__file__).with_name(name).read_bytes() for name in
+        ("prescan.py", "source_geometry.py", "source_scope.py", "surface_sampling.py"))).hexdigest()
+
+
+def geom_surface_mesh(model, g, kind):
+    if kind == "mesh":
+        mid = int(model.geom_dataid[g])
+        va,vn,fa,fn = [int(getattr(model,k)[mid]) for k in
+                       ("mesh_vertadr","mesh_vertnum","mesh_faceadr","mesh_facenum")]
+        return model.mesh_vert[va:va+vn].copy(), model.mesh_face[fa:fa+fn].copy()
+    return primitive_mesh(kind, model.geom_size[g].copy())
 
 
 def analytic_surface(points,kind,size,face_ids):
@@ -237,15 +231,24 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
         kind = geometry_types.get(int(model.geom_type[g]))
         if kind is None:
             raise ContractError("finite visual surface required; infinite plane/hfield is unsupported")
-        if kind == "mesh":
-            mid = int(model.geom_dataid[g])
-            va,vn,fa,fn = [int(getattr(model,k)[mid]) for k in
-                           ("mesh_vertadr","mesh_vertnum","mesh_faceadr","mesh_facenum")]
-            vertices = model.mesh_vert[va:va+vn].copy()
-            faces = model.mesh_face[fa:fa+fn].copy()
-        else:
-            vertices,faces = primitive_mesh(kind,model.geom_size[g].copy())
-        points,face_ids,weights = sample_surface(vertices,faces,spacing,max_points-count)
+        vertices,faces = geom_surface_mesh(model, g, kind)
+        try:
+            points,face_ids,weights,sampling = sample_surface(vertices,faces,spacing,max_points-count,with_audit=True)
+        except SamplingFailure as error:
+            row.update(sampling=error.audit, surface_points=0, color_status="NOT_SAMPLED_GEOMETRY_REJECTED")
+            out.mkdir(parents=True)
+            write_json(out/"sampling_failure.json", {
+                "schema":"g2_prescan_sampling_failure_v1", "status":"REJECTED", "training_ready":False,
+                "scene_id":scene_id, "frame_id":frame, "world_frame":world_frame, "state":state,
+                "model_source_sha256":closure, "sources":sources,
+                "adapter_source_sha256":adapter_source_sha256(),
+                "metadata_sha256":digest(metadata), "ep_meta_sha256":digest(ep_meta) if ep_meta else None,
+                "spacing_m":spacing, "max_points":max_points, "previous_geom_point_count":count,
+                "geom_id":g, "geom_name":name, "sampling":error.audit,
+                "geom_audit_prefix":audit, "compiled_geom_count":int(model.ngeom),
+                "audit_scope":"PREFIX_THROUGH_REJECTED_GEOM_NOT_COMPLETE_INVENTORY",
+                "cloud_written":False, "full_scene_source_certified":False, "reason":str(error)})
+            raise
         if kind!="mesh":
             points=analytic_surface(points,kind,model.geom_size[g],face_ids)
         colors,valid,appearance = surface_colors(model,g,kind,face_ids,weights)
@@ -258,18 +261,17 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
         rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
         surfaces.append((world,rgba,bool(valid)))
         row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
-                   appearance=appearance)
+                   appearance=appearance, sampling=sampling)
         count += len(world)
         records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
                         "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
-                        "local_geometry_sha256":hashlib.sha256(vertices.astype("<f8").tobytes()+faces.astype("<i8").tobytes()).hexdigest()})
+                        "sampling":sampling, "local_geometry_sha256":geometry_sha256(vertices,faces)})
     if not count:
         raise ContractError("no visual surface samples")
     complete = all(item[2] for item in surfaces)
     if not complete and not allow_partial_color:
         raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
-    adapter_sha=hashlib.sha256(b"".join(Path(__file__).with_name(name).read_bytes() for name in
-        ("prescan.py","source_geometry.py","source_scope.py"))).hexdigest()
+    adapter_sha=adapter_source_sha256()
     visual_identity = {"schema":"g2_prescan_source_v1","adapter_source_sha256":adapter_sha,"model_source_sha256":closure,
                        "metadata":meta,"ep_meta":ep,"spacing_m":spacing,"world_frame":world_frame,
                        "mujoco_version":mujoco.__version__}
