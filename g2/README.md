@@ -1,0 +1,16 @@
+# G2 spatial source and view prototype
+
+This isolated implementation addresses [Issue #26](https://github.com/wxwy/psm_wma/issues/26).
+It does not connect to Cosmos datasets, model conditioning, memory or training.
+
+- `sim.prescan`: source MJCF/assets plus an explicit visual/collision role map and optional saved state → world XYZRGB, validity and provenance. MuJoCo is used only here; no camera rendering or physics rollout occurs.
+- `nav_bridge.recorded`: prepare a source-bound plan for the existing native recorded RGB-D/YOLOE/SigLIP path. It writes commands, never runs inference.
+- `nav_bridge.snapshot`: seal actual native snapshots, preserving native Rooms, objects, roots, Island membership, meshes, source parts, relations, colored surfaces and the full tri-state occupancy grid.
+- `views.render`: metric CPU projections of that retained native 3D bundle. House Floor/Upper are shared; every Room references those plus four cardinal assets. Each native Island gets four separate assets.
+
+Run each repository's `g2` modules with that repository as the current directory.
+The two `g2` packages are separate; do not combine their source roots on `PYTHONPATH`.
+
+The ordinary object frontend still requires genuine recorded RGB/depth/pose and matching model observations. Source GT labels are provenance only. Ordinary native structural-root perception is not implemented in this draft: its output is explicitly `BLOCKED_NATIVE_STRUCTURAL_ROOTS`, even with genuine object observations. Oracle snapshots require explicit diagnostic opt-in and cannot certify normal perception.
+
+The [runbook](../docs/build/PSM-WMA_G2_N6_implementation_runbook_2026-11-08.md) defines the interfaces, commands, test evidence and remaining server gates. Original Layout 1/10, complex/oblique walls, whole-house material completeness and human visual review remain open.

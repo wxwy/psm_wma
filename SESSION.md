@@ -1,3 +1,39 @@
+# 2026-11-08 — G2-N6 implementation claim (Issue #26)
+
+Owner hands off independent implementation after nav_sg P0 PR #7 at exact
+`e86c3844325b13092e1713290b079cfb63466cfb`. Root isolated branch
+`codex/g2-n6-prescan-native-views`, baseline V3 `7b8b733e`; unchanged Child/Gitlink
+`1ca308055fc41fb69efaeb9efaa23808f164a18e`. Read canonical live Inbox and current
+G2 v0.8/v1.5/v1.6 ownership/view contracts. Older unrelated review/pane STOP entries
+remain historical; this new Owner-authorized task permits implementation/CPU only.
+
+Planned files: new `g2/{sim,nav_bridge,views,tests}/`, narrow docs/build handoff,
+SESSION/TODO and append-only request. nav_sg separate isolated branch
+`codex/g2-n6-native-snapshot` may add generic native snapshot/group export, preserving
+PR #2/#4/#6/#7. No MuJoCo dependency in generic C++; no Room/Island reclustering in
+G2. Ordinary perception requires real recorded RGB-D/pose; oracle labels remain
+explicit diagnostic input. Missing observations or unresolved affiliations block
+the corresponding Gate instead of claiming full pipeline completion.
+
+Implementation complete for the isolated Draft prototype; status REVIEW.
+Implemented source visual adapter, actual native 3D sealing, shared metric six+independent
+Island assets and a plan-only genuine recorded source adapter. Native companion adds
+quiescent snapshots, frame-0 prebuilt geometry/color initialization and native grouping.
+CPU evidence: G2 64/64; native 129 distinct testcases across 18 XMLs (Catkin wrapper total
+258), zero fail/error/skip; native Python 449 passed/73 optional CPU-torch skips; six native
+TEST_ONLY invocations and twelve sealed/rendered frame snapshots. Four-frame ordinary
+prebuilt geometry/input smoke PASS, no model acceptance. Read-only independent author-agent
+review closed findings for this Draft scope; this is not GPT/server approval.
+
+Evidence: docs/evidence/g2_n6_2026-11-08/; runbook:
+docs/build/PSM-WMA_G2_N6_implementation_runbook_2026-11-08.md.
+Native build-source SHA256 7a8ff690e150956d59f7b2773561034e4956a5344190f7e1d08135d4c92c4bae.
+Normal structural roots are NOT IMPLEMENTED and explicitly blocked; real recorded
+YOLOE/SigLIP execution, whole-house materials, original Layout1/10 frame0/200 and human
+review remain OPEN/NOT_RUN. L-shaped diagnostic structural coverage stays incomplete;
+doorway one-Room result is not small-room generality acceptance. No Issue26 closure.
+No GPU, simulator evaluation, training, production changes, Gitlink update or merge.
+
 # 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:
