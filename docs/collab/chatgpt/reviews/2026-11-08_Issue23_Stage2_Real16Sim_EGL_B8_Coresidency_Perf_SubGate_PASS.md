@@ -49,9 +49,9 @@ Worker `info().trace` 最多2048，本轮256 job轨迹 `trace_overflow=0`；按�
 
 | 时段，P50 | B1 | B4 | B8 |
 |---|---:|---:|---:|
-| **READY → ENCODE_START** | 4017ms | — | **1738ms** |
-| ENCODE_START → ENCODE_END | 26.49ms | — | 77.44ms |
-| RESULT_READY → ACK | 4.27ms | — | 7.14ms |
+| **READY → ENCODE_START** | 4017ms | 2102ms | **1738ms** |
+| ENCODE_START → ENCODE_END | 26.49ms | 42.80ms | 77.44ms |
+| RESULT_READY → ACK | 4.27ms | 5.00ms | 7.14ms |
 | Sim frame step→feature ack 完成（P50） | 4077ms | — | 1844ms |
 
 B8 READY→ENCODE_START P95 **2379ms**，frame→feature P95 **2475ms**。这主要显示**本次 16 Sim 同时突发提交 256 帧后的有限队列/并发调度成本**，不表示正常 Pipeline 每个单步都会等待1.8s。VAE 计算只占部分成本，优先开展真实 Replan arrival / streaming overlap、Unix base64/CPU admission及网路排队测量，而不是仅盯 GPU Kernel。无需先过度重构。
@@ -68,7 +68,7 @@ B8 READY→ENCODE_START P95 **2379ms**，frame→feature P95 **2475ms**。这主
 
 `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/v3_issue23_stage2_real16_egl_sharedvae_20261108/`
 
-- 机器可读汇总：`stage2_real16_egl_final_evidence.json`，由独立证据校验脚本读回11组真实 run + actual Worker traces + 16 Sim slot reports，并逐一断言128/256合法 source steps、本地授权身份、原始 Frozen SHA、模型 job/count、签名验证、GPU post0、无非生产进程存留及临时凭据文件已删除。
+- 机器可读汇总：`stage2_real16_egl_final_evidence.json`，由独立证据校验脚本读回11组真实 run + actual Worker traces + 16 Sim slot reports，并逐一断言64/256个合法 source steps、本地授权身份、原始 Frozen SHA、模型 job/count、签名验证、GPU post0、无非生产进程存留及临时凭据文件已删除。
 - 隔离执行器：`run_16sim_contended.py`, `real_sim_slot.py`, `real_vae_worker_process.py`；只读项目权重及官方源文件，不改正式运行生产代码。
 - 每个 `actual_16sim_*` / `long_16sim_16steps_*` 下含 `run_report.json`, `slot_XX.json`, （VAE方案）`vae_worker_state.json`, `slot_XX_receipts.json`, `sim_XX.log`, `vae.log` 和独立 Exit code。测试生成的 Worker signing / Owner / Session 原始 secret 配置仅暂存权限0600，结束后已移除，不在公开 review/issue 中存储。
 - 同一 GPU4 出现过 `NVIDIA+Mesa` 交叉枚举（17索引，两组同物理GPU），仅 NVIDIA EGL ICD 后为8个物理GPU，单 Sim 严格 native Code Gate 已单独 PASS（Issue23旧评审证据）。所有实际 Sim 使用此不影响系统全局配置的环境变量隔离策略。
