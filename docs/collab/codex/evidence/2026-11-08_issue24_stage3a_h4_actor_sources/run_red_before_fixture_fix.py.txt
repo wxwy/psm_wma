@@ -1,0 +1,45 @@
+"""H4 old-production actual Root->Actor source-contract witness; CPU only."""
+from pathlib import Path
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import xml.etree.ElementTree as ET
+
+root=Path('/workspace/work/psm-wma-stage3a-h4-formal');child=root/'cosmos-framework'
+out=Path('/workspace/work/issue24-stage3a-h4-evidence/red-old-code');out.mkdir(exist_ok=False)
+env=os.environ.copy()
+overrides=dict(CUDA_VISIBLE_DEVICES='',PYTEST_DISABLE_PLUGIN_AUTOLOAD='1',PYTEST_ADDOPTS='',
+    HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTHONDONTWRITEBYTECODE='1',
+    OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',
+    PYTHONPATH=os.pathsep.join(map(str,(root,child,root/'scripts'))),
+    RUFF_CACHE_DIR=str(out/'cache/ruff'),XDG_CACHE_HOME=str(out/'cache/xdg'))
+env.update(overrides);(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+test=root/'tools/v3/eval_v2_batch_tests/actor_source_witness_test.py'
+commands=[]
+def run(name,argv):
+    with (out/(name+'.log')).open('w') as log:
+        result=subprocess.run(list(map(str,argv)),cwd=root,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=120)
+    commands.append(dict(name=name,argv=list(map(str,argv)),cwd=str(root),exit_code=result.returncode))
+    return result.returncode
+assert run('ruff_fix',[sys.executable,'-m','ruff','check','--fix',test])==0
+assert run('ruff_format',[sys.executable,'-m','ruff','format',test])==0
+sources={}
+for local,ref,path in [(root,'599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e','scripts/robocasa_eval_v2/runtime.py'),
+    (child,'11e1855d58cb9f017243a08d610fb33a4443b773','cosmos_framework/simulation/robocasa/eval_v2_worker.py')]:
+    old=subprocess.check_output(['git','-C',str(local),'show',ref+':'+path]);assert (local/path).read_bytes()==old
+    sources[str((local/path).relative_to(root))]=hashlib.sha256(old).hexdigest()
+code=run('pytest',[sys.executable,'-m','pytest','--noconftest','-c','/dev/null','-p','no:cacheprovider','-q',
+    str(test)+'::test_actual_root_sealed_sources_reach_default_actor_ready[C]',
+    '--basetemp='+str(out/'tmp'),'--junitxml='+str(out/'junit.xml')])
+suite=next(ET.parse(out/'junit.xml').getroot().iter('testsuite'))
+assert code==1 and suite.attrib['tests']=='1' and suite.attrib['failures']=='1' and suite.attrib['errors']=='0'
+assert 'incomplete native source witnesses' in (out/'pytest.log').read_text()
+assert all(hashlib.sha256((root/p).read_bytes()).hexdigest()==sha for p,sha in sources.items())
+(out/'result.json').write_text(json.dumps(dict(status='RED_EXPECTED',pytest_exit=1,expected_failures=1,
+    old_root='599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e',old_child='11e1855d58cb9f017243a08d610fb33a4443b773',
+    production_sha256_before=sources,production_sha256_after=sources,
+    test_path=str(test.relative_to(root)),test_sha256=hashlib.sha256(test.read_bytes()).hexdigest(),tests_injected=True,
+    note='Old production byte-identical; test file injected into isolated worktree, not a clean old Formal Pair gate.',commands=commands),indent=2)+'\n')
+print(json.dumps(dict(status='RED_EXPECTED',pytest_exit=1,failures=1,old_production_unchanged=True,output=str(out))))

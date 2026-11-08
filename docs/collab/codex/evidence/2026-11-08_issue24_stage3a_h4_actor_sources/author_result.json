@@ -1,0 +1,78 @@
+{
+  "scope": "ISSUE24_STAGE3A_H4_ACTOR_SOURCE_AUTHOR_CPU",
+  "formal_root": "8a17c3db6a2e571b67e6a149638f9d7922a704d5",
+  "child_gitlink": "00f30235da6ffb085a9304ef6501ede509203092",
+  "root_parent_preserving_reviews": "878f1bb6d6f61996850d57c75f1d70502e04886b",
+  "previous_formal_root": "599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e",
+  "previous_child": "11e1855d58cb9f017243a08d610fb33a4443b773",
+  "status": "PASS",
+  "shell_exit": 0,
+  "top_level_tests_passed": 821,
+  "subtests_passed": 207,
+  "junit_suite_tests": 1028,
+  "groups": {
+    "stage3_focused": {
+      "tests": 636,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 429
+    },
+    "root_lifecycle_config": {
+      "tests": 249,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 249
+    },
+    "legacy_protection": {
+      "tests": 143,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcase_elements": 143
+    }
+  },
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_unchanged": true,
+  "native_constructor_and_identity_unchanged": true,
+  "root_generated_actor_sources": {
+    "C": 18,
+    "A": 8,
+    "B": 8
+  },
+  "h4_new_testcases": 80,
+  "original_default_worker_regressions": 3,
+  "static": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS",
+    "changed_python_files": 2
+  },
+  "controlled_red": {
+    "directory": "red-old-code-02",
+    "status": "RED_EXPECTED",
+    "pytest_exit": 1,
+    "failures": 1,
+    "old_production_identical": true,
+    "tests_injected": true,
+    "red_green_test_sha256_identical": true
+  },
+  "initial_harness_failure": {
+    "directory": "red-old-code",
+    "reason": "Store fixture missing lock/lease_id before Actor; only new fixture corrected; no production changes at this step",
+    "raws_preserved": true
+  },
+  "original_hardware_failure": {
+    "review_path": "docs/collab/chatgpt/reviews/2026-11-08_Issue24_C1S1_RealH100_H4_ActorSourceWitness_REQUEST_CHANGES.md",
+    "review_sha256": "b5cf51c0732dad36f84571607ec8bea84d91e2b77f9b72e7fcad047b2f7da718",
+    "raw_directory": "data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h2_h3_599e7ce9_11e1855d_C1S1_real_20261108/",
+    "summary_sha256": "f8298ac777b4edad7f6187c061ac5c0e6f83aeaef56abeb95755fca33b4727ad",
+    "originals_untouched": true,
+    "remote_server_not_accessed": true
+  },
+  "independent_code_gate": "REQUESTED_NOT_YET_REVIEWED",
+  "real_h100_c_b1_retry": "NOT_RUN",
+  "v3_merge": "NOT_PERFORMED"
+}
