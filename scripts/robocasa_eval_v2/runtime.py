@@ -37,6 +37,10 @@ from robocasa_processes import group_members
 from robocasa_eval_v2 import identity, resources
 from robocasa_eval_v2.config import execution, rendering
 from robocasa_eval_v2.startup import StartupBudget
+from robocasa_eval_v2.shared_vae import (
+    SharedVAESupervisor,
+    enabled as shared_vae_enabled,
+)
 
 
 def limit_streaming_scheduler_to_prefix(scheduler, max_episode_index_exclusive):
@@ -52,17 +56,25 @@ def limit_streaming_scheduler_to_prefix(scheduler, max_episode_index_exclusive):
     if scheduler.inflight or scheduler.resume_scan:
         raise ValueError("stage ceiling must be installed before first dispatch")
     limit = max_episode_index_exclusive
-    if type(limit) is not int or not 1 <= limit < scheduler.store.manifest["episodes_per_task"]:
+    if (
+        type(limit) is not int
+        or not 1 <= limit < scheduler.store.manifest["episodes_per_task"]
+    ):
         raise ValueError("invalid stage prefix ceiling")
     with scheduler._lock:
         scheduler.pending = {
             task: deque(ep for ep in queue if ep < limit)
             for task, queue in scheduler.pending.items()
         }
-        scheduler._record("STAGE_PREFIX_LIMIT", {
-            "dispatch_episode_index_exclusive": limit,
-            "manifest_episodes_per_task": scheduler.store.manifest["episodes_per_task"],
-        })
+        scheduler._record(
+            "STAGE_PREFIX_LIMIT",
+            {
+                "dispatch_episode_index_exclusive": limit,
+                "manifest_episodes_per_task": scheduler.store.manifest[
+                    "episodes_per_task"
+                ],
+            },
+        )
 
 
 class Runtime:
@@ -147,6 +159,9 @@ class Runtime:
         self.phases = {}
         self.closed = False
         self.streaming = streaming(store.manifest)
+        self.shared_vae_profile = shared_vae_enabled(cfg)
+        self.child_root = CHILD
+        self.server_info = {}
         self.capacity_profile = "streaming32" if self.streaming else "legacy8"
         self.state_lock = threading.RLock()
         self.owned_processes = {}
@@ -159,15 +174,26 @@ class Runtime:
             g: threading.Lock() for g in set(self.worker_gpus.values())
         }
         self.startup_budget = (
-            StartupBudget(cfg, self._measure) if self.streaming else None
+            StartupBudget(cfg, self._measure)
+            if self.streaming or self.shared_vae_profile
+            else None
         )
+        self.shared_vae = (
+            self._make_shared_vae_supervisor() if self.shared_vae_profile else None
+        )
+
+    def _make_shared_vae_supervisor(self):
+        return SharedVAESupervisor(self)
+
+    def _shared_gpu_identity(self, gpu):
+        return resources.gpu_identity(gpu)
 
     def _snapshot(self, name):
         with self.state_lock:
             return dict(getattr(self, name))
 
     def _processes(self):
-        if self.streaming:
+        if self.streaming or self.shared_vae_profile:
             return list(self._snapshot("owned_processes").values())
         return [v[0] for v in self._snapshot("servers").values()] + [
             a.owned for a in self._snapshot("actors").values()
@@ -182,7 +208,7 @@ class Runtime:
             if self._closing or self.stop.is_set():
                 raise RuntimeError("cancelled before process creation")
             owned, record = self.registry.start(*args, **kwargs)
-            if self.streaming:
+            if self.streaming or self.shared_vae_profile:
                 with self.state_lock:
                     self.owned_processes[record["id"]] = owned
             return owned, record
@@ -271,7 +297,7 @@ class Runtime:
                         break
 
     def _server(self, worker):
-        if not self.streaming:
+        if not self.streaming and not self.shared_vae_profile:
             return self._create_server(worker)
         gpu = self.worker_gpus[worker]
         with self.server_locks[gpu]:
@@ -306,10 +332,14 @@ class Runtime:
         command = server_argv(
             args, Path(self.cfg["checkpoint"]), Path(self.cfg["config_file"]), port
         )
+        if self.cfg.get("single_latency_arm") is not None:
+            command += ["--single-latency-arm", self.cfg["single_latency_arm"]]
+        if self.shared_vae_profile:
+            command += ["--history-source", "sim_shared_vae"]
         # The eval Client/Actors always use 127.0.0.1. Do not expose the
         # transaction-owning Policy Server on all network interfaces.
         # Both concurrent evaluation runs must bind distinct local TCP ports.
-        if self.streaming:
+        if self.streaming or self.shared_vae_profile:
             if "--host" in command:
                 raise ValueError("ambiguous Policy Server listen host")
             command.extend(("--host", "127.0.0.1"))
@@ -421,10 +451,11 @@ class Runtime:
                 raise RuntimeError("Server startup completed after cancellation")
             with self.state_lock:
                 self.servers[key] = (owned, rec, port)
+                self.server_info[key] = info
         return self.servers[key]
 
     def _actor(self, claim):
-        if not self.streaming:
+        if not self.streaming and not self.shared_vae_profile:
             return self._setup_actor(claim)
         worker = claim["physical_worker"]
         with self._job(), self.worker_locks[worker]:
@@ -453,6 +484,10 @@ class Runtime:
             if self.stop.is_set():
                 raise RuntimeError("cancelled before runtime startup")
             server, server_rec, port = self._server(claim["physical_worker"])
+            if self.shared_vae is not None:
+                self.shared_vae.ensure(
+                    worker, self.server_info[f"GPU{self.worker_gpus[worker]}"]
+                )
             self.phases[claim["physical_worker"]] = "environment_initialization"
             if worker in self.actors:
                 return self._start_assignment(claim, self.actors[worker], server_rec)
@@ -511,6 +546,11 @@ class Runtime:
                     "local_memory_mode": self.store.manifest["protocol"][
                         "local_memory"
                     ],
+                    **(
+                        {"local_evidence_profile": "sim_shared_vae"}
+                        if self.shared_vae_profile
+                        else {}
+                    ),
                     "capacity_profile": self.capacity_profile,
                     "sampling_protocol": self.store.manifest["protocol"]["sampling"],
                     "predict_timeout_s": self.cfg["request_timeout_s"],
@@ -542,6 +582,24 @@ class Runtime:
                     "path": str(file),
                     "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
                 }
+            if self.shared_vae_profile:
+                for name, relative in {
+                    "shared_client": "simulation/robocasa/sim_shared_vae_client.py",
+                    "local_client": "simulation/robocasa/local_memory_client.py",
+                    "transaction_client": "inference/robocasa_transaction_client.py",
+                    "feature_trace": "inference/robocasa_feature_trace.py",
+                    "feature_evidence": "inference/robocasa_feature_evidence.py",
+                    "session_transactions": "inference/robocasa_session_transactions.py",
+                    "batch_transactions": "inference/robocasa_batch_transactions.py",
+                    "vae_protocol": "inference/robocasa_vae_protocol.py",
+                    "vae_worker": "inference/robocasa_vae_worker.py",
+                    "vae_client": "inference/robocasa_vae_client.py",
+                }.items():
+                    file = CHILD / "cosmos_framework" / relative
+                    cfg["source_files"][name] = {
+                        "path": str(file),
+                        "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
+                    }
             path = self.store.root / "_internal/actor_configs" / f"{nonce}.json"
             write(path, cfg)
             parent, child = socket.socketpair()
@@ -554,6 +612,10 @@ class Runtime:
             env.pop(
                 "MUJOCO_EGL_DEVICE_ID", None
             )  # Worker resolves the physical PCI -> EGL index before imports.
+            if self.shared_vae_profile:
+                env["__EGL_VENDOR_LIBRARY_FILENAMES"] = self.cfg["sim_shared_vae"][
+                    "egl_vendor_json"
+                ]
             log = (self.store.root / "logs" / f"{worker}_simulator.log").open("ab")
             with self.state_lock:
                 self.logs.append(log)
@@ -713,13 +775,18 @@ class Runtime:
                 self.server_owners[key],
             )
             self.store.record_timing("session_register", time.perf_counter() - started)
-            return {
+            result = {
                 "lease": lease,
                 "prediction_clock_domain": client.clock_domain,
                 "local_memory_mode": client.mode,
                 "profile": client.protocol,
                 "capacity_profile": self.capacity_profile,
             }
+            if self.shared_vae is not None:
+                result["sim_shared_vae"] = self.shared_vae.register_assignment(
+                    worker, self.actors[worker], result, deadline
+                )
+            return result
 
     def run_slot(self, scheduler, claim):
         with self._job(), self.worker_locks[claim["physical_worker"]]:
@@ -934,6 +1001,24 @@ class Runtime:
                             attempt if attempt and attempt["task"] == task else None,
                         )
                     )
+        if self.shared_vae is not None:
+            try:
+                self.shared_vae.close()
+            except Exception as error:
+                for worker in self.workers:
+                    task = self.slot_claim_tasks.get(
+                        worker, self.actor_tasks.get(worker)
+                    )
+                    if task in self.store.active_tasks:
+                        errors.append(
+                            (
+                                task,
+                                type(error).__name__,
+                                self.latest_attempts.get(
+                                    worker if self.streaming else task
+                                ),
+                            )
+                        )
         for worker, (owned, record, port) in self._snapshot("servers").items():
             try:
                 was = owned.proc.poll()

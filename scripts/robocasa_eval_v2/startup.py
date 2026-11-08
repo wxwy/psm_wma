@@ -11,16 +11,20 @@ class StartupBudget:
 
     def __init__(self, cfg, measure):
         self.cfg, self.measure = cfg, measure
+        if cfg.get("local_evidence_profile") == "sim_shared_vae":
+            self.settings = cfg["sim_shared_vae"]["resources"]
+        else:
+            self.settings = cfg["streaming_resources"]
         self.lock = threading.Lock()
         self.pending = {}
         self.version = 0
         self.initializers = threading.BoundedSemaphore(
-            cfg["streaming_resources"]["initialization_concurrency"]
+            self.settings["initialization_concurrency"]
         )
 
     @contextlib.contextmanager
     def reserve(self, key, kind, gpu):
-        settings = self.cfg["streaming_resources"]
+        settings = self.settings
         reservation = (
             settings[f"{kind}_startup_rss_bytes"],
             settings[f"{kind}_startup_gpu_bytes"],
@@ -39,7 +43,7 @@ class StartupBudget:
                     self.version += 1
 
     def _reconcile(self, key, reservation, *, complete):
-        settings = self.cfg["streaming_resources"]
+        settings = self.settings
         for _ in range(self._MAX_RETRIES):
             with self.lock:
                 version = self.version

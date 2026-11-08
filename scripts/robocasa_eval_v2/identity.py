@@ -114,6 +114,11 @@ def runtime_environment(cache):
 
 
 def prepare(cfg, *, cache, anchor=None, manifest=None):
+    from robocasa_eval_v2.shared_vae import input_files
+
+    for path, expected in input_files(cfg):
+        if sha256_file(path) != expected:
+            raise ValueError("frozen shared Worker input changed")
     tasks = discover(cfg)
     frozen = manifest["experiment"]["root_sha"] if manifest else None
     root, child, actual = verify_source(frozen)
@@ -222,10 +227,19 @@ _INPUT_WITNESSES = {}
 
 
 def guard(cfg, manifest, inputs, *, source=True):
+    if cfg.get("single_latency_arm") is not None and execution(cfg) != manifest.get(
+        "execution"
+    ):
+        raise ValueError(
+            "single-latency/Worker configuration differs from frozen execution identity"
+        )
     if source:
         verify_source(manifest["experiment"]["root_sha"])
     verify_model_observation(inputs["model"])
     checks = [(Path(cfg["config_file"]), manifest["experiment"]["config_sha256"])]
+    from robocasa_eval_v2.shared_vae import input_files
+
+    checks += input_files(cfg)
     checks += [
         (
             Path(d) / "extras/dataset_meta.json",
