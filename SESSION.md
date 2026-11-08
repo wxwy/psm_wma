@@ -1,3 +1,26 @@
+# 2026-11-08 — H2/H3 publication and remote readback PASS; independent Code Gate handoff
+
+Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink
+11e1855d58cb9f017243a08d610fb33a4443b773 now published to the existing isolated
+branches. Owner verified email; normal Child-first/Root pushes succeeded, then
+Root PR25 / Child PR7 updated and independently fetched open/draft/unmerged.
+18/18 remote source/JUnit/gate/result/Inbox/original-review Blob SHAs matched
+local Git objects;76/76 raw archive SHA256 passed. Exact Gitlink, clean worktrees,
+no source/test edits after final author Gate. CPU not rerun after email reply.
+Author738+207 PASS/static5PASS/source_unchanged true/nativeidentity unchanged.
+Original RED3, prior403 receipts/local bundle and hardware failure review retained.
+Official RootV3 7b8b733e / Child1ca30805 unchanged. No GPU/server/realSim/merge.
+
+Review request delivered through updated Draft PRs and append-only canonical
+Inbox; availability is not reviewer ACK/approval. Task REVIEW for fresh H2/H3
+incremental GPT Code Gate only. No background polling or hardware retry claimed.
+PRs: https://github.com/wxwy/psm_wma/pull/25 and https://github.com/wxwy/cosmos-framework/pull/7
+Handoff: docs/collab/codex/reviews/2026-11-08_Issue24_H2_H3_599e7ce9_11e1855d_Incremental_Code_Review_Request.md
+Receipt: docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_receipt.json
+Evidence commit57790ff3c544abdde8a87620a77c1bc3c4526b31; docs-only successors
+never replace Formal Root. Next real C-B1 smoke requires Code Gate then separate
+execution handling; P0SR/B8/900EP/training/V3 merge remain outside scope.
+
 # 2026-11-08 — H2/H3 publication resumed after Owner email verification
 
 Owner replied verified. Normal Child-first/Root Git pushes now succeeded:
