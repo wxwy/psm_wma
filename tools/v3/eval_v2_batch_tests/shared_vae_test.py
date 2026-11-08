@@ -515,11 +515,27 @@ def test_buffered_close_event_is_read_after_normal_process_exit():
         os.close(read)
 
 
+@pytest.mark.parametrize("omega_constructor", [False, True])
 def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
     tmp_path,
+    omega_constructor,
 ):
     cfg = profile_config(tmp_path)
     cfg.update(server_python=sys.executable, server_start_s=10, terminate_grace_s=3)
+    identity, constructor = IDENTITY, {}
+    if omega_constructor:
+        from cosmos_framework.inference.robocasa_vae_daemon import (
+            loaded_vae_identity,
+            worker_constructor_config,
+        )
+        from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+
+        tokenizer = _tokenizer(omega=True)
+        identity = loaded_vae_identity(tokenizer)
+        constructor = worker_constructor_config(tokenizer)
+        raw = json.dumps(constructor).encode()
+        Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+        cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
     run = tmp_path / "run"
     (run / "logs").mkdir(parents=True)
 
@@ -585,10 +601,10 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
             "slot",
             {
                 "local_feature": {
-                    "identity": IDENTITY,
+                    "identity": identity,
                     "history_source": "sim_shared_vae",
                     "clock_domain": "cpu-clock",
-                    "worker_constructor_config": {},
+                    "worker_constructor_config": constructor,
                 }
             },
         )

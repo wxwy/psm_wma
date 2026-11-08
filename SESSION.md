@@ -1,3 +1,18 @@
+# 2026-11-08 — H1 corrected Child frozen; preparing exact-pair author CPU
+
+Child `90ac5e91c5919cdb1d228aebd797e40327900981` contains only daemon container
+normalization/validation, new real OmegaConf daemon tests and one Policy C-init
+AST-bootstrap regression. Root adds actual OmegaConf constructor variant to the
+existing Registry lifecycle test plus this exact Gitlink. No Root production edit.
+Controlled RED ran 2 real ListConfig tests against byte-identical old6842 daemon:
+2 expected FAIL at canonical JSON, pytest exit1; runner RED_EXPECTED exit0.
+Native constructor bytes and loaded-tensor/config identity golden captured from
+old code. All original logs/source/test hashes preserved in external H1 evidence.
+Production formatter changed only daemon formatting; tests formatted before RED.
+Next exact clean Pair CPU runs all original Stage3A/Root/A-B protections + new H1
+cases with CUDA disabled, strict no-failure/error/skip and source fingerprint check.
+No GPU/real model/checkpoint/server access/merge or original evidence modification.
+
 # 2026-11-08 — Issue24 Stage3A H1 OmegaConf remediation claimed
 
 Owner latest message + exact remote H1 report authorize a narrow constructor
