@@ -1,3 +1,25 @@
+# 2026-11-08 (CST) — G2-N6-F1-B2 published / STOP for GPT server recheck
+
+REVIEW. Fixed implementation Root 193a05e3b250eb32dd7ee08165a368a6706e78ee, tree
+ea6c22922c11f1a1edfd9193dbbc9d326a2ca167. GitHub tree exactly matches tested source,
+34/34 G2 source/config/test blob SHAs read back identical. Exact API Git
+commit SHA imported locally only after cryptographic verification; local
+authored same-tree backup preserved. Source code/tests remain frozen.
+Actual Issue26 handoff6722822036 posted and full body read back exactly:
+https://github.com/wxwy/psm_wma/issues/26#issuecomment-6722822036 .
+
+This successor only changes publication/Inbox/SESSION/TODO metadata. Author
+259/259 and llvmpipe54/864 max1byte evidence are not GPT real-scene approval.
+Explicit2D sRGB remains unsupported, role assertions are not automatic
+semantic certification, full-source/real four-frame/native acceptance OPEN.
+Original V3/N6/F1/A2/F1B/review/native7 refs read back unchanged. Native
+2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. No server files/access/
+download/outward transfer, GPU/models/rollouts/training or production/PR edits.
+No new Draft PR created; known restriction was not retried. STOP per F1-B2
+instruction for GPT server-local roles/materials/paper-towel/ColorCloudMap
+recheck, before normal roots/perception/six+Island/PSS/Cosmos/learning.
+
 # 2026-11-08 (CST) — G2-N6-F1-B2 source frozen / handoff preparation
 
 REVIEW. Owner Issue26 comment6722340254 and actual GPT F1-B review commit
