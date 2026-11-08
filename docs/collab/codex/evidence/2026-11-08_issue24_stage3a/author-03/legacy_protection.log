@@ -1,0 +1,592 @@
+........................................................................ [ 50%]
+...............................................................FFFFFFFF  [100%]
+=================================== FAILURES ===================================
+_____ test_rollout_failure_remains_primary_when_reset_also_fails[failure0] _____
+
+failure = RuntimeError('HTTP 400')
+
+    @pytest.mark.parametrize("failure", [RuntimeError("HTTP 400"), TimeoutError("request timeout")])
+    def test_rollout_failure_remains_primary_when_reset_also_fails(failure):
+        run, env, client, reset, _ = runner(failure=failure, reset_failure=RuntimeError("reset failed"))
+        witnesses = []
+        with pytest.raises(type(failure), match=str(failure)):
+>           run(
+                env,
+                server_url="synthetic",
+                image_size=256,
+                action_horizon=16,
+                max_steps=1,
+                latch=1,
+                timeout=0.1,
+                local_memory_client=client,
+                on_cleanup=witnesses.append,
+            )
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121705295424'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+_____ test_rollout_failure_remains_primary_when_reset_also_fails[failure1] _____
+
+failure = TimeoutError('request timeout')
+
+    @pytest.mark.parametrize("failure", [RuntimeError("HTTP 400"), TimeoutError("request timeout")])
+    def test_rollout_failure_remains_primary_when_reset_also_fails(failure):
+        run, env, client, reset, _ = runner(failure=failure, reset_failure=RuntimeError("reset failed"))
+        witnesses = []
+        with pytest.raises(type(failure), match=str(failure)):
+>           run(
+                env,
+                server_url="synthetic",
+                image_size=256,
+                action_horizon=16,
+                max_steps=1,
+                latch=1,
+                timeout=0.1,
+                local_memory_client=client,
+                on_cleanup=witnesses.append,
+            )
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121706684656'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+_________ test_cleanup_all_boundaries_and_independent_witness[normal] __________
+
+kind = 'normal'
+
+    @pytest.mark.parametrize("kind", ["normal", "media", "reset", "both", "env_reset"])
+    def test_cleanup_all_boundaries_and_independent_witness(kind):
+        run, env, client, reset, video = runner(
+            reset_failure=RuntimeError("reset failed") if kind in ("reset", "both") else None,
+            media_failure=RuntimeError("encoder failed") if kind in ("media", "both") else None,
+            env_failure=RuntimeError("env reset failed") if kind == "env_reset" else None,
+        )
+        witnesses = []
+        kwargs = dict(
+            server_url="synthetic",
+            image_size=256,
+            action_horizon=16,
+            max_steps=0,
+            latch=1,
+            timeout=0.1,
+            local_memory_client=client,
+            on_cleanup=witnesses.append,
+        )
+        if kind == "normal":
+>           assert run(env, **kwargs)[0] is False
+                   ^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121706223648'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+__________ test_cleanup_all_boundaries_and_independent_witness[media] __________
+
+kind = 'media'
+
+    @pytest.mark.parametrize("kind", ["normal", "media", "reset", "both", "env_reset"])
+    def test_cleanup_all_boundaries_and_independent_witness(kind):
+        run, env, client, reset, video = runner(
+            reset_failure=RuntimeError("reset failed") if kind in ("reset", "both") else None,
+            media_failure=RuntimeError("encoder failed") if kind in ("media", "both") else None,
+            env_failure=RuntimeError("env reset failed") if kind == "env_reset" else None,
+        )
+        witnesses = []
+        kwargs = dict(
+            server_url="synthetic",
+            image_size=256,
+            action_horizon=16,
+            max_steps=0,
+            latch=1,
+            timeout=0.1,
+            local_memory_client=client,
+            on_cleanup=witnesses.append,
+        )
+        if kind == "normal":
+            assert run(env, **kwargs)[0] is False
+        else:
+            primary = {
+                "media": "encoder failed",
+                "reset": "reset failed",
+                "both": "encoder failed",
+                "env_reset": "env reset failed",
+            }[kind]
+            with pytest.raises(RuntimeError, match=primary):
+>               run(env, **kwargs)
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121708094208'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+__________ test_cleanup_all_boundaries_and_independent_witness[reset] __________
+
+kind = 'reset'
+
+    @pytest.mark.parametrize("kind", ["normal", "media", "reset", "both", "env_reset"])
+    def test_cleanup_all_boundaries_and_independent_witness(kind):
+        run, env, client, reset, video = runner(
+            reset_failure=RuntimeError("reset failed") if kind in ("reset", "both") else None,
+            media_failure=RuntimeError("encoder failed") if kind in ("media", "both") else None,
+            env_failure=RuntimeError("env reset failed") if kind == "env_reset" else None,
+        )
+        witnesses = []
+        kwargs = dict(
+            server_url="synthetic",
+            image_size=256,
+            action_horizon=16,
+            max_steps=0,
+            latch=1,
+            timeout=0.1,
+            local_memory_client=client,
+            on_cleanup=witnesses.append,
+        )
+        if kind == "normal":
+            assert run(env, **kwargs)[0] is False
+        else:
+            primary = {
+                "media": "encoder failed",
+                "reset": "reset failed",
+                "both": "encoder failed",
+                "env_reset": "env reset failed",
+            }[kind]
+            with pytest.raises(RuntimeError, match=primary):
+>               run(env, **kwargs)
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121706262224'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+__________ test_cleanup_all_boundaries_and_independent_witness[both] ___________
+
+kind = 'both'
+
+    @pytest.mark.parametrize("kind", ["normal", "media", "reset", "both", "env_reset"])
+    def test_cleanup_all_boundaries_and_independent_witness(kind):
+        run, env, client, reset, video = runner(
+            reset_failure=RuntimeError("reset failed") if kind in ("reset", "both") else None,
+            media_failure=RuntimeError("encoder failed") if kind in ("media", "both") else None,
+            env_failure=RuntimeError("env reset failed") if kind == "env_reset" else None,
+        )
+        witnesses = []
+        kwargs = dict(
+            server_url="synthetic",
+            image_size=256,
+            action_horizon=16,
+            max_steps=0,
+            latch=1,
+            timeout=0.1,
+            local_memory_client=client,
+            on_cleanup=witnesses.append,
+        )
+        if kind == "normal":
+            assert run(env, **kwargs)[0] is False
+        else:
+            primary = {
+                "media": "encoder failed",
+                "reset": "reset failed",
+                "both": "encoder failed",
+                "env_reset": "env reset failed",
+            }[kind]
+            with pytest.raises(RuntimeError, match=primary):
+>               run(env, **kwargs)
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121706223408'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+________ test_cleanup_all_boundaries_and_independent_witness[env_reset] ________
+
+kind = 'env_reset'
+
+    @pytest.mark.parametrize("kind", ["normal", "media", "reset", "both", "env_reset"])
+    def test_cleanup_all_boundaries_and_independent_witness(kind):
+        run, env, client, reset, video = runner(
+            reset_failure=RuntimeError("reset failed") if kind in ("reset", "both") else None,
+            media_failure=RuntimeError("encoder failed") if kind in ("media", "both") else None,
+            env_failure=RuntimeError("env reset failed") if kind == "env_reset" else None,
+        )
+        witnesses = []
+        kwargs = dict(
+            server_url="synthetic",
+            image_size=256,
+            action_horizon=16,
+            max_steps=0,
+            latch=1,
+            timeout=0.1,
+            local_memory_client=client,
+            on_cleanup=witnesses.append,
+        )
+        if kind == "normal":
+            assert run(env, **kwargs)[0] is False
+        else:
+            primary = {
+                "media": "encoder failed",
+                "reset": "reset failed",
+                "both": "encoder failed",
+                "env_reset": "env reset failed",
+            }[kind]
+            with pytest.raises(RuntimeError, match=primary):
+>               run(env, **kwargs)
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121705287456'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+_________ test_cleanup_witness_callback_cannot_override_original_error _________
+
+    def test_cleanup_witness_callback_cannot_override_original_error():
+        run, env, client, _, _ = runner(failure=RuntimeError("original"))
+        with pytest.raises(RuntimeError, match="original"):
+>           run(
+                env,
+                server_url="synthetic",
+                image_size=256,
+                action_horizon=16,
+                max_steps=1,
+                latch=1,
+                timeout=0.1,
+                local_memory_client=client,
+                on_cleanup=Mock(side_effect=OSError("disk full")),
+            )
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py:109: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = <Mock id='140121706518608'>
+
+    def run_policy(
+        env,
+        *,
+        server_url,
+        image_size,
+        action_horizon,
+        max_steps,
+        latch,
+        timeout,
+        use_state=False,
+        save_png=None,
+        save_video=None,
+        gen_video_path=None,
+        generated_video_mode=None,
+        generated_run_digest=None,
+        generated_attempt_id=None,
+        video_fps=20,
+        local_memory_client: RoboCasaLocalMemoryClient | None = None,
+        on_prediction: Callable[[dict, float], None] | None = None,
+        on_action: Callable[[dict], None] | None = None,
+        on_cleanup: Callable[[dict], None] | None = None,
+        on_progress: Callable[[dict], None] | None = None,
+        initial_observation=None,
+        success_check: Callable | None = None,
+        on_frame: Callable | None = None,
+        language_instruction: str | None = None,
+        http_client=None,
+        trace=None,
+    ) -> tuple[bool, int, str]:
+        shared_vae = getattr(local_memory_client, "uses_shared_vae", False) is True
+        if shared_vae and (action_horizon != 16 or not use_state or not USE_BASE_ACTION or BASE_ENCODING != "raw"):
+            raise ValueError("shared VAE C requires H16/state15/mobile canonical raw15")
+        rollout_error: BaseException | None = None
+>       trace = trace if trace is not None else get_trace()
+                                                ^^^^^^^^^
+E       NameError: name 'get_trace' is not defined
+
+cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py:285: NameError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_rollout_failure_remains_primary_when_reset_also_fails[failure0]
+FAILED ../../../dev::test_rollout_failure_remains_primary_when_reset_also_fails[failure1]
+FAILED ../../../dev::test_cleanup_all_boundaries_and_independent_witness[normal]
+FAILED ../../../dev::test_cleanup_all_boundaries_and_independent_witness[media]
+FAILED ../../../dev::test_cleanup_all_boundaries_and_independent_witness[reset]
+FAILED ../../../dev::test_cleanup_all_boundaries_and_independent_witness[both]
+FAILED ../../../dev::test_cleanup_all_boundaries_and_independent_witness[env_reset]
+FAILED ../../../dev::test_cleanup_witness_callback_cannot_override_original_error
+8 failed, 135 passed, 14 warnings in 16.83s

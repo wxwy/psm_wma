@@ -1,3 +1,28 @@
+# 2026-11-08 — Issue24 Stage3A author CPU PASS; publication/Code Gate handoff
+
+Formal Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child-Gitlink
+`6842b329f71fff8b9813b2d00b83edfc61e3e505`, isolated Root/Child branch
+`v3-stage3a-issue24-20261108`. Final author-04: 654 top-level tests +207 subtests
+PASS (JUnit suite tests861 / testcase elements654), zero failures/errors/skips, Shell0, gate.status PASS,
+source_unchanged true. Ruff check/format PASS on36 changed Python files. Earlier
+author-01/02/03 failures retained, never overwritten; details in new handoff.
+
+Exact Pair CPU work complete. Archiving raw logs/XML/identity/source snapshots,
+then publishing two new Draft PRs. Status REVIEW for GPT independent Code Gate;
+no exact-new-Pair reviewer verdict claimed. Root docs-only successors do not
+replace Formal Root. Current official advertised RootV3
+7b8b733e1f585bb44a0eac7c14ad545c29355a86 and Childv3-local-ttt
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged by this work. No PR4/5/6 changes,
+real weights/GPU/EGL/RoboCasa/P0 timing/SR/Stage3B/merge/training/old-job actions.
+
+Author handoff: docs/collab/codex/reviews/2026-11-08_Issue24_Stage3A_ef82fe02_6842b329_CPU_Code_Review_Request.md
+Evidence: docs/collab/codex/evidence/2026-11-08_issue24_stage3a/
+Role authority: Owner/Issue24 authorizes code+focusedCPU and new Draft PRs;
+GPT design/review, Codex author, DS separate execution. No obsolete V2/pane
+workflow or background polling asserted. No unresolved DESIGN_DELTA.
+
+## Retained implementation/attempt history
+
 # 2026-11-08 — Issue24 Stage3A implementation claimed
 
 ThirdfocusedGate Root141243da258221aaf3121132e5f7a34a6e9ec38a/Child68015f4c64d7a5d29d310f16e86adfa75571674c author-03 retained: new359PASS+207subtests/Root152PASS, legacy135PASS8FAIL,sourceunchangedtrue. Remainingall8fail werelegacy AST-onlyfixture NameError fornewoptionalpure get_trace/nullcontext globals (moduleimportsnotloadedbyfixture); fixedonlyfixture namespace/imports, oldassertionsunchanged. Narrowannouncedcheck_legacy_fixture.py ranexactlegacyfile:8PASS,exit0,log/JUnitunderlegacy-fixture-check, developmentchecknotFormalGate. Freeze test-onlynewPair andrunfinalsamefocusedGate; no productionchangesafterstrictCmarkerfix.

@@ -1,0 +1,8 @@
+{
+  "origin": "/workspace/work/issue24-stage3a-evidence/author-04",
+  "files": {
+    "root_registry_lifecycle.json": "root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/lifecycle.json",
+    "stage1_worker_ipc_lifecycle.json": "stage3_focused_tmp/test_real_subprocess_signed_re0/lifecycle.json"
+  },
+  "scope": "synthetic CPU actual owned OS processes and IPC, not GPU/RoboCasa evidence"
+}

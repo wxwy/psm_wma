@@ -1,0 +1,143 @@
+.................................................. [ 13%]
+.........F.F............................................................ [ 33%]
+........................................................................ [ 54%]
+........................................................................ [ 74%]
+........................................................................ [ 94%]
+.....................           [100%]
+=================================== FAILURES ===================================
+_ test_c_failure_never_publishes_response_or_existing_memory_candidate[prepare] _
+
+feature_actor = <function feature_actor.<locals>.make at 0x7f7ff6ad1f80>
+stage = 'prepare'
+
+    @pytest.mark.parametrize("stage", ["prepare", "generation"])
+    def test_c_failure_never_publishes_response_or_existing_memory_candidate(feature_actor, stage):
+        rig = feature_actor(fail_prepare=stage == "prepare", fail_generate=stage == "generation")
+        actor, adapter = rig.actor, rig.adapter
+        lease = sessions.register(actor)
+        before = rig.base.snapshot
+        adapter.release.set()
+        pending = sessions.submit(actor, lease, sessions.payload(lease))
+>       result = sessions.wait_result(actor, lease, pending, expected=409)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+actor = <cosmos_framework.inference.robocasa_batch_transactions.BatchedSessionTransactions object at 0x7f7ff72e98e0>
+lease = {'attempt_id': 'attempt-1', 'capability': 'fcvFUmmBZasnc1rO70qOHzHD0e44vVodyq5vbmS1mM0', 'episode_id': '7c436e362d5e45268a323353f89417a6', 'episode_index': 0, ...}
+pending = Reply(status=202, body=b'{"payload_sha256":"702bf1545e041727b346915812e5c91fda3d7f42208328de051a7c1cca16881b","request...5560daf1486a2f8f64233e70c1402eec0baf8","server_epoch":"3fd10bc2092c42a2abff42ceddbb2d86","state":"FEATURE_PREPARING"}')
+
+    def wait_result(actor, lease, pending, *, expected=200):
+        value = pending.json()
+        if pending.status == 200:
+            return pending
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline:
+            try:
+                result = actor.result(lease, value["request_key"], value["payload_sha256"])
+            except RuntimeError:
+                if expected != 409:
+                    raise
+                time.sleep(0.005)
+                continue
+            if result.status != 202:
+                if result.status == 409 and not result.json().get("quiescent") and not actor.info()["quarantined"]:
+                    time.sleep(0.005)
+                    continue
+                assert result.status == expected, result.json()
+                return result
+            time.sleep(0.005)
+>       raise AssertionError(f"bounded CPU actor did not finish: {actor.info()}")
+E       AssertionError: bounded CPU actor did not finish: {'enabled': True, 'profile': 'robocasa.session-transactions.b1.v1', 'local_memory_mode': 'required', 'server_epoch': '3fd10bc2092c42a2abff42ceddbb2d86', 'run_lease': 'run', 'manifest_digest': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'slot_ids': ['slot0', 'slot1'], 'max_native_batch': 1, 'capacity_profile': 'legacy8', 'sessions': 1, 'tickets': 0, 'encoded_bytes': 0, 'busy': False, 'quarantined': False, 'stopping': False, 'generated_media': 'bounded_cpu_spool_same_model_executor', 'timeout_s': 4, 'prediction_clock_domain': 'e1bca2f422f8b7eb82d52a8a29ad11f7aa823b2aea829c5fc57ef227981a6575', 'max_encoded_bytes': 134217728, 'max_item_bytes': 33554432, 'max_http_requests': 3, 'execution_profile': 'session_native_batch_v1', 'batch_wait_ms': 0.0, 'batches': 0, 'batch_histogram': {}, 'queued': 0, 'queue_high_water': 0, 'queue_wait_p50_ms': None, 'queue_wait_p95_ms': None, 'batch_generate_ms': {'count': 0, 'recent_max': None, 'recent_mean': None}, 'requests_finished': 0, 'media_jobs': 0, 'media_cpu_bytes': 0, 'media_spool_max_jobs': 4, 'media_spool_max_bytes': 536870912, 'media_drain_timeout_s': 300.0, 'strict_media_item_bytes': 33554432}
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py:167: AssertionError
+_ test_end_during_feature_prepare_cancels_without_generation_or_pending_state_leak _
+
+feature_actor = <function feature_actor.<locals>.make at 0x7f7ff7378860>
+
+    def test_end_during_feature_prepare_cancels_without_generation_or_pending_state_leak(feature_actor):
+        rig = feature_actor()
+        actor, adapter = rig.actor, rig.adapter
+        lease = sessions.register(actor)
+        pending = sessions.submit(actor, lease, sessions.payload(lease))
+        assert adapter.entered.wait(2)
+        response = actor.end(lease)
+        assert response.status == 202 and response.json()["acknowledged"] is False
+        adapter.release.set()
+>       result = sessions.wait_result(actor, lease, pending, expected=409)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+actor = <cosmos_framework.inference.robocasa_batch_transactions.BatchedSessionTransactions object at 0x7f7ff7267e60>
+lease = {'attempt_id': 'attempt-1', 'capability': '-VDbvTKVOZIJrFMkSGOd30_Obi9G19P16npIyFw3HOQ', 'episode_id': 'ce5bbe661682489fb76bdf79ded900c7', 'episode_index': 0, ...}
+pending = Reply(status=202, body=b'{"payload_sha256":"9f85099ba2e26a69d59f9f023eda0ad82ef42994697d711cf4efd0fced0568ef","request...650453088a9266836d36baee293367964175f","server_epoch":"a931612026cd403c8aa463c0ce8a4f75","state":"FEATURE_PREPARING"}')
+
+    def wait_result(actor, lease, pending, *, expected=200):
+        value = pending.json()
+        if pending.status == 200:
+            return pending
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline:
+            try:
+                result = actor.result(lease, value["request_key"], value["payload_sha256"])
+            except RuntimeError:
+                if expected != 409:
+                    raise
+                time.sleep(0.005)
+                continue
+            if result.status != 202:
+                if result.status == 409 and not result.json().get("quiescent") and not actor.info()["quarantined"]:
+                    time.sleep(0.005)
+                    continue
+                assert result.status == expected, result.json()
+                return result
+            time.sleep(0.005)
+>       raise AssertionError(f"bounded CPU actor did not finish: {actor.info()}")
+E       AssertionError: bounded CPU actor did not finish: {'enabled': True, 'profile': 'robocasa.session-transactions.b1.v1', 'local_memory_mode': 'required', 'server_epoch': 'a931612026cd403c8aa463c0ce8a4f75', 'run_lease': 'run', 'manifest_digest': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'slot_ids': ['slot0', 'slot1'], 'max_native_batch': 1, 'capacity_profile': 'legacy8', 'sessions': 1, 'tickets': 0, 'encoded_bytes': 0, 'busy': False, 'quarantined': False, 'stopping': False, 'generated_media': 'bounded_cpu_spool_same_model_executor', 'timeout_s': 4, 'prediction_clock_domain': 'e1bca2f422f8b7eb82d52a8a29ad11f7aa823b2aea829c5fc57ef227981a6575', 'max_encoded_bytes': 134217728, 'max_item_bytes': 33554432, 'max_http_requests': 3, 'execution_profile': 'session_native_batch_v1', 'batch_wait_ms': 0.0, 'batches': 0, 'batch_histogram': {}, 'queued': 0, 'queue_high_water': 0, 'queue_wait_p50_ms': None, 'queue_wait_p95_ms': None, 'batch_generate_ms': {'count': 0, 'recent_max': None, 'recent_mean': None}, 'requests_finished': 0, 'media_jobs': 0, 'media_cpu_bytes': 0, 'media_spool_max_jobs': 4, 'media_spool_max_bytes': 536870912, 'media_drain_timeout_s': 300.0, 'strict_media_item_bytes': 33554432}
+
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py:167: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35
+  /workspace/work/psm-wma-stage3a-issue24/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_c_failure_never_publishes_response_or_existing_memory_candidate[prepare]
+FAILED ../../../dev::test_end_during_feature_prepare_cancels_without_generation_or_pending_state_leak
+2 failed, 357 passed, 9 warnings, 207 subtests passed in 42.14s

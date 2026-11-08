@@ -1,0 +1,141 @@
+{
+  "schema": "issue24-stage3a-author-evidence-v1",
+  "scope": "ISSUE24_STAGE3A_B1_FOCUSED_AUTHOR_CPU",
+  "formal_root": "ef82fe02ee73e3c804b83ffbd68c5123c1377fa2",
+  "child_gitlink": "6842b329f71fff8b9813b2d00b83edfc61e3e505",
+  "base_root_design": "afd0b21f1f994bdf2b21cfbaa4a260ced8eeaaf9",
+  "base_child": "0a2119782fb5078fee3359f9ef7383d788744458",
+  "status": "PASS",
+  "shell_exit": 0,
+  "source_unchanged": true,
+  "top_level_tests_passed": 654,
+  "subtests_passed": 207,
+  "junit_reported_tests": {
+    "stage3_focused": 566,
+    "root_lifecycle_config": 152,
+    "legacy_protection": 143
+  },
+  "junit_total_reported_tests": 861,
+  "junit_testcase_elements": {
+    "stage3_focused": 359,
+    "root_lifecycle_config": 152,
+    "legacy_protection": 143
+  },
+  "junit_total_testcase_elements": 654,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "static": {
+    "ruff_check": "PASS",
+    "ruff_format": "PASS",
+    "changed_python_files": 36
+  },
+  "attempts": [
+    {
+      "directory": "author-01",
+      "identity": {
+        "root": "c9456eb82e54cc7c0babc4dd32643070ab01ae44",
+        "child": "2ced1808ccea05731426f4ad488ac75297bbf075",
+        "gitlink": "2ced1808ccea05731426f4ad488ac75297bbf075"
+      },
+      "status": "FAIL",
+      "source_unchanged": true,
+      "groups": {
+        "stage3_focused": "NOT_RUN",
+        "root_lifecycle_config": "NOT_RUN",
+        "legacy_protection": "NOT_RUN"
+      }
+    },
+    {
+      "directory": "author-02",
+      "identity": {
+        "root": "305af76c48a47e3e4c312417a69d4e8376f4a9ee",
+        "child": "05cf413fb1cfffc0d7d05b18e8803c715125f2ad",
+        "gitlink": "05cf413fb1cfffc0d7d05b18e8803c715125f2ad"
+      },
+      "status": "FAIL",
+      "source_unchanged": true,
+      "groups": {
+        "stage3_focused": {
+          "tests": 566,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "root_lifecycle_config": {
+          "tests": 152,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "legacy_protection": "NOT_RUN"
+      }
+    },
+    {
+      "directory": "author-03",
+      "identity": {
+        "root": "141243da258221aaf3121132e5f7a34a6e9ec38a",
+        "child": "68015f4c64d7a5d29d310f16e86adfa75571674c",
+        "gitlink": "68015f4c64d7a5d29d310f16e86adfa75571674c"
+      },
+      "status": "FAIL",
+      "source_unchanged": true,
+      "groups": {
+        "stage3_focused": {
+          "tests": 566,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "root_lifecycle_config": {
+          "tests": 152,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "legacy_protection": "NOT_RUN"
+      }
+    },
+    {
+      "directory": "author-04",
+      "identity": {
+        "root": "ef82fe02ee73e3c804b83ffbd68c5123c1377fa2",
+        "child": "6842b329f71fff8b9813b2d00b83edfc61e3e505",
+        "gitlink": "6842b329f71fff8b9813b2d00b83edfc61e3e505"
+      },
+      "status": "PASS",
+      "source_unchanged": true,
+      "groups": {
+        "stage3_focused": {
+          "tests": 566,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "root_lifecycle_config": {
+          "tests": 152,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "legacy_protection": {
+          "tests": 143,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
+  ],
+  "independent_code_gate": "REQUESTED_NOT_YET_REVIEWED",
+  "real_wan_policy_weights_gpu_egl_robocasa_p0_sr": "NOT_RUN",
+  "stage3b_b4_b8_action_admission": "DISABLED_NOT_RUN",
+  "v3_merge": "NOT_PERFORMED",
+  "archive_exclusions": [
+    "pytest tmp trees except separately selected safe raw lifecycle artifacts",
+    "caches",
+    "private FD bootstraps",
+    "actor configs",
+    "inherited environment"
+  ]
+}

@@ -1,0 +1,20 @@
+"""Narrow development check for the AST-only legacy lifecycle fixture."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+root = Path("/workspace/work/psm-wma-stage3a-issue24")
+out = Path("/workspace/work/issue24-stage3a-evidence/legacy-fixture-check")
+out.mkdir(parents=True, exist_ok=False)
+env = {**os.environ, "CUDA_VISIBLE_DEVICES": "", "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+       "PYTHONDONTWRITEBYTECODE": "1", "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1",
+       "OMP_NUM_THREADS": "1", "PYTHONPATH": os.pathsep.join(map(str, (root, root / "cosmos-framework", root / "scripts")))}
+args = [sys.executable, "-m", "pytest", "--noconftest", "-c", "/dev/null", "-p", "no:cacheprovider", "-q",
+        str(root / "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py"),
+        f"--basetemp={out / 'tmp'}", f"--junitxml={out / 'junit.xml'}"]
+with (out / "pytest.log").open("wb") as log:
+    result = subprocess.run(args, cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=60)
+print(json.dumps({"scope": "NARROW_DEVELOPMENT_FIXTURE_CHECK_NOT_FORMAL_PAIR", "exit_code": result.returncode}))
+raise SystemExit(result.returncode)
