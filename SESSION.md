@@ -1,3 +1,27 @@
+# 2026-11-08 — Issue24 Stage3A H1 OmegaConf remediation claimed
+
+Owner latest message + exact remote H1 report authorize a narrow constructor
+container serialization fix and focused CPU/static checks only. Prior CPU
+APPROVE_CODE exact Rootef82fe02/Child6842b329 remains historical; H1 real-model
+REQUEST_CHANGES is a distinct Gate. Read actual report and Issue24 comment6718159464.
+Root candidate remote1882959a9ba88a00f4914a4657c07dc203d573a2 fetched and verified
+fast-forward from00a57e1c; four reviewer docs/Inbox commits preserved. New isolated
+worktrees /workspace/work/psm-wma-stage3a-h1-formal, both local branches
+v3-stage3a-h1-omegaconf-20261108, startRoot1882959a/Child6842b329. OfficialV3
+7b8b733e and officialChild1ca30805 unchanged. Current environment already usable;
+no Codex Cloud configuration change needed for this local remediation.
+
+Main owns only Child inference/robocasa_vae_daemon.py and new focused daemon test,
+optional C-bootstrap test extension, Root Gitlink/SESSION/TODO/evidence/Inbox.
+Normalize real OmegaConf containers at the actual-loaded configuration seam;
+retain actual tensor/scale/config hashes, canonical format/size bound, inference
+math/transactions/Resume and Stage3A architecture. Agent review_requirements is
+read-only reviewer. Before tests announce exact CPU commands/environment/output;
+retain old H100 failure provenance without accessing/copying remote server files.
+New Child/Root Pair, raw repeatable CPU evidence and incremental GPT request required
+before any hardware retry. No GPU, model/checkpoint, real Sim, SR, training, old
+job, Stage3B, official merge or earlier-PR operations authorized/performed.
+
 # 2026-11-08 — Issue24 Stage3A published/readback PASS; independent Code Gate handoff
 
 Formal Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child-Gitlink
