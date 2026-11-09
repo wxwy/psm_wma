@@ -1,5 +1,15 @@
 # 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
 
+Author04 exact Roote37d8bd7 / Child9f6cf6a1 focused185PASS,1486 source hashes
+unchanged. GPU03 completed six alternating Prefix-on baseline/optimized warmups;
+no new production inference failure. Audit hook's mutable Python integer then
+exhausted unchanged recompile_limit8 (raw last guard names prefix_kv_projection).
+Root-only measurement correction: Tensor projection counter, all layer hooks
+removed before fresh warmup/timing; retain limit8 and save raw generated inputs/
+outputs locally on server. New CPU counter regression passes40 alternating
+calls, exactly2 shape graphs, correct count/reset without recompilation. Child
+9f6cf6a1 unchanged. Next freeze new Root, author186, same GPU probe (no SR/Sim).
+
 GPU02 Roota458eaae / Child19b30423 loaded/validated real DCP and reached
 generation. It exposed production Dynamo SymBool != Python bool failure in
 inference_text_kv_memory.py:296. No GPU correctness/performance PASS claimed.

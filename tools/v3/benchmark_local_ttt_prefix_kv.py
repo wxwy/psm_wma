@@ -105,6 +105,20 @@ def fixed_history_prefix(model):
     return prefix, fast_state, visual, action_history
 
 
+class PrefixProjectionCounter:
+    """Audit-only Tensor counter; its value must never become a Dynamo guard."""
+
+    def __init__(self, prefix_length, device):
+        import torch
+
+        self.prefix_length = prefix_length
+        self.count = torch.zeros((), dtype=torch.int64, device=device)
+
+    def __call__(self, module, inputs):
+        if inputs[0].shape[0] == self.prefix_length:
+            self.count.add_(1)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--root-worktree", type=Path, required=True)
@@ -200,6 +214,8 @@ def main():
             model, service.experiment_config, service.setup_args.checkpoint_path, "required", use_ema_weights=False
         )
         result["validate_model_mode_and_dcp_inventory"] = "PASS"
+        result["recompile_limit"] = torch._dynamo.config.recompile_limit
+        assert result["recompile_limit"] == 8, "keep the authorized recompile limit unchanged"
         if (
             model.config.joint_attn_implementation != "two_way"
             or model.config.video_temporal_causal
@@ -234,6 +250,17 @@ def main():
             prefix_shape=list(prefix.shape),
             fast_state_sha256=fixed_fast_hashes,
         )
+        torch.save(
+            dict(
+                prefix=prefix.cpu(),
+                fast_state=[t.detach().cpu() for t in fast_state],
+                visual96=visual.cpu(),
+                executed_history=action_history.cpu(),
+                composite_uint8=torch.from_numpy(image),
+                state=request["state"],
+            ),
+            a.output_dir / "fixed_inputs.pt",
+        )
         layers = model.net.language_model.model.layers
         original_dispatch = [layer.self_attn.dispatch_attention_fn for layer in layers]
         audit = None
@@ -248,18 +275,12 @@ def main():
 
             return hook
 
-        def prefix_hook(i):
-            def hook(module, positional):
-                if audit is not None and positional[0].shape[0] == prefix.shape[0]:
-                    audit[i]["prefix_kv_projection"] += 1
-
-            return hook
-
+        projection_counters = [PrefixProjectionCounter(prefix.shape[0], prefix.device) for _ in layers]
         for i, layer in enumerate(layers):
             handles.extend(
                 (
                     layer.register_forward_pre_hook(layer_hook(i), with_kwargs=True),
-                    layer.self_attn.k_proj_moe_gen.register_forward_pre_hook(prefix_hook(i)),
+                    layer.self_attn.k_proj_moe_gen.register_forward_pre_hook(projection_counters[i]),
                 )
             )
         vae_events = []
@@ -282,6 +303,9 @@ def main():
                 if with_audit
                 else None
             )
+            if with_audit:
+                for counter in projection_counters:
+                    counter.count.zero_()
             batch = service._single_policy_batch(prep)
             vae_events.clear()
             torch.cuda.synchronize()
@@ -315,11 +339,16 @@ def main():
                 for layer, old in zip(layers, original_dispatch, strict=True)
             )
             if audit is not None:
+                for layer_audit, counter in zip(audit, projection_counters, strict=True):
+                    layer_audit["prefix_kv_projection"] = int(counter.count.item())
                 row["layers"] = audit
             for key, values in samples.items():
                 assert all(torch.isfinite(t).all() for t in values), key
             cpu = {key: [t.detach().float().cpu() for t in values] for key, values in samples.items()}
             row["output_sha256"] = {key: [digest(t) for t in values] for key, values in cpu.items()}
+            if with_audit:
+                torch.save(cpu, a.output_dir / f"outputs_{tag}.pt")
+                write_json(a.output_dir / f"audit_{tag}.json", row)
             # The real generation returns raw15 and includes the conditioning state row.
             assert cpu["action"][0].shape[-1] == 15
             return row, cpu
@@ -358,6 +387,22 @@ def main():
             a.output_dir / "audit.json",
             dict(baseline=base_audit, optimized=opt_audit, changed_prefix=changed_row, repeated_original=retry_row),
         )
+        # Audit counters must not perturb measured generation. Removing hooks
+        # changes compiled guards: re-warm both ordinary paths before timing.
+        for handle in handles:
+            handle.remove()
+        handles.clear()
+        clean_warmup = []
+        for i in range(a.warmup_pairs):
+            for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
+                row, _ = run(mode, f"clean-warmup-{i}")
+                clean_warmup.append(row)
+        write_json(a.output_dir / "uninstrumented_warmup.json", clean_warmup)
+        _, baseline = run("baseline", "uninstrumented-baseline")
+        _, optimized = run("optimized", "uninstrumented-optimized")
+        torch.save(dict(baseline=baseline, optimized=optimized), a.output_dir / "uninstrumented_outputs.pt")
+        result["uninstrumented_output_errors"] = compare(baseline, optimized)
+        result["layer_hooks_removed_before_measurement"] = True
         records = []
         for i in range(a.pairs):
             for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
@@ -385,6 +430,7 @@ def main():
             write_json(a.output_dir / "kernel_counts.json", kernels)
         assert [digest(t) for t in fast_state] == fixed_fast_hashes
         assert digest(prefix) == result["fixed_inputs"]["prefix_sha256"]
+        assert torch._dynamo.config.recompile_limit == result["recompile_limit"] == 8
         assert hashlib.sha256((metadata / ".metadata").read_bytes()).hexdigest() == result["checkpoint_metadata_sha256"]
         after = identity(root)
         write_json(a.output_dir / "source_after.json", after)
