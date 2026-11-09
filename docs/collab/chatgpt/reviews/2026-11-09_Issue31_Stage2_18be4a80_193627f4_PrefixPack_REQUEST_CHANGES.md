@@ -1,3 +1,5 @@
+> **审核更正（2026-11-09）**：本文件所记 `REQUEST_CHANGES` 是当时把作者自设 `1.05×` Benchmark 阈值误作 Owner 必须达成的强制验收门槛所作结论，现已被新的限定范围 `APPROVE_CODE` 取代。原始性能门槛未达、Shell exit2 和数据仍真实保留。正式更正见 [同一 Formal Pair 的更正报告](2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_APPROVE_CODE_CorrectedGate.md)。本旧文保留为审核轨迹，不再作为当前结论。
+
 # Issue #31 Stage 2 — Prefix-safe 输入打包复用：独立增量审核
 
 **日期**：2026-11-09  
