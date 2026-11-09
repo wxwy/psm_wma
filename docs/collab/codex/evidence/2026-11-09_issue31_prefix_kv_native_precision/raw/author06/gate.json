@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "identity": {
+    "root": "5b89f3eddbfe27ee72c173696a386e0b756d7866",
+    "child": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+    "gitlink": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+    "root_status": "",
+    "child_status": ""
+  },
+  "independent_approval": "NOT_CLAIMED",
+  "junit": {
+    "tests": 187,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "source_files": 1486,
+  "static_files": 8,
+  "inherited_import_order_exceptions": [
+    "mot/inference_text_kv_memory.py:I001",
+    "mot/unified_mot.py:I001",
+    "mot/attention.py:I001"
+  ],
+  "excluded_preexisting_failure": {
+    "test": "local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0",
+    "baseline_child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+    "baseline_raw": "../baseline01/w0.xml",
+    "expanded_candidate_raw": "../dev05/focused.xml",
+    "claim": "Original expanded run 181PASS/1FAIL; same failure on clean baseline; not fixed or counted as PASS"
+  }
+}

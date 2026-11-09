@@ -1,0 +1,252 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+____ test_generation_entrypoint_same_prefix_actions_cache_hits_and_opt_out _____
+
+    def test_generation_entrypoint_same_prefix_actions_cache_hits_and_opt_out():
+        obj, batch = _generation_harness()
+        prefix = (torch.randn(4, 32),)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31], _local_memory_prefixes=prefix)
+>       reference = obj.generate_samples_from_batch(batch, use_prefix_text_kv_cache=False, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:411: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/omni_mot_model.py:3889: in generate_samples_from_batch
+    ) = self._prepare_inference_data(data_batch, seed, has_negative_prompt)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = {'action_processing_record': [ActionProcessingRecord(raw_action_dim=15, action_normalizer=None, action_valid_mask=None, action_codec=None)]}
+seed = [31], has_negative_prompt = False
+
+    def prepare(batch, seed, has_negative_prompt):
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.zeros(16, 1, 2, 3)],
+            x0_tokens_action=[torch.zeros(16, 16)],
+        )
+        noise = torch.linspace(-1, 1, 352)
+        return (
+>           [SequencePlan(has_vision=True, has_action=True)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            clean,
+            [[1, 2]],
+            [[3]],
+            [noise],
+            [torch.zeros_like(noise)],
+            [torch.zeros_like(noise)],
+            True,
+        )
+E       TypeError: SequencePlan.__init__() missing 1 required positional argument: 'has_text'
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:362: TypeError
+_____ test_generation_exception_clears_cache_and_retry_starts_with_fill[1] _____
+
+fail_at = 1
+
+    @pytest.mark.parametrize("fail_at", [1, 3])
+    def test_generation_exception_clears_cache_and_retry_starts_with_fill(fail_at):
+        obj, batch = _generation_harness()
+        prefix = (torch.randn(4, 32),)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31], _local_memory_prefixes=prefix)
+        obj.fail_at = fail_at
+        with pytest.raises(RuntimeError, match="injected generation failure"):
+>           obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:431: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/omni_mot_model.py:3889: in generate_samples_from_batch
+    ) = self._prepare_inference_data(data_batch, seed, has_negative_prompt)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = {'action_processing_record': [ActionProcessingRecord(raw_action_dim=15, action_normalizer=None, action_valid_mask=None, action_codec=None)]}
+seed = [31], has_negative_prompt = False
+
+    def prepare(batch, seed, has_negative_prompt):
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.zeros(16, 1, 2, 3)],
+            x0_tokens_action=[torch.zeros(16, 16)],
+        )
+        noise = torch.linspace(-1, 1, 352)
+        return (
+>           [SequencePlan(has_vision=True, has_action=True)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            clean,
+            [[1, 2]],
+            [[3]],
+            [noise],
+            [torch.zeros_like(noise)],
+            [torch.zeros_like(noise)],
+            True,
+        )
+E       TypeError: SequencePlan.__init__() missing 1 required positional argument: 'has_text'
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:362: TypeError
+_____ test_generation_exception_clears_cache_and_retry_starts_with_fill[3] _____
+
+fail_at = 3
+
+    @pytest.mark.parametrize("fail_at", [1, 3])
+    def test_generation_exception_clears_cache_and_retry_starts_with_fill(fail_at):
+        obj, batch = _generation_harness()
+        prefix = (torch.randn(4, 32),)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31], _local_memory_prefixes=prefix)
+        obj.fail_at = fail_at
+        with pytest.raises(RuntimeError, match="injected generation failure"):
+>           obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:431: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/omni_mot_model.py:3889: in generate_samples_from_batch
+    ) = self._prepare_inference_data(data_batch, seed, has_negative_prompt)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = {'action_processing_record': [ActionProcessingRecord(raw_action_dim=15, action_normalizer=None, action_valid_mask=None, action_codec=None)]}
+seed = [31], has_negative_prompt = False
+
+    def prepare(batch, seed, has_negative_prompt):
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.zeros(16, 1, 2, 3)],
+            x0_tokens_action=[torch.zeros(16, 16)],
+        )
+        noise = torch.linspace(-1, 1, 352)
+        return (
+>           [SequencePlan(has_vision=True, has_action=True)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            clean,
+            [[1, 2]],
+            [[3]],
+            [noise],
+            [torch.zeros_like(noise)],
+            [torch.zeros_like(noise)],
+            True,
+        )
+E       TypeError: SequencePlan.__init__() missing 1 required positional argument: 'has_text'
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:362: TypeError
+________ test_generation_no_prefix_native_path_and_option_are_unchanged ________
+
+    def test_generation_no_prefix_native_path_and_option_are_unchanged():
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
+>       reference = obj.generate_samples_from_batch(batch, use_prefix_text_kv_cache=False, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:445: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/omni_mot_model.py:3889: in generate_samples_from_batch
+    ) = self._prepare_inference_data(data_batch, seed, has_negative_prompt)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = {'action_processing_record': [ActionProcessingRecord(raw_action_dim=15, action_normalizer=None, action_valid_mask=None, action_codec=None)]}
+seed = [31], has_negative_prompt = False
+
+    def prepare(batch, seed, has_negative_prompt):
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.zeros(16, 1, 2, 3)],
+            x0_tokens_action=[torch.zeros(16, 16)],
+        )
+        noise = torch.linspace(-1, 1, 352)
+        return (
+>           [SequencePlan(has_vision=True, has_action=True)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            clean,
+            [[1, 2]],
+            [[3]],
+            [noise],
+            [torch.zeros_like(noise)],
+            [torch.zeros_like(noise)],
+            True,
+        )
+E       TypeError: SequencePlan.__init__() missing 1 required positional argument: 'has_text'
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:362: TypeError
+__ test_generation_requests_changed_instruction_prefix_and_reset_are_isolated __
+
+    def test_generation_requests_changed_instruction_prefix_and_reset_are_isolated():
+        obj, batch = _generation_harness()
+        prefix = torch.randn(4, 32)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
+    
+        def request(p):
+            obj.seen.clear()
+            result = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(p,), **kwargs)
+            assert obj.seen[0][1] is False
+            return result["action"][0]
+    
+>       a = request(prefix)
+            ^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:464: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:460: in request
+    result = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(p,), **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/omni_mot_model.py:3889: in generate_samples_from_batch
+    ) = self._prepare_inference_data(data_batch, seed, has_negative_prompt)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = {'action_processing_record': [ActionProcessingRecord(raw_action_dim=15, action_normalizer=None, action_valid_mask=None, action_codec=None)]}
+seed = [31], has_negative_prompt = False
+
+    def prepare(batch, seed, has_negative_prompt):
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.zeros(16, 1, 2, 3)],
+            x0_tokens_action=[torch.zeros(16, 16)],
+        )
+        noise = torch.linspace(-1, 1, 352)
+        return (
+>           [SequencePlan(has_vision=True, has_action=True)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            clean,
+            [[1, 2]],
+            [[3]],
+            [noise],
+            [torch.zeros_like(noise)],
+            [torch.zeros_like(noise)],
+            True,
+        )
+E       TypeError: SequencePlan.__init__() missing 1 required positional argument: 'has_text'
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:362: TypeError
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_generation_entrypoint_same_prefix_actions_cache_hits_and_opt_out
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_generation_exception_clears_cache_and_retry_starts_with_fill[1]
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_generation_exception_clears_cache_and_retry_starts_with_fill[3]
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_generation_no_prefix_native_path_and_option_are_unchanged
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_generation_requests_changed_instruction_prefix_and_reset_are_isolated
+5 failed, 14 deselected, 1 warning in 10.42s

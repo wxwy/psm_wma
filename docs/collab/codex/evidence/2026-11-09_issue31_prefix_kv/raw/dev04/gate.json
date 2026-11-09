@@ -1,0 +1,12 @@
+{
+  "status": "FAIL",
+  "identity": {
+    "root": "ca3a08acf8697b5ff316fcc476c4f0820d8f3b13",
+    "child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+    "gitlink": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+    "root_status": "M SESSION.md\n M TODO.md\n M cosmos-framework\n?? tools/v3/benchmark_local_ttt_prefix_kv.py",
+    "child_status": "M cosmos_framework/model/generator/mot/cosmos3_vfm_network.py\n M cosmos_framework/model/generator/mot/inference_text_kv_memory.py\n M cosmos_framework/model/generator/mot/unified_mot.py\n M cosmos_framework/model/generator/omni_mot_model.py\n?? cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py"
+  },
+  "independent_approval": "NOT_CLAIMED",
+  "error": "RuntimeError('lint failed')"
+}

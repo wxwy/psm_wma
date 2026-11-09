@@ -1,0 +1,41 @@
+{
+  "cwd": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/root5",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "GPU-a785be7c-17dc-117c-c6fa-de6ded5c135b",
+    "LD_LIBRARY_PATH": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "TOKENIZERS_PARALLELISM": "false",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "PYTHONPATH": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/root5:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/root5/cosmos-framework:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/root5/scripts"
+  },
+  "exit_code": 0,
+  "argv": [
+    "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/robocasa_sim_venv_20261023/bin/python",
+    "tools/v3/benchmark_local_ttt_prefix_kv.py",
+    "--root-worktree",
+    "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/root5",
+    "--expected-root",
+    "5b89f3eddbfe27ee72c173696a386e0b756d7866",
+    "--expected-child",
+    "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+    "--checkpoint",
+    "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma_v3/outputs/local_ttt_robocasa_raw15/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000015000",
+    "--config-file",
+    "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma_v3/outputs/local_ttt_robocasa_raw15/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/config.yaml",
+    "--output-dir",
+    "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/gpu05",
+    "--gpu-index",
+    "6",
+    "--warmup-pairs",
+    "3",
+    "--pairs",
+    "30",
+    "--profile-one"
+  ],
+  "stdout_stderr": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_kv_20261109/gpu05.log",
+  "replay": "Executed record only; use a fresh output directory for any authorized replay. Existing evidence must never be overwritten."
+}

@@ -1,88 +1,39 @@
-# 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
+# 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
 
-GPU04 edf1e4ee/9f6cf6a1 numerical FAIL: latent max0.0231489, raw15 action
-max0.00839865; each mode individually repeatable, all28 layers Prefix30/hit29.
-No speed claim. Single fixed-input teacher-forced diagnostic on exact clean same
-source confirmed UND K/V exactly invariant across tau1000/500 in all28 layers,
-but cache FILL already differs from original before any reuse. Native real/pad
-layout UND131/132,GEN267/268. Raw outputs remain server-only.
-Child4446be0f6dad9b6dc887ef90af52d0af754d4682 changes cache precision boundary:
-capture UND from materialized native GEN K/V; no unused pre-scatter GEN exports;
-hit uses native attention layout including padding, discards dummy UND queries.
-No backend tuning/pack reuse/precision/compile-limit/training/VAE changes.
-New CPU native operand/padding test PASS; identical test42f44eeedd13cd261df8b501789abf01cbb61373b3c8c03049ea4ce73209eb0e
-on old9f6cf6a1 production RED (no native buffer capture). Compiled2PASS after
-fixture now uses real native padding. First broader native_dev47PASS/2fixtureFAIL
-retained; next exact187 focused CPU and hardware teacher-forced recheck.
-Previous v1 CPU archive preserved byte-for-byte outside tree pending publication.
+Task ISSUE31-PREFIX-TEXT-KV REVIEW; Codex author, GPT independent reviewer.
+Formal Root 5b89f3eddbfe27ee72c173696a386e0b756d7866; Child/Gitlink 4446be0f6dad9b6dc887ef90af52d0af754d4682.
+Evidence/Inbox successor is metadata only, never a replacement source Pair.
+Separate Draft RootPR32 / ChildPR10 on approved history-K baseline53b5273c/4cd5fc8c;
+latest baseline docsca3a08ac preserved. ExistingPR29/30/Child8/9 and V3 untouched.
 
-Author04 exact Roote37d8bd7 / Child9f6cf6a1 focused185PASS,1486 source hashes
-unchanged. GPU03 completed six alternating Prefix-on baseline/optimized warmups;
-no new production inference failure. Audit hook's mutable Python integer then
-exhausted unchanged recompile_limit8 (raw last guard names prefix_kv_projection).
-Root-only measurement correction: Tensor projection counter, all layer hooks
-removed before fresh warmup/timing; retain limit8 and save raw generated inputs/
-outputs locally on server. New CPU counter regression passes40 alternating
-calls, exactly2 shape graphs, correct count/reset without recompilation. Child
-9f6cf6a1 unchanged. Next freeze new Root, author186, same GPU probe (no SR/Sim).
+Prefix-aware B1/two_way/guidance1 request-local text K/V: one fill then29 gen-only,
+current Prefix projected/injected all28 layers every30 steps, finally cleanup.
+Native GEN materialization/padding and empty unused GEN sentinels preserve exact
+compiled rounding; no pack reuse/backend tuning/precision/limit8 change.
+Training/VAE/Sim/Worker/scheduler/model-mode/DCP/strict K-H-M-B Resume unchanged.
 
-GPU02 Roota458eaae / Child19b30423 loaded/validated real DCP and reached
-generation. It exposed production Dynamo SymBool != Python bool failure in
-inference_text_kv_memory.py:296. No GPU correctness/performance PASS claimed.
-Minimal equivalent branch guard fix Child9f6cf6a1447983c10f9ff70895487165c6c65736;
-no compile disabling/limit change. Deterministic fullgraph CPU dispatcher tests:
-same SHA256 58cf39796d6c6b68cce8f68ffacfa29734886ec47462181265f3e03579a6724a,
-old production19b30423 controlled test-only worktree static PASS/dynamic RED
-BooleanAtom, new static/dynamic2PASS; raw compile_red02 and compile_green02.
-Earlier compile_red/green development fixture failures retained separately.
-Author03 a458/19b:183PASS,1486 hashes unchanged. Next new exact Pair185CPU then
-GPU03 same fixed-Local probe, preserving old root/root2 and server-only raw data.
+Exact clean author06 187/187 PASS,0failure/error/skip,shell0,gatePASS,
+1486sourcefingerprints unchanged,8scopedstaticfiles PASS. One inherited W0
+continuation assertion reproduced on clean baseline explicitly deselected,
+never counted PASS;3baseline RuffI001 retained,all other diagnostics strict.
+Raw CPU failures/RED/GREEN and prior122payload archive remain immutable.
 
-Author01 Root66a104d5 and author02 Root1d1b0b75 / same Child19b30423:
-181/181 focused PASS,1485 source files unchanged, explicit baselineW0 exclusion.
-GPU01 on isolated Root66a104d5 loaded real Local iter15000 and passed mode/DCP
-validation, then measurement setup failed before generation: required state_in
-argument omitted. Root-only tool fix passes state_in=None and (matching online
-adapter) local inference_mode(False)/enable_grad after global no-grad init.
-New benchmark input CPU tests2/2PASS validate actual model-owned T16 scan,
-fixed Prefix/FastState repeatability and slow weights unchanged. Child19b30423
-unchanged. Freeze latest Root with this tool/test, exact author183 then same GPU
-probe in a separate worktree; original GPU01/raw failure retained on server.
+Real H100 GPU6 only, same Localiter15000/raw15/H16/30stepUniPC/4x32Prefix,
+synthetic input/history,30AB/BA pairs: authorGPU05 PASS,sourceunchanged,exit0;
+all measured Vision/Action errors0. P50 991.5513->825.5335ms (1.2011x),
+P95 997.1945->829.1916ms. 29/30 faster; optimized1386.77ms outlier retained,
+P99 regresses1000.06->1225.27ms, causeunproven. Existingbackgroundload unchanged;
+not exclusiveGPU/noSimthroughput/SR claim. Full hooks removed before rewarm/timing.
+28layerPrefix30/hit29 audit, changedPrefixaction sensitivity, freshrefill/retry,
+FW/Prefix/checkpointmetadata/sourceidentity unchanged; ownedmodelprocesses exited.
+GPU0-3/otherjobs untouched. All private rawGPU files stayserver-only; publish
+derivedstats/hashmanifest56files only. PriorGPU01..04failures preserved, notPASS.
 
-Implementation ready for exact-pair author evidence. Child changes limited to
-four model inference extension points + new CPU tests. B1 guidance1 two_way
-fills text K/V once, keeps current Prefix per layer on every denoising forward;
-gen-only attention retains varlen/padding fences, caches clear in finally and
-dispatcher restores. Request opt-out use_prefix_text_kv_cache=False retains
-original Prefix-on reference. Other layouts/CFG/FSDP fall back; pack reuse stays
-off with Prefix. Root adds only model-only interleaved benchmark (mode/DCP
-validation retained), Gitlink and bookkeeping. No code merge/GPU result yet.
-Dev core38PASS and generation5PASS; expanded dev05 181PASS/1 preexisting FAIL.
-Clean old Child4cd5 reproduces same local_evidence W0 continuation assertion
-(baseline01/w0.xml); scan_local_memory body untouched, intentionally preserves
-FSDP zero-gradient behavior. Not fixed/counting as PASS. Exact focused gate will
-explicitly deselect this known baseline-only failure, preserving both raw logs.
-Two existing I001 import-order exceptions also recorded, other Ruff strict.
-Next freeze Child/Root, exact clean CPU181, then authorized fixed-DCP GPU6 probe.
-
-Codex owns ISSUE31-PREFIX-TEXT-KV, IN_PROGRESS on isolated
-v3-local-ttt-prefix-kv-issue31-20261109; source baseline formal Root
-53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child
-4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe, latest docs ca3a08ac synced clean.
-Read canonical Inbox and Issue31/comment6738445190; Issue28 exact-pair
-APPROVE_CODE and functional H100 evidence are historical, not Issue31 approval.
-Planned Child files: generator/omni_mot_model.py; mot/inference_text_kv_memory.py,
-cosmos3_vfm_network.py, attention.py/unified_mot.py only if integration requires;
-focused inference cache tests and measurement tool. Root code unchanged except
-new measurement/CPU entrypoint if required, Gitlink, evidence and handoff.
-First stage B1/single-sample/two_way Prefix-aware request-local text KV only.
-Keep pack-template policy, model/training/VAE/Sim/Worker, mode/DCP checks and
-K/H/M/B Resume unchanged. Prior DraftPR30/9 and V3 untouched.
-CPU correctness first; Issue31 Owner scope permits later GPU4–7 fixed-Local
-checkpoint model-only baseline/optimized interleaved measurement. Do not alter
-gpu_load_sim.py, GPU0–3, running jobs or export private server files. No SR/900EP.
-Next: inspect per-layer Prefix/masks and implement/prove cache lifecycle.
-Uncommitted; no Issue31 test or GPU result yet, no review closure/merge claimed.
+Handoff docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md
+Evidence docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv*/
+Next publish metadata/evidence, verify remote blobs/refs/PR Draft state, request
+fresh independent incremental Code/Evidence Gate. No V3 merge, new optimization
+stage, training/Sim/SR/900EP or independent Gate closure is authorized/claimed.
 
 # 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
 

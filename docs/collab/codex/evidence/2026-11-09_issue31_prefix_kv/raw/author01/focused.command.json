@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/work/psm-wma-prefix-kv-issue31",
+    "-p",
+    "no:cacheprovider",
+    "-o",
+    "markers=L0: CPU level\nCPU: no GPU\nlevel: test level\ngpus: GPU count",
+    "--basetemp=/workspace/work/issue31-prefix-kv-evidence/author01/pytest_tmp",
+    "--junitxml=/workspace/work/issue31-prefix-kv-evidence/author01/focused.xml",
+    "-q",
+    "--deselect=cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0",
+    "cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/memory_prefix_test.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py::test_decoder_target_only_path_skips_und_and_control_then_restores_full_layout",
+    "cosmos-framework/cosmos_framework/inference/local_memory_online_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+    "tools/v3/eval_v2_batch_tests/history_k_test.py"
+  ],
+  "cwd": "/workspace/work/psm-wma-prefix-kv-issue31",
+  "exit_code": 0
+}

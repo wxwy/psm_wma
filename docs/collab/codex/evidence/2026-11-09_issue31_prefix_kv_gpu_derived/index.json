@@ -1,0 +1,30 @@
+{
+  "kind": "DERIVED GPU statistics only; independent approval NOT_CLAIMED",
+  "formal_root": "5b89f3eddbfe27ee72c173696a386e0b756d7866",
+  "formal_child": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+  "generated_cst": "2026-11-09T20:58:44+08:00",
+  "private_server_files_exported": false,
+  "files": {
+    "README.md": {
+      "bytes": 1054,
+      "sha256": "41037e9aa6c58167711bf2f8be5c8706ef57f4b234875669293dc6daa09f9a73",
+      "git_blob_sha1": "6a4c74cb4e547e63d39f8d3f92313d66142b5710"
+    },
+    "gpu_command.json": {
+      "bytes": 2038,
+      "sha256": "2236b457a1828b49b56ba6f3ca6ce8d8d7e64aad4a4738446372a3c069f0f880",
+      "git_blob_sha1": "000b6468d4e598203797de961143a491a4ae8ff6"
+    },
+    "gpu_statistics.json": {
+      "bytes": 25353,
+      "sha256": "a2d01cfd2527d39a3bd3c1e4c307011c8ae478d98eae2020292d8165aaffd02f",
+      "git_blob_sha1": "194a1e0c340f6e19f1385831c5d3e08af4e4d9ec"
+    },
+    "public_gpu_statistics.py": {
+      "bytes": 8056,
+      "sha256": "7c1e327d5565d5488a8a3b1607ccb614cac0f7ce1c38ca3b79c240273ddc42e9",
+      "git_blob_sha1": "584ca1cee62e472565259d97057508120cadec1e"
+    }
+  },
+  "raw_server_files_bound_by_hash": 56
+}

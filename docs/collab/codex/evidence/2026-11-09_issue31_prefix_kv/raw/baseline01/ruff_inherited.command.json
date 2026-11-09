@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+    "check",
+    "--output-format",
+    "concise",
+    "cosmos_framework/model/generator/mot/inference_text_kv_memory.py",
+    "cosmos_framework/model/generator/mot/unified_mot.py"
+  ],
+  "cwd": "/workspace/work/issue31-baseline-child",
+  "exit_code": 1,
+  "baseline": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+  "status": ""
+}

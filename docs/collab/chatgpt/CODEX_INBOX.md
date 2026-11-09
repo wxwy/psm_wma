@@ -117,3 +117,40 @@ not author-closed, no V3/#27 merge or GPU/realSim/SR/training operation.
 - **源码嫌疑点**：`omni_mot_model.py:3991–3993` Prefix禁用pack-template reuse、`:4065–4112` 禁用text-KV reuse；`mot/attention.py:257–265` 强制varlen；`cosmos3_vfm_network.py:1574–1584` 当前 Local+MemoryState显式禁止。不能盲开 `reuse_text_kv`，否则 Prefix 可能被旁路，必须以真实数值/Action/会话隔离证据证明正确。
 - **下一轮门槛**：Codex先做 Prefix-aware KV 正确性 + 单一Local checkpoint、同样输入/Prefix/FW的交错模型内延迟基准。不得混入train/Sim/Worker改造，不能绕过 `validate_model_mode`。GPU验证只在Owner许可的4–7卡，保留 `gpu_load_sim.py` 原样。若没有明显加速需明确不达标。第二项pack复用必须单独可归因。
 - 这是新优化任务的**handoff/owner request**，不是本条旧代码新一次technical verdict，不授予新的 GPU/merge/production Gate。
+
+
+## 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV: fresh incremental review request
+
+Formal Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink `4446be0f6dad9b6dc887ef90af52d0af754d4682`.
+Approved unmerged baseline53b5273c/4cd5fc8c, latest docsca3a08ac preserved.
+Separate DraftRootPR32 https://github.com/wxwy/psm_wma/pull/32 and ChildPR10
+https://github.com/wxwy/cosmos-framework/pull/10; existingPR29/30/Child8/9 unchanged.
+Evidence/ledger successors are not new formal source identities.
+
+B1/two_way/guidance1 request-local text K/V restores text reuse while retaining
+current Prefix everylayer/step. Native GEN materialization and real pad layout
+preserve compiled rounding; pack reuse remains OFF, backend/precision/limit8
+unchanged. No training/VAE/Sim/Worker/scheduler/mode-DCP/strictK-H-M-B Resume edits.
+Exact clean CPU187/187PASS,0fail/error/skip,shell0/sourceunchanged1486/static8PASS.
+One inherited W0 assertion fails on clean old4cd5 and is explicitly deselected,
+retained as failure, never countedPASS. Three baselineI001 narrowly exempted.
+Controlled compiler/native RED/GREEN plus all development failures archived.
+
+Real H100 GPU6 authorGPU05 Shell0/PASS, same Localiter15000/4x32Prefix/30step
+UniPC/raw15/H16, fixed synthetic composite/history,30balancedAB/BA pairs:
+all Action/Vision maxabs0; P50 991.5513→825.5335ms,1.2011x,16.743%less latency;
+P95 997.1945→829.1916ms. 29/30 faster; retained optimized1386.77ms outlier,
+P99 1000.0608→1225.2732ms regresses, causeunproven. No exclusiveGPU/NoTTTtarget/
+Simthroughput/SR claim. Audits show all28layers Prefix30/projection30/hit29,
+changedPrefix changesAction and repeated request refills independently.
+All layerhooks removed before freshwarmup/timing;limit8/source/FW/Prefix/
+checkpointmetadata unchanged; owned model processes exited, otherjobs untouched.
+Private GPU raw files stay on server; only derived stats and56rawfilehashes published.
+
+Handoff: `docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md`.
+Current CPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/`;
+prior immutableCPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/`;
+derived GPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derived/`.
+Please review this exact Pair's code/CPU/GPU author evidence independently.
+AuthorPASS is not GPT/DS closure. KeepDraft/unmerged; no V3 promotion,
+training/Sim/SR/900EP or second-stage packing/attention optimization authorized.

@@ -1,0 +1,209 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix[True] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa0beeba6c0>
+dynamic = True
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix(monkeypatch, dynamic):
+        """Real H100 hit SymBool != bool in the dispatcher under Dynamo.
+    
+        CPU eager backend traces the production dispatcher in fullgraph mode. The
+        kernel double is SDPA for this unpadded B1 layout (no varlen loop to trace).
+        """
+    
+        def kernel(query, key, value, **kwargs):
+            return F.scaled_dot_product_attention(
+                query.transpose(1, 2),
+                key.transpose(1, 2),
+                value.transpose(1, 2),
+                enable_gqa=True,
+            ).transpose(1, 2)
+    
+        monkeypatch.setattr(cache_module, "attention", kernel)
+        torch.manual_seed(93)
+        caches = make_inference_text_kv_cache(1)
+        und_key, und_value = torch.randn(1, 5, 1, 8), torch.randn(1, 5, 1, 8)
+        caches[0].store(und_key, und_value)
+        state = InferenceTextKVMemoryState(caches, local_prefix_length=4)
+        state.init(
+            {
+                "_num_full_tokens": 6,
+                "_num_causal_tokens": 5,
+                "_causal_seq_offsets": torch.tensor([0, 5]),
+                "_full_only_seq_offsets": torch.tensor([0, 6]),
+            },
+            torch.device("cpu"),
+        )
+        memory = state.read_for_layer(0)
+        q, k, v = torch.randn(6, 2, 8), torch.randn(6, 1, 8), torch.randn(6, 1, 8)
+    
+        def pack(tensor):
+            native, _, _ = build_packed_sequence(
+                "two_way",
+                packed_sequence=torch.cat((tensor.new_zeros(5, *tensor.shape[1:]), tensor)),
+                attn_modes=["causal", "full"],
+                split_lens=[5, 6],
+                sample_lens=[11],
+                packed_und_token_indexes=torch.arange(5),
+                packed_gen_token_indexes=torch.arange(5, 11),
+                num_heads=tensor.shape[1],
+                head_dim=8,
+                num_layers=1,
+            )
+            return from_und_gen_splits(tensor.new_empty(0, *tensor.shape[1:]), tensor, native)
+    
+        mask = SimpleNamespace(is_three_way=False, control_stream_token_ranges=None)
+        prefix_key, prefix_value = torch.randn(4, 1, 8), torch.randn(4, 1, 8)
+        compiled = torch.compile(
+            cache_module.dispatch_attention_with_text_kv_memory, backend="eager", fullgraph=True, dynamic=dynamic
+        )
+        with torch.inference_mode():
+            results = []
+            for shift in (0, 1, 0):
+                pk, pv = prefix_key + shift, prefix_value + shift
+>               result, _ = compiled(
+                    pack(q),
+                    pack(k),
+                    pack(v),
+                    mask,
+                    memory_value=memory,
+                    memory_prefix_key_states=pk,
+                    memory_prefix_value_states=pv,
+                    memory_prefix_sample_offsets=torch.tensor([0, 4]),
+                )
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:366: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:953: in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:2202: in __call__
+    result = self._torchdynamo_orig_backend(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:707: in __call__
+    result = _compile(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1752: in _compile
+    guarded_code, tracer_output = compile_inner(code, one_graph, hooks)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_utils_internal.py:97: in wrapper_function
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1433: in compile_inner
+    return _compile_inner(code, one_graph, hooks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1467: in _compile_inner
+    dynamo_output = compile_frame(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1341: in compile_frame
+    bytecode, tracer_output = transform_code_object(code, transform)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/bytecode_transformation.py:1600: in transform_code_object
+    tracer_output = transformations(instructions, code_options)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1313: in transform
+    tracer_output = trace_frame(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:328: in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:838: in trace_frame
+    run_tracer()
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:819: in run_tracer
+    tracer.run()
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py:1654: in run
+    while self.step():
+          ^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py:1334: in step
+    self.dispatch_table[inst.opcode](self, inst)
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py:2502: in COMPARE_OP
+    self.push(compare_op_handlers[inst.argval](self, self.popn(2), {}))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:1433: in call_function
+    return handler(tx, args, kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:1235: in builtin_dispatch
+    rv = fn(tx, args, kwargs)
+         ^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:1075: in call_binop_handlers
+    rv = fn(tx, *args)
+         ^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:3091: in _comparison_with_symnode
+    return SymNodeVariable.create(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/tensor.py:1472: in create
+    sym_num = get_fake_value(proxy.node, tx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3626: in get_fake_value
+    raise TorchRuntimeError(msg).with_traceback(e.__traceback__) from None
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3524: in get_fake_value
+    ret_val = wrap_fake_exception(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:2966: in wrap_fake_exception
+    return fn()
+           ^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3525: in <lambda>
+    lambda: run_node(tx.output, node, args, kwargs, nnmodule)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3735: in run_node
+    raise RuntimeError(make_error_message(e)).with_traceback(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3694: in run_node
+    return node.target(*args, **kwargs)  # type: ignore[operator]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/__init__.py:769: in __bool__
+    return self.node.bool_()
+           ^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/sym_node.py:605: in bool_
+    return self.guard_bool("", 0)
+           ^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/sym_node.py:541: in guard_bool
+    r = self.evaluate()
+        ^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/sym_node.py:515: in evaluate
+    return self.shape_env.evaluate_sym_node(self, size_oblivious)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7318: in evaluate_sym_node
+    return self.evaluate_expr(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7413: in evaluate_expr
+    return self._inner_evaluate_expr(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/recording.py:273: in wrapper
+    return retlog(fn(*args, **kwargs))
+                  ^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7436: in _inner_evaluate_expr
+    return self._evaluate_expr(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7560: in _evaluate_expr
+    static_expr = self._maybe_evaluate_static(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:2636: in wrapper
+    return fn_cache(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:6385: in _maybe_evaluate_static
+    expr = canonicalize_bool_expr(expr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:734: in canonicalize_bool_expr
+    return _canonicalize_bool_expr_impl(expr)  # type: ignore[arg-type, return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:806: in _canonicalize_bool_expr_impl
+    rhs = expr.rhs - expr.lhs
+          ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = True, other = s43 > 0
+
+    def _noop(self, other=None):
+>       raise TypeError('BooleanAtom not allowed in this context.')
+E       torch._dynamo.exc.TorchRuntimeError: Dynamo failed to run FX node with fake tensors: call_function <built-in function ne>(*(s43 > 0, True), **{}): got TypeError('BooleanAtom not allowed in this context.')
+E       
+E       from user code:
+E          File "/workspace/work/issue31-compile-red-child/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 296, in dispatch_attention_with_text_kv_memory
+E           if prefix_aware != has_prefix:
+E       
+E       Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/sympy/logic/boolalg.py:249: TorchRuntimeError
+----------------------------- Captured stderr call -----------------------------
+W1109 11:47:45.422000 89223 torch/fx/experimental/symbolic_shapes.py:7448] [0/1] failed during evaluate_expr(Eq(s43 > 0, True), hint=True, size_oblivious=False, forcing_spec=False
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix[True]
+1 failed, 1 passed, 22 deselected, 1 warning in 7.77s
