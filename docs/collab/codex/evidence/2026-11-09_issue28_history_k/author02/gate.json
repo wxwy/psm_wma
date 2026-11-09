@@ -1,0 +1,261 @@
+{
+  "gate": "ISSUE28_SCOPED_AUTHOR_CPU_SYNTHETIC_MODEL_ENV_DEVICE_KERNEL",
+  "status": "PASS",
+  "steps": [
+    {
+      "name": "import_origin",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-c",
+        "import cosmos_framework,torch; print(cosmos_framework.__file__); print(torch.__version__,torch.version.cuda); assert torch.version.cuda is None; assert cosmos_framework.__file__.startswith('/workspace/work/psm-wma-history-k-issue28/cosmos-framework')"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 1.8760720770005719
+    },
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/config.py",
+        "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/runtime.py",
+        "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/shared_vae.py",
+        "/workspace/work/psm-wma-history-k-issue28/tools/v3/eval_v2_batch_tests/history_k_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/local_memory_online.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 0.11863265300053172
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/config.py",
+        "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/runtime.py",
+        "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/shared_vae.py",
+        "/workspace/work/psm-wma-history-k-issue28/tools/v3/eval_v2_batch_tests/history_k_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/local_memory_online.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py",
+        "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 0.11688138700264972
+    },
+    {
+      "name": "sparse",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "--rootdir=/workspace/work/psm-wma-history-k-issue28",
+        "-p",
+        "no:cacheprovider",
+        "-o",
+        "markers=level: CPU level\ngpus: GPU count",
+        "-q",
+        "--basetemp=/workspace/work/issue28-history-k-evidence/author02/sparse_tmp",
+        "--junitxml=/workspace/work/issue28-history-k-evidence/author02/sparse.xml",
+        "cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py",
+        "tools/v3/eval_v2_batch_tests/history_k_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 29.265210975998343
+    },
+    {
+      "name": "local_and_transactions",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "--rootdir=/workspace/work/psm-wma-history-k-issue28",
+        "-p",
+        "no:cacheprovider",
+        "-o",
+        "markers=level: CPU level\ngpus: GPU count",
+        "-q",
+        "--basetemp=/workspace/work/issue28-history-k-evidence/author02/local_and_transactions_tmp",
+        "--junitxml=/workspace/work/issue28-history-k-evidence/author02/local_and_transactions.xml",
+        "cosmos-framework/cosmos_framework/inference/local_memory_online_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+        "cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+        "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa_phase6_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 22.611430746001133
+    },
+    {
+      "name": "worker_and_sim",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "--rootdir=/workspace/work/psm-wma-history-k-issue28",
+        "-p",
+        "no:cacheprovider",
+        "-o",
+        "markers=level: CPU level\ngpus: GPU count",
+        "-q",
+        "--basetemp=/workspace/work/issue28-history-k-evidence/author02/worker_and_sim_tmp",
+        "--junitxml=/workspace/work/issue28-history-k-evidence/author02/worker_and_sim.xml",
+        "cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 9.513290163999045
+    },
+    {
+      "name": "root_topology",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "--rootdir=/workspace/work/psm-wma-history-k-issue28",
+        "-p",
+        "no:cacheprovider",
+        "-o",
+        "markers=level: CPU level\ngpus: GPU count",
+        "-q",
+        "--basetemp=/workspace/work/issue28-history-k-evidence/author02/root_topology_tmp",
+        "--junitxml=/workspace/work/issue28-history-k-evidence/author02/root_topology.xml",
+        "tools/v3/eval_v2_batch_tests/shared_vae_test.py",
+        "tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py",
+        "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 33.940563354000915
+    },
+    {
+      "name": "dense_old",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "/workspace/work/issue28-history-k-evidence/dense_parity_probe.py",
+        "/workspace/work/issue28-history-k-evidence/author02/dense_old.json"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 8.402671933999954
+    },
+    {
+      "name": "dense_new",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "/workspace/work/issue28-history-k-evidence/dense_parity_probe.py",
+        "/workspace/work/issue28-history-k-evidence/author02/dense_new.json"
+      ],
+      "cwd": "/workspace/work/psm-wma-history-k-issue28/cosmos-framework",
+      "timeout_s": 300,
+      "exit_code": 0,
+      "seconds": 13.020823036997172
+    }
+  ],
+  "syntax_files": 21,
+  "sparse": {
+    "tests": 100,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "local_and_transactions": {
+    "tests": 193,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "worker_and_sim": {
+    "tests": 473,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "root_topology": {
+    "tests": 64,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "junit": {
+    "tests": 830,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "dense_K16_bit_equal": true,
+  "no_old900_or965_rerun": true,
+  "GPU_Wan_DCP_RoboCasa_SR_training": "NOT_RUN",
+  "independent_review": "NOT_CLAIMED"
+}

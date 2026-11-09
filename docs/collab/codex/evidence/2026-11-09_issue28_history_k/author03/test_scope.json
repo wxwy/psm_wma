@@ -1,0 +1,32 @@
+{
+  "sparse": [
+    "cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py",
+    "tools/v3/eval_v2_batch_tests/history_k_test.py"
+  ],
+  "local_and_transactions": [
+    "cosmos-framework/cosmos_framework/inference/local_memory_online_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions_test.py",
+    "cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py",
+    "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa_phase6_test.py"
+  ],
+  "worker_and_sim": [
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client_test.py"
+  ],
+  "root_topology": [
+    "tools/v3/eval_v2_batch_tests/shared_vae_test.py",
+    "tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py",
+    "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+    "tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "packages": {
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7",
+    "numpy": "2.2.6",
+    "omegaconf": "2.3.0"
+  },
+  "overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "LD_LIBRARY_PATH": "",
+    "COSMOS_DEVICE": "cpu",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "/workspace/work/psm-wma-history-k-issue28:/workspace/work/psm-wma-history-k-issue28/cosmos-framework:/workspace/work/psm-wma-history-k-issue28/scripts",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+    "PYTEST_ADDOPTS": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "MUJOCO_GL": "osmesa",
+    "PYOPENGL_PLATFORM": "osmesa",
+    "HF_HOME": "/workspace/work/issue28-history-k-evidence/author01/cache/hf",
+    "XDG_CACHE_HOME": "/workspace/work/issue28-history-k-evidence/author01/cache/xdg",
+    "MPLCONFIGDIR": "/workspace/work/issue28-history-k-evidence/author01/cache/mpl",
+    "RUFF_CACHE_DIR": "/workspace/work/issue28-history-k-evidence/author01/cache/ruff",
+    "TRITON_CACHE_DIR": "/workspace/work/issue28-history-k-evidence/author01/cache/triton"
+  },
+  "tools": {
+    "author_gate.py": "b9ae096508551855a473e7db244affb557e6a53b3f12906dfecf85d3b2c401a9",
+    "dense_parity_probe.py": "1e46955fc4ac13f8c869676b6d79d565de1d24ab87dfde465c3dcba6c8c31501"
+  }
+}

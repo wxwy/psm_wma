@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/workspace/work/issue28-history-k-evidence/author_gate.py", line 98, in <module>
+    run('ruff_check',[sys.executable,'-m','ruff','check',*static])
+  File "/workspace/work/issue28-history-k-evidence/author_gate.py", line 94, in run
+    raise RuntimeError(name+' failed; raw log retained')
+RuntimeError: ruff_check failed; raw log retained
