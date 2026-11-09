@@ -1,5 +1,17 @@
 # 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
 
+GPU02 Roota458eaae / Child19b30423 loaded/validated real DCP and reached
+generation. It exposed production Dynamo SymBool != Python bool failure in
+inference_text_kv_memory.py:296. No GPU correctness/performance PASS claimed.
+Minimal equivalent branch guard fix Child9f6cf6a1447983c10f9ff70895487165c6c65736;
+no compile disabling/limit change. Deterministic fullgraph CPU dispatcher tests:
+same SHA256 58cf39796d6c6b68cce8f68ffacfa29734886ec47462181265f3e03579a6724a,
+old production19b30423 controlled test-only worktree static PASS/dynamic RED
+BooleanAtom, new static/dynamic2PASS; raw compile_red02 and compile_green02.
+Earlier compile_red/green development fixture failures retained separately.
+Author03 a458/19b:183PASS,1486 hashes unchanged. Next new exact Pair185CPU then
+GPU03 same fixed-Local probe, preserving old root/root2 and server-only raw data.
+
 Author01 Root66a104d5 and author02 Root1d1b0b75 / same Child19b30423:
 181/181 focused PASS,1485 source files unchanged, explicit baselineW0 exclusion.
 GPU01 on isolated Root66a104d5 loaded real Local iter15000 and passed mode/DCP
