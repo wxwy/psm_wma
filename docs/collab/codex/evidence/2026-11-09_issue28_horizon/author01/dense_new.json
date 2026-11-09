@@ -1,0 +1,198 @@
+{
+  "rows": [
+    {
+      "source_steps": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "feature_wire_sha256": "a5b6b56b9d619c125e55ca2c9729a06aa7ea7fdd306156541dc8243cbf03aeb8",
+      "cached_boundary_sha256": "c8e10fcae4268f0dbb637443e6b3a1ab09614aa505ce8f1a7fa42c330a1a3a81",
+      "fast_state_sha256": [
+        "1da2f21cd425fc25a1c3c64892bad7b172767326d0489ce8cbed185157a7e3a6",
+        "e5eceb93b905d2c232a735474e69287edb566eb53676e155b3278aa7894ddb77",
+        "2306f802adb6fe35fc8d5a44c5d2ab0b9594a3b186b8fee7a8ec17454e617ac0",
+        "2c78e7f762bca33a9a1a3d4c611687c128a2da55aac0d7b1f22b6db51b6efe9b"
+      ],
+      "prefix_sha256": "175ae50ff751e410adace427a57e5962fbf52a9c57973e9a7154c09b7773f79f",
+      "synthetic_action_sha256": "80dab25bc507fea4260ba2c6d866343e69fb6acc3edaab4f1958b606c4c15a9d",
+      "adapted_steps": 16.0,
+      "encoded_steps": 0
+    },
+    {
+      "source_steps": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "feature_wire_sha256": "94578d8ace64c08a07bb5aaac2ca68cca0f95acc9b3e2929d495f9984043cefe",
+      "cached_boundary_sha256": "829275ec957b38c91d1be39a2f6be333b6aad9b492af27882228785463898ad7",
+      "fast_state_sha256": [
+        "dd34d51670a8487353564e90010668dfb43804b56056e0b61a9b5d82b3e2eeb2",
+        "447d90056b71bfc720ad66a1c13b327026cc261680528a7c5b53fd33fdcf971f",
+        "f0a145d08f9ea33bb12704867e4fb9de9211c678331706df05c49e9c639312e0",
+        "df4e0b6b69aafae85cd13f159d673f60810859f2dc6aed4d899e5b611b5a4f7a"
+      ],
+      "prefix_sha256": "6cee32eb7a34a6d79c6a42e97117c44f7330cffef6a2bd9b06d04e3d56462a49",
+      "synthetic_action_sha256": "c739ac08cd60d4b54480db8f639e659b7ef608d88fe3a471fdacb3bdcc94e9c6",
+      "adapted_steps": 16.0,
+      "encoded_steps": 0
+    }
+  ],
+  "scan_calls": [
+    [
+      1,
+      false
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ],
+    [
+      1,
+      true
+    ]
+  ]
+}

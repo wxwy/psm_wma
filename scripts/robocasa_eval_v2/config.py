@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 
 from cosmos_framework.evaluation.robocasa_v2.contract import (
+    ACTION_CHUNK_SIZE,
     ROUND_SCHEDULE,
     STREAMING_SCHEDULE,
     validate_streaming_resources,
@@ -17,6 +18,7 @@ DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
     "local_memory_mode": "required",
+    "local_ttt_history_k": None,
     "single_latency_arm": None,
     "local_evidence_profile": "server_vae",
     "sim_shared_vae": None,
@@ -76,6 +78,7 @@ def resolve(argv=None):
     p.add_argument("--render-backend", choices=("egl", "osmesa"))
     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
     p.add_argument("--local-memory-mode", choices=("off", "required"))
+    p.add_argument("--local-ttt-history-k", type=int)
     p.add_argument("--single-latency-arm", choices=("A", "B", "C"))
     p.add_argument("--local-evidence-profile", choices=("server_vae", "sim_shared_vae"))
     p.add_argument(
@@ -116,6 +119,7 @@ def resolve(argv=None):
         "execution_profile",
         "batch_wait_ms",
         "local_memory_mode",
+        "local_ttt_history_k",
         "single_latency_arm",
         "local_evidence_profile",
         "scheduling_protocol",
@@ -266,6 +270,11 @@ def resolve(argv=None):
     from robocasa_eval_v2.shared_vae import validate_profile
 
     validate_profile(cfg)
+    from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
+
+    cfg["local_ttt_history_k"] = validate_history_k(
+        cfg.get("local_ttt_history_k"), ACTION_CHUNK_SIZE
+    )
     limit = cfg["rollout_mp4_first_n_per_task"]
     if limit is not None and (
         type(limit) is not int
@@ -324,6 +333,11 @@ def execution(cfg):
         from robocasa_eval_v2.shared_vae import public_shared_profile
 
         result["shared_vae"] = public_shared_profile(cfg)
+    from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
+
+    history_k = validate_history_k(cfg.get("local_ttt_history_k"), ACTION_CHUNK_SIZE)
+    if history_k != ACTION_CHUNK_SIZE:
+        result["local_ttt_history_k"] = history_k
     return result
 
 

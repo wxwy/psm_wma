@@ -1,0 +1,729 @@
+........FFFFF............F...............................F               [100%]
+=================================== FAILURES ===================================
+_____ test_real_worker_and_policy_two_chunks_select_original_steps_only[1] _____
+
+k = 1
+
+    @pytest.mark.parametrize("k", KS)
+    def test_real_worker_and_policy_two_chunks_select_original_steps_only(k):
+        torch.manual_seed(23)
+        h, adapter, model = _feature_adapter(history_k=k)
+        calls = []
+    
+        def encoder(frames):
+            calls.extend(frame.header["source_step"] for frame in frames)
+            return [h.visual(frame.header["source_step"]) for frame in frames]
+    
+        worker = SharedVAEWorker(
+            encoder,
+            h.identity,
+            KEY,
+            "key",
+            "worker",
+            worker_epoch="worker-epoch",
+            clock_domain=CLOCK,
+            clock_ns=lambda: h.clock[0],
+            config=WorkerConfig(history_k=k),
+        )
+        sid, cap = h.lease["session_id"], "private-test-session-capability"
+        worker.owner_register(h.lease, cap, 10000)
+        _commit_feature_cold(adapter, h)
+        assert model.scan_calls == []  # First current Policy frame is not past evidence.
+        try:
+            for start in (0, 16):
+                rows = h.rows(start)
+                boundary = h.boundary(start)
+                worker.owner_boundary_skip(
+                    h.lease,
+                    f"request-{start}",
+                    f"request-{start}",
+                    start,
+                    rows[0]["post_step_receipt"]["source_rgb_sha256"],
+                    rows[0]["post_step_receipt"]["raw15_sha256"],
+                    hashlib.sha256(canonical_json(boundary.record())).hexdigest(),
+                    rows[0]["post_step_receipt"],
+                )
+                worker.owner_issue(sid, f"request-{start}", f"request-{start}", start + 1, 15)
+                selected = tuple(start + j for j in SELECTED[k])
+                # Force the real asynchronous race: every completion/skip precedes
+                # the earlier selected Frame submission. No sleep/timing lottery.
+                for row in rows[1:]:
+                    skip = row["source_step"] not in selected
+                    worker.owner_complete(
+                        sid,
+                        f"request-{start}",
+                        row["source_step"] + 1,
+                        **({"skipped_receipt": row["post_step_receipt"]} if skip else {}),
+                    )
+                session = worker._sessions[sid]
+                assert session.completed == start + 16
+                assert session.submitted == (start + 16 if k == 1 else selected[1])
+                jobs = []
+                for step in selected[1:]:
+                    frame = Frame.create(
+                        h.lease,
+                        f"request-{start}",
+                        f"request-{start}",
+                        step,
+                        h.rgb(step),
+                        h.action(step),
+                        h.identity,
+                        10000,
+                        9500,
+                        CLOCK,
+                    )
+                    key = worker.submit(frame, cap)
+                    assert worker.submit(frame, cap) == key
+                    with worker._changed:
+                        assert worker._changed.wait_for(lambda: worker.poll(sid, key, cap)["status"] != "pending", 3)
+                    result = worker.poll(sid, key, cap)
+                    assert result["status"] == "ready"
+                    rows[step - start]["feature"] = result["feature"]
+                    jobs.append(key)
+                before = adapter.snapshot
+                update = _prepare_feature(adapter, h, start + 16, rows)
+                assert adapter.snapshot is before  # Nothing published before commit.
+                assert update.memory.replacement.consumer_step == start + 16
+                assert update.visual_replacement.last_source_steps == selected
+                status = adapter.status(update)
+                assert status["adapted_steps"] == k and status["encoded_steps"] == 0
+                if k != 16:
+                    assert status["selected_source_steps"] == list(selected)
+                    assert status["skipped_source_steps"] == [s for s in range(start, start + 16) if s not in selected]
+                    assert status["verified_worker_features"] == k - 1
+                assert len(model.scan_calls) == (start // 16 + 1) * k
+                assert all(count == 1 for count, _ in model.scan_calls)
+                adapter.stage_boundary(update, h.boundary(start + 16))
+                response = CachedMemoryResponse(
+                    f"request-{start + 16}", "f" * 64, canonical_json({"local_memory": adapter.status(update)})
+                )
+                adapter.commit(update, response)
+                snapshot = adapter.snapshot
+                replay = _prepare_feature(adapter, h, start + 16, deepcopy(rows))
+                assert replay.memory.replay and adapter.status(replay)["adapted_steps"] == 0
+                adapter.commit(replay, response)
+                assert adapter.snapshot.fast[sid] is snapshot.fast[sid]
+                changed = deepcopy(rows)
+                changed[-1]["post_step_receipt"]["raw15_sha256"] = "f" * 64
+                with pytest.raises(ValueError, match="replay"):
+                    _prepare_feature(adapter, h, start + 16, changed)
+                for key in jobs:
+                    assert worker.ack(sid, key, cap)["acknowledged"]
+                assert session.issued == session.completed == session.submitted == session.consumed == start + 16
+                assert not session.jobs and worker.info()["items"] == 0
+                assert calls == [s for base in range(0, start + 1, 16) for s in (base + j for j in SELECTED[k][1:])]
+                h.commit_chunk(start + 16)
+            assert len(calls) == 2 * (k - 1)
+            assert len(h.owner._sessions[sid].completed) == 0  # New chunk owns a fresh completion ledger.
+        finally:
+            worker.end(sid, cap, h.clock[0] + 3_000_000_000)
+            worker.close(h.clock[0] + 3_000_000_000)
+>           adapter.end(sid)
+            ^^^^^^^^^^^
+E           AttributeError: 'RoboCasaLocalMemoryPolicyAdapter' object has no attribute 'end'
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:156: AttributeError
+_____ test_real_worker_and_policy_two_chunks_select_original_steps_only[2] _____
+
+k = 2
+
+    @pytest.mark.parametrize("k", KS)
+    def test_real_worker_and_policy_two_chunks_select_original_steps_only(k):
+        torch.manual_seed(23)
+        h, adapter, model = _feature_adapter(history_k=k)
+        calls = []
+    
+        def encoder(frames):
+            calls.extend(frame.header["source_step"] for frame in frames)
+            return [h.visual(frame.header["source_step"]) for frame in frames]
+    
+        worker = SharedVAEWorker(
+            encoder,
+            h.identity,
+            KEY,
+            "key",
+            "worker",
+            worker_epoch="worker-epoch",
+            clock_domain=CLOCK,
+            clock_ns=lambda: h.clock[0],
+            config=WorkerConfig(history_k=k),
+        )
+        sid, cap = h.lease["session_id"], "private-test-session-capability"
+        worker.owner_register(h.lease, cap, 10000)
+        _commit_feature_cold(adapter, h)
+        assert model.scan_calls == []  # First current Policy frame is not past evidence.
+        try:
+            for start in (0, 16):
+                rows = h.rows(start)
+                boundary = h.boundary(start)
+                worker.owner_boundary_skip(
+                    h.lease,
+                    f"request-{start}",
+                    f"request-{start}",
+                    start,
+                    rows[0]["post_step_receipt"]["source_rgb_sha256"],
+                    rows[0]["post_step_receipt"]["raw15_sha256"],
+                    hashlib.sha256(canonical_json(boundary.record())).hexdigest(),
+                    rows[0]["post_step_receipt"],
+                )
+                worker.owner_issue(sid, f"request-{start}", f"request-{start}", start + 1, 15)
+                selected = tuple(start + j for j in SELECTED[k])
+                # Force the real asynchronous race: every completion/skip precedes
+                # the earlier selected Frame submission. No sleep/timing lottery.
+                for row in rows[1:]:
+                    skip = row["source_step"] not in selected
+                    worker.owner_complete(
+                        sid,
+                        f"request-{start}",
+                        row["source_step"] + 1,
+                        **({"skipped_receipt": row["post_step_receipt"]} if skip else {}),
+                    )
+                session = worker._sessions[sid]
+                assert session.completed == start + 16
+                assert session.submitted == (start + 16 if k == 1 else selected[1])
+                jobs = []
+                for step in selected[1:]:
+                    frame = Frame.create(
+                        h.lease,
+                        f"request-{start}",
+                        f"request-{start}",
+                        step,
+                        h.rgb(step),
+                        h.action(step),
+                        h.identity,
+                        10000,
+                        9500,
+                        CLOCK,
+                    )
+                    key = worker.submit(frame, cap)
+                    assert worker.submit(frame, cap) == key
+                    with worker._changed:
+                        assert worker._changed.wait_for(lambda: worker.poll(sid, key, cap)["status"] != "pending", 3)
+                    result = worker.poll(sid, key, cap)
+                    assert result["status"] == "ready"
+                    rows[step - start]["feature"] = result["feature"]
+                    jobs.append(key)
+                before = adapter.snapshot
+                update = _prepare_feature(adapter, h, start + 16, rows)
+                assert adapter.snapshot is before  # Nothing published before commit.
+                assert update.memory.replacement.consumer_step == start + 16
+                assert update.visual_replacement.last_source_steps == selected
+                status = adapter.status(update)
+                assert status["adapted_steps"] == k and status["encoded_steps"] == 0
+                if k != 16:
+                    assert status["selected_source_steps"] == list(selected)
+                    assert status["skipped_source_steps"] == [s for s in range(start, start + 16) if s not in selected]
+                    assert status["verified_worker_features"] == k - 1
+                assert len(model.scan_calls) == (start // 16 + 1) * k
+                assert all(count == 1 for count, _ in model.scan_calls)
+                adapter.stage_boundary(update, h.boundary(start + 16))
+                response = CachedMemoryResponse(
+                    f"request-{start + 16}", "f" * 64, canonical_json({"local_memory": adapter.status(update)})
+                )
+                adapter.commit(update, response)
+                snapshot = adapter.snapshot
+                replay = _prepare_feature(adapter, h, start + 16, deepcopy(rows))
+                assert replay.memory.replay and adapter.status(replay)["adapted_steps"] == 0
+                adapter.commit(replay, response)
+                assert adapter.snapshot.fast[sid] is snapshot.fast[sid]
+                changed = deepcopy(rows)
+                changed[-1]["post_step_receipt"]["raw15_sha256"] = "f" * 64
+                with pytest.raises(ValueError, match="replay"):
+                    _prepare_feature(adapter, h, start + 16, changed)
+                for key in jobs:
+                    assert worker.ack(sid, key, cap)["acknowledged"]
+                assert session.issued == session.completed == session.submitted == session.consumed == start + 16
+                assert not session.jobs and worker.info()["items"] == 0
+                assert calls == [s for base in range(0, start + 1, 16) for s in (base + j for j in SELECTED[k][1:])]
+                h.commit_chunk(start + 16)
+            assert len(calls) == 2 * (k - 1)
+            assert len(h.owner._sessions[sid].completed) == 0  # New chunk owns a fresh completion ledger.
+        finally:
+            worker.end(sid, cap, h.clock[0] + 3_000_000_000)
+            worker.close(h.clock[0] + 3_000_000_000)
+>           adapter.end(sid)
+            ^^^^^^^^^^^
+E           AttributeError: 'RoboCasaLocalMemoryPolicyAdapter' object has no attribute 'end'
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:156: AttributeError
+_____ test_real_worker_and_policy_two_chunks_select_original_steps_only[4] _____
+
+k = 4
+
+    @pytest.mark.parametrize("k", KS)
+    def test_real_worker_and_policy_two_chunks_select_original_steps_only(k):
+        torch.manual_seed(23)
+        h, adapter, model = _feature_adapter(history_k=k)
+        calls = []
+    
+        def encoder(frames):
+            calls.extend(frame.header["source_step"] for frame in frames)
+            return [h.visual(frame.header["source_step"]) for frame in frames]
+    
+        worker = SharedVAEWorker(
+            encoder,
+            h.identity,
+            KEY,
+            "key",
+            "worker",
+            worker_epoch="worker-epoch",
+            clock_domain=CLOCK,
+            clock_ns=lambda: h.clock[0],
+            config=WorkerConfig(history_k=k),
+        )
+        sid, cap = h.lease["session_id"], "private-test-session-capability"
+        worker.owner_register(h.lease, cap, 10000)
+        _commit_feature_cold(adapter, h)
+        assert model.scan_calls == []  # First current Policy frame is not past evidence.
+        try:
+            for start in (0, 16):
+                rows = h.rows(start)
+                boundary = h.boundary(start)
+                worker.owner_boundary_skip(
+                    h.lease,
+                    f"request-{start}",
+                    f"request-{start}",
+                    start,
+                    rows[0]["post_step_receipt"]["source_rgb_sha256"],
+                    rows[0]["post_step_receipt"]["raw15_sha256"],
+                    hashlib.sha256(canonical_json(boundary.record())).hexdigest(),
+                    rows[0]["post_step_receipt"],
+                )
+                worker.owner_issue(sid, f"request-{start}", f"request-{start}", start + 1, 15)
+                selected = tuple(start + j for j in SELECTED[k])
+                # Force the real asynchronous race: every completion/skip precedes
+                # the earlier selected Frame submission. No sleep/timing lottery.
+                for row in rows[1:]:
+                    skip = row["source_step"] not in selected
+                    worker.owner_complete(
+                        sid,
+                        f"request-{start}",
+                        row["source_step"] + 1,
+                        **({"skipped_receipt": row["post_step_receipt"]} if skip else {}),
+                    )
+                session = worker._sessions[sid]
+                assert session.completed == start + 16
+                assert session.submitted == (start + 16 if k == 1 else selected[1])
+                jobs = []
+                for step in selected[1:]:
+                    frame = Frame.create(
+                        h.lease,
+                        f"request-{start}",
+                        f"request-{start}",
+                        step,
+                        h.rgb(step),
+                        h.action(step),
+                        h.identity,
+                        10000,
+                        9500,
+                        CLOCK,
+                    )
+                    key = worker.submit(frame, cap)
+                    assert worker.submit(frame, cap) == key
+                    with worker._changed:
+                        assert worker._changed.wait_for(lambda: worker.poll(sid, key, cap)["status"] != "pending", 3)
+                    result = worker.poll(sid, key, cap)
+                    assert result["status"] == "ready"
+                    rows[step - start]["feature"] = result["feature"]
+                    jobs.append(key)
+                before = adapter.snapshot
+                update = _prepare_feature(adapter, h, start + 16, rows)
+                assert adapter.snapshot is before  # Nothing published before commit.
+                assert update.memory.replacement.consumer_step == start + 16
+                assert update.visual_replacement.last_source_steps == selected
+                status = adapter.status(update)
+                assert status["adapted_steps"] == k and status["encoded_steps"] == 0
+                if k != 16:
+                    assert status["selected_source_steps"] == list(selected)
+                    assert status["skipped_source_steps"] == [s for s in range(start, start + 16) if s not in selected]
+                    assert status["verified_worker_features"] == k - 1
+                assert len(model.scan_calls) == (start // 16 + 1) * k
+                assert all(count == 1 for count, _ in model.scan_calls)
+                adapter.stage_boundary(update, h.boundary(start + 16))
+                response = CachedMemoryResponse(
+                    f"request-{start + 16}", "f" * 64, canonical_json({"local_memory": adapter.status(update)})
+                )
+                adapter.commit(update, response)
+                snapshot = adapter.snapshot
+                replay = _prepare_feature(adapter, h, start + 16, deepcopy(rows))
+                assert replay.memory.replay and adapter.status(replay)["adapted_steps"] == 0
+                adapter.commit(replay, response)
+                assert adapter.snapshot.fast[sid] is snapshot.fast[sid]
+                changed = deepcopy(rows)
+                changed[-1]["post_step_receipt"]["raw15_sha256"] = "f" * 64
+                with pytest.raises(ValueError, match="replay"):
+                    _prepare_feature(adapter, h, start + 16, changed)
+                for key in jobs:
+                    assert worker.ack(sid, key, cap)["acknowledged"]
+                assert session.issued == session.completed == session.submitted == session.consumed == start + 16
+                assert not session.jobs and worker.info()["items"] == 0
+                assert calls == [s for base in range(0, start + 1, 16) for s in (base + j for j in SELECTED[k][1:])]
+                h.commit_chunk(start + 16)
+            assert len(calls) == 2 * (k - 1)
+            assert len(h.owner._sessions[sid].completed) == 0  # New chunk owns a fresh completion ledger.
+        finally:
+            worker.end(sid, cap, h.clock[0] + 3_000_000_000)
+            worker.close(h.clock[0] + 3_000_000_000)
+>           adapter.end(sid)
+            ^^^^^^^^^^^
+E           AttributeError: 'RoboCasaLocalMemoryPolicyAdapter' object has no attribute 'end'
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:156: AttributeError
+_____ test_real_worker_and_policy_two_chunks_select_original_steps_only[8] _____
+
+k = 8
+
+    @pytest.mark.parametrize("k", KS)
+    def test_real_worker_and_policy_two_chunks_select_original_steps_only(k):
+        torch.manual_seed(23)
+        h, adapter, model = _feature_adapter(history_k=k)
+        calls = []
+    
+        def encoder(frames):
+            calls.extend(frame.header["source_step"] for frame in frames)
+            return [h.visual(frame.header["source_step"]) for frame in frames]
+    
+        worker = SharedVAEWorker(
+            encoder,
+            h.identity,
+            KEY,
+            "key",
+            "worker",
+            worker_epoch="worker-epoch",
+            clock_domain=CLOCK,
+            clock_ns=lambda: h.clock[0],
+            config=WorkerConfig(history_k=k),
+        )
+        sid, cap = h.lease["session_id"], "private-test-session-capability"
+        worker.owner_register(h.lease, cap, 10000)
+        _commit_feature_cold(adapter, h)
+        assert model.scan_calls == []  # First current Policy frame is not past evidence.
+        try:
+            for start in (0, 16):
+                rows = h.rows(start)
+                boundary = h.boundary(start)
+                worker.owner_boundary_skip(
+                    h.lease,
+                    f"request-{start}",
+                    f"request-{start}",
+                    start,
+                    rows[0]["post_step_receipt"]["source_rgb_sha256"],
+                    rows[0]["post_step_receipt"]["raw15_sha256"],
+                    hashlib.sha256(canonical_json(boundary.record())).hexdigest(),
+                    rows[0]["post_step_receipt"],
+                )
+                worker.owner_issue(sid, f"request-{start}", f"request-{start}", start + 1, 15)
+                selected = tuple(start + j for j in SELECTED[k])
+                # Force the real asynchronous race: every completion/skip precedes
+                # the earlier selected Frame submission. No sleep/timing lottery.
+                for row in rows[1:]:
+                    skip = row["source_step"] not in selected
+                    worker.owner_complete(
+                        sid,
+                        f"request-{start}",
+                        row["source_step"] + 1,
+                        **({"skipped_receipt": row["post_step_receipt"]} if skip else {}),
+                    )
+                session = worker._sessions[sid]
+                assert session.completed == start + 16
+                assert session.submitted == (start + 16 if k == 1 else selected[1])
+                jobs = []
+                for step in selected[1:]:
+                    frame = Frame.create(
+                        h.lease,
+                        f"request-{start}",
+                        f"request-{start}",
+                        step,
+                        h.rgb(step),
+                        h.action(step),
+                        h.identity,
+                        10000,
+                        9500,
+                        CLOCK,
+                    )
+                    key = worker.submit(frame, cap)
+                    assert worker.submit(frame, cap) == key
+                    with worker._changed:
+                        assert worker._changed.wait_for(lambda: worker.poll(sid, key, cap)["status"] != "pending", 3)
+                    result = worker.poll(sid, key, cap)
+                    assert result["status"] == "ready"
+                    rows[step - start]["feature"] = result["feature"]
+                    jobs.append(key)
+                before = adapter.snapshot
+                update = _prepare_feature(adapter, h, start + 16, rows)
+                assert adapter.snapshot is before  # Nothing published before commit.
+                assert update.memory.replacement.consumer_step == start + 16
+                assert update.visual_replacement.last_source_steps == selected
+                status = adapter.status(update)
+                assert status["adapted_steps"] == k and status["encoded_steps"] == 0
+                if k != 16:
+                    assert status["selected_source_steps"] == list(selected)
+                    assert status["skipped_source_steps"] == [s for s in range(start, start + 16) if s not in selected]
+                    assert status["verified_worker_features"] == k - 1
+                assert len(model.scan_calls) == (start // 16 + 1) * k
+                assert all(count == 1 for count, _ in model.scan_calls)
+                adapter.stage_boundary(update, h.boundary(start + 16))
+                response = CachedMemoryResponse(
+                    f"request-{start + 16}", "f" * 64, canonical_json({"local_memory": adapter.status(update)})
+                )
+                adapter.commit(update, response)
+                snapshot = adapter.snapshot
+                replay = _prepare_feature(adapter, h, start + 16, deepcopy(rows))
+                assert replay.memory.replay and adapter.status(replay)["adapted_steps"] == 0
+                adapter.commit(replay, response)
+                assert adapter.snapshot.fast[sid] is snapshot.fast[sid]
+                changed = deepcopy(rows)
+                changed[-1]["post_step_receipt"]["raw15_sha256"] = "f" * 64
+                with pytest.raises(ValueError, match="replay"):
+                    _prepare_feature(adapter, h, start + 16, changed)
+                for key in jobs:
+                    assert worker.ack(sid, key, cap)["acknowledged"]
+                assert session.issued == session.completed == session.submitted == session.consumed == start + 16
+                assert not session.jobs and worker.info()["items"] == 0
+                assert calls == [s for base in range(0, start + 1, 16) for s in (base + j for j in SELECTED[k][1:])]
+                h.commit_chunk(start + 16)
+            assert len(calls) == 2 * (k - 1)
+            assert len(h.owner._sessions[sid].completed) == 0  # New chunk owns a fresh completion ledger.
+        finally:
+            worker.end(sid, cap, h.clock[0] + 3_000_000_000)
+            worker.close(h.clock[0] + 3_000_000_000)
+>           adapter.end(sid)
+            ^^^^^^^^^^^
+E           AttributeError: 'RoboCasaLocalMemoryPolicyAdapter' object has no attribute 'end'
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:156: AttributeError
+____ test_real_worker_and_policy_two_chunks_select_original_steps_only[16] _____
+
+k = 16
+
+    @pytest.mark.parametrize("k", KS)
+    def test_real_worker_and_policy_two_chunks_select_original_steps_only(k):
+        torch.manual_seed(23)
+        h, adapter, model = _feature_adapter(history_k=k)
+        calls = []
+    
+        def encoder(frames):
+            calls.extend(frame.header["source_step"] for frame in frames)
+            return [h.visual(frame.header["source_step"]) for frame in frames]
+    
+        worker = SharedVAEWorker(
+            encoder,
+            h.identity,
+            KEY,
+            "key",
+            "worker",
+            worker_epoch="worker-epoch",
+            clock_domain=CLOCK,
+            clock_ns=lambda: h.clock[0],
+            config=WorkerConfig(history_k=k),
+        )
+        sid, cap = h.lease["session_id"], "private-test-session-capability"
+        worker.owner_register(h.lease, cap, 10000)
+        _commit_feature_cold(adapter, h)
+        assert model.scan_calls == []  # First current Policy frame is not past evidence.
+        try:
+            for start in (0, 16):
+                rows = h.rows(start)
+                boundary = h.boundary(start)
+                worker.owner_boundary_skip(
+                    h.lease,
+                    f"request-{start}",
+                    f"request-{start}",
+                    start,
+                    rows[0]["post_step_receipt"]["source_rgb_sha256"],
+                    rows[0]["post_step_receipt"]["raw15_sha256"],
+                    hashlib.sha256(canonical_json(boundary.record())).hexdigest(),
+                    rows[0]["post_step_receipt"],
+                )
+                worker.owner_issue(sid, f"request-{start}", f"request-{start}", start + 1, 15)
+                selected = tuple(start + j for j in SELECTED[k])
+                # Force the real asynchronous race: every completion/skip precedes
+                # the earlier selected Frame submission. No sleep/timing lottery.
+                for row in rows[1:]:
+                    skip = row["source_step"] not in selected
+                    worker.owner_complete(
+                        sid,
+                        f"request-{start}",
+                        row["source_step"] + 1,
+                        **({"skipped_receipt": row["post_step_receipt"]} if skip else {}),
+                    )
+                session = worker._sessions[sid]
+                assert session.completed == start + 16
+                assert session.submitted == (start + 16 if k == 1 else selected[1])
+                jobs = []
+                for step in selected[1:]:
+                    frame = Frame.create(
+                        h.lease,
+                        f"request-{start}",
+                        f"request-{start}",
+                        step,
+                        h.rgb(step),
+                        h.action(step),
+                        h.identity,
+                        10000,
+                        9500,
+                        CLOCK,
+                    )
+                    key = worker.submit(frame, cap)
+                    assert worker.submit(frame, cap) == key
+                    with worker._changed:
+                        assert worker._changed.wait_for(lambda: worker.poll(sid, key, cap)["status"] != "pending", 3)
+                    result = worker.poll(sid, key, cap)
+                    assert result["status"] == "ready"
+                    rows[step - start]["feature"] = result["feature"]
+                    jobs.append(key)
+                before = adapter.snapshot
+                update = _prepare_feature(adapter, h, start + 16, rows)
+                assert adapter.snapshot is before  # Nothing published before commit.
+                assert update.memory.replacement.consumer_step == start + 16
+                assert update.visual_replacement.last_source_steps == selected
+                status = adapter.status(update)
+                assert status["adapted_steps"] == k and status["encoded_steps"] == 0
+                if k != 16:
+                    assert status["selected_source_steps"] == list(selected)
+                    assert status["skipped_source_steps"] == [s for s in range(start, start + 16) if s not in selected]
+                    assert status["verified_worker_features"] == k - 1
+                assert len(model.scan_calls) == (start // 16 + 1) * k
+                assert all(count == 1 for count, _ in model.scan_calls)
+                adapter.stage_boundary(update, h.boundary(start + 16))
+                response = CachedMemoryResponse(
+                    f"request-{start + 16}", "f" * 64, canonical_json({"local_memory": adapter.status(update)})
+                )
+                adapter.commit(update, response)
+                snapshot = adapter.snapshot
+                replay = _prepare_feature(adapter, h, start + 16, deepcopy(rows))
+                assert replay.memory.replay and adapter.status(replay)["adapted_steps"] == 0
+                adapter.commit(replay, response)
+                assert adapter.snapshot.fast[sid] is snapshot.fast[sid]
+                changed = deepcopy(rows)
+                changed[-1]["post_step_receipt"]["raw15_sha256"] = "f" * 64
+                with pytest.raises(ValueError, match="replay"):
+                    _prepare_feature(adapter, h, start + 16, changed)
+                for key in jobs:
+                    assert worker.ack(sid, key, cap)["acknowledged"]
+                assert session.issued == session.completed == session.submitted == session.consumed == start + 16
+                assert not session.jobs and worker.info()["items"] == 0
+                assert calls == [s for base in range(0, start + 1, 16) for s in (base + j for j in SELECTED[k][1:])]
+                h.commit_chunk(start + 16)
+            assert len(calls) == 2 * (k - 1)
+            assert len(h.owner._sessions[sid].completed) == 0  # New chunk owns a fresh completion ledger.
+        finally:
+            worker.end(sid, cap, h.clock[0] + 3_000_000_000)
+            worker.close(h.clock[0] + 3_000_000_000)
+>           adapter.end(sid)
+            ^^^^^^^^^^^
+E           AttributeError: 'RoboCasaLocalMemoryPolicyAdapter' object has no attribute 'end'
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:156: AttributeError
+_________ test_frozen_k_and_expired_original_deadline_fail_before_scan _________
+
+    def test_frozen_k_and_expired_original_deadline_fail_before_scan():
+        h, adapter, model = _feature_adapter(history_k=2)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows()
+        from cosmos_framework.inference.robocasa_local_memory_policy_test import _feature_request
+    
+        req = _feature_request(h, 16, rows)
+        req["local_memory"]["local_ttt_history_k"] = 4
+        with pytest.raises(ValueError, match="frozen"):
+            adapter.prepare(req, lease=h.lease, deadline_ns=9000, clock_domain=CLOCK, request_key="request-16")
+        h.clock[0] = 9001
+        with pytest.raises(TimeoutError):
+>           _prepare_feature(adapter, h, 16, rows)
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:231: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py:247: in _prepare_feature
+    return adapter.prepare(
+cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py:369: in prepare
+    request, replacement, encoded_steps = self._parse(
+cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py:351: in _parse
+    return self._parse_features(req, lease=lease, deadline_ns=deadline_ns, clock_domain=clock_domain)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py:267: in _parse_features
+    owner.validate_request(public, deadline_ns, clock_domain)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f0e7de43350>
+lease = {'attempt_id': 'attempt-1', 'episode_id': 'episode-1', 'episode_index': 0, 'generation': 1, ...}
+deadline_ns = 9000, clock_domain = 'synthetic-boot:monotonic:0'
+
+    def validate_request(self, lease, deadline_ns, clock_domain):
+        with self._lock:
+            session = self._session(lease)
+            deadline = _ns(deadline_ns)
+            if (
+                clock_domain != session.worker.clock_domain
+                or deadline > session.deadline
+                or self.clock_ns() >= min(deadline, session.deadline)
+            ):
+>               raise ProtocolError("original feature request budget/clock mismatch or expiry")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: original feature request budget/clock mismatch or expiry
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:483: ProtocolError
+_ test_actual_eval_connector_accepts_B8_and_propagates_frozen_K_without_a_new_transport _
+
+    def test_actual_eval_connector_accepts_B8_and_propagates_frozen_K_without_a_new_transport():
+        from cosmos_framework.inference.robocasa_session_transactions import monotonic_clock_domain
+        from cosmos_framework.simulation.robocasa.eval_v2_transactions import PolicyTransport
+        from cosmos_framework.simulation.robocasa.eval_v2_transactions_test import settings
+    
+        # Production constructor, real TransactionPolicyClient assignment validation,
+        # real SimSharedVAEClient construction. Socket methods are not invoked here.
+        lease = {**old._lease(), "capability": "native-private-session-capability"}
+        descriptor = {
+            **old._descriptor(),
+            "local_ttt_history_k": 4,
+            "worker_socket": "/tmp/unused-history-k.sock",
+            "worker_session_capability": "private-worker-session-capability",
+            "relay_socket": "/tmp/unused-history-k.ctl",
+            "actor_capability": "private-actor-session-capability",
+        }
+        cfg = {
+            **settings(),
+            "max_infer_batch_size": 8,
+            "local_evidence_profile": "sim_shared_vae",
+            "local_ttt_history_k": 4,
+        }
+        transport = PolicyTransport(
+            cfg,
+>           {"lease": lease, "prediction_clock_domain": monotonic_clock_domain(), "sim_shared_vae": descriptor},
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+            time.monotonic() + 10,
+        )
+
+cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=========================== short test summary info ============================
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_real_worker_and_policy_two_chunks_select_original_steps_only[1]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_real_worker_and_policy_two_chunks_select_original_steps_only[2]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_real_worker_and_policy_two_chunks_select_original_steps_only[4]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_real_worker_and_policy_two_chunks_select_original_steps_only[8]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_real_worker_and_policy_two_chunks_select_original_steps_only[16]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_frozen_k_and_expired_original_deadline_fail_before_scan
+FAILED cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py::test_actual_eval_connector_accepts_B8_and_propagates_frozen_K_without_a_new_transport
+7 failed, 51 passed in 13.06s

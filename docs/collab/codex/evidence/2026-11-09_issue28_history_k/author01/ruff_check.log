@@ -1,0 +1,772 @@
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:2:1: E401 [*] Multiple imports on one line
+  |
+1 | """Issue27 Evidence-only M16 supplement, CPU boundary doubles, no real Sim/GPU."""
+2 | import argparse,hashlib,importlib.metadata,json,os,signal,subprocess,sys,time,xml.etree.ElementTree as ET
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E401
+3 | from pathlib import Path
+4 | from datetime import datetime
+  |
+  = help: Split imports
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:6:28: E702 Multiple statements on one line (semicolon)
+  |
+4 | from datetime import datetime
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+  |                            ^ E702
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:6:77: E702 Multiple statements on one line (semicolon)
+  |
+4 | from datetime import datetime
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+  |                                                                             ^ E702
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:7:34: E702 Multiple statements on one line (semicolon)
+  |
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+  |                                  ^ E702
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:7:81: E702 Multiple statements on one line (semicolon)
+  |
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+  |                                                                                 ^ E702
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:8:19: E702 Multiple statements on one line (semicolon)
+   |
+ 6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+ 7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+   |                   ^ E702
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:8:42: E702 Multiple statements on one line (semicolon)
+   |
+ 6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+ 7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+   |                                          ^ E702
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:8:71: E702 Multiple statements on one line (semicolon)
+   |
+ 6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+ 7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');a=p.parse_args()
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+   |                                                                       ^ E702
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:10:49: E702 Multiple statements on one line (semicolon)
+   |
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |                                                 ^ E702
+11 | assert git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+12 | assert git(r,'rev-parse','HEAD:cosmos-framework')==child
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:18:22: E702 Multiple statements on one line (semicolon)
+   |
+16 | files=[r/'tools/v3/eval_v2_batch_tests'/x for x in ['shared_vae_routing_test.py','shared_vae_streaming_m16_test.py','shared_vae_daemon…
+17 | tests=[str(files[0]),str(files[1]),str(r/'tools/v3/eval_v2_batch_tests/shared_vae_test.py')+'::test_registry_worker_is_peer_survives_s…
+18 | env=os.environ.copy();overrides=dict(CUDA_VISIBLE_DEVICES='',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTEST_DISABLE_PLUGIN_AUTOLOA…
+   |                      ^ E702
+19 | env.update(overrides);(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+20 | (out/'versions.json').write_text(json.dumps(dict(python=sys.version,packages={x:importlib.metadata.version(x) for x in ['torch','pytes…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:19:22: E702 Multiple statements on one line (semicolon)
+   |
+17 | tests=[str(files[0]),str(files[1]),str(r/'tools/v3/eval_v2_batch_tests/shared_vae_test.py')+'::test_registry_worker_is_peer_survives_s…
+18 | env=os.environ.copy();overrides=dict(CUDA_VISIBLE_DEVICES='',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTEST_DISABLE_PLUGIN_AUTOLOA…
+19 | env.update(overrides);(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+   |                      ^ E702
+20 | (out/'versions.json').write_text(json.dumps(dict(python=sys.version,packages={x:importlib.metadata.version(x) for x in ['torch','pytes…
+21 | state=dict(status='RUNNING',scope='ISSUE27_TEST_ONLY_STREAMING_M16_32_SESSIONS',steps=[],created_cst=datetime.now(ZoneInfo('Asia/Shang…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:24:76: E702 Multiple statements on one line (semicolon)
+   |
+22 | def save():(out/'gate.json').write_text(json.dumps(state,indent=2)+'\n')
+23 | def run(name,argv,timeout=150):
+24 |  step=dict(name=name,argv=list(map(str,argv)),cwd=str(r),timeout_s=timeout);state['steps'].append(step);save();started=time.monotonic()
+   |                                                                            ^ E702
+25 |  with (out/(name+'.log')).open('wb') as log:
+26 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:24:104: E702 Multiple statements on one line (semicolon)
+   |
+22 | def save():(out/'gate.json').write_text(json.dumps(state,indent=2)+'\n')
+23 | def run(name,argv,timeout=150):
+24 |  step=dict(name=name,argv=list(map(str,argv)),cwd=str(r),timeout_s=timeout);state['steps'].append(step);save();started=time.monotonic()
+   |                                                                                                        ^ E702
+25 |  with (out/(name+'.log')).open('wb') as log:
+26 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:24:111: E702 Multiple statements on one line (semicolon)
+   |
+22 | def save():(out/'gate.json').write_text(json.dumps(state,indent=2)+'\n')
+23 | def run(name,argv,timeout=150):
+24 |  step=dict(name=name,argv=list(map(str,argv)),cwd=str(r),timeout_s=timeout);state['steps'].append(step);save();started=time.monotonic()
+   |                                                                                                               ^ E702
+25 |  with (out/(name+'.log')).open('wb') as log:
+26 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:27:6: E701 Multiple statements on one line (colon)
+   |
+25 |  with (out/(name+'.log')).open('wb') as log:
+26 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+27 |   try:proc.wait(timeout)
+   |      ^ E701
+28 |   except subprocess.TimeoutExpired:
+29 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:29:38: E702 Multiple statements on one line (semicolon)
+   |
+27 |   try:proc.wait(timeout)
+28 |   except subprocess.TimeoutExpired:
+29 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+   |                                      ^ E702
+30 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+31 |  if proc.returncode:raise RuntimeError(name+' failed')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:29:51: E702 Multiple statements on one line (semicolon)
+   |
+27 |   try:proc.wait(timeout)
+28 |   except subprocess.TimeoutExpired:
+29 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+   |                                                   ^ E702
+30 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+31 |  if proc.returncode:raise RuntimeError(name+' failed')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:30:75: E702 Multiple statements on one line (semicolon)
+   |
+28 |   except subprocess.TimeoutExpired:
+29 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+30 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+   |                                                                           ^ E702
+31 |  if proc.returncode:raise RuntimeError(name+' failed')
+32 | def snapshot():
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:30:82: E702 Multiple statements on one line (semicolon)
+   |
+28 |   except subprocess.TimeoutExpired:
+29 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+30 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+   |                                                                                  ^ E702
+31 |  if proc.returncode:raise RuntimeError(name+' failed')
+32 | def snapshot():
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:31:20: E701 Multiple statements on one line (colon)
+   |
+29 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+30 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+31 |  if proc.returncode:raise RuntimeError(name+' failed')
+   |                    ^ E701
+32 | def snapshot():
+33 |  paths=list(c.rglob('*.py'))+list((r/'scripts').rglob('*.py'))+list((r/'tools').rglob('*.py'))
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:40:19: E702 Multiple statements on one line (semicolon)
+   |
+38 |   run('format',[sys.executable,'-m','ruff','format',*files])
+39 |   run('lint_fix',[sys.executable,'-m','ruff','check','--fix',*files])
+40 |  before=snapshot();(out/'source_before.json').write_text(json.dumps(before,indent=2)+'\n')
+   |                   ^ E702
+41 |  run('ruff_check',[sys.executable,'-m','ruff','check',*files])
+42 |  run('ruff_format',[sys.executable,'-m','ruff','format','--check',*files])
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:43:16: E701 Multiple statements on one line (colon)
+   |
+41 |  run('ruff_check',[sys.executable,'-m','ruff','check',*files])
+42 |  run('ruff_format',[sys.executable,'-m','ruff','format','--check',*files])
+43 |  for f in files:compile(f.read_text(),str(f),'exec')
+   |                ^ E701
+44 |  state['syntax_files']=len(files)
+45 |  run('pytest',[sys.executable,'-m','pytest','--noconftest','-c','/dev/null','-p','no:cacheprovider','-q',*tests,'--junitxml='+str(out/…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:46:44: E702 Multiple statements on one line (semicolon)
+   |
+44 |  state['syntax_files']=len(files)
+45 |  run('pytest',[sys.executable,'-m','pytest','--noconftest','-c','/dev/null','-p','no:cacheprovider','-q',*tests,'--junitxml='+str(out/…
+46 |  tree=ET.parse(out/'focused.xml').getroot();suites=list(tree.iter('testsuite'))
+   |                                            ^ E702
+47 |  state['junit']={key:sum(int(s.get(key,'0')) for s in suites) for key in ['tests','failures','errors','skipped']}
+48 |  assert state['junit']['tests'] and not any(state['junit'][x] for x in ['failures','errors','skipped'])
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:52:34: E702 Multiple statements on one line (semicolon)
+   |
+50 |  assert len(proofs)==2, 'both physical layout proofs required'
+51 |  for i,f in enumerate(proofs):
+52 |   proof=json.loads(f.read_text());assert proof['total_sim_sessions']==32 and proof['sims_per_server']==16
+   |                                  ^ E702
+53 |   assert len(set(proof['session_ids']))==32 and proof['scoped_ends']==proof['native_ends']==32
+54 |   (out/f'm16_os_behavior_{i}.json').write_bytes(f.read_bytes())
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:55:30: E702 Multiple statements on one line (semicolon)
+   |
+53 |   assert len(set(proof['session_ids']))==32 and proof['scoped_ends']==proof['native_ends']==32
+54 |   (out/f'm16_os_behavior_{i}.json').write_bytes(f.read_bytes())
+55 |  state['m16_layout_proofs']=2;state['status']='PASS'
+   |                              ^ E702
+56 | except Exception as error:state.update(status='FAIL',error=repr(error))
+57 | finally:
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:56:26: E701 Multiple statements on one line (colon)
+   |
+54 |   (out/f'm16_os_behavior_{i}.json').write_bytes(f.read_bytes())
+55 |  state['m16_layout_proofs']=2;state['status']='PASS'
+56 | except Exception as error:state.update(status='FAIL',error=repr(error))
+   |                          ^ E701
+57 | finally:
+58 |  if before is not None:
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:59:19: E702 Multiple statements on one line (semicolon)
+   |
+57 | finally:
+58 |  if before is not None:
+59 |   after=snapshot();(out/'source_after.json').write_text(json.dumps(after,indent=2)+'\n');state['source_unchanged']=before==after
+   |                   ^ E702
+60 |   if before!=after:state.update(status='FAIL',error='source changed during execution')
+61 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:59:89: E702 Multiple statements on one line (semicolon)
+   |
+57 | finally:
+58 |  if before is not None:
+59 |   after=snapshot();(out/'source_after.json').write_text(json.dumps(after,indent=2)+'\n');state['source_unchanged']=before==after
+   |                                                                                         ^ E702
+60 |   if before!=after:state.update(status='FAIL',error='source changed during execution')
+61 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:60:19: E701 Multiple statements on one line (colon)
+   |
+58 |  if before is not None:
+59 |   after=snapshot();(out/'source_after.json').write_text(json.dumps(after,indent=2)+'\n');state['source_unchanged']=before==after
+60 |   if before!=after:state.update(status='FAIL',error='source changed during execution')
+   |                   ^ E701
+61 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+62 |  state['child_unchanged']=git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:63:75: E701 Multiple statements on one line (colon)
+   |
+61 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+62 |  state['child_unchanged']=git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+63 |  if not state['root_production_unchanged'] or not state['child_unchanged']:state.update(status='FAIL',error='production identity chang…
+   |                                                                           ^ E701
+64 |  if a.expected_root:
+65 |   state['exact_pair_clean_after']=not git(r,'status','--porcelain') and not git(c,'status','--porcelain')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/development-01/runner_as_executed.py:66:41: E701 Multiple statements on one line (colon)
+   |
+64 |  if a.expected_root:
+65 |   state['exact_pair_clean_after']=not git(r,'status','--porcelain') and not git(c,'status','--porcelain')
+66 |   if not state['exact_pair_clean_after']:state.update(status='FAIL',error='exact Pair dirty after validation')
+   |                                         ^ E701
+67 |  save()
+68 | print(json.dumps({k:state.get(k) for k in ['status','junit','source_unchanged','root_production_unchanged','child_unchanged','m16_layo…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:2:1: E401 [*] Multiple imports on one line
+  |
+1 | from pathlib import Path
+2 | import hashlib,json,shutil,subprocess,xml.etree.ElementTree as ET
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E401
+3 | from datetime import datetime
+4 | from zoneinfo import ZoneInfo
+  |
+  = help: Split imports
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:5:53: E702 Multiple statements on one line (semicolon)
+  |
+3 | from datetime import datetime
+4 | from zoneinfo import ZoneInfo
+5 | r=Path('/workspace/work/psm-wma-shared-vae-issue27');c=r/'cosmos-framework';src=Path(__file__).parent
+  |                                                     ^ E702
+6 | formal='9b1756f9099955d6637743f8ad2fa0ee54987b7a';child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec382473828340…
+7 | def git(d,*a):return subprocess.check_output(['git','-C',str(d),*a],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:5:76: E702 Multiple statements on one line (semicolon)
+  |
+3 | from datetime import datetime
+4 | from zoneinfo import ZoneInfo
+5 | r=Path('/workspace/work/psm-wma-shared-vae-issue27');c=r/'cosmos-framework';src=Path(__file__).parent
+  |                                                                            ^ E702
+6 | formal='9b1756f9099955d6637743f8ad2fa0ee54987b7a';child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec382473828340…
+7 | def git(d,*a):return subprocess.check_output(['git','-C',str(d),*a],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:6:50: E702 Multiple statements on one line (semicolon)
+  |
+4 | from zoneinfo import ZoneInfo
+5 | r=Path('/workspace/work/psm-wma-shared-vae-issue27');c=r/'cosmos-framework';src=Path(__file__).parent
+6 | formal='9b1756f9099955d6637743f8ad2fa0ee54987b7a';child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec382473828340…
+  |                                                  ^ E702
+7 | def git(d,*a):return subprocess.check_output(['git','-C',str(d),*a],text=True).strip()
+8 | assert git(r,'rev-parse','HEAD')==formal and git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:6:99: E702 Multiple statements on one line (semicolon)
+  |
+4 | from zoneinfo import ZoneInfo
+5 | r=Path('/workspace/work/psm-wma-shared-vae-issue27');c=r/'cosmos-framework';src=Path(__file__).parent
+6 | formal='9b1756f9099955d6637743f8ad2fa0ee54987b7a';child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec382473828340…
+  |                                                                                                   ^ E702
+7 | def git(d,*a):return subprocess.check_output(['git','-C',str(d),*a],text=True).strip()
+8 | assert git(r,'rev-parse','HEAD')==formal and git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:9:57: E702 Multiple statements on one line (semicolon)
+   |
+ 7 | def git(d,*a):return subprocess.check_output(['git','-C',str(d),*a],text=True).strip()
+ 8 | assert git(r,'rev-parse','HEAD')==formal and git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+ 9 | gate=json.loads((src/'author-01/gate.json').read_text());assert gate['status']=='PASS' and gate['source_unchanged'] and gate['exact_pa…
+   |                                                         ^ E702
+10 | source_hashes=json.loads((src/'author-01/source_after.json').read_text())
+11 | assert all(hashlib.sha256((r/p).read_bytes()).hexdigest()==sha for p,sha in source_hashes.items())
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:13:80: E702 Multiple statements on one line (semicolon)
+   |
+11 | assert all(hashlib.sha256((r/p).read_bytes()).hexdigest()==sha for p,sha in source_hashes.items())
+12 | assert git(r,'rev-parse',formal+':scripts')==git(r,'rev-parse',old+':scripts')
+13 | out=r/'docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions';out.mkdir(parents=True,exist_ok=False)
+   |                                                                                ^ E702
+14 | def copy(f,target):target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(f,target)
+15 | for name in ['development-01','development-02','development-03','author-01']:
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:14:67: E702 Multiple statements on one line (semicolon)
+   |
+12 | assert git(r,'rev-parse',formal+':scripts')==git(r,'rev-parse',old+':scripts')
+13 | out=r/'docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions';out.mkdir(parents=True,exist_ok=False)
+14 | def copy(f,target):target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(f,target)
+   |                                                                   ^ E702
+15 | for name in ['development-01','development-02','development-03','author-01']:
+16 |  for f in sorted((src/name).iterdir()):
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:17:63: E701 Multiple statements on one line (colon)
+   |
+15 | for name in ['development-01','development-02','development-03','author-01']:
+16 |  for f in sorted((src/name).iterdir()):
+17 |   if f.is_file() and f.suffix in ['.json','.xml','.log','.py']:copy(f,out/name/f.name)
+   |                                                               ^ E701
+18 | for name in ['run_focused.py','archive_handoff.py']:copy(src/name,out/'runners'/name)
+19 | scenarios=[]
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:18:52: E701 Multiple statements on one line (colon)
+   |
+16 |  for f in sorted((src/name).iterdir()):
+17 |   if f.is_file() and f.suffix in ['.json','.xml','.log','.py']:copy(f,out/name/f.name)
+18 | for name in ['run_focused.py','archive_handoff.py']:copy(src/name,out/'runners'/name)
+   |                                                    ^ E701
+19 | scenarios=[]
+20 | for f in sorted((src/'author-01/tmp').rglob('streaming_m16_evidence.json')):
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:21:33: E702 Multiple statements on one line (semicolon)
+   |
+19 | scenarios=[]
+20 | for f in sorted((src/'author-01/tmp').rglob('streaming_m16_evidence.json')):
+21 |  proof=json.loads(f.read_text());manifest_path=f.parent/'run/manifest.json';m=json.loads(manifest_path.read_text())
+   |                                 ^ E702
+22 |  assert proof['manifest_digest']==m['digest'] and proof['execution']==m['execution']
+23 |  assert proof['sims_per_server']==16 and proof['total_sim_sessions']==32 and len(set(proof['session_ids']))==32
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:21:76: E702 Multiple statements on one line (semicolon)
+   |
+19 | scenarios=[]
+20 | for f in sorted((src/'author-01/tmp').rglob('streaming_m16_evidence.json')):
+21 |  proof=json.loads(f.read_text());manifest_path=f.parent/'run/manifest.json';m=json.loads(manifest_path.read_text())
+   |                                                                            ^ E702
+22 |  assert proof['manifest_digest']==m['digest'] and proof['execution']==m['execution']
+23 |  assert proof['sims_per_server']==16 and proof['total_sim_sessions']==32 and len(set(proof['session_ids']))==32
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/archive_handoff.py:27:23: E702 Multiple statements on one line (semicolon)
+   |
+25 |  assert len(proof['worker_ready_proofs'])==len(proof['worker_close_receipts'])==proof['worker_count']
+26 |  target=out/'author-01/scenarios'/f.parent.name
+27 |  copy(f,target/f.name);copy(manifest_path,target/'manifest.json')
+   |                       ^ E702
+28 |  scenarios.append(dict(path=str(target.relative_to(out)),servers=2,sims_per_server=16,total_sessions=32,
+29 |   render_gpus=proof['render_gpu_count'],workers=proof['worker_count'],native_batch_sizes=proof['native_batch_sizes'],
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:2:1: E401 [*] Multiple imports on one line
+  |
+1 | """Issue27 Evidence-only M16 supplement, CPU boundary doubles, no real Sim/GPU."""
+2 | import argparse,hashlib,importlib.metadata,json,os,signal,subprocess,sys,time,xml.etree.ElementTree as ET
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E401
+3 | from pathlib import Path
+4 | from datetime import datetime
+  |
+  = help: Split imports
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:6:28: E702 Multiple statements on one line (semicolon)
+  |
+4 | from datetime import datetime
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+  |                            ^ E702
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.p…
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:6:77: E702 Multiple statements on one line (semicolon)
+  |
+4 | from datetime import datetime
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+  |                                                                             ^ E702
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.p…
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:7:34: E702 Multiple statements on one line (semicolon)
+  |
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.…
+  |                                  ^ E702
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:7:81: E702 Multiple statements on one line (semicolon)
+  |
+5 | from zoneinfo import ZoneInfo
+6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.…
+  |                                                                                 ^ E702
+8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:7:130: E702 Multiple statements on one line (semicolon)
+  |
+5 | …
+6 | …ired=True);p.add_argument('--evidence-dir',type=Path,required=True)
+7 | …='store_true');p.add_argument('--m16-only',action='store_true');a=p.parse_args()
+  |                                                                 ^ E702
+8 | …ve();out.mkdir(parents=True,exist_ok=False)
+9 | …,*args],text=True).strip()
+  |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:8:19: E702 Multiple statements on one line (semicolon)
+   |
+ 6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+ 7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.…
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+   |                   ^ E702
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:8:42: E702 Multiple statements on one line (semicolon)
+   |
+ 6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+ 7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.…
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+   |                                          ^ E702
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:8:71: E702 Multiple statements on one line (semicolon)
+   |
+ 6 | p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True);p.add_argument('--evidence-dir',type=Path,required=True)
+ 7 | p.add_argument('--expected-root');p.add_argument('--format',action='store_true');p.add_argument('--m16-only',action='store_true');a=p.…
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+   |                                                                       ^ E702
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:10:49: E702 Multiple statements on one line (semicolon)
+   |
+ 8 | r=a.root.resolve();c=r/'cosmos-framework';out=a.evidence_dir.resolve();out.mkdir(parents=True,exist_ok=False)
+ 9 | def git(d,*args):return subprocess.check_output(['git','-C',str(d),*args],text=True).strip()
+10 | child='60b252d05157b2753d2caebae32b11c878504bbe';old='15dbc97bf13437905ec38247382834067e5341ae'
+   |                                                 ^ E702
+11 | assert git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+12 | assert git(r,'rev-parse','HEAD:cosmos-framework')==child
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:18:14: E701 Multiple statements on one line (colon)
+   |
+16 | files=[r/'tools/v3/eval_v2_batch_tests'/x for x in ['shared_vae_routing_test.py','shared_vae_streaming_m16_test.py','shared_vae_daemon…
+17 | tests=[str(files[0]),str(files[1]),str(r/'tools/v3/eval_v2_batch_tests/shared_vae_test.py')+'::test_registry_worker_is_peer_survives_s…
+18 | if a.m16_only:tests=[str(files[1])]
+   |              ^ E701
+19 | env=os.environ.copy();overrides=dict(CUDA_VISIBLE_DEVICES='',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTEST_DISABLE_PLUGIN_AUTOLOA…
+20 | env.update(overrides);(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:19:22: E702 Multiple statements on one line (semicolon)
+   |
+17 | tests=[str(files[0]),str(files[1]),str(r/'tools/v3/eval_v2_batch_tests/shared_vae_test.py')+'::test_registry_worker_is_peer_survives_s…
+18 | if a.m16_only:tests=[str(files[1])]
+19 | env=os.environ.copy();overrides=dict(CUDA_VISIBLE_DEVICES='',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTEST_DISABLE_PLUGIN_AUTOLOA…
+   |                      ^ E702
+20 | env.update(overrides);(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+21 | (out/'versions.json').write_text(json.dumps(dict(python=sys.version,packages={x:importlib.metadata.version(x) for x in ['torch','pytes…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:20:22: E702 Multiple statements on one line (semicolon)
+   |
+18 | if a.m16_only:tests=[str(files[1])]
+19 | env=os.environ.copy();overrides=dict(CUDA_VISIBLE_DEVICES='',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',PYTEST_DISABLE_PLUGIN_AUTOLOA…
+20 | env.update(overrides);(out/'environment_overrides.json').write_text(json.dumps(overrides,indent=2)+'\n')
+   |                      ^ E702
+21 | (out/'versions.json').write_text(json.dumps(dict(python=sys.version,packages={x:importlib.metadata.version(x) for x in ['torch','pytes…
+22 | state=dict(status='RUNNING',scope='ISSUE27_TEST_ONLY_STREAMING_M16_32_SESSIONS',steps=[],created_cst=datetime.now(ZoneInfo('Asia/Shang…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:25:76: E702 Multiple statements on one line (semicolon)
+   |
+23 | def save():(out/'gate.json').write_text(json.dumps(state,indent=2)+'\n')
+24 | def run(name,argv,timeout=150):
+25 |  step=dict(name=name,argv=list(map(str,argv)),cwd=str(r),timeout_s=timeout);state['steps'].append(step);save();started=time.monotonic()
+   |                                                                            ^ E702
+26 |  with (out/(name+'.log')).open('wb') as log:
+27 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:25:104: E702 Multiple statements on one line (semicolon)
+   |
+23 | def save():(out/'gate.json').write_text(json.dumps(state,indent=2)+'\n')
+24 | def run(name,argv,timeout=150):
+25 |  step=dict(name=name,argv=list(map(str,argv)),cwd=str(r),timeout_s=timeout);state['steps'].append(step);save();started=time.monotonic()
+   |                                                                                                        ^ E702
+26 |  with (out/(name+'.log')).open('wb') as log:
+27 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:25:111: E702 Multiple statements on one line (semicolon)
+   |
+23 | def save():(out/'gate.json').write_text(json.dumps(state,indent=2)+'\n')
+24 | def run(name,argv,timeout=150):
+25 |  step=dict(name=name,argv=list(map(str,argv)),cwd=str(r),timeout_s=timeout);state['steps'].append(step);save();started=time.monotonic()
+   |                                                                                                               ^ E702
+26 |  with (out/(name+'.log')).open('wb') as log:
+27 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:28:6: E701 Multiple statements on one line (colon)
+   |
+26 |  with (out/(name+'.log')).open('wb') as log:
+27 |   proc=subprocess.Popen(step['argv'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+28 |   try:proc.wait(timeout)
+   |      ^ E701
+29 |   except subprocess.TimeoutExpired:
+30 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:30:38: E702 Multiple statements on one line (semicolon)
+   |
+28 |   try:proc.wait(timeout)
+29 |   except subprocess.TimeoutExpired:
+30 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+   |                                      ^ E702
+31 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+32 |  if proc.returncode:raise RuntimeError(name+' failed')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:30:51: E702 Multiple statements on one line (semicolon)
+   |
+28 |   try:proc.wait(timeout)
+29 |   except subprocess.TimeoutExpired:
+30 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+   |                                                   ^ E702
+31 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+32 |  if proc.returncode:raise RuntimeError(name+' failed')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:31:75: E702 Multiple statements on one line (semicolon)
+   |
+29 |   except subprocess.TimeoutExpired:
+30 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+31 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+   |                                                                           ^ E702
+32 |  if proc.returncode:raise RuntimeError(name+' failed')
+33 | def snapshot():
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:31:82: E702 Multiple statements on one line (semicolon)
+   |
+29 |   except subprocess.TimeoutExpired:
+30 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+31 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+   |                                                                                  ^ E702
+32 |  if proc.returncode:raise RuntimeError(name+' failed')
+33 | def snapshot():
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:32:20: E701 Multiple statements on one line (colon)
+   |
+30 |    os.killpg(proc.pid,signal.SIGKILL);proc.wait(5);raise
+31 |  step.update(exit_code=proc.returncode,elapsed_s=time.monotonic()-started);save();print(name,proc.returncode,flush=True)
+32 |  if proc.returncode:raise RuntimeError(name+' failed')
+   |                    ^ E701
+33 | def snapshot():
+34 |  paths=list(c.rglob('*.py'))+list((r/'scripts').rglob('*.py'))+list((r/'tools').rglob('*.py'))
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:41:19: E702 Multiple statements on one line (semicolon)
+   |
+39 |   run('format',[sys.executable,'-m','ruff','format',*files])
+40 |   run('lint_fix',[sys.executable,'-m','ruff','check','--fix',*files])
+41 |  before=snapshot();(out/'source_before.json').write_text(json.dumps(before,indent=2)+'\n')
+   |                   ^ E702
+42 |  run('ruff_check',[sys.executable,'-m','ruff','check',*files])
+43 |  run('ruff_format',[sys.executable,'-m','ruff','format','--check',*files])
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:44:16: E701 Multiple statements on one line (colon)
+   |
+42 |  run('ruff_check',[sys.executable,'-m','ruff','check',*files])
+43 |  run('ruff_format',[sys.executable,'-m','ruff','format','--check',*files])
+44 |  for f in files:compile(f.read_text(),str(f),'exec')
+   |                ^ E701
+45 |  state['syntax_files']=len(files)
+46 |  run('pytest',[sys.executable,'-m','pytest','--noconftest','-c','/dev/null','-p','no:cacheprovider','-q',*tests,'--junitxml='+str(out/…
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:47:44: E702 Multiple statements on one line (semicolon)
+   |
+45 |  state['syntax_files']=len(files)
+46 |  run('pytest',[sys.executable,'-m','pytest','--noconftest','-c','/dev/null','-p','no:cacheprovider','-q',*tests,'--junitxml='+str(out/…
+47 |  tree=ET.parse(out/'focused.xml').getroot();suites=list(tree.iter('testsuite'))
+   |                                            ^ E702
+48 |  state['junit']={key:sum(int(s.get(key,'0')) for s in suites) for key in ['tests','failures','errors','skipped']}
+49 |  assert state['junit']['tests'] and not any(state['junit'][x] for x in ['failures','errors','skipped'])
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:53:34: E702 Multiple statements on one line (semicolon)
+   |
+51 |  assert len(proofs)==2, 'both physical layout proofs required'
+52 |  for i,f in enumerate(proofs):
+53 |   proof=json.loads(f.read_text());assert proof['total_sim_sessions']==32 and proof['sims_per_server']==16
+   |                                  ^ E702
+54 |   assert len(set(proof['session_ids']))==32 and proof['scoped_ends']==proof['native_ends']==32
+55 |   (out/f'm16_os_behavior_{i}.json').write_bytes(f.read_bytes())
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:56:30: E702 Multiple statements on one line (semicolon)
+   |
+54 |   assert len(set(proof['session_ids']))==32 and proof['scoped_ends']==proof['native_ends']==32
+55 |   (out/f'm16_os_behavior_{i}.json').write_bytes(f.read_bytes())
+56 |  state['m16_layout_proofs']=2;state['status']='PASS'
+   |                              ^ E702
+57 | except Exception as error:state.update(status='FAIL',error=repr(error))
+58 | finally:
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:57:26: E701 Multiple statements on one line (colon)
+   |
+55 |   (out/f'm16_os_behavior_{i}.json').write_bytes(f.read_bytes())
+56 |  state['m16_layout_proofs']=2;state['status']='PASS'
+57 | except Exception as error:state.update(status='FAIL',error=repr(error))
+   |                          ^ E701
+58 | finally:
+59 |  if (out/'focused.xml').exists():
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:63:19: E702 Multiple statements on one line (semicolon)
+   |
+61 |   state['junit']={key:sum(int(s.get(key,'0')) for s in suites) for key in ['tests','failures','errors','skipped']}
+62 |  if before is not None:
+63 |   after=snapshot();(out/'source_after.json').write_text(json.dumps(after,indent=2)+'\n');state['source_unchanged']=before==after
+   |                   ^ E702
+64 |   if before!=after:state.update(status='FAIL',error='source changed during execution')
+65 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:63:89: E702 Multiple statements on one line (semicolon)
+   |
+61 |   state['junit']={key:sum(int(s.get(key,'0')) for s in suites) for key in ['tests','failures','errors','skipped']}
+62 |  if before is not None:
+63 |   after=snapshot();(out/'source_after.json').write_text(json.dumps(after,indent=2)+'\n');state['source_unchanged']=before==after
+   |                                                                                         ^ E702
+64 |   if before!=after:state.update(status='FAIL',error='source changed during execution')
+65 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:64:19: E701 Multiple statements on one line (colon)
+   |
+62 |  if before is not None:
+63 |   after=snapshot();(out/'source_after.json').write_text(json.dumps(after,indent=2)+'\n');state['source_unchanged']=before==after
+64 |   if before!=after:state.update(status='FAIL',error='source changed during execution')
+   |                   ^ E701
+65 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+66 |  state['child_unchanged']=git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:67:75: E701 Multiple statements on one line (colon)
+   |
+65 |  state['root_production_unchanged']=not git(r,'diff',old,'--','scripts')
+66 |  state['child_unchanged']=git(c,'rev-parse','HEAD')==child and not git(c,'status','--porcelain')
+67 |  if not state['root_production_unchanged'] or not state['child_unchanged']:state.update(status='FAIL',error='production identity chang…
+   |                                                                           ^ E701
+68 |  if a.expected_root:
+69 |   state['exact_pair_clean_after']=not git(r,'status','--porcelain') and not git(c,'status','--porcelain')
+   |
+
+docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/runners/run_focused.py:70:41: E701 Multiple statements on one line (colon)
+   |
+68 |  if a.expected_root:
+69 |   state['exact_pair_clean_after']=not git(r,'status','--porcelain') and not git(c,'status','--porcelain')
+70 |   if not state['exact_pair_clean_after']:state.update(status='FAIL',error='exact Pair dirty after validation')
+   |                                         ^ E701
+71 |  save()
+72 | print(json.dumps({k:state.get(k) for k in ['status','junit','source_unchanged','root_production_unchanged','child_unchanged','m16_layo…
+   |
+
+Found 77 errors.
+[*] 3 fixable with the `--fix` option.

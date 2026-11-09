@@ -1,0 +1,79 @@
+[
+  {
+    "name": "lint_fix",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "--fix",
+      "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/config.py",
+      "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/runtime.py",
+      "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/shared_vae.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/local_memory_online.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "format",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/config.py",
+      "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/runtime.py",
+      "/workspace/work/psm-wma-history-k-issue28/scripts/robocasa_eval_v2/shared_vae.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/local_memory_online.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "sparse",
+    "command": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-o",
+      "addopts=",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "--junitxml=/workspace/work/issue28-history-k-evidence/dev01/sparse.xml",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+      "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py"
+    ],
+    "exit_code": 1
+  }
+]

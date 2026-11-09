@@ -1,0 +1,17 @@
+{
+  "servers": 3,
+  "total_sim_slots": 6,
+  "workers": 1,
+  "worker_pids": [
+    34096
+  ],
+  "worker_returncodes": [
+    0
+  ],
+  "all_sessions_registered": true,
+  "first_end_isolated": true,
+  "external_alive": true,
+  "actual_policy_models": false,
+  "actual_simulators": false,
+  "encoder": "synthetic_cpu"
+}

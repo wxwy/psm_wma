@@ -1,3 +1,217 @@
+# 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
+
+Formal Root53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a /
+Child-Gitlink4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe. Same DraftPR30/9 source
+branches pushed Child-first and descriptions updated/read back to latest K=H
+default/divisor rule. Evidence headc5cacb5b is metadata, not formal code identity.
+Remote42/42 code/test/rawJUnit/Gate/Diff/identity/probe/Inbox/review Blob SHAs
+equal local Git. Fresh advertised RootV3e58cef1f/#27Root73d8644d and officialChild
+b0dbd115/#27Child60b252d0 unchanged at this check. No merge/base/active-job changes.
+Receipt docs/collab/codex/evidence/2026-11-09_issue28_horizon_publication.json.
+Author566tests+22subtests=588JUnit PASS,static22/sourceunchanged/denseH16 parity;
+original failure/archive evidence retained. TaskREVIEW; next code action GPT
+incremental review. No independent approval or GPU/realSim/training/SR claimed.
+
+# 2026-11-09T14:49:58.094034+08:00 — Issue28 Horizon correction exact CPU PASS, incremental review prepared
+
+Formal Root 53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child-Gitlink 4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe; clean exact author01
+566tests+22subtests=588JUnit PASS,0failed/error/skipped,shell0/gatePASS/source
+unchanged;22 staticfiles PASS; same old59746/new4cd5 CPU defaultH16 feature,
+FastState,Prefix,syntheticAction hashes equal. Original dev558+22/8fixtureFAIL
+retained; fixed explicit fixture protocol/INFO H only. Previous349 archived files
+reverified unchanged; original631+207 not relabelled or blindly rerun.
+Generic H/divisor/default/j0/relativeIDs, Model/Worker/Sim/Session H mismatch,
+strict Manifest/K/M-B/source Resume and relevant NoTTT/IPC/topology/End covered.
+Current Native model/protocol H16 and original flow/training/scheduler unchanged.
+Review handoff docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md; raw docs/collab/codex/evidence/2026-11-09_issue28_horizon.
+
+TaskREVIEW, author evidence only; previous REQUEST_CHANGES remains independent
+authority until GPT new-pair review. Next Child-first and Root normal pushes to
+same PR30/9 branches, update descriptions to latest H rule, remote source/Gitlink/
+raw evidence/Inbox readback. No new PR/runtime or #27/V3 merge. No GPU/server
+files/active jobs/realSim/SR/900EP/training operations. Source work complete.
+
+# 2026-11-09 CST — Horizon correction implemented; exact-pair focused Gate next
+
+Child4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe clean. Generic helpers validate
+positive exact-int H, NoneK->H, positive exact-int divisors, relative strideH//K;
+arbitrary source anchors keep true IDs. Existing Native protocol H16 is named
+ACTION_CHUNK_SIZE in its authoritative contract (Manifest/model identity same).
+Root resolves/freeze K, runtime binds actual Policy INFO H to frozen protocol;
+Policy uses resolved model cfg H, consumer Owner H, sparse Worker/READY/Sim
+carry/bind H. Native H16 guards and dense wire/fingerprint/Manifest remain.
+No new public H option/model capability/training/runtime/scheduler change.
+
+Dev01 external /workspace/work/issue28-horizon-evidence: Ruff/format/lint PASS;
+558 tests+22subtests PASS,8FAIL all one legacy Registry fixture lacking newly
+required store.manifest/PolicyINFO H. Original raw logs/JUnit retained. Added
+explicit Native H to that fixture, no production bypass. All generic H1..48,
+H12/K3/H24, invalid types/non-divisors, consumer/session H, config dense/episode
+horizon distinction and multi-Session paths passed in dev01. Final clean Pair
+focused Gate and default H16 old59746/new dense probe still pending. Historical
+631+207 not relabeled. Continue same PR30/9 and fresh GPT review; no GPU/realSim/
+SR/900EP/server files/training/V3/#27 changes. TaskIN_PROGRESS.
+
+# 2026-11-09 CST — Issue28 Horizon-derived K correction claimed
+
+Fresh observation: before71971a6c, fetch/advertised/tracking V3e58cef1f and
+same PR30 branch c622ac1925778b431e1206d3e34f007e250b33ac match. Consumed
+dbc75fae/c622ac19 via ancestry0/FF. Read exact review for Root050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 /
+Child59746af006748488a678aa9a55dfc3e200668219: REQUEST_CHANGES, MEDIUM latest
+Owner H-derived K contract. Old631+207 and dense parity remain historical valid
+evidence, not new approval. Child current/remote59746af0 clean. Existing PR30/9
+only; no new branch/runtime/PR or #27/V3 merge. User directly authorizes this
+correction; V3 roles/latest Owner scope supersede obsolete MM/Kimi/30-round wait.
+
+Claim Root config.py/shared_vae.py/runtime.py/identity.py; Child contract.py,
+vae_protocol.py/worker.py/daemon.py,feature_evidence.py,local_memory_online.py,
+local_memory_policy.py,action_policy_server_robocasa.py,sim_shared_vae_client.py,
+eval_v2_transactions.py/closed_loop_eval.py; relevant existing/new CPU fixtures,
+tests and addendum/evidence/Inbox/SESSION/TODO. No competing local edits.
+Use existing authoritative protocol Action Chunk H (not Task episode horizon),
+bind Policy resolved cfg H and frozen Manifest across Worker/Sim/consumer.
+K omitted/None resolvesH; exact positive integer divisor; strideH//K; j0 chosen.
+Generic helpers H12/H24/arbitrary positiveH; actual Native model remainsH16.
+Preserve dense wire/fingerprint/Manifest, full completion/transactions/Resume,
+NoTTT/sharedB1/nativeBatch and topology. Focused CPU/static + old-current H16
+dense parity only, new exact Root/Child pair, update same DraftPRs, fresh GPT
+incremental review. No training/model changes or GPU/server/realSim/SR/900EP.
+No code changes/test execution yet. Next implement minimal correction.
+
+# 2026-11-09T13:43:28.955226+08:00 — Issue28 new Draft PRs published;52 remote file readbacks match
+
+Formal Root 050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 / Child-Gitlink 59746af006748488a678aa9a55dfc3e200668219 unchanged. New open
+Draft RootPR30 https://github.com/wxwy/psm_wma/pull/30 and ChildPR9
+https://github.com/wxwy/cosmos-framework/pull/9; narrow stacked#27 review bases.
+No merge into bases/V3; retarget only after #27 lands/approvals. PriorPR29/8
+head/body unchanged, officialRootV3 e58cef1f/Childofficialb0dbd115 unchanged at
+this observation. Fresh git fetch/advertised/tracking,Gitlink,ancestor and source
+tree checks passed.52/52 remote source/test/rawJUnit/Gate/fingerprints/OS proof/
+handoff/Inbox/oldapproval/archive Blob SHAs equal local. Receipt under
+docs/collab/codex/evidence/2026-11-09_issue28_publication/; all source fingerprints
+still match final author03. Publication/evidence headf30c9750 is docs descendant,
+not implementation authority. Final631tests+207subtests=838JUnit authorPASS,
+shell0/gatePASS/sourceunchanged/static21/denseK16 CPU parity; original failures
+and controlledRED8/GREEN8 retained. TaskREVIEW; fresh GPT incremental review
+requested, independent approval not claimed. No GPU/remote server files/realSim/
+SR/900EP/training/live eval/running-job or official merge operations. Source/test
+work is complete; the next code action is fresh GPT incremental review. This
+publication ledger is bookkeeping and does not require a new author CPU run.
+
+# 2026-11-09T13:34:28.074845+08:00 — Issue28 final author PASS; independent Code Gate REVIEW
+
+Formal Root 050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 / Child-Gitlink 59746af006748488a678aa9a55dfc3e200668219; clean exact author03.
+631tests+207subtests=838JUnit PASS,0fail/error/skip,shell0/source_unchanged=true;
+21staticfiles PASS, defaultK16 old/new feature/FastState/Prefix/syntheticAction
+bit-equal. Controlled H16 RED8/GREEN8 same test hash; final Gate includes8. No
+historical-count relabeling; intermediate830PASS and original dev/runner failures
+preserved. Source/proofs/raw logs/JUnit archive docs/collab/codex/evidence/2026-11-09_issue28_history_k; handoff docs/collab/codex/reviews/2026-11-09_Issue28_HistoryK_050e45d8_59746af0_Code_Review_Request.md.
+
+K1/2/4/8/16 default16, pre-RGB skip, all16 completion authority, cachedj0,
+existingT1/Native transactions; strict K/M-B/source Resume, sharedWorkerB1/wait0,
+generic legal topologies including K4/32Session/B8+B8 each. No model/training or
+scheduler changes. One inherited Sim connector B1 guard aligned1..8 here only.
+Fresh fetch/advertised/tracking officialRootV3 e58cef1f53d2382d39c871ce5a50e4acdd5ce268,
+#27Root73d8644d, Childofficialb0dbd115/#27Child60b252d0; isolated frozen feature
+not merged with those branches. Exact #27 review readback still APPROVE_CODE CPU.
+
+Next normal Child-first/newRoot branch pushes, NEW independent stacked Draft PRs
+against qualified#27 candidate branches, then remote source/Gitlink/evidence/Inbox
+readback. #27PR29/8 untouched. Review request is author-only, fresh GPT verdict
+pending; no implied APPROVE_CODE/hardware/merge permission. No GPU/remote files/
+realSim/SR/900EP/training/live evaluation/running-job/V3 operations. TaskREVIEW.
+
+# 2026-11-09 13:27 CST - Issue28 final H16 boundary; new exact author Gate pending
+
+Child now59746af006748488a678aa9a55dfc3e200668219 (clean). Sparse-only
+Owner and Local consumer require a complete H16 chunk before next Policy prepare;
+partial tails still End normally, defaultK16 untouched. Same new regression SHA
+dff237f44016192b340c30c4fb96ecd254a8ef58777f2b132bfa8d25bfc0f9be:
+controlled prior6b5c1915 productionRED8FAIL(DID NOT RAISE), newGREEN8PASS;
+temporary test/fix worktree dirtiness explicit, original production hashes and
+JUnit/logs recorded externally boundary_red/boundary_green. WorkerConfig new
+default field appended to preserve existing positional argument order.
+
+Prior df043615/6b5c1915 exact scoped author02 PASS:623top-level+207subtests=
+830JUnit, source unchanged,21staticfiles and old/new dense probe equal. This is
+historical intermediate evidence, not final Pair acceptance. Author01 failed
+before tests because external runner mistakenly linted immutable old evidence
+scripts; raw failure retained, static source scope corrected without editing
+archives/production. Final author runner now also reports top-level/subtest
+counts separately. Need final Root Gitlink freeze, exact author03, then archive/
+new independent Draft PRs/GPT review. #27PR29/8 and official V3 remain untouched;
+no GPU/server/realSim/SR/900EP/training or running-job operations.
+
+# 2026-11-09 CST - Issue28 implementation + dev98 PASS; preparing exact Formal Pair
+
+Independent #28 branch only. Root config/runtime/Owner relay, Child sparse
+post-step/feature contracts, bounded Worker skip ledger, Sim pre-capture selection,
+Policy Owner/all16 completion admission and existing Local T1 consumer now wired.
+K1/2/4/8/16 default16; no model/training/scheduler changes. One inherited Sim
+connector PolicyB1 guard aligned to approved1..8; #27 PR29/8 untouched.
+
+External /workspace/work/issue28-history-k-evidence: dev01 original51PASS/7FAIL
+(new fixture cleanup method/exception expectation/kernel identity input errors);
+dev02 original283PASS/6FAIL +22subtests (new Root fixture missing Session/episode
+payload identity, strict rejection correct). Failures preserved. Dev03 new98/98
+PASS, no fail/error/skip, Ruff fix/format0, synthetic CPU/noGPU. Allfive counts,
+0->16->32, first0, partialEnd, actual Local scan/abort/replay/late/changed bytes,
+pre-RGB skip, actual Eval connector B8, frozenK/fullM-B mismatch rejected. NewRoot
+FD daemon/Unix IPC/OwnerHTTP all5 + K4 2Policyx16Sim=32 Sessions, singleWorker,
+B8+B8 each, all16 completion proofs, exact extraEncodeK-1, ACK/End/owned0/IPC
+cleanup/external survival. Model/env/kernel/device/current boundaries explicit
+doubles. Old Child60b and current new CPU processes same dense probe/seed28:
+feature wire/cached boundary/FastState/prefix/syntheticAction hashes bit-equal;
+actual Wan/DCP/diffusion/GPU equivalence NOT_RUN.
+
+Next: Child source commit then Root Gitlink/source/tests commit; exact clean Pair
+focused author CPU/static/source fingerprints (no old900/965 rerun), immutable
+raw evidence and new independent Draft PRs/fresh GPT Code Gate request. Still
+IN_PROGRESS, author results do not grant independent approval or GPU/V3 merge.
+
+# 2026-11-09 CST - Issue28 history K implementation claimed after qualified Issue27
+
+Fresh sync observation: before parent #27HEAD9c09bfde; fetch/advertised/tracking
+V3e58cef1f and candidate73d8644df3096e192a83fff2f2d8098a4ac11e64; ancestry and
+FF consumed8c5b0937/73d8644d. Read exact review Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+Child60b252d05157b2753d2caebae32b11c878504bbe literalAPPROVE_CODE CPU/static/
+Evidence only. PriorMEDIUMclosed; no GPU/V3 merge approval inferred. Authority
+docs/collab/chatgpt/reviews/2026-11-09_Issue27_9b1756f9_60b252d0_Streaming32_Evidence_APPROVE_CODE.md
+
+New isolated worktrees /workspace/work/psm-wma-history-k-issue28 and Child;
+both branch v3-local-ttt-history-k-issue28-20261109, Root starts73d metadata
+(source identical to qualified9b), Child60b. Prior #27 worktrees/PR29/8 unchanged.
+Owner final Issue28 body +comments6731421819/6731530426/6732473919 supersede
+older stride/current-T contradictory comments. Config onlylocal_ttt_history_k
+in1/2/4/8/16 default16; selected chunk j%(16/K)==0; j0 previousReplanVisual96
+reused after executed a0 completes, at next Replan. CurrentT belongs to next
+history chunk, no future actions. Unselected no historyRGB/PNG/Worker enqueue/FW;
+retain minimal all16 chronological executed-action receipts/frontiers/identity.
+Reuse original Worker/NativeBatch/OnlineMemory/T1 prepare/commit/abort/ACK/End.
+
+Main claims Root scripts/robocasa_eval_v2/config.py/runtime.py/shared_vae.py,
+Child evaluation/robocasa_v2/contract.py; inference robocasa_vae_protocol.py,
+robocasa_feature_evidence.py,robocasa_vae_worker.py/client.py/daemon.py,
+robocasa_local_memory_policy.py,local_memory_online.py; scripts action_policy_server_robocasa.py;
+simulation robocasa sim_shared_vae_client.py,closed_loop_eval.py,eval_v2_worker.py
+and existing construction seam if needed; focused new tests, runbook/evidence,
+Gitlink/SESSION/TODO/Inbox. No model/training/weights/scheduler redesign.
+K16 keeps original dense wire/math branch; K<16 explicit versioned skip/selection
+receipts and payload. Consumer validates every completion before selecting real
+Visual96/raw15 for existing T1 scan. Worker completed skips use original owner
+complete authority/control lane and cannot race asynchronous selected submission;
+no new sparse engine/thread. Freeze K in execution/Owner/Worker/Session semantics,
+preserve original fullM-B/source/Resume strictness, all #27 legal topologies.
+
+Acceptance CPU: all five exact selected step/count tables (extraVAE/FW0/1,1/2,
+3/4,7/8,15/16), firstReplan0,0->16->32,partialEnd,full16completions/no skipRGB,
+K16 controlled old/new bit parity of features/FastState/prefix/syntheticAction,
+NoTTT/default protection,actual multisession/IPC/replay/changedbytes/late/abort/
+ACK/End/Reset/ownership tests. Run after command/env/input/output/PASS notice.
+Exact clean new Pair/source fingerprints/rawJUnit/static, NEW independent Draft
+Root+Child PRs, fresh GPT review. No GPU/server-file/realSim/SR/900EP/training/V3
+merge or running-job operations; no agents delegated. Claim not implementation.
+
 # 2026-11-09 CST - Issue27 M16 supplement published/read back; Evidence review request
 
 Formal test-only Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /

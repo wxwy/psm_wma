@@ -1,0 +1,1262 @@
+........................................................................ [ 24%]
+...................FFFFFF............................................... [ 49%]
+........................................................................ [ 74%]
+.................................................. [ 92%]
+.......................                                                  [100%]
+=================================== FAILURES ===================================
+_ test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[1-1-2] __
+
+tmp_path = PosixPath('/workspace/work/issue28-history-k-evidence/dev02/pytest-temp/test_sparse_sessions_real_FD_d0')
+k = 1, servers = 1, sims = 2
+
+    @pytest.mark.parametrize(
+        "k,servers,sims", [(k, 1, 2) for k in (1, 2, 4, 8, 16)] + [(4, 2, 16)]
+    )
+    def test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup(
+        tmp_path, k, servers, sims
+    ):
+        with rig_for(tmp_path, servers, sims, True, streaming=sims > 8, history_k=k) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            sessions = []
+            end_s = time.monotonic() + 90
+            clock = next(iter(rig.actors.values())).clock_domain
+            for i, worker in enumerate(rt.workers):
+                gpu, actor = rt.worker_gpus[worker], rig.actors[rt.worker_gpus[worker]]
+                handle = sup.ensure(worker, info(clock, k))
+                lease = actor.register(
+                    s.registration(
+                        rt.slot_ids[worker],
+                        run_lease=rt.store.lease_id,
+                        manifest_digest=rt.store.manifest["digest"],
+                    ),
+                    rt.server_owners[f"GPU{gpu}"],
+                ).json()["lease"]
+                sim = SimpleNamespace(
+                    nonce=f"sim-{i}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker], rt.slot_generations[worker] = sim, 1
+                peer = sup.register_assignment(worker, sim, dict(lease=lease), end_s)
+                public = {n: value for n, value in lease.items() if n != "capability"}
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        actor=actor,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=ScopedActorCompletionChannel(
+                            peer["relay_socket"], peer["actor_capability"], public
+                        ),
+                        client=LocalVAEClient(
+                            peer["worker_socket"],
+                            lease["session_id"],
+                            peer["worker_session_capability"],
+                        ),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == servers * sims
+            assert (
+                len(sup.handles) == 1
+            )  # One actual CPU Worker process shared by every Session.
+            handle = sessions[0].handle
+            assert handle.proof.get("local_ttt_history_k", 16) == k
+            assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+            if k != 16:
+                with pytest.raises(ValueError, match="history K"):
+                    sup.ensure(sessions[0].worker, info(clock, 16))
+            release = threading.Event()
+            gates = [
+                a._executor.submit(lambda: release.wait(10)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    payload = s.payload(v.lease)
+                    payload["state"][0] = v.index / 64
+                    v.pending = s.submit(v.actor, v.lease, payload)
+            finally:
+                release.set()
+            for gate in gates:
+                assert gate.result(10)
+            for v in sessions:
+                response = s.wait_result(v.actor, v.lease, v.pending)
+                v.result = response.json()
+                v.deadline = int(v.actor._tickets[v.result["request_key"]].deadline * 1e9)
+                key = v.result["request_key"]
+                image = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=key,
+                    chunk_id=key,
+                    source_step=0,
+                    source_rgb_sha256=source_digest(image),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("<96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                s.ack(v.actor, v.lease, response)
+                v.raw = struct.pack(
+                    "<15f", *canonicalize_raw15_for_env(v.result["action"][0], False)[1]
+                )
+                v.channel.chunk(key, key, v.result["payload_sha256"], 0, 16, v.deadline)
+                v.rows, v.frames = [], []
+                for step in range(16):
+                    selected = step % (16 // k) == 0
+                    rgb = bytes([v.index + step]) * RGB_BYTES if selected else None
+                    fields = (
+                        key,
+                        key,
+                        step,
+                        source_digest(rgb) if selected else None,
+                        v.raw,
+                        time.monotonic_ns(),
+                        v.deadline,
+                    )
+                    receipt = v.channel.post_step(*fields)
+                    assert (
+                        v.channel.post_step(*fields) == receipt
+                    )  # Scoped replay does not reauthorize work.
+                    v.rows.append(
+                        dict(source_step=step, post_step_receipt=receipt, feature=None)
+                    )
+                    if selected and step:
+                        v.frames.append(
+                            Frame.create(
+                                v.public,
+                                key,
+                                key,
+                                step,
+                                rgb,
+                                v.raw,
+                                IDENTITY,
+                                int(end_s * 1e9),
+                                v.deadline,
+                                clock,
+                                replan_deadline_ns=v.deadline,
+                            )
+                        )
+                # All skip completions arrived before the first selected async Frame.
+                for frame in v.frames:
+                    job = v.client.submit(frame, v.deadline)
+                    assert v.client.submit(frame, v.deadline) == job
+                    while True:
+                        result = v.client.poll(job, v.deadline)
+                        if result["status"] != "pending":
+                            break
+                        assert time.monotonic_ns() < v.deadline
+                        time.sleep(0.001)
+                    assert result["status"] == "ready"
+                    v.rows[frame.header["source_step"]]["feature"] = result["feature"]
+                    assert v.client.ack(job, v.deadline)["acknowledged"]
+                payload = dict(consumer_step=16, evidence=v.rows)
+                if k != 16:
+                    from cosmos_framework.inference.robocasa_feature_evidence import (
+                        SPARSE_EVIDENCE_FORMAT,
+                        SPARSE_EVIDENCE_VERSION,
+                    )
+    
+                    payload.update(
+                        evidence_version=SPARSE_EVIDENCE_VERSION,
+                        evidence_format=SPARSE_EVIDENCE_FORMAT,
+                        local_ttt_history_k=k,
+                    )
+>               batch = rig.owners[v.gpu].admit(
+                    payload,
+                    lease=v.public,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    previous_step=0,
+                )
+
+tools/v3/eval_v2_batch_tests/history_k_test.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f47962bac00>
+payload = {'consumer_step': 16, 'evidence': [{'feature': None, 'post_step_receipt': {'actor_epoch': 'sim-0', 'actor_id': 'e087aa...source_step': 5}, ...], 'evidence_format': 'sim_shared_vae_sparse_b1_t1', 'evidence_version': 'PSM28-FEATURES-v2', ...}
+
+    def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+        """Read-only admission before native READY; no source data can create completion."""
+        if self.history_k != 16:
+            if (
+                payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+                or type(payload.get("local_ttt_history_k")) is not int
+                or payload["local_ttt_history_k"] != self.history_k
+            ):
+                raise ProtocolError("sparse feature selection differs from frozen Owner K")
+        elif "local_ttt_history_k" in payload or payload.get("evidence_version") == SPARSE_EVIDENCE_VERSION:
+            raise ProtocolError("dense Owner cannot accept sparse selection evidence")
+        rows = payload.get("evidence")
+        step = payload.get("consumer_step")
+        if type(rows) is not list or type(step) is not int or type(previous_step) is not int:
+            raise ProtocolError("invalid feature evidence chronology")
+        if not 0 <= previous_step <= step or step - previous_step > 16:
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        steps = tuple(range(previous_step, step))
+        if len(rows) != len(steps):
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        deadline = _ns(deadline_ns)
+        with self._lock:
+            now = self.clock_ns()
+            session = self._session(lease)
+            if (
+                payload.get("session_id") != session.lease["session_id"]
+                or payload.get("episode_id") != session.lease["episode_id"]
+            ):
+>               raise ProtocolError("feature payload Session differs from authenticated native Lease")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: feature payload Session differs from authenticated native Lease
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:635: ProtocolError
+_ test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[2-1-2] __
+
+tmp_path = PosixPath('/workspace/work/issue28-history-k-evidence/dev02/pytest-temp/test_sparse_sessions_real_FD_d1')
+k = 2, servers = 1, sims = 2
+
+    @pytest.mark.parametrize(
+        "k,servers,sims", [(k, 1, 2) for k in (1, 2, 4, 8, 16)] + [(4, 2, 16)]
+    )
+    def test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup(
+        tmp_path, k, servers, sims
+    ):
+        with rig_for(tmp_path, servers, sims, True, streaming=sims > 8, history_k=k) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            sessions = []
+            end_s = time.monotonic() + 90
+            clock = next(iter(rig.actors.values())).clock_domain
+            for i, worker in enumerate(rt.workers):
+                gpu, actor = rt.worker_gpus[worker], rig.actors[rt.worker_gpus[worker]]
+                handle = sup.ensure(worker, info(clock, k))
+                lease = actor.register(
+                    s.registration(
+                        rt.slot_ids[worker],
+                        run_lease=rt.store.lease_id,
+                        manifest_digest=rt.store.manifest["digest"],
+                    ),
+                    rt.server_owners[f"GPU{gpu}"],
+                ).json()["lease"]
+                sim = SimpleNamespace(
+                    nonce=f"sim-{i}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker], rt.slot_generations[worker] = sim, 1
+                peer = sup.register_assignment(worker, sim, dict(lease=lease), end_s)
+                public = {n: value for n, value in lease.items() if n != "capability"}
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        actor=actor,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=ScopedActorCompletionChannel(
+                            peer["relay_socket"], peer["actor_capability"], public
+                        ),
+                        client=LocalVAEClient(
+                            peer["worker_socket"],
+                            lease["session_id"],
+                            peer["worker_session_capability"],
+                        ),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == servers * sims
+            assert (
+                len(sup.handles) == 1
+            )  # One actual CPU Worker process shared by every Session.
+            handle = sessions[0].handle
+            assert handle.proof.get("local_ttt_history_k", 16) == k
+            assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+            if k != 16:
+                with pytest.raises(ValueError, match="history K"):
+                    sup.ensure(sessions[0].worker, info(clock, 16))
+            release = threading.Event()
+            gates = [
+                a._executor.submit(lambda: release.wait(10)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    payload = s.payload(v.lease)
+                    payload["state"][0] = v.index / 64
+                    v.pending = s.submit(v.actor, v.lease, payload)
+            finally:
+                release.set()
+            for gate in gates:
+                assert gate.result(10)
+            for v in sessions:
+                response = s.wait_result(v.actor, v.lease, v.pending)
+                v.result = response.json()
+                v.deadline = int(v.actor._tickets[v.result["request_key"]].deadline * 1e9)
+                key = v.result["request_key"]
+                image = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=key,
+                    chunk_id=key,
+                    source_step=0,
+                    source_rgb_sha256=source_digest(image),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("<96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                s.ack(v.actor, v.lease, response)
+                v.raw = struct.pack(
+                    "<15f", *canonicalize_raw15_for_env(v.result["action"][0], False)[1]
+                )
+                v.channel.chunk(key, key, v.result["payload_sha256"], 0, 16, v.deadline)
+                v.rows, v.frames = [], []
+                for step in range(16):
+                    selected = step % (16 // k) == 0
+                    rgb = bytes([v.index + step]) * RGB_BYTES if selected else None
+                    fields = (
+                        key,
+                        key,
+                        step,
+                        source_digest(rgb) if selected else None,
+                        v.raw,
+                        time.monotonic_ns(),
+                        v.deadline,
+                    )
+                    receipt = v.channel.post_step(*fields)
+                    assert (
+                        v.channel.post_step(*fields) == receipt
+                    )  # Scoped replay does not reauthorize work.
+                    v.rows.append(
+                        dict(source_step=step, post_step_receipt=receipt, feature=None)
+                    )
+                    if selected and step:
+                        v.frames.append(
+                            Frame.create(
+                                v.public,
+                                key,
+                                key,
+                                step,
+                                rgb,
+                                v.raw,
+                                IDENTITY,
+                                int(end_s * 1e9),
+                                v.deadline,
+                                clock,
+                                replan_deadline_ns=v.deadline,
+                            )
+                        )
+                # All skip completions arrived before the first selected async Frame.
+                for frame in v.frames:
+                    job = v.client.submit(frame, v.deadline)
+                    assert v.client.submit(frame, v.deadline) == job
+                    while True:
+                        result = v.client.poll(job, v.deadline)
+                        if result["status"] != "pending":
+                            break
+                        assert time.monotonic_ns() < v.deadline
+                        time.sleep(0.001)
+                    assert result["status"] == "ready"
+                    v.rows[frame.header["source_step"]]["feature"] = result["feature"]
+                    assert v.client.ack(job, v.deadline)["acknowledged"]
+                payload = dict(consumer_step=16, evidence=v.rows)
+                if k != 16:
+                    from cosmos_framework.inference.robocasa_feature_evidence import (
+                        SPARSE_EVIDENCE_FORMAT,
+                        SPARSE_EVIDENCE_VERSION,
+                    )
+    
+                    payload.update(
+                        evidence_version=SPARSE_EVIDENCE_VERSION,
+                        evidence_format=SPARSE_EVIDENCE_FORMAT,
+                        local_ttt_history_k=k,
+                    )
+>               batch = rig.owners[v.gpu].admit(
+                    payload,
+                    lease=v.public,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    previous_step=0,
+                )
+
+tools/v3/eval_v2_batch_tests/history_k_test.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f4796360e00>
+payload = {'consumer_step': 16, 'evidence': [{'feature': None, 'post_step_receipt': {'actor_epoch': 'sim-0', 'actor_id': '4b5019...source_step': 5}, ...], 'evidence_format': 'sim_shared_vae_sparse_b1_t1', 'evidence_version': 'PSM28-FEATURES-v2', ...}
+
+    def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+        """Read-only admission before native READY; no source data can create completion."""
+        if self.history_k != 16:
+            if (
+                payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+                or type(payload.get("local_ttt_history_k")) is not int
+                or payload["local_ttt_history_k"] != self.history_k
+            ):
+                raise ProtocolError("sparse feature selection differs from frozen Owner K")
+        elif "local_ttt_history_k" in payload or payload.get("evidence_version") == SPARSE_EVIDENCE_VERSION:
+            raise ProtocolError("dense Owner cannot accept sparse selection evidence")
+        rows = payload.get("evidence")
+        step = payload.get("consumer_step")
+        if type(rows) is not list or type(step) is not int or type(previous_step) is not int:
+            raise ProtocolError("invalid feature evidence chronology")
+        if not 0 <= previous_step <= step or step - previous_step > 16:
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        steps = tuple(range(previous_step, step))
+        if len(rows) != len(steps):
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        deadline = _ns(deadline_ns)
+        with self._lock:
+            now = self.clock_ns()
+            session = self._session(lease)
+            if (
+                payload.get("session_id") != session.lease["session_id"]
+                or payload.get("episode_id") != session.lease["episode_id"]
+            ):
+>               raise ProtocolError("feature payload Session differs from authenticated native Lease")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: feature payload Session differs from authenticated native Lease
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:635: ProtocolError
+_ test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[4-1-2] __
+
+tmp_path = PosixPath('/workspace/work/issue28-history-k-evidence/dev02/pytest-temp/test_sparse_sessions_real_FD_d2')
+k = 4, servers = 1, sims = 2
+
+    @pytest.mark.parametrize(
+        "k,servers,sims", [(k, 1, 2) for k in (1, 2, 4, 8, 16)] + [(4, 2, 16)]
+    )
+    def test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup(
+        tmp_path, k, servers, sims
+    ):
+        with rig_for(tmp_path, servers, sims, True, streaming=sims > 8, history_k=k) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            sessions = []
+            end_s = time.monotonic() + 90
+            clock = next(iter(rig.actors.values())).clock_domain
+            for i, worker in enumerate(rt.workers):
+                gpu, actor = rt.worker_gpus[worker], rig.actors[rt.worker_gpus[worker]]
+                handle = sup.ensure(worker, info(clock, k))
+                lease = actor.register(
+                    s.registration(
+                        rt.slot_ids[worker],
+                        run_lease=rt.store.lease_id,
+                        manifest_digest=rt.store.manifest["digest"],
+                    ),
+                    rt.server_owners[f"GPU{gpu}"],
+                ).json()["lease"]
+                sim = SimpleNamespace(
+                    nonce=f"sim-{i}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker], rt.slot_generations[worker] = sim, 1
+                peer = sup.register_assignment(worker, sim, dict(lease=lease), end_s)
+                public = {n: value for n, value in lease.items() if n != "capability"}
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        actor=actor,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=ScopedActorCompletionChannel(
+                            peer["relay_socket"], peer["actor_capability"], public
+                        ),
+                        client=LocalVAEClient(
+                            peer["worker_socket"],
+                            lease["session_id"],
+                            peer["worker_session_capability"],
+                        ),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == servers * sims
+            assert (
+                len(sup.handles) == 1
+            )  # One actual CPU Worker process shared by every Session.
+            handle = sessions[0].handle
+            assert handle.proof.get("local_ttt_history_k", 16) == k
+            assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+            if k != 16:
+                with pytest.raises(ValueError, match="history K"):
+                    sup.ensure(sessions[0].worker, info(clock, 16))
+            release = threading.Event()
+            gates = [
+                a._executor.submit(lambda: release.wait(10)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    payload = s.payload(v.lease)
+                    payload["state"][0] = v.index / 64
+                    v.pending = s.submit(v.actor, v.lease, payload)
+            finally:
+                release.set()
+            for gate in gates:
+                assert gate.result(10)
+            for v in sessions:
+                response = s.wait_result(v.actor, v.lease, v.pending)
+                v.result = response.json()
+                v.deadline = int(v.actor._tickets[v.result["request_key"]].deadline * 1e9)
+                key = v.result["request_key"]
+                image = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=key,
+                    chunk_id=key,
+                    source_step=0,
+                    source_rgb_sha256=source_digest(image),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("<96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                s.ack(v.actor, v.lease, response)
+                v.raw = struct.pack(
+                    "<15f", *canonicalize_raw15_for_env(v.result["action"][0], False)[1]
+                )
+                v.channel.chunk(key, key, v.result["payload_sha256"], 0, 16, v.deadline)
+                v.rows, v.frames = [], []
+                for step in range(16):
+                    selected = step % (16 // k) == 0
+                    rgb = bytes([v.index + step]) * RGB_BYTES if selected else None
+                    fields = (
+                        key,
+                        key,
+                        step,
+                        source_digest(rgb) if selected else None,
+                        v.raw,
+                        time.monotonic_ns(),
+                        v.deadline,
+                    )
+                    receipt = v.channel.post_step(*fields)
+                    assert (
+                        v.channel.post_step(*fields) == receipt
+                    )  # Scoped replay does not reauthorize work.
+                    v.rows.append(
+                        dict(source_step=step, post_step_receipt=receipt, feature=None)
+                    )
+                    if selected and step:
+                        v.frames.append(
+                            Frame.create(
+                                v.public,
+                                key,
+                                key,
+                                step,
+                                rgb,
+                                v.raw,
+                                IDENTITY,
+                                int(end_s * 1e9),
+                                v.deadline,
+                                clock,
+                                replan_deadline_ns=v.deadline,
+                            )
+                        )
+                # All skip completions arrived before the first selected async Frame.
+                for frame in v.frames:
+                    job = v.client.submit(frame, v.deadline)
+                    assert v.client.submit(frame, v.deadline) == job
+                    while True:
+                        result = v.client.poll(job, v.deadline)
+                        if result["status"] != "pending":
+                            break
+                        assert time.monotonic_ns() < v.deadline
+                        time.sleep(0.001)
+                    assert result["status"] == "ready"
+                    v.rows[frame.header["source_step"]]["feature"] = result["feature"]
+                    assert v.client.ack(job, v.deadline)["acknowledged"]
+                payload = dict(consumer_step=16, evidence=v.rows)
+                if k != 16:
+                    from cosmos_framework.inference.robocasa_feature_evidence import (
+                        SPARSE_EVIDENCE_FORMAT,
+                        SPARSE_EVIDENCE_VERSION,
+                    )
+    
+                    payload.update(
+                        evidence_version=SPARSE_EVIDENCE_VERSION,
+                        evidence_format=SPARSE_EVIDENCE_FORMAT,
+                        local_ttt_history_k=k,
+                    )
+>               batch = rig.owners[v.gpu].admit(
+                    payload,
+                    lease=v.public,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    previous_step=0,
+                )
+
+tools/v3/eval_v2_batch_tests/history_k_test.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f47967e9820>
+payload = {'consumer_step': 16, 'evidence': [{'feature': None, 'post_step_receipt': {'actor_epoch': 'sim-0', 'actor_id': '171b38...source_step': 5}, ...], 'evidence_format': 'sim_shared_vae_sparse_b1_t1', 'evidence_version': 'PSM28-FEATURES-v2', ...}
+
+    def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+        """Read-only admission before native READY; no source data can create completion."""
+        if self.history_k != 16:
+            if (
+                payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+                or type(payload.get("local_ttt_history_k")) is not int
+                or payload["local_ttt_history_k"] != self.history_k
+            ):
+                raise ProtocolError("sparse feature selection differs from frozen Owner K")
+        elif "local_ttt_history_k" in payload or payload.get("evidence_version") == SPARSE_EVIDENCE_VERSION:
+            raise ProtocolError("dense Owner cannot accept sparse selection evidence")
+        rows = payload.get("evidence")
+        step = payload.get("consumer_step")
+        if type(rows) is not list or type(step) is not int or type(previous_step) is not int:
+            raise ProtocolError("invalid feature evidence chronology")
+        if not 0 <= previous_step <= step or step - previous_step > 16:
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        steps = tuple(range(previous_step, step))
+        if len(rows) != len(steps):
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        deadline = _ns(deadline_ns)
+        with self._lock:
+            now = self.clock_ns()
+            session = self._session(lease)
+            if (
+                payload.get("session_id") != session.lease["session_id"]
+                or payload.get("episode_id") != session.lease["episode_id"]
+            ):
+>               raise ProtocolError("feature payload Session differs from authenticated native Lease")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: feature payload Session differs from authenticated native Lease
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:635: ProtocolError
+_ test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[8-1-2] __
+
+tmp_path = PosixPath('/workspace/work/issue28-history-k-evidence/dev02/pytest-temp/test_sparse_sessions_real_FD_d3')
+k = 8, servers = 1, sims = 2
+
+    @pytest.mark.parametrize(
+        "k,servers,sims", [(k, 1, 2) for k in (1, 2, 4, 8, 16)] + [(4, 2, 16)]
+    )
+    def test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup(
+        tmp_path, k, servers, sims
+    ):
+        with rig_for(tmp_path, servers, sims, True, streaming=sims > 8, history_k=k) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            sessions = []
+            end_s = time.monotonic() + 90
+            clock = next(iter(rig.actors.values())).clock_domain
+            for i, worker in enumerate(rt.workers):
+                gpu, actor = rt.worker_gpus[worker], rig.actors[rt.worker_gpus[worker]]
+                handle = sup.ensure(worker, info(clock, k))
+                lease = actor.register(
+                    s.registration(
+                        rt.slot_ids[worker],
+                        run_lease=rt.store.lease_id,
+                        manifest_digest=rt.store.manifest["digest"],
+                    ),
+                    rt.server_owners[f"GPU{gpu}"],
+                ).json()["lease"]
+                sim = SimpleNamespace(
+                    nonce=f"sim-{i}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker], rt.slot_generations[worker] = sim, 1
+                peer = sup.register_assignment(worker, sim, dict(lease=lease), end_s)
+                public = {n: value for n, value in lease.items() if n != "capability"}
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        actor=actor,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=ScopedActorCompletionChannel(
+                            peer["relay_socket"], peer["actor_capability"], public
+                        ),
+                        client=LocalVAEClient(
+                            peer["worker_socket"],
+                            lease["session_id"],
+                            peer["worker_session_capability"],
+                        ),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == servers * sims
+            assert (
+                len(sup.handles) == 1
+            )  # One actual CPU Worker process shared by every Session.
+            handle = sessions[0].handle
+            assert handle.proof.get("local_ttt_history_k", 16) == k
+            assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+            if k != 16:
+                with pytest.raises(ValueError, match="history K"):
+                    sup.ensure(sessions[0].worker, info(clock, 16))
+            release = threading.Event()
+            gates = [
+                a._executor.submit(lambda: release.wait(10)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    payload = s.payload(v.lease)
+                    payload["state"][0] = v.index / 64
+                    v.pending = s.submit(v.actor, v.lease, payload)
+            finally:
+                release.set()
+            for gate in gates:
+                assert gate.result(10)
+            for v in sessions:
+                response = s.wait_result(v.actor, v.lease, v.pending)
+                v.result = response.json()
+                v.deadline = int(v.actor._tickets[v.result["request_key"]].deadline * 1e9)
+                key = v.result["request_key"]
+                image = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=key,
+                    chunk_id=key,
+                    source_step=0,
+                    source_rgb_sha256=source_digest(image),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("<96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                s.ack(v.actor, v.lease, response)
+                v.raw = struct.pack(
+                    "<15f", *canonicalize_raw15_for_env(v.result["action"][0], False)[1]
+                )
+                v.channel.chunk(key, key, v.result["payload_sha256"], 0, 16, v.deadline)
+                v.rows, v.frames = [], []
+                for step in range(16):
+                    selected = step % (16 // k) == 0
+                    rgb = bytes([v.index + step]) * RGB_BYTES if selected else None
+                    fields = (
+                        key,
+                        key,
+                        step,
+                        source_digest(rgb) if selected else None,
+                        v.raw,
+                        time.monotonic_ns(),
+                        v.deadline,
+                    )
+                    receipt = v.channel.post_step(*fields)
+                    assert (
+                        v.channel.post_step(*fields) == receipt
+                    )  # Scoped replay does not reauthorize work.
+                    v.rows.append(
+                        dict(source_step=step, post_step_receipt=receipt, feature=None)
+                    )
+                    if selected and step:
+                        v.frames.append(
+                            Frame.create(
+                                v.public,
+                                key,
+                                key,
+                                step,
+                                rgb,
+                                v.raw,
+                                IDENTITY,
+                                int(end_s * 1e9),
+                                v.deadline,
+                                clock,
+                                replan_deadline_ns=v.deadline,
+                            )
+                        )
+                # All skip completions arrived before the first selected async Frame.
+                for frame in v.frames:
+                    job = v.client.submit(frame, v.deadline)
+                    assert v.client.submit(frame, v.deadline) == job
+                    while True:
+                        result = v.client.poll(job, v.deadline)
+                        if result["status"] != "pending":
+                            break
+                        assert time.monotonic_ns() < v.deadline
+                        time.sleep(0.001)
+                    assert result["status"] == "ready"
+                    v.rows[frame.header["source_step"]]["feature"] = result["feature"]
+                    assert v.client.ack(job, v.deadline)["acknowledged"]
+                payload = dict(consumer_step=16, evidence=v.rows)
+                if k != 16:
+                    from cosmos_framework.inference.robocasa_feature_evidence import (
+                        SPARSE_EVIDENCE_FORMAT,
+                        SPARSE_EVIDENCE_VERSION,
+                    )
+    
+                    payload.update(
+                        evidence_version=SPARSE_EVIDENCE_VERSION,
+                        evidence_format=SPARSE_EVIDENCE_FORMAT,
+                        local_ttt_history_k=k,
+                    )
+>               batch = rig.owners[v.gpu].admit(
+                    payload,
+                    lease=v.public,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    previous_step=0,
+                )
+
+tools/v3/eval_v2_batch_tests/history_k_test.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f479629e720>
+payload = {'consumer_step': 16, 'evidence': [{'feature': None, 'post_step_receipt': {'actor_epoch': 'sim-0', 'actor_id': '8139c3...source_step': 5}, ...], 'evidence_format': 'sim_shared_vae_sparse_b1_t1', 'evidence_version': 'PSM28-FEATURES-v2', ...}
+
+    def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+        """Read-only admission before native READY; no source data can create completion."""
+        if self.history_k != 16:
+            if (
+                payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+                or type(payload.get("local_ttt_history_k")) is not int
+                or payload["local_ttt_history_k"] != self.history_k
+            ):
+                raise ProtocolError("sparse feature selection differs from frozen Owner K")
+        elif "local_ttt_history_k" in payload or payload.get("evidence_version") == SPARSE_EVIDENCE_VERSION:
+            raise ProtocolError("dense Owner cannot accept sparse selection evidence")
+        rows = payload.get("evidence")
+        step = payload.get("consumer_step")
+        if type(rows) is not list or type(step) is not int or type(previous_step) is not int:
+            raise ProtocolError("invalid feature evidence chronology")
+        if not 0 <= previous_step <= step or step - previous_step > 16:
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        steps = tuple(range(previous_step, step))
+        if len(rows) != len(steps):
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        deadline = _ns(deadline_ns)
+        with self._lock:
+            now = self.clock_ns()
+            session = self._session(lease)
+            if (
+                payload.get("session_id") != session.lease["session_id"]
+                or payload.get("episode_id") != session.lease["episode_id"]
+            ):
+>               raise ProtocolError("feature payload Session differs from authenticated native Lease")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: feature payload Session differs from authenticated native Lease
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:635: ProtocolError
+_ test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[16-1-2] _
+
+tmp_path = PosixPath('/workspace/work/issue28-history-k-evidence/dev02/pytest-temp/test_sparse_sessions_real_FD_d4')
+k = 16, servers = 1, sims = 2
+
+    @pytest.mark.parametrize(
+        "k,servers,sims", [(k, 1, 2) for k in (1, 2, 4, 8, 16)] + [(4, 2, 16)]
+    )
+    def test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup(
+        tmp_path, k, servers, sims
+    ):
+        with rig_for(tmp_path, servers, sims, True, streaming=sims > 8, history_k=k) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            sessions = []
+            end_s = time.monotonic() + 90
+            clock = next(iter(rig.actors.values())).clock_domain
+            for i, worker in enumerate(rt.workers):
+                gpu, actor = rt.worker_gpus[worker], rig.actors[rt.worker_gpus[worker]]
+                handle = sup.ensure(worker, info(clock, k))
+                lease = actor.register(
+                    s.registration(
+                        rt.slot_ids[worker],
+                        run_lease=rt.store.lease_id,
+                        manifest_digest=rt.store.manifest["digest"],
+                    ),
+                    rt.server_owners[f"GPU{gpu}"],
+                ).json()["lease"]
+                sim = SimpleNamespace(
+                    nonce=f"sim-{i}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker], rt.slot_generations[worker] = sim, 1
+                peer = sup.register_assignment(worker, sim, dict(lease=lease), end_s)
+                public = {n: value for n, value in lease.items() if n != "capability"}
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        actor=actor,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=ScopedActorCompletionChannel(
+                            peer["relay_socket"], peer["actor_capability"], public
+                        ),
+                        client=LocalVAEClient(
+                            peer["worker_socket"],
+                            lease["session_id"],
+                            peer["worker_session_capability"],
+                        ),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == servers * sims
+            assert (
+                len(sup.handles) == 1
+            )  # One actual CPU Worker process shared by every Session.
+            handle = sessions[0].handle
+            assert handle.proof.get("local_ttt_history_k", 16) == k
+            assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+            if k != 16:
+                with pytest.raises(ValueError, match="history K"):
+                    sup.ensure(sessions[0].worker, info(clock, 16))
+            release = threading.Event()
+            gates = [
+                a._executor.submit(lambda: release.wait(10)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    payload = s.payload(v.lease)
+                    payload["state"][0] = v.index / 64
+                    v.pending = s.submit(v.actor, v.lease, payload)
+            finally:
+                release.set()
+            for gate in gates:
+                assert gate.result(10)
+            for v in sessions:
+                response = s.wait_result(v.actor, v.lease, v.pending)
+                v.result = response.json()
+                v.deadline = int(v.actor._tickets[v.result["request_key"]].deadline * 1e9)
+                key = v.result["request_key"]
+                image = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=key,
+                    chunk_id=key,
+                    source_step=0,
+                    source_rgb_sha256=source_digest(image),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("<96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                s.ack(v.actor, v.lease, response)
+                v.raw = struct.pack(
+                    "<15f", *canonicalize_raw15_for_env(v.result["action"][0], False)[1]
+                )
+                v.channel.chunk(key, key, v.result["payload_sha256"], 0, 16, v.deadline)
+                v.rows, v.frames = [], []
+                for step in range(16):
+                    selected = step % (16 // k) == 0
+                    rgb = bytes([v.index + step]) * RGB_BYTES if selected else None
+                    fields = (
+                        key,
+                        key,
+                        step,
+                        source_digest(rgb) if selected else None,
+                        v.raw,
+                        time.monotonic_ns(),
+                        v.deadline,
+                    )
+                    receipt = v.channel.post_step(*fields)
+                    assert (
+                        v.channel.post_step(*fields) == receipt
+                    )  # Scoped replay does not reauthorize work.
+                    v.rows.append(
+                        dict(source_step=step, post_step_receipt=receipt, feature=None)
+                    )
+                    if selected and step:
+                        v.frames.append(
+                            Frame.create(
+                                v.public,
+                                key,
+                                key,
+                                step,
+                                rgb,
+                                v.raw,
+                                IDENTITY,
+                                int(end_s * 1e9),
+                                v.deadline,
+                                clock,
+                                replan_deadline_ns=v.deadline,
+                            )
+                        )
+                # All skip completions arrived before the first selected async Frame.
+                for frame in v.frames:
+                    job = v.client.submit(frame, v.deadline)
+                    assert v.client.submit(frame, v.deadline) == job
+                    while True:
+                        result = v.client.poll(job, v.deadline)
+                        if result["status"] != "pending":
+                            break
+                        assert time.monotonic_ns() < v.deadline
+                        time.sleep(0.001)
+                    assert result["status"] == "ready"
+                    v.rows[frame.header["source_step"]]["feature"] = result["feature"]
+                    assert v.client.ack(job, v.deadline)["acknowledged"]
+                payload = dict(consumer_step=16, evidence=v.rows)
+                if k != 16:
+                    from cosmos_framework.inference.robocasa_feature_evidence import (
+                        SPARSE_EVIDENCE_FORMAT,
+                        SPARSE_EVIDENCE_VERSION,
+                    )
+    
+                    payload.update(
+                        evidence_version=SPARSE_EVIDENCE_VERSION,
+                        evidence_format=SPARSE_EVIDENCE_FORMAT,
+                        local_ttt_history_k=k,
+                    )
+>               batch = rig.owners[v.gpu].admit(
+                    payload,
+                    lease=v.public,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    previous_step=0,
+                )
+
+tools/v3/eval_v2_batch_tests/history_k_test.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f479633cce0>
+payload = {'consumer_step': 16, 'evidence': [{'feature': None, 'post_step_receipt': {'actor_epoch': 'sim-0', 'actor_id': '8eada9...52a8a29ad11f7aa823b2aea829c5fc57ef227981a6575', 'episode_deadline_ns': '16414912987914', ...}, 'source_step': 5}, ...]}
+
+    def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+        """Read-only admission before native READY; no source data can create completion."""
+        if self.history_k != 16:
+            if (
+                payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+                or type(payload.get("local_ttt_history_k")) is not int
+                or payload["local_ttt_history_k"] != self.history_k
+            ):
+                raise ProtocolError("sparse feature selection differs from frozen Owner K")
+        elif "local_ttt_history_k" in payload or payload.get("evidence_version") == SPARSE_EVIDENCE_VERSION:
+            raise ProtocolError("dense Owner cannot accept sparse selection evidence")
+        rows = payload.get("evidence")
+        step = payload.get("consumer_step")
+        if type(rows) is not list or type(step) is not int or type(previous_step) is not int:
+            raise ProtocolError("invalid feature evidence chronology")
+        if not 0 <= previous_step <= step or step - previous_step > 16:
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        steps = tuple(range(previous_step, step))
+        if len(rows) != len(steps):
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        deadline = _ns(deadline_ns)
+        with self._lock:
+            now = self.clock_ns()
+            session = self._session(lease)
+            if (
+                payload.get("session_id") != session.lease["session_id"]
+                or payload.get("episode_id") != session.lease["episode_id"]
+            ):
+>               raise ProtocolError("feature payload Session differs from authenticated native Lease")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: feature payload Session differs from authenticated native Lease
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:635: ProtocolError
+_ test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[4-2-16] _
+
+tmp_path = PosixPath('/workspace/work/issue28-history-k-evidence/dev02/pytest-temp/test_sparse_sessions_real_FD_d5')
+k = 4, servers = 2, sims = 16
+
+    @pytest.mark.parametrize(
+        "k,servers,sims", [(k, 1, 2) for k in (1, 2, 4, 8, 16)] + [(4, 2, 16)]
+    )
+    def test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup(
+        tmp_path, k, servers, sims
+    ):
+        with rig_for(tmp_path, servers, sims, True, streaming=sims > 8, history_k=k) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            sessions = []
+            end_s = time.monotonic() + 90
+            clock = next(iter(rig.actors.values())).clock_domain
+            for i, worker in enumerate(rt.workers):
+                gpu, actor = rt.worker_gpus[worker], rig.actors[rt.worker_gpus[worker]]
+                handle = sup.ensure(worker, info(clock, k))
+                lease = actor.register(
+                    s.registration(
+                        rt.slot_ids[worker],
+                        run_lease=rt.store.lease_id,
+                        manifest_digest=rt.store.manifest["digest"],
+                    ),
+                    rt.server_owners[f"GPU{gpu}"],
+                ).json()["lease"]
+                sim = SimpleNamespace(
+                    nonce=f"sim-{i}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker], rt.slot_generations[worker] = sim, 1
+                peer = sup.register_assignment(worker, sim, dict(lease=lease), end_s)
+                public = {n: value for n, value in lease.items() if n != "capability"}
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        actor=actor,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=ScopedActorCompletionChannel(
+                            peer["relay_socket"], peer["actor_capability"], public
+                        ),
+                        client=LocalVAEClient(
+                            peer["worker_socket"],
+                            lease["session_id"],
+                            peer["worker_session_capability"],
+                        ),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == servers * sims
+            assert (
+                len(sup.handles) == 1
+            )  # One actual CPU Worker process shared by every Session.
+            handle = sessions[0].handle
+            assert handle.proof.get("local_ttt_history_k", 16) == k
+            assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+            if k != 16:
+                with pytest.raises(ValueError, match="history K"):
+                    sup.ensure(sessions[0].worker, info(clock, 16))
+            release = threading.Event()
+            gates = [
+                a._executor.submit(lambda: release.wait(10)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    payload = s.payload(v.lease)
+                    payload["state"][0] = v.index / 64
+                    v.pending = s.submit(v.actor, v.lease, payload)
+            finally:
+                release.set()
+            for gate in gates:
+                assert gate.result(10)
+            for v in sessions:
+                response = s.wait_result(v.actor, v.lease, v.pending)
+                v.result = response.json()
+                v.deadline = int(v.actor._tickets[v.result["request_key"]].deadline * 1e9)
+                key = v.result["request_key"]
+                image = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=key,
+                    chunk_id=key,
+                    source_step=0,
+                    source_rgb_sha256=source_digest(image),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("<96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                s.ack(v.actor, v.lease, response)
+                v.raw = struct.pack(
+                    "<15f", *canonicalize_raw15_for_env(v.result["action"][0], False)[1]
+                )
+                v.channel.chunk(key, key, v.result["payload_sha256"], 0, 16, v.deadline)
+                v.rows, v.frames = [], []
+                for step in range(16):
+                    selected = step % (16 // k) == 0
+                    rgb = bytes([v.index + step]) * RGB_BYTES if selected else None
+                    fields = (
+                        key,
+                        key,
+                        step,
+                        source_digest(rgb) if selected else None,
+                        v.raw,
+                        time.monotonic_ns(),
+                        v.deadline,
+                    )
+                    receipt = v.channel.post_step(*fields)
+                    assert (
+                        v.channel.post_step(*fields) == receipt
+                    )  # Scoped replay does not reauthorize work.
+                    v.rows.append(
+                        dict(source_step=step, post_step_receipt=receipt, feature=None)
+                    )
+                    if selected and step:
+                        v.frames.append(
+                            Frame.create(
+                                v.public,
+                                key,
+                                key,
+                                step,
+                                rgb,
+                                v.raw,
+                                IDENTITY,
+                                int(end_s * 1e9),
+                                v.deadline,
+                                clock,
+                                replan_deadline_ns=v.deadline,
+                            )
+                        )
+                # All skip completions arrived before the first selected async Frame.
+                for frame in v.frames:
+                    job = v.client.submit(frame, v.deadline)
+                    assert v.client.submit(frame, v.deadline) == job
+                    while True:
+                        result = v.client.poll(job, v.deadline)
+                        if result["status"] != "pending":
+                            break
+                        assert time.monotonic_ns() < v.deadline
+                        time.sleep(0.001)
+                    assert result["status"] == "ready"
+                    v.rows[frame.header["source_step"]]["feature"] = result["feature"]
+                    assert v.client.ack(job, v.deadline)["acknowledged"]
+                payload = dict(consumer_step=16, evidence=v.rows)
+                if k != 16:
+                    from cosmos_framework.inference.robocasa_feature_evidence import (
+                        SPARSE_EVIDENCE_FORMAT,
+                        SPARSE_EVIDENCE_VERSION,
+                    )
+    
+                    payload.update(
+                        evidence_version=SPARSE_EVIDENCE_VERSION,
+                        evidence_format=SPARSE_EVIDENCE_FORMAT,
+                        local_ttt_history_k=k,
+                    )
+>               batch = rig.owners[v.gpu].admit(
+                    payload,
+                    lease=v.public,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    previous_step=0,
+                )
+
+tools/v3/eval_v2_batch_tests/history_k_test.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.inference.robocasa_feature_evidence.FeatureEvidenceOwner object at 0x7f47964528d0>
+payload = {'consumer_step': 16, 'evidence': [{'feature': None, 'post_step_receipt': {'actor_epoch': 'sim-0', 'actor_id': '433186...source_step': 5}, ...], 'evidence_format': 'sim_shared_vae_sparse_b1_t1', 'evidence_version': 'PSM28-FEATURES-v2', ...}
+
+    def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+        """Read-only admission before native READY; no source data can create completion."""
+        if self.history_k != 16:
+            if (
+                payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+                or type(payload.get("local_ttt_history_k")) is not int
+                or payload["local_ttt_history_k"] != self.history_k
+            ):
+                raise ProtocolError("sparse feature selection differs from frozen Owner K")
+        elif "local_ttt_history_k" in payload or payload.get("evidence_version") == SPARSE_EVIDENCE_VERSION:
+            raise ProtocolError("dense Owner cannot accept sparse selection evidence")
+        rows = payload.get("evidence")
+        step = payload.get("consumer_step")
+        if type(rows) is not list or type(step) is not int or type(previous_step) is not int:
+            raise ProtocolError("invalid feature evidence chronology")
+        if not 0 <= previous_step <= step or step - previous_step > 16:
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        steps = tuple(range(previous_step, step))
+        if len(rows) != len(steps):
+            raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+        deadline = _ns(deadline_ns)
+        with self._lock:
+            now = self.clock_ns()
+            session = self._session(lease)
+            if (
+                payload.get("session_id") != session.lease["session_id"]
+                or payload.get("episode_id") != session.lease["episode_id"]
+            ):
+>               raise ProtocolError("feature payload Session differs from authenticated native Lease")
+E               cosmos_framework.inference.robocasa_vae_protocol.ProtocolError: feature payload Session differs from authenticated native Lease
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:635: ProtocolError
+=========================== short test summary info ============================
+FAILED cosmos-framework::test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[1-1-2]
+FAILED cosmos-framework::test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[2-1-2]
+FAILED cosmos-framework::test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[4-1-2]
+FAILED cosmos-framework::test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[8-1-2]
+FAILED cosmos-framework::test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[16-1-2]
+FAILED cosmos-framework::test_sparse_sessions_real_FD_daemon_owner_HTTP_IPC_and_owned_cleanup[4-2-16]
+6 failed, 283 passed, 22 subtests passed in 25.79s

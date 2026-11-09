@@ -37,11 +37,14 @@ from cosmos_framework.inference.robocasa_vae_client import (
     UnixVAEServer,
 )
 from cosmos_framework.inference.robocasa_vae_daemon import file_sha256
+from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
 from cosmos_framework.inference.robocasa_vae_protocol import (
     canonical_json,
     strict_json,
     validate_lease,
     validate_raw15,
+    validate_history_k,
+    selected_history_step,
 )
 
 
@@ -87,6 +90,11 @@ def _worker_drain_timeout_s(value):
 
 
 def validate_profile(cfg):
+    history_k = validate_history_k(cfg.get("local_ttt_history_k"), ACTION_CHUNK_SIZE)
+    if history_k != ACTION_CHUNK_SIZE and (
+        not enabled(cfg) or cfg.get("local_memory_mode") != "required"
+    ):
+        raise ValueError("sparse history K requires shared VAE Local-TTT")
     if cfg.get("local_evidence_profile", "server_vae") not in (
         "server_vae",
         "sim_shared_vae",
@@ -464,6 +472,15 @@ class _RelayCore:
                 "episode_deadline_ns": str(scope.deadline),
                 "step_completed_ns": request["step_completed_ns"],
             }
+            horizon = scope.handle.public.get("action_chunk_size", ACTION_CHUNK_SIZE)
+            history_k = validate_history_k(
+                scope.handle.public.get("local_ttt_history_k"), horizon
+            )
+            selected = selected_history_step(
+                step, scope.chunk["source_start"], history_k, horizon
+            )
+            if history_k != horizon:
+                expected_receipt.update(history_k=history_k, selected=selected)
             if any(receipt[name] != value for name, value in expected_receipt.items()):
                 raise ValueError(
                     "Policy post-step receipt differs from actual scoped Actor completion"
@@ -490,7 +507,11 @@ class _RelayCore:
                 )
             else:
                 scope.handle.owner.complete(
-                    lease["session_id"], request["chunk_id"], step + 1, deadline
+                    lease["session_id"],
+                    request["chunk_id"],
+                    step + 1,
+                    deadline,
+                    **({"skipped_receipt": receipt} if not selected else {}),
                 )
             scope.steps[step] = (fingerprint, receipt)
             while len(scope.steps) > 32:
@@ -639,6 +660,22 @@ class SharedVAESupervisor:
                 raise RuntimeError("cancelled before shared Worker startup")
             settings = cfg["sim_shared_vae"]
             feature = policy_info["local_feature"]
+            horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+            if (
+                type(policy_info.get("action_chunk_size")) is not int
+                or policy_info["action_chunk_size"] != horizon
+            ):
+                raise ValueError(
+                    "Policy Action Horizon differs from frozen Run Action Chunk"
+                )
+            history_k = validate_history_k(cfg.get("local_ttt_history_k"), horizon)
+            if (
+                validate_history_k(feature.get("local_ttt_history_k"), horizon)
+                != history_k
+            ):
+                raise ValueError(
+                    "Policy history K differs from frozen Run configuration"
+                )
             if (
                 feature.get("history_source") != "sim_shared_vae"
                 or feature["identity"]["encoder_backend"] != "eager"
@@ -661,6 +698,14 @@ class SharedVAESupervisor:
                     handle.public["identity"] != feature["identity"]
                     or handle.public["clock_domain"] != feature["clock_domain"]
                     or handle.public["constructor_config"] != constructor
+                    or validate_history_k(
+                        None, handle.public.get("action_chunk_size", ACTION_CHUNK_SIZE)
+                    )
+                    != horizon
+                    or validate_history_k(
+                        handle.public.get("local_ttt_history_k"), horizon
+                    )
+                    != history_k
                 ):
                     raise ValueError(
                         "Policy differs from the already loaded shared Worker"
@@ -701,6 +746,11 @@ class SharedVAESupervisor:
                 "drain_timeout_s": _worker_drain_timeout_s(cfg["terminate_grace_s"]),
                 "max_sessions": len(members),
                 "max_policy_epochs": policy_count,
+                **(
+                    {"local_ttt_history_k": history_k, "action_chunk_size": horizon}
+                    if history_k != horizon
+                    else {}
+                ),
             }
             secret_read, secret_write = os.pipe()
             ready_read, ready_write = os.pipe()
@@ -779,6 +829,15 @@ class SharedVAESupervisor:
                         }
                     ):
                         raise ValueError("shared Worker actual READY identity mismatch")
+                    if (
+                        validate_history_k(
+                            None, proof.get("action_chunk_size", ACTION_CHUNK_SIZE)
+                        )
+                        != horizon
+                        or validate_history_k(proof.get("local_ttt_history_k"), horizon)
+                        != history_k
+                    ):
+                        raise ValueError("shared Worker READY history K mismatch")
                     attestation = proof["attestation"]
                     if (
                         attestation.get("vae_file_sha256")
@@ -933,6 +992,14 @@ class SharedVAESupervisor:
             "identity": handle.public["identity"],
             "clock_domain": handle.public["clock_domain"],
             "trust_model": "registry_same_trust_domain",
+            **(
+                {
+                    "local_ttt_history_k": handle.public["local_ttt_history_k"],
+                    "action_chunk_size": handle.public["action_chunk_size"],
+                }
+                if "local_ttt_history_k" in handle.public
+                else {}
+            ),
             "actor_id": actor_id,
             "actor_epoch": actor_epoch,
         }

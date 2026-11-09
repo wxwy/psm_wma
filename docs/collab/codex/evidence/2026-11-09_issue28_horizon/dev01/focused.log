@@ -1,0 +1,1066 @@
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+.................................................. [ 34%]
+........................................................................ [ 46%]
+........................................................................ [ 59%]
+........................................................................ [ 72%]
+........................................................................ [ 85%]
+................................................................FFFFFFFF [ 97%]
+............                                                             [100%]
+=================================== FAILURES ===================================
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[original3-False] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s0')
+omega_constructor = False, grace_s = 3
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7db0a7baa0>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e...ig_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ...}, 'worker_constructor_config': {}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[original3-True] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s1')
+omega_constructor = True, grace_s = 3
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7da85ab7d0>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e..._duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [17, 61, 73], ...}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-False] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s2')
+omega_constructor = False, grace_s = 10.0
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7da85ab440>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e...ig_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ...}, 'worker_constructor_config': {}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-True] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s3')
+omega_constructor = True, grace_s = 10.0
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7da85a8aa0>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e..._duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [17, 61, 73], ...}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[explicit15float-False] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s4')
+omega_constructor = False, grace_s = 15.0
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7db0a4ba40>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e...ig_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ...}, 'worker_constructor_config': {}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[explicit15float-True] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s5')
+omega_constructor = True, grace_s = 15.0
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7da846d400>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e..._duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [17, 61, 73], ...}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[integer15-False] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s6')
+omega_constructor = False, grace_s = 15
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7da846d850>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e...ig_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ...}, 'worker_constructor_config': {}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+_ test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[integer15-True] _
+
+tmp_path = PosixPath('/workspace/work/issue28-horizon-evidence/dev01/pytest_tmp/test_registry_worker_is_peer_s7')
+omega_constructor = True, grace_s = 15
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+>           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7f7da84b5220>
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e..._duration': 93, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8}, 'encode_exact_durations': [17, 61, 73], ...}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+>           horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'manifest'
+
+scripts/robocasa_eval_v2/shared_vae.py:663: AttributeError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[original3-False]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[original3-True]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-False]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-True]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[explicit15float-False]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[explicit15float-True]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[integer15-False]
+FAILED tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[integer15-True]
+8 failed, 558 passed, 14 warnings, 22 subtests passed in 61.86s (0:01:01)

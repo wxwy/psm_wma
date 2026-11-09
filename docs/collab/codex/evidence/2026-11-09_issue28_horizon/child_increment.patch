@@ -1,0 +1,904 @@
+diff --git a/cosmos_framework/evaluation/robocasa_v2/contract.py b/cosmos_framework/evaluation/robocasa_v2/contract.py
+index f5b86210..67ba37bb 100644
+--- a/cosmos_framework/evaluation/robocasa_v2/contract.py
++++ b/cosmos_framework/evaluation/robocasa_v2/contract.py
+@@ -11,6 +11,8 @@ import sys
+ from dataclasses import dataclass, field
+ 
+ SCHEMA = "psm_robocasa_eval_v2"
++# Existing frozen Native model/protocol contract; not a configurable history default.
++ACTION_CHUNK_SIZE = 16
+ SAMPLING = "dynamic_slot_environment_seed_then_continuous_reset_v3"
+ ROUND_SCHEDULE = "episode_major_frozen_order_round_barrier_v1"
+ STREAMING_SCHEDULE = "streaming_task_affinity_v2"
+@@ -208,7 +210,7 @@ def build_manifest(
+             "skipped_retry": "explicit_owner_authorization_only",
+             "raw_action_dim": 15,
+             "state_dim": 15,
+-            "action_chunk_size": 16,
++            "action_chunk_size": ACTION_CHUNK_SIZE,
+             "observation_frames": 17,
+             "fps": 20,
+             "camera": "left_wrist",
+@@ -226,14 +228,17 @@ def build_manifest(
+             extra |= {"single_latency"}
+         shared = execution.get("shared_vae") if isinstance(execution, dict) else None
+         if isinstance(execution, dict) and "local_ttt_history_k" in execution:
+-            history_k = execution["local_ttt_history_k"]
++            from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
++
++            horizon = body["protocol"]["action_chunk_size"]
++            history_k = validate_history_k(execution["local_ttt_history_k"], horizon)
+             if (
+-                type(history_k) is not int
+-                or history_k not in (1, 2, 4, 8)
++                execution["local_ttt_history_k"] is None
++                or history_k == horizon
+                 or local_memory != "required"
+                 or not (shared or single and single["arm"] == "C")
+             ):
+-                raise ValueError("sparse K1/2/4/8 requires frozen shared Local-TTT execution")
++                raise ValueError("sparse divisor K requires frozen shared Local-TTT execution; dense K must be omitted")
+             extra.add("local_ttt_history_k")
+         if shared is not None:
+             if single is not None:
+diff --git a/cosmos_framework/inference/local_memory_online.py b/cosmos_framework/inference/local_memory_online.py
+index 6207cdaf..0b10a288 100644
+--- a/cosmos_framework/inference/local_memory_online.py
++++ b/cosmos_framework/inference/local_memory_online.py
+@@ -14,7 +14,9 @@ from dataclasses import dataclass
+ 
+ import torch
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.local_memory_state import MemorySnapshot, MemoryStateStore
++from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
+ from cosmos_framework.model.generator.mot.local_evidence import (
+     CANONICAL_EVIDENCE_FEATURE_CONFIG,
+     ContinualTTTFastState,
+@@ -33,7 +35,7 @@ class OnlineMemoryRequest:
+     executed_action: torch.Tensor
+     reset: bool = False
+     stream_t1: bool = False
+-    history_k: int = 16
++    history_k: int | None = None
+ 
+ 
+ @dataclass(frozen=True)
+@@ -43,7 +45,8 @@ class _Record:
+     state: ContinualTTTFastState | None
+     token: torch.Tensor | None
+     fingerprint: str
+-    history_k: int = 16
++    history_k: int | None = None
++    action_horizon: int = ACTION_CHUNK_SIZE
+ 
+ 
+ @dataclass(frozen=True)
+@@ -72,6 +75,7 @@ class OnlineLocalMemory:
+         scan_local_memory: Callable[..., tuple[torch.Tensor, ContinualTTTFastState, torch.Tensor]] | None = None,
+         max_sessions: int = 64,
+         max_evidence_steps: int = 256,
++        action_horizon: int = ACTION_CHUNK_SIZE,
+     ) -> None:
+         if encoder.feature_config != CANONICAL_EVIDENCE_FEATURE_CONFIG:
+             raise ValueError("online Local-TTT requires canonical evidence features")
+@@ -85,6 +89,7 @@ class OnlineLocalMemory:
+         self.encoder = encoder
+         self.core = core
+         self.scan_local_memory = scan_local_memory
++        self.action_horizon = validate_history_k(None, action_horizon)
+         self.action_dim = action_dim
+         self.max_sessions = int(max_sessions)
+         self.max_evidence_steps = int(max_evidence_steps)
+@@ -123,9 +128,8 @@ class OnlineLocalMemory:
+             raise ValueError("invalid consumer_step/reset")
+         if request.stream_t1 and self.scan_local_memory is None:
+             raise ValueError("T1 feature profile requires the existing model-owned Local scan")
+-        if type(request.history_k) is not int or request.history_k not in (1, 2, 4, 8, 16):
+-            raise ValueError("invalid frozen Local history K")
+-        if request.history_k != 16 and not request.stream_t1:
++        history_k = validate_history_k(request.history_k, self.action_horizon)
++        if history_k != self.action_horizon and not request.stream_t1:
+             raise ValueError("sparse history requires the attested T1 feature path")
+         n = len(request.source_steps)
+         if n > self.max_evidence_steps or any(type(step) is not int or step < 0 for step in request.source_steps):
+@@ -148,8 +152,10 @@ class OnlineLocalMemory:
+         )
+         if request.stream_t1:
+             identity += ("stream_t1",)
+-        if request.history_k != 16:
+-            identity += ("history_k", request.history_k)
++        if history_k != self.action_horizon:
++            identity += ("history_k", history_k)
++        if self.action_horizon != ACTION_CHUNK_SIZE:
++            identity += ("action_horizon", self.action_horizon)
+         digest = hashlib.sha256(json.dumps(identity, separators=(",", ":")).encode())
+         digest.update(visual.contiguous().numpy().tobytes())
+         digest.update(action.contiguous().numpy().tobytes())
+@@ -159,11 +165,14 @@ class OnlineLocalMemory:
+         """Stage a fast-state update; caller commits only after generation succeeds."""
+         with self._lock, torch.inference_mode(False):
+             visual, action, fingerprint = self._validate(request)
++            history_k = validate_history_k(request.history_k, self.action_horizon)
+             if request.session_id in self._pending:
+                 raise RuntimeError("session already has a pending Local-TTT prediction")
+             previous = self._records.get(request.session_id)
+-            if previous is not None and previous.history_k != request.history_k:
+-                raise ValueError("Local history K cannot change within a Session")
++            if previous is not None and (
++                previous.history_k != history_k or previous.action_horizon != self.action_horizon
++            ):
++                raise ValueError("Local history K/H cannot change within a Session")
+             if previous is not None and previous.fingerprint == fingerprint:
+                 telemetry = {
+                     "adapted_steps": 0.0,
+@@ -199,10 +208,10 @@ class OnlineLocalMemory:
+                 if request.consumer_step <= previous.consumer_step:
+                     raise ValueError("stale or changed-bytes Local-TTT request")
+                 expected = tuple(range(previous.consumer_step, request.consumer_step))
+-                if request.history_k != 16:
+-                    if previous.consumer_step % 16 or len(expected) != 16:
++                if history_k != self.action_horizon:
++                    if previous.consumer_step % self.action_horizon or len(expected) != self.action_horizon:
+                         raise ValueError("sparse history must consume its actual H16 chunk")
+-                    expected = expected[:: 16 // request.history_k]
++                    expected = expected[:: self.action_horizon // history_k]
+                 if request.source_steps != expected:
+                     raise ValueError("completed Local-TTT evidence must be contiguous and exactly-once")
+                 visual = visual.to(device)
+@@ -266,7 +275,7 @@ class OnlineLocalMemory:
+                     raise FloatingPointError("online Local-TTT produced non-finite fast state/prefix")
+ 
+             replacement = _Record(
+-                request.episode_id, request.consumer_step, state, token, fingerprint, request.history_k
++                request.episode_id, request.consumer_step, state, token, fingerprint, history_k, self.action_horizon
+             )
+             update = OnlineMemoryUpdate(
+                 self,
+diff --git a/cosmos_framework/inference/robocasa_feature_evidence.py b/cosmos_framework/inference/robocasa_feature_evidence.py
+index d2aac849..350e6cae 100644
+--- a/cosmos_framework/inference/robocasa_feature_evidence.py
++++ b/cosmos_framework/inference/robocasa_feature_evidence.py
+@@ -19,6 +19,7 @@ from collections import OrderedDict
+ from contextlib import contextmanager
+ from dataclasses import dataclass, field
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.robocasa_vae_protocol import (
+     IDENTITY_FIELDS,
+     ProtocolError,
+@@ -112,7 +113,7 @@ def _secret(value):
+     return hashlib.sha256(b"PSM24-owner-control\0" + value).digest()
+ 
+ 
+-def validate_post_step_receipt(value):
++def validate_post_step_receipt(value, *, action_horizon=ACTION_CHUNK_SIZE):
+     """Validate public metadata only; authority additionally requires the Owner ledger."""
+     sparse = type(value) is dict and value.get("version") == SPARSE_POST_STEP_VERSION
+     value = _exact(value, _POST_FIELDS | ({"history_k", "selected"} if sparse else set()), "post-step receipt")
+@@ -124,10 +125,10 @@ def validate_post_step_receipt(value):
+         raise ProtocolError("unsupported post-step provenance")
+     selected = True
+     if sparse:
+-        k = validate_history_k(value["history_k"])
++        k = validate_history_k(value["history_k"], action_horizon)
+         step = _step(value["source_step"])
+-        selected = selected_history_step(step, step // 16 * 16, k)
+-        if k == 16 or type(value["selected"]) is not bool or value["selected"] != selected:
++        selected = selected_history_step(step, step // action_horizon * action_horizon, k, action_horizon)
++        if k == action_horizon or type(value["selected"]) is not bool or value["selected"] != selected:
+             raise ProtocolError("post-step selection differs from frozen sparse K")
+         if not selected and value["source_rgb_sha256"] is not None:
+             raise ProtocolError("skipped history must not carry an RGB payload digest")
+@@ -310,14 +311,18 @@ class FeatureEvidenceOwner:
+         max_sessions=1,
+         trust_model=TRUST_MODEL,
+         policy_identity=None,
+-        history_k=16,
++        history_k=None,
++        action_horizon=ACTION_CHUNK_SIZE,
+     ):
+         if trust_model != TRUST_MODEL or type(max_sessions) is not int or not 1 <= max_sessions <= 64:
+             raise ValueError("explicit bounded Registry same-trust-domain owner required")
+         self._control = _secret(owner_token)
+         self.clock_ns = clock_ns
+         self.max_sessions = max_sessions
+-        self.history_k = validate_history_k(history_k)
++        self.action_horizon = validate_history_k(None, action_horizon)
++        if self.action_horizon != ACTION_CHUNK_SIZE:
++            raise ValueError("Feature Owner Action Horizon differs from the frozen Native model protocol")
++        self.history_k = validate_history_k(history_k, self.action_horizon)
+         self._workers = {}
+         self._revoked_workers = OrderedDict()
+         self._sessions = {}
+@@ -552,7 +557,7 @@ class FeatureEvidenceOwner:
+                 raise ProtocolError("post-step action differs from canonical committed Action")
+             receipt = validate_post_step_receipt(
+                 {
+-                    "version": POST_STEP_VERSION if self.history_k == 16 else SPARSE_POST_STEP_VERSION,
++                    "version": POST_STEP_VERSION if self.history_k == self.action_horizon else SPARSE_POST_STEP_VERSION,
+                     "lease": session.lease,
+                     "issued_chunk_id": chunk_id,
+                     "policy_request_key": request_key,
+@@ -569,9 +574,9 @@ class FeatureEvidenceOwner:
+                     **(
+                         {
+                             "history_k": self.history_k,
+-                            "selected": selected_history_step(step, chunk.start, self.history_k),
++                            "selected": selected_history_step(step, chunk.start, self.history_k, self.action_horizon),
+                         }
+-                        if self.history_k != 16
++                        if self.history_k != self.action_horizon
+                         else {}
+                     ),
+                 }
+@@ -605,7 +610,7 @@ class FeatureEvidenceOwner:
+ 
+     def admit(self, payload, *, lease, deadline_ns, clock_domain, previous_step):
+         """Read-only admission before native READY; no source data can create completion."""
+-        if self.history_k != 16:
++        if self.history_k != self.action_horizon:
+             if (
+                 payload.get("evidence_version") != SPARSE_EVIDENCE_VERSION
+                 or payload.get("evidence_format") != SPARSE_EVIDENCE_FORMAT
+@@ -622,7 +627,11 @@ class FeatureEvidenceOwner:
+         if not 0 <= previous_step <= step or step - previous_step > 16:
+             raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+         steps = tuple(range(previous_step, step))
+-        if self.history_k != 16 and steps and (previous_step % 16 or len(steps) != 16):
++        if (
++            self.history_k != self.action_horizon
++            and steps
++            and (previous_step % self.action_horizon or len(steps) != self.action_horizon)
++        ):
+             raise ProtocolError("sparse Feature prepare requires one complete H16 Action chunk")
+         if len(rows) != len(steps):
+             raise ProtocolError("feature history must contain exactly the actual contiguous completed steps")
+@@ -657,8 +666,8 @@ class FeatureEvidenceOwner:
+                 completed = session.completed.get(source)
+                 if completed is None or canonical_json(post) != completed.receipt_json or post["source_step"] != source:
+                     raise ProtocolError("public post-step receipt lacks matching authoritative Owner completion")
+-                selected = selected_history_step(source, session.chunk.start, self.history_k)
+-                if self.history_k != 16 and (
++                selected = selected_history_step(source, session.chunk.start, self.history_k, self.action_horizon)
++                if self.history_k != self.action_horizon and (
+                     post.get("history_k") != self.history_k or post.get("selected") != selected
+                 ):
+                     raise ProtocolError("post-step selection differs from authoritative Owner")
+@@ -668,7 +677,7 @@ class FeatureEvidenceOwner:
+                     owned_rows.append({"source_step": source, "post_step_receipt": post, "feature": None})
+                     continue
+                 selected_sources.append(source)
+-                if source % 16 == 0:
++                if source % self.action_horizon == 0:
+                     if row["feature"] is not None:
+                         raise ProtocolError("Policy boundary must not impersonate a Worker Feature")
+                     boundary = self._boundary(session, source)
+diff --git a/cosmos_framework/inference/robocasa_feature_evidence_test.py b/cosmos_framework/inference/robocasa_feature_evidence_test.py
+index f668871f..338072cb 100644
+--- a/cosmos_framework/inference/robocasa_feature_evidence_test.py
++++ b/cosmos_framework/inference/robocasa_feature_evidence_test.py
+@@ -50,7 +50,7 @@ LEASE = {
+ 
+ 
+ class EvidenceHarness:
+-    def __init__(self, *, max_sessions=1, bind_lookup=True, history_k=16):
++    def __init__(self, *, max_sessions=1, bind_lookup=True, history_k=None):
+         self.clock = [100]
+         self.lease = deepcopy(LEASE)
+         self.identity = deepcopy(IDENTITY)
+diff --git a/cosmos_framework/inference/robocasa_history_horizon_test.py b/cosmos_framework/inference/robocasa_history_horizon_test.py
+new file mode 100644
+index 00000000..f6272e31
+--- /dev/null
++++ b/cosmos_framework/inference/robocasa_history_horizon_test.py
+@@ -0,0 +1,97 @@
++"""H-derived sampling contracts; non-Native horizons exercise CPU helpers only."""
++
++from copy import deepcopy
++
++import pytest
++import torch
++
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
++from cosmos_framework.inference.local_memory_online import OnlineLocalMemory, OnlineMemoryRequest
++from cosmos_framework.inference.robocasa_feature_evidence import FeatureEvidenceOwner
++from cosmos_framework.inference.robocasa_local_memory_policy_test import _Model
++from cosmos_framework.inference.robocasa_vae_protocol import selected_history_step, validate_history_k
++from cosmos_framework.inference.robocasa_vae_worker import WorkerConfig
++from cosmos_framework.simulation.robocasa.sim_shared_vae_client import SimSharedVAEClient
++from cosmos_framework.simulation.robocasa.sim_shared_vae_client_test import _descriptor, _lease
++
++
++@pytest.mark.parametrize("h", range(1, 49))
++def test_all_divisors_default_dense_first_frame_and_relative_source_identity(h):
++    assert validate_history_k(None, h) == h
++    divisors = [k for k in range(1, h + 1) if h % k == 0]
++    if h == 12:
++        assert divisors == [1, 2, 3, 4, 6, 12]
++    if h == 24:
++        assert divisors == [1, 2, 3, 4, 6, 8, 12, 24]
++    for k in [None, *divisors]:
++        expected_count = h if k is None else k
++        assert validate_history_k(k, h) == expected_count
++        for start in (0, 5, 2 * h):
++            selected = [s for s in range(start, start + h) if selected_history_step(s, start, k, h)]
++            assert selected == list(range(start, start + h, h // expected_count))
++            assert selected[0] == start and len(selected) == expected_count
++            assert len(selected[1:]) == expected_count - 1
++            for outside in (start - 1, start + h):
++                with pytest.raises(ValueError):
++                    selected_history_step(outside, start, k, h)
++
++
++@pytest.mark.parametrize("h", [1, 12, 16, 24])
++@pytest.mark.parametrize("k", [0, -1, True, False, 1.0, "1", [], {}])
++def test_invalid_K_is_not_coerced_even_when_numerically_equal_to_a_divisor(h, k):
++    with pytest.raises(ValueError):
++        validate_history_k(k, h)
++
++
++@pytest.mark.parametrize("h,k", [(12, 5), (16, 3), (24, 5), (1, 2), (12, 24)])
++def test_non_divisors_are_rejected_in_validation_and_sampling(h, k):
++    with pytest.raises(ValueError):
++        validate_history_k(k, h)
++    with pytest.raises(ValueError):
++        selected_history_step(0, 0, k, h)
++
++
++@pytest.mark.parametrize("h", [None, 0, -1, True, False, 12.0, "12"])
++def test_H_must_be_a_positive_integer_Action_Chunk_length(h):
++    with pytest.raises(ValueError):
++        validate_history_k(None, h)
++
++
++@pytest.mark.parametrize("h,k", [(12, None), (12, 3), (24, 6), (16, None)])
++def test_existing_T1_consumer_uses_bound_H_for_default_sampling_and_session_fence(h, k):
++    torch.manual_seed(28)
++    model = _Model()
++    runtime = model.net.local_memory_runtime
++    memory = OnlineLocalMemory(
++        runtime.encoder, runtime.core, scan_local_memory=model.net.scan_local_memory, action_horizon=h
++    )
++    empty = OnlineMemoryRequest("s", "e", 0, (), torch.empty(0, 96), torch.empty(0, 15), True, True, k)
++    cold = memory.prepare(empty)
++    memory.commit(cold)
++    count = validate_history_k(k, h)
++    sources = tuple(range(0, h, h // count))
++    request = OnlineMemoryRequest("s", "e", h, sources, torch.zeros(count, 96), torch.zeros(count, 15), False, True, k)
++    update = memory.prepare(request)
++    assert update.telemetry["adapted_steps"] == count and len(model.scan_calls) == count
++    memory.commit(update)
++    snapshot = memory.store.snapshot
++    memory.action_horizon = h * 2  # Simulate a forbidden in-Session model identity change.
++    with pytest.raises(ValueError, match="K/H"):
++        memory.prepare(empty)
++    assert memory.store.snapshot is snapshot and len(model.scan_calls) == count
++
++
++def test_native_participants_default_K_to_native_contract_and_reject_H_mismatch():
++    owner = FeatureEvidenceOwner("test-private-owner-capability")
++    assert owner.history_k == owner.action_horizon == ACTION_CHUNK_SIZE
++    cfg = WorkerConfig()
++    assert cfg.history_k == cfg.action_horizon == ACTION_CHUNK_SIZE
++    assert WorkerConfig(history_k=None) == WorkerConfig(history_k=ACTION_CHUNK_SIZE)
++    with pytest.raises(ValueError, match="Native"):
++        WorkerConfig(history_k=3, action_horizon=12)
++    with pytest.raises(ValueError, match="Native"):
++        FeatureEvidenceOwner("test-private-owner-capability", history_k=3, action_horizon=12)
++    desc = deepcopy(_descriptor())
++    desc["action_chunk_size"] = 12
++    with pytest.raises(ValueError, match="Horizon"):
++        SimSharedVAEClient(_lease(), desc, 10_000, 1, "clock", local_ttt_history_k=4)
+diff --git a/cosmos_framework/inference/robocasa_history_k_test.py b/cosmos_framework/inference/robocasa_history_k_test.py
+index 908d1571..f9bf9242 100644
+--- a/cosmos_framework/inference/robocasa_history_k_test.py
++++ b/cosmos_framework/inference/robocasa_history_k_test.py
+@@ -64,10 +64,10 @@ def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, en
+     h.owner.end_session(TOKEN, h.lease)
+ 
+ 
+-@pytest.mark.parametrize("value", [0, 3, 5, 32, True, 2.0, "2", None])
++@pytest.mark.parametrize("value", [0, 3, 5, 32, True, 2.0, "2"])
+ def test_history_k_rejects_coercion_and_unsupported_values(value):
+     with pytest.raises(ValueError):
+-        validate_history_k(value)
++        validate_history_k(value, 16)
+ 
+ 
+ @pytest.mark.parametrize("k", KS)
+@@ -333,9 +333,9 @@ def test_worker_skip_replay_forgery_and_late_frame_cannot_advance_or_encode():
+ @pytest.mark.parametrize("start", [0, 16, 32])
+ @pytest.mark.parametrize("k", KS)
+ def test_selection_uses_actual_chunk_relative_time_without_renumbering(start, k):
+-    assert tuple(s for s in range(start, start + 16) if selected_history_step(s, start, k)) == tuple(
++    assert tuple(s for s in range(start, start + 16) if selected_history_step(s, start, k, 16)) == tuple(
+         start + j for j in SELECTED[k]
+     )
+     for invalid in (start - 1, start + 16):
+         with pytest.raises(ValueError):
+-            selected_history_step(invalid, start, k)
++            selected_history_step(invalid, start, k, 16)
+diff --git a/cosmos_framework/inference/robocasa_local_memory_policy.py b/cosmos_framework/inference/robocasa_local_memory_policy.py
+index df2ef444..2bd1bcb7 100644
+--- a/cosmos_framework/inference/robocasa_local_memory_policy.py
++++ b/cosmos_framework/inference/robocasa_local_memory_policy.py
+@@ -15,6 +15,7 @@ from typing import Any, Callable, Literal
+ import torch
+ from torch.distributed.tensor import DTensor
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.local_memory_online import OnlineLocalMemory, OnlineMemoryRequest, OnlineMemoryUpdate
+ from cosmos_framework.inference.local_memory_state import CachedMemoryResponse, MemorySnapshot
+ from cosmos_framework.inference.robocasa_composite_visual import (
+@@ -114,6 +115,9 @@ class RoboCasaLocalMemoryPolicyAdapter:
+                 scan_local_memory=scan,
+                 max_sessions=max_sessions,
+                 max_evidence_steps=max_evidence_steps,
++                action_horizon=feature_evidence_owner.action_horizon
++                if feature_evidence_owner is not None
++                else ACTION_CHUNK_SIZE,
+             )
+             self.memory.paired = True
+             self._lock = self.memory.store.lock
+@@ -245,17 +249,17 @@ class RoboCasaLocalMemoryPolicyAdapter:
+             "evidence_format",
+             "evidence",
+         }
+-        if owner.history_k != 16:
++        if owner.history_k != owner.action_horizon:
+             fields.add("local_ttt_history_k")
+         if type(payload) is not dict or payload.keys() != fields:
+             raise ValueError("Feature profile requires exact opt-in evidence fields")
+         if payload["evidence_version"] != (
+-            FEATURE_EVIDENCE_VERSION if owner.history_k == 16 else SPARSE_EVIDENCE_VERSION
++            FEATURE_EVIDENCE_VERSION if owner.history_k == owner.action_horizon else SPARSE_EVIDENCE_VERSION
+         ) or payload["evidence_format"] != (
+-            FEATURE_EVIDENCE_FORMAT if owner.history_k == 16 else SPARSE_EVIDENCE_FORMAT
++            FEATURE_EVIDENCE_FORMAT if owner.history_k == owner.action_horizon else SPARSE_EVIDENCE_FORMAT
+         ):
+             raise ValueError("unsupported Feature evidence version/format")
+-        if owner.history_k != 16 and (
++        if owner.history_k != owner.action_horizon and (
+             type(payload["local_ttt_history_k"]) is not int or payload["local_ttt_history_k"] != owner.history_k
+         ):
+             raise ValueError("Feature history K differs from frozen Policy Owner")
+@@ -518,7 +522,7 @@ class RoboCasaLocalMemoryPolicyAdapter:
+         }
+         if update.feature_profile:
+             result["evidence_profile"] = FEATURE_EVIDENCE_FORMAT
+-            if self.feature_evidence_owner.history_k != 16:
++            if self.feature_evidence_owner.history_k != self.feature_evidence_owner.action_horizon:
+                 selected = update.visual_replacement.last_source_steps
+                 start = selected[0] if selected else replacement.consumer_step
+                 result.update(
+@@ -526,7 +530,7 @@ class RoboCasaLocalMemoryPolicyAdapter:
+                     local_ttt_history_k=self.feature_evidence_owner.history_k,
+                     selected_source_steps=list(selected),
+                     skipped_source_steps=[s for s in range(start, replacement.consumer_step) if s not in selected],
+-                    verified_worker_features=sum(s % 16 != 0 for s in selected),
++                    verified_worker_features=sum(s % self.feature_evidence_owner.action_horizon != 0 for s in selected),
+                 )
+             # This metadata is serialized into a PRIVATE native Response before
+             # commit_many publishes that same Response/FastState/boundary. Owner
+@@ -551,10 +555,15 @@ class RoboCasaLocalMemoryPolicyAdapter:
+             "visual_evidence": "corrected_composite_single_frame_encode1_v1",
+             "feature_evidence_profile": None
+             if self.feature_evidence_owner is None
+-            else (FEATURE_EVIDENCE_FORMAT if self.feature_evidence_owner.history_k == 16 else SPARSE_EVIDENCE_FORMAT),
++            else (
++                FEATURE_EVIDENCE_FORMAT
++                if self.feature_evidence_owner.history_k == self.feature_evidence_owner.action_horizon
++                else SPARSE_EVIDENCE_FORMAT
++            ),
+             **(
+                 {"local_ttt_history_k": self.feature_evidence_owner.history_k}
+-                if self.feature_evidence_owner is not None and self.feature_evidence_owner.history_k != 16
++                if self.feature_evidence_owner is not None
++                and self.feature_evidence_owner.history_k != self.feature_evidence_owner.action_horizon
+                 else {}
+             ),
+             **self.memory.info(),
+diff --git a/cosmos_framework/inference/robocasa_local_memory_policy_test.py b/cosmos_framework/inference/robocasa_local_memory_policy_test.py
+index df5cdab3..aceaa273 100644
+--- a/cosmos_framework/inference/robocasa_local_memory_policy_test.py
++++ b/cosmos_framework/inference/robocasa_local_memory_policy_test.py
+@@ -216,7 +216,7 @@ def test_corrected_active_modules_do_not_import_historical_b1() -> None:
+         assert not any(any(name in imported for name in forbidden) for imported in imports if imported), module
+ 
+ 
+-def _feature_adapter(*, max_sessions=1, history_k=16):
++def _feature_adapter(*, max_sessions=1, history_k=None):
+     from cosmos_framework.inference.robocasa_feature_evidence_test import EvidenceHarness
+ 
+     harness = EvidenceHarness(bind_lookup=False, max_sessions=max_sessions, history_k=history_k)
+diff --git a/cosmos_framework/inference/robocasa_vae_daemon.py b/cosmos_framework/inference/robocasa_vae_daemon.py
+index dc47210a..d18ede51 100644
+--- a/cosmos_framework/inference/robocasa_vae_daemon.py
++++ b/cosmos_framework/inference/robocasa_vae_daemon.py
+@@ -18,6 +18,7 @@ import time
+ from collections.abc import Mapping
+ from pathlib import Path
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.robocasa_vae_protocol import canonical_json, strict_json
+ 
+ 
+@@ -309,7 +310,8 @@ def run_daemon(
+                 wait_ms=0,
+                 max_sessions=config.get("max_sessions", 16),
+                 max_policy_epochs=config.get("max_policy_epochs", 1),
+-                history_k=config.get("local_ttt_history_k", 16),
++                history_k=config.get("local_ttt_history_k"),
++                action_horizon=config.get("action_chunk_size", ACTION_CHUNK_SIZE),
+             ),
+         )
+         server = UnixVAEServer(
+@@ -342,7 +344,11 @@ def run_daemon(
+                     "max_sessions": worker.config.max_sessions,
+                     "max_policy_epochs": worker.config.max_policy_epochs,
+                 },
+-                **({"local_ttt_history_k": worker.config.history_k} if worker.config.history_k != 16 else {}),
++                **(
++                    {"local_ttt_history_k": worker.config.history_k, "action_chunk_size": worker.config.action_horizon}
++                    if worker.config.history_k != worker.config.action_horizon
++                    else {}
++                ),
+             },
+         )
+         server.wait_closed()
+diff --git a/cosmos_framework/inference/robocasa_vae_protocol.py b/cosmos_framework/inference/robocasa_vae_protocol.py
+index 8a944455..2e5822ac 100644
+--- a/cosmos_framework/inference/robocasa_vae_protocol.py
++++ b/cosmos_framework/inference/robocasa_vae_protocol.py
+@@ -30,23 +30,27 @@ MAX_FEATURE_WIRE_BYTES = 16384
+ MAX_HEADER_BYTES = 8192
+ 
+ 
+-def validate_history_k(value):
+-    if type(value) is not int or value not in (1, 2, 4, 8, 16):
+-        raise ValueError("local_ttt_history_k must be one of1/2/4/8/16")
++def validate_history_k(value, action_horizon):
++    """Resolve omitted K to the actual Action Chunk H; reject coercion/non-divisors."""
++    if type(action_horizon) is not int or action_horizon <= 0:
++        raise ValueError("action_horizon must be a positive integer Action Chunk length")
++    if value is None:
++        return action_horizon
++    if type(value) is not int or value <= 0 or action_horizon % value:
++        raise ValueError("local_ttt_history_k must be a positive integer divisor of action_horizon")
+     return value
+ 
+ 
+-def selected_history_step(source_step, chunk_start, history_k):
+-    """Selection is relative to the actual completed H16 Action chunk."""
+-    stride = 16 // validate_history_k(history_k)
++def selected_history_step(source_step, chunk_start, history_k, action_horizon):
++    """Select original source IDs relative to their authoritative Action Chunk."""
++    stride = action_horizon // validate_history_k(history_k, action_horizon)
+     if (
+         type(source_step) is not int
+         or type(chunk_start) is not int
+         or chunk_start < 0
+-        or chunk_start % 16
+-        or not 0 <= source_step - chunk_start < 16
++        or not 0 <= source_step - chunk_start < action_horizon
+     ):
+-        raise ValueError("source step must belong to its real H16 Action chunk")
++        raise ValueError("source step must belong to its real Action Chunk")
+     return (source_step - chunk_start) % stride == 0
+ 
+ 
+diff --git a/cosmos_framework/inference/robocasa_vae_worker.py b/cosmos_framework/inference/robocasa_vae_worker.py
+index e7123afb..ecdd0b72 100644
+--- a/cosmos_framework/inference/robocasa_vae_worker.py
++++ b/cosmos_framework/inference/robocasa_vae_worker.py
+@@ -17,6 +17,7 @@ from collections import Counter, OrderedDict, deque
+ from dataclasses import dataclass, field
+ from types import MappingProxyType
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.robocasa_vae_protocol import (
+     IDENTITY_FIELDS,
+     MAX_FEATURE_WIRE_BYTES,
+@@ -72,12 +73,15 @@ class WorkerConfig:
+     max_chunks: int = 4
+     max_trace: int = 256
+     max_retired_sessions: int = 16
+-    history_k: int = 16
++    history_k: int | None = None
++    action_horizon: int = ACTION_CHUNK_SIZE
+ 
+     def __post_init__(self):
+         from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
+ 
+-        validate_history_k(self.history_k)
++        object.__setattr__(self, "history_k", validate_history_k(self.history_k, self.action_horizon))
++        if self.action_horizon != ACTION_CHUNK_SIZE:
++            raise ValueError("Worker Action Horizon differs from the frozen Native model protocol")
+         if type(self.bmax) is not int or self.bmax not in (1, 4, 8):
+             raise ValueError("VAE batch cap must be 1, 4 or 8")
+         if type(self.wait_ms) is not int or self.wait_ms not in (0, 2, 5) or (self.bmax == 1 and self.wait_ms):
+@@ -347,8 +351,11 @@ class SharedVAEWorker:
+         rgb_digest = _sha256(source_rgb_sha256, "source RGB digest")
+         action_digest = _sha256(raw15_sha256, "executed raw15 digest")
+         boundary_digest = _sha256(policy_boundary_sha256, "Policy boundary digest")
+-        receipt = validate_post_step_receipt(post_step_receipt)
+-        if receipt.get("history_k", 16) != self.config.history_k or receipt.get("selected", True) is not True:
++        receipt = validate_post_step_receipt(post_step_receipt, action_horizon=self.config.action_horizon)
++        if (
++            receipt.get("history_k", self.config.action_horizon) != self.config.history_k
++            or receipt.get("selected", True) is not True
++        ):
+             raise ValueError("Policy boundary receipt differs from frozen Worker K")
+         if (
+             receipt["lease"] != lease
+@@ -423,10 +430,10 @@ class SharedVAEWorker:
+             if skipped_receipt is not None:
+                 from cosmos_framework.inference.robocasa_feature_evidence import validate_post_step_receipt
+ 
+-                post = validate_post_step_receipt(skipped_receipt)
++                post = validate_post_step_receipt(skipped_receipt, action_horizon=self.config.action_horizon)
+                 source = completed_through - 1
+                 if (
+-                    self.config.history_k == 16
++                    self.config.history_k == self.config.action_horizon
+                     or post.get("history_k") != self.config.history_k
+                     or post.get("selected") is not False
+                     or post["source_rgb_sha256"] is not None
+@@ -459,7 +466,7 @@ class SharedVAEWorker:
+ 
+     def _advance_skips(self, session):
+         # A completed skip may arrive before an earlier asynchronous Frame.
+-        if self.config.history_k != 16:
++        if self.config.history_k != self.config.action_horizon:
+             while session.submitted in session.skipped:
+                 session.submitted += 1
+             while session.consumed < session.submitted and session.consumed not in session.jobs:
+@@ -486,10 +493,11 @@ class SharedVAEWorker:
+                     raise ValueError("source identity reused with changed bytes or deadline")
+                 return old.key if old is not None else tombstone["job_key"]
+             self._open(session)
+-            if self.config.history_k != 16:
++            if self.config.history_k != self.config.action_horizon:
+                 from cosmos_framework.inference.robocasa_vae_protocol import selected_history_step
+ 
+-                if step % 16 == 0 or not selected_history_step(step, step // 16 * 16, self.config.history_k):
++                h = self.config.action_horizon
++                if step % h == 0 or not selected_history_step(step, step // h * h, self.config.history_k, h):
+                     raise ValueError("unselected or Policy-owned boundary cannot enter Worker VAE")
+             if step != session.submitted:
+                 raise ValueError("stale/evicted or noncontiguous source frontier")
+@@ -842,5 +850,9 @@ class SharedVAEWorker:
+                 "trace_overflow": self._trace_overflow,
+                 "causal_attestation": "owner_mock_control_only",
+                 "timing_source": "cpu_monotonic_ns",
+-                **({"local_ttt_history_k": self.config.history_k} if self.config.history_k != 16 else {}),
++                **(
++                    {"local_ttt_history_k": self.config.history_k, "action_chunk_size": self.config.action_horizon}
++                    if self.config.history_k != self.config.action_horizon
++                    else {}
++                ),
+             }
+diff --git a/cosmos_framework/scripts/action_policy_server_robocasa.py b/cosmos_framework/scripts/action_policy_server_robocasa.py
+index 81167a5c..5f6d0cb1 100644
+--- a/cosmos_framework/scripts/action_policy_server_robocasa.py
++++ b/cosmos_framework/scripts/action_policy_server_robocasa.py
+@@ -538,7 +538,7 @@ class ActionServerArgs(pydantic.BaseModel):
+     """Opt-in Phase B transaction/B1 API. Does not enable multi-Sim or B>1."""
+     transaction_owner_token_file: Path | None = None
+     history_source: Literal["server_vae", "sim_shared_vae"] = "server_vae"
+-    local_ttt_history_k: pydantic.StrictInt = 16
++    local_ttt_history_k: pydantic.StrictInt | None = None
+     single_latency_arm: Literal["A", "B", "C"] | None = None
+     """Stage3A explicit B1 signed-history path; defaults preserve native A/B."""
+     transaction_run_lease: str | None = None
+@@ -630,12 +630,15 @@ class ActionServerConfig:
+ 
+ 
+ def _transaction_options(args):
++    from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+     from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
+ 
+-    history_k = validate_history_k(getattr(args, "local_ttt_history_k", 16))
++    horizon = getattr(args, "action_chunk_size", None)
++    horizon = ACTION_CHUNK_SIZE if horizon is None else horizon
++    history_k = validate_history_k(getattr(args, "local_ttt_history_k", None), horizon)
+     batch = args.transaction_profile == "batch"
+     feature_mode = getattr(args, "history_source", "server_vae") == "sim_shared_vae"
+-    if history_k != 16 and not feature_mode:
++    if history_k != horizon and not feature_mode:
+         raise ValueError("sparse history requires the shared VAE feature path")
+     arm = getattr(args, "single_latency_arm", None)
+     if arm is not None and (
+@@ -1086,7 +1089,8 @@ class ActionModelService:
+                 transaction_options["owner_token"],
+                 max_sessions=int(args.local_memory_max_sessions),
+                 policy_identity=identity,
+-                history_k=getattr(args, "local_ttt_history_k", 16),
++                history_k=getattr(args, "local_ttt_history_k", None),
++                action_horizon=self.cfg.action_chunk_size,
+             )
+             self.local_feature_info = {
+                 "identity": identity,
+@@ -1096,8 +1100,8 @@ class ActionModelService:
+                 "policy_bmax": transaction_options.get("max_batch_size", 1),
+                 "policy_wait_ms": transaction_options.get("batch_wait_ms", 0),
+                 **(
+-                    {"local_ttt_history_k": args.local_ttt_history_k}
+-                    if getattr(args, "local_ttt_history_k", 16) != 16
++                    {"local_ttt_history_k": self.feature_evidence_owner.history_k}
++                    if self.feature_evidence_owner.history_k != self.cfg.action_chunk_size
+                     else {}
+                 ),
+             }
+diff --git a/cosmos_framework/simulation/robocasa/closed_loop_eval.py b/cosmos_framework/simulation/robocasa/closed_loop_eval.py
+index ebc4e70b..9cda03c7 100644
+--- a/cosmos_framework/simulation/robocasa/closed_loop_eval.py
++++ b/cosmos_framework/simulation/robocasa/closed_loop_eval.py
+@@ -435,7 +435,7 @@ def run_policy(
+             action_prepare_ns = trace.now_ns() if trace is not None else None
+             history_image = local_memory_client is not None and (
+                 not shared_vae
+-                or getattr(local_memory_client, "history_k", 16) == 16
++                or getattr(local_memory_client, "history_k", action_horizon) == action_horizon
+                 or local_memory_client.needs_history_image(step)
+             )
+             pre_composite = compose(obs).astype(np.uint8) if history_image else None
+diff --git a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+index 892217f6..5b33c310 100644
+--- a/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
++++ b/cosmos_framework/simulation/robocasa/eval_v2_transactions.py
+@@ -15,6 +15,7 @@ from urllib.parse import urlsplit
+ 
+ import requests
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.robocasa_session_transactions import digest, json_bytes
+ from cosmos_framework.inference.robocasa_transaction_client import TransactionPolicyClient
+ from cosmos_framework.simulation.robocasa.local_memory_client import RoboCasaLocalMemoryClient
+@@ -82,7 +83,8 @@ class PolicyTransport:
+                 settings["predict_timeout_s"],
+                 self.client.clock_domain,
+                 end_timeout_s=settings.get("shared_vae_end_timeout_s", 5.0),
+-                local_ttt_history_k=settings.get("local_ttt_history_k", 16),
++                local_ttt_history_k=settings.get("local_ttt_history_k"),
++                action_horizon=settings.get("action_chunk_size", ACTION_CHUNK_SIZE),
+             )
+         else:
+             if "sim_shared_vae" in assignment:
+diff --git a/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py b/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py
+index 7f8e324f..ee0018c5 100644
+--- a/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py
++++ b/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py
+@@ -18,6 +18,7 @@ from dataclasses import dataclass
+ 
+ import numpy as np
+ 
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.robocasa_feature_evidence import (
+     FEATURE_EVIDENCE_FORMAT,
+     FEATURE_EVIDENCE_VERSION,
+@@ -123,12 +124,19 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+         worker_client=None,
+         completion_channel=None,
+         end_timeout_s=2.0,
+-        local_ttt_history_k=16,
++        local_ttt_history_k=None,
++        action_horizon=ACTION_CHUNK_SIZE,
+     ):
+         super().__init__(enabled=True, max_evidence_steps=16)
+         self.lease = validate_lease({k: v for k, v in lease.items() if k != "capability"})
+-        self.history_k = validate_history_k(local_ttt_history_k)
+-        if validate_history_k(descriptor.get("local_ttt_history_k", 16)) != self.history_k:
++        self.action_horizon = validate_history_k(None, action_horizon)
++        if (
++            self.action_horizon != ACTION_CHUNK_SIZE
++            or validate_history_k(None, descriptor.get("action_chunk_size", ACTION_CHUNK_SIZE)) != self.action_horizon
++        ):
++            raise ValueError("assigned Action Horizon differs from frozen Native model protocol")
++        self.history_k = validate_history_k(local_ttt_history_k, self.action_horizon)
++        if validate_history_k(descriptor.get("local_ttt_history_k"), self.action_horizon) != self.history_k:
+             raise ValueError("history K differs from assigned frozen shared Worker")
+         if descriptor.get("trust_model") != "registry_same_trust_domain":
+             raise ValueError("explicit controlled Actor trust model required")
+@@ -274,7 +282,9 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+         with self._changed:
+             if self._boundary is None:
+                 raise RuntimeError("history selection requires a committed Policy chunk")
+-            return selected_history_step(source_step, self._boundary["header"]["source_step"], self.history_k)
++            return selected_history_step(
++                source_step, self._boundary["header"]["source_step"], self.history_k, self.action_horizon
++            )
+ 
+     def prepare_step(self, slot, source_step, composite_image, executed_raw15):
+         with self._changed:
+@@ -287,7 +297,7 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+             header = self._boundary["header"]
+             if not header["source_step"] <= source_step < header["source_step"] + 16:
+                 raise ValueError("Sim step lies outside committed action chunk")
+-            selected = selected_history_step(source_step, header["source_step"], self.history_k)
++            selected = selected_history_step(source_step, header["source_step"], self.history_k, self.action_horizon)
+             if not selected and composite_image is not None:
+                 raise ValueError("unselected history must not create an RGB payload")
+             rgb = self._image(composite_image, "pre-action composite").copy().tobytes() if selected else None
+@@ -301,7 +311,7 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+                 source_digest(rgb) if selected else None,
+                 hashlib.sha256(raw15).hexdigest(),
+             )
+-            if source_step % 16 == 0 and snapshot.source_rgb_sha256 != header["source_rgb_sha256"]:
++            if source_step % self.action_horizon == 0 and snapshot.source_rgb_sha256 != header["source_rgb_sha256"]:
+                 raise ValueError("pre-action boundary RGB differs from committed current Policy image")
+             self._prepared = snapshot
+             return snapshot
+@@ -321,7 +331,7 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+             episode = self._get(slot)
+             if self._prepared is not snapshot or snapshot.source_step != episode.consumer_step:
+                 raise ValueError("exact prepared successful Sim step required")
+-            if snapshot.source_step % 16 == 15:
++            if snapshot.source_step % self.action_horizon == self.action_horizon - 1:
+                 self.start_replan(slot, step_completed_ns)
+             try:
+                 with self._profile_span("owner_step_completion", source_step=snapshot.source_step):
+@@ -352,7 +362,8 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+                     raise ValueError("Owner completion receipt differs from actual successful Sim step")
+                 frame = (
+                     None
+-                    if snapshot.source_step % 16 == 0 or not self.needs_history_image(snapshot.source_step)
++                    if snapshot.source_step % self.action_horizon == 0
++                    or not self.needs_history_image(snapshot.source_step)
+                     else Frame.create(
+                         self.lease,
+                         snapshot.chunk_id,
+@@ -368,7 +379,7 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+                     )
+                 )
+                 row = _Evidence(snapshot.source_step, receipt, frame, ready=frame is None)
+-                if receipt.get("history_k", 16) != self.history_k or receipt.get(
++                if receipt.get("history_k", self.action_horizon) != self.history_k or receipt.get(
+                     "selected", True
+                 ) != self.needs_history_image(snapshot.source_step):
+                     raise ValueError("Owner receipt selection differs from frozen Sim K")
+@@ -464,7 +475,7 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+                     for step in expected
+                 ],
+             )
+-            if self.history_k != 16:
++            if self.history_k != self.action_horizon:
+                 payload.update(
+                     evidence_version=SPARSE_EVIDENCE_VERSION,
+                     evidence_format=SPARSE_EVIDENCE_FORMAT,
+@@ -475,7 +486,7 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+     def acknowledge(self, slot, status):
+         with self._changed:
+             episode = self._get(slot)
+-            if self.history_k != 16 and (
++            if self.history_k != self.action_horizon and (
+                 not isinstance(status, dict)
+                 or type(status.get("local_ttt_history_k")) is not int
+                 or status["local_ttt_history_k"] != self.history_k
+@@ -562,13 +573,21 @@ class SimSharedVAEClient(RoboCasaLocalMemoryClient):
+                     {
+                         "local_ttt_history_k": self.history_k,
+                         "selected_source_steps": [
+-                            s for s in self._rows if selected_history_step(s, s // 16 * 16, self.history_k)
++                            s
++                            for s in self._rows
++                            if selected_history_step(
++                                s, s // self.action_horizon * self.action_horizon, self.history_k, self.action_horizon
++                            )
+                         ],
+                         "skipped_source_steps": [
+-                            s for s in self._rows if not selected_history_step(s, s // 16 * 16, self.history_k)
++                            s
++                            for s in self._rows
++                            if not selected_history_step(
++                                s, s // self.action_horizon * self.action_horizon, self.history_k, self.action_horizon
++                            )
+                         ],
+                     }
+-                    if self.history_k != 16
++                    if self.history_k != self.action_horizon
+                     else {}
+                 ),
+             }

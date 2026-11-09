@@ -336,6 +336,17 @@ class Runtime:
             command += ["--single-latency-arm", self.cfg["single_latency_arm"]]
         if self.shared_vae_profile:
             command += ["--history-source", "sim_shared_vae"]
+            from cosmos_framework.inference.robocasa_vae_protocol import (
+                validate_history_k,
+            )
+
+            horizon = self.store.manifest["protocol"]["action_chunk_size"]
+            history_k = validate_history_k(self.cfg.get("local_ttt_history_k"), horizon)
+            if history_k != horizon:
+                command += [
+                    "--local-ttt-history-k",
+                    str(history_k),
+                ]
         # The eval Client/Actors always use 127.0.0.1. Do not expose the
         # transaction-owning Policy Server on all network interfaces.
         # Both concurrent evaluation runs must bind distinct local TCP ports.
@@ -547,8 +558,21 @@ class Runtime:
                         "local_memory"
                     ],
                     **(
-                        {"local_evidence_profile": "sim_shared_vae"}
+                        {
+                            "local_evidence_profile": "sim_shared_vae",
+                            "action_chunk_size": self.store.manifest["protocol"][
+                                "action_chunk_size"
+                            ],
+                        }
                         if self.shared_vae_profile
+                        else {}
+                    ),
+                    **(
+                        {"local_ttt_history_k": self.cfg["local_ttt_history_k"]}
+                        if self.shared_vae_profile
+                        and self.cfg.get("local_ttt_history_k") is not None
+                        and self.cfg["local_ttt_history_k"]
+                        != self.store.manifest["protocol"]["action_chunk_size"]
                         else {}
                     ),
                     "capacity_profile": self.capacity_profile,

@@ -1,0 +1,13 @@
+{
+  "archive": "docs/collab/chatgpt/archive/CODEX_INBOX_20261109_125637_73d8644.md",
+  "archive_blob": "9d0d3245379091d095fc44281b0f87c13c20d6d6",
+  "archive_sha256": "7e027a9f1eb2649bd6bdfe4590cd9ea00d6e354a8a5ca960825ae04b707b07d7",
+  "pre_rollover_head": "73d8644df3096e192a83fff2f2d8098a4ac11e64",
+  "prior_bytes": 131174,
+  "new_live_bytes": 1838,
+  "byte_for_byte": true,
+  "latest_verdict": "APPROVE_CODE",
+  "formal_root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+  "child": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "review": "docs/collab/chatgpt/reviews/2026-11-09_Issue27_9b1756f9_60b252d0_Streaming32_Evidence_APPROVE_CODE.md"
+}

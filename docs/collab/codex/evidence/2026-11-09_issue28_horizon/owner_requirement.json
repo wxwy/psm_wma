@@ -1,0 +1,30 @@
+{
+  "issue": {
+    "url": "https://github.com/wxwy/psm_wma/issues/28",
+    "title": "[V3 Local-TTT] History-K 按 Action Horizon 自适应：默认 K=H，K 必须整除 H（单一 EvalV2）",
+    "issue_number": 28,
+    "body": "## Owner 最新强制要求（2026-11-09，覆盖之前写死 16 / K 固定枚举的规范）\n\n`local_ttt_history_k` 不允许写死默认 `16`，也不允许固定列举 `{1,2,4,8,16}`。**唯一合法性规则是 `K` 为正整数、`action_horizon=H` 为现有真实动作块长度且 `H % K == 0`；未显式配置 K 时默认 `K=H`。**\n\n- `H` 指 Policy 实际的 **Action Horizon / action_chunk_size**，**不是**每个 Task 的 Episode rollout horizon（Manifest 的 `horizons` 字段）。\n- `K=None/未提供` → 有效 `K=H`，默认完整逐帧 Local-TTT，**沿用旧 dense wire/fingerprint/Manifest 语义**；当目前真实 H=16 时与旧 V3 K16 bit-exact。\n- 显式 K：`type(K) is int and K>0 and H%K==0`（bool、浮点、零、负数、非约数拒绝）。计算 `stride=H//K`，Chunk `[T,T+H-1]` 按相对序号 `j=0..H-1` 选择 `j%stride==0`。采样严格保留真实 source_step，不重新编号。\n- 所有 K 中 **j=0 必选**：当前 Replan T 的 O[T] 输入 Cosmos，缓存 pre-crop Visual96；等动作 a[T] 真正执行后，作为 **下一轮 Replan T+H** 的 Local-TTT 历史首帧，不能在 T 使用未来动作。\n- 每个完整 Chunk `K` 次真实 Fast Weight T1 更新，**额外历史 Wan VAE Encode1 恰为 K−1 次**（首帧直接复用上一轮 current Visual96）；不选帧在历史路径不做 RGB/PNG/Frame/VAE/FW，但真实 env.step、已完成动作、Owner/Session/Lease/epoch/deadline/source frontier 证据仍保留。\n- 例子：H=16 → K={1,2,4,8,16}；**H=12 → K={1,2,3,4,6,12}**；H=24 → K={1,2,3,4,6,8,12,24}。这只是采样/校验函数的可扩展性例子，**不要求在本 Issue 重做模型或把当前实际支持的 H=16 扩展成 H12 的 RoboCasa 全链路**。\n\n### 对已提交的 PR #30 / Child #9 的直接要求\n\n- 现有 formal Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child `59746af006748488a678aa9a55dfc3e200668219` 已有 K 稀疏实现、作者 CPU631+207 PASS，但**采用硬编码默认16、固定5种K、采样公式 `16//K`，尚未满足 Owner 最新要求**。GPT 本轮独立 review 按新要求发出 `REQUEST_CHANGES`，不得合 V3 或继承旧认可。\n- 在 **现有独立 Draft Root #30 / Child #9 上最小增量修改**（不是另建 EvalV2/runtime、另起稀疏引擎）：取真正被协议/Model 冻结并验证的 H，传播到 config resolution、manifest/严格 Resume、Policy/Sim/Worker 的选帧校验。不要用一套硬编码16替换另一套偷偷引入的配置16。当前真实完整动作块 H16 的旧数值合同不变。\n- 重点修复：Root `scripts/robocasa_eval_v2/config.py`、`shared_vae.py` 默认/校验/配置冻结；Child `robocasa_vae_protocol.py::validate_history_k/selected_history_step`、`contract.py`、`local_memory_online.py`、`robocasa_feature_evidence.py`、`sim_shared_vae_client.py`、Worker、Action Server 中与 **K合法性、H/K步距、默认K、选帧**直接有关的写死16。**已有原生 Action Chunk 必须为H16的其它独立模型合同可以继续保持，不得为了此任务擅自扩大整个模型 Action Horizon 支持范围。**\n- CPU 正反测试：H16 所有约数、H12/H24 helper选帧/校验、任意 H≥1 中 K=H dense、K=1只首帧、典型非约数/零/负数/bool/float拒绝、K/H 配置身份不一致/Resume拒绝，`K=H` default旧当前 H16 bit-exact、旧NoTTT/Session、跨 chunk/End 与通用拓扑不回归。只对已有新代码的相关测试做定向增量验证，无须重跑旧965/900EP。\n- 不改训练、模型、原Native Batch调度、不增加第二套系统，不跑GPU/真实Sim/SR/900EP，不合 V3。修复后给**新的精确 Root+Child formal pair**、原始测试日志、Diff 与 Gate 申请，GPT 按新 Pair 增量复审。\n\n### 此前已确认不变量\n\n仅使用原有 EvalV2 / Shared Wan Bvae1/wait0 / Policy Batch1..8 /原 Local Memory T1 更新。上游 #27 允许**所有合法 Server/Sim 配置组合**，1×1、1×8、2×16（每 Server16，总32 Sim）只是验收例子，不能作为白名单。源完成证据始终连续合法；数据相关的 skip/selection 要按现有受限 Owner 控制和 fail-closed 协议维护，完整默认模式仍复用旧 wire/manifest/evidence 格式。",
+    "state": "open",
+    "user": {
+      "login": "wxwy",
+      "name": "wxwy",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/38684249?v=4",
+      "id": 38684249
+    },
+    "assignees": null,
+    "labels": null,
+    "milestone": null,
+    "state_reason": null,
+    "comments": 14,
+    "created_at": "2026-11-09T03:13:03Z",
+    "updated_at": "2026-11-09T06:14:15Z",
+    "closed_at": null,
+    "display_url": "https://github.com/wxwy/psm_wma/issues/28",
+    "display_title": "[V3 Local-TTT] History-K 按 Action Horizon 自适应：默认 K=H，K 必须整除 H（单一 EvalV2）"
+  },
+  "url": "https://github.com/wxwy/psm_wma/issues/28",
+  "title": "[V3 Local-TTT] History-K 按 Action Horizon 自适应：默认 K=H，K 必须整除 H（单一 EvalV2）",
+  "display_url": "https://github.com/wxwy/psm_wma/issues/28",
+  "display_title": "[V3 Local-TTT] History-K 按 Action Horizon 自适应：默认 K=H，K 必须整除 H（单一 EvalV2）"
+}

@@ -1,0 +1,39 @@
+{
+  "phase": "green",
+  "command": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/work/psm-wma-history-k-issue28",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "/workspace/work/psm-wma-history-k-issue28/cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py",
+    "-k",
+    "sparse_partial_tail",
+    "--junitxml=/workspace/work/issue28-history-k-evidence/boundary_green/boundary.xml"
+  ],
+  "identity": {
+    "root": "df043615d94a8dc0d85efc6b7c6d1277ae4bc61a",
+    "root_status": " M cosmos-framework\n",
+    "child": "6b5c191527d83f08f9612b12f83f35dcb39c5f45",
+    "child_status": " M cosmos_framework/inference/local_memory_online.py\n M cosmos_framework/inference/robocasa_feature_evidence.py\n M cosmos_framework/inference/robocasa_history_k_test.py\n M cosmos_framework/inference/robocasa_vae_worker.py\n"
+  },
+  "pytest_exit": 0,
+  "counts": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "expected_outcome": true,
+  "source_worktree_dirty_for_new_regression": true,
+  "test_sha256": "dff237f44016192b340c30c4fb96ecd254a8ef58777f2b132bfa8d25bfc0f9be",
+  "production_sha256": {
+    "inference/local_memory_online.py": "50af311b0de1edd29c159b9aeccc437a4e4bb3cc4495dd14b25da89e8318b166",
+    "inference/robocasa_feature_evidence.py": "1e3ed0234a105dd5fc7b77d26e0f003a7466c20eb4779e34946e136a8d996e81"
+  }
+}

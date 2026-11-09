@@ -1,0 +1,320 @@
+{
+  "files": [
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+      "path": "scripts/robocasa_eval_v2/config.py",
+      "expected_blob": "6b187772dc1f20abf36e7ea80a3b5ad82217e3fd"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+      "path": "scripts/robocasa_eval_v2/runtime.py",
+      "expected_blob": "1b7c56bb1235ad88a6ac2cc9c8ed11b6b3bc265d"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+      "path": "scripts/robocasa_eval_v2/shared_vae.py",
+      "expected_blob": "8182d7715a87967b9f8042b95cf9708b44bff347"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+      "path": "tools/v3/eval_v2_batch_tests/history_k_test.py",
+      "expected_blob": "cef429ee74068ccd2beb6cbb1179c67654e00526"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+      "expected_blob": "d8d197bab1707a48407632f5af9ce565209a8b28"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "expected_blob": "f5b86210813932b8a60e844f4440dc19aafd41fa"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/local_memory_online.py",
+      "expected_blob": "6207cdaf8287e054e397874eedd2b20363684627"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_feature_evidence.py",
+      "expected_blob": "d2aac8490aa01dfa36084ccc89510edffb426da3"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_feature_evidence_test.py",
+      "expected_blob": "f668871fccf417518f9c9d060325fd622d78c5ca"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_history_k_test.py",
+      "expected_blob": "908d157102457d9ac9914fefeea0fb7a89ba376e"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_local_memory_policy.py",
+      "expected_blob": "df2ef44477d4cbd5127127d769cd9b60b96cc2b5"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+      "expected_blob": "df5cdab3523c6866f73de2f46b8ed3c7bced523a"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_vae_client.py",
+      "expected_blob": "59839c2b12308ab8b86bb54f772c0f927cc2337e"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_vae_daemon.py",
+      "expected_blob": "dc47210a839f4c6bced0ed1d879d47875d2e0b14"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_vae_protocol.py",
+      "expected_blob": "8a944455427fade90b8431e9c9771ea757da3739"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/inference/robocasa_vae_worker.py",
+      "expected_blob": "e7123afb361fdd54d0140f704d283f280d7991f7"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "expected_blob": "81167a5c0c4ecc3cddda1872902fcf585dc3d83b"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+      "expected_blob": "ebc4e70bb4ceed9c65c2da69fe6c6aeb6c420769"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "expected_blob": "892217f6a1a31249be9c01550a9cbb6d2df23f42"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/simulation/robocasa/sim_shared_vae_client.py",
+      "expected_blob": "7f8e324ff1c6a2759ee6e112758dd277f9edc2f8"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "59746af006748488a678aa9a55dfc3e200668219",
+      "path": "cosmos_framework/simulation/robocasa/sim_shared_vae_history_k_test.py",
+      "expected_blob": "7cad3bb0d4d126d823669923defd0dd2295b49e3"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/archive_manifest.json",
+      "expected_blob": "1ff7af08055846567184d4225d21ea223465d22a"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/provenance.json",
+      "expected_blob": "db4c447bd67ad43066d6c3d41e96e200fb24706f"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/archive_write_receipt.json",
+      "expected_blob": "c2a45343878f4c7cbea5753469d0e06758a5ab0e"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/gate.json",
+      "expected_blob": "9bb8ac18ace916460defcb50d472adc2d4e5c688"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/junit.xml",
+      "expected_blob": "1bc02b8955b576bfcc6739240e902f81c8e5979f"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/sparse.xml",
+      "expected_blob": "1ba0e0fc89257e3690751fe46e214ad782e0f90c"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/local_and_transactions.xml",
+      "expected_blob": "e4f01db0b39b90545a13ae373207fa745f2cd202"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/worker_and_sim.xml",
+      "expected_blob": "8fd65c517b1e81050a0d948d63a3e51d58a33f92"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/root_topology.xml",
+      "expected_blob": "ece75a1b5017f4edad4066175df4839c32833345"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/source_before.json",
+      "expected_blob": "0985e4760e54078b8c19af7d7a765f2fabad4a82"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/source_after.json",
+      "expected_blob": "0985e4760e54078b8c19af7d7a765f2fabad4a82"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/identity_before.json",
+      "expected_blob": "610310b9e18c3cf953d1856f209cc165813ab186"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/identity_after.json",
+      "expected_blob": "610310b9e18c3cf953d1856f209cc165813ab186"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/environment.json",
+      "expected_blob": "e6300cf502e30d0d5039a4cd22ae23d46054b2b7"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/dense_old.json",
+      "expected_blob": "e26406d3b212f37eb879459d35ec03f124521e15"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/dense_new.json",
+      "expected_blob": "e26406d3b212f37eb879459d35ec03f124521e15"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/dense_parity.json",
+      "expected_blob": "42a406c3827b42757d503b7811310384f157d5f4"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/outer_tool_result.json",
+      "expected_blob": "782dcee4f1a4383005f3b89e5c010df24b5629dd"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/boundary_red/result.json",
+      "expected_blob": "1bdcd44c22bf910b3d10fba9e30508cf60541ce7"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/boundary_red/boundary.xml",
+      "expected_blob": "b8666b34f08beaae7d96141b2c78c1e2d6672565"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/boundary_green/result.json",
+      "expected_blob": "da9ad6a432410b6eb64fc3a45686150e387f8680"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/boundary_green/boundary.xml",
+      "expected_blob": "8249c7f78133865a5b887a357f52c89bc6412f26"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/runners/author_gate.py",
+      "expected_blob": "bb8178f1940d6d5a0015358b90dcfe98c6fa7b7b"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/runners/dense_parity_probe.py",
+      "expected_blob": "aa83b81152cb61a73dffb739e42cebc6256f9356"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/sparse_tmp/test_sparse_sessions_real_FD_d5/sparse_os_behavior.json",
+      "expected_blob": "0caa54d14c5e6c502fbd84e23a0055abb0c8e369"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/sparse_tmp/test_sparse_sessions_real_FD_d5/run/_internal/runtime/shared_vae_worker_closed_2216df0accd3498ca828eb2e8e9f9c34.json",
+      "expected_blob": "32c7d5d7c2e6f14eb1269365de5de6160c4fdc7b"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_history_k/author03/sparse_tmp/test_sparse_sessions_real_FD_d5/run/_internal/runtime/shared_vae_worker_ready_25594b85e0714009afe9a4900d21ffee.json",
+      "expected_blob": "0f09ac6b0baad5c7245805ac2da90582020d6bbb"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/codex/reviews/2026-11-09_Issue28_HistoryK_050e45d8_59746af0_Code_Review_Request.md",
+      "expected_blob": "a5eaa25252abb27d366b63d9a5185acc8c8979ef"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "expected_blob": "2e62148547823aba6b4c4c330f094a748ee5c9dc"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/chatgpt/archive/CODEX_INBOX_20261109_125637_73d8644.md",
+      "expected_blob": "9d0d3245379091d095fc44281b0f87c13c20d6d6"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f30c9750ba28a674e8381648360eef3a68f570e7",
+      "path": "docs/collab/chatgpt/reviews/2026-11-09_Issue27_9b1756f9_60b252d0_Streaming32_Evidence_APPROVE_CODE.md",
+      "expected_blob": "5418e996e9fcd87796c4329d378d546eb6412419"
+    }
+  ],
+  "formal_root": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+  "formal_child": "59746af006748488a678aa9a55dfc3e200668219",
+  "evidence_head": "f30c9750ba28a674e8381648360eef3a68f570e7",
+  "gitlink": "59746af006748488a678aa9a55dfc3e200668219"
+}
