@@ -1,0 +1,46 @@
+[
+  {
+    "backend": "esdf_grid",
+    "frame_id": 0,
+    "model_capture": "BLOCKED_REAL_RGBD_OBSERVATIONS",
+    "proof": {
+      "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+      "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+      "root_count": 7,
+      "semantic_certification": false
+    }
+  },
+  {
+    "backend": "esdf_grid",
+    "frame_id": 3,
+    "model_capture": "BLOCKED_REAL_RGBD_OBSERVATIONS",
+    "proof": {
+      "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+      "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+      "root_count": 7,
+      "semantic_certification": false
+    }
+  },
+  {
+    "backend": "gvd",
+    "frame_id": 0,
+    "model_capture": "BLOCKED_REAL_RGBD_OBSERVATIONS",
+    "proof": {
+      "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+      "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+      "root_count": 7,
+      "semantic_certification": false
+    }
+  },
+  {
+    "backend": "gvd",
+    "frame_id": 3,
+    "model_capture": "BLOCKED_REAL_RGBD_OBSERVATIONS",
+    "proof": {
+      "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+      "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+      "root_count": 7,
+      "semantic_certification": false
+    }
+  }
+]

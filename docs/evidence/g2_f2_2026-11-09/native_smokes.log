@@ -1,0 +1,7 @@
+{"full_map": 0, "status": "PASS"}
+{"full_map": 1, "status": "PASS"}
+{"full_map": 2, "status": "PASS"}
+{"full_map": 3, "status": "PASS"}
+{"ordinary": "esdf_grid", "off": false, "status": "PASS"}
+{"ordinary": "gvd", "off": false, "status": "PASS"}
+{"ordinary": "esdf_grid", "off": true, "status": "PASS"}

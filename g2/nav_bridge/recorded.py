@@ -10,7 +10,7 @@ from g2.sim.source_scope import SUBSET_SCOPE, verify_full_scene_review
 def prepare(prescan_manifest, grid, *, nav_repo, dataset_root, episode, camera,
             sidecar, output, native_python="python3", min_z=.15,max_z=1.8,frames=201,
             full_scene_review=None, allow_declared_subset=False, allow_partial_color=False,
-            native_structures=False, room_source="gvd"):
+            native_structures=False, room_source="gvd",model_rebinding_proof=None):
     import math
     if any(type(flag) is not bool for flag in (allow_partial_color,allow_declared_subset,native_structures)):
         raise ContractError("replay opt-in flags must be booleans")
@@ -86,7 +86,13 @@ def prepare(prescan_manifest, grid, *, nav_repo, dataset_root, episode, camera,
     roots=[r for r in m.get("sources",[]) if r.get("logical_id")=="root.xml"]
     if len(roots)!=1 or not m.get("state",{}).get("file_sha256") or not m.get("input_files",{}).get("ep_meta"):
         raise ContractError("pre-scan lacks original model/states/official ep_meta binding")
-    expected={"model.xml.gz":roots[0]["sha256"],"states.npz":m["state"]["file_sha256"],
+    derivation=None
+    if model_rebinding_proof is not None:
+        from g2.sim.model_rebinding import verify
+        originals=source_by_name.get('model.xml.gz',[])
+        if len(originals)!=1:raise ContractError('unique original compressed episode model required')
+        derivation=verify(model_rebinding_proof,prescan=m,recorded_model_sha256=originals[0].get('sha256'))
+    expected={"model.xml.gz":derivation['original_compressed_sha256'] if derivation else roots[0]["sha256"],"states.npz":m["state"]["file_sha256"],
               "ep_meta.json":m["input_files"]["ep_meta"]["sha256"]}
     for name,expected_sha in expected.items():
         candidates=source_by_name.get(name,[])
@@ -106,6 +112,7 @@ def prepare(prescan_manifest, grid, *, nav_repo, dataset_root, episode, camera,
              "prescan_grid_sha256":digest(grid),"original_sources":expected,
              "visual_source_sha256":m["visual_source_sha256"],"source_scope":source_scope,
              "appearance_status":m['status'],"color_audit_sha256":color_sha}
+    if derivation:binding['model_source_derivation']=derivation
     base += ["--prescan-recorded-binding",str(out/"recorded_binding.json")]
     plan={"schema":"g2_recorded_adapter_plan_v1","status":"DIAGNOSTIC_SUBSET_PLAN_ONLY_NOT_EXECUTED"
           if source_scope["status"]==SUBSET_SCOPE else "PLAN_ONLY_NOT_EXECUTED","cwd":str(nav_repo),
@@ -140,12 +147,14 @@ def main():
     p.add_argument("--allow-partial-color",action="store_true",help="explicit PARTIAL_COLOR diagnostic; requires --allow-declared-subset")
     p.add_argument("--native-structures",action="store_true")
     p.add_argument("--room-source",choices=('gvd','esdf_grid'),default='gvd')
+    p.add_argument('--model-rebinding-proof',help='replay original gzip to rebound XML/assets/state/ep_meta proof')
     a=p.parse_args()
     r=prepare(a.prescan_manifest,a.grid,nav_repo=a.nav_repo,dataset_root=a.dataset_root,
               episode=a.episode,camera=a.camera,sidecar=a.sidecar,output=a.output,
               frames=a.frames,min_z=a.projection_min_z,max_z=a.projection_max_z,
               full_scene_review=a.full_scene_review,allow_declared_subset=a.allow_declared_subset,
-              allow_partial_color=a.allow_partial_color,native_structures=a.native_structures,room_source=a.room_source)
+              allow_partial_color=a.allow_partial_color,native_structures=a.native_structures,room_source=a.room_source,
+              model_rebinding_proof=a.model_rebinding_proof)
     print(r["status"])
 
 

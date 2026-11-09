@@ -1,0 +1,22 @@
+{
+  "binary_sha256": {
+    "libmapping.so": "c190c9aca74a44f00ec2970d5a1195bb8fdf88c1e4484153cb479eb540f47967",
+    "mapping/gt_oracle_native": "7b798442b9b8386da8556c516d96325f37594f6eb4e7f968d5dc5f6f42bbea52",
+    "mapping/mapping_only_node": "92593265cb923ef7501171af032b4affab2ee1fc65ea723249e3baddc2ead312"
+  },
+  "cpu_limit": 2,
+  "full_map_csv_rows_exact_source_owner_verified": 105104,
+  "gpu_used": false,
+  "human_gate": "PENDING",
+  "image": "nav-sg-g2:noetic",
+  "image_id": "sha256:c60c0a5c447f88436ee4a91b11011a0d64f3a7c8392b91f58b113b57079b44dd",
+  "memory_gib": 8,
+  "models_run": 0,
+  "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+  "native_source_files": 152,
+  "network": "none",
+  "owned_container_cleanup": "STOPPED",
+  "reference_images": "NOT_SUPPLIED",
+  "scope": "AUTHOR_CPU_OWN_SCENES_ONLY_NOT_GPT_OR_PRIVATE_LAYOUT_ACCEPTANCE",
+  "training_ready": false
+}

@@ -1,0 +1,207 @@
+[
+  {
+    "case": "closed",
+    "frames_paired": 4,
+    "frames_processed": 4,
+    "gpu_used": false,
+    "models_run": 0,
+    "native_roots_enabled": true,
+    "parameter_profile": "OFFICIAL_SEMANTIC_PARAMS_MODELS_EXPLICITLY_DISABLED_FOR_CPU_TEST",
+    "room_source": "esdf_grid",
+    "scope": "TEST_ONLY_ORDINARY_ROS_MAIN_NOT_PRIVATE_LAYOUT_OR_MODEL_ACCEPTANCE",
+    "snapshots": [
+      {
+        "affiliations_complete": false,
+        "floor_patches": 3,
+        "frame_id": 0,
+        "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+        "native_structures": {
+          "boundary_coverage_complete": false,
+          "floor_evidence_source": "NATIVE_SENSOR_PROBE_AND_LOCAL_OBSERVED_SURFACES",
+          "floor_probe": {
+            "floor_z": -0.04999999999999999,
+            "max_depth": 3,
+            "min_floor_height": 0.3,
+            "provided": true,
+            "sensor_position": [
+              2,
+              1,
+              1.5
+            ],
+            "verified": true
+          },
+          "floor_support_policy": "LOCAL_THIN_SURFACE_V2",
+          "geometry_resolution": 0.1,
+          "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+          "known_object_height_coverage": true,
+          "observed_floor_cells": 4,
+          "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+          "rejected_free_below_cells": 0,
+          "semantic_certification": false,
+          "status": "PARTIAL_OBSERVED_AXIS_ALIGNED_PATCHES",
+          "supported_voxel_count": 4204,
+          "unknown_below_floor_cells": 4,
+          "unsupported_boundary_cells": 0,
+          "unsupported_floor_cells": 1196
+        },
+        "object_frontend_status": "BLOCKED_CURRENT_FRAME_RGBD_OBSERVATIONS",
+        "objects": 0,
+        "room_count": 1,
+        "snapshot_sha256": "2fc87914a4016b731853ab60b928e2ca60239003e5aba136f18b5ec9a834b6f8",
+        "wall_patches": 4
+      },
+      {
+        "affiliations_complete": false,
+        "floor_patches": 3,
+        "frame_id": 3,
+        "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+        "native_structures": {
+          "boundary_coverage_complete": false,
+          "floor_evidence_source": "NATIVE_SENSOR_PROBE_AND_LOCAL_OBSERVED_SURFACES",
+          "floor_probe": {
+            "floor_z": -0.04999999999999999,
+            "max_depth": 3,
+            "min_floor_height": 0.3,
+            "provided": true,
+            "sensor_position": [
+              2,
+              1,
+              1.5
+            ],
+            "verified": true
+          },
+          "floor_support_policy": "LOCAL_THIN_SURFACE_V2",
+          "geometry_resolution": 0.1,
+          "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+          "known_object_height_coverage": true,
+          "observed_floor_cells": 4,
+          "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+          "rejected_free_below_cells": 0,
+          "semantic_certification": false,
+          "status": "PARTIAL_OBSERVED_AXIS_ALIGNED_PATCHES",
+          "supported_voxel_count": 4204,
+          "unknown_below_floor_cells": 4,
+          "unsupported_boundary_cells": 0,
+          "unsupported_floor_cells": 1196
+        },
+        "object_frontend_status": "BLOCKED_CURRENT_FRAME_RGBD_OBSERVATIONS",
+        "objects": 0,
+        "room_count": 1,
+        "snapshot_sha256": "3ff3e0c64305e6dc20ce8ca2cef4ed44a44eed4c7ee2b239cd25e4de54be2ec7",
+        "wall_patches": 4
+      }
+    ],
+    "thin_floor": true,
+    "training_ready": false
+  },
+  {
+    "case": "closed",
+    "frames_paired": 4,
+    "frames_processed": 4,
+    "gpu_used": false,
+    "models_run": 0,
+    "native_roots_enabled": true,
+    "parameter_profile": "OFFICIAL_SEMANTIC_PARAMS_MODELS_EXPLICITLY_DISABLED_FOR_CPU_TEST",
+    "room_source": "gvd",
+    "scope": "TEST_ONLY_ORDINARY_ROS_MAIN_NOT_PRIVATE_LAYOUT_OR_MODEL_ACCEPTANCE",
+    "snapshots": [
+      {
+        "affiliations_complete": false,
+        "floor_patches": 3,
+        "frame_id": 0,
+        "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+        "native_structures": {
+          "boundary_coverage_complete": false,
+          "floor_evidence_source": "NATIVE_SENSOR_PROBE_AND_LOCAL_OBSERVED_SURFACES",
+          "floor_probe": {
+            "floor_z": -0.04999999999999999,
+            "max_depth": 3,
+            "min_floor_height": 0.3,
+            "provided": true,
+            "sensor_position": [
+              2,
+              1,
+              1.5
+            ],
+            "verified": true
+          },
+          "floor_support_policy": "LOCAL_THIN_SURFACE_V2",
+          "geometry_resolution": 0.1,
+          "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+          "known_object_height_coverage": true,
+          "observed_floor_cells": 4,
+          "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+          "rejected_free_below_cells": 0,
+          "semantic_certification": false,
+          "status": "PARTIAL_OBSERVED_AXIS_ALIGNED_PATCHES",
+          "supported_voxel_count": 4204,
+          "unknown_below_floor_cells": 4,
+          "unsupported_boundary_cells": 0,
+          "unsupported_floor_cells": 1196
+        },
+        "object_frontend_status": "BLOCKED_CURRENT_FRAME_RGBD_OBSERVATIONS",
+        "objects": 0,
+        "room_count": 1,
+        "snapshot_sha256": "16d1ff83f916539cbdf9adc3a2f2e57ccc3371789ba42706dcce1296c9671df9",
+        "wall_patches": 4
+      },
+      {
+        "affiliations_complete": false,
+        "floor_patches": 3,
+        "frame_id": 3,
+        "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+        "native_structures": {
+          "boundary_coverage_complete": false,
+          "floor_evidence_source": "NATIVE_SENSOR_PROBE_AND_LOCAL_OBSERVED_SURFACES",
+          "floor_probe": {
+            "floor_z": -0.04999999999999999,
+            "max_depth": 3,
+            "min_floor_height": 0.3,
+            "provided": true,
+            "sensor_position": [
+              2,
+              1,
+              1.5
+            ],
+            "verified": true
+          },
+          "floor_support_policy": "LOCAL_THIN_SURFACE_V2",
+          "geometry_resolution": 0.1,
+          "grid_sha256": "ac43d37ffdcb7fd802f0c807b4f19cb4ce1de630d5592f7693d11b8557e5823e",
+          "known_object_height_coverage": true,
+          "observed_floor_cells": 4,
+          "occupancy_sha256": "bca039ef6e10170d99a5948cc085e276eb5273452471b6acc275e88f2c699828",
+          "rejected_free_below_cells": 0,
+          "semantic_certification": false,
+          "status": "PARTIAL_OBSERVED_AXIS_ALIGNED_PATCHES",
+          "supported_voxel_count": 4204,
+          "unknown_below_floor_cells": 4,
+          "unsupported_boundary_cells": 0,
+          "unsupported_floor_cells": 1196
+        },
+        "object_frontend_status": "BLOCKED_CURRENT_FRAME_RGBD_OBSERVATIONS",
+        "objects": 0,
+        "room_count": 1,
+        "snapshot_sha256": "e9f899e0c90e71a0765150e4ae616b8cd42dcf661f7ce7d42742f2dd7185d267",
+        "wall_patches": 4
+      }
+    ],
+    "thin_floor": true,
+    "training_ready": false
+  },
+  {
+    "case": "closed",
+    "frames_paired": 4,
+    "frames_processed": 4,
+    "gpu_used": false,
+    "models_run": 0,
+    "native_roots_enabled": false,
+    "off_scope": "FOUR_FRAME_ACK_AND_NONEMPTY_MAP_ONLY_NO_SNAPSHOT_OR_GRID_EQUALITY_CLAIM",
+    "parameter_profile": "GENERIC_BASE_XML_AND_TEST_PARAMETERS",
+    "room_source": "esdf_grid",
+    "scope": "TEST_ONLY_ORDINARY_ROS_MAIN_NOT_PRIVATE_LAYOUT_OR_MODEL_ACCEPTANCE",
+    "snapshots": [],
+    "thin_floor": false,
+    "training_ready": false
+  }
+]

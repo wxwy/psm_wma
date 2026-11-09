@@ -116,15 +116,22 @@ def rasterize(xyz,rgb,color_valid,owners,selected,bounds_min,bounds_max,axis, *,
     return image,valid,geometry,depth,owner_image,metadata
 
 
-def render(bundle,output,*,meters_per_pixel=.05,allow_oracle_diagnostic=False):
+def render(bundle,output,*,meters_per_pixel=.05,allow_oracle_diagnostic=False,
+           allow_full_map_mujoco=False,reference_image=None):
     root=Path(bundle).resolve();out=new_output(output,[root])
     manifest,s=load_bundle(root)
     oracle=s["source_mode"]=="oracle_diagnostic"
+    full=s['source_mode']=='full_map_mujoco_source'
     if oracle and not allow_oracle_diagnostic:
         raise ContractError("oracle native snapshot requires explicit diagnostic rendering")
-    if not oracle and (manifest.get("semantic_stage")!="REAL_RECORDED_INPUT_OBSERVED" or
+    if full and not allow_full_map_mujoco:raise ContractError('Full Map source GT requires explicit rendering opt-in')
+    if not oracle and not full and (manifest.get("semantic_stage")!="REAL_RECORDED_INPUT_OBSERVED" or
                        not manifest.get("observation_witness")):
         raise ContractError("BLOCKED_REAL_RGBD_OBSERVATIONS")
+    if 'connection_protocol' in s:
+        from .render_connections import render_v2
+        return render_v2(root,manifest,s,output,meters_per_pixel=meters_per_pixel,reference_image=reference_image)
+    if full:raise ContractError('Full Map requires native connection V2 evidence')
     by_id={e["id"]:e for e in s["entities"]}
     numeric={name:i for i,name in enumerate(sorted(by_id))}
     n=manifest["surface_points"]
@@ -224,9 +231,11 @@ def main():
     p.add_argument("--bundle",required=True);p.add_argument("--output",required=True)
     p.add_argument("--meters-per-pixel",type=float,default=.05)
     p.add_argument("--allow-oracle-diagnostic",action="store_true")
+    p.add_argument('--allow-full-map-mujoco',action='store_true');p.add_argument('--reference-image')
     a=p.parse_args()
     result=render(a.bundle,a.output,meters_per_pixel=a.meters_per_pixel,
-                  allow_oracle_diagnostic=a.allow_oracle_diagnostic)
+                  allow_oracle_diagnostic=a.allow_oracle_diagnostic,
+                  allow_full_map_mujoco=a.allow_full_map_mujoco,reference_image=a.reference_image)
     print(result["status"],len(result["views"]))
 
 

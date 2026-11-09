@@ -81,6 +81,55 @@ def check(case):
     s,raw,_=case;validate_snapshot(s);return verify_native_structure_grid(s,bytes(raw))
 
 
+def thin_case(case):
+    s,raw,path=case;old=bytes(raw);s['grid']['origin'][2]=-1;s['grid']['dimensions'][2]=6
+    thin=bytearray(150)
+    for x in range(5):
+        for y in range(5):
+            for z in range(5):thin[(x*5+y)*6+z+1]=old[(x*5+y)*5+z]
+    selected={(1,1),(1,3),(3,1),(3,3)}
+    for x in range(1,4):
+        for y in range(1,4):
+            if (x,y) not in selected:thin[(x*5+y)*6+1]=0
+    template=s['entities'][0];wall=s['entities'][1]
+    wall['native_structure_evidence']['occupied_voxel_addresses']=[(n//5)*6+n%5+1 for n in wall['native_structure_evidence']['occupied_voxel_addresses']]
+    wall['source_instance_id']='wall_0_0_0_1_2_0_3_5'
+    floors=[]
+    for i,(x,y) in enumerate(sorted(selected)):
+        e=copy.deepcopy(template);e.update(id='entity_'+str(i+2),native_id=i+2,
+            bbox_min=[x,y,0],bbox_max=[x+1,y+1,1],source_instance_id='floor_0_-1_'+
+            '_'.join(map(str,[x,y,1,x,y,1])))
+        e['vertices']=[[e['bbox_max'][a] if n&(1<<a) else e['bbox_min'][a] for a in range(3)] for n in range(8)]
+        geometry=b'NAV_SG_NATIVE_VOXEL_BOX_V1\n'+floats(itertools.chain.from_iterable(e['vertices']))
+        geometry+=b''.join(struct.pack('<Q',n) for n in itertools.chain.from_iterable(e['triangles']))
+        e['geometry_sha256']=hashlib.sha256(geometry).hexdigest()
+        e['native_structure_evidence']['occupied_voxel_addresses']=[(x*5+y)*6+1];floors.append(e)
+    s['entities']=[*floors,wall]
+    s['native_structures'].update(floor_support_policy='LOCAL_THIN_SURFACE_V2',observed_floor_cells=4,
+        unknown_below_floor_cells=4,rejected_free_below_cells=0,unsupported_floor_cells=5,
+        floor_evidence_source='NATIVE_SENSOR_PROBE_AND_LOCAL_OBSERVED_SURFACES')
+    seal(s,bytes(thin));return s,thin,path
+
+
+def test_four_thin_floor_columns_preserve_five_unknown_holes_and_unknown_below(native_case):
+    case=thin_case(native_case);before=bytes(case[1]);result=check(case)
+    assert result['root_count']==5 and bytes(case[1])==before
+    assert case[0]['native_structures']['unsupported_floor_cells']==5
+
+
+@pytest.mark.parametrize('fault',['free_below','unknown_support','wrong_observed_count','wrong_unknown_count','wrong_rejection_count','filled_holes'])
+def test_thin_floor_evidence_rejects_tabletops_missing_support_and_extrapolated_counts(native_case,fault):
+    case=thin_case(native_case);s,raw,_=case;meta=s['native_structures']
+    if fault=='free_below':raw[(1*5+1)*6]=1
+    elif fault=='unknown_support':raw[(1*5+1)*6+1]=0
+    elif fault=='wrong_observed_count':meta['observed_floor_cells']=9
+    elif fault=='wrong_unknown_count':meta['unknown_below_floor_cells']=0
+    elif fault=='wrong_rejection_count':meta['rejected_free_below_cells']=1
+    else:meta['unsupported_floor_cells']=0
+    seal(s,bytes(raw))
+    with pytest.raises(ContractError):check(case)
+
+
 def test_native_observed_geometry_is_separate_from_model_or_semantic_acceptance(native_case):
     result=check(native_case)
     assert result["root_count"]==2 and result["semantic_certification"] is False

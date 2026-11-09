@@ -1,3 +1,73 @@
+# 2026-11-09 18:52 CST — G2-F2 author implementation complete; fixed-SHA publication next
+
+AUTHOR_COMPLETE / no real-scene acceptance. PSM517/517, old446 IDs retained;
+native168/168 distinct C++, old157 retained; related native Python/GT100/100,
+old53 retained. Native152-file source fingerprintf07b7d53 matches generated
+header and all runtime snapshots. Actual ordinary mapping_only_node on both
+backends processed4 own RGB-D frames:4 supported thin Floor columns and1196
+unsupported, UNKNOWN below,4 real Walls; G2 checked4 frame0/3 proofs and refused
+model capture. Default-off main4-frame regression passes. Four own source-GT
+native runs (rectangular/notch,0/200), source-bound bundle/six/Island render,
+105104 actual CSV rows source+exact-owner verification pass.11 native input
+negatives and8 re-signed bundle/source negatives reject. Reference images
+NOT_SUPPLIED, GPT real Layout1/10/H1/history/fullcolor/source/training pending.
+Code review /root/n6_independent_review closed all scoped P0/P1/P2; native
+review's original findings also implemented/runtime-tested and narrow native
+follow-up closure confirmed; corrected11 native negatives require exact
+return1/diagnostic (initial ROS_HOME environmental aborts withdrawn). Evidence and commands are in the new F2
+runbooks and docs/evidence/g2_f2_2026-11-09. No server connection/private file
+transfer/V3/Gitlink/models/GPU/train/merge/PR. Publication/handoff remains to do.
+
+# 2026-11-09 17:44 CST — G2-F2 authorized source/thin-floor/full-map/views implementation
+
+IN_PROGRESS / Codex. New branch codex/g2-f2-source-views from fixedfeff0d54;
+prior08d8d44e SESSION/TODO/canonical Inbox carried as metadata only. Native new
+codex/g2-f2-thin-floor-full-map frome15c4cc2, scene_release54541 unchanged.
+Read live Inbox, AGENTS/governance, latest runbooks, full official Issue8
+6736440426 and Issue26/6736467892 directly from GitHub. The explicit instruction
+is to code now, not request another plan approval. GPT diagnostics:446/157/53
+and real201x2 native replay; no formal APPROVE inferred. This is authorized
+remediation, not a retroactive whole-scene PASS. GPT sole server reviewer, DS
+absent, Owner human view review; old V2/MM/Kimi loops do not apply.
+
+Planned PSM files: new strict compressed-model/path-rebinding proof module and
+new explicit Full Map GT receiving/planning interface; scoped recorded.py,
+snapshot.py and views/render.py; tests and new runbook/evidence. Preserve446
+IDs, no new Room/Island inference in PSM. Native produces connections/Island,
+real finite roots and reference axes; G2 verifies and renders native results.
+All private inputs/paths/evidence remain data; this turn no Remote Desktop
+Commander calls, only repo edits, CPU/self-authored tests and GitHub handoff.
+No V3/Gitlink/train/cache/production/model/GPU/merge/PR; unchanged1ca308 gitlink.
+Six views: Floor-connected BEV; Non-Floor-connected UP, no Ceiling-connection
+or CameraZ cutoff; four real-wall connections and perRoom Island four sides.
+BBox3D Euclidean strict<.30m configurable; objects only relay. UNKNOWN stays
+unknown. Full Map MuJoCo GT is explicitly distinct from perception and cannot
+attest real model observations/training. Original gzip->rebase proof is replayed,
+asset closure/state/ep_meta strict; old direct byte comparison kept for exact
+sources. Next author tests/fixedSHA then GPT independent real0/200/H1.
+
+# 2026-11-09 15:46 CST — fixed native source pair delivered; awaiting GPT
+
+REVIEW. Formal PSM Root feff0d54b04a4c669198ec48493736bbc5dcaa81,
+Native e15c4cc28a157526a53827f29aeb70f88c845a66,
+unchanged Child/Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e.
+Config source54541 remains frozen; F1-D approval unchanged. Later ledger commits
+are metadata only, not replacements for those fixed implementation targets.
+GitHub45/45 PSM +175/175 native source/test/build files blob-exact; API commit
+objects/trees match tested local source.13 protected refs unchanged.
+Final tests446 PSM/157 distinct C++/53 related nativePython all PASS,0fail/error/
+skip;18 real local TEST_ONLY snapshots cross-language proof PASS/model gates
+correctly BLOCKED. Author reviews closed concrete P1/P2; no realLayout/model/
+sixview/training acceptance. See new runbooks/rawJUnit/retention/publication.
+Canonical Inbox request5e220f0e38695928a08bad480d434d96fc8b77fd/blob8bd64466213572a20c34702dd46ba579a670e0dd,
+append-only91873bytes before delivery, was published/readback before requests.
+Issue26/6734897202 and nativeIssue8/6734902391 posted/full-body readback exact;
+handoff_receipt.json records both. No GPT execution or verdict inferred from
+posting. Author CPU container stopped/removed; original inputs/private evidence
+remain on data. No V3/production/Gitlink/cache/GPU/model/train/PR/merge changes.
+STOP implementation pending GPT independent config/native real fourframe check;
+Owner next reviews native rooms/relations/six+Island, not accepted pointclouds.
+
 # 2026-11-09 15:36 CST — native integration author verification complete, publishing fixed source
 
 REVIEW candidate on codex/g2-f1-native-bridge from dc714108; native companion

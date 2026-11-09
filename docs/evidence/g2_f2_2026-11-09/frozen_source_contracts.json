@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "git_blob_sha": "a84473b7276eb8812d3afdaeab4f0d1262453220",
+      "path": "g2/sim/source_geometry.py",
+      "unchanged": true
+    },
+    {
+      "git_blob_sha": "d2c8ad4bf1e65dc89128a0fcc06d3881dd9fa8c8",
+      "path": "g2/sim/surface_sampling.py",
+      "unchanged": true
+    },
+    {
+      "git_blob_sha": "3e2c5dcb3ba8ee86089083d7943f6c4b3071707b",
+      "path": "g2/sim/prescan.py",
+      "unchanged": true
+    },
+    {
+      "git_blob_sha": "0edcfce540f8a0876cc396fe372a11bb66106382",
+      "path": "g2/sim/source_roles.py",
+      "unchanged": true
+    }
+  ],
+  "gitlink": "160000 commit 1ca308055fc41fb69efaeb9efaa23808f164a18e\tcosmos-framework"
+}

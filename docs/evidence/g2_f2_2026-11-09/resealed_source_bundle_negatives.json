@@ -1,0 +1,46 @@
+{
+  "private_layout_acceptance": false,
+  "results": [
+    {
+      "case": "owner_swap",
+      "reason": "Full Map surface entity owner differs from actual native source geometry",
+      "status": "REJECTED"
+    },
+    {
+      "case": "owner_drop",
+      "reason": "Full Map surface entity owner differs from actual native source geometry",
+      "status": "REJECTED"
+    },
+    {
+      "case": "ambiguous_owner",
+      "reason": "Full Map surface entity owner differs from actual native source geometry",
+      "status": "REJECTED"
+    },
+    {
+      "case": "scope_claim",
+      "reason": "Full Map bundle cannot assert perception/training/source certification",
+      "status": "REJECTED"
+    },
+    {
+      "case": "structure_claim",
+      "reason": "Full Map bundle cannot assert perception/training/source certification",
+      "status": "REJECTED"
+    },
+    {
+      "case": "structure_proof",
+      "reason": "Full Map bundle cannot assert perception/training/source certification",
+      "status": "REJECTED"
+    },
+    {
+      "case": "compiled_geom_position",
+      "reason": "Full Map geom audit differs from actual compiled source/state/role",
+      "status": "REJECTED"
+    },
+    {
+      "case": "original_role_metadata",
+      "reason": "Full Map visual source identity differs from original metadata/ep_meta",
+      "status": "REJECTED"
+    }
+  ],
+  "schema": "g2_own_full_map_resealed_negatives_v1"
+}

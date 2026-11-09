@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/workspace/work/psm_wma_n6/g2/tests/full_map_cpu_smoke.py", line 94, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/workspace/work/psm_wma_n6/g2/tests/full_map_cpu_smoke.py", line 90, in main
+    result=make_sources(args.output,args.nav_repo) if args.stage=='prepare' else collect(args.output)
+                                                                                 ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/psm_wma_n6/g2/tests/full_map_cpu_smoke.py", line 76, in collect
+    assert by_source['island']['island_id'] and by_source['table']['island_id']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

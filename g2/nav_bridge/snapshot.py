@@ -43,7 +43,8 @@ def _native_structure_header(s):
     if not isinstance(meta,dict):raise ContractError("native structural evidence must be an object")
     statuses={"NO_OBSERVED_STRUCTURAL_SUPPORT","BLOCKED_NATIVE_SENSOR_FLOOR_EVIDENCE",
         "NO_OBSERVED_NATIVE_ROOM_FREE_COLUMNS","BLOCKED_HIGHER_THAN_OBSERVED_ROOM_GROUND",
-        "BLOCKED_UNOBSERVED_GROUND_FOUNDATION","PARTIAL_OBSERVED_AXIS_ALIGNED_PATCHES","OBSERVED_AXIS_ALIGNED_BOUNDARY_COVERAGE"}
+        "BLOCKED_UNOBSERVED_GROUND_FOUNDATION","BLOCKED_SENSOR_PROBE_OVER_KNOWN_FREE_BELOW",
+        "PARTIAL_OBSERVED_AXIS_ALIGNED_PATCHES","OBSERVED_AXIS_ALIGNED_BOUNDARY_COVERAGE"}
     if meta.get("status") not in statuses:
         raise ContractError("unsupported or overclaimed native structural status")
     sha(meta.get("grid_sha256"));sha(meta.get("occupancy_sha256"))
@@ -68,7 +69,14 @@ def _native_structure_header(s):
             raise ContractError("native floor height must be finite")
     elif probe.get("floor_z") is not None or probe.get("sensor_position") is not None:
         raise ContractError("unavailable native probe cannot provide guessed pose/height")
-    if roots and (not probe["verified"] or meta.get("floor_evidence_source")!="NATIVE_SENSOR_PROBE_AND_OBSERVED_ROOM_FOUNDATION"):
+    policy=meta.get('floor_support_policy','SOLID_FOUNDATION_V1')
+    if policy not in ('SOLID_FOUNDATION_V1','LOCAL_THIN_SURFACE_V2'):
+        raise ContractError('unsupported native floor support policy')
+    expected_floor_source='NATIVE_SENSOR_PROBE_AND_LOCAL_OBSERVED_SURFACES' if policy=='LOCAL_THIN_SURFACE_V2' else 'NATIVE_SENSOR_PROBE_AND_OBSERVED_ROOM_FOUNDATION'
+    if policy=='LOCAL_THIN_SURFACE_V2' and any(type(meta.get(k)) is not int or meta[k]<0 for k in
+            ('observed_floor_cells','unknown_below_floor_cells','rejected_free_below_cells')):
+        raise ContractError('native local floor evidence counters missing')
+    if roots and (not probe["verified"] or meta.get("floor_evidence_source")!=expected_floor_source):
         raise ContractError("native Floor/Wall roots lack observed ground foundation")
     last=s.get("last_rgbd_observation_timestamp_ns")
     if type(last) is not int or not 0<=last<=s["timestamp_ns"]:
@@ -148,6 +156,13 @@ def _verify_native_observed_coverage(s,raw,cells,boxes):
                     observed.append(origin[2]+(z+.5)*res);break
     if not observed or abs(min(observed)-probe["floor_z"])>res*1e-6:
         raise ContractError("native verified floor probe differs from actual occupied support")
+    local=meta.get('floor_support_policy')=='LOCAL_THIN_SURFACE_V2'
+    if local:
+        for dx in (-1,0,1):
+            for dy in (-1,0,1):
+                if state(sx+dx,sy+dy,floor)==2 and state(sx+dx,sy+dy,floor+1)==1 and any(
+                        state(sx+dx,sy+dy,z)==1 for z in range(floor)):
+                    raise ContractError('native floor probe is a raised surface over known FREE')
     # These constants define NATIVE_OCCUPANCY_PATCHES_V1 in nav_sg, not a new
     # G2 classifier. Only native-provided Room cells and patches are checked.
     span=1.60/res
@@ -179,8 +194,19 @@ def _verify_native_observed_coverage(s,raw,cells,boxes):
                 raise ContractError("native wall patch lacks continuous occupied boundary height from ground")
             walls.setdefault(uid,set()).update(support)
     for (x,y),uid in interior.items():
-        if uid in owners and any(state(x,y,z)!=2 for z in range(floor+1)):
+        if not local and uid in owners and any(state(x,y,z)!=2 for z in range(floor+1)):
             raise ContractError("native structural roots lack the whole Room's observed foundation")
+    if local:
+        supported={(x,y) for (x,y),uid in interior.items() if address(x,y,floor) in floors.get(uid,set())}
+        if any(any(state(x,y,z)==1 for z in range(floor)) for x,y in supported):
+            raise ContractError('native local floor patch is above observed FREE space')
+        unknown=sum(any(state(x,y,z)==0 for z in range(floor)) for x,y in supported)
+        rejected=sum(state(x,y,floor)==2 and state(x,y,floor+1)==1 and
+            next((z for z in range(dims[2]-1) if state(x,y,z)==2 and state(x,y,z+1)==1),None)==floor and
+            any(state(x,y,z)==1 for z in range(floor)) for x,y in interior)
+        if (len(supported)!=meta['observed_floor_cells'] or unknown!=meta['unknown_below_floor_cells'] or
+                rejected!=meta['rejected_free_below_cells'] or len(interior)-len(supported)!=meta['unsupported_floor_cells']):
+            raise ContractError('native local floor support/UNKNOWN counts differ')
     missing_floor=sum(address(x,y,floor) not in floors.get(uid,set()) for (x,y),uid in interior.items())
     if missing_floor and not meta["unsupported_floor_cells"]:
         raise ContractError("native floor coverage gaps cannot be reported as zero")
@@ -290,7 +316,7 @@ def validate_snapshot(s):
     for k in ("frame_id","timestamp_ns","completed_rgbd_observations"):
         if type(s.get(k)) is not int or s[k]<0:
             raise ContractError("invalid native "+k)
-    if s.get("source_mode") not in ("perception","oracle_diagnostic"):
+    if s.get("source_mode") not in ("perception","oracle_diagnostic","full_map_mujoco_source"):
         raise ContractError("native source mode must be explicit")
     if type(s.get("affiliations_complete")) is not bool:
         raise ContractError("native affiliation status required")
@@ -321,7 +347,7 @@ def validate_snapshot(s):
         if type(uid) is not int or uid<0 or uid in room_ids:
             raise ContractError("duplicate/invalid native Room UID")
         room_ids.add(uid);vector(r.get("center"),"Room center")
-        if r.get("frame_axes")!="world_axes":
+        if r.get("frame_axes") not in (("room_reference_axes",) if "connection_protocol" in s else ("world_axes",)):
             raise ContractError("unsupported Room frame; do not guess a wall-aligned axis")
     by_id={}
     for e in entities:
@@ -360,10 +386,21 @@ def validate_snapshot(s):
     if s.get("building"):
         if s["building"].get("id")!="building_0":raise ContractError("invalid native Building ID")
         nodes.add("building_0")
-    if s.get("geometry_source_mode") not in ("ORACLE_GRID","PRESCAN_PREBUILT","SENSOR_INCREMENTAL"):
+    if s.get("geometry_source_mode") not in ("ORACLE_GRID","PRESCAN_PREBUILT","SENSOR_INCREMENTAL","FULL_MAP_MUJOCO_SOURCE"):
         raise ContractError("native geometry source must be explicit")
-    if (s["source_mode"]=="perception") == (s["geometry_source_mode"]=="ORACLE_GRID"):
+    if ((s["source_mode"]=="oracle_diagnostic") != (s["geometry_source_mode"]=="ORACLE_GRID") or
+            (s["source_mode"]=="full_map_mujoco_source") != (s["geometry_source_mode"]=="FULL_MAP_MUJOCO_SOURCE")):
         raise ContractError("native oracle/perception geometry mode conflict")
+    if s["source_mode"]=="full_map_mujoco_source":
+        proof=s.get("full_map_source",{})
+        for k in ("native_manifest_sha256","source_proof_sha256"):sha(proof.get(k))
+        if (proof.get("native_geometry_backend")!="ORACLE_GRID" or proof.get("status")!="MUJOCO_FULL_MAP_GT_PENDING_HUMAN" or
+                proof.get("model_observation") is not False or proof.get("training_ready") is not False or
+                s.get("structure_mode")!="MUJOCO_FULL_MAP_GT_V1" or
+                s.get("object_frontend_status")!="MUJOCO_GT_SOURCE_NOT_MODEL_PREDICTIONS" or
+                s["completed_rgbd_observations"]!=0 or s.get("last_rgbd_observation_timestamp_ns")!=0 or
+                any(e.get("observation_source")!="MUJOCO_FULL_MAP_GT" for e in entities)):
+            raise ContractError("Full Map must remain explicit source GT, never model observations")
     relations=s.get("relations")
     if not isinstance(relations,list):
         raise ContractError("native relation list missing")
@@ -373,6 +410,8 @@ def validate_snapshot(s):
     if s.get("surface_file")!="surfaces.csv":
         raise ContractError("unexpected native surface path")
     _native_structure_header(s)
+    from .connections import verify_connection_evidence
+    verify_connection_evidence(s)
     return s
 
 
@@ -479,6 +518,8 @@ def capture(native_directory,output,*,native_run=None,allow_oracle_diagnostic=Fa
     if marker.read_text()!="nav_sg_spatial_snapshot_v1\n":
         raise ContractError("native snapshot has no valid completion marker")
     s=validate_snapshot(read_json(native/"snapshot.json"))
+    if s["source_mode"]=="full_map_mujoco_source":
+        raise ContractError("Full Map requires its dedicated source-proof capture")
     if expected_build_source_sha256 and s["native_build_source_sha256"]!=sha(expected_build_source_sha256):
         raise ContractError("native build source mismatch")
     witness=None
@@ -549,6 +590,9 @@ def load_bundle(directory):
     expected_files={"snapshot.json","surfaces.csv","grid_states.raw","SNAPSHOT_COMPLETE"}
     scope=manifest.get("source_scope",{})
     if not isinstance(scope,dict):raise ContractError("invalid source scope packet")
+    if scope.get("status")=="MUJOCO_FULL_MAP_GT_PENDING_HUMAN":
+        from .full_map import verify_bundle
+        return verify_bundle(root,manifest)
     if scope.get("status")==REVIEWED_SCOPE:expected_files|=EVIDENCE_FILES
     if scope.get("status")==REVIEWED_SCOPE and scope.get("color_audit_sha256"):
         expected_files.add(EVIDENCE_COLOR_AUDIT)
