@@ -21,9 +21,12 @@ def main():
     parser.add_argument('--catalog', required=True)
     parser.add_argument('--output', required=True)
     parser.add_argument('--fetch-public-reference', action='store_true')
+    parser.add_argument('--public-reference-root')
     args = parser.parse_args()
     runtime = read_json(args.runtime_json); reference = read_json(args.catalog)
     protected = [args.runtime_json, args.catalog, runtime['gate'], *runtime.get('generator_roots', {}).values()]
+    if args.public_reference_root:
+        protected.append(args.public_reference_root)
     for layout in (1, 10):
         path = Path(runtime['gate']) / 'evidence' / ('roles_layout%d_frame0_inventory' % layout) / 'inventory.json'
         protected.extend(Path(s['path']).resolve(strict=True).parent for s in read_json(path)['sources'])
@@ -40,6 +43,12 @@ def main():
     for group in {r['root'] for r in reference['sources'].values()}:
         group_records = {key: r for key, r in reference['sources'].items() if r['root'] == group}
         if all(origins.get(key) == 'EXISTING_SOURCE_BYTES_MATCH' for key in group_records):
+            continue
+        if args.public_reference_root:
+            for key, record in group_records.items():
+                verified_file(args.public_reference_root, record)
+                origins[key] = 'PINNED_PUBLIC_REFERENCE_SNAPSHOT_NOT_INSTALLED_VERSION_PROOF'
+            roots[group] = str(Path(args.public_reference_root).resolve(strict=True))
             continue
         if not args.fetch_public_reference:
             raise RuntimeError('matching local source roots unavailable; explicit public reference snapshot required')
