@@ -230,3 +230,13 @@ CPU201PASS/1487sourcehashes; GPU correctnessPASS, performanceNOT_MET/Shell2,
 1.0478x below predeclared1.05x. No threshold change or extra model rerun;
 Stage1P99 unresolved. Raw GPU files retained on server, no private file export.
 Independent exact-pair incremental review requested; keepDraft/noV3merge.
+
+
+## 2026-11-09 — GPT Issue31 Stage2 independent verdict: REQUEST_CHANGES
+
+- **Frozen new implementation pair**: Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`; Stage1 approved previous `5b89f3ed/4446be0f`. Documentation/evidence HEAD is not a new formal target.
+- **Formal verdict `REQUEST_CHANGES`** for Issue #31 Stage2 performance Gate; production correctness no newly confirmed blocker. Frozen model-only same-Local H100 B1/guidance1/30-UniPC **P50 speedup≥1.05×** remains unmet by **1.047834×** (P50 **837.0812→798.8678ms**). Benchmark formal threshold in `tools/v3/benchmark_local_ttt_prefix_kv.py:467–471`, actual code target `cosmos_framework/model/generator/omni_mot_model.py:3998–4025`. **Severity MEDIUM, performance-evidence-only**; benchmark exit2 and `PERFORMANCE_NOT_MET` are correct, not test bugs. No threshold change, cherry-pick, or repetitive same-code rerun to obtain PASS.
+- **Independent CPU**: GPT on clean server exact-pair new `prefix_pack_template_test.py` **14/14 PASS**; author `201 passed, 1 deselected` original JUnit/log checked; old inherited W0 baseline failure remains excluded, no tracked change to scan path.
+- **Independent H100 evidence**: Author's **31/31 server raw file SHA256+size** match published derived index; GPT independently parsed raw 30 balanced AB/BA pairs, 30/30 faster, mean saving38.841ms; P95 844.7195→803.0262ms, P99 846.2682→805.8524ms *within this small sample only*. Saved Action/Vision tensors `torch.equal` optimized/reference; changing Prefix produces Action max-abs1.9608675. 28 layers all 30 Prefix contexts, text KV29 gen-only; 31→2 native pack calls incl common preparation1. Same checkpoint/inputs and both text KV ON; no Sim/900EP/NoTTT cross experiment.
+- **Acceptance**: new substantive code/performance work plus a **new formal pair**, or explicit new Owner acceptance contract. Keep RootPR33/ChildPR11 Draft and **unmerged**, no automatic Stage1/Issue27–28/V3 merge. Stage1 old P99 anomaly still OPEN; this test cannot close production tail SLA.
+- Detailed independent review: `docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_REQUEST_CHANGES.md`.
