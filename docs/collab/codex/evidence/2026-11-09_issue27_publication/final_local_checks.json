@@ -7,5 +7,7 @@
   "source_tests_unchanged_since_author_gate": true,
   "formal_root": "15dbc97bf13437905ec38247382834067e5341ae",
   "formal_child_gitlink": "60b252d05157b2753d2caebae32b11c878504bbe",
-  "status": "LOCAL_PUBLICATION_FINAL_CHECKS_PASS"
+  "status": "LOCAL_PUBLICATION_FINAL_CHECKS_PASS",
+  "inbox_bytes_after_append_only_close_note": 124400,
+  "publication_whitespace_correction": "append-only closing note after docs EOF blank; no source/test changes"
 }

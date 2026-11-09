@@ -552,3 +552,4 @@ Exact Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child00f30235da6ffb0
 - 41/41 remote source/evidence/Inbox Blob SHAs match local Git; fetched Root Gitlink exact. Official V3 remains e58cef1f and Child b0dbd115. Raw90 files include final author965+207PASS, RED2 and retained development failures. Receipt: `docs/collab/codex/evidence/2026-11-09_issue27_publication/publication_receipt.json`.
 - Fresh GPT incremental Code Gate request is available through canonical Inbox and both Draft PRs. Publication is not reviewer ACK/approval. No GPU/realSim/SR/900EP/training/official merge authorization inferred.
 
+- Publication receipts are bookkeeping; the tested Formal Pair remains unchanged.
