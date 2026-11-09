@@ -1,0 +1,378 @@
+diff --git a/cosmos_framework/model/generator/mot/prefix_pack_template_test.py b/cosmos_framework/model/generator/mot/prefix_pack_template_test.py
+new file mode 100644
+index 00000000..53734587
+--- /dev/null
++++ b/cosmos_framework/model/generator/mot/prefix_pack_template_test.py
+@@ -0,0 +1,227 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++"""Issue31 Stage2: request-local native packing, independent of text-KV gain."""
++
++import dataclasses
++import weakref
++from types import MethodType, SimpleNamespace
++
++import pytest
++import torch
++
++from cosmos_framework.data.generator.sequence_packing import pack_input_sequence
++from cosmos_framework.data.generator.sequence_packing.sequence import PackedSequence, SequencePlan
++from cosmos_framework.model.generator.mot.prefix_text_kv_memory_test import _generation_harness
++from cosmos_framework.model.generator.mot.prefix_text_kv_memory_test import cpu_kernels as cpu_kernels
++from cosmos_framework.model.generator.omni_mot_model import OmniMoTModel
++from cosmos_framework.model.generator.utils.data_and_condition import GenerationDataClean
++
++
++def _snapshot(value):
++    if isinstance(value, torch.Tensor):
++        return value.clone()
++    if dataclasses.is_dataclass(value):
++        return {field.name: _snapshot(getattr(value, field.name)) for field in dataclasses.fields(value)}
++    if isinstance(value, (list, tuple)):
++        return type(value)(_snapshot(v) for v in value)
++    return value
++
++
++def _assert_same(left, right):
++    if isinstance(left, torch.Tensor):
++        torch.testing.assert_close(left, right, rtol=0, atol=0)
++    elif isinstance(left, dict):
++        assert left.keys() == right.keys()
++        for key in left:
++            _assert_same(left[key], right[key])
++    elif isinstance(left, (tuple, list)):
++        assert len(left) == len(right)
++        for x, y in zip(left, right, strict=True):
++            _assert_same(x, y)
++    else:
++        assert left == right
++
++
++@pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
++@pytest.mark.parametrize("noisy_action", [False, True])
++def test_native_velocity_template_matches_repack_every_step(monkeypatch, dtype, noisy_action):
++    """Real packer/get_velocity/update; substitute device transfer and model only.
++
++    All finalized dataclass fields are compared, not just the synthetic velocity:
++    current Prefix, text/positions, conditioned/noisy masks, domain/raw15 validity,
++    payloads and timesteps. This exercises 30 distinct noise/time values.
++    """
++    torch.manual_seed(71)
++    monkeypatch.setattr(PackedSequence, "to_cuda", lambda self: None)
++    prefix = torch.randn(4, 32, dtype=dtype)
++    clean = GenerationDataClean(
++        batch_size=1,
++        is_image_batch=False,
++        x0_tokens_vision=[torch.randn(1, 16, 2, 2, 2, dtype=dtype)],
++        x0_tokens_action=[torch.randn(17, 16, dtype=dtype)],
++        x0_tokens_local_memory=[prefix],
++        action_domain_id=[torch.full((17,), 2, dtype=torch.int64)],
++        raw_action_dim=[15],
++        action_valid_mask=[torch.tensor([True] * 14 + [False])],
++    )
++    plans = [
++        SequencePlan(
++            has_text=True,
++            has_vision=True,
++            has_action=True,
++            has_local_memory=True,
++            condition_frame_indexes_vision=[0],
++            condition_frame_indexes_action=[0] if noisy_action else list(range(17)),
++        )
++    ]
++    packed_snapshots = []
++
++    def pack(plans, text, data, time, **kwargs):
++        return pack_input_sequence(
++            plans,
++            text,
++            data,
++            time,
++            special_tokens={"eos_token_id": 1, "start_of_generation": 2, "end_of_generation": 3},
++            latent_patch_size=1,
++            action_dim=16,
++            **kwargs,
++        )
++
++    def denoise(*, data_batch_packed, **kwargs):
++        p = data_batch_packed
++        packed_snapshots.append(_snapshot(p))
++        assert p.local_memory_tokens[0] is prefix
++        shift = prefix.mean() + p.vision.timesteps.float().mean().to(dtype) * 0.001
++        return dict(
++            preds_vision=[p.vision.tokens[0].squeeze(0) * 0.5 + shift], preds_action=[p.action.tokens[0] * 0.25 + shift]
++        )
++
++    obj = SimpleNamespace(
++        config=SimpleNamespace(action_gen=True, sound_gen=False),
++        tensor_kwargs=dict(device="cpu", dtype=dtype),
++        _pack_input_sequence=pack,
++        _derive_include_end_of_generation_token=lambda: False,
++        denoise=denoise,
++    )
++    for name in ("_get_velocity", "_update_inference_pack_template", "_copy_timestep_to_template"):
++        setattr(obj, name, MethodType(getattr(OmniMoTModel, name), obj))
++    template = pack(plans, [[10, 20, 30]], clean, torch.zeros(1))
++    original_prefix = prefix.clone()
++    for step in range(30):
++        noise = [torch.randn(128 + (272 if noisy_action else 0), dtype=dtype)]
++        kwargs = dict(
++            noise_x=noise,
++            timestep=torch.tensor([[1000.0 - step * 30.0]]),
++            text_tokens=[[10, 20, 30]],
++            sequence_plans=plans,
++            gen_data_clean=clean,
++            has_noisy_actions=noisy_action,
++        )
++        reference = obj._get_velocity(**kwargs)
++        actual = obj._get_velocity(packed_sequence_template=template, **kwargs)
++        _assert_same(packed_snapshots[-2], packed_snapshots[-1])
++        torch.testing.assert_close(reference[0], actual[0], rtol=0, atol=0)
++    torch.testing.assert_close(prefix, original_prefix, rtol=0, atol=0)
++    assert template.local_memory_tokens[0] is prefix
++    assert not hasattr(obj, "packed_sequence_template")
++
++
++def test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix():
++    obj, batch = _generation_harness()
++    kwargs = dict(guidance=1.0, num_steps=30, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
++    reference = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=False, **kwargs)
++    assert obj.seen == [(True, False, False)] + [(True, True, False)] * 29
++    obj.seen.clear()
++    actual = obj.generate_samples_from_batch(batch, **kwargs)
++    assert obj.templates == 1
++    assert obj.seen == [(True, False, True)] + [(True, True, True)] * 29
++    for key in actual:
++        torch.testing.assert_close(actual[key][0], reference[key][0], rtol=0, atol=0)
++    # Disabling text KV preserves the original Prefix-on path as before Stage2.
++    obj.seen.clear()
++    original = obj.generate_samples_from_batch(batch, use_prefix_text_kv_cache=False, **kwargs)
++    assert obj.seen == [(False, False, False)] * 30
++    for key in original:
++        torch.testing.assert_close(original[key][0], reference[key][0], rtol=0, atol=0)
++
++
++@pytest.mark.parametrize("setting", ["temporal", "three_way", "postprocess", "cp", "guidance"])
++def test_prefix_pack_uses_only_the_approved_single_sample_cache_layout(setting):
++    obj, batch = _generation_harness()
++    kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
++    if setting == "temporal":
++        obj.config.video_temporal_causal = True
++    elif setting == "three_way":
++        obj.config.joint_attn_implementation = "three_way"
++    elif setting == "postprocess":
++        kwargs["velocity_postprocess_builder"] = lambda **kw: None
++    elif setting == "cp":
++        obj.parallel_dims = SimpleNamespace(cp_enabled=True, cfgp_enabled=False, dp_shard_mesh=None)
++        # A real CP generation needs a process group; check the existing CP
++        # eligibility guard here without fabricating distributed execution.
++        assert not obj._can_reuse_inference_text_kv(
++            [SequencePlan(has_text=True)],
++            GenerationDataClean(batch_size=1, is_image_batch=False),
++            reuse_pack_templates=True,
++            has_velocity_postprocess=False,
++        )
++        assert obj.templates == 0
++        return
++    else:
++        kwargs["guidance"] = 2.0
++        obj._run_classifier_free_guidance = MethodType(OmniMoTModel._run_classifier_free_guidance, obj)
++    obj.generate_samples_from_batch(batch, **kwargs)
++    assert obj.templates == 0
++    assert all(not any(row) for row in obj.seen)
++
++
++@pytest.mark.parametrize("fail_at", [None, 1, 3])
++def test_pack_lifetime_request_changes_and_failure_retry(fail_at):
++    obj, batch = _generation_harness()
++    refs = []
++
++    class Template:
++        def to_cuda(self):
++            pass
++
++    def pack(*args, **kwargs):
++        value = Template()
++        refs.append(weakref.ref(value))
++        return value
++
++    obj._pack_input_sequence = pack
++    prefix = torch.randn(4, 32)
++    kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
++    if fail_at is not None:
++        obj.fail_at = fail_at
++        with pytest.raises(RuntimeError, match="injected generation failure"):
++            obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
++        assert all(not cache.is_initialized for cache in obj.created[-1])
++        obj.fail_at = None
++    obj.seen.clear()
++    a = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
++    assert obj.seen[0] == (True, False, True)
++    changed = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix + 3,), **kwargs)
++    assert not torch.equal(a["action"][0], changed["action"][0])
++    obj.text += 2
++    different_text = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
++    assert not torch.equal(a["action"][0], different_text["action"][0])
++    obj.text -= 2
++    # A cold-start request and a new prefixed Episode never share templates/KV.
++    obj.generate_samples_from_batch(batch, **kwargs)
++    again = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
++    torch.testing.assert_close(a["action"][0], again["action"][0], rtol=0, atol=1e-6)
++    assert len(refs) == 5 + int(fail_at is not None)
++    assert all(ref() is None for ref in refs)
++
++
++def test_no_prefix_pack_option_preserves_native_fast_path():
++    obj, batch = _generation_harness()
++    kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
++    a = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=False, **kwargs)
++    obj.seen.clear()
++    b = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=True, **kwargs)
++    assert obj.seen == [(True, False, True)] + [(True, True, True)] * 5
++    assert obj.templates == 2
++    torch.testing.assert_close(a["action"][0], b["action"][0], rtol=0, atol=0)
+diff --git a/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py b/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py
+index 59058b45..40e730f0 100644
+--- a/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py
++++ b/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py
+@@ -592,7 +592,13 @@ def _generation_harness():
+ @pytest.mark.parametrize("setting", ["temporal_causal", "three_way", "postprocess_builder"])
+ def test_generation_unsupported_prefix_cache_layout_keeps_original_path(setting):
+     obj, batch = _generation_harness()
+-    kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
++    kwargs = dict(
++        guidance=1.0,
++        num_steps=3,
++        seed=[31],
++        _local_memory_prefixes=(torch.randn(4, 32),),
++        use_prefix_pack_templates=False,
++    )
+     if setting == "temporal_causal":
+         obj.config.video_temporal_causal = True
+     elif setting == "three_way":
+@@ -607,7 +613,13 @@ def test_generation_unsupported_prefix_cache_layout_keeps_original_path(setting)
+ def test_generation_entrypoint_same_prefix_actions_cache_hits_and_opt_out():
+     obj, batch = _generation_harness()
+     prefix = (torch.randn(4, 32),)
+-    kwargs = dict(guidance=1.0, num_steps=6, seed=[31], _local_memory_prefixes=prefix)
++    kwargs = dict(
++        guidance=1.0,
++        num_steps=6,
++        seed=[31],
++        _local_memory_prefixes=prefix,
++        use_prefix_pack_templates=False,
++    )
+     reference = obj.generate_samples_from_batch(batch, use_prefix_text_kv_cache=False, **kwargs)
+     assert obj.seen == [(False, False, False)] * 6 and not obj.created
+     obj.seen.clear()
+@@ -625,7 +637,13 @@ def test_generation_entrypoint_same_prefix_actions_cache_hits_and_opt_out():
+ def test_generation_exception_clears_cache_and_retry_starts_with_fill(fail_at):
+     obj, batch = _generation_harness()
+     prefix = (torch.randn(4, 32),)
+-    kwargs = dict(guidance=1.0, num_steps=6, seed=[31], _local_memory_prefixes=prefix)
++    kwargs = dict(
++        guidance=1.0,
++        num_steps=6,
++        seed=[31],
++        _local_memory_prefixes=prefix,
++        use_prefix_pack_templates=False,
++    )
+     obj.fail_at = fail_at
+     with pytest.raises(RuntimeError, match="injected generation failure"):
+         obj.generate_samples_from_batch(batch, **kwargs)
+@@ -641,7 +659,7 @@ def test_generation_exception_clears_cache_and_retry_starts_with_fill(fail_at):
+ 
+ def test_generation_no_prefix_native_path_and_option_are_unchanged():
+     obj, batch = _generation_harness()
+-    kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
++    kwargs = dict(guidance=1.0, num_steps=6, seed=[31], use_prefix_pack_templates=False)
+     reference = obj.generate_samples_from_batch(batch, use_prefix_text_kv_cache=False, **kwargs)
+     assert obj.seen == [(True, False, True)] + [(True, True, True)] * 5
+     obj.seen.clear()
+@@ -653,7 +671,7 @@ def test_generation_no_prefix_native_path_and_option_are_unchanged():
+ def test_generation_requests_changed_instruction_prefix_and_reset_are_isolated():
+     obj, batch = _generation_harness()
+     prefix = torch.randn(4, 32)
+-    kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
++    kwargs = dict(guidance=1.0, num_steps=6, seed=[31], use_prefix_pack_templates=False)
+ 
+     def request(p):
+         obj.seen.clear()
+diff --git a/cosmos_framework/model/generator/omni_mot_model.py b/cosmos_framework/model/generator/omni_mot_model.py
+index 4deb4ad6..9633e516 100644
+--- a/cosmos_framework/model/generator/omni_mot_model.py
++++ b/cosmos_framework/model/generator/omni_mot_model.py
+@@ -3730,6 +3730,7 @@ class OmniMoTModel(ImaginaireModel):
+         upsample_seed: int | None = None,
+         _local_memory_prefixes: tuple[torch.Tensor | None, ...] | None = None,
+         use_prefix_text_kv_cache: bool = True,
++        use_prefix_pack_templates: bool = True,
+         **kwargs,
+     ) -> dict[str, list[torch.Tensor]]:
+         """
+@@ -3774,7 +3775,11 @@ class OmniMoTModel(ImaginaireModel):
+             use_prefix_text_kv_cache (bool): Reuse request-local text K/V with a Local
+                 Prefix for eligible B1, two_way, guidance=1 inference. False keeps
+                 the original Prefix-on path for controlled same-weight comparisons.
+-                Does not change No-TTT, pack-template reuse or model-mode validation.
++                Does not change No-TTT or model-mode validation.
++            use_prefix_pack_templates (bool): Reuse request-local packed metadata
++                for eligible Prefix-aware text-KV requests. Prefix stays fixed
++                within this request; noisy tokens and timesteps refresh every step.
++                False retains the approved text-KV-only path for comparisons.
+             upsample_task (str | None): Canonical V4.2 task resolved by the
+                 inference caller. ``None`` disables native prompt upsampling.
+                 Otherwise, the conditional captions in
+@@ -3993,8 +3998,28 @@ class OmniMoTModel(ImaginaireModel):
+             _align_device,
+         )
+ 
++        reuse_prefix_text_kv = (
++            has_local_prefixes
++            and use_prefix_text_kv_cache
++            and guidance == 1.0
++            and velocity_postprocess_builder is None
++            and _dp_shard_group is None
++            and _cfgp_group is None
++            and (self.parallel_dims is None or not self.parallel_dims.cfgp_enabled)
++            and self._can_reuse_inference_text_kv(
++                sequence_plans,
++                gen_data_clean,
++                reuse_pack_templates=self._can_reuse_inference_pack_templates(sequence_plans, gen_data_clean),
++                has_velocity_postprocess=velocity_postprocess is not None,
++            )
++        )
++        # Prefix is attached before packing and immutable for this generation.
++        # Templates live only in this call; the existing update path refreshes
++        # current noise/timesteps while preserving Prefix, masks and positions.
+         reuse_pack_templates = (
+-            False if has_local_prefixes else self._can_reuse_inference_pack_templates(sequence_plans, gen_data_clean)
++            reuse_prefix_text_kv and use_prefix_pack_templates
++            if has_local_prefixes
++            else self._can_reuse_inference_pack_templates(sequence_plans, gen_data_clean)
+         )
+         cond_packed_sequence_template: PackedSequence | None = None
+         uncond_packed_sequence_template: PackedSequence | None = None
+@@ -4067,22 +4092,6 @@ class OmniMoTModel(ImaginaireModel):
+         # process group whose model-forward sequence is at risk). Text-KV
+         # eligibility must additionally agree across CFG-parallel peers before
+         # either peer installs the request-local attention dispatch.
+-        reuse_prefix_text_kv = (
+-            has_local_prefixes
+-            and use_prefix_text_kv_cache
+-            and guidance == 1.0
+-            and velocity_postprocess_builder is None
+-            and _dp_shard_group is None
+-            and _cfgp_group is None
+-            and (self.parallel_dims is None or not self.parallel_dims.cfgp_enabled)
+-            and self._can_reuse_inference_text_kv(
+-                sequence_plans,
+-                gen_data_clean,
+-                # Eligibility only: Prefix packs are still rebuilt on every step.
+-                reuse_pack_templates=self._can_reuse_inference_pack_templates(sequence_plans, gen_data_clean),
+-                has_velocity_postprocess=velocity_postprocess is not None,
+-            )
+-        )
+         reuse_text_kv = (
+             reuse_prefix_text_kv
+             if has_local_prefixes

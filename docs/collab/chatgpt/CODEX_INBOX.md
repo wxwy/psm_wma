@@ -181,3 +181,37 @@ Fresh incremental GPT review requested on exact5b89/4446; receipt commitmetadata
 - **风险**：性能只证明 model-only 合成固定输入 + 单一 Local iter15000 DCP，不等于真实RoboCasa SR、吞吐或 NoTTT 历史 ~608ms；尾延迟仍需独立 Gate；本 Gate 不授权上游 #27/#28 和 #31 自动合入V3。
 - **详细正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md`。
 - Review/Inbox 的后续文档提交仅为 bookkeeping，**不是 implementation SHA**。
+
+
+## 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack: fresh independent Gate request
+
+FormalRoot `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child-Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`.
+ApprovedStage1Root5b89/Child4446; latestreviewdocs590071c5 preserved. Separate
+v3-local-ttt-prefix-pack-issue31-20261109 candidate, upstreamDrafts unchanged.
+Only productiongenerate_samples_from_batch: same B1/two_way/guidance1 guards,
+request-local native pack templates with current Prefix; original updater/
+Attention/FW/NoTTT/Sim/Worker/VAE/mode-DCP/strictK-H-M-B Resume unchanged.
+Explicit packOFF preserves approvedtextKV-only reference; textKV ON both inGPU.
+
+Exact author02CPU201PASS,0failure/error/skip,shell0/source1487unchanged/static9PASS;
+one inherited W0failure deselected,3baselineI001 documented. Native realpacker
+30step all-field parity/noisyAction variants + lifecycle/error/retry/NoTTT checks.
+Same newtest old4446 productionRED templatecount0/newGREEN; all raw retained.
+GPU02 sameLocaliter15000/4x32Prefix/raw15/H16/B1/30UniPC,30balancedpairs:
+Action/Vision maxabs0, P50837.0812→798.8678ms,
+1.0478x/4.565%less latency; P95844.7195→803.0262ms;
+P99846.2682→805.8524ms/alloutliersretained. Stage1P99cause
+stillOPEN, no tailSLA or NoTTTcross-experiment speed claim. Packtotal31→2 incl
+sharedprep1/denoise30→1;28layersPrefix30/hit29. Hooksremoved/re-warm/limit8/
+requiredDCP/source/FW/Prefix unchanged; owned process exited, otherjobs untouched.
+PriorGPU01benchmark totalcountassertFAIL retained; only Roottool corrected,
+sameChild. Initial newfixtureCPU14FAIL retained, no historicalcount summation.
+GPU statusCORRECTNESS_PASS_PERFORMANCE_NOT_MET/Shell2; predeclared1.05x missed,
+no threshold change/model rerun; performanceGate remainsOPEN.
+GPU raw 31files stayserver-only; derivedstats/hashmanifest published.
+
+Handoff `docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md`.
+Evidence `docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/`.
+Please fresh independent exact-Pair code/CPU/model-only GPU evidence review.
+Author correctness is not performanceGate/independentclosure. KeepDraft/unmerged, no V3 promotion,
+training/Sim/SR/900EP or new denseAttention stage. EvidenceHEAD ismetadata only.

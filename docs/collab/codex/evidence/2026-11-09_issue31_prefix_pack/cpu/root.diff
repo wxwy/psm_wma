@@ -1,0 +1,197 @@
+diff --git a/SESSION.md b/SESSION.md
+index a20d14e8..58b64a76 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,48 @@
++# 2026-11-09 CST — Issue31 Stage2 Prefix-safe pack templates claimed
++
++Author01 exact1568888c/193627f4:201PASS,0failure/error/skip,1487sourcehashes
++unchanged,static9PASS. GPU01 same Pair model/DCP validation passed; warmups and
++audited Action/Vision exact0,28layersPrefix30/hit29. Benchmark-only assertion
++failed because counter includes native preparation pack: actualtotal31/2, not
++denoising-only30/1. Raw GPU01 retained server-only. Correct total assertion only;
++Child193627f4/production unchanged. New Root, exact author02 and same benchmark
++needed. No GPU correctness/performance Gate PASS claimed from partial audit.
++
++Stage2 Child193627f42f4cd1ba6d563aefb8fa8f9428ecb56d committed: only production
++omni_mot_model.py, new227line pack tests, original textKV tests explicitly keep
++packOFF so their approved assertions stay intact. Default eligible Prefix pack
++reuse ON, explicit use_prefix_pack_templates=False retains approved textKV-only
++reference; no-prefix behavior unchanged. Native template update code untouched.
++Narrow dev03 new14PASS/static9PASS. Initial dev01 import-sort failure and dev02
++187PASS/14newfixtureFAIL preserved; fixed fixture CPU SDPA import/domainTensor/
++CP guard-only/no distributed claim/real CFG binding; no production fix for those.
++Next exact clean Root/Child author201CPU, then authorized single-GPU model-only
++packOFF versus packON benchmark with textKV ON both sides. Keep limit8/P99all.
++
++Codex owns ISSUE31-PREFIX-PACK, IN_PROGRESS, independent branch
++v3-local-ttt-prefix-pack-issue31-20261109. Owner latest next-stage instruction:
++restore request-local input pack templates, separately prove equivalence and
++model-only latency, track prior P99 outlier. No merge or Sim/SR/training scope.
++Fresh check before_headcab44ba2 -> advertised590071c599c0531cd9feca9ae748eb0be1af1c89,
++fetch explicit tracking ref and ff-only succeeded; two new GPT docs read in full.
++Formal first-stage Root5b89f3eddbfe27ee72c173696a386e0b756d7866 / Child4446be0f6dad9b6dc887ef90af52d0af754d4682
++APPROVE_CODE confirmed in exact-pair formal GPT review and canonical live Inbox.
++Review docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md.
++Independent25CPU/56rawGPUhashes/exactactions and P50 accepted; P99 and V3 merge
++not approved. Stage2 is a new Owner task, not covered by first-stage approval.
++V3e58cef1f unchanged. Latest Owner V3 roles supersede obsolete V2/Kimi/MM waits.
++
++Planned production scope Child omni_mot_model.py: opt-out for Prefix pack reuse,
++same B1/two_way/guidance1 eligibility, request-local template carries current
++Prefix, refresh every noisy token/timestep without CPU sync. No Attention edit.
++Tests: preserve first-stage checks with explicit pack opt-out; add real packer/
++template equivalence, current Prefix/timestep/noise, lifetime/failure/NoTTT guards.
++Root: Gitlink, focused CPU runner, incremental pack-only GPU benchmark evidence,
++handoff. Reuse first-stage benchmark with opt-out/reference=textKVON/packOFF,
++optimized=textKVON/packON, no factor mixing. P99 retained as separate evidence.
++All private GPU artifacts remain server-only, no active-job/GPU0-3 operation.
++Uncommitted; no new CPU/GPU/latency result or independent Stage2 verdict yet.
++
+ # 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
+ 
+ Task ISSUE31-PREFIX-TEXT-KV REVIEW; Codex author, GPT independent reviewer.
+diff --git a/TODO.md b/TODO.md
+index 261f2edf..9f07249c 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -2,6 +2,8 @@
+ 
+ # 2026-11-09 — Prefix-aware Local-TTT generation
+ 
++- **ISSUE31-PREFIX-PACK** — IN_PROGRESS; Codex; Owner next-stage instruction after exact5b89/4446 GPT APPROVE_CODE, latestdocs590071c5. Independent stacked branch; B1/two_way/guidance1 request-local pack-template reuse with current Prefix, noisy payload/timestep refresh, numerical/lifetime/NoTTT guards and same-Local GPU incremental timing. Preserve P99 outlier and inherited W0 failure. No attention/backend/training/VAE/Sim/Worker/Resume/V3 change. New precise Pair, CPU/raw/derivedGPU evidence and independent incremental Gate required.
++
+ - **ISSUE31-PREFIX-TEXT-KV** — REVIEW; Codex; FormalRoot5b89f3ed/Child4446be0f, DraftPR32/10; exact focused CPU187PASS/zeroFailErrorSkip/1486sourcehashesunchanged, 1 inherited W0 failure deselected +3 baselineI001 documented; real H100 fixed-Local 30pair Vision/Action exact, P50 991.55→825.53ms (1.2011x), P95 improved, one retained outlier/P99 regression. Prefix everylayer/step, request isolation/cleanup; private rawGPU files server-only, derived stats/hashes and raw CPU archived. Fresh independent incremental Gate requested; no pack/backend second stage, training/VAE/Sim/Worker/strictResume change, V3 merge or SR/900EP.
+ 
+ # 2026-11-09 — Shared VAE generic topology
+diff --git a/cosmos-framework b/cosmos-framework
+index 4446be0f..193627f4 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 4446be0f6dad9b6dc887ef90af52d0af754d4682
++Subproject commit 193627f42f4cd1ba6d563aefb8fa8f9428ecb56d
+diff --git a/tools/v3/benchmark_local_ttt_prefix_kv.py b/tools/v3/benchmark_local_ttt_prefix_kv.py
+index b64d2e7b..a84bcd25 100644
+--- a/tools/v3/benchmark_local_ttt_prefix_kv.py
++++ b/tools/v3/benchmark_local_ttt_prefix_kv.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Issue31: same-Local-DCP, Prefix-ON B1 text-KV correctness/performance probe.
++"""Issue31: same-Local-DCP, Prefix-ON B1 cache correctness/performance probe.
+ 
+ Model-only author evidence. No HTTP server, Sim, Worker, training, SR or model
+ mode override. Uses a deterministic synthetic composite observation and real
+@@ -132,6 +132,7 @@ def main():
+     p.add_argument("--warmup-pairs", type=int, default=3)
+     p.add_argument("--pairs", type=int, default=30)
+     p.add_argument("--profile-one", action="store_true")
++    p.add_argument("--optimization", choices=("text_kv", "prefix_pack"), default="text_kv")
+     a = p.parse_args()
+     if a.pairs < 20 or a.warmup_pairs < 2:
+         p.error("at least 20 interleaved measurement pairs and 2 warmup pairs required")
+@@ -163,11 +164,14 @@ def main():
+         num_steps=30,
+         local_memory_mode="required",
+         history_updates_outside_generation_timing=True,
+-        pack_template_reuse_with_prefix=False,
++        optimization=a.optimization,
++        pack_template_reuse_with_prefix=a.optimization == "prefix_pack",
++        baseline_text_kv_cache=a.optimization == "prefix_pack",
+         validation_scope="B1 single GPU two_way only",
+     )
+     handles = []
+     vae_original = None
++    pack_original = None
+     service = None
+     try:
+         gpu_fields = result["gpu_before"].split(",")
+@@ -264,6 +268,15 @@ def main():
+         layers = model.net.language_model.model.layers
+         original_dispatch = [layer.self_attn.dispatch_attention_fn for layer in layers]
+         audit = None
++        pack_calls = 0
++        pack_original = model._pack_input_sequence
++
++        def audit_pack(*args, **kwargs):
++            nonlocal pack_calls
++            pack_calls += 1
++            return pack_original(*args, **kwargs)
++
++        model._pack_input_sequence = audit_pack
+ 
+         def layer_hook(i):
+             def hook(module, positional, kwargs):
+@@ -297,7 +310,8 @@ def main():
+         model.tokenizer_vision_gen.encode = timed_vae
+ 
+         def run(mode, tag, current_prefix=prefix, with_audit=False):
+-            nonlocal audit
++            nonlocal audit, pack_calls
++            pack_calls = 0
+             audit = (
+                 [dict(forwards=0, gen_only=0, prefix_context=0, prefix_kv_projection=0) for _ in layers]
+                 if with_audit
+@@ -321,7 +335,8 @@ def main():
+                     seed=[a.seed],
+                     has_negative_prompt=False,
+                     _local_memory_prefixes=(current_prefix,),
+-                    use_prefix_text_kv_cache=mode == "optimized",
++                    use_prefix_text_kv_cache=mode == "optimized" or a.optimization == "prefix_pack",
++                    use_prefix_pack_templates=a.optimization == "prefix_pack" and mode == "optimized",
+                 )
+             end.record()
+             torch.cuda.synchronize()
+@@ -339,6 +354,7 @@ def main():
+                 for layer, old in zip(layers, original_dispatch, strict=True)
+             )
+             if audit is not None:
++                row["native_pack_calls"] = pack_calls
+                 for layer_audit, counter in zip(audit, projection_counters, strict=True):
+                     layer_audit["prefix_kv_projection"] = int(counter.count.item())
+                 row["layers"] = audit
+@@ -374,9 +390,18 @@ def main():
+         opt_audit, optimized = run("optimized", "audit-optimized", with_audit=True)
+         result["audit_output_errors"] = compare(baseline, optimized)
+         for row in base_audit["layers"]:
+-            assert row == dict(forwards=30, gen_only=0, prefix_context=30, prefix_kv_projection=30)
++            assert row == dict(
++                forwards=30,
++                gen_only=29 if a.optimization == "prefix_pack" else 0,
++                prefix_context=30,
++                prefix_kv_projection=30,
++            )
+         for row in opt_audit["layers"]:
+             assert row == dict(forwards=30, gen_only=29, prefix_context=30, prefix_kv_projection=30)
++        # Native _prepare_inference_data packs once before the denoising loop.
++        # Count that shared preparation too: denoising30->1 means total31->2.
++        assert base_audit["native_pack_calls"] == 31
++        assert opt_audit["native_pack_calls"] == (2 if a.optimization == "prefix_pack" else 31)
+         changed_row, changed = run("optimized", "different-prefix", prefix + 0.5, with_audit=True)
+         assert not torch.equal(optimized["action"][0], changed["action"][0]), "Prefix must affect real actions"
+         retry_row, retry = run("optimized", "original-request-again", with_audit=True)
+@@ -392,6 +417,7 @@ def main():
+         for handle in handles:
+             handle.remove()
+         handles.clear()
++        model._pack_input_sequence = pack_original
+         clean_warmup = []
+         for i in range(a.warmup_pairs):
+             for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
+@@ -403,6 +429,7 @@ def main():
+         torch.save(dict(baseline=baseline, optimized=optimized), a.output_dir / "uninstrumented_outputs.pt")
+         result["uninstrumented_output_errors"] = compare(baseline, optimized)
+         result["layer_hooks_removed_before_measurement"] = True
++        result["pack_audit_removed_before_measurement"] = True
+         records = []
+         for i in range(a.pairs):
+             for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
+@@ -454,6 +481,8 @@ def main():
+             handle.remove()
+         if vae_original is not None:
+             service.model.tokenizer_vision_gen.encode = vae_original
++        if pack_original is not None:
++            service.model._pack_input_sequence = pack_original
+         result["gpu_after"] = gpu_info(a.gpu_index)
+         write_json(a.output_dir / "result.json", result)
+         if "torch" in sys.modules:

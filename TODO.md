@@ -2,9 +2,9 @@
 
 # 2026-11-09 — Prefix-aware Local-TTT generation
 
-- **ISSUE31-PREFIX-PACK** — IN_PROGRESS; Codex; Owner next-stage instruction after exact5b89/4446 GPT APPROVE_CODE, latestdocs590071c5. Independent stacked branch; B1/two_way/guidance1 request-local pack-template reuse with current Prefix, noisy payload/timestep refresh, numerical/lifetime/NoTTT guards and same-Local GPU incremental timing. Preserve P99 outlier and inherited W0 failure. No attention/backend/training/VAE/Sim/Worker/Resume/V3 change. New precise Pair, CPU/raw/derivedGPU evidence and independent incremental Gate required.
+- **ISSUE31-PREFIX-PACK** — REVIEW; Codex; Formal18be4a80/193627f4; focused201CPU/static9/source1487PASS, oldbaselineW0failure explicitly deselected; same-Local H10030pairs/textKV ON both/packOFF-ON exactActions, P50837.08→798.87ms (1.0478x). PerformanceNOT_MET below1.05x/Shell2. Request-local native pack31→2 inclprep1, all28layersPrefix30/hit29. Private rawGPU files server-only, derivedstats/rawCPU archived. Fresh incremental independent Code/Evidence Gate requested; Stage1P99 unresolved, no V3 merge/training/VAE/Sim/Worker/Resume/SR changes.
 
-- **ISSUE31-PREFIX-TEXT-KV** — REVIEW; Codex; FormalRoot5b89f3ed/Child4446be0f, DraftPR32/10; exact focused CPU187PASS/zeroFailErrorSkip/1486sourcehashesunchanged, 1 inherited W0 failure deselected +3 baselineI001 documented; real H100 fixed-Local 30pair Vision/Action exact, P50 991.55→825.53ms (1.2011x), P95 improved, one retained outlier/P99 regression. Prefix everylayer/step, request isolation/cleanup; private rawGPU files server-only, derived stats/hashes and raw CPU archived. Fresh independent incremental Gate requested; no pack/backend second stage, training/VAE/Sim/Worker/strictResume change, V3 merge or SR/900EP.
+- **ISSUE31-PREFIX-TEXT-KV** — DONE (first-stage Code/model-only P50 Gate); exact5b89f3ed/4446be0f GPT APPROVE_CODE in formal review consumed at590071c5. Independent25CPU/56rawhashes/exactActions; author187PASS with inherited W0failure excluded. P50 991.55→825.53ms accepted; P99 unresolved, no V3 merge/Sim/SR/tail-SLA approval. Separate Stage2 task above.
 
 # 2026-11-09 — Shared VAE generic topology
 

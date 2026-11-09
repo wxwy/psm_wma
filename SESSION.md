@@ -1,47 +1,37 @@
-# 2026-11-09 CST — Issue31 Stage2 Prefix-safe pack templates claimed
+# 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack reuse REVIEW
 
-Author01 exact1568888c/193627f4:201PASS,0failure/error/skip,1487sourcehashes
-unchanged,static9PASS. GPU01 same Pair model/DCP validation passed; warmups and
-audited Action/Vision exact0,28layersPrefix30/hit29. Benchmark-only assertion
-failed because counter includes native preparation pack: actualtotal31/2, not
-denoising-only30/1. Raw GPU01 retained server-only. Correct total assertion only;
-Child193627f4/production unchanged. New Root, exact author02 and same benchmark
-needed. No GPU correctness/performance Gate PASS claimed from partial audit.
+Task ISSUE31-PREFIX-PACK REVIEW; authorCodex, independentGPT reviewer.
+FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496/Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d.
+ApprovedStage1Root5b89/Child4446; latestbaseline reviewdocs590071c5 preserved.
+First-stage exact formal GPT APPROVE_CODE consumed aftercab44->590071c5 fetch/
+advertised/ff-only check. Stage2 is new Owner scope, not inherited approval.
+Independent branchv3-local-ttt-prefix-pack-issue31-20261109; V3 unchanged.
 
-Stage2 Child193627f42f4cd1ba6d563aefb8fa8f9428ecb56d committed: only production
-omni_mot_model.py, new227line pack tests, original textKV tests explicitly keep
-packOFF so their approved assertions stay intact. Default eligible Prefix pack
-reuse ON, explicit use_prefix_pack_templates=False retains approved textKV-only
-reference; no-prefix behavior unchanged. Native template update code untouched.
-Narrow dev03 new14PASS/static9PASS. Initial dev01 import-sort failure and dev02
-187PASS/14newfixtureFAIL preserved; fixed fixture CPU SDPA import/domainTensor/
-CP guard-only/no distributed claim/real CFG binding; no production fix for those.
-Next exact clean Root/Child author201CPU, then authorized single-GPU model-only
-packOFF versus packON benchmark with textKV ON both sides. Keep limit8/P99all.
+Only production generate_samples_from_batch changes: approved B1/two_way/
+guidance1 eligibility + request-local Prefix template; updater unchanged, current
+noise/time refreshed, Prefix/masks/positions retained. Explicit packOFF reference,
+NoTTT/Attention/FW/training/VAE/Sim/Worker/DCP/strictK-H-M-B Resume unchanged.
+Exact author02 CPU201PASS/0fail/error/skip/shell0/source1487unchanged/static9PASS;
+one inherited W0failure deselected,3oldI001 retained, full rawfailure history saved.
+Controlled old4446 RED templatecount0/new samecaseGREEN, hash/prodproof archived.
 
-Codex owns ISSUE31-PREFIX-PACK, IN_PROGRESS, independent branch
-v3-local-ttt-prefix-pack-issue31-20261109. Owner latest next-stage instruction:
-restore request-local input pack templates, separately prove equivalence and
-model-only latency, track prior P99 outlier. No merge or Sim/SR/training scope.
-Fresh check before_headcab44ba2 -> advertised590071c599c0531cd9feca9ae748eb0be1af1c89,
-fetch explicit tracking ref and ff-only succeeded; two new GPT docs read in full.
-Formal first-stage Root5b89f3eddbfe27ee72c173696a386e0b756d7866 / Child4446be0f6dad9b6dc887ef90af52d0af754d4682
-APPROVE_CODE confirmed in exact-pair formal GPT review and canonical live Inbox.
-Review docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md.
-Independent25CPU/56rawGPUhashes/exactactions and P50 accepted; P99 and V3 merge
-not approved. Stage2 is a new Owner task, not covered by first-stage approval.
-V3e58cef1f unchanged. Latest Owner V3 roles supersede obsolete V2/Kimi/MM waits.
+GPU02 exactPair correctnessPASS/PERFORMANCE_NOT_MET/exit2, textKV ON both, onlypack flagdiffers,
+same Localiter15000/raw15/H16/4x32Prefix/30step synthetic fixed input/history;
+30balancedpairs, Vision/Action errors0; P50837.0812->798.8678ms,
+1.0478x, reduction4.565%; P95844.7195->803.0262ms;
+P99846.2682->805.8524ms, no SLA/Stage1P99causalclosure.
+Predeclared1.05x threshold not reached; no model rerun/threshold change.
+Pack totals31->2 (sharedprep1, denoise30->1),28layersPrefix30/hit29; audit hooks
+removed before cleanwarmup/timing,limit8/source/FW/Prefix/DCPmetadata unchanged.
+Owned model process exited, onlyGPU6, backgroundload/otherjobs/GPU0-3 untouched.
+RawGPU files stay server-only, derivedstats/hash bindings31files only.
+GPU01priorRoot1568 counterassertFAIL retained; corrected Root benchmarkonly,
+Child unchanged. Initial CPU14fixtureFAIL retained, not relabelledPASS.
 
-Planned production scope Child omni_mot_model.py: opt-out for Prefix pack reuse,
-same B1/two_way/guidance1 eligibility, request-local template carries current
-Prefix, refresh every noisy token/timestep without CPU sync. No Attention edit.
-Tests: preserve first-stage checks with explicit pack opt-out; add real packer/
-template equivalence, current Prefix/timestep/noise, lifetime/failure/NoTTT guards.
-Root: Gitlink, focused CPU runner, incremental pack-only GPU benchmark evidence,
-handoff. Reuse first-stage benchmark with opt-out/reference=textKVON/packOFF,
-optimized=textKVON/packON, no factor mixing. P99 retained as separate evidence.
-All private GPU artifacts remain server-only, no active-job/GPU0-3 operation.
-Uncommitted; no new CPU/GPU/latency result or independent Stage2 verdict yet.
+Handoff docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md
+Evidence docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/
+Next publish metadata/evidence and independent DraftPRs, remote readback, request
+fresh narrow Gate, thenSTOP. No V3 merge, realSim/SR/900EP or training authorized.
 
 # 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
 

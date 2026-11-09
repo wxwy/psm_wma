@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "tools/v3/benchmark_local_ttt_prefix_kv.py",
+    "--help"
+  ],
+  "cwd": "/workspace/work/psm-wma-prefix-pack-issue31",
+  "exit_code": 0
+}
