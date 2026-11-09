@@ -1,0 +1,59 @@
+{
+  "schema": "g2_f2_fixed_source_publication_v1",
+  "psm": {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-f2-source-views",
+    "code_sha": "c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d",
+    "tree": "352226ad1e6bc1133a890e6295290e58fce8e7e1",
+    "base": "feff0d54b04a4c669198ec48493736bbc5dcaa81"
+  },
+  "native": {
+    "repository": "wxwy/nav_sg",
+    "branch": "codex/g2-f2-thin-floor-full-map",
+    "code_sha": "c5825589cc748145819dfc17cfeb7a026aa08c46",
+    "tree": "ced39fb5547f882ac6d7d9a1b4b6f67e13dbaadf",
+    "base": "e15c4cc28a157526a53827f29aeb70f88c845a66",
+    "build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0"
+  },
+  "production_gitlink": {
+    "path": "cosmos-framework",
+    "sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+    "unchanged": true
+  },
+  "all_published_tree_bytes_equal_local_tested": true,
+  "critical_blobs_read_back": [
+    {
+      "repository": "wxwy/psm_wma",
+      "ref": "c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d",
+      "path": "g2/nav_bridge/full_map.py",
+      "sha": "f118cc6a7e18e6d33414fd2d0bf3c83fe673de9d"
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "ref": "c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d",
+      "path": "g2/nav_bridge/surface_ownership.py",
+      "sha": "e2603f2c5b642765a99819017048912f50623521"
+    },
+    {
+      "repository": "wxwy/nav_sg",
+      "ref": "c5825589cc748145819dfc17cfeb7a026aa08c46",
+      "path": "mapping_8_3/mapping/src/gt/gt_oracle_native.cpp",
+      "sha": "87681881f2f3c4e11db3153c95c216bea8a2234f"
+    },
+    {
+      "repository": "wxwy/nav_sg",
+      "ref": "c5825589cc748145819dfc17cfeb7a026aa08c46",
+      "path": "mapping_8_3/mapping/src/map_input/native_structures.cpp",
+      "sha": "2fe23f7ce4582882779c84e5fe4b7395a95a7793"
+    }
+  ],
+  "protected_refs": 15,
+  "protected_refs_unchanged": true,
+  "server_connection_used": false,
+  "private_assets_transferred": false,
+  "models_run": 0,
+  "gpu_used": false,
+  "training_ready": false,
+  "human_gate": "PENDING",
+  "branch_tips_may_advance_only_for_documentation_receipts": true
+}

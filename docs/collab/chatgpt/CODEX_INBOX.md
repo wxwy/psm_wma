@@ -423,3 +423,36 @@ Draft creation was rejected by GitHub HTTP403: `At least one email address must 
 
 
 - Fixed-source review requests posted and exact full bodies read back: PSM Issue26 https://github.com/wxwy/psm_wma/issues/26#issuecomment-6734897202 ; native Issue8 https://github.com/wxwy/nav_sg/issues/8#issuecomment-6734902391 . Canonical request commit5e220f0e/blob8bd64466 verified before delivery; receipt in new evidence directories. Awaiting GPT independent verdict, no automatic server execution or acceptance claim.
+
+
+## 2026-11-09 CST — G2-F2 fixed-source request to GPT
+
+Status: **REQUEST_GPT_INDEPENDENT_REAL_FOUR_FRAME_VERIFICATION**. Codex implementation/author tests complete; no real-scene or human APPROVE claimed. This is the authorized follow-up to nav_sg#8/6736440426 and PSM#26/6736467892. GPT is the sole server reviewer, Owner reviews final spatial views, DS is absent. This explicit workflow supersedes legacy V2/MM/Kimi waiting. After source/Issue delivery Codex stops for independent review.
+
+Formal code pair (use immutable commits, not moving documentation tips):
+
+- PSM root: **c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d**, branch `codex/g2-f2-source-views`, basefeff0d54, tree352226ad1e6bc1133a890e6295290e58fce8e7e1.
+- nav_sg native implementation: **c5825589cc748145819dfc17cfeb7a026aa08c46**, branch `codex/g2-f2-thin-floor-full-map`, basee15c4cc2, treeced39fb5547f882ac6d7d9a1b4b6f67e13dbaadf. This is an external repository commit, not a production submodule update.
+- Production `cosmos-framework` Gitlink remains **1ca308055fc41fb69efaeb9efaa23808f164a18e**. V3 and15 protected refs were read back unchanged. No PR, merge, model/GPU/training/cache task or server connection was used.
+- Native152-file build-source fingerprint: **f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0**. Generated header, compiled binaries and every actual author snapshot match; binary SHA records are inruntime.json. Published Git trees exactly match tested local trees; critical blobs were independently read back.
+
+Implemented native local thin Floor patches with support/UNKNOWN/hole evidence, actual Wall-only roots, typed object-only strict3D `<0.30m` connection paths/uncertainty, native Room reference and ceiling reference plane, BEV FloorYES/UP FloorNO without Ceiling, and native Island IDs. Ordinary untyped object identity stays UNKNOWN_NO_RELAY; a genuine source-bound Object role is required to relay, Robot/Auxiliary excluded. No detector identity was invented.
+
+Implemented strict original gzip→declared path rebind→recursive include/current asset closure/state row/format/ep_meta replay, while keeping direct recorded-root hashing strict by default. Legal missing qpos source time stays missing; Full Map still requires source-state time. Added a separate **FULL_MAP_MUJOCO_SOURCE** route through existing native GT import/Room/SG/color code: actual parsed byte hashes, source manifests/metadata/compiled geometry/role audit/state proof, raw point order/RGB/invalid mask and original face/reason/area attachment preserved. GT is marked sourceGT, never model predictions; dedicated capture and explicit render opt-in required. Re-signed scope/structure and per-point owner changes are rejected against actual source/native geometry. All source/history/fullcolor/human/training certifications remain separate and false/pending.
+
+Author evidence only:
+
+- PSM517/517, zero failure/error/skip; all446 old IDs retained. Native168/168 distinct C++, all157 old IDs retained; relatedPython/GT100/100, all53 retained. Nine generic mirrors equal. Policy-updated assertions are listed in the native runbook.
+- Actual ordinary mapping_only_node: two backends each4 own RGB-D frames, frame0/3 snapshots with4 observed floor columns,1196 unsupported columns and UNKNOWN below;4 real Wall patches, incomplete coverage. G2 independently verified all4 grid/mesh/support snapshots and still rejected genuine-model capture. Default-off ACK/nonempty-map regression also passes.
+- Four actual own MuJoCo Full Map runs at0/200: rectangular25,208points/14views/2Islands per frame; notch27,344points/10views/1Island. The notch Wall correctly connects the nearby block despite its name. All105,104 actual CSV rows pass source and exact native-owner replay; invalid colors/face attachments preserved.
+- Eight re-signed source/bundle negatives rejected. Eleven **corrected** native negatives reject with return1, `GT_NATIVE_FAILED` and matching per-case diagnosis. The initial ROS_HOME environmental aborts were withdrawn, recorded and replaced; they are not proof of code rejection.
+- Local read-only peer review closed all scoped P0/P1/P2; this is not GPT server review. MuJoCo comparison images were NOT_SUPPLIED for the own smoke; H1 pending. Owned CPU container stopped.
+
+Exact runbooks/evidence:
+
+- PSM at formal root: `docs/build/PSM-WMA_G2_F2_source_views_2026-11-09.md` and `docs/evidence/g2_f2_2026-11-09/` (raw517JUnit/log, retention,55-file source inventory, frozen source contracts, native/runtime matrices, exact-owner log, effective11native/8re-sealed negatives and review closure).
+- Native at formal native SHA: `docs/G2_F2_IMPLEMENTATION.md` and the same evidence directory (full Catkin log,19raw C++XMLs,100PythonJUnit,152active-source plus interface/test inventory, main/FullMap/proof evidence). Metadata-only successors add publication/protected-ref/readback receipts; code scopes must diff empty against the formal pair.
+
+GPT next, on server-local originals only: check exact source/blobs/build identity; restore Layout1/10 frame0/200 from original model/state; verify strict compressed-original/rebound derivation and official source closure; inspect sparse ordinary Floor support without filling all Room cells or converting open boundaries to Walls; run explicit source-GT Full Map separately from ordinary/model observations; verify native entity/point/mask/face/state identities and native 3D connection/reference certificates; render actual Room six views and independent Islands with real local MuJoCo comparison images. Keep unknown/missing color/role/unsupported mesh restrictions visible; do not loosen them to make a run pass. Previously accepted point-cloud human review need not be repeated; next Owner review is Room/Wall/Object relations and six/Island comparison.
+
+Request a source-pair-bound GPT verdict, failure locations and server-local evidence hashes. Real four-frame integration, genuine normal object-role observations, full-source/history/full-appearance certification, H1, PSS/Cosmos and training remain unapproved. Codex stops after this handoff; no merge or training follows author PASS.

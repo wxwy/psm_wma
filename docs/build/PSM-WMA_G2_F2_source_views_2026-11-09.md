@@ -1,5 +1,7 @@
 # G2 F2 source binding, Full Map and native connection views
 
+Formal immutable code pair: PSM `c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d`; native `c5825589cc748145819dfc17cfeb7a026aa08c46`. Later branch tips carry documentation/publication receipts only; source scopes remain identical to this pair.
+
 Codex author implementation for [Issue26/6736467892](https://github.com/wxwy/psm_wma/issues/26#issuecomment-6736467892), paired with [nav_sg Issue8/6736440426](https://github.com/wxwy/nav_sg/issues/8#issuecomment-6736440426). Independent PSM branch `codex/g2-f2-source-views` starts at `feff0d54b04a4c669198ec48493736bbc5dcaa81`; native branch `codex/g2-f2-thin-floor-full-map` starts at `e15c4cc28a157526a53827f29aeb70f88c845a66`. Fixed publication SHAs are recorded in the canonical Inbox and the two Issue handoffs. No source branch is merged.
 
 The user authorizes implementation now, followed by GPT independent server verification and Owner visual review. The historical V2/MM/Kimi workflow does not apply to this G2 handoff. This run uses no Remote Desktop Commander, server checkout, private scene files, GPU, model inference or training. The `cosmos-framework` Gitlink remains `1ca308055fc41fb69efaeb9efaa23808f164a18e`. Existing scene-release configurations remain frozen.

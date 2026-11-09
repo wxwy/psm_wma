@@ -1,3 +1,24 @@
+# 2026-11-09 CST — G2-F2 fixed code published; canonical review handoff
+
+REVIEW / GPT server verification required. Formal immutable code pair:
+PSM c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d (tree352226ad1e6bc1133a890e6295290e58fce8e7e1)
+and native c5825589cc748145819dfc17cfeb7a026aa08c46 (treeced39fb5547f882ac6d7d9a1b4b6f67e13dbaadf).
+Both independent GitHub branches published; exact API Git objects reconstructed
+locally and trees equal tested bytes. Four critical blobs read back match.
+Native build-source f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0.
+Production cosmos-framework Gitlink1ca308 unchanged,15 protected refs read
+unchanged after code publication. Canonical Inbox append6138 bytes,98437 total,
+append-only below128KiB, contains exact source pair/scope/evidence/verdict request.
+This metadata commit precedes Issue8/26 delivery; no remote receipt inferred yet.
+Later tips contain docs/publication/receipt files only; source must diff empty
+against the formal code pair. Scoped peer review and native follow-up closed all
+P0/P1/P2, including corrected11 exact-diagnostic proof negatives (old ROS_HOME
+environment aborts withdrawn). PSM517/native168/related100 and own native/main
+source-owner matrices pass. Owned CPU container stopped. Raw server data,
+RoboCasa frame0/200, MuJoCo references, normal model object roles, fullsource/
+history/fullcolor/H1/training remain unapproved. Codex stops after Issue delivery
+for GPT independent validation; no V3/Gitlink/production/GPU/train/merge/PR.
+
 # 2026-11-09 18:52 CST — G2-F2 author implementation complete; fixed-SHA publication next
 
 AUTHOR_COMPLETE / no real-scene acceptance. PSM517/517, old446 IDs retained;
