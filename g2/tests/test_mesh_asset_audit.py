@@ -128,9 +128,9 @@ def test_all_zero_rejection_carries_original_face_evidence():
 
 def test_nonzero_near_degenerate_face_is_reported_not_discarded():
     audit = audit_surface(np.asarray([[0., 0, 0], [1., 0, 0], [0, 1e-15, 0]]), np.asarray([[0, 1, 2]]))
-    assert audit["status"] == "REJECTED"
+    assert audit["status"] == "GEOMETRY_VALID"
     assert audit["discarded_zero_area_face_ids"] == []
-    assert audit["rejected_nonzero_near_degenerate_face_ids"] == [0]
+    assert audit["retained_near_positive_face_ids"] == [0]
 
 
 def test_float32_cancellation_cannot_promote_an_exact_tiny_positive_face():
@@ -141,10 +141,12 @@ def test_float32_cancellation_cannot_promote_an_exact_tiny_positive_face():
                            [0., np.nextafter(np.float32(0), np.float32(1)), 0.]], np.float32)
     faces = np.asarray([[0, 1, 2]])
     assert np.linalg.norm(np.cross(vertices[1] - vertices[0], vertices[2] - vertices[0])) > 1e-14
-    with pytest.raises(SamplingFailure) as caught:
-        sample_surface(vertices, faces, 100., 3)
-    assert caught.value.audit["discarded_zero_area_face_ids"] == []
-    assert caught.value.audit["rejected_nonzero_near_degenerate_face_ids"] == [0]
+    # Preserve the historical case ID: rounded arithmetic must not relabel its
+    # exact-positive geometry. F1-C now retains it rather than rejecting it.
+    points, ids, _, audit = sample_surface(vertices, faces, 100., 3, with_audit=True)
+    assert len(points) == 3 and set(ids) == {0}
+    assert audit["discarded_zero_area_face_ids"] == []
+    assert audit["retained_near_positive_face_ids"] == [0]
 
 
 def test_exact_collinear_float32_face_with_rounded_nonzero_cross_is_skipped():

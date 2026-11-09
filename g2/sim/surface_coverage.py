@@ -13,13 +13,18 @@ def color_coverage(vertices, faces, face_ids, valid, reasons):
         magnitude=np.max(np.abs(triangles),axis=(1,2))
         bound=np.maximum(1e-14,64*np.finfo(np.float64).eps*magnitude*magnitude)
     candidates=np.flatnonzero((np.max(np.abs(cross),axis=1)<=bound)|~np.isfinite(areas))
+    positive=areas>0
     for index in candidates:
-        areas[index]=.5*math.hypot(*(float(component) for component in _exact_cross(triangles[index])))
+        exact=_exact_cross(triangles[index])
+        positive[index]=any(exact)
+        areas[index]=.5*math.hypot(*(float(component) for component in exact))
     counts = np.bincount(face_ids, minlength=len(faces))
     weights = areas[face_ids] / counts[face_ids]
     sampled = counts > 0
     total_area = float(areas[sampled].sum())
-    kept = int(np.count_nonzero(sampled)); retained=int(np.count_nonzero(areas>0))
+    kept = int(np.count_nonzero(sampled)); retained=int(np.count_nonzero(positive))
+    underflow=weights==0
+    underflow_faces=np.unique(face_ids[underflow]).tolist()
     invalid = {REASONS[int(code)]: int(np.count_nonzero(reasons == code)) for code in np.unique(reasons) if code != 0}
     return weights, {
         "sampled_points": len(valid), "color_valid_points": int(np.count_nonzero(valid)),
@@ -28,7 +33,10 @@ def color_coverage(vertices, faces, face_ids, valid, reasons):
         "evaluated_retained_face_count": kept, "retained_input_face_count":retained,
         "evaluated_retained_face_fraction": kept/retained if retained else None,
         "sampled_input_triangle_area_m2": total_area,
-        "area_weighted_valid_sample_fraction": float(weights[valid].sum() / total_area) if total_area else None,
+        "area_weight_underflow_face_ids":underflow_faces,
+        "area_weight_underflow_point_count":int(np.count_nonzero(underflow)),
+        "area_weight_status":"FLOAT64_UNDERFLOW" if underflow_faces else "FLOAT64_APPROXIMATION",
+        "area_weighted_valid_sample_fraction": float(weights[valid].sum() / total_area) if total_area and not underflow_faces else None,
         "area_basis": "FLOAT64_INPUT_TRIANGLE_APPROXIMATION_WEIGHTED_SAMPLES_NOT_CONTINUOUS_COVERAGE",
         "continuous_surface_color_coverage_certified": False,
         "scope": "DECLARED_SAMPLED_SURFACES_ONLY_NOT_WHOLE_HOUSE",

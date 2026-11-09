@@ -1,0 +1,58 @@
+..............F......................................................... [ 93%]
+.....                                                                    [100%]
+=================================== FAILURES ===================================
+_____ test_compiled_micropositive_face_keeps_uv_hash_and_dynamic_identity ______
+
+mesh_scene = (PosixPath('/tmp/pytest-of-agent/pytest-87/test_compiled_micropositive_fa0/own_source'), PosixPath('/tmp/pytest-of-age..._source/model.xml'), PosixPath('/tmp/pytest-of-agent/pytest-87/test_compiled_micropositive_fa0/own_source/roles.json'))
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-87/test_compiled_micropositive_fa0')
+
+    def test_compiled_micropositive_face_keeps_uv_hash_and_dynamic_identity(mesh_scene, tmp_path):
+        import mujoco
+        root, xml, metadata = mesh_scene
+        obj = root / "mesh.obj"
+        # IDs14/15 are respectively a positive microface and exact zero; original
+        # UV slot15 addresses the same red texel as the original odd UV slots.
+        obj.write_text(obj.read_text() + "v 0 0 0\nv 1e-8 0 0\nv 0 1e-8 0\n"
+            "vt .25 .25\nvt .75 .25\nf 9/15 10/15 11/15\nf 9/16 9/16 10/16\n")
+        model, sources = load_model(xml)
+        data = mujoco.MjData(model); state_kind = mujoco.mjtState.mjSTATE_FULLPHYSICS
+        states = np.zeros((201, mujoco.mj_stateSize(model, state_kind)))
+        for frame, distance in ((0, 0.), (200, .12)):
+            data.qpos[:] = distance; data.time = frame * .02
+            mujoco.mj_getState(model, data, states[frame], state_kind)
+        archive = root / "states.npz"; np.savez(archive, states=states)
+        meta = read_json(metadata)
+        meta["state_source"] = {"model_source_sha256": model_source_hash(sources), "states_sha256": digest(archive)}
+        write_json(metadata, meta)
+        outputs = []
+        for frame in (0, 200):
+            out = tmp_path / ("frame" + str(frame))
+            manifest = export(xml, metadata, out, states=archive, frame=frame,
+                              state_format="mujoco_fullphysics", spacing=.4)
+            row = manifest["visual_geoms"][0]; sampling = row["sampling"]
+            assert sampling["retained_near_positive_face_ids"] == [14]
+            assert sampling["discarded_zero_area_face_ids"] == [1, 13, 15]
+            assert sampling["local_geometry_sha256"] == geometry_sha256(model.mesh_vert, model.mesh_face)
+            cloud = np.loadtxt(out / "precolored.txt", skiprows=7)
+            with np.load(out / "color_audit.npz", allow_pickle=False) as evidence:
+                ids = evidence["local_face_id"]; selected = ids == 14
+                assert selected.sum() == 3 and not np.isin(ids, [1, 13, 15]).any()
+>               np.testing.assert_array_equal(cloud[selected, 3:6], np.tile([255, 0, 0], (3, 1)))
+E               AssertionError: 
+E               Arrays are not equal
+E               
+E               Mismatched elements: 6 / 9 (66.7%)
+E               Max absolute difference among violations: 255.
+E               Max relative difference among violations: 1.
+E                ACTUAL: array([[  0., 255.,   0.],
+E                      [  0., 255.,   0.],
+E                      [  0., 255.,   0.]])
+E                DESIRED: array([[255,   0,   0],
+E                      [255,   0,   0],
+E                      [255,   0,   0]])
+
+g2/tests/test_f1c_positive_faces.py:156: AssertionError
+----------- generated xml file: /workspace/work/n6_f1c_targeted.xml ------------
+=========================== short test summary info ============================
+FAILED g2/tests/test_f1c_positive_faces.py::test_compiled_micropositive_face_keeps_uv_hash_and_dynamic_identity
+1 failed, 76 passed in 1.22s

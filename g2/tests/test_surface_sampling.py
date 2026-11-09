@@ -89,8 +89,12 @@ def test_all_zero_mesh_refuses_completion(faces):
 
 @pytest.mark.parametrize("height", [1e-15, 1e-100, np.nextafter(0., 1.)])
 def test_positive_near_degenerate_faces_remain_rejected(height):
-    with pytest.raises(ContractError):
-        sample_surface(np.asarray([[0., 0, 0], [1., 0, 0], [0., height, 0]]), np.asarray([[0, 1, 2]]), .1, 100)
+    # Historical case ID retained; F1-C explicitly supersedes this rejection.
+    points, ids, _, audit = sample_surface(np.asarray([[0., 0, 0], [1., 0, 0], [0., height, 0]]),
+                                          np.asarray([[0, 1, 2]]), .1, 100, with_audit=True)
+    assert len(points) == 66 and set(ids) == {0}
+    assert audit["retained_near_positive_face_ids"] == [0]
+    assert audit["discarded_zero_area_face_ids"] == []
 
 
 def test_positive_small_surface_is_not_an_area_filter():
@@ -105,8 +109,9 @@ def test_rounded_cross_zero_is_not_proof_of_exact_zero():
     vertices = np.asarray([[0., 0., 0.], [a, 1., 0.], [1., np.nextafter(1., 0.), 0.]])
     exact_cross = Fraction(float(a)) * Fraction(float(vertices[2, 1])) - 1
     assert exact_cross != 0
-    with pytest.raises(ContractError):
-        sample_surface(vertices, np.asarray([[0, 1, 2]]), .1, 100)
+    points, ids, _, audit = sample_surface(vertices, np.asarray([[0, 1, 2]]), .1, 1000, with_audit=True)
+    assert len(points) > 0 and set(ids) == {0}
+    assert audit["discarded_zero_area_face_ids"] == []
 
 
 @pytest.mark.parametrize("fault", ["negative_index", "foreign_index", "float_index", "nan", "inf", "empty", "shape"])

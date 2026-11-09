@@ -10,7 +10,7 @@ from .texture_projection import REASONS
 def verify_color_evidence(root, manifest, cloud):
     record=manifest.get("color_audit_file")
     protocol=manifest.get("source_identity",{}).get("color_evidence_protocol")
-    if protocol not in (None,"g2_sample_color_audit_v1"):
+    if protocol not in (None,"g2_sample_color_audit_v1","g2_sample_color_audit_v2"):
         raise ContractError("unknown hashed point color evidence protocol")
     if record is None:
         if protocol is not None or any("color_coverage" in row for row in manifest.get("geom_audit",[])):
@@ -34,7 +34,8 @@ def verify_color_evidence(root, manifest, cloud):
         if any(value.shape!=(n,) for value in values.values()):raise ContractError("point color evidence row count mismatch")
         ids,faces,codes,weights=[values[key] for key in ("geom_id","local_face_id","reason_code","input_triangle_area_weight_m2")]
         if (any(value.dtype.kind not in "iu" or value.dtype.itemsize>8 for value in (ids,faces,codes))
-            or weights.dtype.kind!="f" or not np.isfinite(weights).all() or np.any(weights<=0)
+            or weights.dtype.kind!="f" or not np.isfinite(weights).all() or np.any(weights<0)
+            or (protocol!="g2_sample_color_audit_v2" and np.any(weights==0))
             or np.any(ids<0) or np.any(faces<0) or not set(np.unique(codes)).issubset(REASONS)):
             raise ContractError("invalid point color evidence values")
         if manifest.get("color_reason_codes")!={str(key):value for key,value in REASONS.items()}:
@@ -69,8 +70,23 @@ def verify_color_evidence(root, manifest, cloud):
                 or coverage.get("continuous_surface_color_coverage_certified") is not False):
                 raise ContractError("point color face/coverage inventory mismatch")
             invalid={REASONS[int(code)]:int(np.count_nonzero(reason==code)) for code in np.unique(reason) if code!=0}
+            underflow=False
+            if protocol=="g2_sample_color_audit_v2":
+                zero=weights[selected]==0
+                actual=np.unique(face_ids[zero]).tolist()
+                declared=coverage.get("area_weight_underflow_face_ids")
+                if (not isinstance(declared,list) or any(type(i) is not int for i in declared)
+                    or declared!=actual
+                    or coverage.get("area_weight_underflow_point_count")!=int(np.count_nonzero(zero))
+                    or coverage.get("area_weight_status")!=("FLOAT64_UNDERFLOW" if actual else "FLOAT64_APPROXIMATION")
+                    or not np.array_equal(np.isin(face_ids,actual),zero)
+                    or not set(sampling.get("retained_area_underflow_face_ids",[])).issubset(actual)
+                    or (actual and (sampling.get("policy")!="EXACT_ZERO_ONLY_RETAIN_ALL_POSITIVE"
+                        or not set(actual).issubset(sampling.get("retained_near_positive_face_ids",[]))))):
+                    raise ContractError("point color area underflow evidence mismatch")
+                underflow=bool(actual)
             area=float(weights[selected].sum())
-            fraction=float(weights[selected][cloud_flags[selected]].sum()/area) if area else None
+            fraction=float(weights[selected][cloud_flags[selected]].sum()/area) if area and not underflow else None
             if (coverage.get("invalid_point_reason_counts")!=invalid
                 or not np.isclose(area,coverage.get("sampled_input_triangle_area_m2",-1),rtol=1e-12,atol=1e-15)
                 or (fraction is None)!=(coverage.get("area_weighted_valid_sample_fraction") is None)

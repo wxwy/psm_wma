@@ -1,3 +1,83 @@
+# 2026-11-09 (UTC) — G2-F1-C source frozen / publication preparation
+
+REVIEW / author only. Runtime4 files: surface_sampling default exact-zero-only
+retains all positive; surface_coverage exact positive count/explicit float64
+area-weight underflow; color_evidence strict v2 underflow versus unchanged
+v1/legacy positive-weight requirement; prescan hashes new v2 protocol.
+Source geometry/roles/scope/texture/identity4/native/view/Gitlink unchanged.
+Formal prior R1 APPROVE read at a9ef423f/file0a92ea6f / Issue6729550170;
+only twoP2/regression scope. Layout1 partial cloud human feedback remains
+partial-cloud-only, not whole-house/native/six-view approval.
+
+Final291/291,0failure/error/skip, all original274 IDs retained including259/207.
+Owner-authorized six old rejection case assertions updated in two files;
+new frozen17 tests exact old3b6 all17FAIL/new allPASS. AnotherAgent P2 found
+nonzero squared-norm underflow could bypass subdivision budget; fixed using
+stable hypot only in dtype squared-underflow range, two explicit f32/f64
+controls. Final read-only code review no openP0/P1/P2, not GPT acceptance.
+Initial test-fixture color/manifest interface errors preserved separately.
+Six own positive shapes0/200 each6244 XYZRGB/valid rows exact versus3b6;
+source geometry/state/bounds same, v1/v2 on-disk proof and new producer SHA
+verified. Full36 G2 source/config/test hashes frozen. Evidence
+docs/evidence/g2_f1_c_2026-11-09/; runbook docs/build/PSM-WMA_G2_F1_C_positive_faces_2026-11-09.md.
+
+Before publication actual remoteV3=e58cef1f53d2382d39c871ce5a50e4acdd5ce268
+(already advanced externally; not merged/modified here); original N6/F1/A2/
+F1B/B2/R1/native/review refs recorded. Native2009 and Child1ca308 unchanged.
+No server files/assets/state/image/cloud/audit access/download/transfer,
+GPU/model/rollout/train/native execution/cache/PR/merge. Publish fixed source
+and real GPT Issue26/Inbox handoff, then continue separate role analysis as
+Owner requested. Full-house/normal-native/six+Island/PSS/Cosmos remain OPEN.
+Implementation not yet committed at this record; no server new-SHA claim.
+
+# 2026-11-09 (UTC) — G2-F1-C positive-face formal implementation claim
+
+IN_PROGRESS / Codex. Owner explicitly starts F1-C and subsequent role analysis;
+Issue26 comment6730795142 read in full. Independent branch
+codex/g2-f1c-positive-faces starts at exact R1 source
+3b6c6055e36824be33ed947745aa3e5b839da832. Only five prior metadata receipt files
+carried from d63a126c; no source differences from the required base.
+
+Planned paths: g2/sim/surface_sampling.py and necessary area/evidence producers
+surface_coverage.py/color_evidence.py, focused new tests plus old tests whose
+positive-area rejection assertions the latest Owner policy explicitly supersedes;
+new docs/build and docs/evidence runbook, SESSION/TODO and canonical Inbox.
+Keep original274 case IDs and exact-zero proof, original face/UV/full geometry,
+source/state evidence and nonfinite/budget guards. All positive finite faces
+sample by default; no min-area threshold or legacy rejecting metadata. Numeric
+area underflow must be explicit and cannot lose a positive face or fake area.
+
+Use CPU own fixtures only; no private server access/download/outward transfer.
+Published server experiment is reviewer context, not author execution/acceptance.
+No V3/nav_sg/Gitlink/production/train/cache/PR/merge actions. After fixed source
+and actual GPT handoff continue independent source-based role analysis, not an
+obsolete R1 STOP or V2/MM/Kimi polling. Latest Owner GPT-only review workflow
+supersedes historical multi-review timers. Native structures remain native-owned.
+Current implementation uncommitted; test/asset Gate outcomes not yet claimed.
+
+# 2026-11-09 (CST) — G2-N6-F1-B2-R1 published / STOP for GPT recheck
+
+REVIEW. Fixed implementation Root 3b6c6055e36824be33ed947745aa3e5b839da832, tree
+4a5a888148c5670d628c3de6f4c0bdd6d6079f14. Published Git tree equals tested local tree;
+35/35 G2 source/config/test blob SHAs read back exact. Actual API commit
+object imported after SHA verification; same-tree author backup retained.
+Actual Issue26 R1 handoff6729052936 posted and entire body read back exact:
+https://github.com/wxwy/psm_wma/issues/26#issuecomment-6729052936 .
+
+This successor is metadata only; source/tests stay frozen at Root above.
+Author274/274, old259/207 retained, frozen15 RED8FAIL/7PASS ->15PASS,
+mesh software sRGB-invalid/linear-default128 and positive6244-row0/200
+parity are code/self-test evidence, not GPT independent new-SHA acceptance.
+Protected original V3/N6/F1/A2/F1B/B2/native/review8 refs checked unchanged.
+Native2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. Prior native proof
+only P0 matching3 components; full fixed2009/new-house native still OPEN.
+No server file access/download/outward transfer, GPU/models/rollout/train,
+production/PR/cache mutation or merge. No new Draft PR, known restriction
+not retried. STOP for GPT R1 recheck per Owner instruction; actual house
+roles/materials/paper-positive/native/normal structures/six+Island/learning
+remain pending. Original193 verdict remains REQUEST_CHANGES, not rewritten.
+
 # 2026-11-09 (CST) — G2-N6-F1-B2-R1 two-P2 source frozen
 
 REVIEW. Runtime edits only source_geometry.py (4 added lines: explicit sRGB

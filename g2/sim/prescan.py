@@ -300,7 +300,7 @@ def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
     visual_identity = {"schema":"g2_prescan_source_v1","adapter_source_sha256":adapter_sha,"model_source_sha256":closure,
                        "metadata":meta,"ep_meta":ep,"spacing_m":spacing,"world_frame":world_frame,
                        "mujoco_version":mujoco.__version__,"require_role_evidence":bool(require_role_evidence),
-                       "allow_unclassified":bool(allow_unclassified),"color_evidence_protocol":"g2_sample_color_audit_v1"}
+                       "allow_unclassified":bool(allow_unclassified),"color_evidence_protocol":"g2_sample_color_audit_v2"}
     visual_sha = hashlib.sha256(canonical(visual_identity)).hexdigest()
     source_sha = visual_sha
     native_binding = None

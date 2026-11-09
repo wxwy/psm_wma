@@ -1,0 +1,21 @@
+{
+  "scope": "AUTHOR_CPU_OWN_FIXTURES_NOT_GPT_REAL_SERVER_ACCEPTANCE",
+  "base_runtime": "3b6c6055e36824be33ed947745aa3e5b839da832",
+  "full": {
+    "passed": 291,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "original_case_ids_retained": 274,
+  "new_case_count": 17,
+  "same_test_old_source": {
+    "failed": 17,
+    "passed": 0
+  },
+  "test_sha256": "09d97abd77373a7bf393f88742099f5c29c180fce0c7bf64ba241e9fd975a84b",
+  "all_source_file_count": 36,
+  "private_inputs_accessed": false,
+  "training_ready": false,
+  "source_tree_frozen_at_publication": true
+}

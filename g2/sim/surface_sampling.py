@@ -41,7 +41,7 @@ def audit_surface(vertices, faces):
             or faces.ndim != 2 or faces.shape[1] != 3 or not len(faces)
             or faces.dtype.kind not in "iu" or np.any(faces < 0) or np.any(faces >= len(vertices))):
         raise ContractError("invalid visual mesh")
-    discarded, near, nonfinite, areas = [], [], [], []
+    discarded, near, underflow, nonfinite, areas = [], [], [], [], []
     for index, triangle in enumerate(vertices[faces]):
         with np.errstate(over="ignore", invalid="ignore", under="ignore"):
             tri64 = triangle.astype(np.float64)
@@ -58,43 +58,45 @@ def audit_surface(vertices, faces):
             if not any(exact):
                 discarded.append(index)
                 continue
-            # Float32 cancellation can produce a large rounded legacy norm for
-            # a truly tiny positive face. Exact squares avoid underflow and
-            # retain the positive-face threshold even in this case.
+            # This is diagnostic only: a small strictly positive cross never
+            # rejects or removes a face. Exact squares survive float underflow.
             exact_near = sum(component * component for component in exact) <= Fraction(1e-14) ** 2
             try:
                 norm64 = math.hypot(*(float(component) for component in exact))
             except OverflowError:
                 norm64 = math.inf
-        # Preserve the old positive-face guard in the original input dtype,
-        # as well as its subsequent sampling arithmetic/order.
+        # Preserve nonfinite/overflow protection and normal sampling arithmetic;
+        # the former positive-area minimum is explicitly retired by F1-C.
         with np.errstate(over="ignore", invalid="ignore", under="ignore"):
             legacy_norm = float(np.linalg.norm(np.cross(triangle[1] - triangle[0], triangle[2] - triangle[0])))
         if not math.isfinite(norm64) or not math.isfinite(legacy_norm):
             nonfinite.append(index)
         elif exact_near or legacy_norm <= 1e-14:
             near.append(index)
-        areas.append(norm64 / 2 if math.isfinite(norm64) else 0.)
+        area64 = norm64 / 2 if math.isfinite(norm64) else 0.
+        if math.isfinite(norm64) and area64 == 0:
+            underflow.append(index)  # exact-positive input, not a zero face
+        areas.append(area64)
     try:
         area = math.fsum(areas)
     except OverflowError:
         area = None
     audit = {
         "schema": "g2_surface_sampling_audit_v1", "status": "GEOMETRY_VALID",
-        "policy": "EXACT_ZERO_ONLY_KEEP_POSITIVE_GUARD", "coordinate_dtype": vertices.dtype.str,
+        "policy": "EXACT_ZERO_ONLY_RETAIN_ALL_POSITIVE", "coordinate_dtype": vertices.dtype.str,
         "zero_predicate": "EXACT_RATIONAL_CROSS_OF_REPRESENTED_INPUT_COORDINATES",
-        "positive_face_cross_norm_min_exclusive": 1e-14,
+        "retained_near_positive_face_ids": near,
+        "retained_area_underflow_face_ids": underflow,
         "face_id_basis": "INPUT_LOCAL_TRIANGLE_INDEX", "input_face_count": len(faces),
         "retained_face_count": len(faces) - len(discarded),
         "discarded_zero_area_face_ids": discarded, "discarded_zero_area_face_count": len(discarded),
         "discarded_face_fraction": len(discarded) / len(faces),
-        "discarded_area_m2": 0., "discarded_area_fraction": 0. if area else None,
+        "discarded_area_m2": 0., "discarded_area_fraction": 0. if len(discarded) < len(faces) else None,
         "retained_area_m2": area, "area_measurement": "FLOAT64_APPROXIMATION_OF_INPUT_LOCAL_COORDINATES",
-        "rejected_nonzero_near_degenerate_face_ids": near, "rejected_nonfinite_face_ids": nonfinite,
+        "rejected_nonfinite_face_ids": nonfinite,
         "local_geometry_sha256": geometry_sha256(vertices, faces), "sampled_point_count": 0,
     }
     reason = ("nonfinite visual triangle geometry" if nonfinite or area is None else
-              "nonzero near-degenerate visual triangle" if near else
               "visual mesh has no nonzero-area triangles" if len(discarded) == len(faces) else None)
     if reason:
         audit.update(status="REJECTED", rejection_reason=reason)
@@ -120,6 +122,12 @@ def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
             continue
         with np.errstate(over="ignore", invalid="ignore", under="ignore"):
             edge = max(np.linalg.norm(tri[i] - tri[j]) for i, j in ((0, 1), (1, 2), (2, 0)))
+            if edge < math.sqrt(np.finfo(tri.dtype).tiny):
+                # Squared norms can underflow to zero OR a smaller nonzero
+                # subnormal value. Keep the true length/spacing budget while
+                # leaving ordinary original-dtype arithmetic unchanged.
+                tri64 = tri.astype(np.float64)
+                edge = max(math.hypot(*(tri64[i] - tri64[j])) for i, j in ((0, 1), (1, 2), (2, 0)))
             ratio = edge / spacing
         if not np.isfinite(edge) or not np.isfinite(ratio):
             audit.update(rejection_face_id=index, allocated_point_count_before_rejection=total)
