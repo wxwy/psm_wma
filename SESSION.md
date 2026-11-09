@@ -1,3 +1,46 @@
+# 2026-11-09 CST - Issue28 history K implementation claimed after qualified Issue27
+
+Fresh sync observation: before parent #27HEAD9c09bfde; fetch/advertised/tracking
+V3e58cef1f and candidate73d8644df3096e192a83fff2f2d8098a4ac11e64; ancestry and
+FF consumed8c5b0937/73d8644d. Read exact review Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+Child60b252d05157b2753d2caebae32b11c878504bbe literalAPPROVE_CODE CPU/static/
+Evidence only. PriorMEDIUMclosed; no GPU/V3 merge approval inferred. Authority
+docs/collab/chatgpt/reviews/2026-11-09_Issue27_9b1756f9_60b252d0_Streaming32_Evidence_APPROVE_CODE.md
+
+New isolated worktrees /workspace/work/psm-wma-history-k-issue28 and Child;
+both branch v3-local-ttt-history-k-issue28-20261109, Root starts73d metadata
+(source identical to qualified9b), Child60b. Prior #27 worktrees/PR29/8 unchanged.
+Owner final Issue28 body +comments6731421819/6731530426/6732473919 supersede
+older stride/current-T contradictory comments. Config onlylocal_ttt_history_k
+in1/2/4/8/16 default16; selected chunk j%(16/K)==0; j0 previousReplanVisual96
+reused after executed a0 completes, at next Replan. CurrentT belongs to next
+history chunk, no future actions. Unselected no historyRGB/PNG/Worker enqueue/FW;
+retain minimal all16 chronological executed-action receipts/frontiers/identity.
+Reuse original Worker/NativeBatch/OnlineMemory/T1 prepare/commit/abort/ACK/End.
+
+Main claims Root scripts/robocasa_eval_v2/config.py/runtime.py/shared_vae.py,
+Child evaluation/robocasa_v2/contract.py; inference robocasa_vae_protocol.py,
+robocasa_feature_evidence.py,robocasa_vae_worker.py/client.py/daemon.py,
+robocasa_local_memory_policy.py,local_memory_online.py; scripts action_policy_server_robocasa.py;
+simulation robocasa sim_shared_vae_client.py,closed_loop_eval.py,eval_v2_worker.py
+and existing construction seam if needed; focused new tests, runbook/evidence,
+Gitlink/SESSION/TODO/Inbox. No model/training/weights/scheduler redesign.
+K16 keeps original dense wire/math branch; K<16 explicit versioned skip/selection
+receipts and payload. Consumer validates every completion before selecting real
+Visual96/raw15 for existing T1 scan. Worker completed skips use original owner
+complete authority/control lane and cannot race asynchronous selected submission;
+no new sparse engine/thread. Freeze K in execution/Owner/Worker/Session semantics,
+preserve original fullM-B/source/Resume strictness, all #27 legal topologies.
+
+Acceptance CPU: all five exact selected step/count tables (extraVAE/FW0/1,1/2,
+3/4,7/8,15/16), firstReplan0,0->16->32,partialEnd,full16completions/no skipRGB,
+K16 controlled old/new bit parity of features/FastState/prefix/syntheticAction,
+NoTTT/default protection,actual multisession/IPC/replay/changedbytes/late/abort/
+ACK/End/Reset/ownership tests. Run after command/env/input/output/PASS notice.
+Exact clean new Pair/source fingerprints/rawJUnit/static, NEW independent Draft
+Root+Child PRs, fresh GPT review. No GPU/server-file/realSim/SR/900EP/training/V3
+merge or running-job operations; no agents delegated. Claim not implementation.
+
 # 2026-11-09 CST - Issue27 M16 supplement published/read back; Evidence review request
 
 Formal test-only Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
