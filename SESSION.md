@@ -1,3 +1,37 @@
+# 2026-11-09 CST - Issue27 streaming M16 Evidence-only remediation claimed
+
+Owner latest correction:2x16 means2PolicyServers x16Sim/Server =32Session.
+Prior author handoff's 16total interpretation was wrong; preserve old evidence
+as history and supersede it explicitly. #28 sparse FW remains separate and must
+wait for qualified #27; no sparse production/config/code change in this task.
+
+Fresh observation:beforeHEAD1e5c30d29f70980f6855968500ed1c586d75d674;
+officialV3 fetched/advertisede58cef1f53d2382d39c871ce5a50e4acdd5ce268.
+Candidate advertised/trackingb5127c82d40af7061448e6a83a922a019721517f;
+fast-forward consumed0bb7d471 andb5127c82 review/Inbox docs. Initial missing
+tracking ref was repaired by explicit refspec fetch; advertised/log/ancestry/FF
+checks repeated successfully. Formal review exact Root15dbc97bf13437905ec38247382834067e5341ae
+andChild60b252d05157b2753d2caebae32b11c878504bbe literalREQUEST_CHANGES,
+MEDIUM Evidence-only; no confirmed production defect. Read full review
+docs/collab/chatgpt/reviews/2026-11-09_Issue27_15dbc97b_60b252d0_GenericTopology_Evidence_REQUEST_CHANGES.md
+Child remote branch remains60b252d0,officialb0dbd115. User/V3 role overrides
+apply:Codex test implementation, GPT independent review; no obsolete MM/Kimi
+or GPU polling/approval requirement used to stop this authorized test remedy.
+
+Main claims only Root test fixture shared_vae_routing_test.py, new streaming
+M16 session/IPC test, runbook representative table correction, SESSION/TODO,
+new immutable raw CPU evidence/handoff and append-only canonical Inbox. Tests
+must use actual frozen streamingManifest/Store/Runtime slot derivation/capacity,
+two physical renderGPUs ->two real CPU Worker subprocesses, all32 Sessions/
+OwnerHTTP/UnixIPC/ACK/End/capability isolation/cleanup; same-render complement.
+Preserve1x1/1x8 regressions. Model/Sim/CUDA are explicit CPU boundaries only.
+All production files and Child must remain byte-identical to approved-reviewed
+pair. No need to rerun old965/SR/900EP or RED production tests; new exact test-only
+Root SHA with unchangedChild, focused CPU/static/source identity then publish
+existing Draft PR29/8 metadata and request fresh narrow Evidence review.
+No V3 merge/GPU/server-file/training/running-job actions or agents delegated.
+State IN_PROGRESS; this claim is docs-only, test changes not yet committed.
+
 # 2026-11-09 CST - Issue27 NEW Draft PRs published/read back; Code Gate handoff
 
 Formal Root15dbc97bf13437905ec38247382834067e5341ae / Child-Gitlink
