@@ -1,0 +1,36 @@
+{
+  "kind": "docs_and_derived_evidence_publication_not_new_formal_pair",
+  "evidence_head": "48955f8d878cc4725c5fe122197cb270c9a86f3d",
+  "branch": "v3-local-prefix-attention-issue35-20261109",
+  "formal_root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+  "formal_child_gitlink": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "task_status": "BLOCKED_REAL_INPUT_CAPTURE_NOT_GATE_PASS",
+  "api_blob_match": "6/6",
+  "api_blobs": {
+    "docs/collab/codex/reviews/2026-11-10_Issue35_Attention_ExistingTrace_RealInputCapture_BLOCKED.md": "c84b4593da8f650eeb086d42baa0c1ff8cc9e679",
+    "docs/collab/chatgpt/CODEX_INBOX.md": "250d025ca94ebd8373e6d97c54882eb86f4702af",
+    "docs/collab/codex/evidence/2026-11-10_issue35_attention/profile_statistics.json": "5c4867aed796b660fbd936ab6adf7a6e3481bc1c",
+    "docs/collab/codex/evidence/2026-11-10_issue35_attention/local_cpu/snapshot02.xml": "4559357fc9a4ad1b7843e6d52e1d5536cf3b05d6",
+    "docs/collab/codex/evidence/2026-11-10_issue35_attention/probe/hooks/freeze_capture.py": "30f0dedb372dec499e9832f2ae7875a9e365ffb6",
+    "docs/collab/codex/evidence/2026-11-10_issue35_attention/diagnostic_status.json": "b917efa111f6ae04c251097551d4f3d5f0389216"
+  },
+  "advertised_protected_refs": {
+    "root_v3": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "child_v3_local_ttt": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db",
+    "stage2_docs_branch": "523aa26a5c2484c3547dc31db038d7eaed063dea"
+  },
+  "original_server_files_exported": 0,
+  "no_ttt_executed": false,
+  "production_changed": false,
+  "v3_merged": false,
+  "remaining": [
+    "authorized environment with native EGL physical proof or existing full frozen request",
+    "K1/K16 full-input FastState Prefix parity replay",
+    "real-request component CPU/GPU attribution"
+  ],
+  "notes": [
+    "API readbacks are representative six blobs; advertised exact commit binds full tree",
+    "Original false stop label and ambiguous status01 NoTTT field remain preserved and corrected by sidecars",
+    "This publication receipt successor is metadata, not a new implementation root"
+  ]
+}
