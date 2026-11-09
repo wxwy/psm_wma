@@ -1,3 +1,88 @@
+# 2026-11-09 CST — G2 F3 author A/B complete; independent REVIEW
+
+REVIEW; author results only. Formal native source
+abcc87ca636c81455f397e8b0813522c70874c00 and PSM source/build helper
+72b223499ae6fd080a337dafe0bb60f9f879c953 on independent codex/g2-f3-color-ab.
+Draft nav_sg#9 and PSM#34 remain unmerged. Production Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. Native173 C++ locally and
+on data,121 native Python and553 PSM Python PASS; baseline168/106/517 IDs retained.
+Scoped author peer code/evidence review has no open P0/P1/P2; it is not GPT's
+independent server verdict.153file C++ source fingerprint49335ae314ae1f6a51e6a586cb05fa0f490332bc35bd7d50747fec80c560ecfa.
+
+Same real F2 first201 RGB-D frames in Layout1/10,5/2/1cm,2CPU/noGPU: all6runs
+integrate201/201 with zero skip/overwrite/reject and11 color snapshots each
+(66total). Navigation grid/emitted SG summary bytes equal across leaves at all
+11frames/layout. ACK-paced replay is not unthrottled live-camera acceptance.
+L1 normal snapshots33/33; L10 normal0/33 with same F2 identity/geometry/mode
+conflict, still open. At1cm peak native RSS228.77/221.02MiB, fusion CPU medians
+7.30/8.29ms; L1 normal RPC44.25→227.64ms from5→1cm. Keep5cm default.
+
+Fourframe0/200×3leaf quality comparison12cases:72direction records,36PNGs
+readback/mask/native-RGB-membership PASS,36no-object skips with noPNG. No native
+Islands in these snapshots; real Island quality not established. Core six-view
+render about12s L1/23s L10:1Hz FAIL even at5cm. Full CLI34–38s/57–60s includes
+strict source revalidation; renderer lifetime RSS~3772/4870MiB includes that
+audit and is separate from native fusion memory.66 native color snapshots are
+retained; optional intermediate six-view continuation stopped after12cases.
+Private artifacts stay data; no66rendered/live1Hz/fullnormal/fullsource claim.
+
+Immutable308native/60PSM runtime Gitblobs/build overlay matched published source;
+archive run git_checkout=false. Published Noetic GTest import helper solved
+cached target-name library locations without native source/testbody edits.
+Same Noetic Py3.12/NumPy2.5.4+MuJoCo3.3.7 verifies exact201prefix/49+106entities;
+cross-runtime23quaternion last-bit mismatches rejected, no tolerances. Initial
+8GiB virtual-address-space cap failure retained; successful offline stages use
+8GiB actual RSS guard. Owned server benchmark jobs/local CPU container stopped.
+
+Machine evidence ID .g2_f3_color_ab_author_20261109_01; machine summarySHA256
+9524fed1994e0cb9fbd157152f28560752cc4b00dec2fc9c50b7ee3376e1a01c.
+Full author report docs/build/PSM-WMA_G2_F3_author_results_2026-11-09.md;
+own raw tests and derived real facts docs/evidence/g2_f3_2026-11-09/.
+All17protected refs re-fetched unchanged, including after final publication.
+Canonical Inbox commit1dcd594a/blob6ccb73359c044320b2920329be408c4c4124fc39
+104257bytes fully readback equal before Issue8/6744375534 and
+Issue26/6744377269 were sent and readback equal. DraftPR9/34 bodies/head/base
+readback match; publication_delivery_receipt.json records exact destinations.
+GPT next independently repeats
+and checks real masked views; Owner visual follows. No new map/cache/default,
+V3/Gitlink/source data/old PR/model/GPU/train/merge changes. Directional rays,
+normal L10, model semantics, history/fullcolor/Island/H1/training remain open.
+
+# 2026-11-09 CST — G2-F3 authorization history (superseded by REVIEW above)
+
+IN_PROGRESS / Codex. Owner instructions nav_sg#8/6740780287 and
+PSM#26/6740781122 read in full. New independent codex/g2-f3-color-ab branches
+start at F2 delivery metadata74ac5cbc/da1d38bd; source scopes verified identical
+to explicit baselines nativec5825589 / PSMc4c2a364. Reuse ONE existing native
+ColorCloudMap; no second visual cache or navigation resolution change. Compare
+0.05/0.02/0.01m, six-view/snapshot scheduler1Hz (0.5/2 optional); preserve2Hz
+color publication, actual fusion independent.0.005 remains optional, not default.
+
+Planned native: ColorCloudMapWorker timing/counters/typed RGB-D-only snapshot
+evidence, minimal MapROS statistics/color export RPC, existing native GT spatial
+writer receiving certified observed colors without another color-map fusion;
+offline A/B driver/config/tests. Planned PSM: receiving observed color/native GT
+geometry separately, source/rebinding guards, existing six-view empty/UNKNOWN
+rules, performance aggregation/manifest/tests and new runbook. Native keeps all
+Room/Wall/Floor/object/connection/Island algorithms. Source GT structures never
+become model detections; asset/prescan colors cannot certify the new RGB-D views.
+
+Data device available; read-only environment/preexisting evidence inspection
+only so far, no server code edit. Later author CPU runs use fixed repository
+source in NEW isolated directories, private inputs/outputs remain there; only
+aggregate/count/hash facts may be published. Existing server Noetic prefix and
+F2 GT/cache outputs can be reused. Prior server machine verdict is limited:
+F2 components/GT preview approved, NORMAL_LAYOUT10_AND_REBINDING_OPEN, H1pending;
+not consumed as a formal complete-Gate approval. Rebinding currently hits
+permission denied on archived root-owned asset paths; keep explicit current
+asset vs unavailable historical-byte evidence, never relax source identity.
+
+Codex implements/CPU-author A/B, GPT independently repeats server checks, Owner
+visual decision; DS absent and old V2/MM/Kimi waiting superseded by this explicit
+current workflow. No V3/Gitlink/production/source data edits/model/GPU/train/merge.
+Claimed code edits not yet committed; self-tests, source publication, real A/B,
+read-only peer review, fixed SHA and Issue handoff remain to do.
+
 # 2026-11-09 CST — G2-F2 review request delivered and read back
 
 REVIEW. Canonical Inbox commit7289d7a630572f29a267f8ac34167db9e15d4a61,

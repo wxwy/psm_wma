@@ -401,6 +401,18 @@ def validate_snapshot(s):
                 s["completed_rgbd_observations"]!=0 or s.get("last_rgbd_observation_timestamp_ns")!=0 or
                 any(e.get("observation_source")!="MUJOCO_FULL_MAP_GT" for e in entities)):
             raise ContractError("Full Map must remain explicit source GT, never model observations")
+    observation=s.get('color_observation')
+    if observation is not None:
+        if (s['source_mode']!='full_map_mujoco_source' or s.get('surface_color_source')!='NATIVE_RGBD_FUSION_ONLY' or
+                observation.get('kind')!='NATIVE_RGBD_FUSION_ONLY' or observation.get('geometry_is_source_gt') is not True or
+                observation.get('model_observation') is not False or observation.get('prescan_initialized') is not False or
+                observation.get('frame_id')!=s['frame_id'] or observation.get('voxel_leaf_m')!=leaf or
+                observation.get('native_build_source_sha256')!=s['native_build_source_sha256'] or
+                type(observation.get('timestamp_ns')) is not int or observation['timestamp_ns']<=0):
+            raise ContractError('explicit native RGB-D color/GT geometry identity required')
+        for key in ('manifest_sha256','binding_sha256','worker_metrics_sha256','navigation_source_sha256'):sha(observation.get(key))
+    elif s.get('surface_color_source')=='NATIVE_RGBD_FUSION_ONLY':
+        raise ContractError('native RGB-D colors require observation evidence')
     relations=s.get("relations")
     if not isinstance(relations,list):
         raise ContractError("native relation list missing")
@@ -590,6 +602,9 @@ def load_bundle(directory):
     expected_files={"snapshot.json","surfaces.csv","grid_states.raw","SNAPSHOT_COMPLETE"}
     scope=manifest.get("source_scope",{})
     if not isinstance(scope,dict):raise ContractError("invalid source scope packet")
+    if scope.get('status')=='MUJOCO_GT_STRUCTURE_NATIVE_RGBD_COLOR_PENDING_HUMAN':
+        from .observed_color import verify_bundle
+        return verify_bundle(root,manifest)
     if scope.get("status")=="MUJOCO_FULL_MAP_GT_PENDING_HUMAN":
         from .full_map import verify_bundle
         return verify_bundle(root,manifest)

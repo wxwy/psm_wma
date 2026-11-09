@@ -1,0 +1,19 @@
+{
+  "runs": [
+    {
+      "frame_id": 0,
+      "generated_images": 2,
+      "native_build_source_sha256": "49335ae314ae1f6a51e6a586cb05fa0f490332bc35bd7d50747fec80c560ecfa",
+      "points": 100,
+      "training_ready": false
+    },
+    {
+      "frame_id": 3,
+      "generated_images": 2,
+      "native_build_source_sha256": "49335ae314ae1f6a51e6a586cb05fa0f490332bc35bd7d50747fec80c560ecfa",
+      "points": 100,
+      "training_ready": false
+    }
+  ],
+  "status": "OWN_TEST_ONLY_OBSERVED_GT_ROUNDTRIP_PASS"
+}

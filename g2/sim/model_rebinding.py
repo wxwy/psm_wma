@@ -66,7 +66,7 @@ def _normalise(path,raw,roots,rules,*,original):
     """Normalise only file/directory spelling, retaining every other XML value."""
     root_doc=_parse(raw);compiler=root_doc.find('compiler')
     dirs={k:compiler.get(k,'') if compiler is not None else '' for k in PATH_KEYS}
-    base=path.parent;active=set();documents=[];assets={};budget=[0,0,0];replayed={};aliases={}
+    base=path.parent;active=set();documents=[];assets={};budget=[0,0,0];replayed={};aliases={};original_access={}
     def resolve(reference,parent,tag):
         value=Path(reference)
         prefix=dirs['meshdir' if tag=='mesh' else 'texturedir'] if tag in ('mesh','texture') else ''
@@ -80,13 +80,32 @@ def _normalise(path,raw,roots,rules,*,original):
         target,original_paths=next(iter(pairs.items()))
         if not any(target==r or r in target.parents for r in roots):raise ContractError('rebound asset escapes approved roots')
         if tag!='include' and target.stat().st_size>ASSET_BYTE_LIMIT:raise ContractError('source asset exceeds byte budget')
-        existing={p.resolve() for p in original_paths if p.is_file()}
+        existing=set()
+        for old_path in original_paths:
+            try:
+                available=old_path.is_file()
+                if available:existing.add(old_path.resolve())
+                status='ACCESSIBLE_CURRENT_BYTES' if available else 'ORIGINAL_PATH_MISSING_CURRENT_MAPPED_ASSET_ONLY'
+            except PermissionError:
+                status='ORIGINAL_PATH_PERMISSION_DENIED_CURRENT_MAPPED_ASSET_ONLY'
+            if original and tag!='include':original_access[str(old_path)]={'original_reference':str(old_path),
+                'mapped_asset':str(target),'availability':status,'historical_episode_asset_version_certified':False}
         if original and existing:
             if tag=='include' and any(p.stat().st_size>XML_BYTE_LIMIT for p in [target,*existing]):
                 raise ContractError('source include XML exceeds read budget')
             if tag!='include' and any(p.stat().st_size>ASSET_BYTE_LIMIT for p in existing):
                 raise ContractError('original asset exceeds byte budget')
-            if len(existing)!=1 or digest(next(iter(existing)))!=digest(target):
+            target_sha=digest(target)
+            original_sha=None
+            if len(existing)==1:
+                old=next(iter(existing))
+                try:original_sha=digest(old)
+                except PermissionError:
+                    if tag=='include':raise ContractError('original include bytes required for replay proof')
+                    original_access[str(old)]={'original_reference':str(old),'mapped_asset':str(target),
+                        'availability':'ORIGINAL_PATH_PERMISSION_DENIED_CURRENT_MAPPED_ASSET_ONLY',
+                        'historical_episode_asset_version_certified':False}
+            if len(existing)!=1 or original_sha is not None and original_sha!=target_sha:
                 # XML includes can differ only by replaying the same path rule.
                 if tag!='include':raise ContractError('rebinding would substitute original asset bytes')
         return target,next(iter(existing)) if len(existing)==1 else None
@@ -131,7 +150,7 @@ def _normalise(path,raw,roots,rules,*,original):
         result=ET.tostring(rewritten,encoding='utf-8');replayed[alias]=result
         active.remove(document);return value,result,alias
     value,rewritten,root_alias=visit(path,raw)
-    return value,rewritten,documents,list(assets.values()),replayed,root_alias
+    return value,rewritten,documents,list(assets.values()),replayed,root_alias,list(original_access.values())
 
 
 def _compiled(model,data):
@@ -159,8 +178,8 @@ def _derive(config):
         raise ContractError('original compressed gzip identity required')
     roots=[rebased.parent,*[Path(r).resolve(strict=True) for r in config['asset_roots']]]
     if any(not r.is_dir() for r in roots):raise ContractError('asset root is not a directory')
-    expected,payload,original_xml,original_assets,replayed_xml,root_alias=_normalise(original,_xml(original),roots,rules,original=True)
-    actual,_,rebound_xml,rebound_assets,_,_=_normalise(rebased,_xml(rebased),roots,(),original=False)
+    expected,payload,original_xml,original_assets,replayed_xml,root_alias,original_access=_normalise(original,_xml(original),roots,rules,original=True)
+    actual,_,rebound_xml,rebound_assets,_,_,_=_normalise(rebased,_xml(rebased),roots,(),original=False)
     if expected!=actual:raise ContractError('original to rebound XML differs beyond the declared path-only transformation')
     if sorted(original_assets,key=lambda r:r['path'])!=sorted(rebound_assets,key=lambda r:r['path']):
         raise ContractError('original/rebound complete asset closures differ')
@@ -200,6 +219,7 @@ def _derive(config):
         'model_source_sha256':model_source_hash(sources),'sources':sources,
         'original_xml_closure':original_xml,'rebased_xml_closure':rebound_xml,
         'assets':sorted(rebound_assets,key=lambda r:r['path']),
+        'original_asset_access':sorted(original_access,key=lambda r:r['original_reference']),
         'states':{'path':str(states),'sha256':digest(states)},'ep_meta':{'path':str(ep),'sha256':digest(ep)},
         'frames':rows,'historical_generator_revision_certified':False,'training_ready':False}
 
@@ -222,6 +242,12 @@ def verify(proof,*,prescan=None,recorded_model_sha256=None):
     if _hash_bytes(canonical(value))!=sha(claimed) or value.get('schema')!=SCHEMA:
         raise ContractError('model rebinding proof identity differs')
     actual=_derive(value['configuration'])
+    if 'original_asset_access' not in value:
+        # Existing proofs predate the explicit permission/missing-byte evidence.
+        # They cannot silently gain the newly supported permission case.
+        if any('PERMISSION_DENIED' in row['availability'] for row in actual['original_asset_access']):
+            raise ContractError('legacy proof lacks explicit inaccessible-original asset evidence')
+        actual.pop('original_asset_access')
     if actual!=value:raise ContractError('model rebinding replay/source evidence differs')
     if recorded_model_sha256 is not None and actual['original_compressed']['sha256']!=recorded_model_sha256:
         raise ContractError('rebinding proof belongs to another original compressed episode model')

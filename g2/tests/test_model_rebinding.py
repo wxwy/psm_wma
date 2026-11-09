@@ -173,3 +173,57 @@ def test_oversized_include_is_rejected_before_either_original_or_target_is_hashe
         return original_digest(path)
     monkeypatch.setattr(module,'digest',guarded)
     with pytest.raises(ContractError,match='budget'):create(**model_pair)
+
+
+def test_inaccessible_archived_asset_records_current_mapping_without_certifying_history(model_pair,monkeypatch):
+    original_is_file=Path.is_file
+    def inaccessible(path):
+        if str(path).startswith('/archive/TEST_ONLY/'):raise PermissionError('own fixture archived root is inaccessible')
+        return original_is_file(path)
+    monkeypatch.setattr(Path,'is_file',inaccessible)
+    body=create(**model_pair)
+    rows=body['original_asset_access']
+    assert len(rows)==1 and rows[0]['availability']=='ORIGINAL_PATH_PERMISSION_DENIED_CURRENT_MAPPED_ASSET_ONLY'
+    assert rows[0]['historical_episode_asset_version_certified'] is False
+    verify(model_pair['output']/'rebinding.json')
+    # A legacy proof cannot silently acquire the newly explicit unavailable case.
+    path=model_pair['output']/'rebinding.json';body.pop('original_asset_access');body.pop('version_sha256')
+    body['version_sha256']=hashlib.sha256(canonical(body)).hexdigest();write_json(path,body)
+    with pytest.raises(ContractError,match='legacy proof'):verify(path)
+
+
+def test_inaccessible_original_include_is_still_rejected(model_pair,tmp_path,monkeypatch):
+    old,_=include_pair(model_pair,tmp_path);original_is_file=Path.is_file
+    def inaccessible(path):
+        if path==old/'part.xml':raise PermissionError('own original XML denied')
+        return original_is_file(path)
+    monkeypatch.setattr(Path,'is_file',inaccessible)
+    with pytest.raises(ContractError,match='original include bytes required'):create(**model_pair)
+    assert not model_pair['output'].exists()
+
+
+def test_archived_asset_read_denied_after_successful_stat_is_explicit(model_pair,monkeypatch):
+    from g2.sim import model_rebinding as module
+    archived=model_pair['original_gzip'].parent/'own_archived';archived.mkdir();old=archived/'shape.obj'
+    old.write_bytes((model_pair['asset_roots'][0]/'shape.obj').read_bytes())
+    xml=gzip.decompress(model_pair['original_gzip'].read_bytes()).decode().replace('/archive/TEST_ONLY/assets',str(archived))
+    model_pair['original_gzip'].write_bytes(gzip.compress(xml.encode(),mtime=0))
+    model_pair['path_prefixes']=[{'from':str(archived),'to':str(model_pair['asset_roots'][0])}]
+    original_digest=module.digest
+    def denied(path):
+        if Path(path)==old:raise PermissionError('own archived bytes deny read despite successful stat')
+        return original_digest(path)
+    monkeypatch.setattr(module,'digest',denied);body=create(**model_pair)
+    assert body['original_asset_access'][0]['availability']=='ORIGINAL_PATH_PERMISSION_DENIED_CURRENT_MAPPED_ASSET_ONLY'
+    verify(model_pair['output']/'rebinding.json')
+
+
+def test_current_mapped_asset_permission_is_not_relaxed(model_pair,monkeypatch):
+    from g2.sim import model_rebinding as module
+    target=model_pair['asset_roots'][0]/'shape.obj';original_digest=module.digest
+    def denied(path):
+        if Path(path)==target:raise PermissionError('own current bytes unreadable')
+        return original_digest(path)
+    monkeypatch.setattr(module,'digest',denied)
+    with pytest.raises(PermissionError):create(**model_pair)
+    assert not model_pair['output'].exists()

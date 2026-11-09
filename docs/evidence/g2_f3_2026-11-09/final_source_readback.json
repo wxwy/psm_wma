@@ -1,0 +1,13 @@
+{
+  "receipt": {
+    "schema": "g2_f3_final_source_readback_v1",
+    "native_commit": "abcc87ca636c81455f397e8b0813522c70874c00",
+    "psm_commit": "72b223499ae6fd080a337dafe0bb60f9f879c953",
+    "native_active_source_files": 153,
+    "native_build_overlay_files": 153,
+    "psm_source_files": 60,
+    "all_matched_after_runs": true,
+    "source_files_modified": false
+  },
+  "receipt_sha256": "e0cec5096930f011687ab3073096bf4b5ef0d1b7a4512dc8ddb176e22c8c463e"
+}
