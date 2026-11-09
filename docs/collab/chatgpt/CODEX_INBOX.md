@@ -169,3 +169,15 @@ AuthorCPU187PASS and fixed-Local H100 P50speedup1.2011x/exactActions remain
 qualified author evidence; inherited baseline failure and P99 regression retained.
 No private server files exported, no V3 merge or independent Gate closure.
 Fresh incremental GPT review requested on exact5b89/4446; receipt commitmetadata only.
+
+
+## 2026-11-09 — GPT Issue31 independent verdict: APPROVE_CODE for Root5b89/Child4446
+
+- **Frozen implementation pair** (not review HEAD): Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink `4446be0f6dad9b6dc887ef90af52d0af754d4682`. Baseline Root53b5273c / Child4cd5fc8c. RootPR32 and ChildPR10 remain Draft and unmerged.
+- **独立 verdict `APPROVE_CODE`：限 Issue31 第一阶段 B1/single-sample/two_way/guidance1 Local Prefix-aware Text KV 代码与同一 Local checkpoint 的 model-only GPU P50 Gate。** 不批准 V3 merge、Sim/Worker、真实SR/Episode、尾延迟SLA、多B/多卡部署或第二阶段 Pack/Attention。
+- **独立源码审核**：Root Gitlink 精确对应 Child；本轮六个 Child 文件、Root benchmark 两文件，NoTTT/无Prefix路径不改；cache 请求内初始化/失败清理/dispatch复原；首步从native materialized K/V取UND，后续29次gen-only仍各层注入当前4×32Prefix；禁止跨请求缓存污染。训练/Local FW/原生配置模式验证未动。
+- **独立 CPU**：服务器 exact Pair 执行新 `prefix_text_kv_memory_test.py` **25/25 PASS**。作者针对整个增量的 **187 passed、1 deselected** 原始JUnit/日志核查；被排除的旧W0断言在**旧Child4cd5与新Child4446**独立复跑均同样失败（旧4.43s、新4.81s），不是新增回归，不计通过；三个旧Ruff I001例外保留。
+- **独立 GPU 原始证据审核**：直接从授权服务器复算 `gpu05/measurements.jsonl` 60样本/30对ABBA；**56/56原始证据文件 SHA256 与 size 对上GitHub索引**。P50 **991.5513→825.5335ms**（−16.743%、1.2011×），P95 997.1945→829.1916ms；29/30对更快。**P99 1000.0608→1225.2732ms 退化**，最大1386.77ms离群值保留。GPU原始Action/Vision tensor逐元素原值精确相等，换Prefix后的Action max abs1.9609，恢复旧Prefix后精确相等；28层均30次Prefix生效，优化命中29次。GPU模拟负载仍存在，原始私有文件未外传。
+- **风险**：性能只证明 model-only 合成固定输入 + 单一 Local iter15000 DCP，不等于真实RoboCasa SR、吞吐或 NoTTT 历史 ~608ms；尾延迟仍需独立 Gate；本 Gate 不授权上游 #27/#28 和 #31 自动合入V3。
+- **详细正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md`。
+- Review/Inbox 的后续文档提交仅为 bookkeeping，**不是 implementation SHA**。
