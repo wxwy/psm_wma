@@ -1,3 +1,25 @@
+# 2026-11-09 15:46 CST — fixed native source pair delivered; awaiting GPT
+
+REVIEW. Formal PSM Root feff0d54b04a4c669198ec48493736bbc5dcaa81,
+Native e15c4cc28a157526a53827f29aeb70f88c845a66,
+unchanged Child/Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e.
+Config source54541 remains frozen; F1-D approval unchanged. Later ledger commits
+are metadata only, not replacements for those fixed implementation targets.
+GitHub45/45 PSM +175/175 native source/test/build files blob-exact; API commit
+objects/trees match tested local source.13 protected refs unchanged.
+Final tests446 PSM/157 distinct C++/53 related nativePython all PASS,0fail/error/
+skip;18 real local TEST_ONLY snapshots cross-language proof PASS/model gates
+correctly BLOCKED. Author reviews closed concrete P1/P2; no realLayout/model/
+sixview/training acceptance. See new runbooks/rawJUnit/retention/publication.
+Canonical Inbox request5e220f0e38695928a08bad480d434d96fc8b77fd/blob8bd64466213572a20c34702dd46ba579a670e0dd,
+append-only91873bytes before delivery, was published/readback before requests.
+Issue26/6734897202 and nativeIssue8/6734902391 posted/full-body readback exact;
+handoff_receipt.json records both. No GPT execution or verdict inferred from
+posting. Author CPU container stopped/removed; original inputs/private evidence
+remain on data. No V3/production/Gitlink/cache/GPU/model/train/PR/merge changes.
+STOP implementation pending GPT independent config/native real fourframe check;
+Owner next reviews native rooms/relations/six+Island, not accepted pointclouds.
+
 # 2026-11-09 15:36 CST — native integration author verification complete, publishing fixed source
 
 REVIEW candidate on codex/g2-f1-native-bridge from dc714108; native companion

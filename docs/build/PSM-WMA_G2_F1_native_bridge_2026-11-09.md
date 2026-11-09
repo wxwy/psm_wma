@@ -1,5 +1,14 @@
 # G2-F1 native bridge — fixed-source review candidate
 
+Formal Root `feff0d54b04a4c669198ec48493736bbc5dcaa81`, tree
+`91312da9c3971fa70491685a2061f5223a687fa3`; companion native
+`e15c4cc28a157526a53827f29aeb70f88c845a66`. Exact GitHub trees/Git objects
+and45/45 PSM +175/175 native source/test/build-entry blobs verified. Canonical
+Inbox request5e220f0e was committed/read back before Issue26/6734897202 and
+nativeIssue8/6734902391 delivery; both full comment bodies matched. Final
+publication/handoff receipts are metadata only, not new implementation targets.
+Awaiting GPT; no independent verdict or automatic server execution is inferred.
+
 F1-D scope remains fixed6b04/reviewf86ecef5; scene-release implementation54541
 and both server-local packages remain frozen, pending GPT verification. This
 independent bridge starts at F1-E metadata dc714108. Gitlink remains
