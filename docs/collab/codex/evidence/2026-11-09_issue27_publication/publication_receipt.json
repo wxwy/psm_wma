@@ -1,0 +1,375 @@
+{
+  "created_cst": "2026-11-09T11:30:02.000+08:00",
+  "formal_root": "15dbc97bf13437905ec38247382834067e5341ae",
+  "formal_child_gitlink": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "root_evidence_head_at_readback": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+  "child_head_at_readback": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "status": "PUBLISHED_AND_READ_BACK",
+  "independent_code_gate": "REQUESTED_NOT_CLOSED",
+  "new_draft_prs": [
+    {
+      "url": "https://github.com/wxwy/psm_wma/pull/29",
+      "base": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+      "head": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "url": "https://github.com/wxwy/cosmos-framework/pull/8",
+      "base": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db",
+      "head": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "draft": true,
+      "merged": false
+    }
+  ],
+  "remote_gitlink_verified_by_fetched_root": true,
+  "remote_blob_count": 41,
+  "remote_blob_matches": 41,
+  "blob_receipts": [
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "expected": "3afffa80ed4ef553b77bad41471d25310e3905ac",
+      "actual": "3afffa80ed4ef553b77bad41471d25310e3905ac",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/artifact_hashes.json",
+      "expected": "96b682fd05d11fe99616b6ed8c357b6261cb53fd",
+      "actual": "96b682fd05d11fe99616b6ed8c357b6261cb53fd",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/environment_overrides.json",
+      "expected": "2139976d6b28872f69f717555f8946f018128798",
+      "actual": "2139976d6b28872f69f717555f8946f018128798",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/gate.json",
+      "expected": "4580c7aaf0239cb6950c5c1dcb388fd80d58cfc8",
+      "actual": "4580c7aaf0239cb6950c5c1dcb388fd80d58cfc8",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/legacy_protection.log",
+      "expected": "9a3c36eb2a408d79e876064ff0c52008d5ba5c82",
+      "actual": "9a3c36eb2a408d79e876064ff0c52008d5ba5c82",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/legacy_protection.xml",
+      "expected": "bca0a5e9eb96458f8066297d21978694c4239590",
+      "actual": "bca0a5e9eb96458f8066297d21978694c4239590",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/native_baseline.log",
+      "expected": "db48bc636ced81465fc30dd9259db7496ab8574b",
+      "actual": "db48bc636ced81465fc30dd9259db7496ab8574b",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/root_lifecycle_config.log",
+      "expected": "741e62141f9aabd2b5addd97f0914de972c3afb4",
+      "actual": "741e62141f9aabd2b5addd97f0914de972c3afb4",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/root_lifecycle_config.xml",
+      "expected": "dda7637e1d27850b52a7d3b1b1549dbbd6c9367e",
+      "actual": "dda7637e1d27850b52a7d3b1b1549dbbd6c9367e",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/ruff_check.log",
+      "expected": "1f5f344d054fae10f39140fb7199c99321d9190a",
+      "actual": "1f5f344d054fae10f39140fb7199c99321d9190a",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/ruff_format.log",
+      "expected": "4aa2624e41828cf61a27befbdf3d6fa0dead5361",
+      "actual": "4aa2624e41828cf61a27befbdf3d6fa0dead5361",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/source_after.json",
+      "expected": "40f1ec139415436b1b8aa0e77374e19ff2c23ca4",
+      "actual": "40f1ec139415436b1b8aa0e77374e19ff2c23ca4",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/source_before.json",
+      "expected": "40f1ec139415436b1b8aa0e77374e19ff2c23ca4",
+      "actual": "40f1ec139415436b1b8aa0e77374e19ff2c23ca4",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/source_identity.json",
+      "expected": "b2cabff069edadb63c6c27058464735a45df6071",
+      "actual": "b2cabff069edadb63c6c27058464735a45df6071",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/stage3_focused.log",
+      "expected": "c999d80ee871b5b5e6b1a9836894766affceb87c",
+      "actual": "c999d80ee871b5b5e6b1a9836894766affceb87c",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/stage3_focused.xml",
+      "expected": "d9324d45569d03bfaf8a9bae38e7719661273235",
+      "actual": "d9324d45569d03bfaf8a9bae38e7719661273235",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/static_scope.json",
+      "expected": "d649ea2f823cc2302acba94ff3127210bea96d0c",
+      "actual": "d649ea2f823cc2302acba94ff3127210bea96d0c",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/streaming_bounds.log",
+      "expected": "03bd11fe1d450fa87d6d355fa5cedc44f437a6d1",
+      "actual": "03bd11fe1d450fa87d6d355fa5cedc44f437a6d1",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/streaming_bounds.xml",
+      "expected": "9f44534e305a28971663ccaf2fd7a01c873ae213",
+      "actual": "9f44534e305a28971663ccaf2fd7a01c873ae213",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/author-01/versions.json",
+      "expected": "82e5f65ddb3be62e73149e8851e1899674be723e",
+      "actual": "82e5f65ddb3be62e73149e8851e1899674be723e",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/summary.json",
+      "expected": "511c7b68427e87b0e784965ab75a4d383f0b248c",
+      "actual": "511c7b68427e87b0e784965ab75a4d383f0b248c",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f75344d2eba643ec49f4c97c9f62ce0367f98b87",
+      "path": "docs/collab/codex/reviews/2026-11-09_Issue27_SharedVAE_Topology_15dbc97b_60b252d0_Code_Gate_Request.md",
+      "expected": "4462a7d3975574bc7b849b24ed47daeb35516c0f",
+      "actual": "4462a7d3975574bc7b849b24ed47daeb35516c0f",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "15dbc97bf13437905ec38247382834067e5341ae",
+      "path": "scripts/robocasa_eval_v2/config.py",
+      "expected": "47942505a01bc5d7a4daf6fe6ff767293c6a9e43",
+      "actual": "47942505a01bc5d7a4daf6fe6ff767293c6a9e43",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "15dbc97bf13437905ec38247382834067e5341ae",
+      "path": "scripts/robocasa_eval_v2/shared_vae.py",
+      "expected": "52ffd414a65f900874fc67bb6ea627474a533fc3",
+      "actual": "52ffd414a65f900874fc67bb6ea627474a533fc3",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "15dbc97bf13437905ec38247382834067e5341ae",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_cli_test.py",
+      "expected": "9a05ca51521e3be72c90a698272e2afd3625446c",
+      "actual": "9a05ca51521e3be72c90a698272e2afd3625446c",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "15dbc97bf13437905ec38247382834067e5341ae",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+      "expected": "c6ff9c4bc3fc6f1462ebedd9435bd525b7f94200",
+      "actual": "c6ff9c4bc3fc6f1462ebedd9435bd525b7f94200",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "15dbc97bf13437905ec38247382834067e5341ae",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_server_wire_test.py",
+      "expected": "eb9730429accb1630d0dd8bfe4104fbc954263ef",
+      "actual": "eb9730429accb1630d0dd8bfe4104fbc954263ef",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "15dbc97bf13437905ec38247382834067e5341ae",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py",
+      "expected": "5745406b2a4472a0b3bc00af145f6875a419bc67",
+      "actual": "5745406b2a4472a0b3bc00af145f6875a419bc67",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "expected": "6601c824cc1d81512c33f7ea1773780073d71f62",
+      "actual": "6601c824cc1d81512c33f7ea1773780073d71f62",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_batch_transactions.py",
+      "expected": "eb3cf0d23cb3ec2ccb1968d93a10d4c6879c49aa",
+      "actual": "eb3cf0d23cb3ec2ccb1968d93a10d4c6879c49aa",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_boundary_batch_test.py",
+      "expected": "29735a1a45429e4e1a070e5045b643f600aa4848",
+      "actual": "29735a1a45429e4e1a070e5045b643f600aa4848",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_boundary_capture.py",
+      "expected": "ba5fa8e45f8024aae32a523950594a1ea668e695",
+      "actual": "ba5fa8e45f8024aae32a523950594a1ea668e695",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_feature_transactions_test.py",
+      "expected": "7d4ae4de9ab2fba21249371f7d4e7695a74990e3",
+      "actual": "7d4ae4de9ab2fba21249371f7d4e7695a74990e3",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_shared_memory_test.py",
+      "expected": "79e7cc869581eb4789cfcafeca237895f7587ac2",
+      "actual": "79e7cc869581eb4789cfcafeca237895f7587ac2",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_shared_policy_batch_test.py",
+      "expected": "370841e649c4d42ba1b8d711d87f5b4c8d0ea42b",
+      "actual": "370841e649c4d42ba1b8d711d87f5b4c8d0ea42b",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_shared_ready_test.py",
+      "expected": "0bddd451f17046a1a974770db6b6d6c04425a973",
+      "actual": "0bddd451f17046a1a974770db6b6d6c04425a973",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_vae_daemon.py",
+      "expected": "20bd206b62933c9947ce2e498641d5aed0d5dd55",
+      "actual": "20bd206b62933c9947ce2e498641d5aed0d5dd55",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_vae_topology_test.py",
+      "expected": "d9ce98128302a13c5dead263bcdaee64ed73dadd",
+      "actual": "d9ce98128302a13c5dead263bcdaee64ed73dadd",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/inference/robocasa_vae_worker.py",
+      "expected": "eae2e72894205ecfbb846db3f5faa50d3ffa39f1",
+      "actual": "eae2e72894205ecfbb846db3f5faa50d3ffa39f1",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "expected": "7ab86d122fbb3ec232016513e37c9b3e2bb04669",
+      "actual": "7ab86d122fbb3ec232016513e37c9b3e2bb04669",
+      "pass": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "path": "cosmos_framework/scripts/robocasa_shared_feature_batch_test.py",
+      "expected": "8e202ee943a9f6beda2b8a37175a09533b0eae18",
+      "actual": "8e202ee943a9f6beda2b8a37175a09533b0eae18",
+      "pass": true
+    }
+  ],
+  "official_refs": {
+    "root_v3": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "child_v3_local_ttt": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db"
+  },
+  "official_refs_unchanged": true,
+  "author_cpu": {
+    "top_level_pass": 965,
+    "subtests_pass": 207,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "source_unchanged": true,
+    "static_python_files": 19,
+    "raw_files": 90
+  },
+  "gpu_real_sim_sr_performance": "NOT_RUN",
+  "old_pr25_7_modified": false
+}
