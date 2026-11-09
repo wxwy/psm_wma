@@ -88,3 +88,12 @@ match; advertised branch/Gitlink match. Receipt:
 Author566+22subtests/588JUnit PASS; fresh GPT review requested. Previous MEDIUM
 not author-closed, no V3/#27 merge or GPU/realSim/SR/training operation.
 
+
+
+## 2026-11-09 — GPT independent Issue28 K=H default/divisor incremental approval
+
+- Formal implementation Pair: **Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`**. Previous `REQUEST_CHANGES` Pair `050e45d8` / `59746af0`. Subsequent docs/evidence/Inbox branch HEAD is **not** a replacement formal implementation target.
+- **Formal verdict: `APPROVE_CODE`** — CPU/Static/contract Gate ONLY. Previous MEDIUM finding `K hardcoded default16 / fixed allowed list / 16//K` CLOSED. Exact code has `validate_history_k(K,H)` resolve K=None→H, accept positive exact int divisors only, and select relative `j%(H//K)==0`; Native Action Horizon remains legitimately fixed H16. Default/explicit K=H retains old dense Manifest, Feature wire and T1 semantics. Root/Policy/Worker/Sim freeze and verify actual H and K; NoTTT, Session, M/B Resume, Native Policy batches and topology reused. No new engine or model/training modifications.
+- Independent reviewer read actual incremental Root+Child source and direct CPU tests, original author logs/JUnit, H16 old/new CPU probes and full source inventories. Author focused **566 top-level +22 subtests =588 JUnit PASS**, 0 failed/error/skipped; Ruff/format/AST22 PASS; 1331/1331 before/after source hashes unchanged. Same CPU probe old Child59746/newChild4cd5 outputs matching Feature wire/Boundary/FastState/Prefix/synthetic Action hashes. Pure H1..48/H12/H24 helper and T1 consumer tests do **not** claim H12 production deployment. Reviewer did not rerun author pytest or execute GPU/real Wan/Sim.
+- Detailed report: `docs/collab/chatgpt/reviews/2026-11-09_Issue28_53b5273c_4cd5fc8c_HorizonDerivedK_APPROVE_CODE.md`.
+- Scope strictly **Issue28 CPU incremental Code Gate**. Does not authorize RootPR30/ChildPR9 or their stacked RootPR29/ChildPR8 automatic merge into V3; does not validate new real H100 throughput/Action equivalence/SR, 900Episode, training or operation of running jobs. Future GPU smoke only when separately authorized.
