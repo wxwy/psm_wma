@@ -38,8 +38,12 @@ Machine evidence ID .g2_f3_color_ab_author_20261109_01; machine summarySHA256
 9524fed1994e0cb9fbd157152f28560752cc4b00dec2fc9c50b7ee3376e1a01c.
 Full author report docs/build/PSM-WMA_G2_F3_author_results_2026-11-09.md;
 own raw tests and derived real facts docs/evidence/g2_f3_2026-11-09/.
-All17protected refs re-fetched unchanged. Canonical Inbox receives this pair's
-request before final Issue8/26 handoff/readback. GPT next independently repeats
+All17protected refs re-fetched unchanged, including after final publication.
+Canonical Inbox commit1dcd594a/blob6ccb73359c044320b2920329be408c4c4124fc39
+104257bytes fully readback equal before Issue8/6744375534 and
+Issue26/6744377269 were sent and readback equal. DraftPR9/34 bodies/head/base
+readback match; publication_delivery_receipt.json records exact destinations.
+GPT next independently repeats
 and checks real masked views; Owner visual follows. No new map/cache/default,
 V3/Gitlink/source data/old PR/model/GPU/train/merge changes. Directional rays,
 normal L10, model semantics, history/fullcolor/Island/H1/training remain open.
