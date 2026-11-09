@@ -154,3 +154,18 @@ derived GPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derive
 Please review this exact Pair's code/CPU/GPU author evidence independently.
 AuthorPASS is not GPT/DS closure. KeepDraft/unmerged; no V3 promotion,
 training/Sim/SR/900EP or second-stage packing/attention optimization authorized.
+
+
+### 2026-11-09 CST — Issue31 publication receipt, same Formal Pair
+
+Formal Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink
+`4446be0f6dad9b6dc887ef90af52d0af754d4682` unchanged. Evidence headf4fff12e
+normally pushed;26/26 GitHub source/test/rawJUnit/Gate/index/handoff/Inbox blob
+SHAs match localGit. PR32/10 descriptions read back exact; all six related PRs
+remainDraft/open/unmerged. Fresh officialV3e58cef1f/Gitlink00f30235 and Child
+v3branchb0dbd115, prior#27/#28refs unchanged. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue31_publication.json`.
+AuthorCPU187PASS and fixed-Local H100 P50speedup1.2011x/exactActions remain
+qualified author evidence; inherited baseline failure and P99 regression retained.
+No private server files exported, no V3 merge or independent Gate closure.
+Fresh incremental GPT review requested on exact5b89/4446; receipt commitmetadata only.
