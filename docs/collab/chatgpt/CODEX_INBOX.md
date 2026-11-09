@@ -553,3 +553,13 @@ Exact Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child00f30235da6ffb0
 - Fresh GPT incremental Code Gate request is available through canonical Inbox and both Draft PRs. Publication is not reviewer ACK/approval. No GPU/realSim/SR/900EP/training/official merge authorization inferred.
 
 - Publication receipts are bookkeeping; the tested Formal Pair remains unchanged.
+
+
+## 2026-11-09 — GPT independent Issue27 incremental verdict: REQUEST_CHANGES (Evidence-only)
+
+- Formal technical target unchanged: Root `15dbc97bf13437905ec38247382834067e5341ae` / Child-Gitlink `60b252d05157b2753d2caebae32b11c878504bbe`. Root docs-only successor commits do not replace this formal pair.
+- Independent source/diff and direct tests reviewed. Root#29 / Child#8 are still Draft, unmerged. Author CPU 965 top-level +207 subtests, Ruff19 PASS was inspected as author evidence; not independently rerun, not real H100 proof.
+- **REQUEST_CHANGES — MEDIUM, tests/Evidence-only**: complete Worker subprocess/FD/UnixIPC/Owner HTTP lifecycle test in `tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:189-201` only uses `(2,8)` = **2 Server × 8 Sim/Server = 16 total Sim**, but required representative `2×16` is **2 Server × 16 Sim/Server = 32 total Sim** under existing streaming M16. `shared_vae_server_wire_test.py:16-53` (2,32) only checks pre-spawn argv; no 32-Session Worker registration/ACK/End. Add narrow CPU streaming 2×16 actual Worker/Session/Owner lifecycle proof, assert 2 render GPUs→2 Workers, 32 distinct approved Sessions, cleanup/fail-closed; maintain 1×1/1×8 regression. If stronger fixture reveals production bug, promote to production blocker. No new scheduler or SR/900EP needed.
+- Detailed independent report: `docs/collab/chatgpt/reviews/2026-11-09_Issue27_15dbc97b_60b252d0_GenericTopology_Evidence_REQUEST_CHANGES.md`.
+- **Next independent task #28**: after Issue27 code gate closes, implement `local_ttt_history_k∈{1,2,4,8,16}` default16 on *same* EvalV2/Shared Worker/TTT code, select `i%(16/K)==0` relative to each H16 chunk start, always reuse previous Policy Replan frame at i=0; skipped frames no history VAE/FW, preserve executed-action completion. No premature merge or implementation in this exact pair.
+- Scope: static/CPU Issue27 ONLY. No real GPU, throughput, SR/900EP, training or V3 merge authorization.
