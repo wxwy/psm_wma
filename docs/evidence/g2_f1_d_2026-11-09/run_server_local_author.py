@@ -64,8 +64,20 @@ def main():
             path = snapshot / relative; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(payload)
             origins[key] = 'PINNED_PUBLIC_REFERENCE_SNAPSHOT_NOT_INSTALLED_VERSION_PROOF'
         roots[group] = str(snapshot)
+    verified_spans = 0
+    for rule in [*reference['rules'].values(), *reference.get('non_classifying_facts', [])]:
+        for span in rule.get('generator_spans', []):
+            record = reference['sources'][span['source_id']]
+            payload = verified_file(roots[record['root']], record).read_bytes()
+            lines = payload.splitlines(keepends=True)
+            start, end = span['start_line'], span['end_line']
+            if (not 1 <= start <= end <= len(lines)
+                or hashlib.sha256(b''.join(lines[start-1:end])).hexdigest() != span['excerpt_sha256']):
+                raise RuntimeError('public reference excerpt bounds/hash differ')
+            verified_spans += 1
     provenance = {'source_origins': origins, 'existing_source_matches': existing_matches,
-        'historical_episode_generator_version_certified': False, 'prior_gpt_review_commit': 'ceb5dbb1a32753f275d8ed1dd54a55d8342bca9f'}
+        'verified_excerpt_spans': verified_spans, 'historical_episode_generator_version_certified': False,
+        'prior_gpt_review_commit': 'ceb5dbb1a32753f275d8ed1dd54a55d8342bca9f'}
     write_json(out / 'reference_provenance.json', provenance)
     results = []
     for layout in (1, 10):

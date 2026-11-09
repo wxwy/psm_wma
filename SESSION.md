@@ -1,3 +1,16 @@
+# 2026-11-09 (Asia/Shanghai) — F1-D exact source-excerpt bound correction
+
+IN_PROGRESS. Authorrun05 fixed1ce0b032 preserved all original474 hypotheses
+exactly and mathematically matched all116 registered-helper instances, but
+base verifier correctly rejected116 due an out-of-range citation end line:
+handles369..396 with actual EOF394. Original slicing hash silently truncated;
+bytes/hash were correct but index contract was not. Corrected end to394,
+all11 fixedpublic files/28 excerpts now independently bounds+hash checked.
+Authorrunner preflights all excerpt bounds/hash before any role generation.
+Algorithm/test G2 blobs unchanged from371PASS1ce0; no loosened role/math test.
+Publish this reference correction and rerun fresh server-local author output;
+all590 bound remains unclaimed until actual disk proof. No cloud regeneration.
+
 # 2026-11-09 (Asia/Shanghai) — F1-D template-default instance compatibility
 
 IN_PROGRESS. Source checkpoint33ab1d66 + offline-reference wrapper9a5cff0
