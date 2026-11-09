@@ -107,3 +107,13 @@ not author-closed, no V3/#27 merge or GPU/realSim/SR/training operation.
 - Multi: **2 real Policy Servers GPUs6/7 ×2 Sim slots each, real Sim/Shared VAE Workers on GPU4/5, Worker Bvae1/wait0, K4, Policy batch cap2**. Four tasks CloseFridge900, NavigateKitchen450, PickPlaceSinkToCounter900, TurnOnSinkFaucet600 steps: **4/4 clean/valid, 2850 steps/181 replans, errorNone, per historical replanFW4/Worker features3/prefix present; 2 Worker READY + 2 Worker CLOSED verified with IPC quiescent and no lingering processes**.
 - **Caveat**: Real Policy cap2 only generated actual B1-sized groups under asynchronous no-wait; real grouped Native B2 Action path not yet proven. This test is also **not** a real 2×16=32Sim hardware test (that topology has separate CPU evidence). SR/900Episodes/training not rerun. Functional smoke PASS **does not grant production V3 merge approval**; PR29/8 and stacked PR30/9 remain Draft until Owner decides.
 - Full derived-statistics review (no private server files uploaded): `docs/collab/chatgpt/reviews/2026-11-09_Issue27_Issue28_H100_SharedVAE_SparseK_RealSmoke_FunctionalPASS.md`. Original logs/JSON and deterministic verification remain only in isolated train-server work directory.
+
+
+## 2026-11-09 — Codex NEW TASK Issue31: Prefix-aware text KV cache performance recovery
+
+- **Owner授权方向**：恢复 Local-TTT Memory Prefix 下 Cosmos native generation 的推理速度。新的独立 Codex 优化任务：https://github.com/wxwy/psm_wma/issues/31 （首阶段仅 B1/single-sample/two_way 的 Prefix-aware text KV cache；不是重新审核 Issue28，也不是自动合并 V3）。
+- **基础正式 implementation pair 未变化**：Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`。现有 Root#29/#30 + Child#8/#9 仍 Draft。请 Codex 在**独立候选分支**提交新 formal pair 与证据供 GPT fresh review；不得直接变动前一 pair 或合入 V3。
+- **真实瓶颈**：15个有效900-step Episode、B1/30步、280个稳定Replan每模式；NoTTT/K16/K1 native generation GPU-event mean `608/1203/1181 ms`，当前帧VAE仅 `5.2/5.6/7.0 ms`，说明VAE不是差额。K1/K16 都在 Cosmos 注入固定4×32 Local Prefix；减少历史 K 并不会恢复生成快路径。
+- **源码嫌疑点**：`omni_mot_model.py:3991–3993` Prefix禁用pack-template reuse、`:4065–4112` 禁用text-KV reuse；`mot/attention.py:257–265` 强制varlen；`cosmos3_vfm_network.py:1574–1584` 当前 Local+MemoryState显式禁止。不能盲开 `reuse_text_kv`，否则 Prefix 可能被旁路，必须以真实数值/Action/会话隔离证据证明正确。
+- **下一轮门槛**：Codex先做 Prefix-aware KV 正确性 + 单一Local checkpoint、同样输入/Prefix/FW的交错模型内延迟基准。不得混入train/Sim/Worker改造，不能绕过 `validate_model_mode`。GPU验证只在Owner许可的4–7卡，保留 `gpu_load_sim.py` 原样。若没有明显加速需明确不达标。第二项pack复用必须单独可归因。
+- 这是新优化任务的**handoff/owner request**，不是本条旧代码新一次technical verdict，不授予新的 GPU/merge/production Gate。
