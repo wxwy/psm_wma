@@ -1,0 +1,272 @@
+[
+  {
+    "path": "g2/.gitignore",
+    "expected_git_blob_sha": "6c56ff1bd9054f9e9a0147f85233c996b06536d7",
+    "github_git_blob_sha": "6c56ff1bd9054f9e9a0147f85233c996b06536d7",
+    "match": true
+  },
+  {
+    "path": "g2/README.md",
+    "expected_git_blob_sha": "6844555195a281499303d2a0e79a75c634dad21e",
+    "github_git_blob_sha": "6844555195a281499303d2a0e79a75c634dad21e",
+    "match": true
+  },
+  {
+    "path": "g2/__init__.py",
+    "expected_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "github_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true
+  },
+  {
+    "path": "g2/config/scene_role_profiles_2026-11-09.json",
+    "expected_git_blob_sha": "4879dad6be067531bc1b8a8e83a719123cc9a3ee",
+    "github_git_blob_sha": "4879dad6be067531bc1b8a8e83a719123cc9a3ee",
+    "match": true
+  },
+  {
+    "path": "g2/io.py",
+    "expected_git_blob_sha": "7001277536b49468fcab3e113f7f4cb5ad672bfc",
+    "github_git_blob_sha": "7001277536b49468fcab3e113f7f4cb5ad672bfc",
+    "match": true
+  },
+  {
+    "path": "g2/nav_bridge/__init__.py",
+    "expected_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "github_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true
+  },
+  {
+    "path": "g2/nav_bridge/recorded.py",
+    "expected_git_blob_sha": "60438e979ceb7717d9161e2b3fa71c319ebc388f",
+    "github_git_blob_sha": "60438e979ceb7717d9161e2b3fa71c319ebc388f",
+    "match": true
+  },
+  {
+    "path": "g2/nav_bridge/snapshot.py",
+    "expected_git_blob_sha": "d72bc9f2a9c493df8f37f2a75e577f6d0a4c7dc5",
+    "github_git_blob_sha": "d72bc9f2a9c493df8f37f2a75e577f6d0a4c7dc5",
+    "match": true
+  },
+  {
+    "path": "g2/sim/__init__.py",
+    "expected_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "github_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true
+  },
+  {
+    "path": "g2/sim/asset_inventory.py",
+    "expected_git_blob_sha": "f56425dd6203fc153fef7e34912de4e171dab23d",
+    "github_git_blob_sha": "f56425dd6203fc153fef7e34912de4e171dab23d",
+    "match": true
+  },
+  {
+    "path": "g2/sim/color_evidence.py",
+    "expected_git_blob_sha": "703b42af2a58a92253218a1ff363d58ad2925ecf",
+    "github_git_blob_sha": "703b42af2a58a92253218a1ff363d58ad2925ecf",
+    "match": true
+  },
+  {
+    "path": "g2/sim/prescan.py",
+    "expected_git_blob_sha": "3e2c5dcb3ba8ee86089083d7943f6c4b3071707b",
+    "github_git_blob_sha": "3e2c5dcb3ba8ee86089083d7943f6c4b3071707b",
+    "match": true
+  },
+  {
+    "path": "g2/sim/requirements.txt",
+    "expected_git_blob_sha": "431eaa3d7b9312652c5eaa5ab4d026820d9321fb",
+    "github_git_blob_sha": "431eaa3d7b9312652c5eaa5ab4d026820d9321fb",
+    "match": true
+  },
+  {
+    "path": "g2/sim/role_hypotheses.py",
+    "expected_git_blob_sha": "77ec91ee69121ff3f042a307259c5ebe9465399e",
+    "github_git_blob_sha": "77ec91ee69121ff3f042a307259c5ebe9465399e",
+    "match": true
+  },
+  {
+    "path": "g2/sim/role_review.py",
+    "expected_git_blob_sha": "5fa1c15e3bf688f349a00d033b12bd10f5e8d68b",
+    "github_git_blob_sha": "5fa1c15e3bf688f349a00d033b12bd10f5e8d68b",
+    "match": true
+  },
+  {
+    "path": "g2/sim/scene_release.py",
+    "expected_git_blob_sha": "a1ab85c78dcdcb512a222a86bdf96203861054f7",
+    "github_git_blob_sha": "a1ab85c78dcdcb512a222a86bdf96203861054f7",
+    "match": true
+  },
+  {
+    "path": "g2/sim/source_geometry.py",
+    "expected_git_blob_sha": "a84473b7276eb8812d3afdaeab4f0d1262453220",
+    "github_git_blob_sha": "a84473b7276eb8812d3afdaeab4f0d1262453220",
+    "match": true
+  },
+  {
+    "path": "g2/sim/source_roles.py",
+    "expected_git_blob_sha": "0edcfce540f8a0876cc396fe372a11bb66106382",
+    "github_git_blob_sha": "0edcfce540f8a0876cc396fe372a11bb66106382",
+    "match": true
+  },
+  {
+    "path": "g2/sim/source_scope.py",
+    "expected_git_blob_sha": "a46b09e918d409204c9e305c30944f650298c8ce",
+    "github_git_blob_sha": "a46b09e918d409204c9e305c30944f650298c8ce",
+    "match": true
+  },
+  {
+    "path": "g2/sim/surface_coverage.py",
+    "expected_git_blob_sha": "f3d0c8a76651ad56f2b1fcde84aa68382209c269",
+    "github_git_blob_sha": "f3d0c8a76651ad56f2b1fcde84aa68382209c269",
+    "match": true
+  },
+  {
+    "path": "g2/sim/surface_sampling.py",
+    "expected_git_blob_sha": "d2c8ad4bf1e65dc89128a0fcc06d3881dd9fa8c8",
+    "github_git_blob_sha": "d2c8ad4bf1e65dc89128a0fcc06d3881dd9fa8c8",
+    "match": true
+  },
+  {
+    "path": "g2/sim/texture_projection.py",
+    "expected_git_blob_sha": "d74b305a08b54640866e8d070060cb812c4a570e",
+    "github_git_blob_sha": "d74b305a08b54640866e8d070060cb812c4a570e",
+    "match": true
+  },
+  {
+    "path": "g2/tests/conftest.py",
+    "expected_git_blob_sha": "2a365c4425b4ee47de65c47f2049fb6b53e6d1af",
+    "github_git_blob_sha": "2a365c4425b4ee47de65c47f2049fb6b53e6d1af",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_bridge.py",
+    "expected_git_blob_sha": "8f8b21fc3c3211b0bbb7f60ebe8485e6f7889446",
+    "github_git_blob_sha": "8f8b21fc3c3211b0bbb7f60ebe8485e6f7889446",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_color_evidence.py",
+    "expected_git_blob_sha": "ae44fed18aa0731aad2cc4833e81f7f7f438776d",
+    "github_git_blob_sha": "ae44fed18aa0731aad2cc4833e81f7f7f438776d",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_f1b2_r1.py",
+    "expected_git_blob_sha": "45db9376e5adf2df4da67a61a91bcb49abb9fafa",
+    "github_git_blob_sha": "45db9376e5adf2df4da67a61a91bcb49abb9fafa",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_f1c_positive_faces.py",
+    "expected_git_blob_sha": "e21f41d831b05d574b8b0c43588601c2975a87ad",
+    "github_git_blob_sha": "e21f41d831b05d574b8b0c43588601c2975a87ad",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_mesh_asset_audit.py",
+    "expected_git_blob_sha": "f2ec52d980cd117c454d86250a80030a47331071",
+    "github_git_blob_sha": "f2ec52d980cd117c454d86250a80030a47331071",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_native_recorded_options.py",
+    "expected_git_blob_sha": "d7158a60281e146270d00ed534de270e74001a36",
+    "github_git_blob_sha": "d7158a60281e146270d00ed534de270e74001a36",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_native_structure_proof.py",
+    "expected_git_blob_sha": "c1510f3720242c0118a70f63cb5414bfbb4999f4",
+    "github_git_blob_sha": "c1510f3720242c0118a70f63cb5414bfbb4999f4",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_object_category.py",
+    "expected_git_blob_sha": "5c12df2b6d6d2f0b3a0cd5b8836c3f59cde595cc",
+    "github_git_blob_sha": "5c12df2b6d6d2f0b3a0cd5b8836c3f59cde595cc",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_prescan.py",
+    "expected_git_blob_sha": "5b441b0cc54db2a9c3aefc94aa9f8d462e5921e3",
+    "github_git_blob_sha": "5b441b0cc54db2a9c3aefc94aa9f8d462e5921e3",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_recorded.py",
+    "expected_git_blob_sha": "492a1a3188fcb08df4eed8cff512db7969a2949a",
+    "github_git_blob_sha": "492a1a3188fcb08df4eed8cff512db7969a2949a",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_role_hypotheses.py",
+    "expected_git_blob_sha": "c830b54642a45668957bf35b88f4de67fe336692",
+    "github_git_blob_sha": "c830b54642a45668957bf35b88f4de67fe336692",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_role_review.py",
+    "expected_git_blob_sha": "ba164a7de79f96f436a222143e06d00401bf4026",
+    "github_git_blob_sha": "ba164a7de79f96f436a222143e06d00401bf4026",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_scene_release.py",
+    "expected_git_blob_sha": "b4d9930db81d5d4a0ea64c93d3b3a0c8e942b9d9",
+    "github_git_blob_sha": "b4d9930db81d5d4a0ea64c93d3b3a0c8e942b9d9",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_source_identity.py",
+    "expected_git_blob_sha": "d1c79d5051bc27ccf858c7278dbdc9c248bf6e58",
+    "github_git_blob_sha": "d1c79d5051bc27ccf858c7278dbdc9c248bf6e58",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_source_roles.py",
+    "expected_git_blob_sha": "b0eda7acf0a5e2f3847b1ec9f864f2191bfd268a",
+    "github_git_blob_sha": "b0eda7acf0a5e2f3847b1ec9f864f2191bfd268a",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_source_scope.py",
+    "expected_git_blob_sha": "0e934ee12250382baba977692a6826bd5f98695d",
+    "github_git_blob_sha": "0e934ee12250382baba977692a6826bd5f98695d",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_surface_sampling.py",
+    "expected_git_blob_sha": "213fafc3d2250a2b96cbf87e6f1eff64ae0c64a9",
+    "github_git_blob_sha": "213fafc3d2250a2b96cbf87e6f1eff64ae0c64a9",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_texture_guards.py",
+    "expected_git_blob_sha": "ee035453661a78839ac61e49af5c0a800fc9ec08",
+    "github_git_blob_sha": "ee035453661a78839ac61e49af5c0a800fc9ec08",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_texture_projection.py",
+    "expected_git_blob_sha": "a0e6084ac287e16ebea1e71a022e61929a7d7249",
+    "github_git_blob_sha": "a0e6084ac287e16ebea1e71a022e61929a7d7249",
+    "match": true
+  },
+  {
+    "path": "g2/tests/test_views.py",
+    "expected_git_blob_sha": "7cfc082420b08cc1a59f0b053f03d6823d48f63b",
+    "github_git_blob_sha": "7cfc082420b08cc1a59f0b053f03d6823d48f63b",
+    "match": true
+  },
+  {
+    "path": "g2/views/__init__.py",
+    "expected_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "github_git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "match": true
+  },
+  {
+    "path": "g2/views/render.py",
+    "expected_git_blob_sha": "cd080493ca1e82affae58ffd723914c6dabfbb41",
+    "github_git_blob_sha": "cd080493ca1e82affae58ffd723914c6dabfbb41",
+    "match": true
+  }
+]

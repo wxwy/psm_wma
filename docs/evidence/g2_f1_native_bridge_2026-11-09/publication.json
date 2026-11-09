@@ -1,0 +1,15 @@
+{
+  "scope": "AUTHOR_FIXED_SOURCE_FOR_GPT_INDEPENDENT_REVIEW",
+  "repository": "wxwy/psm_wma",
+  "fixed_source_sha": "feff0d54b04a4c669198ec48493736bbc5dcaa81",
+  "source_tree": "91312da9c3971fa70491685a2061f5223a687fa3",
+  "github_exact_object_verified": true,
+  "github_source_blobs_matched": 45,
+  "github_source_blobs_total": 45,
+  "companion_source_sha": "e15c4cc28a157526a53827f29aeb70f88c845a66",
+  "scene_config_source_sha": "54541c315ad13077b5b4b7f3d81d01138b8931d8",
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "independent_gpt_verdict": "PENDING",
+  "private_server_paths_disclosed": false,
+  "training_ready": false
+}
