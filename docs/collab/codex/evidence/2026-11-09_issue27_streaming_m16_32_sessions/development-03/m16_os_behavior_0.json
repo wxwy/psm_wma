@@ -1,0 +1,131 @@
+{
+  "schedule": "streaming_task_affinity_v2",
+  "manifest_digest": "9cd45b83acbcf7cb57060511ee84b20563ea7ad782acf26b83987acbe1304a47",
+  "execution": {
+    "batch_wait_ms": 0,
+    "gpu_ids": [
+      10,
+      11
+    ],
+    "max_infer_batch_size": 8,
+    "max_rss_bytes": 137438953472,
+    "noise": "literal_cfg_seed_per_sample_v1",
+    "profile": "phase_b_native_batch_v1",
+    "resources": {
+      "initialization_concurrency": 1,
+      "max_owned_gpu_bytes": 1000,
+      "server_startup_gpu_bytes": 100,
+      "server_startup_rss_bytes": 100,
+      "sim_startup_gpu_bytes": 20,
+      "sim_startup_rss_bytes": 30
+    },
+    "scheduling": "streaming_task_affinity_v2",
+    "shared_vae": {
+      "history_source": "sim_shared_vae",
+      "version": "sim_shared_vae_b1_v1",
+      "worker": {
+        "bmax": 1,
+        "egl_vendor_json": "/workspace/work/issue27-m16-evidence/development-03/tmp/test_streaming_m16_32_frozen_s0/egl_vendor_json",
+        "egl_vendor_sha256": "6cd22cf3affb2d3ecfda7ee63d03d38bf26fe696c33c70353924da6b8d3f75d2",
+        "max_rss_bytes": 137438953472,
+        "resources": {
+          "initialization_concurrency": 1,
+          "max_owned_gpu_bytes": 1000,
+          "server_startup_gpu_bytes": 100,
+          "server_startup_rss_bytes": 100,
+          "sim_startup_gpu_bytes": 20,
+          "sim_startup_rss_bytes": 30,
+          "vae_startup_gpu_bytes": 50,
+          "vae_startup_rss_bytes": 50
+        },
+        "trust_model": "registry_same_trust_domain",
+        "vae_config": "/workspace/work/issue27-m16-evidence/development-03/tmp/test_streaming_m16_32_frozen_s0/vae_config",
+        "vae_config_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "vae_weights": "/workspace/work/issue27-m16-evidence/development-03/tmp/test_streaming_m16_32_frozen_s0/vae_weights",
+        "vae_weights_sha256": "765057a806e4cfb818cefdd0b68b1200d1ffde81a111c5ff61a9cf97d24b2093",
+        "wait_ms": 0
+      }
+    },
+    "sims_per_gpu": 16
+  },
+  "servers": 2,
+  "sims_per_server": 16,
+  "total_sim_sessions": 32,
+  "capacity_profile": "streaming32",
+  "render_gpu_count": 2,
+  "worker_count": 2,
+  "session_ids": [
+    "930e2c94444347ac909c38ad46a1dbbb:ec63a6294c34469aa043446f63203e91:1:76317c4d8ff24d87ad27371792d6f0b9",
+    "24f62d6900c740afafe63b8735171db1:590b0a6410604ae6bae0bfa2264e1bb9:1:505b10f8a5c2442db0248e692d323cef",
+    "930e2c94444347ac909c38ad46a1dbbb:2082806eddd44ece974bd113d5d330cf:1:75ce675c74e24fe2b68b85d6a2e8ba98",
+    "24f62d6900c740afafe63b8735171db1:e77997eca5e140479e50c0391db4621c:1:26acdd0d473b496e8230bdc684f7f2d4",
+    "930e2c94444347ac909c38ad46a1dbbb:bf85a637b56f45228b21dd23e018b5b7:1:395f92e540224462890f329b157af749",
+    "24f62d6900c740afafe63b8735171db1:0ecf4c2e20004e3e8301cb19b4e12f27:1:55c8dbd0e43d43f39dcaac4c94ee53f7",
+    "930e2c94444347ac909c38ad46a1dbbb:e0b649314db0417da6b63712e78b034e:1:2cea396732e545bbbfebe7eec0756e58",
+    "24f62d6900c740afafe63b8735171db1:2b3905603e214ac8a5efe4ab98b80294:1:d0fe8872ef7c413388be4f25bf6d232c",
+    "930e2c94444347ac909c38ad46a1dbbb:b176a97f351645e6a7c3261dfd3a987b:1:d4313d0b43674bfabe3793d00507ebd5",
+    "24f62d6900c740afafe63b8735171db1:c174b862f4b7409dbccd8c0499e8b960:1:ba288adf628b40c9972883dc5d984368",
+    "930e2c94444347ac909c38ad46a1dbbb:4f0b5d96e2a04bd6970fcb9b173dc025:1:c440050ae8f348a58dd08f2dffa2b297",
+    "24f62d6900c740afafe63b8735171db1:fb495f9f74114c81a005408bb45facdd:1:d53c43e55ac4452fb5a9465bc5ad0b99",
+    "930e2c94444347ac909c38ad46a1dbbb:babb04c7146c4568b99e7af2ca68a7af:1:c199d62381034053abe3a8fbf7658ed8",
+    "24f62d6900c740afafe63b8735171db1:e9f0a3469e31442f9f42c08af131c496:1:6bdfcf45603e4fb7aa52b720adeb65f3",
+    "930e2c94444347ac909c38ad46a1dbbb:54cc54f24c3646e1b5389c3044837b58:1:a0363cc433c445698721c1fedc10a6d2",
+    "24f62d6900c740afafe63b8735171db1:f634996ba9564be7bddd91f007a37cf7:1:fbdec264d93841adb664df27530ee67a",
+    "930e2c94444347ac909c38ad46a1dbbb:c1e94244a0e44c95aae367e22567e2c7:1:6c4011b9dc1246f1989d443be9cd9421",
+    "24f62d6900c740afafe63b8735171db1:d51b71b6787645abae492ce8e913ec99:1:acb924aee88f4f27af8a692d607981a9",
+    "930e2c94444347ac909c38ad46a1dbbb:15913f84a6f74cd5910ab00943fa7475:1:0ac42dc365c14dc4a1894d89635ada2a",
+    "24f62d6900c740afafe63b8735171db1:3e30f74474c6484e8b5b63f847cc26e7:1:db049b0ff4704f358ff93662a279b3cb",
+    "930e2c94444347ac909c38ad46a1dbbb:ec521531247d48cdb3c8c81e98e9f1e4:1:329e249c4ae9436cae806762c3f17064",
+    "24f62d6900c740afafe63b8735171db1:caf63b99eb4f48f7940fda1c649a25ea:1:cbb485ecd223455fa5bdc7186ee03113",
+    "930e2c94444347ac909c38ad46a1dbbb:0f6bcd5e14bf4de38032f044d5aace04:1:69d74ca1f4cf4dafa11139379247a649",
+    "24f62d6900c740afafe63b8735171db1:55677cef97d148519a601eef90efa141:1:8f0a010f6b4c44c187b73f72114243d5",
+    "930e2c94444347ac909c38ad46a1dbbb:4d16063e80224c15b8d05ac08e0f4203:1:4ebc9050480e41f5aab15204069c5496",
+    "24f62d6900c740afafe63b8735171db1:fe395327b5004a83a28bed809b1ddbbd:1:925c86218ee14833b95523b31046ac2a",
+    "930e2c94444347ac909c38ad46a1dbbb:ded3bbcce343499c80a00944ab98ac16:1:3220e592e3f34302b3264f4b79a549c1",
+    "24f62d6900c740afafe63b8735171db1:03f4d08f4b884b1b8f06c95a95aefdad:1:a69193da390c44029f3c973f0cea5dcb",
+    "930e2c94444347ac909c38ad46a1dbbb:9b6032c63467495e983551f16974f8e1:1:9bc9599b1c464ca99b1b4cb907951027",
+    "24f62d6900c740afafe63b8735171db1:3f362d7cd72a48b68bf0b6ccfd6abf0b:1:e34d93e0a5b44bca8cc7795122effb9a",
+    "930e2c94444347ac909c38ad46a1dbbb:5b8eb7f1a24143ee81c68acc8060ebfe:1:c120273de44e48568ed170e4042ce83a",
+    "24f62d6900c740afafe63b8735171db1:9b451c170a0b4349bb6a07ac64b37924:1:64ad22ff363d46d899767b7c20303f70"
+  ],
+  "policy_epochs": [
+    "24f62d6900c740afafe63b8735171db1",
+    "930e2c94444347ac909c38ad46a1dbbb"
+  ],
+  "native_batch_sizes": {
+    "10": [
+      8,
+      8
+    ],
+    "11": [
+      8,
+      8
+    ]
+  },
+  "worker_bvae": 1,
+  "worker_frame_count": 32,
+  "policy_response_acks": 32,
+  "worker_result_acks": 32,
+  "scoped_ends": 32,
+  "native_ends": 32,
+  "duplicate_replay_unchanged": true,
+  "permission_fail_closed": true,
+  "first_end_isolated": true,
+  "worker_pids": [
+    12651,
+    12658
+  ],
+  "worker_returncodes": [
+    0,
+    0
+  ],
+  "ipc_removed": true,
+  "external_process_survived": true,
+  "startup_reservations_released": true,
+  "measured_owned_rss_bytes": 30093312,
+  "clock_domain": "e1bca2f422f8b7eb82d52a8a29ad11f7aa823b2aea829c5fc57ef227981a6575",
+  "kernel_clock_and_physical_gpu": "explicit_cpu_doubles",
+  "policy_current_boundary": "synthetic_injected",
+  "wan": "synthetic_cpu",
+  "real_sim": false
+}

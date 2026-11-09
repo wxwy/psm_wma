@@ -1,0 +1,82 @@
+{
+  "status": "PASS",
+  "scope": "ISSUE27_TEST_ONLY_STREAMING_M16_32_SESSIONS",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 0.26138235599864856
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 0.11942242899931443
+    },
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof",
+        "--junitxml=/workspace/work/issue27-m16-evidence/author-01/focused.xml",
+        "--basetemp=/workspace/work/issue27-m16-evidence/author-01/tmp"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 31.549516758999744
+    }
+  ],
+  "created_cst": "2026-11-09T12:29:57.534615+08:00",
+  "formal_identity": {
+    "root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+    "child": "60b252d05157b2753d2caebae32b11c878504bbe",
+    "gitlink": "60b252d05157b2753d2caebae32b11c878504bbe"
+  },
+  "root_production_base": "15dbc97bf13437905ec38247382834067e5341ae",
+  "real_gpu_checkpoint_sim_sr": "NOT_RUN",
+  "syntax_files": 3,
+  "junit": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "m16_layout_proofs": 2,
+  "source_unchanged": true,
+  "root_production_unchanged": true,
+  "child_unchanged": true,
+  "exact_pair_clean_after": true
+}

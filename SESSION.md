@@ -1,3 +1,29 @@
+# 2026-11-09 CST - Issue27 M16 exact-pair18PASS; Evidence review publication prepared
+
+New test-only Formal Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+unchangedChild-Gitlink60b252d05157b2753d2caebae32b11c878504bbe. Clean exact-pair
+author-01:18/18PASS,0fail/error/skip,shell0/gatePASS/source_unchanged=true,
+root_production_unchanged=true/child_unchanged=true; Ruff/format/syntax3PASS.
+Root scripts full tree byte-identical to previous15dbc97b; Child clean unchanged.
+Required2Server x16Sim/Server=32Sessions,2renderGPUs->2actualCPUWorkers/16each;
+same-render complement1Worker/32Sessions/2PolicyEpochs. Real Store/frozenManifest/
+Runtime slots32from18Tasks,streaming32 Native16slots/Policy,B8+B8each,OwnerHTTP/
+privateFD/UnixIPC/HMAC/replay/32responseACK+32WorkerACK+32scopedEnd+32nativeEnd,
+permissionfailclosed/ownedRSS/exit0/IPCcleanup/externalalive. CPU model/current
+boundary/env/device/kernel doubles explicit; no realSim/GPU/SR/performance claim.
+
+Raw58files docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/
+57hashes and1375 source files reverified; original89 archived file hashes also
+unchanged. Dev01legacy16PASS/new2FAIL andDev02new2FAIL retained, both traced to
+invalid synthetic raw15 rotation; corrected test generation only. Dev03new2PASS;
+final18 counted once. Prior965+207 is historical, not rerun/relabelled/added.
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_M16_32Sessions_9b1756f9_60b252d0_Evidence_Review_Request.md
+Canonical Inbox appended with exact byte check; existing reviewerREQUEST_CHANGES
+not author-closed. Next normal Root candidate push, update existing DraftPR29/8
+metadata and remote source/Gitlink/evidence readback; publish fresh narrow request.
+No new Child commit, #28 code, V3 merge, GPU/server/realSim/SR/900EP/training or
+running-job operations. #28 staysTODO until qualified#27, same framework only.
+
 # 2026-11-09 CST - Issue27 M16 test-only supplement ready for exact-pair CPU
 
 Dev03 new2/2M16 layout tests PASS. Actual frozen streaming Store/Runtime slots32

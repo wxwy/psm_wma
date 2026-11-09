@@ -1,0 +1,101 @@
+{
+  "created_cst": "2026-11-09T12:32:20.914586+08:00",
+  "formal_root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+  "child_gitlink": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "status": "AUTHOR_M16_CPU_EVIDENCE_PASS_GPT_REVIEW_REQUIRED",
+  "focused": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "static_python_files": 3,
+  "source_unchanged": true,
+  "production_unchanged": true,
+  "scenarios": [
+    {
+      "path": "author-01/scenarios/test_streaming_m16_32_frozen_s0",
+      "servers": 2,
+      "sims_per_server": 16,
+      "total_sessions": 32,
+      "render_gpus": 2,
+      "workers": 2,
+      "native_batch_sizes": {
+        "10": [
+          8,
+          8
+        ],
+        "11": [
+          8,
+          8
+        ]
+      },
+      "worker_acks": 32,
+      "owner_ends": 32,
+      "native_ends": 32,
+      "worker_returncodes": [
+        0,
+        0
+      ],
+      "external_survived": true
+    },
+    {
+      "path": "author-01/scenarios/test_streaming_m16_32_frozen_s1",
+      "servers": 2,
+      "sims_per_server": 16,
+      "total_sessions": 32,
+      "render_gpus": 1,
+      "workers": 1,
+      "native_batch_sizes": {
+        "10": [
+          8,
+          8
+        ],
+        "11": [
+          8,
+          8
+        ]
+      },
+      "worker_acks": 32,
+      "owner_ends": 32,
+      "native_ends": 32,
+      "worker_returncodes": [
+        0
+      ],
+      "external_survived": true
+    }
+  ],
+  "development_results": {
+    "development-01": {
+      "tests": 18,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "development-02": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "development-03": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "previous_full_author_gate": {
+    "root": "15dbc97bf13437905ec38247382834067e5341ae",
+    "child": "60b252d05157b2753d2caebae32b11c878504bbe",
+    "top_level": 965,
+    "subtests": 207,
+    "rerun_in_this_supplement": false
+  },
+  "correction": "2x16 means2PolicyServers x16Sim/Server =32total; previous2x8 remains16total historical evidence",
+  "limitations": [
+    "syntheticCPU encoder/generation/currentBoundary/env/physicalGPU/kernelClock",
+    "no GPU/realSim/SR/900EP/training/official merge",
+    "Issue28 not implemented"
+  ]
+}
