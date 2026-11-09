@@ -36,3 +36,17 @@ historical-count summation. This is a fresh REVIEW request, not author approval.
 Handoff `docs/collab/codex/reviews/2026-11-09_Issue28_HistoryK_050e45d8_59746af0_Code_Review_Request.md`; raw/index `docs/collab/codex/evidence/2026-11-09_issue28_history_k/`.
 Allowed scope Code/CPU/static review only. No GPU/Wan/DCP/realSim/performance/SR/
 900EP/training/remote-file/running-job/V3 merge operation or closure claimed.
+
+
+### 2026-11-09T13:43:28.955226+08:00 — Issue28 publication receipt, same review request
+
+Formal Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child-Gitlink `59746af006748488a678aa9a55dfc3e200668219` unchanged.
+New Draft RootPR30 https://github.com/wxwy/psm_wma/pull/30 and ChildPR9
+https://github.com/wxwy/cosmos-framework/pull/9 open/unmerged; qualified#27
+stacked bases only, no base/V3 merge. Readback52/52 remote source/test/raw
+evidence/Gate/JUnit/proofs/Inbox/archive Blob SHAs match; fetched/advertised refs
+andGitlink match, source identical to final authorGate. PriorPR29/8 heads/bodies
+unchanged; officialV3 e58cef1f/Childofficialb0dbd115 unchanged at this check.
+Receipt docs/collab/codex/evidence/2026-11-09_issue28_publication/publication_receipt.json.
+631tests+207subtests/838JUnit authorPASS is evidence, no independent code/hardware
+approval inferred. TaskREVIEW; fresh GPT incremental Gate requested.

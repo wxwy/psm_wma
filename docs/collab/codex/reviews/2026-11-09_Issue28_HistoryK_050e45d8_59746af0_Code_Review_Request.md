@@ -86,3 +86,17 @@ evidence for this exact Pair. Author does not claim APPROVE_CODE, GPU closure,
 real model parity, speed/SR benefit or permission to merge V3. Later hardware
 smoke, paired SR and performance need their separate authorization. No GPU,
 remote server files, training, live evaluations or running-job operations occurred.
+
+## Publication readback — 2026-11-09T13:43:28.955226+08:00
+
+New independent Draft [Root PR #30](https://github.com/wxwy/psm_wma/pull/30)
+and [Child PR #9](https://github.com/wxwy/cosmos-framework/pull/9) are open,
+unmerged. Stacked bases are qualified #27 branches; no merge into those bases is
+authorized. Retarget after #27 lands and approvals permit it. Prior PR29/8 heads,
+bodies and state are unchanged. Remote readback52/52 source/test/raw evidence/
+Gate/JUnit/provenance/OS/Inbox/approval/archive Blob SHAs match local Git; fresh
+advertised and fetched refs/Gitlink match, source matches final author Gate.
+Receipt: `docs/collab/codex/evidence/2026-11-09_issue28_publication/publication_receipt.json`.
+This publication ledger is a docs descendant, not a new implementation Pair or
+independent verdict. Formal pair remains Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child
+`59746af006748488a678aa9a55dfc3e200668219`. Fresh GPT code/evidence review requested.
