@@ -1,5 +1,16 @@
 # 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
 
+Author01 Root66a104d5 and author02 Root1d1b0b75 / same Child19b30423:
+181/181 focused PASS,1485 source files unchanged, explicit baselineW0 exclusion.
+GPU01 on isolated Root66a104d5 loaded real Local iter15000 and passed mode/DCP
+validation, then measurement setup failed before generation: required state_in
+argument omitted. Root-only tool fix passes state_in=None and (matching online
+adapter) local inference_mode(False)/enable_grad after global no-grad init.
+New benchmark input CPU tests2/2PASS validate actual model-owned T16 scan,
+fixed Prefix/FastState repeatability and slow weights unchanged. Child19b30423
+unchanged. Freeze latest Root with this tool/test, exact author183 then same GPU
+probe in a separate worktree; original GPU01/raw failure retained on server.
+
 Implementation ready for exact-pair author evidence. Child changes limited to
 four model inference extension points + new CPU tests. B1 guidance1 two_way
 fills text K/V once, keeps current Prefix per layer on every denoising forward;

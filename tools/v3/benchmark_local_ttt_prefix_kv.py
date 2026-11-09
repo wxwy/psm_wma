@@ -81,6 +81,30 @@ def summary(rows):
     }
 
 
+def fixed_history_prefix(model):
+    """Build real Local FW/Prefix outside timing, including after init's no-grad.
+
+    Use the FSDP-registered model-owned scan and the production adapter's local
+    grad context. Never update the loaded slow parameters or a live Session.
+    """
+    import torch
+
+    runtime = model.net.local_memory_runtime
+    device = runtime.core.slot_queries.device
+    with torch.inference_mode(False), torch.enable_grad():
+        visual = torch.randn(1, 16, 96, device=device)
+        action_history = torch.randn(1, 16, 15, device=device) * 0.1
+        tokens, fast_state, _ = model.net.scan_local_memory(
+            visual,
+            action_history,
+            torch.ones(1, 16, dtype=torch.bool, device=device),
+            state_in=None,
+            create_graph=False,
+        )
+        prefix = tokens[0, -1].detach().clone()
+    return prefix, fast_state, visual, action_history
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--root-worktree", type=Path, required=True)
@@ -199,20 +223,7 @@ def main():
             state=[0.2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5],
         )
         prep = service._prep_policy_item(request)
-        runtime = model.net.local_memory_runtime
-        device = runtime.core.slot_queries.device
-        visual = torch.randn(1, 16, 96, device=device)
-        action_history = torch.randn(1, 16, 15, device=device) * 0.1
-        # Use the registered model-owned entry point so FSDP materializes the
-        # loaded slow weights exactly as it does in the production adapter.
-        tokens, fast_state, _ = model.net.scan_local_memory(
-            visual,
-            action_history,
-            torch.ones(1, 16, dtype=torch.bool, device=device),
-            state_in=None,
-            create_graph=False,
-        )
-        prefix = tokens[0, -1].detach().clone()
+        prefix, fast_state, visual, action_history = fixed_history_prefix(model)
         fixed_fast_hashes = [digest(t) for t in fast_state]
         result["fixed_inputs"] = dict(
             rgb_sha256=hashlib.sha256(png.getvalue()).hexdigest(),
