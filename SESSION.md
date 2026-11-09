@@ -1,5 +1,21 @@
 # 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
 
+GPU04 edf1e4ee/9f6cf6a1 numerical FAIL: latent max0.0231489, raw15 action
+max0.00839865; each mode individually repeatable, all28 layers Prefix30/hit29.
+No speed claim. Single fixed-input teacher-forced diagnostic on exact clean same
+source confirmed UND K/V exactly invariant across tau1000/500 in all28 layers,
+but cache FILL already differs from original before any reuse. Native real/pad
+layout UND131/132,GEN267/268. Raw outputs remain server-only.
+Child4446be0f6dad9b6dc887ef90af52d0af754d4682 changes cache precision boundary:
+capture UND from materialized native GEN K/V; no unused pre-scatter GEN exports;
+hit uses native attention layout including padding, discards dummy UND queries.
+No backend tuning/pack reuse/precision/compile-limit/training/VAE changes.
+New CPU native operand/padding test PASS; identical test42f44eeedd13cd261df8b501789abf01cbb61373b3c8c03049ea4ce73209eb0e
+on old9f6cf6a1 production RED (no native buffer capture). Compiled2PASS after
+fixture now uses real native padding. First broader native_dev47PASS/2fixtureFAIL
+retained; next exact187 focused CPU and hardware teacher-forced recheck.
+Previous v1 CPU archive preserved byte-for-byte outside tree pending publication.
+
 Author04 exact Roote37d8bd7 / Child9f6cf6a1 focused185PASS,1486 source hashes
 unchanged. GPU03 completed six alternating Prefix-on baseline/optimized warmups;
 no new production inference failure. Audit hook's mutable Python integer then
