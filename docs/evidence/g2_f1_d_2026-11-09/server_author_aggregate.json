@@ -1,0 +1,97 @@
+{
+  "existing_generator_file_matches": 3,
+  "fixed_source_sha": "6b04d214608eafea1da5c0bdd6f072ecc926ebca",
+  "layouts": [
+    {
+      "catalog_sha256": "e7c0519c7ee495128a6321acb021f0e15b559060f965efb84c43d4c4e5f77314",
+      "evidence_bound_proposal_count": 161,
+      "files": {
+        "hypotheses.json": "58cf98c02a91bea73c5a07774c1f1a80353893693050157a2e7ec44a1d6f0968",
+        "proposed_roles.json": "e57070c49933969e7372d70c0dc54b9087da4ad7a602c4e9622e975be9652371",
+        "unresolved.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "frames": [
+        0,
+        200
+      ],
+      "full_scene_source_certified": false,
+      "implementation_sha256": "0eeea9cb4bcbc3de450f3dac0168434d069cbf4b0dcd1ce63fea4b6112b9b092",
+      "independent_review": "PENDING_GPT",
+      "input_unknown_count": 161,
+      "inventory_unknown_count_unchanged": 161,
+      "layout": 1,
+      "model_source_sha256": "d0f22114e43197f33567e495c35f5c32f75ae388f673909809d3cf85f47699b3",
+      "point_cloud_created": false,
+      "production_roles_changed": false,
+      "proposed_role_counts": {
+        "auxiliary": 33,
+        "collision": 120,
+        "visual": 8
+      },
+      "proposed_rule_counts": {
+        "accessory_transparent_visual_registry": 3,
+        "counter_contiguous_contact_chunks": 2,
+        "counter_contiguous_visual": 1,
+        "counter_opening_contact_chunks": 9,
+        "counter_opening_visual": 4,
+        "fixture_contact_registry_primitive": 109,
+        "nested_registered_mesh_alignment_helper": 33
+      },
+      "remaining_without_proposal": 0,
+      "schema": "g2_source_role_proposal_v1",
+      "status": "AUTHOR_PROPOSED_PENDING_GPT",
+      "training_ready": false
+    },
+    {
+      "catalog_sha256": "e7c0519c7ee495128a6321acb021f0e15b559060f965efb84c43d4c4e5f77314",
+      "evidence_bound_proposal_count": 429,
+      "files": {
+        "hypotheses.json": "14d1517bf8365efcd7f397d1f0427a968d97bd6c2ceb3f6a43213ba11fe5d1fd",
+        "proposed_roles.json": "d7d4d23d978b178e70812e7608bf2ed617beaeb45be442a2496fde44514dc0dd",
+        "unresolved.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "frames": [
+        0,
+        200
+      ],
+      "full_scene_source_certified": false,
+      "implementation_sha256": "0eeea9cb4bcbc3de450f3dac0168434d069cbf4b0dcd1ce63fea4b6112b9b092",
+      "independent_review": "PENDING_GPT",
+      "input_unknown_count": 429,
+      "inventory_unknown_count_unchanged": 429,
+      "layout": 10,
+      "model_source_sha256": "8c30dc5ed35a335b4eaa2c20f7153b0ff8a87bf8a4d5b7e416c400a57d50a0eb",
+      "point_cloud_created": false,
+      "production_roles_changed": false,
+      "proposed_role_counts": {
+        "auxiliary": 83,
+        "collision": 333,
+        "visual": 13
+      },
+      "proposed_rule_counts": {
+        "counter_contiguous_contact_chunks": 23,
+        "counter_contiguous_visual": 8,
+        "counter_opening_contact_chunks": 8,
+        "counter_opening_visual": 4,
+        "fixture_contact_registry_primitive": 302,
+        "nested_registered_mesh_alignment_helper": 83,
+        "window_background_visual": 1
+      },
+      "remaining_without_proposal": 0,
+      "schema": "g2_source_role_proposal_v1",
+      "status": "AUTHOR_PROPOSED_PENDING_GPT",
+      "training_ready": false
+    }
+  ],
+  "point_cloud_regenerated": false,
+  "prior_474_proposals_identical": {
+    "1": 128,
+    "10": 346
+  },
+  "private_individual_files_exported": false,
+  "production_code_or_roles_changed": false,
+  "reference_provenance_sha256": "81a6ed4fedd47d6a8ad2a84024f9d076d2ab2b833e2c48a53de6f099debeab03",
+  "scope": "AUTHOR_INSTANCE_CLASSIFICATION_PENDING_GPT_NOT_INDEPENDENT_ACCEPTANCE",
+  "source_tree": "160514c3a96b04571e0f921b45a47340b7430ca0",
+  "training_ready": false
+}

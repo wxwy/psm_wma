@@ -1,0 +1,26 @@
+{
+  "scope": "AUTHOR_F1D_FIXED_SOURCE_PUBLICATION_NOT_INDEPENDENT_ACCEPTANCE",
+  "fixed_source_sha": "6b04d214608eafea1da5c0bdd6f072ecc926ebca",
+  "source_tree": "160514c3a96b04571e0f921b45a47340b7430ca0",
+  "branch": "codex/g2-f1d-role-classification",
+  "base_source": "dcd8a93da1f2c9ad4285140f70bb9f8c3a310cff",
+  "verified_at_utc": "2026-11-09T04:41:51Z",
+  "g2_source_blob_matches": 40,
+  "old_g2_files_unchanged": 38,
+  "author_tests": {
+    "passed": 371,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "old336_retained": true,
+    "new_cases": 35
+  },
+  "actual_server_author_candidates": 590,
+  "actual_server_author_remaining_without_proposal": 0,
+  "independent_gpt_verdict": "PENDING",
+  "native_source_sha": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "point_cloud_regenerated": false,
+  "private_individual_files_exported": false,
+  "training_ready": false
+}

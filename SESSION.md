@@ -1,3 +1,54 @@
+# 2026-11-09 12:41 CST — F1-D actual590 author candidates frozen for GPT review
+
+REVIEW. This entry supersedes earlier IN_PROGRESS checkpoints below. Fixed
+implementation Root `6b04d214608eafea1da5c0bdd6f072ecc926ebca`, tree
+`160514c3a96b04571e0f921b45a47340b7430ca0`, independent branch
+`codex/g2-f1d-role-classification`. Authorrun06 used precisely this checkout;
+40/40 G2 SHA256/Gitblob rechecked on data and 40/40 GitHub blobs fetched exact.
+Published API Git object/tree equals local source checkpoint; G2 files match
+the371PASS test epoch (later changes only source citations/author preflight).
+Original38 G2 files unchanged; only new role_hypotheses.py/test added. Full
+371PASS/0failure/error/skip, original336 plus35 retained, no extra identical
+test rerun after metadata-only citation fix. AnotherAgent code/public reference
+review closed all scoped P0/P1/P2; not real private-source independent approval.
+
+Actual original paired inventories1020/2115, frames0/200: Layout1 bound161
+(120collision+8visual+33auxiliary); Layout10 bound429 (333+13+83).
+remaining_without_proposal0, prior474 hypotheses exactly retained. All590 are
+EVIDENCE_BOUND_CANDIDATE_PENDING_GPT and role_certified=false. Original source
+inventory unknown161/429 remains; only new proposed maps replace placeholders,
+all previously classified entries and non-geom metadata preserved. No active
+role map applied. Server readback verified hashes, unique IDs, map diffs, pending
+states and clean fixed checkout. Initial author integrity helper wrongly required
+unknown placeholders unchanged; corrected assertion, no candidate bug or change.
+
+Detailed hypotheses/proposed maps/source proofs/logs remain server under isolated
+`.g2_f1d_author_roles_20261109/author_run06`; repository contains aggregates/hash
+receipts only. No private XML/assets/states/images/clouds/individual rows exported;
+no accepted coloredcloud re-export/render/recheck. Server source is fetched fixed
+repo code in isolated source02, no server code edits or production checkout edits.
+Public reference11 files/28 bounds+hash spans verified;3 current installed matches
+and8 pinned public snapshots explicitly separated. Historical episode generator
+version NOT certified. Actual original model/mesh hashes/body/pose/size/default
+and material instance facts checked; GPT must review semantics and provenance.
+
+Actual fixed-source Issue26 review request posted and complete body read back:
+https://github.com/wxwy/psm_wma/issues/26#issuecomment-6732441556 . Canonical
+Inbox append-only82736bytes (under131072 cap) carries same fixedRoot; structured
+receipt docs/evidence/g2_f1_d_2026-11-09/handoff_receipt.json. This successor
+changes only docs/aggregates/receipt, not G2 code/test or actual server artifacts.
+
+Owner explicit current workflow overrides obsolete V2/MM/Kimi/DS polling rules:
+Codex implements and submits fixed SHA; GPT alone independently accepts on data;
+DS absent; owner later reviews native room/relations/six+Island. No sync/merge of
+V2/V3, no artificial wait. Canonical Inbox request appended before Issue26 handoff;
+actual delivery/readback receipt recorded above. GPT acceptance PENDING,
+not a whole-house/source/native Gate closure. full_scene_source_certified=false,
+training_ready=false. Native2009fae35 and Child/Gitlink1ca308 unchanged;10 protected
+remote refs checked unchanged. No V3/native/Room/Gitlink/production/cache/GPU/model/
+rollout/train/PR/merge actions. Next GPT independently replays371 and audits590,
+then native ordinary Floor/Wall/Room/Island/objects/relations and six-view Gate.
+
 # 2026-11-09 (Asia/Shanghai) — F1-D exact source-excerpt bound correction
 
 IN_PROGRESS. Authorrun05 fixed1ce0b032 preserved all original474 hypotheses
