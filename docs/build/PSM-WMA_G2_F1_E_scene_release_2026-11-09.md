@@ -49,7 +49,9 @@ object observations、GT结构标签输入、生产应用和新点云生成全�
 第二帧独立archive/冲突/输出隔离等负控。初次夹具geomID错误日志原样保留，
 不作为候选缺陷。另Agent只读复核的P1/P2均关闭；无私有数据独立验收。
 
-服务器实际封存结果与固定发布SHA见后续publication/aggregate/Inbox回执。
+固定发布SHA=`54541c315ad13077b5b4b7f3d81d01138b8931d8`，tree=`e0aec27feb101b41a4afa72dde752199f0cb3531`。服务器新隔离检出43/43 G2 blob精确一致，两套真实package+verify均通过，原角色映射字节未变。
+
+私有封存根和日志位置仅在服务器原位记录，不向GitHub公开；role-map及所有逐部件证据仅原位存在；仓库只存`server_release_aggregate.json`的计数/哈希。Layout1 release SHA=`36feac43894214e2eae9cb82ed3df0e313f0a62044bca0dba67f5ebfe79ba0f7`，Layout10=`3620f92a7c755d489e65b21f09ec00c5a7294c8312e2bee809b55cadd4439f17`。原目录已存在，不得覆盖；GPT独立验证使用固定源或原位只读verify，完整397回归及所有外部来源/state均须再核，不重复已批准的点云/分类人眼验收。后续ledger回执不替代固定实现SHA。
 本次只为独立集成生成配置，GPT仍须验收封装。随后继续nav_sg#8正常结构、
 原生主程序和对象关系，六图/Island由GPT从真实snapshot生成后交用户。
 不在PSM-WMA编写房间分割，不合并、不建PR、不启动Cosmos或GPU。

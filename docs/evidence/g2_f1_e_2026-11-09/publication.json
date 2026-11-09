@@ -1,0 +1,20 @@
+{
+  "fixed_source_sha": "54541c315ad13077b5b4b7f3d81d01138b8931d8",
+  "source_tree": "e0aec27feb101b41a4afa72dde752199f0cb3531",
+  "branch": "codex/g2-f1e-scene-release",
+  "classification_source": "6b04d214608eafea1da5c0bdd6f072ecc926ebca",
+  "review_commit": "f86ecef5daab21587a2b18c06c663085a2ebb413",
+  "review_blob": "1fe9d18f47a41d22892b71b21e9300ba77a3a693",
+  "reviewed_role_maps": 590,
+  "g2_blob_matches": 43,
+  "old40_files_unchanged": true,
+  "author_tests_passed": 397,
+  "old371_retained": true,
+  "real_author_releases": 2,
+  "gpt_release_acceptance": "PENDING",
+  "private_individual_files_exported": false,
+  "point_cloud_regenerated": false,
+  "production_roles_applied": false,
+  "training_ready": false,
+  "native_integration_status": "IN_PROGRESS_SEPARATE_BRANCH_FROM_2009_NO_NATIVE_ACCEPTANCE"
+}

@@ -1,0 +1,47 @@
+{
+  "fixed_source_sha": "54541c315ad13077b5b4b7f3d81d01138b8931d8",
+  "gpt_independent_review": "PENDING",
+  "layouts": [
+    {
+      "classified_unknown_count": 161,
+      "config_sha256": "16ea957381170795ef202429f7512216e4c63d5852421490bd8b3fa9973494e3",
+      "full_scene_source_certified": false,
+      "layout": 1,
+      "private_individual_files_exported": false,
+      "production_map_applied": false,
+      "release_sha256": "36feac43894214e2eae9cb82ed3df0e313f0a62044bca0dba67f5ebfe79ba0f7",
+      "role_counts": {
+        "auxiliary": 33,
+        "collision": 120,
+        "visual": 8
+      },
+      "role_map_sha256": "e57070c49933969e7372d70c0dc54b9087da4ad7a602c4e9622e975be9652371",
+      "schema": "g2_scene_role_release_summary_v1",
+      "training_ready": false
+    },
+    {
+      "classified_unknown_count": 429,
+      "config_sha256": "ab7dbbbf7624a3c2c2519a97bb733653d9abe18caf2f22c1d970f61c7edd3b66",
+      "full_scene_source_certified": false,
+      "layout": 10,
+      "private_individual_files_exported": false,
+      "production_map_applied": false,
+      "release_sha256": "3620f92a7c755d489e65b21f09ec00c5a7294c8312e2bee809b55cadd4439f17",
+      "role_counts": {
+        "auxiliary": 83,
+        "collision": 333,
+        "visual": 13
+      },
+      "role_map_sha256": "d7d4d23d978b178e70812e7608bf2ed617beaeb45be442a2496fde44514dc0dd",
+      "schema": "g2_scene_role_release_summary_v1",
+      "training_ready": false
+    }
+  ],
+  "point_cloud_regenerated": false,
+  "private_individual_files_exported": false,
+  "production_map_applied": false,
+  "scope": "AUTHOR_SERVER_LOCAL_ROLE_RELEASE_NOT_GPT_ACCEPTANCE",
+  "source_blob_matches": 43,
+  "source_tree": "e0aec27feb101b41a4afa72dde752199f0cb3531",
+  "training_ready": false
+}

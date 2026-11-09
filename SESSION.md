@@ -1,5 +1,30 @@
 # 2026-11-09 (CST) — F1-E reviewed scene-release configuration and native integration
 
+F1-E CONFIG REVIEW checkpoint: published fixed54541c315ad13077b5b4b7f3d81d01138b8931d8,
+tree e0aec27feb101b41a4afa72dde752199f0cb3531. AnotherAgent scoped P1/P2 all
+closed;397 distinct PASS/old371 retained,40 oldG2 files byte-identical.43/43 GitHub
+blobs readback exact, published Git object/tree verified locally. Server isolated source fetched fixed54541;43/43
+SHA256/Gitblob match. Actual package+verify both PASS; release SHA L1
+36feac43894214e2eae9cb82ed3df0e313f0a62044bca0dba67f5ebfe79ba0f7,
+L10 3620f92a7c755d489e65b21f09ec00c5a7294c8312e2bee809b55cadd4439f17.
+Rolemap SHA unchanged e57070c4/d7d4d23d from F1-D approval; counts161/429.
+Private packages/inputs/ledger/individual proofs stay data; only counts/hash
+receipts in repository. No pointcloud generation, no server source edit or
+production map application. Fullsource/history/training remainfalse. GPT
+independent release verification PENDING; native code below remainsIN_PROGRESS.
+
+F1-E fixed-source request posted/readback exact at Issue26/6734013714.
+Automatic approval rejected private server-path disclosure; revised public
+request contains counts/hash/repo references only and succeeded. Full locations
+stay in server-local runtime records. No permission escalation remains needed.
+
+Native first complete Catkin compile PASS in cached Noetic image; review found
+floor-table ambiguity, actual wall-labelled Room cells, stale Room/SG/ESDF,
+mode/frame/UNKNOWN issues. Correcting conservatively with observed whole-Room
+ground foundation, native finite voxel patches, source/mode/frame binding,
+full ESDF/Room/actual ObjectMap refresh at export, same-frame model status and
+serialized work locks. No native Gate PASS until final build/tests/review.
+
 IN_PROGRESS / Codex. Read complete formal GPT review f86ecef5daab21587a2b18c06c663085a2ebb413,
 file blob1fe9d18f47a41d22892b71b21e9300ba77a3a693 and Issue26 comment6732760420.
 Verdict APPROVE_SCENE_BOUND_ROLE_CANDIDATES_LAYOUT1_LAYOUT10_ONLY on fixed6b04d214.

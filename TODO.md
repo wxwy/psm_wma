@@ -1,6 +1,6 @@
 # PSM-WMA 任务队列
 
-- **G2-F1E-SCENE-RELEASE** — IN_PROGRESS; Codex; prerequisite F1-D fixed6b04 GPT APPROVE_SCENE_BOUND_ROLE_CANDIDATES_LAYOUT1_LAYOUT10_ONLY at review f86ecef5/blob1fe9d18f, Issue26/6732760420. Publish public immutable scene descriptors plus server-local complete role/evidence bundles tied to original model/state/twoframe inventories and review ledger; fullcolor/history/training false. New standalone module/tests; no private files exported or pointcloud regeneration. FixedSHA handoff then GPT independent validation.
+- **G2-F1E-SCENE-RELEASE** — REVIEW (fixed54541, actual two server-local package+verify PASS,397/397,43blob); Codex; prerequisite F1-D fixed6b04 GPT APPROVE_SCENE_BOUND_ROLE_CANDIDATES_LAYOUT1_LAYOUT10_ONLY at review f86ecef5/blob1fe9d18f, Issue26/6732760420. Publish public immutable scene descriptors plus server-local complete role/evidence bundles tied to original model/state/twoframe inventories and review ledger; fullcolor/history/training false. New standalone module/tests; no private files exported or pointcloud regeneration. FixedSHA handoff then GPT independent validation.
 
 - **G2-F1-NATIVE-STRUCTURES** — IN_PROGRESS in separate nav_sg branch from2009fae35; Codex/GPT per nav_sg#8. Native occupancy/Room-derived finite Floor/Wall and conservative object affiliations, snapshot source/uncertainty/geometry hashes; preserve off-mode and existing Room/Island algorithms. No GT structure labels, fake walls or forced nearest-room. Fullnative real fourframe verification and six+Island/human remain GPT/Owner later.
 
