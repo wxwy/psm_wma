@@ -240,3 +240,12 @@ Independent exact-pair incremental review requested; keepDraft/noV3merge.
 - **Independent H100 evidence**: Author's **31/31 server raw file SHA256+size** match published derived index; GPT independently parsed raw 30 balanced AB/BA pairs, 30/30 faster, mean saving38.841ms; P95 844.7195→803.0262ms, P99 846.2682→805.8524ms *within this small sample only*. Saved Action/Vision tensors `torch.equal` optimized/reference; changing Prefix produces Action max-abs1.9608675. 28 layers all 30 Prefix contexts, text KV29 gen-only; 31→2 native pack calls incl common preparation1. Same checkpoint/inputs and both text KV ON; no Sim/900EP/NoTTT cross experiment.
 - **Acceptance**: new substantive code/performance work plus a **new formal pair**, or explicit new Owner acceptance contract. Keep RootPR33/ChildPR11 Draft and **unmerged**, no automatic Stage1/Issue27–28/V3 merge. Stage1 old P99 anomaly still OPEN; this test cannot close production tail SLA.
 - Detailed independent review: `docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_REQUEST_CHANGES.md`.
+
+
+## 2026-11-09 — Owner corrected Issue31 Stage2 review standard (scoped APPROVE_CODE)
+
+- **更正原因**：Owner明确指出“不应该预设能提升多少”。Issue31 Owner范围未规定 `1.05×` 硬性加速条件；作者自行设置的Benchmark性能判据不是“代码必须返工”的标准。原GPT `REQUEST_CHANGES` 因将作者自设阈值误当强制Gate而**被正式更正**；旧报告文件和原始失败结果均保留，标记 superseded。
+- **正式更新的独立结论**：**`APPROVE_CODE`（限定 Stage2 B1/single-sample/two_way/guidance1 Prefix-safe pack reuse的生产代码增量和同权重model-only数值正确性）**；**`OBSERVED_PERFORMANCE_IMPROVEMENT`**（30/30配对更快，P50 837.0812→798.8678ms，减4.565%，1.047834×；31→2 pack），**`AUTHOR_BENCH_INTERNAL_TARGET_NOT_MET`**（作者内部 >=1.05×没达到，`PERFORMANCE_NOT_MET`、exit2必须原样保留）。三个陈述互不矛盾，不改阈值、不删离群、不给未验证能力背书。
+- **一致性证据**：formal Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d` 不变；GPT独立CPU 14/14、作者201通过/1旧W0排除、原始H100 31/31文件SHA256匹配、保存Action/Vision精确相等、28层30步Prefix生效。Stage1 P99风险仍未关闭；无真实Sim、SR、多B或生产SLA结论。
+- **最新正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_APPROVE_CODE_CorrectedGate.md`。旧 `…_REQUEST_CHANGES.md` 仅保留历史。
+- PR33/Child11以及上游Draft保持未合并；`APPROVE_CODE` 不等于 Owner授权合并V3。**不得为跨越任意5%或1.05×强行改码或刷实验**，继续优化应先看真实剩余瓶颈。
