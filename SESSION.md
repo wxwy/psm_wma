@@ -1,3 +1,35 @@
+# 2026-11-09 CST - Issue27 M16 supplement published/read back; Evidence review request
+
+Formal test-only Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+unchangedChild-Gitlink60b252d05157b2753d2caebae32b11c878504bbe. Exact clean
+focused18/18PASS,0fail/error/skip,static3PASS,shell0/gatePASS/sourceunchanged.
+Root scripts byte-identical to15dbc97b; allChild unchanged. Mandatory2Servers x
+16Sims/Server=32Sessions,2renderGPUs->2CPUWorker processes/16Sessions each.
+Same-render1Worker/32Sessions complement. Real frozenStore/Manifest/Runtime/
+streaming32 capacity,all32approved Native/Worker/Owner leases,FD/UnixIPC/HTTP,
+B8+B8perPolicy,HMAC/ACK/replay/End/permission/RSS/owned exit0/IPC cleanup and
+external survival. Explicit CPU model/current-boundary/env/device/kernel doubles.
+No realGPU/Sim/SR/performance claim. Original965+207 historical, not rerun or
+relabeled. Original invalid raw15 test-rotation failures retained before fix.
+
+Existing Draft RootPR29 and ChildPR8 descriptions updated and independently
+read back open/draft/unmerged at Root evidenceHEADa43b71b8/Child60b252d0.
+25/25 remote source/newJUnit/manifests/READY-close proof/gate/identity/oldreview/
+Inbox/handoff Blob SHAs match local Git. Fetched Root Gitlink exact. Official
+V3e58cef1f/Childb0dbd115 unchanged. Normal Root candidate push only, no Child code
+commit or force push. Publication is availability, not independent approval.
+Proof docs/collab/codex/evidence/2026-11-09_issue27_m16_publication/publication_receipt.json
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_M16_32Sessions_9b1756f9_60b252d0_Evidence_Review_Request.md
+Raw58files docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/
+57new+89original archive hashes and1375source hashes rechecked after publication;
+canonical Inbox request/receipt append-only below128KiB. All source/tests same
+since final author Gate. Later commits only docs/evidence/ledger.
+
+Fresh GPT narrow Evidence review requested, priorREQUEST_CHANGES not author-
+closed. TaskREVIEW. #28 remainsTODO after qualified#27; only planned knob
+local_ttt_history_k1/2/4/8/16 default16, no sparse implementation in this Pair.
+No GPU/server files/realSim/SR/900EP/training/running-job/V3 merge operations.
+
 # 2026-11-09 CST - Issue27 M16 exact-pair18PASS; Evidence review publication prepared
 
 New test-only Formal Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /

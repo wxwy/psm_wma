@@ -2,7 +2,7 @@
 
 # 2026-11-09 — Shared VAE generic topology
 
-- **ISSUE27-SHARED-VAE-TOPOLOGY** — REVIEW (test-only Formal9b1756f9/unchangedChild60b252d0; exact18PASS; M16/32Session Evidence review publication prepared); Codex; Owner/full review atb5127c82; Root-only fixture/test/evidence supplement with frozen Manifest/capacity,32Sessions/realCPUWorker/OwnerHTTP/UnixIPC/ACK/End/isolation/cleanup plus1x1/1x8; production and Child60b252d0 unchanged; new test-only Root SHA and narrow review via existing DraftPR29/8. No GPU/SR/900EP/official merge.
+- **ISSUE27-SHARED-VAE-TOPOLOGY** — REVIEW (test-only Formal9b1756f9/Child60b252d0; exact18PASS; PR29/8 updated/readback25PASS; GPT M16 Evidence review requested); Codex; Owner/full review atb5127c82; Root-only fixture/test/evidence supplement with frozen Manifest/capacity,32Sessions/realCPUWorker/OwnerHTTP/UnixIPC/ACK/End/isolation/cleanup plus1x1/1x8; production and Child60b252d0 unchanged; new test-only Root SHA and narrow review via existing DraftPR29/8. No GPU/SR/900EP/official merge.
 - **ISSUE28-LOCAL-TTT-HISTORY-K** — TODO; Codex; requires qualified #27 Code Gate; separate implementation on same EvalV2 for local_ttt_history_k=1/2/4/8/16 default16, boundary index0 reused, skip historyVAE/FW for unselected frames; no #28 changes in current #27 Pair.
 # PSM-WMA 任务队列
 
