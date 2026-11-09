@@ -1,3 +1,17 @@
+# 2026-11-09 CST — G2-F2 review request delivered and read back
+
+REVIEW. Canonical Inbox commit7289d7a630572f29a267f8ac34167db9e15d4a61,
+blob4edc546eaa174ce89eabbe5c77bbe9e2e59f9392, full98437 bytes decoded/read back
+exactly equal before Issue delivery. Native Issue8 comment6738486321 and PSM
+Issue26 comment6738487245 created via GitHub connector; both complete bodies
+read back equal to requests. Fixed source pair remains PSM
+c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d / native
+c5825589cc748145819dfc17cfeb7a026aa08c46; productionGitlink1ca308 unchanged.
+Detailed receipt docs/evidence/g2_f2_2026-11-09/issue_delivery.json. No GPT
+verdict inferred. Stop for GPT real fourframe/source/native/six/Island review
+and later Owner H1; no legacy MM/Kimi polling, server access, model/GPU/train,
+merge or PR. Source trees unchanged from exact formal source pair.
+
 # 2026-11-09 CST — G2-F2 fixed code published; canonical review handoff
 
 REVIEW / GPT server verification required. Formal immutable code pair:

@@ -1,0 +1,30 @@
+{
+  "schema": "g2_f2_issue_delivery_receipt_v1",
+  "psm_code_sha": "c4c2a36431478825b2f1db8b0fa7b74c11ac9b2d",
+  "native_code_sha": "c5825589cc748145819dfc17cfeb7a026aa08c46",
+  "production_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "canonical_inbox_commit": "7289d7a630572f29a267f8ac34167db9e15d4a61",
+  "canonical_inbox_blob": "4edc546eaa174ce89eabbe5c77bbe9e2e59f9392",
+  "canonical_inbox_full_text_equal": true,
+  "comments": [
+    {
+      "repository": "wxwy/nav_sg",
+      "issue": 8,
+      "id": 6738486321,
+      "url": "https://github.com/wxwy/nav_sg/issues/8#issuecomment-6738486321",
+      "created_at": "2026-11-09T11:06:09Z",
+      "exact_body_readback": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "issue": 26,
+      "id": 6738487245,
+      "url": "https://github.com/wxwy/psm_wma/issues/26#issuecomment-6738487245",
+      "created_at": "2026-11-09T11:06:12Z",
+      "exact_body_readback": true
+    }
+  ],
+  "independent_gpt_verdict": "REQUESTED_NOT_ASSUMED",
+  "real_layout_human_gate": "PENDING",
+  "training_ready": false
+}
