@@ -1,3 +1,26 @@
+# 2026-11-09 (CST) — G2-N6-F1-B2-R1 published / STOP for GPT recheck
+
+REVIEW. Fixed implementation Root 3b6c6055e36824be33ed947745aa3e5b839da832, tree
+4a5a888148c5670d628c3de6f4c0bdd6d6079f14. Published Git tree equals tested local tree;
+35/35 G2 source/config/test blob SHAs read back exact. Actual API commit
+object imported after SHA verification; same-tree author backup retained.
+Actual Issue26 R1 handoff6729052936 posted and entire body read back exact:
+https://github.com/wxwy/psm_wma/issues/26#issuecomment-6729052936 .
+
+This successor is metadata only; source/tests stay frozen at Root above.
+Author274/274, old259/207 retained, frozen15 RED8FAIL/7PASS ->15PASS,
+mesh software sRGB-invalid/linear-default128 and positive6244-row0/200
+parity are code/self-test evidence, not GPT independent new-SHA acceptance.
+Protected original V3/N6/F1/A2/F1B/B2/native/review8 refs checked unchanged.
+Native2009fae35d86579bb22c273fb97ec1bf0835b533 and Gitlink
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. Prior native proof
+only P0 matching3 components; full fixed2009/new-house native still OPEN.
+No server file access/download/outward transfer, GPU/models/rollout/train,
+production/PR/cache mutation or merge. No new Draft PR, known restriction
+not retried. STOP for GPT R1 recheck per Owner instruction; actual house
+roles/materials/paper-positive/native/normal structures/six+Island/learning
+remain pending. Original193 verdict remains REQUEST_CHANGES, not rewritten.
+
 # 2026-11-09 (CST) — G2-N6-F1-B2-R1 two-P2 source frozen
 
 REVIEW. Runtime edits only source_geometry.py (4 added lines: explicit sRGB
