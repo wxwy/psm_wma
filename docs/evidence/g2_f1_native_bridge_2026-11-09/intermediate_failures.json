@@ -1,0 +1,15 @@
+{
+  "scope": "AUTHOR_ITERATION_NOT_FINAL_RESULTS",
+  "preserved_logs": [
+    {
+      "file": "f1_native_bridge_proof_fixture_earlier_reject.log",
+      "sha256": "b7b0d2ad85336a7de314a44bbfdc621666c9cd53fa521041fc465587754c61e5",
+      "reason": "negative fixture correctly rejected earlier by interior check; use UNKNOWN gap to exercise continuous-boundary branch"
+    },
+    {
+      "file": "f1_native_bridge_legacy_error_message.log",
+      "sha256": "d71d9be4be0b704b2c8c88cf15843dfe075329d2e21eeb3aeef48df7ce2b2b6b",
+      "reason": "bounded reader still rejected malformed grid; preserve legacy tri-state error keyword without weakening validation"
+    }
+  ]
+}

@@ -1,4 +1,43 @@
+# 2026-11-09 15:36 CST — native integration author verification complete, publishing fixed source
+
+REVIEW candidate on codex/g2-f1-native-bridge from dc714108; native companion
+codex/g2-f1-native-structures from2009fae35. This checkpoint supersedes older
+IN_PROGRESS notes below. Source not yet published for this increment; fixed
+GitHub SHA and delivery receipts will be a separate metadata successor.
+
+PSM446/446 PASS,0fail/error/skip; all397 and earlier18 native IDs retained,
+33 proof/16 recorded options. Only snapshot.py/recorded.py +2 test files; other
+41 G2 files unchanged including frozen scene_release54541/producer/sampler.
+Native complete CPU Catkin PASS,157 distinct/old129;53 related Python/old50,
+all0fail/error/skip. Actual152-file source fingerprint a977dcd33eeb77a44acb2f9c6818583ab9a2b3b9d243b79b88b6e7c4398fb07c.
+Official no-extra-XML closed/doorway x ESDFGrid/GVD each4 frames PASS; earlier
+controls retained.18 actual main snapshots cross-language raw-grid/proof PASS,
+18 model gates correctly BLOCKED/no bundles,objects0. Two existing Agents
+closed concrete P1/P2 and independently read final evidence. These are author
+CPU/self-authored scenes, not GPT real Layout/model acceptance.
+
+Runbooks and raw test/source/matrix/hash evidence in docs/evidence new native
+bridge/native directories and docs/build/PSM-WMA_G2_F1_native_bridge_2026-11-09.md.
+Immutable two scene releases and all private original inputs stay server-local;
+public new material has no private server paths. F1-E release GPT verification
+still pending. No repeat accepted clouds/human checks, no V3/Gitlink/production/
+cache/model/GPU/train/PR/merge. Next publish fixed independent sources + canonical
+Inbox/Issue26/native8 request/readback; stop for GPT real-source/native chain.
+
 # 2026-11-09 (CST) — F1-E reviewed scene-release configuration and native integration
+
+New implementation claim after frozen F1-E: codex/g2-f1-native-bridge from
+F1-E metadatadc714108 (config implementation54541 stays frozen). Planned existing
+g2/nav_bridge/snapshot.py + focused protocol tests/docs/evidence only. Validate
+native finite occupied-box proofs, whole grid/Room/pose/frame hashes and current
+model-observation status; do not relax real RGB-D witness or reconstruct Room/
+Island in G2. Native C++ continues separate from2009; actual raw sources staydata.
+
+Integration entry closure: also extend existing recorded.py with explicit
+diagnostic PARTIAL_COLOR opt-in and native-structure plan flags, keeping genuine
+RGB-D/model/source/full-scene checks. Native semantic replay gets matching opt-in
+parameters in its own repository; no server source patch. Original prescan,
+sampler, roles and frozen scene_release implementation remain unchanged.
 
 F1-E CONFIG REVIEW checkpoint: published fixed54541c315ad13077b5b4b7f3d81d01138b8931d8,
 tree e0aec27feb101b41a4afa72dde752199f0cb3531. AnotherAgent scoped P1/P2 all
