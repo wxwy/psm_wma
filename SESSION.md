@@ -1,3 +1,38 @@
+# 2026-11-09 — Issue27 generic shared-VAE topology implementation claimed
+
+Owner direct clarification and current Issue27 body/comment6730975744 authorize
+one existing EvalV2/NativeBatch/shared-VAE path for every legal resource/capacity
+bounded Server/Sim topology;1x1/1x8/2x16 are representative tests, not a whitelist.
+Bvae stays1/wait0 exact visual semantics; Bpolicy1..8; preserve strict single ABC
+profiling as optional labels. Code+CPU/static+NEW Draft PRs only, no V3 merge,
+GPU/server/realSim/SR/900EP/training/old-job actions or remote files accessed.
+
+Frozen base Root latestV3e58cef1f53d2382d39c871ce5a50e4acdd5ce268, pinnedChild
+00f30235da6ffb085a9304ef6501ede509203092. Actual officialChild latest
+b0dbd115d03e801ec4d0788c30ee0b0e9655d4db has IDENTICAL full tree to pinned00f
+(c4c33db6ecfb9508c44c5b28df3cc81f5b1e0361), so newChild branch based on official
+b0 merge with no inherited source drift. New isolated worktrees
+/workspace/work/psm-wma-shared-vae-issue27 and Child; both branches
+v3-shared-vae-topology-issue27-20261109. Prior PR25/7 are merged; do not modify.
+
+Main owns Root shared_vae.py/config.py/runtime.py as needed, new Issue27 CPU tests;
+Child contract.py, action_policy_server_robocasa.py, robocasa_batch_transactions.py,
+robocasa_boundary_capture.py, robocasa_vae_worker.py/daemon.py and focused tests.
+Reuse existing scheduler/Registry/snapshot/session machinery; no parallel agent
+work or second runtime. Scope includes actual necessary seams discovered in
+source: per-Policy enrollment/routing when a physical SimGPU Worker is shared,
+bounded multiple Policy epochs and derived existing Worker session capacities,
+per-member original Encode1 boundary capture for Bpolicy>1 (no additional encode),
+READY scheduling on the same model executor without feature B1 collapse.
+All deadlines, ACK/dedup/atomic abort/commit/End, full M/B/source/Resume identity,
+queue/resource bounds and Bvae1 isolation remain strict. Generic shared profile
+must be frozen independently from the unchanged optional single ABC identity.
+
+Before project runs announce commands/env/inputs/outputs/PASS, retain controlled
+old RED and exact clean new-Pair CPU logs/XML/source fingerprints; create new
+Root/Child Draft PRs and canonical Inbox request. Existing one-Sim results and
+old server_vae throughput/SR are historical, not evidence of new shared topology.
+
 # 2026-11-08 — H4 published/readback PASS; narrow independent Code Gate handoff
 
 Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child-Gitlink
