@@ -181,3 +181,80 @@ Fresh incremental GPT review requested on exact5b89/4446; receipt commitmetadata
 - **风险**：性能只证明 model-only 合成固定输入 + 单一 Local iter15000 DCP，不等于真实RoboCasa SR、吞吐或 NoTTT 历史 ~608ms；尾延迟仍需独立 Gate；本 Gate 不授权上游 #27/#28 和 #31 自动合入V3。
 - **详细正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md`。
 - Review/Inbox 的后续文档提交仅为 bookkeeping，**不是 implementation SHA**。
+
+
+## 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack: fresh independent Gate request
+
+FormalRoot `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child-Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`.
+ApprovedStage1Root5b89/Child4446; latestreviewdocs590071c5 preserved. Separate
+v3-local-ttt-prefix-pack-issue31-20261109 candidate, upstreamDrafts unchanged.
+Only productiongenerate_samples_from_batch: same B1/two_way/guidance1 guards,
+request-local native pack templates with current Prefix; original updater/
+Attention/FW/NoTTT/Sim/Worker/VAE/mode-DCP/strictK-H-M-B Resume unchanged.
+Explicit packOFF preserves approvedtextKV-only reference; textKV ON both inGPU.
+
+Exact author02CPU201PASS,0failure/error/skip,shell0/source1487unchanged/static9PASS;
+one inherited W0failure deselected,3baselineI001 documented. Native realpacker
+30step all-field parity/noisyAction variants + lifecycle/error/retry/NoTTT checks.
+Same newtest old4446 productionRED templatecount0/newGREEN; all raw retained.
+GPU02 sameLocaliter15000/4x32Prefix/raw15/H16/B1/30UniPC,30balancedpairs:
+Action/Vision maxabs0, P50837.0812→798.8678ms,
+1.0478x/4.565%less latency; P95844.7195→803.0262ms;
+P99846.2682→805.8524ms/alloutliersretained. Stage1P99cause
+stillOPEN, no tailSLA or NoTTTcross-experiment speed claim. Packtotal31→2 incl
+sharedprep1/denoise30→1;28layersPrefix30/hit29. Hooksremoved/re-warm/limit8/
+requiredDCP/source/FW/Prefix unchanged; owned process exited, otherjobs untouched.
+PriorGPU01benchmark totalcountassertFAIL retained; only Roottool corrected,
+sameChild. Initial newfixtureCPU14FAIL retained, no historicalcount summation.
+GPU statusCORRECTNESS_PASS_PERFORMANCE_NOT_MET/Shell2; predeclared1.05x missed,
+no threshold change/model rerun; performanceGate remainsOPEN.
+GPU raw 31files stayserver-only; derivedstats/hashmanifest published.
+
+Handoff `docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md`.
+Evidence `docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/`.
+Please fresh independent exact-Pair code/CPU/model-only GPU evidence review.
+Author correctness is not performanceGate/independentclosure. KeepDraft/unmerged, no V3 promotion,
+training/Sim/SR/900EP or new denseAttention stage. EvidenceHEAD ismetadata only.
+
+
+### 2026-11-09 CST — Stage2 publication receipt, same Formal Pair
+
+FormalRoot `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child-Gitlink
+`193627f42f4cd1ba6d563aefb8fa8f9428ecb56d` unchanged. Evidence28b19890 normally
+pushed;20/20 GitHub code/JUnit/Gate/proof/index/handoff/Inbox blobs match localGit.
+New Draft RootPR33 https://github.com/wxwy/psm_wma/pull/33 / ChildPR11
+https://github.com/wxwy/cosmos-framework/pull/11 open/unmerged; descriptions exact.
+Stage1PR32/10 and officialV3e58cef1f/Childv3b0dbd115 unchanged. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/publication_receipt.json`.
+CPU201PASS/1487sourcehashes; GPU correctnessPASS, performanceNOT_MET/Shell2,
+1.0478x below predeclared1.05x. No threshold change or extra model rerun;
+Stage1P99 unresolved. Raw GPU files retained on server, no private file export.
+Independent exact-pair incremental review requested; keepDraft/noV3merge.
+
+
+## 2026-11-09 — GPT Issue31 Stage2 independent verdict: REQUEST_CHANGES
+
+- **Frozen new implementation pair**: Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`; Stage1 approved previous `5b89f3ed/4446be0f`. Documentation/evidence HEAD is not a new formal target.
+- **Formal verdict `REQUEST_CHANGES`** for Issue #31 Stage2 performance Gate; production correctness no newly confirmed blocker. Frozen model-only same-Local H100 B1/guidance1/30-UniPC **P50 speedup≥1.05×** remains unmet by **1.047834×** (P50 **837.0812→798.8678ms**). Benchmark formal threshold in `tools/v3/benchmark_local_ttt_prefix_kv.py:467–471`, actual code target `cosmos_framework/model/generator/omni_mot_model.py:3998–4025`. **Severity MEDIUM, performance-evidence-only**; benchmark exit2 and `PERFORMANCE_NOT_MET` are correct, not test bugs. No threshold change, cherry-pick, or repetitive same-code rerun to obtain PASS.
+- **Independent CPU**: GPT on clean server exact-pair new `prefix_pack_template_test.py` **14/14 PASS**; author `201 passed, 1 deselected` original JUnit/log checked; old inherited W0 baseline failure remains excluded, no tracked change to scan path.
+- **Independent H100 evidence**: Author's **31/31 server raw file SHA256+size** match published derived index; GPT independently parsed raw 30 balanced AB/BA pairs, 30/30 faster, mean saving38.841ms; P95 844.7195→803.0262ms, P99 846.2682→805.8524ms *within this small sample only*. Saved Action/Vision tensors `torch.equal` optimized/reference; changing Prefix produces Action max-abs1.9608675. 28 layers all 30 Prefix contexts, text KV29 gen-only; 31→2 native pack calls incl common preparation1. Same checkpoint/inputs and both text KV ON; no Sim/900EP/NoTTT cross experiment.
+- **Acceptance**: new substantive code/performance work plus a **new formal pair**, or explicit new Owner acceptance contract. Keep RootPR33/ChildPR11 Draft and **unmerged**, no automatic Stage1/Issue27–28/V3 merge. Stage1 old P99 anomaly still OPEN; this test cannot close production tail SLA.
+- Detailed independent review: `docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_REQUEST_CHANGES.md`.
+
+
+## 2026-11-09 — Owner corrected Issue31 Stage2 review standard (scoped APPROVE_CODE)
+
+- **更正原因**：Owner明确指出“不应该预设能提升多少”。Issue31 Owner范围未规定 `1.05×` 硬性加速条件；作者自行设置的Benchmark性能判据不是“代码必须返工”的标准。原GPT `REQUEST_CHANGES` 因将作者自设阈值误当强制Gate而**被正式更正**；旧报告文件和原始失败结果均保留，标记 superseded。
+- **正式更新的独立结论**：**`APPROVE_CODE`（限定 Stage2 B1/single-sample/two_way/guidance1 Prefix-safe pack reuse的生产代码增量和同权重model-only数值正确性）**；**`OBSERVED_PERFORMANCE_IMPROVEMENT`**（30/30配对更快，P50 837.0812→798.8678ms，减4.565%，1.047834×；31→2 pack），**`AUTHOR_BENCH_INTERNAL_TARGET_NOT_MET`**（作者内部 >=1.05×没达到，`PERFORMANCE_NOT_MET`、exit2必须原样保留）。三个陈述互不矛盾，不改阈值、不删离群、不给未验证能力背书。
+- **一致性证据**：formal Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d` 不变；GPT独立CPU 14/14、作者201通过/1旧W0排除、原始H100 31/31文件SHA256匹配、保存Action/Vision精确相等、28层30步Prefix生效。Stage1 P99风险仍未关闭；无真实Sim、SR、多B或生产SLA结论。
+- **最新正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_APPROVE_CODE_CorrectedGate.md`。旧 `…_REQUEST_CHANGES.md` 仅保留历史。
+- PR33/Child11以及上游Draft保持未合并；`APPROVE_CODE` 不等于 Owner授权合并V3。**不得为跨越任意5%或1.05×强行改码或刷实验**，继续优化应先看真实剩余瓶颈。
+
+## 2026-11-09 — Stage3 evidence-only handoff: Issue #35 (no new formal implementation pair)
+
+- **New scoped Codex diagnostic**: https://github.com/wxwy/psm_wma/issues/35. Continue Owner request to compare optimized Local-TTT native generation **primarily against the existing No-TTT** benchmark; do **not** rerun No-TTT, redefine 616ms mean as P50, or set arbitrary 1.05× speed Gate.
+- Unchanged formal Stage2 implementation Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`. Prior scoped APPROVE_CODE stands; this task is *new evidence/performance exploration*, **not** repeating formal code review.
+- NoTTT prior 5Episode mean generation ~616.26ms (280 nonfirst replans); single seed4603 P50 **736.75ms** if excluding first cold/first Prefix candidate to match 55 steady requests. Same seed4603 and existing simulated GPU load, Stage2 Local K1 P50 **838.47ms**, K16 **822.19ms** (two separate real Episode runs, 55 stable requests each). Different model checkpoints, do not claim strict causal percentage. Removed `tmux gpu` artificial load on Owner instruction; without fake load Local K1 **816.94ms**, K16 **859.77ms**, the latter has late-half P50~1132ms and cannot be simplified to model architectural overhead.
+- **Attention concrete suspected redundant path** in current Child: `_attention_gen_with_cached_text_and_prefix` still constructs `dummy_und_q` and calls full two-way Attention; Prefix forces varlen, dummy causal output is dropped. 28 layers×29 cache hits=812 hit-path layer executions. No per-component GPU time attribution yet; profile first, do not delete kernels blindly (prior materialized K/V BF16 precision Gate).
+- **Important numerics gap**: old baseline duplicate K1 and K16 genuine Episode actions 57/57 bit-exact; Stage2 first differs from old K1 at replan2/action raw15 max_abs0.00497079, K16 at replan4 max_abs0.00706959 while source RGB/Visual96SHA and scalar FW norm are still equal. New Stage2 with vs without fake GPU load has 57/57 actions exact for both K's. These facts do not prove new implementation Bug absent frozen full Prefix/FastWeights; require exact single-request input/action parity diagnostic before further optimization/production parity claim.
+- Issue35 explicitly has **no preset performance threshold**, no new GPU jobs in this handoff, no current V3 merge, no model/Sim redesign. If Codex changes production code, bring fresh exact Root/Child formal pair and evidence for independent GPT audit; until then no re-review of existing Stage2 Pair.

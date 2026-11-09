@@ -1,0 +1,23 @@
+{
+  "kind": "Derived statistics and hashes only, no private raw file export",
+  "formal_root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+  "formal_child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "files": {
+    "executed_command.sh": {
+      "bytes": 1099,
+      "sha256": "b9c69bf4bc4dc1796aa375e586c6aa42190e4e2fd07703eeb82c4c48b7887772",
+      "git_blob_sha1": "494151929b4384b5285804b33f3b6f52b0cc2bb7"
+    },
+    "gpu_statistics.json": {
+      "bytes": 12779,
+      "sha256": "c6a85c60fe8e759b0cb1e1f3bf461a6a2d91e5fafc1010c12a9591bbd3c33738",
+      "git_blob_sha1": "3e2563be88280c6341dcf8cf5eabc165b0c6c1d2"
+    },
+    "public_gpu_statistics.py": {
+      "bytes": 6535,
+      "sha256": "38788e1263197ee01cd05d918de97b6d7ab7bbe5e698468532b18f28ad958ef7",
+      "git_blob_sha1": "134842e228bdaf7046f7473fc9ecc989837cf776"
+    }
+  },
+  "private_server_files_exported": false
+}

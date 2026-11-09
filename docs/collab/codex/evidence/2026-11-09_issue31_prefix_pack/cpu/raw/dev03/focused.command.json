@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/work/psm-wma-prefix-pack-issue31",
+    "-p",
+    "no:cacheprovider",
+    "-o",
+    "markers=L0: CPU level\nCPU: no GPU\nlevel: test level\ngpus: GPU count",
+    "--basetemp=/workspace/work/issue31-prefix-pack-evidence/dev03/pytest_tmp",
+    "--junitxml=/workspace/work/issue31-prefix-pack-evidence/dev03/focused.xml",
+    "-q",
+    "--deselect=cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0",
+    "cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py"
+  ],
+  "cwd": "/workspace/work/psm-wma-prefix-pack-issue31",
+  "exit_code": 0
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Issue31: same-Local-DCP, Prefix-ON B1 text-KV correctness/performance probe.
+"""Issue31: same-Local-DCP, Prefix-ON B1 cache correctness/performance probe.
 
 Model-only author evidence. No HTTP server, Sim, Worker, training, SR or model
 mode override. Uses a deterministic synthetic composite observation and real
@@ -132,6 +132,7 @@ def main():
     p.add_argument("--warmup-pairs", type=int, default=3)
     p.add_argument("--pairs", type=int, default=30)
     p.add_argument("--profile-one", action="store_true")
+    p.add_argument("--optimization", choices=("text_kv", "prefix_pack"), default="text_kv")
     a = p.parse_args()
     if a.pairs < 20 or a.warmup_pairs < 2:
         p.error("at least 20 interleaved measurement pairs and 2 warmup pairs required")
@@ -163,11 +164,14 @@ def main():
         num_steps=30,
         local_memory_mode="required",
         history_updates_outside_generation_timing=True,
-        pack_template_reuse_with_prefix=False,
+        optimization=a.optimization,
+        pack_template_reuse_with_prefix=a.optimization == "prefix_pack",
+        baseline_text_kv_cache=a.optimization == "prefix_pack",
         validation_scope="B1 single GPU two_way only",
     )
     handles = []
     vae_original = None
+    pack_original = None
     service = None
     try:
         gpu_fields = result["gpu_before"].split(",")
@@ -264,6 +268,15 @@ def main():
         layers = model.net.language_model.model.layers
         original_dispatch = [layer.self_attn.dispatch_attention_fn for layer in layers]
         audit = None
+        pack_calls = 0
+        pack_original = model._pack_input_sequence
+
+        def audit_pack(*args, **kwargs):
+            nonlocal pack_calls
+            pack_calls += 1
+            return pack_original(*args, **kwargs)
+
+        model._pack_input_sequence = audit_pack
 
         def layer_hook(i):
             def hook(module, positional, kwargs):
@@ -297,7 +310,8 @@ def main():
         model.tokenizer_vision_gen.encode = timed_vae
 
         def run(mode, tag, current_prefix=prefix, with_audit=False):
-            nonlocal audit
+            nonlocal audit, pack_calls
+            pack_calls = 0
             audit = (
                 [dict(forwards=0, gen_only=0, prefix_context=0, prefix_kv_projection=0) for _ in layers]
                 if with_audit
@@ -321,7 +335,8 @@ def main():
                     seed=[a.seed],
                     has_negative_prompt=False,
                     _local_memory_prefixes=(current_prefix,),
-                    use_prefix_text_kv_cache=mode == "optimized",
+                    use_prefix_text_kv_cache=mode == "optimized" or a.optimization == "prefix_pack",
+                    use_prefix_pack_templates=a.optimization == "prefix_pack" and mode == "optimized",
                 )
             end.record()
             torch.cuda.synchronize()
@@ -339,6 +354,7 @@ def main():
                 for layer, old in zip(layers, original_dispatch, strict=True)
             )
             if audit is not None:
+                row["native_pack_calls"] = pack_calls
                 for layer_audit, counter in zip(audit, projection_counters, strict=True):
                     layer_audit["prefix_kv_projection"] = int(counter.count.item())
                 row["layers"] = audit
@@ -374,9 +390,18 @@ def main():
         opt_audit, optimized = run("optimized", "audit-optimized", with_audit=True)
         result["audit_output_errors"] = compare(baseline, optimized)
         for row in base_audit["layers"]:
-            assert row == dict(forwards=30, gen_only=0, prefix_context=30, prefix_kv_projection=30)
+            assert row == dict(
+                forwards=30,
+                gen_only=29 if a.optimization == "prefix_pack" else 0,
+                prefix_context=30,
+                prefix_kv_projection=30,
+            )
         for row in opt_audit["layers"]:
             assert row == dict(forwards=30, gen_only=29, prefix_context=30, prefix_kv_projection=30)
+        # Native _prepare_inference_data packs once before the denoising loop.
+        # Count that shared preparation too: denoising30->1 means total31->2.
+        assert base_audit["native_pack_calls"] == 31
+        assert opt_audit["native_pack_calls"] == (2 if a.optimization == "prefix_pack" else 31)
         changed_row, changed = run("optimized", "different-prefix", prefix + 0.5, with_audit=True)
         assert not torch.equal(optimized["action"][0], changed["action"][0]), "Prefix must affect real actions"
         retry_row, retry = run("optimized", "original-request-again", with_audit=True)
@@ -392,6 +417,7 @@ def main():
         for handle in handles:
             handle.remove()
         handles.clear()
+        model._pack_input_sequence = pack_original
         clean_warmup = []
         for i in range(a.warmup_pairs):
             for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
@@ -403,6 +429,7 @@ def main():
         torch.save(dict(baseline=baseline, optimized=optimized), a.output_dir / "uninstrumented_outputs.pt")
         result["uninstrumented_output_errors"] = compare(baseline, optimized)
         result["layer_hooks_removed_before_measurement"] = True
+        result["pack_audit_removed_before_measurement"] = True
         records = []
         for i in range(a.pairs):
             for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
@@ -454,6 +481,8 @@ def main():
             handle.remove()
         if vae_original is not None:
             service.model.tokenizer_vision_gen.encode = vae_original
+        if pack_original is not None:
+            service.model._pack_input_sequence = pack_original
         result["gpu_after"] = gpu_info(a.gpu_index)
         write_json(a.output_dir / "result.json", result)
         if "torch" in sys.modules:

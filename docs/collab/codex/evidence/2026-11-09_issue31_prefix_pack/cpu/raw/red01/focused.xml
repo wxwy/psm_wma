@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="16.670" timestamp="2026-11-09T13:49:48.093825+00:00" hostname="f415bcea90b3"><testcase classname="" name="test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix" time="3.767"><failure message="assert 0 == 1&#10; +  where 0 = namespace(config=namespace(local_memory_enabled=True, local_memory_k_local=4, local_memory_dim=32, joint_attn_implemen...&lt;locals&gt;.&lt;lambda&gt; at 0x7ff14af5cfe0&gt;, _get_velocity=&lt;function _generation_harness.&lt;locals&gt;.velocity at 0x7ff14af5cf40&gt;).templates">def test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix():
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=30, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        reference = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=False, **kwargs)
+        assert obj.seen == [(True, False, False)] + [(True, True, False)] * 29
+        obj.seen.clear()
+        actual = obj.generate_samples_from_batch(batch, **kwargs)
+&gt;       assert obj.templates == 1
+E       assert 0 == 1
+E        +  where 0 = namespace(config=namespace(local_memory_enabled=True, local_memory_k_local=4, local_memory_dim=32, joint_attn_implemen...&lt;locals&gt;.&lt;lambda&gt; at 0x7ff14af5cfe0&gt;, _get_velocity=&lt;function _generation_harness.&lt;locals&gt;.velocity at 0x7ff14af5cf40&gt;).templates
+
+cosmos_framework/model/generator/mot/prefix_pack_template_test.py:137: AssertionError</failure></testcase></testsuite></testsuites>

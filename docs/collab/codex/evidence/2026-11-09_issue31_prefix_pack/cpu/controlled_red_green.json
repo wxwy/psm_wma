@@ -1,0 +1,12 @@
+{
+  "red_child": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+  "red_worktree_status": "?? cosmos_framework/model/generator/mot/prefix_pack_template_test.py",
+  "new_child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "test_sha256": "779a3ff68ddcb90ff5c87df2eb1fdc96be5d861a68a50351f133e31882dd19e2",
+  "red": "raw/red01/focused.xml",
+  "red_expected": "assert obj.templates == 1; actual0",
+  "green": "raw/author02/focused.xml",
+  "new": "201 focused PASS including same positive test",
+  "qualification": "Old production clean; only same new test file untracked. Red pytest -c /dev/null derives rootdir /dev; explicit test path and exact source hash identify test.",
+  "inherited_failure": "Stage1 W0 failure preserved in inherited archive and independently confirmed by GPT on4cd5/4446; explicitly deselected, not rerun/fixed/countingPASS."
+}

@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "formal_root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+  "formal_child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "base_root": "590071c599c0531cd9feca9ae748eb0be1af1c89",
+  "base_child": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+  "changed_root": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "tools/v3/benchmark_local_ttt_prefix_kv.py"
+  ],
+  "changed_child": [
+    "cosmos_framework/model/generator/mot/prefix_pack_template_test.py",
+    "cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+    "cosmos_framework/model/generator/omni_mot_model.py"
+  ],
+  "unchanged_method_ast_sha256": {
+    "_get_velocity": "a9d061cb5b1379dc81260b35e30dc06a3d2867a99c254199cad6f7e4fb592b62",
+    "_update_inference_pack_template": "5567b4abbad3c1d5737d373d7802d3a969a1123fb47b0c16d2d6bdfbaad83ce4",
+    "_copy_timestep_to_template": "ed5998dc8e0c6a4f6fd7084afdaeebabec9e3dc3a2b36209378ec4f5931e07a1",
+    "_can_reuse_inference_pack_templates": "5afa503595634579258e2869f5a8a1271cbaa2e2b70d46cc68dce8aaff12e964",
+    "_can_reuse_inference_text_kv": "92fe850254d0be82660973c1a330e9a88093b37c6aaf54484843b4b75a60efe9"
+  },
+  "production_delta": "Only generate_samples_from_batch: Prefix pack option and existing textKV eligibility computed before template allocation; existing native updater reused unchanged.",
+  "protected": "All other tracked Child/Root production paths identical, including attention/cache/fast weights/training/VAE/Sim/Worker/Resume/mode-DCP checks."
+}

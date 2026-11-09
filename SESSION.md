@@ -1,3 +1,43 @@
+# 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack reuse REVIEW
+
+Task ISSUE31-PREFIX-PACK REVIEW; authorCodex, independentGPT reviewer.
+FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496/Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d.
+ApprovedStage1Root5b89/Child4446; latestbaseline reviewdocs590071c5 preserved.
+First-stage exact formal GPT APPROVE_CODE consumed aftercab44->590071c5 fetch/
+advertised/ff-only check. Stage2 is new Owner scope, not inherited approval.
+Independent branchv3-local-ttt-prefix-pack-issue31-20261109; V3 unchanged.
+
+Only production generate_samples_from_batch changes: approved B1/two_way/
+guidance1 eligibility + request-local Prefix template; updater unchanged, current
+noise/time refreshed, Prefix/masks/positions retained. Explicit packOFF reference,
+NoTTT/Attention/FW/training/VAE/Sim/Worker/DCP/strictK-H-M-B Resume unchanged.
+Exact author02 CPU201PASS/0fail/error/skip/shell0/source1487unchanged/static9PASS;
+one inherited W0failure deselected,3oldI001 retained, full rawfailure history saved.
+Controlled old4446 RED templatecount0/new samecaseGREEN, hash/prodproof archived.
+
+GPU02 exactPair correctnessPASS/PERFORMANCE_NOT_MET/exit2, textKV ON both, onlypack flagdiffers,
+same Localiter15000/raw15/H16/4x32Prefix/30step synthetic fixed input/history;
+30balancedpairs, Vision/Action errors0; P50837.0812->798.8678ms,
+1.0478x, reduction4.565%; P95844.7195->803.0262ms;
+P99846.2682->805.8524ms, no SLA/Stage1P99causalclosure.
+Predeclared1.05x threshold not reached; no model rerun/threshold change.
+Pack totals31->2 (sharedprep1, denoise30->1),28layersPrefix30/hit29; audit hooks
+removed before cleanwarmup/timing,limit8/source/FW/Prefix/DCPmetadata unchanged.
+Owned model process exited, onlyGPU6, backgroundload/otherjobs/GPU0-3 untouched.
+RawGPU files stay server-only, derivedstats/hash bindings31files only.
+GPU01priorRoot1568 counterassertFAIL retained; corrected Root benchmarkonly,
+Child unchanged. Initial CPU14fixtureFAIL retained, not relabelledPASS.
+
+Handoff docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md
+Evidence docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/
+Published evidence28b19890 normally; GitHub20/20 source/test/rawJUnit/Gate/index/
+handoff/Inbox bindings match localGit. New DraftRootPR33/ChildPR11 descriptions
+read back exact, open/unmerged. PriorPR32/10 and V3e58cef1f/Childofficialb0dbd115
+unchanged at check. Receipt same evidence directory/publication_receipt.json.
+Fresh independent narrow Code/Evidence review requested on18be/1936; GPU numerical
+PASS/performanceNOT_MET/Shell2 remains explicit. Receipt successor is metadata,
+not new FormalRoot. STOP; no V3 merge, realSim/SR/900EP/training/denseAttention.
+
 # 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
 
 Task ISSUE31-PREFIX-TEXT-KV REVIEW; Codex author, GPT independent reviewer.
