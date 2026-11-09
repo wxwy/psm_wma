@@ -117,3 +117,67 @@ not author-closed, no V3/#27 merge or GPU/realSim/SR/training operation.
 - **源码嫌疑点**：`omni_mot_model.py:3991–3993` Prefix禁用pack-template reuse、`:4065–4112` 禁用text-KV reuse；`mot/attention.py:257–265` 强制varlen；`cosmos3_vfm_network.py:1574–1584` 当前 Local+MemoryState显式禁止。不能盲开 `reuse_text_kv`，否则 Prefix 可能被旁路，必须以真实数值/Action/会话隔离证据证明正确。
 - **下一轮门槛**：Codex先做 Prefix-aware KV 正确性 + 单一Local checkpoint、同样输入/Prefix/FW的交错模型内延迟基准。不得混入train/Sim/Worker改造，不能绕过 `validate_model_mode`。GPU验证只在Owner许可的4–7卡，保留 `gpu_load_sim.py` 原样。若没有明显加速需明确不达标。第二项pack复用必须单独可归因。
 - 这是新优化任务的**handoff/owner request**，不是本条旧代码新一次technical verdict，不授予新的 GPU/merge/production Gate。
+
+
+## 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV: fresh incremental review request
+
+Formal Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink `4446be0f6dad9b6dc887ef90af52d0af754d4682`.
+Approved unmerged baseline53b5273c/4cd5fc8c, latest docsca3a08ac preserved.
+Separate DraftRootPR32 https://github.com/wxwy/psm_wma/pull/32 and ChildPR10
+https://github.com/wxwy/cosmos-framework/pull/10; existingPR29/30/Child8/9 unchanged.
+Evidence/ledger successors are not new formal source identities.
+
+B1/two_way/guidance1 request-local text K/V restores text reuse while retaining
+current Prefix everylayer/step. Native GEN materialization and real pad layout
+preserve compiled rounding; pack reuse remains OFF, backend/precision/limit8
+unchanged. No training/VAE/Sim/Worker/scheduler/mode-DCP/strictK-H-M-B Resume edits.
+Exact clean CPU187/187PASS,0fail/error/skip,shell0/sourceunchanged1486/static8PASS.
+One inherited W0 assertion fails on clean old4cd5 and is explicitly deselected,
+retained as failure, never countedPASS. Three baselineI001 narrowly exempted.
+Controlled compiler/native RED/GREEN plus all development failures archived.
+
+Real H100 GPU6 authorGPU05 Shell0/PASS, same Localiter15000/4x32Prefix/30step
+UniPC/raw15/H16, fixed synthetic composite/history,30balancedAB/BA pairs:
+all Action/Vision maxabs0; P50 991.5513→825.5335ms,1.2011x,16.743%less latency;
+P95 997.1945→829.1916ms. 29/30 faster; retained optimized1386.77ms outlier,
+P99 1000.0608→1225.2732ms regresses, causeunproven. No exclusiveGPU/NoTTTtarget/
+Simthroughput/SR claim. Audits show all28layers Prefix30/projection30/hit29,
+changedPrefix changesAction and repeated request refills independently.
+All layerhooks removed before freshwarmup/timing;limit8/source/FW/Prefix/
+checkpointmetadata unchanged; owned model processes exited, otherjobs untouched.
+Private GPU raw files stay on server; only derived stats and56rawfilehashes published.
+
+Handoff: `docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md`.
+Current CPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/`;
+prior immutableCPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/`;
+derived GPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derived/`.
+Please review this exact Pair's code/CPU/GPU author evidence independently.
+AuthorPASS is not GPT/DS closure. KeepDraft/unmerged; no V3 promotion,
+training/Sim/SR/900EP or second-stage packing/attention optimization authorized.
+
+
+### 2026-11-09 CST — Issue31 publication receipt, same Formal Pair
+
+Formal Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink
+`4446be0f6dad9b6dc887ef90af52d0af754d4682` unchanged. Evidence headf4fff12e
+normally pushed;26/26 GitHub source/test/rawJUnit/Gate/index/handoff/Inbox blob
+SHAs match localGit. PR32/10 descriptions read back exact; all six related PRs
+remainDraft/open/unmerged. Fresh officialV3e58cef1f/Gitlink00f30235 and Child
+v3branchb0dbd115, prior#27/#28refs unchanged. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue31_publication.json`.
+AuthorCPU187PASS and fixed-Local H100 P50speedup1.2011x/exactActions remain
+qualified author evidence; inherited baseline failure and P99 regression retained.
+No private server files exported, no V3 merge or independent Gate closure.
+Fresh incremental GPT review requested on exact5b89/4446; receipt commitmetadata only.
+
+
+## 2026-11-09 — GPT Issue31 independent verdict: APPROVE_CODE for Root5b89/Child4446
+
+- **Frozen implementation pair** (not review HEAD): Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink `4446be0f6dad9b6dc887ef90af52d0af754d4682`. Baseline Root53b5273c / Child4cd5fc8c. RootPR32 and ChildPR10 remain Draft and unmerged.
+- **独立 verdict `APPROVE_CODE`：限 Issue31 第一阶段 B1/single-sample/two_way/guidance1 Local Prefix-aware Text KV 代码与同一 Local checkpoint 的 model-only GPU P50 Gate。** 不批准 V3 merge、Sim/Worker、真实SR/Episode、尾延迟SLA、多B/多卡部署或第二阶段 Pack/Attention。
+- **独立源码审核**：Root Gitlink 精确对应 Child；本轮六个 Child 文件、Root benchmark 两文件，NoTTT/无Prefix路径不改；cache 请求内初始化/失败清理/dispatch复原；首步从native materialized K/V取UND，后续29次gen-only仍各层注入当前4×32Prefix；禁止跨请求缓存污染。训练/Local FW/原生配置模式验证未动。
+- **独立 CPU**：服务器 exact Pair 执行新 `prefix_text_kv_memory_test.py` **25/25 PASS**。作者针对整个增量的 **187 passed、1 deselected** 原始JUnit/日志核查；被排除的旧W0断言在**旧Child4cd5与新Child4446**独立复跑均同样失败（旧4.43s、新4.81s），不是新增回归，不计通过；三个旧Ruff I001例外保留。
+- **独立 GPU 原始证据审核**：直接从授权服务器复算 `gpu05/measurements.jsonl` 60样本/30对ABBA；**56/56原始证据文件 SHA256 与 size 对上GitHub索引**。P50 **991.5513→825.5335ms**（−16.743%、1.2011×），P95 997.1945→829.1916ms；29/30对更快。**P99 1000.0608→1225.2732ms 退化**，最大1386.77ms离群值保留。GPU原始Action/Vision tensor逐元素原值精确相等，换Prefix后的Action max abs1.9609，恢复旧Prefix后精确相等；28层均30次Prefix生效，优化命中29次。GPU模拟负载仍存在，原始私有文件未外传。
+- **风险**：性能只证明 model-only 合成固定输入 + 单一 Local iter15000 DCP，不等于真实RoboCasa SR、吞吐或 NoTTT 历史 ~608ms；尾延迟仍需独立 Gate；本 Gate 不授权上游 #27/#28 和 #31 自动合入V3。
+- **详细正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md`。
+- Review/Inbox 的后续文档提交仅为 bookkeeping，**不是 implementation SHA**。

@@ -1,5 +1,9 @@
 
 
+# 2026-11-09 — Prefix-aware Local-TTT generation
+
+- **ISSUE31-PREFIX-TEXT-KV** — REVIEW; Codex; FormalRoot5b89f3ed/Child4446be0f, DraftPR32/10; exact focused CPU187PASS/zeroFailErrorSkip/1486sourcehashesunchanged, 1 inherited W0 failure deselected +3 baselineI001 documented; real H100 fixed-Local 30pair Vision/Action exact, P50 991.55→825.53ms (1.2011x), P95 improved, one retained outlier/P99 regression. Prefix everylayer/step, request isolation/cleanup; private rawGPU files server-only, derived stats/hashes and raw CPU archived. Fresh independent incremental Gate requested; no pack/backend second stage, training/VAE/Sim/Worker/strictResume change, V3 merge or SR/900EP.
+
 # 2026-11-09 — Shared VAE generic topology
 
 - **ISSUE27-SHARED-VAE-TOPOLOGY** — DONE (CPU/static/Evidence APPROVE_CODE9b1756f9/60b252d0; hardware/merge separate); historical REVIEW (test-only Formal9b1756f9/Child60b252d0; exact18PASS; PR29/8 updated/readback25PASS; GPT M16 Evidence review requested); Codex; Owner/full review atb5127c82; Root-only fixture/test/evidence supplement with frozen Manifest/capacity,32Sessions/realCPUWorker/OwnerHTTP/UnixIPC/ACK/End/isolation/cleanup plus1x1/1x8; production and Child60b252d0 unchanged; new test-only Root SHA and narrow review via existing DraftPR29/8. No GPU/SR/900EP/official merge.

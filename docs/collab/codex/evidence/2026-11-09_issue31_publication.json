@@ -1,0 +1,294 @@
+{
+  "kind": "Issue31 normal candidate publication and independent GitHub readback",
+  "observed_date": "2026-11-09 CST",
+  "formal_root": "5b89f3eddbfe27ee72c173696a386e0b756d7866",
+  "formal_child_gitlink": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+  "published_evidence_head": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+  "receipt_is_metadata_only": true,
+  "independent_code_evidence_approval": "NOT_CLAIMED",
+  "github_remote_file_bindings": [
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "tools/v3/benchmark_local_ttt_prefix_kv.py",
+      "sha": "b64d2e7bc72905dabe170eb4405a68341962b166",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "tools/v3/prefix_kv_benchmark_test.py",
+      "sha": "c2fd6ae8f327df3e74119b81d917a27af379ed07",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "sha": "0f15c3918e60d2670433c078a26a3b850faca02a",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md",
+      "sha": "1e185d6647b59e309d8c236337259f264555e307",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/index.json",
+      "sha": "01da0b89cc2b903d16e8045b596d3934fef5b672",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/controlled_compile_reproduction.json",
+      "sha": "2ad95c758ad99d6bbf18422cfb524ae2380eb0b2",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/raw/baseline01/w0.xml",
+      "sha": "d5d7988fd4b54599648aa4379dc493161e67ffcc",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/raw/compile_red02/compiled.xml",
+      "sha": "0ff0ace6aac9e993c1c8c768f85fc3575c65b036",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/index.json",
+      "sha": "4c0159ef44e52cee6e9db63a2026df71f8fb375c",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/scope.json",
+      "sha": "a9b01265ab07f6e87841f9bda9e44e21c35b5dac",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/controlled_native_reproduction.json",
+      "sha": "8576194eff829dd280691807c7122c7e82303c41",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/raw/author06/gate.json",
+      "sha": "55de8613409756bd8b3a2eb295068a3b2c9a1c2d",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/raw/author06/focused.xml",
+      "sha": "7111b3c1d6931ce472e76215d8e8a117e51924f3",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/raw/author06/focused.command.json",
+      "sha": "cd2f9ecd2da746be64c051114566086b66bd0437",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/raw/author06/source_before.json",
+      "sha": "7610979c8d38815dac724ffc9cacfdfbc18f9a09",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/raw/author06/source_after.json",
+      "sha": "7610979c8d38815dac724ffc9cacfdfbc18f9a09",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/raw/native_red/focused.xml",
+      "sha": "cefcc449b5ab0a345c0d29a199668d0093c1dd29",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derived/index.json",
+      "sha": "aa56a65f08f54cc5259d16e1b52bccd61b212307",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derived/gpu_statistics.json",
+      "sha": "194a1e0c340f6e19f1385831c5d3e08af4e4d9ec",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derived/gpu_command.json",
+      "sha": "000b6468d4e598203797de961143a491a4ae8ff6",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "path": "cosmos_framework/model/generator/omni_mot_model.py",
+      "sha": "4deb4ad6e4a2740089ac36d52b2b82171a9f19c7",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "path": "cosmos_framework/model/generator/mot/attention.py",
+      "sha": "f928594f4cf75252d9889eb71ee9dd384b472147",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "path": "cosmos_framework/model/generator/mot/inference_text_kv_memory.py",
+      "sha": "aedc62ec241319c48f08df3c3f1c8e70e6deff0d",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "path": "cosmos_framework/model/generator/mot/unified_mot.py",
+      "sha": "c3516faab7a244287120e4921ffc0bfd09cc7844",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "path": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+      "sha": "ce3694958279cbc4b3c746385601f4c0e96ea51f",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "path": "cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+      "sha": "59058b45fad2f03322d2a0b75fc3f8c60b5c0aa9",
+      "status": "MATCH"
+    }
+  ],
+  "github_files_verified": 26,
+  "pr_state_observed_at_evidence_head": [
+    {
+      "repository": "wxwy/psm_wma",
+      "number": 32,
+      "url": "https://github.com/wxwy/psm_wma/pull/32",
+      "head": "f4fff12ec94e687b1da98259601fd55dc56b5122",
+      "base": "ca3a08acf8697b5ff316fcc476c4f0820d8f3b13",
+      "draft": true,
+      "merged": false,
+      "state": "open"
+    },
+    {
+      "repository": "wxwy/cosmos-framework",
+      "number": 10,
+      "url": "https://github.com/wxwy/cosmos-framework/pull/10",
+      "head": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "base": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "draft": true,
+      "merged": false,
+      "state": "open"
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "number": 29,
+      "url": "https://github.com/wxwy/psm_wma/pull/29",
+      "head": "73d8644df3096e192a83fff2f2d8098a4ac11e64",
+      "base": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+      "draft": true,
+      "merged": false,
+      "state": "open"
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "number": 30,
+      "url": "https://github.com/wxwy/psm_wma/pull/30",
+      "head": "ca3a08acf8697b5ff316fcc476c4f0820d8f3b13",
+      "base": "73d8644df3096e192a83fff2f2d8098a4ac11e64",
+      "draft": true,
+      "merged": false,
+      "state": "open"
+    },
+    {
+      "repository": "wxwy/cosmos-framework",
+      "number": 8,
+      "url": "https://github.com/wxwy/cosmos-framework/pull/8",
+      "head": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "base": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db",
+      "draft": true,
+      "merged": false,
+      "state": "open"
+    },
+    {
+      "repository": "wxwy/cosmos-framework",
+      "number": 9,
+      "url": "https://github.com/wxwy/cosmos-framework/pull/9",
+      "head": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "base": "60b252d05157b2753d2caebae32b11c878504bbe",
+      "draft": true,
+      "merged": false,
+      "state": "open"
+    }
+  ],
+  "pr_bodies_read_back_exact": true,
+  "normal_push": true,
+  "force_push": false,
+  "protected_refs_observed": {
+    "root_V3": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "root_V3_gitlink": "00f30235da6ffb085a9304ef6501ede509203092",
+    "child_v3_local_ttt": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db",
+    "root_issue27": "73d8644df3096e192a83fff2f2d8098a4ac11e64",
+    "root_issue28": "ca3a08acf8697b5ff316fcc476c4f0820d8f3b13",
+    "child_issue27": "60b252d05157b2753d2caebae32b11c878504bbe",
+    "child_issue28": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe"
+  },
+  "protected_refs_unchanged": true,
+  "local_evidence_verification": {
+    "payloads": 158,
+    "index_files": 3,
+    "source_hashes": 1486,
+    "focused_cpu_tests": 187,
+    "cpu_failures": 0,
+    "cpu_errors": 0,
+    "cpu_skipped": 0,
+    "preexisting_failure_explicitly_deselected": 1,
+    "inherited_import_order_exceptions": 3,
+    "zero_gpu_vision_action_errors": true,
+    "raw_gpu_files_hash_bound": 56,
+    "raw_gpu_files_exported": false,
+    "raw_cpu_failures_and_whitespace_preserved": true,
+    "nonraw_document_whitespace_check": "PASS",
+    "no_production_change_since_formal_pair": true
+  },
+  "gpu_process_cleanup": "Owned model processes exited, no lingering owned model PIDs; other jobs and gpu_load_sim unchanged.",
+  "limitations": [
+    "Focused author Gate, not full-repository test claim",
+    "P99 regression retained; not production tail-latency acceptance",
+    "Fixed synthetic model-only paired workload under existing background GPU load",
+    "No V3 merge or training/Sim/SR/900EP execution"
+  ],
+  "next": "Fresh independent GPT incremental review of exact Formal Pair. PR32/10 remain Draft and unmerged."
+}

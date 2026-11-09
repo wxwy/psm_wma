@@ -1,0 +1,44 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_model_owned_all_continuation_never_initializes_w0 ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f6869d1ba10>
+
+    def test_model_owned_all_continuation_never_initializes_w0(monkeypatch):
+        net = _local_net()
+        visual, action, valid = torch.randn(2, 4, 96), torch.randn(2, 4, 15), torch.ones(2, 4, dtype=torch.bool)
+        state = ContinualTTTLocalMemoryCore.detach_state(net.local_memory_runtime.core.initial_state(2))
+    
+        def forbidden(batch):
+            raise AssertionError("all-continuation 不得读取 W0")
+    
+        monkeypatch.setattr(net.local_memory_runtime.core, "initial_state", forbidden)
+>       tokens, _, _ = _model_scan(net, visual, action, valid, state)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:331: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/model/generator/mot/local_evidence_test.py:233: in _model_scan
+    return Cosmos3VFMNetwork.scan_local_memory(net, visual, action, valid, state, continuation_mask=continuation_mask)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:400: in scan_local_memory
+    fresh = runtime.core.initial_state(batch)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = 2
+
+    def forbidden(batch):
+>       raise AssertionError("all-continuation 不得读取 W0")
+E       AssertionError: all-continuation 不得读取 W0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:328: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0
+1 failed, 1 warning in 5.28s

@@ -1,0 +1,11 @@
+{
+  "red_production_child": "9f6cf6a1447983c10f9ff70895487165c6c65736",
+  "red_worktree_status": "M cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+  "new_production_child": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+  "test_sha256": "42f44eeedd13cd261df8b501789abf01cbb61373b3c8c03049ea4ce73209eb0e",
+  "red": "raw/native_red/focused.xml",
+  "green": "raw/author06/focused.xml",
+  "old": "1 deterministic expected FAIL: no native materialized buffer capture",
+  "new": "Same native operand/padding test PASS, included in final187",
+  "note": "Red worktree contains same new regression file; all production bytes exact old9f6cf6a1. Earlier native_dev two fixture failures retained; actual production padding fixes the fixture."
+}

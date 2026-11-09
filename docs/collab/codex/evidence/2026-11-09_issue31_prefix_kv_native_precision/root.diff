@@ -1,0 +1,661 @@
+diff --git a/SESSION.md b/SESSION.md
+index 3d5a7345..07bbbfa5 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1,3 +1,89 @@
++# 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
++
++GPU04 edf1e4ee/9f6cf6a1 numerical FAIL: latent max0.0231489, raw15 action
++max0.00839865; each mode individually repeatable, all28 layers Prefix30/hit29.
++No speed claim. Single fixed-input teacher-forced diagnostic on exact clean same
++source confirmed UND K/V exactly invariant across tau1000/500 in all28 layers,
++but cache FILL already differs from original before any reuse. Native real/pad
++layout UND131/132,GEN267/268. Raw outputs remain server-only.
++Child4446be0f6dad9b6dc887ef90af52d0af754d4682 changes cache precision boundary:
++capture UND from materialized native GEN K/V; no unused pre-scatter GEN exports;
++hit uses native attention layout including padding, discards dummy UND queries.
++No backend tuning/pack reuse/precision/compile-limit/training/VAE changes.
++New CPU native operand/padding test PASS; identical test42f44eeedd13cd261df8b501789abf01cbb61373b3c8c03049ea4ce73209eb0e
++on old9f6cf6a1 production RED (no native buffer capture). Compiled2PASS after
++fixture now uses real native padding. First broader native_dev47PASS/2fixtureFAIL
++retained; next exact187 focused CPU and hardware teacher-forced recheck.
++Previous v1 CPU archive preserved byte-for-byte outside tree pending publication.
++
++Author04 exact Roote37d8bd7 / Child9f6cf6a1 focused185PASS,1486 source hashes
++unchanged. GPU03 completed six alternating Prefix-on baseline/optimized warmups;
++no new production inference failure. Audit hook's mutable Python integer then
++exhausted unchanged recompile_limit8 (raw last guard names prefix_kv_projection).
++Root-only measurement correction: Tensor projection counter, all layer hooks
++removed before fresh warmup/timing; retain limit8 and save raw generated inputs/
++outputs locally on server. New CPU counter regression passes40 alternating
++calls, exactly2 shape graphs, correct count/reset without recompilation. Child
++9f6cf6a1 unchanged. Next freeze new Root, author186, same GPU probe (no SR/Sim).
++
++GPU02 Roota458eaae / Child19b30423 loaded/validated real DCP and reached
++generation. It exposed production Dynamo SymBool != Python bool failure in
++inference_text_kv_memory.py:296. No GPU correctness/performance PASS claimed.
++Minimal equivalent branch guard fix Child9f6cf6a1447983c10f9ff70895487165c6c65736;
++no compile disabling/limit change. Deterministic fullgraph CPU dispatcher tests:
++same SHA256 58cf39796d6c6b68cce8f68ffacfa29734886ec47462181265f3e03579a6724a,
++old production19b30423 controlled test-only worktree static PASS/dynamic RED
++BooleanAtom, new static/dynamic2PASS; raw compile_red02 and compile_green02.
++Earlier compile_red/green development fixture failures retained separately.
++Author03 a458/19b:183PASS,1486 hashes unchanged. Next new exact Pair185CPU then
++GPU03 same fixed-Local probe, preserving old root/root2 and server-only raw data.
++
++Author01 Root66a104d5 and author02 Root1d1b0b75 / same Child19b30423:
++181/181 focused PASS,1485 source files unchanged, explicit baselineW0 exclusion.
++GPU01 on isolated Root66a104d5 loaded real Local iter15000 and passed mode/DCP
++validation, then measurement setup failed before generation: required state_in
++argument omitted. Root-only tool fix passes state_in=None and (matching online
++adapter) local inference_mode(False)/enable_grad after global no-grad init.
++New benchmark input CPU tests2/2PASS validate actual model-owned T16 scan,
++fixed Prefix/FastState repeatability and slow weights unchanged. Child19b30423
++unchanged. Freeze latest Root with this tool/test, exact author183 then same GPU
++probe in a separate worktree; original GPU01/raw failure retained on server.
++
++Implementation ready for exact-pair author evidence. Child changes limited to
++four model inference extension points + new CPU tests. B1 guidance1 two_way
++fills text K/V once, keeps current Prefix per layer on every denoising forward;
++gen-only attention retains varlen/padding fences, caches clear in finally and
++dispatcher restores. Request opt-out use_prefix_text_kv_cache=False retains
++original Prefix-on reference. Other layouts/CFG/FSDP fall back; pack reuse stays
++off with Prefix. Root adds only model-only interleaved benchmark (mode/DCP
++validation retained), Gitlink and bookkeeping. No code merge/GPU result yet.
++Dev core38PASS and generation5PASS; expanded dev05 181PASS/1 preexisting FAIL.
++Clean old Child4cd5 reproduces same local_evidence W0 continuation assertion
++(baseline01/w0.xml); scan_local_memory body untouched, intentionally preserves
++FSDP zero-gradient behavior. Not fixed/counting as PASS. Exact focused gate will
++explicitly deselect this known baseline-only failure, preserving both raw logs.
++Two existing I001 import-order exceptions also recorded, other Ruff strict.
++Next freeze Child/Root, exact clean CPU181, then authorized fixed-DCP GPU6 probe.
++
++Codex owns ISSUE31-PREFIX-TEXT-KV, IN_PROGRESS on isolated
++v3-local-ttt-prefix-kv-issue31-20261109; source baseline formal Root
++53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child
++4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe, latest docs ca3a08ac synced clean.
++Read canonical Inbox and Issue31/comment6738445190; Issue28 exact-pair
++APPROVE_CODE and functional H100 evidence are historical, not Issue31 approval.
++Planned Child files: generator/omni_mot_model.py; mot/inference_text_kv_memory.py,
++cosmos3_vfm_network.py, attention.py/unified_mot.py only if integration requires;
++focused inference cache tests and measurement tool. Root code unchanged except
++new measurement/CPU entrypoint if required, Gitlink, evidence and handoff.
++First stage B1/single-sample/two_way Prefix-aware request-local text KV only.
++Keep pack-template policy, model/training/VAE/Sim/Worker, mode/DCP checks and
++K/H/M/B Resume unchanged. Prior DraftPR30/9 and V3 untouched.
++CPU correctness first; Issue31 Owner scope permits later GPU4–7 fixed-Local
++checkpoint model-only baseline/optimized interleaved measurement. Do not alter
++gpu_load_sim.py, GPU0–3, running jobs or export private server files. No SR/900EP.
++Next: inspect per-layer Prefix/masks and implement/prove cache lifecycle.
++Uncommitted; no Issue31 test or GPU result yet, no review closure/merge claimed.
++
+ # 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
+ 
+ Formal Root53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a /
+diff --git a/TODO.md b/TODO.md
+index 557faf49..8ba49675 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,5 +1,9 @@
+ 
+ 
++# 2026-11-09 — Prefix-aware Local-TTT generation
++
++- **ISSUE31-PREFIX-TEXT-KV** — IN_PROGRESS; Codex; Owner Issue31, approved baseline Root53b5273c/Child4cd5fc8c and docs ca3a08ac. Independent branch/PR; B1 two_way text KV reuse while Prefix remains effective every denoise step; CPU equivalence/Prefix sensitivity/lifecycle/error/retry/NoTTT tests, then same real Local checkpoint interleaved GPU4–7 measurement. New exact Pair/raw evidence for GPT; no pack/attention second stage, training/VAE/Sim/Worker change, V3/#27/#28 merge, SR/900EP or active-job operations.
++
+ # 2026-11-09 — Shared VAE generic topology
+ 
+ - **ISSUE27-SHARED-VAE-TOPOLOGY** — DONE (CPU/static/Evidence APPROVE_CODE9b1756f9/60b252d0; hardware/merge separate); historical REVIEW (test-only Formal9b1756f9/Child60b252d0; exact18PASS; PR29/8 updated/readback25PASS; GPT M16 Evidence review requested); Codex; Owner/full review atb5127c82; Root-only fixture/test/evidence supplement with frozen Manifest/capacity,32Sessions/realCPUWorker/OwnerHTTP/UnixIPC/ACK/End/isolation/cleanup plus1x1/1x8; production and Child60b252d0 unchanged; new test-only Root SHA and narrow review via existing DraftPR29/8. No GPU/SR/900EP/official merge.
+diff --git a/cosmos-framework b/cosmos-framework
+index 4cd5fc8c..4446be0f 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe
++Subproject commit 4446be0f6dad9b6dc887ef90af52d0af754d4682
+diff --git a/tools/v3/benchmark_local_ttt_prefix_kv.py b/tools/v3/benchmark_local_ttt_prefix_kv.py
+new file mode 100644
+index 00000000..b64d2e7b
+--- /dev/null
++++ b/tools/v3/benchmark_local_ttt_prefix_kv.py
+@@ -0,0 +1,468 @@
++#!/usr/bin/env python3
++"""Issue31: same-Local-DCP, Prefix-ON B1 text-KV correctness/performance probe.
++
++Model-only author evidence. No HTTP server, Sim, Worker, training, SR or model
++mode override. Uses a deterministic synthetic composite observation and real
++loaded Local-TTT parameters to construct a fixed Prefix/FastState. All raw
++artifacts stay in the selected device's new output directory.
++"""
++
++from __future__ import annotations
++
++import argparse
++import base64
++import hashlib
++import io
++import json
++import statistics
++import subprocess
++import sys
++import time
++from pathlib import Path
++
++
++def git(repo, *args):
++    return subprocess.check_output(["git", "-C", str(repo), *args], text=True).strip()
++
++
++def identity(root):
++    child = root / "cosmos-framework"
++    return dict(
++        root=git(root, "rev-parse", "HEAD"),
++        child=git(child, "rev-parse", "HEAD"),
++        gitlink=git(root, "rev-parse", "HEAD:cosmos-framework"),
++        root_status=git(root, "status", "--porcelain"),
++        child_status=git(child, "status", "--porcelain"),
++    )
++
++
++def write_json(path, value):
++    with path.open("x") as stream:
++        json.dump(value, stream, indent=2, allow_nan=False)
++        stream.write("\n")
++
++
++def digest(tensor):
++    value = tensor.detach().cpu().contiguous()
++    return hashlib.sha256(value.view(dtype=__import__("torch").uint8).numpy().tobytes()).hexdigest()
++
++
++def gpu_info(index):
++    fields = "index,uuid,name,memory.total,memory.used,utilization.gpu,pci.bus_id"
++    return subprocess.check_output(
++        ["nvidia-smi", "-i", str(index), "--query-gpu=" + fields, "--format=csv,noheader,nounits"],
++        text=True,
++    ).strip()
++
++
++def percentile(values, p):
++    values = sorted(values)
++    position = (len(values) - 1) * p
++    lo = int(position)
++    hi = min(lo + 1, len(values) - 1)
++    return values[lo] + (values[hi] - values[lo]) * (position - lo)
++
++
++def summary(rows):
++    return {
++        name: dict(
++            mean=statistics.mean(values := [row[name] for row in rows]),
++            p50=percentile(values, 0.5),
++            p95=percentile(values, 0.95),
++            n=len(values),
++        )
++        for name in (
++            "native_generate_gpu_ms",
++            "native_generate_wall_ms",
++            "current_vae_gpu_ms",
++            "peak_allocated_bytes",
++            "peak_reserved_bytes",
++        )
++    }
++
++
++def fixed_history_prefix(model):
++    """Build real Local FW/Prefix outside timing, including after init's no-grad.
++
++    Use the FSDP-registered model-owned scan and the production adapter's local
++    grad context. Never update the loaded slow parameters or a live Session.
++    """
++    import torch
++
++    runtime = model.net.local_memory_runtime
++    device = runtime.core.slot_queries.device
++    with torch.inference_mode(False), torch.enable_grad():
++        visual = torch.randn(1, 16, 96, device=device)
++        action_history = torch.randn(1, 16, 15, device=device) * 0.1
++        tokens, fast_state, _ = model.net.scan_local_memory(
++            visual,
++            action_history,
++            torch.ones(1, 16, dtype=torch.bool, device=device),
++            state_in=None,
++            create_graph=False,
++        )
++        prefix = tokens[0, -1].detach().clone()
++    return prefix, fast_state, visual, action_history
++
++
++class PrefixProjectionCounter:
++    """Audit-only Tensor counter; its value must never become a Dynamo guard."""
++
++    def __init__(self, prefix_length, device):
++        import torch
++
++        self.prefix_length = prefix_length
++        self.count = torch.zeros((), dtype=torch.int64, device=device)
++
++    def __call__(self, module, inputs):
++        if inputs[0].shape[0] == self.prefix_length:
++            self.count.add_(1)
++
++
++def main():
++    p = argparse.ArgumentParser(description=__doc__)
++    p.add_argument("--root-worktree", type=Path, required=True)
++    p.add_argument("--expected-root", required=True)
++    p.add_argument("--expected-child", required=True)
++    p.add_argument("--checkpoint", type=Path, required=True)
++    p.add_argument("--config-file", type=Path, required=True)
++    p.add_argument("--output-dir", type=Path, required=True)
++    p.add_argument("--gpu-index", type=int, choices=range(4, 8), required=True)
++    p.add_argument("--seed", type=int, default=31)
++    p.add_argument("--warmup-pairs", type=int, default=3)
++    p.add_argument("--pairs", type=int, default=30)
++    p.add_argument("--profile-one", action="store_true")
++    a = p.parse_args()
++    if a.pairs < 20 or a.warmup_pairs < 2:
++        p.error("at least 20 interleaved measurement pairs and 2 warmup pairs required")
++    root = a.root_worktree.resolve()
++    before = identity(root)
++    if (
++        before["root"] != a.expected_root
++        or before["child"] != a.expected_child
++        or before["gitlink"] != a.expected_child
++        or before["root_status"]
++        or before["child_status"]
++    ):
++        raise RuntimeError("exact clean Root/Child/Gitlink required before model loading")
++    if not a.config_file.is_file() or not a.checkpoint.is_dir():
++        raise RuntimeError("local checkpoint/config missing; no network fallback")
++    a.output_dir.mkdir(parents=True, exist_ok=False)
++    write_json(a.output_dir / "source_before.json", before)
++    sys.path[:0] = [str(root), str(root / "cosmos-framework"), str(root / "scripts")]
++    result = dict(
++        status="RUNNING",
++        identity=before,
++        independent_approval="NOT_CLAIMED",
++        checkpoint=str(a.checkpoint.resolve()),
++        checkpoint_config_sha256=hashlib.sha256(a.config_file.read_bytes()).hexdigest(),
++        input_kind="deterministic synthetic composite and executed history; real Local DCP",
++        gpu_before=gpu_info(a.gpu_index),
++        seed=a.seed,
++        guidance=1.0,
++        num_steps=30,
++        local_memory_mode="required",
++        history_updates_outside_generation_timing=True,
++        pack_template_reuse_with_prefix=False,
++        validation_scope="B1 single GPU two_way only",
++    )
++    handles = []
++    vae_original = None
++    service = None
++    try:
++        gpu_fields = result["gpu_before"].split(",")
++        if float(gpu_fields[3]) - float(gpu_fields[4]) < 24 * 1024:
++            raise RuntimeError("less than 24 GiB free on selected GPU; preserve other processes")
++        metadata = a.checkpoint / "model" if (a.checkpoint / "model").is_dir() else a.checkpoint
++        result["checkpoint_metadata_sha256"] = hashlib.sha256((metadata / ".metadata").read_bytes()).hexdigest()
++        import numpy as np
++        import torch
++        from cosmos_framework.inference.common.args import CheckpointOverrides
++        from cosmos_framework.inference.robocasa_transaction_mode import validate_model_mode
++        from cosmos_framework.scripts.action_policy_server_robocasa import ActionModelService, ActionServerArgs
++        from PIL import Image
++
++        if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
++            raise RuntimeError("exactly one visible CUDA device required")
++        expected_uuid = result["gpu_before"].split(",")[1].strip().removeprefix("GPU-").lower()
++        actual_uuid = str(torch.cuda.get_device_properties(0).uuid).removeprefix("GPU-").lower()
++        if expected_uuid != actual_uuid:
++            raise RuntimeError("visible CUDA device does not match authorized physical GPU")
++        result["torch"] = torch.__version__
++        result["cuda"] = torch.version.cuda
++        torch.manual_seed(a.seed)
++        args = ActionServerArgs(
++            checkpoint=CheckpointOverrides(
++                checkpoint_path=str(a.checkpoint.resolve()),
++                config_file=str(a.config_file.resolve()),
++                use_ema_weights=False,
++            ),
++            output_dir=a.output_dir / "model_load",
++            guardrails=False,
++            local_memory_mode="required",
++            transaction_profile="legacy",
++            history_source="server_vae",
++            seed=a.seed,
++            guidance=1.0,
++            num_steps=30,
++            raw_action_dim=15,
++            action_chunk_size=16,
++        )
++        service = ActionModelService(args)
++        model = service.model
++        validate_model_mode(
++            model, service.experiment_config, service.setup_args.checkpoint_path, "required", use_ema_weights=False
++        )
++        result["validate_model_mode_and_dcp_inventory"] = "PASS"
++        result["recompile_limit"] = torch._dynamo.config.recompile_limit
++        assert result["recompile_limit"] == 8, "keep the authorized recompile limit unchanged"
++        if (
++            model.config.joint_attn_implementation != "two_way"
++            or model.config.video_temporal_causal
++            or service.cfg.action_chunk_size != 16
++            or service.raw_action_dim != 15
++        ):
++            raise RuntimeError("frozen B1/two_way/raw15/H16 benchmark contract differs")
++        if service.experiment_config.get("compile", {}).get("enabled", False):
++            raise RuntimeError("this Gate requires the frozen compile.enabled=false configuration")
++
++        # No server observation file is read/exported. Only generated local probe input.
++        rng = np.random.default_rng(a.seed)
++        image = rng.integers(0, 256, size=(256, 512, 3), dtype=np.uint8)
++        png = io.BytesIO()
++        Image.fromarray(image).save(png, format="PNG")
++        request = dict(
++            image=base64.b64encode(png.getvalue()).decode(),
++            image_size=256,
++            prompt="Close the fridge.",
++            domain_name="robocasa",
++            state=[0.2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5],
++        )
++        prep = service._prep_policy_item(request)
++        prefix, fast_state, visual, action_history = fixed_history_prefix(model)
++        fixed_fast_hashes = [digest(t) for t in fast_state]
++        result["fixed_inputs"] = dict(
++            rgb_sha256=hashlib.sha256(png.getvalue()).hexdigest(),
++            prepared_video_sha256=digest(prep["video_padded"]),
++            visual96_sha256=digest(visual),
++            executed_actions_sha256=digest(action_history),
++            prefix_sha256=digest(prefix),
++            prefix_shape=list(prefix.shape),
++            fast_state_sha256=fixed_fast_hashes,
++        )
++        torch.save(
++            dict(
++                prefix=prefix.cpu(),
++                fast_state=[t.detach().cpu() for t in fast_state],
++                visual96=visual.cpu(),
++                executed_history=action_history.cpu(),
++                composite_uint8=torch.from_numpy(image),
++                state=request["state"],
++            ),
++            a.output_dir / "fixed_inputs.pt",
++        )
++        layers = model.net.language_model.model.layers
++        original_dispatch = [layer.self_attn.dispatch_attention_fn for layer in layers]
++        audit = None
++
++        def layer_hook(i):
++            def hook(module, positional, kwargs):
++                if audit is not None:
++                    row = audit[i]
++                    row["forwards"] += 1
++                    row["gen_only"] += int(kwargs.get("gen_only", False))
++                    row["prefix_context"] += int(kwargs.get("memory_prefix_context") is not None)
++
++            return hook
++
++        projection_counters = [PrefixProjectionCounter(prefix.shape[0], prefix.device) for _ in layers]
++        for i, layer in enumerate(layers):
++            handles.extend(
++                (
++                    layer.register_forward_pre_hook(layer_hook(i), with_kwargs=True),
++                    layer.self_attn.k_proj_moe_gen.register_forward_pre_hook(projection_counters[i]),
++                )
++            )
++        vae_events = []
++        vae_original = model.tokenizer_vision_gen.encode
++
++        def timed_vae(*args, **kwargs):
++            start, end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
++            start.record()
++            encoded = vae_original(*args, **kwargs)
++            end.record()
++            vae_events.append((start, end))
++            return encoded
++
++        model.tokenizer_vision_gen.encode = timed_vae
++
++        def run(mode, tag, current_prefix=prefix, with_audit=False):
++            nonlocal audit
++            audit = (
++                [dict(forwards=0, gen_only=0, prefix_context=0, prefix_kv_projection=0) for _ in layers]
++                if with_audit
++                else None
++            )
++            if with_audit:
++                for counter in projection_counters:
++                    counter.count.zero_()
++            batch = service._single_policy_batch(prep)
++            vae_events.clear()
++            torch.cuda.synchronize()
++            torch.cuda.reset_peak_memory_stats()
++            start, end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
++            wall = time.perf_counter()
++            start.record()
++            with torch.inference_mode():
++                samples = model.generate_samples_from_batch(
++                    batch,
++                    guidance=1.0,
++                    num_steps=30,
++                    seed=[a.seed],
++                    has_negative_prompt=False,
++                    _local_memory_prefixes=(current_prefix,),
++                    use_prefix_text_kv_cache=mode == "optimized",
++                )
++            end.record()
++            torch.cuda.synchronize()
++            row = dict(
++                tag=tag,
++                mode=mode,
++                native_generate_gpu_ms=start.elapsed_time(end),
++                native_generate_wall_ms=(time.perf_counter() - wall) * 1000,
++                current_vae_gpu_ms=sum(x.elapsed_time(y) for x, y in vae_events),
++                peak_allocated_bytes=torch.cuda.max_memory_allocated(),
++                peak_reserved_bytes=torch.cuda.max_memory_reserved(),
++            )
++            assert all(
++                layer.self_attn.dispatch_attention_fn is old
++                for layer, old in zip(layers, original_dispatch, strict=True)
++            )
++            if audit is not None:
++                for layer_audit, counter in zip(audit, projection_counters, strict=True):
++                    layer_audit["prefix_kv_projection"] = int(counter.count.item())
++                row["layers"] = audit
++            for key, values in samples.items():
++                assert all(torch.isfinite(t).all() for t in values), key
++            cpu = {key: [t.detach().float().cpu() for t in values] for key, values in samples.items()}
++            row["output_sha256"] = {key: [digest(t) for t in values] for key, values in cpu.items()}
++            if with_audit:
++                torch.save(cpu, a.output_dir / f"outputs_{tag}.pt")
++                write_json(a.output_dir / f"audit_{tag}.json", row)
++            # The real generation returns raw15 and includes the conditioning state row.
++            assert cpu["action"][0].shape[-1] == 15
++            return row, cpu
++
++        def compare(left, right):
++            errors = {}
++            for key in left:
++                assert len(left[key]) == len(right[key])
++                errors[key] = []
++                for x, y in zip(left[key], right[key], strict=True):
++                    errors[key].append(dict(max_abs=float((x - y).abs().max()), mean_abs=float((x - y).abs().mean())))
++                    torch.testing.assert_close(x, y, rtol=1e-4, atol=1e-5)
++            return errors
++
++        # Interleaved warmup, then audit correctness on already-warm kernels.
++        warmup = []
++        for i in range(a.warmup_pairs):
++            for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
++                row, _ = run(mode, f"warmup-{i}")
++                warmup.append(row)
++        write_json(a.output_dir / "warmup.json", warmup)
++        base_audit, baseline = run("baseline", "audit-baseline", with_audit=True)
++        opt_audit, optimized = run("optimized", "audit-optimized", with_audit=True)
++        result["audit_output_errors"] = compare(baseline, optimized)
++        for row in base_audit["layers"]:
++            assert row == dict(forwards=30, gen_only=0, prefix_context=30, prefix_kv_projection=30)
++        for row in opt_audit["layers"]:
++            assert row == dict(forwards=30, gen_only=29, prefix_context=30, prefix_kv_projection=30)
++        changed_row, changed = run("optimized", "different-prefix", prefix + 0.5, with_audit=True)
++        assert not torch.equal(optimized["action"][0], changed["action"][0]), "Prefix must affect real actions"
++        retry_row, retry = run("optimized", "original-request-again", with_audit=True)
++        result["repeat_request_errors"] = compare(optimized, retry)
++        for row in retry_row["layers"]:
++            assert row["gen_only"] == 29, "each request must refill its own text cache"
++        write_json(
++            a.output_dir / "audit.json",
++            dict(baseline=base_audit, optimized=opt_audit, changed_prefix=changed_row, repeated_original=retry_row),
++        )
++        # Audit counters must not perturb measured generation. Removing hooks
++        # changes compiled guards: re-warm both ordinary paths before timing.
++        for handle in handles:
++            handle.remove()
++        handles.clear()
++        clean_warmup = []
++        for i in range(a.warmup_pairs):
++            for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
++                row, _ = run(mode, f"clean-warmup-{i}")
++                clean_warmup.append(row)
++        write_json(a.output_dir / "uninstrumented_warmup.json", clean_warmup)
++        _, baseline = run("baseline", "uninstrumented-baseline")
++        _, optimized = run("optimized", "uninstrumented-optimized")
++        torch.save(dict(baseline=baseline, optimized=optimized), a.output_dir / "uninstrumented_outputs.pt")
++        result["uninstrumented_output_errors"] = compare(baseline, optimized)
++        result["layer_hooks_removed_before_measurement"] = True
++        records = []
++        for i in range(a.pairs):
++            for mode in ("baseline", "optimized") if i % 2 == 0 else ("optimized", "baseline"):
++                row, actual = run(mode, f"pair-{i}")
++                row["errors_from_baseline"] = compare(baseline, actual)
++                records.append(row)
++                with (a.output_dir / "measurements.jsonl").open("a") as stream:
++                    stream.write(json.dumps(row, allow_nan=False) + "\n")
++            print(json.dumps(dict(pair=i + 1, pairs=a.pairs, last_two=records[-2:])), flush=True)
++        result["measurements"] = {
++            mode: summary([r for r in records if r["mode"] == mode]) for mode in ("baseline", "optimized")
++        }
++        if a.profile_one:
++            kernels = {}
++            for mode in ("baseline", "optimized"):
++                with torch.profiler.profile(
++                    activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA]
++                ) as prof:
++                    run(mode, f"profile-{mode}")
++                prof.export_chrome_trace(str(a.output_dir / f"profile_{mode}.json"))
++                kernels[mode] = {}
++                for event in prof.events():
++                    if event.device_type == torch.autograd.DeviceType.CUDA:
++                        kernels[mode][event.name] = kernels[mode].get(event.name, 0) + 1
++            write_json(a.output_dir / "kernel_counts.json", kernels)
++        assert [digest(t) for t in fast_state] == fixed_fast_hashes
++        assert digest(prefix) == result["fixed_inputs"]["prefix_sha256"]
++        assert torch._dynamo.config.recompile_limit == result["recompile_limit"] == 8
++        assert hashlib.sha256((metadata / ".metadata").read_bytes()).hexdigest() == result["checkpoint_metadata_sha256"]
++        after = identity(root)
++        write_json(a.output_dir / "source_after.json", after)
++        assert after == before
++        result["source_unchanged"] = True
++        result["correctness"] = "PASS"
++        base = result["measurements"]["baseline"]["native_generate_gpu_ms"]["p50"]
++        opt = result["measurements"]["optimized"]["native_generate_gpu_ms"]["p50"]
++        result["speedup_p50"] = base / opt
++        result["performance"] = "PASS" if base / opt >= 1.05 else "NOT_MET"
++        result["status"] = "PASS" if result["performance"] == "PASS" else "CORRECTNESS_PASS_PERFORMANCE_NOT_MET"
++    except Exception as error:
++        import traceback
++
++        with (a.output_dir / "failure_traceback.txt").open("x") as stream:
++            traceback.print_exc(file=stream)
++        result.update(status="FAIL", error=repr(error))
++        raise
++    finally:
++        for handle in handles:
++            handle.remove()
++        if vae_original is not None:
++            service.model.tokenizer_vision_gen.encode = vae_original
++        result["gpu_after"] = gpu_info(a.gpu_index)
++        write_json(a.output_dir / "result.json", result)
++        if "torch" in sys.modules:
++            torch = sys.modules["torch"]
++            if torch.distributed.is_initialized():
++                torch.distributed.destroy_process_group()
++    print(json.dumps(result, indent=2), flush=True)
++    return 0 if result["status"] == "PASS" else 2
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/v3/prefix_kv_benchmark_test.py b/tools/v3/prefix_kv_benchmark_test.py
+new file mode 100644
+index 00000000..c2fd6ae8
+--- /dev/null
++++ b/tools/v3/prefix_kv_benchmark_test.py
+@@ -0,0 +1,66 @@
++"""Real CPU Local scan checks for the model-only GPU benchmark's input setup."""
++
++from types import MethodType, SimpleNamespace
++
++import torch
++from cosmos_framework.model.generator.mot.cosmos3_vfm_network import Cosmos3VFMNetwork
++from cosmos_framework.model.generator.mot.memory_prefix import LocalMemoryRuntime
++
++from tools.v3.benchmark_local_ttt_prefix_kv import PrefixProjectionCounter, fixed_history_prefix
++
++
++def _model():
++    runtime = LocalMemoryRuntime().requires_grad_(False)
++    net = SimpleNamespace(config=SimpleNamespace(local_memory_enabled=True), local_memory_runtime=runtime)
++    net.scan_local_memory = MethodType(Cosmos3VFMNetwork.scan_local_memory, net)
++    return SimpleNamespace(net=net)
++
++
++def test_benchmark_prefix_uses_real_fresh_scan_after_global_no_grad():
++    torch.manual_seed(31)
++    model = _model()
++    before = {name: parameter.detach().clone() for name, parameter in model.net.local_memory_runtime.named_parameters()}
++    with torch.no_grad():
++        prefix, state, visual, actions = fixed_history_prefix(model)
++        assert not torch.is_grad_enabled()
++    assert prefix.shape == (4, 32) and not prefix.requires_grad and not prefix.is_inference()
++    assert visual.shape == (1, 16, 96) and actions.shape == (1, 16, 15)
++    assert len(state) == 4 and all(torch.isfinite(t).all() for t in (*state, prefix))
++    assert len(model.net.local_memory_runtime.core._telemetry["inner_loss"]) == 16
++    for name, parameter in model.net.local_memory_runtime.named_parameters():
++        torch.testing.assert_close(before[name], parameter, rtol=0, atol=0)
++
++
++def test_benchmark_repeated_input_seed_reproduces_prefix_and_fast_state():
++    torch.manual_seed(31)
++    model = _model()
++    torch.manual_seed(32)
++    left = fixed_history_prefix(model)
++    torch.manual_seed(32)
++    right = fixed_history_prefix(model)
++    for x, y in zip((left[0], *left[1], *left[2:]), (right[0], *right[1], *right[2:]), strict=True):
++        torch.testing.assert_close(x, y, rtol=0, atol=0)
++
++
++def test_projection_audit_count_does_not_recompile_when_counter_advances():
++    """The former Python integer hook exhausted the real limit of eight."""
++    counter = PrefixProjectionCounter(4, "cpu")
++    net = torch.nn.Linear(8, 8)
++    handle = net.register_forward_pre_hook(counter)
++    graphs = []
++
++    def backend(graph, inputs):
++        graphs.append(graph)
++        return graph.forward
++
++    compiled = torch.compile(net, backend=backend, fullgraph=True, dynamic=False)
++    with torch.no_grad(), torch._dynamo.config.patch(recompile_limit=8):
++        for _ in range(20):
++            compiled(torch.ones(4, 8))
++            compiled(torch.ones(8, 8))
++        assert counter.count.item() == 20
++        assert len(graphs) == 2
++        counter.count.zero_()
++        compiled(torch.ones(4, 8))
++        assert counter.count.item() == 1 and len(graphs) == 2
++    handle.remove()

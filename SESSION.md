@@ -1,3 +1,45 @@
+# 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
+
+Task ISSUE31-PREFIX-TEXT-KV REVIEW; Codex author, GPT independent reviewer.
+Formal Root 5b89f3eddbfe27ee72c173696a386e0b756d7866; Child/Gitlink 4446be0f6dad9b6dc887ef90af52d0af754d4682.
+Evidence/Inbox successor is metadata only, never a replacement source Pair.
+Separate Draft RootPR32 / ChildPR10 on approved history-K baseline53b5273c/4cd5fc8c;
+latest baseline docsca3a08ac preserved. ExistingPR29/30/Child8/9 and V3 untouched.
+
+Prefix-aware B1/two_way/guidance1 request-local text K/V: one fill then29 gen-only,
+current Prefix projected/injected all28 layers every30 steps, finally cleanup.
+Native GEN materialization/padding and empty unused GEN sentinels preserve exact
+compiled rounding; no pack reuse/backend tuning/precision/limit8 change.
+Training/VAE/Sim/Worker/scheduler/model-mode/DCP/strict K-H-M-B Resume unchanged.
+
+Exact clean author06 187/187 PASS,0failure/error/skip,shell0,gatePASS,
+1486sourcefingerprints unchanged,8scopedstaticfiles PASS. One inherited W0
+continuation assertion reproduced on clean baseline explicitly deselected,
+never counted PASS;3baseline RuffI001 retained,all other diagnostics strict.
+Raw CPU failures/RED/GREEN and prior122payload archive remain immutable.
+
+Real H100 GPU6 only, same Localiter15000/raw15/H16/30stepUniPC/4x32Prefix,
+synthetic input/history,30AB/BA pairs: authorGPU05 PASS,sourceunchanged,exit0;
+all measured Vision/Action errors0. P50 991.5513->825.5335ms (1.2011x),
+P95 997.1945->829.1916ms. 29/30 faster; optimized1386.77ms outlier retained,
+P99 regresses1000.06->1225.27ms, causeunproven. Existingbackgroundload unchanged;
+not exclusiveGPU/noSimthroughput/SR claim. Full hooks removed before rewarm/timing.
+28layerPrefix30/hit29 audit, changedPrefixaction sensitivity, freshrefill/retry,
+FW/Prefix/checkpointmetadata/sourceidentity unchanged; ownedmodelprocesses exited.
+GPU0-3/otherjobs untouched. All private rawGPU files stayserver-only; publish
+derivedstats/hashmanifest56files only. PriorGPU01..04failures preserved, notPASS.
+
+Handoff docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md
+Evidence docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv*/
+Evidence headf4fff12ec94e687b1da98259601fd55dc56b5122 normally pushed/read back:
+26/26 remote source/test/rawJUnit/Gate/index/handoff/Inbox blobs match localGit.
+PR32/10 descriptions read back exact, all six related PRs Draft/open/unmerged.
+Fresh protectedrefs V3e58cef1f/Gitlink00f30235, Childofficialb0dbd115, prior#27/#28
+unchanged. Receipt docs/collab/codex/evidence/2026-11-09_issue31_publication.json.
+Request fresh independent incremental Code/Evidence Gate on5b89/4446, thenSTOP.
+No V3 merge, second optimization stage, training/Sim/SR/900EP or independent
+Gate closure is authorized/claimed. This receipt successor is metadata only.
+
 # 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
 
 Formal Root53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a /

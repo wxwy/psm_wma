@@ -1,0 +1,12 @@
+{
+  "CUDA_VISIBLE_DEVICES": "",
+  "LD_LIBRARY_PATH": "",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "HF_HUB_OFFLINE": "1",
+  "TRANSFORMERS_OFFLINE": "1",
+  "PYTHONPATH": "/workspace/work/psm-wma-prefix-kv-issue31:/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework:/workspace/work/psm-wma-prefix-kv-issue31/scripts",
+  "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+  "PYTHONDONTWRITEBYTECODE": "1"
+}

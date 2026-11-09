@@ -1,0 +1,11 @@
+{
+  "red_production_child": "19b30423addf57dcab4c0e8eb5adb75903c8d1cb",
+  "red_worktree_status": "M cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+  "new_production_child": "9f6cf6a1447983c10f9ff70895487165c6c65736",
+  "test_sha256": "58cf39796d6c6b68cce8f68ffacfa29734886ec47462181265f3e03579a6724a",
+  "red": "raw/compile_red02/compiled.xml",
+  "green": "raw/compile_green02/compiled.xml",
+  "old": "1 static PASS / 1 dynamic BooleanAtom FAIL",
+  "new": "2 PASS",
+  "note": "Red worktree carries same new regression file; all production bytes are exact old commit."
+}
