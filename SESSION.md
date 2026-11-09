@@ -1,3 +1,34 @@
+# 2026-11-09 — Issue27 implementation frozen for exact-pair author CPU
+
+Owner scope unchanged: existing EvalV2/NativeBatch/sharedVAE for all legal
+resource/capacity bounded configurations; representative1Server/1Sim,
+1Server/8Sim,2Server/16Sim are tests only. No new scheduler/runtime, no GPU,
+server access, realSim/SR/900EP/training/V3 merge. No parallel agents used.
+
+Child implementation60b252d05157b2753d2caebae32b11c878504bbe based on official
+b0dbd115 (same tree as V3 pinned00f30235). Root changes only config.py and
+shared_vae.py production, four new CPU files, runbook and bookkeeping/Gitlink.
+Child six production modules allow generic frozen shared identity, Policy1..8
+READY batches on the same executor, ordered existing B1 encode observations,
+derived live Session/bounded Policy epochs with strict slot/run fences.
+One physical renderGPU Worker separately enrolled/routed per Policy Server.
+Worker B1/wait0,15+1/16T1,atomic commit/ACK/deadlines/source/fullM-B Resume,
+NoTTT and original optional single A/B/C measurement identity unchanged.
+
+Development05:117PASS including original boundary/feature regressions;
+development07:5PASS actual Root argv->Child options including M32. Static19
+Python files PASS. Earlier format/fixture test failures preserved externally;
+final signed-history End test anchors survivor identity after replay, not before.
+Two old-code restrictions RED_EXPECTED in isolated baseline worktrees; final
+new test files injected only, production hashes unchanged, original failures
+preserved. Evidence/workspace/work/issue27-shared-vae-evidence/.
+
+Next: clean exact Formal Root/Gitlink+Child author CPU with original Stage3A,
+A/B/NoTTT/Local/session/Worker/source guards and streaming capacity/resources;
+rawJUnit/logs/sourcebefore-after/OS proofs. Then NEW Root/Child Draft PRs,
+canonical Inbox append with byte check and fresh GPT Code Gate request. Do not
+update prior merged PR25/7. No hardware or merge approval inferred from CPU.
+
 # 2026-11-09 — Issue27 generic shared-VAE topology implementation claimed
 
 Owner direct clarification and current Issue27 body/comment6730975744 authorize

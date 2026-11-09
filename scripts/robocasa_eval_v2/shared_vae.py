@@ -28,6 +28,7 @@ from pathlib import Path
 
 from cosmos_framework.evaluation.robocasa_v2.contract import (
     STREAMING_RESOURCE_FIELDS,
+    validate_shared_vae,
     validate_single_latency,
 )
 from cosmos_framework.inference.robocasa_vae_client import (
@@ -65,6 +66,14 @@ def public_profile(cfg):
     }
 
 
+def public_shared_profile(cfg):
+    return {
+        "version": "sim_shared_vae_b1_v1",
+        "history_source": "sim_shared_vae",
+        "worker": dict(cfg["sim_shared_vae"], max_rss_bytes=cfg["max_rss_bytes"]),
+    }
+
+
 def _worker_drain_timeout_s(value):
     if (
         type(value) not in (int, float)
@@ -86,11 +95,14 @@ def validate_profile(cfg):
             "explicit server_vae or sim_shared_vae evidence profile required"
         )
     arm = cfg.get("single_latency_arm")
-    if arm is None:
-        if enabled(cfg) or cfg.get("sim_shared_vae") is not None:
-            raise ValueError("Sim VAE requires an explicit new single-latency C Run")
+    shared_mode = enabled(cfg)
+    if arm is not None and (arm == "C") != shared_mode:
+        raise ValueError("single measurement arm differs from selected history source")
+    if arm is None and not shared_mode:
+        if cfg.get("sim_shared_vae") is not None:
+            raise ValueError("Worker configuration requires sim_shared_vae history")
         return
-    if (
+    if arm is not None and (
         cfg.get("execution_profile") != "phase_b"
         or len(cfg["gpu_ids"]) != 1
         or cfg["sims_per_gpu"] != 1
@@ -99,10 +111,19 @@ def validate_profile(cfg):
         raise ValueError(
             "single A/B/C requires exactly one transactional Server and Sim"
         )
-    if arm != "C":
+    if not shared_mode:
         if cfg.get("sim_shared_vae") is not None:
             raise ValueError("A/B create zero historical VAE Workers")
     else:
+        if (
+            cfg.get("execution_profile") != "phase_b"
+            or cfg.get("local_memory_mode") != "required"
+            or type(cfg["max_infer_batch_size"]) is not int
+            or not 1 <= cfg["max_infer_batch_size"] <= 8
+        ):
+            raise ValueError(
+                "shared VAE requires transactional Local-TTT and Policy batch1..8"
+            )
         _worker_drain_timeout_s(cfg["terminate_grace_s"])
         shared = cfg.get("sim_shared_vae")
         if type(shared) is not dict:
@@ -137,8 +158,12 @@ def validate_profile(cfg):
         library = vendor.get("ICD", {}).get("library_path", "")
         if "nvidia" not in str(library).lower():
             raise ValueError("C Sim requires an explicit NVIDIA-only EGL vendor file")
-        if cfg.get("render_backend") != "egl" or cfg["batch_wait_ms"] != 0:
-            raise ValueError("C requires verified EGL and B1 zero peer wait")
+        if cfg.get("render_backend") != "egl" or (
+            arm == "C" and cfg["batch_wait_ms"] != 0
+        ):
+            raise ValueError(
+                "shared VAE requires verified EGL; single C retains zero Policy peer wait"
+            )
         if cfg.get("streaming_resources") is not None and any(
             cfg["streaming_resources"][key] != shared["resources"][key]
             for key in STREAMING_RESOURCE_FIELDS
@@ -146,7 +171,14 @@ def validate_profile(cfg):
             raise ValueError(
                 "C may not override existing streaming resource reservations"
             )
-    validate_single_latency(public_profile(cfg), local_memory=cfg["local_memory_mode"])
+    if arm is not None:
+        validate_single_latency(
+            public_profile(cfg), local_memory=cfg["local_memory_mode"]
+        )
+    else:
+        validate_shared_vae(
+            public_shared_profile(cfg), local_memory=cfg["local_memory_mode"]
+        )
 
 
 def input_files(cfg):
@@ -567,19 +599,42 @@ class SharedVAESupervisor:
             connection_timeout_s=30,
         ).start()
 
+    def _enroll_policy(self, handle, worker):
+        runtime = self.runtime
+        gpu = runtime.worker_render_gpus[worker]
+        policy_gpu = runtime.worker_gpus[worker]
+        route = (gpu, policy_gpu)
+        if route in self.policies:
+            return self.policies[route]
+        key = "GPU" + str(policy_gpu)
+        policy = self.policy_type(
+            "http://127.0.0.1:" + str(runtime.servers[key][2]),
+            runtime.server_owners[key],
+        )
+        public = handle.public
+        policy(
+            "enroll",
+            {
+                "worker_id": public["worker_id"],
+                "worker_epoch": public["worker_epoch"],
+                "key_id": public["key_id"],
+                "key_hex": handle.signing_key.hex(),
+                "identity": public["identity"],
+                "clock_domain": public["clock_domain"],
+                "bmax": 1,
+                "wait_ms": 0,
+            },
+            time.monotonic_ns() + 30_000_000_000,
+        )
+        self.policies[route] = policy
+        return policy
+
     def ensure(self, worker, policy_info):
         runtime, cfg = self.runtime, self.runtime.cfg
         gpu = runtime.worker_render_gpus[worker]
         with self.lock:
             if self.closing:
                 raise RuntimeError("shared Worker supervisor is closing")
-            if gpu in self.handles:
-                handle = self.handles[gpu]
-                if handle.owned.proc.poll() is not None:
-                    raise RuntimeError(
-                        "shared Worker exited; restart requires a fresh Session/epoch"
-                    )
-                return handle
             if runtime.stop.is_set():
                 raise RuntimeError("cancelled before shared Worker startup")
             settings = cfg["sim_shared_vae"]
@@ -596,6 +651,32 @@ class SharedVAESupervisor:
                 raise ValueError(
                     "frozen Worker configuration differs from actual Policy constructor"
                 )
+            if gpu in self.handles:
+                handle = self.handles[gpu]
+                if handle.owned.proc.poll() is not None:
+                    raise RuntimeError(
+                        "shared Worker exited; restart requires a fresh Session/epoch"
+                    )
+                if (
+                    handle.public["identity"] != feature["identity"]
+                    or handle.public["clock_domain"] != feature["clock_domain"]
+                    or handle.public["constructor_config"] != constructor
+                ):
+                    raise ValueError(
+                        "Policy differs from the already loaded shared Worker"
+                    )
+                try:
+                    self._enroll_policy(handle, worker)
+                except BaseException:
+                    runtime.stop.set()
+                    raise
+                return handle
+            members = [
+                slot
+                for slot, assigned in runtime.worker_render_gpus.items()
+                if assigned == gpu
+            ]
+            policy_count = len({runtime.worker_gpus[slot] for slot in members})
             socket_root = Path(tempfile.mkdtemp(prefix="psm24-vae-"))
             socket_root_identity = _directory_identity(socket_root)
             worker_id, epoch, key_id = (
@@ -618,6 +699,8 @@ class SharedVAESupervisor:
                 "wait_ms": 0,
                 "physical_device": runtime._shared_gpu_identity(gpu),
                 "drain_timeout_s": _worker_drain_timeout_s(cfg["terminate_grace_s"]),
+                "max_sessions": len(members),
+                "max_policy_epochs": policy_count,
             }
             secret_read, secret_write = os.pipe()
             ready_read, ready_write = os.pipe()
@@ -689,6 +772,11 @@ class SharedVAESupervisor:
                         any(proof.get(key) != value for key, value in expected.items())
                         or proof["attestation"]["identity"] != public["identity"]
                         or proof["physical_device"] != public["physical_device"]
+                        or proof.get("limits")
+                        != {
+                            "max_sessions": len(members),
+                            "max_policy_epochs": policy_count,
+                        }
                     ):
                         raise ValueError("shared Worker actual READY identity mismatch")
                     attestation = proof["attestation"]
@@ -741,29 +829,11 @@ class SharedVAESupervisor:
                     socket_root,
                     socket_root_identity,
                 )
-                key = "GPU" + str(runtime.worker_gpus[worker])
-                policy = self.policy_type(
-                    "http://127.0.0.1:" + str(runtime.servers[key][2]),
-                    runtime.server_owners[key],
-                )
-                policy(
-                    "enroll",
-                    {
-                        "worker_id": worker_id,
-                        "worker_epoch": epoch,
-                        "key_id": key_id,
-                        "key_hex": signing.hex(),
-                        "identity": public["identity"],
-                        "clock_domain": public["clock_domain"],
-                        "bmax": 1,
-                        "wait_ms": 0,
-                    },
-                    time.monotonic_ns() + 30_000_000_000,
-                )
+                self._enroll_policy(handle, worker)
                 with runtime.starting:
                     if runtime._closing or runtime.stop.is_set():
                         raise RuntimeError("Worker READY completed after cancellation")
-                    self.handles[gpu], self.policies[gpu] = handle, policy
+                    self.handles[gpu] = handle
                 runtime._proof(
                     "shared_vae_worker_ready", {"process": record, "proof": proof}
                 )
@@ -789,7 +859,9 @@ class SharedVAESupervisor:
     def register_assignment(self, worker, actor, assignment, deadline):
         runtime = self.runtime
         handle = self.handles[runtime.worker_render_gpus[worker]]
-        policy = self.policies[runtime.worker_render_gpus[worker]]
+        policy = self.policies[
+            (runtime.worker_render_gpus[worker], runtime.worker_gpus[worker])
+        ]
         lease = assignment["lease"]
         actor_id, actor_epoch = runtime.slot_ids[worker], actor.nonce
         capability, worker_capability = (

@@ -213,7 +213,12 @@ def resolve(argv=None):
         cfg["sims_per_gpu"] > (32 if is_streaming else 8)
         or cfg["max_infer_batch_size"] > (32 if is_streaming else 8)
         or type(cfg["batch_wait_ms"]) is not int
-        or not (0 if cfg.get("single_latency_arm") == "C" else 1)
+        or not (
+            0
+            if cfg.get("single_latency_arm") == "C"
+            or cfg.get("local_evidence_profile") == "sim_shared_vae"
+            else 1
+        )
         <= cfg["batch_wait_ms"]
         <= 1000
     ):
@@ -315,6 +320,10 @@ def execution(cfg):
         from robocasa_eval_v2.shared_vae import public_profile
 
         result["single_latency"] = public_profile(cfg)
+    elif cfg.get("local_evidence_profile") == "sim_shared_vae":
+        from robocasa_eval_v2.shared_vae import public_shared_profile
+
+        result["shared_vae"] = public_shared_profile(cfg)
     return result
 
 
