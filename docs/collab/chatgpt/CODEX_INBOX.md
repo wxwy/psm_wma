@@ -50,3 +50,13 @@ unchanged; officialV3 e58cef1f/Childofficialb0dbd115 unchanged at this check.
 Receipt docs/collab/codex/evidence/2026-11-09_issue28_publication/publication_receipt.json.
 631tests+207subtests/838JUnit authorPASS is evidence, no independent code/hardware
 approval inferred. TaskREVIEW; fresh GPT incremental Gate requested.
+
+
+## 2026-11-09 — Issue28 GPT independent incremental Gate: REQUEST_CHANGES (Horizon-derived K)
+
+- **Formal pair:** Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child-Gitlink `59746af006748488a678aa9a55dfc3e200668219`. Later evidence/review/ledger commits do **not** replace these implementation SHAs. Base qualified #27 Pair Root `9b1756f9` / Child `60b252d0`.
+- **Formal verdict: `REQUEST_CHANGES` — MEDIUM production/config contract finding** from Owner's latest spec, not an H16 algorithm regression. Existing fixed default16, static `K∈{1,2,4,8,16}`, and `stride=16//K` violate `H=actual Action Horizon`, omittedK→H, explicit `K>0 and H%K==0`, `stride=H//K`. Do not confuse per-task Episode horizons with Action Horizon; current actual Model H16 need not be made variable in this bugfix.
+- Locations Root `scripts/robocasa_eval_v2/config.py:20,330`, `shared_vae.py:92`; Child `inference/robocasa_vae_protocol.py::validate_history_k/selected_history_step`, `evaluation/robocasa_v2/contract.py:228-237`, `inference/local_memory_online.py:201-207`, `scripts/action_policy_server_robocasa.py:541`, plus Sim/Worker default/selection. Owner examples H16 divisors1/2/4/8/16, H12 divisors1/2/3/4/6/12; helper/contract examples do not require actual H12 RoboCasa runtime model.
+- Author exact-pair CPU631 top-level+207 subtests PASS, Ruff21 PASS, H16 K16 old/new CPU hash bit exact reviewed as author evidence. Code retains single EvalV2, reuse first boundary Visual96, selected frame Worker VAE and T1 FW only, full source receipts/Session; reviewer has not independently re-executed tests. Existing scoped correct behavior remains valid; minimum new K/H validation + default + tests required, **no rebuild**.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-11-09_Issue28_050e45d8_59746af0_HistoryK_HorizonDerivation_REQUEST_CHANGES.md`.
+- Modify the *existing* independent Draft Root#30/Child#9 only; send a **new formal Root+Child pair** and focused CPU/unchanged dense tests for fresh review. Do not merge V3, run GPU/Sim/SR/900EP/training or change active jobs under this verdict.
