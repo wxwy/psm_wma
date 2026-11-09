@@ -2,6 +2,10 @@
 
 Codex author review request, 2026-11-09T22:00:25+08:00. Status **REVIEW**; independent verdict not claimed.
 
+Draft [Root PR33](https://github.com/wxwy/psm_wma/pull/33) /
+[Child PR11](https://github.com/wxwy/cosmos-framework/pull/11), both unmerged.
+Evidence commit28b19890; publication receipt is metadata only. Performance NOT_MET.
+
 Formal Root **`18be4a80a5ae4d97bc7d287034d24efab847c496`** / Child-Gitlink **`193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`**.
 Approved Stage1 baseline Root5b89f3eddbfe27ee72c173696a386e0b756d7866 /
 Child4446be0f6dad9b6dc887ef90af52d0af754d4682; latest baseline documentation
