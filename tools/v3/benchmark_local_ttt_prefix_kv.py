@@ -398,8 +398,10 @@ def main():
             )
         for row in opt_audit["layers"]:
             assert row == dict(forwards=30, gen_only=29, prefix_context=30, prefix_kv_projection=30)
-        assert base_audit["native_pack_calls"] == 30
-        assert opt_audit["native_pack_calls"] == (1 if a.optimization == "prefix_pack" else 30)
+        # Native _prepare_inference_data packs once before the denoising loop.
+        # Count that shared preparation too: denoising30->1 means total31->2.
+        assert base_audit["native_pack_calls"] == 31
+        assert opt_audit["native_pack_calls"] == (2 if a.optimization == "prefix_pack" else 31)
         changed_row, changed = run("optimized", "different-prefix", prefix + 0.5, with_audit=True)
         assert not torch.equal(optimized["action"][0], changed["action"][0]), "Prefix must affect real actions"
         retry_row, retry = run("optimized", "original-request-again", with_audit=True)

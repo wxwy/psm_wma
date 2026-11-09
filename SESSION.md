@@ -1,5 +1,13 @@
 # 2026-11-09 CST — Issue31 Stage2 Prefix-safe pack templates claimed
 
+Author01 exact1568888c/193627f4:201PASS,0failure/error/skip,1487sourcehashes
+unchanged,static9PASS. GPU01 same Pair model/DCP validation passed; warmups and
+audited Action/Vision exact0,28layersPrefix30/hit29. Benchmark-only assertion
+failed because counter includes native preparation pack: actualtotal31/2, not
+denoising-only30/1. Raw GPU01 retained server-only. Correct total assertion only;
+Child193627f4/production unchanged. New Root, exact author02 and same benchmark
+needed. No GPU correctness/performance Gate PASS claimed from partial audit.
+
 Stage2 Child193627f42f4cd1ba6d563aefb8fa8f9428ecb56d committed: only production
 omni_mot_model.py, new227line pack tests, original textKV tests explicitly keep
 packOFF so their approved assertions stay intact. Default eligible Prefix pack
