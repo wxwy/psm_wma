@@ -1,3 +1,21 @@
+# 2026-11-09 (UTC) — G2-F1-C fixed implementation published / role analysis next
+
+REVIEW. Fixed Root aef1ec04d631ef23c9b3f04dd2ab0f11344e2f21,
+tree3c1a4475354b7711a556ca1ab9abe9e010be6b49; exact parent3b6c6055.
+Independent codex/g2-f1c-positive-faces, published tree equals tested tree,
+all36 G2 source/config/test blobs fetched exact, API Git object hash verified
+and local same-tree author backup retained. Actual Issue26 handoff posted and
+whole body read back: https://github.com/wxwy/psm_wma/issues/26#issuecomment-6731022450 .
+Canonical Inbox append requests GPT fixed-source291/old274 and real四帧
+recheck; this successor is metadata only, runtime/tests stay fixed above.
+Author291PASS/17oldRED/274IDretention/6244-row twoframe parity/code review
+do not imply GPT new-SHA/whole-house acceptance. Nine protected refs checked
+unchanged; native2009/Gitlink1ca308 unchanged. No private files/GPU/model/
+train/native/cache/PR/merge. Continue separately source-role analysis per
+Owner, leaving fixed sampling SHA untouched. Full-source evidence and
+per-component private classification remain server-local; unresolved stays
+unknown. No ordinary Room segmentation in PSM; native structures/#8 separate.
+
 # 2026-11-09 (UTC) — G2-F1-C source frozen / publication preparation
 
 REVIEW / author only. Runtime4 files: surface_sampling default exact-zero-only

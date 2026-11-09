@@ -1,0 +1,21 @@
+{
+  "schema": "g2_f1_c_publication_v1",
+  "fixed_source_sha": "aef1ec04d631ef23c9b3f04dd2ab0f11344e2f21",
+  "tested_tree": "3c1a4475354b7711a556ca1ab9abe9e010be6b49",
+  "exact_source_parent": "3b6c6055e36824be33ed947745aa3e5b839da832",
+  "local_same_tree_author_backup": "ecc41cb67ff9cfc77991acf98bb7666ff44b6d8b",
+  "branch": "codex/g2-f1c-positive-faces",
+  "source_blob_count": 36,
+  "all_source_blobs_match": true,
+  "handoff_url": "https://github.com/wxwy/psm_wma/issues/26#issuecomment-6731022450",
+  "handoff_body_readback_exact": true,
+  "native_sha": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "author_test_count": 291,
+  "old_case_ids_retained": 274,
+  "original_rejection_assertion_policy_changes": 6,
+  "server_new_sha_acceptance": "PENDING_GPT",
+  "training_ready": false,
+  "no_private_server_files_accessed": true,
+  "phase2": "CONTINUE_SEPARATE_SOURCE_ROLE_ANALYSIS"
+}
