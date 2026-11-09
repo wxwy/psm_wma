@@ -7,3 +7,5 @@
 复读363 distinct/363 PASS，0failure/error/skip；原336和新增27的集合恰为363。原38文件逐字节未改；55 panel/55 handle注册模型与官方AST literal一致，11源文件和28片段原字节/hash匹配。nested helper需具体registry模型XML、原mesh闭包哈希、真实同实例body及bbox/mesh缩放，只有实际live object子树有效；缺证据保持unknown。
 
 复核源码SHA256：role_hypotheses=`7431ce4bcf092ee2306c35e139abcf8f9652258e8e846f26d9b1a0c4eafef4e8`；tests=`5588d2a6b0551015b0f67df40dd354b672ad1b89ad59e7b12b275beaa2d01877`；catalog=`c603b9210cfcc6822b9ad62767262603659ef8c89f293c762ac1e496ec53fc5c`。
+
+以上为首个checkpoint。真实116个剩余helper均继承class透明值，增量改为解析main/nested default、geom.class和body.childclass，仍验证effective透明、实际非接触与全部模型/缩放证明。只读复核纠正非法nested main接受，并依据MuJoCo3.3.7实际编译对照保留合法多段topmain合并、拒绝非法重命名/重复具名类。新增共35个规则/负控，最终371PASS，旧336完整保留；该增量代码无开放P0/P1/P2，源码哈希以最终source_inventory为准。

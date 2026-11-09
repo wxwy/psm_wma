@@ -94,6 +94,41 @@ def _same_orientation(left, right):
     return _close(a, b) or _close(a, -b)
 
 
+def _template_attributes(root, target):
+    """Resolve main / inherited default geom class and body childclass."""
+    classes = {'main': {}}
+    def defaults(node, inherited, top=False):
+        key = node.get('class', 'main' if top else '')
+        # MuJoCo allows multiple top-level main blocks, which merge in order;
+        # nested main and renaming the top-level default are invalid.
+        if (top and key != 'main') or (not top and (not key or key == 'main' or key in classes)):
+            raise ContractError('ambiguous template default class')
+        attrs = dict(inherited)
+        geoms = node.findall('geom')
+        if len(geoms) > 1:
+            raise ContractError('ambiguous template default geom')
+        if geoms: attrs.update(geoms[0].attrib)
+        classes[key] = attrs
+        for child in node.findall('default'): defaults(child, attrs)
+    for node in root.findall('default'): defaults(node, classes['main'], top=True)
+    result = None
+    def walk(node, inherited):
+        nonlocal result
+        if node.tag in ('default', 'asset'):
+            return
+        current = node.get('childclass', inherited) if node.tag in ('body', 'worldbody') else inherited
+        if node is target:
+            key = node.get('class', current)
+            if key not in classes:
+                raise ContractError('unknown template geom default class')
+            result = dict(classes[key], **node.attrib)
+        for child in node: walk(child, current)
+    walk(root, 'main')
+    if result is None:
+        raise ContractError('template geom is outside the live tree')
+    return result
+
+
 def _body_facts(sources):
     """Expand real body context; an included root is never a body ancestor."""
     parsed, facts = {}, {}
@@ -189,8 +224,8 @@ def _alignment_template(row, owner, rows, inventory, reference):
                     helpers = [g for g in live[0].iter('geom') if g.get('name') == 'reg_main']
                     if len(helpers) != 1 or helpers[0].get('type', 'sphere') != 'box':
                         continue
-                    helper = helpers[0]
-                    if not _same_orientation(helper.attrib, _attributes(row)):
+                    helper = _template_attributes(template, helpers[0])
+                    if not _same_orientation(helper, _attributes(row)):
                         continue
                     original_size = _numbers(helper.get('size'), [])
                     if (len(original_size) != 3 or np.any(original_size <= 0)
@@ -216,9 +251,9 @@ def _alignment_template(row, owner, rows, inventory, reference):
                         # MuJoCo can recenter compiled mesh frames. Compare
                         # original emitted poses, while retaining the compiled
                         # mesh signature as its independent identity evidence.
-                        matching = [g for g in geoms if _same_orientation(g.attrib, node['attributes'])
+                        matching = [g for g in geoms if _same_orientation(_template_attributes(template, g), node['attributes'])
                             and _close(_numbers(node['attributes'].get('pos'), [0., 0., 0.]),
-                                       _numbers(g.get('pos'), [0., 0., 0.]) * scale)]
+                                       _numbers(_template_attributes(template, g).get('pos'), [0., 0., 0.]) * scale)]
                         if len(matching) != 1:
                             continue
                         return {'nested_factory_instance': prefix, 'factory_parent_body': ancestry[1]['body_name'],
@@ -234,16 +269,23 @@ def generate(inventories, catalog, output, *, generator_roots):
     paths = [Path(p).resolve(strict=True) for p in inventories]
     captured = [p.read_bytes() for p in paths]
     first_input = read_json(paths[0])
+    reference = read_json(catalog)
     protected = [*paths, catalog, *generator_roots.values()]
     protected.extend(Path(s['path']).resolve(strict=True).parent for s in first_input['sources'])
     protected.extend(r['path'] for r in first_input.get('input_files', {}).values())
+    for source in first_input['sources']:
+        full = str(Path(source['path']).resolve()).replace('\\', '/')
+        for models in reference.get('registered_alignment_models', {}).values():
+            for model in models:
+                suffix = str(Path(model).parent).replace('\\', '/') + '/'
+                if suffix in full:
+                    protected.append(Path(full[:full.index(suffix)]) / Path(model).parent)
     out = new_output(output, protected)
     # Existing verifier protects original source trees before creating outputs.
     baseline = analyze(paths, catalog, out / "original_inventory_analysis")
     if captured != [p.read_bytes() for p in paths]:
         raise ContractError("inventory changed while matching source instances")
     first = read_json(paths[0]); rows = first["geom_audit"]
-    reference = read_json(catalog)
     for record in reference["sources"].values():
         if record["root"] not in generator_roots:
             raise ContractError("matching generator roots required")

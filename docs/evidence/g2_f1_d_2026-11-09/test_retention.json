@@ -342,6 +342,9 @@
     "g2.tests.test_role_hypotheses::test_all_source_branches_produce_evidence_bound_proposals",
     "g2.tests.test_role_hypotheses::test_existing_output_is_never_overwritten",
     "g2.tests.test_role_hypotheses::test_generator_version_drift_refuses_proposals",
+    "g2.tests.test_role_hypotheses::test_invalid_template_default_definitions_are_not_role_evidence[<default class=\"renamed\"/>]",
+    "g2.tests.test_role_hypotheses::test_invalid_template_default_definitions_are_not_role_evidence[<default><default class=\"bbox\"/><default class=\"bbox\"/></default>]",
+    "g2.tests.test_role_hypotheses::test_invalid_template_default_definitions_are_not_role_evidence[<default><default class=\"main\"/></default>]",
     "g2.tests.test_role_hypotheses::test_name_group_or_appearance_without_instance_facts_remains_unresolved[background_rotation]",
     "g2.tests.test_role_hypotheses::test_name_group_or_appearance_without_instance_facts_remains_unresolved[background_size]",
     "g2.tests.test_role_hypotheses::test_name_group_or_appearance_without_instance_facts_remains_unresolved[background_texture_uniform]",
@@ -356,17 +359,28 @@
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[None]",
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[non_live_bbox]",
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[non_live_mesh]",
+    "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[opaque_default]",
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[other_instance]",
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[rotated_template_helper]",
+    "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[transparent_childclass]",
+    "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[transparent_default]",
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[unregistered_model]",
     "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[wrong_scale]",
     "g2.tests.test_role_hypotheses::test_output_inside_generator_tree_is_refused_before_any_write",
     "g2.tests.test_role_hypotheses::test_rotating_all_counter_parts_does_not_prove_factory_coverage",
+    "g2.tests.test_role_hypotheses::test_top_level_main_merge_matches_native_mujoco_semantics[False]",
+    "g2.tests.test_role_hypotheses::test_top_level_main_merge_matches_native_mujoco_semantics[True]",
     "g2.tests.test_role_hypotheses::test_transparent_child_body_is_not_a_registered_fixture_region",
     "g2.tests.test_role_hypotheses::test_window_real_include_parent_overrides_ignored_wrapper[False]",
     "g2.tests.test_role_hypotheses::test_window_real_include_parent_overrides_ignored_wrapper[True]",
     "g2.tests.test_role_hypotheses::test_window_unnamed_intermediate_body_is_not_a_factory_direct_child"
   ],
-  "full_count": 363,
-  "missing": []
+  "full_count": 371,
+  "missing": [],
+  "old363_before_template_defaults_retained": true,
+  "new_after_template_defaults": [
+    "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[opaque_default]",
+    "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[transparent_childclass]",
+    "g2.tests.test_role_hypotheses::test_nested_alignment_helper_requires_actual_model_and_scale[transparent_default]"
+  ]
 }

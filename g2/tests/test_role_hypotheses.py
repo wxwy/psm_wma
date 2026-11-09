@@ -180,7 +180,8 @@ def test_window_real_include_parent_overrides_ignored_wrapper(emitted, bad_paren
 
 
 @pytest.mark.parametrize('fault', [None, 'wrong_scale', 'unregistered_model', 'other_instance',
-                                  'non_live_bbox', 'non_live_mesh', 'rotated_template_helper'])
+                                  'non_live_bbox', 'non_live_mesh', 'rotated_template_helper',
+                                  'transparent_default', 'opaque_default', 'transparent_childclass'])
 def test_nested_alignment_helper_requires_actual_model_and_scale(emitted, fault):
     from g2.sim.source_geometry import primitive_mesh
     assets = emitted['xml'].parent / 'fixtures/cabinets/cabinet_panels/CabinetDoorPanel001'
@@ -191,12 +192,19 @@ def test_nested_alignment_helper_requires_actual_model_and_scale(emitted, fault)
     mesh.write_text(''.join('v %.17g %.17g %.17g\n' % tuple(v) for v in vertices)
         + ''.join('f %d %d %d\n' % tuple(f + 1) for f in faces))
     helper = '<geom name="reg_main" type="box" size=".2 .025 .25" rgba="0 1 0 0"/>'
+    defaults = ''; body_attributes = ''
+    if fault in ('transparent_default', 'opaque_default', 'transparent_childclass'):
+        helper = helper.replace(' rgba="0 1 0 0"', '')
+        rgba = '0 1 0 1' if fault == 'opaque_default' else '0 1 0 0'
+        defaults = '<default><default class="bbox"><geom rgba="' + rgba + '"/></default></default>'
+        if fault == 'transparent_childclass': body_attributes = ' childclass="bbox"'
+        else: helper = helper.replace('type="box"', 'type="box" class="bbox"')
     if fault == 'rotated_template_helper': helper = helper.replace('type="box"', 'type="box" quat=".7071067811865476 0 0 .7071067811865476"')
     surface = '<geom name="surface" type="mesh" mesh="m"/>'
     live = ('' if fault == 'non_live_bbox' else helper) + ('' if fault == 'non_live_mesh' else surface)
     dead = helper if fault == 'non_live_bbox' else surface if fault == 'non_live_mesh' else ''
-    (assets / 'model.xml').write_text('<mujoco><asset><mesh name="m" file="mesh.obj"/></asset><worldbody>'
-        '<body name="outer"><body name="object">' + live + '</body></body><body name="unused">' + dead + '</body></worldbody></mujoco>')
+    (assets / 'model.xml').write_text('<mujoco>' + defaults + '<asset><mesh name="m" file="mesh.obj"/></asset><worldbody>'
+        '<body name="outer"><body name="object"' + body_attributes + '>' + live + '</body></body><body name="unused">' + dead + '</body></worldbody></mujoco>')
     mesh_scale = '3 3 3' if fault == 'wrong_scale' else '2 2 2'
     text = emitted['xml'].read_text().replace('<asset>', '<asset><mesh name="panel_mesh" file="' + str(mesh) + '" scale="' + mesh_scale + '"/>')
     mesh_geom = '<geom name="cabinet_door_surface" type="mesh" mesh="panel_mesh" material="counter_counter_top" group="1" contype="0" conaffinity="0" mass="1e-8"/>'
@@ -207,7 +215,7 @@ def test_nested_alignment_helper_requires_actual_model_and_scale(emitted, fault)
     ep = read_json(emitted['ep_meta']); ep['fixtures']['cabinet'] = {'cls': 'SingleCabinet'}; write_json(emitted['ep_meta'], ep)
     rebuild(emitted, text)
     _, roles, hypotheses = propose(emitted)
-    if fault is None:
+    if fault in (None, 'transparent_default', 'transparent_childclass'):
         assert roles['geoms']['cabinet_door_reg_main']['role'] == 'auxiliary'
         proof = next(e for e in hypotheses['entries'] if e['geom_id'] == len(read_json(emitted['paths'][0])['geom_audit']) - 2)
         assert proof['rule_id'] == 'nested_registered_mesh_alignment_helper'
@@ -222,3 +230,31 @@ def test_window_unnamed_intermediate_body_is_not_a_factory_direct_child(emitted)
     rebuild(emitted, text)
     _, roles, _ = propose(emitted)
     assert 'window_window_background_g0_vis' not in roles['geoms']
+
+
+@pytest.mark.parametrize('defaults', ['<default><default class="main"/></default>',
+    '<default class="renamed"/>', '<default><default class="bbox"/><default class="bbox"/></default>'])
+def test_invalid_template_default_definitions_are_not_role_evidence(defaults):
+    import xml.etree.ElementTree as ET
+    from g2.sim.role_hypotheses import _template_attributes
+    root = ET.fromstring('<mujoco>' + defaults + '<worldbody><body><body name="object">'
+        '<geom name="reg_main" type="box" size="1 1 1"/></body></body></worldbody></mujoco>')
+    target = root.find('.//geom[@name="reg_main"]')
+    with pytest.raises(ContractError): _template_attributes(root, target)
+
+
+@pytest.mark.parametrize('explicit_main', [False, True])
+def test_top_level_main_merge_matches_native_mujoco_semantics(explicit_main):
+    import mujoco
+    import xml.etree.ElementTree as ET
+    from g2.sim.role_hypotheses import _template_attributes
+    attribute = ' class="main"' if explicit_main else ''
+    defaults = ('<default' + attribute + '><geom rgba="0 1 0 1" friction=".7 .1 .1"/></default>'
+        '<default' + attribute + '><geom rgba="0 1 0 0"/></default>')
+    text = '<mujoco>' + defaults + '<worldbody><body><body name="object">' \
+        '<geom name="reg_main" type="box" size="1 1 1"/></body></body></worldbody></mujoco>'
+    model = mujoco.MjModel.from_xml_string(text)
+    root = ET.fromstring(text)
+    attrs = _template_attributes(root, root.find('.//geom[@name="reg_main"]'))
+    assert float(attrs['rgba'].split()[-1]) == float(model.geom_rgba[0,3]) == 0.
+    assert float(attrs['friction'].split()[0]) == float(model.geom_friction[0,0]) == .7

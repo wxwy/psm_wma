@@ -1,3 +1,21 @@
+# 2026-11-09 (Asia/Shanghai) — F1-D template-default instance compatibility
+
+IN_PROGRESS. Source checkpoint33ab1d66 + offline-reference wrapper9a5cff0
+ran server-local author analysis with40 sourceblob matches. Actual474 bound:
+Layout1 120collision+8visual/remaining33; Layout10 333collision+13visual/
+remaining83. All originals/individual proposals remain server, only counters/
+hashes/blocker summaries returned. No cloud generation or production role edit.
+
+116 remaining exact registered models pass factory/body/asset/model/live-tree/
+orientation facts but rgba was inherited, not inline: all116 have explicitclass
+and transparent geom defaults. New _template_attributes resolves main/nested
+default geom inheritance, explicitclass and body.childclass; effective transparency
+still required. Positive/default/childclass and opaque-default negative controls
+added; full371PASS, original366/363/336 retained, original38 files unchanged.
+Await scoped read-only incremental code check, then publish fixed source update
+and run new isolated author output comparing original474 proposals unchanged.
+Do not label all590 solved before actual result. No V3/native/Gitlink/cache/train.
+
 # 2026-11-09 (Asia/Shanghai) — F1-D author-validation source checkpoint
 
 IN_PROGRESS. New source-derived proposal generator and catalog implemented;

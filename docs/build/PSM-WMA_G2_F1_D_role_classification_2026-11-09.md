@@ -17,6 +17,8 @@
 
 代码引用及原始文件SHA：`G2_F1_D_generator_role_catalog_2026-11-09.json`。其中model registry由固定公开代码的literal字典提取，不按模糊目录关键字匹配。模型XML及mesh实例证据的原文件只在服务器核对。
 
+真实作者首轮474项已得到来源绑定候选，余116项的模板helper均无inline RGBA、具有显式class并有透明geom默认值。本轮正确解析main/嵌套default继承、geom.class及body.childclass，保留effective模板透明条件；不是省略透明验证或将任意透明geom改辅助。新增透明default/childclass正控和不透明default负控；按原生MuJoCo对照保留合法顶层main合并，拒绝嵌套main、非法top rename与重复具名class。完整作者CPU371/371，原366/363及历史336案例全部保留。实际最新两场景覆盖与余项以固定SHA交接结果为准。
+
 ## 输出与审核边界
 
 新目录保存 `hypotheses.json`、`candidate_evidence_analysis/role_analysis.json`、`proposed_roles.json`、`unresolved.json` 和 `summary.json`。这是建议映射，不写现有配置或生产角色。原始unknown计数保持，候选状态`AUTHOR_PROPOSED_PENDING_GPT`，`production_roles_changed=false`、`full_scene_source_certified=false`、`training_ready=false`。角色映射建议保留原声明、原state_source、官方ep_meta身份及源节点/compiled proof。失败或冲突不为凑590定类。

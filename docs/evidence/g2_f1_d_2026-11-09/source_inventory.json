@@ -76,9 +76,9 @@
     },
     {
       "path": "g2/sim/role_hypotheses.py",
-      "bytes": 27154,
-      "sha256": "7431ce4bcf092ee2306c35e139abcf8f9652258e8e846f26d9b1a0c4eafef4e8",
-      "git_blob_sha": "da5761052b56447e1caa34e811c67e323a92ccdc"
+      "bytes": 29273,
+      "sha256": "0eeea9cb4bcbc3de450f3dac0168434d069cbf4b0dcd1ce63fea4b6112b9b092",
+      "git_blob_sha": "77ec91ee69121ff3f042a307259c5ebe9465399e"
     },
     {
       "path": "g2/sim/role_review.py",
@@ -178,9 +178,9 @@
     },
     {
       "path": "g2/tests/test_role_hypotheses.py",
-      "bytes": 14402,
-      "sha256": "5588d2a6b0551015b0f67df40dd354b672ad1b89ad59e7b12b275beaa2d01877",
-      "git_blob_sha": "a99064efb7dca579f307af808adf2f3f7efe35ab"
+      "bytes": 16759,
+      "sha256": "ccd28944bb29f29544c8f8f5ab2caf656b5f6ca254b2892101859127420dd446",
+      "git_blob_sha": "c830b54642a45668957bf35b88f4de67fe336692"
     },
     {
       "path": "g2/tests/test_role_review.py",

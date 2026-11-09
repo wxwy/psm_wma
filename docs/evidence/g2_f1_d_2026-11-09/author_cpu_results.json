@@ -1,13 +1,15 @@
 {
   "scope": "AUTHOR_CPU_OWN_SOURCE_INSTANCES_NOT_REAL_SERVER_ACCEPTANCE",
-  "passed": 363,
+  "passed": 371,
   "failure": 0,
   "error": 0,
   "skipped": 0,
   "old336_retained": true,
-  "new27": true,
   "old38_files_unchanged": true,
   "private_original_files_exported": false,
-  "actual590_proposals": "NOT_YET_MEASURED_AT_THIS_CODE_CHECKPOINT",
-  "independent_gpt_verdict": "PENDING"
+  "actual590_proposals": "AUTHOR_FIRST_CHECKPOINT_474_BOUND_116_TEMPLATE_DEFAULT_PENDING",
+  "independent_gpt_verdict": "PENDING",
+  "template_default_positive_negative_controls": true,
+  "new_rule_cases": 35,
+  "native_default_merge_parity": true
 }
