@@ -657,7 +657,7 @@ class SharedVAESupervisor:
             settings = cfg["sim_shared_vae"]
             feature = policy_info["local_feature"]
             history_k = validate_history_k(cfg.get("local_ttt_history_k", 16))
-            if feature.get("local_ttt_history_k", 16) != history_k:
+            if validate_history_k(feature.get("local_ttt_history_k", 16)) != history_k:
                 raise ValueError(
                     "Policy history K differs from frozen Run configuration"
                 )
@@ -803,7 +803,10 @@ class SharedVAESupervisor:
                         }
                     ):
                         raise ValueError("shared Worker actual READY identity mismatch")
-                    if proof.get("local_ttt_history_k", 16) != history_k:
+                    if (
+                        validate_history_k(proof.get("local_ttt_history_k", 16))
+                        != history_k
+                    ):
                         raise ValueError("shared Worker READY history K mismatch")
                     attestation = proof["attestation"]
                     if (
