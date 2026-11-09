@@ -1,0 +1,20 @@
+{
+  "scope": "AUTHOR_OWN_INPUTS_PUBLIC_SOURCE_REFERENCE_NOT_PRIVATE_CLASSIFICATION",
+  "passed": 336,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "old291_retained": true,
+  "new_role_tests": 45,
+  "new_test_sha256": "ba0a35b8a6f80aac0d847c49e0239ca0d6c37b8218cb187949b4011beed03d55",
+  "all36_frozen_source_files_exact": true,
+  "adapter_source_sha256_unchanged": "59ae146447ee526cc8aae6eeade89f66d903dd90770594f7a68368fb97082a52",
+  "public_source_files_verified": 9,
+  "public_source_excerpt_spans_verified": 14,
+  "private_unknowns_accessed_or_classified": false,
+  "remaining_private_unknowns_last_review": {
+    "Layout1": 161,
+    "Layout10": 429
+  },
+  "training_ready": false
+}

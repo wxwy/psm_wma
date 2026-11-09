@@ -1,3 +1,55 @@
+# 2026-11-09 (UTC) — G2-F1-C source-role analysis author freeze
+
+REVIEW / analysis code and public reference only, not real590 classification.
+Separate codex/g2-f1c-role-analysis from ledgera25ae31b; F1-C sampling remains
+fixedaef1ec04. New standalone role_review.py pairs existing AUDIT_ONLY data,
+rechecks original hashedXML/compiled signatures, hashed scene/state/declarations,
+complete parsing context and inspected generator code evidence. No rolemap/
+pointcloud/COMPLETE; candidates remainUNCLASSIFIED/PENDING_GPT. Public catalog
+pins9 official source files/14span identities and7 conditional rules; actual
+server generator version not assumed. Full source/export runbook delivered.
+
+Final336/336,0failure/error/skip; old291 retained +45 new. Own TEST_ONLY two
+frame/publiccatalog smoke9blob exact/candidate1/unknown4→4/roleassignments0.
+All36 frozen G2 files match source inventory; adapter59ae1464 unchanged.
+AnotherAgent confirms five P2 areas closed: malformed per-item structure,
+original source output isolation, XML context cache, hashedscene/strictframe/
+state binding, original role declaration binding. No openP0/P1/P2; source9
+andexcerpt14 exact, final336 XML/291 retention/publicsmoke directly checked.
+Fixture test initially changed an alreadyasset firstrecord rather thanrootXML;
+corrected to root.xml and original1FAIL/41PASS log preserved, not code defect.
+
+Evidence docs/evidence/g2_f1_c_roles_2026-11-09/; runbook
+docs/build/PSM-WMA_G2_F1_C_source_role_analysis_2026-11-09.md. No private590
+rows/assets/state/image/cloud/audit access or outward transfer; actual161/429
+decisions still require server-local source matching and GPT independent role
+review. No source/area/role policy workaround or full-house approval implied.
+No nav_sg/Room/V3/Gitlink/production/cache/GPU/model/rollout/train/PR/merge.
+Ten protected refs captured including fixed sampling branch. Publish independent
+analysis SHA and exact Issue26/Inbox handoff, not implementation acceptance.
+Current analysis not yet committed at this record.
+
+# 2026-11-09 (UTC) — G2-F1-C source-role analysis claim
+
+IN_PROGRESS / Codex. Sampling fixed aef1ec04d631ef23c9b3f04dd2ab0f11344e2f21
+already published with exact36blob and Issue26 handoff6731022450; ledger
+a25ae31bfc07019eb8028604b9f9b5f3f9ef2019 only metadata. New separate branch
+codex/g2-f1c-role-analysis. Continue now per Owner, no independent-acceptance
+wait needed for this separate analysis; sampling fixed branch stays frozen.
+Plan: original public RoboCasa/robosuite generator/XML/material/collision
+source provenance catalog and analysis notes, plus small server-local
+per-component evidence/review ledger module/tests if existing inventory cannot
+produce the required590 currently unknown components (161+429).
+Do not fabricate private geom names or classifications unavailable here.
+Use source-bound compiled signatures/source nodes and explicit producer-role
+semantics, not names/group alone; unresolved remains UNCLASSIFIED.
+Actual planned analysis paths: g2/sim/role_review.py, focused
+g2/tests/test_role_review.py; docs/build public generator catalog and source
+analysis/export runbook, docs/evidence own CPU ledger evidence, SESSION/TODO/
+canonical Inbox. No automatic role labels or production role-map writer.
+Private asset/state/image/cloud/audit files stay data. No sampler/prescan/
+native/Room/V3/Gitlink/training/cache changes. Current analysis uncommitted.
+
 # 2026-11-09 (UTC) — G2-F1-C fixed implementation published / role analysis next
 
 REVIEW. Fixed Root aef1ec04d631ef23c9b3f04dd2ab0f11344e2f21,

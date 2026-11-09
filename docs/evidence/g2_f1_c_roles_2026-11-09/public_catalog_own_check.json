@@ -1,0 +1,65 @@
+{
+  "actual_role_assignments": 0,
+  "adapter_source_sha256_unchanged": "59ae146447ee526cc8aae6eeade89f66d903dd90770594f7a68368fb97082a52",
+  "catalog_sha256": "9844b20eb3a6cd4172b068788bbd003398e71a2bcb6fcc39ba090972b12ebb44",
+  "compiled_geoms": 4,
+  "evidence_bound_candidates": 1,
+  "frames": [
+    0,
+    200
+  ],
+  "generator_code_executed": false,
+  "original_590_components_accessed_or_classified": false,
+  "public_source_matches": [
+    {
+      "git_blob_sha": "ec83b29c637e9b6e33a645bdc2b4065f3edcfad3",
+      "sha256": "77f992d01aa1ae5f21ed7f170d0aab9c303c32148f4b427651c04912be8ce68a",
+      "source_id": "counter"
+    },
+    {
+      "git_blob_sha": "a31278df73439a9db6f20d978b44997e24d0cc0e",
+      "sha256": "48b08a65f45d1bf5a54dfe1ef8544a60e4bd20d17653520c4708c0c9b9168a67",
+      "source_id": "windows"
+    },
+    {
+      "git_blob_sha": "6ecec8a9cc1fb23e33dd8833dd7eb9ac35dbab6f",
+      "sha256": "4a50abe7116c8a91aedd99fd1c45212bf52b747e22bf7be1ced9ec5cfc487364",
+      "source_id": "handles"
+    },
+    {
+      "git_blob_sha": "75b1dc813e87f738fd37637b8ee7ba203c9e5afc",
+      "sha256": "6945428028acdcf39b0e139f2cbc95709460ad962d23b9964fbf32563f967c57",
+      "source_id": "fixture"
+    },
+    {
+      "git_blob_sha": "c1c76b0fc3fba1b6cf96d58af9de014d7db58121",
+      "sha256": "00b266c43a36048d87f3b472899a17583d24e8e0c081c56796466e7716b2b743",
+      "source_id": "panels"
+    },
+    {
+      "git_blob_sha": "268fee24027bafea14b2d531c884f892e3e3b80c",
+      "sha256": "5c49fa3fb08f64263879fae2b51beb47cfe54951ff5ba3259aaff63c0b1d5661",
+      "source_id": "cabinets"
+    },
+    {
+      "git_blob_sha": "d04ba123e030cf4381ad1c3175ca09be56a75965",
+      "sha256": "34d4e139ea3b2c7a3dfae6532899808b96167fd06990fe00fd6a4152688fb7b8",
+      "source_id": "scene_builder"
+    },
+    {
+      "git_blob_sha": "463fca1b2a04ea43f87acb56c5ab83d01b6a2328",
+      "sha256": "5844cc77141cbe4cbddfe064db3eb7c4e61669e2cfad7bf1097f1f12bed9c64e",
+      "source_id": "objects"
+    },
+    {
+      "git_blob_sha": "770624b848099721f9d86ec8193e2cbd0c6e6ca2",
+      "sha256": "07e1fd5d1e8ac5132a110738b07f191694c2021ef2519f884e2c367504779042",
+      "source_id": "generated"
+    }
+  ],
+  "scope": "OWN_INPUT_PUBLIC_REFERENCE_ONLY_NOT_LAYOUT_CLASSIFICATION",
+  "status": "PASS",
+  "training_ready": false,
+  "unresolved_after": 4,
+  "unresolved_before": 4
+}
