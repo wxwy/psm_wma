@@ -1,3 +1,24 @@
+# 2026-11-09 13:27 CST - Issue28 final H16 boundary; new exact author Gate pending
+
+Child now59746af006748488a678aa9a55dfc3e200668219 (clean). Sparse-only
+Owner and Local consumer require a complete H16 chunk before next Policy prepare;
+partial tails still End normally, defaultK16 untouched. Same new regression SHA
+dff237f44016192b340c30c4fb96ecd254a8ef58777f2b132bfa8d25bfc0f9be:
+controlled prior6b5c1915 productionRED8FAIL(DID NOT RAISE), newGREEN8PASS;
+temporary test/fix worktree dirtiness explicit, original production hashes and
+JUnit/logs recorded externally boundary_red/boundary_green. WorkerConfig new
+default field appended to preserve existing positional argument order.
+
+Prior df043615/6b5c1915 exact scoped author02 PASS:623top-level+207subtests=
+830JUnit, source unchanged,21staticfiles and old/new dense probe equal. This is
+historical intermediate evidence, not final Pair acceptance. Author01 failed
+before tests because external runner mistakenly linted immutable old evidence
+scripts; raw failure retained, static source scope corrected without editing
+archives/production. Final author runner now also reports top-level/subtest
+counts separately. Need final Root Gitlink freeze, exact author03, then archive/
+new independent Draft PRs/GPT review. #27PR29/8 and official V3 remain untouched;
+no GPU/server/realSim/SR/900EP/training or running-job operations.
+
 # 2026-11-09 CST - Issue28 implementation + dev98 PASS; preparing exact Formal Pair
 
 Independent #28 branch only. Root config/runtime/Owner relay, Child sparse
