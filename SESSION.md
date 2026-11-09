@@ -1,3 +1,31 @@
+# 2026-11-09 (UTC) — F1-C sampling and role-analysis companion published
+
+Sampling fixed Root aef1ec04d631ef23c9b3f04dd2ab0f11344e2f21,
+branch codex/g2-f1c-positive-faces remains metadatahead a25ae31b; real GPT
+handoff https://github.com/wxwy/psm_wma/issues/26#issuecomment-6731022450 .
+Independent analysis fixed Root dcd8a93da1f2c9ad4285140f70bb9f8c3a310cff,
+tree c3b8f041a62d102646e70686f5cfaf5d42c41200, branch
+codex/g2-f1c-role-analysis.38/38 G2 blobs fetched exact, original36 files
+unchanged, tested tree/API Git object verified; same-tree author backup kept.
+Actual analysis handoff posted and fullbody readback:
+https://github.com/wxwy/psm_wma/issues/26#issuecomment-6731248850 .
+Canonical Inbox carries both exact-source requests. This successor metadata
+only, no source/test epoch change. Author336PASS/291retained/45new, public9/
+14span/7conditional rules, owncandidate1/unknown4→4/actualroles0 and code
+review closed5P2 are author evidence, not GPT real-source approval.
+
+Actual Layout1 unknown161/Layout10 unknown429 remain unclassified here;
+no private individual audit/assets/state/image/cloud access or transfer.
+Detailed original-code criteria and server-local percomponent template/tool
+and whole-house export order delivered. GPT next owns fixedsampling real四帧
+recheck and analysis source/code Gate with local version/originalXML/body/
+geometry/material matching. Full-house source/native/normal roots/truefrontend/
+six+Island/H1/PSS/Cosmos remainOPEN/training_readyfalse. Actual590 role closure
+must not be claimed before original-source independent verification.
+Ten protected refs including sampling branch unchanged; native2009/Child1ca308
+unchanged. No V3/native/Room/Gitlink/production/cache/GPU/model/rollout/train/
+PR/merge actions. Both formal code targets frozen for independent recheck.
+
 # 2026-11-09 (UTC) — G2-F1-C source-role analysis author freeze
 
 REVIEW / analysis code and public reference only, not real590 classification.
