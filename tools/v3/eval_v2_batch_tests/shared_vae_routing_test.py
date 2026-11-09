@@ -261,13 +261,14 @@ def owners_for(runtime):
 
 def info(clock_domain="cpu-clock", history_k=16):
     return dict(
+        action_chunk_size=16,
         local_feature=dict(
             identity=copy.deepcopy(IDENTITY),
             history_source="sim_shared_vae",
             clock_domain=clock_domain,
             worker_constructor_config={},
             **({"local_ttt_history_k": history_k} if history_k != 16 else {}),
-        )
+        ),
     )
 
 

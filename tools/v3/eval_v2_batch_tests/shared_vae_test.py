@@ -19,7 +19,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
+from cosmos_framework.evaluation.robocasa_v2.contract import (
+    ACTION_CHUNK_SIZE,
+    build_manifest,
+)
 from cosmos_framework.inference.robocasa_feature_evidence import (
     FeatureEvidenceOwner,
     PolicyBoundary,
@@ -591,7 +594,10 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
                 Path(__file__).resolve().parents[3] / "cosmos-framework",
             )
             self.registry = Registry(run, 0.2)
-            self.store = SimpleNamespace(root=run)
+            self.store = SimpleNamespace(
+                root=run,
+                manifest={"protocol": {"action_chunk_size": ACTION_CHUNK_SIZE}},
+            )
             self.stop, self.state_lock, self.starting = (
                 threading.Event(),
                 threading.RLock(),
@@ -645,12 +651,13 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
         handle = supervisor.ensure(
             "slot",
             {
+                "action_chunk_size": ACTION_CHUNK_SIZE,
                 "local_feature": {
                     "identity": identity,
                     "history_source": "sim_shared_vae",
                     "clock_domain": "cpu-clock",
                     "worker_constructor_config": constructor,
-                }
+                },
             },
         )
         parent = int(

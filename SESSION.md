@@ -1,3 +1,24 @@
+# 2026-11-09 CST — Horizon correction implemented; exact-pair focused Gate next
+
+Child4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe clean. Generic helpers validate
+positive exact-int H, NoneK->H, positive exact-int divisors, relative strideH//K;
+arbitrary source anchors keep true IDs. Existing Native protocol H16 is named
+ACTION_CHUNK_SIZE in its authoritative contract (Manifest/model identity same).
+Root resolves/freeze K, runtime binds actual Policy INFO H to frozen protocol;
+Policy uses resolved model cfg H, consumer Owner H, sparse Worker/READY/Sim
+carry/bind H. Native H16 guards and dense wire/fingerprint/Manifest remain.
+No new public H option/model capability/training/runtime/scheduler change.
+
+Dev01 external /workspace/work/issue28-horizon-evidence: Ruff/format/lint PASS;
+558 tests+22subtests PASS,8FAIL all one legacy Registry fixture lacking newly
+required store.manifest/PolicyINFO H. Original raw logs/JUnit retained. Added
+explicit Native H to that fixture, no production bypass. All generic H1..48,
+H12/K3/H24, invalid types/non-divisors, consumer/session H, config dense/episode
+horizon distinction and multi-Session paths passed in dev01. Final clean Pair
+focused Gate and default H16 old59746/new dense probe still pending. Historical
+631+207 not relabeled. Continue same PR30/9 and fresh GPT review; no GPU/realSim/
+SR/900EP/server files/training/V3/#27 changes. TaskIN_PROGRESS.
+
 # 2026-11-09 CST — Issue28 Horizon-derived K correction claimed
 
 Fresh observation: before71971a6c, fetch/advertised/tracking V3e58cef1f and
