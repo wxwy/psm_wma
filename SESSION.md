@@ -1,3 +1,29 @@
+# 2026-11-09 CST — Issue28 Horizon-derived K correction claimed
+
+Fresh observation: before71971a6c, fetch/advertised/tracking V3e58cef1f and
+same PR30 branch c622ac1925778b431e1206d3e34f007e250b33ac match. Consumed
+dbc75fae/c622ac19 via ancestry0/FF. Read exact review for Root050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 /
+Child59746af006748488a678aa9a55dfc3e200668219: REQUEST_CHANGES, MEDIUM latest
+Owner H-derived K contract. Old631+207 and dense parity remain historical valid
+evidence, not new approval. Child current/remote59746af0 clean. Existing PR30/9
+only; no new branch/runtime/PR or #27/V3 merge. User directly authorizes this
+correction; V3 roles/latest Owner scope supersede obsolete MM/Kimi/30-round wait.
+
+Claim Root config.py/shared_vae.py/runtime.py/identity.py; Child contract.py,
+vae_protocol.py/worker.py/daemon.py,feature_evidence.py,local_memory_online.py,
+local_memory_policy.py,action_policy_server_robocasa.py,sim_shared_vae_client.py,
+eval_v2_transactions.py/closed_loop_eval.py; relevant existing/new CPU fixtures,
+tests and addendum/evidence/Inbox/SESSION/TODO. No competing local edits.
+Use existing authoritative protocol Action Chunk H (not Task episode horizon),
+bind Policy resolved cfg H and frozen Manifest across Worker/Sim/consumer.
+K omitted/None resolvesH; exact positive integer divisor; strideH//K; j0 chosen.
+Generic helpers H12/H24/arbitrary positiveH; actual Native model remainsH16.
+Preserve dense wire/fingerprint/Manifest, full completion/transactions/Resume,
+NoTTT/sharedB1/nativeBatch and topology. Focused CPU/static + old-current H16
+dense parity only, new exact Root/Child pair, update same DraftPRs, fresh GPT
+incremental review. No training/model changes or GPU/server/realSim/SR/900EP.
+No code changes/test execution yet. Next implement minimal correction.
+
 # 2026-11-09T13:43:28.955226+08:00 — Issue28 new Draft PRs published;52 remote file readbacks match
 
 Formal Root 050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 / Child-Gitlink 59746af006748488a678aa9a55dfc3e200668219 unchanged. New open
