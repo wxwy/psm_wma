@@ -1,5 +1,9 @@
 
 
+# 2026-11-09 — Prefix-aware Local-TTT generation
+
+- **ISSUE31-PREFIX-TEXT-KV** — IN_PROGRESS; Codex; Owner Issue31, approved baseline Root53b5273c/Child4cd5fc8c and docs ca3a08ac. Independent branch/PR; B1 two_way text KV reuse while Prefix remains effective every denoise step; CPU equivalence/Prefix sensitivity/lifecycle/error/retry/NoTTT tests, then same real Local checkpoint interleaved GPU4–7 measurement. New exact Pair/raw evidence for GPT; no pack/attention second stage, training/VAE/Sim/Worker change, V3/#27/#28 merge, SR/900EP or active-job operations.
+
 # 2026-11-09 — Shared VAE generic topology
 
 - **ISSUE27-SHARED-VAE-TOPOLOGY** — DONE (CPU/static/Evidence APPROVE_CODE9b1756f9/60b252d0; hardware/merge separate); historical REVIEW (test-only Formal9b1756f9/Child60b252d0; exact18PASS; PR29/8 updated/readback25PASS; GPT M16 Evidence review requested); Codex; Owner/full review atb5127c82; Root-only fixture/test/evidence supplement with frozen Manifest/capacity,32Sessions/realCPUWorker/OwnerHTTP/UnixIPC/ACK/End/isolation/cleanup plus1x1/1x8; production and Child60b252d0 unchanged; new test-only Root SHA and narrow review via existing DraftPR29/8. No GPU/SR/900EP/official merge.

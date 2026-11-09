@@ -1,3 +1,40 @@
+# 2026-11-09 CST — Issue31 Prefix-aware text KV implementation claimed
+
+Implementation ready for exact-pair author evidence. Child changes limited to
+four model inference extension points + new CPU tests. B1 guidance1 two_way
+fills text K/V once, keeps current Prefix per layer on every denoising forward;
+gen-only attention retains varlen/padding fences, caches clear in finally and
+dispatcher restores. Request opt-out use_prefix_text_kv_cache=False retains
+original Prefix-on reference. Other layouts/CFG/FSDP fall back; pack reuse stays
+off with Prefix. Root adds only model-only interleaved benchmark (mode/DCP
+validation retained), Gitlink and bookkeeping. No code merge/GPU result yet.
+Dev core38PASS and generation5PASS; expanded dev05 181PASS/1 preexisting FAIL.
+Clean old Child4cd5 reproduces same local_evidence W0 continuation assertion
+(baseline01/w0.xml); scan_local_memory body untouched, intentionally preserves
+FSDP zero-gradient behavior. Not fixed/counting as PASS. Exact focused gate will
+explicitly deselect this known baseline-only failure, preserving both raw logs.
+Two existing I001 import-order exceptions also recorded, other Ruff strict.
+Next freeze Child/Root, exact clean CPU181, then authorized fixed-DCP GPU6 probe.
+
+Codex owns ISSUE31-PREFIX-TEXT-KV, IN_PROGRESS on isolated
+v3-local-ttt-prefix-kv-issue31-20261109; source baseline formal Root
+53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child
+4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe, latest docs ca3a08ac synced clean.
+Read canonical Inbox and Issue31/comment6738445190; Issue28 exact-pair
+APPROVE_CODE and functional H100 evidence are historical, not Issue31 approval.
+Planned Child files: generator/omni_mot_model.py; mot/inference_text_kv_memory.py,
+cosmos3_vfm_network.py, attention.py/unified_mot.py only if integration requires;
+focused inference cache tests and measurement tool. Root code unchanged except
+new measurement/CPU entrypoint if required, Gitlink, evidence and handoff.
+First stage B1/single-sample/two_way Prefix-aware request-local text KV only.
+Keep pack-template policy, model/training/VAE/Sim/Worker, mode/DCP checks and
+K/H/M/B Resume unchanged. Prior DraftPR30/9 and V3 untouched.
+CPU correctness first; Issue31 Owner scope permits later GPU4–7 fixed-Local
+checkpoint model-only baseline/optimized interleaved measurement. Do not alter
+gpu_load_sim.py, GPU0–3, running jobs or export private server files. No SR/900EP.
+Next: inspect per-layer Prefix/masks and implement/prove cache lifecycle.
+Uncommitted; no Issue31 test or GPU result yet, no review closure/merge claimed.
+
 # 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
 
 Formal Root53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a /
