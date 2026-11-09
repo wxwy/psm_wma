@@ -130,11 +130,12 @@ def frozen_runtime(tmp_path, cfg):
 
 
 @contextmanager
-def rig_for(tmp_path, servers, sims, same_render, *, streaming=False):
+def rig_for(tmp_path, servers, sims, same_render, *, streaming=False, history_k=16):
     cfg = topology(
         tmp_path, servers, sims, 8, same_render=same_render, streaming=streaming
     )
     cfg.update(server_python=sys.executable, server_start_s=10, terminate_grace_s=5)
+    cfg["local_ttt_history_k"] = history_k
     with frozen_runtime(tmp_path, cfg) as runtime:
         with owners_for(runtime) as rig:
             yield rig
@@ -215,6 +216,7 @@ def owners_for(runtime):
                 f"cpu-policy-owner-{gpu}",
                 policy_identity=IDENTITY,
                 max_sessions=len(names),
+                history_k=cfg.get("local_ttt_history_k", 16),
             )
             boundaries[gpu] = {}
             owner.bind_boundary_lookup(
@@ -257,13 +259,14 @@ def owners_for(runtime):
             external.wait(3)
 
 
-def info(clock_domain="cpu-clock"):
+def info(clock_domain="cpu-clock", history_k=16):
     return dict(
         local_feature=dict(
             identity=copy.deepcopy(IDENTITY),
             history_source="sim_shared_vae",
             clock_domain=clock_domain,
             worker_constructor_config={},
+            **({"local_ttt_history_k": history_k} if history_k != 16 else {}),
         )
     )
 

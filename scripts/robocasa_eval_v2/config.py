@@ -17,6 +17,7 @@ DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
     "local_memory_mode": "required",
+    "local_ttt_history_k": 16,
     "single_latency_arm": None,
     "local_evidence_profile": "server_vae",
     "sim_shared_vae": None,
@@ -76,6 +77,7 @@ def resolve(argv=None):
     p.add_argument("--render-backend", choices=("egl", "osmesa"))
     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
     p.add_argument("--local-memory-mode", choices=("off", "required"))
+    p.add_argument("--local-ttt-history-k", type=int)
     p.add_argument("--single-latency-arm", choices=("A", "B", "C"))
     p.add_argument("--local-evidence-profile", choices=("server_vae", "sim_shared_vae"))
     p.add_argument(
@@ -116,6 +118,7 @@ def resolve(argv=None):
         "execution_profile",
         "batch_wait_ms",
         "local_memory_mode",
+        "local_ttt_history_k",
         "single_latency_arm",
         "local_evidence_profile",
         "scheduling_protocol",
@@ -324,6 +327,8 @@ def execution(cfg):
         from robocasa_eval_v2.shared_vae import public_shared_profile
 
         result["shared_vae"] = public_shared_profile(cfg)
+    if cfg.get("local_ttt_history_k", 16) != 16:
+        result["local_ttt_history_k"] = cfg["local_ttt_history_k"]
     return result
 
 

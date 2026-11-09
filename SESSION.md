@@ -1,3 +1,30 @@
+# 2026-11-09 CST - Issue28 implementation + dev98 PASS; preparing exact Formal Pair
+
+Independent #28 branch only. Root config/runtime/Owner relay, Child sparse
+post-step/feature contracts, bounded Worker skip ledger, Sim pre-capture selection,
+Policy Owner/all16 completion admission and existing Local T1 consumer now wired.
+K1/2/4/8/16 default16; no model/training/scheduler changes. One inherited Sim
+connector PolicyB1 guard aligned to approved1..8; #27 PR29/8 untouched.
+
+External /workspace/work/issue28-history-k-evidence: dev01 original51PASS/7FAIL
+(new fixture cleanup method/exception expectation/kernel identity input errors);
+dev02 original283PASS/6FAIL +22subtests (new Root fixture missing Session/episode
+payload identity, strict rejection correct). Failures preserved. Dev03 new98/98
+PASS, no fail/error/skip, Ruff fix/format0, synthetic CPU/noGPU. Allfive counts,
+0->16->32, first0, partialEnd, actual Local scan/abort/replay/late/changed bytes,
+pre-RGB skip, actual Eval connector B8, frozenK/fullM-B mismatch rejected. NewRoot
+FD daemon/Unix IPC/OwnerHTTP all5 + K4 2Policyx16Sim=32 Sessions, singleWorker,
+B8+B8 each, all16 completion proofs, exact extraEncodeK-1, ACK/End/owned0/IPC
+cleanup/external survival. Model/env/kernel/device/current boundaries explicit
+doubles. Old Child60b and current new CPU processes same dense probe/seed28:
+feature wire/cached boundary/FastState/prefix/syntheticAction hashes bit-equal;
+actual Wan/DCP/diffusion/GPU equivalence NOT_RUN.
+
+Next: Child source commit then Root Gitlink/source/tests commit; exact clean Pair
+focused author CPU/static/source fingerprints (no old900/965 rerun), immutable
+raw evidence and new independent Draft PRs/fresh GPT Code Gate request. Still
+IN_PROGRESS, author results do not grant independent approval or GPU/V3 merge.
+
 # 2026-11-09 CST - Issue28 history K implementation claimed after qualified Issue27
 
 Fresh sync observation: before parent #27HEAD9c09bfde; fetch/advertised/tracking

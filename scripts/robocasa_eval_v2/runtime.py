@@ -336,6 +336,11 @@ class Runtime:
             command += ["--single-latency-arm", self.cfg["single_latency_arm"]]
         if self.shared_vae_profile:
             command += ["--history-source", "sim_shared_vae"]
+            if self.cfg.get("local_ttt_history_k", 16) != 16:
+                command += [
+                    "--local-ttt-history-k",
+                    str(self.cfg["local_ttt_history_k"]),
+                ]
         # The eval Client/Actors always use 127.0.0.1. Do not expose the
         # transaction-owning Policy Server on all network interfaces.
         # Both concurrent evaluation runs must bind distinct local TCP ports.
@@ -549,6 +554,12 @@ class Runtime:
                     **(
                         {"local_evidence_profile": "sim_shared_vae"}
                         if self.shared_vae_profile
+                        else {}
+                    ),
+                    **(
+                        {"local_ttt_history_k": self.cfg["local_ttt_history_k"]}
+                        if self.shared_vae_profile
+                        and self.cfg.get("local_ttt_history_k", 16) != 16
                         else {}
                     ),
                     "capacity_profile": self.capacity_profile,
