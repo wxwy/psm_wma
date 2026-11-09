@@ -1,3 +1,33 @@
+# 2026-11-09 (CST) — F1-E reviewed scene-release configuration and native integration
+
+IN_PROGRESS / Codex. Read complete formal GPT review f86ecef5daab21587a2b18c06c663085a2ebb413,
+file blob1fe9d18f47a41d22892b71b21e9300ba77a3a693 and Issue26 comment6732760420.
+Verdict APPROVE_SCENE_BOUND_ROLE_CANDIDATES_LAYOUT1_LAYOUT10_ONLY on fixed6b04d214.
+Independent371PASS/old336, all590 plus116 helper/59 Counter proofs and four-frame
+diagnostic exports accepted for current two scenes only. Current11/11 generator
+files match; previous3 matched merely incomplete root configuration, not drift.
+Historical Episode git revision/fullcolor/native/training remain uncertified.
+GPT machine ledger SHA2568412b731787f2b686357d1ac4731729547da457f3906e35f407542755815bce5.
+
+New independent codex/g2-f1e-scene-release from fixed6b04 source + a3b0c97 metadata.
+Planned PSM files: new g2/sim/scene_release.py, focused tests, two public scene
+profiles containing immutable hashes/counts/review authority, runbook/evidence.
+Private roles/XML/assets/states/per-component evidence stay data. Package only
+into new server-local candidate directory, pin every proof/input and preserve
+original metadata; no cloud re-export or production role-map application.
+
+Native independent codex/g2-f1-native-structures from2009fae35 is next authorized
+implementation per nav_sg#8. Planned finite occupancy-supported Floor/Wall roots,
+strict partial/unknown evidence, conservative bbox/room assignment and snapshot
+provenance, existing Room/Island processing retained. No Oracle normal labels.
+No model/GPU inference; object frontend NOT_RUN unless real observations exist.
+Cloud environment runtime skill confirms managed Docker and cached Noetic image;
+host and data host lack /opt/ros. Use isolated container CPU Catkin, no packages
+or network installs needed. No V3/Gitlink/oldbranches/production/cache/train/merge/PR.
+Formal code changes only repository; server isolated checkout only fetches fixed
+published source. User workflow GPT-only independent review, DS absent supersedes
+obsolete V2/MM/Kimi loops. Code review by anotherAgent still required before handoff.
+
 # 2026-11-09 12:41 CST — F1-D actual590 author candidates frozen for GPT review
 
 REVIEW. This entry supersedes earlier IN_PROGRESS checkpoints below. Fixed

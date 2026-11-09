@@ -1,0 +1,1353 @@
+EEEEEEEEEEEEEEEEEEE                                                      [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_exact_private_artifacts_and_pending_source_proofs_are_preserved _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_exact_private_artifacts_a0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[roles] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[hypotheses] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper1/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[analysis] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper2/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[catalog] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper3/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[approval] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper4/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[frame0] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper5/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_any_reviewed_input_tamper_refuses_before_output[frame200] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_any_reviewed_input_tamper6/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_original_asset_mutation_invalidates_existing_release __
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_original_asset_mutation_i0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_actual_state_archive_is_required_not_only_inventory_claim _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_actual_state_archive_is_r0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_resealing_manifest_cannot_promote_certification[training_ready] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_resealing_manifest_cannot_promote_certification[full_scene_source_certified] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot1/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_resealing_manifest_cannot_promote_certification[historical_generator_revision_certified] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot2/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_resealing_manifest_cannot_promote_certification[native_object_observations_provided] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot3/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_resealing_manifest_cannot_promote_certification[gt_structural_labels_provided] _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_resealing_manifest_cannot4/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_even_rehashed_role_input_cannot_change_previously_classified_parts _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_even_rehashed_role_input_0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_existing_release_and_source_overlap_cannot_be_overwritten _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_existing_release_and_sour0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_______ ERROR at setup of test_symlink_to_unsealed_role_file_is_rejected _______
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_symlink_to_unsealed_role_0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+_ ERROR at setup of test_wrong_profile_or_missing_evidence_cannot_reuse_approval _
+
+evidence_case = {'catalog': PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0/catalog.json'), 'decisions': Po...rator': PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0/own_generator/constructor.py'), ...}
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0')
+
+    @pytest.fixture
+    def release_case(evidence_case, tmp_path):
+        case = evidence_case
+        meta = read_json(case["metadata"])
+        meta["geoms"] = {k: v for k, v in case["original_specs"].items() if k != "mesh"}
+        write_json(case["metadata"], meta)
+        paths = []
+        for frame in (0, 200):
+            root = tmp_path / ("release_inventory" + str(frame))
+            inventory(case["xml"], root, metadata=case["metadata"], states=case["states"], frame=frame)
+            paths.append(root / "inventory.json")
+        first = read_json(paths[0])
+        root = tmp_path / "own_component_analysis"
+>       report = analyze(paths, case["catalog"], root, decisions=case["decisions"], generator_roots=case["roots"])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_scene_release.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+inventories = [PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0/release_inventory0/inventory.json'), PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0/release_inventory200/inventory.json')]
+catalog = PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0/catalog.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-113/test_wrong_profile_or_missing_0/own_component_analysis')
+
+    def analyze(inventories, catalog, output, *, decisions=None, generator_roots=None):
+        """Create immutable analysis only; never emit metadata usable as a role map."""
+        paths = [Path(p).resolve(strict=True) for p in inventories]
+        if len(paths) != 2:
+            raise ContractError("two independently generated frame inventories are required")
+        xml_cache = {}
+        values = [_inventory(path, xml_cache) for path in paths]
+        first, later = values
+        context = lambda value: sorted([{k: v for k, v in source.items() if k != "path"}
+                                         for source in value["sources"]], key=lambda source: source["logical_id"])
+        if (first["scene_id"] != later["scene_id"] or first["world_frame"] != later["world_frame"]
+            or first["source_identity_sha256"] != later["source_identity_sha256"]
+            or type(first.get("frame_id")) is not int or type(later.get("frame_id")) is not int
+            or first["frame_id"] >= later["frame_id"]
+            or context(first) != context(later)
+            or len(first["geom_audit"]) != len(later["geom_audit"])):
+            raise ContractError("paired inventory scene, source or frame identity differs")
+        for before, after in zip(first["geom_audit"], later["geom_audit"]):
+            a, b = before["role_evidence"], after["role_evidence"]
+            if (a != b or before["role"] != after["role"] or before.get("source") != after.get("source")):
+                raise ContractError("paired inventory source-role or compiled identity changed")
+        catalog_path = Path(catalog).resolve(strict=True)
+        reference = read_json(catalog_path)
+        if (not isinstance(reference, dict) or reference.get("schema") != "g2_generator_role_catalog_v1"
+            or not isinstance(reference.get("sources"), dict) or not isinstance(reference.get("rules"), dict)):
+            raise ContractError("unknown generator role catalog")
+        sources, rules = reference["sources"], reference["rules"]
+        roots = {name: Path(root).resolve(strict=True) for name, root in (generator_roots or {}).items()}
+        ledger = read_json(decisions) if decisions else {"schema": "g2_role_hypotheses_v1", "entries": []}
+        if (not isinstance(ledger, dict) or ledger.get("schema") != "g2_role_hypotheses_v1"
+            or not isinstance(ledger.get("entries"), list)):
+            raise ContractError("unknown per-component role hypotheses")
+        proposed = {}
+        unknown_ids = {row["geom_id"] for row in first["geom_audit"] if row["role"] == "UNCLASSIFIED"}
+        for entry in ledger["entries"]:
+            if not isinstance(entry, dict):
+                raise ContractError("per-component hypothesis must be an object")
+            key = entry.get("geom_id")
+            if type(key) is not int or key not in unknown_ids or key in proposed:
+>               raise ContractError("hypothesis targets duplicate, declared or foreign geom")
+E               g2.io.ContractError: hypothesis targets duplicate, declared or foreign geom
+
+g2/sim/role_review.py:140: ContractError
+--------- generated xml file: /workspace/work/f1e_release_targeted.xml ---------
+19 errors in 2.80s
