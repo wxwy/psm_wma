@@ -1,3 +1,17 @@
+# 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
+
+Formal Root53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a /
+Child-Gitlink4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe. Same DraftPR30/9 source
+branches pushed Child-first and descriptions updated/read back to latest K=H
+default/divisor rule. Evidence headc5cacb5b is metadata, not formal code identity.
+Remote42/42 code/test/rawJUnit/Gate/Diff/identity/probe/Inbox/review Blob SHAs
+equal local Git. Fresh advertised RootV3e58cef1f/#27Root73d8644d and officialChild
+b0dbd115/#27Child60b252d0 unchanged at this check. No merge/base/active-job changes.
+Receipt docs/collab/codex/evidence/2026-11-09_issue28_horizon_publication.json.
+Author566tests+22subtests=588JUnit PASS,static22/sourceunchanged/denseH16 parity;
+original failure/archive evidence retained. TaskREVIEW; next code action GPT
+incremental review. No independent approval or GPU/realSim/training/SR claimed.
+
 # 2026-11-09T14:49:58.094034+08:00 — Issue28 Horizon correction exact CPU PASS, incremental review prepared
 
 Formal Root 53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child-Gitlink 4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe; clean exact author01

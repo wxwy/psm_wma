@@ -76,3 +76,15 @@ Original dev fixture8FAIL and historical631+207 evidence retained, not relabelle
 Handoff `docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md`; raw/index `docs/collab/codex/evidence/2026-11-09_issue28_horizon/`.
 Please fresh incremental review; prior MEDIUM is not author-closed. No GPU/
 realSim/SR/900EP/training/server files/active-job/V3/#27 merge authorization.
+
+
+### 2026-11-09 CST - Horizon correction publication receipt (same request)
+
+Formal Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink
+`4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe` unchanged. Same Draft RootPR30 /
+ChildPR9 source and descriptions updated. Remote42/42 source/evidence Blob SHAs
+match; advertised branch/Gitlink match. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue28_horizon_publication.json`.
+Author566+22subtests/588JUnit PASS; fresh GPT review requested. Previous MEDIUM
+not author-closed, no V3/#27 merge or GPU/realSim/SR/training operation.
+
