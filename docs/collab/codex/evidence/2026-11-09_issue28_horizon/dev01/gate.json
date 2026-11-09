@@ -1,0 +1,12 @@
+{
+  "status": "FAIL",
+  "identity": {
+    "root": "2d910a8fbf26257f3a9b0df696621c254f9cc7e1",
+    "child": "59746af006748488a678aa9a55dfc3e200668219",
+    "gitlink": "59746af006748488a678aa9a55dfc3e200668219",
+    "root_status": "M cosmos-framework\n M scripts/robocasa_eval_v2/config.py\n M scripts/robocasa_eval_v2/identity.py\n M scripts/robocasa_eval_v2/runtime.py\n M scripts/robocasa_eval_v2/shared_vae.py\n M tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py\n?? tools/v3/eval_v2_batch_tests/history_horizon_test.py",
+    "child_status": "M cosmos_framework/evaluation/robocasa_v2/contract.py\n M cosmos_framework/inference/local_memory_online.py\n M cosmos_framework/inference/robocasa_feature_evidence.py\n M cosmos_framework/inference/robocasa_feature_evidence_test.py\n M cosmos_framework/inference/robocasa_history_k_test.py\n M cosmos_framework/inference/robocasa_local_memory_policy.py\n M cosmos_framework/inference/robocasa_local_memory_policy_test.py\n M cosmos_framework/inference/robocasa_vae_daemon.py\n M cosmos_framework/inference/robocasa_vae_protocol.py\n M cosmos_framework/inference/robocasa_vae_worker.py\n M cosmos_framework/scripts/action_policy_server_robocasa.py\n M cosmos_framework/simulation/robocasa/closed_loop_eval.py\n M cosmos_framework/simulation/robocasa/eval_v2_transactions.py\n M cosmos_framework/simulation/robocasa/sim_shared_vae_client.py\n?? cosmos_framework/inference/robocasa_history_horizon_test.py"
+  },
+  "independent_approval": "NOT_CLAIMED",
+  "error": "RuntimeError('focused failed')"
+}

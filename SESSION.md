@@ -1,3 +1,22 @@
+# 2026-11-09T14:49:58.094034+08:00 — Issue28 Horizon correction exact CPU PASS, incremental review prepared
+
+Formal Root 53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child-Gitlink 4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe; clean exact author01
+566tests+22subtests=588JUnit PASS,0failed/error/skipped,shell0/gatePASS/source
+unchanged;22 staticfiles PASS; same old59746/new4cd5 CPU defaultH16 feature,
+FastState,Prefix,syntheticAction hashes equal. Original dev558+22/8fixtureFAIL
+retained; fixed explicit fixture protocol/INFO H only. Previous349 archived files
+reverified unchanged; original631+207 not relabelled or blindly rerun.
+Generic H/divisor/default/j0/relativeIDs, Model/Worker/Sim/Session H mismatch,
+strict Manifest/K/M-B/source Resume and relevant NoTTT/IPC/topology/End covered.
+Current Native model/protocol H16 and original flow/training/scheduler unchanged.
+Review handoff docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md; raw docs/collab/codex/evidence/2026-11-09_issue28_horizon.
+
+TaskREVIEW, author evidence only; previous REQUEST_CHANGES remains independent
+authority until GPT new-pair review. Next Child-first and Root normal pushes to
+same PR30/9 branches, update descriptions to latest H rule, remote source/Gitlink/
+raw evidence/Inbox readback. No new PR/runtime or #27/V3 merge. No GPU/server
+files/active jobs/realSim/SR/900EP/training operations. Source work complete.
+
 # 2026-11-09 CST — Horizon correction implemented; exact-pair focused Gate next
 
 Child4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe clean. Generic helpers validate

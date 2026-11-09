@@ -60,3 +60,19 @@ approval inferred. TaskREVIEW; fresh GPT incremental Gate requested.
 - Author exact-pair CPU631 top-level+207 subtests PASS, Ruff21 PASS, H16 K16 old/new CPU hash bit exact reviewed as author evidence. Code retains single EvalV2, reuse first boundary Visual96, selected frame Worker VAE and T1 FW only, full source receipts/Session; reviewer has not independently re-executed tests. Existing scoped correct behavior remains valid; minimum new K/H validation + default + tests required, **no rebuild**.
 - Detailed review: `docs/collab/chatgpt/reviews/2026-11-09_Issue28_050e45d8_59746af0_HistoryK_HorizonDerivation_REQUEST_CHANGES.md`.
 - Modify the *existing* independent Draft Root#30/Child#9 only; send a **new formal Root+Child pair** and focused CPU/unchanged dense tests for fresh review. Do not merge V3, run GPU/Sim/SR/900EP/training or change active jobs under this verdict.
+
+
+## 2026-11-09T14:49:58.094034+08:00 — Issue28 Horizon correction: new incremental Code Gate request
+
+Formal Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`.
+Same DraftRootPR30/ChildPR9. Corrects prior050e45d8/59746af0 REQUEST_CHANGES:
+K omitted/None->actual Action Chunk H, exact positive divisors, relative strideH//K
+and j0; no fixed K enumeration/default16. Frozen protocol/model/Worker/Sim/Local
+H binding, current NativeH16 unchanged; dense wire/fingerprint/Manifest preserved.
+Exact clean author566tests+22subtests=588JUnit PASS,0failure/error/skip,shell0/
+sourceunchanged,static22PASS, defaultH16 old59746/new4cd5 CPU bit parity. Generic
+H1..48/H12/K3/H24 plus identity/NoTTT/Session/IPC/topology regressions covered.
+Original dev fixture8FAIL and historical631+207 evidence retained, not relabelled.
+Handoff `docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md`; raw/index `docs/collab/codex/evidence/2026-11-09_issue28_horizon/`.
+Please fresh incremental review; prior MEDIUM is not author-closed. No GPU/
+realSim/SR/900EP/training/server files/active-job/V3/#27 merge authorization.
