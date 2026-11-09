@@ -1,0 +1,9 @@
+# F1-D 作者侧只读代码复核
+
+另一Agent `/root/n6_independent_review`只读复核，未访问服务器私有部件、GPU、模型或native。当前限定范围无开放P0/P1/P2，不能等同实际590项或GPT独立验收。
+
+已关闭：任意祖先名字假冒Fixture注册根导致误auxiliary；输出根可覆盖/落入源目录；Window引用错误include wrapper或省略未命名父body；Counter同时旋转各geom却冒充工厂分块；模板从未发出的body/default获取helper或mesh、朝向错配。全部均有针对反例。
+
+复读363 distinct/363 PASS，0failure/error/skip；原336和新增27的集合恰为363。原38文件逐字节未改；55 panel/55 handle注册模型与官方AST literal一致，11源文件和28片段原字节/hash匹配。nested helper需具体registry模型XML、原mesh闭包哈希、真实同实例body及bbox/mesh缩放，只有实际live object子树有效；缺证据保持unknown。
+
+复核源码SHA256：role_hypotheses=`7431ce4bcf092ee2306c35e139abcf8f9652258e8e846f26d9b1a0c4eafef4e8`；tests=`5588d2a6b0551015b0f67df40dd354b672ad1b89ad59e7b12b275beaa2d01877`；catalog=`c603b9210cfcc6822b9ad62767262603659ef8c89f293c762ac1e496ec53fc5c`。

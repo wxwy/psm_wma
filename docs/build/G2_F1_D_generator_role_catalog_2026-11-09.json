@@ -1,0 +1,536 @@
+{
+  "schema": "g2_generator_role_catalog_v1",
+  "status": "SOURCE_INSTANCE_MATCHING_REFERENCE_PENDING_INDEPENDENT_REVIEW",
+  "sources": {
+    "counter": {
+      "path": "robocasa/models/fixtures/counter.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "ec83b29c637e9b6e33a645bdc2b4065f3edcfad3",
+      "sha256": "77f992d01aa1ae5f21ed7f170d0aab9c303c32148f4b427651c04912be8ce68a",
+      "bytes": 34185,
+      "root": "robocasa"
+    },
+    "windows": {
+      "path": "robocasa/models/fixtures/windows.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "a31278df73439a9db6f20d978b44997e24d0cc0e",
+      "sha256": "48b08a65f45d1bf5a54dfe1ef8544a60e4bd20d17653520c4708c0c9b9168a67",
+      "bytes": 12759,
+      "root": "robocasa"
+    },
+    "handles": {
+      "path": "robocasa/models/fixtures/handles.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "6ecec8a9cc1fb23e33dd8833dd7eb9ac35dbab6f",
+      "sha256": "4a50abe7116c8a91aedd99fd1c45212bf52b747e22bf7be1ced9ec5cfc487364",
+      "bytes": 12726,
+      "root": "robocasa"
+    },
+    "fixture": {
+      "path": "robocasa/models/fixtures/fixture.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "75b1dc813e87f738fd37637b8ee7ba203c9e5afc",
+      "sha256": "6945428028acdcf39b0e139f2cbc95709460ad962d23b9964fbf32563f967c57",
+      "bytes": 24911,
+      "root": "robocasa"
+    },
+    "panels": {
+      "path": "robocasa/models/fixtures/cabinet_panels.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "c1c76b0fc3fba1b6cf96d58af9de014d7db58121",
+      "sha256": "00b266c43a36048d87f3b472899a17583d24e8e0c081c56796466e7716b2b743",
+      "bytes": 24795,
+      "root": "robocasa"
+    },
+    "cabinets": {
+      "path": "robocasa/models/fixtures/cabinets.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "268fee24027bafea14b2d531c884f892e3e3b80c",
+      "sha256": "5c49fa3fb08f64263879fae2b51beb47cfe54951ff5ba3259aaff63c0b1d5661",
+      "bytes": 47865,
+      "root": "robocasa"
+    },
+    "scene_builder": {
+      "path": "robocasa/models/scenes/scene_builder.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "d04ba123e030cf4381ad1c3175ca09be56a75965",
+      "sha256": "34d4e139ea3b2c7a3dfae6532899808b96167fd06990fe00fd6a4152688fb7b8",
+      "bytes": 15575,
+      "root": "robocasa"
+    },
+    "objects": {
+      "path": "robosuite/models/objects/objects.py",
+      "commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "repository": "ARISE-Initiative/robosuite",
+      "git_blob_sha": "463fca1b2a04ea43f87acb56c5ab83d01b6a2328",
+      "sha256": "5844cc77141cbe4cbddfe064db3eb7c4e61669e2cfad7bf1097f1f12bed9c64e",
+      "bytes": 24438,
+      "root": "robosuite"
+    },
+    "generated": {
+      "path": "robosuite/models/objects/generated_objects.py",
+      "commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "repository": "ARISE-Initiative/robosuite",
+      "git_blob_sha": "770624b848099721f9d86ec8193e2cbd0c6e6ca2",
+      "sha256": "07e1fd5d1e8ac5132a110738b07f191694c2021ef2519f884e2c367504779042",
+      "bytes": 32576,
+      "root": "robosuite"
+    },
+    "mjcf_utils": {
+      "path": "robosuite/utils/mjcf_utils.py",
+      "git_blob_sha": "52b5ebb3096c701b67ab9c054455d28416e7a411",
+      "repository": "ARISE-Initiative/robosuite",
+      "commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "bytes": 41539,
+      "sha256": "273486c4781fdad3d0d37e883411f8b893164ac900cec6d60c6b7fface08db9b",
+      "root": "robosuite"
+    },
+    "accessories": {
+      "path": "robocasa/models/fixtures/accessories.py",
+      "git_blob_sha": "09b7163da4ee3930adeeb3d51d9afc8277056f50",
+      "repository": "robocasa/robocasa",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "bytes": 4418,
+      "sha256": "f31667ba70b9f5a1512c0840197c4060ff2d58d217dfa74352a7411ea9dfcd36",
+      "root": "robocasa"
+    }
+  },
+  "rules": {
+    "counter_contiguous_visual": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 311,
+          "end_line": 365,
+          "excerpt_sha256": "bca0bafa2fe579f076e1f99bdf037ab24c8b9240d7896aef7268b6112773930f"
+        }
+      ],
+      "conditions": [
+        "counter_parameters",
+        "material_binding",
+        "original_emission_branch"
+      ]
+    },
+    "counter_contiguous_contact_chunks": {
+      "allowed_roles": [
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 280,
+          "end_line": 310,
+          "excerpt_sha256": "7925bd6600d4b3d693ff6ecf2d12452407943bc7b7922959c079131cbfe09379"
+        },
+        {
+          "source_id": "counter",
+          "start_line": 367,
+          "end_line": 382,
+          "excerpt_sha256": "50f246aed1834a173733858890ed8a3694b6a4c7ce563dd30118e06db857e96b"
+        }
+      ],
+      "conditions": [
+        "chunk_parameters",
+        "contact_registry",
+        "original_emission_branch"
+      ]
+    },
+    "counter_opening_visual": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 401,
+          "end_line": 525,
+          "excerpt_sha256": "2ee9e85696ec44e0cb40bfe559b94f296d94eea4723c332b187cd05d83a2de29"
+        }
+      ],
+      "conditions": [
+        "opening_parameters",
+        "material_binding",
+        "original_emission_branch"
+      ]
+    },
+    "counter_opening_contact_chunks": {
+      "allowed_roles": [
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 280,
+          "end_line": 310,
+          "excerpt_sha256": "7925bd6600d4b3d693ff6ecf2d12452407943bc7b7922959c079131cbfe09379"
+        },
+        {
+          "source_id": "counter",
+          "start_line": 527,
+          "end_line": 540,
+          "excerpt_sha256": "62e0a5fa7b5664ff808e11b1a7f3273b3678c7d0eca05330e561b5f59e7beeb3"
+        }
+      ],
+      "conditions": [
+        "chunk_parameters",
+        "opening_parameters",
+        "contact_registry"
+      ]
+    },
+    "window_background_visual": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "windows",
+          "start_line": 362,
+          "end_line": 405,
+          "excerpt_sha256": "f4076e3c31c38a319addb7fe42845aa49b9a6f43fe90a8c792a4be5c40e883d6"
+        },
+        {
+          "source_id": "generated",
+          "start_line": 736,
+          "end_line": 768,
+          "excerpt_sha256": "b23ed0521bc9c1421ed575118b5bace87c66e8334deac396814bb4a93046af17"
+        },
+        {
+          "source_id": "objects",
+          "start_line": 622,
+          "end_line": 630,
+          "excerpt_sha256": "e8bdc757c05974b46a23570de9bbfeb262e6a885562736d6cd009e90dfc06b65"
+        }
+      ],
+      "conditions": [
+        "background_parameters",
+        "material_binding",
+        "composed_body",
+        "original_emission_branch"
+      ]
+    },
+    "fixture_region_nonphysical": {
+      "allowed_roles": [
+        "auxiliary"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "fixture",
+          "start_line": 127,
+          "end_line": 190,
+          "excerpt_sha256": "70b59f73d711e1e3025b223167dcd696cb0700c0dcd026c2db19a27f61bc115c"
+        }
+      ],
+      "conditions": [
+        "region_registration",
+        "purpose_and_flags",
+        "original_emission_branch"
+      ],
+      "require_transparent_noncontact": true
+    },
+    "nested_handle_component": {
+      "allowed_roles": [
+        "visual",
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "panels",
+          "start_line": 191,
+          "end_line": 279,
+          "excerpt_sha256": "4484bac7fa282b94e36af10748502f24441769b12bc8c7b612140b4de6605977"
+        },
+        {
+          "source_id": "handles",
+          "start_line": 38,
+          "end_line": 65,
+          "excerpt_sha256": "1b50dce009ee1e015f89cbb400af6690583b7e53b7c473ecf45e4b1eebec3693"
+        },
+        {
+          "source_id": "objects",
+          "start_line": 395,
+          "end_line": 431,
+          "excerpt_sha256": "c29d7f86af9a48026350fe18924e3c30d98725799ed204029f48f7ae3e6dcfb2"
+        }
+      ],
+      "conditions": [
+        "asset_branch",
+        "nested_body_transform",
+        "duplication_mapping",
+        "material_binding"
+      ]
+    },
+    "fixture_contact_registry_primitive": {
+      "allowed_roles": [
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "objects",
+          "start_line": 24,
+          "end_line": 28,
+          "excerpt_sha256": "18e255c9b5d91ee138b38495047ffcc30574b69e627a7ff5d93f031657ffd4c8"
+        },
+        {
+          "source_id": "objects",
+          "start_line": 157,
+          "end_line": 178,
+          "excerpt_sha256": "07f723392e3ab9bc15d9f08c8db11eb0c40ed085abb9d4c11984e45691b2132c"
+        },
+        {
+          "source_id": "fixture",
+          "start_line": 95,
+          "end_line": 122,
+          "excerpt_sha256": "04784d33eac372be2165cfa948ab52f2952daeab8f8307de1ac878fdcca965c5"
+        },
+        {
+          "source_id": "mjcf_utils",
+          "start_line": 653,
+          "end_line": 698,
+          "excerpt_sha256": "31f63ad277e53dcb2b3f8a05a8b6d7b9125e90c05861c1d3dbca5d7bde0e5230"
+        },
+        {
+          "source_id": "mjcf_utils",
+          "start_line": 21,
+          "end_line": 21,
+          "excerpt_sha256": "e7194377f6e2f9a727de6ed5f891cf2a8ca2d2e476bc20a6aa0755384b08638e"
+        }
+      ],
+      "conditions": [
+        "official_instance_body",
+        "original_primitive_compiled_match",
+        "active_contact_no_material",
+        "collision_display_marker_and_physics",
+        "constructor_registry_contract"
+      ]
+    },
+    "accessory_transparent_visual_registry": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "accessories",
+          "start_line": 8,
+          "end_line": 44,
+          "excerpt_sha256": "a0e2d4562e1f8c11c7526cf9cb85091e6811563f25aff941e1f8cbbc86c340a3"
+        },
+        {
+          "source_id": "accessories",
+          "start_line": 48,
+          "end_line": 73,
+          "excerpt_sha256": "0ab99d0a940a0fff84edfc14b0d5ae529e2e79f433018cb9dbb01660b2e2cdcb"
+        },
+        {
+          "source_id": "objects",
+          "start_line": 395,
+          "end_line": 431,
+          "excerpt_sha256": "c29d7f86af9a48026350fe18924e3c30d98725799ed204029f48f7ae3e6dcfb2"
+        },
+        {
+          "source_id": "mjcf_utils",
+          "start_line": 653,
+          "end_line": 698,
+          "excerpt_sha256": "31f63ad277e53dcb2b3f8a05a8b6d7b9125e90c05861c1d3dbca5d7bde0e5230"
+        }
+      ],
+      "conditions": [
+        "official_instance_body",
+        "original_primitive_compiled_match",
+        "noncontact_visual_registry",
+        "transparent_visual_not_auxiliary"
+      ]
+    },
+    "nested_registered_mesh_alignment_helper": {
+      "allowed_roles": [
+        "auxiliary"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "cabinets",
+          "start_line": 214,
+          "end_line": 279,
+          "excerpt_sha256": "d290aea88788bb0c426b2e4970e3c8f1c7a6d1a6b0737da16978548bcd37cd7e"
+        },
+        {
+          "source_id": "panels",
+          "start_line": 225,
+          "end_line": 278,
+          "excerpt_sha256": "213582a14c6caad423e1e678fa70acd7927a300252e03b02dc35d820a32af99d"
+        },
+        {
+          "source_id": "panels",
+          "start_line": 664,
+          "end_line": 696,
+          "excerpt_sha256": "48dd5c6f42c33bbdd4eb32aadb54b6c9493eb354ac910bd6d736dabc5b4f38f2"
+        },
+        {
+          "source_id": "handles",
+          "start_line": 327,
+          "end_line": 366,
+          "excerpt_sha256": "e42db3ed48dd201ea817c76897f2e75ec86fe33c9978499234fa9df2f89d9c7e"
+        },
+        {
+          "source_id": "handles",
+          "start_line": 369,
+          "end_line": 396,
+          "excerpt_sha256": "080a98e14668aa65b07d8be3a8b50c285b5c8f9fbf7ebdc41d12ea652a86e221"
+        }
+      ],
+      "conditions": [
+        "official_cabinet_factory_body_chain",
+        "registered_original_model_xml",
+        "same_instance_visible_mesh_and_asset_closure",
+        "bbox_and_mesh_scale_relationship"
+      ],
+      "require_transparent_noncontact": true
+    }
+  },
+  "non_classifying_facts": [
+    {
+      "id": "auxiliary_spawn_is_not_geometry_exclusion",
+      "generator_spans": [
+        {
+          "source_id": "scene_builder",
+          "start_line": 175,
+          "end_line": 224,
+          "excerpt_sha256": "3551b2d8c1fffcc770488205160e1502ca388fa5c61aa32af40fd5c3fb0593c6"
+        }
+      ],
+      "reason": "An added physical fixture is not proven nonvisual by its auxiliary spawn relationship."
+    },
+    {
+      "id": "opacity_alone_is_not_role",
+      "reason": "Transparent liquids/glass and region markers need distinct original authoring evidence."
+    }
+  ],
+  "private_server_generator_version_matched": false,
+  "automatic_role_assignment": false,
+  "full_scene_source_certified": false,
+  "training_ready": false,
+  "registered_alignment_models": {
+    "panel": [
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel001/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel002/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel003/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel004/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel005/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel006/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel007/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel008/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel009/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel010/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel011/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel012/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel013/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel014/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel015/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel016/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel017/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel018/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel019/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel020/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel021/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel022/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel023/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel024/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel025/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel026/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel027/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel028/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel029/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel030/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel031/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel032/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel033/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel034/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel035/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel036/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel037/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel038/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel039/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel040/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel041/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel042/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel043/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel044/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel045/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel046/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel047/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel048/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel049/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel050/model.xml",
+      "fixtures/cabinets/cabinet_panels/CabinetDoorPanel051/model.xml",
+      "fixtures/cabinets/cabinet_panels/beige_slab_door/model.xml",
+      "fixtures/cabinets/cabinet_panels/red_slab_door/model.xml",
+      "fixtures/cabinets/cabinet_panels/vertical_grain_door/model.xml",
+      "fixtures/cabinets/cabinet_panels/wood_slab_door/model.xml"
+    ],
+    "handle": [
+      "fixtures/handles/CabinetHandle001/model.xml",
+      "fixtures/handles/CabinetHandle002/model.xml",
+      "fixtures/handles/CabinetHandle003/model.xml",
+      "fixtures/handles/CabinetHandle004/model.xml",
+      "fixtures/handles/CabinetHandle005/model.xml",
+      "fixtures/handles/CabinetHandle006/model.xml",
+      "fixtures/handles/CabinetHandle007/model.xml",
+      "fixtures/handles/CabinetHandle008/model.xml",
+      "fixtures/handles/CabinetHandle009/model.xml",
+      "fixtures/handles/CabinetHandle010/model.xml",
+      "fixtures/handles/CabinetHandle011/model.xml",
+      "fixtures/handles/CabinetHandle012/model.xml",
+      "fixtures/handles/CabinetHandle013/model.xml",
+      "fixtures/handles/CabinetHandle014/model.xml",
+      "fixtures/handles/CabinetHandle015/model.xml",
+      "fixtures/handles/CabinetHandle016/model.xml",
+      "fixtures/handles/CabinetHandle017/model.xml",
+      "fixtures/handles/CabinetHandle018/model.xml",
+      "fixtures/handles/CabinetHandle019/model.xml",
+      "fixtures/handles/CabinetHandle020/model.xml",
+      "fixtures/handles/CabinetHandle021/model.xml",
+      "fixtures/handles/CabinetHandle022/model.xml",
+      "fixtures/handles/CabinetHandle023/model.xml",
+      "fixtures/handles/CabinetHandle024/model.xml",
+      "fixtures/handles/CabinetHandle025/model.xml",
+      "fixtures/handles/CabinetHandle026/model.xml",
+      "fixtures/handles/CabinetHandle027/model.xml",
+      "fixtures/handles/CabinetHandle028/model.xml",
+      "fixtures/handles/CabinetHandle029/model.xml",
+      "fixtures/handles/CabinetHandle030/model.xml",
+      "fixtures/handles/CabinetHandle031/model.xml",
+      "fixtures/handles/CabinetHandle032/model.xml",
+      "fixtures/handles/CabinetHandle033/model.xml",
+      "fixtures/handles/CabinetHandle034/model.xml",
+      "fixtures/handles/CabinetHandle035/model.xml",
+      "fixtures/handles/CabinetHandle036/model.xml",
+      "fixtures/handles/CabinetHandle037/model.xml",
+      "fixtures/handles/CabinetHandle038/model.xml",
+      "fixtures/handles/CabinetHandle039/model.xml",
+      "fixtures/handles/CabinetHandle040/model.xml",
+      "fixtures/handles/CabinetHandle041/model.xml",
+      "fixtures/handles/CabinetHandle042/model.xml",
+      "fixtures/handles/CabinetHandle043/model.xml",
+      "fixtures/handles/CabinetHandle044/model.xml",
+      "fixtures/handles/CabinetHandle045/model.xml",
+      "fixtures/handles/CabinetHandle046/model.xml",
+      "fixtures/handles/CabinetHandle047/model.xml",
+      "fixtures/handles/CabinetHandle048/model.xml",
+      "fixtures/handles/CabinetHandle049/model.xml",
+      "fixtures/handles/CabinetHandle050/model.xml",
+      "fixtures/handles/CabinetHandle051/model.xml",
+      "fixtures/handles/flat_handle/model.xml",
+      "fixtures/handles/irregularity_handle/model.xml",
+      "fixtures/handles/protruding_rectangular_handle/model.xml",
+      "fixtures/handles/rectangular_handle/model.xml"
+    ]
+  }
+}

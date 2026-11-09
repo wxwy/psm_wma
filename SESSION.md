@@ -1,3 +1,76 @@
+# 2026-11-09 (Asia/Shanghai) — F1-D author-validation source checkpoint
+
+IN_PROGRESS. New source-derived proposal generator and catalog implemented;
+original38 G2 files unchanged.27 own positive/negative rule controls PASS,
+full363/363 PASS,0failure/error/skip, all old336 testcase IDs retained.
+Readonly review identified/corrected unsafe region-prefix inference, whole
+output isolation, include actualbody provenance, Counter local rotation and
+live model object subtree. Nested helper now requires registered template
+XML/actual asset closure hash and same bbox/mesh scaling, not child names.
+Public11source file/reference snapshot provenance explicit; source roots on
+server found only one matching group so far, no historical-version assertion.
+
+Remote data author aggregate only: actual161/429 preserved; no private rows,
+assets/state/images/clouds exported. Original238/427 source paths all available
+in place. Counter/region/physics feature counts are pre-analysis, not decisions.
+Prepare a published checkpoint for isolated server-local author classification;
+no GPT final request or actual590 completion claim until measured. Existing
+source audits/pointclouds remain unchanged, no cloud regeneration. No server
+production checkout edits, native/Room/V3/Gitlink/train/cache/PR/merge.
+
+# 2026-11-09 (Asia/Shanghai) — F1-D actual590 source classification claim
+
+IN_PROGRESS / Codex. Latest Owner closes repeated colorcloud checks and starts
+actual161+429 role classification. Consumed GPT formal review ceb5dbb1/blob
+dc4b70d43c54db9dca200bada86db22b64185346 and Issue26 comments6731502313/
+6731617433: aef1ec04 realfourframe geometry/color APPROVE_LIMITED, dcd8a93d
+AUDIT_ONLY approved, current9 generator filehash matches server; historical
+instance evidence still required. Layout1/10 partialcloud humanPASS accepted,
+not whole-house/native/sixview. No re-export/re-render of accepted clouds.
+
+Independent codex/g2-f1d-role-classification starts fixeddcd8a93d with only
+its later metadata receipt carried. Planned: standalone g2/sim/role_hypotheses.py
+and focused source-derived matcher tests, minimal reuse hooks in role_review.py
+only if needed, source-rule catalog/runbook, author evidence/SESSION/TODO/Inbox.
+No sampler/producer/identity/navbridge/Room/V3/native/Gitlink/train/cache edits.
+
+Discovered authorized online Remote Desktop Commander device data. Use only
+server-local read-only original inventory/XML/generator/model inspection and
+isolated author analysis of published repo code. All raw originals and derived
+individual rows stay server; return only aggregatecounts/hash/blocker summaries.
+All code edits occur in this workspace repo, never in server checkouts; server
+isolated checkout may fetch fixed published source for author classification.
+GPT owns later independent acceptance, author runs cannot close that Gate.
+Uncommitted claim; exact actualclassification coverage not yet measured.
+
+# 2026-11-09 (UTC) — F1-C sampling and role-analysis companion published
+
+Sampling fixed Root aef1ec04d631ef23c9b3f04dd2ab0f11344e2f21,
+branch codex/g2-f1c-positive-faces remains metadatahead a25ae31b; real GPT
+handoff https://github.com/wxwy/psm_wma/issues/26#issuecomment-6731022450 .
+Independent analysis fixed Root dcd8a93da1f2c9ad4285140f70bb9f8c3a310cff,
+tree c3b8f041a62d102646e70686f5cfaf5d42c41200, branch
+codex/g2-f1c-role-analysis.38/38 G2 blobs fetched exact, original36 files
+unchanged, tested tree/API Git object verified; same-tree author backup kept.
+Actual analysis handoff posted and fullbody readback:
+https://github.com/wxwy/psm_wma/issues/26#issuecomment-6731248850 .
+Canonical Inbox carries both exact-source requests. This successor metadata
+only, no source/test epoch change. Author336PASS/291retained/45new, public9/
+14span/7conditional rules, owncandidate1/unknown4→4/actualroles0 and code
+review closed5P2 are author evidence, not GPT real-source approval.
+
+Actual Layout1 unknown161/Layout10 unknown429 remain unclassified here;
+no private individual audit/assets/state/image/cloud access or transfer.
+Detailed original-code criteria and server-local percomponent template/tool
+and whole-house export order delivered. GPT next owns fixedsampling real四帧
+recheck and analysis source/code Gate with local version/originalXML/body/
+geometry/material matching. Full-house source/native/normal roots/truefrontend/
+six+Island/H1/PSS/Cosmos remainOPEN/training_readyfalse. Actual590 role closure
+must not be claimed before original-source independent verification.
+Ten protected refs including sampling branch unchanged; native2009/Child1ca308
+unchanged. No V3/native/Room/Gitlink/production/cache/GPU/model/rollout/train/
+PR/merge actions. Both formal code targets frozen for independent recheck.
+
 # 2026-11-09 (UTC) — G2-F1-C source-role analysis author freeze
 
 REVIEW / analysis code and public reference only, not real590 classification.
