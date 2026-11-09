@@ -1,0 +1,45 @@
+{
+  "scope": "STAGE0_DOCUMENT_VALIDATION_ONLY",
+  "status": "PASS",
+  "checks": [
+    "five_json_specs_parse_without_duplicate_keys",
+    "draft202012_schemas_and_local_refs_valid",
+    "all_specs_nonrunnable_and_no_execution_results",
+    "p0_is_first_gate_and_strict_single",
+    "mandatory_ABC_and_A_zero_history_worker",
+    "BC_same_checkpoint_and_original_B",
+    "C_B1_wait0_plus15_and_owned_boundary",
+    "optional_D_not_claimed_supported",
+    "separate_topology_strata_and_p99",
+    "raw_and_overlapping_time_semantics",
+    "recipe_phases_are_valid_raw_trace_phases",
+    "paired_SR_smoke_not_efficacy_and_large_separate_gate",
+    "seven_legal_independent_vae_sweep_points",
+    "multi_not_single_substitute",
+    "strict_resume_preserved_in_both_recipes",
+    "all_local_design_links_resolve",
+    "child_changes_docs_only",
+    "root_changes_ledger_docs_only",
+    "official_gitlink_unchanged",
+    "protected_tree_ids_identical_to_baseline"
+  ],
+  "root_head_at_validation": "0f277a0d89cabff437b3980ab347531525fdd236",
+  "child_head_at_validation": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "official_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "protected_tree_ids": {
+    "root_scripts": "f0fedea6d92d2a40546846fab8d389a2c869b843",
+    "root_tools": "96cec91d7d7ec9121b6e0f888474208c3b863c9a",
+    "child_package": "77501c5e1623028cb9ef0826ad772a9d22831785"
+  },
+  "design_sha256": {
+    "DESIGN.md": "5d0833b010ebe5ac6a00ad37f48d413e87dcc7fb106e0d2ca5d3e923d494c11c",
+    "acceptance_matrix.json": "31320047b76ea9d83d9ce81448c2bb354da476148cca5d9474a87ad8468a9f71",
+    "feature_envelope.schema.json": "1aec33ccd982ade1481631c7ba187faa47974a8368fe1e8d030dcc69aac8f1df",
+    "recipes/multi_sr_throughput.json": "b1a523e59b18753b5556dd00fe3713377074bb4bf565380fc8c03cf91a6e32b5",
+    "recipes/single_latency.json": "9066aa25828e0bc2700c28acab566639c8b506376348fe4ce7ec304e0d0bf739",
+    "trace.schema.json": "89d043aa0d5f3cff828b3f5c5e988455b4467f9e2c7c04e89fa85898d3ca931e"
+  },
+  "implementation": "NOT_STARTED",
+  "worker_cpu_gpu_sim_latency_throughput_sr": "NOT_RUN",
+  "independent_design_review": "REQUIRED_NOT_CLAIMED"
+}

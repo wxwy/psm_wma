@@ -1,0 +1,329 @@
+"""H4 actual Root-sealed Actor config -> real Child source verification, CPU only."""
+
+import copy
+import hashlib
+import importlib
+import importlib.metadata
+import json
+import socket
+import sys
+import threading
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
+from cosmos_framework.evaluation.robocasa_v2.store import Store
+from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
+from cosmos_framework.simulation.robocasa import closed_loop_eval as native
+from cosmos_framework.simulation.robocasa import eval_v2_worker as actor
+from cosmos_framework.simulation.robocasa import render_devices
+from robocasa_eval_v2 import resources
+from robocasa_eval_v2.config import execution
+from robocasa_eval_v2.runtime import Runtime
+
+from tools.v3.eval_v2_batch_tests.shared_vae_test import profile_config
+from tools.v3.eval_v2_production_tests.contract_test import manifest
+
+
+BASE = {
+    "worker",
+    "native",
+    "adapter",
+    "slot",
+    "rendering",
+    "media",
+    "generated_video",
+    "transactions",
+}
+C_MODULES = {
+    "shared_client": "cosmos_framework.simulation.robocasa.sim_shared_vae_client",
+    "local_client": "cosmos_framework.simulation.robocasa.local_memory_client",
+    "transaction_client": "cosmos_framework.inference.robocasa_transaction_client",
+    "feature_trace": "cosmos_framework.inference.robocasa_feature_trace",
+    "feature_evidence": "cosmos_framework.inference.robocasa_feature_evidence",
+    "session_transactions": "cosmos_framework.inference.robocasa_session_transactions",
+    "batch_transactions": "cosmos_framework.inference.robocasa_batch_transactions",
+    "vae_protocol": "cosmos_framework.inference.robocasa_vae_protocol",
+    "vae_worker": "cosmos_framework.inference.robocasa_vae_worker",
+    "vae_client": "cosmos_framework.inference.robocasa_vae_client",
+}
+ALL = sorted(BASE | C_MODULES.keys())
+
+
+def root_actor_config(tmp_path, monkeypatch, arm="C"):
+    cfg = profile_config(tmp_path, arm)
+    cfg.update(sim_python=sys.executable, vendor_lock="/cpu/unread-vendor.lock")
+    original = manifest(episodes=1)
+    m = build_manifest(
+        tasks=original["tasks"],
+        episodes=1,
+        seed=original["seed"],
+        horizons=original["horizons"],
+        experiment=original["experiment"],
+        execution=execution(cfg),
+        local_memory=cfg["local_memory_mode"],
+    )
+    store = Store(tmp_path / "run", m)
+    store.create()
+    monkeypatch.setattr(
+        Runtime,
+        "_make_shared_vae_supervisor",
+        lambda self: SimpleNamespace(ensure=lambda *args: None),
+    )
+    runtime = Runtime(
+        store,
+        cfg,
+        {
+            "tasks": {"CloseFridge": "/cpu/unread-dataset"},
+            "simulation_libraries": {
+                name: importlib.metadata.version(name)
+                for name in ("numpy", "Pillow", "requests")
+            },
+            "runtime": {"digest": "1" * 64},
+        },
+        {},
+    )
+    runtime.server_info["GPU6"] = {}
+    monkeypatch.setattr(runtime, "_server", lambda worker: (None, {}, 8912))
+    monkeypatch.setattr(
+        resources,
+        "gpu_identity",
+        lambda gpu: {
+            "gpu_id": gpu,
+            "uuid": "GPU-cpu-only",
+            "pci_bus_id": "0000:98:00.0",
+        },
+    )
+    sealed = []
+
+    class BeforeSpawn(Exception):
+        pass
+
+    def capture(command, **kwargs):
+        assert command[2:4] == [
+            "-m",
+            "cosmos_framework.simulation.robocasa.eval_v2_worker",
+        ]
+        path = Path(command[command.index("--config") + 1])
+        raw = path.read_bytes()
+        assert (
+            hashlib.sha256(raw).hexdigest()
+            == command[command.index("--config-sha256") + 1]
+        )
+        sealed.append((json.loads(raw), path, raw))
+        raise BeforeSpawn
+
+    monkeypatch.setattr(runtime, "_spawn", capture)
+    try:
+        with store.locked(), pytest.raises(BeforeSpawn):
+            runtime._setup_actor(
+                {"task": "CloseFridge", "physical_worker": runtime.workers[0]}
+            )
+    finally:
+        for log in runtime.logs:
+            log.close()
+    assert len(sealed) == 1
+    value, path, raw = sealed[0]
+    return SimpleNamespace(value=value, sealed_path=path, sealed_bytes=raw)
+
+
+def run_actor(configuration, monkeypatch):
+    """Source guard and imported modules stay real; only external execution is doubled."""
+    calls = []
+    monkeypatch.setattr(
+        render_devices, "configure", lambda plan: (calls.append("render") or plan)
+    )
+    monkeypatch.setattr(
+        native,
+        "verify_runtime",
+        lambda *args: (
+            calls.append("vendor")
+            or {
+                "digest": "1" * 64,
+                "protocol": {"official_horizons": {"CloseFridge": 2}},
+            }
+        ),
+    )
+
+    def no_environment(*args, **kwargs):
+        calls.append("environment")
+        raise AssertionError(
+            "source startup tests never create or reset an environment"
+        )
+
+    monkeypatch.setattr(native, "make_env", no_environment)
+    parent, child = socket.socketpair()
+    errors = []
+
+    def target():
+        try:
+            actor.serve(
+                child, configuration
+            )  # factory=None: production source guard executes.
+        except BaseException as error:
+            errors.append(error)
+
+    thread = threading.Thread(target=target)
+    thread.start()
+    parent.settimeout(5)
+    try:
+        first = receive(parent)
+        if first.get("kind") == "READY":
+            send(
+                parent,
+                {"nonce": configuration["nonce"], "request_id": "close", "op": "close"},
+            )
+            assert receive(parent)["closed"] is True
+    finally:
+        parent.close()
+        thread.join(5)
+    assert not thread.is_alive()
+    return first, errors, calls
+
+
+def assert_rejected(record, monkeypatch):
+    first, errors, calls = run_actor(record.value, monkeypatch)
+    assert first["kind"] == "FATAL" and errors
+    assert calls == []  # Before renderer, vendor/env initialization, reset or step.
+    assert record.sealed_path.read_bytes() == record.sealed_bytes
+    return str(errors[0])
+
+
+@pytest.mark.parametrize("arm", ["C", "A", "B"])
+def test_actual_root_sealed_sources_reach_default_actor_ready(
+    tmp_path, monkeypatch, arm
+):
+    record = root_actor_config(tmp_path, monkeypatch, arm)
+    expected = BASE | C_MODULES.keys() if arm == "C" else BASE
+    assert record.value["source_files"].keys() == expected
+    first, errors, calls = run_actor(record.value, monkeypatch)
+    assert not errors and first["kind"] == "READY"
+    assert first["local_memory_mode"] == ("off" if arm == "A" else "required")
+    assert calls == ["render", "vendor"]
+    assert record.sealed_path.read_bytes() == record.sealed_bytes
+    (tmp_path / "source_proof.json").write_text(
+        json.dumps(
+            {
+                "arm": arm,
+                "source_files": record.value["source_files"],
+                "ready_kind": first["kind"],
+                "local_memory_mode": first["local_memory_mode"],
+                "state": first["state"],
+                "factory": "None",
+                "actual_import_origin_checks": True,
+                "environment_creations": 0,
+                "sealed_config_sha256": hashlib.sha256(record.sealed_bytes).hexdigest(),
+            },
+            sort_keys=True,
+        )
+    )
+
+
+@pytest.mark.parametrize("label", ALL)
+@pytest.mark.parametrize("fault", ["missing", "sha", "path"])
+def test_each_c_source_is_mandatory_and_bound_to_exact_bytes_and_origin(
+    tmp_path, monkeypatch, label, fault
+):
+    record = root_actor_config(tmp_path, monkeypatch)
+    if fault == "missing":
+        record.value["source_files"].pop(label)
+    elif fault == "sha":
+        record.value["source_files"][label]["sha256"] = "0" * 64
+    else:
+        expected = record.value["source_files"][label]
+        clone = tmp_path / "same-bytes-other-checkout.py"
+        clone.write_bytes(Path(expected["path"]).read_bytes())
+        expected["path"] = str(clone)
+    error = assert_rejected(record, monkeypatch)
+    assert (
+        "incomplete native source witnesses"
+        if fault == "missing"
+        else "native import origin/source mismatch"
+    ) in error
+
+
+@pytest.mark.parametrize(
+    "fault", ["extra", "renamed", "server_profile", "missing_profile"]
+)
+def test_c_source_label_set_and_profile_cannot_be_relaxed(tmp_path, monkeypatch, fault):
+    record = root_actor_config(tmp_path, monkeypatch)
+    if fault == "extra":
+        record.value["source_files"]["untrusted_extra"] = copy.deepcopy(
+            record.value["source_files"]["worker"]
+        )
+    elif fault == "renamed":
+        record.value["source_files"]["shared_client_typo"] = record.value[
+            "source_files"
+        ].pop("shared_client")
+    elif fault == "server_profile":
+        record.value["settings"]["local_evidence_profile"] = "server_vae"
+    else:
+        record.value["settings"].pop("local_evidence_profile")
+    assert "incomplete native source witnesses" in assert_rejected(record, monkeypatch)
+
+
+@pytest.mark.parametrize("label,module", sorted(C_MODULES.items()))
+def test_actual_c_import_from_other_checkout_is_rejected_even_with_same_bytes(
+    tmp_path, monkeypatch, label, module
+):
+    record = root_actor_config(tmp_path, monkeypatch)
+    imported = importlib.import_module(module)
+    clone = tmp_path / "shadow.py"
+    clone.write_bytes(Path(imported.__file__).read_bytes())
+    monkeypatch.setattr(imported, "__file__", str(clone))
+    assert "native import origin/source mismatch" in assert_rejected(
+        record, monkeypatch
+    )
+
+
+def test_missing_c_import_is_fatal_before_renderer(tmp_path, monkeypatch):
+    record = root_actor_config(tmp_path, monkeypatch)
+    monkeypatch.setitem(sys.modules, C_MODULES["vae_worker"], None)
+    assert "import" in assert_rejected(record, monkeypatch).lower()
+
+
+@pytest.mark.parametrize(
+    "change",
+    ["phase_a", "unknown_execution", "off", "missing_mode", "unknown_evidence"],
+)
+def test_inconsistent_c_profile_is_rejected_even_with_legacy_labels(
+    tmp_path, monkeypatch, change
+):
+    record = root_actor_config(tmp_path, monkeypatch)
+    record.value["source_files"] = {
+        k: v for k, v in record.value["source_files"].items() if k in BASE
+    }
+    settings = record.value["settings"]
+    if change == "phase_a":
+        settings["execution_profile"] = "phase_a"
+        record.value["source_files"].pop("transactions")
+    elif change == "unknown_execution":
+        settings["execution_profile"] = "phase_unknown"
+        record.value["source_files"].pop("transactions")
+    elif change == "off":
+        settings["local_memory_mode"] = "off"
+    elif change == "missing_mode":
+        settings.pop("local_memory_mode")
+    else:
+        settings["local_evidence_profile"] = "unreviewed_profile"
+    error = assert_rejected(record, monkeypatch)
+    assert "profile" in error
+
+
+@pytest.mark.parametrize("arm", ["A", "B"])
+def test_legacy_a_b_keep_exact_eight_sources(tmp_path, monkeypatch, arm):
+    record = root_actor_config(tmp_path, monkeypatch, arm)
+    record.value["source_files"]["feature_trace"] = copy.deepcopy(
+        record.value["source_files"]["native"]
+    )
+    assert "incomplete native source witnesses" in assert_rejected(record, monkeypatch)
+
+
+def test_actual_simulation_library_drift_remains_fatal_before_rendering(
+    tmp_path, monkeypatch
+):
+    record = root_actor_config(tmp_path, monkeypatch)
+    record.value["simulation_libraries"]["numpy"] = "changed-after-preflight"
+    assert "libraries changed" in assert_rejected(record, monkeypatch)

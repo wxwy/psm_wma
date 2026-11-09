@@ -1,0 +1,77 @@
+{
+  "scope": "ISSUE23_STAGE0_DESIGN_PUBLICATION_ONLY",
+  "status": "PUBLISHED_AND_READ_BACK",
+  "root_docs_review_target": "696b3ee8e14339d3eaca448db17c2432f6694e13",
+  "root_canonical_request_commit": "c4078002aff747886dd0d4e047f9bbfd54a3e5bc",
+  "child_design_review_target": "8a170d56014af937b146b35e2b89753313614785",
+  "actual_root_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "not_a_new_runnable_formal_pair": true,
+  "official_refs_read_back": {
+    "root_V3": "a77f3d4bd8a691435d1935025cc1a9766da646a1",
+    "child_v3_local_ttt": "1ca308055fc41fb69efaeb9efaa23808f164a18e"
+  },
+  "checks": [
+    {
+      "file": "design",
+      "sha": "b29dc75b2b69e08ae5c4806ec3f718fe0948927f",
+      "match": true
+    },
+    {
+      "file": "acceptance_matrix.json",
+      "sha": "ff17830085bee46dfc6b76b08cb09fdec8eb6256",
+      "match": true
+    },
+    {
+      "file": "feature_envelope.schema.json",
+      "sha": "34c1462bafa677acbbe881063b0800bee52997b4",
+      "match": true
+    },
+    {
+      "file": "recipes/multi_sr_throughput.json",
+      "sha": "d7fcd30c59f4d9647669925cf7825206d7566566",
+      "match": true
+    },
+    {
+      "file": "recipes/single_latency.json",
+      "sha": "6191c298b250ae1d84891fed11d3c1523c029837",
+      "match": true
+    },
+    {
+      "file": "trace.schema.json",
+      "sha": "1310099338b9d15adaa1ad943f0bb9a7d3adbdc5",
+      "match": true
+    },
+    {
+      "file": "handoff",
+      "sha": "f72430ecb17f993512588533d8b299cee3687645",
+      "match": true
+    },
+    {
+      "file": "inbox",
+      "sha": "ceb6458ebe527e7e7e9ddde522744a52f346b4e3",
+      "match": true
+    }
+  ],
+  "pr": {
+    "url": "https://github.com/wxwy/cosmos-framework/pull/5",
+    "draft": true,
+    "merged": false,
+    "head_sha": "8a170d56014af937b146b35e2b89753313614785",
+    "base_sha": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+    "changed_files": 6
+  },
+  "canonical_inbox_bytes": 53846,
+  "canonical_inbox_limit_bytes": 131072,
+  "root_worktree_child_final_checkout": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "design_available_at": "https://github.com/wxwy/cosmos-framework/tree/8a170d56014af937b146b35e2b89753313614785/docs/designs/issue23_sim_shared_vae_stage0",
+  "implementation": "NOT_STARTED",
+  "project_worker_cpu_gpu_sim_latency_throughput_sr": "NOT_RUN",
+  "document_checks": {
+    "status": "PASS",
+    "count": 20,
+    "shell_exit": 0
+  },
+  "independent_GPT_design_verdict": "REQUIRED_NOT_CLAIMED",
+  "next_allowed_after_design_approval": "standalone_Worker_protocol_focused_CPU_only",
+  "no_merge_no_official_gitlink_update": true
+}

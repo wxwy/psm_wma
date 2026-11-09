@@ -1,0 +1,14 @@
+{
+  "origin": "/workspace/work/issue24-stage3a-evidence/author-04",
+  "files": {
+    "author-04/os_lifecycle/processes/42b5306eb7d44a93b12b597c6821caba.json": "root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/processes/42b5306eb7d44a93b12b597c6821caba.json",
+    "author-04/os_lifecycle/processes/58f2b222a1f84321882c90c113c1006e.json": "root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/processes/58f2b222a1f84321882c90c113c1006e.json",
+    "author-04/os_lifecycle/process_closed/42b5306eb7d44a93b12b597c6821caba.json": "root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/process_closed/42b5306eb7d44a93b12b597c6821caba.json",
+    "author-04/os_lifecycle/process_closed/58f2b222a1f84321882c90c113c1006e.json": "root_lifecycle_config_tmp/test_registry_worker_is_peer_s0/run/_internal/process_closed/58f2b222a1f84321882c90c113c1006e.json",
+    "author-04/raw_trace/synthetic_complete/feature_trace.json": "stage3_focused_tmp/test_NativeEpisode_trace_is_op1/attempt/feature_trace.json",
+    "author-04/raw_trace/synthetic_complete/feature_trace_metadata.json": "stage3_focused_tmp/test_NativeEpisode_trace_is_op1/attempt/feature_trace_metadata.json",
+    "author-04/raw_trace/synthetic_overflow_negative/feature_trace.json": "stage3_focused_tmp/test_NativeEpisode_trace_is_op2/attempt/feature_trace.json",
+    "author-04/raw_trace/synthetic_overflow_negative/feature_trace_metadata.json": "stage3_focused_tmp/test_NativeEpisode_trace_is_op2/attempt/feature_trace_metadata.json"
+  },
+  "scope": "synthetic CPU only; overflow trace deliberately incomplete; process_closed is Registry cleanup, not Root IPC CLOSED receipt"
+}

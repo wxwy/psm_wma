@@ -1,0 +1,76 @@
+{
+  "scope": "ISSUE23_STAGE1_STANDALONE_FOCUSED_AUTHOR_CPU",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.064
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.114
+    },
+    {
+      "name": "standalone",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py",
+        "--basetemp=/workspace/work/issue23-stage1-evidence/author-01/standalone_tmp",
+        "--junitxml=/workspace/work/issue23-stage1-evidence/author-01/standalone.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 240,
+      "exit_code": 1,
+      "elapsed_s": 9.978
+    }
+  ],
+  "real_weights_gpu_egl_sim_policy_integration_sr": "NOT_RUN",
+  "error": "RuntimeError('standalone failed; see standalone.log')",
+  "source_unchanged": true
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.734" timestamp="2026-11-08T10:44:31.176271+00:00" hostname="f82e45f755b2"><testcase classname="" name="test_actual_root_sealed_sources_reach_default_actor_ready[C]" time="0.059"><failure message="AssertionError: assert (not [ValueError('incomplete native source witnesses')])">tmp_path = PosixPath('/workspace/work/issue24-stage3a-h4-evidence/red-old-code-02/tmp/test_actual_root_sealed_source0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f15eb9333b0&gt;
+arm = 'C'
+
+    @pytest.mark.parametrize("arm", ["C", "A", "B"])
+    def test_actual_root_sealed_sources_reach_default_actor_ready(
+        tmp_path, monkeypatch, arm
+    ):
+        record = root_actor_config(tmp_path, monkeypatch, arm)
+        expected = BASE | C_MODULES.keys() if arm == "C" else BASE
+        assert record.value["source_files"].keys() == expected
+        first, errors, calls = run_actor(record.value, monkeypatch)
+&gt;       assert not errors and first["kind"] == "READY"
+E       AssertionError: assert (not [ValueError('incomplete native source witnesses')])
+
+tools/v3/eval_v2_batch_tests/actor_source_witness_test.py:202: AssertionError</failure></testcase></testsuite></testsuites>

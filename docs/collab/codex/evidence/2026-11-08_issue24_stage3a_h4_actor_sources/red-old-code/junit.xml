@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.718" timestamp="2026-11-08T10:43:29.148522+00:00" hostname="f82e45f755b2"><testcase classname="" name="test_actual_root_sealed_sources_reach_default_actor_ready[C]" time="0.013"><failure message="AttributeError: 'Store' object has no attribute 'lease_id'">tmp_path = PosixPath('/workspace/work/issue24-stage3a-h4-evidence/red-old-code/tmp/test_actual_root_sealed_source0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5defb658b0&gt;
+arm = 'C'
+
+    @pytest.mark.parametrize("arm", ["C", "A", "B"])
+    def test_actual_root_sealed_sources_reach_default_actor_ready(
+        tmp_path, monkeypatch, arm
+    ):
+&gt;       record = root_actor_config(tmp_path, monkeypatch, arm)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/actor_source_witness_test.py:198: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tools/v3/eval_v2_batch_tests/actor_source_witness_test.py:121: in root_actor_config
+    runtime._setup_actor(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;robocasa_eval_v2.runtime.Runtime object at 0x7f5de999fc80&gt;
+claim = {'physical_worker': 'GPU6_S0', 'task': 'CloseFridge'}
+
+    def _setup_actor(self, claim):
+        task = claim["task"]
+        worker = claim["physical_worker"]
+        with self.worker_locks[worker] if self.streaming else self.setup_lock:
+            if self.stop.is_set():
+                raise RuntimeError("cancelled before runtime startup")
+            server, server_rec, port = self._server(claim["physical_worker"])
+            if self.shared_vae is not None:
+                self.shared_vae.ensure(
+                    worker, self.server_info[f"GPU{self.worker_gpus[worker]}"]
+                )
+            self.phases[claim["physical_worker"]] = "environment_initialization"
+            if worker in self.actors:
+                return self._start_assignment(claim, self.actors[worker], server_rec)
+            nonce = uuid.uuid4().hex
+            render_gpu = self.worker_render_gpus[worker]
+            render_plan = {
+                "backend": self.render_policy["backend"],
+                "server_gpu_id": self.worker_gpus[worker],
+                "render_gpu_id": render_gpu,
+                "expected_device": resources.gpu_identity(render_gpu)
+                if render_gpu is not None
+                else None,
+            }
+            cfg = {
+                "nonce": nonce,
+                "manifest_digest": self.store.manifest["digest"],
+&gt;               "coordinator_lease_id": self.store.lease_id,
+                                        ^^^^^^^^^^^^^^^^^^^
+                "episodes_per_task": self.store.manifest["episodes_per_task"],
+                "physical_slot_id": self.slot_ids[worker],
+                "physical_worker": worker,
+                "gpu_id": self.worker_gpus[worker],
+                "rendering": render_plan,
+                "task_root": str(self.store.root / "_internal/tasks"),
+                "tasks": {
+                    name: {
+                        "dataset_dir": directory,
+                        "metadata_sha256": self.store.manifest["experiment"][
+                            "task_metadata"
+                        ][name],
+                        "horizon": self.store.manifest["horizons"][name],
+                    }
+                    for name, directory in self.inputs["tasks"].items()
+                },
+                "source_files": {
+                    key: {
+                        "path": str(CHILD / path),
+                        "sha256": hashlib.sha256(
+                            (CHILD / path).read_bytes()
+                        ).hexdigest(),
+                    }
+                    for key, path in {
+                        "worker": "cosmos_framework/simulation/robocasa/eval_v2_worker.py",
+                        "native": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+                        "adapter": "cosmos_framework/simulation/robocasa/eval_v2_adapter.py",
+                        "slot": "cosmos_framework/simulation/robocasa/eval_v2_slot.py",
+                        "rendering": "cosmos_framework/simulation/robocasa/render_devices.py",
+                        "media": "cosmos_framework/evaluation/robocasa_v2/media.py",
+                        "generated_video": "cosmos_framework/evaluation/robocasa_v2/generated_video.py",
+                    }.items()
+                },
+                "settings": {
+                    "server_url": f"http://127.0.0.1:{port}",
+                    "horizon": self.store.manifest["horizons"][task],
+                    "execution_profile": self.cfg.get("execution_profile", "phase_a"),
+                    "max_infer_batch_size": self.cfg.get("max_infer_batch_size", 1),
+                    "local_memory_mode": self.store.manifest["protocol"][
+                        "local_memory"
+                    ],
+                    **(
+                        {"local_evidence_profile": "sim_shared_vae"}
+                        if self.shared_vae_profile
+                        else {}
+                    ),
+                    "capacity_profile": self.capacity_profile,
+                    "sampling_protocol": self.store.manifest["protocol"]["sampling"],
+                    "predict_timeout_s": self.cfg["request_timeout_s"],
+                    "save_rollout_mp4": self.cfg["save_rollout_mp4"],
+                    "rollout_mp4_first_n_per_task": self.cfg.get(
+                        "rollout_mp4_first_n_per_task"
+                    ),
+                    "save_generated_video": self.cfg["save_generated_video"],
+                    "encoder_grace_s": self.cfg["encoder_grace_s"],
+                    "media_drain_timeout_s": self.cfg.get(
+                        "media_drain_timeout_s", 300.0
+                    ),
+                },
+                "simulation_libraries": self.inputs["simulation_libraries"],
+                "runtime_args": {
+                    "runtime_probe_script": str(ROOT / "scripts/robocasa_vendor.py"),
+                    "runtime_lock_file": self.cfg["vendor_lock"],
+                    "runtime_asset_manifest": self.cfg.get("asset_manifest"),
+                    "expected_runtime_digest": self.inputs["runtime"]["digest"],
+                    "runtime_tasks": ",".join(self.store.manifest["task_order"]),
+                },
+            }
+E           AttributeError: 'Store' object has no attribute 'lease_id'
+
+scripts/robocasa_eval_v2/runtime.py:507: AttributeError</failure></testcase></testsuite></testsuites>

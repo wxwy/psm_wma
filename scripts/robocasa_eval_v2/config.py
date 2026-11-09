@@ -17,6 +17,9 @@ DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
     "local_memory_mode": "required",
+    "single_latency_arm": None,
+    "local_evidence_profile": "server_vae",
+    "sim_shared_vae": None,
     "scheduling_protocol": ROUND_SCHEDULE,
     "streaming_resources": None,
     "batch_wait_ms": 20,
@@ -73,6 +76,8 @@ def resolve(argv=None):
     p.add_argument("--render-backend", choices=("egl", "osmesa"))
     p.add_argument("--execution-profile", choices=("phase_a", "phase_b"))
     p.add_argument("--local-memory-mode", choices=("off", "required"))
+    p.add_argument("--single-latency-arm", choices=("A", "B", "C"))
+    p.add_argument("--local-evidence-profile", choices=("server_vae", "sim_shared_vae"))
     p.add_argument(
         "--scheduling-protocol", choices=(ROUND_SCHEDULE, STREAMING_SCHEDULE)
     )
@@ -111,6 +116,8 @@ def resolve(argv=None):
         "execution_profile",
         "batch_wait_ms",
         "local_memory_mode",
+        "single_latency_arm",
+        "local_evidence_profile",
         "scheduling_protocol",
         "media_spool_max_jobs",
         "media_spool_max_bytes",
@@ -174,7 +181,9 @@ def resolve(argv=None):
         or cfg["execution_profile"] != "phase_b"
         or cfg["scheduling_protocol"] != STREAMING_SCHEDULE
     ):
-        raise ValueError("stage_episode_limit_per_task requires streaming Phase B and a strict positive prefix")
+        raise ValueError(
+            "stage_episode_limit_per_task requires streaming Phase B and a strict positive prefix"
+        )
     if cfg["execution_profile"] not in ("phase_a", "phase_b"):
         raise ValueError("explicit execution profile required")
     if cfg["scheduling_protocol"] not in (ROUND_SCHEDULE, STREAMING_SCHEDULE):
@@ -204,7 +213,9 @@ def resolve(argv=None):
         cfg["sims_per_gpu"] > (32 if is_streaming else 8)
         or cfg["max_infer_batch_size"] > (32 if is_streaming else 8)
         or type(cfg["batch_wait_ms"]) is not int
-        or not 1 <= cfg["batch_wait_ms"] <= 1000
+        or not (0 if cfg.get("single_latency_arm") == "C" else 1)
+        <= cfg["batch_wait_ms"]
+        <= 1000
     ):
         raise ValueError("bounded M/B/wait required")
     if cfg["execution_profile"] == "phase_a" and (
@@ -247,6 +258,9 @@ def resolve(argv=None):
         or type(cfg["save_rollout_mp4"]) is not bool
     ):
         raise ValueError("invalid resource/media policy")
+    from robocasa_eval_v2.shared_vae import validate_profile
+
+    validate_profile(cfg)
     limit = cfg["rollout_mp4_first_n_per_task"]
     if limit is not None and (
         type(limit) is not int
@@ -297,6 +311,10 @@ def execution(cfg):
             resources=cfg["streaming_resources"],
             max_rss_bytes=cfg["max_rss_bytes"],
         )
+    if cfg.get("single_latency_arm") is not None:
+        from robocasa_eval_v2.shared_vae import public_profile
+
+        result["single_latency"] = public_profile(cfg)
     return result
 
 

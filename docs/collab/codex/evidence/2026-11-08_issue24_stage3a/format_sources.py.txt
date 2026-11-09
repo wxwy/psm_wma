@@ -1,0 +1,27 @@
+"""Format only the exact Stage3A changed Python files, without project imports."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+root = Path(sys.argv[1]).resolve()
+out = Path(sys.argv[2]).resolve()
+out.mkdir(parents=True, exist_ok=False)
+sources = []
+for repo, base in ((root, "afd0b21f1f994bdf2b21cfbaa4a260ced8eeaaf9"),
+                   (root / "cosmos-framework", "0a2119782fb5078fee3359f9ef7383d788744458")):
+    for args in (("diff", "--name-only", base, "--", "*.py"),
+                 ("ls-files", "--others", "--exclude-standard", "--", "*.py")):
+        names = subprocess.check_output(["git", "-C", str(repo), *args], text=True).splitlines()
+        sources += [str(repo / name) for name in names]
+sources = sorted(set(sources))
+(out / "scope.json").write_text(json.dumps(sources, indent=2) + "\n")
+env = {**os.environ, "CUDA_VISIBLE_DEVICES": "", "RUFF_CACHE_DIR": str(out / "ruff-cache")}
+for label, args in (("lint_fix", ("check", "--fix")), ("format", ("format",))):
+    with (out / f"{label}.log").open("wb") as log:
+        result = subprocess.run([sys.executable, "-m", "ruff", *args, *sources], cwd=root, env=env,
+                                stdout=log, stderr=subprocess.STDOUT)
+    print(f"{label}: exit={result.returncode}, files={len(sources)}", flush=True)
+    if result.returncode:
+        raise SystemExit(result.returncode)

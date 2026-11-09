@@ -1,0 +1,113 @@
+{
+  "status": "RED_EXPECTED",
+  "expected_failures": 3,
+  "pytest_exit_each": 1,
+  "old_root": "ea64c26f7738f2efba5c33c78f18eab475230a61",
+  "old_child": "90ac5e91c5919cdb1d228aebd797e40327900981",
+  "production_sha256_before": {
+    "scripts/robocasa_eval_v2/shared_vae.py": "619051e3b0a33f4989294927c1f0a6fd328438695cb38d73750aea70a61c9583",
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py": "013126241e89c2185a40067820e974a45d62b91c60f6d0929c331da6d6fa8919"
+  },
+  "production_sha256_after": {
+    "scripts/robocasa_eval_v2/shared_vae.py": "619051e3b0a33f4989294927c1f0a6fd328438695cb38d73750aea70a61c9583",
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py": "013126241e89c2185a40067820e974a45d62b91c60f6d0929c331da6d6fa8919"
+  },
+  "test_sha256": {
+    "cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py": "6edee3cf0b3ac584d2d4b4b40f104d09d881e6271bae077a655926c4e7ccd484",
+    "tools/v3/eval_v2_batch_tests/shared_vae_test.py": "b100c0e9c415366a580a9c496d2496298c9a55f1b217ce2ef3c3ab13c12e7225",
+    "tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py": "9c30ae999011819f86f2749436cca2e97f49d41d301ae98e69371c171372278e"
+  },
+  "tests_injected": true,
+  "source_note": "Old production byte-identical; new tests/fixture injected, not a clean old Formal Pair gate.",
+  "worker_log": "/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_float_fd_tmp/test_registry_worker_is_peer_s0/run/logs/vae_GPU4_3563c58922e84bdf800e36ab74a560bc.log",
+  "commands": [
+    {
+      "name": "ruff_fix",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--fix",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "h2_float_fd",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof",
+        "-k",
+        "default10float and False",
+        "--basetemp=/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_float_fd_tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_float_fd.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "exit_code": 1
+    },
+    {
+      "name": "h2_fractional_preflight",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/tools/v3/eval_v2_batch_tests/shared_vae_test.py::test_c_fractional_timeout_rejected_by_public_resolve_before_fresh_namespace",
+        "--basetemp=/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_fractional_preflight_tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_fractional_preflight.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "exit_code": 1
+    },
+    {
+      "name": "h3_bare_uuid",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h2h3-formal/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py::test_cuda_uuid_full_identity_accepts_only_equivalent_prefix[bare]",
+        "--basetemp=/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h3_bare_uuid_tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h3_bare_uuid.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h2h3-formal",
+      "exit_code": 1
+    }
+  ]
+}

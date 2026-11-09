@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.630" timestamp="2026-11-08T08:40:30.472464+00:00" hostname="f82e45f755b2"><testcase classname="" name="test_c_fractional_timeout_rejected_by_public_resolve_before_fresh_namespace" time="0.131"><failure message="Failed: DID NOT RAISE &lt;class 'ValueError'&gt;">tmp_path = PosixPath('/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_fractional_preflight_tmp/test_c_fractional_timeout_reje0')
+
+    def test_c_fractional_timeout_rejected_by_public_resolve_before_fresh_namespace(
+        tmp_path,
+    ):
+        import yaml
+    
+        from robocasa_eval_v2.config import resolve
+        from tools.v3.eval_v2_production_tests.entry_test import config
+    
+        path, inputs = config(tmp_path)
+        cfg = {**profile_config(tmp_path), **inputs, "terminate_grace_s": 10.5}
+        path.write_text(yaml.safe_dump(cfg))
+&gt;       with pytest.raises(ValueError, match="whole.*second"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE &lt;class 'ValueError'&gt;
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:190: Failed</failure></testcase></testsuite></testsuites>

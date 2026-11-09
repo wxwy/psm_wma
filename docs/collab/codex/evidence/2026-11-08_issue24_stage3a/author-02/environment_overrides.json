@@ -1,0 +1,14 @@
+{
+  "CUDA_VISIBLE_DEVICES": "",
+  "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+  "PYTEST_ADDOPTS": "",
+  "HF_HUB_OFFLINE": "1",
+  "TRANSFORMERS_OFFLINE": "1",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "PYTHONPATH": "/workspace/work/psm-wma-stage3a-issue24:/workspace/work/psm-wma-stage3a-issue24/cosmos-framework:/workspace/work/psm-wma-stage3a-issue24/scripts",
+  "RUFF_CACHE_DIR": "/workspace/work/issue24-stage3a-evidence/author-02/cache/ruff",
+  "XDG_CACHE_HOME": "/workspace/work/issue24-stage3a-evidence/author-02/cache/xdg"
+}

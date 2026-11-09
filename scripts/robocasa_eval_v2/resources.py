@@ -32,7 +32,8 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
             raise RuntimeError("BLOCKED_RESOURCE: invalid selected GPU identity")
         devices[index] = uid
     allowed = set()
-    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE:
+    shared = cfg.get("local_evidence_profile") == "sim_shared_vae"
+    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE or shared:
         allowed = owned_group_pids(processes)
     else:
         for p in processes:
@@ -54,10 +55,13 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
         "owned_pids": sorted(allowed),
         "rss_bytes": rss,
     }
-    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE:
+    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE or shared:
         result["owned_gpu_bytes"] = owned_gpu_memory(selected_ids, allowed)
+        settings = (
+            cfg["sim_shared_vae"]["resources"] if shared else cfg["streaming_resources"]
+        )
         if any(
-            v > cfg["streaming_resources"]["max_owned_gpu_bytes"]
+            v > settings["max_owned_gpu_bytes"]
             for v in result["owned_gpu_bytes"].values()
         ):
             raise RuntimeError("BLOCKED_RESOURCE: owned GPU memory budget")

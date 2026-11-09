@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.789" timestamp="2026-11-08T08:40:29.316477+00:00" hostname="f82e45f755b2"><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-False]" time="0.216"><failure message="ValueError: shared Worker actual READY identity mismatch">tmp_path = PosixPath('/workspace/work/issue24-stage3a-h2h3-evidence/red-old-code/h2_float_fd_tmp/test_registry_worker_is_peer_s0')
+omega_constructor = False, grace_s = 10.0
+
+    @pytest.mark.parametrize("omega_constructor", [False, True])
+    @pytest.mark.parametrize(
+        "grace_s",
+        [3, DEFAULTS["terminate_grace_s"], 15.0, 15],
+        ids=["original3", "default10float", "explicit15float", "integer15"],
+    )
+    def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof(
+        tmp_path,
+        omega_constructor,
+        grace_s,
+    ):
+        cfg = profile_config(tmp_path)
+        cfg.update(
+            server_python=sys.executable, server_start_s=10, terminate_grace_s=grace_s
+        )
+        identity, constructor = IDENTITY, {}
+        if omega_constructor:
+            from cosmos_framework.inference.robocasa_vae_daemon import (
+                loaded_vae_identity,
+                worker_constructor_config,
+            )
+            from cosmos_framework.inference.robocasa_vae_daemon_test import _tokenizer
+    
+            tokenizer = _tokenizer(omega=True)
+            identity = loaded_vae_identity(tokenizer)
+            constructor = worker_constructor_config(tokenizer)
+            raw = json.dumps(constructor).encode()
+            Path(cfg["sim_shared_vae"]["vae_config"]).write_bytes(raw)
+            cfg["sim_shared_vae"]["vae_config_sha256"] = hashlib.sha256(raw).hexdigest()
+        run = tmp_path / "run"
+        (run / "logs").mkdir(parents=True)
+    
+        class RootRuntime:
+            def __init__(self):
+                self.cfg, self.child_root = (
+                    cfg,
+                    Path(__file__).resolve().parents[3] / "cosmos-framework",
+                )
+                self.registry = Registry(run, 0.2)
+                self.store = SimpleNamespace(root=run)
+                self.stop, self.state_lock, self.starting = (
+                    threading.Event(),
+                    threading.RLock(),
+                    threading.Condition(),
+                )
+                self._closing = False
+                self.logs, self.proofs, self.commands = [], [], []
+                self.worker_render_gpus, self.worker_gpus = {"slot": 4}, {"slot": 6}
+                self.servers, self.server_owners = (
+                    {"GPU6": (None, None, 1)},
+                    {"GPU6": POLICY_CONTROL},
+                )
+                self.environment = dict(os.environ, PYTHONPATH=str(self.child_root))
+                self.startup_budget = StartupBudget(
+                    cfg, lambda: {"rss_bytes": 0, "owned_gpu_bytes": {4: 0, 6: 0}}
+                )
+    
+            def _shared_gpu_identity(self, gpu):
+                return {
+                    "gpu_id": gpu,
+                    "uuid": "GPU-synthetic-cpu-test",
+                    "pci_bus_id": "0000:00:00.0",
+                }
+    
+            def _spawn(self, command, **kwargs):
+                self.commands.append(list(command))
+                return self.registry.start(command, **kwargs)
+    
+            def _proof(self, kind, value):
+                self.proofs.append((kind, copy.deepcopy(value)))
+    
+        runtime = RootRuntime()
+        fixture = Path(__file__).with_name("shared_vae_daemon_fixture.py")
+        supervisor = module.SharedVAESupervisor(
+            runtime,
+            policy_type=lambda url, token: lambda operation, body, end: {"enrolled": True},
+            command_factory=lambda config, private_fd, ready_fd: [
+                sys.executable,
+                "-B",
+                str(fixture),
+                str(private_fd),
+                str(ready_fd),
+            ],
+        )
+        external = subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"])
+        sim, sim_record = runtime.registry.start(
+            [sys.executable, "-c", "import signal; signal.pause()"], kind="simulator-slot"
+        )
+        handle = None
+        try:
+&gt;           handle = supervisor.ensure(
+                "slot",
+                {
+                    "local_feature": {
+                        "identity": identity,
+                        "history_source": "sim_shared_vae",
+                        "clock_domain": "cpu-clock",
+                        "worker_constructor_config": constructor,
+                    }
+                },
+            )
+
+tools/v3/eval_v2_batch_tests/shared_vae_test.py:645: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;robocasa_eval_v2.shared_vae.SharedVAESupervisor object at 0x7faf8c36a1e0&gt;
+worker = 'slot'
+policy_info = {'local_feature': {'clock_domain': 'cpu-clock', 'history_source': 'sim_shared_vae', 'identity': {'encoder_backend': 'e...ig_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ...}, 'worker_constructor_config': {}}}
+
+    def ensure(self, worker, policy_info):
+        runtime, cfg = self.runtime, self.runtime.cfg
+        gpu = runtime.worker_render_gpus[worker]
+        with self.lock:
+            if self.closing:
+                raise RuntimeError("shared Worker supervisor is closing")
+            if gpu in self.handles:
+                handle = self.handles[gpu]
+                if handle.owned.proc.poll() is not None:
+                    raise RuntimeError(
+                        "shared Worker exited; restart requires a fresh Session/epoch"
+                    )
+                return handle
+            if runtime.stop.is_set():
+                raise RuntimeError("cancelled before shared Worker startup")
+            settings = cfg["sim_shared_vae"]
+            feature = policy_info["local_feature"]
+            if (
+                feature.get("history_source") != "sim_shared_vae"
+                or feature["identity"]["encoder_backend"] != "eager"
+            ):
+                raise ValueError("C Policy did not attest the actual eager VAE")
+            constructor = strict_json(
+                Path(settings["vae_config"]).read_bytes(), max_bytes=65536
+            )
+            if constructor != feature["worker_constructor_config"]:
+                raise ValueError(
+                    "frozen Worker configuration differs from actual Policy constructor"
+                )
+            socket_root = Path(tempfile.mkdtemp(prefix="psm24-vae-"))
+            socket_root_identity = _directory_identity(socket_root)
+            worker_id, epoch, key_id = (
+                "GPU" + str(gpu),
+                uuid.uuid4().hex,
+                uuid.uuid4().hex,
+            )
+            signing, control = secrets.token_bytes(32), secrets.token_bytes(32)
+            public = {
+                "worker_id": worker_id,
+                "worker_epoch": epoch,
+                "key_id": key_id,
+                "clock_domain": feature["clock_domain"],
+                "identity": feature["identity"],
+                "vae_weights": settings["vae_weights"],
+                "vae_file_sha256": settings["vae_weights_sha256"],
+                "constructor_config": constructor,
+                "socket_path": str(socket_root / "v"),
+                "bmax": 1,
+                "wait_ms": 0,
+                "physical_device": runtime._shared_gpu_identity(gpu),
+                "drain_timeout_s": cfg["terminate_grace_s"],
+            }
+            secret_read, secret_write = os.pipe()
+            ready_read, ready_write = os.pipe()
+            owned = None
+            log = (runtime.store.root / "logs" / f"vae_{worker_id}_{epoch}.log").open(
+                "ab"
+            )
+            with runtime.state_lock:
+                runtime.logs.append(log)
+            command = [
+                cfg["server_python"],
+                "-B",
+                "-m",
+                "cosmos_framework.inference.robocasa_vae_daemon",
+                "--bootstrap-fd",
+                str(secret_read),
+                "--ready-fd",
+                str(ready_write),
+            ]
+            if self.command_factory is not None:
+                command = self.command_factory(public, secret_read, ready_write)
+            try:
+                with runtime.startup_budget.reserve("vae:" + str(gpu), "vae", gpu):
+                    owned, record = runtime._spawn(
+                        command,
+                        kind="shared_vae_worker:" + worker_id,
+                        env=dict(runtime.environment, CUDA_VISIBLE_DEVICES=str(gpu)),
+                        cwd=runtime.child_root,
+                        pass_fds=(secret_read, ready_write),
+                        stdout=log,
+                        stderr=log,
+                    )
+                    os.close(secret_read)
+                    secret_read = None
+                    os.close(ready_write)
+                    ready_write = None
+                    private = canonical_json(
+                        {
+                            "public": public,
+                            "signing_key_hex": signing.hex(),
+                            "control_capability_hex": control.hex(),
+                        }
+                    )
+                    if len(private) &gt; 65536:
+                        raise ValueError("bounded private Worker bootstrap required")
+                    deadline = time.monotonic_ns() + int(cfg["server_start_s"] * 1e9)
+                    os.set_blocking(secret_write, False)
+                    while private:
+                        if not select.select(
+                            [], [secret_write], [], min(0.1, _remaining(deadline))
+                        )[1]:
+                            continue
+                        count = os.write(secret_write, private)
+                        private = private[count:]
+                    os.close(secret_write)
+                    secret_write = None
+                    proof = _read_event(ready_read, owned, deadline, runtime.stop)
+                    expected = {
+                        "kind": "READY",
+                        "pid": owned.proc.pid,
+                        "worker_id": worker_id,
+                        "worker_epoch": epoch,
+                        "key_id": key_id,
+                        "clock_domain": public["clock_domain"],
+                        "bmax": 1,
+                        "wait_ms": 0,
+                    }
+                    if (
+                        any(proof.get(key) != value for key, value in expected.items())
+                        or proof["attestation"]["identity"] != public["identity"]
+                        or proof["physical_device"] != public["physical_device"]
+                    ):
+&gt;                       raise ValueError("shared Worker actual READY identity mismatch")
+E                       ValueError: shared Worker actual READY identity mismatch
+
+scripts/robocasa_eval_v2/shared_vae.py:679: ValueError</failure></testcase></testsuite></testsuites>

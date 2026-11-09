@@ -1,0 +1,53 @@
+{
+  "schema": "issue24-h2-h3-publication-block-v1",
+  "observed_at_utc": "2026-11-08 08:48:30 UTC",
+  "formal_root": "599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e",
+  "child_gitlink": "11e1855d58cb9f017243a08d610fb33a4443b773",
+  "author_cpu": {
+    "status": "PASS",
+    "top_level_tests_passed": 738,
+    "subtests_passed": 207,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "shell_exit": 0,
+    "source_unchanged": true,
+    "native_identity_unchanged": true,
+    "ruff_changed_python_files": 5
+  },
+  "publication_status": "BLOCKED_ACCOUNT_EMAIL_VERIFICATION",
+  "git_push": {
+    "exit_code": 128,
+    "http_status": 403,
+    "remote_message": "You must verify your email address.",
+    "attempted_ref": "refs/heads/v3-stage3a-issue24-20261108",
+    "repository": "wxwy/cosmos-framework"
+  },
+  "github_api": {
+    "tool": "github_create_blob",
+    "http_status": 403,
+    "error": "GitHub API error 403: {\"message\":\"At least one email address must be verified to do that.\",\"documentation_url\":\"https://docs.github.com/articles/adding-an-email-address-to-your-github-account\",\"status\":\"403\"}",
+    "error_code": "FORBIDDEN"
+  },
+  "published_new_source_objects_or_refs": false,
+  "pull_requests_updated": false,
+  "remote_prs": [
+    {
+      "url": "https://github.com/wxwy/psm_wma/pull/25",
+      "head_sha": "5e45b02027d18b368751f1b22ea6d292c93e77bc",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "url": "https://github.com/wxwy/cosmos-framework/pull/7",
+      "head_sha": "90ac5e91c5919cdb1d228aebd797e40327900981",
+      "draft": true,
+      "merged": false
+    }
+  ],
+  "user_action_required": "Verify at least one email address on the GitHub account; https://github.com/settings/emails",
+  "original_remote_gpu_evidence": "Unmodified; server not accessed",
+  "source_or_test_changes_after_cpu_gate": false,
+  "new_cpu_gate_or_gpu_retry_for_identity_only_publication": "No source changes planned; existing tested Pair retained",
+  "note": "Local implementation/evidence/Inbox commits are prepared, not delivered to GitHub. No independent review request delivery, approval, merge or GPU success claimed."
+}

@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_READY_PUBLICATION_BLOCKED",
+  "archive": "/workspace/work/issue24-stage3a-h2h3-evidence/issue24-h2-h3-local-review.tar.gz",
+  "bytes": 325087,
+  "sha256": "a66d97134d70240d63c6b3a5809e01f6bcaca1f2679989032a943fd7b7e7dc53",
+  "bundled_root_metadata_head": "a835f7faca22d70b4d2f3d1517dc353c2ce9a076",
+  "formal_root": "599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e",
+  "child_gitlink": "11e1855d58cb9f017243a08d610fb33a4443b773",
+  "raw_artifacts_verified": 76,
+  "git_bundles_verified": true,
+  "note": "Bundle includes source patches and original CPU evidence; later docs-only commits do not replace Formal Root or bundled HEAD."
+}

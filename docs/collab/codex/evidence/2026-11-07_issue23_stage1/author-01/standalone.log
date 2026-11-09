@@ -1,0 +1,42 @@
+....................F.................................................................................. [ 59%]
+......................................................................   [100%]
+=================================== FAILURES ===================================
+_________ test_start_rejects_unsafe_or_foreign_paths[public_directory] _________
+
+socket_root = PosixPath('/tmp/psm23-ipc-9sl16ycm'), kind = 'public_directory'
+
+    @pytest.mark.parametrize("kind", ["symlink", "public_directory", "existing_socket"])
+    def test_start_rejects_unsafe_or_foreign_paths(socket_root, kind):
+        parent, foreign = socket_root / "ipc", socket_root / "foreign"
+        foreign.mkdir(mode=0o700)
+        existing = None
+        if kind == "symlink":
+            parent.symlink_to(foreign, target_is_directory=True)
+        else:
+            parent.mkdir(mode=0o755 if kind == "public_directory" else 0o700)
+            if kind == "existing_socket":
+                existing = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                existing.bind(str(parent / "vae.sock"))
+        try:
+>           with pytest.raises((ValueError, PermissionError, FileExistsError)):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE any of (<class 'ValueError'>, <class 'PermissionError'>, <class 'FileExistsError'>)
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py:347: Failed
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35
+  /workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35
+  /workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py:35: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_start_rejects_unsafe_or_foreign_paths[public_directory]
+1 failed, 172 passed, 3 warnings, 185 subtests passed in 8.59s

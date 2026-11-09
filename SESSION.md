@@ -1,3 +1,439 @@
+# 2026-11-08 — H4 published/readback PASS; narrow independent Code Gate handoff
+
+Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child-Gitlink
+00f30235da6ffb085a9304ef6501ede509203092 published through normal Child-first/
+Root pushes to existing isolated branches. PR25/PR7 updated and fetched Draft/
+open/unmerged.17/17 remote source/gate/JUnit/source-proof/Inbox/original-review
+Blob SHAs matched local Git;77/77 raw archive SHA256 passed. C18 and A/B8-source
+proofs read back READY, default guard factory=None,0 environment creations.
+Root production unchanged; source/tests unchanged after exact clean Pair author
+821+207 PASS/static2PASS/nativeidentity unchanged/source_unchanged true.
+Original RED/source fixtures/hardware failure retained; official V3 7b8b733e /
+Child1ca30805 unchanged. No GPU/server/realSim/SR/B8/training/old-job/merge.
+
+Fresh H4 incremental GPT Code Gate requested through PRs and canonical Inbox;
+publication is availability, not reviewer ACK/approval or real C1S1 acceptance.
+Evidence commitfcf5aaa6615a00cc60a2ea9449f8b90488e678d3; docs-only successors
+never replace Formal Root. Task REVIEW; no background polling/GPU retry claimed.
+Handoff docs/collab/codex/reviews/2026-11-08_Issue24_H4_8a17c3db_00f30235_Incremental_Code_Review_Request.md
+Receipt docs/collab/codex/evidence/2026-11-08_issue24_h4_publication/publication_receipt.json
+PRs https://github.com/wxwy/psm_wma/pull/25 and https://github.com/wxwy/cosmos-framework/pull/7
+
+# 2026-11-08 — H4 exact Pair author CPU PASS; narrow review publication
+
+Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child-Gitlink
+00f30235da6ffb085a9304ef6501ede509203092. Exact clean Pair author-01:
+821top-level+207subtests PASS,0fail/error/skip,Shell0,source_unchanged true;
+Ruff2 changedPython files PASS; native constructor/full identity unchanged.
+H4 new80 cases + original3 defaultWorker cases run along original738 regressions.
+Actual Root sealed C18 and legacy A/B8-label proofs reach Actor default guard READY;
+strict all-label/origin/hash/profile negatives fail before renderer. No factory
+bypass; only execution boundaries doubled. Successful old-code RED1FAIL expected
+and earlier unlocked-Store harness failure retained; RED/GREEN testSHA identical.
+Evidence docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h4_actor_sources/;
+handoff docs/collab/codex/reviews/2026-11-08_Issue24_H4_8a17c3db_00f30235_Incremental_Code_Review_Request.md.
+Task REVIEW for fresh H4 independent Code Gate, not hardware acceptance. Original
+server failure evidence untouched; no GPU/server/realSim/SR/B8/training/V3 merge.
+
+# 2026-11-08 — H4 Child source fix frozen; preparing exact Pair CPU
+
+New Child00f30235da6ffb085a9304ef6501ede509203092 changes only Actor25lines:
+fixed ten module imports/origins for explicit phase_b+sim_shared_vae+required,
+unknown/inconsistent evidence profiles fail closed, original exact source-label
+and imported path/SHA verification unchanged. Root production untouched; new
+Root integration test uses real Runtime._setup_actor sealed source config and
+actual Child serve(factory=None), only execution/renderer/env boundaries doubled.
+
+First RED harness attempt retained red-old-code/: Store fixture forgot lock and
+failed lease_id before Actor. Only new test fixture corrected to store.locked;
+original test/runner snapshots preserved. Successful red-old-code-02 proves old
+production byte-identical, actual RootC18 rejected by old Actor base8 with exact
+incomplete native source witnesses, pytest1FAIL expected. That final test SHA
+will be identical for GREEN; Root sealed config remains unchanged in all tests.
+Formatter2files unchanged. Next exact clean Pair author CPU includes new80 H4
+cases, original default-worker3 and original Stage3A/H1/H2/H3/A-B protections;
+zero fail/error/skip, static and source fingerprint/nativeidentity equality.
+No GPU/data-server/checkpoint/realSim/merge/training or old-job operations.
+
+# 2026-11-08 — Issue24 H4 Actor source-witness remedy claimed
+
+Owner latest instruction + exact H4 report/Issue24 comment6720302846 authorize
+only Child Actor C-mode source-witness contract repair and CPU/static evidence.
+Existing approved/tested source Pair Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e /
+Child11e1855d58cb9f017243a08d610fb33a4443b773; H2/H3 CPU and real startup now
+PASS historically; H4 real Actor blocked before rendering/reset/step. Original
+hardware evidence stays on data, not accessed/copied by Codex. No new SR claim.
+
+Remote candidateRoot878f1bb6d6f61996850d57c75f1d70502e04886b fetched and verified
+fast-forward from480317f4; four reviewer docs/Inbox commits preserved. Created
+isolated worktrees /workspace/work/psm-wma-stage3a-h4-formal and Child, local
+branches v3-stage3a-h4-source-20261108, startRoot878f1bb6/Child11e1855d. Official
+V3 7b8b733e/Child1ca30805 unchanged; prior worktrees/PR4/5/6 untouched.
+
+Main owns ONLY Child simulation/robocasa/eval_v2_worker.py production; new Root
+tools/v3/eval_v2_batch_tests/actor_source_witness_test.py integration regression;
+Root Gitlink/SESSION/TODO/evidence/append-only Inbox. No delegation or agents.
+Add exact source-defined ten imports only for explicit phase_b+sim_shared_vae+
+required; preserve exact label-set and imported path/SHA checks. Unknown profile,
+missing/extra/wrong source/checkout/changed mode must fail before rendering/reset.
+A/off and B/server_vae exact legacy8, original PhaseA7/factory path unchanged.
+No new source map derived from cfg, no Root production edits, no model/TTT/VAE/
+Batch/Resume changes. Test actual Root._setup_actor sealed config through actual
+Child serve(factory=None) with only model/renderer/env boundary doubles; actual
+imports/origins/wire/source guards stay real. First controlled old-code RED,
+then minimal patch/new Pair/CPU original regressions and metadata publication.
+No GPU/server/checkpoint/realSim/training/B8/SR/900EP/V3 merge operations.
+
+# 2026-11-08 — H2/H3 publication and remote readback PASS; independent Code Gate handoff
+
+Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink
+11e1855d58cb9f017243a08d610fb33a4443b773 now published to the existing isolated
+branches. Owner verified email; normal Child-first/Root pushes succeeded, then
+Root PR25 / Child PR7 updated and independently fetched open/draft/unmerged.
+18/18 remote source/JUnit/gate/result/Inbox/original-review Blob SHAs matched
+local Git objects;76/76 raw archive SHA256 passed. Exact Gitlink, clean worktrees,
+no source/test edits after final author Gate. CPU not rerun after email reply.
+Author738+207 PASS/static5PASS/source_unchanged true/nativeidentity unchanged.
+Original RED3, prior403 receipts/local bundle and hardware failure review retained.
+Official RootV3 7b8b733e / Child1ca30805 unchanged. No GPU/server/realSim/merge.
+
+Review request delivered through updated Draft PRs and append-only canonical
+Inbox; availability is not reviewer ACK/approval. Task REVIEW for fresh H2/H3
+incremental GPT Code Gate only. No background polling or hardware retry claimed.
+PRs: https://github.com/wxwy/psm_wma/pull/25 and https://github.com/wxwy/cosmos-framework/pull/7
+Handoff: docs/collab/codex/reviews/2026-11-08_Issue24_H2_H3_599e7ce9_11e1855d_Incremental_Code_Review_Request.md
+Receipt: docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_receipt.json
+Evidence commit57790ff3c544abdde8a87620a77c1bc3c4526b31; docs-only successors
+never replace Formal Root. Next real C-B1 smoke requires Code Gate then separate
+execution handling; P0SR/B8/900EP/training/V3 merge remain outside scope.
+
+# 2026-11-08 — H2/H3 publication resumed after Owner email verification
+
+Owner replied verified. Normal Child-first/Root Git pushes now succeeded:
+Child90ac5e91->11e1855d58cb9f017243a08d610fb33a4443b773;
+Root5e45b020->c53703c407d2ca81788c8dd823a2b416affa5ab9, existing isolated
+v3-stage3a-issue24-20261108 branches, no force. Formal tested implementation
+Root remains599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child11e1855d;
+only docs/evidence/Inbox successors. Author738+207 PASS/static5PASS/sourceunchanged
+and nativeidentity unchanged retained, no source edits/new tests/GPU runs.
+Prior403/block receipts and local recovery bundle retained as historical evidence.
+Update existing Draft PR25/7 to exact Pair and verify remote blobs/refs next;
+no independent approval or GPU/merge acceptance claimed. Task REVIEW.
+
+# 2026-11-08 — H2/H3 local review bundle ready; external email verification required
+
+Code+CPU complete, local Pair Root599e7ce9 / Child11e1855d; source unchanged.
+Local reviewer/recovery tar: /workspace/work/issue24-stage3a-h2h3-evidence/issue24-h2-h3-local-review.tar.gz
+325087 bytes, SHA256 a66d97134d70240d63c6b3a5809e01f6bcaca1f2679989032a943fd7b7e7dc53.
+Contains verified Root/Child Git bundles, narrow source patches, original76 CPU
+artifacts and clear publication-blocked handoff. Bundled RootmetadataHEADa835f7fa;
+Formal testedRoot remains599e7ce9. Root/Child worktrees clean at packaging; no code
+after final Gate. Details in publication/local_bundle.json. GitHub Git+API403
+requires verified account email; request pending with Owner, PR25/7 unchanged.
+On Owner verified-email reply, normal Child-first/Root push, update existing
+Draft PRs to exact Pair and remote-readback; no source changes planned, no GPU.
+
+# 2026-11-08 — H2/H3 code+CPU complete; GitHub publication BLOCKED by email verification
+
+TESTED LOCAL Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child
+11e1855d58cb9f017243a08d610fb33a4443b773. Author738+207 PASS/static5PASS/
+source_unchanged true/nativeidentity unchanged;76 raw evidence files preserved.
+No source/test edits after Gate. Source, evidence and local canonical Inbox
+request commits are complete, but NOT delivered to GitHub.
+
+Actual Child Git push returned HTTP403/exit128: You must verify your email
+address. Connected GitHub create_blob independently returned403/FORBIDDEN:
+At least one email address must be verified to do that. No alternate credentials,
+auth bypass, author rewriting, force push or further write retries attempted.
+Readback still shows Root PR25 head5e45b02027d18b368751f1b22ea6d292c93e77bc /
+Child PR7 head90ac5e91c5919cdb1d228aebd797e40327900981, both Draft/unmerged.
+Official V3 7b8b733e/Child1ca30805 unchanged. No new PR/code Gate delivery claimed.
+User notified through async input: verify at least one GitHub email at
+https://github.com/settings/emails then reply; continue normal Child-first/Root
+push of this same exact Pair, append publication receipt and remote-readback.
+No source/test rerun required unless implementation or tested Pair changes.
+
+Receipt docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_blocked.json.
+Prepare local review bundle/code patches/raw evidence so work is concrete and
+reviewable while account verification is external prerequisite. No GPU/server/
+realSim/merge/training/old-job action. Original hardware evidence untouched.
+
+# 2026-11-08 — H2/H3 exact Pair author CPU PASS; incremental publication
+
+Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink
+11e1855d58cb9f017243a08d610fb33a4443b773. Exact clean Pair author-01:
+738 top-level+207subtests PASS,0failure/error/skip,Shell0,source_unchanged true;
+Ruff5 changed Python files PASS; native constructor bytes/full identity unchanged.
+Controlled RED3 expected failures on byte-identical old production retained;
+RED/GREEN all3test fixture SHA256 identical. Actual8 synthetic CPU privateFD/
+READY/close cases parse integer duration with original whole-second value.
+UUID/NVML strictness tested with CPU mocks; no hardware success claim.
+Evidence docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h2_h3_startup/;
+handoff docs/collab/codex/reviews/2026-11-08_Issue24_H2_H3_599e7ce9_11e1855d_Incremental_Code_Review_Request.md.
+Task REVIEW for fresh independent H2/H3 Code Gate; original hardware failure/raw
+files unchanged. No GPU/server/checkpoint/realSim/P0SR/Stage3B/training/merge.
+
+# 2026-11-08 — H2/H3 candidate source frozen for exact Pair author CPU
+
+Child11e1855d58cb9f017243a08d610fb33a4443b773: strict full128-bit actual CUDA
+UUID syntax, add only GPU- when absent, then unchanged expected UUID + actual
+NVML physical index/UUID/PCI verification. Unique CUDA/all parameters same GPU
+checks remain unchanged. H2 Root adds C-only positive whole-second preflight
+and equivalent int private-FD encoding; leaves resolved cfg/Manifest/A-B/Resume
+and global Child strict_json unchanged. No other production source changes.
+Controlled RED3 on byte-identical old Root ea64/shared_vae and Child90ac/daemon:
+default10.0 actual private FD fails strict JSON;10.5 not rejected by resolve;
+bare actual CUDA UUID wrongly rejected. RED expected3 failures pytest exit1 each,
+source unchanged; injected test/fixture SHA256 preserved. Production formatter
+2files unchanged. New regressions include whole-second READY via original private
+FD/Registry process path and strict CUDA/NVML negatives, all synthetic CPU only.
+Next clean new Pair Gate includes original Stage3A/H1/A-B regressions and native
+constructor/loaded identity old-baseline equality. No GPU/server/realSim/merge.
+
+# 2026-11-08 — Issue24 H2/H3 real C-B1 startup remediation claimed
+
+Latest Owner+formal review and Issue24 comment6719277972 authorize only H2 Root
+whole-second private-FD timeout normalization/preflight, H3 Child strict actual
+CUDA UUID prefix canonicalization, and CPU/static RED/GREEN/READY regressions.
+Read exact formal review for existing Pair Root ea64c26f7738f2efba5c33c78f18eab475230a61
+/ Child90ac5e91c5919cdb1d228aebd797e40327900981. Candidate Rootremote
+5e45b02027d18b368751f1b22ea6d292c93e77bc fetched, descendant of161cdd8e,
+six new reviewer docs/Inbox commits retained. New isolated worktrees
+/workspace/work/psm-wma-stage3a-h2h3-formal and Child; both local branches
+v3-stage3a-h2h3-startup-20261108, start Root5e45b020/Child90ac5e91. Original
+worktrees untouched, official V3 7b8b733e and Child1ca30805 unchanged.
+
+Main owns Root scripts/robocasa_eval_v2/shared_vae.py plus shared_vae_test.py /
+shared_vae_daemon_fixture.py, Child inference/robocasa_vae_daemon.py+daemon_test.py,
+Root Gitlink/SESSION/TODO/evidence/append-only Inbox. No agents/delegation.
+C accepts positive whole seconds including default10.0/15.0, encodes int only
+on private wire, rejects fractional before starting; A/B/config identity/Resume
+and Child strict_json unchanged. CUDA actual full128-bit UUID gets only standard
+prefix normalization; still compare Rootexpected and actual nvidia-smi index,
+UUID/PCI, unique visible CUDA and all loaded parameters same physical device.
+Only CPU test doubles, no GPU/checkpoint/real Sim, no server access/cache changes,
+B8/SR/training/old-job/V3 merge. Original H100 failure evidence untouched.
+Next freeze tests -> controlled old-code RED -> narrow fix/new Pair -> complete
+Stage3A/H1/legacy focused CPU+Ruff -> existing Draft PR25/7 incremental request.
+Current usable Cloud workspace needs no environment/credential configuration.
+
+# 2026-11-08 — Issue24 H1 exact Pair published/readback PASS; incremental review handoff
+
+Formal Root ea64c26f7738f2efba5c33c78f18eab475230a61 / Child-Gitlink
+90ac5e91c5919cdb1d228aebd797e40327900981. Existing Root PR25 and Child PR7
+updated, both independently fetched open/draft/unmerged. 14/14 remote source,
+JUnit/gate/result/Inbox/original-H100-review Blob SHAs matched;49/49 raw artifact
+SHA256 passed. Gitlink exact, clean worktrees before receipt;54 successor paths
+are docs/SESSION/TODO only, no source/test changes after final author Gate.
+Official Root V3 7b8b733e and Child1ca30805 unchanged. Inbox append-only
+78279+3145=81424bytes, below131072. H1 author696+207 PASS/static4PASS/native
+identity+bytes unchanged/source_unchanged true. Original RED/parser failure and
+GPU failure evidence preserved. No remote server or GPU action performed.
+
+New handoff: docs/collab/codex/reviews/2026-11-08_Issue24_H1_OmegaConf_ea64c26f_90ac5e91_Incremental_Code_Review_Request.md
+Evidence commit406175e3e3a688aeda2313697cbb2d8e24bff5fe; publication receipt:
+docs/collab/codex/evidence/2026-11-08_issue24_h1_publication/publication_receipt.json
+PRs: https://github.com/wxwy/psm_wma/pull/25 and https://github.com/wxwy/cosmos-framework/pull/7
+REVIEW for fresh independent H1 Code Gate; no approval/real-model success inferred.
+No automatic polling, hardware retry, P0SR, Stage3B, training/old-job/V3 merge.
+
+# 2026-11-08 — H1 author CPU PASS; incremental review publication
+
+Formal Root ea64c26f7738f2efba5c33c78f18eab475230a61 / Child-Gitlink
+90ac5e91c5919cdb1d228aebd797e40327900981. Exact clean Pair author-02:
+696 top-level+207subtests PASS,0fail/error/skip,Shell0,source_unchanged true,
+native constructor bytes/full loaded identity unchanged against old6842,
+Ruff check/format4 files PASS. Controlled old-code RED2FAIL expected retained.
+Author-01 external mixed-warning JSON parser failure retained; no tests ran,
+source unchanged; corrected only external parser then same-Pair author-02 PASS.
+Only daemon production changed; original Stage3A/A-B regressions retained.
+Task REVIEW for fresh independent H1 CPU Code Gate; no new approval claimed.
+Evidence docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h1_omegaconf/;
+handoff docs/collab/codex/reviews/2026-11-08_Issue24_H1_OmegaConf_ea64c26f_90ac5e91_Incremental_Code_Review_Request.md.
+Original GPU failure review/raw files untouched, no remote server operations.
+No GPU/model/realSim/P0SR/Stage3B/merge/training/old-job operations.
+
+# 2026-11-08 — H1 corrected Child frozen; preparing exact-pair author CPU
+
+Child `90ac5e91c5919cdb1d228aebd797e40327900981` contains only daemon container
+normalization/validation, new real OmegaConf daemon tests and one Policy C-init
+AST-bootstrap regression. Root adds actual OmegaConf constructor variant to the
+existing Registry lifecycle test plus this exact Gitlink. No Root production edit.
+Controlled RED ran 2 real ListConfig tests against byte-identical old6842 daemon:
+2 expected FAIL at canonical JSON, pytest exit1; runner RED_EXPECTED exit0.
+Native constructor bytes and loaded-tensor/config identity golden captured from
+old code. All original logs/source/test hashes preserved in external H1 evidence.
+Production formatter changed only daemon formatting; tests formatted before RED.
+Next exact clean Pair CPU runs all original Stage3A/Root/A-B protections + new H1
+cases with CUDA disabled, strict no-failure/error/skip and source fingerprint check.
+No GPU/real model/checkpoint/server access/merge or original evidence modification.
+
+# 2026-11-08 — Issue24 Stage3A H1 OmegaConf remediation claimed
+
+Owner latest message + exact remote H1 report authorize a narrow constructor
+container serialization fix and focused CPU/static checks only. Prior CPU
+APPROVE_CODE exact Rootef82fe02/Child6842b329 remains historical; H1 real-model
+REQUEST_CHANGES is a distinct Gate. Read actual report and Issue24 comment6718159464.
+Root candidate remote1882959a9ba88a00f4914a4657c07dc203d573a2 fetched and verified
+fast-forward from00a57e1c; four reviewer docs/Inbox commits preserved. New isolated
+worktrees /workspace/work/psm-wma-stage3a-h1-formal, both local branches
+v3-stage3a-h1-omegaconf-20261108, startRoot1882959a/Child6842b329. OfficialV3
+7b8b733e and officialChild1ca30805 unchanged. Current environment already usable;
+no Codex Cloud configuration change needed for this local remediation.
+
+Main owns only Child inference/robocasa_vae_daemon.py and new focused daemon test,
+optional C-bootstrap test extension, Root Gitlink/SESSION/TODO/evidence/Inbox.
+Normalize real OmegaConf containers at the actual-loaded configuration seam;
+retain actual tensor/scale/config hashes, canonical format/size bound, inference
+math/transactions/Resume and Stage3A architecture. Agent review_requirements is
+read-only reviewer. Before tests announce exact CPU commands/environment/output;
+retain old H100 failure provenance without accessing/copying remote server files.
+New Child/Root Pair, raw repeatable CPU evidence and incremental GPT request required
+before any hardware retry. No GPU, model/checkpoint, real Sim, SR, training, old
+job, Stage3B, official merge or earlier-PR operations authorized/performed.
+
+# 2026-11-08 — Issue24 Stage3A published/readback PASS; independent Code Gate handoff
+
+Formal Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child-Gitlink
+`6842b329f71fff8b9813b2d00b83edfc61e3e505`. Root Draft PR25 and Child Draft PR7
+verified open/draft/unmerged. Remote16/16 source/evidence/Inbox Blob SHAs matched
+local Git objects; raw archive77/77 SHA256 passed. Root successors since Formal
+Root contain only docs/SESSION/TODO; source/tests remain unchanged after final
+exact-Pair author Gate. Official V3 advertised7b8b733e and Child1ca30805 unchanged.
+Canonical Inbox append-only70360+2699=73059bytes, below131072 limit; remote blob
+readback passed. Evidence commit3c796fbb4ee214b3e9dafda596b04ab8745bf0fd.
+
+Author CPU:654 top-level+207subtests PASS, JUnit suite tests861/testcase elements654,
+zero failures/errors/skips, Shell0, gate.status PASS, source_unchanged true, Ruff
+check/format PASS. Original failures/logs/JUnit/OS lifecycle/raw traces retained.
+Publication receipt: docs/collab/codex/evidence/2026-11-08_issue24_stage3a_publication/publication_receipt.json
+Handoff: docs/collab/codex/reviews/2026-11-08_Issue24_Stage3A_ef82fe02_6842b329_CPU_Code_Review_Request.md
+PRs: https://github.com/wxwy/psm_wma/pull/25 and https://github.com/wxwy/cosmos-framework/pull/7
+
+Task remains REVIEW for the user-mandated independent GPT Code Gate; publication
+is availability, not reviewer acknowledgement/approval. No background polling or
+new project execution claimed. Real VAE/model/GPU/EGL/RoboCasa/P0 latency/SR,
+Stage3B Action admission, V3 merge, training and old-job operations NOT_RUN.
+
+## Retained implementation/publication history
+
+# 2026-11-08 — Stage3A new Draft PRs published; exact-pair GPT Code Gate requested
+
+Formal implementation Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child
+`6842b329f71fff8b9813b2d00b83edfc61e3e505` unchanged. Root Draft PR25:
+https://github.com/wxwy/psm_wma/pull/25 ; Child Draft PR7:
+https://github.com/wxwy/cosmos-framework/pull/7 . Both are open/draft/unmerged,
+created through GitHub connector; next publication readback verifies exact heads.
+Evidence commit3c796fbb4ee214b3e9dafda596b04ab8745bf0fd archives77 hashed files,
+including all raw failure attempts, real synthetic CPU OS Registry/IPC lifecycle,
+complete/overflow-negative CPU traces. Earlier failed group counts come from raw
+JUnit because runner early exit omits failed group summary; raw originals unchanged.
+Canonical Inbox append byte-checked/append-only; exact author654+207 PASS retained.
+No new project execution after final author-04; official V3/Child/PR4/5/6 untouched.
+
+# 2026-11-08 — Issue24 Stage3A author CPU PASS; publication/Code Gate handoff
+
+Formal Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child-Gitlink
+`6842b329f71fff8b9813b2d00b83edfc61e3e505`, isolated Root/Child branch
+`v3-stage3a-issue24-20261108`. Final author-04: 654 top-level tests +207 subtests
+PASS (JUnit suite tests861 / testcase elements654), zero failures/errors/skips, Shell0, gate.status PASS,
+source_unchanged true. Ruff check/format PASS on36 changed Python files. Earlier
+author-01/02/03 failures retained, never overwritten; details in new handoff.
+
+Exact Pair CPU work complete. Archiving raw logs/XML/identity/source snapshots,
+then publishing two new Draft PRs. Status REVIEW for GPT independent Code Gate;
+no exact-new-Pair reviewer verdict claimed. Root docs-only successors do not
+replace Formal Root. Current official advertised RootV3
+7b8b733e1f585bb44a0eac7c14ad545c29355a86 and Childv3-local-ttt
+1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged by this work. No PR4/5/6 changes,
+real weights/GPU/EGL/RoboCasa/P0 timing/SR/Stage3B/merge/training/old-job actions.
+
+Author handoff: docs/collab/codex/reviews/2026-11-08_Issue24_Stage3A_ef82fe02_6842b329_CPU_Code_Review_Request.md
+Evidence: docs/collab/codex/evidence/2026-11-08_issue24_stage3a/
+Role authority: Owner/Issue24 authorizes code+focusedCPU and new Draft PRs;
+GPT design/review, Codex author, DS separate execution. No obsolete V2/pane
+workflow or background polling asserted. No unresolved DESIGN_DELTA.
+
+## Retained implementation/attempt history
+
+# 2026-11-08 — Issue24 Stage3A implementation claimed
+
+ThirdfocusedGate Root141243da258221aaf3121132e5f7a34a6e9ec38a/Child68015f4c64d7a5d29d310f16e86adfa75571674c author-03 retained: new359PASS+207subtests/Root152PASS, legacy135PASS8FAIL,sourceunchangedtrue. Remainingall8fail werelegacy AST-onlyfixture NameError fornewoptionalpure get_trace/nullcontext globals (moduleimportsnotloadedbyfixture); fixedonlyfixture namespace/imports, oldassertionsunchanged. Narrowannouncedcheck_legacy_fixture.py ranexactlegacyfile:8PASS,exit0,log/JUnitunderlegacy-fixture-check, developmentchecknotFormalGate. Freeze test-onlynewPair andrunfinalsamefocusedGate; no productionchangesafterstrictCmarkerfix.
+
+SecondfocusedGate exactRoot305af76c48a47e3e4c312417a69d4e8376f4a9ee/Child05cf413fb1cfffc0d7d05b18e8803c715125f2ad retainedauthor-02: new359PASS+207subtests,Root152PASS,legacy135PASS8FAIL,staticPASS/sourceunchangedtrue. All8legacyfailures sameproductionclassificationfault: getattr(Mock,'uses_shared_vae',False) fabricatestruthyMock, duck-typedprepare_step/start_replan pickedCpathforlegacyclients. Fixedproductiontoexplicitmarker isTrue forC validation/newhooks/transport; oldregressiontestsunchanged. NewPair+author-03 fullsamefocusedmatrix afterfix; oldFAILspreserved; nohardware/SourceResume.
+
+FirstfocusedauthorGate exactRootc9456eb82e54cc7c0babc4dd32643070ab01ae44/Child2ced1808ccea05731426f4ad488ac75297bbf075 retainedunder `/workspace/work/issue24-stage3a-evidence/author-01`: Ruffcheck/formatPASS, stage3focused357pass2fail+207subtestsPASS,Root/legacygroupsNOT_RUN,sourceunchangedtrue. Actualproductionmetadatafault: failed/cancelled asyncfeatureprepare drains+releasesTicket but_failedrecord omittedquiescent=true, so409poll waitsdespiteproveddrain. Minimalproductionfixwritesquiescent whenabort+drainproven, keepsquarantinepath unchanged; twoexistingdeterministictestscoverbothfail/cancel. Freeze correctednewPairthenrepeatfocusedGate/newdir, nofull435orGPU.
+
+Allwritershandedback; mainformatter executed announcedexternalformat_sources.py on35changedPythonfiles, lint_fix0/format0, logs `/workspace/work/issue24-stage3a-evidence/format-01`. No project/CPUtest/GPU/model/Sim executed yet. Candidate includesexactOwnerpoststep bridge/4frontierskip/currentpre-cropcapture/existingatomicLocalMM/nativeREADY/Registry-peer/privateFD/physicalattestation/ABCstrictprofile/rawtrace. Internalread-onlycrossreviewfoundandclosed schema/actioncanonicalization/Noneboundary/endAPI/FeatureOwnersessionleak/closebuffer/actualdevice/floatNS cases; addedregressions, notformalapproval. Source35filesincludeunchanged-schemaHMACFrame; newWorkerhelper+OwnerProof/T1 integrations explicitlyoptinB1. NextfreezeChild/Rootcodecommit thenexactPairfocusedCPUGate; firsterrorsretained/no skips; nooldGatePASSinheritance.
+
+Ownership supplements: main includes robocasa_transaction_client optional frozenbudget path andActionServer ownerHTTP/capture; decode_test_design additionallyownsnew feature_transactions_test.py andscripts/robocasa_feature_http_test.py (tests only, noexecutions); mkdir_race_design ownsnewboundedfeature_trace.py/test+nativeP0traceglue; Rootagent ownsChildcontract.py/newopt-inexecutionprofiletest asnecessarystrictManifestextension explicitlyrequestedby§7/8, preservingoldschema/MBResume. Newexactoptinfields areimplementationchoices, notinvariantconflictrequiringnewdesign; actualcontradictionstillstopsforDESIGN_DELTA. Tracewriterrawsidecarbounded, ordinaryCoreJSONcontainsmetadataonly.
+
+Owner direct instruction and remote Issue24 authorize coding+focusedCPU only against exactdesignRoot `afd0b21f1f994bdf2b21cfbaa4a260ced8eeaaf9` / Child `0a2119782fb5078fee3359f9ef7383d788744458`. Read frozenStage3design+matrix, exactStage1formalAPPROVE_CODEfile, and Issue24 fullrequest. RemoteofficialV3observed7b8b733e1f585bb44a0eac7c14ad545c29355a86, Childofficial1ca remainsbaseline; designbranchadvertised3975c5d45a526119680d3cf2bd1fda8154414d88 includesafd+inboxledger. Created NEW independentRoot/Childworktrees `/workspace/work/psm-wma-stage3a-issue24`, branches `v3-stage3a-issue24-20261108`, initiallyclean, Rootafd/Child0a. OldStage1/PR4/5/6branchesuntouched. LatestOwnerrolesGPTdesign/review,Codexcode/CPU,DSexecution; nolegacyV2/paneapprovalflow replacesexplicitIssue24scope.
+
+Claim staged ownership (allprojectexecutions main-announced/main-only; noagentcommits): fixture_review owns Child robocasa_vae_worker/client +theirtests sparseboundaryskip; decode_test_design owns new boundarycapture module/tests +narrow omni_mot_model pre-crop observerhook; pipeline_safety_review owns new featureadmission module/tests +robocasa_local_memory_policy/local_memory_online focusedintegration; mkdir_race_design owns Sim native closed_loop/eval_v2_transactions/local_memory_client integration+tests; review_requirements owns Root run-levelWorkerSupervisor/runtime/config/resources/identity/profile+focusedCPUtests and isolatedChilddaemon bootstrap; main owns nativeSession/Batchtransactions +actionPolicyserverHTTP/Ownerwiring/READY/trace +Rootdocs/evidence/canonicalappend-onlyInbox and integration fixes onlyafterhandoff. Explicitly coordinate exactAPIs/files beforeoverlap; retain all unrelated edits. Actualsource/design conflict requires single concrete DESIGN_DELTA inDraftPR and GPTreview, not parallelframework.
+
+Immediate target: B1exact-source codepath, actualpoststep Ownerbinding, atomicfourfrontier0→1..15→16 skip, truePolicycurrentpre-crop cache withoutsecondEncode1, signed15+1 existingOnlineMemory+atomicResponseCommit, nativeREADY/deadline, Registry-peer lifecycle and singleA/B/C opt-in. B4/B8 featureActionadmission disabled. CPUmocks only; norealGPU/Wan/Sim/900EP/training/sourceResume/officialV3changes or oldPRmerges. NewexactChild+RootimplementationSHAs, CPUJUnit/sourcefingerprints andnewDraftPRs→freshGPTCodeGate.
+
+# 2026-11-07 — Issue23 Stage1 Draft PR6 and exact CPU evidence published
+
+Published https://github.com/wxwy/cosmos-framework/pull/6 open/draft/unmerged, head `0a2119782fb5078fee3359f9ef7383d788744458`, baseofficialChild1ca30805. ExactstandaloneCPUformalRoot `3ab4578475d8df5ce93b7bde6c4f2073a46f777e`, samecandidateGitlink0a211978; evidenceRoot `e1230a303ce01526d19ae963a2b02ed5eb4e3d38`, canonicalrequestRoot `9fdaf98d8bf32518d7c29083b22b4964075fdd67`. New isolatedRoot/Childstage1branches pushedwithoutforce; noofficialV3change. RemoteAPI readback matchedall9newChildsource/docsblobIDs+7Rootevidence/requestblobIDs. ParsedremoteAuthorResult/Gate/lifecycle:247top-leveltests+185subtestsPASS,Junit432rows,sourceunchangedtrue,exit0,fullIPCquiescent,externaldummyaliveduringownedcleanup. PR5remoteheadstill8a170d56,draft/unmerged; noPR4changes. Fullreceipt `docs/collab/codex/evidence/2026-11-07_issue23_stage1/publication_receipt.json`. CurrentRoot/Childworktreesclean; receiptcommitisledgeronlyanddoesnotreplaceformalPair.
+
+Stage1authorworkreadyforGPTindependentAPPROVE_CODE/REQUEST_CHANGESreview; noverdictclaimedfromCPUpassorpublication. Stage2GPU/Wan/EGL, Stage3ActionPath/cache15+1+sparserange/P0latencySRandmergeareseparatelygated. Noautomaticbackgroundreviewpolling/GPUexecutionclaimed. ScopehandledasauthorizedOwnerStage1CPUimplementationandnewDraftPRsubmission.
+
+# 2026-11-07 — Issue23 Stage1 focused author CPU PASS; fresh code review next
+
+Formal standalone Pair Root `3ab4578475d8df5ce93b7bde6c4f2073a46f777e` / Child+candidateGitlink `0a2119782fb5078fee3359f9ef7383d788744458`. Announcedrunner executedauthor-02 once, Shell0/gatePASS/source_unchanged=true. New173top-leveltests+185subtestsPASS; legacy74PASS; zeroFailureErrorSkip; JUnit432rows includes185subtests (247top-leveltests). Ruffcheck/formatPASS. ExactsourcePair cleanatstart. Rawlogs/JUnit/identity/versions/sourcebeforeafter andCPUOSlifecycle retainedunder `docs/collab/codex/evidence/2026-11-07_issue23_stage1/`, previousauthor-01FAILpreserved. RunnerSHA256bdf0651e70aec1d063a7b08a3ce63d8342cfb9112036d254d49a3257d84d097b. No realweights/GPU/EGL/Sim/SR or projectfull/DSGateexecution.
+
+Handoff `docs/collab/codex/reviews/2026-11-07_Issue23_Stage1_3ab45784_0a211978_Standalone_CPU_Code_Review_Request.md` requestsindependentGPTAPPROVE_CODE/REQUEST_CHANGESforstandaloneStage1only. Owner-approveddesign8a remainsunaltered; future15+1cacheandsparserangeadapter, realenvsteptrust, PolicyB1actualpeerwait/P0latencySR remainopen. Internalfindingsclosedbeforetests; firstumaskfixturefailurefixedtestonly. OfficialRootV3freshlyfetched `30380d74806aa02173ab2dc52f17eef7cc2f1fdb` stillGitlink1ca; new80b7883d/30380d74areG2docs, untouchedbythisbranch. NextpublishindependentStage1DraftPR,newPairandcanonicalrequest; noofficialmergeorGPUauthorization.
+
+# 2026-11-07 — Issue23 first focused Gate failed on umask-dependent fixture
+
+Exact first CPU pair Root4495399d23381e93e80a5ea98354a7f8529b8af8/Childf64a0396859f8a205caf0cce2318045d479ac844: staticcheck+formatPASS, standalone172pass1fail/185subtestsPASS, legacy notexecuted,source_unchanged=true. Raw artifacts `/workspace/work/issue23-stage1-evidence/author-01`. Solefailuretest_start_rejects_unsafe_or_foreign_paths[public_directory] expected0755 butinheritedumask0077 yields0700. Readumask0077 andactualmkdircode confirmedfixtureassumption. Fixedonlyclient_test toexplicitlychmod0755+assertfixturemode; noprotocol/Worker/IPCproduction changes. NewChildtestcommit tobefrozeninRootcandidate, thenrepeatfocusedGateonnewPair/newoutputdir. RetaininitialFAILunaltered; notGateclosure.
+
+# 2026-11-07 — Issue23 Stage1 implementation frozen for first focused CPU Gate
+
+New Child implementation `f64a0396859f8a205caf0cce2318045d479ac844`, parent approveddesign8a170d56. Delta exactly8 new inference modules/tests plusStage1README, no existingChildPolicy/model/trainingfiles or approveddesign edits. Main formatting command (CUDA_VISIBLE_DEVICES='' python-mruffcheck--fix+format on8newfiles) fixed2 imports, formatted8; finalstaticcheckclean. Read-only internalreviews and deterministic regression additions cover nullcap authorization, concurrentEnd, crossdispatchfairness, shortbudgetdispatch, signaturebinding, boundedcapacity, IPCshutdown/handler/startfailure cleanup, typeddevice-drainquarantine. These are author-side checks, not GPT codeapproval.
+
+Stage1 README explicitly defers15+1boundarycache AND sparseactualsourceStep rangeadapter toStage3; no source renumbering/extraEncode1; currentstandaloneencoderrangescontiguous. Realenvsteptrust and actualPolicyB1nowait remainopen. TypedEncoderDrainUnproven causesstickyquarantine; loadedadapter CUDAfailurewrapper isCPU-mocked only, not actualGPudrainproof. NewtargetRootcandidate changesGitlink in isolatedbranchonly tofreeze cleanCPU sourcePair. OfficialV3 andPR4/PR5 unchanged. NextannouncedexactPairfocusedCPUGate, allWorker/model/GPU/performance/SR outcomescurrentlyNOT_RUN.
+
+# 2026-11-07 — Issue23 Stage1 claimed after exact Stage0 approval
+
+Fetched Root official V3 `92bc50179c4c5b2d35d0db3a7b1ab5f3f41f81a4` and request branch advertised `77f130bb5c68e8fd2cb0594e38512f64f8e326af`; fast-forwarded ff5376cd through5c66ea37/77f130bb. Read exact formal `docs/collab/chatgpt/reviews/2026-11-07_Issue23_Stage0_ChildDesign8a170d56_APPROVE_DESIGN_STAGE0.md`, matching approved Child design8a170d56014af937b146b35e2b89753313614785 and official Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e; verdict APPROVE_DESIGN_STAGE0 authorizes standalone Stage1 CPU only. User directly authorizes Stage1. Initial shorthand fetch lacked tracking ref; explicit refspec retry succeeded before any approval or editing conclusion. Current roles Owner/GPT/Codex/DS override historical V2/Kimi/MM requirements.
+
+Created independent Root/Child `v3-sim-shared-vae-issue23-stage1-20261107`, Root based77f130bb support docs, Child based exact approved8a170d56. PR5 remains unchanged design target. Claim standalone Child files: protocol+protocol_test (protocol agent); Worker+worker_test (worker agent); client/IPC+client_test (IPC agent); optional pure encoder helper+tests (encoder agent); main owns runbook, integration review fixes, Root SESSION/TODO/evidence/append-onlyInbox and isolated candidate Gitlink only. Communicate ownership before cross-file edits. CPU commands announced before execution. No officialRoot, Root production runtime/config, existingPolicy/LocalMemory, realVAEweights/GPU/Sim, checkpoints/training, PR4/PR5 edits, or historical evaluation operations.
+
+Goal: bounded immutable frame submission and signed receipts, independent B1/4/8 READY batching, causal authorized Session frontiers, exactly-once/retry/ACK/End/restart and process cleanup, raw timing spans; real Unix IPC/fake deterministic encoder tests. HMAC and mocked completion are NOT real env.step attestation; Action Path remains unconnected. Boundary15+1 and PolicyB1 actualwait remain future Stage3 open. New implementation SHA plus CPU/static evidence → new independent code review before further gates.
+
+# 2026-11-07 — Issue23 Stage0 docs Draft PR5 published and remotely read back
+
+Docs-only Draft PR https://github.com/wxwy/cosmos-framework/pull/5 is open, draft, unmerged; exact head/primary Child DESIGN target `8a170d56014af937b146b35e2b89753313614785`, base official Child `1ca308055fc41fb69efaeb9efaa23808f164a18e`, six new docs files. Root supporting docs review target `696b3ee8e14339d3eaca448db17c2432f6694e13`; append-only canonical request commit `c4078002aff747886dd0d4e047f9bbfd54a3e5bc`, Inbox53846bytes<131072. Root isolated branch published, no official branch update. Remote API readback matched all six Child design blob IDs plus Root handoff and canonical Inbox; exact remote official V3 remained `a77f3d4bd8a691435d1935025cc1a9766da646a1`, Child v3-local-ttt remained1ca30805. Receipt under evidence/publication_receipt.json.
+
+Nested Child checkout restored (clean, detached) to actual recorded Gitlink1ca30805 after docs publication, so Root is not left with misleading submodule drift. Child design branch/commit8a170d56 remains locally and remotely; inspect its docs with git show or PR5. Primary review target remains8a170d56; this receipt/ledger commit is not an implementation or new Formal Pair. GPT independent design review REQUIRED_NOT_CLAIMED. Stage0 request authored and publication verified; Worker/project CPU/GPU/Sim/latency/SR NOT_RUN, no hardware or SR benefit claim. Next: GPT reviews Stage0 before standalone CPU implementation. Real GPU/Action Path/merge/larger SR still require extra Gates. No automatic background polling claimed.
+
+# 2026-11-07 — Issue23 Stage0 package complete; submit design review only
+
+Isolated Child docs target `8a170d56014af937b146b35e2b89753313614785`, six new docs/spec files (649 insertions); production package tree exactly equals official Child `1ca308055fc41fb69efaeb9efaa23808f164a18e`. Root stays based on official `a77f3d4bd8a691435d1935025cc1a9766da646a1`; Gitlink remains1ca30805. Root claim commit `0f277a0d89cabff437b3980ab347531525fdd236`. Design and evidence handoff: `docs/collab/codex/reviews/2026-11-07_Issue23_Stage0_SharedVAE_P0_Design_Review_Request.md`.
+
+Stage0 draft includes strict single P0 A/B/C, independent multi recipe, complete public Lease and canonical RGB digest, trusted VAE feature provenance, ready-only windows, immutable budgets, private candidates and crash/End cleanup. Internal read-only audits corrected seven concrete documentation inconsistencies and confirmed closure; they are not GPT final review. Single D remains unsupported; all real numerical/performance/SR results NOT_RUN. No PR4 or production edits.
+
+Executed only announced external document validator once: `/workspace/.venvs/psm-wma-cpu/bin/python /workspace/work/issue23-stage0-evidence/validate_design.py --root /workspace/work/psm-wma-sim-shared-vae-issue23 --evidence-dir /workspace/work/issue23-stage0-evidence/validation-01`; exit0/20 design checks PASS. Archived raw JSON/stdout/script under `docs/collab/codex/evidence/2026-11-07_issue23_stage0/`. Python/jsonschema only; no project/model/GPU/Sim execution or external network during validation. Prior HEADs in JSON are intentional pre-commit validation state; content hashes freeze the actual docs.
+
+Current action: publish isolated docs branches + docs-only Draft PR and append canonical request for GPT APPROVE_DESIGN_STAGE0/REQUEST_CHANGES. No claim of design approval or Formal implementation Pair. Stage1 implementation waits for Owner-mandated Stage0 design review; later real GPU/Action Path/large SR/merge remain separately gated. Current Owner roster GPT design/review, Codex isolated implementation/CPU, DS execution; stale V2/Kimi/MM rules do not expand or replace this staged V3 scope. No automated background reviewer polling or hardware execution is claimed.
+
+# 2026-11-07 — Issue23 Stage0 design claimed; implementation not started
+
+Owner Issue23 explicitly requires Stage0 design and acceptance matrix review before implementation. Current task is independent from Issue22/PR4. Fresh fetched/advertised RootV3 `a77f3d4bd8a691435d1935025cc1a9766da646a1`; actual Child/Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`. New isolated Root/Child worktrees `/workspace/work/psm-wma-sim-shared-vae-issue23`, both branch `v3-sim-shared-vae-issue23-stage0-20261107`, initially clean. No main/V2 or PR4 branch used/modified.
+
+Claim Root SESSION/TODO/canonical append-only Inbox and design handoff/evidence only; Child ONLY docs/designs/issue23_sim_shared_vae_stage0/{DESIGN.md,acceptance_matrix.json,recipes/single_latency.json,recipes/multi_sr_throughput.json,trace.schema.json,feature_envelope.schema.json}. All are non-executable Stage0 specifications, not production flags/launchers. Main owns all writes. Four agents inspect base source and Issue23 read-only; no project/test execution. No production source, model/training/cache/checkpoint, officialRootGitlink, server/process/GPU/real simulation or historical evaluation data operations.
+
+P0 first matrix is strict1Server1Sim/PolicyB1/H16/raw15/state15/fps20 A(nativeNoTTT),B(oldServer16Encode1+T16),C(sameLocalcheckpoint asB,SimWorkerB1/wait0,15Encode1+Policyboundaryreuse,16T1). D sameLocalcheckpoint off is currently unsupported by strict config/runtime/DCP mode validator; design may propose explicit future ablation, not bypass guards. Multi performance is separate. Hardware timing/SR/results all NOT_RUN;18x2 smoke never proves SRgain.
+
+Stage0 must define bounded independent per-SimGPU Worker owner, VAE READY microbatch clock, Policy READY batching without inherited admitted-age regression, frozen original deadlines before boundary waits, trusted signed feature producer, causal no-future/lease/epoch/idempotence/end/quiescence, numerical gates and immutable experiment identity. Shared VAE numeric realBF16 B1/B4/B8 vsEncode1/GPU-EGL contention remain unproven; no posthoc tolerance relaxation. Stage1 standaloneWorker/CPU comes only after Stage0review; Stage2hardware and Stage3action-path integration require separate gates.
+
+Current Owner scope excludes evaluation-incident diagnosis. Environment current connected/enforcedrestricted/GitHuballowed/VPNfalse, no repository environment reconfiguration needed for this design task. Root/Child governance, Memory, currentInbox and actual Issue23+4comments read; latestOwner staged ordering overrides obsolete V2/MM/Kimi live polling. Plan publish docs-only Child Draft PR for Stage0 review, Root metadata only; no code implementation authorization inferred from design submission.
+
+## Retained earlier records
+
 # 2026-11-03 — R02 format-only candidate published/readback PASS; STOP for review
 
 Fresh2026-11-03T11:43:20Z push/fetch/advertised-ref/Git-object readback PASS:

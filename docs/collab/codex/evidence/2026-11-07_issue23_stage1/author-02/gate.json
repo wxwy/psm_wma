@@ -1,0 +1,111 @@
+{
+  "scope": "ISSUE23_STAGE1_STANDALONE_FOCUSED_AUTHOR_CPU",
+  "status": "PASS",
+  "steps": [
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.115
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 180,
+      "exit_code": 0,
+      "elapsed_s": 0.115
+    },
+    {
+      "name": "standalone",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_client_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_encoder_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_protocol_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker_test.py",
+        "--basetemp=/workspace/work/issue23-stage1-evidence/author-02/standalone_tmp",
+        "--junitxml=/workspace/work/issue23-stage1-evidence/author-02/standalone.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 240,
+      "exit_code": 0,
+      "elapsed_s": 8.645
+    },
+    {
+      "name": "legacy_protection",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_session_transactions_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/local_memory_online_test.py",
+        "/workspace/work/psm-wma-sim-shared-vae-issue23/cosmos-framework/cosmos_framework/inference/robocasa_composite_visual_test.py",
+        "--basetemp=/workspace/work/issue23-stage1-evidence/author-02/legacy_protection_tmp",
+        "--junitxml=/workspace/work/issue23-stage1-evidence/author-02/legacy_protection.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-sim-shared-vae-issue23",
+      "timeout_s": 240,
+      "exit_code": 0,
+      "elapsed_s": 15.522
+    }
+  ],
+  "real_weights_gpu_egl_sim_policy_integration_sr": "NOT_RUN",
+  "standalone": {
+    "tests": 358,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "legacy_protection": {
+    "tests": 74,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true
+}

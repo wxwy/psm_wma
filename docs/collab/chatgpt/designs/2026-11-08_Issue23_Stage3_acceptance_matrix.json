@@ -1,0 +1,130 @@
+{
+  "schema": "psm_wma_issue23_stage3_design_acceptance_v1",
+  "status": "DESIGN_HANDOFF_IMPLEMENTATION_NOT_STARTED",
+  "design_date": "2026-11-08",
+  "owner_request": "GPT design; Codex implements",
+  "approved_stage0_child": "8a170d56014af937b146b35e2b89753313614785",
+  "approved_stage1_formal_source_root": "3ab4578475d8df5ce93b7bde6c4f2073a46f777e",
+  "approved_stage1_child_gitlink": "0a2119782fb5078fee3359f9ef7383d788744458",
+  "proposal_roots": [
+    "docs/collab/chatgpt/designs/2026-11-08_Issue23_Stage3_Minimal_Integration_Design.md"
+  ],
+  "authority": {
+    "development": "only isolated Codex Root and Child branches / Draft PR, code + focused CPU/static tests",
+    "review": "GPT independent APPROVE_CODE or REQUEST_CHANGES on NEW exact Root/Child pair",
+    "not_authorized": [
+      "official V3 Gitlink promotion",
+      "PR4/PR5/PR6 merge",
+      "real trained model/Policy GPU run",
+      "real Sim evaluation",
+      "large SR / 900 episodes",
+      "training",
+      "source switch resume"
+    ]
+  },
+  "batches": [
+    {
+      "id": "STAGE3A_CPU_CODE",
+      "priority": "P0",
+      "action": "NOW_AUTHORIZE_ISOLATED_CODE_CPU",
+      "vae_baseline": "B1/wait0 + strict exact0 existing numerical reference",
+      "scope": [
+        "Worker boundary_skip exact true source index",
+        "Policy full pre-crop current-frame Visual96 capture without extra Encode1",
+        "Sim step success owned snapshot and Owner completion, no pretended cryptographic env.step proof",
+        "Local signed 15+1 history over existing OnlineMemory prepare/commit/abort",
+        "Worker run-level Registry peer + NVIDIA-only Sim EGL vendor env + per-profile resources",
+        "Native Policy READY after evidence complete; no Peer B1 wait",
+        "traces, original absolute deadline, C opt-in, A/B preserved"
+      ],
+      "deliverables": [
+        "New Child Draft PR, Root candidate Pair SHA/Gitlink",
+        "focused CPU/JUnit/ruff/formal source fingerprint",
+        "Codex exact-pair original evidence and request",
+        "no production/GPU runs until reviewed"
+      ]
+    },
+    {
+      "id": "STAGE3A_P0_ABC",
+      "priority": "P0",
+      "action": "DESIGN_ONLY_NEW_GPU_OWNER_GATE_REQUIRED",
+      "topology": {
+        "policy_server_count": 1,
+        "sim_count": 1,
+        "policy_bmax": 1,
+        "vae_bmax_C": 1,
+        "vae_wait_ms_C": 0,
+        "action_horizon": 16,
+        "state_dim": 15,
+        "raw_action_dim": 15,
+        "fps_is_data_semantics": 20
+      },
+      "arms": [
+        {
+          "id": "A",
+          "checkpoint": "N",
+          "mode": "off",
+          "history_worker": 0
+        },
+        {
+          "id": "B",
+          "checkpoint": "L",
+          "mode": "required",
+          "history": "16 x official Policy Encode1 + T16",
+          "history_worker": 0
+        },
+        {
+          "id": "C",
+          "checkpoint": "L same as B",
+          "mode": "required",
+          "history": "one Policy boundary pre-crop Visual96 + 15 Worker Encode1 + 16 causal T1 scan",
+          "history_worker": 1
+        }
+      ],
+      "requirements": [
+        "same tasks seeds initial state fingerprints sampler and precision per same topology",
+        "first Replan and steady/partial Replan separately",
+        "p50/p95/p99/mean plus count CI, CPU+GPU trace, overlap vs foreground critical path",
+        "B versus C same checkpoint; A vs B/C different weights confounding explicitly disclosed",
+        "18 x 2 tasks smoke is only function, larger SR requires new owner gate"
+      ]
+    },
+    {
+      "id": "STAGE3B_B8",
+      "priority": "P1_DEFER",
+      "action": "REQUIRES_REVIEWED_NUMERIC_AND_DOWNSTREAM_FUNCTIONAL_GATE",
+      "owner_visual_reconstruction": "PASS_EIGHT_REAL_RECORDED_IMAGES",
+      "numeric_exact": "FAIL_NONZERO_BF16_DIFFERENCE",
+      "real_dcp_action_sensitivity": "MEASURED_NONZERO",
+      "production_action_admission": "DISABLED_UNTIL_NEW_FUNCTIONAL_GATE",
+      "requirements": [
+        "predefined functional tolerance + holdout",
+        "same Local checkpoint B1/B8 FastState Prefix Action and paired SR",
+        "no retroactive Stage0 exact0 redefinition",
+        "real 32Sim policy B8 throughput separately after single P0"
+      ]
+    }
+  ],
+  "mandatory_cpu_gates": [
+    "exact true-step boundary0 1..15 16 17..31, atomic 4-frontier skip, no surrogate renumbering",
+    "no boundary extra Encode1 and pre-crop pooling only",
+    "actual post-env.step success only completion; fail/replay/byte-digest spoof rejection",
+    "HMAC + actual loaded VAE identity + current Lease/WorkerEpoch + deadlines",
+    "existing OnlineMemory private candidate commit/abort and old B/off regression",
+    "Owner credentials withheld from Sim, trust domain documented",
+    "Worker peer lifecycle and Session-level End/cancel/quarantine/worker restart",
+    "Policy READY scheduling after verified history, Bpolicy1 and Bvae1 zero intentional peer wait",
+    "root run-level resource identity, EGL vendor source and PCI attestation, no off-mode Worker",
+    "original Replan/Episode deadlines never refreshed",
+    "full pass no skip with raw JUnit + static + source fingerprint and clean Exact Pair"
+  ],
+  "hard_stops": [
+    "missing real poststep proof or boundary rgb/action match",
+    "B8 claims exact numerical equivalence or task SR without new authorization",
+    "cross Session state leak, forged/duplicate completion, local memory partial publish",
+    "no full quiescence or ownership proof on failure/End/restart",
+    "unmatched VAE weights/config or camera layout",
+    "changed M/B Resume semantics",
+    "unauthorized GPU/real sim/long evaluation"
+  ]
+}

@@ -534,3 +534,19 @@
 - **EVALV2-RENDER-MAP** — REVIEW (Formal46d3a604/d3b2a29b; author192 PASS; GPT pending); Codex; isolated branch v3-eval-v2-render-media-20261101, base7e2be5ca/86642677. Independent GPU roles/PCI+actual Context proof/OSMesa/admission guards and Manifest binding implemented. Combined development192 PASS/0failure/error/skip, Ruff0.12.7/format/AST PASS. Clean Formal Pair and author evidence frozen; candidate GPT request prepared. Prior118 development evidence preserved; no canonical merge or true GPU/simulation/FFmpeg/live-job action.
 - **EVALV2-MEDIA-LIFECYCLE** — REVIEW (GPT APPROVE_CODE6484dd83/9a8cd618; RM-M01 CLOSED; hardware pending); Codex; prior29 author evidence/GPT verdict/DS reported mixed-interpreter CPU acknowledgment preserved. No new Media change; independent Owner resource-policy delta below. No out2/NoTTT/shared runtime edits or restart.
 - **EVALV2-OWNER-GPU-RESOURCE-POLICY** — REVIEW (Formal4b581493/9a8cd618, author70 PASS, GPT pending); Codex; Owner explicitly retires foreign CUDA and GPU memory/reserve admission. Only resources.py and focused tests; retain selected device existence/UUID/PCI/Context and owned-process safety. New Root/same Child9a8cd618, narrow CPU/review required; no GPU task enumeration/management, GPU0-3, canonical merge or runtime launch.
+
+
+# 2026-11-07 — Issue23 independent Sim-side shared VAE
+
+- **ISSUE24-STAGE3A-H4-ACTOR-SOURCES** — REVIEW (Root8a17c3db/Child00f30235; author821+207 PASS, narrow independent Code Gate requested); Codex; exact H4 review+Owner instruction; Child C-only ten source imports with strict origin/hash/set checks, actual Root-produced C18 vs legacy A/B8 CPU integration/RED/GREEN, new Pair and narrow GPT Code Gate. No GPU/merge.
+
+- **ISSUE24-STAGE3A-H2-H3-STARTUP** — REVIEW (Root599e7ce9/Child11e1855d; author738+207 PASS; Owner email verified, normal Git publication resumed, incremental independent Code Gate requested); Codex; formal H2/H3 review+Owner instruction; only private-FD whole-second normalization and strict actual CUDA UUID prefix compatibility, CPU RED/GREEN/READY/negative cleanup, new Pair and incremental GPT review. No GPU/V3 merge.
+
+- **ISSUE24-STAGE3A-H1-OMEGACONF** — REVIEW (Root ea64c26f / Child90ac5e91; author696+207 PASS; independent incremental Gate requested); Codex; exact H1 review/Owner instruction; normalize actual OmegaConf containers, real ListConfig CPU RED/GREEN, original Stage3A/A-B protection/static, new Pair+evidence+incremental GPT Code Gate. No GPU/merge.
+
+- **ISSUE24-STAGE3A-CODE-CPU** — REVIEW (Formal Root ef82fe02 / Child6842b329; author654+207 PASS, static/sourceunchanged PASS; independent GPT Code Gate pending); Codex; exactdesignRootafd0b21f/Child0a211978 +Issue24Ownerauthorization; newisolatedStage3Abranches; B1poststep/boundary15+1/existingLocalMM/Registry/READY/deadline/A-B-C/CPU only; submitnewPair+DraftPR+rawCPUevidence forGPTCodeGate. RealGPU/P0SR/Stage3BB8/merge notauthorized.
+
+- **ISSUE23-STAGE0-DESIGN** — DONE; GPT independent APPROVE_DESIGN_STAGE0 for exact8a170d56014af937b146b35e2b89753313614785 in formal5c66ea37/canonical77f130bb; designonly, not CPU/GPUapproval.
+- **ISSUE23-STAGE1-WORKER-CPU** — REVIEW; Codex author/GPT reviewer; formalRoot3ab4578475d8df5ce93b7bde6c4f2073a46f777e/Child0a2119782fb5078fee3359f9ef7383d788744458; new173tests+185subtests, legacy74PASS, zeroFailErrorSkip, Shell0/sourceunchanged; freshstandaloneCodeGate required. GPU/Policy integration/15+1 sparseRange adapter/P0cost-SRNOT_RUN, notautoapproved.
+- **ISSUE23-STAGE2-HARDWARE** — TODO (not authorized); Owner/GPT; real WanBF16 B1/B4/B8 andEGLcompetition Gate, no inference Feature transport before proof.
+- **ISSUE23-STAGE3-P0-AND-MULTI** — TODO (not authorized); Owner/GPT; strict1x1 A/B/C latency/SR paired design and multi throughput independent, reviewed newSourcePair andFresh identities required;18x2smoke noSRbenefitclaim, largerSRrequiresnewOwnerpermission.

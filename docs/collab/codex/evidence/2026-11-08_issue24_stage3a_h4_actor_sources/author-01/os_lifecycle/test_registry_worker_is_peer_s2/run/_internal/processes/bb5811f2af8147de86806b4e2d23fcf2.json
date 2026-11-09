@@ -1,0 +1,1 @@
+{"body":{"command":["/workspace/.venvs/psm-wma-cpu/bin/python","-c","import signal; signal.pause()"],"id":"bb5811f2af8147de86806b4e2d23fcf2","identity":{"pgid":28030,"pid":28030,"session":28030,"start_ticks":3712304},"kind":"simulator-slot"},"sha256":"c40c5449fc8843481ee575772832f7d30822ee66b6fbf6c9c83c0437c2b7b317"}

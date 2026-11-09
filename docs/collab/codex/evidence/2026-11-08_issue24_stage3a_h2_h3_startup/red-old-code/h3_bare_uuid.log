@@ -1,0 +1,49 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_cuda_uuid_full_identity_accepts_only_equivalent_prefix[bare] _______
+
+cuda_identity_rig = namespace(expected={'gpu_id': 4, 'uuid': 'GPU-545d3c6f-e60e-dad5-cb58-b0fd6aceb33b', 'pci_bus_id': '0000:98:00.0'}, ac...espace(model=namespace(model=namespace(parameters=<function cuda_identity_rig.<locals>.<lambda> at 0x7f709b231bc0>)))))
+prefixed = False
+
+    @pytest.mark.parametrize("prefixed", [False, True], ids=["bare", "prefixed"])
+    def test_cuda_uuid_full_identity_accepts_only_equivalent_prefix(cuda_identity_rig, prefixed):
+        rig = cuda_identity_rig
+        rig.actual_uuid = _GPU_UUID if prefixed else _GPU_UUID.removeprefix("GPU-")
+>       assert daemon._physical_device(rig.expected, rig.encoder) == rig.expected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon_test.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+expected = {'gpu_id': 4, 'pci_bus_id': '0000:98:00.0', 'uuid': 'GPU-545d3c6f-e60e-dad5-cb58-b0fd6aceb33b'}
+encoder = namespace(tokenizer=namespace(model=namespace(model=namespace(parameters=<function cuda_identity_rig.<locals>.<lambda> at 0x7f709b231bc0>))))
+
+    def _physical_device(expected, encoder):
+        import torch
+    
+        from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
+    
+        parameters = tuple(encoder.tokenizer.model.model.parameters())
+        device = parameters[0].device if parameters else None
+        if (
+            device is None
+            or device.type != "cuda"
+            or any(parameter.device != device for parameter in parameters)
+            or torch.cuda.device_count() != 1
+        ):
+            raise ValueError("Worker requires exactly one visible CUDA device")
+        uid = str(torch.cuda.get_device_properties(device).uuid)
+        if uid != expected["uuid"]:
+>           raise ValueError("actual Worker CUDA UUID differs from assigned physical GPU")
+E           ValueError: actual Worker CUDA UUID differs from assigned physical GPU
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py:244: ValueError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_cuda_uuid_full_identity_accepts_only_equivalent_prefix[bare]
+1 failed, 1 warning in 1.58s

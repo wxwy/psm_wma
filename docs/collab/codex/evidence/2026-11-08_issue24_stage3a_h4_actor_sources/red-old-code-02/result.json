@@ -1,0 +1,65 @@
+{
+  "status": "RED_EXPECTED",
+  "pytest_exit": 1,
+  "expected_failures": 1,
+  "old_root": "599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e",
+  "old_child": "11e1855d58cb9f017243a08d610fb33a4443b773",
+  "production_sha256_before": {
+    "scripts/robocasa_eval_v2/runtime.py": "8490e6f84d99cfae81be541b138db21f1f7c624abb64767ae8533e30e7d92e67",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py": "dfaa622e125cdb389e07c8057ca01fd9645c660d91bd3ebe9172b64e337a46c9"
+  },
+  "production_sha256_after": {
+    "scripts/robocasa_eval_v2/runtime.py": "8490e6f84d99cfae81be541b138db21f1f7c624abb64767ae8533e30e7d92e67",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/eval_v2_worker.py": "dfaa622e125cdb389e07c8057ca01fd9645c660d91bd3ebe9172b64e337a46c9"
+  },
+  "test_path": "tools/v3/eval_v2_batch_tests/actor_source_witness_test.py",
+  "test_sha256": "681bd49e0b7662675c8bd5f230822bae6349caf4122e5d56862a6ede016c512f",
+  "tests_injected": true,
+  "note": "Old production byte-identical; test file injected into isolated worktree, not a clean old Formal Pair gate.",
+  "commands": [
+    {
+      "name": "ruff_fix",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--fix",
+        "/workspace/work/psm-wma-stage3a-h4-formal/tools/v3/eval_v2_batch_tests/actor_source_witness_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h4-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "/workspace/work/psm-wma-stage3a-h4-formal/tools/v3/eval_v2_batch_tests/actor_source_witness_test.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h4-formal",
+      "exit_code": 0
+    },
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-stage3a-h4-formal/tools/v3/eval_v2_batch_tests/actor_source_witness_test.py::test_actual_root_sealed_sources_reach_default_actor_ready[C]",
+        "--basetemp=/workspace/work/issue24-stage3a-h4-evidence/red-old-code-02/tmp",
+        "--junitxml=/workspace/work/issue24-stage3a-h4-evidence/red-old-code-02/junit.xml"
+      ],
+      "cwd": "/workspace/work/psm-wma-stage3a-h4-formal",
+      "exit_code": 1
+    }
+  ]
+}

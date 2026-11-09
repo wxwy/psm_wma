@@ -1,0 +1,24 @@
+{
+  "schema": "psm24_feature_trace_v1",
+  "clock_domain": "process_monotonic_ns",
+  "count": 3,
+  "attempted_count": 3,
+  "counts": {
+    "single_latency_profile": 1,
+    "initial_reset": 1,
+    "synthetic_CPU_policy": 1
+  },
+  "overflow_count": 0,
+  "cuda_pending": 0,
+  "cuda_active": 0,
+  "cuda_unavailable": 0,
+  "active_spans": 0,
+  "incomplete_reasons": [],
+  "complete": true,
+  "max_events": 8192,
+  "max_bytes": 4194304,
+  "overlap_semantics": "intervals_overlap_do_not_sum_into_critical_path",
+  "path": "feature_trace.json",
+  "sha256": "0dbefa18d4c9f82ebec9b1b4215052b654617cd746ee72efc1f257023d1dde3e",
+  "bytes": 1172
+}
