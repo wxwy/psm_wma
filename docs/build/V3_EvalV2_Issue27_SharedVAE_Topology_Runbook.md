@@ -50,7 +50,12 @@ Representative acceptance configurations (not allowed-value enumeration):
 | --- | --- | --- | --- | --- |
 | 1 | 1 | 1 | 1 | 1/0ms |
 | 1 | 8 | 8 | 8 | 1/0ms |
-| 2 | 16 | 8 | 8 | 1/0ms |
+| 2 | 32 | 16 | 8 | 1/0ms |
+
+Correction from the Evidence-only review: `2x16` means two Policy Servers with
+sixteen Sims each, thirty-two total. This representative uses the existing
+streaming M16 protocol. The previous two/eight (sixteen total) tests remain
+additional coverage; their original archived evidence is not relabeled as32.
 
 Other legal shapes and boundaries are covered by parameter/property tests,
 including three Servers, Policy caps2..7 and existing streaming M32 capacity.

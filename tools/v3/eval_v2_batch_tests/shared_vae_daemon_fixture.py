@@ -35,6 +35,6 @@ if __name__ == "__main__":
         int(sys.argv[1]),
         int(sys.argv[2]),
         encoder_factory=fake_encoder,
-        clock_domain_fn=lambda: "cpu-clock",
+        clock_domain_fn=lambda: sys.argv[3] if len(sys.argv) == 4 else "cpu-clock",
         device_attestor=lambda expected, encoder: expected,
     )

@@ -1,3 +1,27 @@
+# 2026-11-09 CST - Issue27 M16 test-only supplement ready for exact-pair CPU
+
+Dev03 new2/2M16 layout tests PASS. Actual frozen streaming Store/Runtime slots32
+from18tasks, streaming32 native capacities16 perPolicy; all32 approved Sessions,
+PolicyB8+B8 perServer, realOwnerHTTP/WorkerFD/UnixIPC/HMAC/ACK/End/replay/failclosed
+and owned exit0/IPC cleanup/external survival. Required layout2 renderGPUs->2
+Workers(each16); same-render complement1Worker/32Sessions/2PolicyEpochs. Add direct
+READY/close receipts and ownedRSS/PID observation to final proof before freeze.
+Dev01 legacy16/16 passed, new2failed; Dev02 isolated2failed exposes invalid test
+raw15 rotation(first vector zero/collinear). Only CPU generation fixture fixed to
+unit rotation; original production conversion correctly rejected it. Preserve
+all original logs/JUnits/source fingerprints and fixture snapshots. No production
+bug demonstrated. No Child/source edits, no #28, GPU, SR,900EP,merge or training.
+
+Scope exactly3 Root Python test/CPU fixtures plus representative runbook row,
+SESSION/TODO and forthcoming evidence/handoff. Real Runtime/Store replaces old
+Namespace/physical_slots128 fixture; actual run/Manifest/slot IDs/capacity reach
+Native transactions and Supervisor. Model/current-boundary/env/physical GPU/kernel
+remain explicit CPU doubles; no realWan/Action parity/SR/performance assertion.
+Next format/static3 files, test-only Root commit, clean exact-Pair18focused CPU
+(legacy1x1/1x8/Owner regressions+2M16+8privateFD lifecycle), archive raw evidence,
+update existing DraftPR29/8 and fresh Evidence-only Code Gate request. Old965+207
+remains historical same-production evidence; not relabeled as newly rerun.
+
 # 2026-11-09 CST - Issue27 streaming M16 Evidence-only remediation claimed
 
 Owner latest correction:2x16 means2PolicyServers x16Sim/Server =32Session.
@@ -19,6 +43,7 @@ apply:Codex test implementation, GPT independent review; no obsolete MM/Kimi
 or GPU polling/approval requirement used to stop this authorized test remedy.
 
 Main claims only Root test fixture shared_vae_routing_test.py, new streaming
+M16 test and shared_vae_daemon_fixture.py test-only public CPU clock-label input;
 M16 session/IPC test, runbook representative table correction, SESSION/TODO,
 new immutable raw CPU evidence/handoff and append-only canonical Inbox. Tests
 must use actual frozen streamingManifest/Store/Runtime slot derivation/capacity,
