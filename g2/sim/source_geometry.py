@@ -241,6 +241,10 @@ def _legacy_surface_colors(model,g,kind,face_ids,weights):
     unsupported={"mode":"UNSUPPORTED_TEXTURE_PROJECTION","texture_id":texture,"texture_sampled":False}
     if kind != "mesh" or int(model.tex_type[texture]) != int(mujoco.mjtTexture.mjTEXTURE_2D) or bool(model.mat_texuniform[mat]):
         return rgba,False,unsupported
+    # Older schema-only callers have no explicit colorspace field. Compiled
+    # MuJoCo models do; unsupported sRGB must never become valid raw-byte UVs.
+    if hasattr(model,"tex_colorspace") and int(model.tex_colorspace[texture])==int(mujoco.mjtColorSpace.mjCOLORSPACE_SRGB):
+        return rgba,False,dict(unsupported,reason="explicit sRGB mesh texture decode/filter/output encoding is unsupported")
     if int(texture_ids[int(mujoco.mjtTextureRole.mjTEXROLE_OPACITY)]) >= 0:
         return rgba,False,dict(unsupported,reason="separate opacity texture")
     mid=int(model.geom_dataid[g]); face_start=int(model.mesh_faceadr[mid])

@@ -33,12 +33,18 @@ def source_geom_nodes(sources):
         root = ET.fromstring(payload)
         defaults = [{"attributes": dict(node.attrib), "children": [
             {"tag": child.tag, "attributes": dict(child.attrib)} for child in node if child.tag != "default"]}
-            for node in root.iter("default")]
+            for node in root.iter("default") if node is not root or record["logical_id"]=="root.xml"]
         defaults_sha=_sha(defaults)
         documents.append({"source_logical_id":record["logical_id"],"source_sha256":record["sha256"],
                           "source_defaults_sha256":defaults_sha,"source_defaults":defaults,
                           "includes":record.get("includes",[])})
         parsed[record["logical_id"]]=(record,root,defaults_sha)
+
+    def walk_children(logical_id,node,location,body_names,excluded,chain):
+        counters={}
+        for child in node:
+            index=counters.get(child.tag,0);counters[child.tag]=index+1
+            walk(logical_id,child,location+"/"+child.tag+"["+str(index)+"]",body_names,excluded,chain)
 
     def walk(logical_id,node,location,body_names,excluded,chain):
         record,_,defaults_sha=parsed[logical_id]
@@ -53,17 +59,15 @@ def source_geom_nodes(sources):
             included=parsed[target][1]
             edge={"source_logical_id":logical_id,"source_sha256":record["sha256"],"xml_path":location,
                   "reference":node.get("file"),"included_logical_id":target}
-            walk(target,included,"/"+included.tag,body_names,excluded,[*chain,edge])
+            # MuJoCo inserts the included root's children, not the wrapper.
+            walk_children(target,included,"/"+included.tag,body_names,excluded,[*chain,edge])
         if node.tag=="geom" and node.get("name") and not excluded:
             evidence={"source_logical_id":logical_id,"source_sha256":record["sha256"],"xml_path":location,
                 "attributes":dict(node.attrib),"body_ancestors":body_names,"source_defaults_sha256":defaults_sha,
                 "inclusion_chain":chain}
             evidence["source_geom_node_sha256"]=_sha(evidence)
             result.setdefault(node.get("name"),[]).append(evidence)
-        counters={}
-        for child in node:
-            index=counters.get(child.tag,0);counters[child.tag]=index+1
-            walk(logical_id,child,location+"/"+child.tag+"["+str(index)+"]",body_names,excluded,chain)
+        walk_children(logical_id,node,location,body_names,excluded,chain)
     if "root.xml" not in parsed:raise ContractError("root MJCF evidence missing")
     root=parsed["root.xml"][1]
     walk("root.xml",root,"/"+root.tag,[],False,[])

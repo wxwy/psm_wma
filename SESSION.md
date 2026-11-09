@@ -1,3 +1,73 @@
+# 2026-11-09 (CST) — G2-N6-F1-B2-R1 two-P2 source frozen
+
+REVIEW. Runtime edits only source_geometry.py (4 added lines: explicit sRGB
+mesh invalid guard) and source_roles.py (included root children/context and
+ignored-wrapper default table). No sRGB decoder or broad role/math changes.
+Default/linear interpolation and actual child default/body remain unchanged.
+Original XML paths/hashes/include chains kept. Source branch
+codex/g2-n6-f1b2-r1-srgb-wrapper derivesd10d1960/runtime193a05e3.
+Actual GPT REQUEST_CHANGES review a22f64b7aa2874d8d3c7abfc766e3f145d838b19,
+file adc4887de70e9ebeeb1749af1e5822529804750f / Issue26 6723181393 consumed.
+
+Same frozen15 test bytes in isolated193 source:8FAIL/7PASS; new full274/274,
+0failure/error/skip. Old259 including historical207 testcase IDs all retained;
+all existing test files untouched. Canonical RED no compile errors; earlier
+extra-default fixture main-class setup mistake corrected and local initial
+logs preserved separately, not a candidate defect. Test SHA
+9137dd53926d507930387e344fb598150d678e88532adcd307e6f5d41869b06a.
+Own MuJoCo3.3.7 CPU llvmpipe3 mesh cases: sRGB128 renders55 nowinvalid,
+strict rejects/partial keeps reason; default/linear128 valid. Four wrappers
+actually compile to fixture_body, with stable properties/source binding;
+nested children/real defaults/context and strict/diagnostic export covered.
+Own positive6-shape0/200 each6244 data rows exact vs193, source state/bounds/
+original geometry hashes same. Source identity header legitimately changes.
+
+Read-only Agent confirmed both P2 closed, no remaining P0/P1/P2 scoped
+findings; only author code/evidence review, not GPT new-source approval.
+Sampler763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967
+frozen; identity4/source closure/loader/state/geometry/wrapper color contract
+and evidence防降格 code untouched.35 G2 source/config/test hashes frozen,
+32/34 existing files exact; only two existing runtime files changed.
+
+Evidence docs/evidence/g2_n6_f1_b2_r1_2026-11-09/; runbook
+docs/build/PSM-WMA_G2_N6_F1_B2_R1_2026-11-09.md. No server file access/
+download/outward transfer, GPU/models/rollout/native execution, V3/native/
+Gitlink/PR/train/cache mutation. Native2009fae35d86579bb22c273fb97ec1bf0835b533,
+Gitlink1ca308055fc41fb69efaeb9efaa23808f164a18e unchanged. Prior native PASS
+means P0 TEST_ONLY harness with three matching components, not full2009;
+actual house/native four-frame and role unknowns/paper-positive/material/
+ordinary roots/perception/six+Island/learning remain OPEN. Publish new fixed
+SHA/Issue26 handoff then STOP for GPT independent recheck; no merge/Draft retry.
+
+# 2026-11-09 (CST) — G2-N6-F1-B2-R1 two-P2 claim
+
+IN_PROGRESS. Consumed actual GPT REQUEST_CHANGES on fixed193a05e3 from
+review commit a22f64b7aa2874d8d3c7abfc766e3f145d838b19, file blob
+adc4887de70e9ebeeb1749af1e5822529804750f and Issue26 comment6723181393.
+Base d10d19603556f76e13e30796edeed1ddb60b3063 ledger/runtime
+193a05e3b250eb32dd7ee08165a368a6706e78ee. New independent source branch
+codex/g2-n6-f1b2-r1-srgb-wrapper; original source/review refs untouched.
+
+Planned runtime edits only g2/sim/source_geometry.py explicit2D sRGB mesh
+invalid guard and g2/sim/source_roles.py included-document root wrapper
+semantics. Focused new own CPU tests and optional mesh llvmpipe reference,
+runbook/evidence/TODO/SESSION and final fixed-SHA canonical Inbox handoff.
+No broad primitive/math/role algorithm changes; no new sRGB implementation.
+Unwrap only included roots while retaining file hash/original paths/include
+chain and original parent context; actual child bodies/defaults/assets keep
+their semantics. Default/linear mesh values, source/face/UV/state and point
+evidence contract retained. Sampler763f945a frozen; no paper-towel positive
+face deletion, thresholds, role relabeling or whole-house acceptance upgrade.
+
+GPT259/259,34blob/54box864point and old subset four-frame PASS retained as
+independent prior facts. Native evidence only P0 harness with three matching
+reader/fusion components; full2009fae35 program/harness and new-house native
+four-frame still pending. Layout1 PARTIAL_SOURCE and Layout10 positive
+paper-towel rejection remain valid open Gate facts, not new code defects.
+No private server file access/download/outward transfer; use own local
+fixtures only. No GPU/models/rollout/training, V3/native/production/Gitlink/
+PR/cache changes. Publish fixed new source+tests+handoff then STOP for GPT.
+
 # 2026-11-08 (CST) — G2-N6-F1-B2 published / STOP for GPT server recheck
 
 REVIEW. Fixed implementation Root 193a05e3b250eb32dd7ee08165a368a6706e78ee, tree

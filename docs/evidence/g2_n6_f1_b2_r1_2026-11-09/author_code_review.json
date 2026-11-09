@@ -1,0 +1,33 @@
+{
+  "reviewer": "/root/n6_independent_review",
+  "kind": "READ_ONLY_AUTHOR_CODE_REVIEW_NOT_GPT_SERVER_ACCEPTANCE",
+  "decision": "CLOSED_NO_OPEN_P0_P1_P2_IN_R1_SCOPE",
+  "findings": [
+    {
+      "id": "P2-B2-01",
+      "status": "CLOSED",
+      "location": "g2/sim/source_geometry.py:246",
+      "change": "Reject explicit2D sRGB mesh before legacy UV byte interpolation; preserve default/linear path"
+    },
+    {
+      "id": "P2-B2-02",
+      "status": "CLOSED",
+      "location": "g2/sim/source_roles.py:36,43,63",
+      "change": "Ignore included root semantics, traverse actual children with parent context; keep original paths/hash/chain and child bodies/defaults"
+    }
+  ],
+  "evidence_checked": {
+    "full_tests": 274,
+    "old259_retained": 259,
+    "same_frozen15_old_failed": 8,
+    "old_passed": 7,
+    "new_passed": 15,
+    "no_compile_errors_in_canonical_RED": true,
+    "frozen_sampler": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967"
+  },
+  "runtime_source_sha256": {
+    "g2/sim/source_geometry.py": "61ecac60d64e1a15829cf44ce70e795f85e13865ac2314aa64f1c16f6d498b05",
+    "g2/sim/source_roles.py": "1037548263f4ae7b5f025c12536d9e2e1073cfdc7b84c035d0649eb3dd4ad8a1"
+  },
+  "server_private_GPU_model_native_execution": false
+}

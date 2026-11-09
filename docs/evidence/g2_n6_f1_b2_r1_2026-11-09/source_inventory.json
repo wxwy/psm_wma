@@ -1,0 +1,238 @@
+{
+  "schema": "g2_n6_f1_b2_r1_source_inventory_v1",
+  "base_runtime": "193a05e3b250eb32dd7ee08165a368a6706e78ee",
+  "base_ledger": "d10d19603556f76e13e30796edeed1ddb60b3063",
+  "files": [
+    {
+      "path": "g2/.gitignore",
+      "bytes": 28,
+      "sha256": "a51104264729e7b362ea8c739de0ada29ba6e4f6047580ec3a3fd330ad20fd47",
+      "git_blob_sha": "6c56ff1bd9054f9e9a0147f85233c996b06536d7"
+    },
+    {
+      "path": "g2/README.md",
+      "bytes": 3744,
+      "sha256": "fe250c3e9f45dc5e3eb8b97bc8fe68ac4f1463f900aaf38f32d49d11df1e5b78",
+      "git_blob_sha": "6844555195a281499303d2a0e79a75c634dad21e"
+    },
+    {
+      "path": "g2/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "g2/io.py",
+      "bytes": 2484,
+      "sha256": "93ca182893ee415cd4bb2a82c5530bb51a3df5e918c4f17a14bcd7dbadca5dfc",
+      "git_blob_sha": "7001277536b49468fcab3e113f7f4cb5ad672bfc"
+    },
+    {
+      "path": "g2/nav_bridge/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "g2/nav_bridge/recorded.py",
+      "bytes": 7414,
+      "sha256": "a5e5d37ab786885aecdd2a93b97786365d06757fea2cc1be7764eceb42f3222e",
+      "git_blob_sha": "f1196410a324370095ae8a659c0ccff1170cb7b8"
+    },
+    {
+      "path": "g2/nav_bridge/snapshot.py",
+      "bytes": 18990,
+      "sha256": "70cf14614d6562c343c457dc92615f23ad24696a28297a7c3b3c74819b7ebf29",
+      "git_blob_sha": "07aa6c1a0d763e67d0c48fa45bb4112b3b1b920a"
+    },
+    {
+      "path": "g2/sim/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "g2/sim/asset_inventory.py",
+      "bytes": 11031,
+      "sha256": "1782eab7dbb785d80d1805798292bf1f0e38b8521dc5e3241b8c3353bbb8be03",
+      "git_blob_sha": "f56425dd6203fc153fef7e34912de4e171dab23d"
+    },
+    {
+      "path": "g2/sim/color_evidence.py",
+      "bytes": 5881,
+      "sha256": "a8ffba8b1a61dff08e15a674f19cf81716436e09b089ef4d5337af0bf2e20bec",
+      "git_blob_sha": "957976624ff45b4b80f774040f73e14ebe0bbb28"
+    },
+    {
+      "path": "g2/sim/prescan.py",
+      "bytes": 23397,
+      "sha256": "433b2ae3600eb6f943e7f918145339d54a0568782f7e46a9ae057f9500271fa7",
+      "git_blob_sha": "91cfafef82ed9edeadbf0e010cbd03070704fd91"
+    },
+    {
+      "path": "g2/sim/requirements.txt",
+      "bytes": 37,
+      "sha256": "082e5dc86c9c246b97717d30a62d1a4e66db1deaf61060d118a4c83c2e54dda9",
+      "git_blob_sha": "431eaa3d7b9312652c5eaa5ab4d026820d9321fb"
+    },
+    {
+      "path": "g2/sim/source_geometry.py",
+      "bytes": 15490,
+      "sha256": "61ecac60d64e1a15829cf44ce70e795f85e13865ac2314aa64f1c16f6d498b05",
+      "git_blob_sha": "a84473b7276eb8812d3afdaeab4f0d1262453220"
+    },
+    {
+      "path": "g2/sim/source_roles.py",
+      "bytes": 9764,
+      "sha256": "1037548263f4ae7b5f025c12536d9e2e1073cfdc7b84c035d0649eb3dd4ad8a1",
+      "git_blob_sha": "0edcfce540f8a0876cc396fe372a11bb66106382"
+    },
+    {
+      "path": "g2/sim/source_scope.py",
+      "bytes": 12038,
+      "sha256": "8b8931e173eab1760410290a44740efd401a1de13d4b1ed490bdae9e25bb2149",
+      "git_blob_sha": "a46b09e918d409204c9e305c30944f650298c8ce"
+    },
+    {
+      "path": "g2/sim/surface_coverage.py",
+      "bytes": 2071,
+      "sha256": "9363ba095c5b46b635faa97a276fd2d36e6ca7737dfa16d6c3e0ed95acae86a6",
+      "git_blob_sha": "1ec39c17850d6d121a4a53a2f82c35d331428adb"
+    },
+    {
+      "path": "g2/sim/surface_sampling.py",
+      "bytes": 7494,
+      "sha256": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967",
+      "git_blob_sha": "9999eed9c48e4b7e348c65c3c3961d394f7a3c07"
+    },
+    {
+      "path": "g2/sim/texture_projection.py",
+      "bytes": 7466,
+      "sha256": "cd31f9ac4ccb6bfeef1feeccb79003a6ac0f5f1a7cd21c65227175aa389d607e",
+      "git_blob_sha": "d74b305a08b54640866e8d070060cb812c4a570e"
+    },
+    {
+      "path": "g2/tests/conftest.py",
+      "bytes": 3582,
+      "sha256": "a37d96eaed81ab73cadc3f4619e297138f8421b95017b4450f9fe5657def01a6",
+      "git_blob_sha": "2a365c4425b4ee47de65c47f2049fb6b53e6d1af"
+    },
+    {
+      "path": "g2/tests/test_bridge.py",
+      "bytes": 6122,
+      "sha256": "00b05998f0d39fe94908796570f01737193a608318c2d100a1c440876cb2e551",
+      "git_blob_sha": "8f8b21fc3c3211b0bbb7f60ebe8485e6f7889446"
+    },
+    {
+      "path": "g2/tests/test_color_evidence.py",
+      "bytes": 4479,
+      "sha256": "68222cf1c67f78a477dd6c57d1835935bc4e0d8952aac461e4e12e635a92c400",
+      "git_blob_sha": "ae44fed18aa0731aad2cc4833e81f7f7f438776d"
+    },
+    {
+      "path": "g2/tests/test_f1b2_r1.py",
+      "bytes": 8921,
+      "sha256": "9137dd53926d507930387e344fb598150d678e88532adcd307e6f5d41869b06a",
+      "git_blob_sha": "45db9376e5adf2df4da67a61a91bcb49abb9fafa"
+    },
+    {
+      "path": "g2/tests/test_mesh_asset_audit.py",
+      "bytes": 16801,
+      "sha256": "3cbe57df9b86c0337b067b924071cdf7d15393a94f916829f945957392b75e64",
+      "git_blob_sha": "c2c896b60b40d27fce1631a53841dcd3ba6913d0"
+    },
+    {
+      "path": "g2/tests/test_object_category.py",
+      "bytes": 6306,
+      "sha256": "3a01aa097406e7804ed55124045dad4d28e4c679ad3a3ac992ff61b72698c02f",
+      "git_blob_sha": "5c12df2b6d6d2f0b3a0cd5b8836c3f59cde595cc"
+    },
+    {
+      "path": "g2/tests/test_prescan.py",
+      "bytes": 7783,
+      "sha256": "90512299e3f28ea064678852a71364ddfb7b45b5f28f091afbaf2860414cbe45",
+      "git_blob_sha": "5b441b0cc54db2a9c3aefc94aa9f8d462e5921e3"
+    },
+    {
+      "path": "g2/tests/test_recorded.py",
+      "bytes": 4680,
+      "sha256": "d5dd3be3defc88f7153d8ca0752eeb4812f3508bc988387fcb352e28ff6edbbc",
+      "git_blob_sha": "492a1a3188fcb08df4eed8cff512db7969a2949a"
+    },
+    {
+      "path": "g2/tests/test_source_identity.py",
+      "bytes": 3665,
+      "sha256": "4e1b5e64f3ea88211cc205c08df4da7c0c1778d400f8bd4a5327579dc9f5507d",
+      "git_blob_sha": "d1c79d5051bc27ccf858c7278dbdc9c248bf6e58"
+    },
+    {
+      "path": "g2/tests/test_source_roles.py",
+      "bytes": 9136,
+      "sha256": "c9627eb39c9310a2241b07cecdc7c641d75d677976c389b36eac92f96b4d3311",
+      "git_blob_sha": "b0eda7acf0a5e2f3847b1ec9f864f2191bfd268a"
+    },
+    {
+      "path": "g2/tests/test_source_scope.py",
+      "bytes": 15526,
+      "sha256": "f912980045dd612ba4ed53a32c5e7ba9485ba142891241387a763b8db204b4a0",
+      "git_blob_sha": "0e934ee12250382baba977692a6826bd5f98695d"
+    },
+    {
+      "path": "g2/tests/test_surface_sampling.py",
+      "bytes": 6607,
+      "sha256": "85774524589af459093c8b03bab1ca3bf0acc44759708b367699e188607a4415",
+      "git_blob_sha": "8aed4e41ad77a7e38208e7800ba9dda4d83eb1bb"
+    },
+    {
+      "path": "g2/tests/test_texture_guards.py",
+      "bytes": 5655,
+      "sha256": "5fbea70d43e02649ee689199e89268dd092b4f071b366ba5ab9ede5d7b94c30f",
+      "git_blob_sha": "ee035453661a78839ac61e49af5c0a800fc9ec08"
+    },
+    {
+      "path": "g2/tests/test_texture_projection.py",
+      "bytes": 6824,
+      "sha256": "5bef6264a173830d6286b7503310a771b54a75f1ae98c3347213a2b8f3dbed89",
+      "git_blob_sha": "a0e6084ac287e16ebea1e71a022e61929a7d7249"
+    },
+    {
+      "path": "g2/tests/test_views.py",
+      "bytes": 4827,
+      "sha256": "621ba4e6e041a3435bc300de7240d14970f48e5a988bc0fbfb456b7b8ab0b706",
+      "git_blob_sha": "7cfc082420b08cc1a59f0b053f03d6823d48f63b"
+    },
+    {
+      "path": "g2/views/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "g2/views/render.py",
+      "bytes": 13642,
+      "sha256": "225190a79d1a26d32af491a95bdea4f1ce691e7768d576b843c34520b277cebe",
+      "git_blob_sha": "cd080493ca1e82affae58ffd723914c6dabfbb41"
+    }
+  ],
+  "changed_existing_G2_files": [
+    "g2/sim/source_geometry.py",
+    "g2/sim/source_roles.py"
+  ],
+  "unchanged_existing_G2_files": 32,
+  "adapter_source_sha256": "5ebafb9c95ea3ce371f343d1792182c479f1cb8fad0307566b80b8f39e433374",
+  "frozen_sampler_sha256": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967",
+  "unchanged_function_source_sha256": {
+    "g2/sim/prescan.py:pointer_tokens": "eff100c8f097498f75cacd10fa5da502eeed060fcdb2e5491c6df57932feffc9",
+    "g2/sim/prescan.py:pointer": "1d6e38358c79a302bf4f07e5ad8458acd1e62ada242a37028318605bb61ade4d",
+    "g2/sim/prescan.py:source_text": "4d9b5c983e5bff341455ea1440cd986db8e1a3f23339a54b0fad06c2ae4516dd",
+    "g2/sim/prescan.py:source_binding": "c4292ed958555dd104696c877ddb0d996a2dce087d9704eea6b9fc6a6f54236c",
+    "g2/sim/source_geometry.py:model_source_hash": "f908bdb6e1435fa846a33b8251fc7a05a776b03001069ff881381dcf6b37fa32",
+    "g2/sim/source_geometry.py:load_model": "4e816f857dd0b988595c4ae95ff7f2dece2fa38eefc3fedb7ba07d09ec8ba41c",
+    "g2/sim/source_geometry.py:apply_state": "9fa7259c377f8d447ee463e3c0c92b078eda285faeb0d87599860a1806b0814d",
+    "g2/sim/source_geometry.py:primitive_mesh": "2d93b09180be94f0a1f158652ac8c2edc863c4ad69a213d2eea290caf831e3bc",
+    "g2/sim/source_geometry.py:effective_rgba": "75d5719b41d865567c4852750b312f0a839be75470e95ac2b258f0698ccadbc3",
+    "g2/sim/source_geometry.py:surface_colors": "0b6fa8b1f8cd527cf0cf86b273f6387317617d86a39914fe580573f95f09e4e5"
+  },
+  "native_companion": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e"
+}
