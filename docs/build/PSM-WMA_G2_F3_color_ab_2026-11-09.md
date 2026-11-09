@@ -93,6 +93,7 @@ assets/cache, existing PRs, GPU/training and merges are untouched.
 
 For Noetic with modern CMake and cached GTEST imported names, configure with
 `-DCMAKE_PROJECT_mapping_INCLUDE=PSM_REPO/g2/nav_bridge/noetic_gtest_import.cmake`.
-This loads the installed GTest config as global targets on each configure; it
+This loads the installed GTest config and repairs Catkin legacy imported library
+locations that incorrectly contain target names instead of physical files; it
 does not change native sources or test bodies. Preserve any failed build attempt
 and the effective build flags in the server evidence.
