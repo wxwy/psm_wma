@@ -2,6 +2,8 @@
 
 # 2026-11-09 — Prefix-aware Local-TTT generation
 
+- **ISSUE31-PREFIX-PACK** — IN_PROGRESS; Codex; Owner next-stage instruction after exact5b89/4446 GPT APPROVE_CODE, latestdocs590071c5. Independent stacked branch; B1/two_way/guidance1 request-local pack-template reuse with current Prefix, noisy payload/timestep refresh, numerical/lifetime/NoTTT guards and same-Local GPU incremental timing. Preserve P99 outlier and inherited W0 failure. No attention/backend/training/VAE/Sim/Worker/Resume/V3 change. New precise Pair, CPU/raw/derivedGPU evidence and independent incremental Gate required.
+
 - **ISSUE31-PREFIX-TEXT-KV** — REVIEW; Codex; FormalRoot5b89f3ed/Child4446be0f, DraftPR32/10; exact focused CPU187PASS/zeroFailErrorSkip/1486sourcehashesunchanged, 1 inherited W0 failure deselected +3 baselineI001 documented; real H100 fixed-Local 30pair Vision/Action exact, P50 991.55→825.53ms (1.2011x), P95 improved, one retained outlier/P99 regression. Prefix everylayer/step, request isolation/cleanup; private rawGPU files server-only, derived stats/hashes and raw CPU archived. Fresh independent incremental Gate requested; no pack/backend second stage, training/VAE/Sim/Worker/strictResume change, V3 merge or SR/900EP.
 
 # 2026-11-09 — Shared VAE generic topology

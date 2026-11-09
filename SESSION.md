@@ -1,3 +1,40 @@
+# 2026-11-09 CST — Issue31 Stage2 Prefix-safe pack templates claimed
+
+Stage2 Child193627f42f4cd1ba6d563aefb8fa8f9428ecb56d committed: only production
+omni_mot_model.py, new227line pack tests, original textKV tests explicitly keep
+packOFF so their approved assertions stay intact. Default eligible Prefix pack
+reuse ON, explicit use_prefix_pack_templates=False retains approved textKV-only
+reference; no-prefix behavior unchanged. Native template update code untouched.
+Narrow dev03 new14PASS/static9PASS. Initial dev01 import-sort failure and dev02
+187PASS/14newfixtureFAIL preserved; fixed fixture CPU SDPA import/domainTensor/
+CP guard-only/no distributed claim/real CFG binding; no production fix for those.
+Next exact clean Root/Child author201CPU, then authorized single-GPU model-only
+packOFF versus packON benchmark with textKV ON both sides. Keep limit8/P99all.
+
+Codex owns ISSUE31-PREFIX-PACK, IN_PROGRESS, independent branch
+v3-local-ttt-prefix-pack-issue31-20261109. Owner latest next-stage instruction:
+restore request-local input pack templates, separately prove equivalence and
+model-only latency, track prior P99 outlier. No merge or Sim/SR/training scope.
+Fresh check before_headcab44ba2 -> advertised590071c599c0531cd9feca9ae748eb0be1af1c89,
+fetch explicit tracking ref and ff-only succeeded; two new GPT docs read in full.
+Formal first-stage Root5b89f3eddbfe27ee72c173696a386e0b756d7866 / Child4446be0f6dad9b6dc887ef90af52d0af754d4682
+APPROVE_CODE confirmed in exact-pair formal GPT review and canonical live Inbox.
+Review docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md.
+Independent25CPU/56rawGPUhashes/exactactions and P50 accepted; P99 and V3 merge
+not approved. Stage2 is a new Owner task, not covered by first-stage approval.
+V3e58cef1f unchanged. Latest Owner V3 roles supersede obsolete V2/Kimi/MM waits.
+
+Planned production scope Child omni_mot_model.py: opt-out for Prefix pack reuse,
+same B1/two_way/guidance1 eligibility, request-local template carries current
+Prefix, refresh every noisy token/timestep without CPU sync. No Attention edit.
+Tests: preserve first-stage checks with explicit pack opt-out; add real packer/
+template equivalence, current Prefix/timestep/noise, lifetime/failure/NoTTT guards.
+Root: Gitlink, focused CPU runner, incremental pack-only GPU benchmark evidence,
+handoff. Reuse first-stage benchmark with opt-out/reference=textKVON/packOFF,
+optimized=textKVON/packON, no factor mixing. P99 retained as separate evidence.
+All private GPU artifacts remain server-only, no active-job/GPU0-3 operation.
+Uncommitted; no new CPU/GPU/latency result or independent Stage2 verdict yet.
+
 # 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
 
 Task ISSUE31-PREFIX-TEXT-KV REVIEW; Codex author, GPT independent reviewer.
