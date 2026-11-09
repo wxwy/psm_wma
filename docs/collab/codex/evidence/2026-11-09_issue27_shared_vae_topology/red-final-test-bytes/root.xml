@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="1.876" timestamp="2026-11-09T03:17:08.879562+00:00" hostname="f415bcea90b3"><testcase classname="" name="test_shared_topology_is_config_driven_without_single_measurement_arm[2-8-8]" time="0.007"><failure message="ValueError: Sim VAE requires an explicit new single-latency C Run">tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/red-final-test-bytes/root_tmp/test_shared_topology_is_config0')
+servers = 2, sims = 8, batch = 8
+
+    @pytest.mark.parametrize(
+        "servers,sims,batch",
+        [
+            (1, 1, 1),
+            (1, 8, 8),
+            (2, 8, 8),
+            (1, 2, 2),
+            (1, 4, 3),
+            (2, 2, 4),
+            (3, 3, 5),
+            (4, 2, 8),
+        ],
+    )
+    def test_shared_topology_is_config_driven_without_single_measurement_arm(
+        tmp_path, servers, sims, batch
+    ):
+        cfg = topology(tmp_path, servers, sims, batch)
+&gt;       shared_vae.validate_profile(cfg)
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cfg = {'base_port': 8912, 'batch_wait_ms': 0, 'encoder_grace_s': 2.0, 'episode_wall_s': 1800.0, ...}
+
+    def validate_profile(cfg):
+        if cfg.get("local_evidence_profile", "server_vae") not in (
+            "server_vae",
+            "sim_shared_vae",
+        ):
+            raise ValueError(
+                "explicit server_vae or sim_shared_vae evidence profile required"
+            )
+        arm = cfg.get("single_latency_arm")
+        if arm is None:
+            if enabled(cfg) or cfg.get("sim_shared_vae") is not None:
+&gt;               raise ValueError("Sim VAE requires an explicit new single-latency C Run")
+E               ValueError: Sim VAE requires an explicit new single-latency C Run
+
+scripts/robocasa_eval_v2/shared_vae.py:91: ValueError</failure></testcase></testsuite></testsuites>

@@ -1,3 +1,28 @@
+# 2026-11-09 — Issue27 exact Pair CPU PASS; new Draft PR publication prepared
+
+Formal Root15dbc97bf13437905ec38247382834067e5341ae / Child-Gitlink
+60b252d05157b2753d2caebae32b11c878504bbe. Exact clean Pair author-01 shell0,
+gatePASS:965 top-level+207 subtests PASS,0fail/error/skip; JUnit1172total.
+New83top-level; Ruff/format/syntax19PASS; source_unchanged true; final RED/GREEN
+testbytes equal; native constructor/identity unchanged. Four groups472+289+143+
+61 top-level; original Local/NoTTT/Batch/Sim/source/resource protection retained.
+Raw90 files archived with SHA256, original development/RED failures retained.
+Only docs/evidence/Inbox follow the Formal implementation, no source edits.
+
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_SharedVAE_Topology_15dbc97b_60b252d0_Code_Gate_Request.md
+Raw docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/
+New branch both repos v3-shared-vae-topology-issue27-20261109; duplicate PR search
+found none, official refs prepublication still Roote58cef1f/Childb0dbd115.
+Publication not yet asserted: next normal Child-first then Root pushes, NEW
+independent Draft PRs and remote readback. Prior merged PR25/7 remain untouched.
+Canonical Inbox appended after exact byte check; local request not remote ACK.
+
+Task REVIEW, independent GPT Code Gate pending; author CPU is not reviewer
+approval or new real GPU/Action/performance/SR acceptance. No GPU/server/realSim/
+900EP/training/running-job/official V3 merge operations. Same existing EvalV2,
+all legal capacity/resource bounded topologies; Bvae1/wait0/15+1/16T1/full M-B
+Resume/optional single ABC retained. No agents delegated or server files copied.
+
 # 2026-11-09 — Issue27 implementation frozen for exact-pair author CPU
 
 Owner scope unchanged: existing EvalV2/NativeBatch/sharedVAE for all legal

@@ -1,0 +1,105 @@
+cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py:18:36: E702 Multiple statements on one line (semicolon)
+   |
+17 | def test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes():
+18 |     base,_=sessions.make_adapter(8);adapter=FeatureAdapter(base)
+   |                                    ^ E702
+19 |     batches=[]
+20 |     actor=BatchedSessionTransactions(adapter,lambda reqs,updates:(batches.append(len(reqs)) or BatchOutput([[[0.125]*15 for _ in range…
+   |
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py:28:22: E702 Multiple statements on one line (semicolon)
+   |
+26 |         leases=[sessions.register(actor,f'slot{i}') for i in range(8)]
+27 |         pending=[sessions.submit(actor,l,sessions.payload(l)) for l in leases]
+28 |         release.set();gate.result(5)
+   |                      ^ E702
+29 |         results=[sessions.wait_result(actor,l,p) for l,p in zip(leases,pending)]
+30 |         assert batches==[8] and actor.info()['batch_histogram']=={8:1}
+   |
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py:32:39: E701 Multiple statements on one line (colon)
+   |
+30 |         assert batches==[8] and actor.info()['batch_histogram']=={8:1}
+31 |         assert len({r.json()['local_memory']['session_id'] for r in results})==8
+32 |         for l,r in zip(leases,results):sessions.ack(actor,l,r)
+   |                                       ^ E701
+33 |     finally:
+34 |         release.set();actor.close()
+   |
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py:34:22: E702 Multiple statements on one line (semicolon)
+   |
+32 |         for l,r in zip(leases,results):sessions.ack(actor,l,r)
+33 |     finally:
+34 |         release.set();actor.close()
+   |                      ^ E702
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:55:21: E701 Multiple statements on one line (colon)
+   |
+53 | def test_generic_profile_preserves_required_mode_and_existing_capacity_guards(tmp_path,change):
+54 |     cfg=topology(tmp_path,2,8,8)
+55 |     if change=='off':cfg['local_memory_mode']='off'
+   |                     ^ E701
+56 |     elif change in ('vae4','vae8'):cfg['sim_shared_vae']['bmax']=int(change[-1])
+57 |     elif change=='policy9':cfg['max_infer_batch_size']=9
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:56:35: E701 Multiple statements on one line (colon)
+   |
+54 |     cfg=topology(tmp_path,2,8,8)
+55 |     if change=='off':cfg['local_memory_mode']='off'
+56 |     elif change in ('vae4','vae8'):cfg['sim_shared_vae']['bmax']=int(change[-1])
+   |                                   ^ E701
+57 |     elif change=='policy9':cfg['max_infer_batch_size']=9
+58 |     elif change=='fractional_timeout':cfg['terminate_grace_s']=10.5
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:57:27: E701 Multiple statements on one line (colon)
+   |
+55 |     if change=='off':cfg['local_memory_mode']='off'
+56 |     elif change in ('vae4','vae8'):cfg['sim_shared_vae']['bmax']=int(change[-1])
+57 |     elif change=='policy9':cfg['max_infer_batch_size']=9
+   |                           ^ E701
+58 |     elif change=='fractional_timeout':cfg['terminate_grace_s']=10.5
+59 |     else:cfg['execution_profile']='phase_a'
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:58:38: E701 Multiple statements on one line (colon)
+   |
+56 |     elif change in ('vae4','vae8'):cfg['sim_shared_vae']['bmax']=int(change[-1])
+57 |     elif change=='policy9':cfg['max_infer_batch_size']=9
+58 |     elif change=='fractional_timeout':cfg['terminate_grace_s']=10.5
+   |                                      ^ E701
+59 |     else:cfg['execution_profile']='phase_a'
+60 |     with pytest.raises(ValueError):shared_vae.validate_profile(cfg)
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:59:9: E701 Multiple statements on one line (colon)
+   |
+57 |     elif change=='policy9':cfg['max_infer_batch_size']=9
+58 |     elif change=='fractional_timeout':cfg['terminate_grace_s']=10.5
+59 |     else:cfg['execution_profile']='phase_a'
+   |         ^ E701
+60 |     with pytest.raises(ValueError):shared_vae.validate_profile(cfg)
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:60:35: E701 Multiple statements on one line (colon)
+   |
+58 |     elif change=='fractional_timeout':cfg['terminate_grace_s']=10.5
+59 |     else:cfg['execution_profile']='phase_a'
+60 |     with pytest.raises(ValueError):shared_vae.validate_profile(cfg)
+   |                                   ^ E701
+   |
+
+tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py:65:37: E702 Multiple statements on one line (semicolon)
+   |
+63 | @pytest.mark.parametrize('arm',['A','B','C'])
+64 | def test_single_measurement_profile_identity_remains_exact(tmp_path,arm):
+65 |     cfg=profile_config(tmp_path,arm);old=copy.deepcopy(execution(cfg))
+   |                                     ^ E702
+66 |     shared_vae.validate_profile(cfg)
+67 |     assert execution(cfg)==old and 'shared_vae' not in execution(cfg)
+   |
+
+Found 12 errors (1 fixed, 11 remaining).

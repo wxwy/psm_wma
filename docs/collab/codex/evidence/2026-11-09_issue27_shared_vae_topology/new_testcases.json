@@ -1,0 +1,417 @@
+[
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[1]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[2]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[3]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[4]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[5]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[6]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[7]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_native_members_capture_identical_singleton_boundaries_without_extra_encoding[8]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_one_bad_member_prevents_all_boundary_publication_and_restores_context[missing]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_one_bad_member_prevents_all_boundary_publication_and_restores_context[extra]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_one_bad_member_prevents_all_boundary_publication_and_restores_context[swapped]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_one_bad_member_prevents_all_boundary_publication_and_restores_context[duplicate]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_one_bad_member_prevents_all_boundary_publication_and_restores_context[deadline]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_one_bad_member_prevents_all_boundary_publication_and_restores_context[generation]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[1]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[2]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[3]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[4]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[5]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[6]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[7]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_ready_members_are_bounded_by_config_and_map_to_original_sessions[8]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_pump_queued_before_peer_preparations_yields_executor_and_makes_actual_b8"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_no_ready_peer_never_waits_empty_batch_window_and_end_is_session_local"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_original_deadline_expiring_during_shared_generation_aborts_entire_sealed_batch"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end[2]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end[8]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_bounded_shared_worker_keeps_each_policy_session_and_signed_result_separate[1-1]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_bounded_shared_worker_keeps_each_policy_session_and_signed_result_separate[1-8]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_bounded_shared_worker_keeps_each_policy_session_and_signed_result_separate[2-8]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_bounded_shared_worker_keeps_each_policy_session_and_signed_result_separate[2-16]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_bounded_shared_worker_keeps_each_policy_session_and_signed_result_separate[3-3]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_policy_epoch_capacity_preserves_foreign_run_slot_epoch_and_stale_generation_guards"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_default_worker_still_pins_a_single_policy_epoch"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_policy_capacity_is_bounded_by_existing_session_limit[0]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_policy_capacity_is_bounded_by_existing_session_limit[True]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_policy_capacity_is_bounded_by_existing_session_limit[-1]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_policy_capacity_is_bounded_by_existing_session_limit[3]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_actual_shared_policy_batch_keeps_native_generation_and_observes_each_encode_once[1]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_actual_shared_policy_batch_keeps_native_generation_and_observes_each_encode_once[2]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_actual_shared_policy_batch_keeps_native_generation_and_observes_each_encode_once[4]"
+  },
+  {
+    "group": "stage3_focused",
+    "classname": "",
+    "name": "test_actual_shared_policy_batch_keeps_native_generation_and_observes_each_encode_once[8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[1-1-1]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[1-8-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[2-8-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[1-2-2]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[1-4-3]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[2-2-4]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[3-3-5]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_topology_is_config_driven_without_single_measurement_arm[4-2-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_random_and_streaming_capacity_boundaries_are_not_topology_enumerations"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_generic_profile_preserves_required_mode_and_existing_capacity_guards[off]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_generic_profile_preserves_required_mode_and_existing_capacity_guards[vae4]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_generic_profile_preserves_required_mode_and_existing_capacity_guards[vae8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_generic_profile_preserves_required_mode_and_existing_capacity_guards[policy9]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_generic_profile_preserves_required_mode_and_existing_capacity_guards[fractional_timeout]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_generic_profile_preserves_required_mode_and_existing_capacity_guards[phase_a]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_single_measurement_profile_identity_remains_exact[A]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_single_measurement_profile_identity_remains_exact[B]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_single_measurement_profile_identity_remains_exact[C]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-1-False]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-8-False]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-False]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-True]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[3-2-True]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_reused_worker_rejects_other_policy_identity_or_constructor_changes[vae_weights_sha256]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_reused_worker_rejects_other_policy_identity_or_constructor_changes[clock_domain]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_reused_worker_rejects_other_policy_identity_or_constructor_changes[worker_constructor_config]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_public_yaml_preview_uses_same_streaming_slots_for_arbitrary_legal_topologies[1-1-1]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_public_yaml_preview_uses_same_streaming_slots_for_arbitrary_legal_topologies[1-8-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_public_yaml_preview_uses_same_streaming_slots_for_arbitrary_legal_topologies[2-8-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_public_yaml_preview_uses_same_streaming_slots_for_arbitrary_legal_topologies[3-3-5]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_public_yaml_preview_uses_same_streaming_slots_for_arbitrary_legal_topologies[2-32-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_history_keeps_full_resume_identity_and_never_adopts_changed_m_or_b[sims_per_gpu]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_history_keeps_full_resume_identity_and_never_adopts_changed_m_or_b[max_infer_batch_size]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_history_keeps_full_resume_identity_and_never_adopts_changed_m_or_b[batch_wait_ms]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_shared_history_keeps_full_resume_identity_and_never_adopts_changed_m_or_b[worker_resources]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[1-1-1]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[1-8-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[2-8-8]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[3-3-5]"
+  },
+  {
+    "group": "root_lifecycle_config",
+    "classname": "",
+    "name": "test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[2-32-8]"
+  }
+]

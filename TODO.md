@@ -2,7 +2,7 @@
 
 # 2026-11-09 — Shared VAE generic topology
 
-- **ISSUE27-SHARED-VAE-TOPOLOGY** — IN_PROGRESS (Child60b252d0 frozen; targeted117+5PASS/RED2; exact-pair authorCPU pending); Codex; Owner/Issue27 general topology requirement; existing Runtime dynamicServer/Sim/Worker/Session with Bvae1/wait0 and Bpolicy1..8, single ABC unchanged; all legal shapes within prior capacity/resources; new exact Pair, CPU Evidence, NEW Draft PRs and fresh GPT Code Gate. No GPU/SR/900EP/official merge.
+- **ISSUE27-SHARED-VAE-TOPOLOGY** — REVIEW (Formal15dbc97b/Child60b252d0; exact-pair author965+207PASS; fresh Code Gate publication prepared); Codex; Owner/Issue27 general topology requirement; existing Runtime dynamicServer/Sim/Worker/Session with Bvae1/wait0 and Bpolicy1..8, single ABC unchanged; all legal shapes within prior capacity/resources; new exact Pair, CPU Evidence, NEW Draft PRs and fresh GPT Code Gate. No GPU/SR/900EP/official merge.
 # PSM-WMA 任务队列
 
 - **R02-NV-FORMAT-01** — REVIEW; Codex; Formal Root46c08127b2a13155bb22204069a1456cb01424d7 / Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Ruff0.12.7 format2 files, identical full AST/assertions/semantics, clean exact-Pair author CPU66 distinct PASS/0failure/error/skip and static/scope PASS. Isolated v3-eval-v2-r02-format-20261103 published Child FIRST then Root; fresh remote readback55/55 artifacts+4/4 source/config bindings/Gitlink/unique bounded Inbox/clean PASS. Latest c4d docs preserved; publication receipt9 artifacts retained. STOP pending GPT incremental Code Gate and DS independent CPU/static. Historical DS66/static-FAIL retained; official refs unchanged, no GPU/real simulator/training/DCP/old results or old122/379/42 rerun.

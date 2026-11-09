@@ -1,0 +1,52 @@
+{
+  "created_cst": "2026-11-09T11:24:25.591847+08:00",
+  "formal_pair": {
+    "root": "15dbc97bf13437905ec38247382834067e5341ae",
+    "child": "60b252d05157b2753d2caebae32b11c878504bbe",
+    "gitlink": "60b252d05157b2753d2caebae32b11c878504bbe"
+  },
+  "status": "AUTHOR_CPU_PASS_INDEPENDENT_CODE_GATE_PENDING",
+  "groups": {
+    "stage3_focused": {
+      "top_level": 472,
+      "junit_tests": 679,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "root_lifecycle_config": {
+      "top_level": 289,
+      "junit_tests": 289,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "legacy_protection": {
+      "top_level": 143,
+      "junit_tests": 143,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "streaming_bounds": {
+      "top_level": 61,
+      "junit_tests": 61,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "top_level_pass": 965,
+  "junit_tests": 1172,
+  "new_top_level_pass": 83,
+  "static_python_files": 19,
+  "source_unchanged": true,
+  "red_expected_failures": 2,
+  "red_green_test_hashes_equal": true,
+  "native_constructor_and_identity_unchanged": true,
+  "real_gpu_checkpoint_robocasa_sr": "NOT_RUN",
+  "official_branches_modified": false,
+  "scope": "existing EvalV2 + NativeBatch + shared B1 VAE; all legal resource/capacity bounded topologies",
+  "kernel_fixture": "explicit existing /proc kernel identity double; native parser unchanged",
+  "development_failures_preserved": true
+}

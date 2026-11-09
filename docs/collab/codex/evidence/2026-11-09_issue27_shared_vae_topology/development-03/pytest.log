@@ -1,0 +1,328 @@
+.........................................FFFFFFFF....................... [ 80%]
+.................                                                        [100%]
+=================================== FAILURES ===================================
+_ test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-1-False] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_config_drives_workers_own0')
+servers = 1, sims = 1, same_render = False
+
+    @pytest.mark.parametrize(
+        "servers,sims,same_render",
+        [(1, 1, False), (1, 8, False), (2, 8, False), (2, 8, True), (3, 2, True)],
+    )
+    def test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup(
+        tmp_path, servers, sims, same_render
+    ):
+>       with rig_for(tmp_path, servers, sims, same_render) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:202: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-8-False] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_config_drives_workers_own1')
+servers = 1, sims = 8, same_render = False
+
+    @pytest.mark.parametrize(
+        "servers,sims,same_render",
+        [(1, 1, False), (1, 8, False), (2, 8, False), (2, 8, True), (3, 2, True)],
+    )
+    def test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup(
+        tmp_path, servers, sims, same_render
+    ):
+>       with rig_for(tmp_path, servers, sims, same_render) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:202: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-False] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_config_drives_workers_own2')
+servers = 2, sims = 8, same_render = False
+
+    @pytest.mark.parametrize(
+        "servers,sims,same_render",
+        [(1, 1, False), (1, 8, False), (2, 8, False), (2, 8, True), (3, 2, True)],
+    )
+    def test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup(
+        tmp_path, servers, sims, same_render
+    ):
+>       with rig_for(tmp_path, servers, sims, same_render) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:202: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-True] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_config_drives_workers_own3')
+servers = 2, sims = 8, same_render = True
+
+    @pytest.mark.parametrize(
+        "servers,sims,same_render",
+        [(1, 1, False), (1, 8, False), (2, 8, False), (2, 8, True), (3, 2, True)],
+    )
+    def test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup(
+        tmp_path, servers, sims, same_render
+    ):
+>       with rig_for(tmp_path, servers, sims, same_render) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:202: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[3-2-True] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_config_drives_workers_own4')
+servers = 3, sims = 2, same_render = True
+
+    @pytest.mark.parametrize(
+        "servers,sims,same_render",
+        [(1, 1, False), (1, 8, False), (2, 8, False), (2, 8, True), (3, 2, True)],
+    )
+    def test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup(
+        tmp_path, servers, sims, same_render
+    ):
+>       with rig_for(tmp_path, servers, sims, same_render) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:202: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_reused_worker_rejects_other_policy_identity_or_constructor_changes[vae_weights_sha256] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_reused_worker_rejects_oth0')
+field = 'vae_weights_sha256'
+
+    @pytest.mark.parametrize(
+        "field", ["vae_weights_sha256", "clock_domain", "worker_constructor_config"]
+    )
+    def test_reused_worker_rejects_other_policy_identity_or_constructor_changes(
+        tmp_path, field
+    ):
+>       with rig_for(tmp_path, 2, 1, True) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:292: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_reused_worker_rejects_other_policy_identity_or_constructor_changes[clock_domain] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_reused_worker_rejects_oth1')
+field = 'clock_domain'
+
+    @pytest.mark.parametrize(
+        "field", ["vae_weights_sha256", "clock_domain", "worker_constructor_config"]
+    )
+    def test_reused_worker_rejects_other_policy_identity_or_constructor_changes(
+        tmp_path, field
+    ):
+>       with rig_for(tmp_path, 2, 1, True) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:292: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+_ test_reused_worker_rejects_other_policy_identity_or_constructor_changes[worker_constructor_config] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-03/tmp/test_reused_worker_rejects_oth2')
+field = 'worker_constructor_config'
+
+    @pytest.mark.parametrize(
+        "field", ["vae_weights_sha256", "clock_domain", "worker_constructor_config"]
+    )
+    def test_reused_worker_rejects_other_policy_identity_or_constructor_changes(
+        tmp_path, field
+    ):
+>       with rig_for(tmp_path, 2, 1, True) as rig:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:292: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:133: in rig_for
+    owner = FeatureEvidenceOwner(
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:289: in __init__
+    self._control = _secret(owner_token)
+                    ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = b'cpu-owner'
+
+    def _secret(value):
+        if type(value) is str:
+            value = value.encode("utf-8")
+        if type(value) is not bytes or not 16 <= len(value) <= 256:
+>           raise PermissionError("bounded Owner control capability required")
+E           PermissionError: bounded Owner control capability required
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_evidence.py:106: PermissionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-1-False]
+FAILED ../../../dev::test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-8-False]
+FAILED ../../../dev::test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-False]
+FAILED ../../../dev::test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-True]
+FAILED ../../../dev::test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[3-2-True]
+FAILED ../../../dev::test_reused_worker_rejects_other_policy_identity_or_constructor_changes[vae_weights_sha256]
+FAILED ../../../dev::test_reused_worker_rejects_other_policy_identity_or_constructor_changes[clock_domain]
+FAILED ../../../dev::test_reused_worker_rejects_other_policy_identity_or_constructor_changes[worker_constructor_config]
+8 failed, 81 passed, 5 warnings in 19.57s
