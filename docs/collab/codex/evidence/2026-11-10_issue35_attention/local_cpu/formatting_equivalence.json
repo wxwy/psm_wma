@@ -1,0 +1,42 @@
+{
+  "capture_driver.py": {
+    "before_sha256": "22ef30c0f19574d613468221621bb93164811b30e8d3424ae38a353ecc0007b5",
+    "after_sha256": "acd6e4634fe68a8d0108fe5bf7cee26d138570042877f6066d7ce915d8433f82",
+    "same_ast": false
+  },
+  "capture_entry.py": {
+    "before_sha256": "d8fe2beea69d088586580780a1179ac3646219fb78aa1712bbd305ae59ee7d23",
+    "after_sha256": "59dfbe1216ec9c2a3c760e7431179b3c0d6a7a06a33f5c32598b68a0700948d0",
+    "same_ast": true
+  },
+  "egl_probe.py": {
+    "before_sha256": "48eb118a647c6b24892cb825e71887f9721171f6a6dda8dd02708ca070bd1316",
+    "after_sha256": "afc895224fa71b2581dec90815fb9c919d874faec51f2ea54e0ddfd9a6bae712",
+    "same_ast": false
+  },
+  "hooks/freeze_capture.py": {
+    "before_sha256": "6abf62914179e26c3f02c682cbba0593730c73fcf297f40623f4c50a04c5712f",
+    "after_sha256": "f7c1bfea0e1e51a11e6b35435002bbb14f8a122bf4cf301d26b40b1a88d859e1",
+    "same_ast": true
+  },
+  "hooks/sitecustomize.py": {
+    "before_sha256": "ab21348f0f2ead6c7453acb959b3925b74c7360bf17943cc42a4487d290fa871",
+    "after_sha256": "f3ce8a8e2e45ad58d5e6fd788885aa0351182242f84a3b8f2deb6bc9e09e61d4",
+    "same_ast": true
+  },
+  "reduce_existing_trace.py": {
+    "before_sha256": "f739ff399f8b4e01afc498d768318aec2bb6f2621dafadeeb42e7e3a3ca280ec",
+    "after_sha256": "357909a15d35aad6fb49383850bc3d161f81adedc8922286713f12bd5a2e21b3",
+    "same_ast": true
+  },
+  "snapshot_test.py": {
+    "before_sha256": "dc5af0b14a1df30601fbe4f91ecf515b5f55f8655e69604f7513a0b37643f3f0",
+    "after_sha256": "acc1a17c2146d1e13303f8b7835b2a20cdcdb466d44006793161a7da144223d7",
+    "same_ast": true
+  },
+  "verify_bootstrap.py": {
+    "before_sha256": "29f5b0ea9f62d2194443531c0646e64464ca943b7a86605a7047d9c2adfb4a60",
+    "after_sha256": "dff7110e563f667a20676ceb50b1cce59f7232315d5945cc15f8d6636ff2cb87",
+    "same_ast": true
+  }
+}

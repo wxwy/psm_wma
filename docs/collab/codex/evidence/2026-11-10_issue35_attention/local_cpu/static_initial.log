@@ -1,0 +1,13 @@
+capture_driver.py:36:26: E702 Multiple statements on one line (semicolon)
+capture_driver.py:40:33: E702 Multiple statements on one line (semicolon)
+capture_driver.py:42:30: E702 Multiple statements on one line (semicolon)
+capture_driver.py:43:28: E702 Multiple statements on one line (semicolon)
+capture_driver.py:64:31: E702 Multiple statements on one line (semicolon)
+egl_probe.py:35:38: E701 Multiple statements on one line (colon)
+egl_probe.py:36:5: E701 Multiple statements on one line (colon)
+egl_probe.py:39:16: E701 Multiple statements on one line (colon)
+hooks/freeze_capture.py:34:43: E701 Multiple statements on one line (colon)
+hooks/freeze_capture.py:36:33: E701 Multiple statements on one line (colon)
+hooks/freeze_capture.py:38:36: E701 Multiple statements on one line (colon)
+hooks/freeze_capture.py:109:38: E701 Multiple statements on one line (colon)
+Found 13 errors (1 fixed, 12 remaining).

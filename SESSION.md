@@ -1,3 +1,57 @@
+# 2026-11-10 CST — Issue35 evidence-only partial result; real-input capture BLOCKED
+
+Task ISSUE35-ATTENTION-PARITY: BLOCKED, Codex author; GPT independent reviewer.
+Separate branch v3-local-prefix-attention-issue35-20261109, docs base523aa26a.
+Unchanged FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496 /
+Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d; no production changes.
+Owner Issue35 and corrected Stage2 formal review read; scoped APPROVE_CODE stands.
+Earlier1.05x rejection superseded; historical author NOT_MET/exit2 retained.
+No repeated review of unchanged Pair or automatic V3 merge.
+
+Existing GPU02 synthetic trace reduced on-server, source hashes unchanged,
+counts independently crosschecked: both modes causal28, GEN840, varlenprep868.
+PackON GPU work sums causal0.277605ms, GEN11.958062ms, prep2.771284ms;
+Flash CPUinclusive141.351444ms (nested fwd78.619611ms, not additive).
+812 source hit paths do not imply812 causal GPU kernels; possible compilerDCE,
+not per-hit IR proof or real-input latency/GPU savings. No Attention patch.
+
+Original target K1replan2/source32,K16replan4/source64 full tensors absent in
+reviewer archived records; only Action/hash/scalar/timing summaries found.
+One short native K1capture01 tried on exact server root2/Child1936, GPU6Policy+
+GPU4Sim/VAE, output/baseport-only cfg changes. Actor physical EGL proof failed
+at render_devices.py267 before render/reset/env.step; no requests frozen;
+K16 never started, no capture02 or SR. All3owned close receipts match records,
+live_groupfalse and groups empty; finalGPU4/6 both0MiB/0%.
+
+Current uid1004/groups1004 cannot R/W /dev/dri/renderD132 (0660,gid993), correct
+sysfsPCI0000:98:00.0. Nativeinventory8 devices but noDRMPCI/CUDAhandles;
+purectypes/-S withCVDempty/unset bothnull/EGL_BAD_PARAMETER. Permission is an
+observed environment blocker, not proven sole root cause. Nochmod/group/sudo
+execution or identity bypass. Need existing authorized runnable env or complete
+frozen requests; async path/entry question sent, unanswered at this record.
+
+External torch.save capture tools prepared; native carriers/FastRecord/FW/Prefix
+layout/aliases/RNG CPU4/4PASS,0fail/error/skip,Shell0 (prior3PASS preliminary).
+Fixed diagnostic PYTHONPATH shadowing, originalstartup helper hashbound/preserved;
+bootstrap02 native CLI/Policy --help exit0, constructor hook active, modelNOT
+initialized. Hook still not validated on real inference. Current tools RuffPASS,
+format AST bindings retained. Early diagnostic true intentional-stop label was
+wrong; raw capture01 preserved and explicitly corrected, not a successful stop.
+Status01 mislabeled no_ttt_rerun field corrected by immutable status02.
+
+All rawserver configs/images/PT/DCP/logs/trace stayprivate on data. Only owncode,
+local rawCPUJUnit/logs and derivedstats/hashes go in this docs branch. Private
+root /mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue35_attention_20261109;
+index02 SHA4c9eac160fc6f27d210ef2560347c557b518fccbb1c4bf2c34d262ee3aaf8e29.
+Evidence docs/collab/codex/evidence/2026-11-10_issue35_attention/;
+report docs/collab/codex/reviews/2026-11-10_Issue35_Attention_ExistingTrace_RealInputCapture_BLOCKED.md.
+NoTTT rerun/900EP/SR/training/GPU0-3/otherjobs/load management/V3 changes.
+Fresh protected refs RootV3e58cef1f,Childofficialb0dbd115; Stage2docs523aa26a.
+Scope/evidence checks PASS: current9probeRuff/format, AST,4JUnitcounts,
+no private tensors/config copies, diffcheck/Childclean. Publish independent
+evidence branch only; no production pair/PR requested. Precommit record;
+publication receipt follows only after push/readback.
+
 # 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack reuse REVIEW
 
 Task ISSUE31-PREFIX-PACK REVIEW; authorCodex, independentGPT reviewer.

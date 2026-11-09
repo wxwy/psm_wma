@@ -2,7 +2,9 @@
 
 # 2026-11-09 — Prefix-aware Local-TTT generation
 
-- **ISSUE31-PREFIX-PACK** — REVIEW; Codex; Formal18be4a80/193627f4; focused201CPU/static9/source1487PASS, oldbaselineW0failure explicitly deselected; same-Local H10030pairs/textKV ON both/packOFF-ON exactActions, P50837.08→798.87ms (1.0478x). PerformanceNOT_MET below1.05x/Shell2. Request-local native pack31→2 inclprep1, all28layersPrefix30/hit29. Private rawGPU files server-only, derivedstats/rawCPU archived. Fresh incremental independent Code/Evidence Gate requested; Stage1P99 unresolved, no V3 merge/training/VAE/Sim/Worker/Resume/SR changes.
+- **ISSUE35-ATTENTION-PARITY** — BLOCKED; Codex; unchanged18be/1936 scoped APPROVE_CODE. Existing synthetic trace causal28/GEN840/varlen868; no evidence812 causalGPU repeats. Real K1/source32 shortcapture failed nativephysicalEGL beforeenv.step; K16 notstarted,0requests. Currentuid1004 cannotreadGPU4DRMnode; need usableauthorizedenv or frozencompleteinputs. Threeownedgroupscleaned/GPU4,6idle. Externalserialization4CPU/boothelp PASS, not modelGate. Evidence/report2026-11-10; no productioncode/NoTTT/SR/V3changes; realinputparity+componentCPU/GPU remain incomplete.
+
+- **ISSUE31-PREFIX-PACK** — DONE (scoped Stage2 Code/model-only evidence); Formal18be4a80/193627f4, corrected GPT APPROVE_CODE read atdocs523aa26a. P50837.08→798.87ms observed, original author1.05x NOT_MET/Shell2 preserved; no Owner arbitrarythreshold. CPU201+independent14, exact syntheticAction/Vision, Prefix28x30. Realinputparity/Attention belongIssue35; no V3merge/productionSLA/Stage1P99closure.
 
 - **ISSUE31-PREFIX-TEXT-KV** — DONE (first-stage Code/model-only P50 Gate); exact5b89f3ed/4446be0f GPT APPROVE_CODE in formal review consumed at590071c5. Independent25CPU/56rawhashes/exactActions; author187PASS with inherited W0failure excluded. P50 991.55→825.53ms accepted; P99 unresolved, no V3 merge/Sim/SR/tail-SLA approval. Separate Stage2 task above.
 

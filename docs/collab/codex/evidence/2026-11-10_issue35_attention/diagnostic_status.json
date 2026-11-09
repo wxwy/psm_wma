@@ -1,0 +1,73 @@
+{
+  "status": "BLOCKED_REAL_INPUT_CAPTURE_NOT_GATE_PASS",
+  "formal_pair": {
+    "root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+    "child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+    "gitlink": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+    "root_status": "",
+    "child_status": ""
+  },
+  "source_unchanged": true,
+  "capture": {
+    "k1_target_source_step": 32,
+    "k16_target_source_step": 64,
+    "k1_completed": false,
+    "k16_attempted": false,
+    "frozen_request_count": 0,
+    "env_step_executed": false,
+    "episode_sr_reportable": false,
+    "stop_reason": "native physical EGL device proof unavailable before render/reset",
+    "original_driver_label_correction": "capture01 intentional_early_stop=true was erroneous; actual capture never became ready"
+  },
+  "owned_cleanup": [
+    {
+      "kind": "shared_vae_worker:GPU4",
+      "closed": true,
+      "live_group": false
+    },
+    {
+      "kind": "server",
+      "closed": true,
+      "live_group": false
+    },
+    {
+      "kind": "simulator_slot:87b4be10b85a484db144e8b3147593b9",
+      "closed": true,
+      "live_group": false
+    }
+  ],
+  "selected_render_node": {
+    "node": "renderD132",
+    "physical_pci": "0000:98:00.0",
+    "uid": 1004,
+    "groups": [
+      1004
+    ],
+    "gid": 993,
+    "mode": "0o660",
+    "readable": false,
+    "writable": false
+  },
+  "bootstrap": {
+    "original_helper_sha256": "b80f9d0a2f876a4a66bd02dcc097ba7a7efb1ac46321a0cecb4fbffee3dbdf74",
+    "native_environment_preserved_except_probe_precedence": true,
+    "cli_exit": 0,
+    "policy_exit": 0,
+    "hook_loaded": true,
+    "class_instrumented": true,
+    "model_initialized": false,
+    "status": "BOOTSTRAP_ONLY_PASS_NOT_MODEL_GATE"
+  },
+  "trace_reduction_sha256": "05c0d0e923c61a670c9882d2d9b7caad0f7029decac258f0e1101e5ee9522b34",
+  "input_capture_hook_model_validated": false,
+  "code_change_required_by_evidence": false,
+  "no_ttt_executed": false,
+  "no_production_change": true,
+  "selected_gpu_status": [
+    "4, GPU-545d3c6f-e60e-dad5-cb58-b0fd6aceb33b, 0, 0",
+    "6, GPU-a785be7c-17dc-117c-c6fa-de6ded5c135b, 0, 0"
+  ],
+  "private_artifact_count": 75,
+  "private_artifact_index_sha256": "4c9eac160fc6f27d210ef2560347c557b518fccbb1c4bf2c34d262ee3aaf8e29",
+  "supersedes_metadata_only": "status01 no_ttt_rerun=false was a mislabeled field; no No-TTT process was executed"
+}
