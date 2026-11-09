@@ -1,3 +1,64 @@
+# 2026-11-09 CST — G2 F3 code fixed, real A/B running
+
+Native fixed source abcc87ca636c81455f397e8b0813522c70874c00 on independent
+codex/g2-f3-color-ab; native C++ fingerprint49335ae314ae1f6a51e6a586cb05fa0f490332bc35bd7d50747fec80c560ecfa.
+Local173 C++/121 data+GT Python and553 PSM Python PASS; exact retention
+168/106/517 baseline IDs verified. All3 own RGBD leaves integrate4frames,
+export2color+2normal snapshots, reject16 source bindings each. Worker stop/
+overwrite/clear/publication accounting and actual two-frame RGBD→native GT→
+sealed bundle→observed views pass. Code peer review has no open P0/P1/P2;
+directional ray/local thin-feature visibility remains explicitly uncertified.
+
+Data: final308file runtime package and build overlay Git blobs exactly match
+published native tree; existing Patchwork dependency hash matches F2. Original
+Git fetch unavailable, repository code sent inward only; git_checkout=false.
+Full native main compiled; CMake/Noetic cached GTest import compatibility under
+repair using repository build configuration, without server source edits.
+Both real201frame input plans verify against F2 cache digests, snapshot indices
+0/20/.../200. Same Noetic Python3.12/NumPy2.5.4 plus isolated MuJoCo3.3.7
+verifies all201 RGBD frames and exact49/106 source GT entities/states. A different
+Python/NumPy runtime yields23 quaternion last-bit SHA differences and is rejected;
+no tolerances or geometry changes were introduced. Six real color runs started
+on2CPU/noGPU in new isolated directories; no measurement/acceptance result is
+claimed yet. Private data stays on data. Fixed PSM source publication precedes
+server receiver/view runs; final aggregate/fixed-pair handoff comes afterwards.
+V3/Gitlink/models/train/cache/old PRs/merges unchanged; training_ready=false.
+
+# 2026-11-09 CST — G2-F3 existing ColorCloudMap A/B authorized and started
+
+IN_PROGRESS / Codex. Owner instructions nav_sg#8/6740780287 and
+PSM#26/6740781122 read in full. New independent codex/g2-f3-color-ab branches
+start at F2 delivery metadata74ac5cbc/da1d38bd; source scopes verified identical
+to explicit baselines nativec5825589 / PSMc4c2a364. Reuse ONE existing native
+ColorCloudMap; no second visual cache or navigation resolution change. Compare
+0.05/0.02/0.01m, six-view/snapshot scheduler1Hz (0.5/2 optional); preserve2Hz
+color publication, actual fusion independent.0.005 remains optional, not default.
+
+Planned native: ColorCloudMapWorker timing/counters/typed RGB-D-only snapshot
+evidence, minimal MapROS statistics/color export RPC, existing native GT spatial
+writer receiving certified observed colors without another color-map fusion;
+offline A/B driver/config/tests. Planned PSM: receiving observed color/native GT
+geometry separately, source/rebinding guards, existing six-view empty/UNKNOWN
+rules, performance aggregation/manifest/tests and new runbook. Native keeps all
+Room/Wall/Floor/object/connection/Island algorithms. Source GT structures never
+become model detections; asset/prescan colors cannot certify the new RGB-D views.
+
+Data device available; read-only environment/preexisting evidence inspection
+only so far, no server code edit. Later author CPU runs use fixed repository
+source in NEW isolated directories, private inputs/outputs remain there; only
+aggregate/count/hash facts may be published. Existing server Noetic prefix and
+F2 GT/cache outputs can be reused. Prior server machine verdict is limited:
+F2 components/GT preview approved, NORMAL_LAYOUT10_AND_REBINDING_OPEN, H1pending;
+not consumed as a formal complete-Gate approval. Rebinding currently hits
+permission denied on archived root-owned asset paths; keep explicit current
+asset vs unavailable historical-byte evidence, never relax source identity.
+
+Codex implements/CPU-author A/B, GPT independently repeats server checks, Owner
+visual decision; DS absent and old V2/MM/Kimi waiting superseded by this explicit
+current workflow. No V3/Gitlink/production/source data edits/model/GPU/train/merge.
+Claimed code edits not yet committed; self-tests, source publication, real A/B,
+read-only peer review, fixed SHA and Issue handoff remain to do.
+
 # 2026-11-09 CST — G2-F2 review request delivered and read back
 
 REVIEW. Canonical Inbox commit7289d7a630572f29a267f8ac34167db9e15d4a61,
