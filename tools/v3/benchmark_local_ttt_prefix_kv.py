@@ -209,6 +209,7 @@ def main():
             visual,
             action_history,
             torch.ones(1, 16, dtype=torch.bool, device=device),
+            state_in=None,
             create_graph=False,
         )
         prefix = tokens[0, -1].detach().clone()
