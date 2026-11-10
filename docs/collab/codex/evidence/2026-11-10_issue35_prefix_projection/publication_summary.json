@@ -1,0 +1,54 @@
+{
+  "formal_root": "1b184204e301a51a7a20ed4dde1a11689589cf2d",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "parent_root": "8406fc8650088d5ef1f79bb6d63f46a3be41370b",
+  "parent_child": "4be3d702f3008040b830ae09c200d80e273a201a",
+  "child_files": [
+    "cosmos_framework/model/generator/mot/attention.py",
+    "cosmos_framework/model/generator/mot/inference_text_kv_memory.py",
+    "cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+    "cosmos_framework/model/generator/mot/unified_mot.py",
+    "cosmos_framework/model/generator/omni_mot_model.py"
+  ],
+  "gate": {
+    "status": "PASS",
+    "independent_approval": "NOT_CLAIMED",
+    "real_H100": "PENDING_INDEPENDENT_GPT",
+    "identity": {
+      "root": "1b184204e301a51a7a20ed4dde1a11689589cf2d",
+      "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+      "gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+      "root_status": "",
+      "child_status": ""
+    },
+    "junit": {
+      "tests": 314,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_unchanged": true,
+    "source_files": 1487,
+    "static_files": 11,
+    "new_static_files": 2,
+    "inherited_import_order_exceptions": [
+      "mot/inference_text_kv_memory.py:I001",
+      "mot/unified_mot.py:I001",
+      "mot/attention.py:I001"
+    ],
+    "excluded_preexisting_failure": {
+      "test": "local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0",
+      "baseline_child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "baseline_raw": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/raw/baseline01/w0.xml",
+      "expanded_candidate_raw": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/raw/dev05/focused.xml",
+      "claim": "Stage1 expanded181PASS/1FAIL, clean4cd baseline and GPT4446 same failure; no Stage2 scan edit or inherited-test rerun; not fixed/countedPASS"
+    },
+    "existing_gate_sha256": "b90b71cb41aad3c48b4d81301b61bd872e342aaeba8ccf05acf99a299de0fd1e"
+  },
+  "inherited_wrapper_unchanged": "9d7fd7812af9fc1e96e9738a6203dcffd0ade03b150bb0e16e2f98a7be7a42fc",
+  "h100": "NOT_RUN; PENDING_INDEPENDENT_GPT_K16_SOURCE64_ONLY",
+  "new_performance_claim": "NONE",
+  "server_access_this_turn": false,
+  "server_files_exported": false
+}

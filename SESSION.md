@@ -1,3 +1,45 @@
+# 2026-11-10 CST — Issue35 请求内原生Prefix投影作者CPU完成
+
+任务 ISSUE35-PREFIX-PROJECTION：REVIEW；Codex代码/CPU，GPT独立窄增量审核与真实K16/source64 Gate。
+Formal Root 1b184204e301a51a7a20ed4dde1a11689589cf2d /
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2。两仓隔离分支已Child FIRST/Root正常push。
+exact clean作者完整既有scoped CPU314/314 PASS、0失败/错误/跳过、Shell0、1487指纹一致、11静态文件；
+历史W0一项明确deselect、原三项I001不变；59聚焦与314重叠。原RED1、新GREEN1、开发fixture3FAIL均归档。
+报告 docs/collab/codex/reviews/2026-11-10_Issue35_RequestLocal_PrefixProjection_1b184204_d5c1ffc7_Review_Request.md；
+证据 docs/collab/codex/evidence/2026-11-10_issue35_prefix_projection/。文档HEAD为账本，不替代Formal Root。
+首轮实际nativeAttention K/V buffer捕获，小Prefix/UND在编译边界外clone，Host身份/版本/storage绑定；
+训练/未证明/修改Prefix等回退；Context/B1组装/Norm memo算式/Memory注入不改。H100未执行、无性能承诺；
+仅后续GPT K16/source64全30步velocity/Action/Vision严格一致后再同输入性能，不重复K1/NoTTT/Sim/SR/V3。
+
+# 2026-11-10 CST — Issue35 请求内逐层 Prefix K/V 投影复用实施
+
+任务 ISSUE35-PREFIX-PROJECTION：IN_PROGRESS；Codex实现/CPU，GPT独立审核及真实H100，仅K16/source64。
+Child候选已提交d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2，4生产文件+1测试（481+/21-）。
+首轮返回实际Attention K/V buffer及UND索引；编译边界外提取/clone Prefix K/V与UND，普通4tuple不变。
+Host绑定强引用Prefix对象、版本、存储指针/shape/stride/dtype/device；只授权eval/no-grad/B1旧TextKV
+eligible请求，更换/修改或无法跟踪的InferenceTensor/子类回退旧投影。Context/B1组装未改，Norm memo
+函数除文档外AST相同。首轮旧RED1FAIL：每层K/V/KNorm均30次；新相同函数AST GREEN1PASS均1次。
+最终Prefix聚焦59/59 PASS，0失败/错误/跳过，含FP32/BF16逐30步、真实buffer身份、版本/存储失效、
+改变/恢复、请求隔离、异常清理、动态fullgraph。早期55PASS/3fixtureFAIL及中间59PASS保留原JUnit/
+fixture/源码patch；最终直接buffer版再次59PASS。完整clean CPU待Root冻结后执行，预期292+22=314。
+本轮未做H100，不能从Eager120ms或CPU次数推导整模型加速或BF16严格相等。
+两仓隔离分支 v3-local-prefix-projection-issue35-20261110。
+基线Root8406fc8650088d5ef1f79bb6d63f46a3be41370b / Child4be3d702f3008040b830ae09c200d80e273a201a。
+before b44dd7aa，fresh fetch/ls-remote/tracking一致8406fc86，完整列出4新提交444e0cc7/f737365a/
+9ff09be5/8406fc86，ancestor0、ff-only成功。已读正式B1 APPROVE_CODE及K16投影热点完整报告和Inbox。
+39f60da7/4be3d702旧B1数值及性能Gate已独立通过，保持旧批准，不重审。新报告收敛只测K16，
+Eager120ms重复投影并非整模型可回收时间；不改变Memory注入或使用预计算Eager结果冒充编译等价。
+治理技能已读；当前Owner角色Codex实现/CPU、GPT真实GPU，覆盖旧三方/训练等待要求。
+
+预计Child生产范围：attention.py（首轮实际native K/V捕获），inference_text_kv_memory.py（请求cache/
+清理与Host版本绑定），unified_mot.py（明确授权命中时跳过重复Prefix投影），omni_mot_model.py
+（eligible B1/two_way/guidance1/no-grad/eval请求闭包权限与失效）。测试prefix_text_kv_memory_test.py。
+优先不动Context构建、不动已批准B1组装或Norm memo公式。只捕获首轮native已物化Prefix K/V；
+Prefix身份/版本变化或无法可靠跟踪时回退旧路径，避免GPU数据同步与跨请求/Session缓存。
+先确定性CPU预算RED，再CPU数值/原生capture/版本失效/隔离/异常清理/训练及非B1fallback/编译测试。
+提交新Child->Root精确配对及clean scoped CPU Evidence，交GPT独立审核和K16全30步/Action/Vision
+strict0，然后同输入性能。Child已冻结，Root即本记录/Gitlink实现提交；无GPU/服务器/训练/NoTTT/Sim/SR/V3操作。
+
 # 2026-11-10 CST — Issue35 B1 Prefix K/V 组装作者 CPU 完成，申请独立审核
 
 任务 ISSUE35-B1-KV-ASSEMBLY：REVIEW，Codex 实现与 CPU 检查，GPT 独立审核及后续 H100 数值/性能执行。
