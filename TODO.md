@@ -1,8 +1,10 @@
+- **ISSUE35-KV-HIT-PARITY** — IN_PROGRESS; Codex; candidateChildbf707810 (base1936), isolatedbranch20261110. TruefirstPrefixKnormBF16delta proven sameprojection/Normweight; guardedexact-input request-localnormreference, changedPrefix/Vlive, no tolerance/training/globalprecision. ControlledoldRED1/newGREEN1, extraCPUsafetycases added; exactclean213CPU+realK1/32,K16/64 strictall30stepsGPU pending. No V3merge/privatefileexport/NoTTTrerun/Attentionperformance work.
+
 
 
 # 2026-11-09 — Prefix-aware Local-TTT generation
 
-- **ISSUE35-ATTENTION-PARITY** — BLOCKED; Codex; unchanged18be/1936 scoped APPROVE_CODE. Existing synthetic trace causal28/GEN840/varlen868; no evidence812 causalGPU repeats. Real K1/source32 shortcapture failed nativephysicalEGL beforeenv.step; K16 notstarted,0requests. Currentuid1004 cannotreadGPU4DRMnode; need usableauthorizedenv or frozencompleteinputs. Threeownedgroupscleaned/GPU4,6idle. Externalserialization4CPU/boothelp PASS, not modelGate. Evidence/report2026-11-10; no productioncode/NoTTT/SR/V3changes; realinputparity+componentCPU/GPU remain incomplete.
+- **ISSUE35-ATTENTION-PARITY** — IN_PROGRESS via ISSUE35-KV-HIT-PARITY; historicalcaptureBLOCKED superseded byGPTsg-renderCapturePASS and3wayrealStrictParityFAIL. Existingcausal28/GEN840/varlen868 tracevalid; no blindAttention optimization. FirstnumericalPrefixNormissue remediation+newFormalPair priority, originalproductionPair18be/1936 notpromoted.
 
 - **ISSUE31-PREFIX-PACK** — DONE (scoped Stage2 Code/model-only evidence); Formal18be4a80/193627f4, corrected GPT APPROVE_CODE read atdocs523aa26a. P50837.08→798.87ms observed, original author1.05x NOT_MET/Shell2 preserved; no Owner arbitrarythreshold. CPU201+independent14, exact syntheticAction/Vision, Prefix28x30. Realinputparity/Attention belongIssue35; no V3merge/productionSLA/Stage1P99closure.
 

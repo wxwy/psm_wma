@@ -1,3 +1,108 @@
+# 2026-11-10 CST — Issue35 guarded Prefix normalization candidate; CPU/H100 pending
+
+Task ISSUE35-KV-HIT-PARITY IN_PROGRESS, Codex author, independent GPT reviewer.
+Candidate Child bf707810f573e885f0966d65c232dc2a610d6a93, parent193627f4.
+Both isolated branches v3-local-prefix-kv-parity-issue35-20261110. Root source
+commit is this revision (fullRootSHA recorded after freeze in evidence).
+Root parent796e28a7, fresh reviewbranch advertised796e28a7 unchanged at recheck;
+prior eafe->796 fetch4docs/ff-only and exact GPT reports fully read (below).
+No V3 promotion or repeated review of original implementation18be/1936.
+
+Real model diagnostics stayed on original clean server18be/1936. probe03 bothK
+exit0/nonperturbing: nativeUNDKVstatic+cacheexactall28. FirstGENmismatch at
+step1 K1layer18 / K16layer16, inputGENidentical. operands04/05 isolatedlayer
+andK1all3finaloutputs exact independent baseline, same Prefix projection input/
+output andNormweight, Q/Vexact; Kdiff solely1Prefixelement max0.00390625,
+UND132/GEN267/padding2 rows exact. Nemotron3DenseVLRMSNorm (epsilon1e-5)
+compiled full-vs-gen-only normalization execution causes firstPrefixKdelta;
+not cacheUNDcontent, Stage2pack ortrajectory. RawPT/FX/logs remainserver-only.
+All failed/incomplete diagnostic revisions retained; no performance claims.
+
+Candidate only3Child productionfiles: attention typed4Tensor capture for raw
+PrefixKprojection + native materializednormoutput; request-local cache owns
+clones, clears both; hit uses reference only if ALL current projection values
+match exactly, GPUwhere fallback usescurrentnormalization whenchanged. Current
+PrefixK/Vstillprojecteverylayer/everyforward,Vlive, no ignoredchangedPrefix/
+Sessioncache/newtolerance/globalprecision/training change. Matching rawinput
+assumes frozen slowweights withinrequest, same as existing textKV contract.
+Existing NoPrefix/plainKV tuple and unsupportedpaths retained.
+
+New CPU regression injects1ULP inPrefixKnorm withunchangedprojection: old1936
+production bytes verified exact, same testfunctionAST oldRED1FAIL at hit31/96
+elements, newGREEN1PASS includes changedPrefix fallback+returntoriginal.
+No realGPUfix result yet. Added clone/clear, malformedreference, dynamicfullgraph
+currentPrefixcoverage; expected focused213actualJUnit+1historicalW0deselection.
+Ruff/format4sourcefiles PASS apart fromsame3baselineI001 exclusions (no others).
+Next reuseexisting cpu_gate.py on exactclean newRoot/Child, then new candidate
+model-only frozenK1/source32,K16/source64 all30velocity+Action/Vision strict0.
+New source must remainisolated, oldserverRoot/checkpoint/evidence neveredited.
+FullFormalSHA/handoff onlyafter evidence; no independent approval claimed.
+
+# 2026-11-10 CST — Issue35 real cache-hit parity investigation IN_PROGRESS
+
+Codex owns ISSUE35-KV-HIT-PARITY, branch v3-local-prefix-kv-parity-issue35-20261110
+in both repositories; no new production edit yet. BeforeRoot eafe821b5c8cbddcfbba513be16f756aa95de2f3,
+fresh fetch required explicit remote tracking ref (initial tracking lookup failed,
+repaired, not treated as no update); advertised/tracking796e28a7f36c1c06a323db153b207b60b6f69d7f,
+log4new commits62b61e2a/3100294f/019f008a/796e28a7, ancestor0 andff-onlyPASS.
+FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496 /
+Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d unchanged.
+Exact GPT reports read: 2026-11-10_Issue35_EGL_RenderGroup_RealInput_CAPTURE_PASS_REPLAY_PENDING.md
+and2026-11-10_Issue35_RealInput_KVCacheHit_ParityFail_IndependentReplay.md.
+User current instruction authorizes address Stage1hit numerics first, no V3
+promotion or furtherAttentionperformance work. CurrentOwner author/independentGPT
+reviewer role overrides obsolete3party/tmux waits; no delegation requested/used.
+Governance skill read; narrow command/resource/evidence disclosure before runs.
+
+EGLblocker CLOSED via existing authorized sg render context (notchmod/root);
+24private PT across8requests available. Independent server receipt bf ac...full:
+bfacf5dbf329f5b3f11254629425b74772f6b94b2748c9cdb624fb26fb354574.
+Independent replay audit f15d35a5e4697912e233c2d3e2c6a6477f185d72ce76aa413a5dd8877185227e
+recomputed and matches. K1/source32 old-vs-KV action max0.0049707889556884766,
+K16/source64 max0.007069587707519531. Stage1/2 exact; step0exact, step1first
+hit velocitymax0.03125/0.046875. This is confirmed same-full-input Stage1strict
+parityFAIL, no longer incomplete-input/trajectory-only suspicion. Root/docsold
+BLOCKED report preserved as history. No preset tolerance/throughput assumption.
+
+Planned files now: external /workspace/work/issue35-kv-parity-evidence and new
+server _codex_issue35_kv_hit_parity_20261110 for owned probes only, plus SESSION/
+TODO and eventual new evidence/handoff. Inspect/cache-capture outside compiler
+and compare full native UND K/V at steps0/1 vs cached tensors, then firstlayer
+GEN intermediate. Possible minimal Child targets only after evidence:
+model/generator/mot/inference_text_kv_memory.py, attention.py or unified_mot.py
+and narrow prefix_text_kv_memory_test.py; avoid unrelated files/training.
+Raw frozen requests/PT/checkpoint/trace stayserver-only, publish owncode/derived
+scalars/hashes only. Authorized GPU6 currentlyidle, GPU4-7all0MiB precheck;
+no GPU0-3/otherjobs/load management/NoTTT/SimSR/900EP/V3merge. First diagnostic
+will reuse existing fullrequests and native model service, retainlimit8/mode/DCP.
+New author probes server probe03: K1 andK16 bothDIAGNOSTIC_COMPLETE/exit0,
+all3finaloutputs matchindependent exactly despite forced-native-fill capture.
+All28 UND K/V static step0vs1 and normalcache.read step1equalnative.
+FirstGENlayerdiff Step1 K1layer18 / K16layer16, inputGENbyte-identical;
+actualcompiledlayersOptimizedModule,limit8. Initialprobe01/02 outputdir fixture
+failed beforemodelload; logs preserved, correctedexistingreplay outputcontract.
+probe03 rawPT/hashrecordsprivate; no production edits. Current operands01 adds
+GEN Flashalready-materialized operands to diagnostic FX outputs and checks
+isolatedlayerhashes againstwhole-generation; incomplete until nonperturbation
+and operand capture confirmed. OnlyGPU6, no Sim/modelperf/NoTTT experiments.
+operands01 unrecordedFlashname, operands02 keywordarg fixtureFAIL, operands03
+observerbypassedviafunctools.wraps metadata: allrawhistoryretained; no codeGatePASS.
+CPU nativecompileobserver probe confirms wraps0calls vs explicitwrapper1call,
+outputs equal both. operands04 nonperturbingCOMPLETE/exit0,4isolatedlayerhashes
+andK1all3finaloutputs equal prior independent; Q/V exact, K max0.00390625,
+attentionoutmax0.0001220703125(K1)/0.000244140625(K16).
+CPU partition01 COMPLETE: onlyPrefix K 1element/1row changed ineachcase;
+UND132/GEN267/padding2 rows all exact. Thus exact cachedUNDvalues notfirstcause.
+operands05 nowrecords PrefixKprojection input/output, actualNormweight and
+FP32GPUeagernorm diagnostic; allfirstlayer/finalnonperturbchecks mandatory.
+Cloudsameexecutor restarted thenwaitreadyPASS, filespersist; transientfunction
+store reset, commandreconstructed beforelaunch; remoteevidence unchanged.
+No production edit yet. Existing contract explicitly tests changing current
+Prefix onhits; cannot replacePrefix wholesale by staticcache. Evidence-based
+possible remedy must bind memoizedNormresult to exactcurrentpreNorm input,
+fallbackonchange, stillprojectcurrentPrefixeverylayer/step. No toleranceguess,
+no training/globalprecision changes. TaskIN_PROGRESS; next firstPrefixopproof.
+
 # 2026-11-10 CST — Issue35 evidence-only partial result; real-input capture BLOCKED
 
 Task ISSUE35-ATTENTION-PARITY: BLOCKED, Codex author; GPT independent reviewer.
