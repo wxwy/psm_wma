@@ -1,0 +1,13 @@
+{
+  "formal_root": "15dbc97bf13437905ec38247382834067e5341ae",
+  "child": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "artifact_files_verified": 89,
+  "source_files_verified": 1381,
+  "new_top_level_pass": 83,
+  "inbox_bytes_before": 120795,
+  "entry_bytes": 2583,
+  "inbox_bytes_after": 123378,
+  "independent_review": "PENDING",
+  "official_root": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+  "official_child": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db"
+}

@@ -1,0 +1,551 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[1-1-1] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-06/tmp/test_original_runtime_builds_p0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe0c77dde80>
+servers = 1, sims = 1, batch = 1
+
+    @pytest.mark.parametrize(
+        "servers,sims,batch", [(1, 1, 1), (1, 8, 8), (2, 8, 8), (3, 3, 5), (2, 32, 8)]
+    )
+    def test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback(
+        tmp_path, monkeypatch, servers, sims, batch
+    ):
+        path, paths = config(tmp_path)
+        cfg = topology(tmp_path, servers, sims, batch, streaming=True)
+        cfg.update({k: v for k, v in paths.items() if k not in ("gpu_ids", "schema")})
+        old = manifest(tasks=[f"Task{i}" for i in range(18)])
+        m = build_manifest(
+            tasks=old["tasks"],
+            episodes=old["episodes_per_task"],
+            seed=old["seed"],
+            horizons=old["horizons"],
+            experiment=old["experiment"],
+            execution=execution(cfg),
+        )
+        store = Store(tmp_path / "run", m)
+        store.create()
+        runtime = Runtime(store, cfg, {}, {})
+        launches = []
+    
+        class StopBeforeHardware(Exception):
+            pass
+    
+        def capture(command, **options):
+            launches.append((command, options))
+            raise StopBeforeHardware()
+    
+        monkeypatch.setattr(runtime, "_spawn", capture)
+        try:
+            assert len(runtime.workers) == servers * sims
+            with store.locked():
+                for gpu in cfg["gpu_ids"]:
+                    worker = next(w for w, g in runtime.worker_gpus.items() if g == gpu)
+                    with pytest.raises(StopBeforeHardware):
+                        runtime._create_server(worker)
+            assert len(launches) == servers
+            for command, options in launches:
+    
+                def value(flag):
+                    return command[command.index(flag) + 1]
+    
+                assert value("--transaction-max-batch-size") == str(batch)
+                assert (
+                    value("--host") == "127.0.0.1"
+                    and value("--history-source") == "sim_shared_vae"
+                )
+                assert "--single-latency-arm" not in command
+                args = SimpleNamespace(
+                    transaction_profile="batch",
+                    history_source="sim_shared_vae",
+                    local_memory_mode="required",
+                    single_latency_arm=None,
+                    transaction_slot_id=None,
+                    transaction_slot_ids=value("--transaction-slot-ids"),
+                    transaction_owner_token_file=value("--transaction-owner-token-file"),
+                    transaction_run_lease=value("--transaction-run-lease"),
+                    transaction_manifest_digest=value("--transaction-manifest-digest"),
+                    transaction_capacity_profile=value("--transaction-capacity-profile"),
+                    local_memory_max_sessions=int(value("--local-memory-max-sessions")),
+                    transaction_max_batch_size=int(value("--transaction-max-batch-size")),
+                    transaction_batch_wait_ms=int(value("--transaction-batch-wait-ms")),
+                    transaction_timeout_s=float(value("--transaction-timeout-s")),
+                    action_chunk_size=16,
+                )
+>               accepted = server._transaction_options(args)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_server_wire_test.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:706: in _transaction_options
+    monotonic_clock_domain()
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[1-8-8] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-06/tmp/test_original_runtime_builds_p1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe0c76db950>
+servers = 1, sims = 8, batch = 8
+
+    @pytest.mark.parametrize(
+        "servers,sims,batch", [(1, 1, 1), (1, 8, 8), (2, 8, 8), (3, 3, 5), (2, 32, 8)]
+    )
+    def test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback(
+        tmp_path, monkeypatch, servers, sims, batch
+    ):
+        path, paths = config(tmp_path)
+        cfg = topology(tmp_path, servers, sims, batch, streaming=True)
+        cfg.update({k: v for k, v in paths.items() if k not in ("gpu_ids", "schema")})
+        old = manifest(tasks=[f"Task{i}" for i in range(18)])
+        m = build_manifest(
+            tasks=old["tasks"],
+            episodes=old["episodes_per_task"],
+            seed=old["seed"],
+            horizons=old["horizons"],
+            experiment=old["experiment"],
+            execution=execution(cfg),
+        )
+        store = Store(tmp_path / "run", m)
+        store.create()
+        runtime = Runtime(store, cfg, {}, {})
+        launches = []
+    
+        class StopBeforeHardware(Exception):
+            pass
+    
+        def capture(command, **options):
+            launches.append((command, options))
+            raise StopBeforeHardware()
+    
+        monkeypatch.setattr(runtime, "_spawn", capture)
+        try:
+            assert len(runtime.workers) == servers * sims
+            with store.locked():
+                for gpu in cfg["gpu_ids"]:
+                    worker = next(w for w, g in runtime.worker_gpus.items() if g == gpu)
+                    with pytest.raises(StopBeforeHardware):
+                        runtime._create_server(worker)
+            assert len(launches) == servers
+            for command, options in launches:
+    
+                def value(flag):
+                    return command[command.index(flag) + 1]
+    
+                assert value("--transaction-max-batch-size") == str(batch)
+                assert (
+                    value("--host") == "127.0.0.1"
+                    and value("--history-source") == "sim_shared_vae"
+                )
+                assert "--single-latency-arm" not in command
+                args = SimpleNamespace(
+                    transaction_profile="batch",
+                    history_source="sim_shared_vae",
+                    local_memory_mode="required",
+                    single_latency_arm=None,
+                    transaction_slot_id=None,
+                    transaction_slot_ids=value("--transaction-slot-ids"),
+                    transaction_owner_token_file=value("--transaction-owner-token-file"),
+                    transaction_run_lease=value("--transaction-run-lease"),
+                    transaction_manifest_digest=value("--transaction-manifest-digest"),
+                    transaction_capacity_profile=value("--transaction-capacity-profile"),
+                    local_memory_max_sessions=int(value("--local-memory-max-sessions")),
+                    transaction_max_batch_size=int(value("--transaction-max-batch-size")),
+                    transaction_batch_wait_ms=int(value("--transaction-batch-wait-ms")),
+                    transaction_timeout_s=float(value("--transaction-timeout-s")),
+                    action_chunk_size=16,
+                )
+>               accepted = server._transaction_options(args)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_server_wire_test.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:706: in _transaction_options
+    monotonic_clock_domain()
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[2-8-8] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-06/tmp/test_original_runtime_builds_p2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe0c7a251f0>
+servers = 2, sims = 8, batch = 8
+
+    @pytest.mark.parametrize(
+        "servers,sims,batch", [(1, 1, 1), (1, 8, 8), (2, 8, 8), (3, 3, 5), (2, 32, 8)]
+    )
+    def test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback(
+        tmp_path, monkeypatch, servers, sims, batch
+    ):
+        path, paths = config(tmp_path)
+        cfg = topology(tmp_path, servers, sims, batch, streaming=True)
+        cfg.update({k: v for k, v in paths.items() if k not in ("gpu_ids", "schema")})
+        old = manifest(tasks=[f"Task{i}" for i in range(18)])
+        m = build_manifest(
+            tasks=old["tasks"],
+            episodes=old["episodes_per_task"],
+            seed=old["seed"],
+            horizons=old["horizons"],
+            experiment=old["experiment"],
+            execution=execution(cfg),
+        )
+        store = Store(tmp_path / "run", m)
+        store.create()
+        runtime = Runtime(store, cfg, {}, {})
+        launches = []
+    
+        class StopBeforeHardware(Exception):
+            pass
+    
+        def capture(command, **options):
+            launches.append((command, options))
+            raise StopBeforeHardware()
+    
+        monkeypatch.setattr(runtime, "_spawn", capture)
+        try:
+            assert len(runtime.workers) == servers * sims
+            with store.locked():
+                for gpu in cfg["gpu_ids"]:
+                    worker = next(w for w, g in runtime.worker_gpus.items() if g == gpu)
+                    with pytest.raises(StopBeforeHardware):
+                        runtime._create_server(worker)
+            assert len(launches) == servers
+            for command, options in launches:
+    
+                def value(flag):
+                    return command[command.index(flag) + 1]
+    
+                assert value("--transaction-max-batch-size") == str(batch)
+                assert (
+                    value("--host") == "127.0.0.1"
+                    and value("--history-source") == "sim_shared_vae"
+                )
+                assert "--single-latency-arm" not in command
+                args = SimpleNamespace(
+                    transaction_profile="batch",
+                    history_source="sim_shared_vae",
+                    local_memory_mode="required",
+                    single_latency_arm=None,
+                    transaction_slot_id=None,
+                    transaction_slot_ids=value("--transaction-slot-ids"),
+                    transaction_owner_token_file=value("--transaction-owner-token-file"),
+                    transaction_run_lease=value("--transaction-run-lease"),
+                    transaction_manifest_digest=value("--transaction-manifest-digest"),
+                    transaction_capacity_profile=value("--transaction-capacity-profile"),
+                    local_memory_max_sessions=int(value("--local-memory-max-sessions")),
+                    transaction_max_batch_size=int(value("--transaction-max-batch-size")),
+                    transaction_batch_wait_ms=int(value("--transaction-batch-wait-ms")),
+                    transaction_timeout_s=float(value("--transaction-timeout-s")),
+                    action_chunk_size=16,
+                )
+>               accepted = server._transaction_options(args)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_server_wire_test.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:706: in _transaction_options
+    monotonic_clock_domain()
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[3-3-5] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-06/tmp/test_original_runtime_builds_p3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe0c76bcdd0>
+servers = 3, sims = 3, batch = 5
+
+    @pytest.mark.parametrize(
+        "servers,sims,batch", [(1, 1, 1), (1, 8, 8), (2, 8, 8), (3, 3, 5), (2, 32, 8)]
+    )
+    def test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback(
+        tmp_path, monkeypatch, servers, sims, batch
+    ):
+        path, paths = config(tmp_path)
+        cfg = topology(tmp_path, servers, sims, batch, streaming=True)
+        cfg.update({k: v for k, v in paths.items() if k not in ("gpu_ids", "schema")})
+        old = manifest(tasks=[f"Task{i}" for i in range(18)])
+        m = build_manifest(
+            tasks=old["tasks"],
+            episodes=old["episodes_per_task"],
+            seed=old["seed"],
+            horizons=old["horizons"],
+            experiment=old["experiment"],
+            execution=execution(cfg),
+        )
+        store = Store(tmp_path / "run", m)
+        store.create()
+        runtime = Runtime(store, cfg, {}, {})
+        launches = []
+    
+        class StopBeforeHardware(Exception):
+            pass
+    
+        def capture(command, **options):
+            launches.append((command, options))
+            raise StopBeforeHardware()
+    
+        monkeypatch.setattr(runtime, "_spawn", capture)
+        try:
+            assert len(runtime.workers) == servers * sims
+            with store.locked():
+                for gpu in cfg["gpu_ids"]:
+                    worker = next(w for w, g in runtime.worker_gpus.items() if g == gpu)
+                    with pytest.raises(StopBeforeHardware):
+                        runtime._create_server(worker)
+            assert len(launches) == servers
+            for command, options in launches:
+    
+                def value(flag):
+                    return command[command.index(flag) + 1]
+    
+                assert value("--transaction-max-batch-size") == str(batch)
+                assert (
+                    value("--host") == "127.0.0.1"
+                    and value("--history-source") == "sim_shared_vae"
+                )
+                assert "--single-latency-arm" not in command
+                args = SimpleNamespace(
+                    transaction_profile="batch",
+                    history_source="sim_shared_vae",
+                    local_memory_mode="required",
+                    single_latency_arm=None,
+                    transaction_slot_id=None,
+                    transaction_slot_ids=value("--transaction-slot-ids"),
+                    transaction_owner_token_file=value("--transaction-owner-token-file"),
+                    transaction_run_lease=value("--transaction-run-lease"),
+                    transaction_manifest_digest=value("--transaction-manifest-digest"),
+                    transaction_capacity_profile=value("--transaction-capacity-profile"),
+                    local_memory_max_sessions=int(value("--local-memory-max-sessions")),
+                    transaction_max_batch_size=int(value("--transaction-max-batch-size")),
+                    transaction_batch_wait_ms=int(value("--transaction-batch-wait-ms")),
+                    transaction_timeout_s=float(value("--transaction-timeout-s")),
+                    action_chunk_size=16,
+                )
+>               accepted = server._transaction_options(args)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_server_wire_test.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:706: in _transaction_options
+    monotonic_clock_domain()
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+_ test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[2-32-8] _
+
+tmp_path = PosixPath('/workspace/work/issue27-shared-vae-evidence/development-06/tmp/test_original_runtime_builds_p4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe0c76837d0>
+servers = 2, sims = 32, batch = 8
+
+    @pytest.mark.parametrize(
+        "servers,sims,batch", [(1, 1, 1), (1, 8, 8), (2, 8, 8), (3, 3, 5), (2, 32, 8)]
+    )
+    def test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback(
+        tmp_path, monkeypatch, servers, sims, batch
+    ):
+        path, paths = config(tmp_path)
+        cfg = topology(tmp_path, servers, sims, batch, streaming=True)
+        cfg.update({k: v for k, v in paths.items() if k not in ("gpu_ids", "schema")})
+        old = manifest(tasks=[f"Task{i}" for i in range(18)])
+        m = build_manifest(
+            tasks=old["tasks"],
+            episodes=old["episodes_per_task"],
+            seed=old["seed"],
+            horizons=old["horizons"],
+            experiment=old["experiment"],
+            execution=execution(cfg),
+        )
+        store = Store(tmp_path / "run", m)
+        store.create()
+        runtime = Runtime(store, cfg, {}, {})
+        launches = []
+    
+        class StopBeforeHardware(Exception):
+            pass
+    
+        def capture(command, **options):
+            launches.append((command, options))
+            raise StopBeforeHardware()
+    
+        monkeypatch.setattr(runtime, "_spawn", capture)
+        try:
+            assert len(runtime.workers) == servers * sims
+            with store.locked():
+                for gpu in cfg["gpu_ids"]:
+                    worker = next(w for w, g in runtime.worker_gpus.items() if g == gpu)
+                    with pytest.raises(StopBeforeHardware):
+                        runtime._create_server(worker)
+            assert len(launches) == servers
+            for command, options in launches:
+    
+                def value(flag):
+                    return command[command.index(flag) + 1]
+    
+                assert value("--transaction-max-batch-size") == str(batch)
+                assert (
+                    value("--host") == "127.0.0.1"
+                    and value("--history-source") == "sim_shared_vae"
+                )
+                assert "--single-latency-arm" not in command
+                args = SimpleNamespace(
+                    transaction_profile="batch",
+                    history_source="sim_shared_vae",
+                    local_memory_mode="required",
+                    single_latency_arm=None,
+                    transaction_slot_id=None,
+                    transaction_slot_ids=value("--transaction-slot-ids"),
+                    transaction_owner_token_file=value("--transaction-owner-token-file"),
+                    transaction_run_lease=value("--transaction-run-lease"),
+                    transaction_manifest_digest=value("--transaction-manifest-digest"),
+                    transaction_capacity_profile=value("--transaction-capacity-profile"),
+                    local_memory_max_sessions=int(value("--local-memory-max-sessions")),
+                    transaction_max_batch_size=int(value("--transaction-max-batch-size")),
+                    transaction_batch_wait_ms=int(value("--transaction-batch-wait-ms")),
+                    transaction_timeout_s=float(value("--transaction-timeout-s")),
+                    action_chunk_size=16,
+                )
+>               accepted = server._transaction_options(args)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_server_wire_test.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py:706: in _transaction_options
+    monotonic_clock_domain()
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[1-1-1]
+FAILED ../../../dev::test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[1-8-8]
+FAILED ../../../dev::test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[2-8-8]
+FAILED ../../../dev::test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[3-3-5]
+FAILED ../../../dev::test_original_runtime_builds_policy_argv_for_all_configured_slots_without_b1_fallback[2-32-8]
+5 failed, 5 warnings in 10.66s

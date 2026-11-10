@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="49" time="18.596" timestamp="2026-11-09T12:34:02.846238+00:00" hostname="f415bcea90b3"><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[False-1-dtype0]" time="0.358" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[False-1-dtype1]" time="0.383" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[False-8-dtype0]" time="0.331" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[False-8-dtype1]" time="0.351" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[True-1-dtype0]" time="0.320" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[True-1-dtype1]" time="0.344" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[True-8-dtype0]" time="0.300" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_thirty_denoise_steps_keep_prefix_and_match_uncached[True-8-dtype1]" time="0.390" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_prefix_and_text_changes_are_visible_in_independent_requests" time="0.054" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_prefix_is_required_on_every_cache_hit" time="0.020" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_partial_fill_is_not_gen_only_and_cleanup_allows_retry" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_prefix_cache_rejects_multiple_native_samples" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_vfm_guard_allows_only_explicit_prefix_aware_inference_state" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_unexpected_attention_dispatch_is_restored_after_partial_install" time="0.005" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix[False]" time="1.119"><failure message="RuntimeError: allocated size does not match required size">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0eb09f7530&gt;
+dynamic = False
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix(monkeypatch, dynamic):
+        """Real H100 hit SymBool != bool in the dispatcher under Dynamo.
+    
+        CPU eager backend traces the production dispatcher in fullgraph mode. The
+        kernel double is SDPA for this unpadded B1 layout (no varlen loop to trace).
+        """
+    
+        def kernel(query, key, value, **kwargs):
+            return F.scaled_dot_product_attention(
+                query.transpose(1, 2),
+                key.transpose(1, 2),
+                value.transpose(1, 2),
+                enable_gqa=True,
+            ).transpose(1, 2)
+    
+        monkeypatch.setattr(attention_module, "attention", kernel)
+        torch.manual_seed(93)
+        caches = make_inference_text_kv_cache(1)
+        und_key, und_value = torch.randn(1, 5, 1, 8), torch.randn(1, 5, 1, 8)
+        caches[0].store(und_key, und_value)
+        state = InferenceTextKVMemoryState(caches, local_prefix_length=4)
+        state.init(
+            {
+                "_num_full_tokens": 6,
+                "_num_causal_tokens": 5,
+                "causal_seq": torch.empty(5, 16),
+                "_causal_seq_offsets": torch.tensor([0, 5]),
+                "_full_only_seq_offsets": torch.tensor([0, 6]),
+            },
+            torch.device("cpu"),
+        )
+        memory = state.read_for_layer(0)
+        q, k, v = torch.randn(6, 2, 8), torch.randn(6, 1, 8), torch.randn(6, 1, 8)
+    
+        def pack(tensor):
+            native, _, _ = build_packed_sequence(
+                "two_way",
+                packed_sequence=torch.cat((tensor.new_zeros(5, *tensor.shape[1:]), tensor)),
+                attn_modes=["causal", "full"],
+                split_lens=[5, 6],
+                sample_lens=[11],
+                packed_und_token_indexes=torch.arange(5),
+                packed_gen_token_indexes=torch.arange(5, 11),
+                num_heads=tensor.shape[1],
+                head_dim=8,
+                num_layers=1,
+            )
+            return from_und_gen_splits(tensor.new_empty(0, *tensor.shape[1:]), tensor, native)
+    
+        mask = attention_module.SplitInfo([5, 6], ["causal", "full"], [11], actual_len=11)
+        prefix_key, prefix_value = torch.randn(4, 1, 8), torch.randn(4, 1, 8)
+        compiled = torch.compile(
+            cache_module.dispatch_attention_with_text_kv_memory, backend="eager", fullgraph=True, dynamic=dynamic
+        )
+        with torch.inference_mode():
+            results = []
+            for shift in (0, 1, 0):
+                pk, pv = prefix_key + shift, prefix_value + shift
+&gt;               result, _ = compiled(
+                    pack(q),
+                    pack(k),
+                    pack(v),
+                    mask,
+                    memory_value=memory,
+                    memory_prefix_key_states=pk,
+                    memory_prefix_value_states=pv,
+                    memory_prefix_sample_offsets=torch.tensor([0, 4]),
+                )
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:368: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:953: in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/inference_text_kv_memory.py:274: in dispatch_attention_with_text_kv_memory
+    def dispatch_attention_with_text_kv_memory(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:1181: in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = GraphModule()
+L_memory_prefix_key_states_ = tensor([[[-0.7047, -0.5005,  0.5218,  0.1816,  1.6980, -0.1132,  1.1100,
+           2.3789]],
+
+        [[-1.2916, -0.7...9,
+          -0.7190]],
+
+        [[-2.1709, -1.4363, -2.7143,  0.7870, -0.9875,  0.7546, -2.4073,
+          -1.5726]]])
+L_memory_prefix_value_states_ = tensor([[[ 0.5118,  0.5732,  0.3807,  0.5514, -0.5396, -0.4583, -0.7339,
+          -0.4221]],
+
+        [[-0.6542,  2.3...1,
+           1.5210]],
+
+        [[ 0.8946, -0.9180,  0.6939,  1.2739,  0.1447, -0.7224,  0.4407,
+           0.2577]]])
+L_memory_prefix_sample_offsets_ = tensor([0, 4])
+L_memory_value_und_k_cached = tensor([[[[ 0.2419, -0.5710,  0.5902, -0.6211,  0.7834, -2.5849, -0.0095,
+            2.0335]],
+
+         [[ 0.6751,  ...          -0.2752]],
+
+         [[ 0.4567, -0.7796,  0.3875,  0.5396,  1.2195,  0.2611, -1.5802,
+           -1.4789]]]])
+L_memory_value_und_v_cached = tensor([[[[-0.0210, -0.6217, -0.2042, -0.7022, -1.2378,  1.3546,  0.7113,
+            1.1685]],
+
+         [[ 1.2634,  ...           0.1952]],
+
+         [[ 0.1201, -1.3985, -0.6647, -0.3416, -0.5734, -1.0395, -0.2980,
+            0.8650]]]])
+L_packed_query_states_full_only_seq_ = tensor([[[ 0.2201, -1.9295,  0.6810,  0.5579, -0.2158,  1.2549, -0.7334,
+          -0.0676],
+         [-1.2031,  0.528...326,
+           1.0433],
+         [ 0.8498,  0.0944,  1.1069,  0.3430,  0.7530, -1.1909,  0.7251,
+          -0.2986]]])
+L_packed_key_states_sample_offsets_ = tensor([ 0, 11, 13], dtype=torch.int32)
+L_packed_key_states_causal_indices_ = tensor([0, 1, 2, 3, 4], dtype=torch.int32)
+L_packed_key_states_full_indices_ = tensor([ 5,  6,  7,  8,  9, 10], dtype=torch.int32)
+L_packed_value_states_causal_indices_ = tensor([0, 1, 2, 3, 4], dtype=torch.int32)
+L_packed_value_states_full_indices_ = tensor([ 5,  6,  7,  8,  9, 10], dtype=torch.int32)
+L_packed_key_states_full_only_seq_ = tensor([[[-0.0627,  0.0856, -0.5022, -1.0848,  0.4165,  0.0972, -0.4156,
+          -2.4042]],
+
+        [[ 0.8110, -0.2...1,
+          -0.2522]],
+
+        [[ 0.2258,  1.5081, -0.4461,  1.1075,  1.1936,  1.6781, -1.4966,
+           1.0163]]])
+L_packed_value_states_full_only_seq_ = tensor([[[-1.5697,  0.5266, -0.1991,  0.9323,  0.8414, -0.2867, -0.6302,
+           0.0540]],
+
+        [[ 0.1312, -0.0...6,
+          -0.5252]],
+
+        [[-0.1731,  1.5873,  0.3297, -0.0811,  0.3089,  1.6612, -1.0782,
+          -0.2807]]])
+
+    def forward(self, L_memory_prefix_key_states_ : torch.Tensor, L_memory_prefix_value_states_ : torch.Tensor, L_memory_prefix_sample_offsets_ : torch.Tensor, L_memory_value_und_k_cached : torch.Tensor, L_memory_value_und_v_cached : torch.Tensor, L_packed_query_states_full_only_seq_ : torch.Tensor, L_packed_key_states_sample_offsets_ : torch.Tensor, L_packed_key_states_causal_indices_ : torch.Tensor, L_packed_key_states_full_indices_ : torch.Tensor, L_packed_value_states_causal_indices_ : torch.Tensor, L_packed_value_states_full_indices_ : torch.Tensor, L_packed_key_states_full_only_seq_ : torch.Tensor, L_packed_value_states_full_only_seq_ : torch.Tensor):
+        l_memory_prefix_key_states_ = L_memory_prefix_key_states_
+        l_memory_prefix_value_states_ = L_memory_prefix_value_states_
+        l_memory_prefix_sample_offsets_ = L_memory_prefix_sample_offsets_
+        l_memory_value_und_k_cached = L_memory_value_und_k_cached
+        l_memory_value_und_v_cached = L_memory_value_und_v_cached
+        l_packed_query_states_full_only_seq_ = L_packed_query_states_full_only_seq_
+        l_packed_key_states_sample_offsets_ = L_packed_key_states_sample_offsets_
+        l_packed_key_states_causal_indices_ = L_packed_key_states_causal_indices_
+        l_packed_key_states_full_indices_ = L_packed_key_states_full_indices_
+        l_packed_value_states_causal_indices_ = L_packed_value_states_causal_indices_
+        l_packed_value_states_full_indices_ = L_packed_value_states_full_indices_
+        l_packed_key_states_full_only_seq_ = L_packed_key_states_full_only_seq_
+        l_packed_value_states_full_only_seq_ = L_packed_value_states_full_only_seq_
+        getitem = l_memory_value_und_k_cached[0]
+        und_k = torch._C._nn.pad(getitem, (0, 0, 0, 0, 0, 0), 'constant', None);  getitem = None
+        getitem_1 = l_memory_value_und_v_cached[0]
+        und_v = torch._C._nn.pad(getitem_1, (0, 0, 0, 0, 0, 0), 'constant', None);  getitem_1 = None
+        dummy_und_q = l_packed_query_states_full_only_seq_.new_zeros(5, 2, 8)
+        unsqueeze = dummy_und_q.unsqueeze(0);  dummy_und_q = None
+        unsqueeze_1 = und_k.unsqueeze(0)
+        unsqueeze_2 = und_v.unsqueeze(0)
+        transpose = unsqueeze.transpose(1, 2);  unsqueeze = None
+        transpose_1 = unsqueeze_1.transpose(1, 2);  unsqueeze_1 = None
+        transpose_2 = unsqueeze_2.transpose(1, 2);  unsqueeze_2 = None
+        scaled_dot_product_attention = torch._C._nn.scaled_dot_product_attention(transpose, transpose_1, transpose_2, enable_gqa = True);  transpose = transpose_1 = transpose_2 = None
+        causal_res = scaled_dot_product_attention.transpose(1, 2);  scaled_dot_product_attention = None
+        squeeze = causal_res.squeeze(0);  causal_res = None
+        causal_out = squeeze.flatten(-2, -1);  squeeze = causal_out = None
+        out = und_k.new_zeros(11, 1, 8)
+        getitem_2 = und_k[slice(None, 5, None)];  und_k = None
+        out[l_packed_key_states_causal_indices_] = getitem_2;  setitem = out;  l_packed_key_states_causal_indices_ = getitem_2 = setitem = None
+        getitem_3 = l_packed_key_states_full_only_seq_[slice(None, 6, None)];  l_packed_key_states_full_only_seq_ = None
+        out[l_packed_key_states_full_indices_] = getitem_3;  setitem_1 = out;  l_packed_key_states_full_indices_ = getitem_3 = setitem_1 = None
+        out_1 = und_v.new_zeros(11, 1, 8)
+        getitem_4 = und_v[slice(None, 5, None)];  und_v = None
+        out_1[l_packed_value_states_causal_indices_] = getitem_4;  setitem_2 = out_1;  l_packed_value_states_causal_indices_ = getitem_4 = setitem_2 = None
+        getitem_5 = l_packed_value_states_full_only_seq_[slice(None, 6, None)];  l_packed_value_states_full_only_seq_ = None
+        out_1[l_packed_value_states_full_indices_] = getitem_5;  setitem_3 = out_1;  l_packed_value_states_full_indices_ = getitem_5 = setitem_3 = None
+        getitem_6 = l_memory_prefix_sample_offsets_[slice(-1, None, None)]
+        memory_offsets = torch.cat((l_memory_prefix_sample_offsets_, getitem_6));  l_memory_prefix_sample_offsets_ = getitem_6 = None
+        getitem_7 = memory_offsets[slice(1, None, None)]
+        getitem_8 = memory_offsets[slice(None, -1, None)]
+        local_lengths = getitem_7 - getitem_8;  getitem_7 = getitem_8 = None
+        native_offsets_long = l_packed_key_states_sample_offsets_.to(torch.int64);  l_packed_key_states_sample_offsets_ = None
+        getitem_9 = native_offsets_long[slice(1, None, None)]
+        getitem_10 = native_offsets_long[slice(None, -1, None)]
+        native_lengths = getitem_9 - getitem_10;  getitem_9 = getitem_10 = None
+        new_zeros_3 = native_offsets_long.new_zeros(1)
+        add = local_lengths + native_lengths
+        cumsum = torch.cumsum(add, dim = 0);  add = None
+        combined_offsets = torch.cat((new_zeros_3, cumsum));  new_zeros_3 = cumsum = None
+        sample_ids = torch.arange(2, device = device(type='cpu'))
+        local_rows = torch.repeat_interleave(sample_ids, local_lengths, output_size = 4)
+&gt;       native_rows = torch.repeat_interleave(sample_ids, native_lengths, output_size = 11);  sample_ids = native_lengths = None
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: allocated size does not match required size
+
+&lt;eval_with_key&gt;.1:58: RuntimeError</failure></testcase><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix[True]" time="1.537"><failure message="RuntimeError: allocated size does not match required size">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f0eafba5280&gt;
+dynamic = True
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix(monkeypatch, dynamic):
+        """Real H100 hit SymBool != bool in the dispatcher under Dynamo.
+    
+        CPU eager backend traces the production dispatcher in fullgraph mode. The
+        kernel double is SDPA for this unpadded B1 layout (no varlen loop to trace).
+        """
+    
+        def kernel(query, key, value, **kwargs):
+            return F.scaled_dot_product_attention(
+                query.transpose(1, 2),
+                key.transpose(1, 2),
+                value.transpose(1, 2),
+                enable_gqa=True,
+            ).transpose(1, 2)
+    
+        monkeypatch.setattr(attention_module, "attention", kernel)
+        torch.manual_seed(93)
+        caches = make_inference_text_kv_cache(1)
+        und_key, und_value = torch.randn(1, 5, 1, 8), torch.randn(1, 5, 1, 8)
+        caches[0].store(und_key, und_value)
+        state = InferenceTextKVMemoryState(caches, local_prefix_length=4)
+        state.init(
+            {
+                "_num_full_tokens": 6,
+                "_num_causal_tokens": 5,
+                "causal_seq": torch.empty(5, 16),
+                "_causal_seq_offsets": torch.tensor([0, 5]),
+                "_full_only_seq_offsets": torch.tensor([0, 6]),
+            },
+            torch.device("cpu"),
+        )
+        memory = state.read_for_layer(0)
+        q, k, v = torch.randn(6, 2, 8), torch.randn(6, 1, 8), torch.randn(6, 1, 8)
+    
+        def pack(tensor):
+            native, _, _ = build_packed_sequence(
+                "two_way",
+                packed_sequence=torch.cat((tensor.new_zeros(5, *tensor.shape[1:]), tensor)),
+                attn_modes=["causal", "full"],
+                split_lens=[5, 6],
+                sample_lens=[11],
+                packed_und_token_indexes=torch.arange(5),
+                packed_gen_token_indexes=torch.arange(5, 11),
+                num_heads=tensor.shape[1],
+                head_dim=8,
+                num_layers=1,
+            )
+            return from_und_gen_splits(tensor.new_empty(0, *tensor.shape[1:]), tensor, native)
+    
+        mask = attention_module.SplitInfo([5, 6], ["causal", "full"], [11], actual_len=11)
+        prefix_key, prefix_value = torch.randn(4, 1, 8), torch.randn(4, 1, 8)
+        compiled = torch.compile(
+            cache_module.dispatch_attention_with_text_kv_memory, backend="eager", fullgraph=True, dynamic=dynamic
+        )
+        with torch.inference_mode():
+            results = []
+            for shift in (0, 1, 0):
+                pk, pv = prefix_key + shift, prefix_value + shift
+&gt;               result, _ = compiled(
+                    pack(q),
+                    pack(k),
+                    pack(v),
+                    mask,
+                    memory_value=memory,
+                    memory_prefix_key_states=pk,
+                    memory_prefix_value_states=pv,
+                    memory_prefix_sample_offsets=torch.tensor([0, 4]),
+                )
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:368: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:953: in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/inference_text_kv_memory.py:274: in dispatch_attention_with_text_kv_memory
+    def dispatch_attention_with_text_kv_memory(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:1181: in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = GraphModule(), s64 = 4, s4 = 8
+L_memory_prefix_key_states_ = tensor([[[-0.7047, -0.5005,  0.5218,  0.1816,  1.6980, -0.1132,  1.1100,
+           2.3789]],
+
+        [[-1.2916, -0.7...9,
+          -0.7190]],
+
+        [[-2.1709, -1.4363, -2.7143,  0.7870, -0.9875,  0.7546, -2.4073,
+          -1.5726]]])
+L_memory_value_local_prefix_length = 4
+L_memory_prefix_value_states_ = tensor([[[ 0.5118,  0.5732,  0.3807,  0.5514, -0.5396, -0.4583, -0.7339,
+          -0.4221]],
+
+        [[-0.6542,  2.3...1,
+           1.5210]],
+
+        [[ 0.8946, -0.9180,  0.6939,  1.2739,  0.1447, -0.7224,  0.4407,
+           0.2577]]])
+L_memory_prefix_sample_offsets_ = tensor([0, 4]), s91 = None
+L_memory_value_und_k_cached = tensor([[[[ 0.2419, -0.5710,  0.5902, -0.6211,  0.7834, -2.5849, -0.0095,
+            2.0335]],
+
+         [[ 0.6751,  ...          -0.2752]],
+
+         [[ 0.4567, -0.7796,  0.3875,  0.5396,  1.2195,  0.2611, -1.5802,
+           -1.4789]]]])
+L_memory_value_und_v_cached = tensor([[[[-0.0210, -0.6217, -0.2042, -0.7022, -1.2378,  1.3546,  0.7113,
+            1.1685]],
+
+         [[ 1.2634,  ...           0.1952]],
+
+         [[ 0.1201, -1.3985, -0.6647, -0.3416, -0.5734, -1.0395, -0.2980,
+            0.8650]]]])
+L_memory_value_causal_pad_length = 0, s46 = 6
+L_packed_query_states_full_only_seq_ = tensor([[[ 0.2201, -1.9295,  0.6810,  0.5579, -0.2158,  1.2549, -0.7334,
+          -0.0676],
+         [-1.2031,  0.528...326,
+           1.0433],
+         [ 0.8498,  0.0944,  1.1069,  0.3430,  0.7530, -1.1909,  0.7251,
+          -0.2986]]])
+L_packed_query_states_max_causal_len_ = 5
+L_packed_query_states_max_full_len_ = 6
+L_packed_key_states_sample_offsets_ = tensor([ 0, 11, 13], dtype=torch.int32)
+L_packed_key_states_max_sample_len_ = 11
+L_packed_key_states_causal_indices_ = tensor([0, 1, 2, 3, 4], dtype=torch.int32)
+L_packed_key_states_full_indices_ = tensor([ 5,  6,  7,  8,  9, 10], dtype=torch.int32)
+L_packed_value_states_causal_indices_ = tensor([0, 1, 2, 3, 4], dtype=torch.int32)
+L_packed_value_states_full_indices_ = tensor([ 5,  6,  7,  8,  9, 10], dtype=torch.int32)
+L_packed_key_states_full_only_seq_ = tensor([[[-0.0627,  0.0856, -0.5022, -1.0848,  0.4165,  0.0972, -0.4156,
+          -2.4042]],
+
+        [[ 0.8110, -0.2...1,
+          -0.2522]],
+
+        [[ 0.2258,  1.5081, -0.4461,  1.1075,  1.1936,  1.6781, -1.4966,
+           1.0163]]])
+L_packed_value_states_full_only_seq_ = tensor([[[-1.5697,  0.5266, -0.1991,  0.9323,  0.8414, -0.2867, -0.6302,
+           0.0540]],
+
+        [[ 0.1312, -0.0...6,
+          -0.5252]],
+
+        [[-0.1731,  1.5873,  0.3297, -0.0811,  0.3089,  1.6612, -1.0782,
+          -0.2807]]])
+
+    def forward(self, s64 : torch.SymInt, s4 : torch.SymInt, L_memory_prefix_key_states_ : torch.Tensor, L_memory_value_local_prefix_length : torch.SymInt, L_memory_prefix_value_states_ : torch.Tensor, L_memory_prefix_sample_offsets_ : torch.Tensor, s91 : torch.SymInt, L_memory_value_und_k_cached : torch.Tensor, L_memory_value_und_v_cached : torch.Tensor, L_memory_value_causal_pad_length : torch.SymInt, s46 : torch.SymInt, L_packed_query_states_full_only_seq_ : torch.Tensor, L_packed_query_states_max_causal_len_ : torch.SymInt, L_packed_query_states_max_full_len_ : torch.SymInt, L_packed_key_states_sample_offsets_ : torch.Tensor, L_packed_key_states_max_sample_len_ : torch.SymInt, L_packed_key_states_causal_indices_ : torch.Tensor, L_packed_key_states_full_indices_ : torch.Tensor, L_packed_value_states_causal_indices_ : torch.Tensor, L_packed_value_states_full_indices_ : torch.Tensor, L_packed_key_states_full_only_seq_ : torch.Tensor, L_packed_value_states_full_only_seq_ : torch.Tensor):
+        l_memory_prefix_key_states_ = L_memory_prefix_key_states_
+        l_memory_value_local_prefix_length = L_memory_value_local_prefix_length
+        l_memory_prefix_value_states_ = L_memory_prefix_value_states_
+        l_memory_prefix_sample_offsets_ = L_memory_prefix_sample_offsets_
+        l_memory_value_und_k_cached = L_memory_value_und_k_cached
+        l_memory_value_und_v_cached = L_memory_value_und_v_cached
+        l_memory_value_causal_pad_length = L_memory_value_causal_pad_length
+        l_packed_query_states_full_only_seq_ = L_packed_query_states_full_only_seq_
+        l_packed_query_states_max_causal_len_ = L_packed_query_states_max_causal_len_
+        l_packed_query_states_max_full_len_ = L_packed_query_states_max_full_len_
+        l_packed_key_states_sample_offsets_ = L_packed_key_states_sample_offsets_
+        l_packed_key_states_max_sample_len_ = L_packed_key_states_max_sample_len_
+        l_packed_key_states_causal_indices_ = L_packed_key_states_causal_indices_
+        l_packed_key_states_full_indices_ = L_packed_key_states_full_indices_
+        l_packed_value_states_causal_indices_ = L_packed_value_states_causal_indices_
+        l_packed_value_states_full_indices_ = L_packed_value_states_full_indices_
+        l_packed_key_states_full_only_seq_ = L_packed_key_states_full_only_seq_
+        l_packed_value_states_full_only_seq_ = L_packed_value_states_full_only_seq_
+        numel = l_memory_prefix_sample_offsets_.numel();  numel = None
+        getitem_9 = l_memory_value_und_k_cached[0]
+        und_k = torch._C._nn.pad(getitem_9, (0, 0, 0, 0, 0, l_memory_value_causal_pad_length), 'constant', None);  getitem_9 = None
+        getitem_10 = l_memory_value_und_v_cached[0]
+        und_v = torch._C._nn.pad(getitem_10, (0, 0, 0, 0, 0, l_memory_value_causal_pad_length), 'constant', None);  getitem_10 = None
+        sym_sum = torch.sym_sum([l_memory_value_causal_pad_length, s91]);  l_memory_value_causal_pad_length = None
+        dummy_und_q = l_packed_query_states_full_only_seq_.new_zeros(sym_sum, 2, s4)
+        le = l_packed_query_states_max_causal_len_ &lt;= sym_sum;  l_packed_query_states_max_causal_len_ = None
+        _check_3 = torch._check(le);  le = _check_3 = None
+        gt_3 = sym_sum &gt; 1
+        _check_6 = torch._check(gt_3);  gt_3 = _check_6 = None
+        unsqueeze = dummy_und_q.unsqueeze(0);  dummy_und_q = None
+        unsqueeze_1 = und_k.unsqueeze(0)
+        unsqueeze_2 = und_v.unsqueeze(0)
+        transpose = unsqueeze.transpose(1, 2);  unsqueeze = None
+        transpose_1 = unsqueeze_1.transpose(1, 2);  unsqueeze_1 = None
+        transpose_2 = unsqueeze_2.transpose(1, 2);  unsqueeze_2 = None
+        scaled_dot_product_attention = torch._C._nn.scaled_dot_product_attention(transpose, transpose_1, transpose_2, enable_gqa = True);  transpose = transpose_1 = transpose_2 = None
+        causal_res = scaled_dot_product_attention.transpose(1, 2);  scaled_dot_product_attention = None
+        squeeze = causal_res.squeeze(0);  causal_res = None
+        causal_out = squeeze.flatten(-2, -1);  squeeze = causal_out = None
+        add = sym_sum + s46
+        out = und_k.new_zeros(add, 1, s4)
+        le_2 = s91 &lt;= sym_sum;  sym_sum = None
+        _check_7 = torch._check(le_2);  le_2 = _check_7 = None
+        getitem_62 = und_k[slice(None, s91, None)];  und_k = None
+        out[l_packed_key_states_causal_indices_] = getitem_62;  setitem = out;  l_packed_key_states_causal_indices_ = getitem_62 = setitem = None
+        getitem_71 = l_packed_key_states_full_only_seq_[slice(None, s46, None)];  l_packed_key_states_full_only_seq_ = None
+        out[l_packed_key_states_full_indices_] = getitem_71;  setitem_1 = out;  l_packed_key_states_full_indices_ = getitem_71 = setitem_1 = None
+        out_1 = und_v.new_zeros(add, 1, s4)
+        getitem_89 = und_v[slice(None, s91, None)];  und_v = s91 = None
+        out_1[l_packed_value_states_causal_indices_] = getitem_89;  setitem_2 = out_1;  l_packed_value_states_causal_indices_ = getitem_89 = setitem_2 = None
+        getitem_98 = l_packed_value_states_full_only_seq_[slice(None, s46, None)];  l_packed_value_states_full_only_seq_ = None
+        out_1[l_packed_value_states_full_indices_] = getitem_98;  setitem_3 = out_1;  l_packed_value_states_full_indices_ = getitem_98 = setitem_3 = None
+        numel_1 = l_packed_key_states_sample_offsets_.numel();  numel_1 = None
+        getitem_111 = l_memory_prefix_sample_offsets_[slice(-1, None, None)]
+        memory_offsets = torch.cat((l_memory_prefix_sample_offsets_, getitem_111));  l_memory_prefix_sample_offsets_ = getitem_111 = None
+        getitem_112 = memory_offsets[slice(1, None, None)]
+        getitem_113 = memory_offsets[slice(None, -1, None)]
+        local_lengths = getitem_112 - getitem_113;  getitem_112 = getitem_113 = None
+        native_offsets_long = l_packed_key_states_sample_offsets_.to(torch.int64);  l_packed_key_states_sample_offsets_ = None
+        getitem_114 = native_offsets_long[slice(1, None, None)]
+        getitem_115 = native_offsets_long[slice(None, -1, None)]
+        native_lengths = getitem_114 - getitem_115;  getitem_114 = getitem_115 = None
+        new_zeros_3 = native_offsets_long.new_zeros(1)
+        add_2 = local_lengths + native_lengths
+        cumsum = torch.cumsum(add_2, dim = 0);  add_2 = None
+        combined_offsets = torch.cat((new_zeros_3, cumsum));  new_zeros_3 = cumsum = None
+        sample_ids = torch.arange(2, device = device(type='cpu'))
+        local_rows = torch.repeat_interleave(sample_ids, local_lengths, output_size = l_memory_value_local_prefix_length)
+&gt;       native_rows = torch.repeat_interleave(sample_ids, native_lengths, output_size = add);  sample_ids = native_lengths = None
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: allocated size does not match required size
+
+&lt;eval_with_key&gt;.3:73: RuntimeError</failure></testcase><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_prefix_cache_fill_uses_materialized_native_kv_and_hit_keeps_native_padding" time="0.006" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_unsupported_prefix_cache_layout_keeps_original_path[temporal_causal]" time="4.053" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_unsupported_prefix_cache_layout_keeps_original_path[three_way]" time="0.035" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_unsupported_prefix_cache_layout_keeps_original_path[postprocess_builder]" time="0.026" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_entrypoint_same_prefix_actions_cache_hits_and_opt_out" time="0.069" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_exception_clears_cache_and_retry_starts_with_fill[1]" time="0.084" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_exception_clears_cache_and_retry_starts_with_fill[3]" time="0.122" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_no_prefix_native_path_and_option_are_unchanged" time="0.048" /><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_generation_requests_changed_instruction_prefix_and_reset_are_isolated" time="0.228" /><testcase classname="cosmos_framework.model.generator.mot.inference_text_kv_memory_test" name="test_multi_sample_cached_attention_isolates_samples_and_zero_fills_padding" time="0.002" /><testcase classname="cosmos_framework.model.generator.mot.inference_text_kv_memory_test" name="test_multi_sample_layout_rejects_mismatched_sample_counts" time="0.000" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_selected_inventory_and_fast_state" time="0.006" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_optimizer_allowlist_freezes_host_and_selects_complete_local_inventory" time="0.003" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_materialized_encoder_is_initialized" time="0.013" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_first_outer_backward_reaches_ttt_and_bridge_input" time="0.012" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_fp32_bridge_bf16_native_dtype_keeps_gradients" time="0.004" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_mixed_sample_interleave_is_isolated_and_tensorized" time="0.002" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_native_pad_segment_has_no_local_rows" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_two_way_prefix_changes_only_generation_attention" time="0.006" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_native_two_way_outer_loss_reaches_ttt" time="0.012" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_layer_projects_only_generator_kv_without_rope" time="0.006" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_private_attach_preserves_native_carriers_and_rejects_duplicate" time="0.000" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_packing_keeps_native_indexes_and_loss_unchanged" time="0.003" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_wrong_local_shape_rejected[shape0]" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_wrong_local_shape_rejected[shape1]" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_wrong_local_shape_rejected[shape2]" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_cp_rejected_before_native_encoding" time="0.000" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_unsupported_forward_rejected_before_encoding[disabled]" time="0.000" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_unsupported_forward_rejected_before_encoding[cuda_graphs]" time="0.000" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_unsupported_forward_rejected_before_encoding[multiview]" time="0.000" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_detached_inference_prefix_passes_local_guard" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_inference_prefix_with_grad_or_text_kv_memory_is_rejected" time="0.001" /><testcase classname="cosmos_framework.model.generator.mot.memory_prefix_test" name="test_three_way_dispatch_rejected_before_attention" time="0.000" /></testsuite></testsuites>

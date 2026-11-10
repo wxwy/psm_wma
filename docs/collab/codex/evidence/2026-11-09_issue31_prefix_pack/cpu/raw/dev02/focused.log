@@ -1,0 +1,3203 @@
+FFFFFFFFFFFFFF.......................................................... [ 35%]
+........................................................................ [ 71%]
+.........................................................                [100%]
+=================================== FAILURES ===================================
+____ test_native_velocity_template_matches_repack_every_step[False-dtype0] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f88cee8e4e0>
+dtype = torch.float32, noisy_action = False
+
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    @pytest.mark.parametrize("noisy_action", [False, True])
+    def test_native_velocity_template_matches_repack_every_step(monkeypatch, dtype, noisy_action):
+        """Real packer/get_velocity/update; substitute device transfer and model only.
+    
+        All finalized dataclass fields are compared, not just the synthetic velocity:
+        current Prefix, text/positions, conditioned/noisy masks, domain/raw15 validity,
+        payloads and timesteps. This exercises 30 distinct noise/time values.
+        """
+        torch.manual_seed(71)
+        monkeypatch.setattr(PackedSequence, "to_cuda", lambda self: None)
+        prefix = torch.randn(4, 32, dtype=dtype)
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.randn(1, 16, 2, 2, 2, dtype=dtype)],
+            x0_tokens_action=[torch.randn(17, 16, dtype=dtype)],
+            x0_tokens_local_memory=[prefix],
+            action_domain_id=[2],
+            raw_action_dim=[15],
+            action_valid_mask=[torch.tensor([True] * 14 + [False])],
+        )
+        plans = [
+            SequencePlan(
+                has_text=True,
+                has_vision=True,
+                has_action=True,
+                has_local_memory=True,
+                condition_frame_indexes_vision=[0],
+                condition_frame_indexes_action=[0] if noisy_action else list(range(17)),
+            )
+        ]
+        packed_snapshots = []
+    
+        def pack(plans, text, data, time, **kwargs):
+            return pack_input_sequence(
+                plans,
+                text,
+                data,
+                time,
+                special_tokens={"eos_token_id": 1, "start_of_generation": 2, "end_of_generation": 3},
+                latent_patch_size=1,
+                action_dim=16,
+                **kwargs,
+            )
+    
+        def denoise(*, data_batch_packed, **kwargs):
+            p = data_batch_packed
+            packed_snapshots.append(_snapshot(p))
+            assert p.local_memory_tokens[0] is prefix
+            shift = prefix.mean() + p.vision.timesteps.float().mean().to(dtype) * 0.001
+            return dict(
+                preds_vision=[p.vision.tokens[0].squeeze(0) * 0.5 + shift], preds_action=[p.action.tokens[0] * 0.25 + shift]
+            )
+    
+        obj = SimpleNamespace(
+            config=SimpleNamespace(action_gen=True, sound_gen=False),
+            tensor_kwargs=dict(device="cpu", dtype=dtype),
+            _pack_input_sequence=pack,
+            _derive_include_end_of_generation_token=lambda: False,
+            denoise=denoise,
+        )
+        for name in ("_get_velocity", "_update_inference_pack_template", "_copy_timestep_to_template"):
+            setattr(obj, name, MethodType(getattr(OmniMoTModel, name), obj))
+>       template = pack(plans, [[10, 20, 30]], clean, torch.zeros(1))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:79: in pack
+    return pack_input_sequence(
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/packers.py:874: in pack_input_sequence
+    packed = seq_builder.finalize(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PackedSequenceBuilder(sample_lens=[30], split_lens=[5, 25], attn_modes=['causal', 'full'], is_image_batch=False, uses_...es=[tensor([], dtype=torch.int64)], seconds_per_frame=[]), sound=None, vision_item_split_lens=[], control_weights=None)
+gen_data_clean = GenerationDataClean(batch_size=1, is_image_batch=False, raw_state_vision=None, x0_tokens_vision=[tensor([[[[[-2.9187e-...e,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True, False])], control_weights=None)
+
+    def finalize(
+        self,
+        gen_data_clean: GenerationDataClean,
+    ) -> "PackedSequence":
+        """Convert all lists to tensors and compute derived values.
+    
+        Args:
+            gen_data_clean: GenerationDataClean for metadata (e.g., action domain IDs).
+    
+        Returns:
+            New PackedSequence instance with tensors instead of lists.
+        """
+        # Compute sequence length
+        sequence_length = sum(self.sample_lens)
+        sample_lens = self.sample_lens.copy()
+        split_lens = self.split_lens.copy()
+        attn_modes = self.attn_modes.copy()
+    
+        # Prepare loss-related tensors (cross-entropy)
+        label_ids: torch.Tensor | None = None
+        ce_loss_indexes: torch.Tensor | None = None
+        ce_loss_weights: torch.Tensor | None = None
+        if self.label_ids and len(self.label_ids) > 0:
+            label_ids = torch.tensor(self.label_ids)  # [N_ce_tokens]
+            ce_loss_indexes = torch.tensor(self.ce_loss_indexes)  # [N_ce_tokens]
+            ce_loss_weights = torch.tensor(self.ce_loss_weights)  # [N_ce_tokens]
+    
+        # The condition_mask and noisy_frame_indexes are kept as lists to support variable shapes.
+    
+        vision = self._finalize_modality(self.vision)
+        lidar = self._finalize_modality(self.lidar)
+        radar = self._finalize_modality(self.radar)
+        action_domain_id = None
+        if self.action is not None:
+            if gen_data_clean.action_domain_id is not None:
+                if len(gen_data_clean.action_domain_id) != len(self.action.token_shapes):
+                    raise ValueError(
+                        "Action-domain metadata must have one entry per packed action item; "
+                        f"got {len(gen_data_clean.action_domain_id)} domain entries for "
+                        f"{len(self.action.token_shapes)} action items."
+                    )
+                action_domain_id = []
+                for item_index, (domain_ids, token_shape) in enumerate(
+                    zip(gen_data_clean.action_domain_id, self.action.token_shapes)
+                ):
+>                   flat_domain_ids = domain_ids.reshape(-1)
+                                      ^^^^^^^^^^^^^^^^^^
+E                   AttributeError: 'int' object has no attribute 'reshape'
+
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:1106: AttributeError
+____ test_native_velocity_template_matches_repack_every_step[False-dtype1] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f88ce9c7140>
+dtype = torch.bfloat16, noisy_action = False
+
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    @pytest.mark.parametrize("noisy_action", [False, True])
+    def test_native_velocity_template_matches_repack_every_step(monkeypatch, dtype, noisy_action):
+        """Real packer/get_velocity/update; substitute device transfer and model only.
+    
+        All finalized dataclass fields are compared, not just the synthetic velocity:
+        current Prefix, text/positions, conditioned/noisy masks, domain/raw15 validity,
+        payloads and timesteps. This exercises 30 distinct noise/time values.
+        """
+        torch.manual_seed(71)
+        monkeypatch.setattr(PackedSequence, "to_cuda", lambda self: None)
+        prefix = torch.randn(4, 32, dtype=dtype)
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.randn(1, 16, 2, 2, 2, dtype=dtype)],
+            x0_tokens_action=[torch.randn(17, 16, dtype=dtype)],
+            x0_tokens_local_memory=[prefix],
+            action_domain_id=[2],
+            raw_action_dim=[15],
+            action_valid_mask=[torch.tensor([True] * 14 + [False])],
+        )
+        plans = [
+            SequencePlan(
+                has_text=True,
+                has_vision=True,
+                has_action=True,
+                has_local_memory=True,
+                condition_frame_indexes_vision=[0],
+                condition_frame_indexes_action=[0] if noisy_action else list(range(17)),
+            )
+        ]
+        packed_snapshots = []
+    
+        def pack(plans, text, data, time, **kwargs):
+            return pack_input_sequence(
+                plans,
+                text,
+                data,
+                time,
+                special_tokens={"eos_token_id": 1, "start_of_generation": 2, "end_of_generation": 3},
+                latent_patch_size=1,
+                action_dim=16,
+                **kwargs,
+            )
+    
+        def denoise(*, data_batch_packed, **kwargs):
+            p = data_batch_packed
+            packed_snapshots.append(_snapshot(p))
+            assert p.local_memory_tokens[0] is prefix
+            shift = prefix.mean() + p.vision.timesteps.float().mean().to(dtype) * 0.001
+            return dict(
+                preds_vision=[p.vision.tokens[0].squeeze(0) * 0.5 + shift], preds_action=[p.action.tokens[0] * 0.25 + shift]
+            )
+    
+        obj = SimpleNamespace(
+            config=SimpleNamespace(action_gen=True, sound_gen=False),
+            tensor_kwargs=dict(device="cpu", dtype=dtype),
+            _pack_input_sequence=pack,
+            _derive_include_end_of_generation_token=lambda: False,
+            denoise=denoise,
+        )
+        for name in ("_get_velocity", "_update_inference_pack_template", "_copy_timestep_to_template"):
+            setattr(obj, name, MethodType(getattr(OmniMoTModel, name), obj))
+>       template = pack(plans, [[10, 20, 30]], clean, torch.zeros(1))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:79: in pack
+    return pack_input_sequence(
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/packers.py:874: in pack_input_sequence
+    packed = seq_builder.finalize(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PackedSequenceBuilder(sample_lens=[30], split_lens=[5, 25], attn_modes=['causal', 'full'], is_image_batch=False, uses_...es=[tensor([], dtype=torch.int64)], seconds_per_frame=[]), sound=None, vision_item_split_lens=[], control_weights=None)
+gen_data_clean = GenerationDataClean(batch_size=1, is_image_batch=False, raw_state_vision=None, x0_tokens_vision=[tensor([[[[[ 0.6641, ...e,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True, False])], control_weights=None)
+
+    def finalize(
+        self,
+        gen_data_clean: GenerationDataClean,
+    ) -> "PackedSequence":
+        """Convert all lists to tensors and compute derived values.
+    
+        Args:
+            gen_data_clean: GenerationDataClean for metadata (e.g., action domain IDs).
+    
+        Returns:
+            New PackedSequence instance with tensors instead of lists.
+        """
+        # Compute sequence length
+        sequence_length = sum(self.sample_lens)
+        sample_lens = self.sample_lens.copy()
+        split_lens = self.split_lens.copy()
+        attn_modes = self.attn_modes.copy()
+    
+        # Prepare loss-related tensors (cross-entropy)
+        label_ids: torch.Tensor | None = None
+        ce_loss_indexes: torch.Tensor | None = None
+        ce_loss_weights: torch.Tensor | None = None
+        if self.label_ids and len(self.label_ids) > 0:
+            label_ids = torch.tensor(self.label_ids)  # [N_ce_tokens]
+            ce_loss_indexes = torch.tensor(self.ce_loss_indexes)  # [N_ce_tokens]
+            ce_loss_weights = torch.tensor(self.ce_loss_weights)  # [N_ce_tokens]
+    
+        # The condition_mask and noisy_frame_indexes are kept as lists to support variable shapes.
+    
+        vision = self._finalize_modality(self.vision)
+        lidar = self._finalize_modality(self.lidar)
+        radar = self._finalize_modality(self.radar)
+        action_domain_id = None
+        if self.action is not None:
+            if gen_data_clean.action_domain_id is not None:
+                if len(gen_data_clean.action_domain_id) != len(self.action.token_shapes):
+                    raise ValueError(
+                        "Action-domain metadata must have one entry per packed action item; "
+                        f"got {len(gen_data_clean.action_domain_id)} domain entries for "
+                        f"{len(self.action.token_shapes)} action items."
+                    )
+                action_domain_id = []
+                for item_index, (domain_ids, token_shape) in enumerate(
+                    zip(gen_data_clean.action_domain_id, self.action.token_shapes)
+                ):
+>                   flat_domain_ids = domain_ids.reshape(-1)
+                                      ^^^^^^^^^^^^^^^^^^
+E                   AttributeError: 'int' object has no attribute 'reshape'
+
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:1106: AttributeError
+_____ test_native_velocity_template_matches_repack_every_step[True-dtype0] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f88ce9ca8d0>
+dtype = torch.float32, noisy_action = True
+
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    @pytest.mark.parametrize("noisy_action", [False, True])
+    def test_native_velocity_template_matches_repack_every_step(monkeypatch, dtype, noisy_action):
+        """Real packer/get_velocity/update; substitute device transfer and model only.
+    
+        All finalized dataclass fields are compared, not just the synthetic velocity:
+        current Prefix, text/positions, conditioned/noisy masks, domain/raw15 validity,
+        payloads and timesteps. This exercises 30 distinct noise/time values.
+        """
+        torch.manual_seed(71)
+        monkeypatch.setattr(PackedSequence, "to_cuda", lambda self: None)
+        prefix = torch.randn(4, 32, dtype=dtype)
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.randn(1, 16, 2, 2, 2, dtype=dtype)],
+            x0_tokens_action=[torch.randn(17, 16, dtype=dtype)],
+            x0_tokens_local_memory=[prefix],
+            action_domain_id=[2],
+            raw_action_dim=[15],
+            action_valid_mask=[torch.tensor([True] * 14 + [False])],
+        )
+        plans = [
+            SequencePlan(
+                has_text=True,
+                has_vision=True,
+                has_action=True,
+                has_local_memory=True,
+                condition_frame_indexes_vision=[0],
+                condition_frame_indexes_action=[0] if noisy_action else list(range(17)),
+            )
+        ]
+        packed_snapshots = []
+    
+        def pack(plans, text, data, time, **kwargs):
+            return pack_input_sequence(
+                plans,
+                text,
+                data,
+                time,
+                special_tokens={"eos_token_id": 1, "start_of_generation": 2, "end_of_generation": 3},
+                latent_patch_size=1,
+                action_dim=16,
+                **kwargs,
+            )
+    
+        def denoise(*, data_batch_packed, **kwargs):
+            p = data_batch_packed
+            packed_snapshots.append(_snapshot(p))
+            assert p.local_memory_tokens[0] is prefix
+            shift = prefix.mean() + p.vision.timesteps.float().mean().to(dtype) * 0.001
+            return dict(
+                preds_vision=[p.vision.tokens[0].squeeze(0) * 0.5 + shift], preds_action=[p.action.tokens[0] * 0.25 + shift]
+            )
+    
+        obj = SimpleNamespace(
+            config=SimpleNamespace(action_gen=True, sound_gen=False),
+            tensor_kwargs=dict(device="cpu", dtype=dtype),
+            _pack_input_sequence=pack,
+            _derive_include_end_of_generation_token=lambda: False,
+            denoise=denoise,
+        )
+        for name in ("_get_velocity", "_update_inference_pack_template", "_copy_timestep_to_template"):
+            setattr(obj, name, MethodType(getattr(OmniMoTModel, name), obj))
+>       template = pack(plans, [[10, 20, 30]], clean, torch.zeros(1))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:79: in pack
+    return pack_input_sequence(
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/packers.py:874: in pack_input_sequence
+    packed = seq_builder.finalize(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PackedSequenceBuilder(sample_lens=[30], split_lens=[5, 25], attn_modes=['causal', 'full'], is_image_batch=False, uses_...  9, 10, 11, 12, 13, 14, 15, 16])], seconds_per_frame=[]), sound=None, vision_item_split_lens=[], control_weights=None)
+gen_data_clean = GenerationDataClean(batch_size=1, is_image_batch=False, raw_state_vision=None, x0_tokens_vision=[tensor([[[[[-2.9187e-...e,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True, False])], control_weights=None)
+
+    def finalize(
+        self,
+        gen_data_clean: GenerationDataClean,
+    ) -> "PackedSequence":
+        """Convert all lists to tensors and compute derived values.
+    
+        Args:
+            gen_data_clean: GenerationDataClean for metadata (e.g., action domain IDs).
+    
+        Returns:
+            New PackedSequence instance with tensors instead of lists.
+        """
+        # Compute sequence length
+        sequence_length = sum(self.sample_lens)
+        sample_lens = self.sample_lens.copy()
+        split_lens = self.split_lens.copy()
+        attn_modes = self.attn_modes.copy()
+    
+        # Prepare loss-related tensors (cross-entropy)
+        label_ids: torch.Tensor | None = None
+        ce_loss_indexes: torch.Tensor | None = None
+        ce_loss_weights: torch.Tensor | None = None
+        if self.label_ids and len(self.label_ids) > 0:
+            label_ids = torch.tensor(self.label_ids)  # [N_ce_tokens]
+            ce_loss_indexes = torch.tensor(self.ce_loss_indexes)  # [N_ce_tokens]
+            ce_loss_weights = torch.tensor(self.ce_loss_weights)  # [N_ce_tokens]
+    
+        # The condition_mask and noisy_frame_indexes are kept as lists to support variable shapes.
+    
+        vision = self._finalize_modality(self.vision)
+        lidar = self._finalize_modality(self.lidar)
+        radar = self._finalize_modality(self.radar)
+        action_domain_id = None
+        if self.action is not None:
+            if gen_data_clean.action_domain_id is not None:
+                if len(gen_data_clean.action_domain_id) != len(self.action.token_shapes):
+                    raise ValueError(
+                        "Action-domain metadata must have one entry per packed action item; "
+                        f"got {len(gen_data_clean.action_domain_id)} domain entries for "
+                        f"{len(self.action.token_shapes)} action items."
+                    )
+                action_domain_id = []
+                for item_index, (domain_ids, token_shape) in enumerate(
+                    zip(gen_data_clean.action_domain_id, self.action.token_shapes)
+                ):
+>                   flat_domain_ids = domain_ids.reshape(-1)
+                                      ^^^^^^^^^^^^^^^^^^
+E                   AttributeError: 'int' object has no attribute 'reshape'
+
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:1106: AttributeError
+_____ test_native_velocity_template_matches_repack_every_step[True-dtype1] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f88ce9cbe30>
+dtype = torch.bfloat16, noisy_action = True
+
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    @pytest.mark.parametrize("noisy_action", [False, True])
+    def test_native_velocity_template_matches_repack_every_step(monkeypatch, dtype, noisy_action):
+        """Real packer/get_velocity/update; substitute device transfer and model only.
+    
+        All finalized dataclass fields are compared, not just the synthetic velocity:
+        current Prefix, text/positions, conditioned/noisy masks, domain/raw15 validity,
+        payloads and timesteps. This exercises 30 distinct noise/time values.
+        """
+        torch.manual_seed(71)
+        monkeypatch.setattr(PackedSequence, "to_cuda", lambda self: None)
+        prefix = torch.randn(4, 32, dtype=dtype)
+        clean = GenerationDataClean(
+            batch_size=1,
+            is_image_batch=False,
+            x0_tokens_vision=[torch.randn(1, 16, 2, 2, 2, dtype=dtype)],
+            x0_tokens_action=[torch.randn(17, 16, dtype=dtype)],
+            x0_tokens_local_memory=[prefix],
+            action_domain_id=[2],
+            raw_action_dim=[15],
+            action_valid_mask=[torch.tensor([True] * 14 + [False])],
+        )
+        plans = [
+            SequencePlan(
+                has_text=True,
+                has_vision=True,
+                has_action=True,
+                has_local_memory=True,
+                condition_frame_indexes_vision=[0],
+                condition_frame_indexes_action=[0] if noisy_action else list(range(17)),
+            )
+        ]
+        packed_snapshots = []
+    
+        def pack(plans, text, data, time, **kwargs):
+            return pack_input_sequence(
+                plans,
+                text,
+                data,
+                time,
+                special_tokens={"eos_token_id": 1, "start_of_generation": 2, "end_of_generation": 3},
+                latent_patch_size=1,
+                action_dim=16,
+                **kwargs,
+            )
+    
+        def denoise(*, data_batch_packed, **kwargs):
+            p = data_batch_packed
+            packed_snapshots.append(_snapshot(p))
+            assert p.local_memory_tokens[0] is prefix
+            shift = prefix.mean() + p.vision.timesteps.float().mean().to(dtype) * 0.001
+            return dict(
+                preds_vision=[p.vision.tokens[0].squeeze(0) * 0.5 + shift], preds_action=[p.action.tokens[0] * 0.25 + shift]
+            )
+    
+        obj = SimpleNamespace(
+            config=SimpleNamespace(action_gen=True, sound_gen=False),
+            tensor_kwargs=dict(device="cpu", dtype=dtype),
+            _pack_input_sequence=pack,
+            _derive_include_end_of_generation_token=lambda: False,
+            denoise=denoise,
+        )
+        for name in ("_get_velocity", "_update_inference_pack_template", "_copy_timestep_to_template"):
+            setattr(obj, name, MethodType(getattr(OmniMoTModel, name), obj))
+>       template = pack(plans, [[10, 20, 30]], clean, torch.zeros(1))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:79: in pack
+    return pack_input_sequence(
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/packers.py:874: in pack_input_sequence
+    packed = seq_builder.finalize(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PackedSequenceBuilder(sample_lens=[30], split_lens=[5, 25], attn_modes=['causal', 'full'], is_image_batch=False, uses_...  9, 10, 11, 12, 13, 14, 15, 16])], seconds_per_frame=[]), sound=None, vision_item_split_lens=[], control_weights=None)
+gen_data_clean = GenerationDataClean(batch_size=1, is_image_batch=False, raw_state_vision=None, x0_tokens_vision=[tensor([[[[[ 0.6641, ...e,  True,  True,  True,  True,  True,  True,  True,
+         True,  True,  True,  True, False])], control_weights=None)
+
+    def finalize(
+        self,
+        gen_data_clean: GenerationDataClean,
+    ) -> "PackedSequence":
+        """Convert all lists to tensors and compute derived values.
+    
+        Args:
+            gen_data_clean: GenerationDataClean for metadata (e.g., action domain IDs).
+    
+        Returns:
+            New PackedSequence instance with tensors instead of lists.
+        """
+        # Compute sequence length
+        sequence_length = sum(self.sample_lens)
+        sample_lens = self.sample_lens.copy()
+        split_lens = self.split_lens.copy()
+        attn_modes = self.attn_modes.copy()
+    
+        # Prepare loss-related tensors (cross-entropy)
+        label_ids: torch.Tensor | None = None
+        ce_loss_indexes: torch.Tensor | None = None
+        ce_loss_weights: torch.Tensor | None = None
+        if self.label_ids and len(self.label_ids) > 0:
+            label_ids = torch.tensor(self.label_ids)  # [N_ce_tokens]
+            ce_loss_indexes = torch.tensor(self.ce_loss_indexes)  # [N_ce_tokens]
+            ce_loss_weights = torch.tensor(self.ce_loss_weights)  # [N_ce_tokens]
+    
+        # The condition_mask and noisy_frame_indexes are kept as lists to support variable shapes.
+    
+        vision = self._finalize_modality(self.vision)
+        lidar = self._finalize_modality(self.lidar)
+        radar = self._finalize_modality(self.radar)
+        action_domain_id = None
+        if self.action is not None:
+            if gen_data_clean.action_domain_id is not None:
+                if len(gen_data_clean.action_domain_id) != len(self.action.token_shapes):
+                    raise ValueError(
+                        "Action-domain metadata must have one entry per packed action item; "
+                        f"got {len(gen_data_clean.action_domain_id)} domain entries for "
+                        f"{len(self.action.token_shapes)} action items."
+                    )
+                action_domain_id = []
+                for item_index, (domain_ids, token_shape) in enumerate(
+                    zip(gen_data_clean.action_domain_id, self.action.token_shapes)
+                ):
+>                   flat_domain_ids = domain_ids.reshape(-1)
+                                      ^^^^^^^^^^^^^^^^^^
+E                   AttributeError: 'int' object has no attribute 'reshape'
+
+cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:1106: AttributeError
+_______ test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix ________
+
+    def test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix():
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=30, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+>       reference = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=False, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py:331: in dispatch_attention_with_text_kv_memory
+    return two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:01|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=30)
+_ test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[temporal] _
+
+setting = 'temporal'
+
+    @pytest.mark.parametrize("setting", ["temporal", "three_way", "postprocess", "cp", "guidance"])
+    def test_prefix_pack_uses_only_the_approved_single_sample_cache_layout(setting):
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        if setting == "temporal":
+            obj.config.video_temporal_causal = True
+        elif setting == "three_way":
+            obj.config.joint_attn_implementation = "three_way"
+        elif setting == "postprocess":
+            kwargs["velocity_postprocess_builder"] = lambda **kw: None
+        elif setting == "cp":
+            obj.parallel_dims = SimpleNamespace(cp_enabled=True, cfgp_enabled=False, dp_shard_mesh=None)
+        else:
+            kwargs["guidance"] = 2.0
+>       obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:871: in dispatch_attention
+    output = two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:04|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=3)
+_ test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[three_way] _
+
+setting = 'three_way'
+
+    @pytest.mark.parametrize("setting", ["temporal", "three_way", "postprocess", "cp", "guidance"])
+    def test_prefix_pack_uses_only_the_approved_single_sample_cache_layout(setting):
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        if setting == "temporal":
+            obj.config.video_temporal_causal = True
+        elif setting == "three_way":
+            obj.config.joint_attn_implementation = "three_way"
+        elif setting == "postprocess":
+            kwargs["velocity_postprocess_builder"] = lambda **kw: None
+        elif setting == "cp":
+            obj.parallel_dims = SimpleNamespace(cp_enabled=True, cfgp_enabled=False, dp_shard_mesh=None)
+        else:
+            kwargs["guidance"] = 2.0
+>       obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:871: in dispatch_attention
+    output = two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:05|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=3)
+_ test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[postprocess] _
+
+setting = 'postprocess'
+
+    @pytest.mark.parametrize("setting", ["temporal", "three_way", "postprocess", "cp", "guidance"])
+    def test_prefix_pack_uses_only_the_approved_single_sample_cache_layout(setting):
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        if setting == "temporal":
+            obj.config.video_temporal_causal = True
+        elif setting == "three_way":
+            obj.config.joint_attn_implementation = "three_way"
+        elif setting == "postprocess":
+            kwargs["velocity_postprocess_builder"] = lambda **kw: None
+        elif setting == "cp":
+            obj.parallel_dims = SimpleNamespace(cp_enabled=True, cfgp_enabled=False, dp_shard_mesh=None)
+        else:
+            kwargs["guidance"] = 2.0
+>       obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:871: in dispatch_attention
+    output = two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:05|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=3)
+____ test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[cp] ____
+
+setting = 'cp'
+
+    @pytest.mark.parametrize("setting", ["temporal", "three_way", "postprocess", "cp", "guidance"])
+    def test_prefix_pack_uses_only_the_approved_single_sample_cache_layout(setting):
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        if setting == "temporal":
+            obj.config.video_temporal_causal = True
+        elif setting == "three_way":
+            obj.config.joint_attn_implementation = "three_way"
+        elif setting == "postprocess":
+            kwargs["velocity_postprocess_builder"] = lambda **kw: None
+        elif setting == "cp":
+            obj.parallel_dims = SimpleNamespace(cp_enabled=True, cfgp_enabled=False, dp_shard_mesh=None)
+        else:
+            kwargs["guidance"] = 2.0
+>       obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = namespace(config=namespace(local_memory_enabled=True, local_memory_k_local=4, local_memory_dim=32, joint_attn_implemen...<locals>.<lambda> at 0x7f88cc6db380>, _get_velocity=<function _generation_harness.<locals>.velocity at 0x7f88cc6da200>)
+data_batch = {'action_processing_record': [ActionProcessingRecord(raw_action_dim=15, action_normalizer=None, action_valid_mask=None, action_codec=None)]}
+net = None, sampler = None, guidance = 1.0, guidance_interval = None
+velocity_postprocess_builder = None, seed = [31], n_sample = None
+has_negative_prompt = False, num_steps = 3, shift = 5.0, sigma_max = 80.0
+skip_text_tokens_for_cfg = False, normalize_cfg = False, use_batched_cfg = False
+upsample_task = None, upsample_max_new_tokens = 2048, upsample_temperature = 0.7
+upsample_top_k = 20, upsample_top_p = 0.8, upsample_repetition_penalty = 1.0
+upsample_presence_penalty = 0.0, upsample_seed = None
+_local_memory_prefixes = (tensor([[-1.5718,  2.6484, -1.0651,  0.4547, -0.1960, -0.8548,  0.6909,  2.7882,
+          0.0663,  0.1471, -2.0134, ...0.6500, -0.2192, -2.2097, -0.2849,
+          1.4067, -0.1012,  0.7768,  0.8080,  1.7516,  0.5158,  0.9150,  0.2063]]),)
+use_prefix_text_kv_cache = True, use_prefix_pack_templates = True, kwargs = {}
+rf_config = None
+
+    @torch.no_grad()
+    def generate_samples_from_batch(
+        self,
+        data_batch: Dict,
+        net: torch.nn.Module | None = None,
+        sampler: Any | None = None,
+        guidance: float = 1.5,
+        guidance_interval: Optional[list[float]] = None,
+        velocity_postprocess_builder: Optional[
+            Callable[
+                ...,
+                Optional[Callable[[list[torch.Tensor], list[torch.Tensor], torch.Tensor, float], list[torch.Tensor]]],
+            ]
+        ] = None,
+        seed: list[int] | int = 1,
+        n_sample: int | None = None,
+        has_negative_prompt: bool = False,
+        num_steps: int = 35,
+        shift: float | None = None,
+        sigma_max: float = 80.0,
+        skip_text_tokens_for_cfg: bool = False,
+        normalize_cfg: bool = False,
+        use_batched_cfg: bool = False,
+        upsample_task: str | None = None,
+        upsample_max_new_tokens: int = 2048,
+        upsample_temperature: float | None = 0.7,
+        upsample_top_k: int | None = 20,
+        upsample_top_p: float | None = 0.8,
+        upsample_repetition_penalty: float = 1.0,
+        upsample_presence_penalty: float = 0.0,
+        upsample_seed: int | None = None,
+        _local_memory_prefixes: tuple[torch.Tensor | None, ...] | None = None,
+        use_prefix_text_kv_cache: bool = True,
+        use_prefix_pack_templates: bool = True,
+        **kwargs,
+    ) -> dict[str, list[torch.Tensor]]:
+        """
+        Generate samples from the batch. Based on given batch, it will automatically
+        determine whether to generate image or video samples.
+    
+        This method follows the same structure as training_step:
+        1. Build sequence plans
+        2. Get data and condition (encode vision)
+        3. Initialize noise with conditioning (as lists for variable shapes)
+        4. Run sampling loop with velocity function
+        5. Return latents as lists (supports variable shapes)
+    
+        If ``upsample_task`` is not ``None``, the conditional captions are
+        upsampled with the corresponding canonical task (``"t2i"``, ``"t2v"``,
+        or ``"i2v"``) before sample generation.
+    
+        Args:
+            data_batch (dict): Raw data batch from the dataloader.
+            guidance (float): Classifier-free guidance weight.
+            guidance_interval (list[float] | None): Optional timestep interval to apply guidance.
+                For the timesteps (ranging between 0-1000) that fall between the interval, we perform CFG, otherwise, we skip the unconditional generation.
+            seed (list[int] | int): Random seeds for noise generation. For all new use-cases,
+                we use a list of seeds, one for each sample. The length of the list must match
+                the number of samples. Legacy use-cases use a single integer seed which is
+                incremented by 1 for each sample. But this is not supported anymore, and will
+                raise an error if used.
+            n_sample (int | None): Number of samples to generate; defaults to batch size.
+            has_negative_prompt (bool): If True, use negative prompt for unconditional branch.
+            num_steps (int): Number of sampling steps for the diffusion process.
+            shift (float | None): Explicit sampler shift. With shift_lidar configured, None uses
+                the LiDAR or RGB-resolution training shift; otherwise it retains the legacy value 5.
+            sigma_max (float): Maximum sigma for the EDM sampler.
+            skip_text_tokens_for_cfg (bool): If True, skip text tokens in unconditional branch.
+            normalize_cfg (bool): If True, normalize the CFG output.
+            use_batched_cfg (bool): If True, run cond + uncond as one batched forward of
+                size 2N (mutually exclusive with cfg-parallel). Opt-in; default False
+                keeps this API conservative for saturated or memory-constrained workloads.
+                ``OmniInference`` explicitly passes the configured
+                ``SetupOverrides.use_batched_cfg`` policy.
+                Reuses a doubled pack template and a shared text K/V cache when eligible.
+            use_prefix_text_kv_cache (bool): Reuse request-local text K/V with a Local
+                Prefix for eligible B1, two_way, guidance=1 inference. False keeps
+                the original Prefix-on path for controlled same-weight comparisons.
+                Does not change No-TTT or model-mode validation.
+            use_prefix_pack_templates (bool): Reuse request-local packed metadata
+                for eligible Prefix-aware text-KV requests. Prefix stays fixed
+                within this request; noisy tokens and timesteps refresh every step.
+                False retains the approved text-KV-only path for comparisons.
+            upsample_task (str | None): Canonical V4.2 task resolved by the
+                inference caller. ``None`` disables native prompt upsampling.
+                Otherwise, the conditional captions in
+                ``data_batch[self.input_caption_key]`` are expanded via
+                :meth:`upsample_captions` (which drives the reasoner tower's
+                autoregressive loop) BEFORE downstream tokenization, so all
+                subsequent code paths — cond/uncond build, sequence plans,
+                velocity_fn, CFG — operate on the upsampled prompts uniformly.
+                When ``upsample_task`` is ``"i2v"``, the
+                anchor (first) raw frame of each sample's video — extracted
+                from ``data_batch[self.input_video_key]`` via
+                :meth:`_extract_upsample_conditioning_images` — is also
+                forwarded to the upsampler's Qwen3-VL multimodal chat
+                template so the rewritten caption is grounded in the
+                actual conditioning frame, not just the original caption
+                text.  The unconditional captions are NOT upsampled
+                (negative prompts and empty strings pass through as-is).
+            upsample_max_new_tokens (int): Maximum tokens generated per
+                caption during upsampling.  Defaults to 2048.
+            upsample_temperature, upsample_top_k, upsample_top_p: Native
+                reasoner prompt upsampling sampling controls.
+            upsample_repetition_penalty (float): CTRL/HF-style
+                multiplicative logit penalty on tokens already seen
+                in each caption's history.  ``>1.0`` discourages
+                verbatim repetition, ``<1.0`` encourages it, ``1.0``
+                (default) is identity and adds zero overhead.
+            upsample_presence_penalty (float): OpenAI-style additive
+                logit penalty (binary presence, not frequency) on
+                tokens already seen.  ``>0`` discourages reuse,
+                ``<0`` encourages it, ``0.0`` (default) is identity.
+            upsample_seed (int | None): Optional integer seed for the
+                native prompt upsampler's sampling RNG.  Forwarded to
+                :meth:`upsample_captions` and through to
+                :func:`unified_mot._impl_generate_reasoner_text`, which
+                seeds a fresh device-local ``torch.Generator`` once and
+                threads it into every ``torch.multinomial`` draw.
+                ``None`` (default) uses the device's default RNG and is
+                bit-identical to the pre-seed behavior.  Greedy
+                upsampling (``upsample_temperature`` 0) never reads the
+                generator, so the value has no effect in that case.
+                NOTE: distinct from the per-sample ``seed`` argument
+                above, which seeds the diffusion noise.
+    
+        Returns:
+            Dict with keys:
+                - "vision": List of vision latent tensors (one per sample, variable shapes)
+                - "action": List of external-space action tensors
+                  (only present when the packed sequence marks action tokens as
+                  denoising targets, i.e. WAM / inverse dynamics. Plans whose
+                  actions are pure conditioning — forward dynamics, temporal-causal
+                  action conditioning — generate no actions and return no key)
+    
+        Raises:
+            ValueError: If the number of samples does not match the number of noise tensors or seeds.
+            ValueError: If the seed is a single integer. This is not supported anymore: `seed` must be
+                a list of integers, one for each sample.
+        """
+        if shift is None:
+            shift = 5.0
+            rf_config = getattr(self.config, "rectified_flow_training_config", None)
+            if getattr(rf_config, "shift_lidar", None) is not None:
+                if not self._has_vision_stream(data_batch):
+                    shift = float(rf_config.shift_lidar)
+                elif isinstance(rf_config.shift, int):
+                    shift = float(rf_config.shift)
+                else:
+                    size = data_batch["image_size"][-1].reshape(-1, 4)[0]  # [4]
+                    resolution = get_vision_data_resolution((int(size[0]), int(size[1])))
+                    shift = float(rf_config.shift[resolution])
+    
+        if isinstance(seed, int):
+            raise ValueError(
+                "Single integer seed is not supported anymore: `seed` must be a list of integers, one for each sample."
+            )
+        assert isinstance(seed, list)
+    
+        if self.parallel_dims is not None and self.parallel_dims.cp_enabled:
+>           seed = _broadcast_seed(seed, self.parallel_dims.cp_mesh.get_group(), self.parallel_dims.cp_rank)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'cp_mesh'
+
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:3860: AttributeError
+_ test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[guidance] _
+
+setting = 'guidance'
+
+    @pytest.mark.parametrize("setting", ["temporal", "three_way", "postprocess", "cp", "guidance"])
+    def test_prefix_pack_uses_only_the_approved_single_sample_cache_layout(setting):
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=3, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        if setting == "temporal":
+            obj.config.video_temporal_causal = True
+        elif setting == "three_way":
+            obj.config.joint_attn_implementation = "three_way"
+        elif setting == "postprocess":
+            kwargs["velocity_postprocess_builder"] = lambda **kw: None
+        elif setting == "cp":
+            obj.parallel_dims = SimpleNamespace(cp_enabled=True, cfgp_enabled=False, dp_shard_mesh=None)
+        else:
+            kwargs["guidance"] = 2.0
+>       obj.generate_samples_from_batch(batch, **kwargs)
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+noise_x = [tensor([-1.0000, -0.9943, -0.9886, -0.9829, -0.9772, -0.9715, -0.9658, -0.9601,
+        -0.9544, -0.9487, -0.9430, -0...,  0.9373,  0.9430,  0.9487,  0.9544,
+         0.9601,  0.9658,  0.9715,  0.9772,  0.9829,  0.9886,  0.9943,  1.0000])]
+timestep = tensor([[1000.]])
+
+    def velocity_fn(noise_x: list[torch.Tensor], timestep: torch.Tensor) -> list[torch.Tensor]:
+        # len(noise_x) == B, noise_x[i] is shape (D)
+        # timestep is shape (B, 1)
+        torch.compiler.cudagraph_mark_step_begin()
+    
+        assert timestep.ndim == 2, f"timestep must be 2D, got {timestep.shape}"
+        assert timestep.shape == (1, 1), f"timestep must be (1, 1), got {timestep.shape}"
+    
+        # Expand timestep to (B, 1)
+        timestep = timestep.repeat(len(noise_x), 1)  # [B,1]
+    
+        def _single_velocity_fn(tokens: list[list[int]], skip_text_tokens: bool) -> list[torch.Tensor]:
+            nonlocal uncond_text_kv_cache
+            packed_sequence_template = None
+            text_kv_cache: list[UndKVCache] | None = None
+            if reuse_pack_templates:
+                if tokens is cond_tokens and not skip_text_tokens:
+                    packed_sequence_template = cond_packed_sequence_template
+                elif tokens is uncond_tokens and skip_text_tokens == skip_text_tokens_for_cfg:
+                    packed_sequence_template = uncond_packed_sequence_template
+            if reuse_text_kv:
+                if tokens is cond_tokens and not skip_text_tokens:
+                    text_kv_cache = cond_text_kv_cache
+                elif tokens is uncond_tokens and skip_text_tokens == skip_text_tokens_for_cfg:
+                    if reuse_text_kv and uncond_text_kv_cache is None:
+                        uncond_text_kv_cache = self._make_inference_text_kv_cache(net)
+                    text_kv_cache = uncond_text_kv_cache
+            memory: MemoryState | None = (
+                InferenceTextKVMemoryState(
+                    text_kv_cache,
+                    local_prefix_length=self.config.local_memory_k_local if has_local_prefixes else 0,
+                )
+                if text_kv_cache is not None
+                else None
+            )
+            return self._get_velocity(
+                net=net,
+                noise_x=noise_x,
+                timestep=timestep,
+                text_tokens=tokens,
+                sequence_plans=sequence_plans,
+                gen_data_clean=gen_data_clean,
+                skip_text_tokens=skip_text_tokens,
+                packed_sequence_template=packed_sequence_template,
+                memory=memory,
+                has_noisy_actions=has_noisy_actions,
+            )
+    
+        needs_text_cfg = guidance != 1.0
+        if needs_text_cfg and guidance_interval is not None:
+            assert len(guidance_interval) == 2, f"guidance_interval must be [lo, hi], got {guidance_interval}"
+            t_lo, t_hi = guidance_interval
+            needs_text_cfg = t_lo < timestep[0].item() < t_hi
+    
+        # FSDP alignment: if ANY rank in the shard group needs a second
+        # forward for text CFG, every rank
+        # must issue two sequential forwards (or one globally eligible
+        # batched forward) so the allgather sequence stays aligned.
+        # Postprocessors declare extra branches; the sampler owns cache bookkeeping.
+        cfg_branches: tuple[str, ...] = ()
+        if isinstance(velocity_postprocess, VelocityPostprocess):
+            cfg_branches = velocity_postprocess.cfg_branches(timestep)
+        _any_needs_guidance_path = _any_dp_shard_rank_needs_guidance_path(
+            needs_text_cfg,
+            _dp_shard_group,
+            _align_device,
+            num_postprocess_forwards=len(cfg_branches),
+        )
+        if diffusion_cache is not None and cache_step_index is not None:
+            cfgp_rank = (
+                self.parallel_dims.cfgp_rank
+                if velocity_postprocess is None
+                and self.parallel_dims is not None
+                and self.parallel_dims.cfgp_enabled
+                else None
+            )
+            pathways = _velocity_pathways(
+                _any_needs_guidance_path,
+                cfg_branches=cfg_branches,
+                batched_cfg=batched_cfg_fast_path,
+                cfgp_rank=cfgp_rank,
+            )
+            diffusion_cache.begin_step(cache_step_index, pathways)
+    
+        # Fast path: no rank needs CFG or postprocessing — single forward.
+        if not _any_needs_guidance_path and velocity_postprocess is None:
+            return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+    
+        # Batched-CFG fast path (opt-in): run cond + uncond as one forward of
+        # size 2N instead of two sequential N forwards. Removes the per-step
+        # python orchestration between the two forwards. Only taken when there
+        # is no postprocess hook, text-CFG is needed somewhere in the FSDP
+        # shard group this step, and we are not skipping text tokens for the
+        # uncond branch. cfg-parallel was already ruled out at setup. Falls
+        # through to the standard path otherwise.
+        # Under FSDP, every rank takes this path whenever ``_any_needs_guidance_path``
+        # so the allgather sequence stays aligned (same 1-forward-per-step
+        # count); ranks whose local decision was no-CFG still return cond only.
+        if batched_cfg_fast_path and _any_needs_guidance_path:
+            assert sequence_plans_doubled is not None and gen_data_clean_doubled is not None
+            n = len(noise_x)
+            batched_memory: MemoryState | None = (
+                InferenceTextKVMemoryState(batched_text_kv_cache) if batched_text_kv_cache is not None else None
+            )
+            velocities = self._get_velocity(
+                net=net,
+                noise_x=noise_x + noise_x,
+                timestep=torch.cat([timestep, timestep], dim=0),
+                text_tokens=list(cond_tokens) + list(uncond_tokens),
+                sequence_plans=sequence_plans_doubled,
+                gen_data_clean=gen_data_clean_doubled,
+                skip_text_tokens=False,
+                packed_sequence_template=batched_packed_sequence_template,
+                memory=batched_memory,
+                has_noisy_actions=has_noisy_actions,
+            )
+            cond_v = velocities[:n]
+            uncond_v = velocities[n:]
+            if not needs_text_cfg:
+                return cond_v
+            v_pred = [u_i + guidance * (c_i - u_i) for c_i, u_i in zip(cond_v, uncond_v)]
+            if normalize_cfg:
+                v_pred = [
+                    v_i * (torch.norm(c_i) / (torch.norm(v_i) + 1e-8)).clamp(min=0.0, max=1.0)
+                    for v_i, c_i in zip(v_pred, cond_v)
+                ]
+            return v_pred
+    
+        # Fast path: only text-CFG and no postprocess — preserve the
+        # cfgp-parallel branch so two-rank CFG parallelism stays available.
+        if velocity_postprocess is None:
+>           cond_v, uncond_v = self._run_classifier_free_guidance(
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                cond_tokens=cond_tokens,
+                uncond_tokens=uncond_tokens,
+                skip_text_tokens_for_cfg=skip_text_tokens_for_cfg,
+                single_velocity_fn=_single_velocity_fn,
+            )
+E           AttributeError: 'types.SimpleNamespace' object has no attribute '_run_classifier_free_guidance'
+
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4275: AttributeError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:07|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=3)
+__________ test_pack_lifetime_request_changes_and_failure_retry[None] __________
+
+fail_at = None
+
+    @pytest.mark.parametrize("fail_at", [None, 1, 3])
+    def test_pack_lifetime_request_changes_and_failure_retry(fail_at):
+        obj, batch = _generation_harness()
+        refs = []
+    
+        class Template:
+            def to_cuda(self):
+                pass
+    
+        def pack(*args, **kwargs):
+            value = Template()
+            refs.append(weakref.ref(value))
+            return value
+    
+        obj._pack_input_sequence = pack
+        prefix = torch.randn(4, 32)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
+        if fail_at is not None:
+            obj.fail_at = fail_at
+            with pytest.raises(RuntimeError, match="injected generation failure"):
+                obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
+            assert all(not cache.is_initialized for cache in obj.created[-1])
+            obj.fail_at = None
+        obj.seen.clear()
+>       a = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:191: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py:331: in dispatch_attention_with_text_kv_memory
+    return two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:07|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=6)
+___________ test_pack_lifetime_request_changes_and_failure_retry[1] ____________
+
+fail_at = 1
+
+    @pytest.mark.parametrize("fail_at", [None, 1, 3])
+    def test_pack_lifetime_request_changes_and_failure_retry(fail_at):
+        obj, batch = _generation_harness()
+        refs = []
+    
+        class Template:
+            def to_cuda(self):
+                pass
+    
+        def pack(*args, **kwargs):
+            value = Template()
+            refs.append(weakref.ref(value))
+            return value
+    
+        obj._pack_input_sequence = pack
+        prefix = torch.randn(4, 32)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
+        if fail_at is not None:
+            obj.fail_at = fail_at
+            with pytest.raises(RuntimeError, match="injected generation failure"):
+                obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
+            assert all(not cache.is_initialized for cache in obj.created[-1])
+            obj.fail_at = None
+        obj.seen.clear()
+>       a = obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:191: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py:331: in dispatch_attention_with_text_kv_memory
+    return two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:08|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=6)
+[11-09 13:47:08|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=6)
+___________ test_pack_lifetime_request_changes_and_failure_retry[3] ____________
+
+fail_at = 3
+
+    @pytest.mark.parametrize("fail_at", [None, 1, 3])
+    def test_pack_lifetime_request_changes_and_failure_retry(fail_at):
+        obj, batch = _generation_harness()
+        refs = []
+    
+        class Template:
+            def to_cuda(self):
+                pass
+    
+        def pack(*args, **kwargs):
+            value = Template()
+            refs.append(weakref.ref(value))
+            return value
+    
+        obj._pack_input_sequence = pack
+        prefix = torch.randn(4, 32)
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
+        if fail_at is not None:
+            obj.fail_at = fail_at
+            with pytest.raises(RuntimeError, match="injected generation failure"):
+>               obj.generate_samples_from_batch(batch, _local_memory_prefixes=(prefix,), **kwargs)
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:187: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py:331: in dispatch_attention_with_text_kv_memory
+    return two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = tensor([0, 5, 6], dtype=torch.int32)
+cumulative_seqlen_KV = tensor([0, 5, 6], dtype=torch.int32), max_seqlen_Q = 5
+max_seqlen_KV = 5, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:08|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=6)
+____________ test_no_prefix_pack_option_preserves_native_fast_path _____________
+
+    def test_no_prefix_pack_option_preserves_native_fast_path():
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=6, seed=[31])
+>       a = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=False, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py:210: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4365: in generate_samples_from_batch
+    latents = sampler(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:509: in __call__
+    velocity = velocity_fn(noise, torch.tensor([[1000.0 - 10 * i]]))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4230: in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4179: in _single_velocity_fn
+    return self._get_velocity(
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:579: in velocity
+    out = obj.net.step(obj.text, gen, prefix[0] if prefix else None, memory._text_kv_cache if memory else None)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:1521: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py:825: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py:349: in dispatch_attention_with_text_kv_memory
+    return dispatch_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:871: in dispatch_attention
+    output = two_way_attention(
+cosmos-framework/cosmos_framework/model/generator/mot/attention.py:326: in two_way_attention
+    causal_res = attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+query = tensor([[[[ 0.3748, -0.8246, -0.1119,  1.2123, -1.0016,  1.7230,  1.3057,
+            0.1427],
+          [-1.6346,  0....
+            0.0000],
+          [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+key = tensor([[[[ 1.0654, -0.0919,  1.3946,  1.1343,  0.8170,  1.3297, -1.0511,
+           -0.2905]],
+
+         [[ 0.0303,  ...          -0.8362]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+value = tensor([[[[ 1.0346, -0.1131, -0.8123, -0.5399, -1.2823, -0.5300, -0.8645,
+           -0.9054]],
+
+         [[-0.1018,  ...          -0.8582]],
+
+         [[ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+            0.0000]]]])
+is_causal = True, causal_type = <CausalType.DontCare: 2>
+scale = 0.3535533905932738, seqlens_Q = None, seqlens_KV = None
+cumulative_seqlen_Q = None, cumulative_seqlen_KV = None, max_seqlen_Q = 0
+max_seqlen_KV = 0, backend = None, return_lse = False, backend_kwargs = None
+deterministic = False
+
+    def attention(
+        query: Tensor,  # [B,S_Q,H,D]
+        key: Tensor,  # [B,S_KV,H_KV,D]
+        value: Tensor,  # [B,S_KV,H_KV,D_V]
+        is_causal: bool = False,
+        causal_type: CausalType | None = None,
+        scale: float | None = None,
+        # varlen parameters
+        seqlens_Q: Tensor | None = None,  # [B]
+        seqlens_KV: Tensor | None = None,  # [B]
+        cumulative_seqlen_Q: Tensor | None = None,  # [B+1]
+        cumulative_seqlen_KV: Tensor | None = None,  # [B+1]
+        max_seqlen_Q: int | None = None,
+        max_seqlen_KV: int | None = None,
+        # backend & misc parameters
+        backend: str | None = None,
+        return_lse: bool = False,
+        backend_kwargs: dict | None = None,
+        deterministic: bool = False,
+    ) -> Tensor | tuple[Tensor, Tensor]:  # [B,S_Q,H,D_V] or ([B,S_Q,H,D_V], [B,S_Q,H,1])
+        """
+        Runs Attention on given operands (Q, K, V) with the heads-last contiguous layout
+            (`[batch, seqlen, heads, head_dim]`).
+    
+        Varlen Attention is only supported for the sequence-packed layout: QKV tensors have batch size
+        1, and tokens from different batches are concatenated without any padding along the sequence
+        dimension. Sequence lengths for different batches can be provided in two ways:
+            1. `seqlens_Q` and `seqlens_KV` (less efficient): only provide the sequence lengths as
+                integer tensors (must be on the same device as QKV), and cumulative and maximum sequence
+                lengths are recomputed on each call.
+            2. `cumulative_seqlen_{Q,KV}` and `max_seqlen_{Q,KV}` (more efficient):
+                compute cumulative and maximum sequence lengths. `cumulative_seqlen_{Q,KV}` are integer
+                tensors on the same device as QKV containing the cumulative sum of `seqlens_{Q,KV}`,
+                with an additional `0` element in the beginning, therefore sized `batch+1`.
+                `max_seqlen_{Q,KV}` are integers (not Tensors) that represent the maximum sequence
+                lengths for Q and KV among all sequence batches.
+                You can use `generate_varlen_parameters` to generate these
+                parameters:
+                    ```python3
+                    from cosmos_framework.model.attention.varlen import generate_varlen_parameters
+                    (
+                        cumulative_seqlen_Q,
+                        cumulative_seqlen_KV,
+                        max_seqlen_Q,
+                        max_seqlen_KV,
+                    ) = generate_varlen_parameters(q, k, v, seqlens_Q, seqlens_KV)
+                    ```
+    
+        Parameters:
+            query (Tensor): 4-D query tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim]`)
+    
+            key (Tensor): 4-D key tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim]`)
+    
+            value (Tensor): 4-D value tensor, with heads-last contiguous layout
+                (`[batch, seqlen_kv, heads_kv, head_dim_v]`)
+    
+            is_causal (bool): whether or not causal masking is enabled. Default is False.
+    
+            causal_type (CausalType): causal masking mode. Choices: `CausalType.TopLeft`,
+                `CausalType.BottomRight`, `CausalType.DontCare` (only valid when seqlen_q == seqlen_kv).
+                Required when `is_causal = True`.
+    
+            scale (float | None): Dot product scale (attention scale). Defaults to head_dim ** -0.5.
+    
+            seqlens_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of query tokens in each batch. Must be passed together with
+                `seqlens_KV`.
+    
+            seqlens_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch`
+                indicating the number of key/value tokens in each batch. Must be passed together with
+                `seqlens_Q`.
+    
+            cumulative_seqlen_Q (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of query tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_KV` and `max_seqlen_{Q,KV}`.
+    
+            cumulative_seqlen_KV (Tensor | None): (varlen) Optional 1-D tensor with size `batch + 1`
+                indicating the cumulative sum of number of key/value tokens in each batch, with an
+                additional 0 element in the beginning. Must be passed together with
+                `cumulative_seqlen_Q` and `max_seqlen_{Q,KV}`.
+    
+            max_seqlen_Q (int | None): (varlen) Optional integer indicating the maximum query
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_KV`.
+    
+            max_seqlen_KV (int | None): (varlen) Optional integer indicating the maximum key/value
+                sequence length in all batches. Must be passed together with `cumulative_seqlen_{Q,KV}`
+                and `max_seqlen_Q`.
+    
+        Other Parameters:
+            backend (str | None): Backend to run with. If unspecified (default), it will try to
+                select the best available.
+    
+            return_lse (bool): Whether to return the logsumexp values. Default is False.
+    
+            backend_kwargs (dict | None): Key-value pair for passing arguments specific to the backend's
+                attention operator, if any. Only valid when a specific backend is selected (backend is
+                not None).
+    
+            deterministic (bool): Whether to enforce deterministic backward pass. Default is False.
+                When True, backends are selected based on deterministic support.
+    
+        Returns:
+            output (Tensor): 4-D output tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, head_dim_v]`).
+    
+            logsumexp (Tensor): logsumexp tensor, with the heads-last contiguous layout
+                (`[batch, seqlen_q, heads, 1]`). Only returned when return_lse is True.
+                NOTE: this tensor is not guaranteed to be contiguous with some backends and it should
+                not be made contiguous unless we can guarantee its results aren't merged via
+                `merge_attentions`.
+        """
+    
+        assert universal_tensor_checks(query=query, key=key, value=value, raise_error=True)
+    
+        assert attention_tensor_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            raise_error=True,
+        )
+    
+        attention_param_checks(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            is_causal=is_causal,
+            causal_type=causal_type,
+        )
+    
+        (
+            cumulative_seqlen_Q,
+            cumulative_seqlen_KV,
+            max_seqlen_Q,
+            max_seqlen_KV,
+        ) = varlen_tensor_checks(
+            query=query,
+            key=key,
+            value=value,
+            seqlens_Q=seqlens_Q,
+            seqlens_KV=seqlens_KV,
+            cumulative_seqlen_Q=cumulative_seqlen_Q,
+            cumulative_seqlen_KV=cumulative_seqlen_KV,
+            max_seqlen_Q=max_seqlen_Q,
+            max_seqlen_KV=max_seqlen_KV,
+        )
+        is_varlen = cumulative_seqlen_Q is not None
+    
+        scale = scale if scale is not None else query.shape[-1] ** -0.5
+    
+        if backend is None and backend_kwargs is not None:
+            backend_kwargs = None
+            log.debug("A backend was not specified, but got backend_kwargs. Ignoring... ")
+    
+        if backend is not None and backend not in BACKEND_MAP:
+            raise ValueError(f"Selected {backend=}, but available choices are {BACKEND_MAP.keys()}. ")
+    
+        compatible_backend = choose_backend(
+            query_shape=query.shape,
+            key_shape=key.shape,
+            value_shape=value.shape,
+            dtype=query.dtype,
+            device=query.device,
+            requires_grad=query.requires_grad or key.requires_grad or value.requires_grad,
+            is_causal=is_causal,
+            causal_type=causal_type,
+            is_varlen=is_varlen,
+            deterministic=deterministic,
+            return_lse=return_lse,
+            is_compiling=is_torch_compiling(),
+            backend=backend,
+            raise_error=False,
+        )
+    
+        # Either incompatible backend specified by user, or no compatible backends found
+        if compatible_backend is None and backend is None:
+>           raise ValueError(
+                "Could not find a compatible Attention backend for this use case / device. "
+                "Try running with debug logs to find out why."
+E               ValueError: Could not find a compatible Attention backend for this use case / device. Try running with debug logs to find out why.
+
+cosmos-framework/cosmos_framework/model/attention/frontend.py:228: ValueError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:47:09|INFO|cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4341:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=6)
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:761
+  /workspace/work/psm-wma-prefix-pack-issue31/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:761: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:799
+  /workspace/work/psm-wma-prefix-pack-issue31/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:799: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:957
+  /workspace/work/psm-wma-prefix-pack-issue31/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:957: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py: 14 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_native_velocity_template_matches_repack_every_step[False-dtype0]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_native_velocity_template_matches_repack_every_step[False-dtype1]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_native_velocity_template_matches_repack_every_step[True-dtype0]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_native_velocity_template_matches_repack_every_step[True-dtype1]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[temporal]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[three_way]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[postprocess]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[cp]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_prefix_pack_uses_only_the_approved_single_sample_cache_layout[guidance]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_pack_lifetime_request_changes_and_failure_retry[None]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_pack_lifetime_request_changes_and_failure_retry[1]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_pack_lifetime_request_changes_and_failure_retry[3]
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/prefix_pack_template_test.py::test_no_prefix_pack_option_preserves_native_fast_path
+14 failed, 187 passed, 1 deselected, 31 warnings in 58.93s

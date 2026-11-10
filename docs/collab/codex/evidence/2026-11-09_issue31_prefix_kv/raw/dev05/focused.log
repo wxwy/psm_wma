@@ -1,0 +1,70 @@
+.............................................................F.......... [ 39%]
+........................................................................ [ 79%]
+......................................                                   [100%]
+=================================== FAILURES ===================================
+____________ test_model_owned_all_continuation_never_initializes_w0 ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7b48a78e90>
+
+    def test_model_owned_all_continuation_never_initializes_w0(monkeypatch):
+        net = _local_net()
+        visual, action, valid = torch.randn(2, 4, 96), torch.randn(2, 4, 15), torch.ones(2, 4, dtype=torch.bool)
+        state = ContinualTTTLocalMemoryCore.detach_state(net.local_memory_runtime.core.initial_state(2))
+    
+        def forbidden(batch):
+            raise AssertionError("all-continuation 不得读取 W0")
+    
+        monkeypatch.setattr(net.local_memory_runtime.core, "initial_state", forbidden)
+>       tokens, _, _ = _model_scan(net, visual, action, valid, state)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:331: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:233: in _model_scan
+    return Cosmos3VFMNetwork.scan_local_memory(net, visual, action, valid, state, continuation_mask=continuation_mask)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:401: in scan_local_memory
+    fresh = runtime.core.initial_state(batch)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = 2
+
+    def forbidden(batch):
+>       raise AssertionError("all-continuation 不得读取 W0")
+E       AssertionError: all-continuation 不得读取 W0
+
+cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:328: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:761
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:761: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:799
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:799: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:957
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot_test.py:957: PytestUnknownMarkWarning: Unknown pytest.mark.L1 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L1
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py: 14 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py: 12 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py::test_real_small_DCP_inventory_and_config_must_match_selected_mode[off]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0
+1 failed, 181 passed, 31 warnings in 35.46s

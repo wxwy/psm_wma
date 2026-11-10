@@ -1,0 +1,146 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-1] _
+
+k = 1, entry = 'owner'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-2] _
+
+k = 2, entry = 'owner'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-4] _
+
+k = 4, entry = 'owner'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-8] _
+
+k = 8, entry = 'owner'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-1] _
+
+k = 1, entry = 'memory'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-2] _
+
+k = 2, entry = 'memory'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-4] _
+
+k = 4, entry = 'memory'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+_ test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-8] _
+
+k = 8, entry = 'memory'
+
+    @pytest.mark.parametrize("k", [1, 2, 4, 8])
+    @pytest.mark.parametrize("entry", ["owner", "memory"])
+    def test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk(k, entry):
+        h, adapter, model = _feature_adapter(history_k=k)
+        _commit_feature_cold(adapter, h)
+        rows = h.rows(count=8)
+        original = adapter.snapshot
+>       with pytest.raises(ValueError, match="H16"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py:44: Failed
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-1]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-2]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-4]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[owner-8]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-1]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-2]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-4]
+FAILED cosmos-framework/cosmos_framework/inference/robocasa_history_k_test.py::test_sparse_partial_tail_can_End_but_cannot_prepare_a_new_Policy_chunk[memory-8]
+8 failed, 42 deselected, 1 warning in 12.92s

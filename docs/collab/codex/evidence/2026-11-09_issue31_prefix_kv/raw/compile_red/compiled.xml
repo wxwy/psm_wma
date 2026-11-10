@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="18.478" timestamp="2026-11-09T11:43:36.455216+00:00" hostname="f415bcea90b3"><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix[False]" time="0.369"><failure message="torch._dynamo.exc.Unsupported: Observed exception&#10;  Explanation: Dynamo found no exception handler at the top-level compiled function when encountering an exception. Exception will propagate outside the compiled region.&#10;  Hint: Dynamo has detected that tracing the code will result in an error when running in eager. Please double check that your code doesn't contain a similar error when actually running eager/uncompiled.&#10;  Hint: It may be possible to write Dynamo tracing rules for this code. Please report an issue to PyTorch if you encounter this graph break often and it is causing performance issues.&#10;&#10;  Developer debug context: raised exception KeyError([ConstantVariable(str: 'Missing required pack field: sample_offsets')])&#10;&#10; For more details about this graph break, please visit: https://meta-pytorch.github.io/compile-graph-break-site/gb/gb0088.html&#10;&#10;from user code:&#10;   File &quot;/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py&quot;, line 318, in dispatch_attention_with_text_kv_memory&#10;    return _attention_gen_with_cached_text_and_prefix(&#10;  File &quot;/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py&quot;, line 382, in _attention_gen_with_cached_text_and_prefix&#10;    return from_und_gen_splits(gen_out.new_empty(0, gen_out.shape[-1]), gen_out, query), None&#10;  File &quot;/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/data/generator/sequence_packing/runtime.py&quot;, line 721, in from_und_gen_splits&#10;    return from_mode_splits(und_seq, gen_seq, orig)&#10;  File &quot;/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/data/generator/sequence_packing/runtime.py&quot;, line 701, in from_mode_splits&#10;    _ensure_core_metadata(orig)&#10;  File &quot;/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/data/generator/sequence_packing/runtime.py&quot;, line 272, in _ensure_core_metadata&#10;    raise KeyError(f&quot;Missing required pack field: {key}&quot;)&#10;&#10;Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=&quot;+dynamo&quot;">torch._dynamo.exc.ObservedKeyError: raised exception ExceptionVariable(&lt;class 'KeyError'&gt;)
+
+The above exception was the direct cause of the following exception:
+
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7ba5da3e00&gt;
+dynamic = False
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix(monkeypatch, dynamic):
+        """Real H100 hit SymBool != bool in the dispatcher under Dynamo.
+    
+        CPU eager backend traces the production dispatcher in fullgraph mode. The
+        kernel double is SDPA for this unpadded B1 layout (no varlen loop to trace).
+        """
+    
+        def kernel(query, key, value, **kwargs):
+            return F.scaled_dot_product_attention(
+                query.transpose(1, 2),
+                key.transpose(1, 2),
+                value.transpose(1, 2),
+                enable_gqa=True,
+            ).transpose(1, 2)
+    
+        monkeypatch.setattr(cache_module, "attention", kernel)
+        torch.manual_seed(93)
+        caches = make_inference_text_kv_cache(1)
+        und_key, und_value = torch.randn(1, 5, 1, 8), torch.randn(1, 5, 1, 8)
+        caches[0].store(und_key, und_value)
+        state = InferenceTextKVMemoryState(caches, local_prefix_length=4)
+        state.init(
+            {
+                "_num_full_tokens": 6,
+                "_num_causal_tokens": 5,
+                "_causal_seq_offsets": torch.tensor([0, 5]),
+                "_full_only_seq_offsets": torch.tensor([0, 6]),
+            },
+            torch.device("cpu"),
+        )
+        memory = state.read_for_layer(0)
+        q, k, v = torch.randn(6, 2, 8), torch.randn(6, 1, 8), torch.randn(6, 1, 8)
+    
+        def pack(tensor):
+            return dict(causal_seq=tensor.new_empty(0, *tensor.shape[1:]), full_only_seq=tensor, is_sharded=False)
+    
+        mask = SimpleNamespace(is_three_way=False, control_stream_token_ranges=None)
+        prefix_key, prefix_value = torch.randn(4, 1, 8), torch.randn(4, 1, 8)
+        compiled = torch.compile(
+            cache_module.dispatch_attention_with_text_kv_memory, backend="eager", fullgraph=True, dynamic=dynamic
+        )
+        with torch.inference_mode():
+            results = []
+            for shift in (0, 1, 0):
+                pk, pv = prefix_key + shift, prefix_value + shift
+&gt;               result, _ = compiled(
+                    pack(q),
+                    pack(k),
+                    pack(v),
+                    mask,
+                    memory_value=memory,
+                    memory_prefix_key_states=pk,
+                    memory_prefix_value_states=pv,
+                    memory_prefix_sample_offsets=torch.tensor([0, 4]),
+                )
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:354: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ({'causal_seq': tensor([], size=(0, 2, 8)), 'full_only_seq': tensor([[[ 0.2201, -1.9295,  0.6810,  0.5579, -0.2158,  1... -1.0782,
+          -0.2807]]]), 'is_sharded': False}, namespace(is_three_way=False, control_stream_token_ranges=None))
+kwargs = {'memory_prefix_key_states': tensor([[[-0.7047, -0.5005,  0.5218,  0.1816,  1.6980, -0.1132,  1.1100,
+           2.378...v=tensor([ 0, 15], dtype=torch.int32), max_seqlen_q=6, max_seqlen_kv=15, for_cuda_graphs=False, local_prefix_length=4)}
+prior = None, tracing_context = None
+cleanups = [&lt;function ConfigModule._make_closure_patcher.&lt;locals&gt;.change.&lt;locals&gt;.revert at 0x7f7ba5e01300&gt;, &lt;function nothing at 0x7f7bb8a6df80&gt;]
+prior_skip_guard_eval_unsafe = False, prior_error_on_graph_break = None
+saved_dynamic_layer_stack_depth = 0
+cleanup = &lt;function nothing at 0x7f7bb8a6df80&gt;
+cur_exn = ObservedKeyError("raised exception ExceptionVariable(&lt;class 'KeyError'&gt;)")
+
+    @functools.wraps(fn)
+    def compile_wrapper(*args: Any, **kwargs: Any) -&gt; Any:
+        prior = set_eval_frame(None)
+        try:
+            # We shouldn't compile inside kernel invocation.
+            if tracing_context := torch._guards.TracingContext.try_get():
+                if (
+                    tracing_context.fake_mode is not None
+                    and tracing_context.fake_mode.in_kernel_invocation
+                ):
+                    return fn(*args, **kwargs)
+            # Skip nested compile - just inline the function
+            if is_fx_symbolic_tracing():
+                if config.error_on_nested_fx_trace:
+                    raise RuntimeError(
+                        "Detected that you are using FX to symbolically trace "
+                        "a dynamo-optimized function. This is not supported at the moment."
+                    )
+                else:
+                    return fn(*args, **kwargs)
+    
+            if is_jit_tracing():
+                raise RuntimeError(
+                    "Detected that you are using FX to torch.jit.trace "
+                    "a dynamo-optimized function. This is not supported at the moment."
+                )
+    
+            cleanups = [enter() for enter in self.enter_exit_hooks]
+            prior_skip_guard_eval_unsafe = set_skip_guard_eval_unsafe(
+                _is_skip_guard_eval_unsafe_stance()
+            )
+            prior_error_on_graph_break = None
+            if not self.fullgraph and self.error_on_graph_break is not None:
+                prior_error_on_graph_break = _get_error_on_graph_break()
+                _set_error_on_graph_break(self.error_on_graph_break)
+    
+            # Ensure that if an assertion occurs after graph pushes
+            # something onto the DynamicLayerStack then we pop it off (the
+            # constructed graph code isn't guarded with try/finally).
+            #
+            # This used to be a context but putting a `with` here is a noticeable
+            # perf regression (#126293)
+            saved_dynamic_layer_stack_depth = (
+                torch._C._functorch.get_dynamic_layer_stack_depth()
+            )
+    
+            _maybe_set_eval_frame(_callback_from_stance(callback))
+    
+            try:
+                return fn(*args, **kwargs)
+            except Unsupported as e:
+                if config.verbose:
+                    raise
+                # strip internal tracebacks from causes
+                cur_exn: BaseException = e
+                while cur_exn.__cause__ is not None:
+                    cur_exn.__cause__.with_traceback(None)
+                    cur_exn = cur_exn.__cause__
+                # pyrefly: ignore [invalid-inheritance]
+&gt;               raise e.with_traceback(None) from e.__cause__  # User compiler error
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               torch._dynamo.exc.Unsupported: Observed exception
+E                 Explanation: Dynamo found no exception handler at the top-level compiled function when encountering an exception. Exception will propagate outside the compiled region.
+E                 Hint: Dynamo has detected that tracing the code will result in an error when running in eager. Please double check that your code doesn't contain a similar error when actually running eager/uncompiled.
+E                 Hint: It may be possible to write Dynamo tracing rules for this code. Please report an issue to PyTorch if you encounter this graph break often and it is causing performance issues.
+E               
+E                 Developer debug context: raised exception KeyError([ConstantVariable(str: 'Missing required pack field: sample_offsets')])
+E               
+E                For more details about this graph break, please visit: https://meta-pytorch.github.io/compile-graph-break-site/gb/gb0088.html
+E               
+E               from user code:
+E                  File "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 318, in dispatch_attention_with_text_kv_memory
+E                   return _attention_gen_with_cached_text_and_prefix(
+E                 File "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 382, in _attention_gen_with_cached_text_and_prefix
+E                   return from_und_gen_splits(gen_out.new_empty(0, gen_out.shape[-1]), gen_out, query), None
+E                 File "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/data/generator/sequence_packing/runtime.py", line 721, in from_und_gen_splits
+E                   return from_mode_splits(und_seq, gen_seq, orig)
+E                 File "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/data/generator/sequence_packing/runtime.py", line 701, in from_mode_splits
+E                   _ensure_core_metadata(orig)
+E                 File "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/data/generator/sequence_packing/runtime.py", line 272, in _ensure_core_metadata
+E                   raise KeyError(f"Missing required pack field: {key}")
+E               
+E               Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:963: Unsupported</failure></testcase><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix[True]" time="0.330"><failure message="torch._dynamo.exc.TorchRuntimeError: Dynamo failed to run FX node with fake tensors: call_function &lt;built-in function ne&gt;(*(s43 &gt; 0, True), **{}): got TypeError('BooleanAtom not allowed in this context.')&#10;&#10;from user code:&#10;   File &quot;/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py&quot;, line 296, in dispatch_attention_with_text_kv_memory&#10;    if prefix_aware != has_prefix:&#10;&#10;Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=&quot;+dynamo&quot;">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7ba5c93560&gt;
+dynamic = True
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_cached_prefix_dispatch_keeps_symbolic_guards_and_current_prefix(monkeypatch, dynamic):
+        """Real H100 hit SymBool != bool in the dispatcher under Dynamo.
+    
+        CPU eager backend traces the production dispatcher in fullgraph mode. The
+        kernel double is SDPA for this unpadded B1 layout (no varlen loop to trace).
+        """
+    
+        def kernel(query, key, value, **kwargs):
+            return F.scaled_dot_product_attention(
+                query.transpose(1, 2),
+                key.transpose(1, 2),
+                value.transpose(1, 2),
+                enable_gqa=True,
+            ).transpose(1, 2)
+    
+        monkeypatch.setattr(cache_module, "attention", kernel)
+        torch.manual_seed(93)
+        caches = make_inference_text_kv_cache(1)
+        und_key, und_value = torch.randn(1, 5, 1, 8), torch.randn(1, 5, 1, 8)
+        caches[0].store(und_key, und_value)
+        state = InferenceTextKVMemoryState(caches, local_prefix_length=4)
+        state.init(
+            {
+                "_num_full_tokens": 6,
+                "_num_causal_tokens": 5,
+                "_causal_seq_offsets": torch.tensor([0, 5]),
+                "_full_only_seq_offsets": torch.tensor([0, 6]),
+            },
+            torch.device("cpu"),
+        )
+        memory = state.read_for_layer(0)
+        q, k, v = torch.randn(6, 2, 8), torch.randn(6, 1, 8), torch.randn(6, 1, 8)
+    
+        def pack(tensor):
+            return dict(causal_seq=tensor.new_empty(0, *tensor.shape[1:]), full_only_seq=tensor, is_sharded=False)
+    
+        mask = SimpleNamespace(is_three_way=False, control_stream_token_ranges=None)
+        prefix_key, prefix_value = torch.randn(4, 1, 8), torch.randn(4, 1, 8)
+        compiled = torch.compile(
+            cache_module.dispatch_attention_with_text_kv_memory, backend="eager", fullgraph=True, dynamic=dynamic
+        )
+        with torch.inference_mode():
+            results = []
+            for shift in (0, 1, 0):
+                pk, pv = prefix_key + shift, prefix_value + shift
+&gt;               result, _ = compiled(
+                    pack(q),
+                    pack(k),
+                    pack(v),
+                    mask,
+                    memory_value=memory,
+                    memory_prefix_key_states=pk,
+                    memory_prefix_value_states=pv,
+                    memory_prefix_sample_offsets=torch.tensor([0, 4]),
+                )
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:354: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:953: in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:2202: in __call__
+    result = self._torchdynamo_orig_backend(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:707: in __call__
+    result = _compile(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1752: in _compile
+    guarded_code, tracer_output = compile_inner(code, one_graph, hooks)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_utils_internal.py:97: in wrapper_function
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1433: in compile_inner
+    return _compile_inner(code, one_graph, hooks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1467: in _compile_inner
+    dynamo_output = compile_frame(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1341: in compile_frame
+    bytecode, tracer_output = transform_code_object(code, transform)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/bytecode_transformation.py:1600: in transform_code_object
+    tracer_output = transformations(instructions, code_options)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:1313: in transform
+    tracer_output = trace_frame(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:328: in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:838: in trace_frame
+    run_tracer()
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py:819: in run_tracer
+    tracer.run()
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py:1654: in run
+    while self.step():
+          ^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py:1334: in step
+    self.dispatch_table[inst.opcode](self, inst)
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py:2502: in COMPARE_OP
+    self.push(compare_op_handlers[inst.argval](self, self.popn(2), {}))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:1433: in call_function
+    return handler(tx, args, kwargs)  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:1235: in builtin_dispatch
+    rv = fn(tx, args, kwargs)
+         ^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:1075: in call_binop_handlers
+    rv = fn(tx, *args)
+         ^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/builtin.py:3091: in _comparison_with_symnode
+    return SymNodeVariable.create(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/variables/tensor.py:1472: in create
+    sym_num = get_fake_value(proxy.node, tx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3626: in get_fake_value
+    raise TorchRuntimeError(msg).with_traceback(e.__traceback__) from None
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3524: in get_fake_value
+    ret_val = wrap_fake_exception(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:2966: in wrap_fake_exception
+    return fn()
+           ^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3525: in &lt;lambda&gt;
+    lambda: run_node(tx.output, node, args, kwargs, nnmodule)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3735: in run_node
+    raise RuntimeError(make_error_message(e)).with_traceback(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/utils.py:3694: in run_node
+    return node.target(*args, **kwargs)  # type: ignore[operator]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/__init__.py:769: in __bool__
+    return self.node.bool_()
+           ^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/sym_node.py:605: in bool_
+    return self.guard_bool("", 0)
+           ^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/sym_node.py:541: in guard_bool
+    r = self.evaluate()
+        ^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/sym_node.py:515: in evaluate
+    return self.shape_env.evaluate_sym_node(self, size_oblivious)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7318: in evaluate_sym_node
+    return self.evaluate_expr(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7413: in evaluate_expr
+    return self._inner_evaluate_expr(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/recording.py:273: in wrapper
+    return retlog(fn(*args, **kwargs))
+                  ^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7436: in _inner_evaluate_expr
+    return self._evaluate_expr(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:7560: in _evaluate_expr
+    static_expr = self._maybe_evaluate_static(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:2636: in wrapper
+    return fn_cache(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:6385: in _maybe_evaluate_static
+    expr = canonicalize_bool_expr(expr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:734: in canonicalize_bool_expr
+    return _canonicalize_bool_expr_impl(expr)  # type: ignore[arg-type, return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/fx/experimental/symbolic_shapes.py:806: in _canonicalize_bool_expr_impl
+    rhs = expr.rhs - expr.lhs
+          ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = True, other = s43 &gt; 0
+
+    def _noop(self, other=None):
+&gt;       raise TypeError('BooleanAtom not allowed in this context.')
+E       torch._dynamo.exc.TorchRuntimeError: Dynamo failed to run FX node with fake tensors: call_function &lt;built-in function ne&gt;(*(s43 &gt; 0, True), **{}): got TypeError('BooleanAtom not allowed in this context.')
+E       
+E       from user code:
+E          File "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 296, in dispatch_attention_with_text_kv_memory
+E           if prefix_aware != has_prefix:
+E       
+E       Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/sympy/logic/boolalg.py:249: TorchRuntimeError</failure></testcase></testsuite></testsuites>

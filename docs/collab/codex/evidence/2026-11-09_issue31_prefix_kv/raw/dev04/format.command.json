@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "ruff",
+    "format",
+    "--config",
+    "/workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/.ruff.toml",
+    "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+    "cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+    "tools/v3/benchmark_local_ttt_prefix_kv.py"
+  ],
+  "cwd": "/workspace/work/psm-wma-prefix-kv-issue31",
+  "exit_code": 0
+}

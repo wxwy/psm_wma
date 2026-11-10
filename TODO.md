@@ -1,3 +1,21 @@
+- **ISSUE35-PREFIX-PROJECTION** — IN_PROGRESS；Codex；新Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`，基线Root8406fc86/Child4be。请求内原生Attention buffers提取Prefix K/V；Host对象/版本/存储绑定，更换/未证明/训练回退。旧RED1、新GREEN1、最终聚焦59PASS（含22新增），原始开发失败保留；Context/B1组装及Norm memo算式未改。Root冻结后完整314CPU，随后GPT独立K16/source64全30步/Action/Vision及性能；当前H100未执行，无GPU/训练/V3合并。
+- **ISSUE35-B1-KV-ASSEMBLY** — DONE（限定Code/数值/性能Gate）；Formal39f60da7/4be3d702，正式444e0cc7 APPROVE_CODE已读：独立292CPU/11static/1487指纹、两K三路径与全30步exact、H100 P50回收95.8/106.5ms、CUBScan5045→5，原始离群保留。没有V3合并许可，其余性能独立推进。
+- **ISSUE35-KV-HIT-PARITY** — DONE（限定数值Code Gate）；Formal Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93`。正式GPT `7c11e0be` APPROVE_CODE已读取：独立37+213CPU、真实两K三路径全30步及Action/Vision严格一致；旧数值阻断关闭，不是V3合并许可。后续性能证据与B1组装新任务独立处理。
+
+
+
+# 2026-11-09 — Prefix-aware Local-TTT generation
+
+- **ISSUE35-ATTENTION-PARITY** — IN_PROGRESS via ISSUE35-KV-HIT-PARITY; historicalcaptureBLOCKED superseded byGPTsg-renderCapturePASS and3wayrealStrictParityFAIL. Existingcausal28/GEN840/varlen868 tracevalid; no blindAttention optimization. FirstnumericalPrefixNormissue remediation+newFormalPair priority, originalproductionPair18be/1936 notpromoted.
+
+- **ISSUE31-PREFIX-PACK** — DONE (scoped Stage2 Code/model-only evidence); Formal18be4a80/193627f4, corrected GPT APPROVE_CODE read atdocs523aa26a. P50837.08→798.87ms observed, original author1.05x NOT_MET/Shell2 preserved; no Owner arbitrarythreshold. CPU201+independent14, exact syntheticAction/Vision, Prefix28x30. Realinputparity/Attention belongIssue35; no V3merge/productionSLA/Stage1P99closure.
+
+- **ISSUE31-PREFIX-TEXT-KV** — DONE (first-stage Code/model-only P50 Gate); exact5b89f3ed/4446be0f GPT APPROVE_CODE in formal review consumed at590071c5. Independent25CPU/56rawhashes/exactActions; author187PASS with inherited W0failure excluded. P50 991.55→825.53ms accepted; P99 unresolved, no V3 merge/Sim/SR/tail-SLA approval. Separate Stage2 task above.
+
+# 2026-11-09 — Shared VAE generic topology
+
+- **ISSUE27-SHARED-VAE-TOPOLOGY** — DONE (CPU/static/Evidence APPROVE_CODE9b1756f9/60b252d0; hardware/merge separate); historical REVIEW (test-only Formal9b1756f9/Child60b252d0; exact18PASS; PR29/8 updated/readback25PASS; GPT M16 Evidence review requested); Codex; Owner/full review atb5127c82; Root-only fixture/test/evidence supplement with frozen Manifest/capacity,32Sessions/realCPUWorker/OwnerHTTP/UnixIPC/ACK/End/isolation/cleanup plus1x1/1x8; production and Child60b252d0 unchanged; new test-only Root SHA and narrow review via existing DraftPR29/8. No GPU/SR/900EP/official merge.
+- **ISSUE28-LOCAL-TTT-HISTORY-K** — REVIEW; Codex; Owner horizon correction + exact050e45d8/59746af0 REQUEST_CHANGES. Existing PR30/9 only: omitted K=actual Action Chunk H, exact positive integer divisor, strideH//K and j0 mandatory; H12/H24 generic helper proof, current NativeH16 unchanged; focused CPU/static/dense parity, new precise Pair and fresh incremental review. Old631+207 evidence retained; no training/model/GPU/realSim/SR/900EP/V3/#27 changes.
 # PSM-WMA 任务队列
 
 - **R02-NV-FORMAT-01** — REVIEW; Codex; Formal Root46c08127b2a13155bb22204069a1456cb01424d7 / Child-Gitlink1069fe78841228cadbbfbe6afbd767eaed6225da. Ruff0.12.7 format2 files, identical full AST/assertions/semantics, clean exact-Pair author CPU66 distinct PASS/0failure/error/skip and static/scope PASS. Isolated v3-eval-v2-r02-format-20261103 published Child FIRST then Root; fresh remote readback55/55 artifacts+4/4 source/config bindings/Gitlink/unique bounded Inbox/clean PASS. Latest c4d docs preserved; publication receipt9 artifacts retained. STOP pending GPT incremental Code Gate and DS independent CPU/static. Historical DS66/static-FAIL retained; official refs unchanged, no GPU/real simulator/training/DCP/old results or old122/379/42 rerun.

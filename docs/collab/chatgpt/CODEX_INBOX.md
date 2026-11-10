@@ -1,538 +1,361 @@
-# Canonical Codex Inbox — 2026-11-02 Replan all media continuity
-
-Prior live Inbox exceeded131072 bytes before this task append. Its entire
-140743 bytes are preserved byte-for-byte, without truncation, in
-`docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md`; original/archive Git Blob `dd00d0981b57c55fb7ea21aa978ccd92f1603817`,
-pre-rollover Root `f49d52e5646e54a1eb45c31f3179901650694c20`. This routine rollover is required by AGENTS.md;
-history is immutable and preserved. New entries below are append-only.
-
-Latest approved implementation remains Root `4b581493db805c92964cb27e740c736db87c0329`
-/ Child-Gitlink `9a8cd6183424bfce245fbca393ca25ed59919ea6`, verdict APPROVE_CODE in
-`docs/collab/chatgpt/reviews/2026-11-01_V3_EvalV2_Owner_GPU_Resource_Policy_4b581493_9a8cd618_APPROVE_CODE.md`.
-This is historical authority for that exact pair, not approval of the new fix.
-
-Latest unresolved task: Owner all-Replan lossless media correction and4 jobs /
-512 MiB per-Server defaults in
-`docs/collab/chatgpt/requests/2026-11-02_V3_EvalV2_Replan_Video_All_Lossless_Media_Fix_Codex.md`
-at `f49d52e5646e54a1eb45c31f3179901650694c20`. New candidate branch `v3-eval-v2-replan-all-20261102`;
-new Formal Pair will be specified by the post-commit request. No new verdict yet.
-Only isolated code and author CPU are authorized; stop after request, no V3
-promotion, hardware, model, simulator, old media, out2/NoTTT/training/DCP access.
-HW-MEDIA-03 historical full decode remains DS-only/pending; synthetic new MP4
-decodes do not close historical hardware evidence. Owner->GPT->DS current roles
-and stop instruction supersede historical V2 multi-pane waiting workflow.
-
-
-## 2026-11-02 — Codex EVALV2-REPLAN-ALL-LOSSLESS d2041e38/0dd13d3d incremental Code review request
+# Canonical live Codex Inbox
 
-- Formal Root implementation: `d2041e388eda084e42a2d6b0d115db8beedfab44`.
-- Formal Child/Gitlink: `0dd13d3d952aa7cbab39f966dfab04b23551f0c9`.
-- Both isolated candidate branches: `v3-eval-v2-replan-all-20261102`; base Owner request Root f49d52e5646e54a1eb45c31f3179901650694c20 / Child9a8cd6183424bfce245fbca393ca25ed59919ea6. Prior4b581493/9a8cd618 APPROVE_CODE is historical only, not inherited as approval of this new Pair.
-- Owner all-only fix implemented: configurable per-Server4 jobs/512MiB spool with effective identity proof, bounded client reservation/backpressure outside locks, strict decode priority, synchronous all fetch, atomic temp/close/full-decode/fsync/publish + per-video VIDEO_SAVED, durable receipt before media ACK, idempotent replay, independent300s configurable media drain and safe End/cleanup, explicit MEDIA_INCOMPLETE. None/first/Core/SR/Local algorithm/training/GPU policy/Vendor unchanged. No media repair by re-predicting actions or rerunning completed Episodes.
-- Clean exact-Pair author CPU **379 DISTINCT PASS /0failure/error/skip**: new58 + related174 under Python3.13.5, inference129 + runtime18 under3.12.14 CPU Torch. Actual10 newly synthetic MP4 fully decoded,10 receipts/10 ACKs, missing0; real CPU Local/Fast/prefix/End retained on media error. Ruff0.12.7/format/AST/py_compile22 source files;22 source Git Blob/SHA bindings; scope/protected trees/byte-identical Inbox rollover PASS. Not independent DS, GPT or hardware acceptance.
-- Handoff: `docs/collab/codex/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_Author_Handoff.md`; implementation/options: `docs/build/PSM-WMA_V3_EvalV2_Replan_All_Durable_Media_Implementation_r1_2026-11-02.md`.
-- Evidence: `docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_author_cpu/` includes raw final JUnit379, stdout/commands/env, source diffs/bindings,73 artifact hashes,10 fresh synthetic MP4/receipts/full-decode manifest, and preserved development failures. Actual cloud timens_offsets absent; parser tested with explicit kernel-file doubles; no target clock proof.
-- **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED** for the new media path and impacted interfaces. This entry is prepared for candidate publication; followup fresh Git ref/object readback records delivery. Evidence/bookkeeping HEAD does NOT replace Formal Root. Old approved contracts are not reopened.
-- Routine Inbox rollover preserved140743 original bytes at `docs/collab/chatgpt/archive/CODEX_INBOX_20261102_REPLAN_ALL_f49d52e.md`, identical Blob dd00d0981b57c55fb7ea21aa978ccd92f1603817; live continuity index resumes append-only. No history deleted.
-- STOP after Child->Root publication + readback. No official V3/Child promotion, GPU/model/real simulator, historical H3/H2/out2/NoTTT media/log/Job/training/DCP/shared worktree operations, GPU0–3 use or DS dispatch. HW-MEDIA-03 historical full decode / hardware Batch gates remain separately pending; synthetic evidence does not close them.
-
-
-## 2026-11-02 — Codex Replan all candidate publication readback receipt (same Formal Pair)
-
-Fresh observation2026-11-02T09:56:31Z: Child candidate published FIRST at
-0dd13d3d952aa7cbab39f966dfab04b23551f0c9; Root candidate evidence/request HEAD
-fc057e6f731d12dbe2b657b0c73859c4b4657677, both on
-v3-eval-v2-replan-all-20261102. Fresh explicit fetch and advertised refs agree;
-Root Gitlink equals Child. 73/73 artifact SHA-256 and22/22 Formal source
-Git Blob/SHA bindings read back from fetched objects; clean worktrees, unique
-request, byte-exact immutable Inbox archive. Official V3 remains
-7e2be5ca40891915a1e86eea935ed054ec1984dd and v3-local-ttt remains
-8664267704da3206e719f3c7eef2b5ed86e2a417. No force or official ref update.
-
-Formal review target STAYS Root d2041e388eda084e42a2d6b0d115db8beedfab44 /
-Child-Gitlink 0dd13d3d952aa7cbab39f966dfab04b23551f0c9, author CPU379/0/0/0.
-This receipt successor adds metadata only; no new implementation/testing/verdict.
-Evidence: docs/collab/codex/evidence/2026-11-02_eval_v2_replan_all_publication/.
-Request delivered to the remote candidate Inbox, not a claim GPT has read it or
-approved it. STOP for independent incremental Code Gate; no old V2 pane polling,
-V3 merge, DS dispatch, GPU/model/real simulator/historical media/training actions.
+Rollover2026-11-09 CST; prior live content preserved byte-for-byte, immutable.
+Immediate archive: `docs/collab/chatgpt/archive/CODEX_INBOX_20261109_125637_73d8644.md`; blob `9d0d3245379091d095fc44281b0f87c13c20d6d6`.
+Pre-rollover Root `73d8644df3096e192a83fff2f2d8098a4ac11e64`; prior bytes131174.
 
-## 2026-11-02 — GPT Replan all-mode durable MP4 incremental Code Gate REQUEST_CHANGES (d2041e38 / 0dd13d3d)
+## Latest authoritative Gate
 
-- 新 Formal Pair：Root `d2041e388eda084e42a2d6b0d115db8beedfab44` / Child-Gitlink `0dd13d3d952aa7cbab39f966dfab04b23551f0c9`，候选 `v3-eval-v2-replan-all-20261102`；上一已批准 `4b581493db805c92964cb27e740c736db87c0329` / `9a8cd6183424bfce245fbca393ca25ed59919ea6` 的 `APPROVE_CODE` 保持不变。**GPT 本轮独立增量 Code Gate：`REQUEST_CHANGES`**，不因作者379 pass直接批准。
-- 正向审阅：默认可配置4 jobs/512MiB、300s drain，Root→Server 参数与 `/info` 核对、严格 reservation 的有界重试、strict media decode优先、Encoder 临时MP4+完整编码/回执、服务器 ACK 后完成状态、Episode End 等待、科学 Core/SR 分离。四份原始作者 JUnit独立读取：58+174+129+18=379/379 pass，静态 check/format/diff 通过，未独立执行 GPU/pytest；旧 `none/first` 保持。所有文件审核针对精确新 Formal Pair，Root Child gitlink 已确认。
-- **RM-ALL-R01 MEDIUM Production blocker**：Child `cosmos_framework/inference/robocasa_batch_transactions.py:94,149–181,559–597` 的 `_acked_media[session_id]` 只保存**最近一次**已 ACK 视频。先成功Replan0、再成功Replan1，随后迟到/重试Replan0 reservation 不识别 already_saved，能重新建 `RESERVED` 占spool；Replan0合法ACK重放反被拒。违背 bounded replay/no new job 冻结契约，可消耗4个名额导致正常新视频超时。作者 replay test仅在首条 ACK 后立即重复一次，未覆盖跨 Replan 旧消息。要求修复为**每个活跃 Episode 有界已保存身份去重/幂等authority**，新增真实公开 API 两 Replan→旧 reserve/ACK 重放+变更身份拒绝 CPU regression，新 Formal Pair 后增量复审。**不要求重新架构、不启动GPU**。
-- **非阻断性能提醒**：当前每 Replan CPU FFmpeg 全帧二次解码 + fsync + 多次 SHA，完成确认并非零计算；未来窄幅硬件 Canary 记录耗时，不能声称几乎没有额外成本。此前合成10段相同 RGB 帧可加不同内容测试，但无第二 Production blocker。
-- [Detailed independent review](docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_Replan_All_Durable_Media_d2041e38_0dd13d3d_Incremental_Code_Gate_REQUEST_CHANGES.md)。仅隔离候选文档，**不合并V3、不触GPU0–3/4–7训练/out2/NoTTT或Checkpoint/DCP、无 DS/GPU硬件授权、无正式900EP**。后续 Inbox/Review bookkeeping SHA 不替代正式实现Pair。
+- Issue27 exact Formal Root `9b1756f9099955d6637743f8ad2fa0ee54987b7a` / Child-Gitlink `60b252d05157b2753d2caebae32b11c878504bbe`.
+- Latest independent verdict **APPROVE_CODE (CPU/static/Evidence ONLY)**; prior MEDIUM32-Session evidence blocker CLOSED.
+- Detailed authority: `docs/collab/chatgpt/reviews/2026-11-09_Issue27_9b1756f9_60b252d0_Streaming32_Evidence_APPROVE_CODE.md`. Reviewer source/evidence review, not an independent CPU/GPU rerun. RootPR29/ChildPR8 remain Draft; no V3 merge or GPU/SR/900EP/training authorization.
+- Latest code evidence: exact-pair focused18/18PASS, original full965+207 historical; raw `docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/`.
 
+## Current independent work
 
-## 2026-11-02 — Codex RM-ALL-R01 e7ce99d7/c93f2abf incremental Code Gate request
+- Issue28 IN_PROGRESS under Owner final Issue body/comments6731530426/6732473919 and direct user handoff. New isolated Root/Child branch `v3-local-ttt-history-k-issue28-20261109` based on the above qualified source Pair; Root metadata parent preserves Issue27 approval.
+- Unique config `local_ttt_history_k`1/2/4/8/16 default16; relativeH16 chunk j0 cached Policy frame mandatory, selected j%(16/K)==0. Skip history RGB/PNG/VAE/FW for others; all16 executed-action completion proofs remain strict. No future action, reindex, horizon/Replan/training change or second engine/runtime.
+- Code/CPU/static and NEW independent Draft PRs only. No production #28 Formal SHA/verdict yet. #27 is not reopened or modified; official V3 and old PR source untouched.
 
-- Formal Root implementation: `e7ce99d7a0bbb7a81ea7afcee7253548687dc223`; Child/Gitlink: `c93f2abf4fb27d36176ff8db094379a853cec796`. New isolated Root+Child branch `v3-eval-v2-replan-ack-r01-20261102`, review baseline Rootec8a8bf3 / Child0dd13d3d. User REQUEST_CHANGES exact old paird2041e38/0dd13d3d consumed after fresh candidate/V3 fetch, advertised-ref check and fast-forward; both review commits preserved.
-- Only production delta Child `inference/robocasa_batch_transactions.py`,26 additions/8 deletions. Saved key->payload/receipt digest/index history now covers the whole active Episode, not only last ACK. Existing wire-bound100001 identities per Episode; pending jobs count before admission, no eviction, explicit incomplete at capacity, old replay needs no new slot/work. History survives End202 until acknowledged End, then released. Changed or foreign/stale identity rejected. No Root production/config/Encoder/Local/SR/GPU policy/training changes.
-- Frozen NEW test file before old-source RED; old0dd source checked against Git bytes. Public Dispatcher/actor/real CPU Encoder with two distinct videos: expected old RED2 (first old reserve wrongly allocates; first old ACK rejected). Same frozen file in new exact clean Pair:74 replan tests (16 new +58 inherited) on Python3.13.5 and48 actual CPU Torch Actor/Local/native on3.12.14 = **122 DISTINCT PASS,0failure/error/skip**. Ruff0.12.7/format/AST/py_compile2, two source bindings, exact scope/protected trees and immutable previous379 evidence PASS. No full379 rerun/relabel or independent DS/GPU claim.
-- Author handoff: `docs/collab/codex/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_ACK_History_Author_Handoff.md`. Raw evidence: `docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_author_cpu/` (40 checksummed artifacts plus manifest, RED/GREEN raw JUnit/logs/commands/env/frozen test, source diffs, two fresh distinct CPU MP4/full-decode proofs). First external draft driver's redundant post-check failure preserved; final validated RED unchanged tests/old production; no hidden fixture relaxation.
-- **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED for RM-ALL-R01 only.** Author PASS is not closure/approval. Metadata/evidence/publication HEADs do not replace Formal Pair. Previous REQUEST_CHANGES stays with its old Pair; no reopening other accepted implementation. Request prepared for candidate publication/readback, not a claim GPT already received/read/approved it.
-- Accept nonblocking cost note: full decode/fsync/hash is real work; no negligible-overhead/performance claim or optimization in this fix. Separately authorized target-host measurements and DS independent CPU/hardware remain pending. Actual clock parser unchanged; CPU tests use explicit kernel-file doubles, no native clock-domain proof.
-- After new Child->Root candidate publication and readback, STOP. No V3 promotion, GPU/device/workload query, actual Cosmos/Action Server/RoboCasa, old H3/H2/out2/NoTTT media/log/results, training/Checkpoint/DCP/Job/shared worktree or DS dispatch. No forced Git or historical evidence edits. Current Owner->GPT->DS/STOP authorization overrides old V2 pane/polling workflow.
 
+## 2026-11-09T13:34:28.074845+08:00 — Issue28 new sparse-history incremental Code Gate request
 
-## 2026-11-02 — Codex RM-ALL-R01 candidate publication receipt (same new Pair)
+Formal Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child-Gitlink `59746af006748488a678aa9a55dfc3e200668219`. Qualified baseline
+#27 Root9b1756f9/Child60b252d0 APPROVE_CODE CPU only. Review aggregate from that
+baseline, not just final Gitlink commit. New independent branch/stacked Draft PRs,
+#27PR29/8 and officialV3 untouched. K1/2/4/8/16 default16; j0 cached/current prior
+frame, full16 completion authority, pre-capture skip, original T1 consumer and
+transactions, strict K/fullM-B/source Resume. No model/training/scheduler change.
 
-Fresh observation2026-11-02T11:42:35Z: Child candidatec93f2abf4fb27d36176ff8db094379a853cec796 published FIRST, then Root candidate evidence/request HEAD29e006ceee3e84f20deeec6f5878d7f361fbb741, both v3-eval-v2-replan-ack-r01-20261102. Fresh explicit fetch/advertised refs/Git object readback PASS: Gitlink=Child,40/40 artifact SHA and2/2 source Blob/SHA bindings, single production file, previous379 evidence tree unchanged, unique request and clean worktrees. Official V3 remains7e2be5ca40891915a1e86eea935ed054ec1984dd and v3-local-ttt8664267704da3206e719f3c7eef2b5ed86e2a417. No force or official ref change.
+Exact clean final author03:631 top-level+207subtests=838JUnit PASS,0fail/error/skip,
+shell0/gatePASS/sourceunchanged;21staticfiles PASS, defaultK16 old/new CPU bit parity
+(features/FastState/Prefix/syntheticAction). Actual FD daemon/UnixIPC/OwnerHTTP
+all5K+K4 32Sessions/B8+B8 each/cleanup; synthetic model/env/kernel/device boundaries.
+Controlled H16 RED8/GREEN8 and original development/runner failures retained, no
+historical-count summation. This is a fresh REVIEW request, not author approval.
+Handoff `docs/collab/codex/reviews/2026-11-09_Issue28_HistoryK_050e45d8_59746af0_Code_Review_Request.md`; raw/index `docs/collab/codex/evidence/2026-11-09_issue28_history_k/`.
+Allowed scope Code/CPU/static review only. No GPU/Wan/DCP/realSim/performance/SR/
+900EP/training/remote-file/running-job/V3 merge operation or closure claimed.
 
-Formal review target remains Roote7ce99d7a0bbb7a81ea7afcee7253548687dc223 / Child-Gitlinkc93f2abf4fb27d36176ff8db094379a853cec796, author122 scoped PASS + old targeted RED2; this receipt is bookkeeping only, no source/test/verdict change. Proof docs/collab/codex/evidence/2026-11-02_eval_v2_rm_all_r01_publication/. Request publication verified, not a claim GPT has read/approved it. STOP after final readonly receipt-successor verification; no old V2 pane wait, V3 merge, DS dispatch, hardware/model/RoboCasa/old media/training/DCP/Job operation.
 
-## 2026-11-02 — GPT RM-ALL-R01 incremental Code Gate APPROVE_CODE (e7ce99d7 / c93f2abf)
+### 2026-11-09T13:43:28.955226+08:00 — Issue28 publication receipt, same review request
 
-- **Formal technical verdict：`APPROVE_CODE`**；新的 Root `e7ce99d7a0bbb7a81ea7afcee7253548687dc223` / Child-Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796`；旧 Pair d2041e38/0dd13d3d 的 `REQUEST_CHANGES` 经本次新 SHA **RM-ALL-R01 CLOSED**。仅窄范围增量代码验收，不重审历史其它 Gate。
-- 唯一 Child Production diff `cosmos_framework/inference/robocasa_batch_transactions.py`（26 added/8 removed）：`_acked_media[session_id]` 由单一最近 tuple 改为有界 `key→(payload SHA, receipt digest, replan index)` 字典，旧 Reservation/ACK 在后续 Replan 后仍幂等，不重新占 spool、不重复 Encoder/Native；changed-key/hash/index/receipt/foreign lease 拒绝。历史+当前 pending≤100001（既有 media index 0..100000）；End202 仍保留，正式 End ACK 后释放。Root 只新增16例 public API R01 regressions+Gitlink/SESSION/TODO，旧379源码/证据不改。
-- **作者原始测试已独立读取**：旧 Child0dd +冻结 test RED 2/2 expected failures，修复后的 `final/green` 74/74 Python3.13.5、`final/regression` 48/48 Python3.12.14 CPU Torch，合计122 distinct PASS/0 failed/error/skipped。冻测 SHA一致，旧 Replan0/1 实际不同视频哈希，跨6 Replan和 End202/新generation 有覆盖。Ruff、format、syntax PASS；原始JUnit/source bindings均有。**作者 CPU evidence≠DS independent/GPU**，未复测旧379、未改旧H3媒体。
-- [Formal review](docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_e7ce99d7_c93f2abf_Incremental_Code_Gate_APPROVE_CODE.md)。下阶段须 DS_PRO 独立 scoped CPU后由Owner另行授权真实小规模 all-mode GPU+FFmpeg Canary；**不合并正式 V3、不启动 GPU/正式900EP、不碰GPU0–3、其他GPU训练/NoTTT/out2或Checkpoint/DCP**。任何后续 docs/Inbox HEAD 仅为 bookkeeping SHA，不是本次 Formal implementation SHA。
-
-## 2026-11-02 — GPT → DS_PRO RM-ALL-R01 CPU122 independent execution handoff (new formal pair)
-
-- **DS_PRO 执行指令已补齐**：`docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_DS_PRO_CPU122_Independent_Acceptance_Handoff.md`。GPT `APPROVE_CODE` Formal Root `e7ce99d7a0bbb7a81ea7afcee7253548687dc223` / Child `c93f2abf4fb27d36176ff8db094379a853cec796`；当前 candidate `v3-eval-v2-replan-ack-r01-20261102` 的后续文档 HEAD **不是** Formal Pair。
-- **本轮仅独立 CPU Gate**，使用 detached clean Root/Child 和候选证据 `run_cpu.py` + `red_validated/frozen_test.py`，分别用可运行 Python3.13跑 `--phase green` **74 cases**，Python3.12 CPU-Torch跑 `--phase regression` **48 cases**；真实输出 `74/74 + 48/48, 0 fail/error/skip`、Ruff/format/syntax PASS、exact source/hash/clean。需原始JUnit、invocation、gate、log、解释器/version/工作树身份证据。缺依赖时 `BLOCKED_ENV`，不得偷改测试或共有环境，不重跑旧379和old RED2，不把作者122冒充DS独立PASS。
-- **执行边界/停止点**：CPU测试完成后提交证据回 GPT/Owner立即STOP。后续新 Formal Pair 的真实 GPU6 Server/GPU4 EGL、小 Task × 少量 EP、`save_generated_video: all` Canary 只是**未授权建议**，须 Owner 单独批准；不自动合入正式 V3、不运行900EP，不触碰GPU0–3/其它训练、No-TTT/out2、历史H3/H2/任何checkpoint/DCP或旧结果。
-
-## 2026-11-02 — GPT DS_PRO RM-ALL-R01 independent CPU122 acceptance CLOSED
-
-- DS_PRO 提交独立 CPU 验收完整报告；**CPU122 Gate `DS_INDEPENDENT_PASS` / CLOSED（report-supported）**。Formal Root `e7ce99d7a0bbb7a81ea7afcee7253548687dc223` / Child-Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796` 未变：历史 GPT `APPROVE_CODE`/RM-ALL-R01 CLOSED 不重审。DS 新隔离 detached clean checkout，测试前后Root+Child clean，环境 CPU-only，无 V3 合入。
-- DS 实际报告：`green` Python3.13.11 **74/74 PASS**（37.3s）；`regression` Python3.12.13 + CPU Torch2.8.0 **48/48 PASS**（14.2s）；合计122/122，0 failure/error/skip。Ruff0.12.7 check/format root13+child9文件、py_compile与source-only diff均PASS；冻结 test SHA `2114ca14...`、Child production SHA `f8d88ab5...` 与 Gate 绑定一致。作者环境版本不同但成功通过。
-- 静态例外：全树 `git diff --check` 的尾随空白仅见历史作者证据日志/补丁归档，源代码检查PASS；不建议因格式覆盖不可变原始Evidence。执行边界提醒：DS 报告提及查询 `nvidia-smi` compute-app PID 列表，与 Owner 要求的“不查询其他任务”不一致，后续禁止此类查询；本轮不因这一非干预观察重跑CPU。
-- **证明层级**：本次主要依据DS自包含报告及服务器证据实际路径，GPT未远程直取DS原始JUnit/日志，不得冒充亲自执行。详细结论见 `docs/collab/chatgpt/reviews/2026-11-02_V3_EvalV2_RM_ALL_R01_DS_PRO_CPU122_Independent_Acceptance_CLOSED.md`。
-- **下一硬件 Gate 仍需 Owner 单独许可**：仅新的少量 RoboCasa `save_generated_video=all` GPU6 Server + GPU4 EGL Run，核对每次Replan完整 MP4/receipt/ACK/ffmpeg逐帧、Local与Media clean及各项耗时；不能自动执行GPU/900EP/V3合并/out2 Resume，不碰GPU0–3或查询管理他人GPU训练。
-
-## 2026-11-03 — GPT R01 real GPU Canary evidence: reporter profile mismatch REQUEST_CHANGES (new HW evidence only)
-
-- 新 R01 硬件 Evidence，Formal implementation pair **未变化**：Root `e7ce99d7a0bbb7a81ea7afcee7253548687dc223` / Child-Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796`。按规范不重审旧 Code Gate；当前 **R01 Hardware/Media-Summary Gate `REQUEST_CHANGES`**。DS reported CloseFridge GPU6 Server→GPU4 EGL 1EP：Core/SR 1/1 success、19 replans=19 MP4=19 VIDEO_SAVED receipt=19 Server ACK，drop0、encoder/owned cleanup正常；但 `R01_FRESH_EXIT=1`、`media_summary.status=MEDIA_INCOMPLETE`，因此完整 Canary **FAIL**（无条件不可宣称 Gate PASS）。
-- **唯一 confirmed Production blocker `R01-MEDIA-PROFILE-01 MEDIUM`**：Root `scripts/robocasa_eval_v2/config.py:248` Manifest execution profile 真实值 `"phase_b_native_batch_v1"`，Child `contract.py:112` 也固定该值；Root `scripts/robocasa_eval_v2/generated_media.py:34–37` 却用 `== "phase_b"` 判断 `server_ack_required`，导致合法 true completion 误报 false，连 inventory/receipt 校验都未走就把 `saved=acknowledged=0`。该0不是19份实际MP4丢失。
-- 直接相关 `tools/v3/eval_v2_replan_tests/report_test.py` 的 positive测试只覆盖无 native execution 的 Phase A-like Manifest、`server_ack_required=false`；缺真实 Phase B 正例，所以旧379/122未暴露缺陷。
-- **Codex 最小修复任务**：`docs/collab/chatgpt/requests/2026-11-03_V3_EvalV2_R01_Media_Summary_Profile_Codex_Narrow_Fix.md`；改 Root 汇总校验字符串/权威，补 Phase B true acceptance + false rejection + Phase A 回归 + MP4/receipt负例；新 Formal Root SHA/Child不变并重走GPT Code Gate。优先在独立副本**离线**重算原R01的19项汇总，原 `out/R01`/exit1 证据严格不可覆盖；无需立刻再跑 GPU。
-- [完整审查报告](docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_GPU_Canary_Media_Profile_Evidence_REQUEST_CHANGES.md)。**未授权 GPU/正式900EP/V3 promotion/out2/NoTTT修改**；不访问GPU0–3或现有训练，DS仍只做隔离证据/执行验证且不修改生产代码。GPT本轮未直读DS服务器媒体/日志，硬件19/19为DS report-supported，源码 profile 错误为GPT核验。
-
-
-## 2026-11-03 — Codex R01-MEDIA-PROFILE-01 2d1ad80f/c93f2abf incremental Code review request
-
-- Formal Root `2d1ad80f89ab4cc0e275ff4341f064954870abdd`; unchanged Child/Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796`. New isolated Root branch `v3-eval-v2-media-profile-20261103`, baseb19b9edf after fresh sync/review. No Child source/commit/branch changes. Prior e7ce99d7/c93f2abf scoped Code/CPU approvals and original R01 Hardware FAIL/exit1 are preserved.
-- Sole production delta Root `scripts/robocasa_eval_v2/generated_media.py:34`: Manifest comparison uses phase_b_native_batch_v1 instead of CLI phase_b (format2 additions/1 deletion); AST diff exactly one string constant. No weakening ACK type, counts, inventory, receipt/hash/Core/SR or Child contract; no encoder/cache/GPU/Local/training changes.
-- New test frozen before old RED2 (native true wrongly rejected; false wrongly accepted). Same bytes new exact clean-Pair final **42 distinct PASS/0failure/error/skip**, Python3.13.5:15 real production Manifest/Store profile tests +10 report +17 config. Each positive verifies both per-video receipt/file hash calls on repeated publish and unchanged scientific files; missing file/receipt/bad SHA/type/unknown profile still refuses. Ruff0.12.7/format/AST/py_compile2, two source bindings, unchanged Child/old379/122 evidence PASS. Old379/122 not rerun/relabelled; not independent DS/hardware.
-- Handoff `docs/collab/codex/reviews/2026-11-03_V3_EvalV2_R01_Media_Profile_Author_Handoff.md`; evidence `docs/collab/codex/evidence/2026-11-03_eval_v2_media_profile_author_cpu/` includes25 checksummed artifacts, raw RED/GREEN/JUnit/commands/env/frozen test/minimal diff/static proof and fresh synthetic Phase B summaries. Synthetic2-video records do not replace actual19 media reconciliation.
-- **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED for Root profile correction only.** Prepared for candidate publication/readback; this is not reviewer ACK/approval. Later evidence/publication HEADs are bookkeeping, not Formal implementation.
-- **offline_reconciliation=PENDING_DS_ISOLATED_COPY_RECONCILIATION**: no actual R01 files accessed in cloud code workspace. After Code Gate DS must validate new publish against isolated copy of all19 actual inventory/receipt/index/SHA, retain original failure/exit1; any remaining real validation errors must be investigated, not manually relabelled COMPLETE. No GPU rerun or DS dispatch is authorized by author tests.
-- STOP after candidate push/fresh readback. No V3 merge, model/ActionServer/GPU/RoboCasa/900EP/training/DCP/Job/shared-source or old R01/out2/No-TTT/H2/H3 result/media/log edits. Owner current roles/STOP override historical V2/multi-pane polling workflow.
-
-
-## 2026-11-03 — Codex native media-profile candidate publication receipt (same Pair)
-
-Fresh2026-11-03T03:36:14Z explicit fetch/advertised refs/Git object readback PASS:
-Root candidate evidence/request HEAD2d8b1327ffd0f1585ce883fd272eea050f1ed8f2 on
-v3-eval-v2-media-profile-20261103; unchanged remote Child/Gitlink
-c93f2abf4fb27d36176ff8db094379a853cec796.25/25 artifact hashes,2/2 source Blob/SHA
-bindings, sole Root production file, unchanged old379/122 evidence, clean
-worktrees and unique request verified. Official V3 stays7e2be5ca40891915a1e86eea935ed054ec1984dd,
-official Child8664267704da3206e719f3c7eef2b5ed86e2a417. No Child push or force.
-First external verifier used old package path final/static and failed before
-success; corrected verifier path to static, no repository edits, fresh full pass.
-Both observations retained under docs/collab/codex/evidence/2026-11-03_eval_v2_media_profile_publication/.
-
-Formal Root STAYS2d1ad80f89ab4cc0e275ff4341f064954870abdd / Childc93f2abf4fb27d36176ff8db094379a853cec796.
-This successor is receipt/bookkeeping only; author42 scoped PASS/old RED2 intact,
-no source/test/Gate change. Request publication proven, not reviewer ACK/approval.
-Actual19 offline reconciliation PENDING_DS; original R01 FAIL remains. After
-final readonly receipt-successor check STOP; no V3/GPU/model/RoboCasa/old media,
-training/DCP/Job/shared runtime or DS dispatch.
-
-## 2026-11-03 — GPT R01 media-profile Root-only fix APPROVE_CODE (2d1ad80f / c93f2abf)
-
-- **Formal Source Code Gate `APPROVE_CODE`**（仅 R01-MEDIA-PROFILE-01 Root-only小修）：Root `2d1ad80f89ab4cc0e275ff4341f064954870abdd` / Child-Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796`（保持 c93，不重审 Child/旧 ACK history）。正式 Root `scripts/robocasa_eval_v2/generated_media.py:34–38` 仅把 Native Manifest `execution.profile` 判断字面量从错误的 `"phase_b"` 更正为 `"phase_b_native_batch_v1"`，与 `config.execution()`、Child `contract.py` 一致；其余 `is not` 强 bool ACK、MP4、receipt、SHA、identity、Core/SR 检查不变。**R01-MEDIA-PROFILE-01 代码层 CLOSED**。
-- Codex真实旧Root冻结测试 RED2（合法PhaseB true ACK误报失败、非法false ACK误通过）；新Root作者`42/42 PASS`（15 profile+10 report+17 config，0fail/error/skip），Ruff/format/py_compile及literal-only AST、Formal Blob/SHA绑定 PASS。新增真实 `execution()`→Child `build_manifest`→Store+两条合成视频/receipt，PhaseB/PhaseA布尔真伪及文件/哈希负例都覆盖；未重跑旧379/122也没有读取真实R01 out。这是作者CPU，**独立DS尚未验收**。
-- **历史 R01 Canary仍 FAIL**：原 `R01_FRESH_EXIT=1`、`media_summary=MEDIA_INCOMPLETE` 不变；DS报告19 Replan/19视频/19 receipt/19 ACK成功仅为原运行时行为。新代码必须在隔离副本上对真实 R01 19条媒体完整校验后才可报告`OFFLINE19 PASS`；不能把新作者合成2条假充真实19条，也不能篡改原R01历史证据。
-- [完整独立审核](docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_Media_Profile_2d1ad80f_c93f2abf_Incremental_Code_Gate_APPROVE_CODE.md)；[DS执行交接](docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_Media_Profile_DS_CPU42_and_Offline19_Handoff.md)：**CPU42独立定向 + 原R01隔离副本仅CPU离线重算 `publish` + 19/19 ffmpeg全帧/receipt SHA验证**，原out/R01不修改，报告两项独立Gate状态后STOP。未授权重新 GPU Canary、正式900EP或合并 V3；不访问其它GPU/训练、NoTTT/out2、H2/H3、DCP/Checkpoint。候选后续Docs SHA不能代替 Formal Root。
-
-
-## 2026-11-03 — R01 CPU42 + OFFLINE19 Evidence closure
-
-Formal Root 2d1ad80f89ab4cc0e275ff4341f064954870abdd / Child c93f2abf4fb27d36176ff8db094379a853cec796 unchanged. DS-reported CPU42 PASS and OFFLINE19 PASS: 19 MP4/receipts/ACK, 19 full decodes, isolated copy publish COMPLETE and original 104 files unchanged. R01_MEDIA_COMPLETENESS_EVIDENCE CLOSED. Historical Fresh exit=1 remains FAIL_RETAINED; this is not a new GPU Fresh PASS. Details: docs/collab/chatgpt/reviews/2026-11-03_V3_EvalV2_R01_DS_CPU42_OFFLINE19_Media_Completeness_Evidence_CLOSED.md. No V3 merge, GPU, 900 EP or alteration of previous evidence authorized.
-
-
-## 2026-11-03 — Owner / DS_PRO: sync merged V3 and hand off manual EvalV2 launch
-
-- Owner requested DS_PRO **pull the latest integrated Root V3 and Child, then report SHA**; DS should do this only in a **separate clean evaluation checkout**, never in active training or frozen evidence directories. Integrated production merge Root `0f82519dfa22f190141b7a25c1c96fb476855742`; official Child `v3-local-ttt` and Root Gitlink `c93f2abf4fb27d36176ff8db094379a853cec796`. V3 may advance by docs-only commits, report actual HEAD and confirm merge-commit ancestry plus Gitlink/Child and clean status. NO force/dirty reset, NO GPU/simulation started by DS without separate Owner permission.
-- **Executable pull/readback and manual evaluation commands:** `docs/collab/chatgpt/requests/2026-11-03_V3_EvalV2_DS_PRO_Sync_And_Manual_Simulation_Launch.md`. Official entry `scripts/run_robocasa_eval_v2.sh` supports dry-run/fresh; proven GPU6 Server/GPU4 EGL M1/B1 first1EP; separately documented manual18×50=900EP use Server6/7 Render4/5 conservative M1/B1. Set paths from DS verified existing R01 env, not invented paths; YAML save_generated_video manually controlled. No proof of real B2, no new GPU Fresh exit0.
-- DS **report SYNC_PASS/SYNC_BLOCKED and STOP**, Owner independently launches if desired. Preserve historical original R01 Fresh exit1 despite media completeness offline PASS, and preserve V3 G2 document; no out2/NoTTT/H2/H3/Checkpoint/training/GPU0–3 impact.
-
-
-## 2026-11-03 — R02 NVIDIA EGL_CUDA_DEVICE_NV physical PCI mapping candidate (DS CPU Gate pending)
-
-- DS_PRO 已通过独立探针确认目标宿主：`eglQueryDevicesEXT` 8/8、`eglQueryDeviceAttribEXT(EGL_CUDA_DEVICE_NV=0x323A)` 8/8 可返回0..7，EGL4在该机器对应CUDA4/nvidia-smi GPU4 PCI 0000:98:00.0；此前 `eglQueryDeviceStringEXT` 的 DRM 返回 NULL 不能作为失败依据。Khronos 定义这里是 *attribute* 而非 string。
-- **新 Root Formal `286573d2d592cbd7449930e6e93f188a3a9b037d` / Child/Gitlink `37558dcc71682304f3de1848923e6cedb9b77837`**，双方隔离分支 `v3-eval-v2-egl-nvidia-attrib-20261103`。从已合并正式V3/Child单独分支起步，仅 Child `render_devices.py`（生产）及Root `render_devices_test.py`（测试）+Gitlink变更；官方V3未改。
-- **替代旧未通过独立测试的 `v3-eval-v2-egl-index-fallback-20261103`**：新实现取消身份未知时 ordinal放行，查询 NVIDIA CUDA device属性，运行时一次性通过短时CUDA Driver子进程取得当前 CUDA handle→PCI映射，并与现有nvidia-smi expected PCI交叉绑定；唯一匹配，否则拒绝。可用的DRM PCI继续优先；无硬编码Host/GPU顺序。Reset仅查当前EGL Context及可用设备Handle/CUDA字段，不重复全部枚举。显式 `context_device_handle_verified`，不能将缺失的Ctx设备属性虚报为已检查。
-- **完整DS执行交接：`docs/collab/chatgpt/requests/2026-11-03_V3_R02_EGL_NV_CUDA_Device_Identity_DS_Validation.md`**。第一Gate：全新 detached clean候选 checkout，定向render_devices_test+render_mapping_test CPU、Ruff/format/AST，原始JUnit/命令/versions/hash。**当前只有源码提交，未获作者或DS真实CPU PASS及GPT独立APPROVE_CODE**。DS CPU PASS回报GPT后STOP；Owner另行释放GPU4/6并授权，才可用新输出目录R02_1ep_nv_attrib复核ENV_READY/真实PCI/完整Episode/媒体/exit0；不可自动跑GPU、900EP/B2，不修改旧R01/R02/out2/NoTTT或训练GPU0–3。
-
-
-## 2026-11-03 — GPT NV_ATTRIB DS CPU66 PASS / Ruff format FAIL: REQUEST_CHANGES (static only)
-
-- Frozen Formal Root `286573d2d592cbd7449930e6e93f188a3a9b037d` / Child+Gitlink `37558dcc71682304f3de1848923e6cedb9b77837`, independent DS clean checkout. **CPU 66/66 PASS**, `ruff check` PASS, AST parse PASS, but required `ruff format --check` **FAIL for exactly 2 files**: Child `cosmos_framework/simulation/robocasa/render_devices.py` and Root `tools/v3/eval_v2_batch_tests/render_devices_test.py`. DS has original `format_diff_render_devices.txt` and `format_diff_test.txt` under isolated `/tmp/ds_pro_r02_nv_egl_attrib_20261103/evidence/`. DS stopped; no GPU. This is `REQUEST_CHANGES` **static/evidence-only**, not a new finding against EGL logic. No `APPROVE_CODE` on this pair.
-- **Codex narrow repair**: `docs/collab/chatgpt/requests/2026-11-03_R02_NV_ATTRIB_Ruff_Format_Only_Codex.md`: Ruff0.12.7 `format` only the Child source (Child .ruff.toml length120) + Root test (default formatter); AST-before/after bit-identical structural fingerprint, Ruff check/format --check, scoped CPU66/66, source-only diff/identity, Child commit first then Root Gitlink and new Formal Pair. Do not edit logical expressions, tests, contracts or old failed ordinal-fallback branch. Detailed Evidence Gate: `docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_286573d2_37558dcc_DS_CPU66_FORMAT_Gate_REQUEST_CHANGES.md`.
-- After Codex new Formal Pair, GPT fresh incremental Code Gate then DS independent CPU/static revalidation; **do not launch R02 GPU1EP,900EP,merge V3 or affect running training/out2/NoTTT/H2/H3/GPU0–3**. DS JUnit and exact diff not yet independently opened by GPT (report-based observation).
-
-
-## 2026-11-03 — Codex R02 NVIDIA attribute format-only 46c08127/1069fe78 incremental Code review request
-
-- **New Formal Root** `46c08127b2a13155bb22204069a1456cb01424d7`; **Child/Gitlink** `1069fe78841228cadbbfbe6afbd767eaed6225da`. Both new isolated branches `v3-eval-v2-r02-format-20261103`. Root parent `c4d0a4281fb57797484a91b9c47387997b967f31` preserves latest review/request/Inbox. Previous source Pair `286573d2d592cbd7449930e6e93f188a3a9b037d` / `37558dcc71682304f3de1848923e6cedb9b77837` remains historical. Evidence successor HEADs are not new implementation identities.
-- Applied **Ruff0.12.7 format only** to Child `cosmos_framework/simulation/robocasa/render_devices.py` (4+/15-, Child120-column config) and Root `tools/v3/eval_v2_batch_tests/render_devices_test.py` (9+/8-, Root default). Full serialized AST strings/fingerprints are identical before/after, independently verified from exact Git objects; test assertions, CUDA/PCI/context/refusal/TTT/media semantics unchanged. Initial checkout clean and exactly old Pair; both original source SHA256 match DS report; old format RED2 reproduced. Child committed first, Root test/Gitlink second; no old fallback branch changes.
-- **New exact clean-Pair author CPU66 distinct PASS /0 failure/error/skip**,0.95s, Python3.12.14/pytest9.0.2; only the two mandated render test files. Before/after Root/Child clean and unchanged; Ruff0.12.7 check/format, syntax compile, AST parity, both-repo committed diff and minimal scope PASS. Four source/config bindings and55 raw artifact SHA256s. Old122/379/42 not rerun. Original DS66 run on3.13.11/static-FAIL is report-supported history, not this author's execution or new DS/GPT approval.
-- **Evidence** `docs/collab/codex/evidence/2026-11-03_r02_nv_attrib_format_author_cpu/` (raw JUnit/logs/command/env, before/after AST/source snapshots, old expected format failures/diffs, final gate, Git-object parity, minimal patches, binding/hash manifest, runner). **Handoff** `docs/collab/codex/reviews/2026-11-03_R02_NV_ATTRIB_Format_Only_Author_Handoff.md`.
-- **Request GPT fresh incremental APPROVE_CODE / REQUEST_CHANGES / BLOCKED for format-only static remediation on this exact Pair.** Do not repeat model/EGL architecture review. Next independent CPU/static validation is DS's separate Gate; author66 does not close it or authorize GPU1EP.
-- Request prepared for isolated candidate publication; subsequent fresh fetch/advertised-ref/Git-object readback records actual delivery. Official V3 and official Child v3-local-ttt remain unchanged; no claim that GPT has read or approved this request. STOP after Child→Root publication/readback. No V3 promotion, GPU/EGL/Action Server/real RoboCasa/FFmpeg/1EP/900EP, GPU/process inspection, training/DCP/Job/out2/NoTTT/H2/H3 or old Evidence modifications. Current Owner/GPT roles and STOP override stale V2/multi-pane polling.
-
-
-## 2026-11-03 — GPT R02 NV_ATTRIB format-only incremental APPROVE_CODE (46c08127/1069fe78)
-
-- Formal Root `46c08127b2a13155bb22204069a1456cb01424d7` / Child-Gitlink `1069fe78841228cadbbfbe6afbd767eaed6225da`，双仓隔离 `v3-eval-v2-r02-format-20261103`；**正式增量 Source Code Gate `APPROVE_CODE`**，仅关闭先前 `286573d2/37558dcc` 的两个文件 `ruff format --check` 静态 blocker。当前候选 HEAD 的 docs-only 追加不替代 Formal implementation SHA。
-- 实际 Child 唯一生产 Diff `cosmos_framework/simulation/robocasa/render_devices.py`（4+/15-格式化）；Root `tools/v3/eval_v2_batch_tests/render_devices_test.py`（9+/8-格式化）、Gitlink、SESSION/TODO；不存在模型、Agent、CUDA PCI 映射或其他代码逻辑整改。**GPT直接从GitHub逐字对比** `before/ast_0.txt` 与 `after/ast_0.txt`、`before/ast_1.txt` 与 `after/ast_1.txt`，两组完整 AST 完全相等（42028/64016字符）；Git-object AST fingerprints、Ruff0.12.7 static、源码 Blob SHA也吻合。
-- 作者原始 `final/junit.xml` 真正66 testcase全 PASS/0fail/error/skip；`ruff check` PASS，`ruff format --check` `2 files already formatted`，初始格式RED2有保留，Clean-Pair Root/Child/Gitlink吻合。**这是 author CPU，尚不是新的 DS independent CPU/GPU验收；未运行 GPU**。
-- [完整 Review](docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_46c08127_1069fe78_Format_Only_Incremental_Code_Gate_APPROVE_CODE.md)；[DS_PRO独立CPU66执行交接](docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_DS_Independent_CPU66_Acceptance_Handoff.md)：精确 Root/Child detached clean，66相关测试+Ruff0.12.7/AST/源码身份，DS保留JUnit与日志并回报STOP。之后新R02 1EP真实EGL/GPU需要Owner另行授权释放资源，不能因为格式Gate已批准而自动开启；不合入V3/900EP/B2/训练/旧R01-R02/out2/NoTTT/H2/H3。
-
-
-## 2026-11-03 — R02 NVIDIA EGL NV_ATTRIB DS independent CPU66 PASS / STATIC EVIDENCE CLOSED
-
-- Formal Root `46c08127b2a13155bb22204069a1456cb01424d7` / Child-Gitlink `1069fe78841228cadbbfbe6afbd767eaed6225da`；已合并官方 V3 `ff9110ce7ac3fe2438603a481ef720326e435c0a`（PR #16），官方Child同一SHA，Root `render_devices_test.py` Git Blob `fe668d73695718fe0d160bc4134ac8f606465ceb`、Child `render_devices.py` Blob `a1016f91650116d156ea8effee09a7413fc30b4d` 均与原Formal一致。后续docs HEAD不代替Formal implementation。
-- DS_PRO 在独立 clean checkout 报告 CPU **66/66 PASS、0失败/错误/跳过**；Ruff0.12.7 check PASS / format--check PASS（`2 files already formatted`），AST PASS、Root/Child/Gitlink/clean/SHA256 PASS；证据在其服务器本地 `/tmp/ds_pro_r02_nv_format_46c08127_20261103/evidence/`。服务器连接中断，GPT未直接读取 DS 原始JUnit/日志，仅通过用户转交 DS报告验收；GPT已独立回验官方GitHub Root/Child/Gitlink/两个源码Git Blob。
-- **`DS_INDEPENDENT_PASS` / `R02_NV_ATTRIB_CPU_STATIC_EVIDENCE=CLOSED`**。上轮 format REQUEST_CHANGES blocker CLOSED；原 format-only `APPROVE_CODE` 不重审。详细记录 `docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_DS_INDEPENDENT_CPU66_GATE_CLOSED.md`。
-- 下一个实测 Gate 是 **Owner另行授权** 的 GPU6 Action Server/GPU4 EGL R02 CloseFridge×1EP（M1/B1，iter20000，video=all，全新 `R02_1ep_nv_attrib_v2` 输出）。须先由Owner释放所选GPU上的gpu_load_sim；不授权DS/GPT自行杀进程或自动启动真实仿真，禁止900EP/B2、正式训练/NoTTT/out2/H2/H3、覆盖历史R01/R02、访问GPU0–3。真实 `ENV_READY` / Context PCI / Core / MP4/ACK / exit0 **仍未验收**。
-
-
-## 2026-11-03 — R02 NV_ATTRIB real GPU1EP Canary: report-supported PASS
-
-- DS_PRO 报告真实 GPU Canary 成功：正式V3 Root `ff9110ce7ac3fe2438603a481ef720326e435c0a` 生产合并点（后续docs HEAD不改变源码），Child/Gitlink `1069fe78841228cadbbfbe6afbd767eaed6225da`。Phase B M1/B1，GPU6 Action Server + GPU4 EGL Renderer、`CloseFridge` ×1EP、`iter_000020000`、`save_generated_video=all`。EGL index4→GPU4 PCI `0000:98:00.0`，`physical_identity_verified=true`、`context_verified=true`、`context_device_handle_verified=true`。
-- DS报告：308 steps/20 replans、84.17s、success1/1、SR1、`results_qualified=true`、`clean_execution=true`；20/20 Generated MP4 + 20 receipts + 20 ACK、`media_summary.status=COMPLETE`、CLI `exit=0`、无 owned进程残留。新隔离 namespace `R02_1ep_nv_attrib_v2`，旧 R01/R02 失败证据保留。
-- **Gate：`R02_1EP_NV_ATTRIB_PASS` / `R02_NV_ATTRIB_REAL_GPU_EVIDENCE=CLOSED_REPORT_SUPPORTED`**。GPT核对官方源码/EGL/Media校验机制和远端 Root/Child/Gitlink；服务器连接再次中断，未直接读本次原始 MP4/proof/log，以上 runtime观测来自用户转交DS报告，不冒充GPT直接逐条复验。
-- 首轮 Fresh vendor preflight 因共享 robosuite树出现 Numba `.nbc/.nbi` 非受信 ignored cache被拒绝；据DS报告清理缓存、隔离bytecode之后 probe RC0 并完成 Canary。**不在本Gate中扩大改代码**；如果900EP预检再次复发，优先让Numba缓存出共享源码树，不能无条件忽略所有`.nbc/.nbi` 或清理别人进程文件。复测与正式900EP、B2、训练均未自动授权。
-- [完整审核记录](docs/collab/chatgpt/reviews/2026-11-03_R02_NV_ATTRIB_Real_EGL_GPU1EP_Canary_Evidence_PASS.md)。下一步是否启动18×50=900EP需Owner明确决定；保持 M1/B1、独立新输出目录、资源/缓存预检。历史R01旧Fresh exit1和R02早期blocker不能改写。
-
-
-## 2026-11-04 — GPT independent Code Gate: Issue17 EvalV2 Streaming M32/B32
-
-- **Formal implementation pair**: Root `00e119cc20cabe082974bd3495474b589c4b46b6` / Child-Gitlink `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e`; evidence/ledger commit `1c6f66ab14eabcd3d1637ebcf5af8d77c8c60188` is not the technical target.
-- **GPT technical verdict: `REQUEST_CHANGES`**. NEW-F01 HIGH — Root `scripts/robocasa_eval_v2/startup.py:56–65`: post-start `self.measure()` ignores other in-flight reservations before dropping current reservation; owned actual + outstanding reservations may exceed RSS/VRAM budgets. Requires concurrency-aware completion/transfer check and deterministic CPU regression for overlapping startup (RSS + VRAM).
-- **M/B Resume一致性必须保持不变**；不得用预算放宽、删保护或修改科学身份来修复。846 author CPU PASS 是作者证据，不构成此 blocker 的关闭。
-- **Detailed GPT review**: `docs/collab/chatgpt/reviews/2026-11-04_EvalV2_Streaming_M32_B32_00e119cc_82fa270e_REQUEST_CHANGES.md` (docs-only review commit `3b564ae30e364b72497c523720c0089013103442`).
-- **Scope/stop**: candidate not promoted to V3, no DS/H100/GPU authorization, untouched R04/G2. Codex returns new formal pair after narrow remediation for incremental review; absent new pair, do not repeat technical audit.
-
-
-## 2026-11-04 — GPT independent incremental Code Gate: Issue17 NEW-F01 CLOSED
-
-- **Exact Formal Pair**: Root `551b03621507dde52303f54290d4fea89d66e8da` / unchanged Child-Gitlink `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e`. Author evidence/hand-off commit `ebaec6452cb62dd96bae3dcbc313f305ea14c79c` is bookkeeping, **not** technical target.
-- **GPT verdict: `APPROVE_CODE` (NEW-F01 narrow remediation only).** Previous `HIGH NEW-F01 → CLOSED`: in Root `scripts/robocasa_eval_v2/startup.py`, completion now rechecks owned actual RSS/VRAM + all *other* in-flight reservations under version-checked metadata transfer, with bounded fail-closed cleanup. Author RED (old4 FAIL) → new exact pair 35/35 CPU PASS; source/static evidence verified at review scope. Child and all other production sources unchanged.
-- **M/B Resume strict consistency remains unchanged**; no M/B retuning on Resume, no change to frozen Manifest. The larger Issue17 full CPU Gate at new exact Pair and DS independent CPU are still pending. No V3 promotion / G2 merge / GPU / real RoboCasa / R04 action authorized.
-- **Formal detailed review**: `docs/collab/chatgpt/reviews/2026-11-04_EvalV2_Streaming_NEW_F01_551b0362_82fa270e_APPROVE_CODE.md` (review-only commit `03faf8fc4e9ff4af34cfaf9dfc01e9bedd3afeae`). Previous Root00e119cc/Child82fa270e `REQUEST_CHANGES` remains history; it is not applied to this new Pair.
-- **Next**: Codex runs full exact-Pair CPU Gate with actual collected test counts and immutable source evidence, then DS independent CPU only after its proper gate; real hardware requires separate Owner authorization. No repeat technical review if formal pair unchanged and only evidence/ledger commits are added.
-
-
-## 2026-11-04 — GPT independent Code Gate: R04 VFM Action dynamic compile c9fa60b7/4e9c8104
-
-- **Formal technical pair**: Root `c9fa60b7134fda8fb848c29c148f25c7a8901892` / Child-Gitlink `4e9c8104ffd15a373b576bc35ee608de1b60eea1`; evidence/ledger `c6e07a51b8747676f8ef6014c72e9926e8805702` is not the implementation target.
-- **GPT verdict: `APPROVE_CODE` (R04 Action encode compile boundary only).** Child `cosmos3_vfm_network.py` moves cast→action2llm→optional embedding into Tensor-only `_project_action_tokens`, and `parallelize_vfm_network.py` compiles that helper rather than Python-list-driven `_encode_action`; compile options/default recompile_limit8 and parameter/maths unchanged. Old RED 4 expectedFail vs new CPU51/51 PASS, including four 1024-call B1–8 sequences, CPU Inductor, and recorded output/gradient parity. Eight GPU/L1 tests deliberately deselected and not counted.
-- **Independent detailed review:** `docs/collab/chatgpt/reviews/2026-11-04_R04_VFM_Action_Compile_c9fa60b7_4e9c8104_APPROVE_CODE.md` (docs-only review commit `1a005b8bfa20d0917db62fdb25e010752144b1d2`).
-- **Boundary:** This does not authorize GPU/H100, V3/G2 merge, using new source in frozen R04 Resume, real checkpoint/model, training or formal900. DS independent CPU first; GPU Canary only with Owner authorization.
-- **Separately Issue#17**: unchanged Pair Root `551b03621507dde52303f54290d4fea89d66e8da` / Child `82fa270e8cdb76b3e1a4e94adf0c7ce2b497884e` now has author full CPU869/869 PASS at `docs/collab/codex/reviews/2026-11-04_EvalV2_Streaming_551b0362_82fa270e_Author_Full_CPU_PASS_DS_Handoff.md`; technical formal pair unchanged, so **no repeat technical review**. Its next Gate is DS independent CPU; not GPU/V3 promotion.
-
-
-## 2026-11-05 — Codex implementation request: R05 VFM _decode_action dynamic compile
-
-- **Owner instruction**: Codex alone changes production code; GPT owns review and independent CPU/H100/RoboCasa verification.
-- **GitHub issue**: https://github.com/wxwy/psm_wma/issues/18
-- **Frozen start pair**: Root `c9fa60b7134fda8fb848c29c148f25c7a8901892` / Child-Gitlink `4e9c8104ffd15a373b576bc35ee608de1b60eea1`.
-- **Two isolated development branches created**: `v3-r05-action-decode-compile-20261105` in both root and child; detailed request at `docs/collab/chatgpt/requests/2026-11-05_R05_VFM_Action_Decode_Dynamic_Compile_Codex.md` (request-only Root commit `8004106fd3c1e357439c53c3f134933e5c1a5bf0`).
-- **Observed R05 blocker**: actual M16/B8, original iter27700, 15D/H16 Local-TTT produced 12 valid Core then `FailOnRecompileLimitHit`; GPU6 identifies `_decode_action` list guard `len(packed_seq.action.tokens)==5`. Fix the list/metadata vs Tensor compilation boundary, not the already closed `_encode_action` case.
-- **Acceptance**: preserve decode math, dummy no-noisy gradient, Torch default recompilation cap 8, FSDP/CUDA-graph and M/B Resume identity; demonstrate old-RED/new-GREEN with B1–8, parity and CPU test evidence; return NEW Root/Child formal pair for GPT review.
-- **Stop**: do not mutate/Resume original R04 or failed R05, do not merge V3/G2 or launch GPU until GPT Code Gate. Issue creation and branch readiness do not mean Codex has started execution.
-
-
-## 2026-11-05 — GPT independent incremental Code Gate: Issue #18 R05 VFM Action Decode
-
-- **New exact Formal implementation pair**: Root `f4871059cf28a7e2142325738decbf1d53c3148b` / Child+Gitlink `b3098008375c275a36dd2f50cbaf757bedf493ea`. Earlier baseline `c9fa60b7134fda8fb848c29c148f25c7a8901892` / `4e9c8104ffd15a373b576bc35ee608de1b60eea1`; evidence bookkeeping `461bdfeb49e48a242d55c3b1c7f87ccaeee0dc6a` not technical target.
-- **GPT verdict: `APPROVE_CODE` (narrow decode compiler boundary source only)**. Child now compiles pure-Tensor `_project_action_predictions` instead of Python-list `_decode_action`; leaves all list/indices/domain/dummy gradient orchestration in eager, preserves exact `llm2action`, prior encode helper, all compile settings/recompile_limit8, parameter keys, model/Local-TTT/Session/M/B Resume protocols.
-- **Evidence reviewed**: author OLD RED four controlled FailOnRecompileLimitHit; new exact-pair author CPU77/77 PASS, 8 GPU/L1 deselected, 96 old/new eager bit-exact output and complete gradient comparisons, four 1024-call alternating-B sequences with 2 Dynamo graphs each, CPU Inductor. Actual GitHub Child delta inspected independently. GPT attempted isolated source checkout for independent CPU but child repository network clone stalled; **no claim of GPT independent77 PASS**.
-- **Detailed review**: `docs/collab/chatgpt/reviews/2026-11-05_Issue18_R05_Action_Decode_f4871059_b3098008_APPROVE_CODE.md` (docs-only commit `7f25639ea008d4c468ead9bf36748d874d39dc99`).
-- **STOP**: source-only Code Gate does **not** approve GPU, V3/G2 promotion, source-switch Resume of original R04 (648Core)/R05 (12Core), or actual complete RoboCasa evaluation. GPT will next combine with approved Issue17 Streaming pair into an isolated **new integrated Formal Pair**, then run exact-checkpoint real15D/H16 LocalTTT H100/RoboCasa canary after appropriate independent Gate. M/B Resume strict equality stays unchanged.
-
-
-## 2026-11-05 — V3 production promotion verified: Issue17 Streaming + Action encode/decode
-
-- **Published official production pair**: Root implementation merge `95f756584a925ad1eba2d2f20c478c56d4096ed2` on `wxwy/psm_wma:V3` / Child+Gitlink merge `1ca308055fc41fb69efaeb9efaa23808f164a18e` on `wxwy/cosmos-framework:v3-local-ttt`. Both fast-forward updates used expected-SHA guards, no force, remotely read back and verified.
-- **Independent Gate provenance**: Child Tree `21b0e3987546e1f85511be760bca9ee9f7a1974f` is exactly identical to the GPT local integrated Child tested at R06; Root feature blobs from approved Issue17 Root, preexisting V3 review and ledger files preserved; no G2 source changes.
-- **Evidence**: GPT independent full Streaming CPU869/869 PASS and Action CPU77/77 PASS on exact local integrated source; CPU869 used disclosed isolated Python pidfd runtime shim. Real RoboCasa/H100 R06 with verified original iter27700, M16/B8, raw Action[16,15], Local-TTT required: 36/36 Core, 29 success/7 behavioral failures, 0 invalid/interrupt/pending, clean execution true, 34/34 owned closed, zero compiler-limit failures.
-- **Formal promotion review**: `docs/collab/chatgpt/reviews/2026-11-05_R06_Issue17_Issue18_V3_95f75658_1ca30805_PROMOTION_VERIFIED.md` (docs-only commit `204270b0c0d945c26602d6397d2aa1bc1f7d8fad`). Verdict `APPROVE_CODE` for incremental object-level merge; `PROMOTION_VERIFIED` published. New docs-only commit SHA is not a new implementation target.
-- **Boundaries**: No R04/R05/R06 source-switch Resume, no G2 merge, no auto 900EP launch, no M/B Resume parameter changes. New experimental runs must use their own Manifest and source identity.
-
-
-## 2026-11-07 - Issue23 Stage0 design review request (P0 single-instance cost/benefit)
-
-- Gate: independent GPT DESIGN review; requested verdict APPROVE_DESIGN_STAGE0 or REQUEST_CHANGES. No APPROVE_CODE claim.
-- Supporting Root docs target: `696b3ee8e14339d3eaca448db17c2432f6694e13`; official/base Root V3 at task start: `a77f3d4bd8a691435d1935025cc1a9766da646a1`.
-- Primary Child DESIGN target: `8a170d56014af937b146b35e2b89753313614785`; six docs/spec files only. Actual Root Gitlink remains `1ca308055fc41fb69efaeb9efaa23808f164a18e`. This is not a new runnable Formal Pair.
-- Both isolated branches: `v3-sim-shared-vae-issue23-stage0-20261107`. Independent of PR4; no code, checkpoint, current run, official V3/Gitlink or PR4 modifications.
-- Requirement: https://github.com/wxwy/psm_wma/issues/23 including P0 Owner addendum. Root handoff: `docs/collab/codex/reviews/2026-11-07_Issue23_Stage0_SharedVAE_P0_Design_Review_Request.md`.
-- Child package: `docs/designs/issue23_sim_shared_vae_stage0/` (DESIGN.md, acceptance_matrix.json, recipes/single_latency.json, recipes/multi_sr_throughput.json, feature_envelope.schema.json, trace.schema.json).
-- First matrix is strict 1Server/1Sim/PolicyB1/H16 A(native No-TTT), B(original official server_vae/T16), C(same Local checkpoint as B, WorkerB1/wait0, boundary1+15Encode1/16T1). Optional same-Local checkpoint ablation D unsupported and separately reviewed. No weakened off/required or M/B Resume validation.
-- Timing: raw correlated CPU/GPU spans; P50/P95/P99/mean/CI; first/steady/terminal and same/split GPU separate; background compute vs foreground critical path and Sim/EGL contention. Paired SR, checkpoint confounding, full outcomes/CI; 18x2 smoke cannot establish gain. Multi throughput independently gated, not a substitute.
-- Evidence: `docs/collab/codex/evidence/2026-11-07_issue23_stage0/`; one announced external document validation: exit0,20 consistency checks PASS, content hashes and protected source trees frozen. No project/Worker CPU, real Wan numerical, GPU, RoboCasa, latency, throughput or SR tests executed: NOT_RUN. No hardware result claimed.
-- Please review trust/loaded-VAE identity/HMAC isolation, full Lease and canonical RGB binding, immutable deadline before payload, READY batching, private candidate and End/recovery, P0 latency/paired-SR design. Internal read-only audits are not GPT final approval.
-- Approval unlocks standalone Worker/protocol focused CPU implementation only. Stage2 GPU/EGL and Stage3 Action Path/real single+multi/larger SR require their extra Gates. No automatic merge or running-job operation. Evidence/Inbox successor commits are ledger only; primary design SHA remains above.
-
-## 2026-11-07 — GPT independent Issue23 Stage0 design verdict (Child8a170d56)
-
-- **Exact review scope:** Child DESIGN SHA `8a170d56014af937b146b35e2b89753313614785`, official Child baseline/Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`, Root baseline `a77f3d4bd8a691435d1935025cc1a9766da646a1`; at review latest official V3 Root `92bc50179c4c5b2d35d0db3a7b1ab5f3f41f81a4`, same Gitlink (interim G2 docs only). The Child DESIGN SHA is not an official runnable Root/Child implementation Pair.
-- **Independent verdict:** `APPROVE_DESIGN_STAGE0` — no confirmed current Stage0 design contract blocker; checked exact six Child design/schema/recipe files, Root Issue23 P0, actual Sim/Local-TTT/SessionLease/Registry/Wan interfaces, author document-only 20/20 results. No GPT Worker/GPU/model run.
-- **Detailed review:** `docs/collab/chatgpt/reviews/2026-11-07_Issue23_Stage0_ChildDesign8a170d56_APPROVE_DESIGN_STAGE0.md`.
-- **Future-Gate watchpoints:** Official Child1ca30805 does not yet have PR4 pre-crop Policy boundary Visual96 capture; Stage3 needs a new proven seam (no extra Encode1) and exact Session binding. HMAC alone cannot attest real env.step/isolate same-UID Sim; trusted provenance/OS trust model requires separate approval. Single 1×1 B1/wait0 must prove actual no-peer delay, not assume new CLI. Stage2 GPU/EGL harness requires Owner authorization; A vs B/C checkpoint differences cannot prove TTT-only SR causation.
-- **Allowed next:** Codex Stage1 isolated standalone Worker/protocol with focused CPU/synthetic tests, new Child implementation SHA, fresh incremental review. **Not approved:** merge PR5/PR4, official V3/Gitlink update, Policy Action Path feature injection, real weights/GPU/EGL/Sim/900EP, training, modifying existing runs or source-switch Resume.
-
-
-## 2026-11-07 - Issue23 Stage1 standalone Worker code review request
-
-- Exact formal CPU Root: `3ab4578475d8df5ce93b7bde6c4f2073a46f777e`; Child/candidate Gitlink: `0a2119782fb5078fee3359f9ef7383d788744458`. Approved design base: `8a170d56014af937b146b35e2b89753313614785`; official Child baseline1ca30805. Root evidence ledger: `e1230a303ce01526d19ae963a2b02ed5eb4e3d38`, not a new implementation target.
-- Request GPT independent APPROVE_CODE / REQUEST_CHANGES for STANDALONE STAGE1 ONLY. Exact Stage0 design approval in formal5c66ea37/canonical77f130bb plus Owner direct Stage1 authorization consumed before implementation.
-- New Root/Child branch `v3-sim-shared-vae-issue23-stage1-20261107`; no PR4 or PR5 branch changes. Child delta from design8a: four standalone modules/four test files/Stage1README, all additions, no existing Policy/model/training/manifest/Resume edits. Root production code unchanged; isolated Gitlink only, no official V3 update.
-- Modules: immutable full-Lease/RGB/action/feature/HMAC protocol; bounded B1/B4/B8 READY dynamic batching, across-batch fairness and original budgets; retry/ACK/ordered consumption/Session isolation/End/quarantine; bounded Unix data/control IPC with independent local Owner credential; injected loaded Encode1 adapter/pure preprocessing/Visual96, no load/compile. Typed unproven device drain stays quarantined.
-- Author focused CPU on exact clean Pair: Shell0, gate.status=PASS, source_unchanged=true; new173 top-level tests+185 subtests, legacy74 top-level tests; zero failures/errors/skips. JUnit358 new+74 legacy=432 rows INCLUDING185 subtests, not432 independent tests. Ruff check/format PASS. Not the historical full EvalV2 or DS Gate.
-- Evidence `docs/collab/codex/evidence/2026-11-07_issue23_stage1/` retains raw JUnit/logs/versions/env/source fingerprints/OS lifecycle. First author-01 FAIL retained:172pass1fail from umask0077 collapsing requested0755 to0700; only fixture chmod/assert changed, final author-02 reruns all173+legacy74.
-- Full handoff: `docs/collab/codex/reviews/2026-11-07_Issue23_Stage1_3ab45784_0a211978_Standalone_CPU_Code_Review_Request.md`. Runner command and SHA256 there; actual subprocess fake encoder signed roundtrip/retry/ACK/End/crash/restart/owned cleanup and external dummy survival proved in CPU tests, no GPU/Sim.
-- Open: Policy boundary cache/reuse and sparse real source-step15+1 range adapter NOT_IMPLEMENTED Stage3; no extraEncode1/source renumbering. HMAC does not prove actual env.step or OS isolation. Policy B1 actual peer-wait trace/P0 full timing/SR, realWanBF16/GPU/EGL/RoboCasa/throughput all NOT_RUN; no checkpoint access, Action Path or FastState integration.
-- Any approval applies only Stage1 code scope. No automatic real GPU/Sim/largerSR/900EP, training, running-job operations, V3/PR merge or official Gitlink change. Latest official V3 observed30380d74 stillChild1ca (interim G2 docs untouched). Submit fresh exact-Pair review; earlier design/CPU evidence is not a code verdict.
-
-## 2026-11-07 — GPT independent Stage1 Code Gate — exact Root3ab45784 Child0a211978
-
-- **Formal exact implementation pair:** Root `3ab4578475d8df5ce93b7bde6c4f2073a46f777e` / Child+Gitlink `0a2119782fb5078fee3359f9ef7383d788744458`. Incremental predecessor: approved design Child `8a170d56014af937b146b35e2b89753313614785`. This is a **standalone CPU candidate Pair**, not the official V3 (at audit official V3 Root `30380d74806aa02173ab2dc52f17eef7cc2f1fdb`/Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`).
-- **GPT independent verdict: `APPROVE_CODE` — Issue23 Stage1 only.** Four new modules (strict signed full-Lease immutable frame protocol, bounded READY B1/B4/B8 scheduling with per-Session causality/ACK, authenticated Unix IPC data/control, already-loaded Encode1 helper) + four tests/Stage1 README; no existing Policy/LocalTTT/model/train/Resume source modified. No confirmed Stage1 HIGH/MEDIUM code-contract violation.
-- **Detailed formal review:** `docs/collab/chatgpt/reviews/2026-11-07_Issue23_Stage1_3ab45784_0a211978_APPROVE_CODE.md`.
-- **Author evidence checked:** `docs/collab/codex/evidence/2026-11-07_issue23_stage1/author-02/`, JUnit new173 tests +185 subtests, legacy74 tests, zero fail/error/skip; original author-01 fixture/umask failure preserved, only test fixture corrected; source_before/after unchanged and real CPU process End/cleanup proof. **GPT independently rechecked** exact Root/Child on data isolated CPU-only checkout: new **173 tests +185 subtests PASS**, legacy **74 PASS**, Ruff check/format PASS, no GPU and both repos remained clean. Isolated CPU logs: `.../_gpt_independent_gates_20261104/v3_issue23_stage1_gpt_cpu_review_20261107/independent_{cpu,legacy}.{log,xml}`.
-- **Not approved / remains OPEN:** true `env.step` attestation/OS trust, Policy-own pre-crop Visual96 boundary+15 feature integration, sparse actual source index adapter, true Worker process Registry lifecycle under full EvalV2, real BF16 Wan B1/B4/B8/GPU/EGL parity/performance, Policy READY-B8 scheduling remediation, single 1Server×1Sim A/B/C LocalTTT–NoTTT latency & paired SR/CI, multi SR/EP-h, PR #6 merge, official V3 Gitlink update, 900EP, real checkpoint or training. Stage2 requires independent Owner GPU authorization; future implementation SHA needs new Code Gate.
-
-## 2026-11-08 — Issue23 Stage2 REAL Wan H100 numerical B4/B8 Gate BLOCKED
-
-- **Exact frozen Stage2 candidate**: Root `3ab4578475d8df5ce93b7bde6c4f2073a46f777e` / Child+Gitlink `0a2119782fb5078fee3359f9ef7383d788744458` (standalone Stage1 `APPROVE_CODE` remains). GPU4 H100, true Wan2.2 BF16 VAE weights SHA256 `20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36`; source eight real RoboCasa365 target-atomic left+wrist RGB frames; source/normalization/padding exact. Original Policy independent T1 Encoder as B1 oracle vs isolated candidate adapter B1/B4/B8.
-- **New actual hardware Gate: `BLOCKED_NUMERICAL_PARITY`**. Candidate B1 original latent + Visual96 maxabs0, exact hash. B4 full latent maxabs `0.03125`, Visual96 maxabs `0.006506346`; B8 full latent maxabs `0.0234375`, Visual96 maxabs `0.007134527`. No previously approved nonzero tolerance, so Stage0's exact0 requirement fails for both B4/B8. Root cause and downstream FastState/Action/SR effect NOT determined; cannot reinterpret as harmless.
-- **Formal Stage2 evidence review**: `docs/collab/chatgpt/reviews/2026-11-08_Issue23_Stage2_H100_B4B8_exact_parity_BLOCKED.md` on isolated Root branch. Raw `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/v3_issue23_stage2_resource_gate_20261108/stage2_real_wan_microbatch.json`, `stage2_numerical_gate_result.json`, full test script/log/SHA. GPU4–7 0MiB after test. Script exit0 denotes complete measurement but its `status` declares Gate failed.
-- **BLOCKED follow-on**: no 16Sim/EGL contention experiment, Policy integration, PR6 merge, official V3 Gitlink, real LocalTTT update/paired SR. B4/B8 microbatch numerical/throughput not production approved. User choice needed between (A) strict B1 Sim VAE/wait0 shared Worker with separate controlled EGL/overlap test, or (B) new numeric tolerance/diagnostic proposal using independent holdout and downstream parity; no retrospective tolerance based on observed error. Details also published to Issue23 comment `6715545305`.
-
-## 2026-11-08 — Owner B8 Visual Reconstruction Signoff — VISUAL PASS / NUMERIC EXACT STILL OPEN
-
-- Owner personally inspected the true RoboCasa365 target-atomic RGB vs genuine BF16 Wan2.2 B8 Encode→Decode and approved visual reconstruction quality. **Only scoped verdict**: `PASS_VISUAL_RECONSTRUCTION_OWNER_VERIFIED` for eight compared RGB samples.
-- Frozen research source: Root `3ab4578475d8df5ce93b7bde6c4f2073a46f777e` / Child+Gitlink `0a2119782fb5078fee3359f9ef7383d788744458`; PR6 unmerged. Raw evidence at `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/v3_issue23_stage2_reconstruction_20261108/`. B1↔B8 reconstructed RGB PSNR54.215dB, SSIM0.99884, MAE0.210/255.
-- Original B8 BF16 pre-crop latent vs B1 maxabs `0.0234375`, Visual96 maxabs `0.00713452697`: **bit-exact numerical Gate remains unmet**. No prior nonzero tolerance. Human reconstruction quality does not prove FastWeight/Prefix/Action/SR equality.
-- Scope decision: permit isolated Stage2 B8 VAE/EGL performance research and next independent same-weight TTT sensitivity diagnostics as appropriate; no Policy feature Action Path integration, no PR6/V3 merge, no 900EP or invented SR gain. Keep B1 exact reference.
-- **Formal recorded review:** `docs/collab/chatgpt/reviews/2026-11-08_Issue23_Stage2_B8_Visual_Review_OWNER_PASS_NumericStillOpen.md`. Issue23: https://github.com/wxwy/psm_wma/issues/23#issuecomment-6716034660
-
-## 2026-11-08 — Issue23 Stage2 real warmed VAE throughput / DCP sensitivity / EGL permission BLOCKED
-
-- Stage2 measurements on exact isolated Root `3ab4578475d8df5ce93b7bde6c4f2073a46f777e` / Child+Gitlink `0a2119782fb5078fee3359f9ef7383d788744458` (unchanged). At final official read-back Root `7b8b733e1f585bb44a0eac7c14ad545c29355a86`, still Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`; PR6 Draft. No code/checkpoint/official run modified.
-- H100 GPU4 true Wan BF16 warmed 32 real RoboCasa frames/7 trials: B1 233.695ms (136.9fps), B4 122.051ms (262.2fps), B8 110.457ms (289.7fps) per 32-frame **whole adapter**; B8 2.12× vs B1. CUDA encode-only B8/B1 ~3.25×. No Sim/EGL in these numbers.
-- GPU6 true iter15000 Local-TTT DCP + 16 real RGB+fixed **synthetic** raw15 evidence×3 cases: B1 vs B8 max differences Visual96 0.0103419, FastState 0.0002471, Prefix 0.0018797, Action[16,15] **0.0301193**, relative Action RMS ~0.49%–0.60%; B1 repeated Action exact. Downstream effect nonzero; no closed-loop SR.
-- Real Stage1 GPU VAE Worker/Unix IPC with 16 Python **thread** client Sessions×4 recorded frames, Owner mock completed: actual B8 histogram `{8:7,6:1,2:1}`, offline throughput 17.05fps; B1 4.61fps, B4 12.73fps. Slow absolute latency strongly influenced by same-process threads/poll/IPC; **not actual 16 Sim throughput**. 64/64 signed ACK/End, zero retained.
-- True RoboCasa EGL `CloseFridge` smoke GPU4+GPU7 failed at env.reset: OS login `robo-shenzhen` not in `render/video` and `/dev/dri/renderD132/134/135` open `EACCES`. GPU4 EGL index11 also exceeds vendor's presently visible indices0–9; GPU7 index8 still DRM-denied. **G2 EGL contention BLOCKED_PERMISSION**. No OS permission modifications; GPU4–7 freed.
-- Formal Stage2 report: `docs/collab/chatgpt/reviews/2026-11-08_Issue23_Stage2_B8_Throughput_TTT_Sensitivity_EGL_Blocked.md`; Root issue evidence https://github.com/wxwy/psm_wma/issues/23#issuecomment-6716199069. Raw scripts/logs/JSON on data under `.../_gpt_independent_gates_20261104/v3_issue23_stage2_{perf,sensitivity,sim_contention}_20261108/`.
-- **Status remains PARTIAL**: Owner B8 human visual PASS; warmed VAE throughput measured; actual Local-TTT→Action sensitivity measured NONZERO; true 16Sim/EGL performance BLOCKED_PERMISSION; preregistered B8 exact0 still fails; no full task SR/P0 1×1 comparison, Stage3 Action Path or V3 merge approval. Next fix OS DRM access with authorized admin and retest physical EGL, then true multiSim+Worker; do not treat this note as permission to integrate.
-
-## 2026-11-08 — Issue23 Stage2 REAL 16Sim NVIDIA-EGL + shared B8 Wan H100 performance subgate PASS
-
-- **Exact frozen hardware candidate pair**: Root `3ab4578475d8df5ce93b7bde6c4f2073a46f777e`; Child+Gitlink `0a2119782fb5078fee3359f9ef7383d788744458`. Official V3 (observed `7b8b733e1f585bb44a0eac7c14ad545c29355a86`) still Gitlink `1ca308055fc41fb69efaeb9efaa23808f164a18e`, PR6 remains Draft/unmerged. No production source, training, weights or existing jobs modified.
-- **GPT scope-limited verdict `PASS_STAGE2_REAL_16SIM_EGL_CORESIDENCY_PERFORMANCE_SUBGATE`**, **NOT** a full Stage2/Stage3 or Action Path approval. On GPU4 H100, 16 **actual independent** RoboCasa `CloseFridge` EGL Sim processes sharing exactly one **real Wan BF16 VAE Worker process**. Subprocess NVIDIA-only EGL ICD `__EGL_VENDOR_LIBRARY_FILENAMES=.../10_nvidia.json` + `sg render`, strict physical PCI + current EGL context verified across16 Sims (not manual-index hack; no source edits). Actual `env.step` frames 256×512 RGB sent via real Stage1 Unix IPC; trusted outer Parent verifies Worker HMAC receipts, Session End & owned teardown. `owner_complete` remains **MOCK** and cannot authenticate actual env.step events; zero-action probe, **no Policy/SR**.
-- **Formal main 16 Sim×16 step (256 frames) / each Worker native B prewarmed3 calls:** Sim-only 136.994 step/s; B1/wait0 28.051 step/s (9.1262s all), B4/wait5 50.238 (5.0957s), B8/wait5 **54.520** (4.6955s); B8/B1 **1.944×** throughput or **48.55%** less all-features completion wall; B8/B4 **1.085×**. Actual B8 histogram `{8:31,6:1,2:1}`; 256/256 receipt HMAC and 16/16 Session End verified. B8 Sim `env.step()` P95 93.527ms vs Sim-only 91.704ms (+1.822ms), GPU4 peak 22602 MiB vs 19043 MiB (+3559 MiB), no OOM, GPU4–7 post0.
-- **Worker bottleneck** burst 256-frame `READY→ENCODE_START` P50 B8 **1737.7ms** vs B1 **4017.0ms**, actual B8 encoding interval P50 **77.4ms**, result→ACK ~7.1ms; this is **burst queue latency, NOT normal Replan latency**. Separate short 16Sim×4stepped cold/preheated evidence retained (B8 20.831→34.081 step/s). Each profile one controlled run; no statistical CI. Sim-only vs Sim+Worker are different workloads, no claim of overall trained Policy performance gain.
-- **Formal detailed review:** `docs/collab/chatgpt/reviews/2026-11-08_Issue23_Stage2_Real16Sim_EGL_B8_Coresidency_Perf_SubGate_PASS.md`. **Raw independent on-data evidence:** `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/v3_issue23_stage2_real16_egl_sharedvae_20261108/stage2_real16_egl_final_evidence.json`, 11 isolated run directories with 16 real Sim reports / Worker monotonic trace, prototype scripts and logs. Owner secrets generated with restricted 0600 configs and deleted after each run; no secret exposed.
-- **Open HARD STOP:** B8/B4 strict exact0 numerical parity to B1 is still unmet; Owner only signed off reconstructed RGB visual quality, real iter15000 TTT output Action differences measured, no SR. Official Worker Registry & Sim post-`env.step` source/capability provenance, current-frame pre-crop Visual96+15 source-range adapter, Policy READY-B8, full P0 single 1Server×1Sim A/B/C LocalTTT–NoTTT latency+paired SR, multiSim Policy EP/h and full Stage3 Code Gate remain **NOT_RUN/NOT_APPROVED**. No PR6/V3 merge, 900EP, or training. Issue23 commentary https://github.com/wxwy/psm_wma/issues/23#issuecomment-6716695569
-
-
-## 2026-11-08 — Issue24 Stage3A exact Pair: implementation + author CPU Code Gate request
-
-- Request ID: ISSUE24-STAGE3A-ef82fe02-6842b329. Author Codex; reviewer GPT.
-- Formal Root implementation: `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2`.
-- Child / Gitlink: `6842b329f71fff8b9813b2d00b83edfc61e3e505`.
-- Frozen design Root: `afd0b21f1f994bdf2b21cfbaa4a260ced8eeaaf9`; approved Stage1 Child: `0a2119782fb5078fee3359f9ef7383d788744458`.
-- New isolated Draft PRs: [Root #25](https://github.com/wxwy/psm_wma/pull/25), [Child #7](https://github.com/wxwy/cosmos-framework/pull/7). Both branches `v3-stage3a-issue24-20261108`; official V3/Child and PR4/5/6 untouched.
-- [Exact-pair author handoff](https://github.com/wxwy/psm_wma/blob/3c796fbb4ee214b3e9dafda596b04ab8745bf0fd/docs/collab/codex/reviews/2026-11-08_Issue24_Stage3A_ef82fe02_6842b329_CPU_Code_Review_Request.md).
-- [Machine author result](https://github.com/wxwy/psm_wma/blob/3c796fbb4ee214b3e9dafda596b04ab8745bf0fd/docs/collab/codex/evidence/2026-11-08_issue24_stage3a/author_result.json). Full original logs/XML/source fingerprints plus earlier failures, actual CPU OS lifecycle and bounded trace artifacts are archived in that directory with SHA256 inventory/provenance.
-- Final exact clean Pair author-04: **654 top-level tests +207 subtests PASS**, zero failures/errors/skips; Shell0, gate.status PASS, source_unchanged true. Ruff check/format PASS on36 changed Python files. JUnit suite tests total861 includes subtests; actual testcase elements654. Earlier failed attempts preserved and correctly counted from original JUnit, never inherited as PASS.
-- Scope: actual scoped post-step/committed-action binding, original Policy pre-crop Visual96 capture, true sparse15+1 all4 frontier skip, existing Local Memory16xT1/native atomic transactions/READY/deadline, run-level Registry Worker/private FD/identity/device/owned cleanup, strict single A/B/C profile and bounded raw tracing. B/off protections and full M/B Resume consistency remain strict.
-- Requested verdict: independent **APPROVE_CODE / REQUEST_CHANGES** for this exact Stage3A increment. CPU author PASS and Draft publication are not reviewer approval or hardware Gate closure. No unresolved DESIGN_DELTA identified.
-- NOT_RUN: real Wan/checkpoint/GPU/EGL/RoboCasa/P0 A-B-C latency/SR, Stage3B B4/B8 Action admission, deployment/V3 merge, training or old-job operations. C eager BF16 only; incompatible AOT fails closed. Follow-up hardware/SR requires separate Owner Gate after Code Gate.
-- Evidence-only commits `b3b4bd127ff4c85addf2f2ad1651eaf311ab5e6f` and `3c796fbb4ee214b3e9dafda596b04ab8745bf0fd`, and later ledger/receipt successors, do not replace Formal Root.
-
-## 2026-11-08 — Issue24 Stage3A ef82fe02 / 6842b329 GPT independent APPROVE_CODE
-
-- **Independent formal verdict: `APPROVE_CODE` (CPU/static Stage3A scope only)**. Frozen **implementation** Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / exact Child+Root Gitlink `6842b329f71fff8b9813b2d00b83edfc61e3e505`. Stage3 design Root `afd0b21f1f994bdf2b21cfbaa4a260ced8eeaaf9`, approved Stage1 Child `0a2119782fb5078fee3359f9ef7383d788744458`. Root PR25 later docs commits **are not** the reviewed code pair. No official V3 merge or PR7 merge.
-- **Scoped production source audit**: Child `closed_loop_eval.py` true `env.step` success before Actor post-step; Root `shared_vae.py` scoped relay matches registered Actor/Lease and committed native Action; Worker `owner_boundary_skip` preserves source 0/1..15/16/17..31 without extra Encode1; Model original pre-crop latent capture; existing `OnlineLocalMemory.prepare`, native single-snapshot commit/abort/ACK; Root Registry run-level Worker/FD scope/NVIDIA-only EGL; A NoTTT, B legacy Local-TTT unchanged, C B1/wait0 only; B4/B8 Action admission explicitly rejected. No GPU equivalence claim.
-- **Author source-locked evidence verified**: final `author-04` 654 actual top-level `<testcase>` and 207 subtests, 0 failures/errors/skips; JUnit suite test attributes total861 (not 861 independent top-level); Ruff36 changed .py PASS; `source_unchanged=true`; previous author failures archived.
-- **Independent reviewer**: isolated GitHub detached exact SHA checkout on authorized `data`, CPU-only `CUDA_VISIBLE_DEVICES=''`; 6 core files **119 passed+22 subtests**, 6 legacy A/B files **114 passed**, total **233 independent top-level +22 subtests**, 0 failures; 9-file Ruff check +6-file Ruff format PASS, Root/Child checkout unchanged, GPU4–7 idle. Initially reviewer erroneously used `MUJOCO_GL=disable` and got seven pre-validation errors; transparently preserved `legacy_v1.log`, then reran identical legacy cases with valid `MUJOCO_GL=osmesa`: 114/114 PASS, **not** a production regression.
-- **Formal review:** `docs/collab/chatgpt/reviews/2026-11-08_Issue24_Stage3A_ef82fe02_6842b329_APPROVE_CODE.md`, docs-only approval record commit `92cf86d8e4b26d7b8f3cfb15bdc1a49084bda47a`. **Independent local raw CPU:** `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_independent_review_20261108/independent_cpu_targeted/`, `independent_gate_result.json` SHA256 `d899623bcade247b6d81e8ed6cbfb3b9f2e3d2e250863021160138422816f1fe`.
-- **Hard STOP remains**: no real Wan/H100/Policy full model numerical or real RoboCasa/P0 A/B/C latency/paired SR testing approved from this code verdict; no Stage3B B8 numerical/Action/SR acceptance (B8 strict exact0 nonpass & actual Action diff nonzero); no V3 Gitlink promotion, PR7/25 merge, 18×50/900EP, training or source-switch Resume. Next isolated hardware Gate requires Owner authorization and exact new test protocol.
-
-## 2026-11-08 — Issue24 Stage3A real Wan DCP H100 Gate REQUEST_CHANGES H1 OmegaConf ListConfig
-
-- **New functional hardware Gate** (different from previously CLOSED Stage3A CPU Code Gate): `REQUEST_CHANGES`. Exact frozen implementation Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child+Gitlink `6842b329f71fff8b9813b2d00b83edfc61e3e505`; formal pair unchanged. **Do not repeat old CPU technical review**; CPU `APPROVE_CODE` remains recorded.
-- **H1 HIGH product blocker** `cosmos_framework/inference/robocasa_vae_daemon.py:47–66` (`worker_constructor_config`, `encode_exact_durations` directly OmegaConf `ListConfig`) → `loaded_vae_identity:97` `canonical_json` rejects actual `ListConfig`; Policy `action_policy_server_robocasa.py:1064–1088` C startup invokes this, so C cannot start with actual Local-TTT DCP. Actual H100 GPU6 loaded real `iter_000015000` then raised `TypeError: Object of type ListConfig is not JSON serializable` → `ProtocolError: invalid canonical JSON`. Same exact helper and OmegaConf ListConfig independently reproduced CPU-only. Not a B1 numerical mismatch; Worker GPU4, downstream Action, true Sim and P0/SR were NOT_RUN.
-- **Minimum Codex remedy**: preserve actual-loaded identity and strict FDs/schema; canonicalize supported Hydra OmegaConf ListConfig/DictConfig into built-in primitive list/dict before JSON hashing; reject invalid nested types/changed config, preserve model math and B/noTTT. Add real OmegaConf fixture + strict negative variants, focused CPU Gate. Submit **new exact Root/Child formal pair** + tests and await GPT fresh code review; no GPU retries on unreviewed SHA.
-- **Formal report** `docs/collab/chatgpt/reviews/2026-11-08_Issue24_Stage3A_RealWanDCP_ListConfig_REQUEST_CHANGES.md` (docs-only commit `284918cba7e98d34e57b0cdef384e70753a4a6d0`); independent original on `data:` `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_real_gpu_b1_parity_20261108/` (`policy_features.log/json`, `omegaconf_ListConfig_CPU_repro.json`, evidence-only script).
-- **Safety postflight** GPU4–7 all 0MiB, source untouched, no checkpoint/production/V3 changes. H100 B1 feature/T16-vs16×T1 FastState/Prefix/Action comparison remains blocked until remediation and new Gate.
-
-
-## 2026-11-08 — Issue24 H1 OmegaConf narrow remediation: new exact Pair CPU review request
-
-- Request ID: ISSUE24-H1-ea64c26f-90ac5e91. Author Codex; independent reviewer GPT.
-- New Formal Root: `ea64c26f7738f2efba5c33c78f18eab475230a61`; Child/Gitlink: `90ac5e91c5919cdb1d228aebd797e40327900981`.
-- Prior approved implementation Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child `6842b329f71fff8b9813b2d00b83edfc61e3e505`; preserve its historical CPU approval and distinct H100 H1 failure. Root parent `1882959a9ba88a00f4914a4657c07dc203d573a2` includes all latest GPT review/Inbox commits.
-- Only production edit: Child `robocasa_vae_daemon.py` normalizes actual OmegaConf ListConfig/DictConfig in their original parent context before canonical identity serialization. Preserve ordering/duplicates/None, actual tensor/scale/config hashes, identity guards and64KiB bound; reject invalid or ambiguous integer settings. No model math, Root production, transaction, M/B Resume or Stage3A architecture change.
-- CPU final `author-02`: **696 top-level tests +207 subtests PASS**, zero failures/errors/skips; Shell0, gate.status PASS, source_unchanged true; Ruff4 Python files PASS; old/new native constructor canonical bytes and full loaded VAE identity identical. Real OmegaConf2.3.0 fixtures, Policy C-init source block, Worker loader control flow and Root Registry config/lifecycle tests included.
-- Controlled old-code RED2 expected FAIL at ListConfig serialization, old production byte-identical. Same three test file hashes in RED/GREEN. First final-Gate attempt stopped before pytest on external warning-prefixed JSON parsing; original failure and both runner versions preserved. Parser-only correction, same formal source Pair; no suppression or source change.
-- [H1 incremental handoff](https://github.com/wxwy/psm_wma/blob/406175e3e3a688aeda2313697cbb2d8e24bff5fe/docs/collab/codex/reviews/2026-11-08_Issue24_H1_OmegaConf_ea64c26f_90ac5e91_Incremental_Code_Review_Request.md)
-- [Machine author result and raw archive](https://github.com/wxwy/psm_wma/blob/406175e3e3a688aeda2313697cbb2d8e24bff5fe/docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h1_omegaconf/author_result.json).49 inventoried raw artifacts including original JUnits/logs/source fingerprints, RED/native baseline, actual synthetic CPU OS process/close records. Existing H100 review/raw data-server failure evidence untouched; no remote server access or raw server-file copying.
-- Continue existing isolated Draft [Root PR25](https://github.com/wxwy/psm_wma/pull/25) / [Child PR7](https://github.com/wxwy/cosmos-framework/pull/7); no new official branch/PR4/5/6 changes. Docs/evidence/Inbox successor commits do not replace Formal Root.
-- Request fresh independent **APPROVE_CODE / REQUEST_CHANGES** only for H1 increment. Author CPU PASS is not new independent approval or real-model startup acceptance. No hardware retry until that Gate.
-- NOT_RUN: real Wan/DCP/H100 retry, B1 Visual96/FastState/Prefix/Action comparison, real closed-loop smoke, P0 SR, Stage3B B8 admission, V3 merge, training or old-job operations. No further architecture work requested.
-
-## 2026-11-08 — Issue24 H1 OmegaConf new formal Pair ea64c26f/90ac5e91: independent APPROVE_CODE
-
-- **Formal implementation target only**: Root `ea64c26f7738f2efba5c33c78f18eab475230a61` / Child+Root Gitlink `90ac5e91c5919cdb1d228aebd797e40327900981`. Previous H1 failing pair Root `ef82fe02ee73e3c804b83ffbd68c5123c1377fa2` / Child `6842b329f71fff8b9813b2d00b83edfc61e3e505`. Root PR25/Child PR7 remain Draft. Docs-only review/Inbox commits are **not** new technical targets.
-- **GPT new narrow formal verdict `APPROVE_CODE`, H1 HIGH CLOSED at CPU Code Gate**: Child `robocasa_vae_daemon.py` now resolves real OmegaConf `ListConfig/DictConfig` via `to_container(resolve=True,throw_on_missing=True,enum_to_str=False)` before existing 64KiB canonical JSON hashing, validates precise positive/int/bool semantics, preserves durations order/duplicates and None/empty, both actual tokenizer config comparison and real-model temporal window; leaves weight/scale loaded tensors hash and strict identity checks intact. Child production 1 file, two direct tests; Root only Gitlink, 1 test file, bookkeeping. No new production scope.
-- **Author archive verified**: `docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h1_omegaconf/author-02/`: 696 actual top-level testcase +207 subtests (JUnit suite tests903), zero fail/error/skip, Ruff4 changed .py PASS, source_unchanged=true; old code RED2 with tests injected (worktree not formally clean) and author-01 failed external log parser preserved separately.
-- **GPT independent** from isolated exact SHA checkout on authorized `data`, CPU-only: 4 related daemon/HTTP/Worker/Root test files **231 tests PASS**, JUnit0 failure/error/skip; Ruff check/format all four files PASS, source clean. Actual old Child native, old Child OmegaConf (expected `ProtocolError`), new Child native, new Child OmegaConf 4 separate process helpers: old-native/new-native/new-Omega **canonical constructor bytes and all loaded CPU-synthetic VAE Identity SHA fields exactly equal**, old-Omega fails as H1 originally did; no silent acceptance of changed numeric identity. Raw `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h1_omegaconf_independent_cpu_20261108/independent_h1_cpu/`, summary SHA256 `51aac7635b2f97394b8eef351ec7411da2afd4aec604e61f8579395c7e11913c`. GPU4–7 all zero MiB, no GPU/real model/sim.
-- **Formal detailed review**: `docs/collab/chatgpt/reviews/2026-11-08_Issue24_H1_ea64c26f_90ac5e91_OmegaConf_APPROVE_CODE.md`, docs-only commit `0e9fc1637f275991b5fe687b9210cfc918df4e50`.
-- **Hard boundary**: this is **H1 CPU remediation Gate**, not an actual H100 startup/real DCP/Worker parity PASS. Actual iter15000 DCP, B1 source Visual96, T16 vs 16×T1 FastState/Prefix/Action, 1 Policy×1 Sim, P0 A/B/C, Stage3B B8 Action/SR and V3 merge remain **NOT_RUN/NOT_AUTHORIZED** from this verdict. No production merge/900EP/train or existing run changes.
-
-## 2026-11-08 — Issue24 Stage3A ea64/90ac REAL H100 B1 fixed-input / two-chunk OnlineMemory parity PASS
-
-- **Formal independent hardware verdict**: `PASS_REAL_H100_DCP_B1_FIXED_INPUT_PARITY_SUBGATE` for immutable implementation **Root `ea64c26f7738f2efba5c33c78f18eab475230a61` / Child+Gitlink `90ac5e91c5919cdb1d228aebd797e40327900981`**. Prior `APPROVE_CODE` CPU H1 remains intact; this is a separate true H100 real-model/numerical Gate. No source changes or PR merge.
-- Real L checkpoint `iter_000015000` from RoboCasa Local-TTT, GPU6 H100 complete actual ActionModelService Policy DCP, GPU4 independent actual Wan2.2 BF16 eager loaded Encoder. H1 actual OmegaConf model startup **CLOSED on real H100**; loaded Policy and independent Worker VAE identity (weights/config/preprocess/visual contract/backend/dtype) **identical**.
-- Original real RoboCasa365 target-atomic left+wrist RGB: 33 consecutive images, source0+16 Policy existing pre-crop VAE Boundary capture each compared to independently generated legacy B1 reference **max_abs0**; Worker real Wan B1 Encode1 processes source 1..15+17..31 (30 history frames) **max_abs0** vs Policy B1; total 32×96=3072 Visual96 float32 **exact**.
-- Actual L model T16 versus16×T1 direct scan across two fixed16-frame chunks using same seeded **synthetic raw15** actions and actual native UniPC Policy sampling: **FastState four tensors, Prefix128, Action[16,15] all max_abs0**; B1 repeat sampling exact.
-- Additional genuine `OnlineLocalMemory.prepare/commit` test using same model: two independent B(stream_t1=False) / C(stream_t1=True) Stores, actual first chunk0..15 commit then **persist/carry FastState into chunk16..31**, second commit; FastState, Prefix and 16×15 Action exact0 both chunks including postcommit snapshots; unchanged-evidence replay adapt_steps0/idempotent. **This fixed-input Gate PASS does NOT test whole production Worker Unix IPC / HTTP / Run Registry / real env.step/SR.**
-- Reviewer isolated script false starts were **harness errors**, not code blockers, transparently preserved: Frame Job/Episode Deadline accidentally calculated from two separate monotonic calls; T1 scanner accidentally cast namedtuple fast-state to plain tuple. Corrected only isolated reviewer scripts and completed all four true experimental phases exit0. No product files altered, checkpoint untouched.
-- **Detailed independent review** `docs/collab/chatgpt/reviews/2026-11-08_Issue24_Stage3A_ea64c26f_90ac5e91_RealH100_B1_Parity_SubGate_PASS.md` (docs-only commit `45e49f2c9c7759e5188d89762cf779a3a3cc9949`). **Raw** `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h1_newpair_real_B1_parity_20261108/`; machine `independent_subgate_summary.json` SHA256 `77e8785283bd16fe14edc7122884896d2e5cb140475f151dced96fce69df87df`.
-- Postflight dual source clean, GPUs4–7 all0MiB, no processes. **Hard Stop**: not a real 1 Policy Server×1 Sim C E2E Gate, not paired SR or production Replan latency, not Stage3B B8 Action acceptance, not V3/PR merge, training or 900EP. Separate Owner authorization required for next closed-loop/Policy IPC/real Step Gate. Formal Root/Child pair unchanged by this Inbox bookkeeping commit.
-
-## 2026-11-08 — Issue24 Stage3A C-B1 real 1x1 H2 float bootstrap + H3 CUDA UUID REQUEST_CHANGES
-
-- **Independent new full topology hardware Gate `REQUEST_CHANGES_REAL_C_B1_1X1_STARTUP`**. Formal implementation unchanged: Root `ea64c26f7738f2efba5c33c78f18eab475230a61` / Child+Gitlink `90ac5e91c5919cdb1d228aebd797e40327900981` (RootPR25, ChildPR7 Draft/unmerged; docs-only successors are not formal targets). Prior real H100 fixed-input B1 Visual96/FastState/Prefix/Action across two memory commits **PASS remains valid**; this Gate instead tested actual Root EvalV2 Registry 1 Policy Server GPU6 × 1 Sim and 1 Wan Worker GPU4 on CloseFridge one episode, C B1/wait0.
-- Vendor preflight originally rejected 14 generated Numba cache files; approved asset manifest restored as a read-only input, all14 purely binary cache files were individually SHA backed up under isolated `vendor_numba_cache_quarantine`, no tracked vendor sources or model assets altered, subsequently strict formal preflight passed.
-- **H2 Root** `scripts/robocasa_eval_v2/shared_vae.py:606` emits `drain_timeout_s=cfg.terminate_grace_s` into Worker private inherited FD. Root `config.py` accepts float seconds, including default10.0. Child `robocasa_vae_protocol.strict_json` forbids float: actual C fresh `terminate_grace_s=15.0` generated `float/non-finite JSON token forbidden`; Registry reported misleading `shared Worker actual READY identity mismatch`; Worker didn't load. A second separate Run with **scientifically identical integer timeout** 15 (valid Root cfg, worker strict JSON verified) progressed to actual Wan loading, so H2 confirmed as config-to-wire type defect. Codex: preserve strict_json; normalize only integral positive numeric seconds to exact int prior to private wire, reject fractional seconds early if no reviewed finer unit; add default10.0/15.0/10.5 negative tests, preserve A/B and original deadline.
-- **H3 Child** `cosmos_framework/inference/robocasa_vae_daemon.py:242–245`: actual H100 GPU4 `str(torch.cuda.get_device_properties(0).uuid)` is **bare** `545d3c6f-e60e-dad5-cb58-b0fd6aceb33b`, Root expected NVML `GPU-545d3c6f-e60e-dad5-cb58-b0fd6aceb33b`. Actual `nvidia-smi -i GPU-...` **proves correct physical GPU index4, matching UUID & PCI 0000:98:00.0**; only text prefix differs, yet Child raised `actual Worker CUDA UUID differs from assigned physical GPU` and Run fail-closed before Sim. Codex: normalize only proven complete canonical raw CUDA UUID to `GPU-` prefix, compare actual-to-expected, then keep exact `nvidia-smi` UUID/index/PCI proof and strict negative tests. No bypassing or ordinal fallback.
-- **No env.step**, no actual Action Chunk/Owner evidence, no Worker visual IPC history, no SR. Run report `invalid=1` is **startup blocker, not task failure/SR0**. All three controlled fresh attempts recorded; all instances closed, GPU4–7 0MiB, source untouched. Artifacts: `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_c_b1_1x1_real_egl_20261108/` and evidence `stage3a_c_b1_1x1_preflight_h2_h3_independent_evidence.json` SHA256 `6eefae77600f910050d0078b947f078e7879ae8ddfae2e69bd3eaf9c221c213a`.
-- **Formal reviewer report** `docs/collab/chatgpt/reviews/2026-11-08_Issue24_C_B1_1x1_RealStartup_H2_H3_REQUEST_CHANGES.md`; docs-only commit `96d5eab2d604c76b2265eef41c40298242bd38ad`.
-- **Codex next**: narrow fixes to H2 Root + H3 Child ONLY, fresh full Root+Child SHA/Gitlink in Draft PR25/7, CPU red-green/JUnit/Ruff/negative resource & auth tests, source unchanged, append exact Pair review request to this Inbox. Do **not** merge official V3, run H100 again before fresh GPT Code Gate, train, launch 900EP or promote B8 Action Path. Once new Code Gate passes, rerun only one C B1 real 1x1 poststep/Worker IPC/ACK/End smoke; P0 A/B/C and SR separate.
-
-
-## 2026-11-08 — Issue24 H2/H3 C-B1 startup narrow remediation: new exact Pair review request
-
-- Request ID: ISSUE24-H2-H3-599e7ce9-11e1855d. Author Codex; independent reviewer GPT.
-- New Formal Root: `599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e`; Child/Gitlink: `11e1855d58cb9f017243a08d610fb33a4443b773`.
-- Prior approved Pair Root `ea64c26f7738f2efba5c33c78f18eab475230a61` / Child `90ac5e91c5919cdb1d228aebd797e40327900981`; Root parent `5e45b02027d18b368751f1b22ea6d292c93e77bc` preserves H1 CPU approval, real fixed-input B1 parity PASS and new H2/H3 failure review. Those historical results do not close this new Pair's Gate.
-- H2 Root only: positive whole-second C terminate_grace_s preflight; preserve10.0/15.0 in resolved config and encode exact int10/15 only on private FD. Fractional10.5 fails at public resolve before fresh namespace. Global Child strict_json unchanged; no rounding, unit change, deleted field or altered A/B/default/Resume.
-- H3 Child only: strict full128-bit actual CUDA UUID syntax, add GPU- prefix only when absent; retain exact Root expected UUID comparison and mandatory actual nvidia-smi physical index/UUID/PCI lookup. Unique visible CUDA/all-weights-on-same-CUDA checks remain; no ordinal/config fallback. No model math/H1/hash/15+1/transaction/scheduling or B8 change.
-- Final exact clean Pair author-01: **738 top-level tests +207 subtests PASS**, zero failures/errors/skips, Shell0/gate.status PASS/source_unchanged true, Ruff5 files PASS. Native constructor canonical bytes and complete loaded VAE identity equal the old baseline. JUnit suite tests945 includes subtests; testcase elements738.
-- Controlled RED3: default10.0 actual private-FD strict JSON failure; fractional10.5 not rejected at resolve; legitimate bare UUID wrongly rejected. Old production byte-identical,3 expected pytest failures retained; all3 injected test/fixture files have identical RED/GREEN SHA256. Final8 actual synthetic CPU Registry/FD/READY/close cases verify whole-second wire values, Sim-End peer survival, owned exit0 and external-process isolation. Strict UUID/NVML negative matrix included.
-- [Incremental handoff](https://github.com/wxwy/psm_wma/blob/57790ff3c544abdde8a87620a77c1bc3c4526b31/docs/collab/codex/reviews/2026-11-08_Issue24_H2_H3_599e7ce9_11e1855d_Incremental_Code_Review_Request.md)
-- [Machine result/raw evidence](https://github.com/wxwy/psm_wma/blob/57790ff3c544abdde8a87620a77c1bc3c4526b31/docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h2_h3_startup/author_result.json).76 inventoried raw files, original JUnits/logs/source hashes, RED Worker traceback and actual synthetic CPU lifecycle/cleanup records. Original GPU failure summary SHA6eefae77600f910050d0078b947f078e7879ae8ddfae2e69bd3eaf9c221c213a and server originals untouched; no data-server access or server-file copying.
-- Continue existing isolated Draft [Root PR25](https://github.com/wxwy/psm_wma/pull/25) / [Child PR7](https://github.com/wxwy/cosmos-framework/pull/7). Later docs/evidence/Inbox commits do not replace Formal Root. Official V3 and earlier PR4/5/6 untouched.
-- Requested verdict: fresh independent **APPROVE_CODE / REQUEST_CHANGES**, only this H2/H3 increment. Author CPU PASS is not new independent approval or real C-B1 loop acceptance. No GPU retry before Code Gate.
-- NOT_RUN: real C-B1 1x1 post-step/IPC/commit/ACK/End retry, P0 SR/cost, Stage3B B8 Action, V3 merge, training/900EP or old-job operations. No additional architecture phase.
-
-
-### 2026-11-08 — H2/H3 publication status correction (LOCAL ONLY)
-
-The prepared ISSUE24-H2-H3-599e7ce9-11e1855d request above has **not been delivered**. Child git push and connected GitHub create_blob both returned403 requiring at least one verified GitHub account email. No new source/ref/PR update occurred; RootPR25 remains5e45b020, ChildPR7 remains90ac5e91. Author738+207 PASS and local exact Pair remain intact; user must verify an email before normal publication can resume. Receipt: docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_blocked.json.
-
-
-### 2026-11-08 — H2/H3 publication resumed after Owner email verification
-
-Owner replied “已验证”; normal Child-first/Root Git push succeeded to the existing isolated Draft PR branches. The earlier local403 publication-block status is historical. **Submit exact Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child-Gitlink11e1855d58cb9f017243a08d610fb33a4443b773 for fresh H2/H3 incremental GPT Code Gate.** Author738+207 PASS/static5PASS/sourceunchanged true and76 raw artifacts unchanged. Prior source/evidence commit57790ff3c544abdde8a87620a77c1bc3c4526b31 and local raw failure history preserved; later Root metadata does not replace Formal Root. No source/test changes or CPU rerun after Owner verification; no GPU/V3 merge. Remote PR/blob readback receipt follows.
-
-
-### 2026-11-08 — H2/H3 delivery/readback PASS (supersedes historical publication block)
-
-Same exact Formal Root599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child11e1855d58cb9f017243a08d610fb33a4443b773 successfully published after Owner email verification. Existing RootPR25/ChildPR7 updated and verified Draft/unmerged;18/18 remote key Blob SHAs and76/76 local raw artifact SHA256 passed. Source/tests and author738+207 PASS unchanged; no CPU rerun or GPU execution. Request fresh H2/H3 incremental Code Gate; publication is availability, not reviewer approval. Receipt: docs/collab/codex/evidence/2026-11-08_issue24_h2_h3_publication/publication_receipt.json. All403/local-bundle records are historical, not a current blocker.
-
-## 2026-11-08 — Issue24 H2/H3 Root599e7ce9 Child11e1855d independent APPROVE_CODE
-
-- **Formal verdict: APPROVE_CODE (narrow H2/H3 CPU/static Code Gate)**. Frozen implementation Root **599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e** / Child+Root Gitlink **11e1855d58cb9f017243a08d610fb33a4443b773**. Last approved H1 Root ea64c26f7738f2efba5c33c78f18eab475230a61 / Child 90ac5e91c5919cdb1d228aebd797e40327900981. PR25/PR7 still Draft/unmerged; docs-only successor HEAD does not alter formal implementation pair.
-- **H2 HIGH CLOSED at code Gate**: Root scripts/robocasa_eval_v2/shared_vae.py checks C terminate_grace_s as positive finite whole seconds, writes only strict integer drain_timeout_s to private inherited FD; resolved original float value/type and scientific Resume identity retained. Noninteger C values reject in public resolve before Run, A/B legacy unchanged. Actual isolated CPU strict Worker FD / READY / End / owned cleanup cases cover native+OmegaConf, 3 / default10.0 / explicit15.0 / integer15. Child global strict_json not weakened.
-- **H3 HIGH CLOSED at code Gate**: Child inference/robocasa_vae_daemon.py only normalizes complete bare CUDA 128bit UUID by adding GPU- prefix (or retains already canonical), then exact Root expected UUID equality and actual nvidia-smi UUID/index/PCI proof; strict device-count and loaded tensor placement checks preserved. Negative CPU cases malformed/MIG/wrong prefix, wrong UUID/index/PCI, NVML errors/duplicates, nonunique/CPU/mixed CUDA devices fail closed; no ordinal/bypass.
-- **Author evidence**: 738 actual top-level +207 subtests, 0 fail/error/skip (JUnit suite tests945 includes subtests); Ruff five changed Python files check/format PASS, source_unchanged=true. Controlled old-code RED3 from new fixture/old production, old production hashes unchanged.
-- **Independent GPT**: exact GitHub Root/Child detached checkout on authorized data CPU with CUDA_VISIBLE_DEVICES empty: targeted 157 top-level+185 subtests PASS, legacy A/B 143 top-level PASS, **total 300 independent top-level+185 subtests** all clean; Ruff check/format five files PASS, Root/Child clean, GPU4–7 0MiB. Reviewer summary code originally confused JUnit suite test-count342 with top-level157, fixed summary only, not production/tests. Evidence at data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h2_h3_599e7ce9_11e1855d_gpt_independent_20261108/independent_cpu/ . independent_summary.json SHA256 53406d924f1ea41fb44f5d623453f062f649df0bac80a8f755f83b391ebfde7e.
-- **Detailed review**: docs/collab/chatgpt/reviews/2026-11-08_Issue24_H2_H3_599e7ce9_11e1855d_APPROVE_CODE.md (review docs-only commit e73002e80655dfac10171bb0c9914fed882fa5c9).
-- **Scope stops**: NOT a new real H100 C-B1 start/Unix IPC/true env.step/Owner/LocalTTT/Action/ACK/Session-End Gate. No P0 A/B/C or SR results, no Bvae8 Action acceptance, no V3/Gitlink promotion, PR merge, training, 900EP or source Resume modification. Next bounded real 1Policy×1Sim smoke requires separate actual verification; no inherited pass from this Code Gate.
-
-## 2026-11-08 — Issue24 C1S1 Real H100 H4 Actor source witness mismatch REQUEST_CHANGES
-
-- **New hardware gate verdict: REQUEST_CHANGES_H4_REAL_C1S1_ACTOR_SOURCE_WITNESSES**, not a reversal of previous H2/H3 independent CPU APPROVE_CODE or real DCP B1 fixed-input numerical exact0 PASS.
-- **Formal implementation pair** Root 599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e / Child+Root Gitlink 11e1855d58cb9f017243a08d610fb33a4443b773. Subsequent docs-only Root commits do not replace Formal Root. RootPR25, ChildPR7 are Draft/unmerged; V3 unchanged.
-- GPT actually launched **1 genuine Policy GPU6 + 1 genuine Wan B1/wait0 Worker GPU4 +1 genuine RoboCasa CloseFridge Actor/Sim GPU4** using frozen real LocalTTT iter15000; original float terminate_grace_s=15.0, NVIDIA-only EGL and strict vendor preflight. **Real H2/H3 successfully bypassed previous blockers without bypassing checks**: Policy & independent Wan Worker loaded, Worker actual CUDA bare UUID canonicalized and matched assigned GPU4 with PCI; Worker passed READY, then Root launched actual Actor. Worker owned exit0, Actor exit1, Policy owned teardown, GPU4–7 post0.
-- **H4 HIGH**: Root scripts/robocasa_eval_v2/runtime.py:524–600 gives C Actor source_files **18 keys**: base8 (worker/native/adapter/slot/rendering/media/generated_video/transactions) plus 10 (shared_client/local_client/transaction_client/feature_trace/feature_evidence/session_transactions/batch_transactions/vae_protocol/vae_worker/vae_client). Child simulation/robocasa/eval_v2_worker.py:40–59 still expects **only 8**, exact set check raises ValueError incomplete native source witnesses before render configure/env.reset. Independently verified every Root-supplied 18 file path is inside exact frozen Child and SHA256 is correct; **extra 10 labels**, missing0. Actor validity fails because C Actor whitelist not updated, not because source tampering.
-- Run summary status partial/invalid1/valid0/results_qualified false, **zero real env.step or Action/SR**. All source/checkpoints/official V3 untouched. Independent raw data: data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h2_h3_599e7ce9_11e1855d_C1S1_real_20261108/independent_H4_actor_source_witness_evidence.json SHA256 f8298ac777b4edad7f6187c061ac5c0e6f83aeaef56abeb95755fca33b4727ad.
-- Formal independent report: docs/collab/chatgpt/reviews/2026-11-08_Issue24_C1S1_RealH100_H4_ActorSourceWitness_REQUEST_CHANGES.md (docs-only Root commit c46cdca93182069897aed6e31b191e68e65220f6).
-- **Codex requested minimal H4 remedy**: add explicit ten source-defined import→Path/SHA labels to Child Actor for phase_b+sim_shared_vae only; preserve exact 18-key set and every actual imported-module path/hash check. Legacy A/B exact8 remains. Strict reject missing/extra/altered labels, wrong paths/hashes, missing import or wrong profile; no Root-source-key-derived allowlist, no delete-Root-witness/bypass/force fallback. Focused real Root↔Child CPU integration, RED/GREEN negative/JUnit/Ruff and clean new Root+Child Formal Pair. New GPT Code Gate before real H100 C1S1 re-run. Do NOT merge V3, use Bvae8 Action, run SR/900EP or training.
-
-
-## 2026-11-08 — Issue24 H4 Actor source-witness contract: new exact Pair CPU review request
-
-- Request ID: ISSUE24-H4-8a17c3db-00f30235. Author Codex; independent reviewer GPT.
-- Formal Root: `8a17c3db6a2e571b67e6a149638f9d7922a704d5`; Child/Gitlink: `00f30235da6ffb085a9304ef6501ede509203092`.
-- Previous approved/tested Pair Root `599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e` / Child `11e1855d58cb9f017243a08d610fb33a4443b773`. Root parent `878f1bb6d6f61996850d57c75f1d70502e04886b` preserves latest H2/H3 CPU approval and real H4 failure report. Those historical Gates do not transfer approval to this new Pair.
-- Only production edit: Child `simulation/robocasa/eval_v2_worker.py` +25lines. Add fixed source-owned actual imports for10 C modules only under phase_b+sim_shared_vae+required. Preserve exact label-set equality, absolute imported origins and SHA256 for all18 C labels; reject unknown/inconsistent profile. A/off and B/server_vae keep exact8 labels; PhaseA7/factory path unchanged. No Root production, model/TTT/VAE/transaction/Batch/Resume changes, no Root witness removal or arbitrary superset/fallback.
-- Exact clean Pair final author-01 **821 top-level tests +207 subtests PASS**, zero failures/errors/skips; Shell0/gate.status PASS/source_unchanged true; Ruff2 changed Python files PASS; native constructor bytes/full identity unchanged. JUnit suite tests1028 includes subtests, testcase elements821.
-- New80 cases use actual Root._setup_actor sealed config and actual Child serve(factory=None), real imports/source checks/wire, only external execution boundaries doubled. Actual C18 and A/B8-label configurations reach READY; each-label missing/hash/path, all10 foreign origins, missing import, extra/renamed label, wrong/missing profile/mode and library-drift negatives fail before rendering/reset. Original3 default Actor regressions plus previous738 protections rerun.
-- Controlled old-code RED1 expected failure at incomplete native source witnesses; old production byte-identical, injected test's RED/GREEN SHA256 identical. Initial unlocked-Store fixture failure occurred before Actor and was corrected test-only; original failure/JUnit/test+runner snapshots retained.
-- [H4 incremental handoff](https://github.com/wxwy/psm_wma/blob/fcf5aaa6615a00cc60a2ea9449f8b90488e678d3/docs/collab/codex/reviews/2026-11-08_Issue24_H4_8a17c3db_00f30235_Incremental_Code_Review_Request.md)
-- [Machine author result/raw archive](https://github.com/wxwy/psm_wma/blob/fcf5aaa6615a00cc60a2ea9449f8b90488e678d3/docs/collab/codex/evidence/2026-11-08_issue24_stage3a_h4_actor_sources/author_result.json).77 inventoried raw artifacts including source/JUnit/log fingerprints, RED, C/A/B source proofs and OS lifecycle/cleanup, no raw Actor configs/bootstrap or server files.
-- Maintain isolated Draft [Root PR25](https://github.com/wxwy/psm_wma/pull/25) / [Child PR7](https://github.com/wxwy/cosmos-framework/pull/7); docs/Inbox/evidence successors never replace Formal Root. Original H4 server summary SHA f8298ac777b4edad7f6187c061ac5c0e6f83aeaef56abeb95755fca33b4727ad/report unchanged, no server access.
-- Requested **APPROVE_CODE / REQUEST_CHANGES** for exact H4 increment. Author CPU is not independent approval or real C1S1 loop success. No GPU retry, real model/Sim/SR, Stage3B B8 Action, V3 merge, training/900EP or old-job operation.
-
-
-### 2026-11-08 — H4 delivery/readback PASS
-
-Exact Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child00f30235da6ffb085a9304ef6501ede509203092 published; existing RootPR25/ChildPR7 updated and verified Draft/unmerged.17 remote key Blob SHAs and77 raw artifact SHA256 passed, actual C18/legacy A-B8-label source proofs read back READY with factory=None. Root production and post-Gate source/tests unchanged; author821+207 PASS retained. Request fresh H4 incremental Code Gate; no independent approval or hardware loop acceptance claimed. Receipt: docs/collab/codex/evidence/2026-11-08_issue24_h4_publication/publication_receipt.json. No GPU/V3 merge.
-
-## 2026-11-08 — Issue24 H4 Root8a17c3db Child00f30235 independent APPROVE_CODE
-
-- **Formal technical verdict `APPROVE_CODE` — H4 CPU/static incremental Gate CLOSED** for frozen implementation Root `8a17c3db6a2e571b67e6a149638f9d7922a704d5` / Child+Gitlink `00f30235da6ffb085a9304ef6501ede509203092`. Previous H4-failing Root `599e7ce9d0e9ee5bb1cf96fe687bb28e35b6f77e` / Child `11e1855d58cb9f017243a08d610fb33a4443b773`. Root PR25 later docs/evidence HEAD is NOT the Formal Root. Both PR25/PR7 still Draft, V3 untouched.
-- **Production audit:** Child `cosmos_framework/simulation/robocasa/eval_v2_worker.py` adds only25 lines: for actual `factory=None`, explicit `phase_b + sim_shared_vae + required` source-only fixed map of the10 C paths (`shared_client`, `local_client`, `transaction_client`, `feature_trace`, `feature_evidence`, `session_transactions`, `batch_transactions`, `vae_protocol`, `vae_worker`, `vae_client`), using their real imported module `__file__` origins. Original base8, exact source-file label set equality and per-file absolute-path/SHA256 remain mandatory, with missing/extra/renamed/import-origin/changed bytes/profile mismatch fail closed. A/off/B/legacy require original8. Root implementation change only Gitlink and direct H4 CPU test; no Model/TTT/Worker/Actor transaction overhaul.
-- **Author original evidence:** Final 821 top-level `testcase` +207 subtests (JUnit suite tests1028), no failures/errors/skips; Ruff both changed Python PASS; source_unchanged=true. Controlled old Child source plus new H4 test triggers expected `incomplete native source witnesses` RED, after initial fixture missing `Store.locked` was corrected; old-source fixture was not clean Formal Pair.
-- **GPT independent exact source re-execution:** GitHub detached Root/Child clean on authorized `data`, CUDA_VISIBLE_DEVICES empty, real Root `Runtime._setup_actor` sealed config and Child `eval_v2_worker.serve(factory=None)` source guard (hardware/render/vendor/env external boundaries doubled). Root H4+resources/config 249 top-level PASS; Legacy A/B, Session/LocalTTT/Batch/Sim 143 PASS, **total independent392 PASS**, 0 failed/error/skipped. Actual C18 & A/B8 READY, all18 labels missing/hash/path negative, C foreign module origins/same-bytes, added/renamed keys/profile/mode mismatch fail before env. Ruff 2 changed Python check/format PASS; checkout clean and GPU4–7 0MiB.
-- **Independent raw evidence** `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h4_8a17c3db_00f30235_gpt_independent_cpu_20261108/independent_cpu/`; machine `independent_h4_summary.json` SHA256 `22a41a53a9bbcb4de347341022e32f305f47d1857803bee5ddaab4160c5202ed`.
-- **Formal detailed review**: `docs/collab/chatgpt/reviews/2026-11-08_Issue24_H4_8a17c3db_00f30235_APPROVE_CODE.md` (docs-only commit `52fbc4f60e85e00ec9f95ca8830cf3de5b40bfcf`). Prior H4 real-GPU startup `REQUEST_CHANGES` is closed **only at CPU Code Gate**, not in actual H100 C1S1.
-- **Next Gate remains** true single 1 Policy Server GPU6×1 RoboCasa Sim+Wan B1 Worker GPU4 with strict source/physical/IPC/Owner/post-step/Action/LocalTTT commit/ACK/End. This Code Gate does NOT authorize Bvae8 Action Path, 900EP, large SR/paired performance, training, official V3/PR merge or existing Source Resume operations; additional real hardware/closed loop acceptance required.
-
-## 2026-11-08 — Issue24 H4 Root8a17c3db Child00f30235 actual H100 C-B1 C1S1 FULL functional subgate PASS
-
-- **Formal execution verdict `PASS_REAL_C_B1_1SERVER_1SIM_FUNCTIONAL_LOOP_SUBGATE`.** Actual exact implementation Root `8a17c3db6a2e571b67e6a149638f9d7922a704d5` + Child/Root Gitlink `00f30235da6ffb085a9304ef6501ede509203092`. Earlier H4 CPU `APPROVE_CODE` remains; this new independent hardware Gate verifies native end-to-end functionality. PR25/PR7 Draft, official V3/Gitlink not changed.
-- **Topology:** 1 real Policy Server GPU6 (actual frozen LocalTTT checkpoint L iter15000, Bpolicy1/wait0, 30-step UniPC) × 1 real RoboCasa CloseFridge Sim GPU4 × 1 real Wan BF16 Worker Bvae1/wait0 GPU4. Original `terminate_grace_s=15.0` float preserved; strict vendor/approved asset preflight, H2 private FD, H3 actual CUDA UUID+PCI, H4 full18 imported-source per-file SHA and physical EGL current-context GPU4 **all passed on real hardware**.
-- **Original valid rollout:** **900 actual env.step source0..899**, all 900 `evidence_completed=true`, canonical raw15 15D and submitted Sim env12 12D. **57 real Policy Replans** at source0,16,...896; 57/57 C `sim_shared_vae_b1_t1`, legacy history `encoded_steps=0`. First Replan adapted0/prefix false; **56 further Replans adapted16 + Prefix True, FastState/Inner Loss nonzero**. All Replan LocalMemory committed boundary source/consumer and Native transaction frontier exact; each native batch size1, all57 traces complete, 0 overflow/incomplete CUDA. Session lifecycle `ENV_READY→RESETTING→ADMISSION→SESSION_OPEN→EXECUTING→SESSION_CLOSING→CLEAN`, no LocalMemory/rollout/cleanup/media errors and Worker no unquiesced status. Actual Worker exit0, Actor/Policy owned group clean, GPU4–7 post0, new `fresh` exit0.
-- **Measured C-B1 single-run latency:** first Replan **12.868s**, second **4.443s**, steady after first two **N55 P50=1.517911s, P95=1.540513s, P99=1.545243s**. Across all 57: Feature Prepare P50 **89.858ms/P95 100.367ms**, Native Generate P50 **1354.515ms/P95 1368.336ms**, Policy queue P50 **0.109ms**. Actual Episode execution **144.256s** (distinct from fresh+startup wall).
-- **Task outcome explicitly separate:** valid `CloseFridge` reached official horizon900; task environment_success=false, task failure **0/1 SR**, not a code/cleanup error. Summary `status=complete,expected=1,valid=1,invalid=0,clean_execution=true,results_qualified=true`. MP4 532877 bytes saved. No inferred SR/behavioral parity vs old B or full-scale speedup from one task.
-- **Formal reviewer report** `docs/collab/chatgpt/reviews/2026-11-08_Issue24_Real_C_B1_8a17c3db_00f30235_C1S1_E2E_FUNCTIONAL_PASS.md` (docs-only commit `6f2651ae77894c5d68e8c3c62dedf7a5bf6213b6`). Independent original `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_h4_8a17c3db_00f30235_C1S1_real_20261108/independent_C1S1_B1_real_e2e_evidence.json`, SHA256 `401397cb7057471e1ec62029fe9c0c4b53ad383f4ab6aee61da4d8a35955a7af`. All original raw action, Replan, Worker/EGL/owned-process proofs retained on data; no credentials/weights uploaded.
-- **Gate boundary:** this passes **C-B1 true functional loop** but not matched B/C same-checkpoint latency or paired SR (B NOT_RUN in this gate), not A No-TTT ablation, not Stage3B Bvae8 Action parity, no 900EP or training, no V3/PR merge. Preferred next: one same-seed and checkpoint **B/server_vae single Server×single Sim** controlled comparator, then report honest B vs C first/steady latency and outcome; only proceed upon Owner task authorization. Later docs-only commits must not change this formal implementation target.
-
-## 2026-11-08 — Issue24 B/C same-DCP real H100 fixed-input generation performance DIAGNOSTIC_EVIDENCE_COMPLETE
-
-- **No Code Gate change / no production code edits**, implementation frozen Root `8a17c3db6a2e571b67e6a149638f9d7922a704d5` + Child/Gitlink `00f30235da6ffb085a9304ef6501ede509203092`. The earlier actual C-B1 single Server×Sim functional PASS and H4 CPU `APPROVE_CODE` remain; PR25/PR7 Draft, official V3 unchanged. This is performance evidence, NOT H100 feature/SR retest, B8 admission, training or action change.
-- **B/C executed-Action bit parity from actual CloseFridge seed4603 iter15000**: all 900×15 `predicted_raw15`, all 900×12 `submitted_env12` and all 57×16×15 Policy chunks **exact bit equality** (source run telemetry independently parsed). Both valid900step task failure, no SR difference for this single test.
-- **Historical C intermittent native slowdown**: B native generation P50 ~0.97–0.98s throughout; C early fast 0.994s, at replan13..16 briefly ~1.36s, at17..21 0.994s, at22..56 ~1.358s. **C fast regime total Replan P50 ~1.127s vs B matched1.286s (about12% faster)**; C slow regime total P50 ~1.522s vs B1.268s (slower). C full Episode144.256s vs B164.964s (C 12.6% faster) despite overall C Replan P50 being slower. No historical C GPU clock samples; no asserted cause.
-- **Controlled exact pretrained model fixed-input alternating GPU6 profile**: true T16/16×T1 FastState+Prefix+Action bit exact, 24 updates/arm: Fast Weight P50 35.292ms(B T16) vs46.692ms(C T1), +11.400ms. 30 native UniPC generations/arm **B P50 995.294ms vs C995.323ms**; paired C−B mean +0.0455ms, **NO intrinsic ~380ms generator computation penalty found**. All 239 NVML active sampling points at GPU6 SM1980MHz.
-- **Additional 900ms gap/8 repeats per condition** actual DCP probe reproduced time-dependent 1.25–1.30s slow regime after ~24 samplings even with native inputs unchanged and SM clock sampled at1980MHz. HOT/gap/T1 prework each2 of8 slow samples; history-Wan16 prework 0/8 slow. This hints at runtime execution/cache/dispatch effects, but small nonrandom historical state means NO causal attribution to Wan warmup or GPU DVFS. GPU NVML utilization sample shifted roughly34%→24% in slow state.
-- **Independent detailed report**: `docs/collab/chatgpt/reviews/2026-11-08_Issue24_Stage3A_BC_Iter15000_NativeGeneration_Timing_Independent_Diagnostic.md` (docs-only `86c085717697fe31088968ad8c8f84315695222d`). Raw data on authorized host `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_BC_sameDCP_fixedinput_profile_20261108/`, `independent_combined_findings.json` SHA256 `58840fb5bc98f7c0d03ca8dba423788e0ea5e6d960603f14197058b21d193f1b`. Idle-gap raw `.../issue24_stage3a_GPU6_idle_history_clock_profile_20261108/idle_gap_profile.json` SHA256 `18f0d19a11050bfbaafa30196821ab36ed7bc126774af6d77f8daa5b95115052`.
-- **Decision**: Do not change model/native generator or add redundant history VAE encoding based on this isolated result; potential next narrow benchmark is GPU6 CPU enqueue/CUDA event/host scheduling trace in actual single Sim under controlled frequency and matched source. No 900EP, no PR merge or large trial. GPU4–7 final 0MiB, review-only scripts and source unmodified.
-
-## 2026-11-09 — Issue24 Stage3A 1Policy×1Sim ABC iter15000 3-repeat actual hardware PASS_REPEATED_EXPERIMENT_EVIDENCE
-
-- **Verdict `PASS_REPEATED_EXPERIMENT_EVIDENCE`**, not new code gate. Formal implementation Root `8a17c3db6a2e571b67e6a149638f9d7922a704d5` / Child+Gitlink `00f30235da6ffb085a9304ef6501ede509203092`. Source untouched, V3 and PR25/PR7 still Draft. No new full900EP benchmark or training.
-- One Policy GPU6 +one actual RoboCasa Sim GPU4; C has true shared Wan Bvae1/wait0 on GPU4; A NoTTT trained weights iter15000, B old LocalTTT server_vae iter15000, C new sim_shared_vae same B checkpoint iter15000. CloseFridge seed4603; 3 independent fresh repeats each, first old r1 plus six new serial r2 A→B→C, r3 C→B→A. All **9/9 real runs: complete, valid1, invalid0, clean, exit0, each900steps+57Replans**, all task outcome failure0/3 per arm.
-- **Episode seconds three repeats**: A `88.1959,92.5172,94.5058` mean**91.7396s**; B `164.9639,162.0878,156.1443` mean**161.0653s**; C `144.2559,127.3781,133.9067` mean**135.1802s**. **C saved average25.8851s (16.07% lower wall Episode), system throughput ratio ~1.1915x**. All three matched B/C time deltas C−B = −20.7080,−34.7097,−22.2376s.
-- **Replan steady N55 per episode, mean of per-run P50** A `602.762ms`, B `1288.654ms`, C `1274.523ms`; mean of per-run P95 A699.371ms, B1315.647ms, C1410.071ms. C P50 by run 1517.911,1158.325,1147.333ms, nonstationary; C−B steady P50 per pair +247.973,−153.405,−136.961ms. **Do not assert C consistently improves single Replan; three-run average C≈B, C p95 worse**.
-- **Stage P50 mean across three within-run medians (ms)**: B policy history VAE per frame4.823, history_payload_prepare167.018, FastWeight T16 36.049, Native Generation989.747; C Policy history encoded0 (B896 per run), feature_prepare86.899 containing FastWeight T1 82.338, Native Generation1117.228 overall (runP50s 1353.806/1006.405/991.472); A Native Generation556.501. Trace spans overlap and don't sum. C preserves896 TTT adapted steps and 56 Prefix Replans per run.
-- **B/C strongest numerical acceptance**: actual 900×15 raw action, 900×12 submitted Sim action, and 57×16×15 Policy chunk are **bit-exact for EACH of 3 matched pairs**, `max_abs=0`; same underlying model and seed. A is different trained model; cannot be called same-weight NoTTT ablation. Same seed repeated x3 measures timing reproducibility, not multi-seed SR. A/B scheduler wait1ms per schema, C wait0ms; all use Bpolicy1. EGL ICD vendor NVIDIA on new six; initial historical A invalid attempt excluded.
-- **Formal reviewer doc**: `docs/collab/chatgpt/reviews/2026-11-09_Issue24_Stage3A_ABC_iter15000_3Repeat_1Server1Sim_Performance_Evidence.md` (docs-only commit ef88028070c8406160624e19087065e1ef487fdc).
-- **Raw evidence data**: `data:/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue24_stage3a_ABC_iter15000_3repeats_20261109/ABC_iter15000_three_repeat_stats.json` SHA256 `dade842a46411d3355694fc7b2c8942cbb80a29d4049cca3e033c89d1eef7885`, backed by six original fresh Run raw logs and three previous source-locked runs. Server GPU4–7 now occupied by other processes; no changes/kills made. No need to chase NUMA/cpufreq further for the chosen engineering decision.
+Formal Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child-Gitlink `59746af006748488a678aa9a55dfc3e200668219` unchanged.
+New Draft RootPR30 https://github.com/wxwy/psm_wma/pull/30 and ChildPR9
+https://github.com/wxwy/cosmos-framework/pull/9 open/unmerged; qualified#27
+stacked bases only, no base/V3 merge. Readback52/52 remote source/test/raw
+evidence/Gate/JUnit/proofs/Inbox/archive Blob SHAs match; fetched/advertised refs
+andGitlink match, source identical to final authorGate. PriorPR29/8 heads/bodies
+unchanged; officialV3 e58cef1f/Childofficialb0dbd115 unchanged at this check.
+Receipt docs/collab/codex/evidence/2026-11-09_issue28_publication/publication_receipt.json.
+631tests+207subtests/838JUnit authorPASS is evidence, no independent code/hardware
+approval inferred. TaskREVIEW; fresh GPT incremental Gate requested.
+
+
+## 2026-11-09 — Issue28 GPT independent incremental Gate: REQUEST_CHANGES (Horizon-derived K)
+
+- **Formal pair:** Root `050e45d87fe5faf3a830bcaf4629fd7d16ba47a7` / Child-Gitlink `59746af006748488a678aa9a55dfc3e200668219`. Later evidence/review/ledger commits do **not** replace these implementation SHAs. Base qualified #27 Pair Root `9b1756f9` / Child `60b252d0`.
+- **Formal verdict: `REQUEST_CHANGES` — MEDIUM production/config contract finding** from Owner's latest spec, not an H16 algorithm regression. Existing fixed default16, static `K∈{1,2,4,8,16}`, and `stride=16//K` violate `H=actual Action Horizon`, omittedK→H, explicit `K>0 and H%K==0`, `stride=H//K`. Do not confuse per-task Episode horizons with Action Horizon; current actual Model H16 need not be made variable in this bugfix.
+- Locations Root `scripts/robocasa_eval_v2/config.py:20,330`, `shared_vae.py:92`; Child `inference/robocasa_vae_protocol.py::validate_history_k/selected_history_step`, `evaluation/robocasa_v2/contract.py:228-237`, `inference/local_memory_online.py:201-207`, `scripts/action_policy_server_robocasa.py:541`, plus Sim/Worker default/selection. Owner examples H16 divisors1/2/4/8/16, H12 divisors1/2/3/4/6/12; helper/contract examples do not require actual H12 RoboCasa runtime model.
+- Author exact-pair CPU631 top-level+207 subtests PASS, Ruff21 PASS, H16 K16 old/new CPU hash bit exact reviewed as author evidence. Code retains single EvalV2, reuse first boundary Visual96, selected frame Worker VAE and T1 FW only, full source receipts/Session; reviewer has not independently re-executed tests. Existing scoped correct behavior remains valid; minimum new K/H validation + default + tests required, **no rebuild**.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-11-09_Issue28_050e45d8_59746af0_HistoryK_HorizonDerivation_REQUEST_CHANGES.md`.
+- Modify the *existing* independent Draft Root#30/Child#9 only; send a **new formal Root+Child pair** and focused CPU/unchanged dense tests for fresh review. Do not merge V3, run GPU/Sim/SR/900EP/training or change active jobs under this verdict.
+
+
+## 2026-11-09T14:49:58.094034+08:00 — Issue28 Horizon correction: new incremental Code Gate request
+
+Formal Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`.
+Same DraftRootPR30/ChildPR9. Corrects prior050e45d8/59746af0 REQUEST_CHANGES:
+K omitted/None->actual Action Chunk H, exact positive divisors, relative strideH//K
+and j0; no fixed K enumeration/default16. Frozen protocol/model/Worker/Sim/Local
+H binding, current NativeH16 unchanged; dense wire/fingerprint/Manifest preserved.
+Exact clean author566tests+22subtests=588JUnit PASS,0failure/error/skip,shell0/
+sourceunchanged,static22PASS, defaultH16 old59746/new4cd5 CPU bit parity. Generic
+H1..48/H12/K3/H24 plus identity/NoTTT/Session/IPC/topology regressions covered.
+Original dev fixture8FAIL and historical631+207 evidence retained, not relabelled.
+Handoff `docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md`; raw/index `docs/collab/codex/evidence/2026-11-09_issue28_horizon/`.
+Please fresh incremental review; prior MEDIUM is not author-closed. No GPU/
+realSim/SR/900EP/training/server files/active-job/V3/#27 merge authorization.
+
+
+### 2026-11-09 CST - Horizon correction publication receipt (same request)
+
+Formal Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink
+`4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe` unchanged. Same Draft RootPR30 /
+ChildPR9 source and descriptions updated. Remote42/42 source/evidence Blob SHAs
+match; advertised branch/Gitlink match. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue28_horizon_publication.json`.
+Author566+22subtests/588JUnit PASS; fresh GPT review requested. Previous MEDIUM
+not author-closed, no V3/#27 merge or GPU/realSim/SR/training operation.
+
+
+
+## 2026-11-09 — GPT independent Issue28 K=H default/divisor incremental approval
+
+- Formal implementation Pair: **Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`**. Previous `REQUEST_CHANGES` Pair `050e45d8` / `59746af0`. Subsequent docs/evidence/Inbox branch HEAD is **not** a replacement formal implementation target.
+- **Formal verdict: `APPROVE_CODE`** — CPU/Static/contract Gate ONLY. Previous MEDIUM finding `K hardcoded default16 / fixed allowed list / 16//K` CLOSED. Exact code has `validate_history_k(K,H)` resolve K=None→H, accept positive exact int divisors only, and select relative `j%(H//K)==0`; Native Action Horizon remains legitimately fixed H16. Default/explicit K=H retains old dense Manifest, Feature wire and T1 semantics. Root/Policy/Worker/Sim freeze and verify actual H and K; NoTTT, Session, M/B Resume, Native Policy batches and topology reused. No new engine or model/training modifications.
+- Independent reviewer read actual incremental Root+Child source and direct CPU tests, original author logs/JUnit, H16 old/new CPU probes and full source inventories. Author focused **566 top-level +22 subtests =588 JUnit PASS**, 0 failed/error/skipped; Ruff/format/AST22 PASS; 1331/1331 before/after source hashes unchanged. Same CPU probe old Child59746/newChild4cd5 outputs matching Feature wire/Boundary/FastState/Prefix/synthetic Action hashes. Pure H1..48/H12/H24 helper and T1 consumer tests do **not** claim H12 production deployment. Reviewer did not rerun author pytest or execute GPU/real Wan/Sim.
+- Detailed report: `docs/collab/chatgpt/reviews/2026-11-09_Issue28_53b5273c_4cd5fc8c_HorizonDerivedK_APPROVE_CODE.md`.
+- Scope strictly **Issue28 CPU incremental Code Gate**. Does not authorize RootPR30/ChildPR9 or their stacked RootPR29/ChildPR8 automatic merge into V3; does not validate new real H100 throughput/Action equivalence/SR, 900Episode, training or operation of running jobs. Future GPU smoke only when separately authorized.
+
+
+## 2026-11-09 — H100 real RoboCasa smoke: Issue27 + Issue28 FUNCTIONAL PASS, performance pending
+
+- **Exact reviewed implementation pair**: Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child-Gitlink `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`. This appendix is documentation-only and does not replace the formal pair.
+- Owner authorized minimal GPU execution specifically on **GPU4–7**, instructing to ignore the existing `gpu_load_sim.py` synthetic load. Mock load was **not killed or changed**; unrelated GPU0–3 jobs untouched. Real Wan/Model/RoboCasa/EGL; checkpoint iter15000.
+- **`REAL_GPU_FUNCTIONAL_SMOKE_PASS`**: Single CloseFridge seed4603, K16/K1/K4 each900 genuine Sim steps,57 replans, clean valid Episode, zero process errors. Each historical replan really updatedFW16/1/4 times; actual authenticated Worker feature counts total840/0/168; first input RGB and first Action fully exact, subsequent Actions diverged as expected. Episode times128.536/120.135/135.595s; simulated loads make these noncontrolled measurements, **no stable speed acceptance**.
+- Multi: **2 real Policy Servers GPUs6/7 ×2 Sim slots each, real Sim/Shared VAE Workers on GPU4/5, Worker Bvae1/wait0, K4, Policy batch cap2**. Four tasks CloseFridge900, NavigateKitchen450, PickPlaceSinkToCounter900, TurnOnSinkFaucet600 steps: **4/4 clean/valid, 2850 steps/181 replans, errorNone, per historical replanFW4/Worker features3/prefix present; 2 Worker READY + 2 Worker CLOSED verified with IPC quiescent and no lingering processes**.
+- **Caveat**: Real Policy cap2 only generated actual B1-sized groups under asynchronous no-wait; real grouped Native B2 Action path not yet proven. This test is also **not** a real 2×16=32Sim hardware test (that topology has separate CPU evidence). SR/900Episodes/training not rerun. Functional smoke PASS **does not grant production V3 merge approval**; PR29/8 and stacked PR30/9 remain Draft until Owner decides.
+- Full derived-statistics review (no private server files uploaded): `docs/collab/chatgpt/reviews/2026-11-09_Issue27_Issue28_H100_SharedVAE_SparseK_RealSmoke_FunctionalPASS.md`. Original logs/JSON and deterministic verification remain only in isolated train-server work directory.
+
+
+## 2026-11-09 — Codex NEW TASK Issue31: Prefix-aware text KV cache performance recovery
+
+- **Owner授权方向**：恢复 Local-TTT Memory Prefix 下 Cosmos native generation 的推理速度。新的独立 Codex 优化任务：https://github.com/wxwy/psm_wma/issues/31 （首阶段仅 B1/single-sample/two_way 的 Prefix-aware text KV cache；不是重新审核 Issue28，也不是自动合并 V3）。
+- **基础正式 implementation pair 未变化**：Root `53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a` / Child `4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe`。现有 Root#29/#30 + Child#8/#9 仍 Draft。请 Codex 在**独立候选分支**提交新 formal pair 与证据供 GPT fresh review；不得直接变动前一 pair 或合入 V3。
+- **真实瓶颈**：15个有效900-step Episode、B1/30步、280个稳定Replan每模式；NoTTT/K16/K1 native generation GPU-event mean `608/1203/1181 ms`，当前帧VAE仅 `5.2/5.6/7.0 ms`，说明VAE不是差额。K1/K16 都在 Cosmos 注入固定4×32 Local Prefix；减少历史 K 并不会恢复生成快路径。
+- **源码嫌疑点**：`omni_mot_model.py:3991–3993` Prefix禁用pack-template reuse、`:4065–4112` 禁用text-KV reuse；`mot/attention.py:257–265` 强制varlen；`cosmos3_vfm_network.py:1574–1584` 当前 Local+MemoryState显式禁止。不能盲开 `reuse_text_kv`，否则 Prefix 可能被旁路，必须以真实数值/Action/会话隔离证据证明正确。
+- **下一轮门槛**：Codex先做 Prefix-aware KV 正确性 + 单一Local checkpoint、同样输入/Prefix/FW的交错模型内延迟基准。不得混入train/Sim/Worker改造，不能绕过 `validate_model_mode`。GPU验证只在Owner许可的4–7卡，保留 `gpu_load_sim.py` 原样。若没有明显加速需明确不达标。第二项pack复用必须单独可归因。
+- 这是新优化任务的**handoff/owner request**，不是本条旧代码新一次technical verdict，不授予新的 GPU/merge/production Gate。
+
+
+## 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV: fresh incremental review request
+
+Formal Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink `4446be0f6dad9b6dc887ef90af52d0af754d4682`.
+Approved unmerged baseline53b5273c/4cd5fc8c, latest docsca3a08ac preserved.
+Separate DraftRootPR32 https://github.com/wxwy/psm_wma/pull/32 and ChildPR10
+https://github.com/wxwy/cosmos-framework/pull/10; existingPR29/30/Child8/9 unchanged.
+Evidence/ledger successors are not new formal source identities.
+
+B1/two_way/guidance1 request-local text K/V restores text reuse while retaining
+current Prefix everylayer/step. Native GEN materialization and real pad layout
+preserve compiled rounding; pack reuse remains OFF, backend/precision/limit8
+unchanged. No training/VAE/Sim/Worker/scheduler/mode-DCP/strictK-H-M-B Resume edits.
+Exact clean CPU187/187PASS,0fail/error/skip,shell0/sourceunchanged1486/static8PASS.
+One inherited W0 assertion fails on clean old4cd5 and is explicitly deselected,
+retained as failure, never countedPASS. Three baselineI001 narrowly exempted.
+Controlled compiler/native RED/GREEN plus all development failures archived.
+
+Real H100 GPU6 authorGPU05 Shell0/PASS, same Localiter15000/4x32Prefix/30step
+UniPC/raw15/H16, fixed synthetic composite/history,30balancedAB/BA pairs:
+all Action/Vision maxabs0; P50 991.5513→825.5335ms,1.2011x,16.743%less latency;
+P95 997.1945→829.1916ms. 29/30 faster; retained optimized1386.77ms outlier,
+P99 1000.0608→1225.2732ms regresses, causeunproven. No exclusiveGPU/NoTTTtarget/
+Simthroughput/SR claim. Audits show all28layers Prefix30/projection30/hit29,
+changedPrefix changesAction and repeated request refills independently.
+All layerhooks removed before freshwarmup/timing;limit8/source/FW/Prefix/
+checkpointmetadata unchanged; owned model processes exited, otherjobs untouched.
+Private GPU raw files stay on server; only derived stats and56rawfilehashes published.
+
+Handoff: `docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md`.
+Current CPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_native_precision/`;
+prior immutableCPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/`;
+derived GPU: `docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv_gpu_derived/`.
+Please review this exact Pair's code/CPU/GPU author evidence independently.
+AuthorPASS is not GPT/DS closure. KeepDraft/unmerged; no V3 promotion,
+training/Sim/SR/900EP or second-stage packing/attention optimization authorized.
+
+
+### 2026-11-09 CST — Issue31 publication receipt, same Formal Pair
+
+Formal Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink
+`4446be0f6dad9b6dc887ef90af52d0af754d4682` unchanged. Evidence headf4fff12e
+normally pushed;26/26 GitHub source/test/rawJUnit/Gate/index/handoff/Inbox blob
+SHAs match localGit. PR32/10 descriptions read back exact; all six related PRs
+remainDraft/open/unmerged. Fresh officialV3e58cef1f/Gitlink00f30235 and Child
+v3branchb0dbd115, prior#27/#28refs unchanged. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue31_publication.json`.
+AuthorCPU187PASS and fixed-Local H100 P50speedup1.2011x/exactActions remain
+qualified author evidence; inherited baseline failure and P99 regression retained.
+No private server files exported, no V3 merge or independent Gate closure.
+Fresh incremental GPT review requested on exact5b89/4446; receipt commitmetadata only.
+
+
+## 2026-11-09 — GPT Issue31 independent verdict: APPROVE_CODE for Root5b89/Child4446
+
+- **Frozen implementation pair** (not review HEAD): Root `5b89f3eddbfe27ee72c173696a386e0b756d7866` / Child-Gitlink `4446be0f6dad9b6dc887ef90af52d0af754d4682`. Baseline Root53b5273c / Child4cd5fc8c. RootPR32 and ChildPR10 remain Draft and unmerged.
+- **独立 verdict `APPROVE_CODE`：限 Issue31 第一阶段 B1/single-sample/two_way/guidance1 Local Prefix-aware Text KV 代码与同一 Local checkpoint 的 model-only GPU P50 Gate。** 不批准 V3 merge、Sim/Worker、真实SR/Episode、尾延迟SLA、多B/多卡部署或第二阶段 Pack/Attention。
+- **独立源码审核**：Root Gitlink 精确对应 Child；本轮六个 Child 文件、Root benchmark 两文件，NoTTT/无Prefix路径不改；cache 请求内初始化/失败清理/dispatch复原；首步从native materialized K/V取UND，后续29次gen-only仍各层注入当前4×32Prefix；禁止跨请求缓存污染。训练/Local FW/原生配置模式验证未动。
+- **独立 CPU**：服务器 exact Pair 执行新 `prefix_text_kv_memory_test.py` **25/25 PASS**。作者针对整个增量的 **187 passed、1 deselected** 原始JUnit/日志核查；被排除的旧W0断言在**旧Child4cd5与新Child4446**独立复跑均同样失败（旧4.43s、新4.81s），不是新增回归，不计通过；三个旧Ruff I001例外保留。
+- **独立 GPU 原始证据审核**：直接从授权服务器复算 `gpu05/measurements.jsonl` 60样本/30对ABBA；**56/56原始证据文件 SHA256 与 size 对上GitHub索引**。P50 **991.5513→825.5335ms**（−16.743%、1.2011×），P95 997.1945→829.1916ms；29/30对更快。**P99 1000.0608→1225.2732ms 退化**，最大1386.77ms离群值保留。GPU原始Action/Vision tensor逐元素原值精确相等，换Prefix后的Action max abs1.9609，恢复旧Prefix后精确相等；28层均30次Prefix生效，优化命中29次。GPU模拟负载仍存在，原始私有文件未外传。
+- **风险**：性能只证明 model-only 合成固定输入 + 单一 Local iter15000 DCP，不等于真实RoboCasa SR、吞吐或 NoTTT 历史 ~608ms；尾延迟仍需独立 Gate；本 Gate 不授权上游 #27/#28 和 #31 自动合入V3。
+- **详细正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_5b89f3ed_4446be0f_PrefixAware_TextKV_APPROVE_CODE.md`。
+- Review/Inbox 的后续文档提交仅为 bookkeeping，**不是 implementation SHA**。
+
+
+## 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack: fresh independent Gate request
+
+FormalRoot `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child-Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`.
+ApprovedStage1Root5b89/Child4446; latestreviewdocs590071c5 preserved. Separate
+v3-local-ttt-prefix-pack-issue31-20261109 candidate, upstreamDrafts unchanged.
+Only productiongenerate_samples_from_batch: same B1/two_way/guidance1 guards,
+request-local native pack templates with current Prefix; original updater/
+Attention/FW/NoTTT/Sim/Worker/VAE/mode-DCP/strictK-H-M-B Resume unchanged.
+Explicit packOFF preserves approvedtextKV-only reference; textKV ON both inGPU.
+
+Exact author02CPU201PASS,0failure/error/skip,shell0/source1487unchanged/static9PASS;
+one inherited W0failure deselected,3baselineI001 documented. Native realpacker
+30step all-field parity/noisyAction variants + lifecycle/error/retry/NoTTT checks.
+Same newtest old4446 productionRED templatecount0/newGREEN; all raw retained.
+GPU02 sameLocaliter15000/4x32Prefix/raw15/H16/B1/30UniPC,30balancedpairs:
+Action/Vision maxabs0, P50837.0812→798.8678ms,
+1.0478x/4.565%less latency; P95844.7195→803.0262ms;
+P99846.2682→805.8524ms/alloutliersretained. Stage1P99cause
+stillOPEN, no tailSLA or NoTTTcross-experiment speed claim. Packtotal31→2 incl
+sharedprep1/denoise30→1;28layersPrefix30/hit29. Hooksremoved/re-warm/limit8/
+requiredDCP/source/FW/Prefix unchanged; owned process exited, otherjobs untouched.
+PriorGPU01benchmark totalcountassertFAIL retained; only Roottool corrected,
+sameChild. Initial newfixtureCPU14FAIL retained, no historicalcount summation.
+GPU statusCORRECTNESS_PASS_PERFORMANCE_NOT_MET/Shell2; predeclared1.05x missed,
+no threshold change/model rerun; performanceGate remainsOPEN.
+GPU raw 31files stayserver-only; derivedstats/hashmanifest published.
+
+Handoff `docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md`.
+Evidence `docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/`.
+Please fresh independent exact-Pair code/CPU/model-only GPU evidence review.
+Author correctness is not performanceGate/independentclosure. KeepDraft/unmerged, no V3 promotion,
+training/Sim/SR/900EP or new denseAttention stage. EvidenceHEAD ismetadata only.
+
+
+### 2026-11-09 CST — Stage2 publication receipt, same Formal Pair
+
+FormalRoot `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child-Gitlink
+`193627f42f4cd1ba6d563aefb8fa8f9428ecb56d` unchanged. Evidence28b19890 normally
+pushed;20/20 GitHub code/JUnit/Gate/proof/index/handoff/Inbox blobs match localGit.
+New Draft RootPR33 https://github.com/wxwy/psm_wma/pull/33 / ChildPR11
+https://github.com/wxwy/cosmos-framework/pull/11 open/unmerged; descriptions exact.
+Stage1PR32/10 and officialV3e58cef1f/Childv3b0dbd115 unchanged. Receipt:
+`docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/publication_receipt.json`.
+CPU201PASS/1487sourcehashes; GPU correctnessPASS, performanceNOT_MET/Shell2,
+1.0478x below predeclared1.05x. No threshold change or extra model rerun;
+Stage1P99 unresolved. Raw GPU files retained on server, no private file export.
+Independent exact-pair incremental review requested; keepDraft/noV3merge.
+
+
+## 2026-11-09 — GPT Issue31 Stage2 independent verdict: REQUEST_CHANGES
+
+- **Frozen new implementation pair**: Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`; Stage1 approved previous `5b89f3ed/4446be0f`. Documentation/evidence HEAD is not a new formal target.
+- **Formal verdict `REQUEST_CHANGES`** for Issue #31 Stage2 performance Gate; production correctness no newly confirmed blocker. Frozen model-only same-Local H100 B1/guidance1/30-UniPC **P50 speedup≥1.05×** remains unmet by **1.047834×** (P50 **837.0812→798.8678ms**). Benchmark formal threshold in `tools/v3/benchmark_local_ttt_prefix_kv.py:467–471`, actual code target `cosmos_framework/model/generator/omni_mot_model.py:3998–4025`. **Severity MEDIUM, performance-evidence-only**; benchmark exit2 and `PERFORMANCE_NOT_MET` are correct, not test bugs. No threshold change, cherry-pick, or repetitive same-code rerun to obtain PASS.
+- **Independent CPU**: GPT on clean server exact-pair new `prefix_pack_template_test.py` **14/14 PASS**; author `201 passed, 1 deselected` original JUnit/log checked; old inherited W0 baseline failure remains excluded, no tracked change to scan path.
+- **Independent H100 evidence**: Author's **31/31 server raw file SHA256+size** match published derived index; GPT independently parsed raw 30 balanced AB/BA pairs, 30/30 faster, mean saving38.841ms; P95 844.7195→803.0262ms, P99 846.2682→805.8524ms *within this small sample only*. Saved Action/Vision tensors `torch.equal` optimized/reference; changing Prefix produces Action max-abs1.9608675. 28 layers all 30 Prefix contexts, text KV29 gen-only; 31→2 native pack calls incl common preparation1. Same checkpoint/inputs and both text KV ON; no Sim/900EP/NoTTT cross experiment.
+- **Acceptance**: new substantive code/performance work plus a **new formal pair**, or explicit new Owner acceptance contract. Keep RootPR33/ChildPR11 Draft and **unmerged**, no automatic Stage1/Issue27–28/V3 merge. Stage1 old P99 anomaly still OPEN; this test cannot close production tail SLA.
+- Detailed independent review: `docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_REQUEST_CHANGES.md`.
+
+
+## 2026-11-09 — Owner corrected Issue31 Stage2 review standard (scoped APPROVE_CODE)
+
+- **更正原因**：Owner明确指出“不应该预设能提升多少”。Issue31 Owner范围未规定 `1.05×` 硬性加速条件；作者自行设置的Benchmark性能判据不是“代码必须返工”的标准。原GPT `REQUEST_CHANGES` 因将作者自设阈值误当强制Gate而**被正式更正**；旧报告文件和原始失败结果均保留，标记 superseded。
+- **正式更新的独立结论**：**`APPROVE_CODE`（限定 Stage2 B1/single-sample/two_way/guidance1 Prefix-safe pack reuse的生产代码增量和同权重model-only数值正确性）**；**`OBSERVED_PERFORMANCE_IMPROVEMENT`**（30/30配对更快，P50 837.0812→798.8678ms，减4.565%，1.047834×；31→2 pack），**`AUTHOR_BENCH_INTERNAL_TARGET_NOT_MET`**（作者内部 >=1.05×没达到，`PERFORMANCE_NOT_MET`、exit2必须原样保留）。三个陈述互不矛盾，不改阈值、不删离群、不给未验证能力背书。
+- **一致性证据**：formal Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d` 不变；GPT独立CPU 14/14、作者201通过/1旧W0排除、原始H100 31/31文件SHA256匹配、保存Action/Vision精确相等、28层30步Prefix生效。Stage1 P99风险仍未关闭；无真实Sim、SR、多B或生产SLA结论。
+- **最新正式审核记录**：`docs/collab/chatgpt/reviews/2026-11-09_Issue31_Stage2_18be4a80_193627f4_PrefixPack_APPROVE_CODE_CorrectedGate.md`。旧 `…_REQUEST_CHANGES.md` 仅保留历史。
+- PR33/Child11以及上游Draft保持未合并；`APPROVE_CODE` 不等于 Owner授权合并V3。**不得为跨越任意5%或1.05×强行改码或刷实验**，继续优化应先看真实剩余瓶颈。
+
+## 2026-11-09 — Stage3 evidence-only handoff: Issue #35 (no new formal implementation pair)
+
+- **New scoped Codex diagnostic**: https://github.com/wxwy/psm_wma/issues/35. Continue Owner request to compare optimized Local-TTT native generation **primarily against the existing No-TTT** benchmark; do **not** rerun No-TTT, redefine 616ms mean as P50, or set arbitrary 1.05× speed Gate.
+- Unchanged formal Stage2 implementation Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`. Prior scoped APPROVE_CODE stands; this task is *new evidence/performance exploration*, **not** repeating formal code review.
+- NoTTT prior 5Episode mean generation ~616.26ms (280 nonfirst replans); single seed4603 P50 **736.75ms** if excluding first cold/first Prefix candidate to match 55 steady requests. Same seed4603 and existing simulated GPU load, Stage2 Local K1 P50 **838.47ms**, K16 **822.19ms** (two separate real Episode runs, 55 stable requests each). Different model checkpoints, do not claim strict causal percentage. Removed `tmux gpu` artificial load on Owner instruction; without fake load Local K1 **816.94ms**, K16 **859.77ms**, the latter has late-half P50~1132ms and cannot be simplified to model architectural overhead.
+- **Attention concrete suspected redundant path** in current Child: `_attention_gen_with_cached_text_and_prefix` still constructs `dummy_und_q` and calls full two-way Attention; Prefix forces varlen, dummy causal output is dropped. 28 layers×29 cache hits=812 hit-path layer executions. No per-component GPU time attribution yet; profile first, do not delete kernels blindly (prior materialized K/V BF16 precision Gate).
+- **Important numerics gap**: old baseline duplicate K1 and K16 genuine Episode actions 57/57 bit-exact; Stage2 first differs from old K1 at replan2/action raw15 max_abs0.00497079, K16 at replan4 max_abs0.00706959 while source RGB/Visual96SHA and scalar FW norm are still equal. New Stage2 with vs without fake GPU load has 57/57 actions exact for both K's. These facts do not prove new implementation Bug absent frozen full Prefix/FastWeights; require exact single-request input/action parity diagnostic before further optimization/production parity claim.
+- Issue35 explicitly has **no preset performance threshold**, no new GPU jobs in this handoff, no current V3 merge, no model/Sim redesign. If Codex changes production code, bring fresh exact Root/Child formal pair and evidence for independent GPT audit; until then no re-review of existing Stage2 Pair.
+
+
+## 2026-11-10 — Codex Issue35 evidence attempt01: BLOCKED, no new implementation pair
+
+- ID `ISSUE35-EVIDENCE-ATTEMPT01`; independent branch `v3-local-prefix-attention-issue35-20261109`. Formal production Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child-Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d` unchanged. Stage2 scoped APPROVE_CODE stands; no repeat Code Gate request, no new production commit.
+- Existing synthetic GPU02 trace only: causal28 / GEN840 / varlenprep868 in both Pack modes, crosschecked against original kernel_counts and trace hashes. PackON GPU work sums0.278/11.958/2.771ms respectively; CPUFlash inclusive141.351ms includes nested78.620ms, not additive or attributable real-loop savings. 812source hit paths do not establish812causalGPU kernels; no blind Attention patch.
+- Real full-input freeze incomplete: one native K1/source32 attempt stopped at physicalEGL proof beforeenv.step,0requests; K16/source64 notstarted. uid1004/groups1004 cannotR/W GPU4 DRMnode0660/gid993; EGL8devices lackphysicalmapping, purectypes checks alsofail. No permission/identity bypass. All3owned groupsclosed; GPU4/6idle. Need usableauthorizedenv or frozenfullrequest/FW/Prefix; actual K1/K16 action difference remains INCONCLUSIVE, not GatePASS or proven cachebug.
+- Diagnostic tools CPU4/4PASS and nativeCLI/Policyhelp0/bootstrapPASS only; no successful real modelcapture. Initial stop-label/status-field mistakes explicitly corrected in sidecars, raw failures retained. Server75artifact index02SHA `4c9eac160fc6f27d210ef2560347c557b518fccbb1c4bf2c34d262ee3aaf8e29`; rawserver files not exported.
+- Full author report `docs/collab/codex/reviews/2026-11-10_Issue35_Attention_ExistingTrace_RealInputCapture_BLOCKED.md`; ownprobes/localCPU/derivedstats `docs/collab/codex/evidence/2026-11-10_issue35_attention/`. This docs/evidence HEAD is not a new FormalRoot. NoNoTTTrerun, no900EP/SR/training/V3merge or otherjob changes.
+
+## 2026-11-10 — Issue35 EGL device group blocker closed; real frozen K1/K16 input capture PASS
+
+- **Formal pair remains unchanged**: Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child+Gitlink `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`. NO new implementation technical review; Stage2 scoped APPROVE_CODE unchanged.
+- GPT independently reproduced Codex's original EGL BLOCKED under `uid1004/gid1004` (DRM `/dev/dri/renderD132` mode0660, group render gid993, PCI proof0/8), then **fixed the execution context** with existing `sg render -c` (gid993, real PCI proof8/8, GPU4 EGL index4). No root, no chmod, no bypass.
+- Using existing external Codex capture tools, authorized server GPU6 Policy/GPU4 Sim+VAE, K1 captured real requests at source_steps **0,16,32**, K16 captured **0,16,32,48,64**. `capture_ready.json` both present; 8 actual frozen requests, each with request/previous+candidate fast-state/Prefix/RNG, prepared Model input, and model outputs =24/24 private PT files.
+- Diagnostics intentionally interrupted after target: native coordinator exit1/partial invalid (NOT SR run), **outer capture driver exit0**, each case3/3 owned process receipts, no live owned workers, GPU4-7 back0MiB. All raw PT/inputs stay server-only; `independent_receipt.json` SHA256 `bfacf5dbf329f5b3f11254629425b74772f6b94b2748c9cdb624fb26fb354574`.
+- Independent raw synthetic profile reduction confirms 28 causal kernels,840 GEN,868 varlen prepare: **812 cached-hit source calls are not812 causal GPU kernels**; don't optimize an imagined 812×causal cost.
+- **Gate now `EGL_ENV_BLOCKER_CLOSED / CAPTURE_EVIDENCE_PASS / REAL_INPUT_NUMERICAL_PARITY_PENDING`.** Codex next replay actual frozen K1 source32/K16 source64 with same Local DCP/BF16/FastState/Prefix/noise: original caches both OFF vs Stage1 KVON/PackOFF vs Stage2 both ON. Compare Action/Vision and intermediate tensors before any Attention patch. No NoTTT rerun, no preset speed goal, no V3 merge.
+- Detailed GPT review: `docs/collab/chatgpt/reviews/2026-11-10_Issue35_EGL_RenderGroup_RealInput_CAPTURE_PASS_REPLAY_PENDING.md`. Server evidence: `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue35_render_group_capture_20261110/`. Codex's old BLOCKED request remains historical, new review supersedes only the environmental blocker.
+
+## 2026-11-10 — GPT independently replayed REAL K1/32 + K16/64 and found Stage1 TextKV hit parity failure
+
+- **Formal unchanged** Root `18be4a80a5ae4d97bc7d287034d24efab847c496` / Child `193627f42f4cd1ba6d563aefb8fa8f9428ecb56d`; server-only private frozen-request input from previous `sg render` capture, no No-TTT rerun.
+- GPT independently actually loaded Local iter15000 DCP on authorized GPU6 and replayed **same complete real Batch/FastState/Prefix/RNG** for K1 source32 and K16 source64 under 3 paths: ① KVoff/Packoff, ② KVon/Packoff, ③ KVon/Packon.
+- **First formal finding**: ① matches earlier old-EvalV2 raw15 Action exactly (K1/K16); ② and ③ both match newer Stage2 EvalV2 raw15 Action exactly and match each other bit-for-bit, including Vision. Hence **Stage1 TextKV hit changes real-input results; Stage2 packing does not contribute**. Strict original-vs-new action max abs **K1 0.0049707889556884766**, **K16 0.007069587707519531**; Vision max abs 0.04075563 / 0.02632082 respectively.
+- Subsequent isolated `_get_velocity` 30-step instrumentation left the final raw15 replay unchanged and localized earliest divergence to **denoise step1 (first cache hit)**. Step0 first cache fill velocity **exact0** in K1 and K16; step1 max abs K1 **0.03125**, K16 **0.046875**; later steps diverge. Cached UND KV correctness vs GEN-only BF16/varlen numerical behavior is still **UNRESOLVED**, do not guess.
+- Current Issue35 **EGL block closed + Capture PASSED + REAL_INPUT_STRICT_PARITY_FAIL at Stage1 textKV HIT**. Previous limited `APPROVE_CODE` on fixed synthetic input does not establish real-input parity/production promotion. **Hold V3 promotion** until numerical root cause and acceptable parity policy are explicitly resolved. No attempt to meet arbitrary acceleration threshold, no blind Attention patch, no private tensor exfiltration.
+- Independent derived audit on server `.../_gpt_independent_gates_20261104/issue35_real_input_3way_replay_20261110/independent_final_audit.json` SHA256 `f15d35a5e4697912e233c2d3e2c6a6477f185d72ce76aa413a5dd8877185227e`; both replay and velocity trace commands exit0, GPU4-7 idle and source clean.
+- [Formal GPT report](https://github.com/wxwy/psm_wma/blob/v3-local-prefix-attention-issue35-20261109/docs/collab/chatgpt/reviews/2026-11-10_Issue35_RealInput_KVCacheHit_ParityFail_IndependentReplay.md). No formal implementation SHA changed by this docs write.
+
+## 2026-11-10 — Issue35 新 Formal Pair：Prefix K normalization 舍入修复，申请 GPT 窄增量审核
+
+- **新实现审核对象**：Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child-Gitlink `bf707810f573e885f0966d65c232dc2a610d6a93`。原实现 `18be4a80 / 193627f4`；Root 父 `796e28a7` 已包含最新 GPT 真实回放失败报告。两仓隔离分支 `v3-local-prefix-kv-parity-issue35-20261110`。后续 evidence/ledger SHA 不替代 Formal Pair。
+- 原源定位通过无扰动核查：28层 UND K/V 静态且缓存值精确；首个 GEN 输出差异 step1，K1零基layer18、K16layer16。Q/V相同，K只在Prefix 4行中1个BF16元素不同；Prefix投影输入/输出及Norm权重相同，差异位于compiled Prefix normalization。不是Stage2 Pack首次引入；未进一步断言具体FMA/归约指令。
+- **最小生产修复**：Child仅3生产文件+1测试文件；本请求、本层保存原生已物化Prefix K归一化结果及投影输入。命中时仍投影当前K/V，只在投影输入完全相同才GPU选择首次结果，改变输入走当前归一化、V始终当前，clear同时释放。无容差、跨Session缓存、忽略Prefix、训练/算法/全局精度/编译上限/Resume改动。Root仅Gitlink与SESSION/TODO。
+- **作者CPU**：exact clean Pair **213/213 PASS**、0失败/错误/跳过、Shell0、1487源码指纹不变；另1历史W0明确deselected，3原有I001例外。旧1936仅加测试的受控RED1FAIL，新同函数GREEN1PASS，fixture/生产SHA/相同函数AST绑定及原始JUnit保留。
+- **作者真实H100**：同iter15000 Local DCP、B1/H16/raw15/guidance1/30step，三模式全部Prefix ON。K1/source32和K16/source64，三路径Action/Vision/raw15对GPT保存的旧原始Local均逐元素精确；两条缓存路径各30步速度也完全相同，observer未改变输出。`author_h10002` **PASS/Shell0/source_unchanged=true/protected_inputs_unchanged=true**，required+DCP与真实编译层/limit8校验保留。
+- 首轮`author_h10001` K1已通过，K16夹具直读缺省K而KeyError（未执行K16）；按既有默认K=H修正外部夹具，在同Pair新目录完整通过。所有FAIL及早期探针未完成记录均保留，不冒充PASS。
+- [完整增量申请](../codex/reviews/2026-11-10_Issue35_KVHit_PrefixNorm_55b74ab4_bf707810_Review_Request.md)；[CPU原始证据/作者工具/H100精确命令与派生哈希](../codex/evidence/2026-11-10_issue35_kv_hit_parity/README.md)。私有844文件索引SHA `1833504e303cedcfd87a065e921845afb36c1ebbc5d5c68c260f715ce656d623`；新H100 gate SHA `94bacad2a7c2b1fafabe3d94763464028615fa71cce05ac6a5009e7e2fe6eb28`。
+- Codex作者结果不替代独立APPROVE_CODE；本新Pair尚待GPT复核。只有两组冻结真实请求，不宣称所有输入/真实SR/P99或性能收益。原张量、DCP、日志、FX全部留data服务器；最终GPU4-7空闲，无残留owned进程。未运行NoTTT/Sim/SR/900EP，未碰GPU0-3/训练/L2000，未合并V3或继续Attention性能改造。所有上游Draft保持未合并。
+
+## 2026-11-10 — GPT Issue35 55b74ab4/bf707810 independently APPROVE_CODE on frozen real-input numeric parity
+
+- **正式审核 target**：Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child+Gitlink `bf707810f573e885f0966d65c232dc2a610d6a93`；PR36 当前 HEAD仅 evidence/docs账本，不是新的 implementation Pair。上一Root18be/Child1936 新真实冻结输入严格数值Parity失败这一 blocker 现 **CLOSED**。
+- **Formal verdict：`APPROVE_CODE`，严格限定 Issue35 Text KV cache-hit BF16 Prefix K normalization 数值修复**（原生B1/two_way、Local iter15000、30 UniPC步、K1/source32和K16/source64真实冻结请求），不等于 V3 merge授权。
+- **独立源码审阅**：Child3 production files +1 test；在request-local每层缓存首次填充原生已物化 Prefix K归一化参考及投影输入，命中只在当前Prefix投影输入逐元素完全相等时选用参考；改变Prefix仍实时计算，V始终当前，引用detach+clone并clear清理，NoPrefix/其他MemoryState原路径不变。Root实现只Gitlink/SESSION/TODO，双repo clean。
+- **独立CPU**：GPT在精确新 Pair 上新回归37/37 PASS；独立完整scoped CPU Gate **213/213 PASS**, 9项static，1487个源文件指纹前后同一。既存W0一项按前序审核明确deselect，不称全仓green。
+- **独立真实H100（我方脚本实际跑，非直接转述Codex）**：同一Local checkpoint、原生Mode/DCP校验，冻结Batch/FastState/Prefix/CPU+CUDA+NumPy+Python RNG；K1/source32与K16/source64各跑原Local KVoff/Packoff、Stage1 KVon/Packoff、Stage2 KVon/Packon。CPU端再次读取六个GPU输出PT，对比**前一GPT独立保存的原始Local输出**：raw15 Action、模型 Action、Vision全逐元素相同，max_abs0。额外分别在三路径记录并重新读取 **30步×2种K**速度预测；Stage1+Stage2相对于原始路径**各30/30步 exact0**，首次缓存命中Step1也exact0，消除了旧K1=0.00497079、K16=0.00706959的动作差异。
+- **原始Evidence全部留在授权服务器**：`/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue35_kv_norm_fix_independent_20261110/`；独立派生审计`independent_final_verdict.json` SHA256 `bb0bce146d3e5132311bba31492dbae972576c41db9915b359ea26bd7647b50c`。所有owned模型进程退出，GPU4–7闲置，未运行NoTTT、Sim、训练或SR。
+- **限制**：修复后生成时延P50/P95/P99及生产尾延迟**未测**；不自动批准V3合并、不授权多B/复杂layout/完整Episode/生产部署。Issue35 剩余Attention性能分析和这些后续 Gate 仍开放。禁止为跨任意百分比而改阈值、刷实验。
+- **正式详细审核报告**：`docs/collab/chatgpt/reviews/2026-11-10_Issue35_55b74ab4_bf707810_KVHit_NumericParity_APPROVE_CODE.md`。本Inbox/Review commit仅账本，不能替代formal pair。
+
+## 2026-11-10 — Post-fix Native Generation performance evidence (same unchanged formal pair)
+
+- **No new formal implementation**: Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93` unchanged; scoped numeric `APPROVE_CODE` stays. This is **new performance Evidence only**; no redundant code review or V3 merge.
+- **GPT directly ran 4 repeated model-only H100 experiments** (same Local iter15000, same K1/source32 or K16/source64 REAL frozen request, 4warmup+30measured, Stage2 KV+Pack, no fake GPU load). **K1 GPU P50 old 774.532 → fixed 810.472ms (+35.940ms)**; **K16 P50 old 759.777 → fixed 798.868ms (+39.091ms)**. All output tensors validated vs correct pre-/post-fix reference. Full native generation includes current RGB VAE; not FW/HTTP/Sim.
+- **GPT additionally ran two new Local real RoboCasa episodes for varying inputs**, solely to extract model generation: CloseFridge seed4603, 57replan each, 55stable replan indices2..56. Native GPU stage **K1 mean1035.182/P50 1146.950ms**, **K16 mean1088.085/P50 1163.912ms**. **57/57 Action and original RGB sha match the old no-cache Local trajectory for each K**, confirming parity on these two full samples. No SR claim (tasks failed).
+- **Primary historical NoTTT reference**: seed4603 same 55stable p50**736.752ms** / mean**664.654ms**; five seeds total 280 nonfirst mean**616.258ms**. Distinguish p50 vs mean. Historical NoTTT ran with fake GPU load and a separately trained checkpoint; no new NoTTT run. Ratios are observational only, not strict same-input ablations.
+- **New performance finding**: both K’s real model generation slowed around replan28: K1 phase p50 862→1163ms, K16 870→1185ms. Current-frame VAE GPU p50 only ~5–9ms, so VAE does not explain ~300ms change. Source of model/CPU/GPU slowdown still **UNRESOLVED**; don't blindly patch varlen/causal Attention based on 812 source calls.
+- Evidence server-only: `.../_gpt_independent_gates_20261104/issue35_kv_norm_performance_20261110/model_only_independent_summary.json` SHA256 `6a7c73dcf595c3e0f7bcf9b456608d9e3ebc4d4c180853c1786833f4e4fb19a6`; `.../issue35_kv_norm_real_episode_20261110/latency_analysis/` will point to direct raw episode; independent `real_episode_model_native_independent_summary.json` SHA256 `91e8ae8c2b985ae5fb8f189a59ae449ceb0bbfde4bef455d3a13f457e1c0b2ac` located in model_only performance dir. All private inputs/actions remain on data, GPUs 4-7 cleared.
+- Detailed Evidence-only report: `docs/collab/chatgpt/reviews/2026-11-10_Issue35_PostKVNorm_NativeGeneration_Performance_EVIDENCE.md`. Numeric correctness gate remains approved; performance benefit, P99, production and V3 merge are separate.
+
+## 2026-11-10 — GPT independently confirmed B1 Prefix K/V assembly scans and GPU launch overhead (injection unchanged)
+
+- **Formal pair unchanged** Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93`, numeric `APPROVE_CODE` remains, no new production code and no V3 merge. **Owner mandates keeping existing Memory injection semantics/location unchanged**.
+- GPT actually used same **Local-TTT iter15000 checkpoint** and same frozen real request/seed on H100 GPU6, comparing A) noPrefix native (diagnostic only), B) same real Prefix KV/Pack OFF, C) same Prefix KV/Pack ON; 3warmup+20Latin interleaved triples per K, output correctness checked. **K1 P50 A537.371/B995.281/C813.375ms**, **K16 P50 A531.808/B980.972/C802.984ms**. C−A residual **276.004/271.176ms**; textKV+pack recovered **181.906/177.988ms**. Do not compare this directly with historical separately trained NoTTT checkpoints. K16 one 1340.63ms outlier kept. Artificial gpu_load_sim was present initially, auto-yield; no user tasks stopped.
+- **Independent same-real-input CPU+CUDA profiler**: noPrefix **17,712** kernel events/113.548ms kernel total; PrefixKV+Pack **35,414** events/155.435ms; PrefixNoCache **47,330** events/229.896ms. PrefixC vs A = +**17,702 GPU Kernel events** but only +**41.887ms GPU Kernel execution time**, far less than +271–276ms full generation. Host dispatch, small kernels and metadata processing contribute material overhead (not precisely separable by adding profiler inclusive times).
+- **Source-to-event match (critical)**: `mot/attention.py:363–378` calls `prepend_memory_kv`; `mot/memory_prefix.py:127–174` for B1 executes cumsum and **2 repeat_interleave**, index-copy K/V every time. At28layers×30steps=840 calls ⇒ 1680 unnecessary multi-sample ID repeats. Profiler `aten::repeat_interleave` **2→1682**, `aten::cumsum` **2→1682**, CUDA CUB Scan kernels **5→5045** (=+5040). FlashAttention SM90 kernel count **868→868** and Flash GPU time ~11.147→12.281ms; Varlen Prepare +868 kernels (~2.814ms GPU). Hence **do not claim FlashAttention math alone explains residual 276ms**.
+- **Minimal possible Codex change**: keep `attach_local_prefixes`, Prefix K/V projection/normalization/order, Attention Masks/varlen behavior, memory effect on Action, request-only caches and current V exactly as-is. Optimize **only B1 K/V assembly and offset computation** in `prepend_memory_kv` (or equivalent exact layout specialization) to remove redundant scans/metadata launches; otherwise fall back unchanged. GPT external CPU proof direct B1 concat/offset shift **30/30 exact**, incl BF16 and optional padding, NOT compiled-GPU model parity. Need new Formal Pair, strict K1/source32 and K16/source64 **30/30 velocity + Action/Vision exact**, changed Prefix/missing Prefix/Padding/cleanup/multiB-off regression and measured H100 latency (no arbitrary threshold). No NoTTT rerun.
+- **Evidence SHA** `bb871e8bf07e03f7832e60170e50006947e630b1639ce435ec40dbe93c146322` from authorized server `.../_gpt_independent_gates_20261104/issue35_prefix_overhead_samecheckpoint_20261110/independent_performance_root_cause.json`; raw private tensors/ChromeTrace not exported. [Detailed GPT independent diagnosis](https://github.com/wxwy/psm_wma/blob/v3-local-prefix-kv-parity-issue35-20261110/docs/collab/chatgpt/reviews/2026-11-10_Issue35_B1_Prefix_KV_Assembly_Performance_RootCause_EVIDENCE.md). Existing draft remain unmerged; Issue35 performance investigation remains OPEN.
+
+## 2026-11-10 — Issue35 B1 Prefix K/V组装候选：新Pair及CPU证据，申请窄增量审核
+
+- **Formal implementation**：Root `39f60da729a49c9f6514953bf801dcafb7493039` / Child-Gitlink `4be3d702f3008040b830ae09c200d80e273a201a`。Root parent `f9762003e164a013df13c258ee0ab925fcdc8740`，Child parent `bf707810f573e885f0966d65c232dc2a610d6a93`。两仓隔离分支 `v3-local-prefix-b1-assembly-issue35-20261110`；Child FIRST、Root已正常push。后续账本HEAD不替代Formal Pair。
+- 已回读旧55b/bf707数值APPROVE_CODE、post-fix性能报告及B1组装根因报告和精确Issue交接；旧数值Gate不重复审核。本次只实现B1组装，**不改变Memory注入/每层投影归一化/当前K/V/Mask/Varlen/FW/slowweights/Session/Resume**，不把约271–276ms全部视为扫描耗时。
+- **Child实际只有2文件、205新增行**：`memory_prefix.py`新增24行B1推理快路径，直接cat和offset平移，保持optional padding；static shape/dtype/device/正完整Prefix条件不满足或梯度开启时走原通用实现。通用尾部byte-identical，删除新分支后的整个模块AST与parent相同；测试181行。Root实现仅Gitlink/SESSION/TODO。
+- **确定性证据**：旧生产仅测试增加的RED1FAIL（cumsum1/repeat_interleave2/index_copy4），新同一byte-identical测试文件整个101PASS；旧dirty测试实验不冒充clean Formal Gate。新增79项含60组FP32/BF16/offset32/64/Native长度/padding、Prefix改变恢复、多样本/空Prefix回退、梯度与错误拒绝、dynamic/fullgraph无三类操作；CPU图backend不代表H100Inductor。
+- **exact clean新Pair完整作者CPU**：**292/292 PASS，0失败/错误/跳过，Shell0，source_unchanged=true，1487源指纹相同**。原既有scoped Gate未修改，包装入口仅加本次两文件严格static，共11文件；3原I001例外保留，1历史W0 deselected不计PASS。101与292重叠，不累计。
+- [完整新配对申请](../codex/reviews/2026-11-10_Issue35_B1_Assembly_39f60da7_4be3d702_Review_Request.md)；[原始CPU JUnit/log/命令/身份/指纹、baseline/fixture/provenance](../codex/evidence/2026-11-10_issue35_b1_assembly/README.md)。请求GPT先审本24行生产增量及CPU证据，再独立对新clean Pair跑既有冻结K1/source32、K16/source64三路径及全部30步velocity/Action/Vision exact0，之后同权重同输入配对测性能与Kernel，不预设加速率、不剔除离群。
+- **本轮H100/真实数值/实际性能=PENDING，independent approval=NOT_CLAIMED**。新cat可改变编译融合，CPU布局PASS不等于整模型BF16通过。Codex没有连接服务器、管理人工GPU负载或访问/外传私有张量，没有GPU/训练/NoTTT模型/Sim/SR/900EP或V3合并。上游PR36/12保持Draft，当前Issue35性能工作仍开放。
+
+## 2026-11-10 — Issue35 B1 assembly 39f60da7/4be3d702 GPT independent APPROVE_CODE
+
+- **Formal implementation pair (DO NOT substitute docs HEAD)**: Root `39f60da729a49c9f6514953bf801dcafb7493039` / Child+Gitlink `4be3d702f3008040b830ae09c200d80e273a201a`. Previous numeric-approved Root55b/Childbf707; new RootPR37/ChildPR13 remain Draft. Only B1 inference Prefix K/V assembly changed, production +24 lines; original generic body preserved, injection position/semantics/current K/V/Mask/Varlen/FW unchanged.
+- **GPT independent CPU**: exact clean detached implementation pair, scoped regression **292/292 PASS**, 0 fail/error/skip (one inherited historical W0 explicitly deselected), 11 scoped Ruff/format/AST files pass, **1487 source fingerprints unchanged**.
+- **GPT independent real H100 strict numerics**: Local-TTT iter15000, same real frozen K1/source32 and K16/source64, 3 modes each (KVoff+Packoff, KVON+Packoff, KVON+PackON). CPU re-read all six H100 generated outputs against prior original Local reference: raw15/Action/Vision **torch.equal**, and for both K the two cached modes have **all 30/30 velocity steps torch.equal**. Follows original V3 Prefix injection (unchanged); no new strict parity block.
+- **GPT direct native model generation performance** (same real input/checkpoint/GPU6 H100, KV+Pack on, no artificial gpu_load_sim, 4 warmups +30 measured, Action/Vision checked each time): **K1 parent P50 789.680 → candidate 693.883ms (−95.797ms, −12.13%, x1.138)**, **K16 787.289 → 680.790ms (−106.500ms, −13.53%, x1.156)**. P95 K1 796.301→698.169ms; K16 793.439→739.936ms. K16 slower ~729–743ms observations retained; no preset arbitrary improvement bar.
+- **Real H100 CUDA profiler**: Prefix KV+Pack GPU Kernel 35414(parent)→27882(candidate), CUB Scan 5045→5, host `repeat_interleave` 1682→2, `cumsum` 1682→2, **FlashAttn SM90 count unchanged 868**. Intrusive profiles from different sessions only support kernel-path attribution, not precise wallclock speed accounting. No change to Memory semantic calculation.
+- **Scope/verdict**: `APPROVE_CODE` **only** for new B1 inference Prefix assembly implementation and direct scoped CPU/H100 frozen-real-input numerical+latency evidence. **NO** V3 merge, full RoboCasa SR, more complicated batch or global memory, production P99, no NoTTT rerun or modification to Prefix injection. Issue35 broader attention performance work remains open.
+- Evidence stored only on authorized data server `.../_gpt_independent_gates_20261104/issue35_b1_assembly_independent_20261110/` (raw tensors/traces not uploaded). Independent final audit SHA256 `c89821a9ac2efc0000a876b0c33daea8aec38abd3da29f2aa1333fdb8be8df46`. [Formal GPT review](https://github.com/wxwy/psm_wma/blob/v3-local-prefix-b1-assembly-issue35-20261110/docs/collab/chatgpt/reviews/2026-11-10_Issue35_B1_Assembly_39f60da7_4be3d702_APPROVE_CODE.md).
+
+## 2026-11-10 — GPT K16-only request-local Prefix K/V projection microbenchmark: candidate evidence (no source change)
+
+- **OWNER:** All further performance and numeric verification of the next cache candidate uses **K=16/source64 only**, no repeat K1 experiments. Keep Memory injection completely unchanged. Formal approved Root `39f60da729a49c9f6514953bf801dcafb7493039` / Child `4be3d702f3008040b830ae09c200d80e273a201a` remains unchanged and Draft, no V3 merge.
+- GPT independent same-Local-iter15000 checkpoint and K16/source64 real frozen source, 20×Latin A/B/C P50 **native-noPrefix 521.250ms / currentPrefix-noCache 883.451ms / currentPrefix-KVPackON 684.582ms**, so **residual +163.332ms** (model-native includes current VAE). No NoTTT rerun, no structural Memory change.
+- Real network subexpression staticity on H100: fixed K16 4×32 Prefix, local_memory2llm projection + 28 layer input_layernorm/k_proj/v_proj/k_norm, **30 repeats exact**, modifying Prefix changes 28/28 layers; reverting returns exact. Eager only—not compiled model parity. Server `.../issue35_post_B1_remaining_overhead_20261110/static_prefix_projection_report.json` SHA256 `3aca62b973df06753defca3ecb323706370f34af8b5ff608a296ba76cbc50ed5`.
+- GPT independently microbenchmarked K16 true model subexpressions on GPU6 (Eager, warmup3, 15 measured, whole 30-step surrogate): `Prefix Context×30` **wall P50 1.981ms**, `28-layer K/V projections+normalizations×30` **120.362ms**, `both×30` **123.435ms**, `full projection once` **4.207ms**. This is **not** a prediction of exact compiled model speedup. Microbenchmark evidence SHA256 `7c7da9177eddb31f880eb60ce748de93921a6e4bc7f125f93ac6c1d412150741`.
+- Older compiled K1 Profiler (historical source only, **not newly run K1**) shows +1710 NVJet GEMMs vs same-checkpoint noPrefix, consistent with 2×28×30 K/V +30 Context projections; +5824 Triton fused and +868 VarlenPrepare remain. Confirm via new K16 compiled trace if attributing precise hotspots.
+- **NEXT Codex narrow candidate**: Request-local B1/Prefix K/V projection reuse, preserving current actual per-layer K/V injection, mask and varlen semantics; must check **native fill vs Inductor gen-only BF16 rounding boundary** before reusing values; prior real-input Stage1 TextKV cache parity bug proves Eager equality alone is insufficient. Do not add per-layer all+where sync overhead or cross-request cache. Fallback noPrefix/multiB/grad/changed Prefix; clear in finally and keep FastWeight across Replan correct.
+- Next GPT GPU Gate **K16/source64 only**: old original Local, Stage1, Stage2 30/30 velocity exact and Action/Vision/raw15 exact; changed Prefix/reversion; same-DCP/real input old-vs-new 30 repeated model-native GPU perf, retaining P95/P99; no arbitrary speed goal. Codex must submit new formal pair for code review. No NoTTT, no new SR, no V3 merge.
+- **Full independent report:** `docs/collab/chatgpt/reviews/2026-11-10_Issue35_K16_RequestLocal_PrefixProjection_Hotspot_EVIDENCE.md`. Final derived server-only report `.../issue35_post_B1_remaining_overhead_20261110/independent_projection_reuse_finding.json` SHA256 **`ef369e3b61b89c9de10159ff81c1ff6c5a5b012b80ceeda81e692a33f162ff76`**. All private original data retained only on authorized server; GPUs4–7 released. Existing Stage2/B1 code review verdict unchanged; this is new evidence only.

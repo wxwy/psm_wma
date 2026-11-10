@@ -1,0 +1,352 @@
+{
+  "formal_root": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+  "formal_child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+  "evidence_head": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+  "root_pr": "https://github.com/wxwy/psm_wma/pull/30",
+  "child_pr": "https://github.com/wxwy/cosmos-framework/pull/9",
+  "draft": true,
+  "merged": false,
+  "remote_files": 42,
+  "checks": [
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "scripts/robocasa_eval_v2/config.py",
+      "expected": "b2f3014b77a3d111c5f92ebb44d5dd472dc97f1c",
+      "actual": "b2f3014b77a3d111c5f92ebb44d5dd472dc97f1c",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "scripts/robocasa_eval_v2/identity.py",
+      "expected": "72dbf858739d48ee0de0ab7878c9ce21a78aaca1",
+      "actual": "72dbf858739d48ee0de0ab7878c9ce21a78aaca1",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "scripts/robocasa_eval_v2/runtime.py",
+      "expected": "449c2118b1c8428a863aebe3d768f04c51684833",
+      "actual": "449c2118b1c8428a863aebe3d768f04c51684833",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "scripts/robocasa_eval_v2/shared_vae.py",
+      "expected": "fb4868bd0a3bae587eb4e0fca31c53fe7802474e",
+      "actual": "fb4868bd0a3bae587eb4e0fca31c53fe7802474e",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "tools/v3/eval_v2_batch_tests/history_horizon_test.py",
+      "expected": "dbe28ce8c606649a093079dd352301e30af541f8",
+      "actual": "dbe28ce8c606649a093079dd352301e30af541f8",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+      "expected": "dbf0a6d75d47c90baed01c55c4f52c538ae94d59",
+      "actual": "dbf0a6d75d47c90baed01c55c4f52c538ae94d59",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_test.py",
+      "expected": "0543533958615b949008f6cb84b557813e001d19",
+      "actual": "0543533958615b949008f6cb84b557813e001d19",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "expected": "67ba37bb064262f965822a927c9861b1ad3e6895",
+      "actual": "67ba37bb064262f965822a927c9861b1ad3e6895",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/local_memory_online.py",
+      "expected": "0b10a28814b0ec62b50c62c2bc10c3bd0bd18728",
+      "actual": "0b10a28814b0ec62b50c62c2bc10c3bd0bd18728",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_feature_evidence.py",
+      "expected": "350e6cae4d5c43d719a979f24a90306c7953c891",
+      "actual": "350e6cae4d5c43d719a979f24a90306c7953c891",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_feature_evidence_test.py",
+      "expected": "338072cb6505a6753774c12657e00dc28c6fb757",
+      "actual": "338072cb6505a6753774c12657e00dc28c6fb757",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_history_horizon_test.py",
+      "expected": "f6272e312c0c9356420a24be0222c289a8f0fa9e",
+      "actual": "f6272e312c0c9356420a24be0222c289a8f0fa9e",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_history_k_test.py",
+      "expected": "f9bf9242420a8ac5efa77f0edff3894768ba40c7",
+      "actual": "f9bf9242420a8ac5efa77f0edff3894768ba40c7",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_local_memory_policy.py",
+      "expected": "2bd1bcb7aceab7b8e69734c2f31e3966e01ed457",
+      "actual": "2bd1bcb7aceab7b8e69734c2f31e3966e01ed457",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+      "expected": "aceaa27340354932bdc448cdc8b358727a6933df",
+      "actual": "aceaa27340354932bdc448cdc8b358727a6933df",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_vae_daemon.py",
+      "expected": "d18ede51a167cd60cc2e49b76a9b6ba49e1b00d6",
+      "actual": "d18ede51a167cd60cc2e49b76a9b6ba49e1b00d6",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_vae_protocol.py",
+      "expected": "2e5822ac9119d866c7765ee38caafa7fd428099a",
+      "actual": "2e5822ac9119d866c7765ee38caafa7fd428099a",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/inference/robocasa_vae_worker.py",
+      "expected": "ecdd0b72284ee427650d0094540f1dbc98fa6b58",
+      "actual": "ecdd0b72284ee427650d0094540f1dbc98fa6b58",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "expected": "5f6d0cb1b8e5a7f3889024d7d9dbbbe361072401",
+      "actual": "5f6d0cb1b8e5a7f3889024d7d9dbbbe361072401",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/simulation/robocasa/closed_loop_eval.py",
+      "expected": "9cda03c7cf2662e9e964888c202a35c828074831",
+      "actual": "9cda03c7cf2662e9e964888c202a35c828074831",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/simulation/robocasa/eval_v2_transactions.py",
+      "expected": "5b33c310acb4277baf2e84d0288499983f4152f8",
+      "actual": "5b33c310acb4277baf2e84d0288499983f4152f8",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "ref": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "path": "cosmos_framework/simulation/robocasa/sim_shared_vae_client.py",
+      "expected": "ee0018c51c63c0e9113abd944507fe23e92e10b0",
+      "actual": "ee0018c51c63c0e9113abd944507fe23e92e10b0",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/archive_manifest.json",
+      "expected": "7d6435dbf0dfd5a18cf380bcced32f5275c98f72",
+      "actual": "7d6435dbf0dfd5a18cf380bcced32f5275c98f72",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/provenance.json",
+      "expected": "46c08fb44c0f258caab8bf87fa3a389db359a6f5",
+      "actual": "46c08fb44c0f258caab8bf87fa3a389db359a6f5",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/root_increment.patch",
+      "expected": "816324f5a2f618a928440ea14efb3756cd3bdf42",
+      "actual": "816324f5a2f618a928440ea14efb3756cd3bdf42",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/child_increment.patch",
+      "expected": "e13f920b3c460b0f71425e6a3b0cbcb00b414201",
+      "actual": "e13f920b3c460b0f71425e6a3b0cbcb00b414201",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/gate.json",
+      "expected": "3693e678cde7ac1cb1f87605678e0e90c733aceb",
+      "actual": "3693e678cde7ac1cb1f87605678e0e90c733aceb",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/junit.xml",
+      "expected": "1830a4d175e307df4a6e76346d7be7784240dd23",
+      "actual": "1830a4d175e307df4a6e76346d7be7784240dd23",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/commands.json",
+      "expected": "afea71a3945fb44e25b0e7b06f4f54b6c752b932",
+      "actual": "afea71a3945fb44e25b0e7b06f4f54b6c752b932",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/environment.json",
+      "expected": "19a221fdf9e39389e4853a00f4714c2442e30875",
+      "actual": "19a221fdf9e39389e4853a00f4714c2442e30875",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/source_before.json",
+      "expected": "fac7c81386b4d1c77852e9e184826084c98f2b7f",
+      "actual": "fac7c81386b4d1c77852e9e184826084c98f2b7f",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/source_after.json",
+      "expected": "fac7c81386b4d1c77852e9e184826084c98f2b7f",
+      "actual": "fac7c81386b4d1c77852e9e184826084c98f2b7f",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/outer_tool_result.json",
+      "expected": "6a11db0aa2ae20d3e1ee9ab22dd491af6924aa4d",
+      "actual": "6a11db0aa2ae20d3e1ee9ab22dd491af6924aa4d",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/dense_old.json",
+      "expected": "e26406d3b212f37eb879459d35ec03f124521e15",
+      "actual": "e26406d3b212f37eb879459d35ec03f124521e15",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/author01/dense_new.json",
+      "expected": "e26406d3b212f37eb879459d35ec03f124521e15",
+      "actual": "e26406d3b212f37eb879459d35ec03f124521e15",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/dev_gate.py",
+      "expected": "1e897673cd73a0a36a972e65ef33a71348541cef",
+      "actual": "1e897673cd73a0a36a972e65ef33a71348541cef",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/dense_parity_probe.py",
+      "expected": "aa83b81152cb61a73dffb739e42cebc6256f9356",
+      "actual": "aa83b81152cb61a73dffb739e42cebc6256f9356",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/owner_requirement.json",
+      "expected": "b7b82b468ab7713f3421289aa38b95a3cdc308e1",
+      "actual": "b7b82b468ab7713f3421289aa38b95a3cdc308e1",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue28_horizon/dev01/junit.xml",
+      "expected": "1aa97ec62b552b23231c16e8bb2b91e46a561c2a",
+      "actual": "1aa97ec62b552b23231c16e8bb2b91e46a561c2a",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "expected": "cf9017fc026780e751df251d1511c61397d8fe04",
+      "actual": "cf9017fc026780e751df251d1511c61397d8fe04",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md",
+      "expected": "319c28b0102d16d94716c9a95285b498bea44cc7",
+      "actual": "319c28b0102d16d94716c9a95285b498bea44cc7",
+      "match": true
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "ref": "c5cacb5bd56f8df765a98ed61f285e74e4c4d152",
+      "path": "docs/collab/chatgpt/reviews/2026-11-09_Issue28_050e45d8_59746af0_HistoryK_HorizonDerivation_REQUEST_CHANGES.md",
+      "expected": "5530754d36aa73c4a90b7db735a6c86479be88e0",
+      "actual": "5530754d36aa73c4a90b7db735a6c86479be88e0",
+      "match": true
+    }
+  ],
+  "author_tests": 566,
+  "author_subtests": 22,
+  "author_junit": 588,
+  "independent_approval": "NOT_CLAIMED"
+}

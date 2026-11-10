@@ -1,0 +1,32 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix ________
+
+    def test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix():
+        obj, batch = _generation_harness()
+        kwargs = dict(guidance=1.0, num_steps=30, seed=[31], _local_memory_prefixes=(torch.randn(4, 32),))
+        reference = obj.generate_samples_from_batch(batch, use_prefix_pack_templates=False, **kwargs)
+        assert obj.seen == [(True, False, False)] + [(True, True, False)] * 29
+        obj.seen.clear()
+        actual = obj.generate_samples_from_batch(batch, **kwargs)
+>       assert obj.templates == 1
+E       assert 0 == 1
+E        +  where 0 = namespace(config=namespace(local_memory_enabled=True, local_memory_k_local=4, local_memory_dim=32, joint_attn_implemen...<locals>.<lambda> at 0x7ff14af5cfe0>, _get_velocity=<function _generation_harness.<locals>.velocity at 0x7ff14af5cf40>).templates
+
+cosmos_framework/model/generator/mot/prefix_pack_template_test.py:137: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[11-09 13:50:00|INFO|cosmos_framework/model/generator/omni_mot_model.py:4332:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=30)
+[11-09 13:50:04|INFO|cosmos_framework/model/generator/omni_mot_model.py:4332:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=30)
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+: 14 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_generation_reuses_one_pack_and_keeps_text_cache_and_prefix
+1 failed, 15 warnings in 16.67s

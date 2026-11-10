@@ -1,0 +1,53 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_identical_prefix_norm_input_keeps_fill_rounding_and_changed_prefix_is_live _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f0c106d1ca0>
+
+    def test_identical_prefix_norm_input_keeps_fill_rounding_and_changed_prefix_is_live(monkeypatch):
+        """Model a one-ULP backend drift after the unchanged K projection.
+    
+        Real Nemotron compiled fill/hit produced different Prefix K normalization
+        with identical inputs. The CPU double controls only that normalization
+        rounding; current Prefix changes must still affect the hit.
+        """
+        torch.manual_seed(31)
+        net = _TinyMoT(torch.bfloat16)
+        und, gen, prefix = (torch.randn(*shape, dtype=torch.bfloat16) for shape in ((5, 16), (6, 16), (4, 32)))
+        drift = False
+        for layer in net.layers:
+            original = layer.self_attn.k_norm_moe_gen.forward
+    
+            def normalization(value, original=original):
+                result = original(value)
+                if drift and value.shape[0] == 4:
+                    return torch.nextafter(result, torch.full_like(result, float("inf")))
+                return result
+    
+            monkeypatch.setattr(layer.self_attn.k_norm_moe_gen, "forward", normalization)
+        with torch.inference_mode():
+            reference = net.step(und, gen, prefix)
+            previous = install_inference_memory_attention_dispatch(net)
+            try:
+                caches = make_inference_text_kv_cache(3)
+                fill = net.step(und, gen, prefix, caches)
+                torch.testing.assert_close(fill, reference, rtol=0, atol=0)
+                drift = True
+                hit = net.step(und, gen, prefix, caches)
+>               torch.testing.assert_close(hit, reference, rtol=0, atol=0)
+E               AssertionError: Tensor-likes are not equal!
+E               
+E               Mismatched elements: 31 / 96 (32.3%)
+E               Greatest absolute difference: 0.0078125 at index (0, 7)
+E               Greatest relative difference: 0.04833984375 at index (0, 11)
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:271: AssertionError
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py::test_identical_prefix_norm_input_keeps_fill_rounding_and_changed_prefix_is_live
+1 failed, 25 deselected, 1 warning in 6.82s

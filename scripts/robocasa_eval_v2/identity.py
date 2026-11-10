@@ -5,7 +5,11 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest, digest
+from cosmos_framework.evaluation.robocasa_v2.contract import (
+    ACTION_CHUNK_SIZE,
+    build_manifest,
+    digest,
+)
 from cosmos_framework.evaluation.robocasa_v2.store import read
 from eval_robocasa_18task_queue import discover_task_datasets, launch_environment
 from robocasa_episode_resume.model_identity import (
@@ -129,7 +133,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
     requested = {
         "checkpoint": Path(cfg["checkpoint"]),
         "num_steps": cfg["prediction_steps"],
-        "action_horizon": 16,
+        "action_horizon": ACTION_CHUNK_SIZE,
         "guidance": cfg["guidance"],
     }
     cached = Path(cfg["output_dir"]) / "_internal/verification_cache.json"

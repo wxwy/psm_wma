@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="6.577" timestamp="2026-11-09T12:42:32.423161+00:00" hostname="f415bcea90b3"><testcase classname="cosmos_framework.model.generator.mot.prefix_text_kv_memory_test" name="test_prefix_cache_fill_uses_materialized_native_kv_and_hit_keeps_native_padding" time="0.010"><failure message="assert (None is not None)">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f9da2c9f8c0&gt;
+
+    def test_prefix_cache_fill_uses_materialized_native_kv_and_hit_keeps_native_padding(monkeypatch):
+        """Keep the exact native GEN operands/backend contract, including pad ranges."""
+        torch.manual_seed(109)
+    
+        def pack(tensor):
+            return build_packed_sequence(
+                "two_way",
+                packed_sequence=tensor,
+                attn_modes=["causal", "full"],
+                split_lens=[5, 6],
+                sample_lens=[11],
+                packed_und_token_indexes=torch.arange(5),
+                packed_gen_token_indexes=torch.arange(5, 11),
+                num_heads=tensor.shape[1],
+                head_dim=8,
+                num_layers=1,
+                full_seq_alignment=8,
+                causal_seq_alignment=8,
+            )[:2]
+    
+        query, mask = pack(torch.randn(11, 2, 8))
+        key, _ = pack(torch.randn(11, 1, 8))
+        value, _ = pack(torch.randn(11, 1, 8))
+        norm_key = from_und_gen_splits(key["causal_seq"] * 2, get_gen_seq(key), key)
+        kwargs = dict(
+            memory_prefix_key_states=torch.randn(4, 1, 8),
+            memory_prefix_value_states=torch.randn(4, 1, 8),
+            memory_prefix_sample_offsets=torch.tensor([0, 4]),
+        )
+        calls = []
+    
+        def kernel(query, key, value, **kw):
+            calls.append(
+                dict(
+                    query=query.clone(),
+                    key=key.clone(),
+                    value=value.clone(),
+                    **{k: v.clone() if isinstance(v, torch.Tensor) else v for k, v in kw.items()},
+                )
+            )
+            return _cpu_attention(query, key, value, **kw)
+    
+        monkeypatch.setattr(attention_module, "attention", kernel)
+        monkeypatch.setattr(cache_module, "attention", kernel)
+        caches = make_inference_text_kv_cache(1)
+        state = InferenceTextKVMemoryState(caches, local_prefix_length=4)
+        state.init(query, torch.device("cpu"))
+        with torch.inference_mode():
+            expected, _ = dispatch_attention(query, key, value, mask, packed_key_states_normalized=norm_key, **kwargs)
+            native_gen_call = calls[-1]
+            fill, kv = cache_module.dispatch_attention_with_text_kv_memory(
+                query,
+                key,
+                value,
+                mask,
+                memory_value=state.read_for_layer(0),
+                packed_key_states_normalized=norm_key,
+                **kwargs,
+            )
+&gt;           assert kv is not None and kv[0].numel() == kv[1].numel() == 0
+E           assert (None is not None)
+
+cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:466: AssertionError</failure></testcase></testsuite></testsuites>

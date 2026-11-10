@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="8.149" timestamp="2026-11-09T03:17:12.882553+00:00" hostname="f415bcea90b3"><testcase classname="" name="test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes" time="0.007"><failure message="ValueError: Stage3A signed features require Policy B1/wait0; B4/B8 Action admission is disabled">def test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes():
+        base, _ = sessions.make_adapter(8)
+        adapter = FeatureAdapter(base)
+        batches = []
+&gt;       actor = BatchedSessionTransactions(
+            adapter,
+            lambda reqs, updates: (
+                batches.append(len(reqs)) or BatchOutput([[[0.125] * 15 for _ in range(16)] for _ in reqs])
+            ),
+            lambda: None,
+            max_batch_size=8,
+            batch_wait_ms=0,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=tuple(f"slot{i}" for i in range(8)),
+            timeout_s=5,
+        )
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;cosmos_framework.inference.robocasa_batch_transactions.BatchedSessionTransactions object at 0x7f06dd646180&gt;
+adapter = &lt;cosmos_framework.inference.robocasa_shared_policy_batch_test.FeatureAdapter object at 0x7f072a8cbf50&gt;
+generate_many = &lt;function test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes.&lt;locals&gt;.&lt;lambda&gt; at 0x7f06dd6e1b20&gt;
+quiesce = &lt;function test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes.&lt;locals&gt;.&lt;lambda&gt; at 0x7f06dd6e1bc0&gt;
+max_batch_size = 8, batch_wait_ms = 0, decode_media = None
+media_spool_max_jobs = 4, media_spool_max_bytes = 536870912
+media_drain_timeout_s = 300.0, single_latency_arm = None
+kwargs = {'manifest_digest': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'owner_token': 'cpu-owner', 'run_lease': 'run', 'slot_ids': ('slot0', 'slot1', 'slot2', 'slot3', 'slot4', 'slot5', ...), ...}
+
+    def __init__(
+        self,
+        adapter,
+        generate_many,
+        quiesce,
+        *,
+        max_batch_size=2,
+        batch_wait_ms=20,
+        decode_media=None,
+        media_spool_max_jobs=4,
+        media_spool_max_bytes=512 * 1024**2,
+        media_drain_timeout_s=300.0,
+        single_latency_arm=None,
+        **kwargs,
+    ):
+        self.feature_mode = getattr(adapter, "feature_evidence_owner", None) is not None
+        if single_latency_arm not in (None, "A", "B", "C") or (single_latency_arm is not None and max_batch_size != 1):
+            raise ValueError("P0 latency profiling requires one native Policy member")
+        self.profiling_arm = single_latency_arm or ("C" if self.feature_mode else None)
+        if self.feature_mode and (adapter.mode != "required" or max_batch_size != 1 or batch_wait_ms != 0):
+&gt;           raise ValueError("Stage3A signed features require Policy B1/wait0; B4/B8 Action admission is disabled")
+E           ValueError: Stage3A signed features require Policy B1/wait0; B4/B8 Action admission is disabled
+
+cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py:83: ValueError</failure></testcase></testsuite></testsuites>

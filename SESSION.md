@@ -1,3 +1,814 @@
+# 2026-11-10 CST — Issue35 请求内逐层 Prefix K/V 投影复用实施
+
+任务 ISSUE35-PREFIX-PROJECTION：IN_PROGRESS；Codex实现/CPU，GPT独立审核及真实H100，仅K16/source64。
+Child候选已提交d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2，4生产文件+1测试（481+/21-）。
+首轮返回实际Attention K/V buffer及UND索引；编译边界外提取/clone Prefix K/V与UND，普通4tuple不变。
+Host绑定强引用Prefix对象、版本、存储指针/shape/stride/dtype/device；只授权eval/no-grad/B1旧TextKV
+eligible请求，更换/修改或无法跟踪的InferenceTensor/子类回退旧投影。Context/B1组装未改，Norm memo
+函数除文档外AST相同。首轮旧RED1FAIL：每层K/V/KNorm均30次；新相同函数AST GREEN1PASS均1次。
+最终Prefix聚焦59/59 PASS，0失败/错误/跳过，含FP32/BF16逐30步、真实buffer身份、版本/存储失效、
+改变/恢复、请求隔离、异常清理、动态fullgraph。早期55PASS/3fixtureFAIL及中间59PASS保留原JUnit/
+fixture/源码patch；最终直接buffer版再次59PASS。完整clean CPU待Root冻结后执行，预期292+22=314。
+本轮未做H100，不能从Eager120ms或CPU次数推导整模型加速或BF16严格相等。
+两仓隔离分支 v3-local-prefix-projection-issue35-20261110。
+基线Root8406fc8650088d5ef1f79bb6d63f46a3be41370b / Child4be3d702f3008040b830ae09c200d80e273a201a。
+before b44dd7aa，fresh fetch/ls-remote/tracking一致8406fc86，完整列出4新提交444e0cc7/f737365a/
+9ff09be5/8406fc86，ancestor0、ff-only成功。已读正式B1 APPROVE_CODE及K16投影热点完整报告和Inbox。
+39f60da7/4be3d702旧B1数值及性能Gate已独立通过，保持旧批准，不重审。新报告收敛只测K16，
+Eager120ms重复投影并非整模型可回收时间；不改变Memory注入或使用预计算Eager结果冒充编译等价。
+治理技能已读；当前Owner角色Codex实现/CPU、GPT真实GPU，覆盖旧三方/训练等待要求。
+
+预计Child生产范围：attention.py（首轮实际native K/V捕获），inference_text_kv_memory.py（请求cache/
+清理与Host版本绑定），unified_mot.py（明确授权命中时跳过重复Prefix投影），omni_mot_model.py
+（eligible B1/two_way/guidance1/no-grad/eval请求闭包权限与失效）。测试prefix_text_kv_memory_test.py。
+优先不动Context构建、不动已批准B1组装或Norm memo公式。只捕获首轮native已物化Prefix K/V；
+Prefix身份/版本变化或无法可靠跟踪时回退旧路径，避免GPU数据同步与跨请求/Session缓存。
+先确定性CPU预算RED，再CPU数值/原生capture/版本失效/隔离/异常清理/训练及非B1fallback/编译测试。
+提交新Child->Root精确配对及clean scoped CPU Evidence，交GPT独立审核和K16全30步/Action/Vision
+strict0，然后同输入性能。Child已冻结，Root即本记录/Gitlink实现提交；无GPU/服务器/训练/NoTTT/Sim/SR/V3操作。
+
+# 2026-11-10 CST — Issue35 B1 Prefix K/V 组装作者 CPU 完成，申请独立审核
+
+任务 ISSUE35-B1-KV-ASSEMBLY：REVIEW，Codex 实现与 CPU 检查，GPT 独立审核及后续 H100 数值/性能执行。
+Formal Root 39f60da729a49c9f6514953bf801dcafb7493039 /
+Child-Gitlink 4be3d702f3008040b830ae09c200d80e273a201a。两仓 Child FIRST、Root 已正常push；
+后续文档/证据 HEAD 为账本，不改变本配对。新配对尚无独立APPROVE_CODE、H100或V3合并许可。
+
+exact clean完整scoped作者CPU已完成：292/292 PASS（213+79）、0失败/错误/跳过、Shell0；
+原9加新2共11文件静态通过，原3个I001例外未增加、1项历史W0单独deselect；1487项指纹一致。
+CPU包装脚本复用原既有Gate入口，源码未变，原始JUnit/日志/环境/命令/身份均归档。
+报告 docs/collab/codex/reviews/2026-11-10_Issue35_B1_Assembly_39f60da7_4be3d702_Review_Request.md；
+证据 docs/collab/codex/evidence/2026-11-10_issue35_b1_assembly/。
+只做CPU；H100两K三路径全30步/Action/Vision strict0及同输入性能须由GPT独立执行。
+完整新增函数cat可能改变Inductor融合，CPU不能替代整模型BF16 Gate；不宣称已节省271–276ms。
+
+以下为本次实现与冻结记录：
+新隔离分支（两仓）：v3-local-prefix-b1-assembly-issue35-20261110。
+基线 Root f9762003e164a013df13c258ee0ab925fcdc8740，Child/Gitlink bf707810f573e885f0966d65c232dc2a610d6a93。
+
+本轮先保存 before5658adab，显式 fetch 当前 review 分支，ls-remote/tracking 同为 f9762003，
+完整列出6个新提交7c11e0be/4c9ccd90/25bc485c/6210b1d3/56cb318e/f9762003，ancestor0，ff-only成功。
+已读3份新正式报告及canonical Inbox：55b74ab4/bf707810数值APPROVE_CODE（独立37+213CPU，
+真实两K三路径及全30步exact）；后续同输入性能证据；B1 assembly profiler根因证据。
+没有重复审核旧 Pair。旧任务数值阻断已按正式报告关闭，性能新任务另行认领。
+适用治理技能已读；当前Owner明确由Codex修改、CPU验证，GPT做真实H100验收，覆盖旧三方/训练等待流程。
+本轮不启动GPU或远程实验，不管理gpu_load_sim/其他任务，不外传服务器文件。
+
+生产文件仅Child mot/memory_prefix.py；测试扩展 mot/memory_prefix_test.py。
+在已有prepend_memory_kv内为合法B1推理提供直接cat/offset-shift；不满足静态shape/dtype/device/
+推理条件时保留原通用实现，梯度启用时保留原训练路径。Prefix投影/归一化、当前K/V、顺序、Mask、
+Varlen、FastWeight、slowweights、NoPrefix/多样本及Resume均不改。先添加性能契约负例，保留旧RED，
+再检查Padding/FP32/BF16/offset dtype/当前Prefix/动态fullgraph/原通用多样本及训练回退。
+代码冻结后提交Child FIRST、Root只Gitlink及工作记录，执行exact clean scoped CPU Gate，
+归档原始JUnit/log/源码指纹，交付新精确Pair与Draft。真实H100两K全30步/Action/Vision和性能待GPT验证；
+不预设加速比、不将CPU布局证明写成GPU数值或性能通过，不合并V3、不重跑NoTTT/Sim/SR/900EP。
+Child已提交：4be3d702f3008040b830ae09c200d80e273a201a，基于bf707810。
+仅24行生产增量，原通用尾部byte-identical；移除新分支后的整个模块AST与基线一致。
+受控旧RED为真实操作断言：cumsum1/repeat_interleave2/index_copy4，1FAIL、Shell1；
+新同一测试文件byte-identical，聚焦101/101 PASS（原22+新增79）、0失败/错误/跳过。
+两改动文件Ruff/format通过。完整负例fixture、JUnit、原源码SHA与静态provenance位于
+/workspace/work/issue35-b1-assembly-evidence/。不是已完成H100数值或性能验证。
+Root实现仅更新Gitlink/SESSION/TODO；冻结后已用既有cpu_gate.py执行exact clean完整scoped Gate，
+实际213+79=292项，继续明确排除历史W0并保留原3个I001例外；新两文件另做严格静态检查。
+
+# 2026-11-10 CST — Issue35 作者数值修复完成，申请新配对独立审核
+
+任务 ISSUE35-KV-HIT-PARITY：REVIEW。Codex 实现与作者证据，GPT 独立审核；
+没有新配对的 APPROVE_CODE，也没有 V3 合并或后续性能实验许可。
+
+Formal Root 55b74ab461fda27e4ff6490023c828db0abc0a9f /
+Child-Gitlink bf707810f573e885f0966d65c232dc2a610d6a93。
+两仓隔离分支 v3-local-prefix-kv-parity-issue35-20261110 已分别正常 push。
+本次 evidence/Inbox 提交是账本，不替代 Formal Pair。
+
+首差异定位：原 clean18be/1936 的 UND K/V 全28层静态且缓存读值精确；
+首次 GEN 层差异为 step1，K1 layer18、K16 layer16。经四个真实层的完整
+输出 SHA 无扰动核对，只有 Prefix K 中1个BF16元素不同；投影输入、投影
+输出、Norm权重相同，首差异在 compiled Prefix normalization 路径。
+修复只在精确相同投影输入下复用本请求原生首次归一化值；改变输入使用
+当前值，K/V仍逐层逐步投影、V始终当前，clear释放，无容差/跨Session缓存。
+
+作者CPU：原201+新增12，213 PASS，0失败/错误/跳过，Shell0；1个历史W0
+明确 deselected。9文件静态通过（原3个I001例外），1487指纹前后一致。
+受控旧1936仅测试增加 RED1FAIL，新同函数 GREEN1PASS；AST/SHA绑定通过。
+
+作者真实H100 author_h10002：PASS/Shell0。GPU6，iter15000、required/DCP
+身份通过，实际28层 OptimizedModule、limit8不变。K1/source32与K16/source64
+各三路径 Action/Vision/raw15 均精确等于独立旧原始Local输出；每条路径
+observer不改变输出，Stage1/2全部30步速度也各自等于原始Local。保护输入、
+FastState/Prefix、源码未变。首轮h10001夹具漏处理K16缺省K而FAIL，完整保留；
+只有外部夹具按默认K=H修正，生产 Pair 未变。未作性能或SR结论。
+
+GPU初查有其他任务，未动进程；Owner明确回复GPU4-7任务已停止，复查空闲
+才加载GPU6。最终4-7均0MiB、GPU6无compute PID，旧root2仍clean18be/1936。
+所有真实PT/图像/DCP/日志/FX留在data私有目录，无GPU0-3/训练/L2000操作。
+844私有文件索引SHA 1833504e303cedcfd87a065e921845afb36c1ebbc5d5c68c260f715ce656d623。
+新完整H100 gate SHA 94bacad2a7c2b1fafabe3d94763464028615fa71cce05ac6a5009e7e2fe6eb28。
+
+独立审核申请：docs/collab/codex/reviews/2026-11-10_Issue35_KVHit_PrefixNorm_55b74ab4_bf707810_Review_Request.md。
+原始本地CPU、作者工具、H100精确命令/派生表：docs/collab/codex/evidence/2026-11-10_issue35_kv_hit_parity/。
+打包校验通过：213JUnit、同函数AST、原生产SHA、2真实请求120速度比较均核对。
+重新fetch/ls-remote原review分支，仍796e28a7，无新父分支提交；当前候选基于它。
+下一步仅GPT对此新增量独立审核；保留上游Draft，不重复NoTTT/Sim/SR/900EP，
+不自动合并V3，不将本作者PASS称为独立Gate closure。
+
+# 以下为本轮实施期间的历史进展（已由上述完成记录更新）
+
+# 2026-11-10 CST — Issue35 guarded Prefix normalization candidate; CPU/H100 pending
+
+Task ISSUE35-KV-HIT-PARITY IN_PROGRESS, Codex author, independent GPT reviewer.
+Candidate Child bf707810f573e885f0966d65c232dc2a610d6a93, parent193627f4.
+Both isolated branches v3-local-prefix-kv-parity-issue35-20261110. Root source
+commit is this revision (fullRootSHA recorded after freeze in evidence).
+Root parent796e28a7, fresh reviewbranch advertised796e28a7 unchanged at recheck;
+prior eafe->796 fetch4docs/ff-only and exact GPT reports fully read (below).
+No V3 promotion or repeated review of original implementation18be/1936.
+
+Real model diagnostics stayed on original clean server18be/1936. probe03 bothK
+exit0/nonperturbing: nativeUNDKVstatic+cacheexactall28. FirstGENmismatch at
+step1 K1layer18 / K16layer16, inputGENidentical. operands04/05 isolatedlayer
+andK1all3finaloutputs exact independent baseline, same Prefix projection input/
+output andNormweight, Q/Vexact; Kdiff solely1Prefixelement max0.00390625,
+UND132/GEN267/padding2 rows exact. Nemotron3DenseVLRMSNorm (epsilon1e-5)
+compiled full-vs-gen-only normalization execution causes firstPrefixKdelta;
+not cacheUNDcontent, Stage2pack ortrajectory. RawPT/FX/logs remainserver-only.
+All failed/incomplete diagnostic revisions retained; no performance claims.
+
+Candidate only3Child productionfiles: attention typed4Tensor capture for raw
+PrefixKprojection + native materializednormoutput; request-local cache owns
+clones, clears both; hit uses reference only if ALL current projection values
+match exactly, GPUwhere fallback usescurrentnormalization whenchanged. Current
+PrefixK/Vstillprojecteverylayer/everyforward,Vlive, no ignoredchangedPrefix/
+Sessioncache/newtolerance/globalprecision/training change. Matching rawinput
+assumes frozen slowweights withinrequest, same as existing textKV contract.
+Existing NoPrefix/plainKV tuple and unsupportedpaths retained.
+
+New CPU regression injects1ULP inPrefixKnorm withunchangedprojection: old1936
+production bytes verified exact, same testfunctionAST oldRED1FAIL at hit31/96
+elements, newGREEN1PASS includes changedPrefix fallback+returntoriginal.
+No realGPUfix result yet. Added clone/clear, malformedreference, dynamicfullgraph
+currentPrefixcoverage; expected focused213actualJUnit+1historicalW0deselection.
+Ruff/format4sourcefiles PASS apart fromsame3baselineI001 exclusions (no others).
+Next reuseexisting cpu_gate.py on exactclean newRoot/Child, then new candidate
+model-only frozenK1/source32,K16/source64 all30velocity+Action/Vision strict0.
+New source must remainisolated, oldserverRoot/checkpoint/evidence neveredited.
+FullFormalSHA/handoff onlyafter evidence; no independent approval claimed.
+
+# 2026-11-10 CST — Issue35 real cache-hit parity investigation IN_PROGRESS
+
+Codex owns ISSUE35-KV-HIT-PARITY, branch v3-local-prefix-kv-parity-issue35-20261110
+in both repositories; no new production edit yet. BeforeRoot eafe821b5c8cbddcfbba513be16f756aa95de2f3,
+fresh fetch required explicit remote tracking ref (initial tracking lookup failed,
+repaired, not treated as no update); advertised/tracking796e28a7f36c1c06a323db153b207b60b6f69d7f,
+log4new commits62b61e2a/3100294f/019f008a/796e28a7, ancestor0 andff-onlyPASS.
+FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496 /
+Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d unchanged.
+Exact GPT reports read: 2026-11-10_Issue35_EGL_RenderGroup_RealInput_CAPTURE_PASS_REPLAY_PENDING.md
+and2026-11-10_Issue35_RealInput_KVCacheHit_ParityFail_IndependentReplay.md.
+User current instruction authorizes address Stage1hit numerics first, no V3
+promotion or furtherAttentionperformance work. CurrentOwner author/independentGPT
+reviewer role overrides obsolete3party/tmux waits; no delegation requested/used.
+Governance skill read; narrow command/resource/evidence disclosure before runs.
+
+EGLblocker CLOSED via existing authorized sg render context (notchmod/root);
+24private PT across8requests available. Independent server receipt bf ac...full:
+bfacf5dbf329f5b3f11254629425b74772f6b94b2748c9cdb624fb26fb354574.
+Independent replay audit f15d35a5e4697912e233c2d3e2c6a6477f185d72ce76aa413a5dd8877185227e
+recomputed and matches. K1/source32 old-vs-KV action max0.0049707889556884766,
+K16/source64 max0.007069587707519531. Stage1/2 exact; step0exact, step1first
+hit velocitymax0.03125/0.046875. This is confirmed same-full-input Stage1strict
+parityFAIL, no longer incomplete-input/trajectory-only suspicion. Root/docsold
+BLOCKED report preserved as history. No preset tolerance/throughput assumption.
+
+Planned files now: external /workspace/work/issue35-kv-parity-evidence and new
+server _codex_issue35_kv_hit_parity_20261110 for owned probes only, plus SESSION/
+TODO and eventual new evidence/handoff. Inspect/cache-capture outside compiler
+and compare full native UND K/V at steps0/1 vs cached tensors, then firstlayer
+GEN intermediate. Possible minimal Child targets only after evidence:
+model/generator/mot/inference_text_kv_memory.py, attention.py or unified_mot.py
+and narrow prefix_text_kv_memory_test.py; avoid unrelated files/training.
+Raw frozen requests/PT/checkpoint/trace stayserver-only, publish owncode/derived
+scalars/hashes only. Authorized GPU6 currentlyidle, GPU4-7all0MiB precheck;
+no GPU0-3/otherjobs/load management/NoTTT/SimSR/900EP/V3merge. First diagnostic
+will reuse existing fullrequests and native model service, retainlimit8/mode/DCP.
+New author probes server probe03: K1 andK16 bothDIAGNOSTIC_COMPLETE/exit0,
+all3finaloutputs matchindependent exactly despite forced-native-fill capture.
+All28 UND K/V static step0vs1 and normalcache.read step1equalnative.
+FirstGENlayerdiff Step1 K1layer18 / K16layer16, inputGENbyte-identical;
+actualcompiledlayersOptimizedModule,limit8. Initialprobe01/02 outputdir fixture
+failed beforemodelload; logs preserved, correctedexistingreplay outputcontract.
+probe03 rawPT/hashrecordsprivate; no production edits. Current operands01 adds
+GEN Flashalready-materialized operands to diagnostic FX outputs and checks
+isolatedlayerhashes againstwhole-generation; incomplete until nonperturbation
+and operand capture confirmed. OnlyGPU6, no Sim/modelperf/NoTTT experiments.
+operands01 unrecordedFlashname, operands02 keywordarg fixtureFAIL, operands03
+observerbypassedviafunctools.wraps metadata: allrawhistoryretained; no codeGatePASS.
+CPU nativecompileobserver probe confirms wraps0calls vs explicitwrapper1call,
+outputs equal both. operands04 nonperturbingCOMPLETE/exit0,4isolatedlayerhashes
+andK1all3finaloutputs equal prior independent; Q/V exact, K max0.00390625,
+attentionoutmax0.0001220703125(K1)/0.000244140625(K16).
+CPU partition01 COMPLETE: onlyPrefix K 1element/1row changed ineachcase;
+UND132/GEN267/padding2 rows all exact. Thus exact cachedUNDvalues notfirstcause.
+operands05 nowrecords PrefixKprojection input/output, actualNormweight and
+FP32GPUeagernorm diagnostic; allfirstlayer/finalnonperturbchecks mandatory.
+Cloudsameexecutor restarted thenwaitreadyPASS, filespersist; transientfunction
+store reset, commandreconstructed beforelaunch; remoteevidence unchanged.
+No production edit yet. Existing contract explicitly tests changing current
+Prefix onhits; cannot replacePrefix wholesale by staticcache. Evidence-based
+possible remedy must bind memoizedNormresult to exactcurrentpreNorm input,
+fallbackonchange, stillprojectcurrentPrefixeverylayer/step. No toleranceguess,
+no training/globalprecision changes. TaskIN_PROGRESS; next firstPrefixopproof.
+
+# 2026-11-10 CST — Issue35 evidence-only partial result; real-input capture BLOCKED
+
+Task ISSUE35-ATTENTION-PARITY: BLOCKED, Codex author; GPT independent reviewer.
+Separate branch v3-local-prefix-attention-issue35-20261109, docs base523aa26a.
+Unchanged FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496 /
+Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d; no production changes.
+Owner Issue35 and corrected Stage2 formal review read; scoped APPROVE_CODE stands.
+Earlier1.05x rejection superseded; historical author NOT_MET/exit2 retained.
+No repeated review of unchanged Pair or automatic V3 merge.
+
+Existing GPU02 synthetic trace reduced on-server, source hashes unchanged,
+counts independently crosschecked: both modes causal28, GEN840, varlenprep868.
+PackON GPU work sums causal0.277605ms, GEN11.958062ms, prep2.771284ms;
+Flash CPUinclusive141.351444ms (nested fwd78.619611ms, not additive).
+812 source hit paths do not imply812 causal GPU kernels; possible compilerDCE,
+not per-hit IR proof or real-input latency/GPU savings. No Attention patch.
+
+Original target K1replan2/source32,K16replan4/source64 full tensors absent in
+reviewer archived records; only Action/hash/scalar/timing summaries found.
+One short native K1capture01 tried on exact server root2/Child1936, GPU6Policy+
+GPU4Sim/VAE, output/baseport-only cfg changes. Actor physical EGL proof failed
+at render_devices.py267 before render/reset/env.step; no requests frozen;
+K16 never started, no capture02 or SR. All3owned close receipts match records,
+live_groupfalse and groups empty; finalGPU4/6 both0MiB/0%.
+
+Current uid1004/groups1004 cannot R/W /dev/dri/renderD132 (0660,gid993), correct
+sysfsPCI0000:98:00.0. Nativeinventory8 devices but noDRMPCI/CUDAhandles;
+purectypes/-S withCVDempty/unset bothnull/EGL_BAD_PARAMETER. Permission is an
+observed environment blocker, not proven sole root cause. Nochmod/group/sudo
+execution or identity bypass. Need existing authorized runnable env or complete
+frozen requests; async path/entry question sent, unanswered at this record.
+
+External torch.save capture tools prepared; native carriers/FastRecord/FW/Prefix
+layout/aliases/RNG CPU4/4PASS,0fail/error/skip,Shell0 (prior3PASS preliminary).
+Fixed diagnostic PYTHONPATH shadowing, originalstartup helper hashbound/preserved;
+bootstrap02 native CLI/Policy --help exit0, constructor hook active, modelNOT
+initialized. Hook still not validated on real inference. Current tools RuffPASS,
+format AST bindings retained. Early diagnostic true intentional-stop label was
+wrong; raw capture01 preserved and explicitly corrected, not a successful stop.
+Status01 mislabeled no_ttt_rerun field corrected by immutable status02.
+
+All rawserver configs/images/PT/DCP/logs/trace stayprivate on data. Only owncode,
+local rawCPUJUnit/logs and derivedstats/hashes go in this docs branch. Private
+root /mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue35_attention_20261109;
+index02 SHA4c9eac160fc6f27d210ef2560347c557b518fccbb1c4bf2c34d262ee3aaf8e29.
+Evidence docs/collab/codex/evidence/2026-11-10_issue35_attention/;
+report docs/collab/codex/reviews/2026-11-10_Issue35_Attention_ExistingTrace_RealInputCapture_BLOCKED.md.
+NoTTT rerun/900EP/SR/training/GPU0-3/otherjobs/load management/V3 changes.
+Fresh protected refs RootV3e58cef1f,Childofficialb0dbd115; Stage2docs523aa26a.
+Scope/evidence checks PASS: current9probeRuff/format, AST,4JUnitcounts,
+no private tensors/config copies, diffcheck/Childclean. Evidence48955f8d878cc4725c5fe122197cb270c9a86f3d
+normally pushed independent branch; advertisedSHA matches, API6/6 representative
+blobs exact (report/Inbox/stats/JUnit/hook/status). RootV3e58cef1f, officialChild
+b0dbd115, Stage2docs523aa26a remain unchanged. Publication receipt same evidence
+directory/publication_receipt.json. Receipt successor is metadata, no production
+pair/PR request. Task staysBLOCKED awaiting usableenv/frozeninputs; partial
+diagnostic is not GatePASS and no new experiment is running.
+
+# 2026-11-09T22:00:25+08:00 — Issue31 Stage2 Prefix-safe pack reuse REVIEW
+
+Task ISSUE31-PREFIX-PACK REVIEW; authorCodex, independentGPT reviewer.
+FormalRoot18be4a80a5ae4d97bc7d287034d24efab847c496/Child-Gitlink193627f42f4cd1ba6d563aefb8fa8f9428ecb56d.
+ApprovedStage1Root5b89/Child4446; latestbaseline reviewdocs590071c5 preserved.
+First-stage exact formal GPT APPROVE_CODE consumed aftercab44->590071c5 fetch/
+advertised/ff-only check. Stage2 is new Owner scope, not inherited approval.
+Independent branchv3-local-ttt-prefix-pack-issue31-20261109; V3 unchanged.
+
+Only production generate_samples_from_batch changes: approved B1/two_way/
+guidance1 eligibility + request-local Prefix template; updater unchanged, current
+noise/time refreshed, Prefix/masks/positions retained. Explicit packOFF reference,
+NoTTT/Attention/FW/training/VAE/Sim/Worker/DCP/strictK-H-M-B Resume unchanged.
+Exact author02 CPU201PASS/0fail/error/skip/shell0/source1487unchanged/static9PASS;
+one inherited W0failure deselected,3oldI001 retained, full rawfailure history saved.
+Controlled old4446 RED templatecount0/new samecaseGREEN, hash/prodproof archived.
+
+GPU02 exactPair correctnessPASS/PERFORMANCE_NOT_MET/exit2, textKV ON both, onlypack flagdiffers,
+same Localiter15000/raw15/H16/4x32Prefix/30step synthetic fixed input/history;
+30balancedpairs, Vision/Action errors0; P50837.0812->798.8678ms,
+1.0478x, reduction4.565%; P95844.7195->803.0262ms;
+P99846.2682->805.8524ms, no SLA/Stage1P99causalclosure.
+Predeclared1.05x threshold not reached; no model rerun/threshold change.
+Pack totals31->2 (sharedprep1, denoise30->1),28layersPrefix30/hit29; audit hooks
+removed before cleanwarmup/timing,limit8/source/FW/Prefix/DCPmetadata unchanged.
+Owned model process exited, onlyGPU6, backgroundload/otherjobs/GPU0-3 untouched.
+RawGPU files stay server-only, derivedstats/hash bindings31files only.
+GPU01priorRoot1568 counterassertFAIL retained; corrected Root benchmarkonly,
+Child unchanged. Initial CPU14fixtureFAIL retained, not relabelledPASS.
+
+Handoff docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md
+Evidence docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/
+Published evidence28b19890 normally; GitHub20/20 source/test/rawJUnit/Gate/index/
+handoff/Inbox bindings match localGit. New DraftRootPR33/ChildPR11 descriptions
+read back exact, open/unmerged. PriorPR32/10 and V3e58cef1f/Childofficialb0dbd115
+unchanged at check. Receipt same evidence directory/publication_receipt.json.
+Fresh independent narrow Code/Evidence review requested on18be/1936; GPU numerical
+PASS/performanceNOT_MET/Shell2 remains explicit. Receipt successor is metadata,
+not new FormalRoot. STOP; no V3 merge, realSim/SR/900EP/training/denseAttention.
+
+# 2026-11-09T20:58:44+08:00 — Issue31 Prefix-aware text KV ready for independent review
+
+Task ISSUE31-PREFIX-TEXT-KV REVIEW; Codex author, GPT independent reviewer.
+Formal Root 5b89f3eddbfe27ee72c173696a386e0b756d7866; Child/Gitlink 4446be0f6dad9b6dc887ef90af52d0af754d4682.
+Evidence/Inbox successor is metadata only, never a replacement source Pair.
+Separate Draft RootPR32 / ChildPR10 on approved history-K baseline53b5273c/4cd5fc8c;
+latest baseline docsca3a08ac preserved. ExistingPR29/30/Child8/9 and V3 untouched.
+
+Prefix-aware B1/two_way/guidance1 request-local text K/V: one fill then29 gen-only,
+current Prefix projected/injected all28 layers every30 steps, finally cleanup.
+Native GEN materialization/padding and empty unused GEN sentinels preserve exact
+compiled rounding; no pack reuse/backend tuning/precision/limit8 change.
+Training/VAE/Sim/Worker/scheduler/model-mode/DCP/strict K-H-M-B Resume unchanged.
+
+Exact clean author06 187/187 PASS,0failure/error/skip,shell0,gatePASS,
+1486sourcefingerprints unchanged,8scopedstaticfiles PASS. One inherited W0
+continuation assertion reproduced on clean baseline explicitly deselected,
+never counted PASS;3baseline RuffI001 retained,all other diagnostics strict.
+Raw CPU failures/RED/GREEN and prior122payload archive remain immutable.
+
+Real H100 GPU6 only, same Localiter15000/raw15/H16/30stepUniPC/4x32Prefix,
+synthetic input/history,30AB/BA pairs: authorGPU05 PASS,sourceunchanged,exit0;
+all measured Vision/Action errors0. P50 991.5513->825.5335ms (1.2011x),
+P95 997.1945->829.1916ms. 29/30 faster; optimized1386.77ms outlier retained,
+P99 regresses1000.06->1225.27ms, causeunproven. Existingbackgroundload unchanged;
+not exclusiveGPU/noSimthroughput/SR claim. Full hooks removed before rewarm/timing.
+28layerPrefix30/hit29 audit, changedPrefixaction sensitivity, freshrefill/retry,
+FW/Prefix/checkpointmetadata/sourceidentity unchanged; ownedmodelprocesses exited.
+GPU0-3/otherjobs untouched. All private rawGPU files stayserver-only; publish
+derivedstats/hashmanifest56files only. PriorGPU01..04failures preserved, notPASS.
+
+Handoff docs/collab/codex/reviews/2026-11-09_Issue31_PrefixAware_TextKV_5b89f3ed_4446be0f_Review_Request.md
+Evidence docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv*/
+Evidence headf4fff12ec94e687b1da98259601fd55dc56b5122 normally pushed/read back:
+26/26 remote source/test/rawJUnit/Gate/index/handoff/Inbox blobs match localGit.
+PR32/10 descriptions read back exact, all six related PRs Draft/open/unmerged.
+Fresh protectedrefs V3e58cef1f/Gitlink00f30235, Childofficialb0dbd115, prior#27/#28
+unchanged. Receipt docs/collab/codex/evidence/2026-11-09_issue31_publication.json.
+Request fresh independent incremental Code/Evidence Gate on5b89/4446, thenSTOP.
+No V3 merge, second optimization stage, training/Sim/SR/900EP or independent
+Gate closure is authorized/claimed. This receipt successor is metadata only.
+
+# 2026-11-09 CST — Horizon correction published/readback, fresh GPT review requested
+
+Formal Root53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a /
+Child-Gitlink4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe. Same DraftPR30/9 source
+branches pushed Child-first and descriptions updated/read back to latest K=H
+default/divisor rule. Evidence headc5cacb5b is metadata, not formal code identity.
+Remote42/42 code/test/rawJUnit/Gate/Diff/identity/probe/Inbox/review Blob SHAs
+equal local Git. Fresh advertised RootV3e58cef1f/#27Root73d8644d and officialChild
+b0dbd115/#27Child60b252d0 unchanged at this check. No merge/base/active-job changes.
+Receipt docs/collab/codex/evidence/2026-11-09_issue28_horizon_publication.json.
+Author566tests+22subtests=588JUnit PASS,static22/sourceunchanged/denseH16 parity;
+original failure/archive evidence retained. TaskREVIEW; next code action GPT
+incremental review. No independent approval or GPU/realSim/training/SR claimed.
+
+# 2026-11-09T14:49:58.094034+08:00 — Issue28 Horizon correction exact CPU PASS, incremental review prepared
+
+Formal Root 53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a / Child-Gitlink 4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe; clean exact author01
+566tests+22subtests=588JUnit PASS,0failed/error/skipped,shell0/gatePASS/source
+unchanged;22 staticfiles PASS; same old59746/new4cd5 CPU defaultH16 feature,
+FastState,Prefix,syntheticAction hashes equal. Original dev558+22/8fixtureFAIL
+retained; fixed explicit fixture protocol/INFO H only. Previous349 archived files
+reverified unchanged; original631+207 not relabelled or blindly rerun.
+Generic H/divisor/default/j0/relativeIDs, Model/Worker/Sim/Session H mismatch,
+strict Manifest/K/M-B/source Resume and relevant NoTTT/IPC/topology/End covered.
+Current Native model/protocol H16 and original flow/training/scheduler unchanged.
+Review handoff docs/collab/codex/reviews/2026-11-09_Issue28_Horizon_53b5273c_4cd5fc8c_Incremental_Review_Request.md; raw docs/collab/codex/evidence/2026-11-09_issue28_horizon.
+
+TaskREVIEW, author evidence only; previous REQUEST_CHANGES remains independent
+authority until GPT new-pair review. Next Child-first and Root normal pushes to
+same PR30/9 branches, update descriptions to latest H rule, remote source/Gitlink/
+raw evidence/Inbox readback. No new PR/runtime or #27/V3 merge. No GPU/server
+files/active jobs/realSim/SR/900EP/training operations. Source work complete.
+
+# 2026-11-09 CST — Horizon correction implemented; exact-pair focused Gate next
+
+Child4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe clean. Generic helpers validate
+positive exact-int H, NoneK->H, positive exact-int divisors, relative strideH//K;
+arbitrary source anchors keep true IDs. Existing Native protocol H16 is named
+ACTION_CHUNK_SIZE in its authoritative contract (Manifest/model identity same).
+Root resolves/freeze K, runtime binds actual Policy INFO H to frozen protocol;
+Policy uses resolved model cfg H, consumer Owner H, sparse Worker/READY/Sim
+carry/bind H. Native H16 guards and dense wire/fingerprint/Manifest remain.
+No new public H option/model capability/training/runtime/scheduler change.
+
+Dev01 external /workspace/work/issue28-horizon-evidence: Ruff/format/lint PASS;
+558 tests+22subtests PASS,8FAIL all one legacy Registry fixture lacking newly
+required store.manifest/PolicyINFO H. Original raw logs/JUnit retained. Added
+explicit Native H to that fixture, no production bypass. All generic H1..48,
+H12/K3/H24, invalid types/non-divisors, consumer/session H, config dense/episode
+horizon distinction and multi-Session paths passed in dev01. Final clean Pair
+focused Gate and default H16 old59746/new dense probe still pending. Historical
+631+207 not relabeled. Continue same PR30/9 and fresh GPT review; no GPU/realSim/
+SR/900EP/server files/training/V3/#27 changes. TaskIN_PROGRESS.
+
+# 2026-11-09 CST — Issue28 Horizon-derived K correction claimed
+
+Fresh observation: before71971a6c, fetch/advertised/tracking V3e58cef1f and
+same PR30 branch c622ac1925778b431e1206d3e34f007e250b33ac match. Consumed
+dbc75fae/c622ac19 via ancestry0/FF. Read exact review for Root050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 /
+Child59746af006748488a678aa9a55dfc3e200668219: REQUEST_CHANGES, MEDIUM latest
+Owner H-derived K contract. Old631+207 and dense parity remain historical valid
+evidence, not new approval. Child current/remote59746af0 clean. Existing PR30/9
+only; no new branch/runtime/PR or #27/V3 merge. User directly authorizes this
+correction; V3 roles/latest Owner scope supersede obsolete MM/Kimi/30-round wait.
+
+Claim Root config.py/shared_vae.py/runtime.py/identity.py; Child contract.py,
+vae_protocol.py/worker.py/daemon.py,feature_evidence.py,local_memory_online.py,
+local_memory_policy.py,action_policy_server_robocasa.py,sim_shared_vae_client.py,
+eval_v2_transactions.py/closed_loop_eval.py; relevant existing/new CPU fixtures,
+tests and addendum/evidence/Inbox/SESSION/TODO. No competing local edits.
+Use existing authoritative protocol Action Chunk H (not Task episode horizon),
+bind Policy resolved cfg H and frozen Manifest across Worker/Sim/consumer.
+K omitted/None resolvesH; exact positive integer divisor; strideH//K; j0 chosen.
+Generic helpers H12/H24/arbitrary positiveH; actual Native model remainsH16.
+Preserve dense wire/fingerprint/Manifest, full completion/transactions/Resume,
+NoTTT/sharedB1/nativeBatch and topology. Focused CPU/static + old-current H16
+dense parity only, new exact Root/Child pair, update same DraftPRs, fresh GPT
+incremental review. No training/model changes or GPU/server/realSim/SR/900EP.
+No code changes/test execution yet. Next implement minimal correction.
+
+# 2026-11-09T13:43:28.955226+08:00 — Issue28 new Draft PRs published;52 remote file readbacks match
+
+Formal Root 050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 / Child-Gitlink 59746af006748488a678aa9a55dfc3e200668219 unchanged. New open
+Draft RootPR30 https://github.com/wxwy/psm_wma/pull/30 and ChildPR9
+https://github.com/wxwy/cosmos-framework/pull/9; narrow stacked#27 review bases.
+No merge into bases/V3; retarget only after #27 lands/approvals. PriorPR29/8
+head/body unchanged, officialRootV3 e58cef1f/Childofficialb0dbd115 unchanged at
+this observation. Fresh git fetch/advertised/tracking,Gitlink,ancestor and source
+tree checks passed.52/52 remote source/test/rawJUnit/Gate/fingerprints/OS proof/
+handoff/Inbox/oldapproval/archive Blob SHAs equal local. Receipt under
+docs/collab/codex/evidence/2026-11-09_issue28_publication/; all source fingerprints
+still match final author03. Publication/evidence headf30c9750 is docs descendant,
+not implementation authority. Final631tests+207subtests=838JUnit authorPASS,
+shell0/gatePASS/sourceunchanged/static21/denseK16 CPU parity; original failures
+and controlledRED8/GREEN8 retained. TaskREVIEW; fresh GPT incremental review
+requested, independent approval not claimed. No GPU/remote server files/realSim/
+SR/900EP/training/live eval/running-job or official merge operations. Source/test
+work is complete; the next code action is fresh GPT incremental review. This
+publication ledger is bookkeeping and does not require a new author CPU run.
+
+# 2026-11-09T13:34:28.074845+08:00 — Issue28 final author PASS; independent Code Gate REVIEW
+
+Formal Root 050e45d87fe5faf3a830bcaf4629fd7d16ba47a7 / Child-Gitlink 59746af006748488a678aa9a55dfc3e200668219; clean exact author03.
+631tests+207subtests=838JUnit PASS,0fail/error/skip,shell0/source_unchanged=true;
+21staticfiles PASS, defaultK16 old/new feature/FastState/Prefix/syntheticAction
+bit-equal. Controlled H16 RED8/GREEN8 same test hash; final Gate includes8. No
+historical-count relabeling; intermediate830PASS and original dev/runner failures
+preserved. Source/proofs/raw logs/JUnit archive docs/collab/codex/evidence/2026-11-09_issue28_history_k; handoff docs/collab/codex/reviews/2026-11-09_Issue28_HistoryK_050e45d8_59746af0_Code_Review_Request.md.
+
+K1/2/4/8/16 default16, pre-RGB skip, all16 completion authority, cachedj0,
+existingT1/Native transactions; strict K/M-B/source Resume, sharedWorkerB1/wait0,
+generic legal topologies including K4/32Session/B8+B8 each. No model/training or
+scheduler changes. One inherited Sim connector B1 guard aligned1..8 here only.
+Fresh fetch/advertised/tracking officialRootV3 e58cef1f53d2382d39c871ce5a50e4acdd5ce268,
+#27Root73d8644d, Childofficialb0dbd115/#27Child60b252d0; isolated frozen feature
+not merged with those branches. Exact #27 review readback still APPROVE_CODE CPU.
+
+Next normal Child-first/newRoot branch pushes, NEW independent stacked Draft PRs
+against qualified#27 candidate branches, then remote source/Gitlink/evidence/Inbox
+readback. #27PR29/8 untouched. Review request is author-only, fresh GPT verdict
+pending; no implied APPROVE_CODE/hardware/merge permission. No GPU/remote files/
+realSim/SR/900EP/training/live evaluation/running-job/V3 operations. TaskREVIEW.
+
+# 2026-11-09 13:27 CST - Issue28 final H16 boundary; new exact author Gate pending
+
+Child now59746af006748488a678aa9a55dfc3e200668219 (clean). Sparse-only
+Owner and Local consumer require a complete H16 chunk before next Policy prepare;
+partial tails still End normally, defaultK16 untouched. Same new regression SHA
+dff237f44016192b340c30c4fb96ecd254a8ef58777f2b132bfa8d25bfc0f9be:
+controlled prior6b5c1915 productionRED8FAIL(DID NOT RAISE), newGREEN8PASS;
+temporary test/fix worktree dirtiness explicit, original production hashes and
+JUnit/logs recorded externally boundary_red/boundary_green. WorkerConfig new
+default field appended to preserve existing positional argument order.
+
+Prior df043615/6b5c1915 exact scoped author02 PASS:623top-level+207subtests=
+830JUnit, source unchanged,21staticfiles and old/new dense probe equal. This is
+historical intermediate evidence, not final Pair acceptance. Author01 failed
+before tests because external runner mistakenly linted immutable old evidence
+scripts; raw failure retained, static source scope corrected without editing
+archives/production. Final author runner now also reports top-level/subtest
+counts separately. Need final Root Gitlink freeze, exact author03, then archive/
+new independent Draft PRs/GPT review. #27PR29/8 and official V3 remain untouched;
+no GPU/server/realSim/SR/900EP/training or running-job operations.
+
+# 2026-11-09 CST - Issue28 implementation + dev98 PASS; preparing exact Formal Pair
+
+Independent #28 branch only. Root config/runtime/Owner relay, Child sparse
+post-step/feature contracts, bounded Worker skip ledger, Sim pre-capture selection,
+Policy Owner/all16 completion admission and existing Local T1 consumer now wired.
+K1/2/4/8/16 default16; no model/training/scheduler changes. One inherited Sim
+connector PolicyB1 guard aligned to approved1..8; #27 PR29/8 untouched.
+
+External /workspace/work/issue28-history-k-evidence: dev01 original51PASS/7FAIL
+(new fixture cleanup method/exception expectation/kernel identity input errors);
+dev02 original283PASS/6FAIL +22subtests (new Root fixture missing Session/episode
+payload identity, strict rejection correct). Failures preserved. Dev03 new98/98
+PASS, no fail/error/skip, Ruff fix/format0, synthetic CPU/noGPU. Allfive counts,
+0->16->32, first0, partialEnd, actual Local scan/abort/replay/late/changed bytes,
+pre-RGB skip, actual Eval connector B8, frozenK/fullM-B mismatch rejected. NewRoot
+FD daemon/Unix IPC/OwnerHTTP all5 + K4 2Policyx16Sim=32 Sessions, singleWorker,
+B8+B8 each, all16 completion proofs, exact extraEncodeK-1, ACK/End/owned0/IPC
+cleanup/external survival. Model/env/kernel/device/current boundaries explicit
+doubles. Old Child60b and current new CPU processes same dense probe/seed28:
+feature wire/cached boundary/FastState/prefix/syntheticAction hashes bit-equal;
+actual Wan/DCP/diffusion/GPU equivalence NOT_RUN.
+
+Next: Child source commit then Root Gitlink/source/tests commit; exact clean Pair
+focused author CPU/static/source fingerprints (no old900/965 rerun), immutable
+raw evidence and new independent Draft PRs/fresh GPT Code Gate request. Still
+IN_PROGRESS, author results do not grant independent approval or GPU/V3 merge.
+
+# 2026-11-09 CST - Issue28 history K implementation claimed after qualified Issue27
+
+Fresh sync observation: before parent #27HEAD9c09bfde; fetch/advertised/tracking
+V3e58cef1f and candidate73d8644df3096e192a83fff2f2d8098a4ac11e64; ancestry and
+FF consumed8c5b0937/73d8644d. Read exact review Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+Child60b252d05157b2753d2caebae32b11c878504bbe literalAPPROVE_CODE CPU/static/
+Evidence only. PriorMEDIUMclosed; no GPU/V3 merge approval inferred. Authority
+docs/collab/chatgpt/reviews/2026-11-09_Issue27_9b1756f9_60b252d0_Streaming32_Evidence_APPROVE_CODE.md
+
+New isolated worktrees /workspace/work/psm-wma-history-k-issue28 and Child;
+both branch v3-local-ttt-history-k-issue28-20261109, Root starts73d metadata
+(source identical to qualified9b), Child60b. Prior #27 worktrees/PR29/8 unchanged.
+Owner final Issue28 body +comments6731421819/6731530426/6732473919 supersede
+older stride/current-T contradictory comments. Config onlylocal_ttt_history_k
+in1/2/4/8/16 default16; selected chunk j%(16/K)==0; j0 previousReplanVisual96
+reused after executed a0 completes, at next Replan. CurrentT belongs to next
+history chunk, no future actions. Unselected no historyRGB/PNG/Worker enqueue/FW;
+retain minimal all16 chronological executed-action receipts/frontiers/identity.
+Reuse original Worker/NativeBatch/OnlineMemory/T1 prepare/commit/abort/ACK/End.
+
+Main claims Root scripts/robocasa_eval_v2/config.py/runtime.py/shared_vae.py,
+Child evaluation/robocasa_v2/contract.py; inference robocasa_vae_protocol.py,
+robocasa_feature_evidence.py,robocasa_vae_worker.py/client.py/daemon.py,
+robocasa_local_memory_policy.py,local_memory_online.py; scripts action_policy_server_robocasa.py;
+simulation robocasa sim_shared_vae_client.py,closed_loop_eval.py,eval_v2_worker.py
+and existing construction seam if needed; focused new tests, runbook/evidence,
+Gitlink/SESSION/TODO/Inbox. No model/training/weights/scheduler redesign.
+K16 keeps original dense wire/math branch; K<16 explicit versioned skip/selection
+receipts and payload. Consumer validates every completion before selecting real
+Visual96/raw15 for existing T1 scan. Worker completed skips use original owner
+complete authority/control lane and cannot race asynchronous selected submission;
+no new sparse engine/thread. Freeze K in execution/Owner/Worker/Session semantics,
+preserve original fullM-B/source/Resume strictness, all #27 legal topologies.
+
+Acceptance CPU: all five exact selected step/count tables (extraVAE/FW0/1,1/2,
+3/4,7/8,15/16), firstReplan0,0->16->32,partialEnd,full16completions/no skipRGB,
+K16 controlled old/new bit parity of features/FastState/prefix/syntheticAction,
+NoTTT/default protection,actual multisession/IPC/replay/changedbytes/late/abort/
+ACK/End/Reset/ownership tests. Run after command/env/input/output/PASS notice.
+Exact clean new Pair/source fingerprints/rawJUnit/static, NEW independent Draft
+Root+Child PRs, fresh GPT review. No GPU/server-file/realSim/SR/900EP/training/V3
+merge or running-job operations; no agents delegated. Claim not implementation.
+
+# 2026-11-09 CST - Issue27 M16 supplement published/read back; Evidence review request
+
+Formal test-only Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+unchangedChild-Gitlink60b252d05157b2753d2caebae32b11c878504bbe. Exact clean
+focused18/18PASS,0fail/error/skip,static3PASS,shell0/gatePASS/sourceunchanged.
+Root scripts byte-identical to15dbc97b; allChild unchanged. Mandatory2Servers x
+16Sims/Server=32Sessions,2renderGPUs->2CPUWorker processes/16Sessions each.
+Same-render1Worker/32Sessions complement. Real frozenStore/Manifest/Runtime/
+streaming32 capacity,all32approved Native/Worker/Owner leases,FD/UnixIPC/HTTP,
+B8+B8perPolicy,HMAC/ACK/replay/End/permission/RSS/owned exit0/IPC cleanup and
+external survival. Explicit CPU model/current-boundary/env/device/kernel doubles.
+No realGPU/Sim/SR/performance claim. Original965+207 historical, not rerun or
+relabeled. Original invalid raw15 test-rotation failures retained before fix.
+
+Existing Draft RootPR29 and ChildPR8 descriptions updated and independently
+read back open/draft/unmerged at Root evidenceHEADa43b71b8/Child60b252d0.
+25/25 remote source/newJUnit/manifests/READY-close proof/gate/identity/oldreview/
+Inbox/handoff Blob SHAs match local Git. Fetched Root Gitlink exact. Official
+V3e58cef1f/Childb0dbd115 unchanged. Normal Root candidate push only, no Child code
+commit or force push. Publication is availability, not independent approval.
+Proof docs/collab/codex/evidence/2026-11-09_issue27_m16_publication/publication_receipt.json
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_M16_32Sessions_9b1756f9_60b252d0_Evidence_Review_Request.md
+Raw58files docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/
+57new+89original archive hashes and1375source hashes rechecked after publication;
+canonical Inbox request/receipt append-only below128KiB. All source/tests same
+since final author Gate. Later commits only docs/evidence/ledger.
+
+Fresh GPT narrow Evidence review requested, priorREQUEST_CHANGES not author-
+closed. TaskREVIEW. #28 remainsTODO after qualified#27; only planned knob
+local_ttt_history_k1/2/4/8/16 default16, no sparse implementation in this Pair.
+No GPU/server files/realSim/SR/900EP/training/running-job/V3 merge operations.
+
+# 2026-11-09 CST - Issue27 M16 exact-pair18PASS; Evidence review publication prepared
+
+New test-only Formal Root9b1756f9099955d6637743f8ad2fa0ee54987b7a /
+unchangedChild-Gitlink60b252d05157b2753d2caebae32b11c878504bbe. Clean exact-pair
+author-01:18/18PASS,0fail/error/skip,shell0/gatePASS/source_unchanged=true,
+root_production_unchanged=true/child_unchanged=true; Ruff/format/syntax3PASS.
+Root scripts full tree byte-identical to previous15dbc97b; Child clean unchanged.
+Required2Server x16Sim/Server=32Sessions,2renderGPUs->2actualCPUWorkers/16each;
+same-render complement1Worker/32Sessions/2PolicyEpochs. Real Store/frozenManifest/
+Runtime slots32from18Tasks,streaming32 Native16slots/Policy,B8+B8each,OwnerHTTP/
+privateFD/UnixIPC/HMAC/replay/32responseACK+32WorkerACK+32scopedEnd+32nativeEnd,
+permissionfailclosed/ownedRSS/exit0/IPCcleanup/externalalive. CPU model/current
+boundary/env/device/kernel doubles explicit; no realSim/GPU/SR/performance claim.
+
+Raw58files docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/
+57hashes and1375 source files reverified; original89 archived file hashes also
+unchanged. Dev01legacy16PASS/new2FAIL andDev02new2FAIL retained, both traced to
+invalid synthetic raw15 rotation; corrected test generation only. Dev03new2PASS;
+final18 counted once. Prior965+207 is historical, not rerun/relabelled/added.
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_M16_32Sessions_9b1756f9_60b252d0_Evidence_Review_Request.md
+Canonical Inbox appended with exact byte check; existing reviewerREQUEST_CHANGES
+not author-closed. Next normal Root candidate push, update existing DraftPR29/8
+metadata and remote source/Gitlink/evidence readback; publish fresh narrow request.
+No new Child commit, #28 code, V3 merge, GPU/server/realSim/SR/900EP/training or
+running-job operations. #28 staysTODO until qualified#27, same framework only.
+
+# 2026-11-09 CST - Issue27 M16 test-only supplement ready for exact-pair CPU
+
+Dev03 new2/2M16 layout tests PASS. Actual frozen streaming Store/Runtime slots32
+from18tasks, streaming32 native capacities16 perPolicy; all32 approved Sessions,
+PolicyB8+B8 perServer, realOwnerHTTP/WorkerFD/UnixIPC/HMAC/ACK/End/replay/failclosed
+and owned exit0/IPC cleanup/external survival. Required layout2 renderGPUs->2
+Workers(each16); same-render complement1Worker/32Sessions/2PolicyEpochs. Add direct
+READY/close receipts and ownedRSS/PID observation to final proof before freeze.
+Dev01 legacy16/16 passed, new2failed; Dev02 isolated2failed exposes invalid test
+raw15 rotation(first vector zero/collinear). Only CPU generation fixture fixed to
+unit rotation; original production conversion correctly rejected it. Preserve
+all original logs/JUnits/source fingerprints and fixture snapshots. No production
+bug demonstrated. No Child/source edits, no #28, GPU, SR,900EP,merge or training.
+
+Scope exactly3 Root Python test/CPU fixtures plus representative runbook row,
+SESSION/TODO and forthcoming evidence/handoff. Real Runtime/Store replaces old
+Namespace/physical_slots128 fixture; actual run/Manifest/slot IDs/capacity reach
+Native transactions and Supervisor. Model/current-boundary/env/physical GPU/kernel
+remain explicit CPU doubles; no realWan/Action parity/SR/performance assertion.
+Next format/static3 files, test-only Root commit, clean exact-Pair18focused CPU
+(legacy1x1/1x8/Owner regressions+2M16+8privateFD lifecycle), archive raw evidence,
+update existing DraftPR29/8 and fresh Evidence-only Code Gate request. Old965+207
+remains historical same-production evidence; not relabeled as newly rerun.
+
+# 2026-11-09 CST - Issue27 streaming M16 Evidence-only remediation claimed
+
+Owner latest correction:2x16 means2PolicyServers x16Sim/Server =32Session.
+Prior author handoff's 16total interpretation was wrong; preserve old evidence
+as history and supersede it explicitly. #28 sparse FW remains separate and must
+wait for qualified #27; no sparse production/config/code change in this task.
+
+Fresh observation:beforeHEAD1e5c30d29f70980f6855968500ed1c586d75d674;
+officialV3 fetched/advertisede58cef1f53d2382d39c871ce5a50e4acdd5ce268.
+Candidate advertised/trackingb5127c82d40af7061448e6a83a922a019721517f;
+fast-forward consumed0bb7d471 andb5127c82 review/Inbox docs. Initial missing
+tracking ref was repaired by explicit refspec fetch; advertised/log/ancestry/FF
+checks repeated successfully. Formal review exact Root15dbc97bf13437905ec38247382834067e5341ae
+andChild60b252d05157b2753d2caebae32b11c878504bbe literalREQUEST_CHANGES,
+MEDIUM Evidence-only; no confirmed production defect. Read full review
+docs/collab/chatgpt/reviews/2026-11-09_Issue27_15dbc97b_60b252d0_GenericTopology_Evidence_REQUEST_CHANGES.md
+Child remote branch remains60b252d0,officialb0dbd115. User/V3 role overrides
+apply:Codex test implementation, GPT independent review; no obsolete MM/Kimi
+or GPU polling/approval requirement used to stop this authorized test remedy.
+
+Main claims only Root test fixture shared_vae_routing_test.py, new streaming
+M16 test and shared_vae_daemon_fixture.py test-only public CPU clock-label input;
+M16 session/IPC test, runbook representative table correction, SESSION/TODO,
+new immutable raw CPU evidence/handoff and append-only canonical Inbox. Tests
+must use actual frozen streamingManifest/Store/Runtime slot derivation/capacity,
+two physical renderGPUs ->two real CPU Worker subprocesses, all32 Sessions/
+OwnerHTTP/UnixIPC/ACK/End/capability isolation/cleanup; same-render complement.
+Preserve1x1/1x8 regressions. Model/Sim/CUDA are explicit CPU boundaries only.
+All production files and Child must remain byte-identical to approved-reviewed
+pair. No need to rerun old965/SR/900EP or RED production tests; new exact test-only
+Root SHA with unchangedChild, focused CPU/static/source identity then publish
+existing Draft PR29/8 metadata and request fresh narrow Evidence review.
+No V3 merge/GPU/server-file/training/running-job actions or agents delegated.
+State IN_PROGRESS; this claim is docs-only, test changes not yet committed.
+
+# 2026-11-09 CST - Issue27 NEW Draft PRs published/read back; Code Gate handoff
+
+Formal Root15dbc97bf13437905ec38247382834067e5341ae / Child-Gitlink
+60b252d05157b2753d2caebae32b11c878504bbe. Author exact-pair965 top-level+
+207subtests PASS,0fail/error/skip; shell0/gatePASS/source_unchanged true, static19
+Python PASS, new83 tests, final oldRED2 expected/hash-equal GREEN. No source or
+test edits after Gate. Raw90 public CPU evidence files retained, including all
+initial formatter/fixture failures.1381 source hashes and89 artifact hashes
+reverified after publication. Later Root commits only metadata/evidence.
+
+Normal Child-first/Root new-branch pushes successful. NEW RootPR29
+https://github.com/wxwy/psm_wma/pull/29 and ChildPR8
+https://github.com/wxwy/cosmos-framework/pull/8 fetched open/draft/unmerged.
+41/41 remote source/JUnit/gate/manifest/Inbox Blob SHAs match local Git objects;
+fetched remote Root Gitlink is exact. Remote official V3e58cef1f/Childb0dbd115
+unchanged. Existing merged PR25/7 untouched. No force push or automatic merge.
+Publication proof docs/collab/codex/evidence/2026-11-09_issue27_publication/publication_receipt.json
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_SharedVAE_Topology_15dbc97b_60b252d0_Code_Gate_Request.md
+
+Fresh GPT incremental Code Gate request available through both Draft PRs and
+canonical committed Inbox. This records publication, not reviewer ACK/approval.
+Task REVIEW; stop implementation here. Same EvalV2 for all legal bounded shapes;
+examples are acceptance cases only. Bvae1/wait0/15+1/16T1,NoTTT,optional singleABC,
+fullM-B Resume/source/deadline/session/resource/owned cleanup retained. No GPU,
+remote server files, realSim/SR/900EP/training/running-job/V3 merge operations.
+No parallel agents. Later real multi-session GPU smoke needs fresh Code Gate
+and separate execution authorization; no new hardware speedup claimed by CPU.
+
+# 2026-11-09 — Issue27 exact Pair CPU PASS; new Draft PR publication prepared
+
+Formal Root15dbc97bf13437905ec38247382834067e5341ae / Child-Gitlink
+60b252d05157b2753d2caebae32b11c878504bbe. Exact clean Pair author-01 shell0,
+gatePASS:965 top-level+207 subtests PASS,0fail/error/skip; JUnit1172total.
+New83top-level; Ruff/format/syntax19PASS; source_unchanged true; final RED/GREEN
+testbytes equal; native constructor/identity unchanged. Four groups472+289+143+
+61 top-level; original Local/NoTTT/Batch/Sim/source/resource protection retained.
+Raw90 files archived with SHA256, original development/RED failures retained.
+Only docs/evidence/Inbox follow the Formal implementation, no source edits.
+
+Handoff docs/collab/codex/reviews/2026-11-09_Issue27_SharedVAE_Topology_15dbc97b_60b252d0_Code_Gate_Request.md
+Raw docs/collab/codex/evidence/2026-11-09_issue27_shared_vae_topology/
+New branch both repos v3-shared-vae-topology-issue27-20261109; duplicate PR search
+found none, official refs prepublication still Roote58cef1f/Childb0dbd115.
+Publication not yet asserted: next normal Child-first then Root pushes, NEW
+independent Draft PRs and remote readback. Prior merged PR25/7 remain untouched.
+Canonical Inbox appended after exact byte check; local request not remote ACK.
+
+Task REVIEW, independent GPT Code Gate pending; author CPU is not reviewer
+approval or new real GPU/Action/performance/SR acceptance. No GPU/server/realSim/
+900EP/training/running-job/official V3 merge operations. Same existing EvalV2,
+all legal capacity/resource bounded topologies; Bvae1/wait0/15+1/16T1/full M-B
+Resume/optional single ABC retained. No agents delegated or server files copied.
+
+# 2026-11-09 — Issue27 implementation frozen for exact-pair author CPU
+
+Owner scope unchanged: existing EvalV2/NativeBatch/sharedVAE for all legal
+resource/capacity bounded configurations; representative1Server/1Sim,
+1Server/8Sim,2Server/16Sim are tests only. No new scheduler/runtime, no GPU,
+server access, realSim/SR/900EP/training/V3 merge. No parallel agents used.
+
+Child implementation60b252d05157b2753d2caebae32b11c878504bbe based on official
+b0dbd115 (same tree as V3 pinned00f30235). Root changes only config.py and
+shared_vae.py production, four new CPU files, runbook and bookkeeping/Gitlink.
+Child six production modules allow generic frozen shared identity, Policy1..8
+READY batches on the same executor, ordered existing B1 encode observations,
+derived live Session/bounded Policy epochs with strict slot/run fences.
+One physical renderGPU Worker separately enrolled/routed per Policy Server.
+Worker B1/wait0,15+1/16T1,atomic commit/ACK/deadlines/source/fullM-B Resume,
+NoTTT and original optional single A/B/C measurement identity unchanged.
+
+Development05:117PASS including original boundary/feature regressions;
+development07:5PASS actual Root argv->Child options including M32. Static19
+Python files PASS. Earlier format/fixture test failures preserved externally;
+final signed-history End test anchors survivor identity after replay, not before.
+Two old-code restrictions RED_EXPECTED in isolated baseline worktrees; final
+new test files injected only, production hashes unchanged, original failures
+preserved. Evidence/workspace/work/issue27-shared-vae-evidence/.
+
+Next: clean exact Formal Root/Gitlink+Child author CPU with original Stage3A,
+A/B/NoTTT/Local/session/Worker/source guards and streaming capacity/resources;
+rawJUnit/logs/sourcebefore-after/OS proofs. Then NEW Root/Child Draft PRs,
+canonical Inbox append with byte check and fresh GPT Code Gate request. Do not
+update prior merged PR25/7. No hardware or merge approval inferred from CPU.
+
+# 2026-11-09 — Issue27 generic shared-VAE topology implementation claimed
+
+Owner direct clarification and current Issue27 body/comment6730975744 authorize
+one existing EvalV2/NativeBatch/shared-VAE path for every legal resource/capacity
+bounded Server/Sim topology;1x1/1x8/2x16 are representative tests, not a whitelist.
+Bvae stays1/wait0 exact visual semantics; Bpolicy1..8; preserve strict single ABC
+profiling as optional labels. Code+CPU/static+NEW Draft PRs only, no V3 merge,
+GPU/server/realSim/SR/900EP/training/old-job actions or remote files accessed.
+
+Frozen base Root latestV3e58cef1f53d2382d39c871ce5a50e4acdd5ce268, pinnedChild
+00f30235da6ffb085a9304ef6501ede509203092. Actual officialChild latest
+b0dbd115d03e801ec4d0788c30ee0b0e9655d4db has IDENTICAL full tree to pinned00f
+(c4c33db6ecfb9508c44c5b28df3cc81f5b1e0361), so newChild branch based on official
+b0 merge with no inherited source drift. New isolated worktrees
+/workspace/work/psm-wma-shared-vae-issue27 and Child; both branches
+v3-shared-vae-topology-issue27-20261109. Prior PR25/7 are merged; do not modify.
+
+Main owns Root shared_vae.py/config.py/runtime.py as needed, new Issue27 CPU tests;
+Child contract.py, action_policy_server_robocasa.py, robocasa_batch_transactions.py,
+robocasa_boundary_capture.py, robocasa_vae_worker.py/daemon.py and focused tests.
+Reuse existing scheduler/Registry/snapshot/session machinery; no parallel agent
+work or second runtime. Scope includes actual necessary seams discovered in
+source: per-Policy enrollment/routing when a physical SimGPU Worker is shared,
+bounded multiple Policy epochs and derived existing Worker session capacities,
+per-member original Encode1 boundary capture for Bpolicy>1 (no additional encode),
+READY scheduling on the same model executor without feature B1 collapse.
+All deadlines, ACK/dedup/atomic abort/commit/End, full M/B/source/Resume identity,
+queue/resource bounds and Bvae1 isolation remain strict. Generic shared profile
+must be frozen independently from the unchanged optional single ABC identity.
+
+Before project runs announce commands/env/inputs/outputs/PASS, retain controlled
+old RED and exact clean new-Pair CPU logs/XML/source fingerprints; create new
+Root/Child Draft PRs and canonical Inbox request. Existing one-Sim results and
+old server_vae throughput/SR are historical, not evidence of new shared topology.
+
 # 2026-11-08 — H4 published/readback PASS; narrow independent Code Gate handoff
 
 Formal Root8a17c3db6a2e571b67e6a149638f9d7922a704d5 / Child-Gitlink

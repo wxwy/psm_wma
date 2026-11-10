@@ -1,0 +1,16 @@
+{
+  "formal_root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+  "child_gitlink": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "previous_formal_root": "15dbc97bf13437905ec38247382834067e5341ae",
+  "root_scripts_tree": "5753a1a7c448c94e05e337380f5addccc7b71468",
+  "previous_root_scripts_tree": "5753a1a7c448c94e05e337380f5addccc7b71468",
+  "child_tree": "fc967c72ffc2db006aacba370185804aeaedc9d3",
+  "root_production_byte_identical": true,
+  "child_worktree_clean": true,
+  "source_files_verified": 1375,
+  "python_test_scope": [
+    "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+    "tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+    "tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "formal_root": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+  "formal_child": "59746af006748488a678aa9a55dfc3e200668219",
+  "gitlink": "59746af006748488a678aa9a55dfc3e200668219",
+  "root_metadata_base": "73d8644df3096e192a83fff2f2d8098a4ac11e64",
+  "qualified_base_root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+  "qualified_base_child": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "aggregate_root_diff": "SESSION.md                                         |  91 ++++\n TODO.md                                            |   4 +-\n cosmos-framework                                   |   2 +-\n docs/collab/chatgpt/CODEX_INBOX.md                 | 595 +--------------------\n .../archive/CODEX_INBOX_20261109_125637_73d8644.md | 587 ++++++++++++++++++++\n .../2026-11-09_issue28_claim/inbox_rollover.json   |  13 +\n .../owner_requirements.json                        |  22 +\n .../2026-11-09_Issue28_LocalTTT_HistoryK_CPU.md    |  89 +++\n scripts/robocasa_eval_v2/config.py                 |   5 +\n scripts/robocasa_eval_v2/runtime.py                |  11 +\n scripts/robocasa_eval_v2/shared_vae.py             |  36 +-\n tools/v3/eval_v2_batch_tests/history_k_test.py     | 352 ++++++++++++\n .../eval_v2_batch_tests/shared_vae_routing_test.py |   7 +-\n 13 files changed, 1226 insertions(+), 588 deletions(-)",
+  "aggregate_child_diff": ".../evaluation/robocasa_v2/contract.py             |  10 +\n cosmos_framework/inference/local_memory_online.py  |  18 +-\n .../inference/robocasa_feature_evidence.py         |  78 ++++-\n .../inference/robocasa_feature_evidence_test.py    |  26 +-\n .../inference/robocasa_history_k_test.py           | 341 +++++++++++++++++++++\n .../inference/robocasa_local_memory_policy.py      |  58 +++-\n .../inference/robocasa_local_memory_policy_test.py |   4 +-\n cosmos_framework/inference/robocasa_vae_client.py  |  16 +-\n cosmos_framework/inference/robocasa_vae_daemon.py  |   2 +\n .../inference/robocasa_vae_protocol.py             |  22 ++\n cosmos_framework/inference/robocasa_vae_worker.py  |  55 +++-\n .../scripts/action_policy_server_robocasa.py       |  12 +\n .../simulation/robocasa/closed_loop_eval.py        |   9 +-\n .../simulation/robocasa/eval_v2_transactions.py    |   5 +-\n .../simulation/robocasa/sim_shared_vae_client.py   |  56 +++-\n .../robocasa/sim_shared_vae_history_k_test.py      | 188 ++++++++++++\n 16 files changed, 863 insertions(+), 37 deletions(-)",
+  "scope": "author CPU/static only; synthetic model/env/kernel/device/current-boundary",
+  "old_author01": "FAIL before tests: runner scope included immutable archived scripts; source untouched",
+  "old_author02": "intermediate df043615/6b5c1915 PASS 623+207=830; not final acceptance",
+  "boundary_red": "8 expected failures on prior sparse candidate plus new uncommitted regression",
+  "boundary_green": "same test SHA 8PASS with minimal uncommitted fix; final clean Gate repeated afterward",
+  "final_gate": {
+    "tests": 838,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pytest_top_level": 631,
+  "pytest_subtests": 207,
+  "source_fingerprint_files": 1373,
+  "source_unchanged": true,
+  "GPU_Wan_DCP_RoboCasa_SR_training": "NOT_RUN",
+  "independent_review": "REQUESTED_NOT_CLAIMED"
+}

@@ -1,0 +1,371 @@
+diff --git a/scripts/robocasa_eval_v2/config.py b/scripts/robocasa_eval_v2/config.py
+index 6b187772..b2f3014b 100644
+--- a/scripts/robocasa_eval_v2/config.py
++++ b/scripts/robocasa_eval_v2/config.py
+@@ -8,6 +8,7 @@ import os
+ from pathlib import Path
+ 
+ from cosmos_framework.evaluation.robocasa_v2.contract import (
++    ACTION_CHUNK_SIZE,
+     ROUND_SCHEDULE,
+     STREAMING_SCHEDULE,
+     validate_streaming_resources,
+@@ -17,7 +18,7 @@ DEFAULTS = {
+     "schema": "psm_robocasa_eval_v2",
+     "execution_profile": "phase_a",
+     "local_memory_mode": "required",
+-    "local_ttt_history_k": 16,
++    "local_ttt_history_k": None,
+     "single_latency_arm": None,
+     "local_evidence_profile": "server_vae",
+     "sim_shared_vae": None,
+@@ -269,6 +270,11 @@ def resolve(argv=None):
+     from robocasa_eval_v2.shared_vae import validate_profile
+ 
+     validate_profile(cfg)
++    from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
++
++    cfg["local_ttt_history_k"] = validate_history_k(
++        cfg.get("local_ttt_history_k"), ACTION_CHUNK_SIZE
++    )
+     limit = cfg["rollout_mp4_first_n_per_task"]
+     if limit is not None and (
+         type(limit) is not int
+@@ -327,8 +333,11 @@ def execution(cfg):
+         from robocasa_eval_v2.shared_vae import public_shared_profile
+ 
+         result["shared_vae"] = public_shared_profile(cfg)
+-    if cfg.get("local_ttt_history_k", 16) != 16:
+-        result["local_ttt_history_k"] = cfg["local_ttt_history_k"]
++    from cosmos_framework.inference.robocasa_vae_protocol import validate_history_k
++
++    history_k = validate_history_k(cfg.get("local_ttt_history_k"), ACTION_CHUNK_SIZE)
++    if history_k != ACTION_CHUNK_SIZE:
++        result["local_ttt_history_k"] = history_k
+     return result
+ 
+ 
+diff --git a/scripts/robocasa_eval_v2/identity.py b/scripts/robocasa_eval_v2/identity.py
+index 43ffcfca..72dbf858 100644
+--- a/scripts/robocasa_eval_v2/identity.py
++++ b/scripts/robocasa_eval_v2/identity.py
+@@ -5,7 +5,11 @@ from __future__ import annotations
+ import subprocess
+ from pathlib import Path
+ 
+-from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest, digest
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    ACTION_CHUNK_SIZE,
++    build_manifest,
++    digest,
++)
+ from cosmos_framework.evaluation.robocasa_v2.store import read
+ from eval_robocasa_18task_queue import discover_task_datasets, launch_environment
+ from robocasa_episode_resume.model_identity import (
+@@ -129,7 +133,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
+     requested = {
+         "checkpoint": Path(cfg["checkpoint"]),
+         "num_steps": cfg["prediction_steps"],
+-        "action_horizon": 16,
++        "action_horizon": ACTION_CHUNK_SIZE,
+         "guidance": cfg["guidance"],
+     }
+     cached = Path(cfg["output_dir"]) / "_internal/verification_cache.json"
+diff --git a/scripts/robocasa_eval_v2/runtime.py b/scripts/robocasa_eval_v2/runtime.py
+index 1b7c56bb..449c2118 100644
+--- a/scripts/robocasa_eval_v2/runtime.py
++++ b/scripts/robocasa_eval_v2/runtime.py
+@@ -336,10 +336,16 @@ class Runtime:
+             command += ["--single-latency-arm", self.cfg["single_latency_arm"]]
+         if self.shared_vae_profile:
+             command += ["--history-source", "sim_shared_vae"]
+-            if self.cfg.get("local_ttt_history_k", 16) != 16:
++            from cosmos_framework.inference.robocasa_vae_protocol import (
++                validate_history_k,
++            )
++
++            horizon = self.store.manifest["protocol"]["action_chunk_size"]
++            history_k = validate_history_k(self.cfg.get("local_ttt_history_k"), horizon)
++            if history_k != horizon:
+                 command += [
+                     "--local-ttt-history-k",
+-                    str(self.cfg["local_ttt_history_k"]),
++                    str(history_k),
+                 ]
+         # The eval Client/Actors always use 127.0.0.1. Do not expose the
+         # transaction-owning Policy Server on all network interfaces.
+@@ -552,14 +558,21 @@ class Runtime:
+                         "local_memory"
+                     ],
+                     **(
+-                        {"local_evidence_profile": "sim_shared_vae"}
++                        {
++                            "local_evidence_profile": "sim_shared_vae",
++                            "action_chunk_size": self.store.manifest["protocol"][
++                                "action_chunk_size"
++                            ],
++                        }
+                         if self.shared_vae_profile
+                         else {}
+                     ),
+                     **(
+                         {"local_ttt_history_k": self.cfg["local_ttt_history_k"]}
+                         if self.shared_vae_profile
+-                        and self.cfg.get("local_ttt_history_k", 16) != 16
++                        and self.cfg.get("local_ttt_history_k") is not None
++                        and self.cfg["local_ttt_history_k"]
++                        != self.store.manifest["protocol"]["action_chunk_size"]
+                         else {}
+                     ),
+                     "capacity_profile": self.capacity_profile,
+diff --git a/scripts/robocasa_eval_v2/shared_vae.py b/scripts/robocasa_eval_v2/shared_vae.py
+index 8182d771..fb4868bd 100644
+--- a/scripts/robocasa_eval_v2/shared_vae.py
++++ b/scripts/robocasa_eval_v2/shared_vae.py
+@@ -37,6 +37,7 @@ from cosmos_framework.inference.robocasa_vae_client import (
+     UnixVAEServer,
+ )
+ from cosmos_framework.inference.robocasa_vae_daemon import file_sha256
++from cosmos_framework.evaluation.robocasa_v2.contract import ACTION_CHUNK_SIZE
+ from cosmos_framework.inference.robocasa_vae_protocol import (
+     canonical_json,
+     strict_json,
+@@ -89,8 +90,8 @@ def _worker_drain_timeout_s(value):
+ 
+ 
+ def validate_profile(cfg):
+-    history_k = validate_history_k(cfg.get("local_ttt_history_k", 16))
+-    if history_k != 16 and (
++    history_k = validate_history_k(cfg.get("local_ttt_history_k"), ACTION_CHUNK_SIZE)
++    if history_k != ACTION_CHUNK_SIZE and (
+         not enabled(cfg) or cfg.get("local_memory_mode") != "required"
+     ):
+         raise ValueError("sparse history K requires shared VAE Local-TTT")
+@@ -471,11 +472,14 @@ class _RelayCore:
+                 "episode_deadline_ns": str(scope.deadline),
+                 "step_completed_ns": request["step_completed_ns"],
+             }
+-            history_k = scope.handle.public.get("local_ttt_history_k", 16)
++            horizon = scope.handle.public.get("action_chunk_size", ACTION_CHUNK_SIZE)
++            history_k = validate_history_k(
++                scope.handle.public.get("local_ttt_history_k"), horizon
++            )
+             selected = selected_history_step(
+-                step, scope.chunk["source_start"], history_k
++                step, scope.chunk["source_start"], history_k, horizon
+             )
+-            if history_k != 16:
++            if history_k != horizon:
+                 expected_receipt.update(history_k=history_k, selected=selected)
+             if any(receipt[name] != value for name, value in expected_receipt.items()):
+                 raise ValueError(
+@@ -656,8 +660,19 @@ class SharedVAESupervisor:
+                 raise RuntimeError("cancelled before shared Worker startup")
+             settings = cfg["sim_shared_vae"]
+             feature = policy_info["local_feature"]
+-            history_k = validate_history_k(cfg.get("local_ttt_history_k", 16))
+-            if validate_history_k(feature.get("local_ttt_history_k", 16)) != history_k:
++            horizon = runtime.store.manifest["protocol"]["action_chunk_size"]
++            if (
++                type(policy_info.get("action_chunk_size")) is not int
++                or policy_info["action_chunk_size"] != horizon
++            ):
++                raise ValueError(
++                    "Policy Action Horizon differs from frozen Run Action Chunk"
++                )
++            history_k = validate_history_k(cfg.get("local_ttt_history_k"), horizon)
++            if (
++                validate_history_k(feature.get("local_ttt_history_k"), horizon)
++                != history_k
++            ):
+                 raise ValueError(
+                     "Policy history K differs from frozen Run configuration"
+                 )
+@@ -683,7 +698,14 @@ class SharedVAESupervisor:
+                     handle.public["identity"] != feature["identity"]
+                     or handle.public["clock_domain"] != feature["clock_domain"]
+                     or handle.public["constructor_config"] != constructor
+-                    or handle.public.get("local_ttt_history_k", 16) != history_k
++                    or validate_history_k(
++                        None, handle.public.get("action_chunk_size", ACTION_CHUNK_SIZE)
++                    )
++                    != horizon
++                    or validate_history_k(
++                        handle.public.get("local_ttt_history_k"), horizon
++                    )
++                    != history_k
+                 ):
+                     raise ValueError(
+                         "Policy differs from the already loaded shared Worker"
+@@ -724,7 +746,11 @@ class SharedVAESupervisor:
+                 "drain_timeout_s": _worker_drain_timeout_s(cfg["terminate_grace_s"]),
+                 "max_sessions": len(members),
+                 "max_policy_epochs": policy_count,
+-                **({"local_ttt_history_k": history_k} if history_k != 16 else {}),
++                **(
++                    {"local_ttt_history_k": history_k, "action_chunk_size": horizon}
++                    if history_k != horizon
++                    else {}
++                ),
+             }
+             secret_read, secret_write = os.pipe()
+             ready_read, ready_write = os.pipe()
+@@ -804,7 +830,11 @@ class SharedVAESupervisor:
+                     ):
+                         raise ValueError("shared Worker actual READY identity mismatch")
+                     if (
+-                        validate_history_k(proof.get("local_ttt_history_k", 16))
++                        validate_history_k(
++                            None, proof.get("action_chunk_size", ACTION_CHUNK_SIZE)
++                        )
++                        != horizon
++                        or validate_history_k(proof.get("local_ttt_history_k"), horizon)
+                         != history_k
+                     ):
+                         raise ValueError("shared Worker READY history K mismatch")
+@@ -963,7 +993,10 @@ class SharedVAESupervisor:
+             "clock_domain": handle.public["clock_domain"],
+             "trust_model": "registry_same_trust_domain",
+             **(
+-                {"local_ttt_history_k": handle.public["local_ttt_history_k"]}
++                {
++                    "local_ttt_history_k": handle.public["local_ttt_history_k"],
++                    "action_chunk_size": handle.public["action_chunk_size"],
++                }
+                 if "local_ttt_history_k" in handle.public
+                 else {}
+             ),
+diff --git a/tools/v3/eval_v2_batch_tests/history_horizon_test.py b/tools/v3/eval_v2_batch_tests/history_horizon_test.py
+new file mode 100644
+index 00000000..dbe28ce8
+--- /dev/null
++++ b/tools/v3/eval_v2_batch_tests/history_horizon_test.py
+@@ -0,0 +1,65 @@
++"""Configuration/Manifest H authority and current Native shared-Worker CPU probes."""
++
++import copy
++
++import pytest
++import yaml
++
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    ACTION_CHUNK_SIZE,
++    canonical,
++    validate_manifest,
++)
++from cosmos_framework.inference.robocasa_session_transactions_test import (
++    clock_kernel as clock_kernel,
++)
++from robocasa_eval_v2.config import DEFAULTS, execution, resolve
++from tools.v3.eval_v2_batch_tests.history_k_test import frozen
++from tools.v3.eval_v2_batch_tests.shared_vae_routing_test import info, rig_for
++from tools.v3.eval_v2_batch_tests.shared_vae_test import profile_config
++from tools.v3.eval_v2_production_tests.entry_test import config
++
++
++@pytest.mark.parametrize("choice", ["omitted", None, ACTION_CHUNK_SIZE])
++def test_public_resolution_uses_Action_Chunk_not_episode_horizon_and_dense_identity(
++    tmp_path, choice
++):
++    path, inputs = config(tmp_path)
++    cfg = {**profile_config(tmp_path), **inputs}
++    cfg.pop("local_ttt_history_k", None)
++    if choice != "omitted":
++        cfg["local_ttt_history_k"] = choice
++    path.write_text(yaml.safe_dump(cfg))
++    _, resolved = resolve(["fresh", "--config", str(path)])
++    assert DEFAULTS["local_ttt_history_k"] is None
++    assert resolved["local_ttt_history_k"] == ACTION_CHUNK_SIZE
++    expected = copy.deepcopy(resolved)
++    expected["local_ttt_history_k"] = None
++    m = frozen(resolved)
++    assert canonical(m) == canonical(frozen(expected))
++    assert "local_ttt_history_k" not in execution(resolved)
++    m["horizons"]["CloseFridge"] = 12
++    from cosmos_framework.evaluation.robocasa_v2.contract import digest
++
++    m["digest"] = digest({n: v for n, v in m.items() if n != "digest"})
++    assert validate_manifest(m)["protocol"]["action_chunk_size"] == ACTION_CHUNK_SIZE
++    assert resolved["local_ttt_history_k"] != m["horizons"]["CloseFridge"]
++
++
++def test_policy_H_is_compared_to_frozen_protocol_before_worker_start(tmp_path):
++    with rig_for(tmp_path, 1, 1, False, history_k=4) as rig:
++        worker = rig.runtime.workers[0]
++        clock = next(iter(rig.actors.values())).clock_domain
++        wrong = info(clock, 4)
++        wrong["action_chunk_size"] = (
++            12  # K4 divides both12 and16; matching K alone is insufficient.
++        )
++        with pytest.raises(ValueError, match="Action Horizon"):
++            rig.supervisor.ensure(worker, wrong)
++        assert not rig.runtime.commands and not rig.supervisor.handles
++        handle = rig.supervisor.ensure(worker, info(clock, 4))
++        assert (
++            handle.public["action_chunk_size"]
++            == handle.proof["action_chunk_size"]
++            == ACTION_CHUNK_SIZE
++        )
+diff --git a/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py b/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py
+index d8d197ba..dbf0a6d7 100644
+--- a/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py
++++ b/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py
+@@ -261,13 +261,14 @@ def owners_for(runtime):
+ 
+ def info(clock_domain="cpu-clock", history_k=16):
+     return dict(
++        action_chunk_size=16,
+         local_feature=dict(
+             identity=copy.deepcopy(IDENTITY),
+             history_source="sim_shared_vae",
+             clock_domain=clock_domain,
+             worker_constructor_config={},
+             **({"local_ttt_history_k": history_k} if history_k != 16 else {}),
+-        )
++        ),
+     )
+ 
+ 
+diff --git a/tools/v3/eval_v2_batch_tests/shared_vae_test.py b/tools/v3/eval_v2_batch_tests/shared_vae_test.py
+index 171ee524..05435339 100644
+--- a/tools/v3/eval_v2_batch_tests/shared_vae_test.py
++++ b/tools/v3/eval_v2_batch_tests/shared_vae_test.py
+@@ -19,7 +19,10 @@ from types import SimpleNamespace
+ 
+ import pytest
+ 
+-from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
++from cosmos_framework.evaluation.robocasa_v2.contract import (
++    ACTION_CHUNK_SIZE,
++    build_manifest,
++)
+ from cosmos_framework.inference.robocasa_feature_evidence import (
+     FeatureEvidenceOwner,
+     PolicyBoundary,
+@@ -591,7 +594,10 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
+                 Path(__file__).resolve().parents[3] / "cosmos-framework",
+             )
+             self.registry = Registry(run, 0.2)
+-            self.store = SimpleNamespace(root=run)
++            self.store = SimpleNamespace(
++                root=run,
++                manifest={"protocol": {"action_chunk_size": ACTION_CHUNK_SIZE}},
++            )
+             self.stop, self.state_lock, self.starting = (
+                 threading.Event(),
+                 threading.RLock(),
+@@ -645,12 +651,13 @@ def test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_pro
+         handle = supervisor.ensure(
+             "slot",
+             {
++                "action_chunk_size": ACTION_CHUNK_SIZE,
+                 "local_feature": {
+                     "identity": identity,
+                     "history_source": "sim_shared_vae",
+                     "clock_domain": "cpu-clock",
+                     "worker_constructor_config": constructor,
+-                }
++                },
+             },
+         )
+         parent = int(

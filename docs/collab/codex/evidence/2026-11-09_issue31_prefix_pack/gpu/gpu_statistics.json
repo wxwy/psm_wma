@@ -1,0 +1,414 @@
+{
+  "kind": "DERIVED_STATISTICS_AND_HASHES_ONLY_NO_PRIVATE_SERVER_FILE_EXPORT",
+  "status": "CORRECTNESS_PASS_PERFORMANCE_NOT_MET",
+  "independent_approval": "NOT_CLAIMED",
+  "benchmark_exit_code": 2,
+  "formal_pair": {
+    "root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+    "child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+    "gitlink": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+    "root_status": "",
+    "child_status": ""
+  },
+  "source_unchanged": true,
+  "recompile_limit": 8,
+  "optimization": "prefix_pack",
+  "text_kv_on_both_sides": true,
+  "input_kind": "Fixed synthetic composite/history; real Local iter15000 DCP, raw15/H16/4x32Prefix/B1/30-step UniPC/guidance1",
+  "validate_model_mode_and_dcp_inventory": "PASS",
+  "torch": "2.10.0+cu128",
+  "cuda": "12.8",
+  "checkpoint_config_sha256": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+  "checkpoint_metadata_sha256": "a75d6e2847ce6eb943403df33588d4d44737e0e12769350c97d79cf3af3ec6d7",
+  "fixed_inputs_sha_and_shapes": {
+    "rgb_sha256": "4b7a567878755c7f80a4b24da42667b0713787fbe8b1a01d6aba6a22c27d32e5",
+    "prepared_video_sha256": "a96277ddbd71254af9c76f97812e3f0a59171ee492f73d0da1599ad331489b9b",
+    "visual96_sha256": "7bd35add480f2494631d7ebd8d1595596d631769ed172b4f23937b47ff906443",
+    "executed_actions_sha256": "afcb917c875f7e0457a31445b603090f3a7694cb7183b3ec7da79c6a9b1393e2",
+    "prefix_sha256": "a23406df2cedb9ec325ea5d52e495724386b0331b263d94b2523175e725cde5a",
+    "prefix_shape": [
+      4,
+      32
+    ],
+    "fast_state_sha256": [
+      "aa6b8f8ab431d997347f7e5f90678481e3ef60326a4f7b721d3c14af7aa3d9da",
+      "343000c5f3982c4eac0bf7b3fcb5682222ff5717428505c7410159457fed4903",
+      "31e30795788ab6c9fdd8bb1f98f6d023c9b3258b2fce15d07ff632ab64b35a3a",
+      "d93c1aa97bac22c550a9564d444bd80dc2a6b5f8e1a66dbd1cb3f952ec54e502"
+    ]
+  },
+  "max_abs_measured_error": {
+    "vision": 0,
+    "action": 0
+  },
+  "audit_output_errors": {
+    "vision": [
+      {
+        "max_abs": 0,
+        "mean_abs": 0
+      }
+    ],
+    "action": [
+      {
+        "max_abs": 0,
+        "mean_abs": 0
+      }
+    ]
+  },
+  "repeated_request_errors": {
+    "vision": [
+      {
+        "max_abs": 0,
+        "mean_abs": 0
+      }
+    ],
+    "action": [
+      {
+        "max_abs": 0,
+        "mean_abs": 0
+      }
+    ]
+  },
+  "uninstrumented_output_errors": {
+    "vision": [
+      {
+        "max_abs": 0,
+        "mean_abs": 0
+      }
+    ],
+    "action": [
+      {
+        "max_abs": 0,
+        "mean_abs": 0
+      }
+    ]
+  },
+  "all28layers_each_mode": {
+    "forwards": 30,
+    "gen_only": 29,
+    "prefix_context": 30,
+    "prefix_kv_projection": 30
+  },
+  "native_total_pack_calls": {
+    "baseline": 31,
+    "optimized": 2
+  },
+  "native_preparation_pack_calls": 1,
+  "denoising_pack_calls": {
+    "baseline": 30,
+    "optimized": 1
+  },
+  "prefix_sensitivity": true,
+  "fresh_cache_and_template_per_request": true,
+  "layer_hooks_removed_before_measurement": true,
+  "pack_audit_removed_before_measurement": true,
+  "warmup_pairs": 3,
+  "clean_warmup_pairs": 3,
+  "measurement_pairs": 30,
+  "measurements": {
+    "baseline": {
+      "native_generate_gpu_ms": {
+        "mean": 836.9259704589844,
+        "p50": 837.0811767578125,
+        "p95": 844.7195465087891,
+        "n": 30
+      },
+      "native_generate_wall_ms": {
+        "mean": 836.9795380160213,
+        "p50": 837.1316408738494,
+        "p95": 844.7744308970869,
+        "n": 30
+      },
+      "current_vae_gpu_ms": {
+        "mean": 4.354593070348104,
+        "p50": 4.3393919467926025,
+        "p95": 4.5156879186630245,
+        "n": 30
+      },
+      "peak_allocated_bytes": {
+        "mean": 8302126080,
+        "p50": 8302126080,
+        "p95": 8302126080,
+        "n": 30
+      },
+      "peak_reserved_bytes": {
+        "mean": 8396996608,
+        "p50": 8396996608,
+        "p95": 8396996608,
+        "n": 30
+      }
+    },
+    "optimized": {
+      "native_generate_gpu_ms": {
+        "mean": 798.0850016276041,
+        "p50": 798.8677673339844,
+        "p95": 803.0261627197266,
+        "n": 30
+      },
+      "native_generate_wall_ms": {
+        "mean": 798.1438341240088,
+        "p50": 798.9540109410882,
+        "p95": 803.0784517526627,
+        "n": 30
+      },
+      "current_vae_gpu_ms": {
+        "mean": 4.379481601715088,
+        "p50": 4.329040050506592,
+        "p95": 4.598096132278442,
+        "n": 30
+      },
+      "peak_allocated_bytes": {
+        "mean": 8302126080,
+        "p50": 8302126080,
+        "p95": 8302126080,
+        "n": 30
+      },
+      "peak_reserved_bytes": {
+        "mean": 8396996608,
+        "p50": 8396996608,
+        "p95": 8396996608,
+        "n": 30
+      }
+    }
+  },
+  "gpu_ms": {
+    "baseline": {
+      "n": 30,
+      "mean": 836.9259704589844,
+      "min": 830.1415405273438,
+      "max": 846.7139892578125,
+      "p50": 837.0811767578125,
+      "p95": 844.7195465087891,
+      "p99": 846.2682275390625
+    },
+    "optimized": {
+      "n": 30,
+      "mean": 798.0850016276041,
+      "min": 790.1533813476562,
+      "max": 806.9631958007812,
+      "p50": 798.8677673339844,
+      "p95": 803.0261627197266,
+      "p99": 805.8523846435547
+    }
+  },
+  "paired_gpu_ms_savings": {
+    "n": 30,
+    "mean": 38.84096883138021,
+    "min": 31.53033447265625,
+    "max": 44.65228271484375,
+    "p50": 39.278411865234375,
+    "p95": 43.74595336914062,
+    "p99": 44.58980102539063
+  },
+  "optimized_faster_pairs": 30,
+  "slowest_three": {
+    "baseline": [
+      {
+        "tag": "pair-20",
+        "gpu_ms": 846.7139892578125,
+        "wall_ms": 846.7728346586227,
+        "current_vae_gpu_ms": 4.348800182342529
+      },
+      {
+        "tag": "pair-14",
+        "gpu_ms": 845.1768798828125,
+        "wall_ms": 845.233216881752,
+        "current_vae_gpu_ms": 4.344895839691162
+      },
+      {
+        "tag": "pair-19",
+        "gpu_ms": 844.1605834960938,
+        "wall_ms": 844.213692471385,
+        "current_vae_gpu_ms": 4.3348798751831055
+      }
+    ],
+    "optimized": [
+      {
+        "tag": "pair-13",
+        "gpu_ms": 806.9631958007812,
+        "wall_ms": 807.0144727826118,
+        "current_vae_gpu_ms": 4.354047775268555
+      },
+      {
+        "tag": "pair-18",
+        "gpu_ms": 803.1328125,
+        "wall_ms": 803.1859043985605,
+        "current_vae_gpu_ms": 4.4561920166015625
+      },
+      {
+        "tag": "pair-17",
+        "gpu_ms": 802.8958129882812,
+        "wall_ms": 802.9471207410097,
+        "current_vae_gpu_ms": 4.58841609954834
+      }
+    ]
+  },
+  "speedup_p50": 1.0478344614545603,
+  "p50_latency_reduction_fraction": 0.045650780933620405,
+  "performance": "NOT_MET",
+  "current_vae_included_in_generation": true,
+  "history_updates_excluded_from_generation_timing": true,
+  "kernel_summary": {
+    "baseline": {
+      "cuda_events_including_memcpy": 39667,
+      "distinct_names": 185,
+      "sha256": "bca2f402bf665f3ce77cdcd8891ed865fb4059e8238cc5b46dcbb377faa7409e"
+    },
+    "optimized": {
+      "cuda_events_including_memcpy": 38654,
+      "distinct_names": 185,
+      "sha256": "c734f04c3878eefd2effac12027ef1162642cfada243c4d14f42818833e8b2bf"
+    }
+  },
+  "previous_gpu01": {
+    "status": "FAIL",
+    "root": "1568888c9337b49fb9f5293eee119e3fc6b54120",
+    "child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+    "error": "AssertionError()",
+    "audit_errors": {
+      "vision": [
+        {
+          "max_abs": 0,
+          "mean_abs": 0
+        }
+      ],
+      "action": [
+        {
+          "max_abs": 0,
+          "mean_abs": 0
+        }
+      ]
+    },
+    "disposition": "Benchmark counted one native preparation pack as well. Expected totals corrected31->2; production and Child unchanged."
+  },
+  "raw_server_only_hashes": {
+    "gpu01/audit_audit-baseline.json": {
+      "bytes": 3830,
+      "sha256": "8d58a75e895b4815238208dc69cb2273a42fee3cb5d409678f2fb360f278aeb0"
+    },
+    "gpu01/audit_audit-optimized.json": {
+      "bytes": 3830,
+      "sha256": "34b1e4c6b75b9e2e1dd56062dcd1bdea2f232e448f3f1fda6ace3ac712ec9b79"
+    },
+    "gpu01/failure_traceback.txt": {
+      "bytes": 303,
+      "sha256": "fff880f154fa73cbb562e5edf5adfdb441c0315d091368a29c37d0d807c4b5f3"
+    },
+    "gpu01/fixed_inputs.pt": {
+      "bytes": 503827,
+      "sha256": "59339abb8e47844ad136cfa0ff34d8e644284d5fb838fa8a0e338c2be521aad6"
+    },
+    "gpu01/outputs_audit-baseline.pt": {
+      "bytes": 195101,
+      "sha256": "5d2013bc07992ab00b6ffb6d92676f88f9005331f765e03b63da9acfdc217c74"
+    },
+    "gpu01/outputs_audit-optimized.pt": {
+      "bytes": 195109,
+      "sha256": "1bf14c2f7f61db980908b164fc95a097de13f34dea917ed1948471626d1b9cb9"
+    },
+    "gpu01/result.json": {
+      "bytes": 2551,
+      "sha256": "44d0bf91ba7255c1813bda55a3a55c385684078ca70e3c4ea135c78882377785"
+    },
+    "gpu01/source_before.json": {
+      "bytes": 212,
+      "sha256": "08fadfcba08ee4ae5d533a524cb9e157bdcf6dc6efe7518b373a897c45e7bf78"
+    },
+    "gpu01/warmup.json": {
+      "bytes": 3063,
+      "sha256": "e320dd97e0f0b731d61eba5e8923f2d79d556d875cf7f053cc089d01ff4f6bcf"
+    },
+    "gpu01.log": {
+      "bytes": 17970,
+      "sha256": "69e6051e7f0d16e4d61d35bce063bfb9592d8c8decc3cda07126620869d78913"
+    },
+    "gpu02/audit.json": {
+      "bytes": 16907,
+      "sha256": "54250ed6fce4ad00ff426dab3437116d68e5966089dea45c8d840d21cba092f7"
+    },
+    "gpu02/audit_audit-baseline.json": {
+      "bytes": 3829,
+      "sha256": "94d733703ce37f6657ee73e53372e10a247a0fa5ff3f5e83daa25c5cbd10abe5"
+    },
+    "gpu02/audit_audit-optimized.json": {
+      "bytes": 3832,
+      "sha256": "09351a3c6138662f789c800063fca2d0f02744bd45ee4486fd1316dbaf97b62e"
+    },
+    "gpu02/audit_different-prefix.json": {
+      "bytes": 3832,
+      "sha256": "cb1a128832f85827f1d5f3391348c6e23ebfd7490c2e108ff1b75eea312ad7d8"
+    },
+    "gpu02/audit_original-request-again.json": {
+      "bytes": 3839,
+      "sha256": "53a813cfd0a43038c2cc0e06b08f564936e511953a8bcbd4743b1315837e47c2"
+    },
+    "gpu02/fixed_inputs.pt": {
+      "bytes": 503827,
+      "sha256": "59339abb8e47844ad136cfa0ff34d8e644284d5fb838fa8a0e338c2be521aad6"
+    },
+    "gpu02/kernel_counts.json": {
+      "bytes": 90776,
+      "sha256": "49339a3992d9dbcf27f851b23efafe2173e843aea6dc5c32d3b0fa2c807e96a2"
+    },
+    "gpu02/measurements.jsonl": {
+      "bytes": 32443,
+      "sha256": "25c51d8b9f2b30ed8dc3e29522379bdea0e14dcda41801ad20ca5dcc6bff4682"
+    },
+    "gpu02/outputs_audit-baseline.pt": {
+      "bytes": 195101,
+      "sha256": "5d2013bc07992ab00b6ffb6d92676f88f9005331f765e03b63da9acfdc217c74"
+    },
+    "gpu02/outputs_audit-optimized.pt": {
+      "bytes": 195109,
+      "sha256": "1bf14c2f7f61db980908b164fc95a097de13f34dea917ed1948471626d1b9cb9"
+    },
+    "gpu02/outputs_different-prefix.pt": {
+      "bytes": 195117,
+      "sha256": "9dddce1b30269d847743870ff603afa08fa3d9ec23d21bffc2f893d52f02bfde"
+    },
+    "gpu02/outputs_original-request-again.pt": {
+      "bytes": 195165,
+      "sha256": "94a780cf11bb2966f656514805e5f30d7c8500ed18f09e698e374b79d98622c9"
+    },
+    "gpu02/profile_baseline.json": {
+      "bytes": 87678366,
+      "sha256": "49c633835e923e09a17f6c0a0d6fea339d3389da34a8227c1ef125110222f8e3"
+    },
+    "gpu02/profile_optimized.json": {
+      "bytes": 81583325,
+      "sha256": "abbf14ce5144f035ac9b988bfdc6662fd70704970f13ef376e531b2b5f98bad5"
+    },
+    "gpu02/result.json": {
+      "bytes": 4800,
+      "sha256": "20de05e67c1f4419bd967984716ab2a2c920a1460b2a8ac965a79491bedebf84"
+    },
+    "gpu02/source_after.json": {
+      "bytes": 212,
+      "sha256": "51ccf0448f608e4030c77d2e487f4b50909ef25d574c6e68ec109af998aaf2a0"
+    },
+    "gpu02/source_before.json": {
+      "bytes": 212,
+      "sha256": "51ccf0448f608e4030c77d2e487f4b50909ef25d574c6e68ec109af998aaf2a0"
+    },
+    "gpu02/uninstrumented_outputs.pt": {
+      "bytes": 388723,
+      "sha256": "81c2efc76d95ec84d1e8a8874518c4c80bbe6946f82527a31827873d4fe916f9"
+    },
+    "gpu02/uninstrumented_warmup.json": {
+      "bytes": 3099,
+      "sha256": "b5947951fe570989f07d21a12130c50c5fcbd47e7a56467bd01631b5ea3d1f63"
+    },
+    "gpu02/warmup.json": {
+      "bytes": 3064,
+      "sha256": "0b2dc3c7bd5a90f0c320151cb0ae980a4551eb0c2f737a40a38a716cccffb698"
+    },
+    "gpu02.log": {
+      "bytes": 113407,
+      "sha256": "64b770903bc12fbfc7b6ec2642c55de5263b9dee0cbcf9d1c106244333f23466"
+    }
+  },
+  "server_only_artifact_directory": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue31_prefix_pack_20261109/gpu02",
+  "remaining_owned_model_pids": [],
+  "gpu_after_process_exit": "6, GPU-a785be7c-17dc-117c-c6fa-de6ded5c135b, NVIDIA H100 80GB HBM3, 36977, 0",
+  "limitation": "Existing gpu_load_sim unchanged; fixed synthetic model-only paired workload, no Sim/Worker/SR/900EP or exclusive-GPU/NoTTT comparison. Stage1 P99 outlier remains unresolved independently of this run."
+}

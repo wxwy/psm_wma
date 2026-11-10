@@ -1,0 +1,28 @@
+usage: benchmark_local_ttt_prefix_kv.py [-h] --root-worktree ROOT_WORKTREE
+                                        --expected-root EXPECTED_ROOT
+                                        --expected-child EXPECTED_CHILD
+                                        --checkpoint CHECKPOINT --config-file
+                                        CONFIG_FILE --output-dir OUTPUT_DIR
+                                        --gpu-index {4,5,6,7} [--seed SEED]
+                                        [--warmup-pairs WARMUP_PAIRS]
+                                        [--pairs PAIRS] [--profile-one]
+
+Issue31: same-Local-DCP, Prefix-ON B1 text-KV correctness/performance probe.
+Model-only author evidence. No HTTP server, Sim, Worker, training, SR or model
+mode override. Uses a deterministic synthetic composite observation and real
+loaded Local-TTT parameters to construct a fixed Prefix/FastState. All raw
+artifacts stay in the selected device's new output directory.
+
+options:
+  -h, --help            show this help message and exit
+  --root-worktree ROOT_WORKTREE
+  --expected-root EXPECTED_ROOT
+  --expected-child EXPECTED_CHILD
+  --checkpoint CHECKPOINT
+  --config-file CONFIG_FILE
+  --output-dir OUTPUT_DIR
+  --gpu-index {4,5,6,7}
+  --seed SEED
+  --warmup-pairs WARMUP_PAIRS
+  --pairs PAIRS
+  --profile-one

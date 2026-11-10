@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "formal_root": "5b89f3eddbfe27ee72c173696a386e0b756d7866",
+  "formal_child": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+  "base_root": "ca3a08acf8697b5ff316fcc476c4f0820d8f3b13",
+  "base_child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+  "changed_root": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework",
+    "tools/v3/benchmark_local_ttt_prefix_kv.py",
+    "tools/v3/prefix_kv_benchmark_test.py"
+  ],
+  "changed_child": [
+    "cosmos_framework/model/generator/mot/attention.py",
+    "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+    "cosmos_framework/model/generator/mot/inference_text_kv_memory.py",
+    "cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+    "cosmos_framework/model/generator/mot/unified_mot.py",
+    "cosmos_framework/model/generator/omni_mot_model.py"
+  ],
+  "unchanged_method_ast_sha256": {
+    "scan_local_memory": "4125fdccfa3588fa6cef117b3731b71f6d381c0bc24f93f0f5846dd78207d830",
+    "_encode_action": "ef15e1161b45e69d6a09a1f359b523af9fec7c2bddc794ce87cfeca0a18c0983",
+    "_decode_action": "1c47426406f554e5ae79613248d90255e62b1ffbecab1378d35f4d47cda5ef61"
+  },
+  "attention_scope": "Private inference-only native materialized UND K/V capture. No backend change, pack-template reuse or precision/compile-limit change.",
+  "protected_paths": "All other tracked Root/Child files unchanged by exact Git diff; training/VAE/Sim/Worker/config/Resume/memory_prefix.py preserved"
+}

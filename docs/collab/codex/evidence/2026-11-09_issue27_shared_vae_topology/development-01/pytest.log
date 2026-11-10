@@ -1,0 +1,71 @@
+..................F......................                                [100%]
+=================================== FAILURES ===================================
+____ test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes ____
+
+    def test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes():
+        base, _ = sessions.make_adapter(8)
+        adapter = FeatureAdapter(base)
+        batches = []
+>       actor = BatchedSessionTransactions(
+            adapter,
+            lambda reqs, updates: (
+                batches.append(len(reqs)) or BatchOutput([[[0.125] * 15 for _ in range(16)] for _ in reqs])
+            ),
+            lambda: None,
+            max_batch_size=8,
+            batch_wait_ms=0,
+            owner_token="cpu-owner",
+            run_lease="run",
+            manifest_digest="a" * 64,
+            slot_ids=tuple(f"slot{i}" for i in range(8)),
+            timeout_s=5,
+        )
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py:107: in __init__
+    super().__init__(adapter, None, quiesce, **kwargs)
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:220: in __init__
+    self.clock_domain = monotonic_clock_domain()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:118: in monotonic_clock_domain
+    rows = [line.split() for line in read("/proc/self/timens_offsets").splitlines()]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos-framework/cosmos_framework/inference/robocasa_session_transactions.py:111: in read
+    with Path(path).open("rb") as stream:
+         ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/proc/self/timens_offsets'), mode = 'rb', buffering = -1
+encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/proc/self/timens_offsets'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes
+1 failed, 40 passed, 3 warnings in 11.31s

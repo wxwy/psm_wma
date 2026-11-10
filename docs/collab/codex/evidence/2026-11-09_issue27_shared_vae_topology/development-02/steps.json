@@ -1,0 +1,53 @@
+[
+  {
+    "name": "format",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_batch_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_ready_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_vae_topology_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_shared_feature_batch_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/scripts/robocasa_eval_v2/config.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/scripts/robocasa_eval_v2/shared_vae.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "--fix",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/evaluation/robocasa_v2/contract.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_batch_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_ready_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_vae_daemon.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_vae_topology_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_vae_worker.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_shared_feature_batch_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/scripts/robocasa_eval_v2/config.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/scripts/robocasa_eval_v2/shared_vae.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+      "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py"
+    ],
+    "exit_code": 1
+  }
+]

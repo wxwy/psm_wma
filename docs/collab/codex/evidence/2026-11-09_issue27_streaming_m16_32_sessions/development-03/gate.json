@@ -1,0 +1,112 @@
+{
+  "status": "PASS",
+  "scope": "ISSUE27_TEST_ONLY_STREAMING_M16_32_SESSIONS",
+  "steps": [
+    {
+      "name": "format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 0.11528049899970938
+    },
+    {
+      "name": "lint_fix",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--fix",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 0.11594474000048649
+    },
+    {
+      "name": "ruff_check",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 0.11476139399928798
+    },
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 0.11570605800079647
+    },
+    {
+      "name": "pytest",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+        "--junitxml=/workspace/work/issue27-m16-evidence/development-03/focused.xml",
+        "--basetemp=/workspace/work/issue27-m16-evidence/development-03/tmp"
+      ],
+      "cwd": "/workspace/work/psm-wma-shared-vae-issue27",
+      "timeout_s": 150,
+      "exit_code": 0,
+      "elapsed_s": 19.950369512998805
+    }
+  ],
+  "created_cst": "2026-11-09T12:27:44.852909+08:00",
+  "formal_identity": {
+    "root": "ad7b9da2cf84b0c4d8899833c552b3945743f18a",
+    "child": "60b252d05157b2753d2caebae32b11c878504bbe",
+    "gitlink": "60b252d05157b2753d2caebae32b11c878504bbe"
+  },
+  "root_production_base": "15dbc97bf13437905ec38247382834067e5341ae",
+  "real_gpu_checkpoint_sim_sr": "NOT_RUN",
+  "syntax_files": 3,
+  "junit": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "m16_layout_proofs": 2,
+  "source_unchanged": true,
+  "root_production_unchanged": true,
+  "child_unchanged": true
+}

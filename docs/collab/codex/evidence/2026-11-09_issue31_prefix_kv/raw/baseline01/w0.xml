@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.283" timestamp="2026-11-09T11:28:22.907474+00:00" hostname="f415bcea90b3"><testcase classname="cosmos_framework.model.generator.mot.local_evidence_test" name="test_model_owned_all_continuation_never_initializes_w0" time="0.004"><failure message="AssertionError: all-continuation 不得读取 W0">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6869d1ba10&gt;
+
+    def test_model_owned_all_continuation_never_initializes_w0(monkeypatch):
+        net = _local_net()
+        visual, action, valid = torch.randn(2, 4, 96), torch.randn(2, 4, 15), torch.ones(2, 4, dtype=torch.bool)
+        state = ContinualTTTLocalMemoryCore.detach_state(net.local_memory_runtime.core.initial_state(2))
+    
+        def forbidden(batch):
+            raise AssertionError("all-continuation 不得读取 W0")
+    
+        monkeypatch.setattr(net.local_memory_runtime.core, "initial_state", forbidden)
+&gt;       tokens, _, _ = _model_scan(net, visual, action, valid, state)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:331: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/model/generator/mot/local_evidence_test.py:233: in _model_scan
+    return Cosmos3VFMNetwork.scan_local_memory(net, visual, action, valid, state, continuation_mask=continuation_mask)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:400: in scan_local_memory
+    fresh = runtime.core.initial_state(batch)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = 2
+
+    def forbidden(batch):
+&gt;       raise AssertionError("all-continuation 不得读取 W0")
+E       AssertionError: all-continuation 不得读取 W0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:328: AssertionError</failure></testcase></testsuite></testsuites>

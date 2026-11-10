@@ -1,0 +1,17 @@
+{
+  "k": 8,
+  "servers": 1,
+  "sims_per_server": 2,
+  "sessions": 2,
+  "completed_steps": 32,
+  "history_encode1": 14,
+  "worker_returncode": 0,
+  "external_survived": true,
+  "policy_batch_histograms": {
+    "10": [
+      2
+    ]
+  },
+  "real_model": false,
+  "real_env": false
+}

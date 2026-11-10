@@ -1,0 +1,11 @@
+tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py:235:45: E741 Ambiguous variable name: `l`
+    |
+233 |             assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+234 |         for gpu, owner in rig.owners.items():
+235 |             expected = {l["session_id"] for l, c, g in channels if g == gpu}
+    |                                             ^ E741
+236 |             assert set(owner._sessions) == expected and len(expected) == sims
+237 |             assert len({s.lease["server_epoch"] for s in owner._sessions.values()}) == 1
+    |
+
+Found 2 errors (1 fixed, 1 remaining).

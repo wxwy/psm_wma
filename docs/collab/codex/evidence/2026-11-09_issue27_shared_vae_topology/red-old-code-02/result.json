@@ -1,0 +1,79 @@
+{
+  "status": "RED_EXPECTED",
+  "expected_failures": 2,
+  "old_production_unchanged": true,
+  "source_hashes": {
+    "scripts/robocasa_eval_v2/shared_vae.py": "6dda8c38f31df2b80ad33a204d5a42032f08c23ba61a461f76c0810ef0200d59",
+    "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py": "fc57dfe9293892cb092b6f16e8bc60b7fe3108f7f40f730214d983b3cf0d78a8"
+  },
+  "tests_injected": true,
+  "test_hashes": {
+    "tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py": "952421bed126d16102138b1e259c00b6723058dc8ec0e8c0d25989ac75fe919e",
+    "cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py": "4b1b62f1dff0ee11eeb9840ce613c4a19eca35e493f56cd8fbfea5c43e8212f7"
+  },
+  "commands": [
+    {
+      "name": "ruff_format",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "ruff_fix",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "--fix",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py",
+        "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "root",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-shared-vae-issue27/tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py::test_shared_topology_is_config_driven_without_single_measurement_arm",
+        "-k",
+        "2-8-8",
+        "--basetemp=/workspace/work/issue27-shared-vae-evidence/red-old-code-02/root_tmp",
+        "--junitxml=/workspace/work/issue27-shared-vae-evidence/red-old-code-02/root.xml"
+      ],
+      "exit_code": 1
+    },
+    {
+      "name": "child",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py::test_feature_policy_batch8_uses_real_ready_peers_and_isolated_prefixes",
+        "--basetemp=/workspace/work/issue27-shared-vae-evidence/red-old-code-02/child_tmp",
+        "--junitxml=/workspace/work/issue27-shared-vae-evidence/red-old-code-02/child.xml"
+      ],
+      "exit_code": 1
+    }
+  ]
+}

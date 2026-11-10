@@ -1,0 +1,232 @@
+{
+  "created_cst": "2026-11-09T12:38:11.000+08:00",
+  "formal_root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+  "child_gitlink": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "root_evidence_head_at_readback": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+  "production_same_as_previous_root": "15dbc97bf13437905ec38247382834067e5341ae",
+  "status": "PUBLISHED_AND_READ_BACK",
+  "independent_evidence_review": "REQUESTED_NOT_AUTHOR_CLOSED",
+  "root_pr": {
+    "url": "https://github.com/wxwy/psm_wma/pull/29",
+    "head": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+    "base": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "draft": true,
+    "merged": false
+  },
+  "child_pr": {
+    "url": "https://github.com/wxwy/cosmos-framework/pull/8",
+    "head": "60b252d05157b2753d2caebae32b11c878504bbe",
+    "base": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db",
+    "draft": true,
+    "merged": false
+  },
+  "remote_blob_matches": 25,
+  "blob_receipts": [
+    {
+      "path": "docs/build/V3_EvalV2_Issue27_SharedVAE_Topology_Runbook.md",
+      "expected": "e4f48f246a797a3e2a99975a43a22706d9c415bd",
+      "ref": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+      "actual": "e4f48f246a797a3e2a99975a43a22706d9c415bd",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "expected": "eeaefbd629c4aef56fc7f6bed6be677ddb38c48c",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "eeaefbd629c4aef56fc7f6bed6be677ddb38c48c",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/chatgpt/reviews/2026-11-09_Issue27_15dbc97b_60b252d0_GenericTopology_Evidence_REQUEST_CHANGES.md",
+      "expected": "67653bcfad3c5ad15fd9ccbb3ea3c62d2263a539",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "67653bcfad3c5ad15fd9ccbb3ea3c62d2263a539",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/artifact_hashes.json",
+      "expected": "886306dc2ad81bc7f57b1a0c96ee09f89b50cf6b",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "886306dc2ad81bc7f57b1a0c96ee09f89b50cf6b",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/environment_overrides.json",
+      "expected": "3799dcc4a7701ac6cf18eff5279126d5c2779b54",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "3799dcc4a7701ac6cf18eff5279126d5c2779b54",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/focused.xml",
+      "expected": "c179ed0bf7fc8d31908f10ea7c0c5d8ce0fade71",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "c179ed0bf7fc8d31908f10ea7c0c5d8ce0fade71",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/gate.json",
+      "expected": "61a8d9c1ef212ac577d13f80d5ab5c1805162980",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "61a8d9c1ef212ac577d13f80d5ab5c1805162980",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/m16_os_behavior_0.json",
+      "expected": "6d2e9d02aba725f0e3109fdf56678383fd782ae9",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "6d2e9d02aba725f0e3109fdf56678383fd782ae9",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/m16_os_behavior_1.json",
+      "expected": "7b3ecc89fcfcbbb12392ce3f9523065fcd9c58be",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "7b3ecc89fcfcbbb12392ce3f9523065fcd9c58be",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/pytest.log",
+      "expected": "d4a573ec775612f5892d2f6c11100919858684e0",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "d4a573ec775612f5892d2f6c11100919858684e0",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/ruff_check.log",
+      "expected": "1f5f344d054fae10f39140fb7199c99321d9190a",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "1f5f344d054fae10f39140fb7199c99321d9190a",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/ruff_format.log",
+      "expected": "8e4d504182979b9ad211fb7b88757897fbed0606",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "8e4d504182979b9ad211fb7b88757897fbed0606",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/scenarios/test_streaming_m16_32_frozen_s0/manifest.json",
+      "expected": "c182b67a79fda55e28a055cf6d20d6d9f9c92cf4",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "c182b67a79fda55e28a055cf6d20d6d9f9c92cf4",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/scenarios/test_streaming_m16_32_frozen_s0/streaming_m16_evidence.json",
+      "expected": "6d2e9d02aba725f0e3109fdf56678383fd782ae9",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "6d2e9d02aba725f0e3109fdf56678383fd782ae9",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/scenarios/test_streaming_m16_32_frozen_s1/manifest.json",
+      "expected": "c41e990da5e2b7fcb1820800e6e3910bcc00e99e",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "c41e990da5e2b7fcb1820800e6e3910bcc00e99e",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/scenarios/test_streaming_m16_32_frozen_s1/streaming_m16_evidence.json",
+      "expected": "7b3ecc89fcfcbbb12392ce3f9523065fcd9c58be",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "7b3ecc89fcfcbbb12392ce3f9523065fcd9c58be",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/source_after.json",
+      "expected": "56609c0b66f9f02d97ed1d62c35e5dac625414dc",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "56609c0b66f9f02d97ed1d62c35e5dac625414dc",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/source_before.json",
+      "expected": "56609c0b66f9f02d97ed1d62c35e5dac625414dc",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "56609c0b66f9f02d97ed1d62c35e5dac625414dc",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/author-01/versions.json",
+      "expected": "82e5f65ddb3be62e73149e8851e1899674be723e",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "82e5f65ddb3be62e73149e8851e1899674be723e",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/production_identity.json",
+      "expected": "dd298dd32e11fb1b6c8b470e20003ff15782a331",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "dd298dd32e11fb1b6c8b470e20003ff15782a331",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/evidence/2026-11-09_issue27_streaming_m16_32_sessions/summary.json",
+      "expected": "847d99158edf0959fe8cbe9f0516672536492833",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "847d99158edf0959fe8cbe9f0516672536492833",
+      "pass": true
+    },
+    {
+      "path": "docs/collab/codex/reviews/2026-11-09_Issue27_M16_32Sessions_9b1756f9_60b252d0_Evidence_Review_Request.md",
+      "expected": "88300e727b6af3f2e1d5f1ff6d55570cd39bfb23",
+      "ref": "a43b71b8e2e69be907fc51fbb9f5e582de09b050",
+      "actual": "88300e727b6af3f2e1d5f1ff6d55570cd39bfb23",
+      "pass": true
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_daemon_fixture.py",
+      "expected": "6b5fdb1b6a77a64eb735ac2d71e8f3c0e4eb749b",
+      "ref": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+      "actual": "6b5fdb1b6a77a64eb735ac2d71e8f3c0e4eb749b",
+      "pass": true
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_routing_test.py",
+      "expected": "09595e277d7ad617109147d8415e28ca89895f94",
+      "ref": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+      "actual": "09595e277d7ad617109147d8415e28ca89895f94",
+      "pass": true
+    },
+    {
+      "path": "tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py",
+      "expected": "b2a8372bcce1babd0184e57915c752dc099ca72e",
+      "ref": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+      "actual": "b2a8372bcce1babd0184e57915c752dc099ca72e",
+      "pass": true
+    }
+  ],
+  "fetched_root_gitlink_verified": true,
+  "official_refs_unchanged": {
+    "root_v3": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "child_v3_local_ttt": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db"
+  },
+  "author_cpu": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "source_unchanged": true,
+    "production_unchanged": true,
+    "child_unchanged": true,
+    "static_python_files": 3,
+    "archived_files": 58
+  },
+  "mandatory_case": {
+    "servers": 2,
+    "sims_per_server": 16,
+    "total_sessions": 32,
+    "render_gpus": 2,
+    "worker_processes": 2,
+    "sessions_each_worker": 16
+  },
+  "same_render_complement": {
+    "worker_processes": 1,
+    "sessions": 32,
+    "policy_epochs": 2
+  },
+  "issue28_implemented": false,
+  "real_gpu_sim_sr_900ep_training_merge": "NOT_RUN"
+}

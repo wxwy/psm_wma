@@ -1,0 +1,153 @@
+...............................FF....................................... [ 61%]
+.............................................                            [100%]
+=================================== FAILURES ===================================
+_ test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end[2] _
+
+count = 2
+
+    @pytest.mark.parametrize("count", [2, 8])
+    def test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end(count):
+        first, adapter, model = p._feature_adapter(max_sessions=count)
+        histories = [first]
+        for i in range(1, count):
+            h = copy.copy(first)
+            h.lease = dict(
+                first.lease, session_id=f"session-{i + 1}", episode_id=f"episode-{i + 1}", slot_id=f"slot-{i + 1}"
+            )
+            h.visual = lambda step, index=i: struct.pack("<96f", *([step / 16 + index / 32] * 96))
+            first.owner.register_session(
+                TOKEN, h.lease, worker_id="worker", actor_id="actor", actor_epoch="actor-epoch", episode_deadline_ns=10000
+            )
+            histories.append(h)
+    
+        def commit_round(step, rows):
+            before = adapter.snapshot
+            updates = [p._prepare_feature(adapter, h, step, r) for h, r in zip(histories, rows)]
+            assert adapter.snapshot is before
+            for h, u in zip(histories, updates):
+                adapter.stage_boundary(u, h.boundary(step))
+            responses = [
+                CachedMemoryResponse(f"request-{step}", "f" * 64, canonical_json({"local_memory": adapter.status(u)}))
+                for u in updates
+            ]
+            adapter.commit_many(tuple(zip(updates, responses)))
+            assert len(adapter.snapshot.responses) == len(adapter.snapshot.visual) == count
+            return updates, responses
+    
+        commit_round(0, [[] for _ in histories])
+        for h in histories:
+            h.commit_chunk()
+        rows = [h.rows() for h in histories]
+        assert all(
+            len(r) == 16 and r[0]["feature"] is None and sum(v["feature"] is not None for v in r) == 15 for r in rows
+        )
+        updates, responses = commit_round(16, rows)
+        assert model.scan_calls == ([(1, False)] + [(1, True)] * 15) * count
+        assert all(adapter.status(u)["encoded_steps"] == 0 for u in updates)
+        states = [adapter.snapshot.fast[h.lease["session_id"]].state for h in histories]
+        assert any(not torch.equal(a, b) for a, b in zip(states[0], states[-1]))
+        before = adapter.snapshot
+        for h, r, cached in zip(histories, rows, responses):
+            replay = p._prepare_feature(adapter, h, 16, copy.deepcopy(r))
+            assert replay.memory.replay
+            adapter.commit(replay, cached)
+        assert len(model.scan_calls) == 16 * count
+        survivor = histories[-1].lease["session_id"]
+        adapter.reset(histories[0].lease["session_id"])
+        assert adapter.snapshot.fast[survivor] is before.fast[survivor]
+>       assert adapter.snapshot.visual[survivor] is before.visual[survivor]
+E       AssertionError: assert _VisualRecord(episode_id='episode-2', consumer_step=16, image_size=256, preprocess_profile='left_wrist_reflection_pad_...x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?')) is _VisualRecord(episode_id='episode-2', consumer_step=16, image_size=256, preprocess_profile='left_wrist_reflection_pad_...x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?\x00\x00\x84?'))
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_memory_test.py:69: AssertionError
+_ test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end[8] _
+
+count = 8
+
+    @pytest.mark.parametrize("count", [2, 8])
+    def test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end(count):
+        first, adapter, model = p._feature_adapter(max_sessions=count)
+        histories = [first]
+        for i in range(1, count):
+            h = copy.copy(first)
+            h.lease = dict(
+                first.lease, session_id=f"session-{i + 1}", episode_id=f"episode-{i + 1}", slot_id=f"slot-{i + 1}"
+            )
+            h.visual = lambda step, index=i: struct.pack("<96f", *([step / 16 + index / 32] * 96))
+            first.owner.register_session(
+                TOKEN, h.lease, worker_id="worker", actor_id="actor", actor_epoch="actor-epoch", episode_deadline_ns=10000
+            )
+            histories.append(h)
+    
+        def commit_round(step, rows):
+            before = adapter.snapshot
+            updates = [p._prepare_feature(adapter, h, step, r) for h, r in zip(histories, rows)]
+            assert adapter.snapshot is before
+            for h, u in zip(histories, updates):
+                adapter.stage_boundary(u, h.boundary(step))
+            responses = [
+                CachedMemoryResponse(f"request-{step}", "f" * 64, canonical_json({"local_memory": adapter.status(u)}))
+                for u in updates
+            ]
+            adapter.commit_many(tuple(zip(updates, responses)))
+            assert len(adapter.snapshot.responses) == len(adapter.snapshot.visual) == count
+            return updates, responses
+    
+        commit_round(0, [[] for _ in histories])
+        for h in histories:
+            h.commit_chunk()
+        rows = [h.rows() for h in histories]
+        assert all(
+            len(r) == 16 and r[0]["feature"] is None and sum(v["feature"] is not None for v in r) == 15 for r in rows
+        )
+        updates, responses = commit_round(16, rows)
+        assert model.scan_calls == ([(1, False)] + [(1, True)] * 15) * count
+        assert all(adapter.status(u)["encoded_steps"] == 0 for u in updates)
+        states = [adapter.snapshot.fast[h.lease["session_id"]].state for h in histories]
+        assert any(not torch.equal(a, b) for a, b in zip(states[0], states[-1]))
+        before = adapter.snapshot
+        for h, r, cached in zip(histories, rows, responses):
+            replay = p._prepare_feature(adapter, h, 16, copy.deepcopy(r))
+            assert replay.memory.replay
+            adapter.commit(replay, cached)
+        assert len(model.scan_calls) == 16 * count
+        survivor = histories[-1].lease["session_id"]
+        adapter.reset(histories[0].lease["session_id"])
+        assert adapter.snapshot.fast[survivor] is before.fast[survivor]
+>       assert adapter.snapshot.visual[survivor] is before.visual[survivor]
+E       AssertionError: assert _VisualRecord(episode_id='episode-8', consumer_step=16, image_size=256, preprocess_profile='left_wrist_reflection_pad_...x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?')) is _VisualRecord(episode_id='episode-8', consumer_step=16, image_size=256, preprocess_profile='left_wrist_reflection_pad_...x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?\x00\x00\x9c?'))
+
+cosmos-framework/cosmos_framework/inference/robocasa_shared_memory_test.py:69: AssertionError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_boundary_capture_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/inference/robocasa_feature_transactions_test.py:25: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37
+  /workspace/work/psm-wma-shared-vae-issue27/cosmos-framework/cosmos_framework/scripts/robocasa_feature_http_test.py:37: PytestUnknownMarkWarning: Unknown pytest.mark.gpus - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    pytestmark = [pytest.mark.level(0), pytest.mark.gpus(0)]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end[2]
+FAILED ../../../dev::test_signed_multi_session_history_retains_15plus1_t1_atomic_commit_replay_and_end[8]
+2 failed, 115 passed, 7 warnings in 30.71s

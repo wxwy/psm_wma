@@ -1,0 +1,219 @@
+{
+  "kind": "Issue31 Stage2 candidate publication/readback, metadata only",
+  "formal_root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+  "formal_child_gitlink": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "observed_evidence_head": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+  "normal_push": true,
+  "force_push": false,
+  "remote_blobs_verified": 20,
+  "remote_bindings": [
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "tools/v3/benchmark_local_ttt_prefix_kv.py",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "a84bcd25ad5edcf83afdb7c606208a1448be01e6",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/chatgpt/CODEX_INBOX.md",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "6232aa3b17171149230350ceb210579b43eabda8",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/reviews/2026-11-09_Issue31_Stage2_PrefixPack_18be4a80_193627f4_Review_Request.md",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "0574d2962ad964a985d004f335cc7c6140adf270",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/index.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "1fae3d8602c171ba40c5595bea3a3cc3adc35733",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/scope.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "13988d998de8aba06b96830fa36cd7f094fca42b",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/controlled_red_green.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "4d43522b884ee4236bc6c26db13cb32c87bcfc8b",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/author02/gate.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "53f3f9967b705fad8238459800366388d1411bf6",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/author02/focused.xml",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "7d086162a49c5ef37c81bd1de92f6ecaa462d666",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/author02/focused.command.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "0f9ecd01a30ed53a3c2702f6a5fe28018edb8d0b",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/author02/source_before.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "0f79080bc970e63d4421babea3a176c3e69bf3f0",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/author02/source_after.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "0f79080bc970e63d4421babea3a176c3e69bf3f0",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/author01/gate.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "3f39ddcfca4353621e4a49fe7412c5a9d0342e83",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/dev02/focused.xml",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "0fd582692e655a014f8e200435cdf766ab749e4b",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/raw/red01/focused.xml",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "83708b3ad135d636aadaa8f5c9e9bedd82d76151",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/gpu/index.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "358c26e2cd63896173f3624b33180d3e09c3140f",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/gpu/gpu_statistics.json",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "3e2563be88280c6341dcf8cf5eabc165b0c6c1d2",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/psm_wma",
+      "path": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/gpu/executed_command.sh",
+      "ref": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "sha": "494151929b4384b5285804b33f3b6f52b0cc2bb7",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "path": "cosmos_framework/model/generator/omni_mot_model.py",
+      "ref": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+      "sha": "9633e516ce3228f2a7cba734a16791360fa5431e",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "path": "cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py",
+      "ref": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+      "sha": "40e730f07a8395d7d2f9fe85bffad12001e885a6",
+      "status": "MATCH"
+    },
+    {
+      "repository_full_name": "wxwy/cosmos-framework",
+      "path": "cosmos_framework/model/generator/mot/prefix_pack_template_test.py",
+      "ref": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+      "sha": "537345874bb9240acf0f7dfd42afd505ab62d950",
+      "status": "MATCH"
+    }
+  ],
+  "pr_snapshots_before_receipt": [
+    {
+      "repository": "wxwy/psm_wma",
+      "number": 33,
+      "url": "https://github.com/wxwy/psm_wma/pull/33",
+      "head": "28b19890d3f1da4c5b79fad37945fab0833862d3",
+      "base": "590071c599c0531cd9feca9ae748eb0be1af1c89",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "repository": "wxwy/cosmos-framework",
+      "number": 11,
+      "url": "https://github.com/wxwy/cosmos-framework/pull/11",
+      "head": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+      "base": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "number": 32,
+      "url": "https://github.com/wxwy/psm_wma/pull/32",
+      "head": "590071c599c0531cd9feca9ae748eb0be1af1c89",
+      "base": "ca3a08acf8697b5ff316fcc476c4f0820d8f3b13",
+      "draft": true,
+      "merged": false
+    },
+    {
+      "repository": "wxwy/cosmos-framework",
+      "number": 10,
+      "url": "https://github.com/wxwy/cosmos-framework/pull/10",
+      "head": "4446be0f6dad9b6dc887ef90af52d0af754d4682",
+      "base": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+      "draft": true,
+      "merged": false
+    }
+  ],
+  "pr_descriptions_read_back_exact": true,
+  "protected_refs": {
+    "root_V3": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "child_v3_local_ttt": "b0dbd115d03e801ec4d0788c30ee0b0e9655d4db",
+    "stage1_root_branch": "590071c599c0531cd9feca9ae748eb0be1af1c89",
+    "stage1_child_branch": "4446be0f6dad9b6dc887ef90af52d0af754d4682"
+  },
+  "protected_refs_unchanged": true,
+  "source_diff_after_formal_pair": "NONE",
+  "validation": {
+    "cpu_selected_pass": 201,
+    "excluded_inherited_failure": 1,
+    "inherited_ruff_I001_exceptions": 3,
+    "source_fingerprints_unchanged": 1487,
+    "cpu_payloads": 73,
+    "gpu_derived_payloads": 3,
+    "gpu_correctness": "PASS",
+    "gpu_performance": "NOT_MET",
+    "gpu_status": "CORRECTNESS_PASS_PERFORMANCE_NOT_MET",
+    "gpu_exit_code": 2,
+    "p50_speedup": 1.0478344614545603,
+    "predeclared_speedup_threshold": 1.05,
+    "raw_gpu_hashes": 31,
+    "raw_gpu_files_exported": false,
+    "remaining_owned_model_pids": []
+  },
+  "independent_approval": "NOT_CLAIMED",
+  "stage1_tail_anomaly": "UNRESOLVED",
+  "no_more_model_reruns_or_threshold_change": true,
+  "next": "Independent narrow code/evidence review; keep Draft, no V3 merge/training/Sim/SR/900EP/dense Attention stage."
+}

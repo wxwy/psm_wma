@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="18" time="52.316" timestamp="2026-11-09T04:24:07.982891+00:00" hostname="f415bcea90b3"><testcase classname="" name="test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-1-False]" time="0.998" /><testcase classname="" name="test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[1-8-False]" time="1.352" /><testcase classname="" name="test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-False]" time="1.677" /><testcase classname="" name="test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[2-8-True]" time="1.072" /><testcase classname="" name="test_config_drives_workers_owner_enrollment_sessions_end_and_owned_cleanup[3-2-True]" time="1.225" /><testcase classname="" name="test_reused_worker_rejects_other_policy_identity_or_constructor_changes[vae_weights_sha256]" time="1.636" /><testcase classname="" name="test_reused_worker_rejects_other_policy_identity_or_constructor_changes[clock_domain]" time="1.560" /><testcase classname="" name="test_reused_worker_rejects_other_policy_identity_or_constructor_changes[worker_constructor_config]" time="1.042" /><testcase classname="" name="test_streaming_m16_32_frozen_sessions_worker_ipc_ack_end_and_fail_closed[two-render-workers]" time="1.640"><failure message="cosmos_framework.inference.robocasa_vae_client.VAEIPCError: VAE IPC request rejected: UNAVAILABLE">tmp_path = PosixPath('/workspace/work/issue27-m16-evidence/development-01/tmp/test_streaming_m16_32_frozen_s0')
+same_render = False
+
+    @pytest.mark.parametrize(
+        "same_render", [False, True], ids=["two-render-workers", "one-shared-render-worker"]
+    )
+    def test_streaming_m16_32_frozen_sessions_worker_ipc_ack_end_and_fail_closed(
+        tmp_path, same_render
+    ):
+        with rig_for(tmp_path, 2, 16, same_render, streaming=True) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            frozen = read(rt.store.root / "manifest.json")
+            assert frozen == rt.store.manifest
+            assert frozen["protocol"]["schedule"] == STREAMING_SCHEDULE
+            assert frozen["execution"]["sims_per_gpu"] == 16
+            assert len(frozen["tasks"]) == 18 and len(rt.workers) == 32 &gt; len(
+                frozen["tasks"]
+            )
+            assert rt.streaming and rt.capacity_profile == "streaming32"
+            assert all(
+                a.capacity_profile == "streaming32" and len(a.slot_ids) == 16
+                for a in rig.actors.values()
+            )
+            clocks = {a.clock_domain for a in rig.actors.values()}
+            assert len(clocks) == 1
+            clock = clocks.pop()
+            sessions = []
+            episode_deadline = time.monotonic() + 60
+            for i, worker in enumerate(rt.workers):
+                gpu = rt.worker_gpus[worker]
+                handle = sup.ensure(worker, info(clock))
+                registration = s.registration(
+                    rt.slot_ids[worker],
+                    run_lease=rt.store.lease_id,
+                    manifest_digest=frozen["digest"],
+                    task=frozen["task_order"][i % 18],
+                    episode_index=i // 18,
+                )
+                lease = (
+                    rig.actors[gpu]
+                    .register(registration, rt.server_owners[f"GPU{gpu}"])
+                    .json()["lease"]
+                )
+                actor = SimpleNamespace(
+                    nonce=f"actor-{worker}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker] = actor
+                rt.slot_generations[worker] = 1
+                peer = sup.register_assignment(
+                    worker, actor, dict(lease=lease), episode_deadline
+                )
+                public = {k: v for k, v in lease.items() if k != "capability"}
+                channel = ScopedActorCompletionChannel(
+                    peer["relay_socket"], peer["actor_capability"], public
+                )
+                client = LocalVAEClient(
+                    peer["worker_socket"],
+                    lease["session_id"],
+                    peer["worker_session_capability"],
+                )
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=channel,
+                        client=client,
+                        episode_ns=int(episode_deadline * 1e9),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == 32
+            assert len({v.lease["slot_id"] for v in sessions}) == 32
+            assert len({v.lease["server_epoch"] for v in sessions}) == 2
+            expected_workers = 1 if same_render else 2
+            assert (
+                len(sup.handles)
+                == len(rt.commands)
+                == len(rt.owned_processes)
+                == expected_workers
+            )
+            assert len(sup.policies) == 2 and not rt.startup_budget.pending
+            assert rt.cpu_measurements[-1]["rss_bytes"] &gt; 0
+            for gpu, owner in rig.owners.items():
+                approved = {v.lease["session_id"] for v in sessions if v.gpu == gpu}
+                assert set(owner._sessions) == approved and len(approved) == 16
+            for handle in sup.handles.values():
+                assert handle.proof["limits"] == dict(
+                    max_sessions=32 if same_render else 16,
+                    max_policy_epochs=2 if same_render else 1,
+                )
+                assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+    
+            # All admitted preparations are released together. Both original native
+            # Policy executors generate actual B8+B8, with Session-specific actions.
+            release = threading.Event()
+            blockers = [
+                a._executor.submit(lambda: release.wait(5)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    request = s.payload(v.lease)
+                    request["state"][0] = v.index / 64
+                    v.reply = s.submit(rig.actors[v.gpu], v.lease, request)
+            finally:
+                release.set()
+            for blocked in blockers:
+                assert blocked.result(5)
+            for v in sessions:
+                actor = rig.actors[v.gpu]
+                result = s.wait_result(actor, v.lease, v.reply)
+                v.body = result.json()
+                assert v.body["action"][0][0] == v.index / 64
+                assert v.body["native_batch"]["size"] == 8
+                v.deadline = int(actor._tickets[v.body["request_key"]].deadline * 1e9)
+                v.image0 = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=v.body["request_key"],
+                    chunk_id=v.body["request_key"],
+                    source_step=0,
+                    source_rgb_sha256=source_digest(v.image0),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("&lt;96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                assert s.ack(actor, v.lease, result).json()["acknowledged"]
+                assert (
+                    actor._result(
+                        actor._lease(v.lease),
+                        v.body["request_key"],
+                        v.body["payload_sha256"],
+                    ).status
+                    == 200
+                )
+            assert all(sizes == [8, 8] for sizes in rig.batches.values())
+            assert all(a.info()["batch_histogram"] == {8: 2} for a in rig.actors.values())
+            assert all(a.info()["tickets"] == 0 for a in rig.actors.values())
+    
+            # Real scoped relay-&gt;Owner HTTP completions authorize the Worker; the
+            # synthetic current boundary skips step0 and one real IPC frame tests1.
+            for v in sessions:
+                key = v.body["request_key"]
+                args = (key, key, v.body["payload_sha256"], 0, 16, v.deadline)
+&gt;               first = v.channel.chunk(*args)
+                        ^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py:55: in chunk
+    return self._actor(
+cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py:52: in _actor
+    return self._call(op, {"actor_capability": self._actor_capability, "lease": self.lease, **fields}, deadline_ns)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;cosmos_framework.simulation.robocasa.sim_shared_vae_client.ScopedActorCompletionChannel object at 0x7f95552e9850&gt;
+op = 'chunk'
+fields = {'actor_capability': '2kgFqO5lauIqZk4TMjO0f7k6KFsmw3Pcz--qFyzyAtU', 'chunk_id': 'dba535ca8e530b5f7a2b8ecd080ee945150ac...mpt_id': 'attempt-1', 'episode_id': '865349eb77334062b4b10eea1a685c25', 'episode_index': 0, 'generation': 1, ...}, ...}
+deadline_ns = 13435596924651
+
+    def _call(self, op, fields, deadline_ns, *, data=False):
+        _ns(deadline_ns)
+        raw = _json({"op": op, "deadline_ns": str(deadline_ns), **fields})
+        limit = MAX_FRAME_WIRE_BYTES if data else _CONTROL_BYTES
+        if len(raw) &gt; limit:
+            raise ValueError("IPC frame exceeds bounded size")
+        path, first_error = self.path if data else _control_path(self.path), None
+        while True:
+            try:
+                remaining = _remaining(deadline_ns)
+            except TimeoutError as error:
+                if first_error is not None:
+                    raise error from first_error
+                raise
+            try:
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+                    connection.settimeout(remaining)
+                    connection.connect(str(path))
+                    _send(connection, raw, deadline_ns, limit)
+                    reply = _receive(connection, deadline_ns, MAX_FRAME_WIRE_BYTES)
+                _remaining(deadline_ns)
+                if type(reply.get("ok")) is not bool:
+                    raise ValueError("exact IPC response required")
+                if reply["ok"]:
+                    if set(reply) != {"ok", "result"}:
+                        raise ValueError("exact IPC response required")
+                    return reply["result"]
+                if (
+                    set(reply) != {"ok", "error"}
+                    or type(reply["error"]) is not dict
+                    or set(reply["error"]) != {"code", "type"}
+                ):
+                    raise ValueError("exact IPC error response required")
+                error = VAEIPCError(reply["error"]["code"], reply["error"]["type"])
+                if first_error is not None:
+                    raise error from first_error
+&gt;               raise error
+E               cosmos_framework.inference.robocasa_vae_client.VAEIPCError: VAE IPC request rejected: UNAVAILABLE
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py:456: VAEIPCError</failure></testcase><testcase classname="" name="test_streaming_m16_32_frozen_sessions_worker_ipc_ack_end_and_fail_closed[one-shared-render-worker]" time="1.692"><failure message="cosmos_framework.inference.robocasa_vae_client.VAEIPCError: VAE IPC request rejected: UNAVAILABLE">tmp_path = PosixPath('/workspace/work/issue27-m16-evidence/development-01/tmp/test_streaming_m16_32_frozen_s1')
+same_render = True
+
+    @pytest.mark.parametrize(
+        "same_render", [False, True], ids=["two-render-workers", "one-shared-render-worker"]
+    )
+    def test_streaming_m16_32_frozen_sessions_worker_ipc_ack_end_and_fail_closed(
+        tmp_path, same_render
+    ):
+        with rig_for(tmp_path, 2, 16, same_render, streaming=True) as rig:
+            rt, sup = rig.runtime, rig.supervisor
+            frozen = read(rt.store.root / "manifest.json")
+            assert frozen == rt.store.manifest
+            assert frozen["protocol"]["schedule"] == STREAMING_SCHEDULE
+            assert frozen["execution"]["sims_per_gpu"] == 16
+            assert len(frozen["tasks"]) == 18 and len(rt.workers) == 32 &gt; len(
+                frozen["tasks"]
+            )
+            assert rt.streaming and rt.capacity_profile == "streaming32"
+            assert all(
+                a.capacity_profile == "streaming32" and len(a.slot_ids) == 16
+                for a in rig.actors.values()
+            )
+            clocks = {a.clock_domain for a in rig.actors.values()}
+            assert len(clocks) == 1
+            clock = clocks.pop()
+            sessions = []
+            episode_deadline = time.monotonic() + 60
+            for i, worker in enumerate(rt.workers):
+                gpu = rt.worker_gpus[worker]
+                handle = sup.ensure(worker, info(clock))
+                registration = s.registration(
+                    rt.slot_ids[worker],
+                    run_lease=rt.store.lease_id,
+                    manifest_digest=frozen["digest"],
+                    task=frozen["task_order"][i % 18],
+                    episode_index=i // 18,
+                )
+                lease = (
+                    rig.actors[gpu]
+                    .register(registration, rt.server_owners[f"GPU{gpu}"])
+                    .json()["lease"]
+                )
+                actor = SimpleNamespace(
+                    nonce=f"actor-{worker}",
+                    owned=SimpleNamespace(proc=SimpleNamespace(poll=lambda: None)),
+                )
+                rt.actors[worker] = actor
+                rt.slot_generations[worker] = 1
+                peer = sup.register_assignment(
+                    worker, actor, dict(lease=lease), episode_deadline
+                )
+                public = {k: v for k, v in lease.items() if k != "capability"}
+                channel = ScopedActorCompletionChannel(
+                    peer["relay_socket"], peer["actor_capability"], public
+                )
+                client = LocalVAEClient(
+                    peer["worker_socket"],
+                    lease["session_id"],
+                    peer["worker_session_capability"],
+                )
+                sessions.append(
+                    SimpleNamespace(
+                        index=i,
+                        worker=worker,
+                        gpu=gpu,
+                        lease=lease,
+                        public=public,
+                        handle=handle,
+                        peer=peer,
+                        channel=channel,
+                        client=client,
+                        episode_ns=int(episode_deadline * 1e9),
+                    )
+                )
+            assert len({v.lease["session_id"] for v in sessions}) == 32
+            assert len({v.lease["slot_id"] for v in sessions}) == 32
+            assert len({v.lease["server_epoch"] for v in sessions}) == 2
+            expected_workers = 1 if same_render else 2
+            assert (
+                len(sup.handles)
+                == len(rt.commands)
+                == len(rt.owned_processes)
+                == expected_workers
+            )
+            assert len(sup.policies) == 2 and not rt.startup_budget.pending
+            assert rt.cpu_measurements[-1]["rss_bytes"] &gt; 0
+            for gpu, owner in rig.owners.items():
+                approved = {v.lease["session_id"] for v in sessions if v.gpu == gpu}
+                assert set(owner._sessions) == approved and len(approved) == 16
+            for handle in sup.handles.values():
+                assert handle.proof["limits"] == dict(
+                    max_sessions=32 if same_render else 16,
+                    max_policy_epochs=2 if same_render else 1,
+                )
+                assert handle.proof["bmax"] == 1 and handle.proof["wait_ms"] == 0
+    
+            # All admitted preparations are released together. Both original native
+            # Policy executors generate actual B8+B8, with Session-specific actions.
+            release = threading.Event()
+            blockers = [
+                a._executor.submit(lambda: release.wait(5)) for a in rig.actors.values()
+            ]
+            try:
+                for v in sessions:
+                    request = s.payload(v.lease)
+                    request["state"][0] = v.index / 64
+                    v.reply = s.submit(rig.actors[v.gpu], v.lease, request)
+            finally:
+                release.set()
+            for blocked in blockers:
+                assert blocked.result(5)
+            for v in sessions:
+                actor = rig.actors[v.gpu]
+                result = s.wait_result(actor, v.lease, v.reply)
+                v.body = result.json()
+                assert v.body["action"][0][0] == v.index / 64
+                assert v.body["native_batch"]["size"] == 8
+                v.deadline = int(actor._tickets[v.body["request_key"]].deadline * 1e9)
+                v.image0 = bytes([v.index]) * RGB_BYTES
+                boundary = PolicyBoundary.create(
+                    lease=v.public,
+                    request_key=v.body["request_key"],
+                    chunk_id=v.body["request_key"],
+                    source_step=0,
+                    source_rgb_sha256=source_digest(v.image0),
+                    identity=IDENTITY,
+                    deadline_ns=v.deadline,
+                    clock_domain=clock,
+                    visual96=struct.pack("&lt;96f", *([v.index / 64] * 96)),
+                )
+                rig.boundaries[v.gpu][(v.lease["session_id"], 0)] = boundary
+                assert s.ack(actor, v.lease, result).json()["acknowledged"]
+                assert (
+                    actor._result(
+                        actor._lease(v.lease),
+                        v.body["request_key"],
+                        v.body["payload_sha256"],
+                    ).status
+                    == 200
+                )
+            assert all(sizes == [8, 8] for sizes in rig.batches.values())
+            assert all(a.info()["batch_histogram"] == {8: 2} for a in rig.actors.values())
+            assert all(a.info()["tickets"] == 0 for a in rig.actors.values())
+    
+            # Real scoped relay-&gt;Owner HTTP completions authorize the Worker; the
+            # synthetic current boundary skips step0 and one real IPC frame tests1.
+            for v in sessions:
+                key = v.body["request_key"]
+                args = (key, key, v.body["payload_sha256"], 0, 16, v.deadline)
+&gt;               first = v.channel.chunk(*args)
+                        ^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/eval_v2_batch_tests/shared_vae_streaming_m16_test.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py:55: in chunk
+    return self._actor(
+cosmos-framework/cosmos_framework/simulation/robocasa/sim_shared_vae_client.py:52: in _actor
+    return self._call(op, {"actor_capability": self._actor_capability, "lease": self.lease, **fields}, deadline_ns)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;cosmos_framework.simulation.robocasa.sim_shared_vae_client.ScopedActorCompletionChannel object at 0x7f955474dbb0&gt;
+op = 'chunk'
+fields = {'actor_capability': 'Vz8WWzFoSd-PUqa4ED0L5vPD5XBW1AgRSr_aaY55bC4', 'chunk_id': '0eb27e426a25279c83f902a3e20028b26a67a...mpt_id': 'attempt-1', 'episode_id': '0f237685a7c24250ba577e26bf80e9e8', 'episode_index': 0, 'generation': 1, ...}, ...}
+deadline_ns = 13436881631712
+
+    def _call(self, op, fields, deadline_ns, *, data=False):
+        _ns(deadline_ns)
+        raw = _json({"op": op, "deadline_ns": str(deadline_ns), **fields})
+        limit = MAX_FRAME_WIRE_BYTES if data else _CONTROL_BYTES
+        if len(raw) &gt; limit:
+            raise ValueError("IPC frame exceeds bounded size")
+        path, first_error = self.path if data else _control_path(self.path), None
+        while True:
+            try:
+                remaining = _remaining(deadline_ns)
+            except TimeoutError as error:
+                if first_error is not None:
+                    raise error from first_error
+                raise
+            try:
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+                    connection.settimeout(remaining)
+                    connection.connect(str(path))
+                    _send(connection, raw, deadline_ns, limit)
+                    reply = _receive(connection, deadline_ns, MAX_FRAME_WIRE_BYTES)
+                _remaining(deadline_ns)
+                if type(reply.get("ok")) is not bool:
+                    raise ValueError("exact IPC response required")
+                if reply["ok"]:
+                    if set(reply) != {"ok", "result"}:
+                        raise ValueError("exact IPC response required")
+                    return reply["result"]
+                if (
+                    set(reply) != {"ok", "error"}
+                    or type(reply["error"]) is not dict
+                    or set(reply["error"]) != {"code", "type"}
+                ):
+                    raise ValueError("exact IPC error response required")
+                error = VAEIPCError(reply["error"]["code"], reply["error"]["type"])
+                if first_error is not None:
+                    raise error from first_error
+&gt;               raise error
+E               cosmos_framework.inference.robocasa_vae_client.VAEIPCError: VAE IPC request rejected: UNAVAILABLE
+
+cosmos-framework/cosmos_framework/inference/robocasa_vae_client.py:456: VAEIPCError</failure></testcase><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[original3-False]" time="6.903" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[original3-True]" time="2.794" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-False]" time="2.013" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[default10float-True]" time="0.403" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[explicit15float-False]" time="0.360" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[explicit15float-True]" time="0.453" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[integer15-False]" time="0.398" /><testcase classname="" name="test_registry_worker_is_peer_survives_sim_end_and_closes_with_private_fd_proof[integer15-True]" time="0.559" /></testsuite></testsuites>

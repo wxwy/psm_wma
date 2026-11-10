@@ -1,0 +1,54 @@
+{
+  "status": "RED_EXPECTED",
+  "expected_failures": 2,
+  "old_production_unchanged": true,
+  "source_hashes": {
+    "scripts/robocasa_eval_v2/shared_vae.py": "6dda8c38f31df2b80ad33a204d5a42032f08c23ba61a461f76c0810ef0200d59",
+    "cosmos-framework/cosmos_framework/inference/robocasa_batch_transactions.py": "fc57dfe9293892cb092b6f16e8bc60b7fe3108f7f40f730214d983b3cf0d78a8"
+  },
+  "tests_injected": true,
+  "test_hashes": {
+    "tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py": "952421bed126d16102138b1e259c00b6723058dc8ec0e8c0d25989ac75fe919e",
+    "cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py": "404c23cd92da4424def5726959ca2ff959c35fe19414edb79417b4c0fb6e7b52"
+  },
+  "commands": [
+    {
+      "name": "root",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-issue27-red-final/tools/v3/eval_v2_batch_tests/shared_vae_topology_test.py::test_shared_topology_is_config_driven_without_single_measurement_arm",
+        "-k",
+        "2-8-8",
+        "--basetemp=/workspace/work/issue27-shared-vae-evidence/red-final-test-bytes/root_tmp",
+        "--junitxml=/workspace/work/issue27-shared-vae-evidence/red-final-test-bytes/root.xml"
+      ],
+      "exit_code": 1
+    },
+    {
+      "name": "child",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/dev/null",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "/workspace/work/psm-wma-issue27-red-final/cosmos-framework/cosmos_framework/inference/robocasa_shared_policy_batch_test.py",
+        "--basetemp=/workspace/work/issue27-shared-vae-evidence/red-final-test-bytes/child_tmp",
+        "--junitxml=/workspace/work/issue27-shared-vae-evidence/red-final-test-bytes/child.xml"
+      ],
+      "exit_code": 1
+    }
+  ]
+}

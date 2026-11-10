@@ -1,0 +1,24 @@
+......................................                                   [100%]
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:31
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:31: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:32
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:32: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:82
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:82: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:83
+  /workspace/work/psm-wma-prefix-kv-issue31/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory_test.py:83: PytestUnknownMarkWarning: Unknown pytest.mark.CPU - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.CPU
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+38 passed, 5 warnings in 9.48s

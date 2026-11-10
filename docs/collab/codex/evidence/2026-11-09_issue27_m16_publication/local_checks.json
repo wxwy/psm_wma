@@ -1,0 +1,12 @@
+{
+  "formal_root": "9b1756f9099955d6637743f8ad2fa0ee54987b7a",
+  "child_gitlink": "60b252d05157b2753d2caebae32b11c878504bbe",
+  "new_archive_hashes_verified": 57,
+  "original_archive_hashes_verified": 89,
+  "source_hashes_verified": 1375,
+  "inbox_bytes_before": 126372,
+  "entry_bytes": 1987,
+  "inbox_bytes_after": 128359,
+  "status": "LOCAL_HANDOFF_PREPARED",
+  "independent_review": "NOT_CLOSED"
+}

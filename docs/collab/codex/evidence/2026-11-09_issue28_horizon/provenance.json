@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-11-09T14:49:58.094034+08:00",
+  "formal_pair": {
+    "root": "53b5273c7907e2d7a8fb1831ac0e0ec8b9fa973a",
+    "child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe"
+  },
+  "gitlink": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+  "previous_formal_root": "050e45d87fe5faf3a830bcaf4629fd7d16ba47a7",
+  "previous_child": "59746af006748488a678aa9a55dfc3e200668219",
+  "review_root_metadata": "c622ac1925778b431e1206d3e34f007e250b33ac",
+  "author_tests": 566,
+  "subtests": 22,
+  "junit": 588,
+  "source_unchanged": true,
+  "static_files": 22,
+  "dense_H16_default_bit_equal": true,
+  "source_files": 1331,
+  "dev01": "558 tests+22subtests passed,8 failures in legacy Registry fixture missing protocol/INFO H; raw retained",
+  "old_evidence_unchanged_files": 349,
+  "historical631_plus207": "retained, not rerun/relabelled as this increment",
+  "versions": {
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7",
+    "omegaconf": "2.3.0"
+  },
+  "GPU_real_model_RoboCasa_SR_training_900_V3": "NOT_RUN",
+  "independent_code_verdict": "REQUEST_FRESH_REVIEW"
+}

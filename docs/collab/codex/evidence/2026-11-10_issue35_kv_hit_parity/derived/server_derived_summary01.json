@@ -1,0 +1,944 @@
+{
+  "privacy": "Derived scalars/schema/hashes only; no raw tensors, logs, frames, generated code or checkpoint exported",
+  "independent_approval": "NOT_CLAIMED",
+  "performance_claim": "NONE",
+  "original_identity": {
+    "root": "18be4a80a5ae4d97bc7d287034d24efab847c496",
+    "child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+    "root_status": "",
+    "child_status": ""
+  },
+  "original_probe": [
+    {
+      "k": 1,
+      "status": "DIAGNOSTIC_COMPLETE",
+      "report_sha256": "7990bf520342b9cd2af65baa901a6b2b03d47479dc53742069dae60acc8031b3",
+      "modes_match_independent": {
+        "original": true,
+        "stage1_kv": true,
+        "stage2_kvpack": true
+      },
+      "native_und_static_layers": 28,
+      "cached_und_exact_layers": 28,
+      "layers": 28,
+      "first_gen_difference": {
+        "step": 1,
+        "layer": 18,
+        "gen_input_equal": true,
+        "gen_output_equal": false
+      }
+    },
+    {
+      "k": 16,
+      "status": "DIAGNOSTIC_COMPLETE",
+      "report_sha256": "fbfed587912c06fcc556bccbb2eeebfd8f3b33074625efc20f5b2053bed9c36b",
+      "modes_match_independent": {
+        "original": true,
+        "stage1_kv": true,
+        "stage2_kvpack": true
+      },
+      "native_und_static_layers": 28,
+      "cached_und_exact_layers": 28,
+      "layers": 28,
+      "first_gen_difference": {
+        "step": 1,
+        "layer": 16,
+        "gen_input_equal": true,
+        "gen_output_equal": false
+      }
+    }
+  ],
+  "operands": {
+    "operands04": {
+      "status": "OPERAND_DIAGNOSTIC_COMPLETE",
+      "report_sha256": "ecc2b86ec2b5fe8a6fc68e912691c4e81f15d88402ccee7660ce4e0dbb9260e1",
+      "nonperturbing": true,
+      "layer_checks": [
+        {
+          "k": 1,
+          "layer": 18,
+          "mode": "full_compute_capture",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        },
+        {
+          "k": 1,
+          "layer": 18,
+          "mode": "stage1",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        },
+        {
+          "k": 16,
+          "layer": 16,
+          "mode": "full_compute_capture",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        },
+        {
+          "k": 16,
+          "layer": 16,
+          "mode": "stage1",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        }
+      ],
+      "comparisons": {
+        "1": {
+          "all_equal": false,
+          "tensors": {
+            "root.q": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.k": {
+              "equal": false,
+              "max_abs": 0.00390625
+            },
+            "root.v": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.out": {
+              "equal": false,
+              "max_abs": 0.0001220703125
+            }
+          }
+        },
+        "16": {
+          "all_equal": false,
+          "tensors": {
+            "root.q": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.k": {
+              "equal": false,
+              "max_abs": 0.00390625
+            },
+            "root.v": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.out": {
+              "equal": false,
+              "max_abs": 0.000244140625
+            }
+          }
+        }
+      },
+      "normalization_parameters": {},
+      "final_modes_match_independent": {
+        "original": true,
+        "stage1_kv": true,
+        "stage2_kvpack": true
+      }
+    },
+    "operands05": {
+      "status": "OPERAND_DIAGNOSTIC_COMPLETE",
+      "report_sha256": "49c029d670b2ecc56f9cd029de93cfd49fbcb3e49f20c0419800a64866508881",
+      "nonperturbing": true,
+      "layer_checks": [
+        {
+          "k": 1,
+          "layer": 18,
+          "mode": "full_compute_capture",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        },
+        {
+          "k": 1,
+          "layer": 18,
+          "mode": "stage1",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        },
+        {
+          "k": 16,
+          "layer": 16,
+          "mode": "full_compute_capture",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        },
+        {
+          "k": 16,
+          "layer": 16,
+          "mode": "stage1",
+          "output_matches_whole_generation": true,
+          "attention_recorded": true
+        }
+      ],
+      "comparisons": {
+        "1": {
+          "all_equal": false,
+          "tensors": {
+            "root.q": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.k": {
+              "equal": false,
+              "max_abs": 0.00390625
+            },
+            "root.v": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.out": {
+              "equal": false,
+              "max_abs": 0.0001220703125
+            },
+            "root.prefix_projection_input": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.prefix_projection_output": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.prefix_norm_weight": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.prefix_norm_eager": {
+              "equal": true,
+              "max_abs": 0
+            }
+          }
+        },
+        "16": {
+          "all_equal": false,
+          "tensors": {
+            "root.q": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.k": {
+              "equal": false,
+              "max_abs": 0.00390625
+            },
+            "root.v": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.out": {
+              "equal": false,
+              "max_abs": 0.000244140625
+            },
+            "root.prefix_projection_input": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.prefix_projection_output": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.prefix_norm_weight": {
+              "equal": true,
+              "max_abs": 0
+            },
+            "root.prefix_norm_eager": {
+              "equal": true,
+              "max_abs": 0
+            }
+          }
+        }
+      },
+      "normalization_parameters": {
+        "K1": {
+          "family": "Nemotron3DenseVLRMSNorm",
+          "epsilon": 0.00001
+        },
+        "K16": {
+          "family": "Nemotron3DenseVLRMSNorm",
+          "epsilon": 0.00001
+        }
+      },
+      "final_modes_match_independent": {
+        "original": true,
+        "stage1_kv": true,
+        "stage2_kvpack": true
+      }
+    }
+  },
+  "key_partition": {
+    "report_sha256": "3a14cf31741d89bd17efec62bd4f3264b94d8d21b2411d237a0fabe797f1b645",
+    "status": "KEY_OPERAND_PARTITION_COMPLETE",
+    "records": [
+      {
+        "k": 1,
+        "layer": 18,
+        "prefix_len": 4,
+        "parts": {
+          "prefix": {
+            "rows": 4,
+            "changed_elements": 1,
+            "changed_rows": 1,
+            "max_abs": 0.00390625,
+            "full_sha256": "014bc35b073d9edd559019e32987db4b48fc380115d51f1a31dfcb5251db35bd",
+            "hit_sha256": "ed74100ddbfe3daef4b3b80be275998dafd656e7986227702e4225340aad25d0"
+          },
+          "und": {
+            "rows": 132,
+            "changed_elements": 0,
+            "changed_rows": 0,
+            "max_abs": 0,
+            "full_sha256": "5ec767e48a6ecc2b972a43318b5a1c76fca6c47529b4be4e8afa8ca07f62db89",
+            "hit_sha256": "5ec767e48a6ecc2b972a43318b5a1c76fca6c47529b4be4e8afa8ca07f62db89"
+          },
+          "gen": {
+            "rows": 267,
+            "changed_elements": 0,
+            "changed_rows": 0,
+            "max_abs": 0,
+            "full_sha256": "96e3e8e49aa26fd52cc0a980c6a77a71d133eae60a8f70ed6251e084fc5ebdfc",
+            "hit_sha256": "96e3e8e49aa26fd52cc0a980c6a77a71d133eae60a8f70ed6251e084fc5ebdfc"
+          },
+          "padding": {
+            "rows": 2,
+            "changed_elements": 0,
+            "changed_rows": 0,
+            "max_abs": 0,
+            "full_sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7",
+            "hit_sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+          }
+        }
+      },
+      {
+        "k": 16,
+        "layer": 16,
+        "prefix_len": 4,
+        "parts": {
+          "prefix": {
+            "rows": 4,
+            "changed_elements": 1,
+            "changed_rows": 1,
+            "max_abs": 0.00390625,
+            "full_sha256": "1c7ca42d11c5b5ef5116b031d1bcd77b93daed15b213831d8715c96ae20003c7",
+            "hit_sha256": "ddba39367a70867df66e867b2e667569337c29637c7638841e9848bf58520c47"
+          },
+          "und": {
+            "rows": 132,
+            "changed_elements": 0,
+            "changed_rows": 0,
+            "max_abs": 0,
+            "full_sha256": "8ab5ef22196a55ad73036049171b65dbba7865a952aba898b5535722d61d202f",
+            "hit_sha256": "8ab5ef22196a55ad73036049171b65dbba7865a952aba898b5535722d61d202f"
+          },
+          "gen": {
+            "rows": 267,
+            "changed_elements": 0,
+            "changed_rows": 0,
+            "max_abs": 0,
+            "full_sha256": "383bfc8cf6d258b11ba71d060eab06518e65e996ac0e1f77764d42926020fbb3",
+            "hit_sha256": "383bfc8cf6d258b11ba71d060eab06518e65e996ac0e1f77764d42926020fbb3"
+          },
+          "padding": {
+            "rows": 2,
+            "changed_elements": 0,
+            "changed_rows": 0,
+            "max_abs": 0,
+            "full_sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7",
+            "hit_sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+          }
+        }
+      }
+    ],
+    "original_tensor_values_exported": false
+  },
+  "author_h100": {
+    "author_h10001": {
+      "status": "FAIL",
+      "error": "KeyError('local_ttt_history_k')",
+      "shell_exit": 1,
+      "gate_sha256": "cd7351fa9837d392fcad399cdd0a718118433024ce0d290bf98f36fd1ea06f38",
+      "source_before_sha256": "61d738e3b41c579b0f83f40d8ebfff99dbe2b6b9e361bfe5df3a25dcde03e68f",
+      "source_after_sha256": "61d738e3b41c579b0f83f40d8ebfff99dbe2b6b9e361bfe5df3a25dcde03e68f",
+      "identity": {
+        "root": "55b74ab461fda27e4ff6490023c828db0abc0a9f",
+        "child": "bf707810f573e885f0966d65c232dc2a610d6a93",
+        "gitlink": "bf707810f573e885f0966d65c232dc2a610d6a93",
+        "root_status": "",
+        "child_status": ""
+      },
+      "source_files": 1487,
+      "source_unchanged": true,
+      "protected_inputs_unchanged": false,
+      "model": {
+        "torch": "2.10.0+cu128",
+        "cuda": "12.8",
+        "validate_model_mode": "PASS",
+        "recompile_limit": 8,
+        "layer_types": [
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule"
+        ],
+        "local_memory_mode": "required"
+      },
+      "cases": [
+        {
+          "k": 1,
+          "source_step": 32,
+          "ordinary": {
+            "original": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            },
+            "stage1": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            },
+            "stage2": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            }
+          },
+          "observer_nonperturbing": {
+            "original": true,
+            "stage1": true,
+            "stage2": true
+          },
+          "velocity": {
+            "stage1": {
+              "steps": 30,
+              "all_equal": true,
+              "per_step_max_abs": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "stage2": {
+              "steps": 30,
+              "all_equal": true,
+              "per_step_max_abs": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "stage1_vs_stage2": {
+            "all_equal": true,
+            "tensors": {
+              "root.samples.vision.0": {
+                "equal": true,
+                "max_abs": 0
+              },
+              "root.samples.action.0": {
+                "equal": true,
+                "max_abs": 0
+              },
+              "root.raw15_action": {
+                "equal": true,
+                "max_abs": 0
+              }
+            }
+          }
+        },
+        {
+          "k": 16,
+          "source_step": 64,
+          "ordinary": {},
+          "observer_nonperturbing": {},
+          "velocity": {}
+        }
+      ]
+    },
+    "author_h10002": {
+      "status": "PASS",
+      "error": null,
+      "shell_exit": 0,
+      "gate_sha256": "94bacad2a7c2b1fafabe3d94763464028615fa71cce05ac6a5009e7e2fe6eb28",
+      "source_before_sha256": "61d738e3b41c579b0f83f40d8ebfff99dbe2b6b9e361bfe5df3a25dcde03e68f",
+      "source_after_sha256": "61d738e3b41c579b0f83f40d8ebfff99dbe2b6b9e361bfe5df3a25dcde03e68f",
+      "identity": {
+        "root": "55b74ab461fda27e4ff6490023c828db0abc0a9f",
+        "child": "bf707810f573e885f0966d65c232dc2a610d6a93",
+        "gitlink": "bf707810f573e885f0966d65c232dc2a610d6a93",
+        "root_status": "",
+        "child_status": ""
+      },
+      "source_files": 1487,
+      "source_unchanged": true,
+      "protected_inputs_unchanged": true,
+      "model": {
+        "torch": "2.10.0+cu128",
+        "cuda": "12.8",
+        "validate_model_mode": "PASS",
+        "recompile_limit": 8,
+        "layer_types": [
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule",
+          "OptimizedModule"
+        ],
+        "local_memory_mode": "required"
+      },
+      "cases": [
+        {
+          "k": 1,
+          "source_step": 32,
+          "ordinary": {
+            "original": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            },
+            "stage1": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            },
+            "stage2": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            }
+          },
+          "observer_nonperturbing": {
+            "original": true,
+            "stage1": true,
+            "stage2": true
+          },
+          "velocity": {
+            "stage1": {
+              "steps": 30,
+              "all_equal": true,
+              "per_step_max_abs": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "stage2": {
+              "steps": 30,
+              "all_equal": true,
+              "per_step_max_abs": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "stage1_vs_stage2": {
+            "all_equal": true,
+            "tensors": {
+              "root.samples.vision.0": {
+                "equal": true,
+                "max_abs": 0
+              },
+              "root.samples.action.0": {
+                "equal": true,
+                "max_abs": 0
+              },
+              "root.raw15_action": {
+                "equal": true,
+                "max_abs": 0
+              }
+            }
+          }
+        },
+        {
+          "k": 16,
+          "source_step": 64,
+          "ordinary": {
+            "original": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            },
+            "stage1": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            },
+            "stage2": {
+              "all_equal": true,
+              "tensors": {
+                "root.raw15_action": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.vision.0": {
+                  "equal": true,
+                  "max_abs": 0
+                },
+                "root.samples.action.0": {
+                  "equal": true,
+                  "max_abs": 0
+                }
+              }
+            }
+          },
+          "observer_nonperturbing": {
+            "original": true,
+            "stage1": true,
+            "stage2": true
+          },
+          "velocity": {
+            "stage1": {
+              "steps": 30,
+              "all_equal": true,
+              "per_step_max_abs": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            "stage2": {
+              "steps": 30,
+              "all_equal": true,
+              "per_step_max_abs": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          "stage1_vs_stage2": {
+            "all_equal": true,
+            "tensors": {
+              "root.samples.vision.0": {
+                "equal": true,
+                "max_abs": 0
+              },
+              "root.samples.action.0": {
+                "equal": true,
+                "max_abs": 0
+              },
+              "root.raw15_action": {
+                "equal": true,
+                "max_abs": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "private_evidence_index": {
+    "path": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_codex_issue35_kv_hit_parity_20261110/private_evidence_index01.json",
+    "files": 844,
+    "sha256": "1833504e303cedcfd87a065e921845afb36c1ebbc5d5c68c260f715ce656d623",
+    "raw_files_exported": false
+  },
+  "gpu_after": [
+    "4, 0 MiB, 0 %",
+    "5, 0 MiB, 0 %",
+    "6, 0 MiB, 0 %",
+    "7, 0 MiB, 0 %"
+  ],
+  "gpu6_compute_pids_after": []
+}
