@@ -1,0 +1,43 @@
+{
+  "status": "CPU_PROBE_PASS; HARDWARE_DIAGNOSTIC_PENDING",
+  "production_formal_root": "1b184204e301a51a7a20ed4dde1a11689589cf2d",
+  "production_child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "review_consumed_root": "e403fb8a2a296e4444b2d3398003e8e9967d12c3",
+  "source_fingerprints_compared": 1487,
+  "production_source_unchanged": true,
+  "child_clean": true,
+  "new_production_pair": false,
+  "cpu_tests": {
+    "tests": 34,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "shell_exit": 0
+  },
+  "cpu_mode": "CPU Torch and simulated CUDA, no model/checkpoint/context",
+  "static": {
+    "files": 2,
+    "ruff_select": [
+      "E",
+      "F",
+      "I"
+    ],
+    "format_check": "PASS",
+    "exceptions": []
+  },
+  "development_history": {
+    "dev01": "26 PASS; earlier source snapshots retained",
+    "dev02": "E731/E501 in test file, pytest not started; raw source/log retained",
+    "dev03": "34 PASS, includes dev01 cases; no additive count"
+  },
+  "gpu_tests_this_turn": "NOT_RUN",
+  "server_access_this_turn": "read-only file names and CLI declarations",
+  "server_original_files_exported": false,
+  "production_root_cause": "UNKNOWN",
+  "latency_stability_gate": "OPEN",
+  "V3_merge": "NOT_AUTHORIZED_OR_PERFORMED",
+  "probe_sha256": {
+    "latency_probe.py": "c4ba2686a1f33897e2c916fc01ef96c201524f8767fa8bd7566ed919d0c4753b",
+    "probe_test.py": "28f746b9f0a70fb3845e33a13a5f27f7354748bbdd9d9a165e77e1ebb9e024f7"
+  }
+}
