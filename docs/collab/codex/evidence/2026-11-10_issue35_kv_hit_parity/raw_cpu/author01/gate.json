@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "identity": {
+    "root": "55b74ab461fda27e4ff6490023c828db0abc0a9f",
+    "child": "bf707810f573e885f0966d65c232dc2a610d6a93",
+    "gitlink": "bf707810f573e885f0966d65c232dc2a610d6a93",
+    "root_status": "",
+    "child_status": ""
+  },
+  "independent_approval": "NOT_CLAIMED",
+  "junit": {
+    "tests": 213,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "source_files": 1487,
+  "static_files": 9,
+  "inherited_import_order_exceptions": [
+    "mot/inference_text_kv_memory.py:I001",
+    "mot/unified_mot.py:I001",
+    "mot/attention.py:I001"
+  ],
+  "excluded_preexisting_failure": {
+    "test": "local_evidence_test.py::test_model_owned_all_continuation_never_initializes_w0",
+    "baseline_child": "4cd5fc8c43d6793745dbc4cac51c59ee8a020dbe",
+    "baseline_raw": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/raw/baseline01/w0.xml",
+    "expanded_candidate_raw": "docs/collab/codex/evidence/2026-11-09_issue31_prefix_kv/raw/dev05/focused.xml",
+    "claim": "Stage1 expanded181PASS/1FAIL, clean4cd baseline and GPT4446 same failure; no Stage2 scan edit or inherited-test rerun; not fixed/countedPASS"
+  }
+}

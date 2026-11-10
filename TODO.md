@@ -1,8 +1,10 @@
+- **ISSUE35-KV-HIT-PARITY** — REVIEW；Codex 作者，GPT 独立审核。Formal Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93`。受控旧 RED1 / 新 GREEN1；exact clean CPU 213 PASS、历史 W0 单独排除；真实 K1/source32、K16/source64 三路径 Action/Vision/raw15 及所有30步速度严格0误差，Shell0、源码与保护输入未变。仅修 Prefix 编译归一化数值差异，当前 Prefix 改变仍生效。申请见 `2026-11-10_Issue35_KVHit_PrefixNorm_55b74ab4_bf707810_Review_Request.md`；尚无独立批准/性能结论/V3 合并，原始服务器文件未外传。
+
 
 
 # 2026-11-09 — Prefix-aware Local-TTT generation
 
-- **ISSUE35-ATTENTION-PARITY** — BLOCKED; Codex; unchanged18be/1936 scoped APPROVE_CODE. Existing synthetic trace causal28/GEN840/varlen868; no evidence812 causalGPU repeats. Real K1/source32 shortcapture failed nativephysicalEGL beforeenv.step; K16 notstarted,0requests. Currentuid1004 cannotreadGPU4DRMnode; need usableauthorizedenv or frozencompleteinputs. Threeownedgroupscleaned/GPU4,6idle. Externalserialization4CPU/boothelp PASS, not modelGate. Evidence/report2026-11-10; no productioncode/NoTTT/SR/V3changes; realinputparity+componentCPU/GPU remain incomplete.
+- **ISSUE35-ATTENTION-PARITY** — IN_PROGRESS via ISSUE35-KV-HIT-PARITY; historicalcaptureBLOCKED superseded byGPTsg-renderCapturePASS and3wayrealStrictParityFAIL. Existingcausal28/GEN840/varlen868 tracevalid; no blindAttention optimization. FirstnumericalPrefixNormissue remediation+newFormalPair priority, originalproductionPair18be/1936 notpromoted.
 
 - **ISSUE31-PREFIX-PACK** — DONE (scoped Stage2 Code/model-only evidence); Formal18be4a80/193627f4, corrected GPT APPROVE_CODE read atdocs523aa26a. P50837.08→798.87ms observed, original author1.05x NOT_MET/Shell2 preserved; no Owner arbitrarythreshold. CPU201+independent14, exact syntheticAction/Vision, Prefix28x30. Realinputparity/Attention belongIssue35; no V3merge/productionSLA/Stage1P99closure.
 
