@@ -213,24 +213,17 @@ Prefix、Inner Loss 和非零Fast更新是在线记忆机制确实执行的证�
 - 原始Run未改动，所有正式结果有具体Run路径、Root/Child、Manifest/Model/Runtime Digest、Summary SHA256可追踪。
 - 本文为结果研究报告，不是新代码变更或新的Formal implementation Gate approval。
 
-## 13. 2026-11-10 补充：Local-TTT 优化后推理时延与 No-TTT 对比
+## 13. Local-TTT 与 No-TTT 推理时延（V3 采用版本）
 
-本节是后续时延补充，**不修改前述 14 组、12,600 EP 正式仿真结果**。以下均为模型原生生成时延（含当前帧 VAE，不含 HTTP、FastWeight 和仿真），单位 ms。
+以下为**模型原生生成**时延，包含当前帧 VAE，不含 FastWeight、HTTP 和仿真。前述14组、12,600 EP正式结果不变。
 
-| 结果来源 | Mean | P50 | P95 |
-|---|---:|---:|---:|
-| **No-TTT 历史 5 EP**（280次非首次 Replan） | 616.26 | **569.58** | 793.60 |
-| No-TTT 历史 CloseFridge，seed4603（55次稳态） | 664.65 | 736.75 | 751.18 |
-| 优化前 Local-TTT，CloseFridge，iter15000、K16（同轨迹55次） | 1,088.09 | 1,163.91 | 1,230.02 |
-| **优化后 Local-TTT**，CloseFridge，iter15000、K16（同轨迹55次） | **806.68** | **744.07** | 1,007.47 |
-| 优化后 Local-TTT，K16 固定真实输入（4次预热＋30次测量） | 669.23 | **664.87** | 671.67 |
+| 模型 | 测试条件 | Mean | P50 | P95 |
+|---|---|---:|---:|---:|
+| **No-TTT** | 历史5 EP，280次非首次 Replan | 616 ms | **570 ms** | 794 ms |
+| **Local-TTT**（V3现行推理代码） | CloseFridge，iter15000、K16，55次稳态 Replan | 807 ms | **744 ms** | 1,007 ms |
 
-**优化收益**：相同 Local-TTT checkpoint、相同 CloseFridge 轨迹下，Mean 由 1,088→807 ms（下降25.9%），P50 由 1,164→744 ms（下降36.1%），新旧动作序列逐次精确一致（57/57）。
+另外，Local-TTT 在固定真实输入、预热后的模型生成 **P50=665 ms**；这是固定输入基准，不是完整闭环。
 
-**比较边界**：No-TTT 约 **570 ms** 是历史 5 EP 基准；Local-TTT **744 ms** 是真实闭环模型生成 P50；**665 ms** 是充分预热后的固定输入基准，不代表完整闭环。No-TTT 与 Local-TTT 使用不同训练 checkpoint，且 No-TTT 历史 GPU 负载条件不同，不能据此断言两者严格持平或计算因果加速比。此前高并发 M16/B8 的 No-TTT 请求 P50 2,764 ms、旧 Local-TTT 8,050 ms 包含排队与准备开销，不应当成模型生成基准。
+**可比性说明**：No-TTT 和 Local-TTT 的 checkpoint、任务分布及 GPU 负载条件不同，因此以上为描述性对比，不代表严格同条件 A/B。Local-TTT 的744 ms实测使用iter15000 checkpoint和已合入V3的推理代码，并非iter27700的全任务时延。V3版本已另以iter27700完成单任务10/10有效且成功的功能验收，不计入本时延表。
 
-**成功率补充**：最终 V3 集成版本的 Local-TTT iter27700 已在 `PickPlaceToasterToCounter` 真实仿真中验证 **10/10 有效且成功**。此结果只用于验证新代码正确运行，不纳入上述时延对照表，不计入前述14组900EP正式结果。
-
-**证据**：No-TTT 历史和旧 Local 的时延记录：`.../_gpt_independent_gates_20261104/issue35_kv_norm_performance_20261110/real_episode_model_native_independent_summary.json`；新 Local 真实闭环：`.../v3_integration_gate_20261110/real_episode_comparison.json`；固定输入：`.../issue35_prefix_projection_independent_20261110/independent_final_audit.json`；最终10EP成功率：`.../iter27700_pickplace_toaster_newcode_10ep_20261110/run/summary.json`。上述文件均在 `data` 服务器的 `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/` 下；原始 Run 不变。
-
-冻结的新版实现：Root `1b184204e301a51a7a20ed4dde1a11689589cf2d` / Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`；V3 合并提交 `e23fe240c167f9ccc97b4e112ca76c178c5c1416`。
+**证据**：`data`服务器 `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/` 下的 `issue35_kv_norm_performance_20261110/real_episode_model_native_independent_summary.json`、`v3_integration_gate_20261110/real_episode_comparison.json`、`issue35_prefix_projection_independent_20261110/independent_final_audit.json`。现行实现Root `1b184204e301a51a7a20ed4dde1a11689589cf2d`、Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`。
