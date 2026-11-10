@@ -229,19 +229,19 @@ R07的每个`(Task, EP)`可定位到`tasks/<Task>/episodes/ep_<EP:03d>/result.js
 **后续维护方式**：这份通用报告持续添加新的正式Local-TTT Run，R03原始历史报告与R07机器审计作为不可覆盖的独立证据保留；任何不同formal Root/Child、Checkpoint、任务集合或采样协议必须保留独立身份与解释边界。本文仅更新研究材料，不授权新训练、修改生产代码或重新运行旧结果。
 
 
-## 九、2026-11-10 合入 V3 的 Local-TTT 推理优化时延补充
+## 九、2026-11-10 Local-TTT 推理优化时延补充
 
-> 本节是**后续增量结果**，不改动本报告原R03/R07的900EP、正式SHA与历史统计。前述第八节在2026-11-05写下的“No-TTT R08待完成”是当时的历史状态；截至11月07日，Local/No-TTT已经完成**14组×900EP共12,600有效EP**。完整比较和本节时延原始出处详见 [14组正式Local/No-TTT仿真对比及最终推理优化附录](PSM-WMA_V3_RoboCasa365_Local_NoTTT_14Run_Evaluation_Report.md)，特别是 §8 与 §13。
+本节只补充模型原生生成时延（含当前帧 VAE，不含 HTTP、FastWeight 和仿真），原 R03/R07 的正式 900EP 结果不变。完整证据见 [14组 Local/No-TTT 仿真对比报告 §13](PSM-WMA_V3_RoboCasa365_Local_NoTTT_14Run_Evaluation_Report.md)。
 
-| 推理口径 | No-TTT 参考 | 新 Local-TTT | 可得结论 |
-|---|---:|---:|---|
-| **历史模型原生生成 P50**（非首次、5EP） | **569.58ms**（280次） | — | 是此前多次仿真使用的“不到600ms”No-TTT基准，不是高并发排队的2,764ms |
-| **CloseFridge同seed模型原生生成P50**（55次稳态Replan） | 736.75ms（历史独立No权重） | **744.07ms**（iter15000，K16） | 描述性接近；Checkpoint和GPU负载条件不同，**不能声称严格持平** |
-| **Local自身代码A/B**（相同CloseFridge轨迹，iter15000） | 优化前Local：1,163.91ms | **744.07ms** | P50下降36.1%；Mean 1,088.09→806.68ms（下降25.9%），新旧57次Action精确一致 |
-| **同进程固定真实输入、4次预热＋30次测量** | — | **664.87ms**（K16，iter15000） | 纯模型原生生成benchmark，**不是整条闭环Replan** |
-| **最终iter27700真实10EP**（PickPlaceToasterToCounter，M2/B2） | — | Native P50 **1,014.5ms**；完整请求 P50 **1,186.78ms** | 235次稳态Replan（每EP排除前2次），真实SR=10/10；与上一行不同任务/权重/负载，不能互相替代 |
-| **历史900EP高并发M16/B8完整请求P50** | 2,764ms（N28000） | 8,050ms（旧代码L27700） | 均包含队列/准备；**不是最终合入V3新版Local的性能** |
+| 实测口径 | P50 |
+|---|---:|
+| **No-TTT**，历史5EP、280次非首次Replan | **570 ms** |
+| 优化前 **Local-TTT**，CloseFridge真实闭环、iter15000、K16 | 1,164 ms |
+| **优化后 Local-TTT**，同CloseFridge轨迹 | **744 ms** |
+| 优化后 Local-TTT，固定真实输入、4次预热＋30次测量 | **665 ms** |
 
-**模型生成口径**包含当前帧VAE，不包含FastWeight、HTTP和仿真；完整请求口径包含服务端准备/传输等。上述几组代码、任务、Checkpoint和并发配置不同，除了“Local自身同轨迹新旧代码A/B”外，不应报告成严格因果加速比。最终新版的M16/B8全18任务时延A/B、冷启动尾延迟与生产P99仍未封闭。
+**直接优化收益**：相同 Local-TTT 模型及同轨迹 P50 下降 **36.1%**（1,164→744 ms），Mean 由 1,088→807 ms（下降25.9%），动作精确一致。No-TTT 与 Local-TTT 的 checkpoint / GPU 负载不同，570 与 744 ms 仅作描述性参考；665 ms 是固定输入基准，**不是完整真实闭环时延**。
 
-新代码的冻结实现Root为 `1b184204e301a51a7a20ed4dde1a11689589cf2d`、Child/Gitlink为 `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`，已通过 Root PR #40 合并到V3（Merge commit `e23fe240c167f9ccc97b4e112ca76c178c5c1416`）。详细数值、原始服务器路径和限制见链接报告§13；本补充不修改正式Run或checkpoint。
+最终 V3 集成版 Local-TTT iter27700 在 `PickPlaceToasterToCounter` 实测 **10/10 成功**，只作为功能验收记录，不参与本时延对比。新版全任务高并发和生产 P99 尚未形成受控时延结论。
+
+冻结实现 Root `1b184204e301a51a7a20ed4dde1a11689589cf2d` / Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`，V3 合并提交 `e23fe240c167f9ccc97b4e112ca76c178c5c1416`；文档修改不改变正式评测数据。
