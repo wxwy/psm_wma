@@ -1,4 +1,4 @@
-- **ISSUE35-PREFIX-PROJECTION** — IN_PROGRESS；Codex；新Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`，基线Root8406fc86/Child4be。请求内原生Attention buffers提取Prefix K/V；Host对象/版本/存储绑定，更换/未证明/训练回退。旧RED1、新GREEN1、最终聚焦59PASS（含22新增），原始开发失败保留；Context/B1组装及Norm memo算式未改。Root冻结后完整314CPU，随后GPT独立K16/source64全30步/Action/Vision及性能；当前H100未执行，无GPU/训练/V3合并。
+- **ISSUE35-PREFIX-PROJECTION** — REVIEW；Formal Root1b184204e301a51a7a20ed4dde1a11689589cf2d / Child d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2；exact clean CPU314PASS/11static/1487指纹一致，历史W0排除不计PASS及原3项I001不变；59聚焦重叠、RED及fixture失败保留。请求内原生buffer捕获/版本绑定、未证明回退；Context/B1组装/Norm memo算式未改。GPT窄增量与仅K16/source64全部30步/Action/Vision+性能待验，未做H100、无性能承诺/V3合并。
 - **ISSUE35-B1-KV-ASSEMBLY** — DONE（限定Code/数值/性能Gate）；Formal39f60da7/4be3d702，正式444e0cc7 APPROVE_CODE已读：独立292CPU/11static/1487指纹、两K三路径与全30步exact、H100 P50回收95.8/106.5ms、CUBScan5045→5，原始离群保留。没有V3合并许可，其余性能独立推进。
 - **ISSUE35-KV-HIT-PARITY** — DONE（限定数值Code Gate）；Formal Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93`。正式GPT `7c11e0be` APPROVE_CODE已读取：独立37+213CPU、真实两K三路径全30步及Action/Vision严格一致；旧数值阻断关闭，不是V3合并许可。后续性能证据与B1组装新任务独立处理。
 

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "/workspace/work/psm-wma-attention-issue35/docs/collab/codex/evidence/2026-11-09_issue31_prefix_pack/cpu/cpu_gate.py",
+    "--root",
+    "/workspace/work/psm-wma-attention-issue35",
+    "--run",
+    "/workspace/work/issue35-prefix-projection-evidence/author01/scoped",
+    "--expected-root",
+    "1b184204e301a51a7a20ed4dde1a11689589cf2d",
+    "--expected-child",
+    "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2"
+  ],
+  "cwd": "/workspace/work/psm-wma-attention-issue35",
+  "exit_code": 0
+}

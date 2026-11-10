@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="8.114" timestamp="2026-11-10T06:58:50.584234+00:00" hostname="4c7ce8517e60"><testcase classname="" name="test_frozen_request_projects_prefix_kv_once_per_layer_over_thirty_steps" time="3.223" /></testsuite></testsuites>

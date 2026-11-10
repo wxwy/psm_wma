@@ -1,0 +1,11 @@
+{
+  "child": "4be3d702f3008040b830ae09c200d80e273a201a",
+  "production_sha256": {
+    "cosmos_framework/model/generator/mot/attention.py": "96e6411f9ddcafe0560d43b5f460d19b972ebdb8220e01df31f966f8ff5117f5",
+    "cosmos_framework/model/generator/mot/inference_text_kv_memory.py": "cd6875c32dff8e1d13af56b91490c2e0b053c281fefa5034f86e7d67310c5e56",
+    "cosmos_framework/model/generator/mot/unified_mot.py": "59fa2b0440ecea2c24c3710ba613a028600f07f8d72008896e157380f6aee722",
+    "cosmos_framework/model/generator/omni_mot_model.py": "3158b4726f7cc1b5eecadb51d14dfd01a1b4b4d1bd9c25a0a5ddc5f1e7f7f980"
+  },
+  "test_sha256": "4f084b97ee75c5dab4e750506239aa010a6437ba45a9346b8e759018d855858a",
+  "only_test_changed_in_child": true
+}

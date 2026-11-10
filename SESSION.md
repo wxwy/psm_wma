@@ -1,3 +1,16 @@
+# 2026-11-10 CST — Issue35 请求内原生Prefix投影作者CPU完成
+
+任务 ISSUE35-PREFIX-PROJECTION：REVIEW；Codex代码/CPU，GPT独立窄增量审核与真实K16/source64 Gate。
+Formal Root 1b184204e301a51a7a20ed4dde1a11689589cf2d /
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2。两仓隔离分支已Child FIRST/Root正常push。
+exact clean作者完整既有scoped CPU314/314 PASS、0失败/错误/跳过、Shell0、1487指纹一致、11静态文件；
+历史W0一项明确deselect、原三项I001不变；59聚焦与314重叠。原RED1、新GREEN1、开发fixture3FAIL均归档。
+报告 docs/collab/codex/reviews/2026-11-10_Issue35_RequestLocal_PrefixProjection_1b184204_d5c1ffc7_Review_Request.md；
+证据 docs/collab/codex/evidence/2026-11-10_issue35_prefix_projection/。文档HEAD为账本，不替代Formal Root。
+首轮实际nativeAttention K/V buffer捕获，小Prefix/UND在编译边界外clone，Host身份/版本/storage绑定；
+训练/未证明/修改Prefix等回退；Context/B1组装/Norm memo算式/Memory注入不改。H100未执行、无性能承诺；
+仅后续GPT K16/source64全30步velocity/Action/Vision严格一致后再同输入性能，不重复K1/NoTTT/Sim/SR/V3。
+
 # 2026-11-10 CST — Issue35 请求内逐层 Prefix K/V 投影复用实施
 
 任务 ISSUE35-PREFIX-PROJECTION：IN_PROGRESS；Codex实现/CPU，GPT独立审核及真实H100，仅K16/source64。

@@ -1,0 +1,402 @@
+.............................F......................FF....               [100%]
+=================================== FAILURES ===================================
+_ test_prefix_cache_fill_uses_materialized_native_kv_and_hit_keeps_native_padding[True] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8e65f24cb0>
+frozen_projection = True
+
+    @pytest.mark.parametrize("frozen_projection", [False, True])
+    def test_prefix_cache_fill_uses_materialized_native_kv_and_hit_keeps_native_padding(monkeypatch, frozen_projection):
+        """Keep the exact native GEN operands/backend contract, including pad ranges."""
+        torch.manual_seed(109)
+    
+        def pack(tensor):
+            return build_packed_sequence(
+                "two_way",
+                packed_sequence=tensor,
+                attn_modes=["causal", "full"],
+                split_lens=[5, 6],
+                sample_lens=[11],
+                packed_und_token_indexes=torch.arange(5),
+                packed_gen_token_indexes=torch.arange(5, 11),
+                num_heads=tensor.shape[1],
+                head_dim=8,
+                num_layers=1,
+                full_seq_alignment=8,
+                causal_seq_alignment=8,
+            )[:2]
+    
+        query, mask = pack(torch.randn(11, 2, 8))
+        key, _ = pack(torch.randn(11, 1, 8))
+        value, _ = pack(torch.randn(11, 1, 8))
+        norm_key = from_und_gen_splits(key["causal_seq"] * 2, get_gen_seq(key), key)
+        kwargs = dict(
+            memory_prefix_key_states=torch.randn(4, 1, 8),
+            memory_prefix_value_states=torch.randn(4, 1, 8),
+            memory_prefix_sample_offsets=torch.tensor([0, 4]),
+        )
+        calls = []
+    
+        def kernel(query, key, value, **kw):
+            calls.append(
+                dict(
+                    query=query.clone(),
+                    key=key.clone(),
+                    value=value.clone(),
+                    **{k: v.clone() if isinstance(v, torch.Tensor) else v for k, v in kw.items()},
+                )
+            )
+            return _cpu_attention(query, key, value, **kw)
+    
+        monkeypatch.setattr(attention_module, "attention", kernel)
+        monkeypatch.setattr(cache_module, "attention", kernel)
+        caches = make_inference_text_kv_cache(1)
+        token = torch.randn(4, 32)
+        with torch.no_grad():
+            binding = cache_module.prefix_projection_binding((token,)) if frozen_projection else None
+        state = InferenceTextKVMemoryState(
+            caches, local_prefix_length=4, frozen_prefix_binding=binding, current_prefixes=(token,)
+        )
+        cache_kwargs = dict(kwargs)
+        if frozen_projection:
+            cache_kwargs["memory_prefix_key_source_states"] = kwargs["memory_prefix_key_states"]
+        state.init(query, torch.device("cpu"))
+        with torch.inference_mode():
+            expected, _ = dispatch_attention(query, key, value, mask, packed_key_states_normalized=norm_key, **kwargs)
+            native_gen_call = calls[-1]
+            fill, kv = cache_module.dispatch_attention_with_text_kv_memory(
+                query,
+                key,
+                value,
+                mask,
+                memory_value=state.read_for_layer(0),
+                packed_key_states_normalized=norm_key,
+                **cache_kwargs,
+            )
+            assert kv is not None
+            if frozen_projection:
+>               assert isinstance(kv, cache_module._FrozenPrefixTextKVToStore)
+E               AssertionError: assert False
+E                +  where False = isinstance(_PrefixTextKVToStore(prefix_key_input=tensor([[[[-0.9160, -0.7186,  0.1826,  0.1582, -0.6982,  0.9526,  0.0429,\n      ...          2.0831]],\n\n         [[ 0.8016, -0.3081,  0.3278, -0.3368,  1.7867,  0.4452,  0.5679,\n            1.9868]]]])), <class 'cosmos_framework.model.generator.mot.attention._FrozenPrefixTextKVToStore'>)
+E                +    where <class 'cosmos_framework.model.generator.mot.attention._FrozenPrefixTextKVToStore'> = cache_module._FrozenPrefixTextKVToStore
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:591: AssertionError
+___ test_compiled_frozen_projection_fill_and_hits_keep_strict_outputs[False] ___
+
+dynamic = False
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_frozen_projection_fill_and_hits_keep_strict_outputs(dynamic):
+        torch.manual_seed(136)
+        net = _TinyMoT(torch.bfloat16)
+        und, gen, prefix = (torch.randn(*shape, dtype=torch.bfloat16) for shape in ((5, 16), (6, 16), (4, 32)))
+        with torch.inference_mode():
+            expected = [net.step(und, gen + i * 0.01, prefix) for i in range(3)]
+        with torch.no_grad():
+            binding = cache_module.prefix_projection_binding((prefix,))
+        previous = install_inference_memory_attention_dispatch(net)
+        caches = make_inference_text_kv_cache(3)
+        torch._dynamo.reset()
+        try:
+            for index, layer in enumerate(net.layers):
+                net.layers[index] = torch.compile(layer, backend="eager", fullgraph=True, dynamic=dynamic)
+            with torch.inference_mode():
+                for i, reference in enumerate(expected):
+                    owner = InferenceTextKVMemoryState(
+                        caches, local_prefix_length=4, frozen_prefix_binding=binding, current_prefixes=(prefix,)
+                    )
+>                   actual = net.step(und, gen + i * 0.01, prefix, caches, memory_owner=owner)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:1026: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:465: in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ({'_caption_seq_offsets': None, '_causal_indices': tensor([0, 1, 2, 3, 4], dtype=torch.int32), '_causal_sample_ids': t..., '_causal_sample_ids': tensor([0, 0, 0, 0, 0, 1]), '_causal_seq_offsets': tensor([0, 5, 6], dtype=torch.int32), ...}))
+kwargs = {'gen_only': False, 'memory_prefix_context': MemoryPrefixContext(hidden=tensor([[-0.5391,  1.9141,  0.6836,  1.0078, -..._key_input_cached=None, prefix_key_output_cached=None, prefix_value_output_cached=None, reuse_prefix_projections=True)}
+prior = None, tracing_context = None
+cleanups = [<function ConfigModule._make_closure_patcher.<locals>.change.<locals>.revert at 0x7f8e65cd6340>, <function nothing at 0x7f8e78ab8fe0>]
+prior_skip_guard_eval_unsafe = False, prior_error_on_graph_break = None
+saved_dynamic_layer_stack_depth = 0
+cleanup = <function nothing at 0x7f8e78ab8fe0>
+cur_exn = UserError('Consider annotating your code using torch._check*(). Could not guard on data-dependent expression u1 > u0 (...o this especially if you\'re reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"\n')
+
+    @functools.wraps(fn)
+    def compile_wrapper(*args: Any, **kwargs: Any) -> Any:
+        prior = set_eval_frame(None)
+        try:
+            # We shouldn't compile inside kernel invocation.
+            if tracing_context := torch._guards.TracingContext.try_get():
+                if (
+                    tracing_context.fake_mode is not None
+                    and tracing_context.fake_mode.in_kernel_invocation
+                ):
+                    return fn(*args, **kwargs)
+            # Skip nested compile - just inline the function
+            if is_fx_symbolic_tracing():
+                if config.error_on_nested_fx_trace:
+                    raise RuntimeError(
+                        "Detected that you are using FX to symbolically trace "
+                        "a dynamo-optimized function. This is not supported at the moment."
+                    )
+                else:
+                    return fn(*args, **kwargs)
+    
+            if is_jit_tracing():
+                raise RuntimeError(
+                    "Detected that you are using FX to torch.jit.trace "
+                    "a dynamo-optimized function. This is not supported at the moment."
+                )
+    
+            cleanups = [enter() for enter in self.enter_exit_hooks]
+            prior_skip_guard_eval_unsafe = set_skip_guard_eval_unsafe(
+                _is_skip_guard_eval_unsafe_stance()
+            )
+            prior_error_on_graph_break = None
+            if not self.fullgraph and self.error_on_graph_break is not None:
+                prior_error_on_graph_break = _get_error_on_graph_break()
+                _set_error_on_graph_break(self.error_on_graph_break)
+    
+            # Ensure that if an assertion occurs after graph pushes
+            # something onto the DynamicLayerStack then we pop it off (the
+            # constructed graph code isn't guarded with try/finally).
+            #
+            # This used to be a context but putting a `with` here is a noticeable
+            # perf regression (#126293)
+            saved_dynamic_layer_stack_depth = (
+                torch._C._functorch.get_dynamic_layer_stack_depth()
+            )
+    
+            _maybe_set_eval_frame(_callback_from_stance(callback))
+    
+            try:
+                return fn(*args, **kwargs)
+            except Unsupported as e:
+                if config.verbose:
+                    raise
+                # strip internal tracebacks from causes
+                cur_exn: BaseException = e
+                while cur_exn.__cause__ is not None:
+                    cur_exn.__cause__.with_traceback(None)
+                    cur_exn = cur_exn.__cause__
+                # pyrefly: ignore [invalid-inheritance]
+>               raise e.with_traceback(None) from e.__cause__  # User compiler error
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               torch._dynamo.exc.UserError: Consider annotating your code using torch._check*(). Could not guard on data-dependent expression u1 > u0 (unhinted: u1 > u0).  (Size-like symbols: none)
+E               
+E               consider using data-dependent friendly APIs such as guard_or_false, guard_or_true and statically_known_true.
+E               Caused by: if qe > qs:  # work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:42 in _cpu_attention (_dynamo/variables/tensor.py:1514 in evaluate_expr)
+E               For more information, run with TORCH_LOGS="dynamic"
+E               For extended logs when we create symbols, also add TORCHDYNAMO_EXTENDED_DEBUG_CREATE_SYMBOL="u1,u0"
+E               If you suspect the guard was triggered from C++, add TORCHDYNAMO_EXTENDED_DEBUG_CPP=1
+E               For more debugging help, see https://docs.google.com/document/d/1HSuTTVvYH1pTew89Rtpeu84Ht3nQEFTYhAX3Ypa_xJs/edit?usp=sharing
+E               
+E               User Stack (most recent call last):
+E                 (snipped, see stack below for prefix)
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1540, in forward
+E                   pack_attn_out, kv_to_store = self.self_attn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 844, in forward
+E                   packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 452, in dispatch_attention_with_text_kv_memory
+E                   return two_way_attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/attention.py", line 354, in two_way_attention
+E                   causal_res = attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py", line 42, in _cpu_attention
+E                   if qe > qs:
+E               
+E               For C++ stack trace, run with TORCHDYNAMO_EXTENDED_DEBUG_CPP=1
+E               For more information about this error, see: https://pytorch.org/docs/main/generated/exportdb/index.html#constrain-as-size-example
+E               
+E               from user code:
+E                  File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1540, in forward
+E                   pack_attn_out, kv_to_store = self.self_attn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 844, in forward
+E                   packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 452, in dispatch_attention_with_text_kv_memory
+E                   return two_way_attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/attention.py", line 354, in two_way_attention
+E                   causal_res = attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py", line 42, in _cpu_attention
+E                   if qe > qs:
+E               
+E               Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:963: UserError
+___ test_compiled_frozen_projection_fill_and_hits_keep_strict_outputs[True] ____
+
+dynamic = True
+
+    @pytest.mark.parametrize("dynamic", [False, True])
+    def test_compiled_frozen_projection_fill_and_hits_keep_strict_outputs(dynamic):
+        torch.manual_seed(136)
+        net = _TinyMoT(torch.bfloat16)
+        und, gen, prefix = (torch.randn(*shape, dtype=torch.bfloat16) for shape in ((5, 16), (6, 16), (4, 32)))
+        with torch.inference_mode():
+            expected = [net.step(und, gen + i * 0.01, prefix) for i in range(3)]
+        with torch.no_grad():
+            binding = cache_module.prefix_projection_binding((prefix,))
+        previous = install_inference_memory_attention_dispatch(net)
+        caches = make_inference_text_kv_cache(3)
+        torch._dynamo.reset()
+        try:
+            for index, layer in enumerate(net.layers):
+                net.layers[index] = torch.compile(layer, backend="eager", fullgraph=True, dynamic=dynamic)
+            with torch.inference_mode():
+                for i, reference in enumerate(expected):
+                    owner = InferenceTextKVMemoryState(
+                        caches, local_prefix_length=4, frozen_prefix_binding=binding, current_prefixes=(prefix,)
+                    )
+>                   actual = net.step(und, gen + i * 0.01, prefix, caches, memory_owner=owner)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:1026: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:128: in step
+    pack, _, kv = layer(
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:465: in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ({'_caption_seq_offsets': None, '_causal_indices': tensor([0, 1, 2, 3, 4], dtype=torch.int32), '_causal_sample_ids': t..., '_causal_sample_ids': tensor([0, 0, 0, 0, 0, 1]), '_causal_seq_offsets': tensor([0, 5, 6], dtype=torch.int32), ...}))
+kwargs = {'gen_only': False, 'memory_prefix_context': MemoryPrefixContext(hidden=tensor([[-0.5391,  1.9141,  0.6836,  1.0078, -..._key_input_cached=None, prefix_key_output_cached=None, prefix_value_output_cached=None, reuse_prefix_projections=True)}
+prior = None, tracing_context = None
+cleanups = [<function ConfigModule._make_closure_patcher.<locals>.change.<locals>.revert at 0x7f8e52b88fe0>, <function nothing at 0x7f8e78ab8fe0>]
+prior_skip_guard_eval_unsafe = False, prior_error_on_graph_break = None
+saved_dynamic_layer_stack_depth = 0
+cleanup = <function nothing at 0x7f8e78ab8fe0>
+cur_exn = UserError('Consider annotating your code using torch._check*(). Could not guard on data-dependent expression u1 > u0 (...o this especially if you\'re reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"\n')
+
+    @functools.wraps(fn)
+    def compile_wrapper(*args: Any, **kwargs: Any) -> Any:
+        prior = set_eval_frame(None)
+        try:
+            # We shouldn't compile inside kernel invocation.
+            if tracing_context := torch._guards.TracingContext.try_get():
+                if (
+                    tracing_context.fake_mode is not None
+                    and tracing_context.fake_mode.in_kernel_invocation
+                ):
+                    return fn(*args, **kwargs)
+            # Skip nested compile - just inline the function
+            if is_fx_symbolic_tracing():
+                if config.error_on_nested_fx_trace:
+                    raise RuntimeError(
+                        "Detected that you are using FX to symbolically trace "
+                        "a dynamo-optimized function. This is not supported at the moment."
+                    )
+                else:
+                    return fn(*args, **kwargs)
+    
+            if is_jit_tracing():
+                raise RuntimeError(
+                    "Detected that you are using FX to torch.jit.trace "
+                    "a dynamo-optimized function. This is not supported at the moment."
+                )
+    
+            cleanups = [enter() for enter in self.enter_exit_hooks]
+            prior_skip_guard_eval_unsafe = set_skip_guard_eval_unsafe(
+                _is_skip_guard_eval_unsafe_stance()
+            )
+            prior_error_on_graph_break = None
+            if not self.fullgraph and self.error_on_graph_break is not None:
+                prior_error_on_graph_break = _get_error_on_graph_break()
+                _set_error_on_graph_break(self.error_on_graph_break)
+    
+            # Ensure that if an assertion occurs after graph pushes
+            # something onto the DynamicLayerStack then we pop it off (the
+            # constructed graph code isn't guarded with try/finally).
+            #
+            # This used to be a context but putting a `with` here is a noticeable
+            # perf regression (#126293)
+            saved_dynamic_layer_stack_depth = (
+                torch._C._functorch.get_dynamic_layer_stack_depth()
+            )
+    
+            _maybe_set_eval_frame(_callback_from_stance(callback))
+    
+            try:
+                return fn(*args, **kwargs)
+            except Unsupported as e:
+                if config.verbose:
+                    raise
+                # strip internal tracebacks from causes
+                cur_exn: BaseException = e
+                while cur_exn.__cause__ is not None:
+                    cur_exn.__cause__.with_traceback(None)
+                    cur_exn = cur_exn.__cause__
+                # pyrefly: ignore [invalid-inheritance]
+>               raise e.with_traceback(None) from e.__cause__  # User compiler error
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               torch._dynamo.exc.UserError: Consider annotating your code using torch._check*(). Could not guard on data-dependent expression u1 > u0 (unhinted: u1 > u0).  (Size-like symbols: none)
+E               
+E               consider using data-dependent friendly APIs such as guard_or_false, guard_or_true and statically_known_true.
+E               Caused by: if qe > qs:  # work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py:42 in _cpu_attention (_dynamo/variables/tensor.py:1514 in evaluate_expr)
+E               For more information, run with TORCH_LOGS="dynamic"
+E               For extended logs when we create symbols, also add TORCHDYNAMO_EXTENDED_DEBUG_CREATE_SYMBOL="u1,u0"
+E               If you suspect the guard was triggered from C++, add TORCHDYNAMO_EXTENDED_DEBUG_CPP=1
+E               For more debugging help, see https://docs.google.com/document/d/1HSuTTVvYH1pTew89Rtpeu84Ht3nQEFTYhAX3Ypa_xJs/edit?usp=sharing
+E               
+E               User Stack (most recent call last):
+E                 (snipped, see stack below for prefix)
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1540, in forward
+E                   pack_attn_out, kv_to_store = self.self_attn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 844, in forward
+E                   packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 452, in dispatch_attention_with_text_kv_memory
+E                   return two_way_attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/attention.py", line 354, in two_way_attention
+E                   causal_res = attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py", line 42, in _cpu_attention
+E                   if qe > qs:
+E               
+E               For C++ stack trace, run with TORCHDYNAMO_EXTENDED_DEBUG_CPP=1
+E               For more information about this error, see: https://pytorch.org/docs/main/generated/exportdb/index.html#constrain-as-size-example
+E               
+E               from user code:
+E                  File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1540, in forward
+E                   pack_attn_out, kv_to_store = self.self_attn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 844, in forward
+E                   packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/inference_text_kv_memory.py", line 452, in dispatch_attention_with_text_kv_memory
+E                   return two_way_attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/attention.py", line 354, in two_way_attention
+E                   causal_res = attention(
+E                 File "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/prefix_text_kv_memory_test.py", line 42, in _cpu_attention
+E                   if qe > qs:
+E               
+E               Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:963: UserError
+=============================== warnings summary ===============================
+../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+: 14 warnings
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../dev::test_prefix_cache_fill_uses_materialized_native_kv_and_hit_keeps_native_padding[True]
+FAILED ../../../dev::test_compiled_frozen_projection_fill_and_hits_keep_strict_outputs[False]
+FAILED ../../../dev::test_compiled_frozen_projection_fill_and_hits_keep_strict_outputs[True]
+3 failed, 55 passed, 15 warnings in 15.49s
