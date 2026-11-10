@@ -1,6 +1,19 @@
-# 2026-11-10 CST — Issue35 B1 Prefix K/V 组装实现冻结，完整 CPU 待执行
+# 2026-11-10 CST — Issue35 B1 Prefix K/V 组装作者 CPU 完成，申请独立审核
 
-任务 ISSUE35-B1-KV-ASSEMBLY：IN_PROGRESS，Codex 实现与 CPU 检查，GPT 独立审核及后续 H100 数值/性能执行。
+任务 ISSUE35-B1-KV-ASSEMBLY：REVIEW，Codex 实现与 CPU 检查，GPT 独立审核及后续 H100 数值/性能执行。
+Formal Root 39f60da729a49c9f6514953bf801dcafb7493039 /
+Child-Gitlink 4be3d702f3008040b830ae09c200d80e273a201a。两仓 Child FIRST、Root 已正常push；
+后续文档/证据 HEAD 为账本，不改变本配对。新配对尚无独立APPROVE_CODE、H100或V3合并许可。
+
+exact clean完整scoped作者CPU已完成：292/292 PASS（213+79）、0失败/错误/跳过、Shell0；
+原9加新2共11文件静态通过，原3个I001例外未增加、1项历史W0单独deselect；1487项指纹一致。
+CPU包装脚本复用原既有Gate入口，源码未变，原始JUnit/日志/环境/命令/身份均归档。
+报告 docs/collab/codex/reviews/2026-11-10_Issue35_B1_Assembly_39f60da7_4be3d702_Review_Request.md；
+证据 docs/collab/codex/evidence/2026-11-10_issue35_b1_assembly/。
+只做CPU；H100两K三路径全30步/Action/Vision strict0及同输入性能须由GPT独立执行。
+完整新增函数cat可能改变Inductor融合，CPU不能替代整模型BF16 Gate；不宣称已节省271–276ms。
+
+以下为本次实现与冻结记录：
 新隔离分支（两仓）：v3-local-prefix-b1-assembly-issue35-20261110。
 基线 Root f9762003e164a013df13c258ee0ab925fcdc8740，Child/Gitlink bf707810f573e885f0966d65c232dc2a610d6a93。
 
@@ -26,8 +39,8 @@ Child已提交：4be3d702f3008040b830ae09c200d80e273a201a，基于bf707810。
 新同一测试文件byte-identical，聚焦101/101 PASS（原22+新增79）、0失败/错误/跳过。
 两改动文件Ruff/format通过。完整负例fixture、JUnit、原源码SHA与静态provenance位于
 /workspace/work/issue35-b1-assembly-evidence/。不是已完成H100数值或性能验证。
-Root仅更新Gitlink/SESSION/TODO；Root冻结后用既有cpu_gate.py执行exact clean完整scoped Gate，
-预期213+79=292项，继续明确排除历史W0并保留原3个I001例外；新两文件另做严格静态检查。
+Root实现仅更新Gitlink/SESSION/TODO；冻结后已用既有cpu_gate.py执行exact clean完整scoped Gate，
+实际213+79=292项，继续明确排除历史W0并保留原3个I001例外；新两文件另做严格静态检查。
 
 # 2026-11-10 CST — Issue35 作者数值修复完成，申请新配对独立审核
 

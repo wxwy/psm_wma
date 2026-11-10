@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "ruff",
+    "check",
+    "--config",
+    "/workspace/work/psm-wma-attention-issue35/cosmos-framework/.ruff.toml",
+    "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/memory_prefix.py",
+    "/workspace/work/psm-wma-attention-issue35/cosmos-framework/cosmos_framework/model/generator/mot/memory_prefix_test.py"
+  ],
+  "cwd": "/workspace/work/psm-wma-attention-issue35",
+  "exit_code": 0
+}

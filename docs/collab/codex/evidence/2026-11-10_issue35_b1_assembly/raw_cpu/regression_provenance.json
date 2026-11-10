@@ -1,0 +1,22 @@
+{
+  "baseline_child": "bf707810f573e885f0966d65c232dc2a610d6a93",
+  "production_delta": "one B1 inference fast branch only",
+  "generic_tail_byte_identical": true,
+  "remaining_module_AST_identical": true,
+  "test_file_byte_identical_RED_GREEN": true,
+  "test_sha256": "31b363bad88a8db3b894a314abcbc3198212fca74ce1e299ffc514f0f737a4b9",
+  "old_red": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_focused": {
+    "tests": 101,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "production_sha256": "bf6f3b2ad03f79db8896da6e89823f2e69c1081eaab7c6bd7dfdf574a00fffda",
+  "real_GPU_validation": "NOT_RUN"
+}

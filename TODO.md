@@ -1,4 +1,4 @@
-- **ISSUE35-B1-KV-ASSEMBLY** — IN_PROGRESS；Codex；基于Root f9762003 / Child bf707810；新Child `4be3d702f3008040b830ae09c200d80e273a201a`。仅24行B1推理组装快路径；通用尾部byte-identical，移除分支后模块AST与基线一致。受控旧RED1/new聚焦101PASS，测试文件字节相同；含60布局+Padding/当前Prefix/多B/梯度与fullgraph。Root冻结后运行exact clean完整scoped CPU预计292项；H100真实两K全30步与性能待GPT独立执行。无GPU/训练/V3合并。
+- **ISSUE35-B1-KV-ASSEMBLY** — REVIEW；Codex；新Formal Root `39f60da729a49c9f6514953bf801dcafb7493039` / Child-Gitlink `4be3d702f3008040b830ae09c200d80e273a201a`。仅24行B1推理组装快路径；通用尾部byte-identical，移除分支后模块AST与基线一致。受控旧RED1/new聚焦101PASS，同一测试文件；exact clean完整scoped CPU **292/292 PASS**、11文件静态、1487指纹同一，历史W0单独排除。新报告 `2026-11-10_Issue35_B1_Assembly_39f60da7_4be3d702_Review_Request.md`。H100两K全30步/Action/Vision strict0与性能待GPT独立执行；未获新独立批准、无GPU/训练/V3合并。
 - **ISSUE35-KV-HIT-PARITY** — DONE（限定数值Code Gate）；Formal Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93`。正式GPT `7c11e0be` APPROVE_CODE已读取：独立37+213CPU、真实两K三路径全30步及Action/Vision严格一致；旧数值阻断关闭，不是V3合并许可。后续性能证据与B1组装新任务独立处理。
 
 
