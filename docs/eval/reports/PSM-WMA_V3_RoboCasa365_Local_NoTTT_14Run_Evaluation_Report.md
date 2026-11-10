@@ -213,52 +213,24 @@ Prefix、Inner Loss 和非零Fast更新是在线记忆机制确实执行的证�
 - 原始Run未改动，所有正式结果有具体Run路径、Root/Child、Manifest/Model/Runtime Digest、Summary SHA256可追踪。
 - 本文为结果研究报告，不是新代码变更或新的Formal implementation Gate approval。
 
-## 13. 2026-11-10 补充：合入 V3 的 Local-TTT 推理优化时延与 No-TTT 对照
+## 13. 2026-11-10 补充：Local-TTT 优化后推理时延与 No-TTT 对比
 
-> **增量时延复核（非第15组正式900EP）**。本节不修改前述14/14组、12,600EP、452,629个预测请求的正式统计；前述 §8 中 L27700 的 8,050ms / N28000 的 2,764ms 是**旧评测代码 M16/B8 高并发完整请求 P50**，不等同最终合入 V3 后的模型原生生成 P50。所有数值按实测原始记录回读，单位为 ms。
+本节是后续时延补充，**不修改前述 14 组、12,600 EP 正式仿真结果**。以下均为模型原生生成时延（含当前帧 VAE，不含 HTTP、FastWeight 和仿真），单位 ms。
 
-### 13.1 模型原生生成时延（含当前帧 VAE，不含 FastWeight/HTTP/仿真）
+| 结果来源 | Mean | P50 | P95 |
+|---|---:|---:|---:|
+| **No-TTT 历史 5 EP**（280次非首次 Replan） | 616.26 | **569.58** | 793.60 |
+| No-TTT 历史 CloseFridge，seed4603（55次稳态） | 664.65 | 736.75 | 751.18 |
+| 优化前 Local-TTT，CloseFridge，iter15000、K16（同轨迹55次） | 1,088.09 | 1,163.91 | 1,230.02 |
+| **优化后 Local-TTT**，CloseFridge，iter15000、K16（同轨迹55次） | **806.68** | **744.07** | 1,007.47 |
+| 优化后 Local-TTT，K16 固定真实输入（4次预热＋30次测量） | 669.23 | **664.87** | 671.67 |
 
-| 实验与模型身份 | 任务 / 测试模式 | 统计范围 | Mean | P50 | P95 |
-|---|---|---:|---:|---:|---:|
-| 历史 No-TTT，独立训练权重 | 5 EP，跨Episode | 280次非首次Replan | **616.26** | **569.58** | 793.60 |
-| 历史 No-TTT，seed4603 | CloseFridge | 55次稳态Replan（序号2–56） | 664.65 | 736.75 | 751.18 |
-| 优化前 Local-TTT，iter15000，K16 | CloseFridge，seed4603 | 相同55次稳态Replan | 1,088.09 | 1,163.91 | 1,230.02 |
-| **合入 V3 的 Local-TTT**，iter15000，K16 | CloseFridge，seed4603 | 相同55次稳态Replan | **806.68** | **744.07** | 1,007.47 |
-| **合入 V3 的 Local-TTT**，iter27700，K16 | PickPlaceToasterToCounter，M2/B2，10 EP | 每EP排除前2次Replan，共235次 | **958.1** | **1,014.5** | 1,082.0 |
-| 合入 V3 的 Local-TTT，iter15000，K16 | 真实冻结输入；同进程ON/OFF配对，ON | 4次预热后、30次正式测量 | 669.23 | **664.87** | 671.67 |
+**优化收益**：相同 Local-TTT checkpoint、相同 CloseFridge 轨迹下，Mean 由 1,088→807 ms（下降25.9%），P50 由 1,164→744 ms（下降36.1%），新旧动作序列逐次精确一致（57/57）。
 
-- **744ms 是 iter15000 的 CloseFridge 单任务真实闭环 P50，不是 iter27700 最终10EP的 P50**；665ms 是**固定真实输入、预热后模型原生生成**P50，不代表整条仿真闭环；1,015ms 是 iter27700 在另一个任务10EP的模型生成 P50，三者不能互相替代。
-- **同 Local 模型、同 CloseFridge 轨迹的直接代码 A/B**：平均从 1,088.09→806.68ms（减少25.9%），P50 从 1,163.91→744.07ms（减少36.1%），P95 从 1,230.02→1,007.47ms（减少18.1%）；新旧 Action 与相应 RGB 序列均逐次精确一致（57/57）。这是本轮**可以直接说明代码优化收益**的比较。
-- No-TTT 的历史 seed4603 P50=736.75ms 与新版 Local P50=744.07ms 很接近；但其**训练Checkpoint不同、历史 No-TTT 存在模拟 GPU 负载，环境未做严格同条件配对**，不能据此声称 Local-TTT 与 No-TTT 严格持平，也不能把两者差异归因于 TTT 算法。
-- 历史 No-TTT 五Episode P50≈570ms 是既有低负载模型生成基准，**不应使用 M16/B8 排队之后的 2,764ms 取代**。
+**比较边界**：No-TTT 约 **570 ms** 是历史 5 EP 基准；Local-TTT **744 ms** 是真实闭环模型生成 P50；**665 ms** 是充分预热后的固定输入基准，不代表完整闭环。No-TTT 与 Local-TTT 使用不同训练 checkpoint，且 No-TTT 历史 GPU 负载条件不同，不能据此断言两者严格持平或计算因果加速比。此前高并发 M16/B8 的 No-TTT 请求 P50 2,764 ms、旧 Local-TTT 8,050 ms 包含排队与准备开销，不应当成模型生成基准。
 
-### 13.2 最新 iter27700 的真实完整 Replan 闭环（10EP，M2/B2）
+**成功率补充**：最终 V3 集成版本的 Local-TTT iter27700 已在 `PickPlaceToasterToCounter` 真实仿真中验证 **10/10 有效且成功**。此结果只用于验证新代码正确运行，不纳入上述时延对照表，不计入前述14组900EP正式结果。
 
-基于正式合并的 Root `1b184204e301a51a7a20ed4dde1a11689589cf2d` / Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`，GPU6/7 Policy、GPU4/5 EGL Sim、`Local-TTT required`、H16、K16、raw15、30生成步、seed=0：
+**证据**：No-TTT 历史和旧 Local 的时延记录：`.../_gpt_independent_gates_20261104/issue35_kv_norm_performance_20261110/real_episode_model_native_independent_summary.json`；新 Local 真实闭环：`.../v3_integration_gate_20261110/real_episode_comparison.json`；固定输入：`.../issue35_prefix_projection_independent_20261110/independent_final_audit.json`；最终10EP成功率：`.../iter27700_pickplace_toaster_newcode_10ep_20261110/run/summary.json`。上述文件均在 `data` 服务器的 `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/` 下；原始 Run 不变。
 
-| 口径 | N | Mean | P50 | P95 |
-|---|---:|---:|---:|---:|
-| 完整 Replan 请求（每EP排除前2次） | 235 | 1,175.95 | **1,186.78** | 1,493.27 |
-| Model Native（同235次） | 235 | 958.1 | **1,014.5** | 1,082.0 |
-| Queue（同235次） | 235 | 约0.1 | 约0.1 | 约0.2 |
-| Batch Prepare（同235次） | 235 | 约0 | 约0 | 约0 |
-
-该轮任务 **10/10有效、10/10成功（SR=100%）、0失败/invalid/interrupted、clean_execution=true、results_qualified=true、exit=0**，共10份真实Rollout MP4。**首次请求或首次 Prefix 编译**存在约12–16秒个别长尾；因此稳态 P50 不能代表冷启动与生产 P99。
-
-### 13.3 最终科学结论与证据限制
-
-1. **已证明**：Local-TTT 推理优化保持真实模型输出一致，在同输入同权重同任务 A/B 中明显降低模型原生生成延时；iter27700在历史高SR的任务上经10EP证明可成功运行。
-2. **未证明**：新版 Local-TTT 在 18任务×50EP、M16/B8 的完整请求 P50 已低于旧版 No-TTT；未完成同 checkpoint/同任务/同负载的 No-TTT vs Local-TTT 受控因果时延 A/B；冷启动、GPU allocator 长尾和生产 P99 仍开放。
-3. **不要混合口径**：模型原生生成与完整请求不同；固定输入 GPU benchmark 与真实闭环不同；M2/B2 与 M16/B8 不同；iter15000 与 iter27700 不同；独立训练权重的 No-TTT 和 Local-TTT 不是仅切换开关的纯消融。正确性和 SR 不用推理延迟数值替代。
-
-### 13.4 精确证据路径与版本身份
-
-所有下列原始文件保留在 `data` 服务器，未修改或外传私有模型输入/权重：
-
-- 历史 No-TTT 5EP、seed4603 / 原 Local iter15000 的模型生成统计：`/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue35_kv_norm_performance_20261110/real_episode_model_native_independent_summary.json`。
-- 新 Local iter15000 的 CloseFridge 真实闭环对照：`.../_gpt_independent_gates_20261104/v3_integration_gate_20261110/real_episode_comparison.json`。
-- 固定输入 K16 30次配对基准与完整严格数值回执：`.../_gpt_independent_gates_20261104/issue35_prefix_projection_independent_20261110/independent_final_audit.json`。
-- 最终 Local iter27700 真实10EP：`.../_gpt_independent_gates_20261104/iter27700_pickplace_toaster_newcode_10ep_20261110/run/summary.json`，逐次时延与事务为 `run/tasks/PickPlaceToasterToCounter/episodes/ep_*/predictions.jsonl`，执行日志在同根目录 `logs/fresh.log`。
-- 历史14组900EP数据仍以本目录 `metrics/`、`runs/`、`audit_14runs.json` 为准，不将本节的10EP作为任何900EP正式Run。
-- V3发布：Root PR #40 合并 commit `e23fe240c167f9ccc97b4e112ca76c178c5c1416`；此后文档提交属于 bookkeeping，不改变上述精确 implementation pair。
+冻结的新版实现：Root `1b184204e301a51a7a20ed4dde1a11689589cf2d` / Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`；V3 合并提交 `e23fe240c167f9ccc97b4e112ca76c178c5c1416`。
