@@ -359,3 +359,13 @@ Independent exact-pair incremental review requested; keepDraft/noV3merge.
 - **NEXT Codex narrow candidate**: Request-local B1/Prefix K/V projection reuse, preserving current actual per-layer K/V injection, mask and varlen semantics; must check **native fill vs Inductor gen-only BF16 rounding boundary** before reusing values; prior real-input Stage1 TextKV cache parity bug proves Eager equality alone is insufficient. Do not add per-layer all+where sync overhead or cross-request cache. Fallback noPrefix/multiB/grad/changed Prefix; clear in finally and keep FastWeight across Replan correct.
 - Next GPT GPU Gate **K16/source64 only**: old original Local, Stage1, Stage2 30/30 velocity exact and Action/Vision/raw15 exact; changed Prefix/reversion; same-DCP/real input old-vs-new 30 repeated model-native GPU perf, retaining P95/P99; no arbitrary speed goal. Codex must submit new formal pair for code review. No NoTTT, no new SR, no V3 merge.
 - **Full independent report:** `docs/collab/chatgpt/reviews/2026-11-10_Issue35_K16_RequestLocal_PrefixProjection_Hotspot_EVIDENCE.md`. Final derived server-only report `.../issue35_post_B1_remaining_overhead_20261110/independent_projection_reuse_finding.json` SHA256 **`ef369e3b61b89c9de10159ff81c1ff6c5a5b012b80ceeda81e692a33f162ff76`**. All private original data retained only on authorized server; GPUs4–7 released. Existing Stage2/B1 code review verdict unchanged; this is new evidence only.
+
+## 2026-11-10 — V3 Local Memory 推理集成 / Owner 授权发布闭环（PR #40）
+
+- **正式 implementation pair**：Root `1b184204e301a51a7a20ed4dde1a11689589cf2d`；Child+Gitlink `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`。V3 baseline `e58cef1f53d2382d39c871ce5a50e4acdd5ce268`。
+- **GPT 独立技术 Verdict**：`APPROVE_CODE`，仅用于冻结的 History-K + Shared VAE + Prefix request-local 推理集成和 V3 release；不授权额外训练、其他 task SR 归纳、部署或生产 P99。
+- **Detailed review（canonical）**：`docs/collab/chatgpt/reviews/2026-11-10_V3_LocalMemory_HistoryK_SharedVAE_Prefix_Integration_1b184204_d5c1ffc7_APPROVE_CODE.md`。
+- **行为证据**：同 Pair CPU 314/314 + 集成 CPU 115/115 PASS；真实 H100 K16/source64 原生 BF16 Velocity 30 step、Action/Vision 严格一致；Local-TTT `iter_000027700` 在 `PickPlaceToasterToCounter` 真实 10 episodes **10/10 valid、10 success、SR=1.0**，`clean_execution=true`、`results_qualified=true`，exit=0、0进程错误、10份MP4。
+- **发布回执**：Child `v3-local-ttt` 无强制快进到精确 `d5c1ffc7`；Root PR #40 https://github.com/wxwy/psm_wma/pull/40 标准合并到 `V3`，merge SHA `e23fe240c167f9ccc97b4e112ca76c178c5c1416`。GitHub核验 `1b184204...V3` 的实现代码差异为零。
+- **保留风险**：其他17任务SR、No-TTT比较、初始化时延稳定性与P99未关闭。此前4个不同任务单seed 0/4有效失败，不代表此次10EP实验失败。以上后续Gate独立验收。
+- 此条和 detailed review 是 **review/bookkeeping**，不可代替 formal Root/Child SHA；不冒称其他审核者的批准。
