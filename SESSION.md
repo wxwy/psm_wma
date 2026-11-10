@@ -1,3 +1,30 @@
+# 2026-11-10 CST — Issue35 K16 首次慢段/长尾诊断接手
+
+任务 ISSUE35-K16-LATENCY-DIAGNOSTICS：REVIEW（外部工具/CPU已完成）；Codex仅外部探针/静态/CPU，真实GPU仍由GPT独立执行。
+本轮before74b48c6ea191bb095740f08262c607a5aad666f1；显式fetch后advertised/tracking一致
+e403fb8a2a296e4444b2d3398003e8e9967d12c3；完整新提交379f1856/e403fb8a，ancestor0，ff-only成功。
+已完整读取正式review 2026-11-10_Issue35_K16_1b184204_d5c1ffc7_RequestLocalProjection_IndependentReview.md
+及Issue35精确评论6762151776：Formal Root1b184204e301a51a7a20ed4dde1a11689589cf2d /
+Child-Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2获限域APPROVE_CODE：独立314CPU/11static/
+1487指纹；K16真实4路Action/Vision/raw15与30步严格相同、真实绑定启用。同进程30配对29次ON更快、
+节省P50 33.853ms；首次890ms慢段、重跑最大1295.667ms及unique_graphs8均必须保留，稳定性OPEN。
+不从图数稳定推导CUDA/kernel/时钟/CPU均稳定；不改Memory、Attention、权重、编译配置或正式配对。
+当前Owner角色覆盖旧三方/tmux等待要求；治理技能已复读，本轮只做独立诊断代码及CPU，不启动GPU。
+两仓当前干净，Child继续d5c1；Root新诊断分支v3-local-prefix-latency-issue35-20261110，不合并V3。
+预计仅在/workspace/work/issue35-latency-diagnostics/开发外部generate边界观测probe、CPU测试及runbook，
+通过后复制自有工具/CPU证据到docs/collab/codex/evidence/2026-11-10_issue35_latency_diagnostics/。
+复用既有真实K16回放入口，不创建新模型/仿真框架；生产源码、Child/Gitlink及314旧Gate均不修改或重跑。
+记录host wall/CPU/schedstat/GC、已有Dynamo计数、CUDA event span/allocator；不新增同步、不改变RNG/
+输入/输出/grad/stream/编译开关。GPU span包含设备空隙，并非Kernel总时间。诊断开销必须另标。
+代码/数值任务ISSUE35-PREFIX-PROJECTION只在已批准范围DONE；首次/长尾性能与V3合并保持OPEN。
+最终探针34/34 CPU PASS、0失败/错误/跳过、Shell0，两文件Ruff E/F/I和format无例外；26旧项重叠，
+dev02两项样式失败及源文件保留，pytest未启动；最终dev03通过。1487现有生产源指纹逐项相同、Child干净。
+只读查看data服务器本Gate目录/CLI声明，未运行模型/GPU、未复制原始服务器文件。新工具只在外部观测generate，
+无新增CUDA同步；Source/K16约束/异步event/GC和原异常清理CPU覆盖，实际硬件与观测开销仍待GPT验证。
+报告 docs/collab/codex/reviews/2026-11-10_Issue35_K16_Latency_Diagnostics_Handoff.md；
+证据 docs/collab/codex/evidence/2026-11-10_issue35_latency_diagnostics/。本提交仅工具/文档，不是新Formal Pair。
+交GPT先审核工具，再仅K16关联同时间轴证据。当前根因UNKNOWN/性能稳定性OPEN，不继续Attention优化。
+
 # 2026-11-10 CST — Issue35 请求内原生Prefix投影作者CPU完成
 
 任务 ISSUE35-PREFIX-PROJECTION：REVIEW；Codex代码/CPU，GPT独立窄增量审核与真实K16/source64 Gate。

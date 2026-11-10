@@ -1,0 +1,9 @@
+{
+  "baseline_fingerprint_file": "docs/collab/codex/evidence/2026-11-10_issue35_prefix_projection/raw_cpu/author01/scoped/source_after.json",
+  "baseline_fingerprint_sha256": "107f7b46296e4a59bf0218816bddfa2faf647491eb16cd5a6dac8e0e2b0c1f05",
+  "source_files": 1487,
+  "all_equal": true,
+  "root_parent": "e403fb8a2a296e4444b2d3398003e8e9967d12c3",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2"
+}

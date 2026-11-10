@@ -1,0 +1,23 @@
+probe_test.py:204:5: E731 Do not assign a `lambda` expression, use a `def`
+    |
+202 | def test_runner_replacing_method_is_not_overwritten():
+203 |     model = model_for(lambda self: 1)
+204 |     replacement = lambda self: 2
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E731
+205 |     observer, _, _ = observe(model)
+206 |     with observer:
+    |
+    = help: Rewrite `replacement` as a `def`
+
+probe_test.py:286:121: E501 Line too long (167 > 120)
+    |
+284 | …
+285 | …
+286 | …l\nOmniMoTModel().generate_samples_from_batch()\nraise RuntimeError("native runner")\n'
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E501
+287 | …
+288 | …s[:], sys.argv, Path.cwd()
+    |
+
+Found 2 errors.
+No fixes available (1 hidden fix can be enabled with the `--unsafe-fixes` option).
