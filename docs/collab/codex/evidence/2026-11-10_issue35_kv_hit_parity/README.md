@@ -20,3 +20,5 @@ CPU：原201项加12项回归，213 PASS、0 failure/error/skip；1个历史 W0 
 H100：三模式都是同一个 iter15000 Local-TTT 模型且 Prefix ON，不是 No-TTT；仅 KV/Pack 开关不同。每种模式恢复同一冻结完整请求与原生 prepared，不重新编码视觉或修改输入。先生成无包装输出，再从 `_get_velocity` 外部记录30步，并要求 observer 不改变最终输出。`author_h10002` PASS/Shell0/source+input unchanged；`author_h10001` K1通过后因 K16缺省K的外部夹具KeyError失败，未执行K16，原记录未覆盖。
 
 原始服务器张量/PT、图像、checkpoint、FX/code、模型日志均仍在 `data` 私有目录；这里发布的是作者源码、本地合成 CPU 证据和派生哈希/统计。私有844文件索引 SHA256=`1833504e303cedcfd87a065e921845afb36c1ebbc5d5c68c260f715ce656d623`。
+
+原始 RED 的 pytest 日志和 JUnit 内含 traceback 自带行尾空格，按原始字节保留。发布 whitespace 检查只排除这两份原始文件，其余文档和工具必须通过；生产代码检查范围不变。
