@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="6.962" timestamp="2026-11-10T05:13:37.073934+00:00" hostname="4c7ce8517e60"><testcase classname="" name="test_b1_inference_assembly_has_no_sample_expansion_scan_or_index_copy" time="0.015"><failure message="AssertionError: B1 assembly still runs generic sample metadata/scatter: {'aten::cumsum': 1, 'aten::repeat_interleave': 2, 'aten::index_copy': 4}&#10;assert not {'aten::cumsum': 1, 'aten::index_copy': 4, 'aten::repeat_interleave': 2}">def test_b1_inference_assembly_has_no_sample_expansion_scan_or_index_copy():
+        for pad in (0, 2):
+            inputs = _b1_assembly_inputs(pad=pad)
+            with torch.inference_mode(), _AssemblyOps() as ops:
+                actual = prepend_memory_kv(**inputs)
+            forbidden = {
+                name: count
+                for name, count in ops.counts.items()
+                if name
+                in {
+                    "aten::repeat_interleave",
+                    "aten::cumsum",
+                    "aten::index_copy",
+                }
+            }
+&gt;           assert not forbidden, f"B1 assembly still runs generic sample metadata/scatter: {forbidden}"
+E           AssertionError: B1 assembly still runs generic sample metadata/scatter: {'aten::cumsum': 1, 'aten::repeat_interleave': 2, 'aten::index_copy': 4}
+E           assert not {'aten::cumsum': 1, 'aten::index_copy': 4, 'aten::repeat_interleave': 2}
+
+cosmos-framework/cosmos_framework/model/generator/mot/memory_prefix_test.py:525: AssertionError</failure></testcase></testsuite></testsuites>

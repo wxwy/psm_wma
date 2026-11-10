@@ -1,3 +1,47 @@
+# 2026-11-10 CST — Issue35 B1 Prefix K/V 组装作者 CPU 完成，申请独立审核
+
+任务 ISSUE35-B1-KV-ASSEMBLY：REVIEW，Codex 实现与 CPU 检查，GPT 独立审核及后续 H100 数值/性能执行。
+Formal Root 39f60da729a49c9f6514953bf801dcafb7493039 /
+Child-Gitlink 4be3d702f3008040b830ae09c200d80e273a201a。两仓 Child FIRST、Root 已正常push；
+后续文档/证据 HEAD 为账本，不改变本配对。新配对尚无独立APPROVE_CODE、H100或V3合并许可。
+
+exact clean完整scoped作者CPU已完成：292/292 PASS（213+79）、0失败/错误/跳过、Shell0；
+原9加新2共11文件静态通过，原3个I001例外未增加、1项历史W0单独deselect；1487项指纹一致。
+CPU包装脚本复用原既有Gate入口，源码未变，原始JUnit/日志/环境/命令/身份均归档。
+报告 docs/collab/codex/reviews/2026-11-10_Issue35_B1_Assembly_39f60da7_4be3d702_Review_Request.md；
+证据 docs/collab/codex/evidence/2026-11-10_issue35_b1_assembly/。
+只做CPU；H100两K三路径全30步/Action/Vision strict0及同输入性能须由GPT独立执行。
+完整新增函数cat可能改变Inductor融合，CPU不能替代整模型BF16 Gate；不宣称已节省271–276ms。
+
+以下为本次实现与冻结记录：
+新隔离分支（两仓）：v3-local-prefix-b1-assembly-issue35-20261110。
+基线 Root f9762003e164a013df13c258ee0ab925fcdc8740，Child/Gitlink bf707810f573e885f0966d65c232dc2a610d6a93。
+
+本轮先保存 before5658adab，显式 fetch 当前 review 分支，ls-remote/tracking 同为 f9762003，
+完整列出6个新提交7c11e0be/4c9ccd90/25bc485c/6210b1d3/56cb318e/f9762003，ancestor0，ff-only成功。
+已读3份新正式报告及canonical Inbox：55b74ab4/bf707810数值APPROVE_CODE（独立37+213CPU，
+真实两K三路径及全30步exact）；后续同输入性能证据；B1 assembly profiler根因证据。
+没有重复审核旧 Pair。旧任务数值阻断已按正式报告关闭，性能新任务另行认领。
+适用治理技能已读；当前Owner明确由Codex修改、CPU验证，GPT做真实H100验收，覆盖旧三方/训练等待流程。
+本轮不启动GPU或远程实验，不管理gpu_load_sim/其他任务，不外传服务器文件。
+
+生产文件仅Child mot/memory_prefix.py；测试扩展 mot/memory_prefix_test.py。
+在已有prepend_memory_kv内为合法B1推理提供直接cat/offset-shift；不满足静态shape/dtype/device/
+推理条件时保留原通用实现，梯度启用时保留原训练路径。Prefix投影/归一化、当前K/V、顺序、Mask、
+Varlen、FastWeight、slowweights、NoPrefix/多样本及Resume均不改。先添加性能契约负例，保留旧RED，
+再检查Padding/FP32/BF16/offset dtype/当前Prefix/动态fullgraph/原通用多样本及训练回退。
+代码冻结后提交Child FIRST、Root只Gitlink及工作记录，执行exact clean scoped CPU Gate，
+归档原始JUnit/log/源码指纹，交付新精确Pair与Draft。真实H100两K全30步/Action/Vision和性能待GPT验证；
+不预设加速比、不将CPU布局证明写成GPU数值或性能通过，不合并V3、不重跑NoTTT/Sim/SR/900EP。
+Child已提交：4be3d702f3008040b830ae09c200d80e273a201a，基于bf707810。
+仅24行生产增量，原通用尾部byte-identical；移除新分支后的整个模块AST与基线一致。
+受控旧RED为真实操作断言：cumsum1/repeat_interleave2/index_copy4，1FAIL、Shell1；
+新同一测试文件byte-identical，聚焦101/101 PASS（原22+新增79）、0失败/错误/跳过。
+两改动文件Ruff/format通过。完整负例fixture、JUnit、原源码SHA与静态provenance位于
+/workspace/work/issue35-b1-assembly-evidence/。不是已完成H100数值或性能验证。
+Root实现仅更新Gitlink/SESSION/TODO；冻结后已用既有cpu_gate.py执行exact clean完整scoped Gate，
+实际213+79=292项，继续明确排除历史W0并保留原3个I001例外；新两文件另做严格静态检查。
+
 # 2026-11-10 CST — Issue35 作者数值修复完成，申请新配对独立审核
 
 任务 ISSUE35-KV-HIT-PARITY：REVIEW。Codex 实现与作者证据，GPT 独立审核；

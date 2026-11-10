@@ -1,0 +1,27 @@
+{
+  "formal_root": "39f60da729a49c9f6514953bf801dcafb7493039",
+  "formal_child": "4be3d702f3008040b830ae09c200d80e273a201a",
+  "root_parent": "f9762003e164a013df13c258ee0ab925fcdc8740",
+  "child_parent": "bf707810f573e885f0966d65c232dc2a610d6a93",
+  "root_changed": [
+    "SESSION.md",
+    "TODO.md",
+    "cosmos-framework"
+  ],
+  "child_changed": [
+    "cosmos_framework/model/generator/mot/memory_prefix.py",
+    "cosmos_framework/model/generator/mot/memory_prefix_test.py"
+  ],
+  "gitlink": "4be3d702f3008040b830ae09c200d80e273a201a",
+  "production_added_lines": 24,
+  "new_test_cases": 79,
+  "focused_tests": 101,
+  "distinct_author_tests": 292,
+  "controlled_RED_tests": 1,
+  "controlled_RED_failures": 1,
+  "focused_and_full_overlap": true,
+  "current_scope": "CPU/static only",
+  "H100_numerics": "PENDING_INDEPENDENT_GPT",
+  "performance": "NOT_MEASURED",
+  "private_server_files_accessed_or_exported": false
+}
