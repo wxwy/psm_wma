@@ -298,3 +298,14 @@ Independent exact-pair incremental review requested; keepDraft/noV3merge.
 - 首轮`author_h10001` K1已通过，K16夹具直读缺省K而KeyError（未执行K16）；按既有默认K=H修正外部夹具，在同Pair新目录完整通过。所有FAIL及早期探针未完成记录均保留，不冒充PASS。
 - [完整增量申请](../codex/reviews/2026-11-10_Issue35_KVHit_PrefixNorm_55b74ab4_bf707810_Review_Request.md)；[CPU原始证据/作者工具/H100精确命令与派生哈希](../codex/evidence/2026-11-10_issue35_kv_hit_parity/README.md)。私有844文件索引SHA `1833504e303cedcfd87a065e921845afb36c1ebbc5d5c68c260f715ce656d623`；新H100 gate SHA `94bacad2a7c2b1fafabe3d94763464028615fa71cce05ac6a5009e7e2fe6eb28`。
 - Codex作者结果不替代独立APPROVE_CODE；本新Pair尚待GPT复核。只有两组冻结真实请求，不宣称所有输入/真实SR/P99或性能收益。原张量、DCP、日志、FX全部留data服务器；最终GPU4-7空闲，无残留owned进程。未运行NoTTT/Sim/SR/900EP，未碰GPU0-3/训练/L2000，未合并V3或继续Attention性能改造。所有上游Draft保持未合并。
+
+## 2026-11-10 — GPT Issue35 55b74ab4/bf707810 independently APPROVE_CODE on frozen real-input numeric parity
+
+- **正式审核 target**：Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child+Gitlink `bf707810f573e885f0966d65c232dc2a610d6a93`；PR36 当前 HEAD仅 evidence/docs账本，不是新的 implementation Pair。上一Root18be/Child1936 新真实冻结输入严格数值Parity失败这一 blocker 现 **CLOSED**。
+- **Formal verdict：`APPROVE_CODE`，严格限定 Issue35 Text KV cache-hit BF16 Prefix K normalization 数值修复**（原生B1/two_way、Local iter15000、30 UniPC步、K1/source32和K16/source64真实冻结请求），不等于 V3 merge授权。
+- **独立源码审阅**：Child3 production files +1 test；在request-local每层缓存首次填充原生已物化 Prefix K归一化参考及投影输入，命中只在当前Prefix投影输入逐元素完全相等时选用参考；改变Prefix仍实时计算，V始终当前，引用detach+clone并clear清理，NoPrefix/其他MemoryState原路径不变。Root实现只Gitlink/SESSION/TODO，双repo clean。
+- **独立CPU**：GPT在精确新 Pair 上新回归37/37 PASS；独立完整scoped CPU Gate **213/213 PASS**, 9项static，1487个源文件指纹前后同一。既存W0一项按前序审核明确deselect，不称全仓green。
+- **独立真实H100（我方脚本实际跑，非直接转述Codex）**：同一Local checkpoint、原生Mode/DCP校验，冻结Batch/FastState/Prefix/CPU+CUDA+NumPy+Python RNG；K1/source32与K16/source64各跑原Local KVoff/Packoff、Stage1 KVon/Packoff、Stage2 KVon/Packon。CPU端再次读取六个GPU输出PT，对比**前一GPT独立保存的原始Local输出**：raw15 Action、模型 Action、Vision全逐元素相同，max_abs0。额外分别在三路径记录并重新读取 **30步×2种K**速度预测；Stage1+Stage2相对于原始路径**各30/30步 exact0**，首次缓存命中Step1也exact0，消除了旧K1=0.00497079、K16=0.00706959的动作差异。
+- **原始Evidence全部留在授权服务器**：`/mnt/data/shenzhen/szrobot/logs/.tmp_backup/_gpt_independent_gates_20261104/issue35_kv_norm_fix_independent_20261110/`；独立派生审计`independent_final_verdict.json` SHA256 `bb0bce146d3e5132311bba31492dbae972576c41db9915b359ea26bd7647b50c`。所有owned模型进程退出，GPU4–7闲置，未运行NoTTT、Sim、训练或SR。
+- **限制**：修复后生成时延P50/P95/P99及生产尾延迟**未测**；不自动批准V3合并、不授权多B/复杂layout/完整Episode/生产部署。Issue35 剩余Attention性能分析和这些后续 Gate 仍开放。禁止为跨任意百分比而改阈值、刷实验。
+- **正式详细审核报告**：`docs/collab/chatgpt/reviews/2026-11-10_Issue35_55b74ab4_bf707810_KVHit_NumericParity_APPROVE_CODE.md`。本Inbox/Review commit仅账本，不能替代formal pair。
