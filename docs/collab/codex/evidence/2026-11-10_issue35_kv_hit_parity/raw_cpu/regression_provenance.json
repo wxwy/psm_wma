@@ -1,0 +1,41 @@
+{
+  "old_child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "new_child": "bf707810f573e885f0966d65c232dc2a610d6a93",
+  "controlled_old_worktree": "production unchanged; only test addition, not a clean Formal Gate",
+  "production": {
+    "cosmos_framework/model/generator/mot/attention.py": {
+      "expected_sha256": "db17dcd88ddba9e82994a336e5b196d30976ec23050f82adeb27933da6731e7b",
+      "git_blob_sha256": "db17dcd88ddba9e82994a336e5b196d30976ec23050f82adeb27933da6731e7b"
+    },
+    "cosmos_framework/model/generator/mot/inference_text_kv_memory.py": {
+      "expected_sha256": "8f51265feebc32a216505ab8896bcd95aae925cf6d8908ba34843e0e2303fcc8",
+      "git_blob_sha256": "8f51265feebc32a216505ab8896bcd95aae925cf6d8908ba34843e0e2303fcc8"
+    },
+    "cosmos_framework/model/generator/mot/unified_mot.py": {
+      "expected_sha256": "8233cdbdaf35802135abfa66e0b60c6f141a5e848338da1d1ae3c75f992384b7",
+      "git_blob_sha256": "8233cdbdaf35802135abfa66e0b60c6f141a5e848338da1d1ae3c75f992384b7"
+    }
+  },
+  "same_test_function": "test_identical_prefix_norm_input_keeps_fill_rounding_and_changed_prefix_is_live",
+  "function_AST_equal": true,
+  "function_AST_sha256": "72b13b77edae719c6d425c7e563a75ff9c685ad1958d60cb40c4aa117c7c2d0f",
+  "old_fixture_sha256": "9af6fe4fc3cffed3ee917356a8d69391d8cf5c7755e4200482e9b4f1475273e8",
+  "old_junit": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_focused_junit": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "exact_clean_candidate_junit": {
+    "tests": 213,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

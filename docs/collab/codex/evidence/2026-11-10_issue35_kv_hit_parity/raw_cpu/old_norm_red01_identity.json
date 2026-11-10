@@ -1,0 +1,12 @@
+{
+  "child": "193627f42f4cd1ba6d563aefb8fa8f9428ecb56d",
+  "only_test_added": true,
+  "production_sha256": {
+    "cosmos_framework/model/generator/mot/attention.py": "db17dcd88ddba9e82994a336e5b196d30976ec23050f82adeb27933da6731e7b",
+    "cosmos_framework/model/generator/mot/inference_text_kv_memory.py": "8f51265feebc32a216505ab8896bcd95aae925cf6d8908ba34843e0e2303fcc8",
+    "cosmos_framework/model/generator/mot/unified_mot.py": "8233cdbdaf35802135abfa66e0b60c6f141a5e848338da1d1ae3c75f992384b7"
+  },
+  "test_sha256": "9af6fe4fc3cffed3ee917356a8d69391d8cf5c7755e4200482e9b4f1475273e8",
+  "expected_failure": "exact equality on cache hit after controlled one-ULP Prefix norm drift",
+  "shell_exit": 1
+}

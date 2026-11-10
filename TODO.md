@@ -1,4 +1,4 @@
-- **ISSUE35-KV-HIT-PARITY** — IN_PROGRESS; Codex; candidateChildbf707810 (base1936), isolatedbranch20261110. TruefirstPrefixKnormBF16delta proven sameprojection/Normweight; guardedexact-input request-localnormreference, changedPrefix/Vlive, no tolerance/training/globalprecision. ControlledoldRED1/newGREEN1, extraCPUsafetycases added; exactclean213CPU+realK1/32,K16/64 strictall30stepsGPU pending. No V3merge/privatefileexport/NoTTTrerun/Attentionperformance work.
+- **ISSUE35-KV-HIT-PARITY** — REVIEW；Codex 作者，GPT 独立审核。Formal Root `55b74ab461fda27e4ff6490023c828db0abc0a9f` / Child `bf707810f573e885f0966d65c232dc2a610d6a93`。受控旧 RED1 / 新 GREEN1；exact clean CPU 213 PASS、历史 W0 单独排除；真实 K1/source32、K16/source64 三路径 Action/Vision/raw15 及所有30步速度严格0误差，Shell0、源码与保护输入未变。仅修 Prefix 编译归一化数值差异，当前 Prefix 改变仍生效。申请见 `2026-11-10_Issue35_KVHit_PrefixNorm_55b74ab4_bf707810_Review_Request.md`；尚无独立批准/性能结论/V3 合并，原始服务器文件未外传。
 
 
 

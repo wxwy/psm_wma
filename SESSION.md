@@ -1,3 +1,46 @@
+# 2026-11-10 CST — Issue35 作者数值修复完成，申请新配对独立审核
+
+任务 ISSUE35-KV-HIT-PARITY：REVIEW。Codex 实现与作者证据，GPT 独立审核；
+没有新配对的 APPROVE_CODE，也没有 V3 合并或后续性能实验许可。
+
+Formal Root 55b74ab461fda27e4ff6490023c828db0abc0a9f /
+Child-Gitlink bf707810f573e885f0966d65c232dc2a610d6a93。
+两仓隔离分支 v3-local-prefix-kv-parity-issue35-20261110 已分别正常 push。
+本次 evidence/Inbox 提交是账本，不替代 Formal Pair。
+
+首差异定位：原 clean18be/1936 的 UND K/V 全28层静态且缓存读值精确；
+首次 GEN 层差异为 step1，K1 layer18、K16 layer16。经四个真实层的完整
+输出 SHA 无扰动核对，只有 Prefix K 中1个BF16元素不同；投影输入、投影
+输出、Norm权重相同，首差异在 compiled Prefix normalization 路径。
+修复只在精确相同投影输入下复用本请求原生首次归一化值；改变输入使用
+当前值，K/V仍逐层逐步投影、V始终当前，clear释放，无容差/跨Session缓存。
+
+作者CPU：原201+新增12，213 PASS，0失败/错误/跳过，Shell0；1个历史W0
+明确 deselected。9文件静态通过（原3个I001例外），1487指纹前后一致。
+受控旧1936仅测试增加 RED1FAIL，新同函数 GREEN1PASS；AST/SHA绑定通过。
+
+作者真实H100 author_h10002：PASS/Shell0。GPU6，iter15000、required/DCP
+身份通过，实际28层 OptimizedModule、limit8不变。K1/source32与K16/source64
+各三路径 Action/Vision/raw15 均精确等于独立旧原始Local输出；每条路径
+observer不改变输出，Stage1/2全部30步速度也各自等于原始Local。保护输入、
+FastState/Prefix、源码未变。首轮h10001夹具漏处理K16缺省K而FAIL，完整保留；
+只有外部夹具按默认K=H修正，生产 Pair 未变。未作性能或SR结论。
+
+GPU初查有其他任务，未动进程；Owner明确回复GPU4-7任务已停止，复查空闲
+才加载GPU6。最终4-7均0MiB、GPU6无compute PID，旧root2仍clean18be/1936。
+所有真实PT/图像/DCP/日志/FX留在data私有目录，无GPU0-3/训练/L2000操作。
+844私有文件索引SHA 1833504e303cedcfd87a065e921845afb36c1ebbc5d5c68c260f715ce656d623。
+新完整H100 gate SHA 94bacad2a7c2b1fafabe3d94763464028615fa71cce05ac6a5009e7e2fe6eb28。
+
+独立审核申请：docs/collab/codex/reviews/2026-11-10_Issue35_KVHit_PrefixNorm_55b74ab4_bf707810_Review_Request.md。
+原始本地CPU、作者工具、H100精确命令/派生表：docs/collab/codex/evidence/2026-11-10_issue35_kv_hit_parity/。
+打包校验通过：213JUnit、同函数AST、原生产SHA、2真实请求120速度比较均核对。
+重新fetch/ls-remote原review分支，仍796e28a7，无新父分支提交；当前候选基于它。
+下一步仅GPT对此新增量独立审核；保留上游Draft，不重复NoTTT/Sim/SR/900EP，
+不自动合并V3，不将本作者PASS称为独立Gate closure。
+
+# 以下为本轮实施期间的历史进展（已由上述完成记录更新）
+
 # 2026-11-10 CST — Issue35 guarded Prefix normalization candidate; CPU/H100 pending
 
 Task ISSUE35-KV-HIT-PARITY IN_PROGRESS, Codex author, independent GPT reviewer.
