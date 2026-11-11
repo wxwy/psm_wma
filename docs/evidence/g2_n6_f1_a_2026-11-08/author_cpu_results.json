@@ -1,0 +1,93 @@
+{
+  "baseline": "f1e4f1f0e3f2a48c3361987fabf58e406b313c7b",
+  "baseline_runtime": "c7ebb429074be5726ff9abead0e0d930a7e2138d",
+  "coverage": [
+    "official fixtures dict key/cls",
+    "object_cfgs unique list name and original category field",
+    "strict RFC6901, malformed pointer/category/role rejection",
+    "complete geom/body/material/world pose/color audit",
+    "declared subset marker cannot certify whole-scene source",
+    "sealed source review/manifest/cloud revalidation",
+    "internal audit/source/world contradictions and recomputed-hash attacks",
+    "synthetic FULLPHYSICS frame0/200 stable IDs and 0.2m motion"
+  ],
+  "environment": {
+    "gpu_used": false,
+    "model_inference": false,
+    "mujoco": "3.3.7",
+    "new_dependencies": false,
+    "numpy": "2.3.5",
+    "python": "Python 3.12.14"
+  },
+  "frozen_probes": {
+    "note": "31 are a subset of full suite coverage, not 31 additional distinct cases",
+    "old_worktree_commit": "f1e4f1f0e3f2a48c3361987fabf58e406b313c7b",
+    "same_tests_new_green": {
+      "cases": 31,
+      "errors": 0,
+      "failures": 0,
+      "junit_sha256": "c02ef5cacc2b5c3a13cc5042895cc385b53b3cf80d956b0fe4478de85f435462",
+      "skipped": 0
+    },
+    "same_tests_old_red": {
+      "cases": 31,
+      "errors": 0,
+      "failures": 17,
+      "junit_sha256": "467ccf4e9a53569bdae5acbc8cf7f65d41daf5ae869baf591426f093fa50f17d",
+      "skipped": 0
+    },
+    "source_files": {
+      "test_recorded_scope.py": {
+        "equals_current_repo_test": "g2/tests/test_recorded.py",
+        "sha256": "d5dd3be3defc88f7153d8ca0752eeb4812f3508bc988387fcb352e28ff6edbbc"
+      },
+      "test_source_identity_frozen.py": {
+        "equals_current_repo_test": "g2/tests/test_source_identity.py",
+        "sha256": "4e1b5e64f3ea88211cc205c08df4da7c0c1778d400f8bd4a5327579dc9f5507d"
+      }
+    },
+    "tests": [
+      "test_source_identity_frozen.py",
+      "test_recorded_scope.py::test_complete_marker_alone_cannot_create_full_scene_plan"
+    ]
+  },
+  "full_python_suite": {
+    "cases": 129,
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "cef43778d00ee1258d972aa73c06677d534e495cd4b6ab38c32ce04ef477fa77",
+    "skipped": 0
+  },
+  "full_suite_command": "python -m pytest g2/tests -q --junitxml=NEW_JUNIT",
+  "independent_code_review": {
+    "formal_GPT_server_acceptance": false,
+    "kind": "read-only second-agent review required by AGENTS.md"
+  },
+  "initial_identity_red": {
+    "cases": 29,
+    "errors": 0,
+    "failures": 16,
+    "junit_sha256": "4f0f74ff97671a770e327e374bbad24a59339ff9bd41809d64ce9aff5b677233",
+    "skipped": 0
+  },
+  "native_catkin": "UNCHANGED_NOT_RERUN_IN_THIS_PSM_ONLY_BATCH",
+  "privacy": {
+    "data_server_access": false,
+    "server_files_downloaded": false,
+    "server_files_published": false,
+    "test_inputs": "self-created schema/MJCF/state fixtures; public issue format facts only"
+  },
+  "real_gates": {
+    "Layout10_frame0_frame200": "NOT_RUN_HERE",
+    "Layout1_frame0_frame200": "NOT_RUN_HERE",
+    "PSS_Cosmos": "NOT_STARTED",
+    "full_scene_role_material_certification": "PENDING_INDEPENDENT_SERVER_REVIEW",
+    "normal_native_structures": "NOT_IMPLEMENTED_IN_THIS_BATCH",
+    "real_model_execution": "NOT_RUN",
+    "six_view_human_acceptance": "HUMAN_PENDING"
+  },
+  "schema": "g2_n6_f1_a_author_evidence_v1",
+  "scope": "F1_A_SOURCE_IDENTITY_AND_DECLARED_VS_FULL_SCENE_ONLY",
+  "unchanged_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "unchanged_native": "2009fae35d86579bb22c273fb97ec1bf0835b533"
+}

@@ -1,0 +1,67 @@
+{
+  "human_gate": "PENDING",
+  "private_layout_acceptance": false,
+  "runs": [
+    {
+      "frame_id": 0,
+      "islands": 2,
+      "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+      "points": 25208,
+      "reference_image": "NOT_SUPPLIED",
+      "rooms": 1,
+      "scene_id": "TEST_ONLY_F2_rectangular",
+      "snapshot_sha256": "26cb6cc94e6666fc7fea893d2a3973c98ce6fa0993b62035e5855bf75f5eec7c",
+      "source_sha256": "9901125d8ff57c4ae9f0759fd978424f15d74f42d1a40633786c9745253542dd",
+      "status": "MUJOCO_FULL_MAP_GT_PENDING_HUMAN",
+      "surfaces_sha256": "895945a700dfb537564bdc8a4accb1c7683646cce9b7152008f81e1efba1127c",
+      "training_ready": false,
+      "views": 14
+    },
+    {
+      "frame_id": 200,
+      "islands": 2,
+      "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+      "points": 25208,
+      "reference_image": "NOT_SUPPLIED",
+      "rooms": 1,
+      "scene_id": "TEST_ONLY_F2_rectangular",
+      "snapshot_sha256": "ca282336ca8cd51a6d8f85dec0b0aaf951508b9aebea63d3fd418037ad81547f",
+      "source_sha256": "9901125d8ff57c4ae9f0759fd978424f15d74f42d1a40633786c9745253542dd",
+      "status": "MUJOCO_FULL_MAP_GT_PENDING_HUMAN",
+      "surfaces_sha256": "98517775edea14ef3cc3b2923f07bc64c03d29fd0fa84a2392d6316bb29a6963",
+      "training_ready": false,
+      "views": 14
+    },
+    {
+      "frame_id": 0,
+      "islands": 1,
+      "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+      "points": 27344,
+      "reference_image": "NOT_SUPPLIED",
+      "rooms": 1,
+      "scene_id": "TEST_ONLY_F2_notch",
+      "snapshot_sha256": "7a502183d74b6a632c911eb05cd8827d1682091548b826880d0145476faa9a0c",
+      "source_sha256": "0143624becfd03a1606ae4d8d1c4cb6ae36d38bb5516fccddd6950eb7d80dea1",
+      "status": "MUJOCO_FULL_MAP_GT_PENDING_HUMAN",
+      "surfaces_sha256": "07853535ae41cee2f91aa08ce84232e9d15dd34b42b1ad4d8591073f1b8d533f",
+      "training_ready": false,
+      "views": 10
+    },
+    {
+      "frame_id": 200,
+      "islands": 1,
+      "native_build_source_sha256": "f07b7d5385aaba9fcf5a47cd5aa693a58f93fb3e3f741ac55f8d5ba9c3566da0",
+      "points": 27344,
+      "reference_image": "NOT_SUPPLIED",
+      "rooms": 1,
+      "scene_id": "TEST_ONLY_F2_notch",
+      "snapshot_sha256": "88551b004aeddf7064608e7b3ffd5d3570e407c2f2a5cac015f0b670745543a7",
+      "source_sha256": "0143624becfd03a1606ae4d8d1c4cb6ae36d38bb5516fccddd6950eb7d80dea1",
+      "status": "MUJOCO_FULL_MAP_GT_PENDING_HUMAN",
+      "surfaces_sha256": "887ab720b34c82fed0ab73935261f4308dfb3ce58a315ec3372d66dbb45dcfea",
+      "training_ready": false,
+      "views": 10
+    }
+  ],
+  "schema": "g2_own_full_map_smoke_result_v1"
+}

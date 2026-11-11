@@ -1,0 +1,515 @@
+FFFFFFFFFFFFFFF                                                          [100%]
+=================================== FAILURES ===================================
+__________ test_pure_micropositive_mesh_is_sampled_by_default[1e-08] ___________
+
+scale = 1e-08
+
+    @pytest.mark.parametrize("scale", [1e-8, 1e-100, 1e-200, np.nextafter(0., 1.)])
+    def test_pure_micropositive_mesh_is_sampled_by_default(scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]])
+        faces = np.asarray([[0, 1, 2]])
+        assert Fraction(float(scale)) ** 2 > 0
+        original = vertices.tobytes(), faces.tobytes()
+>       points, ids, bary, audit = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+00, 0.e+00, 0.e+00],
+       [1.e-08, 0.e+00, 0.e+00],
+       [0.e+00, 1.e-08, 0.e+00]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+__________ test_pure_micropositive_mesh_is_sampled_by_default[1e-100] __________
+
+scale = 1e-100
+
+    @pytest.mark.parametrize("scale", [1e-8, 1e-100, 1e-200, np.nextafter(0., 1.)])
+    def test_pure_micropositive_mesh_is_sampled_by_default(scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]])
+        faces = np.asarray([[0, 1, 2]])
+        assert Fraction(float(scale)) ** 2 > 0
+        original = vertices.tobytes(), faces.tobytes()
+>       points, ids, bary, audit = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-100, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-100, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+__________ test_pure_micropositive_mesh_is_sampled_by_default[1e-200] __________
+
+scale = 1e-200
+
+    @pytest.mark.parametrize("scale", [1e-8, 1e-100, 1e-200, np.nextafter(0., 1.)])
+    def test_pure_micropositive_mesh_is_sampled_by_default(scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]])
+        faces = np.asarray([[0, 1, 2]])
+        assert Fraction(float(scale)) ** 2 > 0
+        original = vertices.tobytes(), faces.tobytes()
+>       points, ids, bary, audit = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+__________ test_pure_micropositive_mesh_is_sampled_by_default[5e-324] __________
+
+scale = np.float64(5e-324)
+
+    @pytest.mark.parametrize("scale", [1e-8, 1e-100, 1e-200, np.nextafter(0., 1.)])
+    def test_pure_micropositive_mesh_is_sampled_by_default(scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]])
+        faces = np.asarray([[0, 1, 2]])
+        assert Fraction(float(scale)) ** 2 > 0
+        original = vertices.tobytes(), faces.tobytes()
+>       points, ids, bary, audit = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [5.e-324, 0.e+000, 0.e+000],
+       [0.e+000, 5.e-324, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_______ test_long_thin_positive_face_obeys_edge_spacing_and_exact_budget _______
+
+    def test_long_thin_positive_face_obeys_edge_spacing_and_exact_budget():
+        vertices = np.asarray([[0., 0., 0.], [10., 0., 0.], [0., 1e-100, 0.]])
+        faces = np.asarray([[0, 1, 2]])
+        # Longest edge / spacing = 10, hence 66 points regardless of area.
+>       points, ids, _ = sample_surface(vertices, faces, 1., 66)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e+001, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-100, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 66
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_ test_underflowed_squared_edge_does_not_bypass_subdivision_budget[float32-1e-30] _
+
+dtype = <class 'numpy.float32'>, scale = 1e-30
+
+    @pytest.mark.parametrize("dtype,scale", [(np.float32, 1e-30), (np.float64, 1e-200)])
+    def test_underflowed_squared_edge_does_not_bypass_subdivision_budget(dtype, scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]], dtype)
+        with pytest.raises(SamplingFailure, match="budget") as caught:
+>           sample_surface(vertices, np.asarray([[0, 1, 2]]), scale / 10, 3)
+
+g2/tests/test_f1c_positive_faces.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+00, 0.e+00, 0.e+00],
+       [1.e-30, 0.e+00, 0.e+00],
+       [0.e+00, 1.e-30, 0.e+00]], dtype=float32)
+faces = array([[0, 1, 2]]), spacing = 1e-31, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+
+During handling of the above exception, another exception occurred:
+
+dtype = <class 'numpy.float32'>, scale = 1e-30
+
+    @pytest.mark.parametrize("dtype,scale", [(np.float32, 1e-30), (np.float64, 1e-200)])
+    def test_underflowed_squared_edge_does_not_bypass_subdivision_budget(dtype, scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]], dtype)
+>       with pytest.raises(SamplingFailure, match="budget") as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'budget'
+E        Input: 'nonzero near-degenerate visual triangle'
+
+g2/tests/test_f1c_positive_faces.py:51: AssertionError
+_ test_underflowed_squared_edge_does_not_bypass_subdivision_budget[float64-1e-200] _
+
+dtype = <class 'numpy.float64'>, scale = 1e-200
+
+    @pytest.mark.parametrize("dtype,scale", [(np.float32, 1e-30), (np.float64, 1e-200)])
+    def test_underflowed_squared_edge_does_not_bypass_subdivision_budget(dtype, scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]], dtype)
+        with pytest.raises(SamplingFailure, match="budget") as caught:
+>           sample_surface(vertices, np.asarray([[0, 1, 2]]), scale / 10, 3)
+
+g2/tests/test_f1c_positive_faces.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1e-201, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+
+During handling of the above exception, another exception occurred:
+
+dtype = <class 'numpy.float64'>, scale = 1e-200
+
+    @pytest.mark.parametrize("dtype,scale", [(np.float32, 1e-30), (np.float64, 1e-200)])
+    def test_underflowed_squared_edge_does_not_bypass_subdivision_budget(dtype, scale):
+        vertices = np.asarray([[0., 0., 0.], [scale, 0., 0.], [0., scale, 0.]], dtype)
+>       with pytest.raises(SamplingFailure, match="budget") as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'budget'
+E        Input: 'nonzero near-degenerate visual triangle'
+
+g2/tests/test_f1c_positive_faces.py:51: AssertionError
+__ test_zero_micropositive_and_normal_faces_keep_original_ids_and_allocation ___
+
+    def test_zero_micropositive_and_normal_faces_keep_original_ids_and_allocation():
+        vertices = np.asarray([[0., 0., 0.], [1e-8, 0., 0.], [0., 1e-8, 0.],
+                               [1., 0., 0.], [0., 1., 0.]])
+        faces = np.asarray([[0, 0, 1], [0, 1, 2], [1, 1, 2], [0, 3, 4]])
+>       points, ids, _, audit = sample_surface(vertices, faces, 2., 6, with_audit=True)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+00, 0.e+00, 0.e+00],
+       [1.e-08, 0.e+00, 0.e+00],
+       [0.e+00, 1.e-08, 0.e+00],
+       [1.e+00, 0.e+00, 0.e+00],
+       [0.e+00, 1.e+00, 0.e+00]])
+faces = array([[0, 0, 1],
+       [0, 1, 2],
+       [1, 1, 2],
+       [0, 3, 4]])
+spacing = 2.0, remaining = 6
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_____ test_positive_area_weight_underflow_is_explicit_and_disk_verifiable ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_positive_area_weight_unde0')
+
+    def test_positive_area_weight_underflow_is_explicit_and_disk_verifiable(tmp_path):
+>       cloud, manifest, coverage, sampling = _tiny_color_evidence(tmp_path)
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_f1c_positive_faces.py:73: in _tiny_color_evidence
+    points, ids, _, sampling = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+___ test_zero_or_negative_area_weights_cannot_silently_pass[legacy_protocol] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_zero_or_negative_area_wei0')
+fault = 'legacy_protocol'
+
+    @pytest.mark.parametrize("fault", ["legacy_protocol", "missing_annotation", "wrong_face", "wrong_count", "negative_weight"])
+    def test_zero_or_negative_area_weights_cannot_silently_pass(tmp_path, fault):
+>       cloud, manifest, coverage, _ = _tiny_color_evidence(tmp_path)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_f1c_positive_faces.py:73: in _tiny_color_evidence
+    points, ids, _, sampling = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_ test_zero_or_negative_area_weights_cannot_silently_pass[missing_annotation] __
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_zero_or_negative_area_wei1')
+fault = 'missing_annotation'
+
+    @pytest.mark.parametrize("fault", ["legacy_protocol", "missing_annotation", "wrong_face", "wrong_count", "negative_weight"])
+    def test_zero_or_negative_area_weights_cannot_silently_pass(tmp_path, fault):
+>       cloud, manifest, coverage, _ = _tiny_color_evidence(tmp_path)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_f1c_positive_faces.py:73: in _tiny_color_evidence
+    points, ids, _, sampling = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_____ test_zero_or_negative_area_weights_cannot_silently_pass[wrong_face] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_zero_or_negative_area_wei2')
+fault = 'wrong_face'
+
+    @pytest.mark.parametrize("fault", ["legacy_protocol", "missing_annotation", "wrong_face", "wrong_count", "negative_weight"])
+    def test_zero_or_negative_area_weights_cannot_silently_pass(tmp_path, fault):
+>       cloud, manifest, coverage, _ = _tiny_color_evidence(tmp_path)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_f1c_positive_faces.py:73: in _tiny_color_evidence
+    points, ids, _, sampling = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_____ test_zero_or_negative_area_weights_cannot_silently_pass[wrong_count] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_zero_or_negative_area_wei3')
+fault = 'wrong_count'
+
+    @pytest.mark.parametrize("fault", ["legacy_protocol", "missing_annotation", "wrong_face", "wrong_count", "negative_weight"])
+    def test_zero_or_negative_area_weights_cannot_silently_pass(tmp_path, fault):
+>       cloud, manifest, coverage, _ = _tiny_color_evidence(tmp_path)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_f1c_positive_faces.py:73: in _tiny_color_evidence
+    points, ids, _, sampling = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+___ test_zero_or_negative_area_weights_cannot_silently_pass[negative_weight] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_zero_or_negative_area_wei4')
+fault = 'negative_weight'
+
+    @pytest.mark.parametrize("fault", ["legacy_protocol", "missing_annotation", "wrong_face", "wrong_count", "negative_weight"])
+    def test_zero_or_negative_area_weights_cannot_silently_pass(tmp_path, fault):
+>       cloud, manifest, coverage, _ = _tiny_color_evidence(tmp_path)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_f1c_positive_faces.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_f1c_positive_faces.py:73: in _tiny_color_evidence
+    points, ids, _, sampling = sample_surface(vertices, faces, 1., 3, with_audit=True)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[0.e+000, 0.e+000, 0.e+000],
+       [1.e-200, 0.e+000, 0.e+000],
+       [0.e+000, 1.e-200, 0.e+000]])
+faces = array([[0, 1, 2]]), spacing = 1.0, remaining = 3
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+_____ test_compiled_micropositive_face_keeps_uv_hash_and_dynamic_identity ______
+
+mesh_scene = (PosixPath('/tmp/pytest-of-agent/pytest-86/test_compiled_micropositive_fa0/own_source'), PosixPath('/tmp/pytest-of-age..._source/model.xml'), PosixPath('/tmp/pytest-of-agent/pytest-86/test_compiled_micropositive_fa0/own_source/roles.json'))
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_compiled_micropositive_fa0')
+
+    def test_compiled_micropositive_face_keeps_uv_hash_and_dynamic_identity(mesh_scene, tmp_path):
+        import mujoco
+        root, xml, metadata = mesh_scene
+        obj = root / "mesh.obj"
+        # IDs14/15 are respectively a positive microface and exact zero; original
+        # UV slot15 addresses the same red texel as the original odd UV slots.
+        obj.write_text(obj.read_text() + "v 0 0 0\nv 1e-8 0 0\nv 0 1e-8 0\n"
+            "vt .25 .25\nvt .75 .25\nf 9/15 10/15 11/15\nf 9/16 9/16 10/16\n")
+        model, sources = load_model(xml)
+        data = mujoco.MjData(model); state_kind = mujoco.mjtState.mjSTATE_FULLPHYSICS
+        states = np.zeros((201, mujoco.mj_stateSize(model, state_kind)))
+        for frame, distance in ((0, 0.), (200, .12)):
+            data.qpos[:] = distance; data.time = frame * .02
+            mujoco.mj_getState(model, data, states[frame], state_kind)
+        archive = root / "states.npz"; np.savez(archive, states=states)
+        meta = read_json(metadata)
+        meta["state_source"] = {"model_source_sha256": model_source_hash(sources), "states_sha256": digest(archive)}
+        write_json(metadata, meta)
+        outputs = []
+        for frame in (0, 200):
+            out = tmp_path / ("frame" + str(frame))
+>           manifest = export(xml, metadata, out, states=archive, frame=frame,
+                              state_format="mujoco_fullphysics", spacing=.4)
+
+g2/tests/test_f1c_positive_faces.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/sim/prescan.py:259: in export
+    points,face_ids,weights,sampling = sample_surface(vertices,faces,spacing,max_points-count,with_audit=True)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+vertices = array([[-2.e-01, -3.e-01, -4.e-01],
+       [-2.e-01, -3.e-01,  4.e-01],
+       [-2.e-01,  3.e-01, -4.e-01],
+       [-2...   [ 0.e+00,  0.e+00,  0.e+00],
+       [ 1.e-08,  0.e+00,  0.e+00],
+       [ 0.e+00,  1.e-08,  0.e+00]], dtype=float32)
+faces = array([[ 0,  1,  3],
+       [ 0,  0,  1],
+       [ 0,  3,  2],
+       [ 4,  6,  7],
+       [ 4,  7,  5],
+       [ 0,  ...
+       [ 1,  5,  7],
+       [ 1,  7,  3],
+       [ 2,  2,  2],
+       [ 8,  9, 10],
+       [ 8,  8,  9]], dtype=int32)
+spacing = 0.4, remaining = 5000000
+
+    def sample_surface(vertices, faces, spacing, remaining, *, with_audit=False):
+        """Sample every retained face in original order, within a hard point budget."""
+        audit = audit_surface(vertices, faces)
+        if audit["status"] == "REJECTED":
+>           raise SamplingFailure(audit["rejection_reason"], audit)
+E           g2.sim.surface_sampling.SamplingFailure: nonzero near-degenerate visual triangle
+
+g2/sim/surface_sampling.py:108: SamplingFailure
+-------------- generated xml file: /workspace/work/n6_f1c_red.xml --------------
+=========================== short test summary info ============================
+FAILED g2/tests/test_f1c_positive_faces.py::test_pure_micropositive_mesh_is_sampled_by_default[1e-08]
+FAILED g2/tests/test_f1c_positive_faces.py::test_pure_micropositive_mesh_is_sampled_by_default[1e-100]
+FAILED g2/tests/test_f1c_positive_faces.py::test_pure_micropositive_mesh_is_sampled_by_default[1e-200]
+FAILED g2/tests/test_f1c_positive_faces.py::test_pure_micropositive_mesh_is_sampled_by_default[5e-324]
+FAILED g2/tests/test_f1c_positive_faces.py::test_long_thin_positive_face_obeys_edge_spacing_and_exact_budget
+FAILED g2/tests/test_f1c_positive_faces.py::test_underflowed_squared_edge_does_not_bypass_subdivision_budget[float32-1e-30]
+FAILED g2/tests/test_f1c_positive_faces.py::test_underflowed_squared_edge_does_not_bypass_subdivision_budget[float64-1e-200]
+FAILED g2/tests/test_f1c_positive_faces.py::test_zero_micropositive_and_normal_faces_keep_original_ids_and_allocation
+FAILED g2/tests/test_f1c_positive_faces.py::test_positive_area_weight_underflow_is_explicit_and_disk_verifiable
+FAILED g2/tests/test_f1c_positive_faces.py::test_zero_or_negative_area_weights_cannot_silently_pass[legacy_protocol]
+FAILED g2/tests/test_f1c_positive_faces.py::test_zero_or_negative_area_weights_cannot_silently_pass[missing_annotation]
+FAILED g2/tests/test_f1c_positive_faces.py::test_zero_or_negative_area_weights_cannot_silently_pass[wrong_face]
+FAILED g2/tests/test_f1c_positive_faces.py::test_zero_or_negative_area_weights_cannot_silently_pass[wrong_count]
+FAILED g2/tests/test_f1c_positive_faces.py::test_zero_or_negative_area_weights_cannot_silently_pass[negative_weight]
+FAILED g2/tests/test_f1c_positive_faces.py::test_compiled_micropositive_face_keeps_uv_hash_and_dynamic_identity
+15 failed in 0.39s

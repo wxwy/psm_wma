@@ -1,3 +1,15 @@
+# 2026-11-11 CST — G2 F24 正式 V3 集成：IN_PROGRESS
+
+任务 `G2-F24-V3-INTEGRATION`，负责人 ChatGPT/Codex。Owner 已要求继续构建并将服务器跑通的 G2 实现逐文件整合到正式 V3/nav_sg G2；服务器不进行 commit/push。
+
+本次正式 V3 基线 `3966058af6f2f3e189bdebe9e1099249c80b2e5e`，树 `bfa2b4fb36d67d1bec81ae075cab6d3e2a4dd825`；F24 仓库候选 `32f12f8dba44277ad0d3a2f16404267b2044a446`；共同基线 `7b8b733e1f585bb44a0eac7c14ad545c29355a86`。保留正式 V3 Cosmos Gitlink `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2` 及现有训练/评测脚本、文档与账本主体。
+
+预计修改范围：候选 `g2/` 共67个源码/测试/配置文件、其非冲突 G2 文档与历史证据，以及本次集成记录；补齐直接10mm视觉表面体素源、明确数据集输入的 Episode 入口、native delta transport 与已验收 GPU View 接线。10cm Occupancy/ESDF/Room 与10mm彩色视图地图保持既定职责。PSM与nav_sg的同名g2包分别在各自仓库进程中运行。
+
+先按文件/blob校核既有仓库代码和服务器验证实现，再在隔离目录编译、执行完整相关CPU测试和实际25-state端到端复验。已有6个merger测试仅覆盖静态/动态颜色合并，不能代表完整生产入口验收。所有执行命令、输入、输出与资源在启动前说明，真实数据与图像保留在授权服务器。当前状态仅为集成进行中；实际测试结果与最终源码SHA由后续记录回填。9,126-episode全量生产及模型训练不在本步骤内。
+
+以下正式 V3 历史记录保持原文。
+
 # 2026-11-10 CST — Issue35 请求内逐层 Prefix K/V 投影复用实施
 
 任务 ISSUE35-PREFIX-PROJECTION：IN_PROGRESS；Codex实现/CPU，GPT独立审核及真实H100，仅K16/source64。

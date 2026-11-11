@@ -1,0 +1,15 @@
+{
+  "scope": "AUTHOR_CPU_OWN_SOURCE_INSTANCES_NOT_REAL_SERVER_ACCEPTANCE",
+  "passed": 371,
+  "failure": 0,
+  "error": 0,
+  "skipped": 0,
+  "old336_retained": true,
+  "old38_files_unchanged": true,
+  "private_original_files_exported": false,
+  "actual590_proposals": "590_EVIDENCE_BOUND_AUTHOR_CANDIDATES_PENDING_GPT",
+  "independent_gpt_verdict": "PENDING",
+  "template_default_positive_negative_controls": true,
+  "new_rule_cases": 35,
+  "native_default_merge_parity": true
+}

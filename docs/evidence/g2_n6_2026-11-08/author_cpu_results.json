@@ -1,0 +1,266 @@
+{
+  "bases": {
+    "nav_sg": "e86c3844325b13092e1713290b079cfb63466cfb",
+    "psm_wma": "7b8b733e1f585bb44a0eac7c14ad545c29355a86",
+    "unchanged_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e"
+  },
+  "date_utc": "2026-11-08",
+  "environment": {
+    "Pillow": "11.3.0",
+    "container_network": "none",
+    "gpu_used": false,
+    "mujoco": "3.3.7",
+    "native": "ROS Noetic / Ubuntu 20.04 / GCC 9.4",
+    "numpy": "2.3.5",
+    "opencv_headless": "4.10.0.84",
+    "python": "3.12.14"
+  },
+  "g2_python": {
+    "command": "python -m pytest g2/tests -q",
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "9b69ea4ad912e74e83f4fbe88f67da9fb61f11f2bd3e30cee5116b64b122f374",
+    "passed": 64,
+    "skipped": 0
+  },
+  "gates": {
+    "Cosmos_training": "NOT_RUN_NOT_AUTHORIZED",
+    "issue_26": "OPEN",
+    "normal_real_rgbd_model_observations": "NOT_RUN",
+    "normal_structural_roots": "BLOCKED_NOT_IMPLEMENTED",
+    "oblique_complex_walls": "UNSUPPORTED_CONSERVATIVE_INCOMPLETE",
+    "private_Layout1_Layout10_frame0_200": "NOT_RUN",
+    "whole_house_material_completeness": "PENDING_SOURCE_AND_VISUAL_REVIEW"
+  },
+  "independent_review": {
+    "formal_server_approval": false,
+    "kind": "read-only code review, separate author agent required by AGENTS.md",
+    "open_P0_P1_in_draft_scope": 0
+  },
+  "native_build": {
+    "active_tree": "mapping_8_3/mapping",
+    "gt_native_sha256": "df8a2609825346089158c579665c12ee9e262648202d65782ccb5eca58218299",
+    "historical_tree": "NOT_BUILT",
+    "mapping_library_sha256": "f4c144b35fabc45ec83eb6cc635caebef7743f00ab1b424f0a394d48203fc192",
+    "mapping_node_sha256": "ebdd658556da044fdd56ec186797865977287d3ef7279182a5166a4f522c9475",
+    "source_sha256": "7a8ff690e150956d59f7b2773561034e4956a5344190f7e1d08135d4c92c4bae",
+    "status": "PASS"
+  },
+  "native_roundtrip": {
+    "doorway_small_room_generality": "NOT_ACCEPTED",
+    "frames_per_invocation": [
+      0,
+      200
+    ],
+    "invocations": 6,
+    "l_shaped_structural_coverage": "INCOMPLETE_NO_ISLAND_INVENTED",
+    "modes": [
+      "esdf_grid",
+      "gvd"
+    ],
+    "part_joint_provenance_preserved": true,
+    "saved_state_movement_m": 0.2,
+    "sealed_and_rendered_snapshots": 12,
+    "sources": [
+      "TEST_ONLY_rectangular",
+      "TEST_ONLY_l_shaped",
+      "TEST_ONLY_doorway"
+    ],
+    "stable_native_object_ids": true
+  },
+  "native_tests": {
+    "catkin_wrapper_inclusive_summary": 258,
+    "distinct_testcases": 129,
+    "errors": 0,
+    "failures": 0,
+    "new_spatial_cases": 9,
+    "skipped": 0,
+    "xml_inventory": [
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-aib_clusterer_test.xml",
+        "sha256": "2fb1f22452fb17ac18c5858e672a140482b18508ab615514e38a35565cebe3a6",
+        "skipped": 0,
+        "testcases": 2
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-depth_zero_invalid_test.xml",
+        "sha256": "b5649f50603ec4ad406df106dbc9d42d319f21485089ad0915b298f730a3e601",
+        "skipped": 0,
+        "testcases": 6
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-encoder_sanity_check_test.xml",
+        "sha256": "bf0fba9ad3aa82daf4b2452c209dbc8038a2018fd46f8de246afe840433ce9ab",
+        "skipped": 0,
+        "testcases": 7
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-gt_oracle_bridge_test.xml",
+        "sha256": "7eadbc118a02063c85ba1f3bf97a174c3392e11155def21ad946bf6bf98a4f25",
+        "skipped": 0,
+        "testcases": 5
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-gt_oracle_import_test.xml",
+        "sha256": "9ac9d0c8529d60e9dea0b59f71c28ddd80a1dd67085f6b10aaf7b1a919f9b486",
+        "skipped": 0,
+        "testcases": 9
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-gt_oracle_scene_graph_test.xml",
+        "sha256": "09888359e5ebf0a0d568bf6ef99573b0d82cc7b440f0536f620e165811f035a4",
+        "skipped": 0,
+        "testcases": 6
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-gt_room_pipeline_test.xml",
+        "sha256": "1703023796fc004b8ded27a70cfa30d847fc87d3e3e9e6e018429bb839f0af8e",
+        "skipped": 0,
+        "testcases": 9
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-map_ros_scheduler_test.xml",
+        "sha256": "65242d50e39c7bfef03cdb72d661b9ca2ed1350c24277044718c7228afece81e",
+        "skipped": 0,
+        "testcases": 8
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-object_evidence_map_test.xml",
+        "sha256": "e680d2b8943db80052c33fc77b548999ad7f38efa746dc8211ccf8e5eab010ba",
+        "skipped": 0,
+        "testcases": 3
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-object_lifecycle_log_odds_test.xml",
+        "sha256": "cea15d4bde8497a192bc9b639add4ff68dfa5743a7a14664bd820e3886c9b3ef",
+        "skipped": 0,
+        "testcases": 9
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-object_map_exporter_test.xml",
+        "sha256": "5d31280c1c7fedb32bf9da509670c84c91c8f6cd04f07570251bf68fa93dcef1",
+        "skipped": 0,
+        "testcases": 2
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-object_map_utils_test.xml",
+        "sha256": "89f6da35d4255bc6a517be6bb696e8f83012b30cd1da38861bc17e51b4fbb90c",
+        "skipped": 0,
+        "testcases": 3
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-object_visibility_utils_test.xml",
+        "sha256": "9f52bc2525e410ccb44a649294be1112c53c6d2fd47e728a3431edf14d7c4d04",
+        "skipped": 0,
+        "testcases": 16
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-offline_replay_contract_test.xml",
+        "sha256": "bf2686945708283a4d62d7e216cf0c0bc7adf51a428a5001cae82116a28a3432",
+        "skipped": 0,
+        "testcases": 6
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-precolored_cloud_test.xml",
+        "sha256": "913a5740854f4d1d985921e2cc9b101b8025808970c033383203b1764835a369",
+        "skipped": 0,
+        "testcases": 9
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-proto_bank_utils_test.xml",
+        "sha256": "c4e3a65059fb71e3c8f8bf6685855ef91ad8f474ad87782e63c7981750947bde",
+        "skipped": 0,
+        "testcases": 9
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-spatial_snapshot_test.xml",
+        "sha256": "f0cf73d065a32560c1191e26e460bae96152d06b44ce1589f6504efe18ecbf85",
+        "skipped": 0,
+        "testcases": 9
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "file": "gtest-vmf_identity_utils_test.xml",
+        "sha256": "72e5ca822dac7296e4949ebfd34e9c1da1fa29b77b68987a1466aea6b68dbc08",
+        "skipped": 0,
+        "testcases": 11
+      }
+    ]
+  },
+  "nav_python": {
+    "command": "python -m pytest g2/offline/tests g2/semantic/tests g2/gt/tests -q -rs",
+    "errors": 0,
+    "failures": 0,
+    "new_recorded_adapter_checks": 6,
+    "passed": 449,
+    "skip_reason": "existing CPU torch model-service/pooling tests require optional CPU torch, not installed",
+    "skipped": 73
+  },
+  "normal_prebuilt_geometry_smoke": {
+    "frames_paired": 4,
+    "frames_processed": 4,
+    "frames_published": 4,
+    "frames_read": 4,
+    "map_evidence": {
+      "first_point_world": [
+        3.5596208572387695,
+        -0.6371381878852844,
+        2
+      ],
+      "frame_index": 3,
+      "input_points": 32768,
+      "occupied_voxels": 8231,
+      "source": "native_mapping_ack",
+      "stamp_ns": 1300000000
+    },
+    "meaning": "synthetic native geometry initialization and continued input ONLY; no genuine model/source-scene acceptance",
+    "status": "COMPLETE",
+    "world_frame": "world"
+  },
+  "raw_log_sha256": {
+    "n6_native_frozen_build.log": "40926ac872802a5f580bdffa161bd69b33de97463def18b63fa5953f3da5982b",
+    "n6_native_roundtrip.log": "8f2f396df85510e244b3320db36f154a3d27d863604dab300d121e75bc13041e",
+    "n6_native_tests_frozen.log": "dbfc27f3585e00bbf89c08dd13c84146af0a680875c71c08feb4636b678c516f",
+    "n6_nav_python_final.log": "654c6e48bdee5fbf15be910970b5c971b6f990c88019259171f1c27839609007",
+    "n6_postprocess.log": "0b9ea520268534090c2181f9cf48b48a2088da510c78e33d7101cfc71c779329",
+    "n6_prebuilt_smoke_r4.log": "1819279815bfad231cb71f1750f43b60eec34f6af5b31d91e753005323e20f48",
+    "n6_python_tests_final.log": "66dfa494d9eb8fb5134a4a98db1ba407aca51fee36c86975b8a885d11aa83748"
+  },
+  "schema": "g2_n6_author_cpu_evidence_v1",
+  "scope": "AUTHOR_CPU_NATIVE_TEST_ONLY_NOT_SERVER_OR_HUMAN_ACCEPTANCE"
+}

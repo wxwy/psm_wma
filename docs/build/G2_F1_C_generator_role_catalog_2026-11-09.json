@@ -1,0 +1,277 @@
+{
+  "schema": "g2_generator_role_catalog_v1",
+  "status": "PUBLIC_SOURCE_REFERENCE_ONLY",
+  "sources": {
+    "counter": {
+      "path": "robocasa/models/fixtures/counter.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "ec83b29c637e9b6e33a645bdc2b4065f3edcfad3",
+      "sha256": "77f992d01aa1ae5f21ed7f170d0aab9c303c32148f4b427651c04912be8ce68a",
+      "bytes": 34185,
+      "root": "robocasa"
+    },
+    "windows": {
+      "path": "robocasa/models/fixtures/windows.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "a31278df73439a9db6f20d978b44997e24d0cc0e",
+      "sha256": "48b08a65f45d1bf5a54dfe1ef8544a60e4bd20d17653520c4708c0c9b9168a67",
+      "bytes": 12759,
+      "root": "robocasa"
+    },
+    "handles": {
+      "path": "robocasa/models/fixtures/handles.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "6ecec8a9cc1fb23e33dd8833dd7eb9ac35dbab6f",
+      "sha256": "4a50abe7116c8a91aedd99fd1c45212bf52b747e22bf7be1ced9ec5cfc487364",
+      "bytes": 12726,
+      "root": "robocasa"
+    },
+    "fixture": {
+      "path": "robocasa/models/fixtures/fixture.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "75b1dc813e87f738fd37637b8ee7ba203c9e5afc",
+      "sha256": "6945428028acdcf39b0e139f2cbc95709460ad962d23b9964fbf32563f967c57",
+      "bytes": 24911,
+      "root": "robocasa"
+    },
+    "panels": {
+      "path": "robocasa/models/fixtures/cabinet_panels.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "c1c76b0fc3fba1b6cf96d58af9de014d7db58121",
+      "sha256": "00b266c43a36048d87f3b472899a17583d24e8e0c081c56796466e7716b2b743",
+      "bytes": 24795,
+      "root": "robocasa"
+    },
+    "cabinets": {
+      "path": "robocasa/models/fixtures/cabinets.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "268fee24027bafea14b2d531c884f892e3e3b80c",
+      "sha256": "5c49fa3fb08f64263879fae2b51beb47cfe54951ff5ba3259aaff63c0b1d5661",
+      "bytes": 47865,
+      "root": "robocasa"
+    },
+    "scene_builder": {
+      "path": "robocasa/models/scenes/scene_builder.py",
+      "commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+      "repository": "robocasa/robocasa",
+      "git_blob_sha": "d04ba123e030cf4381ad1c3175ca09be56a75965",
+      "sha256": "34d4e139ea3b2c7a3dfae6532899808b96167fd06990fe00fd6a4152688fb7b8",
+      "bytes": 15575,
+      "root": "robocasa"
+    },
+    "objects": {
+      "path": "robosuite/models/objects/objects.py",
+      "commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "repository": "ARISE-Initiative/robosuite",
+      "git_blob_sha": "463fca1b2a04ea43f87acb56c5ab83d01b6a2328",
+      "sha256": "5844cc77141cbe4cbddfe064db3eb7c4e61669e2cfad7bf1097f1f12bed9c64e",
+      "bytes": 24438,
+      "root": "robosuite"
+    },
+    "generated": {
+      "path": "robosuite/models/objects/generated_objects.py",
+      "commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+      "repository": "ARISE-Initiative/robosuite",
+      "git_blob_sha": "770624b848099721f9d86ec8193e2cbd0c6e6ca2",
+      "sha256": "07e1fd5d1e8ac5132a110738b07f191694c2021ef2519f884e2c367504779042",
+      "bytes": 32576,
+      "root": "robosuite"
+    }
+  },
+  "rules": {
+    "counter_contiguous_visual": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 311,
+          "end_line": 365,
+          "excerpt_sha256": "bca0bafa2fe579f076e1f99bdf037ab24c8b9240d7896aef7268b6112773930f"
+        }
+      ],
+      "conditions": [
+        "counter_parameters",
+        "material_binding",
+        "original_emission_branch"
+      ]
+    },
+    "counter_contiguous_contact_chunks": {
+      "allowed_roles": [
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 280,
+          "end_line": 310,
+          "excerpt_sha256": "7925bd6600d4b3d693ff6ecf2d12452407943bc7b7922959c079131cbfe09379"
+        },
+        {
+          "source_id": "counter",
+          "start_line": 367,
+          "end_line": 382,
+          "excerpt_sha256": "50f246aed1834a173733858890ed8a3694b6a4c7ce563dd30118e06db857e96b"
+        }
+      ],
+      "conditions": [
+        "chunk_parameters",
+        "contact_registry",
+        "original_emission_branch"
+      ]
+    },
+    "counter_opening_visual": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 401,
+          "end_line": 525,
+          "excerpt_sha256": "2ee9e85696ec44e0cb40bfe559b94f296d94eea4723c332b187cd05d83a2de29"
+        }
+      ],
+      "conditions": [
+        "opening_parameters",
+        "material_binding",
+        "original_emission_branch"
+      ]
+    },
+    "counter_opening_contact_chunks": {
+      "allowed_roles": [
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "counter",
+          "start_line": 280,
+          "end_line": 310,
+          "excerpt_sha256": "7925bd6600d4b3d693ff6ecf2d12452407943bc7b7922959c079131cbfe09379"
+        },
+        {
+          "source_id": "counter",
+          "start_line": 527,
+          "end_line": 540,
+          "excerpt_sha256": "62e0a5fa7b5664ff808e11b1a7f3273b3678c7d0eca05330e561b5f59e7beeb3"
+        }
+      ],
+      "conditions": [
+        "chunk_parameters",
+        "opening_parameters",
+        "contact_registry"
+      ]
+    },
+    "window_background_visual": {
+      "allowed_roles": [
+        "visual"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "windows",
+          "start_line": 362,
+          "end_line": 405,
+          "excerpt_sha256": "f4076e3c31c38a319addb7fe42845aa49b9a6f43fe90a8c792a4be5c40e883d6"
+        },
+        {
+          "source_id": "generated",
+          "start_line": 736,
+          "end_line": 768,
+          "excerpt_sha256": "b23ed0521bc9c1421ed575118b5bace87c66e8334deac396814bb4a93046af17"
+        },
+        {
+          "source_id": "objects",
+          "start_line": 622,
+          "end_line": 630,
+          "excerpt_sha256": "e8bdc757c05974b46a23570de9bbfeb262e6a885562736d6cd009e90dfc06b65"
+        }
+      ],
+      "conditions": [
+        "background_parameters",
+        "material_binding",
+        "composed_body",
+        "original_emission_branch"
+      ]
+    },
+    "fixture_region_nonphysical": {
+      "allowed_roles": [
+        "auxiliary"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "fixture",
+          "start_line": 127,
+          "end_line": 190,
+          "excerpt_sha256": "70b59f73d711e1e3025b223167dcd696cb0700c0dcd026c2db19a27f61bc115c"
+        }
+      ],
+      "conditions": [
+        "region_registration",
+        "purpose_and_flags",
+        "original_emission_branch"
+      ],
+      "require_transparent_noncontact": true
+    },
+    "nested_handle_component": {
+      "allowed_roles": [
+        "visual",
+        "collision"
+      ],
+      "generator_spans": [
+        {
+          "source_id": "panels",
+          "start_line": 191,
+          "end_line": 279,
+          "excerpt_sha256": "4484bac7fa282b94e36af10748502f24441769b12bc8c7b612140b4de6605977"
+        },
+        {
+          "source_id": "handles",
+          "start_line": 38,
+          "end_line": 65,
+          "excerpt_sha256": "1b50dce009ee1e015f89cbb400af6690583b7e53b7c473ecf45e4b1eebec3693"
+        },
+        {
+          "source_id": "objects",
+          "start_line": 395,
+          "end_line": 431,
+          "excerpt_sha256": "c29d7f86af9a48026350fe18924e3c30d98725799ed204029f48f7ae3e6dcfb2"
+        }
+      ],
+      "conditions": [
+        "asset_branch",
+        "nested_body_transform",
+        "duplication_mapping",
+        "material_binding"
+      ]
+    }
+  },
+  "non_classifying_facts": [
+    {
+      "id": "auxiliary_spawn_is_not_geometry_exclusion",
+      "generator_spans": [
+        {
+          "source_id": "scene_builder",
+          "start_line": 175,
+          "end_line": 224,
+          "excerpt_sha256": "3551b2d8c1fffcc770488205160e1502ca388fa5c61aa32af40fd5c3fb0593c6"
+        }
+      ],
+      "reason": "An added physical fixture is not proven nonvisual by its auxiliary spawn relationship."
+    },
+    {
+      "id": "opacity_alone_is_not_role",
+      "reason": "Transparent liquids/glass and region markers need distinct original authoring evidence."
+    }
+  ],
+  "private_server_generator_version_matched": false,
+  "automatic_role_assignment": false,
+  "full_scene_source_certified": false,
+  "training_ready": false
+}

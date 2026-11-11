@@ -1,0 +1,9 @@
+{
+  "native_commit": "abcc87ca636c81455f397e8b0813522c70874c00",
+  "files": {
+    "g2/offline/color_ab.py": "11082a4539db8c612d0dfe140a48a75e4ac318c500cea5fac8f4b3a11efffed1",
+    "g2/offline/dataset.py": "70fd0d8ceeb5a322957d6ad5ce195c5bc4704c45701048e99da0dfd0a77b8b14",
+    "g2/offline/geometry.py": "c0502861f830281eab5c2c1eb7a3671414dec7bc9aeea7024c67831ff191c233",
+    "g2/offline/replay_robocasa.py": "4cf36be426cfb0c17bb11eb284df3acfde43f25ac6bdeb109e330de59c687196"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "source": "193a05e3b250eb32dd7ee08165a368a6706e78ee",
+  "tree": "ea6c22922c11f1a1edfd9193dbbc9d326a2ca167",
+  "files": [
+    {
+      "path": "g2/.gitignore",
+      "sha": "6c56ff1bd9054f9e9a0147f85233c996b06536d7",
+      "match": true
+    },
+    {
+      "path": "g2/README.md",
+      "sha": "6844555195a281499303d2a0e79a75c634dad21e",
+      "match": true
+    },
+    {
+      "path": "g2/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/io.py",
+      "sha": "7001277536b49468fcab3e113f7f4cb5ad672bfc",
+      "match": true
+    },
+    {
+      "path": "g2/nav_bridge/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/nav_bridge/recorded.py",
+      "sha": "f1196410a324370095ae8a659c0ccff1170cb7b8",
+      "match": true
+    },
+    {
+      "path": "g2/nav_bridge/snapshot.py",
+      "sha": "07aa6c1a0d763e67d0c48fa45bb4112b3b1b920a",
+      "match": true
+    },
+    {
+      "path": "g2/sim/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/sim/asset_inventory.py",
+      "sha": "f56425dd6203fc153fef7e34912de4e171dab23d",
+      "match": true
+    },
+    {
+      "path": "g2/sim/color_evidence.py",
+      "sha": "957976624ff45b4b80f774040f73e14ebe0bbb28",
+      "match": true
+    },
+    {
+      "path": "g2/sim/prescan.py",
+      "sha": "91cfafef82ed9edeadbf0e010cbd03070704fd91",
+      "match": true
+    },
+    {
+      "path": "g2/sim/requirements.txt",
+      "sha": "431eaa3d7b9312652c5eaa5ab4d026820d9321fb",
+      "match": true
+    },
+    {
+      "path": "g2/sim/source_geometry.py",
+      "sha": "bd0e26c2abdf30977d830e6d895f3043d6bc36f7",
+      "match": true
+    },
+    {
+      "path": "g2/sim/source_roles.py",
+      "sha": "858b6979b5b193e4377b507e561a261df6acd209",
+      "match": true
+    },
+    {
+      "path": "g2/sim/source_scope.py",
+      "sha": "a46b09e918d409204c9e305c30944f650298c8ce",
+      "match": true
+    },
+    {
+      "path": "g2/sim/surface_coverage.py",
+      "sha": "1ec39c17850d6d121a4a53a2f82c35d331428adb",
+      "match": true
+    },
+    {
+      "path": "g2/sim/surface_sampling.py",
+      "sha": "9999eed9c48e4b7e348c65c3c3961d394f7a3c07",
+      "match": true
+    },
+    {
+      "path": "g2/sim/texture_projection.py",
+      "sha": "d74b305a08b54640866e8d070060cb812c4a570e",
+      "match": true
+    },
+    {
+      "path": "g2/tests/conftest.py",
+      "sha": "2a365c4425b4ee47de65c47f2049fb6b53e6d1af",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_bridge.py",
+      "sha": "8f8b21fc3c3211b0bbb7f60ebe8485e6f7889446",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_color_evidence.py",
+      "sha": "ae44fed18aa0731aad2cc4833e81f7f7f438776d",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_mesh_asset_audit.py",
+      "sha": "c2c896b60b40d27fce1631a53841dcd3ba6913d0",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_object_category.py",
+      "sha": "5c12df2b6d6d2f0b3a0cd5b8836c3f59cde595cc",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_prescan.py",
+      "sha": "5b441b0cc54db2a9c3aefc94aa9f8d462e5921e3",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_recorded.py",
+      "sha": "492a1a3188fcb08df4eed8cff512db7969a2949a",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_source_identity.py",
+      "sha": "d1c79d5051bc27ccf858c7278dbdc9c248bf6e58",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_source_roles.py",
+      "sha": "b0eda7acf0a5e2f3847b1ec9f864f2191bfd268a",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_source_scope.py",
+      "sha": "0e934ee12250382baba977692a6826bd5f98695d",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_surface_sampling.py",
+      "sha": "8aed4e41ad77a7e38208e7800ba9dda4d83eb1bb",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_texture_guards.py",
+      "sha": "ee035453661a78839ac61e49af5c0a800fc9ec08",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_texture_projection.py",
+      "sha": "a0e6084ac287e16ebea1e71a022e61929a7d7249",
+      "match": true
+    },
+    {
+      "path": "g2/tests/test_views.py",
+      "sha": "7cfc082420b08cc1a59f0b053f03d6823d48f63b",
+      "match": true
+    },
+    {
+      "path": "g2/views/__init__.py",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "match": true
+    },
+    {
+      "path": "g2/views/render.py",
+      "sha": "cd080493ca1e82affae58ffd723914c6dabfbb41",
+      "match": true
+    }
+  ]
+}

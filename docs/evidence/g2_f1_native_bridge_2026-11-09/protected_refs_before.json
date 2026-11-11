@@ -1,0 +1,93 @@
+[
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "V3",
+    "sha": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "current_sha": "e58cef1f53d2382d39c871ce5a50e4acdd5ce268",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-prescan-native-views",
+    "sha": "f1e4f1f0e3f2a48c3361987fabf58e406b313c7b",
+    "current_sha": "f1e4f1f0e3f2a48c3361987fabf58e406b313c7b",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1-source-gate",
+    "sha": "08a1bbb14db4aa5b05a51724f27a60c72f826c87",
+    "current_sha": "08a1bbb14db4aa5b05a51724f27a60c72f826c87",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1-a2-info-cat",
+    "sha": "28926f6c64db37e9cc71e9cdf24e4f6ad42a4674",
+    "current_sha": "28926f6c64db37e9cc71e9cdf24e4f6ad42a4674",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1b-mesh-audit",
+    "sha": "6bbd1e43ec1cab988af1c6aebf43cb60d8322b13",
+    "current_sha": "6bbd1e43ec1cab988af1c6aebf43cb60d8322b13",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1b2-texture-role",
+    "sha": "d10d19603556f76e13e30796edeed1ddb60b3063",
+    "current_sha": "d10d19603556f76e13e30796edeed1ddb60b3063",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-n6-f1b2-r1-srgb-wrapper",
+    "sha": "d63a126cb866ca4f4a0862383d096cad21ef1ea0",
+    "current_sha": "d63a126cb866ca4f4a0862383d096cad21ef1ea0",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/nav_sg",
+    "branch": "codex/g2-n6-native-snapshot",
+    "sha": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+    "current_sha": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "gpt/review-g2-n6-f1b2-193a05e3-20261108",
+    "sha": "a22f64b7aa2874d8d3c7abfc766e3f145d838b19",
+    "current_sha": "a22f64b7aa2874d8d3c7abfc766e3f145d838b19",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-f1c-positive-faces",
+    "sha": "a25ae31bfc07019eb8028604b9f9b5f3f9ef2019",
+    "current_sha": "a25ae31bfc07019eb8028604b9f9b5f3f9ef2019",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-f1c-role-analysis",
+    "sha": "01630f288adc00dccfe2bf0c49ddc03459c9f70e",
+    "current_sha": "01630f288adc00dccfe2bf0c49ddc03459c9f70e",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-f1d-role-classification",
+    "sha": "a3b0c97bb32a54675e964714cf6553041d357d26",
+    "current_sha": "a3b0c97bb32a54675e964714cf6553041d357d26",
+    "unchanged": true
+  },
+  {
+    "repository": "wxwy/psm_wma",
+    "branch": "codex/g2-f1e-scene-release",
+    "sha": "dc714108a1443ed66c284cc44b81fae78d95dfa9",
+    "current_sha": "dc714108a1443ed66c284cc44b81fae78d95dfa9",
+    "unchanged": true
+  }
+]

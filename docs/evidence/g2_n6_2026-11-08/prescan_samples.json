@@ -1,0 +1,89 @@
+{
+  "samples": [
+    {
+      "file": {
+        "bytes": 4457876,
+        "path": "precolored.txt",
+        "sha256": "b5348895242bdb3c07484ac0d10f396226d71fd484f0aa4db21d3fabcba58c9e"
+      },
+      "frame_id": 0,
+      "point_count": 72960,
+      "scene_id": "TEST_ONLY_doorway",
+      "source_sha256": "db502e872a0c9bb0dc8cbd8b6a5559302080779062ce406e78598849411920e5",
+      "status": "COMPLETE",
+      "visual_source_sha256": "7e45f11b57cf4c74531e651d5cd216be6dc0c61a256573b2920b81164bcbd1cf",
+      "world_frame": "map"
+    },
+    {
+      "file": {
+        "bytes": 4457558,
+        "path": "precolored.txt",
+        "sha256": "0e0fb506f992142028957c081f83682ce5f678ad8dd6516bcef901b57b5ec453"
+      },
+      "frame_id": 200,
+      "point_count": 72960,
+      "scene_id": "TEST_ONLY_doorway",
+      "source_sha256": "db502e872a0c9bb0dc8cbd8b6a5559302080779062ce406e78598849411920e5",
+      "status": "COMPLETE",
+      "visual_source_sha256": "7e45f11b57cf4c74531e651d5cd216be6dc0c61a256573b2920b81164bcbd1cf",
+      "world_frame": "map"
+    },
+    {
+      "file": {
+        "bytes": 4167608,
+        "path": "precolored.txt",
+        "sha256": "561cdb5ed72f9109dcb39188954149f1f1febdd54b7b0e25d9f62b7dba6fb04d"
+      },
+      "frame_id": 0,
+      "point_count": 69144,
+      "scene_id": "TEST_ONLY_l_shaped",
+      "source_sha256": "dba9ae804a201414acda50155c86e434668fa87977995e84c4ce60ca0f0c9b5b",
+      "status": "COMPLETE",
+      "visual_source_sha256": "435c5330d67ccfd5bc4b109fca203754554ebc718318a7aa798b559ef5b37a4d",
+      "world_frame": "map"
+    },
+    {
+      "file": {
+        "bytes": 4167290,
+        "path": "precolored.txt",
+        "sha256": "f76dc287ccb45d25e7ee7ff2b7a28b35aab0b1ab08daae0898e0cc1476677557"
+      },
+      "frame_id": 200,
+      "point_count": 69144,
+      "scene_id": "TEST_ONLY_l_shaped",
+      "source_sha256": "dba9ae804a201414acda50155c86e434668fa87977995e84c4ce60ca0f0c9b5b",
+      "status": "COMPLETE",
+      "visual_source_sha256": "435c5330d67ccfd5bc4b109fca203754554ebc718318a7aa798b559ef5b37a4d",
+      "world_frame": "map"
+    },
+    {
+      "file": {
+        "bytes": 3959983,
+        "path": "precolored.txt",
+        "sha256": "3857e48ed4d9956c5e6b2cefa70afabb0bdd1be78319874fb90eb433de748358"
+      },
+      "frame_id": 0,
+      "point_count": 64904,
+      "scene_id": "TEST_ONLY_rectangular",
+      "source_sha256": "595c4949c7cb00459176141dccd0039740249212d741cb6189a239ddae21d31a",
+      "status": "COMPLETE",
+      "visual_source_sha256": "ba9629bc26b7a87009591c004a0fd9341ed3c7a98b0a6a662223f29b0f9dda1b",
+      "world_frame": "map"
+    },
+    {
+      "file": {
+        "bytes": 3959665,
+        "path": "precolored.txt",
+        "sha256": "6477dc9c4ac5755019c6c85ce21887e57fe03cd5214357018c22f87b3dc8ee19"
+      },
+      "frame_id": 200,
+      "point_count": 64904,
+      "scene_id": "TEST_ONLY_rectangular",
+      "source_sha256": "595c4949c7cb00459176141dccd0039740249212d741cb6189a239ddae21d31a",
+      "status": "COMPLETE",
+      "visual_source_sha256": "ba9629bc26b7a87009591c004a0fd9341ed3c7a98b0a6a662223f29b0f9dda1b",
+      "world_frame": "map"
+    }
+  ],
+  "schema": "g2_n6_test_only_prescans_v1"
+}

@@ -1,0 +1,71 @@
+{
+  "schema": "g2_n6_f1_b2_r1_publication_v1",
+  "implementation_commit": "3b6c6055e36824be33ed947745aa3e5b839da832",
+  "implementation_tree": "4a5a888148c5670d628c3de6f4c0bdd6d6079f14",
+  "branch": "codex/g2-n6-f1b2-r1-srgb-wrapper",
+  "issue_recheck_request": "https://github.com/wxwy/psm_wma/issues/26#issuecomment-6729052936",
+  "exact_body_readback": true,
+  "verified_G2_source_config_test_files": 35,
+  "tested_tree_identical": true,
+  "verification_method": "CONNECTED_GITHUB_GIT_DATA_TREE_AND_FILE_BLOB_SHA_READBACK",
+  "api_git_commit_sha_verified_locally": true,
+  "metadata_successor_changes_runtime": false,
+  "new_Draft_PR_created": false,
+  "GPT_new_SHA_acceptance": "PENDING",
+  "whole_house_source_certified": false,
+  "private_server_files_accessed_or_transferred": false,
+  "native_execution": "NOT_RUN_HERE",
+  "previous_native_boundary": "P0_HARNESS_SAME_THREE_READER_FUSION_COMPONENTS_NOT_FULL2009_PROGRAM",
+  "native_companion": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "protected_refs": [
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "V3",
+      "sha": "7b8b733e1f585bb44a0eac7c14ad545c29355a86",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "codex/g2-n6-prescan-native-views",
+      "sha": "f1e4f1f0e3f2a48c3361987fabf58e406b313c7b",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "codex/g2-n6-f1-source-gate",
+      "sha": "08a1bbb14db4aa5b05a51724f27a60c72f826c87",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "codex/g2-n6-f1-a2-info-cat",
+      "sha": "28926f6c64db37e9cc71e9cdf24e4f6ad42a4674",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "codex/g2-n6-f1b-mesh-audit",
+      "sha": "6bbd1e43ec1cab988af1c6aebf43cb60d8322b13",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "codex/g2-n6-f1b2-texture-role",
+      "sha": "d10d19603556f76e13e30796edeed1ddb60b3063",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/nav_sg",
+      "branch": "codex/g2-n6-native-snapshot",
+      "sha": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+      "unchanged": true
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "branch": "gpt/review-g2-n6-f1b2-193a05e3-20261108",
+      "sha": "a22f64b7aa2874d8d3c7abfc766e3f145d838b19",
+      "unchanged": true
+    }
+  ]
+}

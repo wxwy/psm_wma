@@ -1,0 +1,33 @@
+{
+  "scope": "PUBLIC_UPSTREAM_SOURCE_NOT_PRIVATE_SERVER_FILES",
+  "references": [
+    {
+      "repository": "google-deepmind/mujoco",
+      "ref": "3.3.7",
+      "path": "src/render/render_gl3.c",
+      "blob": "133e5d6a617606a51fca5a377be37716fdf5923b",
+      "lines": [
+        "61-202",
+        "293-368"
+      ]
+    },
+    {
+      "repository": "google-deepmind/mujoco",
+      "ref": "3.3.7",
+      "path": "src/render/render_context.c",
+      "blob": "4a47f1dfe26b5f627d653dc3add7fb32800c3bce",
+      "lines": [
+        "1362-1450"
+      ]
+    },
+    {
+      "repository": "google-deepmind/mujoco",
+      "ref": "3.3.7",
+      "path": "src/engine/engine_vis_visualize.c",
+      "blob": "c107b9ba32ff9e7121abdab7b40061bae53e2f1c",
+      "lines": [
+        "266-295"
+      ]
+    }
+  ]
+}

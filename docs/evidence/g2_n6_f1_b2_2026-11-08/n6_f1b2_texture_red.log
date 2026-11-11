@@ -1,0 +1,736 @@
+FFFFFFFFFFFFF                                                            [100%]
+=================================== FAILURES ===================================
+________ test_textured_2d_primitives_export_actual_colors[box-.2 .4 .6] ________
+
+textured = <function textured.<locals>.make at 0x7fd5a65a5e40>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex0')
+kind = 'box', size = '.2 .4 .6'
+
+    @pytest.mark.parametrize("kind,size", [("box", ".2 .4 .6"), ("cylinder", ".2 .6"),
+                                           ("sphere", ".2"), ("ellipsoid", ".2 .4 .6")])
+    def test_textured_2d_primitives_export_actual_colors(textured, tmp_path, kind, size):
+        model, metadata, _ = textured(kind=kind, size=size)
+>       result = export(model, metadata, tmp_path / "cloud", spacing=.3)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_texture_projection.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+mjcf = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex0/own_materials/model.xml')
+metadata = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex0/own_materials/roles.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex0/cloud')
+
+    def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
+               asset_roots=(), ep_meta=None, state_format="qpos", world_frame="map",
+               native_manifest=None, allow_partial_color=False, max_points=5_000_000):
+        import mujoco
+        mjcf, metadata = Path(mjcf).resolve(), Path(metadata).resolve()
+        paths = [mjcf, metadata] + [Path(p).resolve() for p in (states, ep_meta, native_manifest) if p]
+        out = new_output(output, [mjcf.parent, *asset_roots, *paths])
+        if not np.isfinite(spacing) or spacing<=0 or type(max_points) is not int or not 0<max_points<=5_000_000:
+            raise ContractError("invalid surface spacing/point budget")
+        meta = read_json(metadata)
+        if meta.get("schema") != "g2_sim_prescan_v1" or not isinstance(meta.get("geoms"), dict):
+            raise ContractError("explicit g2_sim_prescan_v1 geom-role mapping required")
+        scene_id = meta.get("scene_id")
+        quote(scene_id); quote(world_frame)
+        ep = read_json(ep_meta) if ep_meta else None
+        model, sources = load_model(mjcf, asset_roots)
+        closure = model_source_hash(sources)
+        if states:
+            if meta.get("state_source") != {"model_source_sha256": closure, "states_sha256": digest(states)}:
+                raise ContractError("state_source must bind full model closure and states archive")
+        data, state = apply_state(model, states, frame, state_format)
+        names = [mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, i) or "geom_%d"%i
+                 for i in range(model.ngeom)]
+        if set(meta["geoms"]) != set(names):
+            raise ContractError("every geom needs an explicit visual/collision/robot/auxiliary role")
+        geometry_types = {int(getattr(mujoco.mjtGeom, "mjGEOM_"+kind.upper())):kind
+                          for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh")}
+        surfaces, records, excluded, audit = [], [], [], []
+        count = 0
+        for g, name in enumerate(names):
+            spec = meta["geoms"][name]
+            if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
+            role = spec.get("role")
+            if role not in ("visual","collision","robot","auxiliary"):
+                raise ContractError("invalid or absent geom role")
+            row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+            audit.append(row)
+            binding = row["source"]
+            if role != "visual" or effective_rgba(model,g)[3] <= 0:
+                row["color_status"] = "TRANSPARENT" if role == "visual" else "EXCLUDED_" + role.upper()
+                row["surface_points"] = 0
+                excluded.append({"geom_name":name,"role":role,"reason":"explicit_role_or_transparency","source":binding})
+                continue
+            kind = geometry_types.get(int(model.geom_type[g]))
+            if kind is None:
+                raise ContractError("finite visual surface required; infinite plane/hfield is unsupported")
+            vertices,faces = geom_surface_mesh(model, g, kind)
+            try:
+                points,face_ids,weights,sampling = sample_surface(vertices,faces,spacing,max_points-count,with_audit=True)
+            except SamplingFailure as error:
+                row.update(sampling=error.audit, surface_points=0, color_status="NOT_SAMPLED_GEOMETRY_REJECTED")
+                out.mkdir(parents=True)
+                write_json(out/"sampling_failure.json", {
+                    "schema":"g2_prescan_sampling_failure_v1", "status":"REJECTED", "training_ready":False,
+                    "scene_id":scene_id, "frame_id":frame, "world_frame":world_frame, "state":state,
+                    "model_source_sha256":closure, "sources":sources,
+                    "adapter_source_sha256":adapter_source_sha256(),
+                    "metadata_sha256":digest(metadata), "ep_meta_sha256":digest(ep_meta) if ep_meta else None,
+                    "spacing_m":spacing, "max_points":max_points, "previous_geom_point_count":count,
+                    "geom_id":g, "geom_name":name, "sampling":error.audit,
+                    "geom_audit_prefix":audit, "compiled_geom_count":int(model.ngeom),
+                    "audit_scope":"PREFIX_THROUGH_REJECTED_GEOM_NOT_COMPLETE_INVENTORY",
+                    "cloud_written":False, "full_scene_source_certified":False, "reason":str(error)})
+                raise
+            if kind!="mesh":
+                points=analytic_surface(points,kind,model.geom_size[g],face_ids)
+            colors,valid,appearance = surface_colors(model,g,kind,face_ids,weights)
+            if np.any(colors[:,3] < 1-1e-7):
+                valid=False
+                appearance=dict(appearance,unsupported="translucent_surface_requires_alpha_transport")
+            world = points @ data.geom_xmat[g].reshape(3,3).T + data.geom_xpos[g]
+            if not np.isfinite(world).all():
+                raise ContractError("nonfinite world surface")
+            rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
+            surfaces.append((world,rgba,bool(valid)))
+            row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
+                       appearance=appearance, sampling=sampling)
+            count += len(world)
+            records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
+                            "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
+                            "sampling":sampling, "local_geometry_sha256":geometry_sha256(vertices,faces)})
+        if not count:
+            raise ContractError("no visual surface samples")
+        complete = all(item[2] for item in surfaces)
+        if not complete and not allow_partial_color:
+>           raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
+E           g2.io.ContractError: unsupported texture projection; partial export requires --allow-partial-color
+
+g2/sim/prescan.py:273: ContractError
+_______ test_textured_2d_primitives_export_actual_colors[cylinder-.2 .6] _______
+
+textured = <function textured.<locals>.make at 0x7fd59844a480>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex1')
+kind = 'cylinder', size = '.2 .6'
+
+    @pytest.mark.parametrize("kind,size", [("box", ".2 .4 .6"), ("cylinder", ".2 .6"),
+                                           ("sphere", ".2"), ("ellipsoid", ".2 .4 .6")])
+    def test_textured_2d_primitives_export_actual_colors(textured, tmp_path, kind, size):
+        model, metadata, _ = textured(kind=kind, size=size)
+>       result = export(model, metadata, tmp_path / "cloud", spacing=.3)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_texture_projection.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+mjcf = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex1/own_materials/model.xml')
+metadata = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex1/own_materials/roles.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex1/cloud')
+
+    def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
+               asset_roots=(), ep_meta=None, state_format="qpos", world_frame="map",
+               native_manifest=None, allow_partial_color=False, max_points=5_000_000):
+        import mujoco
+        mjcf, metadata = Path(mjcf).resolve(), Path(metadata).resolve()
+        paths = [mjcf, metadata] + [Path(p).resolve() for p in (states, ep_meta, native_manifest) if p]
+        out = new_output(output, [mjcf.parent, *asset_roots, *paths])
+        if not np.isfinite(spacing) or spacing<=0 or type(max_points) is not int or not 0<max_points<=5_000_000:
+            raise ContractError("invalid surface spacing/point budget")
+        meta = read_json(metadata)
+        if meta.get("schema") != "g2_sim_prescan_v1" or not isinstance(meta.get("geoms"), dict):
+            raise ContractError("explicit g2_sim_prescan_v1 geom-role mapping required")
+        scene_id = meta.get("scene_id")
+        quote(scene_id); quote(world_frame)
+        ep = read_json(ep_meta) if ep_meta else None
+        model, sources = load_model(mjcf, asset_roots)
+        closure = model_source_hash(sources)
+        if states:
+            if meta.get("state_source") != {"model_source_sha256": closure, "states_sha256": digest(states)}:
+                raise ContractError("state_source must bind full model closure and states archive")
+        data, state = apply_state(model, states, frame, state_format)
+        names = [mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, i) or "geom_%d"%i
+                 for i in range(model.ngeom)]
+        if set(meta["geoms"]) != set(names):
+            raise ContractError("every geom needs an explicit visual/collision/robot/auxiliary role")
+        geometry_types = {int(getattr(mujoco.mjtGeom, "mjGEOM_"+kind.upper())):kind
+                          for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh")}
+        surfaces, records, excluded, audit = [], [], [], []
+        count = 0
+        for g, name in enumerate(names):
+            spec = meta["geoms"][name]
+            if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
+            role = spec.get("role")
+            if role not in ("visual","collision","robot","auxiliary"):
+                raise ContractError("invalid or absent geom role")
+            row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+            audit.append(row)
+            binding = row["source"]
+            if role != "visual" or effective_rgba(model,g)[3] <= 0:
+                row["color_status"] = "TRANSPARENT" if role == "visual" else "EXCLUDED_" + role.upper()
+                row["surface_points"] = 0
+                excluded.append({"geom_name":name,"role":role,"reason":"explicit_role_or_transparency","source":binding})
+                continue
+            kind = geometry_types.get(int(model.geom_type[g]))
+            if kind is None:
+                raise ContractError("finite visual surface required; infinite plane/hfield is unsupported")
+            vertices,faces = geom_surface_mesh(model, g, kind)
+            try:
+                points,face_ids,weights,sampling = sample_surface(vertices,faces,spacing,max_points-count,with_audit=True)
+            except SamplingFailure as error:
+                row.update(sampling=error.audit, surface_points=0, color_status="NOT_SAMPLED_GEOMETRY_REJECTED")
+                out.mkdir(parents=True)
+                write_json(out/"sampling_failure.json", {
+                    "schema":"g2_prescan_sampling_failure_v1", "status":"REJECTED", "training_ready":False,
+                    "scene_id":scene_id, "frame_id":frame, "world_frame":world_frame, "state":state,
+                    "model_source_sha256":closure, "sources":sources,
+                    "adapter_source_sha256":adapter_source_sha256(),
+                    "metadata_sha256":digest(metadata), "ep_meta_sha256":digest(ep_meta) if ep_meta else None,
+                    "spacing_m":spacing, "max_points":max_points, "previous_geom_point_count":count,
+                    "geom_id":g, "geom_name":name, "sampling":error.audit,
+                    "geom_audit_prefix":audit, "compiled_geom_count":int(model.ngeom),
+                    "audit_scope":"PREFIX_THROUGH_REJECTED_GEOM_NOT_COMPLETE_INVENTORY",
+                    "cloud_written":False, "full_scene_source_certified":False, "reason":str(error)})
+                raise
+            if kind!="mesh":
+                points=analytic_surface(points,kind,model.geom_size[g],face_ids)
+            colors,valid,appearance = surface_colors(model,g,kind,face_ids,weights)
+            if np.any(colors[:,3] < 1-1e-7):
+                valid=False
+                appearance=dict(appearance,unsupported="translucent_surface_requires_alpha_transport")
+            world = points @ data.geom_xmat[g].reshape(3,3).T + data.geom_xpos[g]
+            if not np.isfinite(world).all():
+                raise ContractError("nonfinite world surface")
+            rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
+            surfaces.append((world,rgba,bool(valid)))
+            row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
+                       appearance=appearance, sampling=sampling)
+            count += len(world)
+            records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
+                            "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
+                            "sampling":sampling, "local_geometry_sha256":geometry_sha256(vertices,faces)})
+        if not count:
+            raise ContractError("no visual surface samples")
+        complete = all(item[2] for item in surfaces)
+        if not complete and not allow_partial_color:
+>           raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
+E           g2.io.ContractError: unsupported texture projection; partial export requires --allow-partial-color
+
+g2/sim/prescan.py:273: ContractError
+_________ test_textured_2d_primitives_export_actual_colors[sphere-.2] __________
+
+textured = <function textured.<locals>.make at 0x7fd59844b380>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex2')
+kind = 'sphere', size = '.2'
+
+    @pytest.mark.parametrize("kind,size", [("box", ".2 .4 .6"), ("cylinder", ".2 .6"),
+                                           ("sphere", ".2"), ("ellipsoid", ".2 .4 .6")])
+    def test_textured_2d_primitives_export_actual_colors(textured, tmp_path, kind, size):
+        model, metadata, _ = textured(kind=kind, size=size)
+>       result = export(model, metadata, tmp_path / "cloud", spacing=.3)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_texture_projection.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+mjcf = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex2/own_materials/model.xml')
+metadata = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex2/own_materials/roles.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex2/cloud')
+
+    def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
+               asset_roots=(), ep_meta=None, state_format="qpos", world_frame="map",
+               native_manifest=None, allow_partial_color=False, max_points=5_000_000):
+        import mujoco
+        mjcf, metadata = Path(mjcf).resolve(), Path(metadata).resolve()
+        paths = [mjcf, metadata] + [Path(p).resolve() for p in (states, ep_meta, native_manifest) if p]
+        out = new_output(output, [mjcf.parent, *asset_roots, *paths])
+        if not np.isfinite(spacing) or spacing<=0 or type(max_points) is not int or not 0<max_points<=5_000_000:
+            raise ContractError("invalid surface spacing/point budget")
+        meta = read_json(metadata)
+        if meta.get("schema") != "g2_sim_prescan_v1" or not isinstance(meta.get("geoms"), dict):
+            raise ContractError("explicit g2_sim_prescan_v1 geom-role mapping required")
+        scene_id = meta.get("scene_id")
+        quote(scene_id); quote(world_frame)
+        ep = read_json(ep_meta) if ep_meta else None
+        model, sources = load_model(mjcf, asset_roots)
+        closure = model_source_hash(sources)
+        if states:
+            if meta.get("state_source") != {"model_source_sha256": closure, "states_sha256": digest(states)}:
+                raise ContractError("state_source must bind full model closure and states archive")
+        data, state = apply_state(model, states, frame, state_format)
+        names = [mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, i) or "geom_%d"%i
+                 for i in range(model.ngeom)]
+        if set(meta["geoms"]) != set(names):
+            raise ContractError("every geom needs an explicit visual/collision/robot/auxiliary role")
+        geometry_types = {int(getattr(mujoco.mjtGeom, "mjGEOM_"+kind.upper())):kind
+                          for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh")}
+        surfaces, records, excluded, audit = [], [], [], []
+        count = 0
+        for g, name in enumerate(names):
+            spec = meta["geoms"][name]
+            if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
+            role = spec.get("role")
+            if role not in ("visual","collision","robot","auxiliary"):
+                raise ContractError("invalid or absent geom role")
+            row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+            audit.append(row)
+            binding = row["source"]
+            if role != "visual" or effective_rgba(model,g)[3] <= 0:
+                row["color_status"] = "TRANSPARENT" if role == "visual" else "EXCLUDED_" + role.upper()
+                row["surface_points"] = 0
+                excluded.append({"geom_name":name,"role":role,"reason":"explicit_role_or_transparency","source":binding})
+                continue
+            kind = geometry_types.get(int(model.geom_type[g]))
+            if kind is None:
+                raise ContractError("finite visual surface required; infinite plane/hfield is unsupported")
+            vertices,faces = geom_surface_mesh(model, g, kind)
+            try:
+                points,face_ids,weights,sampling = sample_surface(vertices,faces,spacing,max_points-count,with_audit=True)
+            except SamplingFailure as error:
+                row.update(sampling=error.audit, surface_points=0, color_status="NOT_SAMPLED_GEOMETRY_REJECTED")
+                out.mkdir(parents=True)
+                write_json(out/"sampling_failure.json", {
+                    "schema":"g2_prescan_sampling_failure_v1", "status":"REJECTED", "training_ready":False,
+                    "scene_id":scene_id, "frame_id":frame, "world_frame":world_frame, "state":state,
+                    "model_source_sha256":closure, "sources":sources,
+                    "adapter_source_sha256":adapter_source_sha256(),
+                    "metadata_sha256":digest(metadata), "ep_meta_sha256":digest(ep_meta) if ep_meta else None,
+                    "spacing_m":spacing, "max_points":max_points, "previous_geom_point_count":count,
+                    "geom_id":g, "geom_name":name, "sampling":error.audit,
+                    "geom_audit_prefix":audit, "compiled_geom_count":int(model.ngeom),
+                    "audit_scope":"PREFIX_THROUGH_REJECTED_GEOM_NOT_COMPLETE_INVENTORY",
+                    "cloud_written":False, "full_scene_source_certified":False, "reason":str(error)})
+                raise
+            if kind!="mesh":
+                points=analytic_surface(points,kind,model.geom_size[g],face_ids)
+            colors,valid,appearance = surface_colors(model,g,kind,face_ids,weights)
+            if np.any(colors[:,3] < 1-1e-7):
+                valid=False
+                appearance=dict(appearance,unsupported="translucent_surface_requires_alpha_transport")
+            world = points @ data.geom_xmat[g].reshape(3,3).T + data.geom_xpos[g]
+            if not np.isfinite(world).all():
+                raise ContractError("nonfinite world surface")
+            rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
+            surfaces.append((world,rgba,bool(valid)))
+            row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
+                       appearance=appearance, sampling=sampling)
+            count += len(world)
+            records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
+                            "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
+                            "sampling":sampling, "local_geometry_sha256":geometry_sha256(vertices,faces)})
+        if not count:
+            raise ContractError("no visual surface samples")
+        complete = all(item[2] for item in surfaces)
+        if not complete and not allow_partial_color:
+>           raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
+E           g2.io.ContractError: unsupported texture projection; partial export requires --allow-partial-color
+
+g2/sim/prescan.py:273: ContractError
+_____ test_textured_2d_primitives_export_actual_colors[ellipsoid-.2 .4 .6] _____
+
+textured = <function textured.<locals>.make at 0x7fd59844afc0>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex3')
+kind = 'ellipsoid', size = '.2 .4 .6'
+
+    @pytest.mark.parametrize("kind,size", [("box", ".2 .4 .6"), ("cylinder", ".2 .6"),
+                                           ("sphere", ".2"), ("ellipsoid", ".2 .4 .6")])
+    def test_textured_2d_primitives_export_actual_colors(textured, tmp_path, kind, size):
+        model, metadata, _ = textured(kind=kind, size=size)
+>       result = export(model, metadata, tmp_path / "cloud", spacing=.3)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_texture_projection.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+mjcf = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex3/own_materials/model.xml')
+metadata = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex3/own_materials/roles.json')
+output = PosixPath('/tmp/pytest-of-agent/pytest-69/test_textured_2d_primitives_ex3/cloud')
+
+    def export(mjcf, metadata, output, *, states=None, frame=0, spacing=.05,
+               asset_roots=(), ep_meta=None, state_format="qpos", world_frame="map",
+               native_manifest=None, allow_partial_color=False, max_points=5_000_000):
+        import mujoco
+        mjcf, metadata = Path(mjcf).resolve(), Path(metadata).resolve()
+        paths = [mjcf, metadata] + [Path(p).resolve() for p in (states, ep_meta, native_manifest) if p]
+        out = new_output(output, [mjcf.parent, *asset_roots, *paths])
+        if not np.isfinite(spacing) or spacing<=0 or type(max_points) is not int or not 0<max_points<=5_000_000:
+            raise ContractError("invalid surface spacing/point budget")
+        meta = read_json(metadata)
+        if meta.get("schema") != "g2_sim_prescan_v1" or not isinstance(meta.get("geoms"), dict):
+            raise ContractError("explicit g2_sim_prescan_v1 geom-role mapping required")
+        scene_id = meta.get("scene_id")
+        quote(scene_id); quote(world_frame)
+        ep = read_json(ep_meta) if ep_meta else None
+        model, sources = load_model(mjcf, asset_roots)
+        closure = model_source_hash(sources)
+        if states:
+            if meta.get("state_source") != {"model_source_sha256": closure, "states_sha256": digest(states)}:
+                raise ContractError("state_source must bind full model closure and states archive")
+        data, state = apply_state(model, states, frame, state_format)
+        names = [mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, i) or "geom_%d"%i
+                 for i in range(model.ngeom)]
+        if set(meta["geoms"]) != set(names):
+            raise ContractError("every geom needs an explicit visual/collision/robot/auxiliary role")
+        geometry_types = {int(getattr(mujoco.mjtGeom, "mjGEOM_"+kind.upper())):kind
+                          for kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh")}
+        surfaces, records, excluded, audit = [], [], [], []
+        count = 0
+        for g, name in enumerate(names):
+            spec = meta["geoms"][name]
+            if not isinstance(spec,dict):raise ContractError("geom role record must be an object")
+            role = spec.get("role")
+            if role not in ("visual","collision","robot","auxiliary"):
+                raise ContractError("invalid or absent geom role")
+            row = geom_audit_row(model, data, g, name, spec, geometry_types, ep)
+            audit.append(row)
+            binding = row["source"]
+            if role != "visual" or effective_rgba(model,g)[3] <= 0:
+                row["color_status"] = "TRANSPARENT" if role == "visual" else "EXCLUDED_" + role.upper()
+                row["surface_points"] = 0
+                excluded.append({"geom_name":name,"role":role,"reason":"explicit_role_or_transparency","source":binding})
+                continue
+            kind = geometry_types.get(int(model.geom_type[g]))
+            if kind is None:
+                raise ContractError("finite visual surface required; infinite plane/hfield is unsupported")
+            vertices,faces = geom_surface_mesh(model, g, kind)
+            try:
+                points,face_ids,weights,sampling = sample_surface(vertices,faces,spacing,max_points-count,with_audit=True)
+            except SamplingFailure as error:
+                row.update(sampling=error.audit, surface_points=0, color_status="NOT_SAMPLED_GEOMETRY_REJECTED")
+                out.mkdir(parents=True)
+                write_json(out/"sampling_failure.json", {
+                    "schema":"g2_prescan_sampling_failure_v1", "status":"REJECTED", "training_ready":False,
+                    "scene_id":scene_id, "frame_id":frame, "world_frame":world_frame, "state":state,
+                    "model_source_sha256":closure, "sources":sources,
+                    "adapter_source_sha256":adapter_source_sha256(),
+                    "metadata_sha256":digest(metadata), "ep_meta_sha256":digest(ep_meta) if ep_meta else None,
+                    "spacing_m":spacing, "max_points":max_points, "previous_geom_point_count":count,
+                    "geom_id":g, "geom_name":name, "sampling":error.audit,
+                    "geom_audit_prefix":audit, "compiled_geom_count":int(model.ngeom),
+                    "audit_scope":"PREFIX_THROUGH_REJECTED_GEOM_NOT_COMPLETE_INVENTORY",
+                    "cloud_written":False, "full_scene_source_certified":False, "reason":str(error)})
+                raise
+            if kind!="mesh":
+                points=analytic_surface(points,kind,model.geom_size[g],face_ids)
+            colors,valid,appearance = surface_colors(model,g,kind,face_ids,weights)
+            if np.any(colors[:,3] < 1-1e-7):
+                valid=False
+                appearance=dict(appearance,unsupported="translucent_surface_requires_alpha_transport")
+            world = points @ data.geom_xmat[g].reshape(3,3).T + data.geom_xpos[g]
+            if not np.isfinite(world).all():
+                raise ContractError("nonfinite world surface")
+            rgba = np.rint(np.clip(colors,0,1)*255).astype(np.uint8)
+            surfaces.append((world,rgba,bool(valid)))
+            row.update(surface_points=len(world), color_status="VALID" if valid else "UNSUPPORTED_APPEARANCE",
+                       appearance=appearance, sampling=sampling)
+            count += len(world)
+            records.append({"geom_id":g,"geom_name":name,"role":"visual","source":binding,
+                            "surface_points":len(world),"color_valid":bool(valid),"appearance":appearance,
+                            "sampling":sampling, "local_geometry_sha256":geometry_sha256(vertices,faces)})
+        if not count:
+            raise ContractError("no visual surface samples")
+        complete = all(item[2] for item in surfaces)
+        if not complete and not allow_partial_color:
+>           raise ContractError("unsupported texture projection; partial export requires --allow-partial-color")
+E           g2.io.ContractError: unsupported texture projection; partial export requires --allow-partial-color
+
+g2/sim/prescan.py:273: ContractError
+______ test_planar_mapping_matches_pinned_mujoco_object_planes[False-1 1] ______
+
+textured = <function textured.<locals>.make at 0x7fd5984f0ae0>, uniform = False
+repeat = '1 1'
+
+    @pytest.mark.parametrize("uniform,repeat", [(False, "1 1"), (False, "2 3"), (True, "1 1"), (True, "2 3")])
+    def test_planar_mapping_matches_pinned_mujoco_object_planes(textured, uniform, repeat):
+        _, _, compiled = textured(uniform=uniform, repeat=repeat)
+        # Reference GL_OBJECT_PLANE equations from MuJoCo3.3.7 render_gl3.c146-149.
+        points = np.asarray([[.1, -.2, .6], [-.1, .2, .6], [.2, .07, -.3]])
+>       rgba, valid, appearance = surface_colors(compiled, 0, "box", np.zeros(3, int),
+            np.tile([1., 0., 0.], (3, 1)), local_points=points)
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:55: TypeError
+______ test_planar_mapping_matches_pinned_mujoco_object_planes[False-2 3] ______
+
+textured = <function textured.<locals>.make at 0x7fd5984f0ea0>, uniform = False
+repeat = '2 3'
+
+    @pytest.mark.parametrize("uniform,repeat", [(False, "1 1"), (False, "2 3"), (True, "1 1"), (True, "2 3")])
+    def test_planar_mapping_matches_pinned_mujoco_object_planes(textured, uniform, repeat):
+        _, _, compiled = textured(uniform=uniform, repeat=repeat)
+        # Reference GL_OBJECT_PLANE equations from MuJoCo3.3.7 render_gl3.c146-149.
+        points = np.asarray([[.1, -.2, .6], [-.1, .2, .6], [.2, .07, -.3]])
+>       rgba, valid, appearance = surface_colors(compiled, 0, "box", np.zeros(3, int),
+            np.tile([1., 0., 0.], (3, 1)), local_points=points)
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:55: TypeError
+______ test_planar_mapping_matches_pinned_mujoco_object_planes[True-1 1] _______
+
+textured = <function textured.<locals>.make at 0x7fd5984f1a80>, uniform = True
+repeat = '1 1'
+
+    @pytest.mark.parametrize("uniform,repeat", [(False, "1 1"), (False, "2 3"), (True, "1 1"), (True, "2 3")])
+    def test_planar_mapping_matches_pinned_mujoco_object_planes(textured, uniform, repeat):
+        _, _, compiled = textured(uniform=uniform, repeat=repeat)
+        # Reference GL_OBJECT_PLANE equations from MuJoCo3.3.7 render_gl3.c146-149.
+        points = np.asarray([[.1, -.2, .6], [-.1, .2, .6], [.2, .07, -.3]])
+>       rgba, valid, appearance = surface_colors(compiled, 0, "box", np.zeros(3, int),
+            np.tile([1., 0., 0.], (3, 1)), local_points=points)
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:55: TypeError
+______ test_planar_mapping_matches_pinned_mujoco_object_planes[True-2 3] _______
+
+textured = <function textured.<locals>.make at 0x7fd5984f19e0>, uniform = True
+repeat = '2 3'
+
+    @pytest.mark.parametrize("uniform,repeat", [(False, "1 1"), (False, "2 3"), (True, "1 1"), (True, "2 3")])
+    def test_planar_mapping_matches_pinned_mujoco_object_planes(textured, uniform, repeat):
+        _, _, compiled = textured(uniform=uniform, repeat=repeat)
+        # Reference GL_OBJECT_PLANE equations from MuJoCo3.3.7 render_gl3.c146-149.
+        points = np.asarray([[.1, -.2, .6], [-.1, .2, .6], [.2, .07, -.3]])
+>       rgba, valid, appearance = surface_colors(compiled, 0, "box", np.zeros(3, int),
+            np.tile([1., 0., 0.], (3, 1)), local_points=points)
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:55: TypeError
+______ test_cube_axis_colors_match_compiled_six_face_upload_order[False] _______
+
+textured = <function textured.<locals>.make at 0x7fd5984f1940>, uniform = False
+
+    @pytest.mark.parametrize("uniform", [False, True])
+    def test_cube_axis_colors_match_compiled_six_face_upload_order(textured, uniform):
+        _, _, compiled = textured(texture="cube", uniform=uniform)
+        points = np.asarray([[.2, 0, 0], [-.2, 0, 0], [0, .4, 0], [0, -.4, 0], [0, 0, .6], [0, 0, -.6]])
+>       rgba, valid, _ = surface_colors(compiled, 0, "box", np.zeros(6, int),
+            np.tile([1., 0., 0.], (6, 1)), local_points=points)
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:76: TypeError
+_______ test_cube_axis_colors_match_compiled_six_face_upload_order[True] _______
+
+textured = <function textured.<locals>.make at 0x7fd5984f1bc0>, uniform = True
+
+    @pytest.mark.parametrize("uniform", [False, True])
+    def test_cube_axis_colors_match_compiled_six_face_upload_order(textured, uniform):
+        _, _, compiled = textured(texture="cube", uniform=uniform)
+        points = np.asarray([[.2, 0, 0], [-.2, 0, 0], [0, .4, 0], [0, -.4, 0], [0, 0, .6], [0, 0, -.6]])
+>       rgba, valid, _ = surface_colors(compiled, 0, "box", np.zeros(6, int),
+            np.tile([1., 0., 0.], (6, 1)), local_points=points)
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:76: TypeError
+_______ test_cube_corner_with_different_face_colors_retains_unknown_mask _______
+
+textured = <function textured.<locals>.make at 0x7fd5984f1260>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-69/test_cube_corner_with_differen0')
+
+    def test_cube_corner_with_different_face_colors_retains_unknown_mask(textured, tmp_path):
+        model, metadata, _ = textured(texture="cube")
+        with pytest.raises(ContractError, match="partial"):
+            export(model, metadata, tmp_path / "refused", spacing=.5)
+        result = export(model, metadata, tmp_path / "partial", spacing=.5, allow_partial_color=True)
+        rows = np.loadtxt(tmp_path / "partial/precolored.txt", skiprows=7)
+>       assert np.any(rows[:, -1] == 1) and np.any(rows[:, -1] == 0)
+E       assert (np.False_)
+E        +  where np.False_ = <function any at 0x7fd5a8f14e30>(array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n       0., 0., 0., 0., 0., 0., 0., 0., 0., ... 0., 0., 0., 0., 0., 0., 0.,\n       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,\n       0., 0.]) == 1)
+E        +    where <function any at 0x7fd5a8f14e30> = np.any
+
+g2/tests/test_texture_projection.py:89: AssertionError
+______________ test_cube_repeat_is_not_applied_as_a_2d_uv_repeat _______________
+
+textured = <function textured.<locals>.make at 0x7fd5984f2fc0>
+
+    def test_cube_repeat_is_not_applied_as_a_2d_uv_repeat(textured):
+        _, _, a = textured(texture="cube", repeat="1 1")
+        _, _, b = textured(texture="cube", repeat="7 11")
+        points = np.asarray([[.2, .03, .05]])
+        arguments = (0, "box", np.asarray([0]), np.asarray([[1., 0., 0.]]))
+>       first, valid_a, _ = surface_colors(a, *arguments, local_points=points)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: surface_colors() got an unexpected keyword argument 'local_points'
+
+g2/tests/test_texture_projection.py:103: TypeError
+____________ test_color_audit_preserves_point_geom_face_and_reason _____________
+
+textured = <function textured.<locals>.make at 0x7fd5984f1d00>
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-69/test_color_audit_preserves_poi0')
+
+    def test_color_audit_preserves_point_geom_face_and_reason(textured, tmp_path):
+        model, metadata, _ = textured(texture="cube")
+        result = export(model, metadata, tmp_path / "partial", spacing=.5, allow_partial_color=True)
+>       with np.load(tmp_path / "partial/color_audit.npz", allow_pickle=False) as audit:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_texture_projection.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+file = PosixPath('/tmp/pytest-of-agent/pytest-69/test_color_audit_preserves_poi0/partial/color_audit.npz')
+mmap_mode = None, allow_pickle = False, fix_imports = True, encoding = 'ASCII'
+
+    @set_module('numpy')
+    def load(file, mmap_mode=None, allow_pickle=False, fix_imports=True,
+             encoding='ASCII', *, max_header_size=_MAX_HEADER_SIZE):
+        """
+        Load arrays or pickled objects from ``.npy``, ``.npz`` or pickled files.
+    
+        .. warning:: Loading files that contain object arrays uses the ``pickle``
+                     module, which is not secure against erroneous or maliciously
+                     constructed data. Consider passing ``allow_pickle=False`` to
+                     load data that is known not to contain object arrays for the
+                     safer handling of untrusted sources.
+    
+        Parameters
+        ----------
+        file : file-like object, string, or pathlib.Path
+            The file to read. File-like objects must support the
+            ``seek()`` and ``read()`` methods and must always
+            be opened in binary mode.  Pickled files require that the
+            file-like object support the ``readline()`` method as well.
+        mmap_mode : {None, 'r+', 'r', 'w+', 'c'}, optional
+            If not None, then memory-map the file, using the given mode (see
+            `numpy.memmap` for a detailed description of the modes).  A
+            memory-mapped array is kept on disk. However, it can be accessed
+            and sliced like any ndarray.  Memory mapping is especially useful
+            for accessing small fragments of large files without reading the
+            entire file into memory.
+        allow_pickle : bool, optional
+            Allow loading pickled object arrays stored in npy files. Reasons for
+            disallowing pickles include security, as loading pickled data can
+            execute arbitrary code. If pickles are disallowed, loading object
+            arrays will fail. Default: False
+        fix_imports : bool, optional
+            Only useful when loading Python 2 generated pickled files,
+            which includes npy/npz files containing object arrays. If `fix_imports`
+            is True, pickle will try to map the old Python 2 names to the new names
+            used in Python 3.
+        encoding : str, optional
+            What encoding to use when reading Python 2 strings. Only useful when
+            loading Python 2 generated pickled files, which includes
+            npy/npz files containing object arrays. Values other than 'latin1',
+            'ASCII', and 'bytes' are not allowed, as they can corrupt numerical
+            data. Default: 'ASCII'
+        max_header_size : int, optional
+            Maximum allowed size of the header.  Large headers may not be safe
+            to load securely and thus require explicitly passing a larger value.
+            See :py:func:`ast.literal_eval()` for details.
+            This option is ignored when `allow_pickle` is passed.  In that case
+            the file is by definition trusted and the limit is unnecessary.
+    
+        Returns
+        -------
+        result : array, tuple, dict, etc.
+            Data stored in the file. For ``.npz`` files, the returned instance
+            of NpzFile class must be closed to avoid leaking file descriptors.
+    
+        Raises
+        ------
+        OSError
+            If the input file does not exist or cannot be read.
+        UnpicklingError
+            If ``allow_pickle=True``, but the file cannot be loaded as a pickle.
+        ValueError
+            The file contains an object array, but ``allow_pickle=False`` given.
+        EOFError
+            When calling ``np.load`` multiple times on the same file handle,
+            if all data has already been read
+    
+        See Also
+        --------
+        save, savez, savez_compressed, loadtxt
+        memmap : Create a memory-map to an array stored in a file on disk.
+        lib.format.open_memmap : Create or load a memory-mapped ``.npy`` file.
+    
+        Notes
+        -----
+        - If the file contains pickle data, then whatever object is stored
+          in the pickle is returned.
+        - If the file is a ``.npy`` file, then a single array is returned.
+        - If the file is a ``.npz`` file, then a dictionary-like object is
+          returned, containing ``{filename: array}`` key-value pairs, one for
+          each file in the archive.
+        - If the file is a ``.npz`` file, the returned value supports the
+          context manager protocol in a similar fashion to the open function::
+    
+            with load('foo.npz') as data:
+                a = data['a']
+    
+          The underlying file descriptor is closed when exiting the 'with'
+          block.
+    
+        Examples
+        --------
+        >>> import numpy as np
+    
+        Store data to disk, and load it again:
+    
+        >>> np.save('/tmp/123', np.array([[1, 2, 3], [4, 5, 6]]))
+        >>> np.load('/tmp/123.npy')
+        array([[1, 2, 3],
+               [4, 5, 6]])
+    
+        Store compressed data to disk, and load it again:
+    
+        >>> a=np.array([[1, 2, 3], [4, 5, 6]])
+        >>> b=np.array([1, 2])
+        >>> np.savez('/tmp/123.npz', a=a, b=b)
+        >>> data = np.load('/tmp/123.npz')
+        >>> data['a']
+        array([[1, 2, 3],
+               [4, 5, 6]])
+        >>> data['b']
+        array([1, 2])
+        >>> data.close()
+    
+        Mem-map the stored array, and then access the second row
+        directly from disk:
+    
+        >>> X = np.load('/tmp/123.npy', mmap_mode='r')
+        >>> X[1, :]
+        memmap([4, 5, 6])
+    
+        """
+        if encoding not in ('ASCII', 'latin1', 'bytes'):
+            # The 'encoding' value for pickle also affects what encoding
+            # the serialized binary data of NumPy arrays is loaded
+            # in. Pickle does not pass on the encoding information to
+            # NumPy. The unpickling code in numpy._core.multiarray is
+            # written to assume that unicode data appearing where binary
+            # should be is in 'latin1'. 'bytes' is also safe, as is 'ASCII'.
+            #
+            # Other encoding values can corrupt binary data, and we
+            # purposefully disallow them. For the same reason, the errors=
+            # argument is not exposed, as values other than 'strict'
+            # result can similarly silently corrupt numerical data.
+            raise ValueError("encoding must be 'ASCII', 'latin1', or 'bytes'")
+    
+        pickle_kwargs = {'encoding': encoding, 'fix_imports': fix_imports}
+    
+        with contextlib.ExitStack() as stack:
+            if hasattr(file, 'read'):
+                fid = file
+                own_fid = False
+            else:
+>               fid = stack.enter_context(open(os.fspath(file), "rb"))
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-agent/pytest-69/test_color_audit_preserves_poi0/partial/color_audit.npz'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/numpy/lib/_npyio_impl.py:454: FileNotFoundError
+--------- generated xml file: /workspace/work/n6_f1b2_texture_red.xml ----------
+=========================== short test summary info ============================
+FAILED g2/tests/test_texture_projection.py::test_textured_2d_primitives_export_actual_colors[box-.2 .4 .6]
+FAILED g2/tests/test_texture_projection.py::test_textured_2d_primitives_export_actual_colors[cylinder-.2 .6]
+FAILED g2/tests/test_texture_projection.py::test_textured_2d_primitives_export_actual_colors[sphere-.2]
+FAILED g2/tests/test_texture_projection.py::test_textured_2d_primitives_export_actual_colors[ellipsoid-.2 .4 .6]
+FAILED g2/tests/test_texture_projection.py::test_planar_mapping_matches_pinned_mujoco_object_planes[False-1 1]
+FAILED g2/tests/test_texture_projection.py::test_planar_mapping_matches_pinned_mujoco_object_planes[False-2 3]
+FAILED g2/tests/test_texture_projection.py::test_planar_mapping_matches_pinned_mujoco_object_planes[True-1 1]
+FAILED g2/tests/test_texture_projection.py::test_planar_mapping_matches_pinned_mujoco_object_planes[True-2 3]
+FAILED g2/tests/test_texture_projection.py::test_cube_axis_colors_match_compiled_six_face_upload_order[False]
+FAILED g2/tests/test_texture_projection.py::test_cube_axis_colors_match_compiled_six_face_upload_order[True]
+FAILED g2/tests/test_texture_projection.py::test_cube_corner_with_different_face_colors_retains_unknown_mask
+FAILED g2/tests/test_texture_projection.py::test_cube_repeat_is_not_applied_as_a_2d_uv_repeat
+FAILED g2/tests/test_texture_projection.py::test_color_audit_preserves_point_geom_face_and_reason
+13 failed in 0.44s

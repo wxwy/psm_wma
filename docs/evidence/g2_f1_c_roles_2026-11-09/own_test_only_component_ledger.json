@@ -1,0 +1,710 @@
+{
+  "analysis_source_sha256": "9e4747979333f9b0fa3c9e11f3b15123c233909f493acd7916c6390943e2bb3e",
+  "candidate_role_counts": {
+    "visual": 1
+  },
+  "catalog_sha256": "9844b20eb3a6cd4172b068788bbd003398e71a2bcb6fcc39ba090972b12ebb44",
+  "compiled_geom_count": 4,
+  "frames": [
+    0,
+    200
+  ],
+  "full_scene_source_certified": false,
+  "generator_semantics_independently_reviewed": false,
+  "geom_analysis": [
+    {
+      "body_ancestry": [
+        {
+          "body_id": 1,
+          "body_name": "own_counter"
+        },
+        {
+          "body_id": 0,
+          "body_name": "world"
+        }
+      ],
+      "candidate_role": "visual",
+      "conaffinity": 0,
+      "contype": 0,
+      "effective_rgba": [
+        0.30000001192092896,
+        0.6000000238418579,
+        0.8999999761581421,
+        1.0
+      ],
+      "generator_evidence": [
+        {
+          "end_line": 365,
+          "excerpt_sha256": "bca0bafa2fe579f076e1f99bdf037ab24c8b9240d7896aef7268b6112773930f",
+          "reference_commit": "3443cdf3dd20f9ae8ed41adba442059b506891d0",
+          "repository": "robocasa/robocasa",
+          "source_id": "counter",
+          "source_sha256": "77f992d01aa1ae5f21ed7f170d0aab9c303c32148f4b427651c04912be8ce68a",
+          "start_line": 311
+        }
+      ],
+      "geom_id": 0,
+      "geom_name": "own_counter_top_visual",
+      "geom_size": [
+        0.5,
+        0.3,
+        0.015
+      ],
+      "geometry_status": "GEOMETRY_VALID",
+      "geometry_type": "box",
+      "group": 1,
+      "hypothesis": {
+        "classification_reason": "TEST_ONLY own emitted full box and material; a source hypothesis, not private role truth",
+        "compiled_signature_sha256": "dd519cee8e49ef751034ebd2ebb9e7c54a84f5c655f6f540503c9dd7a88d43bc",
+        "condition_evidence": {
+          "counter_parameters": "Own width1/depth.6/height1/thickness.03 yield size.5/.3/.015 posz.485",
+          "material_binding": "Own XML material own_counter_counter_top binds the full box",
+          "original_emission_branch": "Own known contiguous-top structure matches inspected code; no server instance claim"
+        },
+        "emission_trace": "Own fixture reproduces the inspected Counter contiguous-top emission structure",
+        "geom_id": 0,
+        "role": "visual",
+        "rule_id": "counter_contiguous_visual",
+        "source_attributes": {
+          "conaffinity": "0",
+          "contype": "0",
+          "group": "1",
+          "mass": "1e-8",
+          "material": "own_counter_counter_top",
+          "name": "own_counter_top_visual",
+          "pos": "0 0 .485",
+          "size": ".5 .3 .015",
+          "type": "box"
+        },
+        "source_geom_node_sha256": "7f72c8d852a84f5b75ade94d3b42ca1cf0104b460764026ac6e0f8133dcfcc68"
+      },
+      "material": {
+        "mode": "MATERIAL",
+        "rgba": [
+          0.30000001192092896,
+          0.6000000238418579,
+          0.8999999761581421,
+          1.0
+        ],
+        "texrepeat": [
+          1.0,
+          1.0
+        ],
+        "texture_bindings": [],
+        "texuniform": false
+      },
+      "material_probe": {
+        "appearance": {
+          "mode": "constant_asset_albedo",
+          "texture_sampled": false
+        },
+        "basis": "ONE_RETAINED_FACE_CENTROID_ONLY",
+        "original_face_id": 0,
+        "rgba": [
+          0.30000001192092896,
+          0.6000000238418579,
+          0.8999999761581421,
+          1.0
+        ],
+        "status": "PROBE_VALID",
+        "surface_color_coverage_measured": false
+      },
+      "review_state": "EVIDENCE_BOUND_CANDIDATE_PENDING_GPT",
+      "role": "UNCLASSIFIED",
+      "role_certified": false,
+      "role_evidence": {
+        "asserted_role": null,
+        "basis": "ORIGINAL_HASHED_XML_AND_COMPILED_GEOM_BODY_NOT_GROUP_OR_NAME_CLASSIFICATION",
+        "compiled_properties": {
+          "body_ancestry": [
+            {
+              "body_id": 1,
+              "body_name": "own_counter"
+            },
+            {
+              "body_id": 0,
+              "body_name": "world"
+            }
+          ],
+          "compiled_rgba": [
+            0.5,
+            0.5,
+            0.5,
+            1.0
+          ],
+          "conaffinity": 0,
+          "contype": 0,
+          "geom_id": 0,
+          "geom_name": "own_counter_top_visual",
+          "geom_size": [
+            0.5,
+            0.3,
+            0.015
+          ],
+          "geometry_data_id": -1,
+          "geometry_type": "box",
+          "geometry_type_id": 6,
+          "group": 1,
+          "local_position": [
+            0.0,
+            0.0,
+            0.485
+          ],
+          "local_quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "material_id": 0
+        },
+        "compiled_signature_sha256": "dd519cee8e49ef751034ebd2ebb9e7c54a84f5c655f6f540503c9dd7a88d43bc",
+        "independent_role_review": "PENDING_EXTERNAL_FULL_SOURCE_REVIEW",
+        "role_certified": false,
+        "schema": "g2_source_role_evidence_v1",
+        "source_geom_nodes": [
+          {
+            "attributes": {
+              "conaffinity": "0",
+              "contype": "0",
+              "group": "1",
+              "mass": "1e-8",
+              "material": "own_counter_counter_top",
+              "name": "own_counter_top_visual",
+              "pos": "0 0 .485",
+              "size": ".5 .3 .015",
+              "type": "box"
+            },
+            "body_ancestors": [
+              "own_counter"
+            ],
+            "inclusion_chain": [],
+            "source_defaults_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "source_geom_node_sha256": "7f72c8d852a84f5b75ade94d3b42ca1cf0104b460764026ac6e0f8133dcfcc68",
+            "source_logical_id": "root.xml",
+            "source_sha256": "a5650da9a31ab873275c0d71a1a6932e6c1ea385eff9a3980a9366106fc9ec11",
+            "xml_path": "/mujoco/worldbody[0]/body[0]/geom[0]"
+          }
+        ],
+        "status": "SOURCE_BOUND"
+      },
+      "sampling": {
+        "area_measurement": "FLOAT64_APPROXIMATION_OF_INPUT_LOCAL_COORDINATES",
+        "coordinate_dtype": "<f8",
+        "discarded_area_fraction": 0.0,
+        "discarded_area_m2": 0.0,
+        "discarded_face_fraction": 0.0,
+        "discarded_zero_area_face_count": 0,
+        "discarded_zero_area_face_ids": [],
+        "face_id_basis": "INPUT_LOCAL_TRIANGLE_INDEX",
+        "input_face_count": 12,
+        "local_geometry_sha256": "96b74034df82aaeffb74a4b39fcfd04eb993f7f45e5f1fb80ac28a9b5162b638",
+        "policy": "EXACT_ZERO_ONLY_RETAIN_ALL_POSITIVE",
+        "rejected_nonfinite_face_ids": [],
+        "retained_area_m2": 1.296,
+        "retained_area_underflow_face_ids": [],
+        "retained_face_count": 12,
+        "retained_near_positive_face_ids": [],
+        "sampled_point_count": 0,
+        "schema": "g2_surface_sampling_audit_v1",
+        "status": "GEOMETRY_VALID",
+        "zero_predicate": "EXACT_RATIONAL_CROSS_OF_REPRESENTED_INPUT_COORDINATES"
+      },
+      "source": null
+    },
+    {
+      "body_ancestry": [
+        {
+          "body_id": 1,
+          "body_name": "own_counter"
+        },
+        {
+          "body_id": 0,
+          "body_name": "world"
+        }
+      ],
+      "candidate_role": null,
+      "conaffinity": 1,
+      "contype": 1,
+      "effective_rgba": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+      ],
+      "geom_id": 1,
+      "geom_name": "own_counter_top_0",
+      "geom_size": [
+        0.25,
+        0.3,
+        0.015
+      ],
+      "geometry_status": "GEOMETRY_VALID",
+      "geometry_type": "box",
+      "group": 0,
+      "material": {
+        "mode": "GEOM_RGBA",
+        "texture_bindings": []
+      },
+      "material_probe": {
+        "appearance": {
+          "mode": "geom_rgba_asset_albedo",
+          "texture_sampled": false
+        },
+        "basis": "ONE_RETAINED_FACE_CENTROID_ONLY",
+        "original_face_id": 0,
+        "rgba": [
+          0.5,
+          0.5,
+          0.5,
+          1.0
+        ],
+        "status": "PROBE_VALID",
+        "surface_color_coverage_measured": false
+      },
+      "reason": "NO_PER_COMPONENT_GENERATOR_HYPOTHESIS",
+      "review_state": "UNRESOLVED",
+      "role": "UNCLASSIFIED",
+      "role_certified": false,
+      "role_evidence": {
+        "asserted_role": null,
+        "basis": "ORIGINAL_HASHED_XML_AND_COMPILED_GEOM_BODY_NOT_GROUP_OR_NAME_CLASSIFICATION",
+        "compiled_properties": {
+          "body_ancestry": [
+            {
+              "body_id": 1,
+              "body_name": "own_counter"
+            },
+            {
+              "body_id": 0,
+              "body_name": "world"
+            }
+          ],
+          "compiled_rgba": [
+            0.5,
+            0.5,
+            0.5,
+            1.0
+          ],
+          "conaffinity": 1,
+          "contype": 1,
+          "geom_id": 1,
+          "geom_name": "own_counter_top_0",
+          "geom_size": [
+            0.25,
+            0.3,
+            0.015
+          ],
+          "geometry_data_id": -1,
+          "geometry_type": "box",
+          "geometry_type_id": 6,
+          "group": 0,
+          "local_position": [
+            -0.25,
+            0.0,
+            0.485
+          ],
+          "local_quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "material_id": -1
+        },
+        "compiled_signature_sha256": "8d26de5c0b667d6865802f328c0a3ddba1c465a4255151e659b890c41e3adaf7",
+        "independent_role_review": "PENDING_EXTERNAL_FULL_SOURCE_REVIEW",
+        "role_certified": false,
+        "schema": "g2_source_role_evidence_v1",
+        "source_geom_nodes": [
+          {
+            "attributes": {
+              "group": "0",
+              "name": "own_counter_top_0",
+              "pos": "-.25 0 .485",
+              "size": ".25 .3 .015",
+              "type": "box"
+            },
+            "body_ancestors": [
+              "own_counter"
+            ],
+            "inclusion_chain": [],
+            "source_defaults_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "source_geom_node_sha256": "e9ad49f707748a0867941a299fd171031f75c175750787b9be93103b215e8545",
+            "source_logical_id": "root.xml",
+            "source_sha256": "a5650da9a31ab873275c0d71a1a6932e6c1ea385eff9a3980a9366106fc9ec11",
+            "xml_path": "/mujoco/worldbody[0]/body[0]/geom[1]"
+          }
+        ],
+        "status": "SOURCE_BOUND"
+      },
+      "sampling": {
+        "area_measurement": "FLOAT64_APPROXIMATION_OF_INPUT_LOCAL_COORDINATES",
+        "coordinate_dtype": "<f8",
+        "discarded_area_fraction": 0.0,
+        "discarded_area_m2": 0.0,
+        "discarded_face_fraction": 0.0,
+        "discarded_zero_area_face_count": 0,
+        "discarded_zero_area_face_ids": [],
+        "face_id_basis": "INPUT_LOCAL_TRIANGLE_INDEX",
+        "input_face_count": 12,
+        "local_geometry_sha256": "72b623bd26701aee66a7193e21da53913dbce2e0ab31a61c131d258255a175b3",
+        "policy": "EXACT_ZERO_ONLY_RETAIN_ALL_POSITIVE",
+        "rejected_nonfinite_face_ids": [],
+        "retained_area_m2": 0.6659999999999999,
+        "retained_area_underflow_face_ids": [],
+        "retained_face_count": 12,
+        "retained_near_positive_face_ids": [],
+        "sampled_point_count": 0,
+        "schema": "g2_surface_sampling_audit_v1",
+        "status": "GEOMETRY_VALID",
+        "zero_predicate": "EXACT_RATIONAL_CROSS_OF_REPRESENTED_INPUT_COORDINATES"
+      },
+      "source": null
+    },
+    {
+      "body_ancestry": [
+        {
+          "body_id": 1,
+          "body_name": "own_counter"
+        },
+        {
+          "body_id": 0,
+          "body_name": "world"
+        }
+      ],
+      "candidate_role": null,
+      "conaffinity": 1,
+      "contype": 1,
+      "effective_rgba": [
+        0.5,
+        0.5,
+        0.5,
+        1.0
+      ],
+      "geom_id": 2,
+      "geom_name": "own_counter_top_1",
+      "geom_size": [
+        0.25,
+        0.3,
+        0.015
+      ],
+      "geometry_status": "GEOMETRY_VALID",
+      "geometry_type": "box",
+      "group": 0,
+      "material": {
+        "mode": "GEOM_RGBA",
+        "texture_bindings": []
+      },
+      "material_probe": {
+        "appearance": {
+          "mode": "geom_rgba_asset_albedo",
+          "texture_sampled": false
+        },
+        "basis": "ONE_RETAINED_FACE_CENTROID_ONLY",
+        "original_face_id": 0,
+        "rgba": [
+          0.5,
+          0.5,
+          0.5,
+          1.0
+        ],
+        "status": "PROBE_VALID",
+        "surface_color_coverage_measured": false
+      },
+      "reason": "NO_PER_COMPONENT_GENERATOR_HYPOTHESIS",
+      "review_state": "UNRESOLVED",
+      "role": "UNCLASSIFIED",
+      "role_certified": false,
+      "role_evidence": {
+        "asserted_role": null,
+        "basis": "ORIGINAL_HASHED_XML_AND_COMPILED_GEOM_BODY_NOT_GROUP_OR_NAME_CLASSIFICATION",
+        "compiled_properties": {
+          "body_ancestry": [
+            {
+              "body_id": 1,
+              "body_name": "own_counter"
+            },
+            {
+              "body_id": 0,
+              "body_name": "world"
+            }
+          ],
+          "compiled_rgba": [
+            0.5,
+            0.5,
+            0.5,
+            1.0
+          ],
+          "conaffinity": 1,
+          "contype": 1,
+          "geom_id": 2,
+          "geom_name": "own_counter_top_1",
+          "geom_size": [
+            0.25,
+            0.3,
+            0.015
+          ],
+          "geometry_data_id": -1,
+          "geometry_type": "box",
+          "geometry_type_id": 6,
+          "group": 0,
+          "local_position": [
+            0.25,
+            0.0,
+            0.485
+          ],
+          "local_quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "material_id": -1
+        },
+        "compiled_signature_sha256": "96065314aefecd8932c7dfd5acb7daf627b6d2c65dcbcc4868772378273073e7",
+        "independent_role_review": "PENDING_EXTERNAL_FULL_SOURCE_REVIEW",
+        "role_certified": false,
+        "schema": "g2_source_role_evidence_v1",
+        "source_geom_nodes": [
+          {
+            "attributes": {
+              "group": "0",
+              "name": "own_counter_top_1",
+              "pos": ".25 0 .485",
+              "size": ".25 .3 .015",
+              "type": "box"
+            },
+            "body_ancestors": [
+              "own_counter"
+            ],
+            "inclusion_chain": [],
+            "source_defaults_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "source_geom_node_sha256": "8080f3f1feaa701993040117d492c1e495e46ea17ff7ef5ebdf7256f158e48bc",
+            "source_logical_id": "root.xml",
+            "source_sha256": "a5650da9a31ab873275c0d71a1a6932e6c1ea385eff9a3980a9366106fc9ec11",
+            "xml_path": "/mujoco/worldbody[0]/body[0]/geom[2]"
+          }
+        ],
+        "status": "SOURCE_BOUND"
+      },
+      "sampling": {
+        "area_measurement": "FLOAT64_APPROXIMATION_OF_INPUT_LOCAL_COORDINATES",
+        "coordinate_dtype": "<f8",
+        "discarded_area_fraction": 0.0,
+        "discarded_area_m2": 0.0,
+        "discarded_face_fraction": 0.0,
+        "discarded_zero_area_face_count": 0,
+        "discarded_zero_area_face_ids": [],
+        "face_id_basis": "INPUT_LOCAL_TRIANGLE_INDEX",
+        "input_face_count": 12,
+        "local_geometry_sha256": "72b623bd26701aee66a7193e21da53913dbce2e0ab31a61c131d258255a175b3",
+        "policy": "EXACT_ZERO_ONLY_RETAIN_ALL_POSITIVE",
+        "rejected_nonfinite_face_ids": [],
+        "retained_area_m2": 0.6659999999999999,
+        "retained_area_underflow_face_ids": [],
+        "retained_face_count": 12,
+        "retained_near_positive_face_ids": [],
+        "sampled_point_count": 0,
+        "schema": "g2_surface_sampling_audit_v1",
+        "status": "GEOMETRY_VALID",
+        "zero_predicate": "EXACT_RATIONAL_CROSS_OF_REPRESENTED_INPUT_COORDINATES"
+      },
+      "source": null
+    },
+    {
+      "body_ancestry": [
+        {
+          "body_id": 1,
+          "body_name": "own_counter"
+        },
+        {
+          "body_id": 0,
+          "body_name": "world"
+        }
+      ],
+      "candidate_role": null,
+      "conaffinity": 0,
+      "contype": 0,
+      "effective_rgba": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "geom_id": 3,
+      "geom_name": "own_counter_reg_main",
+      "geom_size": [
+        0.5,
+        0.3,
+        0.5
+      ],
+      "geometry_status": "GEOMETRY_VALID",
+      "geometry_type": "box",
+      "group": 0,
+      "material": {
+        "mode": "GEOM_RGBA",
+        "texture_bindings": []
+      },
+      "material_probe": {
+        "appearance": {
+          "mode": "geom_rgba_asset_albedo",
+          "texture_sampled": false,
+          "unsupported": "translucent_surface_requires_alpha_transport"
+        },
+        "basis": "ONE_RETAINED_FACE_CENTROID_ONLY",
+        "original_face_id": 0,
+        "rgba": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "status": "UNSUPPORTED_OR_TRANSLUCENT",
+        "surface_color_coverage_measured": false
+      },
+      "reason": "NO_PER_COMPONENT_GENERATOR_HYPOTHESIS",
+      "review_state": "UNRESOLVED",
+      "role": "UNCLASSIFIED",
+      "role_certified": false,
+      "role_evidence": {
+        "asserted_role": null,
+        "basis": "ORIGINAL_HASHED_XML_AND_COMPILED_GEOM_BODY_NOT_GROUP_OR_NAME_CLASSIFICATION",
+        "compiled_properties": {
+          "body_ancestry": [
+            {
+              "body_id": 1,
+              "body_name": "own_counter"
+            },
+            {
+              "body_id": 0,
+              "body_name": "world"
+            }
+          ],
+          "compiled_rgba": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "conaffinity": 0,
+          "contype": 0,
+          "geom_id": 3,
+          "geom_name": "own_counter_reg_main",
+          "geom_size": [
+            0.5,
+            0.3,
+            0.5
+          ],
+          "geometry_data_id": -1,
+          "geometry_type": "box",
+          "geometry_type_id": 6,
+          "group": 0,
+          "local_position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_quaternion": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "material_id": -1
+        },
+        "compiled_signature_sha256": "5d9c0385f54e2c7a1673cfdd161776d7dacc7808e169105a967fba7392180ef3",
+        "independent_role_review": "PENDING_EXTERNAL_FULL_SOURCE_REVIEW",
+        "role_certified": false,
+        "schema": "g2_source_role_evidence_v1",
+        "source_geom_nodes": [
+          {
+            "attributes": {
+              "conaffinity": "0",
+              "contype": "0",
+              "name": "own_counter_reg_main",
+              "rgba": "1 0 0 0",
+              "size": ".5 .3 .5",
+              "type": "box"
+            },
+            "body_ancestors": [
+              "own_counter"
+            ],
+            "inclusion_chain": [],
+            "source_defaults_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "source_geom_node_sha256": "0eec5105c0ebfa48a2258eaefd2d29b2b3cbe03d7ff501ea8104614d0154d586",
+            "source_logical_id": "root.xml",
+            "source_sha256": "a5650da9a31ab873275c0d71a1a6932e6c1ea385eff9a3980a9366106fc9ec11",
+            "xml_path": "/mujoco/worldbody[0]/body[0]/geom[3]"
+          }
+        ],
+        "status": "SOURCE_BOUND"
+      },
+      "sampling": {
+        "area_measurement": "FLOAT64_APPROXIMATION_OF_INPUT_LOCAL_COORDINATES",
+        "coordinate_dtype": "<f8",
+        "discarded_area_fraction": 0.0,
+        "discarded_area_m2": 0.0,
+        "discarded_face_fraction": 0.0,
+        "discarded_zero_area_face_count": 0,
+        "discarded_zero_area_face_ids": [],
+        "face_id_basis": "INPUT_LOCAL_TRIANGLE_INDEX",
+        "input_face_count": 12,
+        "local_geometry_sha256": "72f5482f445d34950935b9c08981e70b07e4451d925527d29965f37449641fa1",
+        "policy": "EXACT_ZERO_ONLY_RETAIN_ALL_POSITIVE",
+        "rejected_nonfinite_face_ids": [],
+        "retained_area_m2": 4.4,
+        "retained_area_underflow_face_ids": [],
+        "retained_face_count": 12,
+        "retained_near_positive_face_ids": [],
+        "sampled_point_count": 0,
+        "schema": "g2_surface_sampling_audit_v1",
+        "status": "GEOMETRY_VALID",
+        "zero_predicate": "EXACT_RATIONAL_CROSS_OF_REPRESENTED_INPUT_COORDINATES"
+      },
+      "source": null
+    }
+  ],
+  "hypotheses_sha256": "865f99a99e4d90066e8646d9dd67132d5cd377a79ce0f5ae2f5897a208d3f206",
+  "inventory_files": [
+    {
+      "frame_id": 0,
+      "sha256": "0f02076ced5c0bcb0225a693f024a14bdd0fbac809d60503b48cbe92aff04e0e",
+      "state": {
+        "file_sha256": "6b4c765d6e41758e4b8b264c1203e122fea3c246abfcddd1ba9cfb4c8a2f14ef",
+        "format": "qpos",
+        "frame_id": 0,
+        "path": "/workspace/work/n6_f1c_roles_public_check/TEST_ONLY_own_source/states.npz",
+        "row_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "timestamp": 0.0,
+        "timestamp_source": "archive_time"
+      }
+    },
+    {
+      "frame_id": 200,
+      "sha256": "d9725ed617ec51cef94c17c478f9a52a33b5aed74943af17374342deac8e09ca",
+      "state": {
+        "file_sha256": "6b4c765d6e41758e4b8b264c1203e122fea3c246abfcddd1ba9cfb4c8a2f14ef",
+        "format": "qpos",
+        "frame_id": 200,
+        "path": "/workspace/work/n6_f1c_roles_public_check/TEST_ONLY_own_source/states.npz",
+        "row_sha256": "7762a446e2cee860b090b945cd7c3a502b7fe4a2d29f0f0889175de5ba4ae752",
+        "timestamp": 4.0,
+        "timestamp_source": "archive_time"
+      }
+    }
+  ],
+  "model_source_sha256": "b388f5807afc60f6fe0a275928d949e6c524b92d34d653bcff0e5894f56be13b",
+  "point_cloud_created": false,
+  "remaining_unclassified_count": 4,
+  "review_state_counts": {
+    "EVIDENCE_BOUND_CANDIDATE_PENDING_GPT": 1,
+    "UNRESOLVED": 3
+  },
+  "role_assignments_written": false,
+  "scene_id": "TEST_ONLY_PUBLIC_CATALOG_ROLE_ANALYSIS",
+  "schema": "g2_source_role_analysis_v1",
+  "scope": "SOURCE_EVIDENCE_LEDGER_ONLY_NOT_NATIVE_DETECTIONS_OR_ROLE_APPROVAL",
+  "status": "AUDIT_ONLY",
+  "training_ready": false
+}

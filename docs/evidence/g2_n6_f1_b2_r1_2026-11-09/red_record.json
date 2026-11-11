@@ -1,0 +1,8 @@
+{
+  "baseline_runtime": "193a05e3b250eb32dd7ee08165a368a6706e78ee",
+  "base_ledger": "d10d19603556f76e13e30796edeed1ddb60b3063",
+  "test_file": "g2/tests/test_f1b2_r1.py",
+  "test_sha256": "9137dd53926d507930387e344fb598150d678e88532adcd307e6f5d41869b06a",
+  "frozen_sampler_sha256": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967",
+  "original_fixture_setup_failure_preserved_separately": true
+}

@@ -1,0 +1,9 @@
+{
+  "baseline_runtime": "029122268ea535d8b3c74c0b3fb2b0d0302a828f",
+  "test_file": "g2/tests/test_texture_projection.py",
+  "test_sha256": "5bef6264a173830d6286b7503310a771b54a75f1ae98c3347213a2b8f3dbed89",
+  "red_tests": 13,
+  "failed": 13,
+  "passed": 0,
+  "sampler_sha256": "763f945ae6f282abd7f69dbe7dbef9cb20d1990fa2a9f34159f6b63ae95cd967"
+}

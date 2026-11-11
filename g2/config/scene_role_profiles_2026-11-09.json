@@ -1,0 +1,88 @@
+{
+  "schema": "g2_scene_role_profiles_v1",
+  "version": "2026-11-09",
+  "classification_source": {
+    "commit": "6b04d214608eafea1da5c0bdd6f072ecc926ebca",
+    "tree": "160514c3a96b04571e0f921b45a47340b7430ca0",
+    "catalog_sha256": "e7c0519c7ee495128a6321acb021f0e15b559060f965efb84c43d4c4e5f77314"
+  },
+  "review": {
+    "commit": "f86ecef5daab21587a2b18c06c663085a2ebb413",
+    "file": "docs/collab/chatgpt/reviews/2026-11-09_G2_F1D_6b04d214_GPT_independent_review.md",
+    "blob": "1fe9d18f47a41d22892b71b21e9300ba77a3a693",
+    "verdict": "APPROVE_SCENE_BOUND_ROLE_CANDIDATES_LAYOUT1_LAYOUT10_ONLY",
+    "evidence_sha256": "8412b731787f2b686357d1ac4731729547da457f3906e35f407542755815bce5",
+    "issue_comment": 6732760420
+  },
+  "historical_generator_revision_certified": false,
+  "full_scene_source_certified": false,
+  "training_ready": false,
+  "profiles": {
+    "1": {
+      "analysis_sha256": "42a4422ba10f66b4e8aaa84ca2085b1e6c6ffc17ac7b9193f19cb512eeee83f9",
+      "classified_unknown_count": 161,
+      "compiled_geom_count": 1020,
+      "files": {
+        "hypotheses.json": "58cf98c02a91bea73c5a07774c1f1a80353893693050157a2e7ec44a1d6f0968",
+        "proposed_roles.json": "e57070c49933969e7372d70c0dc54b9087da4ad7a602c4e9622e975be9652371"
+      },
+      "frames": [
+        {
+          "frame_id": 0,
+          "inventory_sha256": "cb7e8eb33f93335372592af1e52b2ed12b606703d71b1f279017e3993ba7c714",
+          "state_archive_sha256": "20ae5402bdeb98dafaf2f42e100bbd475de28400988afb90b490a86ce16be6b3",
+          "state_format": "mujoco_fullphysics",
+          "state_row_sha256": "f0214f4543ce7a5245d16c2d8425d07f29094908b43b2d721a358e35bcb06ded"
+        },
+        {
+          "frame_id": 200,
+          "inventory_sha256": "09f139fd5c7193120771958fe4df88153bb41c3c22722a0f911823a7f0652429",
+          "state_archive_sha256": "20ae5402bdeb98dafaf2f42e100bbd475de28400988afb90b490a86ce16be6b3",
+          "state_format": "mujoco_fullphysics",
+          "state_row_sha256": "348a0199b477350ff4143ed34b905fc230300aa86c60138e6e414c7ad0c664df"
+        }
+      ],
+      "layout": 1,
+      "model_source_sha256": "d0f22114e43197f33567e495c35f5c32f75ae388f673909809d3cf85f47699b3",
+      "proposed_counts": {
+        "auxiliary": 33,
+        "collision": 120,
+        "visual": 8
+      },
+      "source_identity_sha256": "6350b4a168b20630bc1144b7a29c225e035b8d94500f873477ef1d9f673bede3"
+    },
+    "10": {
+      "analysis_sha256": "d19f9e5816f1b7077975db66426825cba6d3f36f052ae0092ca92d50ee2c75b6",
+      "classified_unknown_count": 429,
+      "compiled_geom_count": 2115,
+      "files": {
+        "hypotheses.json": "14d1517bf8365efcd7f397d1f0427a968d97bd6c2ceb3f6a43213ba11fe5d1fd",
+        "proposed_roles.json": "d7d4d23d978b178e70812e7608bf2ed617beaeb45be442a2496fde44514dc0dd"
+      },
+      "frames": [
+        {
+          "frame_id": 0,
+          "inventory_sha256": "17c2ce92b7684175e2cd1689f0c0baeb5b91637a9ab355bf226755b438579d5d",
+          "state_archive_sha256": "2bbc9cdb2eb93c42ef30aac1f46805ff1dab796579011a91d1e0c325f8a49c75",
+          "state_format": "mujoco_fullphysics",
+          "state_row_sha256": "2f25b7230f58dc626faf46e48fa659d1334cafc016008d48f4f34346e4e9798c"
+        },
+        {
+          "frame_id": 200,
+          "inventory_sha256": "3657d84e869685ccfcd1ae088f9a5fe10773dd55b8534380ffaa861d86e20e16",
+          "state_archive_sha256": "2bbc9cdb2eb93c42ef30aac1f46805ff1dab796579011a91d1e0c325f8a49c75",
+          "state_format": "mujoco_fullphysics",
+          "state_row_sha256": "55c8421326ce77893e78be662880224d3e01c1ab958d390d510b46b5b123ded8"
+        }
+      ],
+      "layout": 10,
+      "model_source_sha256": "8c30dc5ed35a335b4eaa2c20f7153b0ff8a87bf8a4d5b7e416c400a57d50a0eb",
+      "proposed_counts": {
+        "auxiliary": 83,
+        "collision": 333,
+        "visual": 13
+      },
+      "source_identity_sha256": "a1ded47c8fc80f0ac5527d2d4aeefa6e42acb00c978887a952cc96ab2cc92181"
+    }
+  }
+}

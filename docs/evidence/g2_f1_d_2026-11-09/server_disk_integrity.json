@@ -1,0 +1,62 @@
+{
+  "aggregate_sha256": "961c939e2d689da153ceeae37fc2fb02489a1fbf57af7c4f2b051ae129411f7d",
+  "historical_episode_generator_version_certified": false,
+  "initial_integrity_script_error": "CHECK_WRONGLY_REQUIRED_UNKNOWN_PLACEHOLDERS_UNCHANGED_NOT_CANDIDATE_BUG",
+  "layouts": [
+    {
+      "analysis_sha256": "42a4422ba10f66b4e8aaa84ca2085b1e6c6ffc17ac7b9193f19cb512eeee83f9",
+      "candidate_count": 161,
+      "changed_unknown_entries_in_new_map": 161,
+      "existing_classified_metadata_preserved": true,
+      "input_inventory_sha256": [
+        "cb7e8eb33f93335372592af1e52b2ed12b606703d71b1f279017e3993ba7c714",
+        "09f139fd5c7193120771958fe4df88153bb41c3c22722a0f911823a7f0652429"
+      ],
+      "layout": 1,
+      "new_map_added_keys": 0,
+      "pending_gpt_count": 161,
+      "remaining_without_proposal": 0,
+      "role_certified_count": 0,
+      "role_counts": {
+        "auxiliary": 33,
+        "collision": 120,
+        "visual": 8
+      },
+      "summary_sha256": "f9053ec62facfed723b408f4943d91d37afad4dd80902cb24fa730250f6457bd"
+    },
+    {
+      "analysis_sha256": "d19f9e5816f1b7077975db66426825cba6d3f36f052ae0092ca92d50ee2c75b6",
+      "candidate_count": 429,
+      "changed_unknown_entries_in_new_map": 429,
+      "existing_classified_metadata_preserved": true,
+      "input_inventory_sha256": [
+        "17c2ce92b7684175e2cd1689f0c0baeb5b91637a9ab355bf226755b438579d5d",
+        "3657d84e869685ccfcd1ae088f9a5fe10773dd55b8534380ffaa861d86e20e16"
+      ],
+      "layout": 10,
+      "new_map_added_keys": 0,
+      "pending_gpt_count": 429,
+      "remaining_without_proposal": 0,
+      "role_certified_count": 0,
+      "role_counts": {
+        "auxiliary": 83,
+        "collision": 333,
+        "visual": 13
+      },
+      "summary_sha256": "15969ec6b89ad2028c7c55fd5e7ee2a74394cd24ba5c77193d0655a08208f1fd"
+    }
+  ],
+  "point_cloud_regenerated": false,
+  "prior_474_proposals_identical": {
+    "1": 128,
+    "10": 346
+  },
+  "private_individual_files_exported": false,
+  "production_roles_changed": false,
+  "scope": "AUTHOR_DISK_INTEGRITY_NOT_GPT_ACCEPTANCE",
+  "source_files_matching": 40,
+  "source_sha": "6b04d214608eafea1da5c0bdd6f072ecc926ebca",
+  "total_candidates": 590,
+  "training_ready": false,
+  "verified_excerpt_spans": 28
+}

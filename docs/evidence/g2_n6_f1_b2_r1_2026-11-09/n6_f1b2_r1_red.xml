@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="8" skipped="0" tests="15" time="0.575" timestamp="2026-11-08T23:53:22.968773+00:00" hostname="7691fc2accc2"><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_color_space_mask_and_reason_are_conservative[sRGB]" time="0.075"><failure message="assert (not np.True_)">mesh_scene = (PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_color_space_mask_and0/own_source'), PosixPath('/tmp/pytest-of-age..._source/model.xml'), PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_color_space_mask_and0/own_source/roles.json'))
+colorspace = 'sRGB'
+
+    @pytest.mark.parametrize("colorspace", ["sRGB", "linear", "default"])
+    def test_mesh_color_space_mask_and_reason_are_conservative(mesh_scene, colorspace):
+        import mujoco
+        xml, _ = mesh_material(mesh_scene, colorspace)
+        model, _ = load_model(xml)
+        g = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, "mesh")
+        rgba, valid, appearance, reasons = surface_colors(model, g, "mesh", np.asarray([0]),
+            np.asarray([[.2, .3, .5]]), with_diagnostics=True)
+        if colorspace == "sRGB":
+&gt;           assert not valid[0] and reasons[0] != 0
+E           assert (not np.True_)
+
+g2/tests/test_f1b2_r1.py:32: AssertionError</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_color_space_mask_and_reason_are_conservative[linear]" time="0.006" /><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_color_space_mask_and_reason_are_conservative[default]" time="0.004" /><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_export_strict_partial_and_linear_contract[False-sRGB]" time="0.016"><failure message="Failed: DID NOT RAISE &lt;class 'g2.io.ContractError'&gt;">mesh_scene = (PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_export_strict_partia0/own_source'), PosixPath('/tmp/pytest-of-age..._source/model.xml'), PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_export_strict_partia0/own_source/roles.json'))
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_export_strict_partia0')
+colorspace = 'sRGB', partial = False
+
+    @pytest.mark.parametrize("colorspace", ["sRGB", "linear", "default"])
+    @pytest.mark.parametrize("partial", [False, True])
+    def test_mesh_export_strict_partial_and_linear_contract(mesh_scene, tmp_path, colorspace, partial):
+        xml, metadata = mesh_material(mesh_scene, colorspace)
+        out = tmp_path / "export"
+        if colorspace == "sRGB" and not partial:
+&gt;           with pytest.raises(ContractError, match="partial"):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE &lt;class 'g2.io.ContractError'&gt;
+
+g2/tests/test_f1b2_r1.py:46: Failed</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_export_strict_partial_and_linear_contract[False-linear]" time="0.011" /><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_export_strict_partial_and_linear_contract[False-default]" time="0.012" /><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_export_strict_partial_and_linear_contract[True-sRGB]" time="0.009"><failure message="assert np.False_&#10; +  where np.False_ = &lt;function all at 0x7f603996fb70&gt;(array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n       1., 1., 1., 1., 1., 1., 1., 1., 1., ... 1., 1., 1., 1., 1., 1., 1.,\n       1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n       1., 1.]) == 0)&#10; +    where &lt;function all at 0x7f603996fb70&gt; = np.all&#10; +    and   0 = int(False)">mesh_scene = (PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_export_strict_partia3/own_source'), PosixPath('/tmp/pytest-of-age..._source/model.xml'), PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_export_strict_partia3/own_source/roles.json'))
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_mesh_export_strict_partia3')
+colorspace = 'sRGB', partial = True
+
+    @pytest.mark.parametrize("colorspace", ["sRGB", "linear", "default"])
+    @pytest.mark.parametrize("partial", [False, True])
+    def test_mesh_export_strict_partial_and_linear_contract(mesh_scene, tmp_path, colorspace, partial):
+        xml, metadata = mesh_material(mesh_scene, colorspace)
+        out = tmp_path / "export"
+        if colorspace == "sRGB" and not partial:
+            with pytest.raises(ContractError, match="partial"):
+                export(xml, metadata, out, spacing=.4)
+            assert not out.exists()
+            return
+        result = export(xml, metadata, out, spacing=.4, allow_partial_color=partial)
+        points = np.loadtxt(out / "precolored.txt", skiprows=7)
+        expected_valid = colorspace != "sRGB"
+&gt;       assert np.all(points[:, -1] == int(expected_valid))
+E       assert np.False_
+E        +  where np.False_ = &lt;function all at 0x7f603996fb70&gt;(array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n       1., 1., 1., 1., 1., 1., 1., 1., 1., ... 1., 1., 1., 1., 1., 1., 1.,\n       1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n       1., 1.]) == 0)
+E        +    where &lt;function all at 0x7f603996fb70&gt; = np.all
+E        +    and   0 = int(False)
+
+g2/tests/test_f1b2_r1.py:53: AssertionError</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_export_strict_partial_and_linear_contract[True-linear]" time="0.008" /><testcase classname="g2.tests.test_f1b2_r1" name="test_mesh_export_strict_partial_and_linear_contract[True-default]" time="0.008" /><testcase classname="g2.tests.test_f1b2_r1" name="test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive[mujocoinclude]" time="0.069" /><testcase classname="g2.tests.test_f1b2_r1" name="test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive[body]" time="0.059"><failure message="AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'&#10;  &#10;  - SOURCE_BOUND&#10;  + SOURCE_UNRESOLVED">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_included_root_is_ignored_1')
+wrapper = 'body'
+
+    @pytest.mark.parametrize("wrapper", ["mujocoinclude", "body", "default", "asset"])
+    def test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive(tmp_path, wrapper):
+        import mujoco
+        xml, metadata, fragment = included_scene(tmp_path / "own_source", wrapper)
+        model, _ = load_model(xml)
+        assert model.nbody == 2 and model.ngeom == 2
+        assert mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "ignored_wrapper") == -1
+        for g in range(model.ngeom):
+            assert mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, int(model.geom_bodyid[g])) == "fixture_body"
+        audit = inventory(xml, tmp_path / "audit", metadata=metadata)
+        control_xml, control_meta, _ = included_scene(tmp_path / "control", "mujocoinclude")
+        control = inventory(control_xml, tmp_path / "control_audit", metadata=control_meta)
+        for row, reference in zip(audit["geom_audit"], control["geom_audit"]):
+            evidence = row["role_evidence"]
+&gt;           assert evidence["status"] == "SOURCE_BOUND"
+E           AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'
+E             
+E             - SOURCE_BOUND
+E             + SOURCE_UNRESOLVED
+
+g2/tests/test_f1b2_r1.py:105: AssertionError</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive[default]" time="0.058"><failure message="AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'&#10;  &#10;  - SOURCE_BOUND&#10;  + SOURCE_UNRESOLVED">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_included_root_is_ignored_2')
+wrapper = 'default'
+
+    @pytest.mark.parametrize("wrapper", ["mujocoinclude", "body", "default", "asset"])
+    def test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive(tmp_path, wrapper):
+        import mujoco
+        xml, metadata, fragment = included_scene(tmp_path / "own_source", wrapper)
+        model, _ = load_model(xml)
+        assert model.nbody == 2 and model.ngeom == 2
+        assert mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "ignored_wrapper") == -1
+        for g in range(model.ngeom):
+            assert mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, int(model.geom_bodyid[g])) == "fixture_body"
+        audit = inventory(xml, tmp_path / "audit", metadata=metadata)
+        control_xml, control_meta, _ = included_scene(tmp_path / "control", "mujocoinclude")
+        control = inventory(control_xml, tmp_path / "control_audit", metadata=control_meta)
+        for row, reference in zip(audit["geom_audit"], control["geom_audit"]):
+            evidence = row["role_evidence"]
+&gt;           assert evidence["status"] == "SOURCE_BOUND"
+E           AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'
+E             
+E             - SOURCE_BOUND
+E             + SOURCE_UNRESOLVED
+
+g2/tests/test_f1b2_r1.py:105: AssertionError</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive[asset]" time="0.058"><failure message="AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'&#10;  &#10;  - SOURCE_BOUND&#10;  + SOURCE_UNRESOLVED">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_included_root_is_ignored_3')
+wrapper = 'asset'
+
+    @pytest.mark.parametrize("wrapper", ["mujocoinclude", "body", "default", "asset"])
+    def test_included_root_is_ignored_but_paths_hashes_and_parent_context_survive(tmp_path, wrapper):
+        import mujoco
+        xml, metadata, fragment = included_scene(tmp_path / "own_source", wrapper)
+        model, _ = load_model(xml)
+        assert model.nbody == 2 and model.ngeom == 2
+        assert mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "ignored_wrapper") == -1
+        for g in range(model.ngeom):
+            assert mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, int(model.geom_bodyid[g])) == "fixture_body"
+        audit = inventory(xml, tmp_path / "audit", metadata=metadata)
+        control_xml, control_meta, _ = included_scene(tmp_path / "control", "mujocoinclude")
+        control = inventory(control_xml, tmp_path / "control_audit", metadata=control_meta)
+        for row, reference in zip(audit["geom_audit"], control["geom_audit"]):
+            evidence = row["role_evidence"]
+&gt;           assert evidence["status"] == "SOURCE_BOUND"
+E           AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'
+E             
+E             - SOURCE_BOUND
+E             + SOURCE_UNRESOLVED
+
+g2/tests/test_f1b2_r1.py:105: AssertionError</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_nested_wrappers_preserve_real_child_body_and_include_chain" time="0.006"><failure message="AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'&#10;  &#10;  - SOURCE_BOUND&#10;  + SOURCE_UNRESOLVED">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_nested_wrappers_preserve_0')
+
+    def test_nested_wrappers_preserve_real_child_body_and_include_chain(tmp_path):
+        import mujoco
+        xml, metadata, _ = included_scene(tmp_path / "own_source", "body", nested=True)
+        model, _ = load_model(xml)
+        assert mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, int(model.geom_bodyid[0])) == "inner_body"
+        result = inventory(xml, tmp_path / "audit", metadata=metadata)
+        evidence = result["geom_audit"][0]["role_evidence"]
+&gt;       assert evidence["status"] == "SOURCE_BOUND"
+E       AssertionError: assert 'SOURCE_UNRESOLVED' == 'SOURCE_BOUND'
+E         
+E         - SOURCE_BOUND
+E         + SOURCE_UNRESOLVED
+
+g2/tests/test_f1b2_r1.py:129: AssertionError</failure></testcase><testcase classname="g2.tests.test_f1b2_r1" name="test_real_child_default_is_preserved_while_default_wrapper_is_ignored" time="0.005"><failure message="AssertionError: assert ('actual_default' in ['ignored_wrapper', None, 'actual_default'] and 'ignored_wrapper' not in ['ignored_wrapper', None, 'actual_default'])">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-84/test_real_child_default_is_pre0')
+
+    def test_real_child_default_is_preserved_while_default_wrapper_is_ignored(tmp_path):
+        root = tmp_path / "own_source"; root.mkdir()
+        fragment = root / "defaults.inc"
+        fragment.write_text('&lt;default class="ignored_wrapper"&gt;&lt;default&gt;&lt;default class="actual_default"&gt;'
+            '&lt;geom type="box" size=".2 .3 .4" rgba=".1 .2 .3 1"/&gt;&lt;/default&gt;&lt;/default&gt;&lt;/default&gt;')
+        xml = root / "model.xml"
+        xml.write_text('&lt;mujoco&gt;&lt;include file="defaults.inc"/&gt;&lt;worldbody&gt;&lt;body name="fixture_body"&gt;'
+            '&lt;geom name="visible" class="actual_default"/&gt;&lt;/body&gt;&lt;/worldbody&gt;&lt;/mujoco&gt;')
+        model, _ = load_model(xml)
+        np.testing.assert_allclose(model.geom_size[0], [.2, .3, .4])
+        result = inventory(xml, tmp_path / "audit", scene_id="TEST_ONLY_R1_DEFAULT")
+        definitions = [entry["attributes"].get("class") for document in result["source_role_documents"] for entry in document["source_defaults"]]
+&gt;       assert "actual_default" in definitions and "ignored_wrapper" not in definitions
+E       AssertionError: assert ('actual_default' in ['ignored_wrapper', None, 'actual_default'] and 'ignored_wrapper' not in ['ignored_wrapper', None, 'actual_default'])
+
+g2/tests/test_f1b2_r1.py:150: AssertionError</failure></testcase></testsuite></testsuites>

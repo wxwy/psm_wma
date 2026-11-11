@@ -1,0 +1,220 @@
+{
+  "fixed_source_sha": "54541c315ad13077b5b4b7f3d81d01138b8931d8",
+  "files": [
+    {
+      "path": "g2/.gitignore",
+      "git_blob_sha": "6c56ff1bd9054f9e9a0147f85233c996b06536d7",
+      "matched": true
+    },
+    {
+      "path": "g2/README.md",
+      "git_blob_sha": "6844555195a281499303d2a0e79a75c634dad21e",
+      "matched": true
+    },
+    {
+      "path": "g2/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "matched": true
+    },
+    {
+      "path": "g2/config/scene_role_profiles_2026-11-09.json",
+      "git_blob_sha": "4879dad6be067531bc1b8a8e83a719123cc9a3ee",
+      "matched": true
+    },
+    {
+      "path": "g2/io.py",
+      "git_blob_sha": "7001277536b49468fcab3e113f7f4cb5ad672bfc",
+      "matched": true
+    },
+    {
+      "path": "g2/nav_bridge/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "matched": true
+    },
+    {
+      "path": "g2/nav_bridge/recorded.py",
+      "git_blob_sha": "f1196410a324370095ae8a659c0ccff1170cb7b8",
+      "matched": true
+    },
+    {
+      "path": "g2/nav_bridge/snapshot.py",
+      "git_blob_sha": "07aa6c1a0d763e67d0c48fa45bb4112b3b1b920a",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/asset_inventory.py",
+      "git_blob_sha": "f56425dd6203fc153fef7e34912de4e171dab23d",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/color_evidence.py",
+      "git_blob_sha": "703b42af2a58a92253218a1ff363d58ad2925ecf",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/prescan.py",
+      "git_blob_sha": "3e2c5dcb3ba8ee86089083d7943f6c4b3071707b",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/requirements.txt",
+      "git_blob_sha": "431eaa3d7b9312652c5eaa5ab4d026820d9321fb",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/role_hypotheses.py",
+      "git_blob_sha": "77ec91ee69121ff3f042a307259c5ebe9465399e",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/role_review.py",
+      "git_blob_sha": "5fa1c15e3bf688f349a00d033b12bd10f5e8d68b",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/scene_release.py",
+      "git_blob_sha": "a1ab85c78dcdcb512a222a86bdf96203861054f7",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/source_geometry.py",
+      "git_blob_sha": "a84473b7276eb8812d3afdaeab4f0d1262453220",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/source_roles.py",
+      "git_blob_sha": "0edcfce540f8a0876cc396fe372a11bb66106382",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/source_scope.py",
+      "git_blob_sha": "a46b09e918d409204c9e305c30944f650298c8ce",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/surface_coverage.py",
+      "git_blob_sha": "f3d0c8a76651ad56f2b1fcde84aa68382209c269",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/surface_sampling.py",
+      "git_blob_sha": "d2c8ad4bf1e65dc89128a0fcc06d3881dd9fa8c8",
+      "matched": true
+    },
+    {
+      "path": "g2/sim/texture_projection.py",
+      "git_blob_sha": "d74b305a08b54640866e8d070060cb812c4a570e",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/conftest.py",
+      "git_blob_sha": "2a365c4425b4ee47de65c47f2049fb6b53e6d1af",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_bridge.py",
+      "git_blob_sha": "8f8b21fc3c3211b0bbb7f60ebe8485e6f7889446",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_color_evidence.py",
+      "git_blob_sha": "ae44fed18aa0731aad2cc4833e81f7f7f438776d",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_f1b2_r1.py",
+      "git_blob_sha": "45db9376e5adf2df4da67a61a91bcb49abb9fafa",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_f1c_positive_faces.py",
+      "git_blob_sha": "e21f41d831b05d574b8b0c43588601c2975a87ad",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_mesh_asset_audit.py",
+      "git_blob_sha": "f2ec52d980cd117c454d86250a80030a47331071",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_object_category.py",
+      "git_blob_sha": "5c12df2b6d6d2f0b3a0cd5b8836c3f59cde595cc",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_prescan.py",
+      "git_blob_sha": "5b441b0cc54db2a9c3aefc94aa9f8d462e5921e3",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_recorded.py",
+      "git_blob_sha": "492a1a3188fcb08df4eed8cff512db7969a2949a",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_role_hypotheses.py",
+      "git_blob_sha": "c830b54642a45668957bf35b88f4de67fe336692",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_role_review.py",
+      "git_blob_sha": "ba164a7de79f96f436a222143e06d00401bf4026",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_scene_release.py",
+      "git_blob_sha": "b4d9930db81d5d4a0ea64c93d3b3a0c8e942b9d9",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_source_identity.py",
+      "git_blob_sha": "d1c79d5051bc27ccf858c7278dbdc9c248bf6e58",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_source_roles.py",
+      "git_blob_sha": "b0eda7acf0a5e2f3847b1ec9f864f2191bfd268a",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_source_scope.py",
+      "git_blob_sha": "0e934ee12250382baba977692a6826bd5f98695d",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_surface_sampling.py",
+      "git_blob_sha": "213fafc3d2250a2b96cbf87e6f1eff64ae0c64a9",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_texture_guards.py",
+      "git_blob_sha": "ee035453661a78839ac61e49af5c0a800fc9ec08",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_texture_projection.py",
+      "git_blob_sha": "a0e6084ac287e16ebea1e71a022e61929a7d7249",
+      "matched": true
+    },
+    {
+      "path": "g2/tests/test_views.py",
+      "git_blob_sha": "7cfc082420b08cc1a59f0b053f03d6823d48f63b",
+      "matched": true
+    },
+    {
+      "path": "g2/views/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "matched": true
+    },
+    {
+      "path": "g2/views/render.py",
+      "git_blob_sha": "cd080493ca1e82affae58ffd723914c6dabfbb41",
+      "matched": true
+    }
+  ]
+}

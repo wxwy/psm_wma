@@ -1,0 +1,29 @@
+{
+  "draft_pr_creation": {
+    "http_status": 403,
+    "message": "At least one email address must be verified to do that.",
+    "pr_created": false,
+    "prepared_requests": "draft_pr_requests.json",
+    "status": "BLOCKED_GITHUB_UNVERIFIED_EMAIL"
+  },
+  "formal_server_approval": false,
+  "gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "implementations": {
+    "nav_sg": {
+      "byte_hashes_match_tested_inventory": true,
+      "implementation_commit": "2009fae35d86579bb22c273fb97ec1bf0835b533",
+      "tree": "9fc89f461f9edbdd3ebae3684412eb3bd20c1b3f",
+      "verified_source_files": 43
+    },
+    "psm_wma": {
+      "byte_hashes_match_tested_inventory": true,
+      "implementation_commit": "c7ebb429074be5726ff9abead0e0d930a7e2138d",
+      "tree": "6aa4204f81fa5360cf07f487d986c88087478ac9",
+      "verified_source_files": 15
+    }
+  },
+  "later_metadata_successor_changes_runtime_sources": false,
+  "publication": "GitHub connected API; git fetch readback and exact tree equality",
+  "schema": "g2_n6_publication_source_check_v1",
+  "utc": "2026-11-08T08:35:23.036735+00:00"
+}

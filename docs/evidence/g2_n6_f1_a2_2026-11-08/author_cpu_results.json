@@ -1,0 +1,51 @@
+{
+  "baseline_handoff": "08a1bbb14db4aa5b05a51724f27a60c72f826c87",
+  "baseline_prescan_blob": "626bcdcaa7b721a941727915fa36738d6a5551aa",
+  "baseline_runtime": "7c12caea2c0a4b9acc24d40da9e7c5a5345888f3",
+  "commands": {
+    "green": "python -m pytest g2/tests -q --junitxml=GREEN_JUNIT",
+    "red": "python -m pytest g2/tests/test_object_category.py -q --junitxml=RED_JUNIT"
+  },
+  "formal_review_blob": "7defb0d480332dac1913e8319c9c2cc563e4c828",
+  "formal_review_commit": "a79a8051eb9bf0faae920c8aa9d204c2e2934f02",
+  "green": {
+    "cases": 160,
+    "errors": 0,
+    "failures": 0,
+    "sha256": "d8d4d40e344dc4dab44892252f88d4722aeafbe0976aa440e33c810b4d1a6d97",
+    "skipped": 0
+  },
+  "independent_author_code_review": "read-only second agent; no open P0/P1/P2; not GPT/server approval",
+  "new_31_cases_pass": true,
+  "not_run": [
+    "real server obj/distr recheck on new SHA",
+    "whole-house source/material certification",
+    "native Catkin (unchanged)",
+    "real model/GPU",
+    "six-view human acceptance",
+    "PSS/Cosmos/training"
+  ],
+  "original_129_cases_retained": true,
+  "privacy": {
+    "server_access": false,
+    "server_files_downloaded_or_published": false,
+    "test_inputs": "public review schema plus own MJCF"
+  },
+  "red": {
+    "cases": 31,
+    "errors": 0,
+    "failures": 6,
+    "sha256": "bef0fcb56e3b1f66c77747274da10a33c96046ad9f755a3c35d66bbc3fc4530b",
+    "skipped": 0
+  },
+  "review_verdict": "REQUEST_CHANGES",
+  "runtime_diff": "17 insertions, 3 deletions",
+  "runtime_files_changed": [
+    "g2/sim/prescan.py"
+  ],
+  "same_new_test_file_sha256": "3a01aa097406e7804ed55124045dad4d28e4c679ad3a3ac992ff61b72698c02f",
+  "schema": "g2_n6_f1_a2_author_evidence_v1",
+  "scope": "F1A_B1_info.cat_MINIMAL_ONLY",
+  "unchanged_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "unchanged_native": "2009fae35d86579bb22c273fb97ec1bf0835b533"
+}

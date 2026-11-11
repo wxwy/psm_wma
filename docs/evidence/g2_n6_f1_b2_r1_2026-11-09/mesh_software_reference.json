@@ -1,0 +1,56 @@
+{
+  "GPU_or_private_inputs": false,
+  "cases": [
+    {
+      "colorspace": "sRGB",
+      "export_status": "PARTIAL_COLOR",
+      "reason_code": 1,
+      "rendered_rgb": [
+        55,
+        55,
+        55
+      ],
+      "sample_rgb_when_valid": null,
+      "sample_valid": false,
+      "training_ready": false
+    },
+    {
+      "colorspace": "linear",
+      "export_status": "COMPLETE",
+      "reason_code": 0,
+      "rendered_rgb": [
+        128,
+        128,
+        128
+      ],
+      "sample_rgb_when_valid": [
+        128,
+        128,
+        128
+      ],
+      "sample_valid": true,
+      "training_ready": false
+    },
+    {
+      "colorspace": "default",
+      "export_status": "COMPLETE",
+      "reason_code": 0,
+      "rendered_rgb": [
+        128,
+        128,
+        128
+      ],
+      "sample_rgb_when_valid": [
+        128,
+        128,
+        128
+      ],
+      "sample_valid": true,
+      "training_ready": false
+    }
+  ],
+  "mujoco": "3.3.7",
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "scope": "THREE_OWN_MESH_CASES_NOT_REAL_LAYOUT_OR_OTHER_PRIMITIVES",
+  "status": "PASS"
+}

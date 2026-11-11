@@ -1,0 +1,85 @@
+{
+  "schema": "g2_f3_publication_delivery_receipt_v1",
+  "author_results_only": true,
+  "fixed_native_source": "abcc87ca636c81455f397e8b0813522c70874c00",
+  "fixed_psm_source": "72b223499ae6fd080a337dafe0bb60f9f879c953",
+  "native_metadata_head": "1b7371b9e4dd0a676b4a2de58d1675e237679655",
+  "psm_inbox_and_report_commit": "1dcd594a060a0848828eff3718661155218a3ade",
+  "production_gitlink": "1ca308055fc41fb69efaeb9efaa23808f164a18e",
+  "inbox": {
+    "source": "github-full-file-readback",
+    "bytes": 104257,
+    "sha256": "b823718ad1803ef80851f80af0850482866dcd7a3f3edd8ed1754f338f3c71af",
+    "blob": "6ccb73359c044320b2920329be408c4c4124fc39",
+    "full_bytes_equal": true,
+    "published_commit": "1dcd594a060a0848828eff3718661155218a3ade"
+  },
+  "issues": [
+    {
+      "repository": "wxwy/nav_sg",
+      "issue": 8,
+      "id": 6744375534,
+      "url": "https://github.com/wxwy/nav_sg/issues/8#issuecomment-6744375534",
+      "exact_body_readback": true,
+      "created_at": "2026-11-09T15:47:21Z"
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "issue": 26,
+      "id": 6744377269,
+      "url": "https://github.com/wxwy/psm_wma/issues/26#issuecomment-6744377269",
+      "exact_body_readback": true,
+      "created_at": "2026-11-09T15:47:26Z"
+    }
+  ],
+  "draft_prs": [
+    {
+      "repository": "wxwy/nav_sg",
+      "number": 9,
+      "url": "https://github.com/wxwy/nav_sg/pull/9",
+      "draft": true,
+      "merged": false,
+      "head_sha": "1b7371b9e4dd0a676b4a2de58d1675e237679655",
+      "base_sha": "74ac5cbc0d2c9ec9e7f2f45b7b0351182139178b",
+      "body_exact_readback": true,
+      "mergeable": true,
+      "mergeable_state": "clean"
+    },
+    {
+      "repository": "wxwy/psm_wma",
+      "number": 34,
+      "url": "https://github.com/wxwy/psm_wma/pull/34",
+      "draft": true,
+      "merged": false,
+      "head_sha": "1dcd594a060a0848828eff3718661155218a3ade",
+      "base_sha": "da1d38bd769b22fd2806cbf0697b6ca80654a439",
+      "body_exact_readback": true,
+      "mergeable": true,
+      "mergeable_state": "clean"
+    }
+  ],
+  "final_protected_ref_count": 17,
+  "final_protected_ref_unchanged": true,
+  "final_protected_readback_utc": "2026-11-09 15:48:36 UTC",
+  "server_machine_summary_sha256": "9524fed1994e0cb9fbd157152f28560752cc4b00dec2fc9c50b7ee3376e1a01c",
+  "server_final_source_readback": {
+    "receipt": {
+      "schema": "g2_f3_final_source_readback_v1",
+      "native_commit": "abcc87ca636c81455f397e8b0813522c70874c00",
+      "psm_commit": "72b223499ae6fd080a337dafe0bb60f9f879c953",
+      "native_active_source_files": 153,
+      "native_build_overlay_files": 153,
+      "psm_source_files": 60,
+      "all_matched_after_runs": true,
+      "source_files_modified": false
+    },
+    "receipt_sha256": "e0cec5096930f011687ab3073096bf4b5ef0d1b7a4512dc8ddb176e22c8c463e"
+  },
+  "core_render_1hz_pass": false,
+  "normal_layout10_pass": false,
+  "default_leaf_m": 0.05,
+  "private_raw_artifacts_exported": false,
+  "gpt_independent_review": "PENDING",
+  "owner_visual_review": "PENDING",
+  "training_ready": false
+}

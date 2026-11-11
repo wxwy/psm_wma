@@ -1,0 +1,39 @@
+..................F..................................................... [ 86%]
+...........                                                              [100%]
+=================================== FAILURES ===================================
+_______ test_new_six_views_keep_up_open_walls_and_room_islands_separate ________
+
+native_connections = (PosixPath('/tmp/pytest-of-agent/pytest-131/test_new_six_views_keep_up_ope0/native'), {'affiliations_complete': True, 'bounds_max': [3, 3, 4], 'bounds_min': [-3, -3, -1], 'color_voxel_leaf': 0.05, ...})
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-131/test_new_six_views_keep_up_ope0')
+
+    def test_new_six_views_keep_up_open_walls_and_room_islands_separate(native_connections,tmp_path):
+>       native,s=native_connections;capture(native,tmp_path/'bundle',allow_oracle_diagnostic=True)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_connections.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/nav_bridge/snapshot.py:553: in capture
+    count=sum(1 for _ in iter_surfaces(native/"surfaces.csv",{e["id"] for e in s["entities"]}))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/nav_bridge/snapshot.py:553: in <genexpr>
+    count=sum(1 for _ in iter_surfaces(native/"surfaces.csv",{e["id"] for e in s["entities"]}))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-131/test_new_six_views_keep_up_ope0/native/surfaces.csv')
+entities = {'entity_0', 'entity_1', 'entity_2', 'entity_3', 'entity_4', 'entity_5', ...}
+max_points = 5000000
+
+    def iter_surfaces(path, entities, max_points=5_000_000):
+        expected=["x","y","z","red","green","blue","color_valid","entity_id"]
+        with Path(path).open(encoding="utf-8",newline="") as stream:
+            reader=csv.reader(stream,strict=True)
+            if next(reader,None)!=expected:
+>               raise ContractError("native surface header mismatch")
+E               g2.io.ContractError: native surface header mismatch
+
+g2/nav_bridge/snapshot.py:423: ContractError
+------------- generated xml file: /workspace/work/f2_targeted.xml --------------
+=========================== short test summary info ============================
+FAILED g2/tests/test_connections.py::test_new_six_views_keep_up_open_walls_and_room_islands_separate
+1 failed, 82 passed in 0.91s

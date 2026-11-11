@@ -1,0 +1,83 @@
+{
+  "schema": "g2_own_full_map_native_negatives_v1",
+  "results": [
+    {
+      "case": "cloud_hash",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map original transport/manifest hash differs",
+      "log_sha256": "a6d15669474f12b89d6550a0206d83b50defb643d17d0eac7514e75dbae30c7f"
+    },
+    {
+      "case": "frame",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map proof belongs to another source/frame",
+      "log_sha256": "88fa8ffce300049694e31e8500642949167c614f58f8670833c6270347fc81b9"
+    },
+    {
+      "case": "time",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map source manifest identity/time differs",
+      "log_sha256": "d3af7c71f0f1aec4e30c2bd0541bdafc4af8eaba27c9a0711067a8600e03ed24"
+    },
+    {
+      "case": "manifest_schema",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map source manifest identity/time differs",
+      "log_sha256": "d3af7c71f0f1aec4e30c2bd0541bdafc4af8eaba27c9a0711067a8600e03ed24"
+    },
+    {
+      "case": "manifest_scene",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map source manifest identity/time differs",
+      "log_sha256": "d3af7c71f0f1aec4e30c2bd0541bdafc4af8eaba27c9a0711067a8600e03ed24"
+    },
+    {
+      "case": "original_bytes",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map original source bytes changed",
+      "log_sha256": "e0cf4a412c44d399679698abcde896591798fc9d01870ddc573f49ff00ad4c24"
+    },
+    {
+      "case": "manifest_grid_hash",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map manifest transport evidence differs",
+      "log_sha256": "95db0fe444e3c0f032591d339bc84ba96eddf3e69380198b70a529ae6f6f6e79"
+    },
+    {
+      "case": "duplicate_key",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "duplicate Full Map manifest key",
+      "log_sha256": "d05fa7c1272623061250e148baed8119f13271e1d9b0c8db097dac1ab249e8a1"
+    },
+    {
+      "case": "color_world",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map color manifest source/state differs",
+      "log_sha256": "fe7e61bb18bf774846aeb0c927cfca811e52e0f1e2ff6f9ce4a921d9dd5be160"
+    },
+    {
+      "case": "color_time",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "Full Map color manifest source/state differs",
+      "log_sha256": "fe7e61bb18bf774846aeb0c927cfca811e52e0f1e2ff6f9ce4a921d9dd5be160"
+    },
+    {
+      "case": "arbitrary_text",
+      "returncode": 1,
+      "output_created": false,
+      "expected_diagnostic": "expected value",
+      "log_sha256": "67bad3936e9dbf74e0e6702b11a8d19b61da2200834ff1d04b8adf3bdabdbb7a"
+    }
+  ],
+  "private_layout_acceptance": false
+}

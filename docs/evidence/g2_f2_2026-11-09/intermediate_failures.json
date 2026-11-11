@@ -1,0 +1,27 @@
+[
+  {
+    "case": "first new connection fixture CSV header",
+    "cause": "author fixture used r/g/b instead of native red/green/blue; corrected fixture",
+    "result": "1 failed,82 passed"
+  },
+  {
+    "case": "first related-native Python command",
+    "cause": "author named two nonexistent test paths; corrected to documented53 plus47 existing GT cases",
+    "result": "exit4"
+  },
+  {
+    "case": "first Full Map collect assertion",
+    "cause": "author expected source block named island to remain Island in notch scene; actual .1m Wall connection was correctly not Island; corrected fixture assertion without changing source or candidate geometry",
+    "result": "AssertionError"
+  },
+  {
+    "case": "initial native negative harness",
+    "cause": "unset ROS_HOME caused all11 SIGABRT; withdrawn. Harness now requires isolated ROS paths, return1, GT_NATIVE_FAILED and per-case diagnosis; all11 effective reruns pass",
+    "result": "INVALID_ENVIRONMENT_FAILURE_NOT_A_CODE_REJECTION"
+  },
+  {
+    "case": "peer review corrections",
+    "cause": "local thin patch global-return/outlier, untyped robot eligibility, parsed-byte source manifests, source closure/frame/include budgets, missing source clock, exact GT scope/owner/metadata; final raw suites pass",
+    "result": "all addressed"
+  }
+]

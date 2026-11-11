@@ -1,0 +1,42 @@
+{
+  "scope": "OWN_LOCAL_CPU_FIXTURES_ONLY_NOT_SERVER_OR_WHOLE_HOUSE_ACCEPTANCE",
+  "tests": {
+    "passed": 274,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "old259_retained": 259,
+    "historical207_retained": 207
+  },
+  "same_15_probe_bytes": {
+    "old193_failed": 8,
+    "old193_passed": 7,
+    "new_passed": 15,
+    "test_sha256": "9137dd53926d507930387e344fb598150d678e88532adcd307e6f5d41869b06a"
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "mujoco": "3.3.7",
+    "numpy": "2.3.5",
+    "new_dependencies": false,
+    "CPU_only": true
+  },
+  "software_reference": "THREE_OWN_MESH_COLORSPACE_CASES_LLVMPipe_SRGB55_INVALID_LINEAR_DEFAULT128_VALID",
+  "formal_review_consumed": {
+    "target": "193a05e3b250eb32dd7ee08165a368a6706e78ee",
+    "commit": "a22f64b7aa2874d8d3c7abfc766e3f145d838b19",
+    "file_blob": "adc4887de70e9ebeeb1749af1e5822529804750f",
+    "verdict": "REQUEST_CHANGES_TWO_P2",
+    "issue_comment": 6723181393
+  },
+  "runtime_changes_only": [
+    "g2/sim/source_geometry.py",
+    "g2/sim/source_roles.py"
+  ],
+  "private_server_files_accessed_or_transferred": false,
+  "native_execution": "NOT_RUN_HERE",
+  "prior_GPT_native_boundary": "P0_TEST_ONLY_HARNESS_THREE_MATCHING_COMPONENTS_NOT_FULL2009_PROGRAM_OR_NEW_HOUSE_CANDIDATE",
+  "real_full_native_four_frames": "PENDING",
+  "whole_house_source_certified": false,
+  "training_ready": false
+}
