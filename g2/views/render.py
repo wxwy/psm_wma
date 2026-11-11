@@ -24,7 +24,8 @@ CARDINAL=("+X","-X","+Y","-Y")
 
 def rasterize(xyz,rgb,color_valid,owners,selected,bounds_min,bounds_max,axis, *,
               meters_per_pixel=.05,meshes=(),surface_tolerance=0,max_pixels=4_000_000,
-              asset_fill_radius_m=None, renderer_backend="cpu"):
+              asset_fill_radius_m=None, renderer_backend="cpu",
+              opaque_ray_owner_indices=None):
     if renderer_backend not in ("cpu","gpu"):
         raise ContractError("unsupported G2 rasterizer backend")
     if axis not in AXES or not math.isfinite(meters_per_pixel) or meters_per_pixel<=0:
@@ -148,7 +149,8 @@ def rasterize(xyz,rgb,color_valid,owners,selected,bounds_min,bounds_max,axis, *,
             get_projector(),xyz,rgb,color_valid,owners,
             geometry,valid,image,depth,owner_image,
             origin,right,up,forward,meters_per_pixel,
-            asset_fill_radius_m,meters_per_pixel)
+            asset_fill_radius_m,meters_per_pixel,
+            opaque_ray_owner_indices=opaque_ray_owner_indices)
         metadata["asset_unassigned_near_surface_pixels"]=fallback
         metadata["unassigned_color_not_promoted_to_entity_identity"]=True
         metadata["asset_surface_reprojected_pixels"]=filled

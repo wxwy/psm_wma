@@ -123,7 +123,9 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 asset_fill_radius_m=((.035 if dense_evidence.get('voxel_leaf_m')==.02
                                       else .015) if dense_evidence else
                                      max(.075,s['color_voxel_leaf']*1.8)) if full_asset else None,
-                renderer_backend=renderer_backend)
+                renderer_backend=renderer_backend,
+                opaque_ray_owner_indices=(dense_evidence.get("opaque_ray_owner_indices")
+                                          if full_asset and dense_evidence else None))
             image,mask,geom,depth,owner,meta=data;folder=out/name;folder.mkdir(parents=True)
             synthetic_ceiling=False
             objects={numeric[k] for k in members if by_id[k]['kind']=='object'}

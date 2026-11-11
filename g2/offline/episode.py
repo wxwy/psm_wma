@@ -159,8 +159,10 @@ def _compare_views(stage, references):
 
 
 def render(inputs, prepared, native_output, output, backend="gpu"):
-    from .direct_source import verify_input_config
+    from .direct_source import (verify_input_config, load_source,
+                                prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
+    from g2.views.alpha_source import compiled_translucent_only_owner_proof, save_source_alpha_sidecars
     started = time.perf_counter()
     config = read_json(inputs)
     _, _, _, snapshots = verify_input_config(config)
@@ -182,6 +184,13 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
             or colors["frames"] != configured_frames
             or sha_file(prepared / "native_sequence.txt") != colors["sequence_sha256"]):
         raise ContractError("native episode/source completion is missing or inconsistent")
+    # Rebuild only the compiled identity/geom-role roster once; every source
+    # file and state archive is verified by load_source before color recovery.
+    model, initial, dense, role, _ = load_source(config)
+    visual_specs = prepare_visual_specs(model, initial, dense, role)
+    opaque_ray_owner_indices = certified_opaque_color_owner_indices(model, visual_specs, initial)
+    alpha_proof = compiled_translucent_only_owner_proof(
+        model, visual_specs, initial, dense['model_source_sha256'])
     output = new_output(output, _source_paths(config) + [inputs, prepared, native_output])
     output.mkdir(parents=True)
     rows = []
@@ -202,10 +211,19 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
             if any(receipt[k] != reference[k] for k in native_fields):
                 raise ContractError("native navigation/Room/SG differs from accepted reference")
         surface = read_native_surface(native / "native_view_color_TEMP.g2col10.bin", expected, snapshot)
+        evidence=dict(surface[4], opaque_ray_owner_indices=opaque_ray_owner_indices,
+                      opaque_ray_cert_schema="g2_verified_compiled_gt_opaque_owner_v1")
+        surface = (*surface[:4], evidence)
         bundle, manifest = _view_manifest(row, snapshot)
         stage = output / f"state_{expected['state_id']:06d}_frame_{frame:06d}"
         result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
                                         meters_per_pixel=.01, renderer_backend=backend)
+        # Native 10mm RGB remains opaque. RGBA alpha evidence is written as a
+        # separate, explicitly not-training-ready layer; no fake background.
+        alpha_sidecar = save_source_alpha_sidecars(
+            stage / "g2_original_gpu",
+            read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
+            stage / "alpha_source_layer")
         exact_views = _compare_views(stage, row["reference_views"]) if row.get("reference_views") else 0
         if row.get("scene_graph"):
             sg = row["scene_graph"]
@@ -216,7 +234,10 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
         record = dict(frame=frame, state_id=expected["state_id"], view_count=result["view_count"],
             reference_pixel_exact_images=exact_views, native_color_sha256=receipt["source_color_map_sha256"],
             native_reference_exact=bool(row.get("reference_native_receipt")),
-            view_render_s=result["gpu_render_and_export_s"])
+            view_render_s=result["gpu_render_and_export_s"],
+            alpha_sidecar_count=sum(x["alpha_pixel_count"] for x in
+                                    alpha_sidecar["view_alpha_layers"]),
+            alpha_layers_have_unknown_background=True)
         rows.append(record)
         print("G2_NATIVE_VIEW_STATE_PASS", frame, "pixel_exact_images", exact_views, flush=True)
     if len(rows) != len(configured_frames):

@@ -236,8 +236,23 @@ class NearestGrid:
         gl.glDeleteProgram(self.build_shader)
         gl.glDeleteProgram(self.query_shader)
 
+def ray_behind_surface_mask(delta, forward, *, depth_m=.03001, lateral_m=.0072):
+    """Only same-ray source samples behind first native geometry are safe."""
+    delta = np.asarray(delta, np.float64)
+    direction = np.asarray(forward, np.float64)
+    if delta.ndim != 2 or delta.shape[1] != 3 or direction.shape != (3,):
+        raise ValueError("invalid opaque ray shape")
+    if not np.isfinite(delta).all() or not np.isfinite(direction).all():
+        raise ValueError("nonfinite opaque ray")
+    if abs(np.linalg.norm(direction) - 1) > 1.e-9:
+        raise ValueError("nonunit opaque ray")
+    t = delta @ direction
+    lateral = np.linalg.norm(delta - t[:, None] * direction, axis=1)
+    return (t >= -1.e-4) & (t <= depth_m) & (lateral <= lateral_m)
+
+
 def recover(projector,xyz,rgb,color_valid,owners,geometry,valid,image,depth,owner_image,
-            uv_origin,right,up,forward,mpp,radius,leaf):
+            uv_origin,right,up,forward,mpp,radius,leaf,*,opaque_ray_owner_indices=None):
     """Return same (image,valid,filled,fallback,metrics) as CPU G2 helper."""
     t0=time.perf_counter()
     if not np.isfinite(radius) or radius<=0:raise ValueError("invalid G2 asset fill radius")
@@ -297,7 +312,36 @@ def recover(projector,xyz,rgb,color_valid,owners,geometry,valid,image,depth,owne
     image[rows1,cols1]=rgb[unassigned_index[mask]]
     valid[rows1,cols1]=True
     fallback=int(mask.sum())
+    # Extra, source-proof-only display recovery. This is disabled for RGB-D,
+    # legacy dense maps and every entity with any translucent source geom.
+    # Geometry, depth and owner selection remain authoritative and unchanged.
+    ray_extra=0;ray_considered=0;ray_ties=0;ray_gpu_s=0.
+    if opaque_ray_owner_indices:
+        eligible=np.asarray(opaque_ray_owner_indices,dtype=np.int32)
+        candidate=geometry & ~valid & np.isin(owner_image,eligible)
+        rr,cc=np.nonzero(candidate)
+        ray_considered=len(rr)
+        if len(rr):
+            query=query_surface(rr,cc)
+            match,ray_gpu_s=engine.lookup(query,owner_image[rr,cc],leaf,.03001,False)
+            match,ray_ties,ray_cpu_s=resolve_near_tie(match,query,owner_image[rr,cc],.03001,False)
+            exists=np.flatnonzero(match>=0)
+            if len(exists):
+                diff=xyz[match[exists]]-query[exists]
+                safe=ray_behind_surface_mask(diff,forward)
+                index=exists[safe]
+                image[rr[index],cc[index]]=rgb[match[index]]
+                valid[rr[index],cc[index]]=True
+                ray_extra=len(index)
     stats={
+       "opaque_ray_owner_count":len(opaque_ray_owner_indices or []),
+       "opaque_ray_considered_pixels":ray_considered,
+       "opaque_ray_restored_pixels":ray_extra,
+       "opaque_ray_gpu_query_s":round(ray_gpu_s,6),
+       "opaque_ray_cpu_near_ties":ray_ties,
+       "opaque_ray_depth_max_m":.03001,
+       "opaque_ray_lateral_max_m":.0072,
+       "opaque_ray_provenance":"COMPILED_MUJOCO_GT_ONLY_NO_TRANSPARENT_ENTITY" if opaque_ray_owner_indices else "NOT_ENABLED",
        "gpu_nearest_total_s":round(time.perf_counter()-t0,6),
        "gpu_nearest_same_query_s":round(cost_same,6),
        "gpu_nearest_unknown_query_s":round(cost_unknown,6),

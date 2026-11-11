@@ -36,6 +36,17 @@ def validate_surface_data(surface_data, snapshot):
         value = evidence.get(key)
         if type(value) not in (int, float) or not math.isfinite(value) or value != .01:
             raise ContractError('direct surface input requires the accepted 10 mm grid: ' + key)
+    opaque = evidence.get("opaque_ray_owner_indices")
+    if opaque is not None:
+        if (snapshot.get("source_mode") != "full_map_mujoco_source"
+                or evidence.get("opaque_ray_cert_schema") != "g2_verified_compiled_gt_opaque_owner_v1"
+                or not isinstance(opaque, list) or len(opaque) > len(entity_ids)
+                or any(type(i) is not int or i < 0 or i >= len(entity_ids) for i in opaque)
+                or opaque != sorted(set(opaque))
+                or any(snapshot["entities"][next(
+                    j for j, row in enumerate(snapshot["entities"]) if row["id"] == entity_ids[i]
+                )]["kind"] != "object" for i in opaque)):
+            raise ContractError("invalid compiled source opaque ray recovery certificate")
     xyz = np.asarray(xyz)
     rgb = np.asarray(rgb)
     valid = np.asarray(valid)

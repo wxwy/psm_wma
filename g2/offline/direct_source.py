@@ -413,3 +413,31 @@ def identify_dynamic_geoms(model, states, frames, specs):
     moving = set(model_geoms[dynamic].tolist())
     stationary = set(model_geoms[~dynamic].tolist())
     return moving, stationary, round(time.perf_counter() - started, 6)
+
+
+def certified_opaque_color_owner_indices(model, specs, snapshot):
+    """Only completely opaque source GT objects with some verified native RGB.
+
+    The caller must use load_source() / prepare_visual_specs() on the
+    same complete checked model closure and scene manifest.
+    A translucent geom anywhere in the same native entity excludes it;
+    this prevents filling transparent glass from adjacent opaque surfaces.
+    """
+    from g2.sim.source_geometry import effective_rgba
+    import math
+
+    native_ids = sorted(e["id"] for e in snapshot["entities"])
+    objects = {i for i, eid in enumerate(native_ids)
+               if next(e for e in snapshot["entities"] if e["id"] == eid)["kind"] == "object"}
+    material = {}
+    for spec in specs:
+        idx = spec["owner"]
+        if idx < 0 or idx not in objects:
+            continue
+        opacity = float(effective_rgba(model, spec["g"])[3])
+        if not math.isfinite(opacity) or not 0 <= opacity <= 1:
+            raise ContractError("nonfinite or invalid compiled source alpha")
+        material.setdefault(idx, []).append((opacity, spec["original_valid_samples"]))
+    return sorted(idx for idx, rows in material.items()
+                  if rows and all(alpha >= 1 - 1.e-7 for alpha, _ in rows)
+                  and any(count > 0 for _, count in rows))
