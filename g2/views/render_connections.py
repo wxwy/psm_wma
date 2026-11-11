@@ -38,7 +38,8 @@ def wall_directions(s,room):
 
 
 def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None,
-              dense_manifest=None,surface_data=None,renderer_backend="cpu"):
+              dense_manifest=None,surface_data=None,renderer_backend="cpu",
+              visual_mesh_by_room=None):
     from .render import AXES,CARDINAL,rasterize
     started=time.perf_counter_ns();cpu_started=time.process_time_ns()
     native_observed=(s.get('surface_color_source')=='NATIVE_RGBD_FUSION_ONLY' and
@@ -48,6 +49,11 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
         s.get('surface_color_source')=='MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK')
     if surface_data is not None and dense_manifest is not None:
         raise ContractError('direct surface data and dense manifest are mutually exclusive')
+    if visual_mesh_by_room is not None:
+        if (not full_asset or surface_data is None or renderer_backend != "gpu"
+                or type(visual_mesh_by_room) is not dict
+                or not visual_mesh_by_room):
+            raise ContractError("visual-mesh source requires MuJoCo full-map 10mm GPU proof")
     if (surface_data is not None or dense_manifest is not None) and not full_asset:
         raise ContractError('native observed RGB-D never receives privileged MuJoCo direct assets')
     verify_connection_evidence(s)
@@ -111,7 +117,24 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
         bounds=(corners-origin)@axes.T;lo=bounds.min(axis=0);hi=bounds.max(axis=0)
         def emit(name,axis,members,low=lo,high=hi,boundary='not_applicable'):
             view_start=time.perf_counter_ns();view_cpu=time.process_time_ns()
-            data=rasterize(points,rgb,valid,owners,{numeric[k] for k in members},low,high,axis,
+            use_visual_mesh=visual_mesh_by_room is not None
+            if use_visual_mesh:
+                from .visual_mesh_zbuffer import view_source_zbuffer
+                visual_source=visual_mesh_by_room.get(uid)
+                if visual_source is None:
+                    raise ContractError("source visual geometry missing current native room")
+                if (visual_source.get("source_sha256")!=s["source_sha256"]
+                        or visual_source.get("scene_id")!=s["scene_id"]
+                        or visual_source.get("frame_id")!=s["frame_id"]
+                        or visual_source.get("room_uid")!=uid):
+                    raise ContractError("Visual GT mesh and native Snapshot identity differ")
+                color_pixels,mask,geom,depth,owner,geom_id,meta=view_source_zbuffer(
+                    visual_source,points,rgb,valid,owners,
+                    {numeric[k] for k in members},low,high,axis,
+                    meters_per_pixel=meters_per_pixel,backend=renderer_backend)
+                data=(color_pixels,mask,geom,depth,owner,meta)
+            else:
+                data=rasterize(points,rgb,valid,owners,{numeric[k] for k in members},low,high,axis,
                 meters_per_pixel=meters_per_pixel,meshes=meshes,
                 # Actual native 2cm voxel CENTER can sit up to sqrt(3)/2*2cm
                 # from its original surface. This F7-only renderer accounts
@@ -149,6 +172,12 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 if by_id[k]['kind']!='object' or k in ambiguous:continue
                 vertices=(np.asarray(by_id[k]['vertices'],float).reshape(-1,3)-origin)@axes.T
                 if len(vertices) and np.ptp(vertices@forward)<=math.sqrt(3)*visual_leaf+1e-9:ambiguous.append(k)
+            if use_visual_mesh:
+                # Whole-object thinness from Collision Mesh is not a Visual
+                # voxel uncertainty certificate; do not erase actual visual RGB.
+                ambiguous=[]
+                projectable=bool(np.any(np.isin(
+                    owner,[numeric[k] for k in members if by_id[k]['kind']=='object'])))
             uncertain=np.isin(owner,[numeric[k] for k in ambiguous]);mask[uncertain]=False;image[uncertain]=0
             object_mask=mask & np.isin(owner,list(objects))
             # Full Map source samples cover the entire scene, independent of
@@ -180,7 +209,17 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
             if generated:
                 Image.fromarray(image).save(folder/'rgb.png');Image.fromarray(mask.astype(np.uint8)*255).save(folder/'color_valid.png')
                 Image.fromarray(geom.astype(np.uint8)*255).save(folder/'geometry_valid.png')
-                np.savez_compressed(folder/'geometry.npz',depth=depth.astype(np.float32),native_entity_index=owner)
+                if use_visual_mesh:
+                    # Keep the original per-geom Z-buffer identity separately
+                    # from native entity ID; source material coverage can now
+                    # be independently audited rather than assumed per object.
+                    np.savez_compressed(folder/'geometry.npz',
+                        depth=depth.astype(np.float32),
+                        native_entity_index=owner,
+                        source_visual_geom_index=geom_id)
+                else:
+                    np.savez_compressed(folder/'geometry.npz',
+                        depth=depth.astype(np.float32),native_entity_index=owner)
             for key in ('right_world','up_world','forward_world'):meta[key]=(np.asarray(meta[key])@axes).tolist()
             meta.update(coordinate_frame='NATIVE_ROOM_REFERENCE',reference_frame=room['reference_frame'],
                 uv_min_room=meta.pop('uv_min_world'),room_bounds_min=meta.pop('world_bounds_min'),
@@ -206,6 +245,10 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                     'SOURCE_BOUND_NATIVE_OBSERVED_PIXELS_ONLY'),
                 projection_wall_ns=time.perf_counter_ns()-view_start,projection_cpu_ns=time.process_time_ns()-view_cpu,
                 unassigned_points_excluded=int(np.count_nonzero(owners==-1)))
+            if use_visual_mesh:
+                meta.update(
+                    source_visual_geometry_only=True,
+                    source_collision_geometry_used_for_opaque_depth=False)
             write_json(folder/'view.json',meta);views[name]=meta
         bev={k for k in room_objects if records[k]['floor_state']=='YES'}|{k for k in adjacent if by_id[k]['kind']=='floor'}
         up={k for k in room_objects if records[k]['floor_state']=='NO'}
@@ -245,9 +288,13 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                                  'NATIVE_RGBD_OBSERVATIONS_ONLY'),
         empty_direction='SKIPPED_NO_PROJECTABLE_OBJECT_NO_PNG',
         unobserved_direction='UNKNOWN_NOT_OBSERVED_NO_PNG',
-        interpolation=bool(full_asset),backside_filling=bool(full_asset),
-        asset_surface_fill='NEAREST_SAME_ENTITY_3D_SOURCE_ASSET_SAMPLE' if full_asset else 'NONE',
+        interpolation=bool(full_asset and visual_mesh_by_room is None),
+        backside_filling=bool(full_asset and visual_mesh_by_room is None),
+        asset_surface_fill=('SOURCE_VISUAL_MESH_WITH_SOURCE_SURFEL_COLOR' if visual_mesh_by_room is not None else
+                            'NEAREST_SAME_ENTITY_3D_SOURCE_ASSET_SAMPLE' if full_asset else 'NONE'),
         missing_ceiling='WALL_MATCHED_DISPLAY_ONLY_NOT_SG_OR_GT' if full_asset else 'UNKNOWN')
+    if visual_mesh_by_room is not None:
+        recipe['visual_geometry_source']='SOURCE_BOUND_MUJOCO_VISUAL_MESH'
     result={'schema':'g2_spatial_views_v2','status':'MUJOCO_FULL_MAP_GT_PENDING_HUMAN' if full else 'ORACLE_DIAGNOSTIC_ONLY' if oracle else
             'RECORDED_SPATIAL_PREVIEW' if s['affiliations_complete'] else 'PARTIAL_NATIVE_STRUCTURES',
         'source_mode':s['source_mode'],'source_scope':manifest['source_scope'],'scene_id':s['scene_id'],

@@ -6,8 +6,6 @@ layer can be composited when a background is actually known; checkerboard
 previews are explicitly NOT training-ready scene RGB.
 """
 from pathlib import Path
-import hashlib
-import math
 
 import numpy as np
 from PIL import Image
@@ -100,7 +98,8 @@ def _verify_proof(proof, snapshot):
     return materials
 
 
-def save_source_alpha_sidecars(native_render_root, rendered, snapshot, proof, output):
+def save_source_alpha_sidecars(native_render_root, rendered, snapshot, proof, output,
+                               *, visual_mesh_by_room=None):
     """Retain Alpha/validity as an independent diagnostic, never RGB replacement."""
     from g2.io import digest
     materials = _verify_proof(proof, snapshot)
@@ -121,14 +120,73 @@ def save_source_alpha_sidecars(native_render_root, rendered, snapshot, proof, ou
         original = np.asarray(Image.open(parent / 'rgb.png').convert('RGB'))
         if not (owner.shape == geometry.shape == valid.shape == original.shape[:2]):
             raise ContractError('source alpha view dimensions differ')
+        with np.load(parent / 'geometry.npz',allow_pickle=False) as result_geom:
+            depth_opaque=np.asarray(result_geom['depth'],float)
+        if depth_opaque.shape!=geometry.shape:
+            raise ContractError('source opaque geometry depth mismatch')
         if np.any(valid & ~geometry):
             raise ContractError('invalid source alpha mask domain')
         layer = np.zeros((*geometry.shape, 4), np.uint8)
         preview = original.copy()
         preview[~geometry] = 255
         by_entity = {}
+        known_background_px=0
+        unknown_background_px=0
+        visible_alpha=np.zeros_like(geometry)
+        visual_alpha_geom_indices=np.full(geometry.shape,-2,np.int32)
+        visual_alpha_depth=np.full(geometry.shape,np.nan)
+        if visual_mesh_by_room is not None:
+            # Actual Alpha source geometry, not the old collision snapshot:
+            # independently project compiled transparent MuJoCo Visual Geoms.
+            from g2.views.exact_compute import get_engine
+            room_key=key.split('/')
+            if (len(room_key)<3 or room_key[0]!='rooms'):
+                raise ContractError('alpha source view lacks explicit native room')
+            try:
+                room_uid=int(room_key[1])
+            except ValueError as exc:
+                raise ContractError('invalid native alpha room uid') from exc
+            source_geom=visual_mesh_by_room.get(room_uid)
+            if source_geom is None:
+                raise ContractError('source alpha visual mesh unavailable for room')
+            allowed_native_members=set(rendered['views'][key]['native_entity_ids'])
+            specids={j for j,a in source_geom['attributes'].items()
+                     if a['native_id'] in allowed_native_members and
+                     a['native_id'] in materials and
+                     a['geom_name']==materials[a['native_id']]['geom_name']}
+            mesh=[row for row in source_geom['translucent'] if row[0] in specids]
+            if mesh:
+                from g2.views.render import AXES
+                meta=rendered['views'][key]
+                axis=meta['axis']
+                if axis not in AXES:
+                    raise ContractError('unsupported source alpha axis')
+                lo=np.asarray(meta['room_bounds_min'],float)
+                hi=np.asarray(meta['room_bounds_max'],float)
+                visible_alpha,visual_alpha_depth,visual_alpha_geom_indices,dims,_=get_engine().draw(
+                    mesh,specids,lo,hi,axis,.01)
+                if visible_alpha.shape!=geometry.shape:
+                    raise ContractError('source alpha mesh/view dimensions differ')
+            else:
+                visible_alpha=np.zeros_like(geometry)
+        else:
+            # Legacy separate-alpha diagnostic remains available for old
+            # collision-based source Views; never pass as a visual GT proof.
+            visible_alpha=geometry & ~valid
         for eid, m in sorted(materials.items()):
-            opaque_unknown = geometry & ~valid & (owner == m['owner_index'])
+            if visual_mesh_by_room is not None:
+                matching_source_spec={
+                    j for j,a in source_geom['attributes'].items()
+                    if a['native_id']==eid and
+                    a['geom_name']==m['geom_name']}
+                candidates=visible_alpha & np.isin(
+                    visual_alpha_geom_indices, list(matching_source_spec))
+                # Correct occlusion: the transparent surface is visible if
+                # there is no opaque surface in front of it.
+                alpha_front=candidates & (~geometry | (visual_alpha_depth < depth_opaque-1.e-8))
+                opaque_unknown=alpha_front
+            else:
+                opaque_unknown = geometry & ~valid & (owner == m['owner_index'])
             if not np.any(opaque_unknown):
                 continue
             rgba = np.asarray(m['rgba'], dtype=float)
@@ -141,9 +199,17 @@ def save_source_alpha_sidecars(native_render_root, rendered, snapshot, proof, ou
             # source-color replacement. Alpha layer is preserved losslessly.
             checker = np.where((rr // 8 + cc // 8) % 2 == 0, 216, 244)
             bg = np.repeat(checker[:,None], 3, axis=1)
+            if visual_mesh_by_room is not None:
+                # Use existing source RGB when opaque background is known.
+                # Otherwise the checkerboard is an explicit UNKNOWN, not GT.
+                bg_is_proven=valid[rr,cc]
+                bg[bg_is_proven]=original[rr[bg_is_proven],cc[bg_is_proven]]
+                known_background_px+=int(bg_is_proven.sum())
+                unknown_background_px+=int((~bg_is_proven).sum())
             preview[rr,cc] = np.rint(source_rgb * material_alpha + bg * (1 - material_alpha)).astype(np.uint8)
             by_entity[eid] = int(opaque_unknown.sum())
-        assert not np.any((layer[:,:,3] > 0) & valid)
+        if visual_mesh_by_room is None:
+            assert not np.any((layer[:,:,3] > 0) & valid)
         relative = Path(key)
         if relative.is_absolute() or '..' in relative.parts:
             raise ContractError('unsafe alpha sidecar direction')
@@ -160,9 +226,16 @@ def save_source_alpha_sidecars(native_render_root, rendered, snapshot, proof, ou
             'checkerboard_preview_sha256': digest(target / 'checkerboard_unknown_preview.png'),
             'source_rgba_file': str((relative / 'source_rgba.png')),
             'checkerboard_preview_file': str((relative / 'checkerboard_unknown_preview.png')),
-            'background_known': False,
+            'background_known': bool(known_background_px and not unknown_background_px),
             'full_transparency_compositor_complete': False,
         })
+        if visual_mesh_by_room is not None:
+            results[-1].update(
+                source_alpha_on_known_opaque_background_pixels=known_background_px,
+                source_alpha_on_unknown_background_pixels=unknown_background_px,
+                source_alpha_mesh_geometry=True,
+                source_alpha_opaque_depth_aware=True,
+                source_alpha_no_refraction_or_multiple_layers=True)
     report = {
         'schema': 'g2_source_opaque_separate_alpha_view_sidecar_v1',
         'scene_id': snapshot['scene_id'], 'source_sha256': snapshot['source_sha256'],
@@ -172,8 +245,18 @@ def save_source_alpha_sidecars(native_render_root, rendered, snapshot, proof, ou
         'view_count': len(results), 'supported_owners': sorted(materials),
         'skipped_mixed_alpha_owner_ids': proof['skipped_mixed_or_textured_owners'],
         'training_ready': False, 'human_gate': 'PENDING_HUMAN',
-        'background_compositing_status': 'UNKNOWN_BACKGROUND_NOT_YET_RENDERED',
+        'background_compositing_status': ('ACTUAL_OPAQUE_RGB_IF_PROVEN_ELSE_CHECKERBOARD_UNKNOWN'
+                                         if visual_mesh_by_room is not None else
+                                         'UNKNOWN_BACKGROUND_NOT_YET_RENDERED'),
         'view_alpha_layers': results,
     }
+    if visual_mesh_by_room is not None:
+        report['source_visual_mesh_for_transparency']=True
     write_json(output / 'alpha_sidecar_manifest.json', report)
+    if visual_mesh_by_room is not None:
+        # The actual Visual-Alpha GPU Z-buffer opened an EGL context. Release
+        # it explicitly so long-lived episode workers do not leak contexts
+        # and CLI shutdown does not rely on unsafe Python __del__ teardown.
+        from g2.views.exact_compute import close_engine
+        close_engine()
     return report

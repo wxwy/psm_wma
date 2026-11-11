@@ -158,8 +158,9 @@ def _compare_views(stage, references):
     return len(expected)
 
 
-def render(inputs, prepared, native_output, output, backend="gpu"):
-    from .direct_source import (verify_input_config, load_source,
+def render(inputs, prepared, native_output, output, backend="gpu", *,
+           visual_mesh_source=False):
+    from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
     from g2.views.alpha_source import compiled_translucent_only_owner_proof, save_source_alpha_sidecars
@@ -186,7 +187,9 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
         raise ContractError("native episode/source completion is missing or inconsistent")
     # Rebuild only the compiled identity/geom-role roster once; every source
     # file and state archive is verified by load_source before color recovery.
-    model, initial, dense, role, _ = load_source(config)
+    model, initial, dense, role, states = load_source(config)
+    if visual_mesh_source and backend != "gpu":
+        raise ContractError("GT visual-mesh geometry prototype requires GPU")
     visual_specs = prepare_visual_specs(model, initial, dense, role)
     opaque_ray_owner_indices = certified_opaque_color_owner_indices(model, visual_specs, initial)
     alpha_proof = compiled_translucent_only_owner_proof(
@@ -216,14 +219,31 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
         surface = (*surface[:4], evidence)
         bundle, manifest = _view_manifest(row, snapshot)
         stage = output / f"state_{expected['state_id']:06d}_frame_{frame:06d}"
+        visual_by_room=None
+        if visual_mesh_source:
+            from g2.views.visual_mesh_zbuffer import compile_visual_geom_frame
+            state=get_data(model, states[frame])
+            ids=sorted(e['id'] for e in snapshot['entities'])
+            visual_by_room={
+                r['uid']:compile_visual_geom_frame(
+                    model,state,visual_specs,r,ids)
+                for r in snapshot['rooms']
+            }
+            for source_geometry in visual_by_room.values():
+                source_geometry.update(
+                    scene_id=snapshot["scene_id"],
+                    source_sha256=snapshot["source_sha256"],
+                    frame_id=frame,
+                    source_model_sha256=dense["model_source_sha256"])
         result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
-                                        meters_per_pixel=.01, renderer_backend=backend)
+                                        meters_per_pixel=.01, renderer_backend=backend,
+                                        visual_mesh_by_room=visual_by_room)
         # Native 10mm RGB remains opaque. RGBA alpha evidence is written as a
         # separate, explicitly not-training-ready layer; no fake background.
         alpha_sidecar = save_source_alpha_sidecars(
             stage / "g2_original_gpu",
             read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
-            stage / "alpha_source_layer")
+            stage / "alpha_source_layer", visual_mesh_by_room=visual_by_room)
         exact_views = _compare_views(stage, row["reference_views"]) if row.get("reference_views") else 0
         if row.get("scene_graph"):
             sg = row["scene_graph"]
@@ -238,6 +258,10 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
             alpha_sidecar_count=sum(x["alpha_pixel_count"] for x in
                                     alpha_sidecar["view_alpha_layers"]),
             alpha_layers_have_unknown_background=True)
+        if visual_mesh_source:
+            record.update(
+                view_opaque_visual_geometry_from_source=True,
+                source_surfel_geom_color_training_ready=False)
         rows.append(record)
         print("G2_NATIVE_VIEW_STATE_PASS", frame, "pixel_exact_images", exact_views, flush=True)
     if len(rows) != len(configured_frames):
@@ -247,6 +271,8 @@ def render(inputs, prepared, native_output, output, backend="gpu"):
         renderer_backend=backend, color_leaf_m=.01, view_meters_per_pixel=.01,
         training_ready=False, native_inputs_retained_for_audit=True,
         actual_wall_s=round(time.perf_counter() - started, 6))
+    if visual_mesh_source:
+        report['view_opaque_geometry_source']='SOURCE_BOUND_VISUAL_MESH'
     write_json(output / "episode_receipt.json", report)
     print("G2_REPOSITORY_EPISODE_PASS", output / "episode_receipt.json", flush=True)
     return report
@@ -265,11 +291,14 @@ def main():
     p.add_argument("--native-output", required=True)
     p.add_argument("--output", required=True)
     p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
+    p.add_argument("--visual-mesh-source", action="store_true",
+                   help="EXPERIMENTAL source Visual-Mesh depth, never Collision Mesh; H1/train Gate remains blocked")
     args = parser.parse_args()
     if args.command == "prepare":
         prepare(args.inputs, args.nav_manifest, args.output)
     else:
-        render(args.inputs, args.prepared, args.native_output, args.output, args.backend)
+        render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
+               visual_mesh_source=args.visual_mesh_source)
 
 
 if __name__ == "__main__":

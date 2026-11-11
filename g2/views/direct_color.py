@@ -124,7 +124,8 @@ def export_white_views(rendered, rendered_root, output):
 
 
 def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
-                            meters_per_pixel=.01, renderer_backend='gpu'):
+                            meters_per_pixel=.01, renderer_backend='gpu',
+                            visual_mesh_by_room=None):
     """Render explicit native 10 mm color through the accepted G2 View path.
 
     ``manifest`` and ``snapshot`` must already come from the caller's verified
@@ -146,7 +147,8 @@ def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
     try:
         rendered = render_v2(bundle, manifest, snapshot, output / 'g2_original_gpu',
                              meters_per_pixel=meters_per_pixel, surface_data=checked,
-                             renderer_backend=renderer_backend)
+                             renderer_backend=renderer_backend,
+                             visual_mesh_by_room=visual_mesh_by_room)
         exported = export_white_views(rendered, output / 'g2_original_gpu', output)
     finally:
         close_gpu_renderers()
@@ -159,5 +161,8 @@ def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
               'gpu_render_and_export_s': round(time.perf_counter() - started, 5),
               'views': exported, 'room_six_refs': rendered['room_six_refs'],
               'islands': rendered['islands']}
+    if visual_mesh_by_room is not None:
+        report['visual_geometry_source']='SOURCE_BOUND_MUJOCO_VISUAL_MESH'
+        report['unknown_visual_color_regions_retained']=True
     write_json(output / 'direct_color_views.json', report)
     return report
