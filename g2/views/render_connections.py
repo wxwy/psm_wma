@@ -79,6 +79,15 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     # Asset textures and synthetic palettes can support geometry diagnostics,
     # but never supply pixels to the six-view visual condition.
     if not (native_observed or full_asset):valid[:]=False
+    # Native 10mm color can arrive with an older 50mm snapshot. Only the
+    # source-bound color transport knows the actual voxel quantization scale.
+    # Legacy dense sampling has no voxel_leaf_m and retains its own recipe.
+    visual_leaf = s['color_voxel_leaf']
+    if full_asset and dense_evidence is not None and 'voxel_leaf_m' in dense_evidence:
+        visual_leaf = dense_evidence['voxel_leaf_m']
+    if (type(visual_leaf) not in (float, int) or
+            not math.isfinite(visual_leaf) or visual_leaf <= 0):
+        raise ContractError('invalid source-bound color leaf for thin-geometry projection')
     # The two reviewed RoboCasa layouts have wall-top references but no physical
     # ceiling. A wall-matched color is allowed for DISPLAY only, not geometry
     # evidence, occupancy, color_valid or SG.
@@ -123,7 +132,7 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
             for k in members:
                 if by_id[k]['kind']!='object':continue
                 vertices=(np.asarray(by_id[k]['vertices'],float).reshape(-1,3)-origin)@axes.T
-                if len(vertices) and np.ptp(vertices@forward)<=math.sqrt(3)*s['color_voxel_leaf']+1e-9:
+                if len(vertices) and np.ptp(vertices@forward)<=math.sqrt(3)*visual_leaf+1e-9:
                     ambiguous.append(k)
                 uv=np.column_stack((vertices@right,vertices@up))
                 for tri in by_id[k]['triangles']:
@@ -137,7 +146,7 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
             for k in members:
                 if by_id[k]['kind']!='object' or k in ambiguous:continue
                 vertices=(np.asarray(by_id[k]['vertices'],float).reshape(-1,3)-origin)@axes.T
-                if len(vertices) and np.ptp(vertices@forward)<=math.sqrt(3)*s['color_voxel_leaf']+1e-9:ambiguous.append(k)
+                if len(vertices) and np.ptp(vertices@forward)<=math.sqrt(3)*visual_leaf+1e-9:ambiguous.append(k)
             uncertain=np.isin(owner,[numeric[k] for k in ambiguous]);mask[uncertain]=False;image[uncertain]=0
             object_mask=mask & np.isin(owner,list(objects))
             # Full Map source samples cover the entire scene, independent of
@@ -183,7 +192,11 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 color_provenance='MUJOCO_ASSET_ALBEDO' if full_asset else 'NATIVE_RGBD_OBSERVATION',
                 asset_surface_reprojected_pixels=meta.get('asset_surface_reprojected_pixels',0),
                 synthetic_background_display_only=bool(synthetic_ceiling),
-                quantized_thin_geometry_masked_ids=sorted(ambiguous),directional_ray_certification=False,
+                quantized_thin_geometry_masked_ids=sorted(ambiguous),
+                effective_visual_color_leaf_m=float(visual_leaf),
+                snapshot_color_voxel_leaf_m=float(s['color_voxel_leaf']),
+                thin_geometry_uncertainty_m=math.sqrt(3)*visual_leaf,
+                directional_ray_certification=False,
                 reason=('NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION' if not projectable else
                     'ASSET_SURFACE_COLOR_MISSING' if full_asset and not generated else
                     'MUJOCO_ASSET_SURFACE_COLOR_AND_GEOMETRY' if full_asset else
@@ -213,7 +226,7 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
             members={k for k in room_objects if by_id[k].get('island_id')==island}
             vertices=np.asarray([[x,y,z] for k in members for x in (by_id[k]['bbox_min'][0],by_id[k]['bbox_max'][0])
                 for y in (by_id[k]['bbox_min'][1],by_id[k]['bbox_max'][1]) for z in (by_id[k]['bbox_min'][2],by_id[k]['bbox_max'][2])])
-            local=(vertices-origin)@axes.T;padding=max(meters_per_pixel,s['color_voxel_leaf']*.5+1e-7)
+            local=(vertices-origin)@axes.T;padding=max(meters_per_pixel,visual_leaf*.5+1e-7)
             record={'room_uid':uid,'member_entity_ids':sorted(members),'views':[],'native_id':island}
             for axis in CARDINAL:
                 name=prefix+'/islands/'+island+'/'+axis.replace('+','plus_').replace('-','minus_')

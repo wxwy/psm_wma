@@ -103,3 +103,76 @@ def test_white_export_keeps_multiple_rooms_and_island_directions_separate(tmp_pa
         actual = np.asarray(Image.open(tmp_path / 'export' / row['rgb_file']))
         np.testing.assert_array_equal(actual[0, 0], [255, 255, 255])
         np.testing.assert_array_equal(actual[0, 1], [17, 34, 51])
+
+
+@pytest.mark.parametrize('thickness,expected_masked', [(0.03, False), (0.005, True)])
+def test_native_10mm_thin_geometry_uses_transport_leaf_not_old_snapshot(
+        tmp_path, thickness, expected_masked):
+    # A genuine 3cm countertop or whisk must not be dropped because a
+    # source-bound 10mm color map accompanies a legacy 5cm native snapshot.
+    snapshot, manifest, data = source_case()
+    assert snapshot['color_voxel_leaf'] == .05
+    assert data[4]['voxel_leaf_m'] == .01
+    thin = next(e for e in snapshot['entities'] if e['id'] == 'entity_5')
+    thin['bbox_max'][2] = thickness
+    for vertex in thin['vertices']:
+        vertex[2] = thickness if vertex[2] > 0 else 0.
+    data = (np.array([[1.4, 1.4, thickness]]),
+            np.array([[245, 244, 244]], np.uint8),
+            np.array([True]), np.array([5], np.int32), data[4])
+    root = tmp_path / 'source'
+    root.mkdir()
+    result = render_v2(root, manifest, snapshot, tmp_path / 'rendered',
+                       surface_data=data, meters_per_pixel=.05,
+                       renderer_backend='cpu')
+    top = result['views']['rooms/0/floor_top']
+    assert top['effective_visual_color_leaf_m'] == .01
+    assert top['snapshot_color_voxel_leaf_m'] == .05
+    assert top['thin_geometry_uncertainty_m'] == pytest.approx(3 ** .5 * .01)
+    assert ('entity_5' in top['quantized_thin_geometry_masked_ids']) is expected_masked
+    if expected_masked:
+        assert top['observed_color_pixels'] == 0
+    else:
+        assert top['image_generated']
+        folder = tmp_path / 'rendered/rooms/0/floor_top'
+        owner = np.load(folder / 'geometry.npz')['native_entity_index']
+        geometry = np.asarray(Image.open(folder / 'geometry_valid.png')) > 0
+        valid = np.asarray(Image.open(folder / 'color_valid.png')) > 0
+        owned = geometry & (owner == 5)
+        assert owned.sum() > 0
+        assert (owned & valid).sum() > 0
+        rgb = np.asarray(Image.open(folder / 'rgb.png').convert('RGB'))
+        assert (rgb[owned & valid] == [245, 244, 244]).all()
+
+
+def test_legacy_dense_samples_without_native_voxel_leaf_keep_snapshot_gate(
+        tmp_path, monkeypatch):
+    # Existing dense-manifest color input is a sampled cloud, NOT the validated
+    # 10mm native voxel stream; it must not be silently relabeled as 10mm.
+    snapshot, manifest, data = source_case()
+    thin = next(e for e in snapshot['entities'] if e['id'] == 'entity_5')
+    thin['bbox_max'][2] = .03
+    for vertex in thin['vertices']:
+        vertex[2] = .03 if vertex[2] > 0 else 0.
+    positions = np.array([[1.4, 1.4, .03]])
+    rgb = np.array([[245, 244, 244]], np.uint8)
+    valid = np.array([True])
+    owners = np.array([5], np.int32)
+    evidence = {'dense_sample_spacing_m': .01, 'dense_small_sample_spacing_m': .01}
+    from g2.views import dense_surfaces
+
+    def fake_loader(*args):
+        return positions, rgb, valid, owners, evidence
+
+    monkeypatch.setattr(dense_surfaces, 'load_dense_surfaces', fake_loader)
+    root = tmp_path / 'source'
+    root.mkdir()
+    (root / 'source_inputs.json').write_text('{"files": {}}')
+    result = render_v2(root, manifest, snapshot, tmp_path / 'rendered',
+                       dense_manifest=tmp_path / 'source_dense_manifest.json',
+                       meters_per_pixel=.05, renderer_backend='cpu')
+    top = result['views']['rooms/0/floor_top']
+    assert top['effective_visual_color_leaf_m'] == .05
+    assert top['snapshot_color_voxel_leaf_m'] == .05
+    assert 'entity_5' in top['quantized_thin_geometry_masked_ids']
+    assert not top['image_generated']
