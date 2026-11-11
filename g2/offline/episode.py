@@ -1,0 +1,255 @@
+"""Portable reviewed-input episode -> native dual-map -> G2 View workflow.
+
+This entry consumes a materialized source manifest and verified spatial
+snapshots. Dataset-wide discovery and snapshot/Room certification remain
+separate stages. It never imports nav_sg's duplicate top-level g2 package.
+"""
+import argparse
+import hashlib
+import shutil
+import time
+from pathlib import Path
+
+import numpy as np
+
+from g2.io import ContractError, new_output, read_json, write_json
+from .native_transport import (composed_digest, read_native_surface, sha_file,
+                               write_layer_batch, write_sequence)
+
+
+def bound_json(ref):
+    path = Path(ref["path"]).resolve(strict=True)
+    if sha_file(path) != ref["sha256"]:
+        raise ContractError("input JSON bytes differ: " + str(path))
+    return read_json(path)
+
+
+def _source_paths(config):
+    paths = [Path(config[k]["path"]) for k in ("source_manifest", "visual_inventory", "role_map")]
+    paths.extend(Path(row["snapshot"]["path"]) for row in config["states"])
+    return paths
+
+
+def prepare(inputs, nav_manifest, output):
+    from .direct_source import (build_one, get_data, identify_dynamic_geoms,
+        load_source, prepare_visual_specs, verify_input_config)
+    from .fast_static_dynamic_merge import aggregate, combine
+    started = time.perf_counter()
+    config = read_json(inputs)
+    gt, _, _, snapshots = verify_input_config(config)
+    nav = read_json(nav_manifest)
+    frames = [row["frame"] for row in config["states"]]
+    if config.get("layout") not in (1, 10) or not 2 <= len(frames) <= 300:
+        raise ContractError("current native episode adapter requires layout 1/10 and 2..300 states")
+    if (nav["source_scene_sha256"] != gt["source_sha256"]
+            or frames != [row["frame"] for row in nav["frames"]]
+            or nav.get("source_known_region_NOT_CERTIFIED") is not True):
+        raise ContractError("navigation input differs from the requested episode states")
+    reference = None
+    if config.get("reference_color_manifest"):
+        reference = bound_json(config["reference_color_manifest"])
+        if (reference["source_sha256"] != gt["source_sha256"]
+                or reference["frames"] != frames):
+            raise ContractError("reference color episode/source differs")
+    output = new_output(output, _source_paths(config) + [inputs, nav_manifest])
+    model, initial, dense, role, states = load_source(config)
+    specs = prepare_visual_specs(model, initial, dense, role)
+    moving, fixed, planning_s = identify_dynamic_geoms(model, states, frames, specs)
+    output.mkdir(parents=True)
+    (output / "payloads").mkdir()
+    previous, layers, records = {}, {}, []
+    static_cache = None
+    for state_id, (frame, snapshot) in enumerate(zip(frames, snapshots)):
+        tick = time.perf_counter()
+        data = get_data(model, states[frame])
+        center = np.asarray(snapshot["rooms"][0]["reference_frame"]["origin_world"], float)
+        changed = []
+        for spec in specs:
+            geom = spec["g"]
+            pose = np.concatenate([data.geom_xpos[geom], data.geom_xmat[geom].reshape(9)])
+            if geom in previous and np.max(np.abs(previous[geom] - pose)) <= 1e-10:
+                continue
+            if state_id and geom in fixed:
+                raise ContractError("source geom moved after static classification")
+            layers[geom], _ = build_one(model, data, spec, center)
+            previous[geom] = pose.copy()
+            changed.append(spec)
+        if state_id == 0:
+            static_cache, _ = aggregate(layers, specs, fixed)
+        dynamic_cache, _ = aggregate(layers, specs, moving)
+        surface, _ = combine(static_cache, dynamic_cache)
+        expected_sha, count, unknown = composed_digest(surface)
+        state_sha = hashlib.sha256(np.asarray(states[frame], dtype="<f8").tobytes()).hexdigest()
+        if state_sha != nav["frames"][state_id]["source_state_row_sha256"]:
+            raise ContractError("navigation and color source state rows differ")
+        if reference is not None:
+            ref = reference["states"][state_id]
+            if ((expected_sha, count, unknown, state_sha) !=
+                    (ref["expected_full_color_sha256"], ref["expected_full_color_voxels"],
+                     ref["expected_unknown_owner_cells"], ref["source_state_sha256"])):
+                raise ContractError("direct color map differs from independent reference")
+        file = output / "payloads" / f"state_{state_id:06d}_frame_{frame:06d}.g2layer10.bin"
+        encoded = write_layer_batch(file, frame=frame, scene_id=initial["scene_id"],
+            source_sha=initial["source_sha256"], state_sha=state_sha, expected_sha=expected_sha,
+            specs=specs, changed=changed, static_ids=fixed, layers=layers)
+        row = dict(state_id=state_id, frame=frame, source_scene_id=initial["scene_id"],
+            source_sha256=initial["source_sha256"], source_state_sha256=state_sha,
+            source_state_file_sha256=gt["state"]["file_sha256"],
+            expected_full_color_sha256=expected_sha, expected_full_color_voxels=count,
+            expected_unknown_owner_cells=unknown, all_source_visual_geoms=len(specs),
+            static_geom_count=len(fixed), dynamic_geom_count=len(moving),
+            initial_all_static_and_dynamic=state_id == 0, native_color_leaf_m=.01,
+            stage_prepare_s=round(time.perf_counter() - tick, 6), **encoded)
+        records.append(row)
+        print("G2_COLOR_STATE_PREPARED", frame, "voxels", count, "changed_geoms", len(changed),
+              "reference_exact", reference is not None, flush=True)
+    report = dict(schema="g2_direct_color_episode_prepared_v1", layout=config["layout"],
+        source_sha256=initial["source_sha256"], source_model_sha256=dense["model_source_sha256"],
+        source_inputs_sha256=sha_file(inputs), navigation_manifest_sha256=sha_file(nav_manifest),
+        complete_episode_states=len(records), frames=frames, source_frame_count=len(states),
+        preclassified_static_geoms=len(fixed), preclassified_dynamic_geoms=len(moving),
+        dynamic_preplan_s=planning_s, states=records, training_ready=False,
+        reference_color_exact=reference is not None, total_wall_s=round(time.perf_counter() - started, 6))
+    report["sequence_sha256"] = write_sequence(output / "native_sequence.txt", report, nav)
+    report["complete"] = True
+    write_json(output / "color_manifest.json", report)
+    print("G2_EPISODE_SOURCE_PREPARED", output / "color_manifest.json", flush=True)
+    return report
+
+
+def _view_manifest(row, snapshot):
+    reference = row["bundle_manifest"]
+    manifest = bound_json(reference)
+    bundle = Path(reference["path"]).resolve().parent
+    if (manifest.get("source_sha256") != snapshot["source_sha256"]
+            or manifest.get("scene_id") != snapshot["scene_id"]
+            or manifest.get("world_frame") != snapshot["world_frame"]):
+        raise ContractError("view bundle belongs to a different source scene")
+    if manifest.get("frame_id") == snapshot["frame_id"]:
+        if manifest.get("source_sha256") != snapshot["source_sha256"]:
+            raise ContractError("view bundle source differs")
+        if manifest["files"]["snapshot.json"]["sha256"] != row["snapshot"]["sha256"]:
+            raise ContractError("view bundle snapshot bytes differ")
+        return bundle, manifest
+    # The verified dynamic snapshot supplies the current geometry/affiliations.
+    # Bundle directory is retained only for legacy renderer metadata.
+    dynamic = dict(schema="g2_dynamic_rederived_oracle_v1",
+        version_sha256=hashlib.sha256((snapshot["source_sha256"] + ":" +
+            str(snapshot["frame_id"]) + ":" + row["snapshot"]["sha256"]).encode()).hexdigest(),
+        source_scope=dict(status="MUJOCO_FULL_MAP_GT_PENDING_HUMAN", full_scene_source_certified=False),
+        training_ready=False)
+    return bundle, dynamic
+
+
+def _compare_views(stage, references):
+    from PIL import Image
+    expected = {row["relative_path"]: row for row in references}
+    actual = {str(p.relative_to(stage)) for root in (stage / "sixview", stage / "islands")
+              for p in root.rglob("*.png")}
+    if not expected or len(expected) != len(references) or actual != set(expected):
+        raise ContractError("reference/generated view directions differ")
+    for relative, row in expected.items():
+        if sha_file(row["path"]) != row["sha256"]:
+            raise ContractError("reference image bytes changed")
+        a = np.asarray(Image.open(row["path"]).convert("RGB"))
+        b = np.asarray(Image.open(stage / relative).convert("RGB"))
+        if a.shape != b.shape or not np.array_equal(a, b):
+            raise ContractError("rendered RGB differs from reference: " + relative)
+    return len(expected)
+
+
+def render(inputs, prepared, native_output, output, backend="gpu"):
+    from .direct_source import verify_input_config
+    from g2.views.direct_color import save_direct_color_views
+    started = time.perf_counter()
+    config = read_json(inputs)
+    _, _, _, snapshots = verify_input_config(config)
+    prepared, native_output = Path(prepared), Path(native_output)
+    colors = read_json(prepared / "color_manifest.json")
+    complete = read_json(native_output / "F24_NATIVE_FULL_EPISODE_COMPLETE.json")
+    configured_frames = [row["frame"] for row in config["states"]]
+    expected_rows = colors.get("states")
+    if (not isinstance(expected_rows, list) or len(expected_rows) != len(configured_frames)
+            or colors.get("complete_episode_states") != len(configured_frames)
+            or [row.get("frame") for row in expected_rows] != configured_frames
+            or [row.get("state_id") for row in expected_rows] != list(range(len(configured_frames)))):
+        raise ContractError("prepared state coverage/order is incomplete")
+    if (colors.get("complete") is not True or colors["source_inputs_sha256"] != sha_file(inputs)
+            or complete.get("complete_state_count") != len(snapshots)
+            or complete.get("native_color_full_F22_sha_equal_every_state") is not True
+            or complete.get("native_dual_map_same_process") is not True
+            or complete.get("source_known_region_is_TEST_ONLY_NOT_CERTIFIED") is not True
+            or colors["frames"] != configured_frames
+            or sha_file(prepared / "native_sequence.txt") != colors["sequence_sha256"]):
+        raise ContractError("native episode/source completion is missing or inconsistent")
+    output = new_output(output, _source_paths(config) + [inputs, prepared, native_output])
+    output.mkdir(parents=True)
+    rows = []
+    native_fields = ("native_nav_10cm_occupancy_cells_verified", "rooms", "scene_graph_objects",
+                     "scene_graph_assigned", "scene_graph_root_structures", "footprint_sha256",
+                     "source_color_map_sha256", "native_total_color_voxels")
+    for row, expected, snapshot in zip(config["states"], colors["states"], snapshots):
+        frame = row["frame"]
+        if expected["frame"] != frame:
+            raise ContractError("prepared frame order differs")
+        native = native_output / f"frame_{frame}"
+        receipt = read_json(native / "native_receipt.json")
+        if (receipt.get("frame") != frame or receipt.get("F22_F21_direct_10mm_map_RGB_owner_exact") is not True
+                or receipt.get("source_color_map_sha256") != expected["expected_full_color_sha256"]):
+            raise ContractError("native map receipt differs")
+        if row.get("reference_native_receipt"):
+            reference = bound_json(row["reference_native_receipt"])
+            if any(receipt[k] != reference[k] for k in native_fields):
+                raise ContractError("native navigation/Room/SG differs from accepted reference")
+        surface = read_native_surface(native / "native_view_color_TEMP.g2col10.bin", expected, snapshot)
+        bundle, manifest = _view_manifest(row, snapshot)
+        stage = output / f"state_{expected['state_id']:06d}_frame_{frame:06d}"
+        result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
+                                        meters_per_pixel=.01, renderer_backend=backend)
+        exact_views = _compare_views(stage, row["reference_views"]) if row.get("reference_views") else 0
+        if row.get("scene_graph"):
+            sg = row["scene_graph"]
+            graph = bound_json(sg)
+            if graph["frame_id"] != frame or graph["scene_id"] != snapshot["scene_id"]:
+                raise ContractError("source scene graph belongs to another frame/scene")
+            shutil.copyfile(sg["path"], stage / "scene_graph.json")
+        record = dict(frame=frame, state_id=expected["state_id"], view_count=result["view_count"],
+            reference_pixel_exact_images=exact_views, native_color_sha256=receipt["source_color_map_sha256"],
+            native_reference_exact=bool(row.get("reference_native_receipt")),
+            view_render_s=result["gpu_render_and_export_s"])
+        rows.append(record)
+        print("G2_NATIVE_VIEW_STATE_PASS", frame, "pixel_exact_images", exact_views, flush=True)
+    if len(rows) != len(configured_frames):
+        raise ContractError("episode render did not cover every requested state")
+    report = dict(schema="g2_repository_native_view_episode_v1", complete=True,
+        source_inputs_sha256=sha_file(inputs), spatial_state_count=len(rows), states=rows,
+        renderer_backend=backend, color_leaf_m=.01, view_meters_per_pixel=.01,
+        training_ready=False, native_inputs_retained_for_audit=True,
+        actual_wall_s=round(time.perf_counter() - started, 6))
+    write_json(output / "episode_receipt.json", report)
+    print("G2_REPOSITORY_EPISODE_PASS", output / "episode_receipt.json", flush=True)
+    return report
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    commands = parser.add_subparsers(dest="command", required=True)
+    p = commands.add_parser("prepare")
+    p.add_argument("--inputs", required=True)
+    p.add_argument("--nav-manifest", required=True)
+    p.add_argument("--output", required=True)
+    p = commands.add_parser("render")
+    p.add_argument("--inputs", required=True)
+    p.add_argument("--prepared", required=True)
+    p.add_argument("--native-output", required=True)
+    p.add_argument("--output", required=True)
+    p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
+    args = parser.parse_args()
+    if args.command == "prepare":
+        prepare(args.inputs, args.nav_manifest, args.output)
+    else:
+        render(args.inputs, args.prepared, args.native_output, args.output, args.backend)
+
+
+if __name__ == "__main__":
+    main()

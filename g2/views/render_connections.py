@@ -37,24 +37,55 @@ def wall_directions(s,room):
     return result,evidence,uncertain
 
 
-def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None):
+def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None,
+              dense_manifest=None,surface_data=None,renderer_backend="cpu"):
     from .render import AXES,CARDINAL,rasterize
-    verify_connection_evidence(s);started=time.perf_counter_ns();cpu_started=time.process_time_ns()
+    started=time.perf_counter_ns();cpu_started=time.process_time_ns()
     native_observed=(s.get('surface_color_source')=='NATIVE_RGBD_FUSION_ONLY' and
         manifest.get('source_scope',{}).get('status')=='MUJOCO_GT_STRUCTURE_NATIVE_RGBD_COLOR_PENDING_HUMAN')
+    full_asset=((dense_manifest is not None or surface_data is not None) and
+        s.get('source_mode')=='full_map_mujoco_source' and
+        s.get('surface_color_source')=='MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK')
+    if surface_data is not None and dense_manifest is not None:
+        raise ContractError('direct surface data and dense manifest are mutually exclusive')
+    if (surface_data is not None or dense_manifest is not None) and not full_asset:
+        raise ContractError('native observed RGB-D never receives privileged MuJoCo direct assets')
+    verify_connection_evidence(s)
+    # Legacy/oracle snapshots keep their previous UNKNOWN-color behavior.
+    # Only an explicitly source-bound MuJoCo Full Map may use asset albedo.
     if type(meters_per_pixel) not in (int,float) or not math.isfinite(meters_per_pixel) or meters_per_pixel<=0:
         raise ContractError('invalid view resolution')
     out=new_output(output,[root]+([reference_image] if reference_image else []))
     by_id={e['id']:e for e in s['entities']};numeric={name:i for i,name in enumerate(sorted(by_id))}
-    records={r['entity_id']:r for r in s['connections']['objects']};n=manifest['surface_points']
-    xyz=np.empty((n,3));rgb=np.empty((n,3),np.uint8);valid=np.empty(n,bool);owners=np.empty(n,np.int32);count=0
-    for i,row in enumerate(iter_surfaces(root/'surfaces.csv',set(by_id))):
-        if i>=n:raise ContractError('bundle surface count differs')
-        xyz[i]=row[:3];rgb[i]=row[3:6];valid[i]=row[6];owners[i]=numeric.get(row[7],-1);count+=1
-    if count!=n:raise ContractError('bundle surface count differs')
+    records={r['entity_id']:r for r in s['connections']['objects']}
+    dense_evidence=None
+    if surface_data is not None:
+        from .direct_color import validate_surface_data
+        xyz,rgb,valid,owners,dense_evidence=validate_surface_data(surface_data,s)
+        n=len(xyz)
+    elif dense_manifest is not None:
+        from .dense_surfaces import load_dense_surfaces
+        from g2.io import read_json
+        xyz,rgb,valid,owners,dense_evidence=load_dense_surfaces(
+            dense_manifest,s,read_json(root/'source_inputs.json'))
+        n=len(xyz)
+    else:
+        n=manifest['surface_points']
+        xyz=np.empty((n,3));rgb=np.empty((n,3),np.uint8);valid=np.empty(n,bool);owners=np.empty(n,np.int32);count=0
+        for i,row in enumerate(iter_surfaces(root/'surfaces.csv',set(by_id))):
+            if i>=n:raise ContractError('bundle surface count differs')
+            xyz[i]=row[:3];rgb[i]=row[3:6];valid[i]=row[6];owners[i]=numeric.get(row[7],-1);count+=1
+        if count!=n:raise ContractError('bundle surface count differs')
     # Asset textures and synthetic palettes can support geometry diagnostics,
     # but never supply pixels to the six-view visual condition.
-    if not native_observed:valid[:]=False
+    if not (native_observed or full_asset):valid[:]=False
+    # The two reviewed RoboCasa layouts have wall-top references but no physical
+    # ceiling. A wall-matched color is allowed for DISPLAY only, not geometry
+    # evidence, occupancy, color_valid or SG.
+    wall_ids={numeric[e['id']] for e in s['entities'] if e['kind']=='wall'}
+    wall_samples=valid & np.isin(owners,list(wall_ids))
+    wall_display_rgb=(np.median(rgb[wall_samples],axis=0).astype(np.uint8)
+                      if full_asset and wall_samples.any() else None)
     out.mkdir(parents=True);views={};room_refs={};island_refs={};wall_evidence={}
     for room in s['rooms']:
         uid=room['uid'];axes=np.asarray(room['reference_frame']['axes_world']);origin=np.asarray(room['reference_frame']['origin_world'])
@@ -72,8 +103,20 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
         def emit(name,axis,members,low=lo,high=hi,boundary='not_applicable'):
             view_start=time.perf_counter_ns();view_cpu=time.process_time_ns()
             data=rasterize(points,rgb,valid,owners,{numeric[k] for k in members},low,high,axis,
-                meters_per_pixel=meters_per_pixel,meshes=meshes,surface_tolerance=0.)
+                meters_per_pixel=meters_per_pixel,meshes=meshes,
+                # Actual native 2cm voxel CENTER can sit up to sqrt(3)/2*2cm
+                # from its original surface. This F7-only renderer accounts
+                # for that quantization while keeping owner-bound recovery.
+                surface_tolerance=((.025 if dense_evidence.get('voxel_leaf_m')==.02
+                                   else .01) if dense_evidence else
+                                   s['color_voxel_leaf']*.5+1e-7)
+                                  if full_asset else 0.,
+                asset_fill_radius_m=((.035 if dense_evidence.get('voxel_leaf_m')==.02
+                                      else .015) if dense_evidence else
+                                     max(.075,s['color_voxel_leaf']*1.8)) if full_asset else None,
+                renderer_backend=renderer_backend)
             image,mask,geom,depth,owner,meta=data;folder=out/name;folder.mkdir(parents=True)
+            synthetic_ceiling=False
             objects={numeric[k] for k in members if by_id[k]['kind']=='object'}
             # Projectability is geometry, not color availability or an empty Room.
             right,up,forward=map(np.asarray,AXES[axis]);projectable=False;ambiguous=[]
@@ -97,9 +140,32 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 if len(vertices) and np.ptp(vertices@forward)<=math.sqrt(3)*s['color_voxel_leaf']+1e-9:ambiguous.append(k)
             uncertain=np.isin(owner,[numeric[k] for k in ambiguous]);mask[uncertain]=False;image[uncertain]=0
             object_mask=mask & np.isin(owner,list(objects))
-            status=('SKIPPED_NO_PROJECTABLE_OBJECT' if not projectable else
-                    'UNKNOWN_NOT_OBSERVED' if not object_mask.any() else 'OBSERVED_PARTIAL_RGBD')
-            generated=status=='OBSERVED_PARTIAL_RGBD'
+            # Full Map source samples cover the entire scene, independent of
+            # a robot's current camera visibility. Perception mode unchanged.
+            if full_asset:
+                has_scene=bool(geom.any()) and bool(mask.any())
+                status=('SKIPPED_NO_PROJECTABLE_OBJECT' if not projectable else
+                        'FULL_MAP_ASSET_COLOR_PARTIAL' if has_scene else
+                        'UNKNOWN_ASSET_COLOR')
+                generated=projectable and has_scene
+                if axis=='upper_up':
+                    # Do not emit a ceiling-only upward view. Real projectable
+                    # object pixels are required, not a virtual wall-tint plane.
+                    generated=generated and bool(object_mask.any())
+                    if not generated:
+                        status='SKIPPED_NO_PROJECTABLE_OBJECT' if not projectable else 'UNKNOWN_ASSET_COLOR'
+                    synthetic_ceiling=(generated and
+                        room.get('ceiling_reference',{}).get('is_detected_ceiling') is False and
+                        wall_display_rgb is not None)
+                    if synthetic_ceiling:
+                        # Display-only; never enter 3D, SG or color_valid.
+                        image[~geom]=wall_display_rgb
+                        meta['display_only_synthetic_ceiling_pixels']=int((~geom).sum())
+                        meta['synthetic_background_source']='MATCHED_SOURCE_WALL_ASSET_MEDIAN_NOT_PHYSICAL_CEILING'
+            else:
+                status=('SKIPPED_NO_PROJECTABLE_OBJECT' if not projectable else
+                        'UNKNOWN_NOT_OBSERVED' if not object_mask.any() else 'OBSERVED_PARTIAL_RGBD')
+                generated=status=='OBSERVED_PARTIAL_RGBD'
             if generated:
                 Image.fromarray(image).save(folder/'rgb.png');Image.fromarray(mask.astype(np.uint8)*255).save(folder/'color_valid.png')
                 Image.fromarray(geom.astype(np.uint8)*255).save(folder/'geometry_valid.png')
@@ -113,10 +179,16 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 observed_color_pixels=int(mask.sum()),known_geometry_pixels=int(geom.sum()),
                 status=status,image_generated=generated,rgb_file='rgb.png' if generated else None,
                 projectable_object_geometry=projectable,observed_object_color_pixels=int(object_mask.sum()),
-                color_provenance_verified=native_observed,
+                color_provenance_verified=native_observed or full_asset,
+                color_provenance='MUJOCO_ASSET_ALBEDO' if full_asset else 'NATIVE_RGBD_OBSERVATION',
+                asset_surface_reprojected_pixels=meta.get('asset_surface_reprojected_pixels',0),
+                synthetic_background_display_only=bool(synthetic_ceiling),
                 quantized_thin_geometry_masked_ids=sorted(ambiguous),directional_ray_certification=False,
                 reason=('NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION' if not projectable else
-                    'VISIBLE_OBJECT_LACKS_NATIVE_RGBD_COLOR' if not generated else 'SOURCE_BOUND_NATIVE_OBSERVED_PIXELS_ONLY'),
+                    'ASSET_SURFACE_COLOR_MISSING' if full_asset and not generated else
+                    'MUJOCO_ASSET_SURFACE_COLOR_AND_GEOMETRY' if full_asset else
+                    'VISIBLE_OBJECT_LACKS_NATIVE_RGBD_COLOR' if not generated else
+                    'SOURCE_BOUND_NATIVE_OBSERVED_PIXELS_ONLY'),
                 projection_wall_ns=time.perf_counter_ns()-view_start,projection_cpu_ns=time.process_time_ns()-view_cpu,
                 unassigned_points_excluded=int(np.count_nonzero(owners==-1)))
             write_json(folder/'view.json',meta);views[name]=meta
@@ -154,8 +226,13 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
         'bev':'FLOOR_YES','up':'FLOOR_NO_WITHOUT_CEILING_REQUIREMENT','unknown_floor':'EXCLUDED_AND_RECORDED',
         'wall_views':'ONLY_ACTUAL_WALL_ROOT_PATHS_IN_NATIVE_ROOM_REFERENCE','islands_in_room_cardinals':False,
         'reference_planes_are_height_classifiers':False,'occlusion':'NEAREST_SELECTED_SOURCE_GEOMETRY_WITH_INVALID_COLOR_MASK'}
-    recipe.update(color_source='NATIVE_RGBD_OBSERVATIONS_ONLY',empty_direction='SKIPPED_NO_PROJECTABLE_OBJECT_NO_PNG',
-        unobserved_direction='UNKNOWN_NOT_OBSERVED_NO_PNG',interpolation=False,backside_filling=False)
+    recipe.update(color_source=('MUJOCO_FULL_SCENE_ASSET_ALBEDO' if full_asset else
+                                 'NATIVE_RGBD_OBSERVATIONS_ONLY'),
+        empty_direction='SKIPPED_NO_PROJECTABLE_OBJECT_NO_PNG',
+        unobserved_direction='UNKNOWN_NOT_OBSERVED_NO_PNG',
+        interpolation=bool(full_asset),backside_filling=bool(full_asset),
+        asset_surface_fill='NEAREST_SAME_ENTITY_3D_SOURCE_ASSET_SAMPLE' if full_asset else 'NONE',
+        missing_ceiling='WALL_MATCHED_DISPLAY_ONLY_NOT_SG_OR_GT' if full_asset else 'UNKNOWN')
     result={'schema':'g2_spatial_views_v2','status':'MUJOCO_FULL_MAP_GT_PENDING_HUMAN' if full else 'ORACLE_DIAGNOSTIC_ONLY' if oracle else
             'RECORDED_SPATIAL_PREVIEW' if s['affiliations_complete'] else 'PARTIAL_NATIVE_STRUCTURES',
         'source_mode':s['source_mode'],'source_scope':manifest['source_scope'],'scene_id':s['scene_id'],
@@ -183,6 +260,11 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     result['render_timing']={'wall_ns':time.perf_counter_ns()-started,'cpu_ns':time.process_time_ns()-cpu_started,
         'peak_rss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'includes_source_revalidation':False,
         'includes_parsing_projection_image_io':True}
+    if dense_evidence is not None:
+        result['dense_source_evidence']=dense_evidence
+        result['recipe']['visual_asset_sampling_spacing_m']=dense_evidence['dense_sample_spacing_m']
+        result['recipe']['small_asset_sampling_spacing_m']=dense_evidence['dense_small_sample_spacing_m']
+        result['recipe_sha256']=hashlib.sha256(canonical(result['recipe'])).hexdigest()
     result['files']={str(p.relative_to(out)):{'sha256':digest(p),'bytes':p.stat().st_size} for p in sorted(out.rglob('*')) if p.is_file()}
     write_json(out/'views.json',result);(out/'PREVIEW_COMPLETE').write_text('SPATIAL_VIEWS_NOT_TRAINING_ACCEPTANCE\n')
     return result

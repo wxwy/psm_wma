@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import math
+import time
 from pathlib import Path
 import re
 import numpy as np
@@ -22,7 +23,10 @@ CARDINAL=("+X","-X","+Y","-Y")
 
 
 def rasterize(xyz,rgb,color_valid,owners,selected,bounds_min,bounds_max,axis, *,
-              meters_per_pixel=.05,meshes=(),surface_tolerance=0,max_pixels=4_000_000):
+              meters_per_pixel=.05,meshes=(),surface_tolerance=0,max_pixels=4_000_000,
+              asset_fill_radius_m=None, renderer_backend="cpu"):
+    if renderer_backend not in ("cpu","gpu"):
+        raise ContractError("unsupported G2 rasterizer backend")
     if axis not in AXES or not math.isfinite(meters_per_pixel) or meters_per_pixel<=0:
         raise ContractError("invalid orthographic recipe")
     right,up,forward=np.asarray(AXES[axis],float)
@@ -50,74 +54,167 @@ def rasterize(xyz,rgb,color_valid,owners,selected,bounds_min,bounds_max,axis, *,
               "world_bounds_min":lo.tolist(),"world_bounds_max":hi.tolist()}
     if not selected:
         return image,valid,geometry,np.full_like(depth,np.nan),owner_image,metadata
-    # Geometry can occlude without RGB. Never paint source GT/semantic palettes.
-    for entity,vertices,triangles in meshes:
-        if entity not in selected:
-            continue
-        vertices=np.asarray(vertices,float)
-        triangles=np.asarray(triangles,int)
-        if not vertices.size or not triangles.size:
-            continue
-        projected=np.column_stack([(vertices@right-origin[0])/meters_per_pixel,
-                                   (vertices@up-origin[1])/meters_per_pixel,
-                                   vertices@forward])
-        for triangle in projected[triangles]:
-            a,b,c=triangle
-            determinant=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
-            if abs(determinant)<1e-10:
+    if renderer_backend == "cpu":
+        # Geometry can occlude without RGB. Never paint source GT/semantic palettes.
+        for entity,vertices,triangles in meshes:
+            if entity not in selected:
                 continue
-            x0=max(0,int(np.floor(triangle[:,0].min())));x1=min(width-1,int(np.floor(triangle[:,0].max())))
-            y0=max(0,int(np.floor(triangle[:,1].min())));y1=min(height-1,int(np.floor(triangle[:,1].max())))
-            if x1<x0 or y1<y0:
+            vertices=np.asarray(vertices,float)
+            triangles=np.asarray(triangles,int)
+            if not vertices.size or not triangles.size:
                 continue
-            xs,ys=np.meshgrid(np.arange(x0,x1+1)+.5,np.arange(y0,y1+1)+.5)
-            wa=((b[1]-c[1])*(xs-c[0])+(c[0]-b[0])*(ys-c[1]))/determinant
-            wb=((c[1]-a[1])*(xs-c[0])+(a[0]-c[0])*(ys-c[1]))/determinant
-            wc=1-wa-wb
-            z=wa*a[2]+wb*b[2]+wc*c[2]
-            rows=height-1-np.arange(y0,y1+1)
-            target=depth[np.ix_(rows,np.arange(x0,x1+1))]
-            near,far=(corners@forward).min(),(corners@forward).max()
-            replace=(wa>=-1e-10)&(wb>=-1e-10)&(wc>=-1e-10)&(z<target)&(z>=near-1e-9)&(z<=far+1e-9)
-            rr,cc=np.nonzero(replace);rr=height-1-(rr+y0);cc=cc+x0
-            depth[rr,cc]=z[replace];geometry[rr,cc]=True;owner_image[rr,cc]=entity
+            projected=np.column_stack([(vertices@right-origin[0])/meters_per_pixel,
+                                       (vertices@up-origin[1])/meters_per_pixel,
+                                       vertices@forward])
+            for triangle in projected[triangles]:
+                a,b,c=triangle
+                determinant=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
+                if abs(determinant)<1e-10:
+                    continue
+                x0=max(0,int(np.floor(triangle[:,0].min())));x1=min(width-1,int(np.floor(triangle[:,0].max())))
+                y0=max(0,int(np.floor(triangle[:,1].min())));y1=min(height-1,int(np.floor(triangle[:,1].max())))
+                if x1<x0 or y1<y0:
+                    continue
+                xs,ys=np.meshgrid(np.arange(x0,x1+1)+.5,np.arange(y0,y1+1)+.5)
+                wa=((b[1]-c[1])*(xs-c[0])+(c[0]-b[0])*(ys-c[1]))/determinant
+                wb=((c[1]-a[1])*(xs-c[0])+(a[0]-c[0])*(ys-c[1]))/determinant
+                wc=1-wa-wb
+                z=wa*a[2]+wb*b[2]+wc*c[2]
+                rows=height-1-np.arange(y0,y1+1)
+                target=depth[np.ix_(rows,np.arange(x0,x1+1))]
+                near,far=(corners@forward).min(),(corners@forward).max()
+                replace=(wa>=-1e-10)&(wb>=-1e-10)&(wc>=-1e-10)&(z<target)&(z>=near-1e-9)&(z<=far+1e-9)
+                rr,cc=np.nonzero(replace);rr=height-1-(rr+y0);cc=cc+x0
+                depth[rr,cc]=z[replace];geometry[rr,cc]=True;owner_image[rr,cc]=entity
+    else:
+        # F12 candidate: replace ONLY the original G2 triangle/depth raster with
+        # GPU FP64 deterministic per-pixel evaluation of the same triangle formula.
+        # Keep all native G2 selection, colored-voxel projection, ownership, masks,
+        # KDTree recovery, and empty-direction rules below unchanged.
+        from .exact_compute import get_engine
+        gpu_start=time.perf_counter()
+        geometry, gpu_depth, owner_image, gpu_dims, gpu_info=get_engine().draw(
+            meshes,selected,lo,hi,axis,meters_per_pixel)
+        if gpu_dims != (width,height):
+            raise ContractError("F12 GPU geometry pixel bounds differ from G2 CPU")
+        depth=np.where(geometry,gpu_depth,np.inf)
+        metadata["gpu_geometry_kernel"] = gpu_info
+        metadata["gpu_geometry_wall_seconds"] = time.perf_counter()-gpu_start
     xyz=np.asarray(xyz,float);rgb=np.asarray(rgb,np.uint8);color_valid=np.asarray(color_valid,bool)
     owners=np.asarray(owners,np.int32)
     if xyz.ndim!=2 or xyz.shape[1]!=3 or rgb.shape!=(len(xyz),3) or color_valid.shape!=(len(xyz),) or owners.shape!=(len(xyz),) or not np.isfinite(xyz).all():
         raise ContractError("invalid surface arrays")
-    members=np.isin(owners,list(selected)) & np.all((xyz>=lo-1e-9)&(xyz<=hi+1e-9),axis=1)
-    indices=np.flatnonzero(members)
-    p=xyz[indices]
-    columns=np.floor((p@right-origin[0])/meters_per_pixel+1e-8).astype(np.int64)
-    rows=height-1-np.floor((p@up-origin[1])/meters_per_pixel+1e-8).astype(np.int64)
-    inside=(columns>=0)&(columns<width)&(rows>=0)&(rows<height)
-    indices=indices[inside];columns=columns[inside];rows=rows[inside]
-    if not len(indices):
-        depth[~geometry]=np.nan
-        return image,valid,geometry,depth,owner_image,metadata
-    z=xyz[indices]@forward
-    pixel=rows*width+columns
-    packed_rgb=rgb[indices].astype(np.uint32)@np.asarray([65536,256,1],np.uint32)
-    # Deterministic ties, with valid observed color winning identical geometry.
-    order=np.lexsort((packed_rgb,-color_valid[indices].astype(int),z,pixel))
-    first=np.r_[True,pixel[order][1:]!=pixel[order][:-1]]
-    order=order[first]
-    indices=indices[order];rows=rows[order];columns=columns[order];z=z[order]
-    old=depth[rows,columns];old_owner=owner_image[rows,columns]
-    accepted=(z<=old+1e-9) | ((owners[indices]==old_owner)&(z<=old+surface_tolerance))
-    indices=indices[accepted];rows=rows[accepted];columns=columns[accepted];z=z[accepted]
-    geometry[rows,columns]=True
-    depth[rows,columns]=np.minimum(depth[rows,columns],z)
-    owner_image[rows,columns]=owners[indices]
-    observed=color_valid[indices] & (owners[indices]>=0)
-    image[rows[observed],columns[observed]]=rgb[indices[observed]]
-    valid[rows[observed],columns[observed]]=True
+    if renderer_backend == "gpu" and len(xyz):
+        from .gpu_color_select import get_projector
+        indices,rows,columns,z,color_info = get_projector().select(
+            xyz,rgb,color_valid,owners,selected,lo,hi,
+            right,up,forward,origin,meters_per_pixel,width,height)
+        metadata.update(color_info)
+        metadata["color_pixel_selector_backend"]="gpu_lexsort_exact"
+    else:
+        members=np.isin(owners,list(selected)) & np.all((xyz>=lo-1e-9)&(xyz<=hi+1e-9),axis=1)
+        indices=np.flatnonzero(members)
+        p=xyz[indices]
+        columns=np.floor((p@right-origin[0])/meters_per_pixel+1e-8).astype(np.int64)
+        rows=height-1-np.floor((p@up-origin[1])/meters_per_pixel+1e-8).astype(np.int64)
+        inside=(columns>=0)&(columns<width)&(rows>=0)&(rows<height)
+        indices=indices[inside];columns=columns[inside];rows=rows[inside]
+        if len(indices):
+            z=xyz[indices]@forward
+            pixel=rows*width+columns
+            packed_rgb=rgb[indices].astype(np.uint32)@np.asarray([65536,256,1],np.uint32)
+            # Deterministic ties, with valid observed color winning identical geometry.
+            order=np.lexsort((packed_rgb,-color_valid[indices].astype(int),z,pixel))
+            first=np.r_[True,pixel[order][1:]!=pixel[order][:-1]]
+            order=order[first]
+            indices=indices[order];rows=rows[order];columns=columns[order];z=z[order]
+    if len(indices):
+        old=depth[rows,columns];old_owner=owner_image[rows,columns]
+        accepted=(z<=old+1e-9) | ((owners[indices]==old_owner)&(z<=old+surface_tolerance))
+        indices=indices[accepted];rows=rows[accepted];columns=columns[accepted];z=z[accepted]
+        geometry[rows,columns]=True
+        depth[rows,columns]=np.minimum(depth[rows,columns],z)
+        owner_image[rows,columns]=owners[indices]
+        observed=color_valid[indices] & (owners[indices]>=0)
+        image[rows[observed],columns[observed]]=rgb[indices[observed]]
+        valid[rows[observed],columns[observed]]=True
+    # Only for full-scene ASSET color, never for unobserved camera RGB-D.
+    # Reproject a nearby real asset surface sample to the visible mesh point,
+    # using the SAME native object ID; don't spread colors across objects.
+    if renderer_backend=="gpu" and asset_fill_radius_m is not None:
+        from .gpu_color_select import get_projector
+        from .gpu_nearest_recovery import recover
+        image,valid,filled,fallback,nn_meta=recover(
+            get_projector(),xyz,rgb,color_valid,owners,
+            geometry,valid,image,depth,owner_image,
+            origin,right,up,forward,meters_per_pixel,
+            asset_fill_radius_m,meters_per_pixel)
+        metadata["asset_unassigned_near_surface_pixels"]=fallback
+        metadata["unassigned_color_not_promoted_to_entity_identity"]=True
+        metadata["asset_surface_reprojected_pixels"]=filled
+        metadata["asset_fill_radius_m"]=asset_fill_radius_m
+        metadata["asset_fill_provenance"]="NEAREST_SAME_ENTITY_3D_MUJOCO_ASSET_SURFACE_SAMPLE_NOT_CAMERA"
+        metadata.update(nn_meta)
+    else:
+        if asset_fill_radius_m is not None:
+            if not math.isfinite(asset_fill_radius_m) or asset_fill_radius_m <= 0:
+                raise ContractError("invalid asset surface recovery radius")
+            try:
+                from scipy.spatial import cKDTree
+            except ImportError as exc:
+                raise ContractError("asset surface recovery requires scipy") from exc
+            missing=geometry & ~valid & (owner_image>=0)
+            filled=0
+            for owner_id in np.unique(owner_image[missing]):
+                sample=np.flatnonzero((owners==owner_id)&color_valid)
+                targets=np.argwhere(missing & (owner_image==owner_id))
+                if not len(sample) or not len(targets):
+                    continue
+                tree=cKDTree(xyz[sample])
+                for group in np.array_split(targets,max(1,int(math.ceil(len(targets)/100000)))):
+                    rows2,cols2=group[:,0],group[:,1]
+                    uv0=origin[0]+(cols2+.5)*meters_per_pixel
+                    uv1=origin[1]+(height-rows2-.5)*meters_per_pixel
+                    surface=uv0[:,None]*right+uv1[:,None]*up+depth[rows2,cols2,None]*forward
+                    distances,nearest=tree.query(surface,k=1,distance_upper_bound=asset_fill_radius_m,workers=1)
+                    inside=np.isfinite(distances)
+                    rr,cc=rows2[inside],cols2[inside]
+                    image[rr,cc]=rgb[sample[nearest[inside]]]
+                    valid[rr,cc]=True
+                    filled+=int(inside.sum())
+            # F2 asset samples contain valid scene RGB with an UNKNOWN native
+            # owner (e.g. visual floor vs collision floor ID). Spatially bind only
+            # when a source sample physically lies on the projected GT surface.
+            # The inferred identity is NOT promoted to the SG or point cloud.
+            unassigned=np.flatnonzero((owners==-1)&color_valid)
+            fallback=0
+            if len(unassigned):
+                targets=np.argwhere(geometry & ~valid & (owner_image>=0))
+                if len(targets):
+                    tree=cKDTree(xyz[unassigned])
+                    for group in np.array_split(targets,max(1,int(math.ceil(len(targets)/100000)))):
+                        rows2,cols2=group[:,0],group[:,1]
+                        uv0=origin[0]+(cols2+.5)*meters_per_pixel
+                        uv1=origin[1]+(height-rows2-.5)*meters_per_pixel
+                        surface=uv0[:,None]*right+uv1[:,None]*up+depth[rows2,cols2,None]*forward
+                        distances,nearest=tree.query(surface,k=1,distance_upper_bound=min(.06,asset_fill_radius_m),workers=1)
+                        close=np.isfinite(distances)
+                        rr,cc=rows2[close],cols2[close]
+                        image[rr,cc]=rgb[unassigned[nearest[close]]]
+                        valid[rr,cc]=True
+                        fallback+=int(close.sum())
+            metadata["asset_unassigned_near_surface_pixels"]=fallback
+            metadata["unassigned_color_not_promoted_to_entity_identity"]=True
+            metadata["asset_surface_reprojected_pixels"]=filled
+            metadata["asset_fill_radius_m"]=asset_fill_radius_m
+            metadata["asset_fill_provenance"]="NEAREST_SAME_ENTITY_3D_MUJOCO_ASSET_SURFACE_SAMPLE_NOT_CAMERA"
     depth[~geometry]=np.nan
     return image,valid,geometry,depth,owner_image,metadata
 
 
 def render(bundle,output,*,meters_per_pixel=.05,allow_oracle_diagnostic=False,
-           allow_full_map_mujoco=False,reference_image=None):
+           allow_full_map_mujoco=False,reference_image=None,dense_manifest=None,
+           surface_data=None,renderer_backend="cpu"):
     root=Path(bundle).resolve();out=new_output(output,[root])
     manifest,s=load_bundle(root)
     oracle=s["source_mode"]=="oracle_diagnostic"
@@ -125,12 +222,16 @@ def render(bundle,output,*,meters_per_pixel=.05,allow_oracle_diagnostic=False,
     if oracle and not allow_oracle_diagnostic:
         raise ContractError("oracle native snapshot requires explicit diagnostic rendering")
     if full and not allow_full_map_mujoco:raise ContractError('Full Map source GT requires explicit rendering opt-in')
+    if (dense_manifest is not None or surface_data is not None) and not full:
+        raise ContractError('dense MuJoCo assets cannot enter RGB-D/perception view paths')
     if not oracle and not full and (manifest.get("semantic_stage")!="REAL_RECORDED_INPUT_OBSERVED" or
                        not manifest.get("observation_witness")):
         raise ContractError("BLOCKED_REAL_RGBD_OBSERVATIONS")
     if 'connection_protocol' in s:
         from .render_connections import render_v2
-        return render_v2(root,manifest,s,output,meters_per_pixel=meters_per_pixel,reference_image=reference_image)
+        return render_v2(root,manifest,s,output,meters_per_pixel=meters_per_pixel,
+                         reference_image=reference_image,dense_manifest=dense_manifest,
+                         surface_data=surface_data,renderer_backend=renderer_backend)
     if full:raise ContractError('Full Map requires native connection V2 evidence')
     by_id={e["id"]:e for e in s["entities"]}
     numeric={name:i for i,name in enumerate(sorted(by_id))}
@@ -149,7 +250,8 @@ def render(bundle,output,*,meters_per_pixel=.05,allow_oracle_diagnostic=False,
         selected={numeric[e] for e in members}
         data=rasterize(xyz,rgb,valid,owners,selected,lo or s["bounds_min"],hi or s["bounds_max"],axis,
                        meters_per_pixel=meters_per_pixel,meshes=meshes,
-                       surface_tolerance=s["color_voxel_leaf"]*.5+1e-7)
+                       surface_tolerance=s["color_voxel_leaf"]*.5+1e-7,
+                       renderer_backend=renderer_backend)
         image,mask,geom,depth,owner,meta=data
         folder=out/name;folder.mkdir(parents=True)
         Image.fromarray(image).save(folder/"rgb.png")
@@ -232,10 +334,14 @@ def main():
     p.add_argument("--meters-per-pixel",type=float,default=.05)
     p.add_argument("--allow-oracle-diagnostic",action="store_true")
     p.add_argument('--allow-full-map-mujoco',action='store_true');p.add_argument('--reference-image')
+    p.add_argument('--dense-manifest',help='source-bound MuJoCo 10mm Visual color chunks; Full Map only')
+    p.add_argument('--renderer-backend',choices=('cpu','gpu'),default='cpu')
     a=p.parse_args()
     result=render(a.bundle,a.output,meters_per_pixel=a.meters_per_pixel,
                   allow_oracle_diagnostic=a.allow_oracle_diagnostic,
-                  allow_full_map_mujoco=a.allow_full_map_mujoco,reference_image=a.reference_image)
+                  allow_full_map_mujoco=a.allow_full_map_mujoco,
+                  reference_image=a.reference_image,dense_manifest=a.dense_manifest,
+                  renderer_backend=a.renderer_backend)
     print(result["status"],len(result["views"]))
 
 
