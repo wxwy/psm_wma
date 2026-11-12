@@ -136,8 +136,14 @@ def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
         raise ContractError('direct color Views require the accepted 1 cm/pixel recipe')
     if renderer_backend not in ('cpu', 'gpu'):
         raise ContractError('unsupported G2 rasterizer backend')
+    direct_gt=(
+        snapshot.get('surface_transport_mode')=='SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN'
+        and snapshot.get('surface_color_source')=='MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY'
+        and visual_mesh_by_room is not None
+        and all('surface_registry' in v for v in visual_mesh_by_room.values()))
     if (snapshot.get('source_mode') != 'full_map_mujoco_source' or
-            snapshot.get('surface_color_source') != 'MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK'):
+            not (snapshot.get('surface_color_source') ==
+                 'MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK' or direct_gt)):
         raise ContractError('direct color Views require explicit MuJoCo Full Map source')
     checked = validate_surface_data(surface_data, snapshot)
     bundle = Path(bundle).resolve()

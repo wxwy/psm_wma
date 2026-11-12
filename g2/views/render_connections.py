@@ -44,9 +44,17 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     started=time.perf_counter_ns();cpu_started=time.process_time_ns()
     native_observed=(s.get('surface_color_source')=='NATIVE_RGBD_FUSION_ONLY' and
         manifest.get('source_scope',{}).get('status')=='MUJOCO_GT_STRUCTURE_NATIVE_RGBD_COLOR_PENDING_HUMAN')
+    # Geometry-only initial Full Map still receives independently verified
+    # 10mm F24 native color source from MuJoCo Visual Mesh. Never accept a
+    # missing 5cm prescan as color evidence without F27 surface registry.
+    direct_gt=(s.get('surface_transport_mode')=='SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN'
+               and s.get('surface_color_source')=='MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY'
+               and surface_data is not None and visual_mesh_by_room is not None
+               and all('surface_registry' in v for v in visual_mesh_by_room.values()))
     full_asset=((dense_manifest is not None or surface_data is not None) and
         s.get('source_mode')=='full_map_mujoco_source' and
-        s.get('surface_color_source')=='MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK')
+        (s.get('surface_color_source')=='MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK'
+         or direct_gt))
     if surface_data is not None and dense_manifest is not None:
         raise ContractError('direct surface data and dense manifest are mutually exclusive')
     if visual_mesh_by_room is not None:
