@@ -120,8 +120,8 @@ def pinned_episode(row):
     source = read_json(inputs)
     color = read_json(cm)
     complete = read_json(nc)
-    if not isinstance(source, dict) or source.get("layout") not in (1, 10):
-        raise ContractError("G2 render batch requires source Layout1/Layout10")
+    if not isinstance(source, dict) or type(source.get("layout")) is not int or not 1 <= source["layout"] <= 10:
+        raise ContractError("G2 render batch requires source layout 1..10")
     states = source.get("states")
     if not isinstance(states, list) or not 2 <= len(states) <= 300:
         raise ContractError("invalid G2 episode state window")
