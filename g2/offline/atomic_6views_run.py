@@ -132,6 +132,7 @@ def _native_gate(config, prepared, native_manifest, prescan, root, row):
     # only its 'native_run' child, with an independent nonexisting output.
     root.mkdir(parents=True,exist_ok=False)
     env=os.environ.copy()
+    env.pop("PYTHONPATH",None)  # ROS1 Noetic uses a different Python ABI.
     env.update(
         G2_GT_PROJECTION_MIN_Z=str(config.min_z),
         G2_GT_PROJECTION_MAX_Z=str(config.max_z),
