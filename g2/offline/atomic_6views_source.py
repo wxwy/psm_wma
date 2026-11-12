@@ -106,8 +106,8 @@ def inspect_original(original, ep_meta, states, *, expected_length, expected_lay
     import numpy as np
     meta_path, states_path = Path(ep_meta).resolve(strict=True), Path(states).resolve(strict=True)
     metadata = json.loads(meta_path.read_text())
-    if metadata.get("layout_id") != expected_layout or metadata.get("style_id") != expected_layout:
-        raise ContractError("official layout and style identity mismatch")
+    if type(expected_layout) is not int or expected_layout <= 0 or metadata.get("layout_id") != expected_layout:
+        raise ContractError("official layout ID differs from pinned episode mapping")
     with np.load(states_path, allow_pickle=False) as archive:
         if "states" not in archive:
             raise ContractError("official archive missing FULLPHYSICS states")
