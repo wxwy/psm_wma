@@ -20,7 +20,7 @@ RAW = DATA_ROOT.parent / "robocasa365_official/v1.0/target/atomic"
 DEPTH = DATA_ROOT / "robocasa365-target-atomic-depth"
 OUTPUT = DATA_ROOT / "robocasa365-target-atomic-6views"
 SCHEMA = "g2_robocasa365_atomic_6views_dataset_plan_v1"
-EXPECTED = 9126
+EXPECTED = None  # open-source datasets need not have the same number of episodes
 MAX_BATCH = 100
 
 
@@ -277,21 +277,27 @@ def _check_depth(row, depth_dir, originals):
 
 
 def discover(mapping=FLAT / "flat_v3_mapping.parquet", raw_root=RAW,
-             depth_root=DEPTH, expected=EXPECTED, stride=10):
-    try:
-        import pyarrow.parquet as pq
-    except ImportError as error:
-        raise PlanError("pyarrow is required for flat V3 mapping") from error
-    mapping = Path(mapping).resolve(strict=True)
+             depth_root=DEPTH, expected=EXPECTED, stride=10, *,
+             require_depth=False, log=print):
+    from .atomic_6views_catalog import CatalogError, discover_flat
     raw_root = Path(raw_root).resolve(strict=True)
-    depth_root = Path(depth_root).resolve(strict=True)
-    table = pq.read_table(mapping, columns=[
-        "task_class", "local_episode_index", "global_episode_index", "length"])
-    if table.num_rows != expected:
-        raise PlanError(f"mapping has {table.num_rows} episodes, expected {expected}")
-    raw_rows = table.to_pylist()
-    tasks = sorted({r["task_class"] for r in raw_rows})
-    roots = _lerobot_task_roots(raw_root, tasks)
+    mapping = Path(mapping)
+    if not mapping.is_file() and expected is not None:
+        # The count is checked below, never used as a fallback identity.
+        pass
+    try:
+        raw_rows, roots, catalog_origin = discover_flat(mapping, raw_root, log=log)
+    except CatalogError as error:
+        raise PlanError(str(error)) from error
+    if expected is not None and len(raw_rows) != expected:
+        raise PlanError(f"mapping has {len(raw_rows)} episodes, expected {expected}")
+    depth_root = Path(depth_root)
+    has_depth = depth_root.is_dir()
+    if require_depth and not has_depth:
+        raise PlanError("required depth root is missing: " + str(depth_root))
+    if log is not None:
+        log(f"G2_SOURCE_INDEX source={catalog_origin} depth_available={has_depth} "
+            f"require_depth={require_depth}", flush=True)
     result = []
     counter = Counter()
     for global_id, row in enumerate(raw_rows):
@@ -308,11 +314,19 @@ def discover(mapping=FLAT / "flat_v3_mapping.parquet", raw_root=RAW,
         if type(layout) is not int or layout <= 0:
             raise PlanError(f"invalid official layout_id for {ep}: {layout}")
         depth_dir = depth_root / "tasks" / task / "episodes" / f"episode_{ep:06d}"
-        depth = _check_depth(row, depth_dir, originals)
+        if has_depth and (depth_dir / "COMPLETE.json").is_file():
+            depth = _check_depth(row, depth_dir, originals)
+        elif require_depth:
+            raise PlanError("required episode depth absent: " + str(depth_dir))
+        else:
+            depth = None  # full-map MuJoCo does not require previously exported RGB-D.
         frames = frame_ids(row["length"], stride)
         row_for_digest = {**row, "layout_id": layout}
+        provenance = (depth["original_sha256"] if depth is not None else
+                      {kind: sha_file(path) for kind, path in originals.items()})
         fingerprint = selection_fingerprint(
-            row_for_digest, depth["original_sha256"], depth["export_digest"], frames)
+            row_for_digest, provenance,
+            depth["export_digest"] if depth is not None else None, frames)
         result.append({
             "episode_id": ep, "task_class": task, "local_episode_index": local,
             "layout_id": layout, "source_frames": row["length"],
@@ -325,6 +339,9 @@ def discover(mapping=FLAT / "flat_v3_mapping.parquet", raw_root=RAW,
             "training_ready": False,
         })
         counter[layout] += 1
+    if log is not None:
+        log(f"G2_SOURCE_INDEX_COMPLETE episodes={len(result)} "
+            f"layouts={len(counter)}", flush=True)
     return result, counter
 
 
@@ -346,12 +363,13 @@ def manifest_for_batch(rows, batch_no, target_root):
 
 def build(mapping, raw_root, depth_root, plan_root, target_root, *,
           expected=EXPECTED, batch_size=100, tasks=None,
-          episodes_per_task=None, resume=False):
+          episodes_per_task=None, resume=False, require_depth=False):
     if type(batch_size) is not int or not 1 <= batch_size <= MAX_BATCH:
         raise PlanError("batch_size must be in [1, 100]")
     if type(resume) is not bool:
         raise PlanError("resume must be boolean")
-    rows, layouts = discover(mapping, raw_root, depth_root, expected=expected)
+    rows, layouts = discover(mapping, raw_root, depth_root,
+                              expected=expected, require_depth=require_depth)
     chosen, counts = select(rows, tasks=tasks, episodes_per_task=episodes_per_task)
     target_root = Path(target_root).resolve()
     skipped = []
@@ -374,7 +392,10 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
     if any(plan_root == source or source in plan_root.parents
            for source in (Path(raw_root).resolve(), Path(depth_root).resolve(), Path(mapping).resolve().parent)):
         raise PlanError("plan_root may not overlap protected inputs")
-    mapping_sha = sha_file(mapping)
+    # The source index is re-derived from official metadata if no flat cache exists.
+    # A missing flat parquet is an expected open-source dataset state.
+    mapping_sha = (sha_file(mapping) if Path(mapping).is_file()
+                   else selection_sha256(rows))
     if plan_root.exists():
         if not plan_root.is_dir() or plan_root.is_symlink():
             raise PlanError("invalid existing plan_root")
@@ -395,7 +416,10 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
                         "sha256": sha_file(plan_root / name)})
     summary = {
         "schema": SCHEMA, "target_root": str(target_root),
-        "mapping": str(Path(mapping).resolve()), "mapping_sha256": mapping_sha,
+        "mapping": str(Path(mapping).absolute()) if Path(mapping).is_file() else None,
+        "mapping_source": "flat_v3_mapping.parquet" if Path(mapping).is_file()
+                          else "official_episodes_jsonl",
+        "mapping_sha256": mapping_sha,
         "selection_sha256": selection_sha256(chosen),
         "raw_root": str(Path(raw_root).resolve()),
         "depth_root": str(Path(depth_root).resolve()),
@@ -431,7 +455,10 @@ def main(argv=None):
     p.add_argument("--target-root", type=Path, default=OUTPUT)
     p.add_argument("--plan-root", type=Path)
     p.add_argument("--batch-size", type=int, default=100)
-    p.add_argument("--expected", type=int, default=EXPECTED)
+    p.add_argument("--expected", type=int, default=EXPECTED,
+                   help="optional expected total episode count (default: accept any dataset size)")
+    p.add_argument("--require-depth", action="store_true",
+                   help="only for RGB-D experiments; Full Map can build without Depth")
     p.add_argument("--task", action="append", default=[],
                    help="task name; repeat or comma-separate (default: all tasks)")
     p.add_argument("--episodes-per-task", type=int, default=None,
@@ -441,7 +468,8 @@ def main(argv=None):
     args = p.parse_args(argv)
     if args.action == "scan":
         rows, layouts = discover(args.mapping, args.raw_root, args.depth_root,
-                                 expected=args.expected)
+                                 expected=args.expected,
+                                 require_depth=args.require_depth)
         chosen, counts = select(rows, tasks=args.task,
                                 episodes_per_task=args.episodes_per_task)
         skipped = [r["episode_id"] for r in chosen
@@ -463,7 +491,7 @@ def main(argv=None):
                        args.plan_root, args.target_root,
                        expected=args.expected, batch_size=args.batch_size,
                        tasks=args.task, episodes_per_task=args.episodes_per_task,
-                       resume=args.resume)
+                       resume=args.resume, require_depth=args.require_depth)
     print(json.dumps(output, ensure_ascii=False, sort_keys=True, indent=2))
     return 0
 
