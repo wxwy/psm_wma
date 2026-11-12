@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -96,9 +97,22 @@ def _write_json(path, body):
         f.write("\n")
 
 
-def package(source, destination, *, episode_id, task_class, require_graph=True):
+def package(source, destination, *, episode_id, task_class,
+            require_graph=True, selection=None):
     """Write one compact episode atomically; never touch source or prior output."""
     receipt, states = inspect_episode(source, require_graph=require_graph)
+    fingerprint = None
+    if selection is not None:
+        if not isinstance(selection, dict):
+            raise PackageError("selection record must be a dictionary")
+        fingerprint = selection.get("source_fingerprint")
+        if (selection.get("episode_id") != episode_id
+                or selection.get("task_class") != task_class
+                or not isinstance(fingerprint, str) or len(fingerprint) != 64
+                or any(c not in "0123456789abcdef" for c in fingerprint)
+                or selection.get("spatial_frames") != [row["frame"] for row in states]
+                or selection.get("spatial_state_count") != len(states)):
+            raise PackageError("F27 source output differs from pinned selection")
     destination = Path(destination).absolute()
     if (destination.exists() or destination.is_symlink()
             or destination == Path(source).resolve()
@@ -138,6 +152,8 @@ def package(source, destination, *, episode_id, task_class, require_graph=True):
             "schema": "g2_atomic_compact_6views_v1",
             "episode_id": episode_id, "task_class": task_class,
             "source_inputs_sha256": receipt["source_inputs_sha256"],
+            "source_fingerprint": fingerprint,
+            "selection_pinned_for_resume": fingerprint is not None,
             "source_renderer": "f27", "source_mode": "full_map_mujoco_source",
             "source_20hz": True, "spatial_frequency_hz": 2,
             "view_resolution_mpp": .01, "island_four_views_enabled": True,
@@ -147,10 +163,14 @@ def package(source, destination, *, episode_id, task_class, require_graph=True):
             "audit_source_kept_separately": True,
         }
         _write_json(tmp / "episode_manifest.json", summary)
+        manifest_sha256 = hashlib.sha256(
+            (tmp / "episode_manifest.json").read_bytes()).hexdigest()
         _write_json(tmp / "COMPLETE.json", {
             "schema": summary["schema"], "complete": True,
             "episode_id": episode_id, "state_count": len(rows),
-            "renderer": "f27", "training_ready": False})
+            "renderer": "f27", "training_ready": False,
+            "source_fingerprint": fingerprint,
+            "episode_manifest_sha256": manifest_sha256})
         os.rename(tmp, destination)
         succeeded = True
         return summary
@@ -166,6 +186,8 @@ def main(argv=None):
     p.add_argument("--destination", type=Path)
     p.add_argument("--episode-id", type=int)
     p.add_argument("--task-class")
+    p.add_argument("--selection-record", type=Path,
+                   help="one pinned per-episode planner record; required for resumable production")
     args = p.parse_args(argv)
     if args.action == "inspect":
         _, states = inspect_episode(args.source)
@@ -177,7 +199,9 @@ def main(argv=None):
         if args.destination is None or args.episode_id is None or not args.task_class:
             p.error("package requires --destination, --episode-id, --task-class")
         result = package(args.source, args.destination,
-                         episode_id=args.episode_id, task_class=args.task_class)
+                         episode_id=args.episode_id, task_class=args.task_class,
+                         selection=read_json(args.selection_record)
+                                   if args.selection_record else None)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
