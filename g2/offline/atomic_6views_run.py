@@ -128,6 +128,9 @@ def _nav_env(config):
 
 
 def _native_gate(config, prepared, native_manifest, prescan, root, row):
+    # The outer stage is managed by the Python runner; nav_sg's CLI creates
+    # only its 'native_run' child, with an independent nonexisting output.
+    root.mkdir(parents=True,exist_ok=False)
     env=os.environ.copy()
     env.update(
         G2_GT_PROJECTION_MIN_Z=str(config.min_z),
@@ -484,6 +487,10 @@ def main(argv=None):
     args=parser().parse_args(argv)
     if args.max_attempts<1 or args.max_attempts>5:
         raise ContractError("invalid retry count")
+    if args.action in ("run","work") and not (
+            args.manual_start and args.allow_experimental):
+        raise ContractError("production is manual-only: explicitly pass "
+                            "--manual-start --allow-experimental")
     args.gpus=[int(x) for x in args.gpus.split(",")]
     args.output_root=args.output_root.resolve()
     if args.action=="work":
