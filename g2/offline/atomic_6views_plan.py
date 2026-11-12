@@ -400,12 +400,7 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
     # The source index is re-derived from official metadata if no flat cache exists.
     # A missing flat parquet is an expected open-source dataset state.
     mapping_sha = (sha_file(mapping) if Path(mapping).is_file()
-                   else hashlib.sha256(json.dumps(
-                       [{k: r[k] for k in ("task_class", "local_episode_index",
-                                          "global_episode_index", "length")}
-                        for r in rows],
-                       sort_keys=True, separators=(",", ":"), allow_nan=False,
-                   ).encode("utf-8")).hexdigest())
+                   else selection_sha256(rows))
     if plan_root.exists():
         if not plan_root.is_dir() or plan_root.is_symlink():
             raise PlanError("invalid existing plan_root")
