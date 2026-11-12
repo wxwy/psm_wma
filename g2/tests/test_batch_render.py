@@ -457,3 +457,26 @@ def test_corrupted_output_does_not_resume_as_success(sample_job, tmp_path, child
     assert r["attempt"] == 2
     assert (root / "ep00/attempt_0001").is_dir()  # immutable history
     assert (root / "ep00/attempt_0002").is_dir()
+
+
+@pytest.mark.parametrize("sha", ["a" * 40, "b" * 64])
+def test_git_head_accepts_git_sha1_and_sha256_repository_modes(
+    monkeypatch, tmp_path, sha
+):
+    class Result:
+        stdout = sha + "\n"
+
+    monkeypatch.setattr(batch.subprocess, "run", lambda *args, **kwargs: Result())
+    assert batch.source_commit(tmp_path) == sha
+
+
+@pytest.mark.parametrize("bad_sha", ["a" * 39, "b" * 41, "c" * 65, "g" * 40])
+def test_git_head_rejects_invalid_or_truncated_object_ids(
+    monkeypatch, tmp_path, bad_sha
+):
+    class Result:
+        stdout = bad_sha + "\n"
+
+    monkeypatch.setattr(batch.subprocess, "run", lambda *args, **kwargs: Result())
+    with pytest.raises(ContractError, match="pin repository"):
+        batch.source_commit(tmp_path)

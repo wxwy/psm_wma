@@ -30,7 +30,7 @@ from g2.io import ContractError, digest, read_json
 SCHEMA = "g2_gpu_batch_render_v1"
 PLAN_SCHEMA = "g2_gpu_batch_pinned_plan_v1"
 ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,95}\Z")
-HASH = re.compile(r"[0-9a-f]{64}\Z")
+GIT_OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})\Z")
 MAX_JOBS = 10000
 MAX_GPUS = 8
 REPORT_LIMIT = 100
@@ -205,7 +205,7 @@ def source_commit(repo):
         check=True,
         timeout=10,
     ).stdout.strip()
-    if not HASH.fullmatch(result):
+    if not GIT_OBJECT_ID.fullmatch(result):
         raise ContractError("cannot pin repository HEAD")
     return result
 
