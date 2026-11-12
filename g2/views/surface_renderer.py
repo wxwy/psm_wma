@@ -344,8 +344,13 @@ class SurfaceRenderer:
         from g2.views.material_appearance import preview_optics
         layer=_empty_layer(geometry.shape)
         safe=np.where(geometry,gids,-1)
+        # Source geometry identity is an ORIGINAL compiled (Geom, face)
+        # pair, not the Geom alone. Two coplanar triangles of the SAME Geom
+        # can have distinct UV/material evidence at identical depth, e.g.
+        # near a mesh seam. They are different surfaces, not duplicates.
+        # Reserve low IDs for sensor/native map layers and -1 for UNKNOWN.
         layer.update(depth=depth, geometry_valid=geometry, geom_id=safe,
-                     surface_id=safe.copy())
+                     surface_id=np.full(safe.shape,-1,dtype=np.int64))
         layer["visibility_ambiguous"]=np.asarray(ambiguous,bool).copy()
         receipts={}
         axes=np.asarray(room["reference_frame"]["axes_world"],float)
@@ -389,6 +394,11 @@ class SurfaceRenderer:
             owner=record.get("semantic_owner_index")
             layer["semantic_owner"][select]=-1 if owner is None else owner
             layer["face_id"][select]=source_face
+            if gid<0 or gid>=2**31 or np.any((source_face<0)|(source_face>=2**32-1)):
+                raise ContractError("source face identity overflow")
+            layer["surface_id"][select]=(
+                (np.int64(gid+1)<<np.int64(32)) |
+                (source_face.astype(np.int64)+np.int64(1)))
             reason,count=np.unique(sample.reason_code,return_counts=True)
             alpha_reason,alpha_count=np.unique(sample.alpha_reason_code,return_counts=True)
             receipts[str(gid)]=dict(evidence=sample.evidence,
