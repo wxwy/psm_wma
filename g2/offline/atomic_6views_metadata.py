@@ -139,7 +139,8 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
         gt_geoms[name] = {
             "instance_id": instance, "part_id": "whole",
             "category_id": category, "category_label": label, "kind": kind,
-            "joint_id": "none",
+            # Omit joint_id: native GT extractor resolves actual compiled
+            # body joints, including movable drawers and doors.
         }
     if not any(x.get("kind") == "floor" for x in gt_geoms.values()):
         raise ContractError("no official floor fixture was classified")
