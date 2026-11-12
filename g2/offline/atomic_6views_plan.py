@@ -101,6 +101,69 @@ def select(rows, *, tasks=None, episodes_per_task=None):
     return chosen, dict(sorted(taken.items()))
 
 
+def selection_sha256(rows):
+    """Order-independent immutable selection and episode source recipe."""
+    entries = sorted((r["episode_id"], r["source_fingerprint"]) for r in rows)
+    return hashlib.sha256(json.dumps(
+        entries, sort_keys=True, separators=(",", ":"), allow_nan=False,
+    ).encode("utf-8")).hexdigest()
+
+
+def reuse_pinned_plan(plan_root, *, selection, mapping_sha, target_root,
+                      pending, skipped, episodes_per_task, counts):
+    """Resume the exact existing immutable plan; do not rewrite batch manifests."""
+    index_path = plan_root / "index.json"
+    if not index_path.is_file() or index_path.is_symlink():
+        raise PlanError("existing plan has no immutable index")
+    index = read_json(index_path)
+    if (
+        index.get("schema") != SCHEMA
+        or index.get("target_root") != str(target_root)
+        or index.get("mapping_sha256") != mapping_sha
+        or index.get("selection_sha256") != selection_sha256(selection)
+        or index.get("episodes_per_task") != episodes_per_task
+        or index.get("task_episode_counts") != counts
+        or index.get("renderer") != "f27"
+        or index.get("training_ready") is not False
+    ):
+        raise PlanError("existing plan selection or source recipe changed")
+    known = {r["episode_id"] for r in selection}
+    visited = set()
+    for record in index.get("batches", []):
+        name = record.get("path")
+        if (type(name) is not str or not name.startswith("batch_")
+                or not name.endswith(".json") or "/" in name):
+            raise PlanError("invalid pinned batch filename")
+        path = plan_root / name
+        if not path.is_file() or path.is_symlink() or sha_file(path) != record.get("sha256"):
+            raise PlanError("pinned batch file changed: " + str(path))
+        data = read_json(path)
+        if (data.get("schema") != SCHEMA or data.get("target_root") != str(target_root)
+                or data.get("renderer") != "f27"
+                or data.get("training_ready") is not False
+                or not isinstance(data.get("episodes"), list)
+                or record.get("episode_count") != len(data["episodes"])):
+            raise PlanError("existing plan batch schema or size changed")
+        for row in data["episodes"]:
+            eid = row.get("episode_id")
+            if eid not in known or eid in visited:
+                raise PlanError("existing plan contains duplicate/foreign episode")
+            visited.add(eid)
+    current_completed = {r["episode_id"] for r in skipped}
+    if (not visited <= known
+            or visited != (known - set(index.get("skipped_completed_ids", [])))
+            or any(eid not in known for eid in current_completed)):
+        raise PlanError("existing batch selection differs from original plan")
+    return {
+        **index,
+        "resume": True,
+        "plan_reused": True,
+        "episodes_skipped_completed_now": len(skipped),
+        "episodes_pending_now": len(pending),
+        "previously_pinned_batches_unchanged": True,
+    }
+
+
 def completed_output(row, target_root):
     """Check only the small completion marker and manifest, not every PNG.
 
@@ -303,14 +366,22 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
             pending.append(row)
 
     plan_root = Path(plan_root).absolute()
-    if plan_root.exists():
-        raise PlanError("plan_root already exists; immutable plans cannot be overwritten")
+    if plan_root.exists() and not resume:
+        raise PlanError("plan_root already exists; use --resume to reuse the pinned plan")
     if (plan_root == target_root or target_root in plan_root.parents
             or plan_root in target_root.parents):
         raise PlanError("keep pre-production plan outside the production output tree")
     if any(plan_root == source or source in plan_root.parents
            for source in (Path(raw_root).resolve(), Path(depth_root).resolve(), Path(mapping).resolve().parent)):
         raise PlanError("plan_root may not overlap protected inputs")
+    mapping_sha = sha_file(mapping)
+    if plan_root.exists():
+        if not plan_root.is_dir() or plan_root.is_symlink():
+            raise PlanError("invalid existing plan_root")
+        return reuse_pinned_plan(
+            plan_root, selection=chosen, mapping_sha=mapping_sha,
+            target_root=target_root, pending=pending, skipped=skipped,
+            episodes_per_task=episodes_per_task, counts=counts)
     plan_root.mkdir(parents=True)
     batches = []
     for begin in range(0, len(pending), batch_size):
@@ -324,7 +395,8 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
                         "sha256": sha_file(plan_root / name)})
     summary = {
         "schema": SCHEMA, "target_root": str(target_root),
-        "mapping": str(Path(mapping).resolve()), "mapping_sha256": sha_file(mapping),
+        "mapping": str(Path(mapping).resolve()), "mapping_sha256": mapping_sha,
+        "selection_sha256": selection_sha256(chosen),
         "raw_root": str(Path(raw_root).resolve()),
         "depth_root": str(Path(depth_root).resolve()),
         "dataset_episodes_total": len(rows),
