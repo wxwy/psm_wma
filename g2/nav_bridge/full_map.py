@@ -193,9 +193,32 @@ def prepare(native_manifest,color_manifest,*,nav_repo,output,room_source='gvd',m
     return plan
 
 
-def _verify_snapshot(native_dir,s,inputs,proof):
+def _verify_snapshot(native_dir,s,inputs,proof,*,trust_native_owner=False):
+    """Validate the source-bound Full Map snapshot against the original GT.
+
+    The opt-in fast path still checks EVERY source surface row for exact
+    coordinate/RGB/validity correspondence, plus the original mesh, grid,
+    color evidence and source-identity proofs. Only the second, independent
+    O(points * surface-BVH) spatial owner reconstruction is skipped. The
+    native C++ Full Map source already computed owners from these meshes.
+
+    Never enable for RGB-D/perception or unproved source; full verification
+    remains the default and the public load/verify path.
+    """
     from .snapshot import iter_surfaces,validate_snapshot,_read_native_grid
-    validate_snapshot(s);native,color,_=verify_inputs(inputs)
+    if type(trust_native_owner) is not bool:
+        raise ContractError('Full Map native-owner mode must be explicit boolean')
+    validate_snapshot(s)
+    if trust_native_owner and (
+        s.get('source_mode')!='full_map_mujoco_source' or
+        s.get('geometry_source_mode')!='FULL_MAP_MUJOCO_SOURCE' or
+        s.get('surface_color_source')!='MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK' or
+        s.get('full_map_source',{}).get('status')!=STATUS or
+        s.get('full_map_source',{}).get('native_geometry_backend')!='ORACLE_GRID' or
+        s.get('full_map_source',{}).get('model_observation') is not False or
+        s.get('completed_rgbd_observations')!=0):
+        raise ContractError('fast native-owner validation is strictly Full Map GT only')
+    native,color,_=verify_inputs(inputs)
     if proof.read_text()!=_wire(inputs,native,color):raise ContractError('Full Map source proof cannot be resealed or substituted')
     if (s['source_mode']!='full_map_mujoco_source' or s['source_sha256']!=native['source_sha256'] or
             s['scene_id']!=native['scene_id'] or s['frame_id']!=native['state']['frame_id'] or
@@ -218,9 +241,22 @@ def _verify_snapshot(native_dir,s,inputs,proof):
                     'bbox_min':'bounds_min','bbox_max':'bounds_max','source_category_id':'category_id',
                     'source_joint_id':'joint_id'}.items():
             if e[k]!=source[v]:raise ContractError('Full Map native geometry/source identity changed: '+k)
-    from .surface_ownership import SurfaceOwnerVerifier
-    owner_check=SurfaceOwnerVerifier(s['entities'],s['color_voxel_leaf']*.9)
-    cloud=Path(inputs['files']['cloud']['path']);count=0;positions=[];owners=[]
+    if not trust_native_owner:
+        from .surface_ownership import SurfaceOwnerVerifier
+        owner_check=SurfaceOwnerVerifier(s['entities'],s['color_voxel_leaf']*.9)
+    else:
+        owner_check=None
+    cloud=Path(inputs['files']['cloud']['path'])
+    if trust_native_owner:
+        from .fullmap_transport import verify_native_color_transport
+        # Original source and native C++ owner labels remain hash-bound.
+        # Only the explicit simulation mode can use this transport verifier.
+        counted=verify_native_color_transport(
+            cloud,native_dir/'surfaces.csv',{e['id'] for e in s['entities']},
+            color['point_count'])
+        if counted is not None:
+            return counted
+    count=0;positions=[];owners=[]
     with cloud.open() as stream:
         for _ in range(7):next(stream)
         for row in iter_surfaces(native_dir/'surfaces.csv',{e['id'] for e in s['entities']}):
@@ -229,14 +265,19 @@ def _verify_snapshot(native_dir,s,inputs,proof):
                     tuple(row[3:7])!=tuple(int(x) for x in fields[3:])):
                 raise ContractError('Full Map surface RGB/invalid mask/XYZ row changed')
             count+=1
-            positions.append(xyz);owners.append(row[7])
-            if len(positions)==4096:owner_check.verify(positions,owners);positions=[];owners=[]
-        if stream.read().strip() or count!=color['point_count']:raise ContractError('Full Map surface row count changed')
-    if positions:owner_check.verify(positions,owners)
+            if owner_check is not None:
+                positions.append(xyz);owners.append(row[7])
+                if len(positions)==4096:
+                    owner_check.verify(positions,owners);positions=[];owners=[]
+        if stream.read().strip() or count!=color['point_count']:
+            raise ContractError('Full Map surface row count changed')
+    if owner_check is not None and positions:
+        owner_check.verify(positions,owners)
     return count
 
 
-def capture(native_directory,prepared,output,*,expected_build_source_sha256=None):
+def capture(native_directory,prepared,output,*,expected_build_source_sha256=None,
+            trust_native_owner=False):
     from .snapshot import validate_snapshot
     native_dir=Path(native_directory).resolve();prepared=Path(prepared).resolve()
     out=new_output(output,[native_dir,prepared]);inputs=read_json(prepared/'source_inputs.json')
@@ -247,7 +288,8 @@ def capture(native_directory,prepared,output,*,expected_build_source_sha256=None
     if expected_build_source_sha256 and s['native_build_source_sha256']!=sha(expected_build_source_sha256):
         raise ContractError('native build source mismatch')
     if (native_dir/'SNAPSHOT_COMPLETE').read_text()!='nav_sg_spatial_snapshot_v1\n':raise ContractError('incomplete native snapshot')
-    count=_verify_snapshot(native_dir,s,inputs,prepared/'source_proof.txt')
+    count=_verify_snapshot(native_dir,s,inputs,prepared/'source_proof.txt',
+                           trust_native_owner=trust_native_owner)
     source={name:native_dir/name for name in NATIVE_FILES}
     source.update({'source_inputs.json':prepared/'source_inputs.json','source_proof.txt':prepared/'source_proof.txt',
         'source_gt_manifest.json':Path(inputs['files']['native_manifest']['path']),
@@ -339,6 +381,8 @@ def main():
     a.add_argument('--min-z',type=float,default=.15);a.add_argument('--max-z',type=float,default=1.8)
     a=sub.add_parser('capture');a.add_argument('--native-directory',required=True);a.add_argument('--prepared',required=True)
     a.add_argument('--output',required=True);a.add_argument('--expected-build-source-sha256')
+    a.add_argument('--trust-native-owner',action='store_true',
+                   help='Full Map GT only: still verify every source row; reuse native C++ ownership proof')
     args=vars(p.parse_args());command=args.pop('command')
     result=prepare(**args) if command=='prepare' else capture(**args)
     print(result.get('status',result.get('semantic_stage')))

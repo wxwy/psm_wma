@@ -227,8 +227,14 @@ def produce_one(row,config):
         lambda p:_native_gate(config,natprep,native_gt,color_prescan,p,row),
         required=("native_run/frame_0/spatial_snapshot/snapshot.json",
                   "native_run/frame_0/spatial_snapshot/SNAPSHOT_COMPLETE"))
+    # This executor is exclusively RoboCasa/MuJoCo Full Map. The native C++
+    # export already computed surface ownership; preserve every coordinate,
+    # RGB, mask, scene binding and byte hash, but do not independently repeat
+    # millions of triangle-distance tests when sealing the initial bundle.
+    # RGB-D/perception and the public deep bundle verifier remain unchanged.
     bundle=stage(work,"bundle",row,lambda p:capture_native(
-        native_initial/"native_run/frame_0/spatial_snapshot",natprep,p),
+        native_initial/"native_run/frame_0/spatial_snapshot",natprep,p,
+        trust_native_owner=True),
         required=("bundle.json","snapshot.json"))
     roster=stage(work,"visual_roster",row,lambda p:build_visual_roster(
         native_gt/"manifest.json",metadata/"role_map.json",p),
