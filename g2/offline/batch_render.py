@@ -1,4 +1,4 @@
-"""Resource-bounded, multi-GPU G2 *View-only* episode batch scheduler.
+"""Resource-bounded, multi-GPU F27 *View-only* episode batch scheduler.
 
 The scheduler NEVER imports Mujoco, EGL or GPU libraries: every slot launches
 a fresh child process, pinned to a physical MUJOCO_EGL_DEVICE_ID. Its inputs
@@ -228,7 +228,7 @@ def pinned_plan(manifest, jobs, repo, *, python):
         repo_root=str(repo),
         git_commit=root_source,
         python=str(python),
-        mode="GPU_EXPERIMENTAL_VISUAL_MESH_ONLY",
+        mode="GPU_F27_SURFACE_REGISTRY_H1_APPROVED_NOT_TRAINING_READY",
         training_ready=False,
         jobs=[source_identity(j) for j in jobs],
     )
@@ -265,7 +265,7 @@ def atomic_json(path, data):
 
 
 def validate_episode_receipt(out, episode):
-    """Reject merely zero-exit child runs without complete source-bound output."""
+    """Require F27 source-bound, material-aware evidence, never a legacy view."""
     receipt_path = out / "episode_receipt.json"
     if not receipt_path.is_file() or receipt_path.is_symlink():
         raise ContractError("missing episode completion receipt")
@@ -276,9 +276,17 @@ def validate_episode_receipt(out, episode):
         or result.get("training_ready") is not False
         or result.get("source_inputs_sha256") != episode.input_sha256
         or result.get("spatial_state_count") != episode.count
-        or result.get("view_opaque_geometry_source") != "SOURCE_BOUND_VISUAL_MESH"
+        or result.get("view_opaque_geometry_source")
+        != "SURFACE_REGISTRY_VISUAL_GEOMETRY"
+        or result.get("semantic_owner_optional") is not True
+        or result.get("source_material_identity_per_pixel") is not True
+        or result.get("native_scene_graph_modified") is not False
+        or result.get("source_alpha_model")
+        != "FRONT_SURFACE_PER_GEOM_SORTED_ALPHA_NO_REFRACTION"
+        or result.get("renderer_backend") != "gpu"
+        or result.get("view_meters_per_pixel") != 0.01
     ):
-        raise ContractError("render receipt not complete source Visual Mesh output")
+        raise ContractError("F27 material/geometry episode proof is missing")
     rows = result.get("states")
     if (
         not isinstance(rows, list)
@@ -286,77 +294,93 @@ def validate_episode_receipt(out, episode):
         or [r.get("frame") for r in rows] != list(episode.frames)
         or [r.get("state_id") for r in rows] != list(range(episode.count))
     ):
-        raise ContractError("render episode states incomplete or unordered")
+        raise ContractError("F27 episode states incomplete or unordered")
+    source_states = read_json(episode.inputs).get("states", [])
     image_count = 0
-    for row in rows:
+    for row, source_state in zip(rows, source_states):
         if (
-            not isinstance(row.get("view_count"), int)
+            type(row.get("view_count")) is not int
             or row["view_count"] < 1
             or row.get("view_opaque_visual_geometry_from_source") is not True
             or row.get("source_surfel_geom_color_training_ready") is not False
+            or type(row.get("surface_registry_count")) is not int
+            or row["surface_registry_count"] < 1
+            or type(row.get("transparent_visible_pixels")) is not int
+            or row["transparent_visible_pixels"] < 0
+            or type(row.get("unbound_visible_pixels")) is not int
+            or row["unbound_visible_pixels"] < 0
+            or row.get("alpha_sidecar_count") != row["transparent_visible_pixels"]
         ):
-            raise ContractError("source Visual Mesh per-state gate missing")
+            raise ContractError("F27 per-state surface/alpha evidence missing")
         state = out / f"state_{row['state_id']:06d}_frame_{row['frame']:06d}"
         dc = state / "direct_color_views.json"
-        ac = state / "alpha_source_layer" / "alpha_sidecar_manifest.json"
-        if not dc.is_file() or not ac.is_file():
-            raise ContractError("native View or Alpha evidence missing")
-        d = read_json(dc)
-        a = read_json(ac)
+        reg = state / "surface_registry.json"
+        native = state / "g2_original_gpu" / "views.json"
+        if any(not p.is_file() or p.is_symlink() for p in (dc, reg, native)):
+            raise ContractError("F27 view, registry or numeric provenance missing")
+        d, registry, nv = read_json(dc), read_json(reg), read_json(native)
         if (
             d.get("frame_id") != row["frame"]
             or d.get("training_ready") is not False
-            or d.get("visual_geometry_source") != "SOURCE_BOUND_MUJOCO_VISUAL_MESH"
+            or d.get("visual_geometry_source")
+            != "SURFACE_REGISTRY_VISUAL_GEOMETRY"
+            or d.get("surface_material_identity_per_pixel") is not True
+            or d.get("source_scene_graph_unchanged") is not True
+            or d.get("unknown_visual_color_regions_retained") is not True
+            or d.get("transparent_visible_pixels")
+            != row["transparent_visible_pixels"]
+            or d.get("unbound_visible_pixels") != row["unbound_visible_pixels"]
             or d.get("view_count") != row["view_count"]
-            or a.get("frame_id") != row["frame"]
-            or a.get("view_count") != row["view_count"]
-            or a.get("training_ready") is not False
+            or registry.get("schema") != "g2_surface_registry_v1"
+            or registry.get("native_scene_graph_modified") is not False
+            or registry.get("frame_id") != row["frame"]
+            or registry.get("source_sha256") != d.get("source_sha256")
+            or registry.get("scene_id") != d.get("scene_id")
+            or not isinstance(registry.get("surfaces"), list)
+            or len(registry["surfaces"]) != row["surface_registry_count"]
+            or nv.get("frame_id") != row["frame"]
+            or nv.get("source_sha256") != d.get("source_sha256")
+            or nv.get("training_ready") is not False
         ):
-            raise ContractError("View/Alpha per-state source proof differs")
+            raise ContractError("F27 surface registry or scene/alpha identity differs")
+        if source_state.get("scene_graph"):
+            graph = state / "scene_graph.json"
+            if (
+                not graph.is_file()
+                or graph.is_symlink()
+                or digest(graph) != source_state["scene_graph"]["sha256"]
+            ):
+                raise ContractError("F27 native scene graph missing or modified")
         views = d.get("views")
-        if not isinstance(views, list) or len(views) != row["view_count"]:
-            raise ContractError("View list incomplete")
+        native_views = nv.get("views")
+        if (
+            not isinstance(views, list)
+            or len(views) != row["view_count"]
+            or not isinstance(native_views, dict)
+        ):
+            raise ContractError("F27 view list incomplete")
         for view in views:
             rel = Path(view.get("rgb_file", ""))
+            native_name = view.get("native_view")
             if (
                 rel.is_absolute()
                 or ".." in rel.parts
                 or len(rel.parts) < 2
+                or not isinstance(native_name, str)
+                or native_name not in native_views
+                or native_views[native_name].get("image_generated") is not True
                 or not (state / rel).is_file()
+                or (state / rel).is_symlink()
                 or digest(state / rel) != view.get("sha256")
             ):
-                raise ContractError("view PNG path or digest is invalid")
-        alpha = a.get("view_alpha_layers")
-        if (
-            not isinstance(alpha, list)
-            or len(alpha) != row["view_count"]
-            or a.get("source_visual_mesh_for_transparency") is not True
-        ):
-            raise ContractError("source Visual-Mesh Alpha evidence missing")
-        for alpha_view in alpha:
-            if alpha_view.get("frame_id") != row["frame"]:
-                raise ContractError("source Alpha view frame differs")
-            for file_key, sha_key in (
-                ("source_rgba_file", "source_rgba_sha256"),
-                ("checkerboard_preview_file", "checkerboard_preview_sha256"),
-            ):
-                relative = Path(alpha_view.get(file_key, ""))
-                if (
-                    relative.is_absolute()
-                    or not relative.parts
-                    or ".." in relative.parts
-                    or len(relative.parts) < 2
-                ):
-                    raise ContractError("source Alpha layer path invalid")
-                candidate = state / "alpha_source_layer" / relative
-                if (
-                    candidate.is_symlink()
-                    or not candidate.is_file()
-                    or (state / "alpha_source_layer").resolve()
-                    not in candidate.resolve().parents
-                    or digest(candidate) != alpha_view.get(sha_key)
-                ):
-                    raise ContractError("source Alpha layer bytes/hash invalid")
+                raise ContractError("F27 view PNG or source direction invalid")
+            native_rel = Path(native_name)
+            if native_rel.is_absolute() or ".." in native_rel.parts:
+                raise ContractError("unsafe F27 native view directory")
+            view_dir = state / "g2_original_gpu" / native_rel
+            for name in ("geometry.npz", "view.json", "geometry_valid.png", "color_valid.png"):
+                if not (view_dir / name).is_file() or (view_dir / name).is_symlink():
+                    raise ContractError("F27 per-pixel geometry/material proof missing")
         image_count += len(views)
     return dict(
         status="DONE_NOT_TRAINING_CERTIFIED",
@@ -364,6 +388,7 @@ def validate_episode_receipt(out, episode):
         frames=episode.count,
         view_images=image_count,
         receipt_sha256=digest(receipt_path),
+        renderer_mode="F27_SURFACE_REGISTRY_VISUAL_GEOMETRY",
         training_ready=False,
         output=str(out),
     )
@@ -428,7 +453,7 @@ def child_command(python, episode, destination):
         str(destination),
         "--backend",
         "gpu",
-        "--visual-mesh-source",
+        "--surface-registry-source",
     ]
 
 
