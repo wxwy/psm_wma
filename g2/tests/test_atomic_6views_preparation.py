@@ -211,3 +211,36 @@ def test_official_metadata_uses_compiled_roles_and_true_source_categories():
     assert nav["geoms"]["robot0_g0_vis"]["include"] is False
     assert audit["role_counts"]["visual"] >= 3
     assert audit["not_human_semantic_approved"] is True
+
+
+@pytest.mark.parametrize("layout", [11, 12, 42, 100001])
+def test_dataset_planner_does_not_whitelist_layout_ids(tmp_path, layout):
+    roots = fixture_dataset(tmp_path, n=1)
+    extra = roots["raw"] / "TestTask/20250820/lerobot/extras/episode_000000"
+    (extra / "ep_meta.json").write_text(
+        json.dumps({"layout_id": layout, "style_id": 3}))
+    depth = roots["depth"] / "tasks/TestTask/episodes/episode_000000"
+    entry = json.loads((depth / "manifest.json").read_text())
+    for file in entry["identity"]["source_files"]:
+        if file["path"].endswith("ep_meta.json"):
+            file["sha256"] = _sha(extra / "ep_meta.json")
+            file["size"] = (extra / "ep_meta.json").stat().st_size
+    (depth / "manifest.json").write_text(json.dumps(entry))
+    complete = json.loads((depth / "COMPLETE.json").read_text())
+    complete["manifest_sha256"] = _sha(depth / "manifest.json")
+    (depth / "COMPLETE.json").write_text(json.dumps(complete))
+    found, grouped = planner.discover(roots["flat"] / "flat_v3_mapping.parquet",
+                                      roots["raw"], roots["depth"], expected=1)
+    assert found[0]["layout_id"] == layout
+    assert grouped[layout] == 1
+
+
+@pytest.mark.parametrize("invalid", [0, -1, True, "10", None])
+def test_dataset_planner_rejects_nonpositive_or_noninteger_layouts(tmp_path, invalid):
+    roots = fixture_dataset(tmp_path, n=1)
+    extra = roots["raw"] / "TestTask/20250820/lerobot/extras/episode_000000"
+    (extra / "ep_meta.json").write_text(
+        json.dumps({"layout_id": invalid, "style_id": 4}))
+    with pytest.raises(planner.PlanError, match="layout_id"):
+        planner.discover(roots["flat"] / "flat_v3_mapping.parquet",
+                         roots["raw"], roots["depth"], expected=1)
