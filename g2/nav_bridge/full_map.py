@@ -246,7 +246,17 @@ def _verify_snapshot(native_dir,s,inputs,proof,*,trust_native_owner=False):
         owner_check=SurfaceOwnerVerifier(s['entities'],s['color_voxel_leaf']*.9)
     else:
         owner_check=None
-    cloud=Path(inputs['files']['cloud']['path']);count=0;positions=[];owners=[]
+    cloud=Path(inputs['files']['cloud']['path'])
+    if trust_native_owner:
+        from .fullmap_transport import verify_native_color_transport
+        # Original source and native C++ owner labels remain hash-bound.
+        # Only the explicit simulation mode can use this transport verifier.
+        counted=verify_native_color_transport(
+            cloud,native_dir/'surfaces.csv',{e['id'] for e in s['entities']},
+            color['point_count'])
+        if counted is not None:
+            return counted
+    count=0;positions=[];owners=[]
     with cloud.open() as stream:
         for _ in range(7):next(stream)
         for row in iter_surfaces(native_dir/'surfaces.csv',{e['id'] for e in s['entities']}):
