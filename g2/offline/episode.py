@@ -351,17 +351,15 @@ def main():
     p.add_argument("--native-output", required=True)
     p.add_argument("--output", required=True)
     p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
-    p.add_argument("--visual-mesh-source", action="store_true",
-                   help="EXPERIMENTAL source Visual-Mesh depth, never Collision Mesh; H1/train Gate remains blocked")
-    p.add_argument("--surface-registry-source", action="store_true",
-                   help="Opt-in unified surface identity, exact material sampling and layered alpha; H1 pending")
+    p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
+                   help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
     args = parser.parse_args()
     if args.command == "prepare":
         prepare(args.inputs, args.nav_manifest, args.output)
     else:
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
-               visual_mesh_source=args.visual_mesh_source,
-               surface_registry_source=args.surface_registry_source)
+               visual_mesh_source=args.renderer in ("f27", "legacy"),
+               surface_registry_source=args.renderer == "f27")
 
 
 if __name__ == "__main__":
