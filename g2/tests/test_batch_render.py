@@ -449,7 +449,7 @@ def test_memory_guard_is_optional_and_avoids_launch(sample_job, tmp_path, monkey
     assert not (root / "ep00").exists()
 
 
-def test_corrupted_output_does_not_resume_as_success(sample_job, tmp_path, child_file):
+def test_corrupted_receipt_does_not_resume_as_success(sample_job, tmp_path, child_file):
     e = batch.pinned_episode(sample_job())
     root = prepare_root(tmp_path / "out")
     kwargs = dict(
@@ -463,8 +463,10 @@ def test_corrupted_output_does_not_resume_as_success(sample_job, tmp_path, child
     slot = batch.Slot(4, 0)
     r = batch.process_job(slot, e, root, max_attempts=1, **kwargs)
     assert r["status"] == "DONE_NOT_TRAINING_CERTIFIED"
-    img = root / "ep00/attempt_0001/state_000000_frame_000000/sixview/floor_top.png"
-    img.write_bytes(b"malicious-tamper")
+    receipt = root / "ep00/attempt_0001/episode_receipt.json"
+    content = json.loads(receipt.read_text())
+    content["complete"] = False
+    receipt.write_text(json.dumps(content))
     assert batch.inspect_existing(root, e) == (None, 1)
     r = batch.process_job(slot, e, root, max_attempts=2, **kwargs)
     assert r["status"] == "DONE_NOT_TRAINING_CERTIFIED"
@@ -497,12 +499,19 @@ def test_git_head_rejects_invalid_or_truncated_object_ids(
 
 
 
-def test_child_command_uses_accepted_f27_not_legacy(sample_job, tmp_path):
+def test_renderer_is_configurable_and_f27_is_default(sample_job, tmp_path):
     e = batch.pinned_episode(sample_job())
-    command = batch.child_command(Path(sys.executable), e, tmp_path / "future_output")
-    assert "--surface-registry-source" in command
-    assert "--visual-mesh-source" not in command
-    assert batch.pinned_plan.__name__ == "pinned_plan"
+    parser = batch.build_parser()
+    base = ["plan", "--manifest", str(tmp_path / "input.json"),
+            "--output-root", str(tmp_path / "out")]
+    assert parser.parse_args(base).renderer == "f27"
+    assert parser.parse_args(base + ["--renderer", "legacy"]).renderer == "legacy"
+    default = batch.child_command(Path(sys.executable), e, tmp_path / "output")
+    old = batch.child_command(Path(sys.executable), e, tmp_path / "output", "legacy")
+    assert "--surface-registry-source" in default and "--visual-mesh-source" not in default
+    assert "--visual-mesh-source" in old and "--surface-registry-source" not in old
+    with pytest.raises(ContractError, match="renderer"):
+        batch.child_command(Path(sys.executable), e, tmp_path / "output", "other")
 
 
 def test_legacy_receipt_is_rejected_by_f27_batch(sample_job, tmp_path, child_file):
@@ -517,3 +526,39 @@ def test_legacy_receipt_is_rejected_by_f27_batch(sample_job, tmp_path, child_fil
     )
     assert result["status"] == "FAILED_VALIDATION"
     assert result["training_ready"] is False
+
+
+def test_explicit_legacy_renderer_can_accept_legacy_receipt(sample_job, tmp_path, child_file):
+    e = batch.pinned_episode(sample_job())
+    root = prepare_root(tmp_path / "out")
+    result = batch.process_job(
+        batch.Slot(4, 0), e, root,
+        python=Path(sys.executable), repo=tmp_path,
+        max_attempts=1, timeout_seconds=0, min_free_mib=0,
+        cancel=threading.Event(),
+        renderer="legacy",
+        command_factory=factory(child_file, "legacy"),
+    )
+    assert result["status"] == "DONE_NOT_TRAINING_CERTIFIED"
+    assert result["renderer"] == "legacy"
+    assert batch.inspect_existing(root, e, renderer="legacy")[0]["renderer"] == "legacy"
+    assert batch.inspect_existing(root, e, renderer="f27") == (None, 1)
+
+
+def test_receipt_validation_does_not_rehash_images(sample_job, tmp_path, child_file, monkeypatch):
+    e = batch.pinned_episode(sample_job())
+    root = prepare_root(tmp_path / "out")
+    result = batch.process_job(
+        batch.Slot(4, 0), e, root,
+        python=Path(sys.executable), repo=tmp_path,
+        max_attempts=1, timeout_seconds=0, min_free_mib=0,
+        cancel=threading.Event(),
+        command_factory=factory(child_file),
+    )
+    assert result["status"] == "DONE_NOT_TRAINING_CERTIFIED"
+    def never_digest(*args, **kwargs):
+        raise AssertionError("completion rehashed output files")
+    monkeypatch.setattr(batch, "digest", never_digest)
+    check = batch.validate_episode_receipt(root/"ep00/attempt_0001", e)
+    assert check["view_images"] == 2
+    assert check["renderer"] == "f27"
