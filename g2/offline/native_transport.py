@@ -194,6 +194,64 @@ def write_sequence(path, color, nav):
     return sha_file(path)
 
 
+def write_color_only_sequence(path, color):
+    """Bind a MuJoCo visual GT-only F24 source stream; never assert 10cm nav.
+
+    No Room/SG state is reconstructed by this transport. The source snapshots
+    are validated by the independent V3 snapshot producer and F27 renderer.
+    This cannot stand in for a native RGB-D or 10cm occupancy receipt.
+    """
+    if (color.get("schema") != "g2_direct_color_episode_prepared_v1"
+            or color.get("native_color_only_without_10cm_nav") is not True
+            or color.get("navigation_manifest_sha256") is not None
+            or color.get("training_ready") is not False
+            or not 2 <= color.get("complete_episode_states", 0) <= 300):
+        raise ContractError("color-only sequence requires explicit source GT preparation")
+    rows = color["states"]
+    if (not isinstance(rows, list) or len(rows) != color["complete_episode_states"]
+            or rows[0].get("frame") != 0
+            or color.get("frames") != [r["frame"] for r in rows]
+            or any(a["frame"] >= b["frame"] for a,b in zip(rows,rows[1:]))):
+        raise ContractError("color-only source frame roster invalid")
+    source=require_sha(color.get("source_sha256"))
+    scene=rows[0].get("source_scene_id")
+    if (not isinstance(scene,str) or not scene or
+            any(char.isspace() for char in scene) or
+            any(r.get("source_scene_id") != scene or
+                r.get("source_sha256") != source for r in rows)):
+        raise ContractError("color-only scene or source identity differs")
+    layout=color["layout"]
+    if type(layout) is not int or layout<=0:
+        raise ContractError("invalid color-only layout")
+    lines=["F24_G2_NATIVE_COLOR_ONLY_SEQUENCE_V1",f"layout {layout}",
+           f"scene {scene}",f"source {source}",f"rows {len(rows)}"]
+    for index,row in enumerate(rows):
+        count=row["expected_full_color_voxels"]
+        unknown=row["expected_unknown_owner_cells"]
+        if (type(row.get("frame")) is not int or row["frame"]<0 or
+                row["initial_all_static_and_dynamic"] != (index==0) or
+                type(count) is not int or not 0 < count <= 8_000_000 or
+                type(unknown) is not int or not 0 <= unknown <= count or
+                row.get("source_state_file_sha256") != color.get("original_states_file_sha256")):
+            raise ContractError("color-only state, count or original FULLPHYSICS proof differs")
+        binary_sha=require_sha(row["binary_sha256"])
+        state_sha=require_sha(row["source_state_sha256"])
+        full_sha=require_sha(row["expected_full_color_sha256"])
+        if sha_file(row["data_file"])!=binary_sha:
+            raise ContractError("color-only original geom payload mutated")
+        values=[row["frame"],row["data_file"],binary_sha,state_sha,
+                full_sha,count,unknown]
+        if any(any(c.isspace() for c in str(value)) for value in values):
+            raise ContractError("color-only native transport whitespace")
+        lines.append(" ".join(map(str,values)))
+    result="\n".join(lines)+"\n"
+    if len(result.encode())>131072:
+        raise ContractError("color-only native stream exceeds manifest budget")
+    with Path(path).open("x",encoding="utf-8") as out:
+        out.write(result)
+    return sha_file(path)
+
+
 def read_native_surface(path, expected, snapshot):
     """Verify the C++ composed map before giving it to the renderer."""
     path = Path(path)

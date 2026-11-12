@@ -30,29 +30,53 @@ def _source_paths(config):
     return paths
 
 
-def prepare(inputs, nav_manifest, output):
+def prepare(inputs, nav_manifest, output, *, color_only=False):
     from .direct_source import (build_one, get_data, identify_dynamic_geoms,
         load_source, prepare_visual_specs, verify_input_config)
     from .fast_static_dynamic_merge import aggregate, combine
     started = time.perf_counter()
     config = read_json(inputs)
     gt, _, _, snapshots = verify_input_config(config)
-    nav = read_json(nav_manifest)
     frames = [row["frame"] for row in config["states"]]
     if type(config.get("layout")) is not int or config["layout"] <= 0 or not 2 <= len(frames) <= 300:
         raise ContractError("native episode adapter requires a positive layout ID and 2..300 states")
-    if (nav["source_scene_sha256"] != gt["source_sha256"]
-            or frames != [row["frame"] for row in nav["frames"]]
-            or nav.get("source_known_region_NOT_CERTIFIED") is not True):
-        raise ContractError("navigation input differs from the requested episode states")
+    if type(color_only) is not bool:
+        raise ContractError("native color-only mode must be explicit")
+    if color_only:
+        if (nav_manifest is not None
+                or gt["state"].get("format")!="mujoco_fullphysics"
+                or any(s["source_mode"]!="full_map_mujoco_source"
+                       or s.get("geometry_source_mode")!="FULL_MAP_MUJOCO_SOURCE"
+                       or s.get("surface_transport_mode")!="SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN"
+                       or s.get("surface_color_source")!="MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY"
+                       or s.get("completed_rgbd_observations")!=0
+                       for s in snapshots)):
+            raise ContractError("color-only requires proven MuJoCo Full Map without RGB-D or nav states")
+        nav=None
+    else:
+        if nav_manifest is None:
+            raise ContractError("legacy native dual-map mode requires nav_manifest")
+        nav=read_json(nav_manifest)
+        if (nav["source_scene_sha256"] != gt["source_sha256"]
+                or frames != [row["frame"] for row in nav["frames"]]
+                or nav.get("source_known_region_NOT_CERTIFIED") is not True):
+            raise ContractError("navigation input differs from the requested episode states")
     reference = None
     if config.get("reference_color_manifest"):
         reference = bound_json(config["reference_color_manifest"])
         if (reference["source_sha256"] != gt["source_sha256"]
                 or reference["frames"] != frames):
             raise ContractError("reference color episode/source differs")
-    output = new_output(output, _source_paths(config) + [inputs, nav_manifest])
+    output = new_output(output, _source_paths(config) + [inputs] +
+                        ([] if color_only else [nav_manifest]))
     model, initial, dense, role, states = load_source(config)
+    if color_only:
+        if (sha_file(gt["state"]["path"])!=gt["state"]["file_sha256"]
+                or hashlib.sha256(np.asarray(states[0],dtype="<f8").tobytes()).hexdigest()!=
+                   gt["state"]["row_sha256"]):
+            raise ContractError("color-only original FULLPHYSICS source has changed")
+        if frames[-1]>=len(states):
+            raise ContractError("color-only frame exceeds source FULLPHYSICS episode")
     specs = prepare_visual_specs(model, initial, dense, role)
     moving, fixed, planning_s = identify_dynamic_geoms(model, states, frames, specs)
     output.mkdir(parents=True)
@@ -80,7 +104,7 @@ def prepare(inputs, nav_manifest, output):
         surface, _ = combine(static_cache, dynamic_cache)
         expected_sha, count, unknown = composed_digest(surface)
         state_sha = hashlib.sha256(np.asarray(states[frame], dtype="<f8").tobytes()).hexdigest()
-        if state_sha != nav["frames"][state_id]["source_state_row_sha256"]:
+        if not color_only and state_sha != nav["frames"][state_id]["source_state_row_sha256"]:
             raise ContractError("navigation and color source state rows differ")
         if reference is not None:
             ref = reference["states"][state_id]
@@ -105,12 +129,20 @@ def prepare(inputs, nav_manifest, output):
               "reference_exact", reference is not None, flush=True)
     report = dict(schema="g2_direct_color_episode_prepared_v1", layout=config["layout"],
         source_sha256=initial["source_sha256"], source_model_sha256=dense["model_source_sha256"],
-        source_inputs_sha256=sha_file(inputs), navigation_manifest_sha256=sha_file(nav_manifest),
+        source_inputs_sha256=sha_file(inputs),
+        navigation_manifest_sha256=None if color_only else sha_file(nav_manifest),
         complete_episode_states=len(records), frames=frames, source_frame_count=len(states),
         preclassified_static_geoms=len(fixed), preclassified_dynamic_geoms=len(moving),
         dynamic_preplan_s=planning_s, states=records, training_ready=False,
         reference_color_exact=reference is not None, total_wall_s=round(time.perf_counter() - started, 6))
-    report["sequence_sha256"] = write_sequence(output / "native_sequence.txt", report, nav)
+    if color_only:
+        from .native_transport import write_color_only_sequence
+        report["native_color_only_without_10cm_nav"] = True
+        report["original_states_file_sha256"] = gt["state"]["file_sha256"]
+        report["sequence_sha256"] = write_color_only_sequence(
+            output / "native_sequence.txt", report)
+    else:
+        report["sequence_sha256"] = write_sequence(output / "native_sequence.txt", report, nav)
     report["complete"] = True
     write_json(output / "color_manifest.json", report)
     print("G2_EPISODE_SOURCE_PREPARED", output / "color_manifest.json", flush=True)
@@ -159,7 +191,8 @@ def _compare_views(stage, references):
 
 
 def _render(inputs, prepared, native_output, output, backend="gpu", *,
-           visual_mesh_source=False, surface_registry_source=False):
+           visual_mesh_source=False, surface_registry_source=False,
+           color_only=False):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
@@ -169,7 +202,28 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     _, _, _, snapshots = verify_input_config(config)
     prepared, native_output = Path(prepared), Path(native_output)
     colors = read_json(prepared / "color_manifest.json")
-    complete = read_json(native_output / "F24_NATIVE_FULL_EPISODE_COMPLETE.json")
+    if type(color_only) is not bool:
+        raise ContractError("color-only View mode must be explicit")
+    if color_only:
+        if not surface_registry_source or any(
+                s["source_mode"]!="full_map_mujoco_source"
+                or s.get("surface_transport_mode")!="SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN"
+                or s.get("surface_color_source")!="MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY"
+                or s.get("completed_rgbd_observations")!=0 for s in snapshots):
+            raise ContractError("color-only F27 requires source-proved Full Map/Visual Mesh")
+        complete = read_json(native_output / "G2_NATIVE_COLOR_ONLY_COMPLETE.json")
+        if (colors.get("native_color_only_without_10cm_nav") is not True
+                or colors.get("navigation_manifest_sha256") is not None
+                or complete.get("schema")!="G2_NATIVE_COLOR_ONLY_EPISODE_V1"
+                or complete.get("native_color_only_without_10cm_nav") is not True
+                or complete.get("native_dual_map_same_process") is not False
+                or complete.get("source_sha256")!=snapshots[0]["source_sha256"]
+                or complete.get("scene_id")!=snapshots[0]["scene_id"]):
+            raise ContractError("native GT color-only completion/source is invalid")
+    else:
+        complete = read_json(native_output / "F24_NATIVE_FULL_EPISODE_COMPLETE.json")
+        if colors.get("native_color_only_without_10cm_nav"):
+            raise ContractError("legacy dual-map cannot consume color-only GT source")
     configured_frames = [row["frame"] for row in config["states"]]
     expected_rows = colors.get("states")
     if (not isinstance(expected_rows, list) or len(expected_rows) != len(configured_frames)
@@ -180,8 +234,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     if (colors.get("complete") is not True or colors["source_inputs_sha256"] != sha_file(inputs)
             or complete.get("complete_state_count") != len(snapshots)
             or complete.get("native_color_full_F22_sha_equal_every_state") is not True
-            or complete.get("native_dual_map_same_process") is not True
-            or complete.get("source_known_region_is_TEST_ONLY_NOT_CERTIFIED") is not True
+            or (not color_only and complete.get("native_dual_map_same_process") is not True)
+            or (not color_only and complete.get("source_known_region_is_TEST_ONLY_NOT_CERTIFIED") is not True)
             or colors["frames"] != configured_frames
             or sha_file(prepared / "native_sequence.txt") != colors["sequence_sha256"]):
         raise ContractError("native episode/source completion is missing or inconsistent")
@@ -218,10 +272,23 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         if (receipt.get("frame") != frame or receipt.get("F22_F21_direct_10mm_map_RGB_owner_exact") is not True
                 or receipt.get("source_color_map_sha256") != expected["expected_full_color_sha256"]):
             raise ContractError("native map receipt differs")
+        if color_only:
+            if (receipt.get("schema")!="G2_NATIVE_COLOR_ONLY_FRAME_V1"
+                    or receipt.get("native_color_only_without_10cm_nav") is not True
+                    or receipt.get("native_nav_10cm_occupancy_cells_verified","missing") is not None
+                    or receipt.get("scene_id")!=snapshot["scene_id"]
+                    or receipt.get("source_sha256")!=snapshot["source_sha256"]
+                    or receipt.get("source_state_row_sha256")!=expected["source_state_sha256"]
+                    or receipt.get("native_total_color_voxels")!=expected["expected_full_color_voxels"]
+                    or receipt.get("native_unknown_owner_cells")!=expected["expected_unknown_owner_cells"]
+                    or receipt.get("training_ready") is not False):
+                raise ContractError("native-only 10mm color source is not state-bound")
         if row.get("reference_native_receipt"):
             reference = bound_json(row["reference_native_receipt"])
-            if any(receipt[k] != reference[k] for k in native_fields):
-                raise ContractError("native navigation/Room/SG differs from accepted reference")
+            compare = (("source_color_map_sha256","native_total_color_voxels")
+                       if color_only else native_fields)
+            if any(receipt.get(k) != reference.get(k) for k in compare):
+                raise ContractError("native reference color/Room evidence differs")
         surface = read_native_surface(native / "native_view_color_TEMP.g2col10.bin", expected, snapshot)
         evidence=dict(surface[4], opaque_ray_owner_indices=opaque_ray_owner_indices,
                       opaque_ray_cert_schema="g2_verified_compiled_gt_opaque_owner_v1")
@@ -308,6 +375,9 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         renderer_backend=backend, color_leaf_m=.01, view_meters_per_pixel=.01,
         training_ready=False, native_inputs_retained_for_audit=True,
         actual_wall_s=round(time.perf_counter() - started, 6))
+    if color_only:
+        report["native_color_only_without_10cm_nav"]=True
+        report["native_nav_10cm_update_claimed"]=False
     if visual_mesh_source:
         report['view_opaque_geometry_source']='SOURCE_BOUND_VISUAL_MESH'
     if surface_registry_source:
@@ -326,12 +396,14 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
 
 
 def render(inputs, prepared, native_output, output, backend="gpu", *,
-           visual_mesh_source=False, surface_registry_source=False):
+           visual_mesh_source=False, surface_registry_source=False,
+           color_only=False):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
                        visual_mesh_source=visual_mesh_source,
-                       surface_registry_source=surface_registry_source)
+                       surface_registry_source=surface_registry_source,
+                       color_only=color_only)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -343,7 +415,8 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     p = commands.add_parser("prepare")
     p.add_argument("--inputs", required=True)
-    p.add_argument("--nav-manifest", required=True)
+    p.add_argument("--nav-manifest")
+    p.add_argument("--color-only",action="store_true")
     p.add_argument("--output", required=True)
     p = commands.add_parser("render")
     p.add_argument("--inputs", required=True)
@@ -351,15 +424,18 @@ def main():
     p.add_argument("--native-output", required=True)
     p.add_argument("--output", required=True)
     p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
+    p.add_argument("--color-only",action="store_true")
     p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
                    help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
     args = parser.parse_args()
     if args.command == "prepare":
-        prepare(args.inputs, args.nav_manifest, args.output)
+        prepare(args.inputs, args.nav_manifest, args.output,
+                color_only=args.color_only)
     else:
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
                visual_mesh_source=args.renderer in ("f27", "legacy"),
-               surface_registry_source=args.renderer == "f27")
+               surface_registry_source=args.renderer == "f27",
+               color_only=args.color_only)
 
 
 if __name__ == "__main__":
