@@ -177,3 +177,37 @@ def test_path_rebinding_only_changes_asset_references(tmp_path):
     assert str(asset / "mesh.obj").encode() in content
     assert b'scale="1 1 1"' in content
     assert references[0][0] == "/historical/assets/mesh.obj"
+
+
+def test_official_metadata_uses_compiled_roles_and_true_source_categories():
+    mujoco = pytest.importorskip("mujoco")
+    from g2.offline import atomic_6views_metadata as metadata
+    xml = """<mujoco><worldbody>
+      <body name="floor_room"><geom name="floor_room_g0" type="box" size=".5 .5 .1"/>
+        <geom name="floor_room_g0_vis" type="box" size=".5 .5 .1"
+              group="1" contype="0" conaffinity="0"/></body>
+      <body name="wall_room"><geom name="wall_room_g0" type="box" size=".1 1 1"/>
+        <geom name="wall_room_g0_vis" type="box" size=".1 1 1"
+              group="1" contype="0" conaffinity="0"/></body>
+      <body name="window_group_room"><geom name="window_group_room_g0" type="box" size=".2 .2 .02"/>
+        <geom name="window_group_room_g0_vis" type="box" size=".2 .2 .02"
+              rgba=".5 .6 .9 .15" group="1" contype="0" conaffinity="0"/></body>
+      <body name="robot0_base"><geom name="robot0_g0_vis" type="box" size=".1 .1 .1"
+              group="1" contype="0" conaffinity="0"/></body>
+    </worldbody></mujoco>"""
+    model = mujoco.MjModel.from_xml_string(xml)
+    ep_meta = {"fixtures": {
+        "floor_room": {"cls": "Floor"}, "wall_room": {"cls": "Wall"},
+        "window_group_room": {"cls": "Window"}},
+        "object_cfgs": []}
+    role, nav, audit = metadata.derive(
+        model, ep_meta, scene_id="test_scene",
+        state_sha256="b"*64, model_source_sha256="a"*64)
+    assert nav["geoms"]["floor_room_g0"]["kind"] == "floor"
+    assert nav["geoms"]["wall_room_g0"]["kind"] == "wall"
+    assert nav["geoms"]["window_group_room_g0"]["category_id"] == "window"
+    assert role["geoms"]["window_group_room_g0_vis"]["role"] == "visual"
+    assert role["geoms"]["window_group_room_g0_vis"]["source_kind"] == "ep_meta"
+    assert nav["geoms"]["robot0_g0_vis"]["include"] is False
+    assert audit["role_counts"]["visual"] >= 3
+    assert audit["not_human_semantic_approved"] is True
