@@ -32,7 +32,7 @@ def _source_manifest(manifest):
                 canonical(gt.get("source_identity"))).hexdigest()
             or gt.get("state",{}).get("format")!="mujoco_fullphysics"
             or gt["state"].get("frame_id")!=0
-            or gt.get("training_ready") is not False
+            or gt.get("training_ready",False) is not False
             or not gt.get("entities")):
         raise ContractError("not an original frame0 MuJoCo Full Map GT manifest")
     files=gt.get("files",{})
