@@ -15,7 +15,7 @@ def _sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def fixture_dataset(tmp_path, *, n=2):
+def fixture_dataset(tmp_path, *, n=2, task_names=None):
     pa = pytest.importorskip("pyarrow")
     pq = pytest.importorskip("pyarrow.parquet")
     roots = {"raw": tmp_path / "raw", "flat": tmp_path / "flat",
@@ -25,7 +25,8 @@ def fixture_dataset(tmp_path, *, n=2):
         roots[key].mkdir()
     rows = []
     for i in range(n):
-        task, layout = "TestTask", (i % 10) + 1
+        task = task_names[i % len(task_names)] if task_names else "TestTask"
+        layout = (i % 10) + 1
         local = i
         extra = roots["raw"] / task / "20250820" / "lerobot" / "extras" / f"episode_{local:06d}"
         extra.mkdir(parents=True)
@@ -244,3 +245,121 @@ def test_dataset_planner_rejects_nonpositive_or_noninteger_layouts(tmp_path, inv
     with pytest.raises(planner.PlanError, match="layout_id"):
         planner.discover(roots["flat"] / "flat_v3_mapping.parquet",
                          roots["raw"], roots["depth"], expected=1)
+
+
+def test_task_filter_and_unlimited_default_per_task(tmp_path):
+    roots = fixture_dataset(tmp_path, n=7, task_names=("OpenDrawer", "CloseFridge"))
+    rows, _ = planner.discover(
+        roots["flat"] / "flat_v3_mapping.parquet", roots["raw"], roots["depth"], expected=7)
+    default, counts = planner.select(rows)
+    assert [x["episode_id"] for x in default] == list(range(7))
+    assert counts == {"CloseFridge": 3, "OpenDrawer": 4}
+    a, a_count = planner.select(rows, tasks=["OpenDrawer"], episodes_per_task=None)
+    assert [x["episode_id"] for x in a] == [0, 2, 4, 6]
+    assert a_count == {"OpenDrawer": 4}
+    b, counts_b = planner.select(
+        rows, tasks=["CloseFridge,OpenDrawer"], episodes_per_task=2)
+    assert [x["episode_id"] for x in b] == [0, 1, 2, 3]
+    assert counts_b == {"CloseFridge": 2, "OpenDrawer": 2}
+    assert planner.normalize_tasks([]) is None
+    assert planner.normalize_tasks(["OpenDrawer"]) == {"OpenDrawer"}
+    with pytest.raises(planner.PlanError, match="unknown task"):
+        planner.select(rows, tasks=["NotATask"])
+    with pytest.raises(planner.PlanError, match="positive integer"):
+        planner.select(rows, episodes_per_task=0)
+    with pytest.raises(planner.PlanError, match="positive integer"):
+        planner.select(rows, episodes_per_task=True)
+    with pytest.raises(planner.PlanError, match="duplicate"):
+        planner.select(rows, tasks=["OpenDrawer,OpenDrawer"])
+
+
+def make_committed_receipt(target_root, selection):
+    final = target_root / selection["expected_relative_output"]
+    final.mkdir(parents=True)
+    states = [{"frame": frame} for frame in selection["spatial_frames"]]
+    manifest = {
+        "schema": "g2_atomic_compact_6views_v1",
+        "episode_id": selection["episode_id"],
+        "task_class": selection["task_class"],
+        "source_renderer": "f27",
+        "source_fingerprint": selection["source_fingerprint"],
+        "island_four_views_enabled": True,
+        "state_count": len(states),
+        "states": states,
+        "complete": True,
+        "training_ready": False,
+    }
+    (final / "episode_manifest.json").write_text(json.dumps(manifest))
+    receipt = {
+        "schema": manifest["schema"], "complete": True,
+        "renderer": "f27", "episode_id": selection["episode_id"],
+        "source_fingerprint": selection["source_fingerprint"],
+        "episode_manifest_sha256": _sha(final / "episode_manifest.json"),
+        "state_count": len(states), "training_ready": False,
+    }
+    (final / "COMPLETE.json").write_text(json.dumps(receipt))
+    return final
+
+
+def test_fixed_selection_resume_skips_only_matching_completed_source(tmp_path):
+    roots = fixture_dataset(tmp_path, n=6, task_names=("OpenDrawer", "CloseFridge"))
+    rows, _ = planner.discover(
+        roots["flat"] / "flat_v3_mapping.parquet", roots["raw"], roots["depth"], expected=6)
+    chosen, _ = planner.select(rows, episodes_per_task=2)
+    assert [row["episode_id"] for row in chosen] == [0, 1, 2, 3]
+    complete = make_committed_receipt(roots["published"], chosen[1])
+    assert planner.completed_output(chosen[1], roots["published"]) is True
+    assert planner.completed_output(chosen[0], roots["published"]) is False
+    with pytest.raises(planner.PlanError, match="explicit --resume"):
+        planner.build(roots["flat"] / "flat_v3_mapping.parquet", roots["raw"],
+                      roots["depth"], roots["plans"], roots["published"],
+                      expected=6, episodes_per_task=2)
+    assert not roots["plans"].exists()
+    summary = planner.build(roots["flat"] / "flat_v3_mapping.parquet", roots["raw"],
+                            roots["depth"], roots["plans"], roots["published"],
+                            expected=6, episodes_per_task=2, resume=True)
+    assert summary["episodes_total"] == 4
+    assert summary["dataset_episodes_total"] == 6
+    assert summary["episodes_skipped_completed"] == 1
+    assert summary["episodes_pending"] == 3
+    assert summary["skipped_completed_ids"] == [1]
+    assert summary["task_episode_counts"] == {"CloseFridge": 2, "OpenDrawer": 2}
+    actual = json.loads((roots["plans"] / "batch_000.json").read_text())
+    assert [row["episode_id"] for row in actual["episodes"]] == [0, 2, 3]
+    # A different selected episode's marker may never satisfy the frozen source.
+    marker = json.loads((complete / "COMPLETE.json").read_text())
+    marker["source_fingerprint"] = "0" * 64
+    (complete / "COMPLETE.json").write_text(json.dumps(marker))
+    with pytest.raises(planner.PlanError, match="identity/recipe differs"):
+        planner.completed_output(chosen[1], roots["published"])
+
+
+def test_resume_rejects_incomplete_output_and_stale_recipe(tmp_path):
+    roots = fixture_dataset(tmp_path, n=2)
+    rows, _ = planner.discover(roots["flat"] / "flat_v3_mapping.parquet",
+                                roots["raw"], roots["depth"], expected=2)
+    target = roots["published"] / rows[0]["expected_relative_output"]
+    target.mkdir(parents=True)
+    with pytest.raises(planner.PlanError, match="incomplete output"):
+        planner.completed_output(rows[0], roots["published"])
+
+
+def test_publisher_fingerprint_binds_output_to_selection(tmp_path):
+    selection = {
+        "episode_id": 17, "task_class": "TestTask",
+        "spatial_frames": [0], "spatial_state_count": 1,
+        "source_fingerprint": "c"*64, "expected_relative_output": "published",
+    }
+    original = fixture_render(tmp_path)
+    output = tmp_path / "published"
+    compact.package(original, output, episode_id=17, task_class="TestTask",
+                    selection=selection)
+    assert planner.completed_output(selection, tmp_path)
+    manifest = compact.read_json(output / "episode_manifest.json")
+    assert manifest["source_fingerprint"] == selection["source_fingerprint"]
+    assert compact.read_json(output / "COMPLETE.json")[
+        "episode_manifest_sha256"] == _sha(output / "episode_manifest.json")
+    with pytest.raises(compact.PackageError, match="pinned selection"):
+        compact.package(original, tmp_path / "other", episode_id=17,
+                        task_class="TestTask",
+                        selection={**selection, "spatial_frames": [10]})
