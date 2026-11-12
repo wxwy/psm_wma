@@ -62,6 +62,9 @@ class WorkerConfig:
     robosuite_repo: Path
     # Explicit Full Map GT-only initialization; default legacy remains intact.
     sim_direct_geometry_only: bool=False
+    # Only RoboCasa/MuJoCo offline F27: skip per-frame 10cm nav_states and
+    # run the native long-lived 10mm direct-color worker separately.
+    sim_color_only: bool=False
 
 
 def event(kind, *, row=None, **values):
@@ -212,8 +215,11 @@ def produce_one(row,config):
     work=config.work_root/row["task_class"]/f"episode_{row['episode_id']:06d}"
     # Separate source-mode namespace is required: no legacy snapshot/color/F27
     # stage receipt may be silently reused by the new direct GT recipe.
+    if config.sim_color_only and not config.sim_direct_geometry_only:
+        raise ContractError("simulation color-only requires native Full Map GT Room/SG")
     if config.sim_direct_geometry_only:
-        work=work/"direct_gt_geometry_only_v1"
+        work=work/("direct_gt_geometry_only_color_only_v1" if config.sim_color_only
+                   else "direct_gt_geometry_only_v1")
     work.mkdir(parents=True,exist_ok=True)
     original=row["original"]
     scene=f"robocasa365_atomic_{row['episode_id']:06d}"
@@ -297,13 +303,20 @@ def produce_one(row,config):
     roster=stage(work,"visual_roster",row,lambda p:build_visual_roster(
         native_gt/"manifest.json",metadata/"role_map.json",p),
         required=("dense_manifest.json",))
-    def nav_frames(p):
-        subprocess_stage([config.python,"-m","g2.gt.episode_nav_states",
-            "--source-manifest",native_gt/"manifest.json",
-            "--frames",json.dumps(row["spatial_frames"]),
-            "--output",p],cwd=config.nav_repo,env=nav_env,
-            row=row,name="native_navigation_states")
-    navstates=stage(work,"nav_states",row,nav_frames,required=("nav_manifest.json",))
+    if config.sim_color_only:
+        # Dynamic SG already comes from the original MuJoCo state. The initial
+        # Room comes from source-bound native GT; no 10cm navigation timeline is
+        # consumed by the offline F27 color-only renderer.
+        navstates=None
+    else:
+        def nav_frames(p):
+            subprocess_stage([config.python,"-m","g2.gt.episode_nav_states",
+                "--source-manifest",native_gt/"manifest.json",
+                "--frames",json.dumps(row["spatial_frames"]),
+                "--output",p],cwd=config.nav_repo,env=nav_env,
+                row=row,name="native_navigation_states")
+        navstates=stage(work,"nav_states",row,nav_frames,
+                        required=("nav_manifest.json",))
     snapshots=stage(work,"snapshots",row,lambda p:generate_snapshots(
         bundle/"snapshot.json",native_gt/"manifest.json",
         row["spatial_frames"],nav_repo=config.nav_repo,
@@ -313,19 +326,37 @@ def produce_one(row,config):
         layout_id=row["layout_id"],output=p),
         required=("episode_inputs.json","COMPLETE.json"))
     prepared=stage(work,"color",row,lambda p:prepare_color(
-        snapshots/"episode_inputs.json",navstates/"nav_manifest.json",p),
+        snapshots/"episode_inputs.json",
+        None if config.sim_color_only else navstates/"nav_manifest.json",p,
+        color_only=config.sim_color_only),
         required=("color_manifest.json","native_sequence.txt"))
-    def native_episode(p):
-        env=os.environ.copy()
-        env.pop("PYTHONPATH",None)  # Restore Noetic-owned packages via catkin setup.
-        subprocess_stage(["bash",
-            Path(__file__).with_name("native_sequence_gate.sh"),
-            config.nav_setup,config.native_binary,
-            prepared/"native_sequence.txt",p,str(config.port),
-            str(config.min_z),str(config.max_z)],cwd=config.nav_repo,
-            env=env,row=row,name="native_dualmap")
-    dualmap=stage(work,"native_dualmap",row,native_episode,
-                   required=("F24_NATIVE_FULL_EPISODE_COMPLETE.json",))
+    if config.sim_color_only:
+        def native_color_only(p):
+            native_bin=config.native_binary.with_name("gt_direct_color_only")
+            if not native_bin.is_file():
+                raise ContractError("native 10mm color-only executable not built from nav_sg")
+            env=os.environ.copy()
+            env.pop("PYTHONPATH",None)
+            command=("set -e; source "+shlex_quote(config.nav_setup)+"; "+
+                     shlex_quote(native_bin)+" --plan "+
+                     shlex_quote(prepared/"native_sequence.txt")+" --output "+
+                     shlex_quote(p))
+            subprocess_stage(["bash","-lc",command],cwd=config.nav_repo,
+                             env=env,row=row,name="native_10mm_color_only")
+        dualmap=stage(work,"native_color_only",row,native_color_only,
+                      required=("G2_NATIVE_COLOR_ONLY_COMPLETE.json",))
+    else:
+        def native_episode(p):
+            env=os.environ.copy()
+            env.pop("PYTHONPATH",None)  # Restore Noetic-owned packages via catkin setup.
+            subprocess_stage(["bash",
+                Path(__file__).with_name("native_sequence_gate.sh"),
+                config.nav_setup,config.native_binary,
+                prepared/"native_sequence.txt",p,str(config.port),
+                str(config.min_z),str(config.max_z)],cwd=config.nav_repo,
+                env=env,row=row,name="native_dualmap")
+        dualmap=stage(work,"native_dualmap",row,native_episode,
+                       required=("F24_NATIVE_FULL_EPISODE_COMPLETE.json",))
     def render(p):
         env=os.environ.copy()
         env.update(MUJOCO_GL="egl",PYOPENGL_PLATFORM="egl",
@@ -335,7 +366,8 @@ def produce_one(row,config):
         subprocess_stage([config.python,"-m","g2.offline.episode","render",
             "--inputs",snapshots/"episode_inputs.json",
             "--prepared",prepared,"--native-output",dualmap,
-            "--output",p,"--backend","gpu","--renderer","f27"],
+            "--output",p,"--backend","gpu","--renderer","f27"]+
+            (["--color-only"] if config.sim_color_only else []),
             cwd=Path(__file__).resolve().parents[2],
             env=env,row=row,name="f27")
     f27=stage(work,"f27",row,render,required=("episode_receipt.json",))
@@ -371,7 +403,8 @@ def _ports(gpus,workers,base):
             for index,gpu in enumerate(gpus) for slot in range(workers)]
 
 
-def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *, sim_direct_geometry_only=False):
+def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *,
+                             sim_direct_geometry_only=False, sim_color_only=False):
     """Compile missing/stale native modules exclusively from both source trees."""
     repo=Path(repo).resolve(strict=True)
     nav_repo=Path(nav_repo).resolve(strict=True)
@@ -411,6 +444,20 @@ def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *, sim_di
     if (not native_binary.is_file()
             or cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns):
         raise ContractError("nav_sg worker did not build from current source")
+    if sim_color_only:
+        if not sim_direct_geometry_only:
+            raise ContractError("color-only native worker requires explicit direct Full Map")
+        source=nav_repo/"mapping_8_3/mapping/src/gt/gt_direct_color_only.cpp"
+        binary=native_binary.with_name("gt_direct_color_only")
+        if not source.is_file():
+            raise ContractError("simulation color-only nav_sg executable source is absent")
+        if not binary.is_file() or source.stat().st_mtime_ns>binary.stat().st_mtime_ns:
+            event("BUILD",repo="nav_sg",target="gt_direct_color_only")
+            shell=("set -e; source "+shlex_quote(nav_setup)+"; cmake --build "+
+                   shlex_quote(build_root)+" --target gt_direct_color_only -j4")
+            subprocess_stage(["bash","-lc",shell],cwd=nav_repo)
+        if not binary.is_file() or source.stat().st_mtime_ns>binary.stat().st_mtime_ns:
+            raise ContractError("native 10mm source-color worker missing or stale")
 
 
 def schedule(args):
@@ -465,7 +512,8 @@ def schedule(args):
         raise ContractError("work-root overlaps original input/parent or output parent")
     slots=_ports(args.gpus,args.workers_per_gpu,args.ros_port_base)
     ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary,
-                             sim_direct_geometry_only=args.sim_direct_geometry_only)
+                             sim_direct_geometry_only=args.sim_direct_geometry_only,
+                             sim_color_only=args.sim_color_only)
     args.output_root.mkdir(parents=True,exist_ok=True)
     root.mkdir(parents=True,exist_ok=True)
     q=queue.Queue()
@@ -483,7 +531,8 @@ def schedule(args):
             python=Path(sys.executable),output_root=args.output_root,work_root=root,
             keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu,
             robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
-            sim_direct_geometry_only=args.sim_direct_geometry_only)
+            sim_direct_geometry_only=args.sim_direct_geometry_only,
+            sim_color_only=args.sim_color_only)
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -506,6 +555,7 @@ def schedule(args):
                      "--manual-start","--allow-experimental"]
                 if args.keep_work:cmd.append("--keep-work")
                 if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
+                if args.sim_color_only:cmd.append("--sim-color-only")
                 try:
                     subprocess.run(cmd,check=True)
                     if not plan.completed_output(row,args.output_root):
@@ -557,7 +607,8 @@ def run_one_cli(args):
         keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,
         port=args.ros_port,gpu=args.gpu,
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
-        sim_direct_geometry_only=args.sim_direct_geometry_only)
+        sim_direct_geometry_only=args.sim_direct_geometry_only,
+            sim_color_only=args.sim_color_only)
     produce_one(selected,config)
     return 0
 
@@ -593,6 +644,8 @@ def parser():
     p.add_argument("--max-z",type=float,default=1.8)
     p.add_argument("--manual-start",action="store_true")
     p.add_argument("--allow-experimental",action="store_true")
+    p.add_argument("--sim-color-only",action="store_true",
+                   help="experimental RoboCasa GT: F27 direct 10mm color, no nav_states")
     p.add_argument("--sim-direct-geometry-only",action="store_true",
                    help="experimental RoboCasa Full Map 10cm GT native Room/SG; never RGB-D")
     p.add_argument("--keep-work",action="store_true",
@@ -611,6 +664,8 @@ def main(argv=None):
             args.manual_start and args.allow_experimental):
         raise ContractError("production is manual-only: explicitly pass "
                             "--manual-start --allow-experimental")
+    if args.sim_color_only and not args.sim_direct_geometry_only:
+        raise ContractError("color-only Full Map requires --sim-direct-geometry-only")
     args.gpus=[int(x) for x in args.gpus.split(",")]
     args.output_root=args.output_root.resolve()
     if args.action=="work":
