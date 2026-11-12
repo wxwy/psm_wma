@@ -124,7 +124,7 @@ def test_sequence_refuses_nav_from_another_state_before_creating_plan(tmp_path):
 def test_sequence_respects_current_native_adapter_limits(tmp_path, fault):
     color, nav = sequence_case(tmp_path)
     if fault == 'unsupported_layout':
-        color['layout'] = 2
+        color['layout'] = 0
     elif fault == 'one_row':
         color['states'].pop()
         nav['frames'].pop()
@@ -156,3 +156,22 @@ def test_truncated_prepared_states_cannot_publish_a_complete_episode(tmp_path, m
     with pytest.raises(ContractError, match='coverage|incomplete'):
         episode.render(inputs, prepared, native, output, backend='cpu')
     assert not output.exists()
+
+
+@pytest.mark.parametrize("layout", [1, 2, 4, 10, 11, 42, 99999])
+def test_sequence_supports_every_official_robocasa_layout(tmp_path, layout):
+    color, nav = sequence_case(tmp_path)
+    color["layout"] = layout
+    output = tmp_path / "valid_layout.txt"
+    result = write_sequence(output, color, nav)
+    assert output.is_file()
+    assert ("layout %s" % layout) in output.read_text().splitlines()
+    assert result == sha_file(output)
+
+
+@pytest.mark.parametrize("invalid", [0, -1, True, 1.0, "1", None])
+def test_sequence_rejects_invalid_official_layout(tmp_path, invalid):
+    color, nav = sequence_case(tmp_path)
+    color["layout"] = invalid
+    with pytest.raises(ContractError):
+        write_sequence(tmp_path / "invalid_layout.txt", color, nav)
