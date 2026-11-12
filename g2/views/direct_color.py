@@ -125,7 +125,7 @@ def export_white_views(rendered, rendered_root, output):
 
 def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
                             meters_per_pixel=.01, renderer_backend='gpu',
-                            visual_mesh_by_room=None):
+                            visual_mesh_by_room=None, keep_gpu_context=False):
     """Render explicit native 10 mm color through the accepted G2 View path.
 
     ``manifest`` and ``snapshot`` must already come from the caller's verified
@@ -151,7 +151,8 @@ def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
                              visual_mesh_by_room=visual_mesh_by_room)
         exported = export_white_views(rendered, output / 'g2_original_gpu', output)
     finally:
-        close_gpu_renderers()
+        if not keep_gpu_context:
+            close_gpu_renderers()
     report = {'schema': 'g2_direct_color_view_export_v1',
               'scene_id': snapshot['scene_id'], 'source_sha256': snapshot['source_sha256'],
               'frame_id': snapshot['frame_id'], 'voxel_leaf_m': .01,
@@ -164,5 +165,10 @@ def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
     if visual_mesh_by_room is not None:
         report['visual_geometry_source']='SOURCE_BOUND_MUJOCO_VISUAL_MESH'
         report['unknown_visual_color_regions_retained']=True
+        if all('surface_registry' in v for v in visual_mesh_by_room.values()):
+            report['visual_geometry_source']='SURFACE_REGISTRY_VISUAL_GEOMETRY'
+            report['transparent_visible_pixels']=sum(v.get('transparent_visible_pixels',0) for v in rendered['views'].values())
+            report['unbound_visible_pixels']=sum(v.get('unbound_visible_pixels',0) for v in rendered['views'].values() if v['image_generated'])
+            report['surface_material_identity_per_pixel']=True
     write_json(output / 'direct_color_views.json', report)
     return report

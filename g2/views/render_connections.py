@@ -50,7 +50,9 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     if surface_data is not None and dense_manifest is not None:
         raise ContractError('direct surface data and dense manifest are mutually exclusive')
     if visual_mesh_by_room is not None:
-        if (not full_asset or surface_data is None or renderer_backend != "gpu"
+        unified_surface_source=(isinstance(visual_mesh_by_room,dict) and
+            all(isinstance(v,dict) and "surface_registry" in v for v in visual_mesh_by_room.values()))
+        if (not full_asset or surface_data is None or (renderer_backend != "gpu" and not unified_surface_source)
                 or type(visual_mesh_by_room) is not dict
                 or not visual_mesh_by_room):
             raise ContractError("visual-mesh source requires MuJoCo full-map 10mm GPU proof")
@@ -104,8 +106,9 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     out.mkdir(parents=True);views={};room_refs={};island_refs={};wall_evidence={}
     for room in s['rooms']:
         uid=room['uid'];axes=np.asarray(room['reference_frame']['axes_world']);origin=np.asarray(room['reference_frame']['origin_world'])
-        points=(xyz-origin)@axes.T
-        meshes=[(numeric[e['id']],((np.asarray(e['vertices'],float).reshape(-1,3)-origin)@axes.T).tolist(),e['triangles']) for e in s['entities']]
+        unified_room=(visual_mesh_by_room is not None and "surface_registry" in visual_mesh_by_room.get(uid,{}))
+        points=None if unified_room else (xyz-origin)@axes.T
+        meshes=[] if unified_room else [(numeric[e['id']],((np.asarray(e['vertices'],float).reshape(-1,3)-origin)@axes.T).tolist(),e['triangles']) for e in s['entities']]
         room_objects={e['id'] for e in s['entities'] if e['kind']=='object' and e['room_uid']==uid}
         adjacent={e['id'] for e in s['entities'] if e['kind']!='object' and uid in e.get('adjacent_room_uids',[])}
         directions,proof,uncertain=wall_directions(s,room);wall_evidence[str(uid)]={'walls':proof,'unresolved_wall_direction_ids':uncertain}
@@ -128,10 +131,15 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                         or visual_source.get("frame_id")!=s["frame_id"]
                         or visual_source.get("room_uid")!=uid):
                     raise ContractError("Visual GT mesh and native Snapshot identity differ")
-                color_pixels,mask,geom,depth,owner,geom_id,meta=view_source_zbuffer(
-                    visual_source,points,rgb,valid,owners,
-                    {numeric[k] for k in members},low,high,axis,
-                    meters_per_pixel=meters_per_pixel,backend=renderer_backend)
+                if unified_room:
+                    color_pixels,mask,geom,depth,owner,geom_id,meta=visual_source["surface_renderer"].render(
+                        visual_source["surface_registry"],room,{numeric[k] for k in members},
+                        low,high,axis,meters_per_pixel,island='/islands/' in name)
+                else:
+                    color_pixels,mask,geom,depth,owner,geom_id,meta=view_source_zbuffer(
+                        visual_source,points,rgb,valid,owners,
+                        {numeric[k] for k in members},low,high,axis,
+                        meters_per_pixel=meters_per_pixel,backend=renderer_backend)
                 data=(color_pixels,mask,geom,depth,owner,meta)
             else:
                 data=rasterize(points,rgb,valid,owners,{numeric[k] for k in members},low,high,axis,
@@ -150,6 +158,7 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 opaque_ray_owner_indices=(dense_evidence.get("opaque_ray_owner_indices")
                                           if full_asset and dense_evidence else None))
             image,mask,geom,depth,owner,meta=data;folder=out/name;folder.mkdir(parents=True)
+            pixel_evidence=meta.pop('_pixel_evidence',{})
             synthetic_ceiling=False
             objects={numeric[k] for k in members if by_id[k]['kind']=='object'}
             # Projectability is geometry, not color availability or an empty Room.
@@ -178,8 +187,13 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 ambiguous=[]
                 projectable=bool(np.any(np.isin(
                     owner,[numeric[k] for k in members if by_id[k]['kind']=='object'])))
+            if unified_room:
+                foreground_geometry=geom & np.isin(geom_id,meta['non_background_surface_indices'])
+                projectable=bool(foreground_geometry.any())
             uncertain=np.isin(owner,[numeric[k] for k in ambiguous]);mask[uncertain]=False;image[uncertain]=0
             object_mask=mask & np.isin(owner,list(objects))
+            if unified_room:
+                object_mask=mask & foreground_geometry
             # Full Map source samples cover the entire scene, independent of
             # a robot's current camera visibility. Perception mode unchanged.
             if full_asset:
@@ -188,10 +202,12 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                         'FULL_MAP_ASSET_COLOR_PARTIAL' if has_scene else
                         'UNKNOWN_ASSET_COLOR')
                 generated=projectable and has_scene
+                if unified_room:
+                    generated=projectable and bool(geom.any())
                 if axis=='upper_up':
                     # Do not emit a ceiling-only upward view. Real projectable
                     # object pixels are required, not a virtual wall-tint plane.
-                    generated=generated and bool(object_mask.any())
+                    generated=generated and bool(foreground_geometry.any() if unified_room else object_mask.any())
                     if not generated:
                         status='SKIPPED_NO_PROJECTABLE_OBJECT' if not projectable else 'UNKNOWN_ASSET_COLOR'
                     synthetic_ceiling=(generated and
@@ -216,7 +232,7 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                     np.savez_compressed(folder/'geometry.npz',
                         depth=depth.astype(np.float32),
                         native_entity_index=owner,
-                        source_visual_geom_index=geom_id)
+                        source_visual_geom_index=geom_id,**pixel_evidence)
                 else:
                     np.savez_compressed(folder/'geometry.npz',
                         depth=depth.astype(np.float32),native_entity_index=owner)
@@ -295,6 +311,12 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
         missing_ceiling='WALL_MATCHED_DISPLAY_ONLY_NOT_SG_OR_GT' if full_asset else 'UNKNOWN')
     if visual_mesh_by_room is not None:
         recipe['visual_geometry_source']='SOURCE_BOUND_MUJOCO_VISUAL_MESH'
+        if unified_surface_source:
+            recipe.update(visual_geometry_source='SURFACE_REGISTRY_VISUAL_GEOMETRY',
+                membership='NATIVE_OBJECT_CERTIFICATE_PLUS_EXPLICIT_SURFACE_AFFILIATION',
+                asset_surface_fill='NONE_EXACT_VISIBLE_FACE_MATERIAL',
+                transparency='SORTED_SOURCE_SURFACE_LAYERS_LINEAR_COMPOSITE',
+                semantic_owner_optional=True)
     result={'schema':'g2_spatial_views_v2','status':'MUJOCO_FULL_MAP_GT_PENDING_HUMAN' if full else 'ORACLE_DIAGNOSTIC_ONLY' if oracle else
             'RECORDED_SPATIAL_PREVIEW' if s['affiliations_complete'] else 'PARTIAL_NATIVE_STRUCTURES',
         'source_mode':s['source_mode'],'source_scope':manifest['source_scope'],'scene_id':s['scene_id'],

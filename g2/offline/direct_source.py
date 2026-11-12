@@ -283,6 +283,8 @@ def prepare_visual_specs(model, snap, dense, role):
         specs.append(dict(
             g=g, name=name, kind=kind, instance=group, owner=owner,
             role=original_role, structure=structure,
+            source_kind=source_instance[0], source_instance=list(source_instance),
+            source_category=role["geoms"].get(name, {}).get("source_category"),
             vertices=mesh_vertices, faces=mesh_faces,
             original_dense_samples=int(visual["points"]),
             original_valid_samples=int(visual["valid_color_points"]),

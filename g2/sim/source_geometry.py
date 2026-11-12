@@ -275,7 +275,8 @@ def _legacy_surface_colors(model,g,kind,face_ids,weights):
                       "filter":"repeat_bilinear","texrepeat":model.mat_texrepeat[mat].tolist(),"camera_observation":False}
 
 
-def surface_colors(model, g, kind, face_ids, weights, *, local_points=None, with_diagnostics=False):
+def surface_colors(model, g, kind, face_ids, weights, *, local_points=None,
+                   with_diagnostics=False, enable_srgb_primitive=False):
     """Legacy mesh UVs plus pinned primitive projection and per-point validity."""
     import mujoco
     from .texture_projection import primitive_colors
@@ -284,7 +285,10 @@ def surface_colors(model, g, kind, face_ids, weights, *, local_points=None, with
                              or int(model.mat_texid[mat, int(mujoco.mjtTextureRole.mjTEXROLE_RGBA)]) >= 0)
     if kind != "mesh" and textured:
         rgba = np.repeat(effective_rgba(model, g)[None], len(face_ids), axis=0)
-        rgba, valid, appearance, reasons = primitive_colors(model, g, kind, local_points, len(face_ids), rgba)
+        rgba, valid, appearance, reasons = primitive_colors(
+            model, g, kind, local_points, len(face_ids), rgba,
+            enable_srgb=enable_srgb_primitive,
+        )
     else:
         rgba, ok, appearance = _legacy_surface_colors(model, g, kind, face_ids, weights)
         valid = np.full(len(face_ids), bool(ok)); reasons = np.where(valid, 0, 1).astype(np.uint8)
