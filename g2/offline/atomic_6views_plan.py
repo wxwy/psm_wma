@@ -149,7 +149,7 @@ def reuse_pinned_plan(plan_root, *, selection, mapping_sha, target_root,
             if eid not in known or eid in visited:
                 raise PlanError("existing plan contains duplicate/foreign episode")
             visited.add(eid)
-    current_completed = {r["episode_id"] for r in skipped}
+    current_completed = set(skipped)
     if (not visited <= known
             or visited != (known - set(index.get("skipped_completed_ids", [])))
             or any(eid not in known for eid in current_completed)):
