@@ -62,6 +62,7 @@ class WorkerConfig:
     robosuite_repo: Path
     # Explicit Full Map GT-only initialization; default legacy remains intact.
     sim_direct_geometry_only: bool=False
+    sim_sparse_nav: bool=False
 
 
 def event(kind, *, row=None, **values):
@@ -213,7 +214,8 @@ def produce_one(row,config):
     # Separate source-mode namespace is required: no legacy snapshot/color/F27
     # stage receipt may be silently reused by the new direct GT recipe.
     if config.sim_direct_geometry_only:
-        work=work/"direct_gt_geometry_only_v1"
+        work=work/("direct_gt_geometry_only_sparse_nav_v1"
+                   if config.sim_sparse_nav else "direct_gt_geometry_only_v1")
     work.mkdir(parents=True,exist_ok=True)
     original=row["original"]
     scene=f"robocasa365_atomic_{row['episode_id']:06d}"
@@ -298,12 +300,15 @@ def produce_one(row,config):
         native_gt/"manifest.json",metadata/"role_map.json",p),
         required=("dense_manifest.json",))
     def nav_frames(p):
-        subprocess_stage([config.python,"-m","g2.gt.episode_nav_states",
+        producer=("g2.gt.episode_nav_deltas" if config.sim_sparse_nav
+                  else "g2.gt.episode_nav_states")
+        subprocess_stage([config.python,"-m",producer,
             "--source-manifest",native_gt/"manifest.json",
             "--frames",json.dumps(row["spatial_frames"]),
             "--output",p],cwd=config.nav_repo,env=nav_env,
             row=row,name="native_navigation_states")
-    navstates=stage(work,"nav_states",row,nav_frames,required=("nav_manifest.json",))
+    navstates=stage(work,"nav_deltas" if config.sim_sparse_nav else "nav_states",
+                    row,nav_frames,required=("nav_manifest.json",))
     snapshots=stage(work,"snapshots",row,lambda p:generate_snapshots(
         bundle/"snapshot.json",native_gt/"manifest.json",
         row["spatial_frames"],nav_repo=config.nav_repo,
@@ -483,7 +488,8 @@ def schedule(args):
             python=Path(sys.executable),output_root=args.output_root,work_root=root,
             keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu,
             robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
-            sim_direct_geometry_only=args.sim_direct_geometry_only)
+            sim_direct_geometry_only=args.sim_direct_geometry_only,
+            sim_sparse_nav=args.sim_sparse_nav)
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -506,6 +512,7 @@ def schedule(args):
                      "--manual-start","--allow-experimental"]
                 if args.keep_work:cmd.append("--keep-work")
                 if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
+                if args.sim_sparse_nav:cmd.append("--sim-sparse-nav")
                 try:
                     subprocess.run(cmd,check=True)
                     if not plan.completed_output(row,args.output_root):
@@ -557,7 +564,8 @@ def run_one_cli(args):
         keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,
         port=args.ros_port,gpu=args.gpu,
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
-        sim_direct_geometry_only=args.sim_direct_geometry_only)
+        sim_direct_geometry_only=args.sim_direct_geometry_only,
+        sim_sparse_nav=args.sim_sparse_nav)
     produce_one(selected,config)
     return 0
 
@@ -593,6 +601,8 @@ def parser():
     p.add_argument("--max-z",type=float,default=1.8)
     p.add_argument("--manual-start",action="store_true")
     p.add_argument("--allow-experimental",action="store_true")
+    p.add_argument("--sim-sparse-nav",action="store_true",
+                   help="experimental Full Map only: native 10cm voxel/entity deltas")
     p.add_argument("--sim-direct-geometry-only",action="store_true",
                    help="experimental RoboCasa Full Map 10cm GT native Room/SG; never RGB-D")
     p.add_argument("--keep-work",action="store_true",
@@ -611,6 +621,8 @@ def main(argv=None):
             args.manual_start and args.allow_experimental):
         raise ContractError("production is manual-only: explicitly pass "
                             "--manual-start --allow-experimental")
+    if args.sim_sparse_nav and not args.sim_direct_geometry_only:
+        raise ContractError("sparse 10cm GT nav requires explicit --sim-direct-geometry-only")
     args.gpus=[int(x) for x in args.gpus.split(",")]
     args.output_root=args.output_root.resolve()
     if args.action=="work":
