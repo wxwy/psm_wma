@@ -508,8 +508,8 @@ def test_renderer_is_configurable_and_f27_is_default(sample_job, tmp_path):
     assert parser.parse_args(base + ["--renderer", "legacy"]).renderer == "legacy"
     default = batch.child_command(Path(sys.executable), e, tmp_path / "output")
     old = batch.child_command(Path(sys.executable), e, tmp_path / "output", "legacy")
-    assert "--surface-registry-source" in default and "--visual-mesh-source" not in default
-    assert "--visual-mesh-source" in old and "--surface-registry-source" not in old
+    assert default[-2:] == ["--renderer", "f27"]
+    assert old[-2:] == ["--renderer", "legacy"]
     with pytest.raises(ContractError, match="renderer"):
         batch.child_command(Path(sys.executable), e, tmp_path / "output", "other")
 
