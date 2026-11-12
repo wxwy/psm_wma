@@ -195,6 +195,8 @@ def test_official_metadata_uses_compiled_roles_and_true_source_categories():
               rgba=".5 .6 .9 .15" group="1" contype="0" conaffinity="0"/></body>
       <body name="robot0_base"><geom name="robot0_g0_vis" type="box" size=".1 .1 .1"
               group="1" contype="0" conaffinity="0"/></body>
+      <body name="invisible_placeholder"><geom name="invalid_outside_room"
+              type="box" pos="0 0 10" size=".2 .2 .02" rgba="0 0 0 0"/></body>
     </worldbody></mujoco>"""
     model = mujoco.MjModel.from_xml_string(xml)
     ep_meta = {"fixtures": {
@@ -210,6 +212,8 @@ def test_official_metadata_uses_compiled_roles_and_true_source_categories():
     assert role["geoms"]["window_group_room_g0_vis"]["role"] == "visual"
     assert role["geoms"]["window_group_room_g0_vis"]["source_kind"] == "ep_meta"
     assert nav["geoms"]["robot0_g0_vis"]["include"] is False
+    assert nav["geoms"]["invalid_outside_room"]["include"] is False
+    assert audit["excluded_invisible_out_of_room_collision_geom_count"] == 1
     assert audit["role_counts"]["visual"] >= 3
     assert audit["not_human_semantic_approved"] is True
 
