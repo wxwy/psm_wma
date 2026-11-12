@@ -39,8 +39,8 @@ def prepare(inputs, nav_manifest, output):
     gt, _, _, snapshots = verify_input_config(config)
     nav = read_json(nav_manifest)
     frames = [row["frame"] for row in config["states"]]
-    if type(config.get("layout")) is not int or not 1 <= config["layout"] <= 10 or not 2 <= len(frames) <= 300:
-        raise ContractError("native episode adapter requires layouts 1..10 and 2..300 states")
+    if type(config.get("layout")) is not int or config["layout"] <= 0 or not 2 <= len(frames) <= 300:
+        raise ContractError("native episode adapter requires a positive layout ID and 2..300 states")
     if (nav["source_scene_sha256"] != gt["source_sha256"]
             or frames != [row["frame"] for row in nav["frames"]]
             or nav.get("source_known_region_NOT_CERTIFIED") is not True):
