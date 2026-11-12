@@ -131,8 +131,8 @@ def prepare_model(original, ep_meta, states, output, *, length, layout,
     if target.exists() or target.is_symlink():
         raise ContractError("source preparation output already exists")
     for protected in (original.parent, *[Path(p).resolve() for p in asset_roots]):
-        if target == protected or target in protected.parents:
-            raise ContractError("source output cannot overwrite an asset root")
+        if target == protected or target in protected.parents or protected in target.parents:
+            raise ContractError("source output must not overlap an asset root")
     fingerprints, state_width = inspect_original(
         original, ep_meta, states, expected_length=length, expected_layout=layout)
     payload, references, changes = rebind_xml(original, rules=rules)
