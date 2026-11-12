@@ -389,8 +389,13 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
     if (plan_root == target_root or target_root in plan_root.parents
             or plan_root in target_root.parents):
         raise PlanError("keep pre-production plan outside the production output tree")
+    protected = [Path(raw_root).resolve()]
+    if Path(depth_root).exists():
+        protected.append(Path(depth_root).resolve())
+    if Path(mapping).is_file():
+        protected.append(Path(mapping).resolve().parent)
     if any(plan_root == source or source in plan_root.parents
-           for source in (Path(raw_root).resolve(), Path(depth_root).resolve(), Path(mapping).resolve().parent)):
+           for source in protected):
         raise PlanError("plan_root may not overlap protected inputs")
     # The source index is re-derived from official metadata if no flat cache exists.
     # A missing flat parquet is an expected open-source dataset state.
