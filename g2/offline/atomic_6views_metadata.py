@@ -133,9 +133,9 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
             "category_id": category, "category_label": label, "kind": kind,
             "joint_id": "none",
         }
-    if not any(x["kind"] == "floor" for x in gt_geoms.values()):
+    if not any(x.get("kind") == "floor" for x in gt_geoms.values()):
         raise ContractError("no official floor fixture was classified")
-    if not any(x["kind"] == "wall" for x in gt_geoms.values()):
+    if not any(x.get("kind") == "wall" for x in gt_geoms.values()):
         raise ContractError("no official wall fixture was classified")
     return (
         {"schema": "g2_sim_prescan_v1", "scene_id": scene_id,
