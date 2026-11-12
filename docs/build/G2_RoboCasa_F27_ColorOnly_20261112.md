@@ -22,9 +22,9 @@ No `nav_states`, per-frame 10cm grid file, `native_dualmap`, synthetic RGB-D or 
 |---|---:|---|---|---|
 | CloseFridge 503 | 27 | 27/27 native color binaries byte-identical | 27/27 source JSON bytes identical | 108/108 PNG bytes identical |
 | OpenDrawer 3022 | 35 | 35/35 native color binaries byte-identical | 35/35 source JSON bytes identical | 140/140 PNG bytes identical |
-| OpenDrawer 3029 | 36 | Full production Worker rerun pending final acceptance | Pending | Pending |
+| OpenDrawer 3029 | 36 | 36/36 original native 10mm digests pass | 36/36 decompressed SG JSON bytes identical | 144/144 PNG bytes identical |
 
-503 native color-only worker elapsed **9.26s** including 27 native frame exports; unchanged F27 output pass. 3022 full native color-only and F27 pass. The exact speedup of complete source→PNG jobs needs matched-load A/B; F27 still dominates.
+503 native color-only worker elapsed **9.26s** including 27 native frame exports. OpenDrawer3029 full official V3 Worker `work --sim-direct-geometry-only --sim-color-only` completed in **395.35s**, including initial source-GT Room/SG, 36 dynamic snapshots, 10mm native color and F27. The production candidate was validated by `completed_output()` against the pinned source selection; all 36 SG payloads and all 144 PNGs match prior production. Its scratch directory had **no** `nav_states`, `nav_deltas`, `native_dualmap`, `prescan` or `native_prepare` stages. Initial 10cm GT Room/SG source is still present. The exact speedup of complete source→PNG jobs needs matched-load A/B; F27 remains the dominant cost.
 
 ### Regression and isolation
 
@@ -36,4 +36,4 @@ No `nav_states`, per-frame 10cm grid file, `native_dualmap`, synthetic RGB-D or 
 
 ## Promotion gate
 
-Update this report with final third-episode Worker and direct C++ build evidence before PR merge. GitHub nav_sg G2 must merge before V3. Server native runtime must be rebuilt from matching official G2; do not use transient accept/replay binaries for production. All resulting views are spatial-conditioning artifacts; `training_ready` remains false.
+All three real episode gates are complete. Before PR merge, verify a final C++ build in the isolated environment and compare its generated `NAV_SG_SPATIAL_BUILD_SHA256` against the original G2 native build identity. GitHub nav_sg G2 must merge before V3. Server native runtime must be rebuilt from matching official G2; do not use transient accept/replay binaries for production. All resulting views are spatial-conditioning artifacts; `training_ready` remains false.
