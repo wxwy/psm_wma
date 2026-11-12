@@ -224,9 +224,10 @@ def produce_one(row,config):
         required=("source_proof.txt","source_inputs.json"))
     native_initial=stage(work,"native_run",row,
         lambda p:_native_gate(config,natprep,native_gt,color_prescan,p,row),
-        required=("native_run/snapshot.json","native_run/SNAPSHOT_COMPLETE"))
+        required=("native_run/frame_0/spatial_snapshot/snapshot.json",
+                  "native_run/frame_0/spatial_snapshot/SNAPSHOT_COMPLETE"))
     bundle=stage(work,"bundle",row,lambda p:capture_native(
-        native_initial/"native_run",natprep,p),
+        native_initial/"native_run/frame_0/spatial_snapshot",natprep,p),
         required=("bundle.json","snapshot.json"))
     roster=stage(work,"visual_roster",row,lambda p:build_visual_roster(
         native_gt/"manifest.json",metadata/"role_map.json",p),
