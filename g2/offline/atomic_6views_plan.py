@@ -36,6 +36,116 @@ def sha_file(path):
     return h.hexdigest()
 
 
+def selection_fingerprint(row, originals_sha256, depth_digest, frames):
+    """Pinned per-episode source and rendering recipe, not a filesystem path."""
+    identity = {
+        "schema": "g2_atomic_6views_source_selection_v1",
+        "episode_id": row["global_episode_index"],
+        "task_class": row["task_class"],
+        "local_episode_index": row["local_episode_index"],
+        "layout_id": row["layout_id"],
+        "source_frames": row["length"],
+        "spatial_frames": frames,
+        "original_sha256": originals_sha256,
+        "depth_export_digest": depth_digest,
+        "renderer": "f27",
+        "source_fps": 20,
+        "spatial_stride": 10,
+        "occupancy_resolution_m": 0.1,
+        "surface_resolution_m": 0.01,
+        "view_resolution_mpp": 0.01,
+        "island_four_views": True,
+    }
+    return hashlib.sha256(json.dumps(
+        identity, sort_keys=True, separators=(",", ":"), allow_nan=False,
+    ).encode("utf-8")).hexdigest()
+
+
+def normalize_tasks(tasks):
+    """None/empty => all. Repeat --task or comma-separate values."""
+    if tasks is None or tasks == []:
+        return None
+    if isinstance(tasks, str):
+        tasks = [tasks]
+    if not isinstance(tasks, (list, tuple)) or not tasks:
+        raise PlanError("invalid task selection")
+    names = []
+    for arg in tasks:
+        if not isinstance(arg, str):
+            raise PlanError("task names must be text")
+        names.extend(chunk.strip() for chunk in arg.split(","))
+    if any(not x or "/" in x or "\\\\" in x for x in names) or len(names) != len(set(names)):
+        raise PlanError("empty, duplicate or unsafe task selection")
+    return set(names)
+
+
+def select(rows, *, tasks=None, episodes_per_task=None):
+    """Stable first N global IDs per selected task. N=None => all."""
+    names = normalize_tasks(tasks)
+    if episodes_per_task is not None and (
+            type(episodes_per_task) is not int or episodes_per_task <= 0):
+        raise PlanError("--episodes-per-task must be a positive integer or omitted (all)")
+    available = {row["task_class"] for row in rows}
+    if names is not None and names - available:
+        raise PlanError("unknown task(s): " + ", ".join(sorted(names - available)))
+    taken = Counter()
+    chosen = []
+    for row in sorted(rows, key=lambda x: x["episode_id"]):
+        task = row["task_class"]
+        if names is not None and task not in names:
+            continue
+        if episodes_per_task is not None and taken[task] >= episodes_per_task:
+            continue
+        taken[task] += 1
+        chosen.append(row)
+    return chosen, dict(sorted(taken.items()))
+
+
+def completed_output(row, target_root):
+    """Check only the small completion marker and manifest, not every PNG.
+
+    A visible destination with incomplete or mismatched identity is a conflict;
+    never silently mark it DONE and never delete user data.
+    """
+    final = Path(target_root) / row["expected_relative_output"]
+    if not final.exists() and not final.is_symlink():
+        return False
+    if final.is_symlink() or not final.is_dir():
+        raise PlanError("invalid existing episode output: " + str(final))
+    complete = final / "COMPLETE.json"
+    manifest = final / "episode_manifest.json"
+    if (not complete.is_file() or not manifest.is_file()
+            or complete.is_symlink() or manifest.is_symlink()):
+        raise PlanError("incomplete output conflicts with resume: " + str(final))
+    marker = read_json(complete)
+    data = read_json(manifest)
+    expected_frames = row["spatial_frames"]
+    actual_states = data.get("states")
+    if (
+        marker.get("schema") != "g2_atomic_compact_6views_v1"
+        or data.get("schema") != marker["schema"]
+        or marker.get("complete") is not True
+        or data.get("complete") is not True
+        or marker.get("training_ready") is not False
+        or data.get("training_ready") is not False
+        or marker.get("renderer") != "f27"
+        or data.get("source_renderer") != "f27"
+        or data.get("island_four_views_enabled") is not True
+        or marker.get("episode_id") != row["episode_id"]
+        or data.get("episode_id") != row["episode_id"]
+        or data.get("task_class") != row["task_class"]
+        or marker.get("state_count") != len(expected_frames)
+        or data.get("state_count") != len(expected_frames)
+        or marker.get("source_fingerprint") != row["source_fingerprint"]
+        or data.get("source_fingerprint") != row["source_fingerprint"]
+        or marker.get("episode_manifest_sha256") != sha_file(manifest)
+        or not isinstance(actual_states, list)
+        or [x.get("frame") for x in actual_states if isinstance(x, dict)] != expected_frames
+    ):
+        raise PlanError("existing episode output identity/recipe differs: " + str(final))
+    return True
+
+
 def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -97,7 +207,10 @@ def _check_depth(row, depth_dir, originals):
     if "robot0_agentview_left" not in cameras:
         raise PlanError("Depth left camera missing: " + str(depth_dir))
     return {"manifest": str(manifest), "complete": str(complete),
-            "export_digest": receipt["export_digest"]}
+            "export_digest": receipt["export_digest"],
+            "original_sha256": {kind: sources[kind]["sha256"]
+                                for kind in ("states.npz", "model.xml.gz", "ep_meta.json")}}
+
 
 
 def discover(mapping=FLAT / "flat_v3_mapping.parquet", raw_root=RAW,
@@ -134,12 +247,16 @@ def discover(mapping=FLAT / "flat_v3_mapping.parquet", raw_root=RAW,
         depth_dir = depth_root / "tasks" / task / "episodes" / f"episode_{ep:06d}"
         depth = _check_depth(row, depth_dir, originals)
         frames = frame_ids(row["length"], stride)
+        row_for_digest = {**row, "layout_id": layout}
+        fingerprint = selection_fingerprint(
+            row_for_digest, depth["original_sha256"], depth["export_digest"], frames)
         result.append({
             "episode_id": ep, "task_class": task, "local_episode_index": local,
             "layout_id": layout, "source_frames": row["length"],
             "spatial_frames": frames, "spatial_state_count": len(frames),
             "original": {k: str(p) for k, p in originals.items()},
             "depth": depth,
+            "source_fingerprint": fingerprint,
             "expected_relative_output": f"tasks/{task}/episodes/episode_{ep:06d}",
             "upstream_scene_status": "REQUIRES_PER_EPISODE_FULL_MAP_BUILD",
             "training_ready": False,
@@ -164,11 +281,27 @@ def manifest_for_batch(rows, batch_no, target_root):
     }
 
 
-def build(mapping, raw_root, depth_root, plan_root, target_root, *, expected=EXPECTED, batch_size=100):
+def build(mapping, raw_root, depth_root, plan_root, target_root, *,
+          expected=EXPECTED, batch_size=100, tasks=None,
+          episodes_per_task=None, resume=False):
     if type(batch_size) is not int or not 1 <= batch_size <= MAX_BATCH:
         raise PlanError("batch_size must be in [1, 100]")
+    if type(resume) is not bool:
+        raise PlanError("resume must be boolean")
     rows, layouts = discover(mapping, raw_root, depth_root, expected=expected)
+    chosen, counts = select(rows, tasks=tasks, episodes_per_task=episodes_per_task)
     target_root = Path(target_root).resolve()
+    skipped = []
+    pending = []
+    for row in chosen:
+        if completed_output(row, target_root):
+            if not resume:
+                raise PlanError("existing complete episode requires explicit --resume: " +
+                                row["expected_relative_output"])
+            skipped.append(row["episode_id"])
+        else:
+            pending.append(row)
+
     plan_root = Path(plan_root).absolute()
     if plan_root.exists():
         raise PlanError("plan_root already exists; immutable plans cannot be overwritten")
@@ -180,10 +313,10 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *, expected=EXP
         raise PlanError("plan_root may not overlap protected inputs")
     plan_root.mkdir(parents=True)
     batches = []
-    for begin in range(0, len(rows), batch_size):
+    for begin in range(0, len(pending), batch_size):
         num = begin // batch_size
         name = f"batch_{num:03d}.json"
-        pack = manifest_for_batch(rows[begin:begin + batch_size], num, target_root)
+        pack = manifest_for_batch(pending[begin:begin + batch_size], num, target_root)
         write_json(plan_root / name, pack)
         batches.append({"path": name, "episode_count": len(pack["episodes"]),
                         "first_id": pack["episodes"][0]["episode_id"],
@@ -194,9 +327,19 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *, expected=EXP
         "mapping": str(Path(mapping).resolve()), "mapping_sha256": sha_file(mapping),
         "raw_root": str(Path(raw_root).resolve()),
         "depth_root": str(Path(depth_root).resolve()),
-        "episodes_total": len(rows), "batches_total": len(batches),
+        "dataset_episodes_total": len(rows),
+        "episodes_total": len(chosen),
+        "episodes_pending": len(pending),
+        "episodes_skipped_completed": len(skipped),
+        "skipped_completed_ids": skipped,
+        "task_episode_counts": counts,
+        "tasks_selected": sorted(counts),
+        "episodes_per_task": episodes_per_task,
+        "resume": resume,
+        "batches_total": len(batches),
         "layout_counts": {str(k): layouts[k] for k in sorted(layouts)},
-        "spatial_state_total": sum(r["spatial_state_count"] for r in rows),
+        "spatial_state_total": sum(r["spatial_state_count"] for r in chosen),
+        "spatial_state_pending": sum(r["spatial_state_count"] for r in pending),
         "island_four_views": True, "renderer": "f27",
         "training_ready": False, "ready_for_direct_batch_render": False,
         "requires_per_episode_source_preparation": True,
@@ -217,19 +360,38 @@ def main(argv=None):
     p.add_argument("--plan-root", type=Path)
     p.add_argument("--batch-size", type=int, default=100)
     p.add_argument("--expected", type=int, default=EXPECTED)
+    p.add_argument("--task", action="append", default=[],
+                   help="task name; repeat or comma-separate (default: all tasks)")
+    p.add_argument("--episodes-per-task", type=int, default=None,
+                   help="maximum first episodes per chosen task (default: ALL)")
+    p.add_argument("--resume", action="store_true",
+                   help="skip only completed, recipe-matching episodes in the fixed selection")
     args = p.parse_args(argv)
     if args.action == "scan":
         rows, layouts = discover(args.mapping, args.raw_root, args.depth_root,
                                  expected=args.expected)
-        output = {"episodes": len(rows), "layouts": dict(layouts),
-                  "spatial_states": sum(x["spatial_state_count"] for x in rows),
+        chosen, counts = select(rows, tasks=args.task,
+                                episodes_per_task=args.episodes_per_task)
+        skipped = [r["episode_id"] for r in chosen
+                   if completed_output(r, args.target_root)]
+        if skipped and not args.resume:
+            raise PlanError("some selected outputs exist; use --resume")
+        output = {"dataset_episodes": len(rows), "episodes": len(chosen),
+                  "episodes_pending": len(chosen) - len(skipped),
+                  "episodes_skipped_completed": len(skipped),
+                  "task_episode_counts": counts,
+                  "episodes_per_task": args.episodes_per_task,
+                  "resume": args.resume, "layouts": dict(layouts),
+                  "spatial_states": sum(x["spatial_state_count"] for x in chosen),
                   "target_root": str(args.target_root), "production_started": False}
     else:
         if args.plan_root is None:
             p.error("--plan-root required for plan")
         output = build(args.mapping, args.raw_root, args.depth_root,
                        args.plan_root, args.target_root,
-                       expected=args.expected, batch_size=args.batch_size)
+                       expected=args.expected, batch_size=args.batch_size,
+                       tasks=args.task, episodes_per_task=args.episodes_per_task,
+                       resume=args.resume)
     print(json.dumps(output, ensure_ascii=False, sort_keys=True, indent=2))
     return 0
 
