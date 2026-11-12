@@ -48,8 +48,22 @@ while not rosgraph.is_master_online():
         raise SystemExit("native worker isolated master timeout")
     time.sleep(.05)
 PY
-"$binary" --plan "$plan" --output "$output" \
-  --projection-min-z "$min_z" --projection-max-z "$max_z" \
-  --emit-native-color-view-binary true
+# Use nav_sg's own launch profile; direct execution would omit the
+# Room/SG configuration and silently change the native segmentation policy.
+launch_pkg="$(realpath "$(rospack find mapping)")"
+expected_pkg="$(realpath "$(dirname "$setup")/../src/mapping")"
+[[ "$launch_pkg" == "$expected_pkg" ]] || {
+  echo 'ROS mapping package resolves outside the configured nav_sg repository' >&2
+  exit 2
+}
+expected_binary="$(realpath "$(dirname "$setup")/lib/mapping/gt_direct_color_episode")"
+[[ "$binary" == "$expected_binary" ]] || {
+  echo 'native worker binary must come from the same nav_sg catkin source' >&2
+  exit 2
+}
+roslaunch mapping g2_gt_direct_color_episode.launch \
+  plan:="$plan" output:="$output" \
+  projection_min_z:="$min_z" projection_max_z:="$max_z" \
+  emit_native_color_view_binary:=true
 test -f "$output/F24_NATIVE_FULL_EPISODE_COMPLETE.json"
 echo "G2_NATIVE_COLOR_DUALMAP_COMPLETE $output"
