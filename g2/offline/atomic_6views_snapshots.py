@@ -169,13 +169,25 @@ def generate(base_snapshot, source_manifest, frames, *,
             connection_distance=snap["connection_distance"],known=True)
         verify_connection_evidence(snap)
         validate_snapshot(snap)
-        snapshot_path=states_dir/f"frame_{frame:06d}.json"
-        write_json(snapshot_path,snap)
+        if frame == 0:
+            # The first frame is the EXACT source-proved native bundle.
+            # Re-encoding/rederiving it would change snapshot SHA and make
+            # _view_manifest reject the current native frame0 binding.
+            for a,b in zip(snap["entities"],base["entities"]):
+                if any(a[key]!=b[key] for key in
+                       ("bbox_min","bbox_max","kind","source_instance_id","source_part_id")):
+                    raise ContractError("original native frame0 entity geometry differs")
+            snap=copy.deepcopy(base)
+            snapshot_ref=reference(base_snapshot)
+        else:
+            snapshot_path=states_dir/f"frame_{frame:06d}.json"
+            write_json(snapshot_path,snap)
+            snapshot_ref=reference(snapshot_path)
         graph_path=graphs_dir/f"frame_{frame:06d}.json"
         write_json(graph_path,_state_summary(
             snap,row,frame,gt["source_sha256"],snap["timestamp_ns"]))
         sequence.append({
-            "frame":frame,"snapshot":reference(snapshot_path),
+            "frame":frame,"snapshot":snapshot_ref,
             "scene_graph":reference(graph_path),
             "bundle_manifest":reference(bundle_manifest),
         })
