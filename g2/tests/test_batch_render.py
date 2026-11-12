@@ -562,3 +562,9 @@ def test_receipt_validation_does_not_rehash_images(sample_job, tmp_path, child_f
     check = batch.validate_episode_receipt(root/"ep00/attempt_0001", e)
     assert check["view_images"] == 2
     assert check["renderer"] == "f27"
+
+
+@pytest.mark.parametrize("layout", [1, 2, 4, 10, 11, 42, 99999])
+def test_gpu_batch_accepts_all_official_robocasa_layouts(sample_job, layout):
+    job = sample_job(job_id=f"layout_{layout}", layout=layout)
+    assert batch.pinned_episode(job).layout == layout
