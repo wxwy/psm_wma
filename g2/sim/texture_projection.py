@@ -11,6 +11,45 @@ REASONS = {0: "VALID", 1: "UNSUPPORTED_APPEARANCE", 2: "SEPARATE_OPACITY_TEXTURE
            5: "INVALID_LOCAL_TEXTURE_COORDINATES", 6: "UNVERIFIED_MUJOCO_PROJECTION_VERSION"}
 
 
+def srgb_to_linear(color):
+    """Decode RGB transfer only; alpha is already linear."""
+    value = np.asarray(color, dtype=np.float64)
+    if not np.isfinite(value).all() or np.any((value < 0) | (value > 1)):
+        raise ValueError("invalid sRGB color")
+    return np.where(value <= 0.04045, value / 12.92,
+                    ((value + 0.055) / 1.055) ** 2.4)
+
+
+def linear_to_srgb(color):
+    """Encode normalized linear RGB at an explicit display/export boundary."""
+    value = np.asarray(color, dtype=np.float64)
+    if not np.isfinite(value).all():
+        raise ValueError("invalid linear-RGB color")
+    value = np.clip(value, 0.0, 1.0)
+    return np.where(value <= 0.0031308, 12.92 * value,
+                    1.055 * value ** (1.0 / 2.4) - 0.055)
+
+
+def srgb_bilinear(pixels, uv, repeat):
+    """Decode texels before filtering; never decode the alpha channel.
+
+    MaterialResolver caches this decoded texture for repeated sampling. This
+    small standalone helper remains available to historical callers/oracles.
+    """
+    pixels = np.asarray(pixels, dtype=np.float64)
+    uv = np.asarray(uv, dtype=np.float64)
+    if (pixels.ndim != 3 or pixels.shape[2] not in (3, 4)
+            or min(pixels.shape[:2]) <= 0
+            or not np.isfinite(pixels).all()
+            or np.any((pixels < 0) | (pixels > 1))):
+        raise ValueError("invalid sRGB texture")
+    if uv.ndim != 2 or uv.shape[1] != 2 or not np.isfinite(uv).all():
+        raise ValueError("invalid sRGB UV")
+    decoded = pixels.copy()
+    decoded[..., :3] = srgb_to_linear(decoded[..., :3])
+    return _bilinear(decoded, uv, repeat)
+
+
 def _bilinear(pixels, uv, repeat):
     height, width = pixels.shape[:2]
     xy = (uv % 1 if repeat else np.clip(uv, 0, 1)) * [width, height] - .5
@@ -51,7 +90,22 @@ def _cube(pixels, direction):
     return colors, usable & ~uncertain, uncertain
 
 
-def primitive_colors(model, g, kind, local_points, count, rgba):
+def primitive_colors(model, g, kind, local_points, count, rgba, *, enable_srgb=False):
+    if enable_srgb:
+        # Explicit compatibility adapter. The production source path uses the
+        # resolver result directly, without this legacy opaque transport.
+        from .material_resolver import MaterialResolver
+        result = MaterialResolver(model).sample(
+            g, kind, np.zeros(count, dtype=np.int64),
+            np.tile([1.0, 0.0, 0.0], (count, 1)),
+            local_points=local_points,
+        )
+        value = np.column_stack((result.rgb_compat, result.alpha))
+        appearance = dict(result.evidence, texture_sampled=bool(result.evidence.get("texture_id", -1) >= 0))
+        if result.evidence.get("texture_colorspace") == "sRGB":
+            appearance.update(colorspace_verified=True,
+                              filter="GL_SRGB8_decode_before_repeat_bilinear")
+        return value, result.color_valid, appearance, result.reason_code
     import mujoco
     rgba = rgba.copy()
     rgba[:, :3] = 0  # unknown texture is never replaced by a proxy geom color

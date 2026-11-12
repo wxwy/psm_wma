@@ -158,8 +158,8 @@ def _compare_views(stage, references):
     return len(expected)
 
 
-def render(inputs, prepared, native_output, output, backend="gpu", *,
-           visual_mesh_source=False):
+def _render(inputs, prepared, native_output, output, backend="gpu", *,
+           visual_mesh_source=False, surface_registry_source=False):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
@@ -188,12 +188,20 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
     # Rebuild only the compiled identity/geom-role roster once; every source
     # file and state archive is verified by load_source before color recovery.
     model, initial, dense, role, states = load_source(config)
-    if visual_mesh_source and backend != "gpu":
+    if surface_registry_source:
+        visual_mesh_source = True
+    if visual_mesh_source and backend != "gpu" and not surface_registry_source:
         raise ContractError("GT visual-mesh geometry prototype requires GPU")
     visual_specs = prepare_visual_specs(model, initial, dense, role)
     opaque_ray_owner_indices = certified_opaque_color_owner_indices(model, visual_specs, initial)
-    alpha_proof = compiled_translucent_only_owner_proof(
+    alpha_proof = None if surface_registry_source else compiled_translucent_only_owner_proof(
         model, visual_specs, initial, dense['model_source_sha256'])
+    source_renderer = None
+    if surface_registry_source:
+        from .direct_source import identify_dynamic_geoms
+        from g2.views.surface_renderer import SurfaceRenderer
+        _, static_ids, planning_s = identify_dynamic_geoms(model, states, configured_frames, visual_specs)
+        source_renderer = SurfaceRenderer(model, initial['source_sha256'], static_ids, backend=backend)
     output = new_output(output, _source_paths(config) + [inputs, prepared, native_output])
     output.mkdir(parents=True)
     rows = []
@@ -201,6 +209,7 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
                      "scene_graph_assigned", "scene_graph_root_structures", "footprint_sha256",
                      "source_color_map_sha256", "native_total_color_voxels")
     for row, expected, snapshot in zip(config["states"], colors["states"], snapshots):
+        state_started = time.perf_counter()
         frame = row["frame"]
         if expected["frame"] != frame:
             raise ContractError("prepared frame order differs")
@@ -220,7 +229,17 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
         bundle, manifest = _view_manifest(row, snapshot)
         stage = output / f"state_{expected['state_id']:06d}_frame_{frame:06d}"
         visual_by_room=None
-        if visual_mesh_source:
+        registry = None
+        if surface_registry_source:
+            from g2.views.surface_registry import compile_surface_registry
+            state=get_data(model, states[frame])
+            registry=compile_surface_registry(model,state,visual_specs,snapshot)
+            visual_by_room={r['uid']:dict(
+                scene_id=snapshot['scene_id'],source_sha256=snapshot['source_sha256'],
+                frame_id=frame,room_uid=r['uid'],source_model_sha256=dense['model_source_sha256'],
+                surface_registry=registry,surface_renderer=source_renderer)
+                for r in snapshot['rooms']}
+        elif visual_mesh_source:
             from g2.views.visual_mesh_zbuffer import compile_visual_geom_frame
             state=get_data(model, states[frame])
             ids=sorted(e['id'] for e in snapshot['entities'])
@@ -237,13 +256,25 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
                     source_model_sha256=dense["model_source_sha256"])
         result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
                                         meters_per_pixel=.01, renderer_backend=backend,
-                                        visual_mesh_by_room=visual_by_room)
+                                        visual_mesh_by_room=visual_by_room,
+                                        keep_gpu_context=surface_registry_source)
         # Native 10mm RGB remains opaque. RGBA alpha evidence is written as a
         # separate, explicitly not-training-ready layer; no fake background.
-        alpha_sidecar = save_source_alpha_sidecars(
-            stage / "g2_original_gpu",
-            read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
-            stage / "alpha_source_layer", visual_mesh_by_room=visual_by_room)
+        if surface_registry_source:
+            alpha_sidecar={'view_alpha_layers':[{'alpha_pixel_count':result['transparent_visible_pixels']}]}
+            write_json(stage/'surface_registry.json',dict(
+                schema=registry['schema'],scene_id=snapshot['scene_id'],source_sha256=snapshot['source_sha256'],
+                frame_id=frame,native_scene_graph_modified=False,
+                uncertain_surface_ids=registry.get('uncertain_surface_ids',[]),
+                surfaces=[{k:v for k,v in record.items() if k in (
+                    'surface_id','geom_id','spec_index','kind','semantic_owner_index','semantic_owner_id',
+                    'material_id','structural_role','structural_role_evidence','source_evidence',
+                    'room_affiliations','affiliation_status')} for record in registry['surfaces'].values()]))
+        else:
+            alpha_sidecar = save_source_alpha_sidecars(
+                stage / "g2_original_gpu",
+                read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
+                stage / "alpha_source_layer", visual_mesh_by_room=visual_by_room)
         exact_views = _compare_views(stage, row["reference_views"]) if row.get("reference_views") else 0
         if row.get("scene_graph"):
             sg = row["scene_graph"]
@@ -258,6 +289,12 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
             alpha_sidecar_count=sum(x["alpha_pixel_count"] for x in
                                     alpha_sidecar["view_alpha_layers"]),
             alpha_layers_have_unknown_background=True)
+        record['state_wall_s']=round(time.perf_counter()-state_started,6)
+        if surface_registry_source:
+            record.update(unbound_visible_pixels=result['unbound_visible_pixels'],
+                transparent_visible_pixels=result['transparent_visible_pixels'],
+                surface_registry_count=len(registry['surfaces']),
+                static_cache_hits=source_renderer.cache_hits,static_cache_misses=source_renderer.cache_misses)
         if visual_mesh_source:
             record.update(
                 view_opaque_visual_geometry_from_source=True,
@@ -273,9 +310,32 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
         actual_wall_s=round(time.perf_counter() - started, 6))
     if visual_mesh_source:
         report['view_opaque_geometry_source']='SOURCE_BOUND_VISUAL_MESH'
+    if surface_registry_source:
+        durations=np.asarray([r['state_wall_s'] for r in rows],float)
+        report.update(view_opaque_geometry_source='SURFACE_REGISTRY_VISUAL_GEOMETRY',
+            semantic_owner_optional=True,source_material_identity_per_pixel=True,
+            native_scene_graph_modified=False,static_preplan_s=planning_s,
+            static_cache_hits=source_renderer.cache_hits,static_cache_misses=source_renderer.cache_misses,
+            state_latency_p50_s=float(np.percentile(durations,50)),state_latency_p95_s=float(np.percentile(durations,95)),
+            first_state_s=float(durations[0]),warm_state_p50_s=float(np.median(durations[1:])) if len(durations)>1 else None,
+            source_alpha_model='FRONT_SURFACE_PER_GEOM_SORTED_ALPHA_NO_REFRACTION',
+            source_color_policy='SOURCE_LINEAR_NUMERIC_AND_APPEARANCE_COMPAT_PNG')
     write_json(output / "episode_receipt.json", report)
     print("G2_REPOSITORY_EPISODE_PASS", output / "episode_receipt.json", flush=True)
     return report
+
+
+def render(inputs, prepared, native_output, output, backend="gpu", *,
+           visual_mesh_source=False, surface_registry_source=False):
+    """Run a pinned episode with one renderer lifetime, including error cleanup."""
+    try:
+        return _render(inputs, prepared, native_output, output, backend,
+                       visual_mesh_source=visual_mesh_source,
+                       surface_registry_source=surface_registry_source)
+    finally:
+        if surface_registry_source:
+            from g2.views.direct_color import close_gpu_renderers
+            close_gpu_renderers()
 
 
 def main():
@@ -293,12 +353,15 @@ def main():
     p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
     p.add_argument("--visual-mesh-source", action="store_true",
                    help="EXPERIMENTAL source Visual-Mesh depth, never Collision Mesh; H1/train Gate remains blocked")
+    p.add_argument("--surface-registry-source", action="store_true",
+                   help="Opt-in unified surface identity, exact material sampling and layered alpha; H1 pending")
     args = parser.parse_args()
     if args.command == "prepare":
         prepare(args.inputs, args.nav_manifest, args.output)
     else:
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
-               visual_mesh_source=args.visual_mesh_source)
+               visual_mesh_source=args.visual_mesh_source,
+               surface_registry_source=args.surface_registry_source)
 
 
 if __name__ == "__main__":
