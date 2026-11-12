@@ -252,12 +252,14 @@ def produce_one(row,config):
         snapshots/"episode_inputs.json",navstates/"nav_manifest.json",p),
         required=("color_manifest.json","native_sequence.txt"))
     def native_episode(p):
+        env=os.environ.copy()
+        env.pop("PYTHONPATH",None)  # Restore Noetic-owned packages via catkin setup.
         subprocess_stage(["bash",
             Path(__file__).with_name("native_sequence_gate.sh"),
             config.nav_setup,config.native_binary,
             prepared/"native_sequence.txt",p,str(config.port),
             str(config.min_z),str(config.max_z)],cwd=config.nav_repo,
-            env=os.environ.copy(),row=row,name="native_dualmap")
+            env=env,row=row,name="native_dualmap")
     dualmap=stage(work,"native_dualmap",row,native_episode,
                    required=("F24_NATIVE_FULL_EPISODE_COMPLETE.json",))
     def render(p):
