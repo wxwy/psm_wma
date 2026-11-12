@@ -307,6 +307,37 @@ def _ports(gpus,workers,base):
             for index,gpu in enumerate(gpus) for slot in range(workers)]
 
 
+def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary):
+    """Compile missing/stale native modules exclusively from both source trees."""
+    repo=Path(repo).resolve(strict=True)
+    nav_repo=Path(nav_repo).resolve(strict=True)
+    raster_src=repo/"g2/offline/fast_surface_cells.cpp"
+    raster_bin=repo/"g2/bin/libfast_surface_cells.so"
+    if not raster_src.is_file():
+        raise ContractError("missing V3 native triangle raster source")
+    if (not raster_bin.is_file()
+            or raster_src.stat().st_mtime_ns>raster_bin.stat().st_mtime_ns):
+        event("BUILD",repo="psm_wma_v3",target="libfast_surface_cells")
+        subprocess_stage(["bash",repo/"g2/offline/build_native_raster.sh"],cwd=repo)
+    cpp=nav_repo/"mapping_8_3/mapping/src/gt/gt_direct_color_episode.cpp"
+    if not cpp.is_file():
+        raise ContractError("missing nav_sg committed native worker source")
+    if not nav_setup.is_file():
+        raise ContractError("nav_sg ROS Noetic setup.bash is not installed")
+    build_root=nav_repo/".g2_catkin_ws/build"
+    if not build_root.is_dir():
+        raise ContractError("nav_sg catkin workspace is not configured")
+    if not native_binary.is_file() or cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns:
+        event("BUILD",repo="nav_sg",target="gt_direct_color_episode")
+        script=("set -e; source "+shlex_quote(nav_setup)+"; "
+                "cmake --build "+shlex_quote(build_root)
+                +" --target gt_direct_color_episode gt_oracle_native -j4")
+        subprocess_stage(["bash","-lc",script],cwd=nav_repo)
+    if (not native_binary.is_file()
+            or cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns):
+        raise ContractError("nav_sg worker did not build from current source")
+
+
 def schedule(args):
     rows,_=plan.discover(args.mapping,args.raw_root,args.depth_root,
                          require_depth=args.require_depth)
@@ -350,11 +381,15 @@ def schedule(args):
     for p in (nav_setup,native_binary):
         if not p.is_file():
             raise ContractError("native ROS/catkin runtime missing: "+str(p))
-    cpp=nav_repo/"mapping_8_3/mapping/src/gt/gt_direct_color_episode.cpp"
-    if cpp.is_file() and cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns:
-        raise ContractError("native worker binary older than its committed source; rebuild before production")
+    # Only the explicit owner-triggered run reaches compilation or GPU stages.
     root=args.work_root or args.output_root/"_work"
+    raw=args.raw_root.resolve(strict=True)
+    root=root.absolute()
+    if (root==raw or raw in root.parents or root in raw.parents
+            or root==args.output_root or root in args.output_root.parents):
+        raise ContractError("work-root overlaps original input/parent or output parent")
     slots=_ports(args.gpus,args.workers_per_gpu,args.ros_port_base)
+    ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary)
     args.output_root.mkdir(parents=True,exist_ok=True)
     root.mkdir(parents=True,exist_ok=True)
     q=queue.Queue()
