@@ -389,3 +389,41 @@ def test_publisher_fingerprint_binds_output_to_selection(tmp_path):
         compact.package(original, tmp_path / "other", episode_id=17,
                         task_class="TestTask",
                         selection={**selection, "spatial_frames": [10]})
+
+
+def test_resume_rejects_legacy_upper_view_without_actual_upper_level_sg(tmp_path):
+    """A signed COMPLETE marker cannot launder an empty white upper view.
+
+    The existing artifact remains untouched: only explicit, versioned
+    regeneration should replace an obsolete content recipe.
+    """
+    selection = {
+        "episode_id": 17, "task_class": "TestTask",
+        "spatial_frames": [0], "spatial_state_count": 1,
+        "source_fingerprint": "c" * 64, "expected_relative_output": "finished",
+    }
+    source_root = fixture_render(tmp_path)
+    finished = tmp_path / "finished"
+    compact.package(source_root, finished, episode_id=17,
+                    task_class="TestTask", selection=selection)
+    assert planner.completed_output(selection, tmp_path)
+    manifest_file = finished / "episode_manifest.json"
+    manifest = compact.read_json(manifest_file)
+    manifest["states"][0]["view_pngs"].append("sixview/upper_up.png")
+    compact._write_json  # Establish that this is a recognized producer module.
+    manifest_file.write_text(json.dumps(manifest))
+    marker_file = finished / "COMPLETE.json"
+    marker = compact.read_json(marker_file)
+    marker["episode_manifest_sha256"] = _sha(manifest_file)
+    marker_file.write_text(json.dumps(marker))
+    with pytest.raises(planner.PlanError, match="upper_up without an SG-certified upper object"):
+        planner.completed_output(selection, tmp_path)
+    # A real SG-approved upper object suffices for the source-bound gate.
+    folder = finished / "state_000000_frame_000000"
+    sg_file = folder / "scene_graph.json.gz"
+    with gzip.open(sg_file, "rt") as stream:
+        graph = json.load(stream)
+    graph["entities"] = [{"id": "entity_0", "kind": "object", "upper_member": True}]
+    with gzip.open(sg_file, "wt") as stream:
+        json.dump(graph, stream)
+    assert planner.completed_output(selection, tmp_path)
