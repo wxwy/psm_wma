@@ -410,7 +410,6 @@ def test_resume_rejects_legacy_upper_view_without_actual_upper_level_sg(tmp_path
     manifest_file = finished / "episode_manifest.json"
     manifest = compact.read_json(manifest_file)
     manifest["states"][0]["view_pngs"].append("sixview/upper_up.png")
-    compact._write_json  # Establish that this is a recognized producer module.
     manifest_file.write_text(json.dumps(manifest))
     marker_file = finished / "COMPLETE.json"
     marker = compact.read_json(marker_file)
