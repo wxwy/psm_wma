@@ -207,7 +207,12 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
                 if axis=='upper_up':
                     # Do not emit a ceiling-only upward view. Real projectable
                     # object pixels are required, not a virtual wall-tint plane.
-                    generated=generated and bool(foreground_geometry.any() if unified_room else object_mask.any())
+                    # A background/shell ray is not an upper-level object.
+                    # In particular, if every native object is floor-connected
+                    # or affiliation-unknown, no upper view can be certified.
+                    generated=(generated and bool(objects) and
+                               bool(foreground_geometry.any() if unified_room
+                                    else object_mask.any()))
                     if not generated:
                         status='SKIPPED_NO_PROJECTABLE_OBJECT' if not projectable else 'UNKNOWN_ASSET_COLOR'
                     synthetic_ceiling=(generated and

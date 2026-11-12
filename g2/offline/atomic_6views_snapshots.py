@@ -141,7 +141,8 @@ def generate(base_snapshot, source_manifest, frames, *,
         mujoco.mj_setState(model,data,row,mujoco.mjtState.mjSTATE_FULLPHYSICS)
         mujoco.mj_forward(model,data)
         _,actual,_,_=oracle.extract(
-            model,data,far,identity["metadata"],None,identity["geometry"])
+            model,data,far,identity["metadata"],None,identity["geometry"],
+            include_surfaces=False)
         now={(r["instance_id"],r["part_id"]):r for r in actual}
         if set(now)!=set(ref_by_key):
             raise ContractError("current GT entity roster differs from native frame0")
