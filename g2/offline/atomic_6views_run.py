@@ -58,6 +58,8 @@ class WorkerConfig:
     max_z: float
     port: int
     gpu: int
+    robocasa_repo: Path
+    robosuite_repo: Path
 
 
 def event(kind, *, row=None, **values):
@@ -156,12 +158,6 @@ def shlex_quote(value):
     return shlex.quote(str(value))
 
 
-def one(row, config):
-    from .episode import prepare as prepare_color
-    from .full_map import _native_modules  # no: use g2.nav_bridge.full_map below
-    raise AssertionError("unreachable")
-
-
 def produce_one(row,config):
     from g2.nav_bridge.full_map import capture as capture_native
     from g2.nav_bridge.full_map import prepare as prepare_native
@@ -175,40 +171,24 @@ def produce_one(row,config):
     original=row["original"]
     scene=f"robocasa365_atomic_{row['episode_id']:06d}"
     nav_env=_nav_env(config)
+    asset_roots=(config.robocasa_repo,config.robosuite_repo)
+    rules=(("/opt/conda/envs/robocasa/lib/python3.10/site-packages/robosuite",
+            str(config.robosuite_repo/"robosuite")),
+           ("/root/robocasa/robocasa",str(config.robocasa_repo/"robocasa")))
     root=stage(work,"source",row,lambda p:prepare_model(
         original["model.xml.gz"],original["ep_meta.json"],
         original["states.npz"],p,length=row["source_frames"],
-        layout=row["layout_id"]),required=("source_receipt.json","scene_rebased.xml"))
+        layout=row["layout_id"],rules=rules,asset_roots=asset_roots),
+        required=("source_receipt.json","scene_rebased.xml"))
     metadata=stage(work,"metadata",row,lambda p:build_metadata(
         root/"scene_rebased.xml",original["ep_meta.json"],original["states.npz"],
-        p,scene_id=scene),required=("role_map.json","native_metadata.json"))
+        p,scene_id=scene,asset_roots=asset_roots),
+        required=("role_map.json","native_metadata.json"))
     grid=stage(work,"grid",row,lambda p:build_geometry(
         root/"scene_rebased.xml",original["states.npz"],
-        metadata/"native_metadata.json",p),
+        metadata/"native_metadata.json",p,asset_roots=asset_roots),
         required=("grid_plan.json","known_region.json"))
     grid_plan=read_json(grid/"grid_plan.json")["grid"]
-    def nav_gt_builder(p):
-        subprocess_stage([config.python,"-m","g2.gt.mujoco_scene",
-            "--mjcf",root/"scene_rebased.xml",
-            "--metadata",metadata/"native_metadata.json",
-            "--ep-meta",original["ep_meta.json"],
-            "--states",original["states.npz"],
-            "--state-format","mujoco_fullphysics",
-            "--known-region",grid/"known_region.json",
-            "--geometry","collision","--frame","0",
-            "--resolution",str(grid_plan["resolution"]),
-            "--dims",*[str(x) for x in grid_plan["dims"]],
-            "--origin",*[str(x) for x in grid_plan["origin"]],
-            "--asset-root",config.nav_repo.parent.parent.parent, # overwritten below
-            "--output",p],cwd=config.nav_repo,env=nav_env,
-            row=row,name="native_source_gt")
-    # Resolve actual installed asset roots from first model closure's explicit
-    # source-model configuration, not from arbitrary acceptance file locations.
-    asset_root=Path("/mnt/data1/data_v2_0617")
-    if asset_root.is_dir():
-        asset_roots=[asset_root/"robocasa_repo",asset_root/"robosuite_repo"]
-    else:
-        raise ContractError("asset source roots unavailable; configure official asset source")
     def nav_gt(p):
         cmd=[config.python,"-m","g2.gt.mujoco_scene",
             "--mjcf",root/"scene_rebased.xml",
@@ -383,7 +363,8 @@ def schedule(args):
         config=WorkerConfig(
             nav_repo=nav_repo,nav_setup=nav_setup,native_binary=native_binary,
             python=Path(sys.executable),output_root=args.output_root,work_root=root,
-            keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu)
+            keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu,
+            robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo)
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -397,6 +378,8 @@ def schedule(args):
                      "--output-root",str(args.output_root),
                      "--work-root",str(root),
                      "--nav-repo",str(nav_repo),
+                     "--robocasa-repo",str(args.robocasa_repo),
+                     "--robosuite-repo",str(args.robosuite_repo),
                      "--nav-setup",str(nav_setup),
                      "--native-binary",str(native_binary),
                      "--ros-port",str(port),"--gpu",str(gpu),
@@ -452,7 +435,8 @@ def run_one_cli(args):
         native_binary=args.native_binary,python=Path(sys.executable),
         output_root=args.output_root,work_root=args.work_root,
         keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,
-        port=args.ros_port,gpu=args.gpu)
+        port=args.ros_port,gpu=args.gpu,
+        robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo)
     produce_one(selected,config)
     return 0
 
@@ -478,6 +462,10 @@ def parser():
     p.add_argument("--max-attempts",type=int,default=2)
     p.add_argument("--ros-port-base",type=int,default=21500)
     p.add_argument("--nav-repo",type=Path,default=Path(__file__).resolve().parents[3]/"nav_sg")
+    p.add_argument("--robocasa-repo",type=Path,
+                   default=Path("/mnt/data1/data_v2_0617/robocasa_repo"))
+    p.add_argument("--robosuite-repo",type=Path,
+                   default=Path("/mnt/data1/data_v2_0617/robosuite_repo"))
     p.add_argument("--nav-setup",type=Path)
     p.add_argument("--native-binary",type=Path)
     p.add_argument("--min-z",type=float,default=.15)
