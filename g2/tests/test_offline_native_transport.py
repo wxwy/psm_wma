@@ -165,7 +165,7 @@ def test_sequence_supports_every_official_robocasa_layout(tmp_path, layout):
     output = tmp_path / "valid_layout.txt"
     result = write_sequence(output, color, nav)
     assert output.is_file()
-    assert f"layout {layout}\\n" in output.read_text()
+    assert ("layout %s" % layout) in output.read_text().splitlines()
     assert result == sha_file(output)
 
 
