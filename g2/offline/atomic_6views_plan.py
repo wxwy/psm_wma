@@ -206,6 +206,34 @@ def completed_output(row, target_root):
         or [x.get("frame") for x in actual_states if isinstance(x, dict)] != expected_frames
     ):
         raise PlanError("existing episode output identity/recipe differs: " + str(final))
+    # A valid marker is not enough if the original F27 exporter accidentally
+    # emitted an empty upward direction. Inspect only the compact SG for
+    # states which actually published upper_up; this is inexpensive on resume
+    # and avoids silently accepting the old white-only upper views.
+    import gzip
+    for index, state in enumerate(actual_states):
+        views=state.get("view_pngs",[])
+        if not isinstance(views,list):
+            raise PlanError("invalid finished per-state view inventory: "+str(final))
+        if "sixview/upper_up.png" not in views:
+            continue
+        frame=state["frame"]
+        folder=final/f"state_{index:06d}_frame_{frame:06d}"
+        graph_file=folder/"scene_graph.json.gz"
+        if not graph_file.is_file() or graph_file.is_symlink():
+            raise PlanError("missing upper-view SG proof: "+str(graph_file))
+        try:
+            with gzip.open(graph_file,"rt",encoding="utf-8") as stream:
+                graph=json.load(stream)
+        except (OSError,EOFError,ValueError) as error:
+            raise PlanError("unreadable upper-view SG proof: "+str(graph_file)) from error
+        entities=graph.get("entities")
+        if (not isinstance(entities,list)
+                or graph.get("frame_id")!=frame
+                or not any(x.get("kind")=="object"
+                           and x.get("upper_member") is True
+                           for x in entities if isinstance(x,dict))):
+            raise PlanError("upper_up without an SG-certified upper object: "+str(folder))
     return True
 
 
