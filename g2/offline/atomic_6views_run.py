@@ -447,7 +447,7 @@ def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *,
     if sim_color_only:
         if not sim_direct_geometry_only:
             raise ContractError("color-only native worker requires explicit direct Full Map")
-        source=nav_repo/"mapping_8_3/mapping/src/gt/gt_direct_color_only.cpp"
+        source=nav_repo/"g2/gt/gt_direct_color_only.cpp"
         binary=native_binary.with_name("gt_direct_color_only")
         if not source.is_file():
             raise ContractError("simulation color-only nav_sg executable source is absent")
