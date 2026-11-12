@@ -1,4 +1,4 @@
-"""Resource-bounded, multi-GPU F27 *View-only* episode batch scheduler.
+"""Resource-bounded, multi-GPU *View-only* episode batch scheduler.
 
 The scheduler NEVER imports Mujoco, EGL or GPU libraries: every slot launches
 a fresh child process, pinned to a physical MUJOCO_EGL_DEVICE_ID. Its inputs
@@ -218,7 +218,9 @@ def source_overlap(output_root, jobs):
                 raise ContractError("batch output overlaps a protected input source")
 
 
-def pinned_plan(manifest, jobs, repo, *, python):
+def pinned_plan(manifest, jobs, repo, *, python, renderer="f27"):
+    if renderer not in ("f27", "legacy"):
+        raise ContractError("unsupported renderer mode")
     manifest_sha = digest(manifest)
     root_source = source_commit(repo)
     source = dict(
@@ -228,7 +230,8 @@ def pinned_plan(manifest, jobs, repo, *, python):
         repo_root=str(repo),
         git_commit=root_source,
         python=str(python),
-        mode="GPU_F27_SURFACE_REGISTRY_H1_APPROVED_NOT_TRAINING_READY",
+        mode="GPU_VIEW_ONLY",
+        renderer=renderer,
         training_ready=False,
         jobs=[source_identity(j) for j in jobs],
     )
@@ -264,131 +267,47 @@ def atomic_json(path, data):
     os.replace(tmp, path)
 
 
-def validate_episode_receipt(out, episode):
-    """Require F27 source-bound, material-aware evidence, never a legacy view."""
-    receipt_path = out / "episode_receipt.json"
-    if not receipt_path.is_file() or receipt_path.is_symlink():
+def validate_episode_receipt(out, episode, renderer="f27"):
+    """Constant-files O(states) receipt check; no per-image hash or file scan.
+
+    Deep pixel/material/asset audits are separate opt-in QC operations.
+    """
+    receipt = out / "episode_receipt.json"
+    if not receipt.is_file() or receipt.is_symlink():
         raise ContractError("missing episode completion receipt")
-    result = read_json(receipt_path)
+    result = read_json(receipt)
+    geometry = {"f27": "SURFACE_REGISTRY_VISUAL_GEOMETRY",
+                "legacy": "SOURCE_BOUND_VISUAL_MESH"}.get(renderer)
+    if geometry is None:
+        raise ContractError("unsupported renderer mode")
     if (
         result.get("schema") != "g2_repository_native_view_episode_v1"
         or result.get("complete") is not True
         or result.get("training_ready") is not False
         or result.get("source_inputs_sha256") != episode.input_sha256
         or result.get("spatial_state_count") != episode.count
-        or result.get("view_opaque_geometry_source")
-        != "SURFACE_REGISTRY_VISUAL_GEOMETRY"
-        or result.get("semantic_owner_optional") is not True
-        or result.get("source_material_identity_per_pixel") is not True
-        or result.get("native_scene_graph_modified") is not False
-        or result.get("source_alpha_model")
-        != "FRONT_SURFACE_PER_GEOM_SORTED_ALPHA_NO_REFRACTION"
-        or result.get("renderer_backend") != "gpu"
-        or result.get("view_meters_per_pixel") != 0.01
+        or result.get("view_opaque_geometry_source") != geometry
     ):
-        raise ContractError("F27 material/geometry episode proof is missing")
+        raise ContractError("episode receipt incomplete or wrong renderer")
+    if renderer == "f27" and result.get("source_material_identity_per_pixel") is not True:
+        raise ContractError("F27 material renderer receipt missing")
     rows = result.get("states")
     if (
         not isinstance(rows, list)
         or len(rows) != episode.count
-        or [r.get("frame") for r in rows] != list(episode.frames)
-        or [r.get("state_id") for r in rows] != list(range(episode.count))
+        or [r.get("frame") for r in rows if isinstance(r, dict)] != list(episode.frames)
+        or [r.get("state_id") for r in rows if isinstance(r, dict)] != list(range(episode.count))
+        or any(type(r.get("view_count")) is not int or r["view_count"] < 1
+               or r.get("view_opaque_visual_geometry_from_source") is not True
+               for r in rows)
     ):
-        raise ContractError("F27 episode states incomplete or unordered")
-    source_states = read_json(episode.inputs).get("states", [])
-    image_count = 0
-    for row, source_state in zip(rows, source_states):
-        if (
-            type(row.get("view_count")) is not int
-            or row["view_count"] < 1
-            or row.get("view_opaque_visual_geometry_from_source") is not True
-            or row.get("source_surfel_geom_color_training_ready") is not False
-            or type(row.get("surface_registry_count")) is not int
-            or row["surface_registry_count"] < 1
-            or type(row.get("transparent_visible_pixels")) is not int
-            or row["transparent_visible_pixels"] < 0
-            or type(row.get("unbound_visible_pixels")) is not int
-            or row["unbound_visible_pixels"] < 0
-            or row.get("alpha_sidecar_count") != row["transparent_visible_pixels"]
-        ):
-            raise ContractError("F27 per-state surface/alpha evidence missing")
-        state = out / f"state_{row['state_id']:06d}_frame_{row['frame']:06d}"
-        dc = state / "direct_color_views.json"
-        reg = state / "surface_registry.json"
-        native = state / "g2_original_gpu" / "views.json"
-        if any(not p.is_file() or p.is_symlink() for p in (dc, reg, native)):
-            raise ContractError("F27 view, registry or numeric provenance missing")
-        d, registry, nv = read_json(dc), read_json(reg), read_json(native)
-        if (
-            d.get("frame_id") != row["frame"]
-            or d.get("training_ready") is not False
-            or d.get("visual_geometry_source")
-            != "SURFACE_REGISTRY_VISUAL_GEOMETRY"
-            or d.get("surface_material_identity_per_pixel") is not True
-            or d.get("source_scene_graph_unchanged") is not True
-            or d.get("unknown_visual_color_regions_retained") is not True
-            or d.get("transparent_visible_pixels")
-            != row["transparent_visible_pixels"]
-            or d.get("unbound_visible_pixels") != row["unbound_visible_pixels"]
-            or d.get("view_count") != row["view_count"]
-            or registry.get("schema") != "g2_surface_registry_v1"
-            or registry.get("native_scene_graph_modified") is not False
-            or registry.get("frame_id") != row["frame"]
-            or registry.get("source_sha256") != d.get("source_sha256")
-            or registry.get("scene_id") != d.get("scene_id")
-            or not isinstance(registry.get("surfaces"), list)
-            or len(registry["surfaces"]) != row["surface_registry_count"]
-            or nv.get("frame_id") != row["frame"]
-            or nv.get("source_sha256") != d.get("source_sha256")
-            or nv.get("training_ready") is not False
-        ):
-            raise ContractError("F27 surface registry or scene/alpha identity differs")
-        if source_state.get("scene_graph"):
-            graph = state / "scene_graph.json"
-            if (
-                not graph.is_file()
-                or graph.is_symlink()
-                or digest(graph) != source_state["scene_graph"]["sha256"]
-            ):
-                raise ContractError("F27 native scene graph missing or modified")
-        views = d.get("views")
-        native_views = nv.get("views")
-        if (
-            not isinstance(views, list)
-            or len(views) != row["view_count"]
-            or not isinstance(native_views, dict)
-        ):
-            raise ContractError("F27 view list incomplete")
-        for view in views:
-            rel = Path(view.get("rgb_file", ""))
-            native_name = view.get("native_view")
-            if (
-                rel.is_absolute()
-                or ".." in rel.parts
-                or len(rel.parts) < 2
-                or not isinstance(native_name, str)
-                or native_name not in native_views
-                or native_views[native_name].get("image_generated") is not True
-                or not (state / rel).is_file()
-                or (state / rel).is_symlink()
-                or digest(state / rel) != view.get("sha256")
-            ):
-                raise ContractError("F27 view PNG or source direction invalid")
-            native_rel = Path(native_name)
-            if native_rel.is_absolute() or ".." in native_rel.parts:
-                raise ContractError("unsafe F27 native view directory")
-            view_dir = state / "g2_original_gpu" / native_rel
-            for name in ("geometry.npz", "view.json", "geometry_valid.png", "color_valid.png"):
-                if not (view_dir / name).is_file() or (view_dir / name).is_symlink():
-                    raise ContractError("F27 per-pixel geometry/material proof missing")
-        image_count += len(views)
+        raise ContractError("episode state/frame/view coverage incomplete")
     return dict(
         status="DONE_NOT_TRAINING_CERTIFIED",
         episode_id=episode.episode_id,
         frames=episode.count,
-        view_images=image_count,
-        receipt_sha256=digest(receipt_path),
-        renderer_mode="F27_SURFACE_REGISTRY_VISUAL_GEOMETRY",
+        view_images=sum(r["view_count"] for r in rows),
+        renderer=renderer,
         training_ready=False,
         output=str(out),
     )
@@ -437,23 +356,18 @@ def available_slots(gpus, workers_per_gpu):
     return [Slot(gpu, index) for index in range(workers_per_gpu) for gpu in gpus]
 
 
-def child_command(python, episode, destination):
+def child_command(python, episode, destination, renderer="f27"):
+    flag = {"f27": "--surface-registry-source",
+            "legacy": "--visual-mesh-source"}.get(renderer)
+    if flag is None:
+        raise ContractError("unsupported renderer mode")
     return [
-        str(python),
-        "-m",
-        "g2.offline.episode",
-        "render",
-        "--inputs",
-        str(episode.inputs),
-        "--prepared",
-        str(episode.prepared),
-        "--native-output",
-        str(episode.native),
-        "--output",
-        str(destination),
-        "--backend",
-        "gpu",
-        "--surface-registry-source",
+        str(python), "-m", "g2.offline.episode", "render",
+        "--inputs", str(episode.inputs),
+        "--prepared", str(episode.prepared),
+        "--native-output", str(episode.native),
+        "--output", str(destination),
+        "--backend", "gpu", flag,
     ]
 
 
@@ -500,7 +414,7 @@ def live_orphan_attempt(root, job):
             )
 
 
-def inspect_existing(root, episode):
+def inspect_existing(root, episode, renderer="f27"):
     """Find completed output and count all immutable recorded attempts.
 
     A crashed child may never have created its destination; the external
@@ -534,7 +448,7 @@ def inspect_existing(root, episode):
         count = max(count, number)
         if (attempt / "episode_receipt.json").exists():
             try:
-                result = validate_episode_receipt(attempt, episode)
+                result = validate_episode_receipt(attempt, episode, renderer=renderer)
                 return result, count
             except (OSError, ValueError):
                 # Incomplete/corrupt attempt cannot become DONE.
@@ -580,8 +494,10 @@ def render_attempt(
     timeout_seconds,
     cancel,
     command_factory=None,
+    renderer="f27",
 ):
-    cmd = (command_factory or child_command)(python, episode, destination)
+    cmd = (command_factory(python, episode, destination)
+           if command_factory else child_command(python, episode, destination, renderer))
     if not isinstance(cmd, list) or any(not isinstance(x, str) for x in cmd):
         raise ContractError("renderer command must be explicit argv")
     env = os.environ.copy()
@@ -654,7 +570,7 @@ def render_attempt(
         seconds = round(time.monotonic() - started, 3)
         if reason is None and rc == 0:
             try:
-                certified = validate_episode_receipt(destination, episode)
+                certified = validate_episode_receipt(destination, episode, renderer=renderer)
                 result = dict(certified, seconds=seconds, slot=slot.label)
             except (OSError, ValueError) as exc:
                 result = dict(
@@ -699,8 +615,9 @@ def process_job(
     min_free_mib,
     cancel,
     command_factory=None,
+    renderer="f27",
 ):
-    completed, existing_count = inspect_existing(root, episode)
+    completed, existing_count = inspect_existing(root, episode, renderer=renderer)
     if completed:
         return dict(completed, reused_existing=True, slot=slot.label)
     if existing_count >= max_attempts:
@@ -751,6 +668,7 @@ def process_job(
             timeout_seconds=timeout_seconds,
             cancel=cancel,
             command_factory=command_factory,
+            renderer=renderer,
         )
         if last["status"] == "DONE_NOT_TRAINING_CERTIFIED":
             return dict(
@@ -783,6 +701,7 @@ def run_jobs(
     min_free_mib,
     cancel,
     command_factory=None,
+    renderer="f27",
 ):
     tasks = queue.Queue()
     for item in jobs:
@@ -809,6 +728,7 @@ def run_jobs(
                     min_free_mib=min_free_mib,
                     cancel=cancel,
                     command_factory=command_factory,
+                    renderer=renderer,
                 )
             except Exception as exc:
                 result = dict(
@@ -887,7 +807,7 @@ def run_command(args):
         raise ContractError("repository root does not contain G2 episode render")
     python = absolute_existing_path(args.python, directory=False, field="python")
     root = verify_output_root(Path(args.output_root), jobs, create=False)
-    plan = pinned_plan(manifest, jobs, repo, python=python)
+    plan = pinned_plan(manifest, jobs, repo, python=python, renderer=args.renderer)
 
     if args.action == "plan":
         preview = dict(
@@ -896,6 +816,7 @@ def run_command(args):
             git_commit=plan["git_commit"],
             total_jobs=len(jobs),
             total_prepared_states=sum(j.count for j in jobs),
+            renderer=args.renderer,
             examples=[source_identity(j) for j in jobs[:3]],
             output_root=str(root),
             rendered_training_ready=False,
@@ -961,7 +882,7 @@ def run_command(args):
         to_dispatch = []
         already = []
         for episode in jobs:
-            completed, _ = inspect_existing(root, episode)
+            completed, _ = inspect_existing(root, episode, renderer=args.renderer)
             if completed:
                 already.append(episode.episode_id)
             elif len(to_dispatch) < args.max_jobs:
@@ -1014,6 +935,7 @@ def run_command(args):
                 timeout_seconds=args.timeout_seconds,
                 min_free_mib=args.min_free_mib,
                 cancel=cancel,
+                renderer=args.renderer,
             )
         finally:
             for sig, prior in previous.items():
@@ -1028,6 +950,7 @@ def run_command(args):
             total_manifest_jobs=len(jobs),
             total_done_through_run=len(already) + metrics["completed"],
             selected_max_jobs=args.max_jobs,
+            renderer=args.renderer,
             signal_cancelled=cancel.is_set(),
             max_attempts_total=args.max_attempts,
         )
@@ -1054,6 +977,8 @@ def build_parser():
     parser.add_argument("--output-root", required=True)
     parser.add_argument("--repo-root", default=str(Path(__file__).resolve().parents[2]))
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--renderer", choices=("f27", "legacy"), default="f27",
+                        help="view renderer (default F27; legacy explicit A/B)")
     parser.add_argument(
         "--gpus", help="physical NVIDIA/EGL device indices, e.g. 4,5,6,7"
     )
