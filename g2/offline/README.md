@@ -72,3 +72,67 @@ All output directories must be new. The native sequence format excludes whitespa
 - GPU nearest-color recovery retains the accepted grid/owner limits and rejects unsupported rotated or nonuniform Room-frame grids.
 - This acceptance workflow retains source delta binaries and temporary native color tensors for diagnosis. It is not the final raw-map-free dataset writer.
 - Dataset enumeration, fresh snapshot/Room certification, cleanup, frame-to-state packaging and large-batch throughput approval are separate work. A successful pilot does not start the 9,126-episode run.
+
+
+## Fresh RoboCasa dataset → one-command Room 6views + Island 4views (candidate)
+
+All preparation now resides under `g2/offline/atomic_6views_*.py` in the
+repository. **No validation-folder scripts or pre-materialized Layout1/10
+snapshots are accepted as production dependencies.**
+
+- Auto-discover original `<task>/<date>/lerobot/meta/episodes.jsonl` and
+  `extras/episode_*/{model.xml.gz,states.npz,ep_meta.json}`; use an existing
+  flat V3 parquet only when provided and found. Fresh data do not require the
+  parquet mapping or Depth.
+- Generate per-episode source-exact model rebinding, official semantic/geom
+  candidates, finite 10cm GT occupancy, native Room/SG, 10mm Visual-Geom
+  incremental source and F27 original-material 1cm/pixel orthographic views.
+  Keep Island's four views in an independent `islands/<id>/` folder.
+- Reuse completed **source-identity-pinned** stages. An incomplete scratch
+  stage is rebuilt; a mismatched final output is never claimed DONE.
+  Successful episodes retain compact PNG and compressed SG; intermediate
+  dense text/cloud/10cm grid/10mm worker tensors are cleaned by default.
+- Every stage reports `G2_STAGE_START`, `G2_STAGE_REUSE`,
+  `G2_STAGE_DONE`, or `G2_STAGE_REBUILD`, with task, global episode ID
+  and timings. Each completed/failed episode emits `G2_PROGRESS` including
+  overall and task-local counts, percentage and elapsed seconds; nav_sg
+  native and F27 source-state logs remain visible.
+- `--task` can be repeated or comma-separated. Without a task option,
+  all tasks are selected. Without `--episodes-per-task`, **ALL available
+  episodes of each selected task** are selected. The per-task quota is
+  completely independent of `--batch-size` (100 by default).
+- The compiled nav_sg native worker and ROS1 Noetic remain runtime
+  dependencies. Both checked-out repositories and the MuJoCo runtime must
+  be built/installed to the pinned compatible revisions (MuJoCo 3.3.7
+  for current RoboCasa). This is an environment dependency, not a dataset
+  preprocessing step.
+- The simulator-derived known-free volume is intentionally
+  `TEST_ONLY_NOT_CERTIFIED`. The output cannot claim real RGBD
+  observation, semantic contact, training certification or human review.
+
+Source-index inspection without any data production:
+
+```bash
+python -m g2.offline.atomic_6views_run scan \
+  --task OpenDrawer --task CloseFridge --episodes-per-task 8 \
+  --plan-root /path/to/reproducible_open_close_plan
+```
+
+**Manual-only full-source candidate** (16 episodes, four physical GPUs × two
+EGL processes per GPU):
+
+```bash
+python -m g2.offline.atomic_6views_run run \
+  --raw-root /mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic \
+  --output-root /mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-6views \
+  --plan-root /mnt/data1/data_v2_0617/robocasa365_v3_flat/.g2_open_close_8_plan \
+  --task OpenDrawer --task CloseFridge --episodes-per-task 8 \
+  --gpus 4,5,6,7 --workers-per-gpu 2 \
+  --resume --manual-start --allow-experimental
+```
+
+This command must not be executed until end-to-end non-pilot native Room/SG,
+dual-map, F27 and compact receipts are tested and the user personally
+authorizes the run. No assistant-initiated production is allowed. Existing
+build/runtime dependencies are checked before GPU work. Existing state
+manifests are automatically generated and do not need separate manual prep.
