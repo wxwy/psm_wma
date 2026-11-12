@@ -192,7 +192,7 @@ def _compare_views(stage, references):
 
 def _render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
-           color_only=False):
+           color_only=False, robot_pose_marker=True):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
@@ -343,6 +343,14 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                 read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
                 stage / "alpha_source_layer", visual_mesh_by_room=visual_by_room)
         exact_views = _compare_views(stage, row["reference_views"]) if row.get("reference_views") else 0
+        # Overlay the chassis only AFTER raw View pixel-parity verification.
+        # This never enters native rendering, view geometry, or scene-graph data.
+        marker = None
+        if robot_pose_marker:
+            from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
+            robot_data = (state if visual_mesh_source or surface_registry_source
+                          else get_data(model, states[frame]))
+            marker = overlay_final_top_views(stage, chassis_pose(model, robot_data))
         if row.get("scene_graph"):
             sg = row["scene_graph"]
             graph = bound_json(sg)
@@ -353,6 +361,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             reference_pixel_exact_images=exact_views, native_color_sha256=receipt["source_color_map_sha256"],
             native_reference_exact=bool(row.get("reference_native_receipt")),
             view_render_s=result["gpu_render_and_export_s"],
+            robot_pose_marker_drawn_views=marker["drawn_views"] if marker else 0,
             alpha_sidecar_count=sum(x["alpha_pixel_count"] for x in
                                     alpha_sidecar["view_alpha_layers"]),
             alpha_layers_have_unknown_background=True)
@@ -373,6 +382,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     report = dict(schema="g2_repository_native_view_episode_v1", complete=True,
         source_inputs_sha256=sha_file(inputs), spatial_state_count=len(rows), states=rows,
         renderer_backend=backend, color_leaf_m=.01, view_meters_per_pixel=.01,
+        robot_pose_marker_enabled=robot_pose_marker,
         training_ready=False, native_inputs_retained_for_audit=True,
         actual_wall_s=round(time.perf_counter() - started, 6))
     if color_only:
@@ -397,13 +407,13 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
 
 def render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
-           color_only=False):
+           color_only=False, robot_pose_marker=True):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
                        visual_mesh_source=visual_mesh_source,
                        surface_registry_source=surface_registry_source,
-                       color_only=color_only)
+                       color_only=color_only, robot_pose_marker=robot_pose_marker)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -425,6 +435,8 @@ def main():
     p.add_argument("--output", required=True)
     p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
     p.add_argument("--color-only",action="store_true")
+    p.add_argument("--robot-pose-marker", action=argparse.BooleanOptionalAction,
+                   default=True, help="draw chassis position/heading on exported floor_top (default: on)")
     p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
                    help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
     args = parser.parse_args()
@@ -435,7 +447,7 @@ def main():
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
                visual_mesh_source=args.renderer in ("f27", "legacy"),
                surface_registry_source=args.renderer == "f27",
-               color_only=args.color_only)
+               color_only=args.color_only, robot_pose_marker=args.robot_pose_marker)
 
 
 if __name__ == "__main__":

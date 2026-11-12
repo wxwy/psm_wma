@@ -65,6 +65,7 @@ class WorkerConfig:
     # Only RoboCasa/MuJoCo offline F27: skip per-frame 10cm nav_states and
     # run the native long-lived 10mm direct-color worker separately.
     sim_color_only: bool=False
+    robot_pose_marker: bool=True
 
 
 def event(kind, *, row=None, **values):
@@ -83,7 +84,7 @@ def subprocess_stage(command, *, cwd=None, env=None, row=None, name=None):
         event("SUBPROCESS_DONE",row=row,stage=name,seconds=round(time.monotonic()-begin,2))
 
 
-def _stage_mark(path, name, row):
+def _stage_mark(path, name, row, *, robot_pose_marker=None):
     marker=Path(path)/RECEIPT
     if not marker.is_file() or marker.is_symlink():
         return False
@@ -92,15 +93,18 @@ def _stage_mark(path, name, row):
             and data.get("complete") is True
             and data.get("stage")==name
             and data.get("source_fingerprint")==row["source_fingerprint"]
-            and data.get("renderer")=="f27")
+            and data.get("renderer")=="f27"
+            and (robot_pose_marker is None or
+                 data.get("robot_pose_marker") is robot_pose_marker))
 
 
-def stage(work, name, row, builder, *, required=()):
+def stage(work, name, row, builder, *, required=(), robot_pose_marker=None):
     target=Path(work)/name
     if target.is_symlink():
         raise ContractError("stage must not be a symlink: "+str(target))
     if target.exists():
-        if _stage_mark(target,name,row) and all((target/p).is_file() for p in required):
+        if (_stage_mark(target,name,row,robot_pose_marker=robot_pose_marker)
+                and all((target/p).is_file() for p in required)):
             event("STAGE_REUSE",row=row,stage=name)
             return target
         # Only our own scratch root, never original source or finished output.
@@ -117,6 +121,7 @@ def stage(work, name, row, builder, *, required=()):
         "schema":"g2_atomic_production_stage_v1","stage":name,
         "source_fingerprint":row["source_fingerprint"],
         "complete":True,"renderer":"f27","training_ready":False,
+        **({"robot_pose_marker":robot_pose_marker} if robot_pose_marker is not None else {}),
     })
     event("STAGE_DONE",row=row,stage=name,
           seconds=round(time.monotonic()-started,2))
@@ -367,10 +372,12 @@ def produce_one(row,config):
             "--inputs",snapshots/"episode_inputs.json",
             "--prepared",prepared,"--native-output",dualmap,
             "--output",p,"--backend","gpu","--renderer","f27"]+
-            (["--color-only"] if config.sim_color_only else []),
+            (["--color-only"] if config.sim_color_only else [])+
+            (["--no-robot-pose-marker"] if not config.robot_pose_marker else []),
             cwd=Path(__file__).resolve().parents[2],
             env=env,row=row,name="f27")
-    f27=stage(work,"f27",row,render,required=("episode_receipt.json",))
+    f27=stage(work,"f27",row,render,required=("episode_receipt.json",),
+              robot_pose_marker=config.robot_pose_marker)
     final=config.output_root/row["expected_relative_output"]
     result=package(f27,final,episode_id=row["episode_id"],
                    task_class=row["task_class"],selection=row)
@@ -532,7 +539,8 @@ def schedule(args):
             keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu,
             robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
             sim_direct_geometry_only=args.sim_direct_geometry_only,
-            sim_color_only=args.sim_color_only)
+            sim_color_only=args.sim_color_only,
+            robot_pose_marker=args.robot_pose_marker)
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -556,6 +564,7 @@ def schedule(args):
                 if args.keep_work:cmd.append("--keep-work")
                 if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
                 if args.sim_color_only:cmd.append("--sim-color-only")
+                if not args.robot_pose_marker:cmd.append("--no-robot-pose-marker")
                 try:
                     subprocess.run(cmd,check=True)
                     if not plan.completed_output(row,args.output_root):
@@ -608,7 +617,8 @@ def run_one_cli(args):
         port=args.ros_port,gpu=args.gpu,
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
         sim_direct_geometry_only=args.sim_direct_geometry_only,
-            sim_color_only=args.sim_color_only)
+            sim_color_only=args.sim_color_only,
+            robot_pose_marker=args.robot_pose_marker)
     produce_one(selected,config)
     return 0
 
@@ -644,6 +654,8 @@ def parser():
     p.add_argument("--max-z",type=float,default=1.8)
     p.add_argument("--manual-start",action="store_true")
     p.add_argument("--allow-experimental",action="store_true")
+    p.add_argument("--robot-pose-marker",action=argparse.BooleanOptionalAction,
+                   default=True, help="include chassis marker on final floor-top PNGs (default: on)")
     p.add_argument("--sim-color-only",action="store_true",
                    help="experimental RoboCasa GT: F27 direct 10mm color, no nav_states")
     p.add_argument("--sim-direct-geometry-only",action="store_true",
