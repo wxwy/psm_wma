@@ -16,7 +16,7 @@ from g2.io import ContractError
 from g2.sim.source_geometry import effective_rgba, load_model, model_source_hash
 from g2.offline.atomic_6views_source import DEFAULT_ASSET_ROOTS, _hash
 
-ROBOT_PREFIXES = ("robot0_", "mobilebase0_")
+ROBOT_PREFIXES = ("robot0_", "mobilebase0_", "gripper0_")
 SCHEMA = "g2_atomic_official_semantic_candidate_v1"
 
 
@@ -123,11 +123,19 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
         else:
             bodyid = int(model.geom_bodyid[g])
             body = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, bodyid) or "world"
-            # Geometric fallback is visibly UNKNOWN in SG, never categorized as
-            # a wall/floor from shape or name. Human/native structure may clarify.
-            kind, category, label = "object", "unknown", "unknown"
-            instance = "unclassified:" + body
-            unmatched.append(name)
+            # Model-generated structural roots that are absent from ep_meta
+            # keep their original explicit structural prefix, with provenance
+            # marked SOURCE-NAME-ONLY (not a human-certified wall detector).
+            if name.startswith("wall_"):
+                kind, category, label = "wall", "wall", "wall"
+                instance = "mjcf_wall:" + body
+            elif name.startswith("floor_"):
+                kind, category, label = "floor", "floor", "floor"
+                instance = "mjcf_floor:" + body
+            else:
+                kind, category, label = "object", "unknown", "unknown"
+                instance = "unclassified:" + body
+                unmatched.append(name)
         gt_geoms[name] = {
             "instance_id": instance, "part_id": "whole",
             "category_id": category, "category_label": label, "kind": kind,
