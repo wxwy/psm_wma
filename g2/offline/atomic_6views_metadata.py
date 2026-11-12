@@ -51,7 +51,7 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
     object_records = ep_meta.get("object_cfgs", [])
     if not isinstance(object_records, list):
         raise ContractError("official object_cfgs is not a list")
-    object_sources = {entry["name"]: entry for entry in object_records
+    object_sources = {entry["name"]: (i, entry) for i, entry in enumerate(object_records)
                       if isinstance(entry, dict) and isinstance(entry.get("name"), str)}
     if len(object_sources) != len(object_records):
         raise ContractError("duplicated/invalid source object names")
@@ -66,10 +66,36 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
         alpha = float(effective_rgba(model, g)[3])
         role = _classify(name, group, collidable, alpha)
         source_type, official_name = _match(name, fixture_names, object_names)
-        source_record = {"role": role, "derived_from": "COMPILED_GROUP_COLLISION_ALPHA",
-                         "compiled_group": group, "compiled_collidable": collidable,
-                         "compiled_alpha": alpha, "official_source": source_type,
-                         "official_instance": official_name}
+        # Preserve the exact provenance ABI consumed by g2.sim.prescan:
+        # original fixture/object JSON Pointer, or exact source geom name.
+        source_record = {
+            "role": role, "classification_reason":
+                "OFFICIAL_EP_META_INSTANCE_AND_COMPILED_GROUP_COLLISION_ALPHA",
+        }
+        if role != "robot" and source_type == "fixture":
+            category = ep_meta["fixtures"][official_name].get("cls")
+            if not isinstance(category, str) or not category:
+                raise ContractError("official fixture class missing")
+            escaped = official_name.replace("~", "~0").replace("/", "~1")
+            source_record.update(
+                source_kind="ep_meta", ep_meta_pointer="/fixtures/" + escaped,
+                source_instance_name=official_name,
+                source_collection="fixtures", source_category_field="cls",
+                source_category=category)
+        elif role != "robot" and source_type == "object":
+            index, original_record = object_sources[official_name]
+            info = original_record.get("info", {})
+            if isinstance(info, dict) and isinstance(info.get("cat"), str) and info["cat"]:
+                source_record.update(
+                    source_kind="ep_meta", ep_meta_pointer=f"/object_cfgs/{index}",
+                    source_instance_name=official_name,
+                    source_collection="object_cfgs", source_category_field="info.cat",
+                    source_category=info["cat"])
+            else:
+                source_record.update(source_kind="mjcf", geom_name=name,
+                    classification_reason="SOURCE_GEOM_WITHOUT_OFFICIAL_OBJECT_FINE_CATEGORY")
+        else:
+            source_record.update(source_kind="mjcf", geom_name=name)
         roles[name] = source_record
         counts[role] += 1
         if role == "robot":
@@ -88,7 +114,7 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
             category = fixture_cls.lower()
             label = fixture_cls
         elif source_type == "object":
-            record = object_sources[official_name]
+            _, record = object_sources[official_name]
             raw_cat = record.get("info", {}).get("cat", "unknown")
             category = raw_cat if isinstance(raw_cat, str) and raw_cat else "unknown"
             label = category
