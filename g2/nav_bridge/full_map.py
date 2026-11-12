@@ -20,7 +20,7 @@ from g2.sim.color_evidence import verify_color_evidence
 from g2.sim.source_scope import audit_summary
 
 STATUS='MUJOCO_FULL_MAP_GT_PENDING_HUMAN'
-PINNED={'mujoco_scene.py':'409810a8aa88550adb6e6d682fa755383a632f1afb6bda52309ccdb3ea5924fe',
+PINNED={'mujoco_scene.py':'d6495ed3a5bab351870508b22eb89ae22358034d7a564ec23aee16ea456eb550',
         'verify_export.py':'64b2bb8e25411700e406609242bfd0c0b2f7d69a6e614047e24915868a4ba276'}
 NATIVE_FILES={'snapshot.json','surfaces.csv','grid_states.raw','SNAPSHOT_COMPLETE'}
 EVIDENCE_FILES={'source_inputs.json','source_proof.txt','source_gt_manifest.json',
