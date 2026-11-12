@@ -168,6 +168,12 @@ def _native_geometry_gate(config, prepared, native_manifest, root, row):
     root.mkdir(parents=True,exist_ok=False)
     env=os.environ.copy()
     env.pop("PYTHONPATH",None)
+    # Never inherit a cloud/perception source into the geometry-only worker.
+    for name in ("G2_GT_PRESCAN_FRAME0","G2_GT_PRESCAN_FRAME200",
+                 "G2_GT_FULL_MAP_FRAME0_PROOF","G2_GT_FULL_MAP_FRAME200_PROOF",
+                 "G2_GT_OBSERVED_COLOR_MANIFEST",
+                 "G2_GT_NEXT_OBSERVED_COLOR_MANIFEST"):
+        env.pop(name,None)
     env.update(
         G2_GT_PROJECTION_MIN_Z=str(config.min_z),
         G2_GT_PROJECTION_MAX_Z=str(config.max_z),
@@ -387,9 +393,13 @@ def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *, sim_di
         raise ContractError("nav_sg catkin workspace is not configured")
     geometry_source=nav_repo/"mapping_8_3/mapping/src/gt/gt_oracle_native.cpp"
     geometry_binary=native_binary.parent/"gt_oracle_native"
+    direct_deps=(geometry_source,
+                 nav_repo/"mapping_8_3/mapping/src/map_input/spatial_snapshot.cpp",
+                 nav_repo/"mapping_8_3/mapping/include/mapping/map_input/spatial_snapshot.h")
     need_direct=(sim_direct_geometry_only and
-                 (not geometry_binary.is_file() or
-                  geometry_source.stat().st_mtime_ns>geometry_binary.stat().st_mtime_ns))
+                 (not geometry_binary.is_file() or any(
+                     p.stat().st_mtime_ns>geometry_binary.stat().st_mtime_ns
+                     for p in direct_deps)))
     if (not native_binary.is_file()
             or cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns
             or need_direct):
