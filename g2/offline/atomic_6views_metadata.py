@@ -139,9 +139,33 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
         gt_geoms[name] = {
             "instance_id": instance, "part_id": "whole",
             "category_id": category, "category_label": label, "kind": kind,
-            # Omit joint_id: native GT extractor resolves actual compiled
-            # body joints, including movable drawers and doors.
         }
+    # A single native entity groups multiple visual/collision geom parts.
+    # Each contributing body may contain a distinct door/drawer joint.
+    # Preserve ONE actual union-of-source-joints per entity so nav_sg's
+    # owner key (instance,part) remains unique and its joint consistency
+    # contract does not fail merely because a fixture has moving parts.
+    actual_joints = {}
+    for geom_id in range(model.ngeom):
+        geom_name = mujoco.mj_id2name(
+            model, mujoco.mjtObj.mjOBJ_GEOM, geom_id) or f"geom_{geom_id}"
+        spec = gt_geoms.get(geom_name, {})
+        if "instance_id" not in spec:
+            continue
+        key = spec["instance_id"]
+        joint_set = actual_joints.setdefault(key, set())
+        body = int(model.geom_bodyid[geom_id])
+        while body > 0:
+            first, count = int(model.body_jntadr[body]), int(model.body_jntnum[body])
+            for j in range(first, first+count):
+                name = mujoco.mj_id2name(model,mujoco.mjtObj.mjOBJ_JOINT,j)
+                if name:
+                    joint_set.add(name)
+            body = int(model.body_parentid[body])
+    for geom_spec in gt_geoms.values():
+        if "instance_id" in geom_spec:
+            names = sorted(actual_joints[geom_spec["instance_id"]])
+            geom_spec["joint_id"] = ",".join(names) if names else "none"
     if not any(x.get("kind") == "floor" for x in gt_geoms.values()):
         raise ContractError("no official floor fixture was classified")
     if not any(x.get("kind") == "wall" for x in gt_geoms.values()):
