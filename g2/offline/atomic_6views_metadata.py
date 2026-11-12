@@ -43,7 +43,7 @@ def _match(name, fixture_keys, object_keys):
         ("object", obj) if obj is not None else ("unmatched", None))
 
 
-def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
+def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256, state_data=None):
     import mujoco
     if not isinstance(ep_meta, dict) or not isinstance(ep_meta.get("fixtures"), dict):
         raise ContractError("official ep_meta fixture identities missing")
@@ -56,7 +56,30 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
     if len(object_sources) != len(object_records):
         raise ContractError("duplicated/invalid source object names")
     object_names = sorted(object_sources, key=len, reverse=True)
-    roles, gt_geoms, counts, unmatched = {}, {}, Counter(), []
+    from g2.sim.prescan import geom_surface_mesh, geometry_type_names
+    from g2.sim.source_geometry import apply_state
+    state_data = state_data if state_data is not None else mujoco.MjData(model)
+    mujoco.mj_forward(model, state_data)
+    geom_kinds = geometry_type_names()
+    # Official physical wall geometry defines the room's vertical envelope.
+    # Invisible collision primitives above this envelope are legacy placement
+    # placeholders, not navigable or visible kitchen geometry. This is a
+    # MATERIAL+GEOMETRY policy, never a task/Layout/name-specific exclusion.
+    wall_tops = []
+    for geom_id in range(model.ngeom):
+        name = mujoco.mj_id2name(model,mujoco.mjtObj.mjOBJ_GEOM,geom_id) or f"geom_{geom_id}"
+        origin, fixture = _match(name,fixture_names,object_names)
+        if (origin!="fixture" or ep_meta["fixtures"][fixture].get("cls")!="Wall"
+                or not (model.geom_contype[geom_id] or model.geom_conaffinity[geom_id])):
+            continue
+        kind=geom_kinds.get(int(model.geom_type[geom_id]))
+        if kind not in ("box","sphere","ellipsoid","capsule","cylinder","mesh"):
+            continue
+        vertices,_=geom_surface_mesh(model,geom_id,kind)
+        world=vertices@state_data.geom_xmat[geom_id].reshape(3,3).T+state_data.geom_xpos[geom_id]
+        wall_tops.append(float(world[:,2].max()))
+    wall_top=max(wall_tops) if wall_tops else None
+    roles, gt_geoms, counts, unmatched, excluded_placeholders = {}, {}, Counter(), [], []
     for g in range(model.ngeom):
         name = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, g) or f"geom_{g}"
         if name in roles:
@@ -102,6 +125,21 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
             gt_geoms[name] = {"include": False,
                               "exclusion_reason": "SOURCE_PANDAOMRON_ROBOT_GEOM"}
             continue
+        if (role == "collision" and alpha == 0 and wall_top is not None
+                and float(state_data.geom_xpos[g,2])>wall_top+.5):
+            kind=geom_kinds.get(int(model.geom_type[g]))
+            if kind in ("box","sphere","ellipsoid","capsule","cylinder","mesh"):
+                vertices,_=geom_surface_mesh(model,g,kind)
+                zmin=float((vertices@state_data.geom_xmat[g].reshape(3,3).T+
+                            state_data.geom_xpos[g])[:,2].min())
+                if zmin>wall_top+.5:
+                    gt_geoms[name]={
+                        "include":False,
+                        "exclusion_reason":
+                            "INVISIBLE_COLLIDABLE_OUTSIDE_OFFICIAL_WALL_VERTICAL_ENVELOPE",
+                    }
+                    excluded_placeholders.append(name)
+                    continue
         if not collidable or group != 0:
             continue  # Occupancy is collision-sourced, not visual appearance.
         if source_type == "fixture":
@@ -185,6 +223,9 @@ def derive(model, ep_meta, *, scene_id, state_sha256, model_source_sha256):
         {"schema": SCHEMA, "scene_id": scene_id,
          "role_counts": dict(counts), "native_collision_geoms": len(gt_geoms),
          "unmatched_collision_geom_names": unmatched,
+         "excluded_invisible_out_of_room_collision_geom_count":len(excluded_placeholders),
+         "excluded_invisible_out_of_room_collision_geoms":excluded_placeholders,
+         "physical_wall_top_m":wall_top,
          "official_fixture_count": len(fixture_names),
          "official_dynamic_object_count": len(object_names),
          "not_human_semantic_approved": True, "training_ready": False})
@@ -199,9 +240,11 @@ def build(rebased_xml, ep_meta, states, output, *, scene_id, asset_roots=DEFAULT
         raise ContractError("metadata output already exists")
     meta = json.loads(ep_meta.read_text())
     model, sources = load_model(source, asset_roots)
+    from g2.sim.source_geometry import apply_state
+    data,_=apply_state(model,states,0,"mujoco_fullphysics")
     role, native, audit = derive(
         model, meta, scene_id=scene_id, state_sha256=_hash(states),
-        model_source_sha256=model_source_hash(sources))
+        model_source_sha256=model_source_hash(sources),state_data=data)
     dest.mkdir(parents=True)
     for filename, body in (("role_map.json", role), ("native_metadata.json", native),
                            ("source_classification_audit.json", audit)):
