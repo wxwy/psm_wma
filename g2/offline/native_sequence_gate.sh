@@ -21,6 +21,9 @@ max_z="$7"
   echo 'native worker inputs are missing or destination already exists' >&2
   exit 2
 }
+# Isolate Noetic/Python 3.12 from the parent MuJoCo 3.3.7 Python 3.13
+# runtime; catkin reconstructs its own package import paths.
+unset PYTHONPATH
 set +u
 source "$setup"
 set -u
