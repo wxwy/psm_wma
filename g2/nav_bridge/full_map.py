@@ -262,8 +262,50 @@ def capture(native_directory,prepared,output,*,expected_build_source_sha256=None
         semantic_stage='MUJOCO_GT_SOURCE_NOT_MODEL_PREDICTIONS',structural_stage='SOURCE_GT_NATIVE_ROOM_GRAPH',
         native_structure_proof=None,observation_witness=None,surface_points=count,files=files,training_ready=False)
     result['version_sha256']=hashlib.sha256(canonical(result)).hexdigest()
-    write_json(out/'bundle.json',result);verify_bundle(out,result)
+    write_json(out/'bundle.json',result)
+    # _verify_snapshot already audited every original grid, point, color,
+    # label and owner above. Each copied file was verified against the
+    # ORIGINAL byte digest. Repeating the millions-of-points audit here adds
+    # minutes but cannot strengthen an identical-byte source-bound copy.
+    # External load_bundle/verify_bundle always retain their full deep audit.
+    _verify_sealed_copy(out,result,source)
     (out/'BUNDLE_COMPLETE').write_text('SOURCE_BOUND_NATIVE_SNAPSHOT\n');return result
+
+
+def _verify_sealed_copy(root, manifest, originals):
+    """Seal copies of already fully audited source bytes without re-parsing them.
+
+    Caller must have run _verify_snapshot on the source and checked each
+    original's SHA before construction. Rejects changed copies and references.
+    Never sets training_ready. Ordinary verify_bundle remains the deep API.
+    """
+    root=Path(root).resolve()
+    if (manifest.get('schema')!='g2_native_bundle_v1' or
+            manifest.get('source_scope')!={'status':STATUS,'full_scene_source_certified':False} or
+            manifest.get('training_ready') is not False or
+            manifest.get('structural_stage')!='SOURCE_GT_NATIVE_ROOM_GRAPH' or
+            manifest.get('semantic_stage')!='MUJOCO_GT_SOURCE_NOT_MODEL_PREDICTIONS' or
+            manifest.get('observation_witness') is not None or
+            set(manifest.get('files',{}))!=NATIVE_FILES|EVIDENCE_FILES or
+            set(originals)!=set(manifest['files'])):
+        raise ContractError('invalid source-bound sealed copy manifest')
+    sealed=dict(manifest)
+    expected=sealed.pop('version_sha256',None)
+    if expected!=hashlib.sha256(canonical(sealed)).hexdigest():
+        raise ContractError('source bundle version digest differs')
+    if read_json(root/'bundle.json')!=manifest:
+        raise ContractError('source bundle manifest bytes changed')
+    for name,original in originals.items():
+        record=manifest['files'][name]
+        if record.get('path')!=name or record['sha256']!=digest(original):
+            raise ContractError('source attachment identity changed during copy')
+        verified_file(root,record)
+    s=read_json(root/'snapshot.json')
+    for k in ('scene_id','source_sha256','frame_id','timestamp_ns','world_frame',
+              'source_mode','native_build_source_sha256','geometry_source_mode'):
+        if s.get(k)!=manifest.get(k):
+            raise ContractError('source bundle copy snapshot identity changed')
+    return True
 
 
 def verify_bundle(root,manifest):
