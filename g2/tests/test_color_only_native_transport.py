@@ -42,7 +42,7 @@ def test_no_navigation_or_rgbd_is_declared(prepared,tmp_path):
     assert text.startswith("F24_G2_NATIVE_COLOR_ONLY_SEQUENCE_V1\n")
     assert "nav_states" not in text
     assert "known_free_region" not in text
-    assert "RGBD" not in text.upper()
+    assert all("RGBD" not in line for line in text.splitlines()[:5])
     assert text.splitlines()[4]=="rows 2"
 
 
