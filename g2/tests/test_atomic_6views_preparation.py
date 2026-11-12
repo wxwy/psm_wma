@@ -326,6 +326,28 @@ def test_fixed_selection_resume_skips_only_matching_completed_source(tmp_path):
     assert summary["task_episode_counts"] == {"CloseFridge": 2, "OpenDrawer": 2}
     actual = json.loads((roots["plans"] / "batch_000.json").read_text())
     assert [row["episode_id"] for row in actual["episodes"]] == [0, 2, 3]
+    # Repeating --resume with the same plan_root reuses immutable source bytes.
+    previous_hash = _sha(roots["plans"] / "batch_000.json")
+    reused = planner.build(
+        roots["flat"] / "flat_v3_mapping.parquet", roots["raw"],
+        roots["depth"], roots["plans"], roots["published"],
+        expected=6, episodes_per_task=2, resume=True)
+    assert reused["plan_reused"] is True
+    assert reused["episodes_pending_now"] == 3
+    assert _sha(roots["plans"] / "batch_000.json") == previous_hash
+    # Newly completed episodes are skipped, not replaced by later candidates.
+    make_committed_receipt(roots["published"], chosen[2])
+    reused_again = planner.build(
+        roots["flat"] / "flat_v3_mapping.parquet", roots["raw"],
+        roots["depth"], roots["plans"], roots["published"],
+        expected=6, episodes_per_task=2, resume=True)
+    assert reused_again["episodes_pending_now"] == 2
+    assert reused_again["episodes_skipped_completed_now"] == 2
+    with pytest.raises(planner.PlanError, match="selection or source recipe changed"):
+        planner.build(
+            roots["flat"] / "flat_v3_mapping.parquet", roots["raw"],
+            roots["depth"], roots["plans"], roots["published"],
+            expected=6, episodes_per_task=1, resume=True)
     # A different selected episode's marker may never satisfy the frozen source.
     marker = json.loads((complete / "COMPLETE.json").read_text())
     marker["source_fingerprint"] = "0" * 64
