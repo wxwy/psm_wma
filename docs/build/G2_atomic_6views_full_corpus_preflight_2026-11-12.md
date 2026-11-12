@@ -32,6 +32,30 @@ The owner fixed the eventual dataset root to:
 - `g2/tests/test_atomic_6views_preparation.py`: synthetic plan/source/compact tests.
 - Layout IDs are **not a whitelist**; only positive integer and source provenance are checked. The 10 IDs above are descriptions of the current dataset. The generic transport adapter and nav_sg native worker have separately been merged as [PSM-WMA #44](https://github.com/wxwy/psm_wma/pull/44) and [nav_sg #11](https://github.com/wxwy/nav_sg/pull/11).
 
+
+## Task selection and resumable manual planning (November 12 update)
+
+The selection API is independent of batch size:
+
+- Omit `--task`: select **all 18 tasks**. Repeat `--task OpenDrawer --task CloseFridge` or use `--task OpenDrawer,CloseFridge` to select some.
+- Omit `--episodes-per-task`: select **ALL** episodes from every chosen task (this is the default, not 100).
+- `--episodes-per-task 100`: choose the fixed earliest **100 global episode IDs per task**, not 100 newly pending episodes on every restart. The limit is per task; `--batch-size 100` independently controls dispatch grouping.
+- `--resume`: skip only compact episode directories whose source-pinned `source_fingerprint`, expected frames, renderer, manifest SHA and atomic completion receipt all agree. An incomplete or mismatched directory blocks rather than silently overwriting.
+- An existing `--plan-root` can be **reused with `--resume`**; it is checked against the original selection and source recipe. Batch manifests are not regenerated; the caller's later executor must skip already-completed outputs at dispatch time. The real `g2.offline.batch_render` scheduler also already has own resume for *materialized* render jobs.
+- The compact publisher accepts a `--selection-record` to bind its completion receipt to the planning source identity; legacy unbound outputs are not silently resumed as complete.
+- `scan` and `plan` are CPU/read-only discovery and immutable manifest operations. They **do not start any production jobs**.
+
+Illustrative preflight only (from V3 source root; don't confuse with a production launch command):
+
+```bash
+python -m g2.offline.atomic_6views_plan scan
+python -m g2.offline.atomic_6views_plan scan --task OpenDrawer --task CloseFridge --episodes-per-task 3 --resume
+python -m g2.offline.atomic_6views_plan plan --plan-root /new/immutable/preflight_plan --batch-size 100
+# Repeat the same plan command with --resume to reuse that plan's immutable batches.
+```
+
+Real server dry-run: task selection OpenDrawer+CloseFridge, 3 each, yielded 6 selected/pending, 190 spatial states, production_started=false. Selection/resume CPU tests are checked separately from runtime/semantic production readiness.
+
 ## Unresolved production blockers — no automatic start
 
 1. The existing F24/F27 render command requires a **source-bound scene GT manifest**, per-state verified Room/Island snapshots and Scene Graph, complete native 10 cm occupancy and 10 mm color worker outputs, plus original visual-Geom inventory. Today these were assembled only for the approved two pilot episodes, **not** for each of 9,126 distinct original scenes.
