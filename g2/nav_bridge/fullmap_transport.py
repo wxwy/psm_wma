@@ -89,6 +89,8 @@ def verify_native_color_transport(source_cloud, native_surfaces, entities, count
             scanned += len(native)
         if scanned != count:
             raise ContractError("Full Map point transport row count differs")
+    except ContractError:
+        raise
     except (OSError, ValueError, TypeError, OverflowError, UnicodeError,
             pd.errors.ParserError) as exc:
         raise ContractError("invalid native source color transport") from exc
