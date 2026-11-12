@@ -124,7 +124,7 @@ def test_sequence_refuses_nav_from_another_state_before_creating_plan(tmp_path):
 def test_sequence_respects_current_native_adapter_limits(tmp_path, fault):
     color, nav = sequence_case(tmp_path)
     if fault == 'unsupported_layout':
-        color['layout'] = 2
+        color['layout'] = 11
     elif fault == 'one_row':
         color['states'].pop()
         nav['frames'].pop()
