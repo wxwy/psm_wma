@@ -21,7 +21,6 @@ DEPTH = DATA_ROOT / "robocasa365-target-atomic-depth"
 OUTPUT = DATA_ROOT / "robocasa365-target-atomic-6views"
 SCHEMA = "g2_robocasa365_atomic_6views_dataset_plan_v1"
 EXPECTED = 9126
-LAYOUTS = set(range(1, 11))
 MAX_BATCH = 100
 
 
@@ -130,8 +129,8 @@ def discover(mapping=FLAT / "flat_v3_mapping.parquet", raw_root=RAW,
             raise PlanError("missing original official source: " + str(extra))
         meta = read_json(originals["ep_meta.json"])
         layout = meta.get("layout_id")
-        if type(layout) is not int or layout not in LAYOUTS:
-            raise PlanError(f"unsupported official layout_id for {ep}: {layout}")
+        if type(layout) is not int or layout <= 0:
+            raise PlanError(f"invalid official layout_id for {ep}: {layout}")
         depth_dir = depth_root / "tasks" / task / "episodes" / f"episode_{ep:06d}"
         depth = _check_depth(row, depth_dir, originals)
         frames = frame_ids(row["length"], stride)
