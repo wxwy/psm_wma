@@ -156,3 +156,22 @@ def test_truncated_prepared_states_cannot_publish_a_complete_episode(tmp_path, m
     with pytest.raises(ContractError, match='coverage|incomplete'):
         episode.render(inputs, prepared, native, output, backend='cpu')
     assert not output.exists()
+
+
+@pytest.mark.parametrize("layout", list(range(1, 11)))
+def test_sequence_supports_every_official_robocasa_layout(tmp_path, layout):
+    color, nav = sequence_case(tmp_path)
+    color["layout"] = layout
+    output = tmp_path / "valid_layout.txt"
+    result = write_sequence(output, color, nav)
+    assert output.is_file()
+    assert f"layout {layout}\\n" in output.read_text()
+    assert result == sha_file(output)
+
+
+@pytest.mark.parametrize("invalid", [0, -1, 11, True, 1.0, "1"])
+def test_sequence_rejects_invalid_official_layout(tmp_path, invalid):
+    color, nav = sequence_case(tmp_path)
+    color["layout"] = invalid
+    with pytest.raises(ContractError):
+        write_sequence(tmp_path / "invalid_layout.txt", color, nav)
