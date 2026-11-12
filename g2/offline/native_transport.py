@@ -156,8 +156,8 @@ def write_sequence(path, color, nav):
             or frames != [r["frame"] for r in nav_rows]):
         raise ContractError("color/nav frame coverage differs")
     layout = color["layout"]
-    if type(layout) is not int or layout not in (1, 10):
-        raise ContractError("current verified native adapter supports layouts 1 and 10")
+    if type(layout) is not int or not 1 <= layout <= 10:
+        raise ContractError("native adapter supports RoboCasa layouts 1..10")
     scene = rows[0]["source_scene_id"]
     if any(c.isspace() for c in scene):
         raise ContractError("native scene identifiers cannot contain whitespace")
