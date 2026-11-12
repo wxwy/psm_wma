@@ -21,7 +21,9 @@ max_z="$7"
   echo 'native worker inputs are missing or destination already exists' >&2
   exit 2
 }
+set +u
 source "$setup"
+set -u
 export ROS_MASTER_URI="http://127.0.0.1:$port"
 export ROS_IP=127.0.0.1
 export ROS_HOME="${output}_ros_home"
