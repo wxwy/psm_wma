@@ -41,34 +41,41 @@ for i, frame in enumerate(frames):
     image=root/"sixview/floor_top.png"
     image.write_bytes(b"fake-png-bytes-no-GPU")
     sha=hashlib.sha256(image.read_bytes()).hexdigest()
+    src_id="TEST_ONLY_FAKE_SOURCE_SHA"
+    scene_id="TEST_ONLY_FAKE_LAYOUT"
+    native_name="rooms/0/floor_top"
+    native_dir=root/"g2_original_gpu"/native_name
+    native_dir.mkdir(parents=True)
+    for filename in ("geometry.npz","view.json","geometry_valid.png","color_valid.png"):
+        (native_dir/filename).write_bytes(b"FAKE_PROOF_CONTENT_NOT_REAL_RENDER")
+    (root/"g2_original_gpu/views.json").write_text(json.dumps({
+        "frame_id":frame,"source_sha256":src_id,"training_ready":False,
+        "views":{native_name:{"image_generated":True}}
+    }))
+    (root/"surface_registry.json").write_text(json.dumps({
+        "schema":"g2_surface_registry_v1","frame_id":frame,
+        "scene_id":scene_id,"source_sha256":src_id,
+        "native_scene_graph_modified":False,
+        "surfaces":[{"surface_id":1}],"uncertain_surface_ids":[]
+    }))
     manifest={
        "frame_id":frame, "training_ready":False,
-       "visual_geometry_source":"SOURCE_BOUND_MUJOCO_VISUAL_MESH",
+       "scene_id":scene_id, "source_sha256":src_id,
+       "visual_geometry_source":"SURFACE_REGISTRY_VISUAL_GEOMETRY",
+       "surface_material_identity_per_pixel":True,
+       "source_scene_graph_unchanged":True,
+       "unknown_visual_color_regions_retained":True,
+       "transparent_visible_pixels":0,"unbound_visible_pixels":0,
        "view_count":1,
-       "views":[{"rgb_file":"sixview/floor_top.png","sha256":sha}],
+       "views":[{"rgb_file":"sixview/floor_top.png","sha256":sha,
+                 "native_view":native_name}],
     }
     (root/"direct_color_views.json").write_text(json.dumps(manifest))
-    (root/"alpha_source_layer").mkdir()
-    alpha_dir=root/"alpha_source_layer/rooms/0/floor_top"
-    alpha_dir.mkdir(parents=True)
-    rgba=alpha_dir/"source_rgba.png"
-    preview=alpha_dir/"checkerboard_unknown_preview.png"
-    rgba.write_bytes(b"source-alpha-diagnostic")
-    preview.write_bytes(b"source-alpha-preview")
-    files={
-       "source_rgba_file":"rooms/0/floor_top/source_rgba.png",
-       "source_rgba_sha256":hashlib.sha256(rgba.read_bytes()).hexdigest(),
-       "checkerboard_preview_file":"rooms/0/floor_top/checkerboard_unknown_preview.png",
-       "checkerboard_preview_sha256":hashlib.sha256(preview.read_bytes()).hexdigest(),
-    }
-    (root/"alpha_source_layer/alpha_sidecar_manifest.json").write_text(json.dumps(
-       {"frame_id":frame, "training_ready":False, "view_count":1,
-        "source_visual_mesh_for_transparency":True,
-        "view_alpha_layers":[{"view":"rooms/0/floor_top",
-                              "frame_id":frame,"alpha_pixel_count":0,**files}]}))
     states.append({"frame":frame, "state_id":i,"view_count":1,
        "view_opaque_visual_geometry_from_source":True,
-       "source_surfel_geom_color_training_ready":False})
+       "source_surfel_geom_color_training_ready":False,
+       "surface_registry_count":1,"transparent_visible_pixels":0,
+       "alpha_sidecar_count":0,"unbound_visible_pixels":0})
 if mode == "bad_frames":
     states.pop()
 receipt={
@@ -76,11 +83,18 @@ receipt={
   "complete":True, "training_ready":False,
   "source_inputs_sha256":hashlib.sha256(inputs.read_bytes()).hexdigest(),
   "spatial_state_count":len(frames),
-  "view_opaque_geometry_source":"SOURCE_BOUND_VISUAL_MESH",
+  "view_opaque_geometry_source":("SOURCE_BOUND_VISUAL_MESH"
+                                 if mode=="legacy" else "SURFACE_REGISTRY_VISUAL_GEOMETRY"),
+  "semantic_owner_optional":True,
+  "source_material_identity_per_pixel":True,
+  "native_scene_graph_modified":False,
+  "source_alpha_model":"FRONT_SURFACE_PER_GEOM_SORTED_ALPHA_NO_REFRACTION",
+  "renderer_backend":"gpu",
+  "view_meters_per_pixel":0.01,
   "states":states,
 }
 (dst/"episode_receipt.json").write_text(json.dumps(receipt))
-"""
+""""""
 
 
 @pytest.fixture
@@ -480,3 +494,26 @@ def test_git_head_rejects_invalid_or_truncated_object_ids(
     monkeypatch.setattr(batch.subprocess, "run", lambda *args, **kwargs: Result())
     with pytest.raises(ContractError, match="pin repository"):
         batch.source_commit(tmp_path)
+
+
+
+def test_child_command_uses_accepted_f27_not_legacy(sample_job, tmp_path):
+    e = batch.pinned_episode(sample_job())
+    command = batch.child_command(Path(sys.executable), e, tmp_path / "future_output")
+    assert "--surface-registry-source" in command
+    assert "--visual-mesh-source" not in command
+    assert batch.pinned_plan.__name__ == "pinned_plan"
+
+
+def test_legacy_receipt_is_rejected_by_f27_batch(sample_job, tmp_path, child_file):
+    e = batch.pinned_episode(sample_job())
+    root = prepare_root(tmp_path / "out")
+    result = batch.process_job(
+        batch.Slot(4, 0), e, root,
+        python=Path(sys.executable), repo=tmp_path,
+        max_attempts=1, timeout_seconds=0, min_free_mib=0,
+        cancel=threading.Event(),
+        command_factory=factory(child_file, "legacy"),
+    )
+    assert result["status"] == "FAILED_VALIDATION"
+    assert result["training_ready"] is False
