@@ -60,6 +60,8 @@ class WorkerConfig:
     gpu: int
     robocasa_repo: Path
     robosuite_repo: Path
+    # Explicit Full Map GT-only initialization; default legacy remains intact.
+    sim_direct_geometry_only: bool=False
 
 
 def event(kind, *, row=None, **values):
@@ -157,6 +159,37 @@ def _native_gate(config, prepared, native_manifest, prescan, root, row):
     return root
 
 
+def _native_geometry_gate(config, prepared, native_manifest, root, row):
+    """Simulation-only nav_sg native Room/SG from 10cm Oracle geometry.
+
+    No precolored cloud, RGB-D, or color worker is supplied to the initializer.
+    The original _native_gate remains the unmodified legacy entry point.
+    """
+    root.mkdir(parents=True,exist_ok=False)
+    env=os.environ.copy()
+    env.pop("PYTHONPATH",None)
+    env.update(
+        G2_GT_PROJECTION_MIN_Z=str(config.min_z),
+        G2_GT_PROJECTION_MAX_Z=str(config.max_z),
+        G2_GT_EXPORT_SPATIAL="true",G2_GT_MIN_ASSIGNED="0",
+        G2_GT_FULL_MAP_GEOMETRY_ONLY_PROOF=str(prepared/"source_proof.txt"),
+        G2_GT_ROS_PORT=str(config.port),
+        G2_GT_ROS_HOME=str(root.parent/"direct_native_ros_home"),
+        PYTHONDONTWRITEBYTECODE="1",
+    )
+    script=(f"source {shlex_quote(config.nav_setup)}; "
+            f"bash {shlex_quote(config.nav_repo/'g2/gt/native_gate.sh')} "
+            f"{shlex_quote(native_manifest/'grid.txt')} "
+            f"{shlex_quote(native_manifest/'objects.txt')} "
+            f"{shlex_quote(root/'native_run')} esdf_grid")
+    subprocess_stage(["bash","-lc",script],cwd=config.nav_repo,env=env,
+                     row=row,name="source_gt_geometry_only_native_room_sg")
+    if not (root/"native_run/frame_0/spatial_snapshot/SNAPSHOT_COMPLETE").is_file() or not (
+            root/"native_run/FULL_MAP_PREVIEW_COMPLETE").is_file():
+        raise ContractError("geometry-only native Full Map Room/SG was not produced")
+    return root
+
+
 def shlex_quote(value):
     import shlex
     return shlex.quote(str(value))
@@ -171,6 +204,10 @@ def produce_one(row,config):
     # MuJoCo/GL context inside the CPU orchestrator.
     start=time.monotonic()
     work=config.work_root/row["task_class"]/f"episode_{row['episode_id']:06d}"
+    # Separate source-mode namespace is required: no legacy snapshot/color/F27
+    # stage receipt may be silently reused by the new direct GT recipe.
+    if config.sim_direct_geometry_only:
+        work=work/"direct_gt_geometry_only_v1"
     work.mkdir(parents=True,exist_ok=True)
     original=row["original"]
     scene=f"robocasa365_atomic_{row['episode_id']:06d}"
@@ -209,33 +246,48 @@ def produce_one(row,config):
         cmd.extend(("--output",p))
         subprocess_stage(cmd,cwd=config.nav_repo,env=nav_env,row=row,name="native_source_gt")
     native_gt=stage(work,"native_gt",row,nav_gt,required=("manifest.json","grid.txt","objects.txt"))
-    def prescan_builder(p):
-        prescan(root/"scene_rebased.xml",metadata/"role_map.json",p,
-            states=original["states.npz"],frame=0,spacing=.05,
-            asset_roots=asset_roots,ep_meta=original["ep_meta.json"],
-            state_format="mujoco_fullphysics",world_frame="world",
-            native_manifest=native_gt/"manifest.json",
-            allow_partial_color=True)
-    color_prescan=stage(work,"prescan",row,prescan_builder,
-                        required=("manifest.json","precolored.txt"))
-    natprep=stage(work,"native_prepare",row,lambda p:prepare_native(
-        native_gt/"manifest.json",color_prescan/"manifest.json",
-        nav_repo=config.nav_repo,output=p,room_source="esdf_grid",
-        min_z=config.min_z,max_z=config.max_z),
-        required=("source_proof.txt","source_inputs.json"))
-    native_initial=stage(work,"native_run",row,
-        lambda p:_native_gate(config,natprep,native_gt,color_prescan,p,row),
-        required=("native_run/frame_0/spatial_snapshot/snapshot.json",
-                  "native_run/frame_0/spatial_snapshot/SNAPSHOT_COMPLETE"))
-    # This executor is exclusively RoboCasa/MuJoCo Full Map. The native C++
-    # export already computed surface ownership; preserve every coordinate,
-    # RGB, mask, scene binding and byte hash, but do not independently repeat
-    # millions of triangle-distance tests when sealing the initial bundle.
-    # RGB-D/perception and the public deep bundle verifier remain unchanged.
-    bundle=stage(work,"bundle",row,lambda p:capture_native(
-        native_initial/"native_run/frame_0/spatial_snapshot",natprep,p,
-        trust_native_owner=True),
-        required=("bundle.json","snapshot.json"))
+    if config.sim_direct_geometry_only:
+        from g2.nav_bridge.fullmap_geometry_only import (
+            prepare as prepare_geometry_only,
+            capture as capture_geometry_only,
+        )
+        direct_prepared=stage(work,"direct_prepare",row,lambda p:
+            prepare_geometry_only(native_gt/"manifest.json",p),
+            required=("source_proof.txt","plan.json"))
+        direct_native=stage(work,"direct_native",row,lambda p:
+            _native_geometry_gate(config,direct_prepared,native_gt,p,row),
+            required=("native_run/frame_0/spatial_snapshot/snapshot.json",
+                      "native_run/frame_0/spatial_snapshot/SNAPSHOT_COMPLETE"))
+        bundle=stage(work,"direct_bundle",row,lambda p:
+            capture_geometry_only(
+                direct_native/"native_run/frame_0/spatial_snapshot",
+                direct_prepared,p),
+            required=("bundle.json","snapshot.json"))
+    else:
+        def prescan_builder(p):
+            prescan(root/"scene_rebased.xml",metadata/"role_map.json",p,
+                states=original["states.npz"],frame=0,spacing=.05,
+                asset_roots=asset_roots,ep_meta=original["ep_meta.json"],
+                state_format="mujoco_fullphysics",world_frame="world",
+                native_manifest=native_gt/"manifest.json",
+                allow_partial_color=True)
+        color_prescan=stage(work,"prescan",row,prescan_builder,
+                            required=("manifest.json","precolored.txt"))
+        natprep=stage(work,"native_prepare",row,lambda p:prepare_native(
+            native_gt/"manifest.json",color_prescan/"manifest.json",
+            nav_repo=config.nav_repo,output=p,room_source="esdf_grid",
+            min_z=config.min_z,max_z=config.max_z),
+            required=("source_proof.txt","source_inputs.json"))
+        native_initial=stage(work,"native_run",row,
+            lambda p:_native_gate(config,natprep,native_gt,color_prescan,p,row),
+            required=("native_run/frame_0/spatial_snapshot/snapshot.json",
+                      "native_run/frame_0/spatial_snapshot/SNAPSHOT_COMPLETE"))
+        # The legacy full-map source retains its original complete RGB,
+        # validity and native ownership evidence. Native RGB-D stays unchanged.
+        bundle=stage(work,"bundle",row,lambda p:capture_native(
+            native_initial/"native_run/frame_0/spatial_snapshot",natprep,p,
+            trust_native_owner=True),
+            required=("bundle.json","snapshot.json"))
     roster=stage(work,"visual_roster",row,lambda p:build_visual_roster(
         native_gt/"manifest.json",metadata/"role_map.json",p),
         required=("dense_manifest.json",))
@@ -313,7 +365,7 @@ def _ports(gpus,workers,base):
             for index,gpu in enumerate(gpus) for slot in range(workers)]
 
 
-def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary):
+def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *, sim_direct_geometry_only=False):
     """Compile missing/stale native modules exclusively from both source trees."""
     repo=Path(repo).resolve(strict=True)
     nav_repo=Path(nav_repo).resolve(strict=True)
@@ -333,7 +385,14 @@ def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary):
     build_root=nav_repo/".g2_catkin_ws/build"
     if not build_root.is_dir():
         raise ContractError("nav_sg catkin workspace is not configured")
-    if not native_binary.is_file() or cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns:
+    geometry_source=nav_repo/"mapping_8_3/mapping/src/gt/gt_oracle_native.cpp"
+    geometry_binary=native_binary.parent/"gt_oracle_native"
+    need_direct=(sim_direct_geometry_only and
+                 (not geometry_binary.is_file() or
+                  geometry_source.stat().st_mtime_ns>geometry_binary.stat().st_mtime_ns))
+    if (not native_binary.is_file()
+            or cpp.stat().st_mtime_ns>native_binary.stat().st_mtime_ns
+            or need_direct):
         event("BUILD",repo="nav_sg",target="gt_direct_color_episode")
         script=("set -e; source "+shlex_quote(nav_setup)+"; "
                 "cmake --build "+shlex_quote(build_root)
@@ -395,7 +454,8 @@ def schedule(args):
             or root==args.output_root or root in args.output_root.parents):
         raise ContractError("work-root overlaps original input/parent or output parent")
     slots=_ports(args.gpus,args.workers_per_gpu,args.ros_port_base)
-    ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary)
+    ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary,
+                             sim_direct_geometry_only=args.sim_direct_geometry_only)
     args.output_root.mkdir(parents=True,exist_ok=True)
     root.mkdir(parents=True,exist_ok=True)
     q=queue.Queue()
@@ -412,7 +472,8 @@ def schedule(args):
             nav_repo=nav_repo,nav_setup=nav_setup,native_binary=native_binary,
             python=Path(sys.executable),output_root=args.output_root,work_root=root,
             keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu,
-            robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo)
+            robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
+            sim_direct_geometry_only=args.sim_direct_geometry_only)
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -434,6 +495,7 @@ def schedule(args):
                      "--min-z",str(args.min_z),"--max-z",str(args.max_z),
                      "--manual-start","--allow-experimental"]
                 if args.keep_work:cmd.append("--keep-work")
+                if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
                 try:
                     subprocess.run(cmd,check=True)
                     if not plan.completed_output(row,args.output_root):
@@ -484,7 +546,8 @@ def run_one_cli(args):
         output_root=args.output_root,work_root=args.work_root,
         keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,
         port=args.ros_port,gpu=args.gpu,
-        robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo)
+        robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
+        sim_direct_geometry_only=args.sim_direct_geometry_only)
     produce_one(selected,config)
     return 0
 
@@ -520,6 +583,8 @@ def parser():
     p.add_argument("--max-z",type=float,default=1.8)
     p.add_argument("--manual-start",action="store_true")
     p.add_argument("--allow-experimental",action="store_true")
+    p.add_argument("--sim-direct-geometry-only",action="store_true",
+                   help="experimental RoboCasa Full Map 10cm GT native Room/SG; never RGB-D")
     p.add_argument("--keep-work",action="store_true",
                    help="retain large temporary artifacts (default: clean on success)")
     p.add_argument("--episode-id",type=int)
