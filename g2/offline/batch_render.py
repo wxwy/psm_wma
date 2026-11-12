@@ -357,9 +357,7 @@ def available_slots(gpus, workers_per_gpu):
 
 
 def child_command(python, episode, destination, renderer="f27"):
-    flag = {"f27": "--surface-registry-source",
-            "legacy": "--visual-mesh-source"}.get(renderer)
-    if flag is None:
+    if renderer not in ("f27", "legacy"):
         raise ContractError("unsupported renderer mode")
     return [
         str(python), "-m", "g2.offline.episode", "render",
@@ -367,7 +365,7 @@ def child_command(python, episode, destination, renderer="f27"):
         "--prepared", str(episode.prepared),
         "--native-output", str(episode.native),
         "--output", str(destination),
-        "--backend", "gpu", flag,
+        "--backend", "gpu", "--renderer", renderer,
     ]
 
 
