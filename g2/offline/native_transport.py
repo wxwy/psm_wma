@@ -145,7 +145,10 @@ def write_layer_batch(path, *, frame, scene_id, source_sha, state_sha,
 
 
 def write_sequence(path, color, nav):
-    """Bind both independently generated maps to the same source state."""
+    """Bind independently generated map transports to original source GT."""
+    if nav.get("schema")=="NAV_SG_EPISODE_NAV_DELTAS_V1":
+        return write_sparse_sequence(path,color,nav)
+    # The legacy V1 transport remains the unchanged default.
     if (color["source_sha256"] != nav["source_scene_sha256"]
             or nav.get("source_known_region_NOT_CERTIFIED") is not True
             or nav.get("training_ready") is not False):
@@ -191,6 +194,74 @@ def write_sequence(path, color, nav):
         raise ContractError("native episode sequence exceeds 128 KiB")
     with Path(path).open("x", encoding="utf-8") as stream:
         stream.write(text)
+    return sha_file(path)
+
+
+def write_sparse_sequence(path, color, nav):
+    """Opt-in F24 V2: one full frame, source-bound subsequent sparse 10cm diffs.
+
+    The actual native C++ worker rebuilds and SHA-checks the complete occupancy
+    grid before running the *original* Room/SG and 10mm color update logic.
+    Nothing in the RGB-D/perception producer calls this transport.
+    """
+    if (nav.get("schema")!="NAV_SG_EPISODE_NAV_DELTAS_V1" or
+            nav.get("source_mode")!="MUJOCO_FULL_MAP_GT_TEST_ONLY_KNOWN_REGION" or
+            nav.get("training_ready") is not False or
+            nav.get("source_known_region_NOT_CERTIFIED") is not True or
+            color["source_sha256"]!=nav.get("source_scene_sha256")):
+        raise ContractError("sparse nav is strictly source-bound MuJoCo GT only")
+    rows=color["states"]
+    sources=nav.get("frames")
+    if (not isinstance(sources,list) or not 2<=len(rows)<=300 or
+            len(sources)!=len(rows) or
+            rows[0]["frame"]!=sources[0]["frame"]!=0 or
+            [r["frame"] for r in rows]!=[s["frame"] for s in sources] or
+            any(a["frame"]>=b["frame"] for a,b in zip(rows,rows[1:]))):
+        raise ContractError("sparse nav/color state inventory mismatch")
+    scene=rows[0]["source_scene_id"]
+    if (not isinstance(scene,str) or not scene or
+            any(c.isspace() for c in scene) or
+            any(r["source_scene_id"]!=scene for r in rows)):
+        raise ContractError("invalid sparse scene identity")
+    layout=color.get("layout")
+    if type(layout) is not int or layout<=0:
+        raise ContractError("invalid sparse native layout")
+    lines=["F24_G2_NATIVE_COLOR_AND_NAV_SEQUENCE_V2",
+           f"layout {layout}",f"scene {scene}",
+           f"source {require_sha(color['source_sha256'])}",
+           "known_free_region_TEST_ONLY 1",f"rows {len(rows)}"]
+    for index,(row,source) in enumerate(zip(rows,sources)):
+        if (source.get("transport_kind")!=("full" if index==0 else "delta")
+                or row["source_sha256"]!=color["source_sha256"]
+                or row["source_state_sha256"]!=source["source_state_row_sha256"]
+                or row["initial_all_static_and_dynamic"]!=(index==0)):
+            raise ContractError("sparse nav identity/state/initial mode differs")
+        full_grid=require_sha(source.get("full_grid_state_sha256"))
+        count=row["expected_full_color_voxels"]
+        unknown=row["expected_unknown_owner_cells"]
+        if (type(count) is not int or not 1<=count<=8000000 or
+                type(unknown) is not int or not 0<=unknown<=count):
+            raise ContractError("invalid native color count for sparse nav")
+        for file,sha_value in (
+                (source["source_grid_file"],source["source_grid_sha256"]),
+                (source["source_objects_file"],source["source_objects_sha256"]),
+                (row["data_file"],row["binary_sha256"])):
+            if sha_file(file)!=require_sha(sha_value):
+                raise ContractError("sparse nav source/color transport changed")
+        values=[row["frame"],source["source_grid_file"],
+                source["source_objects_file"],
+                source["source_grid_sha256"],source["source_objects_sha256"],
+                row["data_file"],row["binary_sha256"],
+                row["source_state_sha256"],row["expected_full_color_sha256"],
+                count,unknown,full_grid]
+        if any(any(c.isspace() for c in str(value)) for value in values):
+            raise ContractError("sparse native transport contains whitespace")
+        lines.append(" ".join(map(str,values)))
+    body="\n".join(lines)+"\n"
+    if len(body.encode())>131072:
+        raise ContractError("sparse native sequence exceeds budget")
+    with Path(path).open("x",encoding="utf-8") as f:
+        f.write(body)
     return sha_file(path)
 
 
