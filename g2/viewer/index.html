@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171d25">
+  <title>G2 Spatial Replay · RoboCasa365</title>
+  <link rel="stylesheet" href="./viewer.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="mast-inner">
+      <div class="brand">
+        <span class="brand-mark">G<span>2</span></span>
+        <span class="brand-copy">
+          <strong>Spatial Replay</strong>
+          <small>RoboCasa365 · Views &amp; Cameras</small>
+        </span>
+      </div>
+      <div class="mast-right">
+        <span class="mast-note">WORLD STATE EXPLORER</span>
+        <span id="system-status" class="system-pill"><i></i><span>正在连接数据</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="selection-panel" aria-label="数据选择">
+      <div class="selector-grid">
+        <div class="control-group task-picker">
+          <label for="task-select">任务 / TASK</label>
+          <select id="task-select" aria-label="选择任务" disabled><option>正在读取任务…</option></select>
+        </div>
+        <div class="control-group episode-picker">
+          <label for="episode-select">轨迹 / EPISODE <span id="available-count" class="field-caption"></span></label>
+          <select id="episode-select" aria-label="选择已完成 Episode" disabled><option>请选择任务</option></select>
+        </div>
+        <button id="refresh-episodes" class="button outline refresh-btn" title="扫描刚完成的 Episode">
+          <span aria-hidden="true">↻</span> 刷新列表
+        </button>
+      </div>
+      <div class="instruction-line">
+        <div class="instruction-mark">INSTRUCTION <span class="instruction-marker"></span></div>
+        <p id="instruction-text">选择一个任务和已完成的 Episode 查看任务指令。</p>
+        <div class="instruction-stats">
+          <span id="task-tag">—</span>
+          <span id="global-tag">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="player-panel" aria-label="同步播放">
+      <div class="player-top">
+        <div class="player-heading">
+          <h1>时间轴 <span>Timeline</span></h1>
+          <p>相机 20 Hz · 空间视图 2 Hz · 同步定位</p>
+        </div>
+        <div class="timecode"><strong id="time-current">00:00.00</strong><span class="time-sep">/</span><span id="time-total">00:00.00</span></div>
+      </div>
+      <input type="range" id="scrub" aria-label="播放进度" min="0" max="1000" step="1" value="0" disabled>
+      <div class="player-bottom">
+        <div class="transport">
+          <button id="prev-frame" class="button nav-btn" aria-label="上一空间帧" title="上一空间帧（←）" disabled>‹</button>
+          <button id="play" class="button play-btn" aria-label="播放" disabled>▶ <span>播放</span></button>
+          <button id="next-frame" class="button nav-btn" aria-label="下一空间帧" title="下一空间帧（→）" disabled>›</button>
+          <div class="transport-divider"></div>
+          <label class="speed-label" for="speed">速度</label>
+          <select id="speed" class="speed-select" aria-label="播放速度">
+            <option value="0.25">0.25×</option><option value="0.5">0.5×</option>
+            <option value="1" selected>1.0×</option><option value="1.5">1.5×</option>
+            <option value="2">2.0×</option><option value="3">3.0×</option>
+            <option value="4">4.0×</option>
+          </select>
+        </div>
+        <div class="frame-summary">
+          <span class="frame-dot"></span>
+          <span id="frame-label">空间帧 — / —</span>
+          <span class="summary-separator">·</span>
+          <span id="source-frame-label">原始帧 —</span>
+          <span id="playback-status" class="sync-state">待选择</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="自定义多视角布局">
+      <div class="workspace-head">
+        <div>
+          <h2>视角工作台 <span>View Workspace</span></h2>
+          <p>自定义行与显示块。拖动 <span aria-hidden="true">⠿</span> 调整行、列顺序；每行最多 5 个。</p>
+        </div>
+        <div class="workspace-actions">
+          <button id="reset-layout" class="button text-btn" title="重置为初始双行布局">重置布局</button>
+          <button id="add-row" class="button add-primary"><span aria-hidden="true">＋</span> 添加行</button>
+        </div>
+      </div>
+      <div id="display-rows" class="display-rows" aria-live="polite"></div>
+      <div class="workspace-end">G2 · PERSISTENT SPATIAL STATE <span>视图缺失时会保留占位，不影响其他块同步</span></div>
+    </section>
+  </main>
+
+  <video id="clock-video" muted playsinline preload="metadata" hidden></video>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="./viewer.js" defer></script>
+</body>
+</html>
