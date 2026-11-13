@@ -13,6 +13,10 @@ from PIL import Image, ImageDraw
 from g2.io import ContractError, read_json, write_json
 
 
+MARKER_STYLES = ("classic", "game_arrow")
+DEFAULT_MARKER_STYLE = "game_arrow"
+
+
 def chassis_pose(model, data):
     """Use the *actual* Omron wheel-base frame, not robot0_base (XML anchor)."""
     import mujoco
@@ -66,8 +70,8 @@ def project(meta, pose):
     return col, row, dx / size, dy / size
 
 
-def _stamp(image, x, y, dx, dy):
-    """Draw constant-size map marker with a white outline for contrast."""
+def _stamp_classic(image, x, y, dx, dy):
+    """Preserve the old engineering-style blue dot and heading arrow."""
     draw = ImageDraw.Draw(image)
     tip = (x + 23 * dx, y + 23 * dy)
     # Ground-facing map marker: white halo, blue arrow and blue center dot.
@@ -82,10 +86,49 @@ def _stamp(image, x, y, dx, dy):
     draw.ellipse((x - 5, y - 5, x + 5, y + 5), fill=(22, 103, 217))
 
 
-def overlay_final_top_views(stage, pose):
+def _stamp_game_arrow(image, x, y, dx, dy):
+    """Antialiased red chevron with a notched tail, like a game minimap marker.
+
+    Draw only a small local patch; the map image itself is never resampled.
+    The image-space heading (dx, dy) remains the physical chassis +X axis.
+    """
+    scale = 4
+    radius = 29
+    center = radius * scale
+    overlay = Image.new("RGBA", (2 * radius * scale, 2 * radius * scale), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    # Coordinates are (along heading, perpendicular to heading). A recessed
+    # rear notch makes the silhouette a concave game-style chevron, not a kite.
+    shape = ((22, 0), (-16, -11), (-6, 0), (-16, 11))
+    def points(offset_x=0, offset_y=0):
+        return [((radius + along * dx - across * dy + offset_x) * scale,
+                 (radius + along * dy + across * dx + offset_y) * scale)
+                for along, across in shape]
+    # Understated drop shadow and dark red outline are visible on white floors.
+    draw.polygon(points(1.0, 1.5), fill=(50, 34, 32, 80))
+    polygon = points()
+    draw.polygon(polygon, fill=(232, 52, 39, 255))
+    draw.line(polygon + [polygon[0]], fill=(151, 39, 33, 255),
+              width=scale, joint="curve")
+    patch = overlay.resize((2 * radius, 2 * radius), Image.Resampling.LANCZOS)
+    image.paste(patch, (round(x) - radius, round(y) - radius), patch)
+
+
+def _stamp(image, x, y, dx, dy, *, style=DEFAULT_MARKER_STYLE):
+    if style == "classic":
+        _stamp_classic(image, x, y, dx, dy)
+    elif style == "game_arrow":
+        _stamp_game_arrow(image, x, y, dx, dy)
+    else:
+        raise ContractError("unsupported robot pose marker style: " + str(style))
+
+
+def overlay_final_top_views(stage, pose, *, style=DEFAULT_MARKER_STYLE):
     """Stamp only exported top RGBs; do not modify g2_original_gpu or masks."""
     from g2.offline.native_transport import sha_file
 
+    if style not in MARKER_STYLES:
+        raise ContractError("unsupported robot pose marker style: " + str(style))
     stage = Path(stage)
     report = read_json(stage / "direct_color_views.json")
     total, drawn, details = 0, 0, []
@@ -106,7 +149,7 @@ def overlay_final_top_views(stage, pose):
         x, y, dx, dy = project(meta, pose)
         inside = 0 <= x < image.width and 0 <= y < image.height
         if inside:
-            _stamp(image, x, y, dx, dy)
+            _stamp(image, x, y, dx, dy, style=style)
             image.save(target)
             view["sha256"] = sha_file(target)
             drawn += 1
@@ -120,7 +163,8 @@ def overlay_final_top_views(stage, pose):
     if drawn == 0:
         raise ContractError("robot chassis is outside every exported floor_top view")
     marker = {
-        "enabled": True, "drawn_views": drawn, "eligible_views": total,
+        "enabled": True, "style": style,
+        "drawn_views": drawn, "eligible_views": total,
         "pose": pose, "views": details,
         "stage": "AFTER_RAW_PIXEL_EXACT_VALIDATION",
         "affects": "FINAL_FLOOR_TOP_RGB_PNG_ONLY",

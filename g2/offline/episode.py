@@ -192,7 +192,8 @@ def _compare_views(stage, references):
 
 def _render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
-           color_only=False, robot_pose_marker=True):
+           color_only=False, robot_pose_marker=True,
+           robot_pose_marker_style="game_arrow"):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
@@ -350,7 +351,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
             robot_data = (state if visual_mesh_source or surface_registry_source
                           else get_data(model, states[frame]))
-            marker = overlay_final_top_views(stage, chassis_pose(model, robot_data))
+            marker = overlay_final_top_views(
+                stage, chassis_pose(model, robot_data), style=robot_pose_marker_style)
         if row.get("scene_graph"):
             sg = row["scene_graph"]
             graph = bound_json(sg)
@@ -383,6 +385,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         source_inputs_sha256=sha_file(inputs), spatial_state_count=len(rows), states=rows,
         renderer_backend=backend, color_leaf_m=.01, view_meters_per_pixel=.01,
         robot_pose_marker_enabled=robot_pose_marker,
+        robot_pose_marker_style=robot_pose_marker_style if robot_pose_marker else None,
         training_ready=False, native_inputs_retained_for_audit=True,
         actual_wall_s=round(time.perf_counter() - started, 6))
     if color_only:
@@ -407,13 +410,15 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
 
 def render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
-           color_only=False, robot_pose_marker=True):
+           color_only=False, robot_pose_marker=True,
+           robot_pose_marker_style="game_arrow"):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
                        visual_mesh_source=visual_mesh_source,
                        surface_registry_source=surface_registry_source,
-                       color_only=color_only, robot_pose_marker=robot_pose_marker)
+                       color_only=color_only, robot_pose_marker=robot_pose_marker,
+                       robot_pose_marker_style=robot_pose_marker_style)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -437,6 +442,8 @@ def main():
     p.add_argument("--color-only",action="store_true")
     p.add_argument("--robot-pose-marker", action=argparse.BooleanOptionalAction,
                    default=True, help="draw chassis position/heading on exported floor_top (default: on)")
+    p.add_argument("--robot-pose-marker-style", choices=("classic", "game_arrow"),
+                   default="game_arrow", help="final floor_top marker style (default: game_arrow)")
     p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
                    help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
     args = parser.parse_args()
@@ -447,7 +454,8 @@ def main():
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
                visual_mesh_source=args.renderer in ("f27", "legacy"),
                surface_registry_source=args.renderer == "f27",
-               color_only=args.color_only, robot_pose_marker=args.robot_pose_marker)
+               color_only=args.color_only, robot_pose_marker=args.robot_pose_marker,
+               robot_pose_marker_style=args.robot_pose_marker_style)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,9 @@ from PIL import Image
 import pytest
 
 from g2.io import ContractError
-from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views, project
+from g2.views.robot_pose_marker import (
+    DEFAULT_MARKER_STYLE, _stamp, chassis_pose, overlay_final_top_views, project,
+)
 
 
 def _meta():
@@ -61,8 +63,9 @@ def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tm
     raw_hash = hashlib.sha256((raw / "rgb.png").read_bytes()).hexdigest()
     side_hash = hashlib.sha256(side.read_bytes()).hexdigest()
     before_top = top.read_bytes()
-    summary = overlay_final_top_views(stage, _pose())
+    summary = overlay_final_top_views(stage, _pose(), style="classic")
     assert summary["drawn_views"] == 1
+    assert summary["style"] == "classic"
     assert summary["eligible_views"] == 1
     assert top.read_bytes() != before_top
     assert hashlib.sha256(side.read_bytes()).hexdigest() == side_hash
@@ -75,6 +78,26 @@ def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tm
         assert image.getpixel((300, 250))[2] > image.getpixel((300, 250))[0]
         assert image.getpixel((300, 230))[2] > image.getpixel((300, 230))[0]
         assert image.getpixel((80, 80)) == (255, 255, 255)
+
+
+def test_default_game_arrow_is_red_and_has_notched_tail():
+    assert DEFAULT_MARKER_STYLE == "game_arrow"
+    image = Image.new("RGB", (120, 120), "white")
+    _stamp(image, 60, 60, 1, 0)  # tip to image-right
+    assert image.getpixel((76, 60))[0] > 180  # red tip
+    assert image.getpixel((76, 60))[1] < 110
+    assert image.getpixel((60, 60))[0] > 180  # red body
+    assert image.getpixel((45, 60)) == (255, 255, 255)  # concave rear notch
+    assert image.getpixel((22, 22)) == (255, 255, 255)
+    classic = Image.new("RGB", image.size, "white")
+    _stamp(classic, 60, 60, 1, 0, style="classic")
+    assert classic.tobytes() != image.tobytes()
+    rotated = Image.new("RGB", image.size, "white")
+    _stamp(rotated, 60, 60, 0, -1)
+    assert rotated.getpixel((60, 44))[0] > 180
+    assert rotated.getpixel((60, 44))[1] < 110
+    with pytest.raises(ContractError, match="style"):
+        _stamp(image, 60, 60, 1, 0, style="unknown")
 
 
 def test_missing_valid_floor_top_or_outside_pose_rejected(tmp_path):
@@ -90,6 +113,8 @@ def test_default_on_cli_and_config_sensitive_f27_reuse(tmp_path):
     from g2.offline.atomic_6views_run import parser, stage, _stage_mark
 
     assert parser().parse_args(["plan"]).robot_pose_marker is True
+    assert parser().parse_args(["plan"]).robot_pose_marker_style == "game_arrow"
+    assert parser().parse_args(["plan", "--robot-pose-marker-style", "classic"]).robot_pose_marker_style == "classic"
     assert parser().parse_args(["plan", "--no-robot-pose-marker"]).robot_pose_marker is False
     row = {"source_fingerprint": "f" * 64, "task_class": "OpenDrawer", "episode_id": 0}
     work = tmp_path / "work"
@@ -102,15 +127,21 @@ def test_default_on_cli_and_config_sensitive_f27_reuse(tmp_path):
         calls.append(True)
 
     stage(work, "f27", row, build, required=("episode_receipt.json",),
-          robot_pose_marker=True)
-    assert _stage_mark(work / "f27", "f27", row, robot_pose_marker=True)
+          robot_pose_marker=True, robot_pose_marker_style="game_arrow")
+    assert _stage_mark(work / "f27", "f27", row, robot_pose_marker=True,
+                       robot_pose_marker_style="game_arrow")
     stage(work, "f27", row, build, required=("episode_receipt.json",),
-          robot_pose_marker=True)
+          robot_pose_marker=True, robot_pose_marker_style="game_arrow")
     assert len(calls) == 1
+    assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=True,
+                           robot_pose_marker_style="classic")
+    stage(work, "f27", row, build, required=("episode_receipt.json",),
+          robot_pose_marker=True, robot_pose_marker_style="classic")
+    assert len(calls) == 2
     assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=False)
     stage(work, "f27", row, build, required=("episode_receipt.json",),
           robot_pose_marker=False)
-    assert len(calls) == 2
+    assert len(calls) == 3
 
 
 def test_real_mujoco_chassis_frame_not_robot_root_anchor():

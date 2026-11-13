@@ -66,6 +66,7 @@ class WorkerConfig:
     # run the native long-lived 10mm direct-color worker separately.
     sim_color_only: bool=False
     robot_pose_marker: bool=True
+    robot_pose_marker_style: str="game_arrow"
 
 
 def event(kind, *, row=None, **values):
@@ -84,7 +85,8 @@ def subprocess_stage(command, *, cwd=None, env=None, row=None, name=None):
         event("SUBPROCESS_DONE",row=row,stage=name,seconds=round(time.monotonic()-begin,2))
 
 
-def _stage_mark(path, name, row, *, robot_pose_marker=None):
+def _stage_mark(path, name, row, *, robot_pose_marker=None,
+                robot_pose_marker_style=None):
     marker=Path(path)/RECEIPT
     if not marker.is_file() or marker.is_symlink():
         return False
@@ -95,15 +97,19 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None):
             and data.get("source_fingerprint")==row["source_fingerprint"]
             and data.get("renderer")=="f27"
             and (robot_pose_marker is None or
-                 data.get("robot_pose_marker") is robot_pose_marker))
+                 data.get("robot_pose_marker") is robot_pose_marker)
+            and (robot_pose_marker_style is None or
+                 data.get("robot_pose_marker_style")==robot_pose_marker_style))
 
 
-def stage(work, name, row, builder, *, required=(), robot_pose_marker=None):
+def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
+          robot_pose_marker_style=None):
     target=Path(work)/name
     if target.is_symlink():
         raise ContractError("stage must not be a symlink: "+str(target))
     if target.exists():
-        if (_stage_mark(target,name,row,robot_pose_marker=robot_pose_marker)
+        if (_stage_mark(target,name,row,robot_pose_marker=robot_pose_marker,
+                        robot_pose_marker_style=robot_pose_marker_style)
                 and all((target/p).is_file() for p in required)):
             event("STAGE_REUSE",row=row,stage=name)
             return target
@@ -122,6 +128,8 @@ def stage(work, name, row, builder, *, required=(), robot_pose_marker=None):
         "source_fingerprint":row["source_fingerprint"],
         "complete":True,"renderer":"f27","training_ready":False,
         **({"robot_pose_marker":robot_pose_marker} if robot_pose_marker is not None else {}),
+        **({"robot_pose_marker_style":robot_pose_marker_style}
+           if robot_pose_marker_style is not None else {}),
     })
     event("STAGE_DONE",row=row,stage=name,
           seconds=round(time.monotonic()-started,2))
@@ -373,11 +381,14 @@ def produce_one(row,config):
             "--prepared",prepared,"--native-output",dualmap,
             "--output",p,"--backend","gpu","--renderer","f27"]+
             (["--color-only"] if config.sim_color_only else [])+
-            (["--no-robot-pose-marker"] if not config.robot_pose_marker else []),
+            (["--no-robot-pose-marker"] if not config.robot_pose_marker else [])+
+            ["--robot-pose-marker-style",config.robot_pose_marker_style],
             cwd=Path(__file__).resolve().parents[2],
             env=env,row=row,name="f27")
     f27=stage(work,"f27",row,render,required=("episode_receipt.json",),
-              robot_pose_marker=config.robot_pose_marker)
+              robot_pose_marker=config.robot_pose_marker,
+              robot_pose_marker_style=(config.robot_pose_marker_style
+                                       if config.robot_pose_marker else None))
     final=config.output_root/row["expected_relative_output"]
     result=package(f27,final,episode_id=row["episode_id"],
                    task_class=row["task_class"],selection=row)
@@ -540,7 +551,8 @@ def schedule(args):
             robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
             sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
-            robot_pose_marker=args.robot_pose_marker)
+            robot_pose_marker=args.robot_pose_marker,
+            robot_pose_marker_style=args.robot_pose_marker_style)
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -565,6 +577,7 @@ def schedule(args):
                 if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
                 if args.sim_color_only:cmd.append("--sim-color-only")
                 if not args.robot_pose_marker:cmd.append("--no-robot-pose-marker")
+                cmd.extend(["--robot-pose-marker-style",args.robot_pose_marker_style])
                 try:
                     subprocess.run(cmd,check=True)
                     if not plan.completed_output(row,args.output_root):
@@ -618,7 +631,8 @@ def run_one_cli(args):
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
         sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
-            robot_pose_marker=args.robot_pose_marker)
+            robot_pose_marker=args.robot_pose_marker,
+            robot_pose_marker_style=args.robot_pose_marker_style)
     produce_one(selected,config)
     return 0
 
@@ -656,6 +670,8 @@ def parser():
     p.add_argument("--allow-experimental",action="store_true")
     p.add_argument("--robot-pose-marker",action=argparse.BooleanOptionalAction,
                    default=True, help="include chassis marker on final floor-top PNGs (default: on)")
+    p.add_argument("--robot-pose-marker-style",choices=("classic","game_arrow"),
+                   default="game_arrow",help="final floor-top marker style (default: game_arrow)")
     p.add_argument("--sim-color-only",action="store_true",
                    help="experimental RoboCasa GT: F27 direct 10mm color, no nav_states")
     p.add_argument("--sim-direct-geometry-only",action="store_true",
