@@ -89,6 +89,8 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
         'id="pick-local-videos"', 'id="local-folder-fallback"',
         'id="remote-path"', 'id="scan-remote"',
         'id="restore-server"', 'id="directory-scan-status"',
+        'id="server-directory-select"', 'id="server-parent"',
+        'id="server-refresh"',
     ):
         assert control in html
     for marker in (
@@ -116,6 +118,12 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
     assert 'showDirectoryPicker' in js
     assert 'webkitdirectory' in html
     assert 'function scanRemoteRoot()' in js
+    assert 'function listServerDirectoryChoices()' in js
+    assert 'function navigateServerParent()' in js
+    assert 'directory-layout' in html
+    assert 'directory-source-card' in html
+    assert 'grid-template-columns:repeat(2,minmax(0,1fr))' in css
+    assert 'font-size:18px' in css
     assert 'data-count="4"' in css and 'data-count="5"' in css
     assert "minmax(0,1fr)" in css
     assert "[hidden] { display: none !important; }" in css
@@ -154,3 +162,13 @@ def test_recursive_directory_picker_without_browser():
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert "G2_DIRECTORY_NATIVE_RECURSIVE_DISCOVERY_PASS" in result.stdout
+
+def test_hierarchical_server_directory_dropdown_with_simulated_http():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_remote_browse_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_SERVER_HIERARCHICAL_DROPDOWN_PASS" in result.stdout

@@ -135,3 +135,17 @@ the pinned G2 output.
 
 Both source modes are read-only. The saved layout stays in localStorage;
 selected directory handles are not uploaded or persisted to the server.
+
+## UI layout: local and remote directory panels
+
+The data-source selector uses two balanced columns on desktop (Local left,
+Server right), stacking vertically below 1,000px. The remote panel offers a
+hierarchical directory dropdown populated from the **current same-origin HTTP
+directory listing**. Select a child to enter it, or use the Up button to return
+one level; Refresh rereads the current level. The manually editable HTTP path
+and the existing Scan & Load action remain available. This dropdown **cannot**
+enumerate arbitrary Linux paths outside the server's published HTTP root.
+
+The task's natural-language instruction now uses 18px semibold type on desktop
+(16px on small screens) for clearer review; other playback and layout controls
+are unchanged.

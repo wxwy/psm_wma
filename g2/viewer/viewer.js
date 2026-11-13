@@ -143,6 +143,7 @@
     mode: "server", baseCatalog: null, localSource: null,
     localVideoRoot: null, localVideoUrls: new Map(),
     sourceRootUrl: "../",
+    serverBrowseToken: 0, serverBrowseEntries: [],
   };
 
   function saveLayout() {
@@ -960,6 +961,46 @@
     });
   }
 
+  async function listServerDirectoryChoices() {
+    const select = $("server-directory-select");
+    const status = $("server-browse-status");
+    const token = ++state.serverBrowseToken;
+    select.disabled = true;
+    fillSelect(select, [["", "读取当前目录中的文件夹…"]], "");
+    status.textContent = "正在读取服务器目录…";
+    try {
+      const root = canonicalServerRoot($("remote-path").value.trim());
+      const children = await remoteDirectoryEntries(root);
+      if (token !== state.serverBrowseToken) return;
+      state.serverBrowseEntries = children;
+      const options = [
+        ["", children.length ? "选择下级目录…" : "当前目录没有下级文件夹"],
+        ...children.map(child => [child.url, "📁 " + child.name]),
+      ];
+      fillSelect(select, options, "");
+      select.disabled = children.length === 0;
+      status.textContent = children.length + " 个子目录 · 可逐级选择";
+    } catch (error) {
+      if (token !== state.serverBrowseToken) return;
+      state.serverBrowseEntries = [];
+      fillSelect(select, [["", "目录无法浏览，可手动输入路径"]], "");
+      select.disabled = true;
+      status.textContent = "未列出子目录 · " + error.message;
+    }
+  }
+
+  function navigateServerParent() {
+    try {
+      const current = canonicalServerRoot($("remote-path").value.trim());
+      const parent = new URL("../", current);
+      if (parent.origin !== location.origin || parent.href === current) return;
+      $("remote-path").value = parent.pathname;
+      void listServerDirectoryChoices();
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
   function canonicalServerRoot(raw) {
     if (!raw) throw Error("请输入 HTTP 数据目录");
     // Convenience for the existing 18765 server's /mnt/data1 soft link.
@@ -1073,6 +1114,7 @@
     state.localVideoRoot = null;
     clearVideoObjectUrls();
     $("remote-path").value = "../";
+    void listServerDirectoryChoices();
     const tasks = state.baseCatalog.tasks;
     const available = new Set(await listDirectory("../tasks/"));
     const preferred = tasks.find(task => available.has(task.name))?.name ||
@@ -1093,6 +1135,18 @@
   $("restore-server").addEventListener("click", () =>
     void restoreDefaultServer().catch(error => toast(error.message)));
   $("scan-remote").addEventListener("click", scanRemoteRoot);
+  $("server-refresh").addEventListener("click", () =>
+    void listServerDirectoryChoices());
+  $("server-parent").addEventListener("click", navigateServerParent);
+  $("server-directory-select").addEventListener("change", event => {
+    const selected = state.serverBrowseEntries.find(
+      entry => entry.url === event.target.value);
+    if (!selected) return;
+    $("remote-path").value = new URL(selected.url).pathname;
+    void listServerDirectoryChoices();
+  });
+  $("remote-path").addEventListener("change", () =>
+    void listServerDirectoryChoices());
   $("remote-path").addEventListener("keydown", event => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -1120,6 +1174,7 @@
         previous : first?.name || state.catalog.tasks[0].name;
       select.value = selected;
       await chooseTask(selected);
+      void listServerDirectoryChoices();
     } catch (error) {
       showStatus("初始化失败", "issue");
       $("instruction-text").textContent = error.message;
