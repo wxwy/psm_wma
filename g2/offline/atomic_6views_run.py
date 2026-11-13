@@ -599,19 +599,6 @@ def schedule(args):
             finished.append(r["episode_id"])
     def worker(slot):
         gpu,subslot,port=slot
-        config=WorkerConfig(
-            nav_repo=nav_repo,nav_setup=nav_setup,native_binary=native_binary,
-            python=Path(sys.executable),output_root=args.output_root,work_root=root,
-            keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,port=port,gpu=gpu,
-            robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
-            sim_direct_geometry_only=args.sim_direct_geometry_only,
-            sim_color_only=args.sim_color_only,
-            sim_direct_material=args.sim_direct_material,
-            scene_event_index=args.scene_event_index,
-            lazy_texel_decode=args.lazy_texel_decode,
-            robot_pose_marker=args.robot_pose_marker,
-            robot_pose_marker_style=args.robot_pose_marker_style,
-            marker_appearance=appearance_from_args(args))
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return

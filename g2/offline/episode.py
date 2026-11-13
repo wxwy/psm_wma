@@ -203,7 +203,6 @@ def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
     """
     from PIL import Image
     from g2.io import write_json
-    from g2.offline.native_transport import sha_file
     from g2.views.robot_pose_marker import overlay_final_top_views
     from g2.offline.scene_view_event_index import index_state
     views=original_report["views"]
