@@ -22,9 +22,12 @@ def chassis_pose(model, data):
     if body_id < 0:
         raise ContractError("robot pose marker requires mobilebase0_wheeled_base")
     position = [float(x) for x in data.xpos[body_id]]
-    # The RoboCasa Omron mobile-forward joint is in chassis local +Y.
+    # RoboCasa PandaOmron's PHYSICAL FRONT points from the wheel chassis
+    # toward the arm mount: body local +X (wheel body is mounted at x=-0.20).
+    # Do NOT use joint_mobile_forward here: its axis is +Y in recorded MJCF,
+    # and describes a translation DOF, not the front of the physical robot.
     rotation = data.xmat[body_id].reshape(3, 3)
-    forward = [float(x) for x in rotation[:, 1]]
+    forward = [float(x) for x in rotation[:, 0]]
     if not all(math.isfinite(v) for v in position + forward):
         raise ContractError("non-finite chassis pose")
     if math.hypot(forward[0], forward[1]) < 1e-8:
@@ -33,7 +36,7 @@ def chassis_pose(model, data):
         "position_world": position,
         "forward_world": forward,
         "source_body": "mobilebase0_wheeled_base",
-        "forward_axis": "body_local_positive_Y",
+        "forward_axis": "body_local_positive_X",
     }
 
 

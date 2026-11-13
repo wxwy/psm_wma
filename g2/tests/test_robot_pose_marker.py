@@ -25,9 +25,9 @@ def _meta():
 def _pose():
     return {
         "position_world": [10.5, 21, 0],
-        "forward_world": [0, -1, 0],
+        "forward_world": [-1, 0, 0],
         "source_body": "mobilebase0_wheeled_base",
-        "forward_axis": "body_local_positive_Y",
+        "forward_axis": "body_local_positive_X",
     }
 
 
@@ -35,8 +35,8 @@ def test_projection_uses_real_room_axis_origin_and_flipped_image_row():
     x, y, dx, dy = project(_meta(), _pose())
     assert x == pytest.approx(299.5)
     assert y == pytest.approx(249.5)
-    assert dx == pytest.approx(-1)
-    assert dy == pytest.approx(0)
+    assert dx == pytest.approx(0)
+    assert dy == pytest.approx(-1)
 
 
 def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tmp_path):
@@ -73,7 +73,7 @@ def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tm
     assert after["views"][1]["sha256"] == side_hash
     with Image.open(top) as image:
         assert image.getpixel((300, 250))[2] > image.getpixel((300, 250))[0]
-        assert image.getpixel((280, 250))[2] > image.getpixel((280, 250))[0]
+        assert image.getpixel((300, 230))[2] > image.getpixel((300, 230))[0]
         assert image.getpixel((80, 80)) == (255, 255, 255)
 
 
@@ -117,7 +117,11 @@ def test_real_mujoco_chassis_frame_not_robot_root_anchor():
     mujoco = pytest.importorskip("mujoco")
     xml = """<mujoco><worldbody>
       <body name="robot0_base" pos="10 10 0">
+        <body name="mobilebase0_support" pos="-2.5 3 .55">
+          <geom type="sphere" size=".04"/>
+        </body>
         <body name="mobilebase0_wheeled_base" pos="-2 3 .15" quat="0 0 0 1">
+          <joint name="mobilebase0_joint_mobile_forward" type="slide" axis="0 1 0"/>
           <geom type="box" size=".1 .2 .1"/>
         </body>
       </body>
@@ -127,4 +131,14 @@ def test_real_mujoco_chassis_frame_not_robot_root_anchor():
     mujoco.mj_forward(model, data)
     pose = chassis_pose(model, data)
     assert pose["position_world"] == pytest.approx([8, 13, .15])
-    assert pose["forward_world"][:2] == pytest.approx([0, -1])
+    assert pose["forward_world"][:2] == pytest.approx([-1, 0])
+    assert pose["forward_axis"] == "body_local_positive_X"
+    arm_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "mobilebase0_support")
+    arm_xy = data.xpos[arm_id, :2]
+    base_xy = pose["position_world"][:2]
+    # Physical front (wheels -> arm mount) is NOT the named forward slide DOF.
+    assert sum((arm_xy[i] - base_xy[i]) * pose["forward_world"][i]
+               for i in range(2)) > 0
+    joint_id = mujoco.mj_name2id(
+        model, mujoco.mjtObj.mjOBJ_JOINT, "mobilebase0_joint_mobile_forward")
+    assert model.jnt_axis[joint_id].tolist() == [0, 1, 0]
