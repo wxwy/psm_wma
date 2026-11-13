@@ -2,13 +2,15 @@
 import hashlib
 import json
 
+import numpy as np
 from PIL import Image
 import pytest
 
 from g2.io import ContractError
 from g2.views.robot_pose_marker import (
-    DEFAULT_MARKER_STYLE, MARKER_RECIPE_VERSION, _stamp,
-    chassis_pose, overlay_final_top_views, project,
+    DEFAULT_MARKER_STYLE, MARKER_RECIPE_VERSION, MarkerAppearance,
+    _stamp, chassis_pose, overlay_final_top_views, project,
+    marker_cache_key, appearance_from_args, appearance_cli_args,
 )
 
 
@@ -67,6 +69,11 @@ def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tm
     summary = overlay_final_top_views(stage, _pose(), style="classic")
     assert summary["drawn_views"] == 1
     assert summary["style"] == "classic"
+    assert summary["appearance"]["outline_color"] == "#E1E5EA"
+    assert summary["appearance"]["fill_color"] == "#454B53"
+    assert summary["appearance"]["length_px"] == 26.6
+    assert summary["appearance"]["relief"] == "raised"
+    assert summary["appearance_sha256"] == marker_cache_key("classic", MarkerAppearance())
     assert summary["eligible_views"] == 1
     assert top.read_bytes() != before_top
     assert hashlib.sha256(side.read_bytes()).hexdigest() == side_hash
@@ -83,11 +90,11 @@ def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tm
 
 def test_default_game_arrow_is_gray_and_reduced_70x80():
     assert DEFAULT_MARKER_STYLE == "game_arrow"
-    assert MARKER_RECIPE_VERSION == "g2_game_arrow_gray_70length_80width_v2"
+    assert MARKER_RECIPE_VERSION == "g2_robot_marker_appearance_v3"
     image = Image.new("RGB", (120, 120), "white")
     _stamp(image, 60, 60, 1, 0)  # tip to image-right
     rgb = image.getpixel((70, 60))
-    assert 100 < rgb[0] < 200 and max(rgb) - min(rgb) < 22  # neutral gray
+    assert 40 < rgb[0] < 210 and max(rgb) - min(rgb) < 55  # dark-gray fill / bevel
     assert image.getpixel((60, 60)) != (255, 255, 255)
     assert image.getpixel((45, 60)) == (255, 255, 255)  # tail notch
     assert image.getpixel((80, 60)) == (255, 255, 255)  # old tip +22, new +15.4
@@ -99,9 +106,74 @@ def test_default_game_arrow_is_gray_and_reduced_70x80():
     rotated = Image.new("RGB", image.size, "white")
     _stamp(rotated, 60, 60, 0, -1)
     rotated_gray = rotated.getpixel((60, 51))
-    assert 100 < rotated_gray[0] < 200 and max(rotated_gray) - min(rotated_gray) < 22
+    assert 40 < rotated_gray[0] < 210 and max(rotated_gray) - min(rotated_gray) < 55
     with pytest.raises(ContractError, match="style"):
         _stamp(image, 60, 60, 1, 0, style="unknown")
+
+
+@pytest.mark.parametrize("style", ["classic", "game_arrow"])
+def test_both_styles_honor_fill_stroke_outline_toggle_and_relief(style):
+    # Custom magenta border + deep-blue fill makes shared knobs unambiguous.
+    fill="#123456"
+    palette=dict(outline_width_px=2.0,outline_color="#FF00FF",
+                 fill_color=fill,relief="flat")
+    painted=Image.new("RGB",(180,180),(235,235,235))
+    _stamp(painted,90,90,1,0,style=style,appearance=MarkerAppearance(**palette))
+    pixels=np.asarray(painted)
+    border=(pixels[:,:,0] > 185)&(pixels[:,:,2] > 180)&(pixels[:,:,1] < 85)
+    core=(pixels[:,:,0] < 90)&(pixels[:,:,2] < 160)
+    assert border.sum() >= 5
+    assert core.sum() >= 10
+    none=Image.new("RGB",(180,180),(235,235,235))
+    _stamp(none,90,90,1,0,style=style,
+           appearance=MarkerAppearance(**dict(palette,outline_enabled=False)))
+    nop=np.asarray(none)
+    assert not ((nop[:,:,0]>185)&(nop[:,:,2]>180)&(nop[:,:,1]<85)).any()
+    raised=Image.new("RGB",(180,180),(235,235,235))
+    _stamp(raised,90,90,1,0,style=style,
+           appearance=MarkerAppearance(**dict(palette,relief="raised")))
+    assert raised.tobytes()!=painted.tobytes()
+
+
+@pytest.mark.parametrize("style", ["classic", "game_arrow"])
+def test_length_scales_every_geometric_dimension_without_changing_anchor(style):
+    def bbox(length):
+        image=Image.new("RGB",(220,220),"white")
+        _stamp(image,110,110,1,0,style=style,appearance=MarkerAppearance(
+            length_px=length,outline_enabled=False,relief="flat"))
+        mask=np.any(np.asarray(image)<205,axis=2)
+        ys,xs=np.nonzero(mask)
+        assert len(xs)>50
+        return xs.max()-xs.min()+1,ys.max()-ys.min()+1
+    a=bbox(26.6);b=bbox(39.9)
+    assert 1.32 < b[0]/a[0] < 1.70
+    assert 1.32 < b[1]/a[1] < 1.70
+
+
+def test_appearance_validation_config_roundtrip_and_cache_identity():
+    for kw in ({"fill_color":"red"}, {"outline_color":"#FFF"},
+               {"outline_width_px":float("nan")}, {"outline_width_px":-1},
+               {"length_px":0}, {"length_px":500}, {"relief":"3d"},
+               {"outline_enabled":1}):
+        with pytest.raises(ContractError):
+            MarkerAppearance(**kw)
+    from g2.offline.atomic_6views_run import parser
+    settings=parser().parse_args(["plan","--no-robot-pose-marker-outline",
+        "--robot-pose-marker-outline-width","2.5",
+        "--robot-pose-marker-outline-color","#BFC3C9",
+        "--robot-pose-marker-fill-color","#30353B",
+        "--robot-pose-marker-length-px","40",
+        "--robot-pose-marker-relief","flat"])
+    a=appearance_from_args(settings)
+    assert a.to_dict()["relief"]=="flat"
+    assert not a.outline_enabled and a.length_px==40
+    assert "--no-robot-pose-marker-outline" in appearance_cli_args(a)
+    cache=marker_cache_key("game_arrow",a)
+    assert len(cache)==64
+    assert cache != marker_cache_key("game_arrow",MarkerAppearance())
+    assert cache != marker_cache_key("classic",a)
+    assert cache != marker_cache_key("game_arrow",MarkerAppearance(
+        **dict(a.to_dict(),fill_color="#444444")))
 
 
 def test_missing_valid_floor_top_or_outside_pose_rejected(tmp_path):
@@ -147,6 +219,10 @@ def test_default_on_cli_and_config_sensitive_f27_reuse(tmp_path):
     stage(work, "f27", row, build, required=("episode_receipt.json",),
           robot_pose_marker=True, robot_pose_marker_style="game_arrow")
     assert len(calls) == 2
+    changed = MarkerAppearance(fill_color="#303030")
+    assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=True,
+                           robot_pose_marker_style="game_arrow",
+                           marker_appearance=changed)
     assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=True,
                            robot_pose_marker_style="classic")
     stage(work, "f27", row, build, required=("episode_receipt.json",),

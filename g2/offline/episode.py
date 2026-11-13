@@ -193,11 +193,15 @@ def _compare_views(stage, references):
 def _render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
            color_only=False, robot_pose_marker=True,
-           robot_pose_marker_style="game_arrow"):
+           robot_pose_marker_style="game_arrow", marker_appearance=None):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
-    from g2.views.robot_pose_marker import MARKER_RECIPE_VERSION
+    from g2.views.robot_pose_marker import (MARKER_RECIPE_VERSION, MarkerAppearance,
+                                           marker_cache_key)
+    marker_appearance = marker_appearance if marker_appearance is not None else MarkerAppearance()
+    if not isinstance(marker_appearance, MarkerAppearance):
+        raise ContractError("invalid robot marker appearance")
     from g2.views.alpha_source import compiled_translucent_only_owner_proof, save_source_alpha_sidecars
     started = time.perf_counter()
     config = read_json(inputs)
@@ -353,7 +357,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             robot_data = (state if visual_mesh_source or surface_registry_source
                           else get_data(model, states[frame]))
             marker = overlay_final_top_views(
-                stage, chassis_pose(model, robot_data), style=robot_pose_marker_style)
+                stage, chassis_pose(model, robot_data), style=robot_pose_marker_style,
+                appearance=marker_appearance)
         if row.get("scene_graph"):
             sg = row["scene_graph"]
             graph = bound_json(sg)
@@ -388,6 +393,9 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         robot_pose_marker_enabled=robot_pose_marker,
         robot_pose_marker_style=robot_pose_marker_style if robot_pose_marker else None,
         robot_pose_marker_recipe_version=(MARKER_RECIPE_VERSION if robot_pose_marker else None),
+        robot_pose_marker_appearance=(marker_appearance.to_dict() if robot_pose_marker else None),
+        robot_pose_marker_appearance_sha256=(marker_cache_key(robot_pose_marker_style,
+              marker_appearance) if robot_pose_marker else None),
         training_ready=False, native_inputs_retained_for_audit=True,
         actual_wall_s=round(time.perf_counter() - started, 6))
     if color_only:
@@ -413,14 +421,15 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
 def render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
            color_only=False, robot_pose_marker=True,
-           robot_pose_marker_style="game_arrow"):
+           robot_pose_marker_style="game_arrow", marker_appearance=None):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
                        visual_mesh_source=visual_mesh_source,
                        surface_registry_source=surface_registry_source,
                        color_only=color_only, robot_pose_marker=robot_pose_marker,
-                       robot_pose_marker_style=robot_pose_marker_style)
+                       robot_pose_marker_style=robot_pose_marker_style,
+                       marker_appearance=marker_appearance)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -446,6 +455,8 @@ def main():
                    default=True, help="draw chassis position/heading on exported floor_top (default: on)")
     p.add_argument("--robot-pose-marker-style", choices=("classic", "game_arrow"),
                    default="game_arrow", help="final floor_top marker style (default: game_arrow)")
+    from g2.views.robot_pose_marker import add_appearance_args, appearance_from_args
+    add_appearance_args(p)
     p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
                    help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
     args = parser.parse_args()
@@ -457,7 +468,8 @@ def main():
                visual_mesh_source=args.renderer in ("f27", "legacy"),
                surface_registry_source=args.renderer == "f27",
                color_only=args.color_only, robot_pose_marker=args.robot_pose_marker,
-               robot_pose_marker_style=args.robot_pose_marker_style)
+               robot_pose_marker_style=args.robot_pose_marker_style,
+               marker_appearance=appearance_from_args(args))
 
 
 if __name__ == "__main__":

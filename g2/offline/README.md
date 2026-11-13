@@ -11,6 +11,29 @@ python -m pytest g2/tests -q
 
 The generated `g2/bin/libfast_surface_cells.so` is ignored by Git. The GPU backend additionally needs MuJoCo EGL, PyOpenGL and the NVIDIA FP64/64-bit atomic shader capabilities used by the accepted renderer. SciPy supplies the existing CPU reference path. CPU remains the renderer default; direct-color runs select their backend explicitly.
 
+## Robot pose marker (final top View only)
+
+`floor_top.png` is stamped **after** source-bound F27 rasterization and raw
+pixel-parity verification; the native mesh, other View directions, geometry
+masks, room graph, and raw F27 RGB are unchanged. Both `classic` and
+`game_arrow` support one shared appearance contract:
+
+- `--robot-pose-marker` / `--no-robot-pose-marker` (default on)
+- `--robot-pose-marker-style {classic,game_arrow}` (default `game_arrow`)
+- `--robot-pose-marker-outline` / `--no-robot-pose-marker-outline` (default on)
+- `--robot-pose-marker-outline-width FLOAT` (default 1.0 final-image pixel)
+- `--robot-pose-marker-outline-color '#E1E5EA'` (gray-white default, `#RRGGBB`)
+- `--robot-pose-marker-fill-color '#454B53'` (dark gray default, `#RRGGBB`)
+- `--robot-pose-marker-length-px FLOAT` (default 26.6; width, tail notch,
+  arrowhead and the classic dot/shaft scale proportionally)
+- `--robot-pose-marker-relief {flat,raised}` (default `raised`); `raised` is
+  a 2.5D shading/pixel overlay, **not** any change to 3D scene geometry
+
+All appearance settings are recorded in the per-state marker receipt and
+source-identity-bound stage cache key. Changing color, outline, length,
+style, or relief invalidates the corresponding **F27 export stage** only.
+`nav_sg` and original RoboCasa frames remain untouched.
+
 ## Explicit episode inputs
 
 `g2.offline.episode` consumes JSON with `schema="g2_direct_color_episode_inputs_v1"`, `layout`, and these references:

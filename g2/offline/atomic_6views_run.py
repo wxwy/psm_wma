@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 import os
 from pathlib import Path
@@ -31,7 +31,9 @@ import time
 import traceback
 
 from g2.io import ContractError, read_json, write_json
-from g2.views.robot_pose_marker import MARKER_RECIPE_VERSION
+from g2.views.robot_pose_marker import (MARKER_RECIPE_VERSION, DEFAULT_MARKER_STYLE,
+    MarkerAppearance, marker_cache_key, add_appearance_args,
+    appearance_from_args, appearance_cli_args)
 from . import atomic_6views_plan as plan
 from .atomic_6views_compact import package
 from .atomic_6views_geometry import build as build_geometry
@@ -68,6 +70,7 @@ class WorkerConfig:
     sim_color_only: bool=False
     robot_pose_marker: bool=True
     robot_pose_marker_style: str="game_arrow"
+    marker_appearance: MarkerAppearance=field(default_factory=MarkerAppearance)
 
 
 def event(kind, *, row=None, **values):
@@ -87,7 +90,7 @@ def subprocess_stage(command, *, cwd=None, env=None, row=None, name=None):
 
 
 def _stage_mark(path, name, row, *, robot_pose_marker=None,
-                robot_pose_marker_style=None):
+                robot_pose_marker_style=None, marker_appearance=None):
     marker=Path(path)/RECEIPT
     if not marker.is_file() or marker.is_symlink():
         return False
@@ -102,17 +105,21 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None,
             and (robot_pose_marker_style is None or
                  data.get("robot_pose_marker_style")==robot_pose_marker_style)
             and (robot_pose_marker is not True or
-                 data.get("robot_pose_marker_recipe_version")==MARKER_RECIPE_VERSION))
+                 (data.get("robot_pose_marker_recipe_version")==MARKER_RECIPE_VERSION and
+                  data.get("robot_pose_marker_appearance_sha256")==marker_cache_key(
+                      robot_pose_marker_style or DEFAULT_MARKER_STYLE,
+                      marker_appearance if marker_appearance is not None else MarkerAppearance()))))
 
 
 def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
-          robot_pose_marker_style=None):
+          robot_pose_marker_style=None, marker_appearance=None):
     target=Path(work)/name
     if target.is_symlink():
         raise ContractError("stage must not be a symlink: "+str(target))
     if target.exists():
         if (_stage_mark(target,name,row,robot_pose_marker=robot_pose_marker,
-                        robot_pose_marker_style=robot_pose_marker_style)
+                        robot_pose_marker_style=robot_pose_marker_style,
+                        marker_appearance=marker_appearance)
                 and all((target/p).is_file() for p in required)):
             event("STAGE_REUSE",row=row,stage=name)
             return target
@@ -133,7 +140,10 @@ def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
         **({"robot_pose_marker":robot_pose_marker} if robot_pose_marker is not None else {}),
         **({"robot_pose_marker_style":robot_pose_marker_style}
            if robot_pose_marker_style is not None else {}),
-        **({"robot_pose_marker_recipe_version":MARKER_RECIPE_VERSION}
+        **({"robot_pose_marker_recipe_version":MARKER_RECIPE_VERSION,
+            "robot_pose_marker_appearance_sha256":marker_cache_key(
+                robot_pose_marker_style or DEFAULT_MARKER_STYLE,
+                marker_appearance if marker_appearance is not None else MarkerAppearance())}
            if robot_pose_marker is True else {}),
     })
     event("STAGE_DONE",row=row,stage=name,
@@ -387,13 +397,15 @@ def produce_one(row,config):
             "--output",p,"--backend","gpu","--renderer","f27"]+
             (["--color-only"] if config.sim_color_only else [])+
             (["--no-robot-pose-marker"] if not config.robot_pose_marker else [])+
-            ["--robot-pose-marker-style",config.robot_pose_marker_style],
+            ["--robot-pose-marker-style",config.robot_pose_marker_style]+
+            appearance_cli_args(config.marker_appearance),
             cwd=Path(__file__).resolve().parents[2],
             env=env,row=row,name="f27")
     f27=stage(work,"f27",row,render,required=("episode_receipt.json",),
               robot_pose_marker=config.robot_pose_marker,
               robot_pose_marker_style=(config.robot_pose_marker_style
-                                       if config.robot_pose_marker else None))
+                                       if config.robot_pose_marker else None),
+              marker_appearance=config.marker_appearance)
     final=config.output_root/row["expected_relative_output"]
     result=package(f27,final,episode_id=row["episode_id"],
                    task_class=row["task_class"],selection=row)
@@ -557,7 +569,8 @@ def schedule(args):
             sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
             robot_pose_marker=args.robot_pose_marker,
-            robot_pose_marker_style=args.robot_pose_marker_style)
+            robot_pose_marker_style=args.robot_pose_marker_style,
+            marker_appearance=appearance_from_args(args))
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
@@ -583,6 +596,7 @@ def schedule(args):
                 if args.sim_color_only:cmd.append("--sim-color-only")
                 if not args.robot_pose_marker:cmd.append("--no-robot-pose-marker")
                 cmd.extend(["--robot-pose-marker-style",args.robot_pose_marker_style])
+                cmd.extend(appearance_cli_args(appearance_from_args(args)))
                 try:
                     subprocess.run(cmd,check=True)
                     if not plan.completed_output(row,args.output_root):
@@ -637,7 +651,8 @@ def run_one_cli(args):
         sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
             robot_pose_marker=args.robot_pose_marker,
-            robot_pose_marker_style=args.robot_pose_marker_style)
+            robot_pose_marker_style=args.robot_pose_marker_style,
+            marker_appearance=appearance_from_args(args))
     produce_one(selected,config)
     return 0
 
@@ -677,6 +692,7 @@ def parser():
                    default=True, help="include chassis marker on final floor-top PNGs (default: on)")
     p.add_argument("--robot-pose-marker-style",choices=("classic","game_arrow"),
                    default="game_arrow",help="final floor-top marker style (default: game_arrow)")
+    add_appearance_args(p)
     p.add_argument("--sim-color-only",action="store_true",
                    help="experimental RoboCasa GT: F27 direct 10mm color, no nav_states")
     p.add_argument("--sim-direct-geometry-only",action="store_true",
