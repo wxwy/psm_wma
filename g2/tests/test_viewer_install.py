@@ -123,3 +123,14 @@ def test_delayed_png_decode_never_blanks_visible_floor_map():
         text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert "VIEWER_NO_BLANK_FRAME_REGRESSION_PASS" in result.stdout
+
+
+def test_island_four_directions_with_multiple_ids_and_no_island_episode():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_island_sources_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "VIEWER_ISLAND_FOUR_VIEW_CONTRACT_PASS" in result.stdout

@@ -77,3 +77,15 @@ python -m pytest -q g2/tests/test_viewer_install.py
 
 Run the installer again only when the checked-in UI or V3 mapping changes.
 Newly completed episodes do not require reinstalling or reindexing.
+## Island four-direction views
+
+For each selected Episode, the UI discovers Island IDs from the original
+episode_manifest.json state records. Only direction PNGs explicitly listed in
+view_pngs are offered; the four Island directions are plus_X, minus_X,
+plus_Y and minus_Y, grouped under each specific Island ID. Multiple Islands
+are shown as separate groups. The Viewer uses the corresponding Island PNG
+for that exact spatial state; it does not substitute a global room side view.
+
+Saved layouts remain stable when changing Episode. A previously selected Island
+that is absent from the current Episode is explicitly marked as unavailable and
+displays a placeholder, never another Island image.

@@ -17,6 +17,82 @@
   ];
   const VIDEO = new Set(["left", "right", "wrist"]);
   const ALL = new Set(SOURCES.map(v => v[0]));
+  const ISLAND_DIRECTIONS = ["plus_X", "minus_X", "plus_Y", "minus_Y"];
+  // Strict source tokens keep saved layouts and URL paths traversal-safe.
+  const ISLAND_SOURCE_RE = /^island:(island_[0-9]+_entity_[0-9]+):(plus_X|minus_X|plus_Y|minus_Y)$/;
+  const ISLAND_ID_RE = /^island_[0-9]+_entity_[0-9]+$/;
+  const parseIslandSource = source => {
+    const match = typeof source === "string" ? source.match(ISLAND_SOURCE_RE) : null;
+    return match ? {island: match[1], direction: match[2]} : null;
+  };
+  const validSource = source => ALL.has(source) || parseIslandSource(source) !== null;
+
+  function islandGroups(manifest) {
+    if (!manifest || !Array.isArray(manifest.states)) return [];
+    const byId = new Map();
+    for (const entry of manifest.states) {
+      if (!Array.isArray(entry.view_pngs)) continue;
+      const views = new Set(entry.view_pngs);
+      for (const id of entry.islands || []) {
+        if (typeof id !== "string" || !ISLAND_ID_RE.test(id)) continue;
+        for (const direction of ISLAND_DIRECTIONS) {
+          if (!views.has("islands/" + id + "/" + direction + ".png")) continue;
+          if (!byId.has(id)) byId.set(id, new Set());
+          byId.get(id).add(direction);
+        }
+      }
+    }
+    return [...byId.keys()].sort((a,b) => a.localeCompare(b,undefined,{numeric:true}))
+      .map((id,index) => ({
+        id,
+        label: "Island " + (index + 1) + " · " + id,
+        choices: ISLAND_DIRECTIONS.filter(direction => byId.get(id).has(direction))
+          .map(direction => ({
+            value: "island:" + id + ":" + direction,
+            label: direction.replace("plus_","+").replace("minus_","−"),
+          })),
+      }));
+  }
+
+  function sourceMetadata(source) {
+    const known = SOURCES.find(x => x[0] === source);
+    if (known) return known;
+    const island = parseIslandSource(source);
+    if (!island) throw Error("不支持的展示视角");
+    return [source, island.island + " · " + island.direction, "2 Hz · ISLAND"];
+  }
+
+  function fillSourceSelect(select, selected) {
+    select.replaceChildren();
+    const group = (name, values) => {
+      const optgroup = document.createElement("optgroup");
+      optgroup.label = name;
+      for (const [value,label] of values) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        optgroup.append(option);
+      }
+      select.append(optgroup);
+    };
+    group("全局 SixView", SOURCES.filter(x => !VIDEO.has(x[0])));
+    group("机器人相机", SOURCES.filter(x => VIDEO.has(x[0])));
+    const islands = islandGroups(state.manifest);
+    for (const island of islands) {
+      group(island.label, island.choices.map(c => [c.value, "Island · " + c.label]));
+    }
+    const options = [...select.querySelectorAll("option")];
+    if (!options.some(opt => opt.value === selected)) {
+      // Preserve a saved layout across Episodes with different Island IDs,
+      // but never advertise obsolete Island views as playable choices.
+      const missing = document.createElement("option");
+      missing.value = selected;
+      missing.textContent = sourceMetadata(selected)[1] + "（当前 Episode 无此视角）";
+      missing.disabled = true;
+      select.append(missing);
+    }
+    select.value = selected;
+  }
   const CAMERA = {
     left: "observation.images.robot0_agentview_left",
     right: "observation.images.robot0_agentview_right",
@@ -50,7 +126,7 @@
       if (Array.isArray(saved) && saved.length > 0 && saved.length <= 30 &&
           saved.every(r => typeof r.id === "string" &&
             Array.isArray(r.blocks) && r.blocks.length <= 5 &&
-            r.blocks.every(b => typeof b.id === "string" && ALL.has(b.source)))) {
+            r.blocks.every(b => typeof b.id === "string" && validSource(b.source)))) {
         const ids = saved.flatMap(r => [r.id, ...r.blocks.map(b => b.id)]);
         if (new Set(ids).size === ids.length) return saved;
       }
@@ -124,9 +200,15 @@
 
   function viewPath(source, index) {
     const entry = state.manifest.states[index];
-    if (!entry.view_pngs.includes("sixview/" + source + ".png")) return null;
+    const island = parseIslandSource(source);
+    if (!island && !ALL.has(source)) return null;
+    const relative = island
+      ? "islands/" + island.island + "/" + island.direction + ".png"
+      : "sixview/" + source + ".png";
+    // Only allow exact manifest-backed PNG paths, never construct unchecked data.
+    if (!entry.view_pngs.includes(relative)) return null;
     return episodeDirectory() + "state_" + pad(index) +
-      "_frame_" + pad(entry.frame) + "/sixview/" + source + ".png";
+      "_frame_" + pad(entry.frame) + "/" + relative;
   }
 
   function spatialAt(time) {
@@ -296,6 +378,7 @@
         tile.canvas.hidden = true;
         tile.fallback.hidden = false;
         tile.fallbackText.textContent =
+          parseIslandSource(tile.source) ? "该时刻未生成这个 Island 的方向视图" :
           tile.source === "upper_up" ? "该时刻没有仰视图" : "该视角未生成";
         tile.status.textContent = "NOT GENERATED";
         continue;
@@ -492,7 +575,7 @@
     const select = document.createElement("select");
     select.className = "tile-select"; select.title = "切换展示来源";
     select.setAttribute("aria-label", "展示块 " + (index + 1) + " 视角");
-    fillSelect(select, SOURCES.map(x => [x[0], x[1]]), block.source);
+    fillSourceSelect(select, block.source);
     select.addEventListener("change", () => {
       block.source = select.value; saveLayout(); renderLayout();
     });
@@ -514,7 +597,7 @@
     const foot = document.createElement("div"); foot.className = "tile-foot";
     const source = document.createElement("span"); source.className = "tile-source";
     const status = document.createElement("span"); status.className = "tile-state";
-    const meta = SOURCES.find(x => x[0] === block.source);
+    const meta = sourceMetadata(block.source);
     source.textContent = meta[2];
     status.textContent = "—";
     foot.append(source, status);
