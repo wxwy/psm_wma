@@ -1,6 +1,6 @@
 # G2 P0+P1+P2 — independent full-chain integration gate, 2026-11-13
 
-**Status: code and end-to-end checks PASS in the isolated experimental workspace. P2 CloseFridge human image-quality gate PENDING. This branch is NOT merged into formal V3, and the 9,126-Episode producer was NOT restarted.**
+**Status: isolated end-to-end tests and user H1 visual-acceptance gate PASS. Formal V3 promotion and additional full-Worker paired throughput tests remain OPEN. The 9,126-Episode producer was NOT restarted.**
 
 Experiment source base: formal PSM-WMA V3 commit f29b01d3235a7fbfd8e17727b8edaf2155957b35, nav_sg native source 9734d2e0e261a47efbd00f5de78ec6c1a983557b. This experimental branch introduces only opt-in switches. Default v1 producer, default native ROS RGB-D source, and original nav_sg are unmodified.
 
@@ -14,7 +14,7 @@ At each 2 Hz View state:
 - Preserve frame-specific real source GT, every Scene Graph, and source/provenance identifiers.
 - Existing robot exclusion and arrow-overlay implementation are reused, not reimplemented.
 
-The user has accepted 1 mm / 1 degree as the physical View cache motion threshold, and had previously inspected sample 1-pixel and 57-pixel differences with H1 visual acceptance. The new CloseFridge worst-case 468-pixel difference requires a SEPARATE human gate.
+The user has accepted 1 mm / 1 degree as the physical View cache motion threshold, and had previously inspected sample 1-pixel and 57-pixel differences with H1 visual acceptance. The separate CloseFridge H1 human gate has now PASSED: the user inspected the largest differences and reported no visible distinction.
 
 ## P0: opt-in Lazy Texture
 
@@ -60,7 +60,7 @@ CloseFridge/episode_000569, source-bound real RoboCasa data and actual nav_sg na
 - New v2 package: 17 source states, **17/17 Scene Graphs equal to the old published v1**, 136 old View comparisons, 52 physical PNGs and 84 indexed image refs. 93 PNGs exactly equal; 43 differed by a total 2,710 pixels, worst single side View 468 pixels out of 178,974 (0.2615%).
 - New published v2 Episode size around 11 MiB vs old v1 around 19 MiB, using the same broad du units (not a calibrated compression benchmark).
 - No original production output was changed or replaced. Independent output path: /tmp/g2_p012_fullworker_20261113/output/tasks/CloseFridge/episodes/episode_000569.
-- Human quality preview: /tmp/g2_p012_fullworker_20261113/human_gate/index.html, server localhost:18770. **Human H1 pending for this new larger diff.**
+- Human quality preview: /tmp/g2_p012_fullworker_20261113/human_gate/index.html, server localhost:18770. **Human H1 PASS: user explicitly reported no visible difference after inspecting the CloseFridge preview.**
 
 ## Tests and strict boundaries
 
@@ -72,11 +72,17 @@ CloseFridge/episode_000569, source-bound real RoboCasa data and actual nav_sg na
 
 ## Remaining promotion gates
 
-1. **H1 visual acceptance for CloseFridge 468-pixel worst-case side view**. If rejected, do not promote the current 1mm/1degree cache behavior without a policy revision.
+1. **H1 visual acceptance CLOSED — PASS.** The user examined the CloseFridge preview, including the worst 468-pixel side-view difference, and reported no visible distinction. Keep exact pixel mismatch counts in the audit (visual PASS is not bit-exact parity).
 2. Re-run full code on a second complete direct-material Worker task class and confirm Room/Island/ceiling/translucent cases are not regressed.
 3. Complete a strict side-by-side or interleaved **full Worker throughput comparison** under the same machine contention if claiming global speedup (current 1.99x is a historical cross-run reference).
 4. Promote code only after explicit approval; do not mutate formal V3 or the running/stopped producer in-place, never touch existing 202 v1 completed Episodes. The default original v1 and native RGB-D path must remain unchanged.
 
 ## Formal code and output isolation verified after GitHub experiment commit
 
-The experimental branch was created from the pinned V3 commit f29b01d3235a7fbfd8e17727b8edaf2155957b35 and does not update V3. Full worker output was written only into an independent /tmp output root; pre-existing 202 completed formal v1 RoboCasa Episode directories remain untouched. G2 full production was not restarted. A new CloseFridge H1 review is still pending.
+The experimental branch was created from the pinned V3 commit f29b01d3235a7fbfd8e17727b8edaf2155957b35 and does not update V3. Full worker output was written only into an independent /tmp output root; pre-existing 202 completed formal v1 RoboCasa Episode directories remain untouched. G2 full production was not restarted. The latest CloseFridge H1 review has been explicitly accepted by the user.
+
+## H1 accepted — 2026-11-13
+
+The user reviewed the real complete CloseFridge/episode_000569 side-by-side comparison at the fixed localhost:18770 preview and explicitly stated **“没有区别的”** (no visible difference). The previous 1 mm translation / 1 degree rotation tolerance remains the agreed image-update policy. Mark visual quality gate H1 PASS for this candidate and treat the remaining 468-pixel maximum and aggregate 2,710 different pixels as audited, intentionally accepted visual approximations. This does NOT mean bit-exact PNG equivalence; 17/17 per-frame Scene Graphs were content-equal, and source identity was checked independently.
+
+Promotion remains blocked on finishing remaining required tests (including a second complete original-source direct-material Worker task/layout and source-v1/v2 mixed Resume validation) and an explicit production merge decision. Do not restart full production automatically.
