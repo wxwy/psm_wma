@@ -64,7 +64,7 @@ CloseFridge/episode_000569, source-bound real RoboCasa data and actual nav_sg na
 
 ## Tests and strict boundaries
 
-- G2 Python full regression: **877/877 passed**.
+- G2 Python full regression: **916/916 passed** when G2_F27_REAL_SOURCE_MJCF points to the real, read-only NavigateKitchen scene_rebased.xml; this includes both P0 real-texture tests that previously skipped without an explicit source asset.
 - G2 Viewer Node smoke: **4/4 passed** (Island, no flicker, native local directory source, v2 indexing).
 - Additional opt-in tests verify v2 full/arrow/reuse cases, direct indexes, per-frame SG, changed View inventory at FULL states, mismatched source fingerprint and wrong references, and malformed mode flags.
 - P1 refs cannot claim motion above 1mm/1degree; native byte evidence is never forged. P2 direct mode refuses original color payload flags and source snapshots without correct GT provenance.
@@ -76,3 +76,7 @@ CloseFridge/episode_000569, source-bound real RoboCasa data and actual nav_sg na
 2. Re-run full code on a second complete direct-material Worker task class and confirm Room/Island/ceiling/translucent cases are not regressed.
 3. Complete a strict side-by-side or interleaved **full Worker throughput comparison** under the same machine contention if claiming global speedup (current 1.99x is a historical cross-run reference).
 4. Promote code only after explicit approval; do not mutate formal V3 or the running/stopped producer in-place, never touch existing 202 v1 completed Episodes. The default original v1 and native RGB-D path must remain unchanged.
+
+## Formal code and output isolation verified after GitHub experiment commit
+
+The experimental branch was created from the pinned V3 commit f29b01d3235a7fbfd8e17727b8edaf2155957b35 and does not update V3. Full worker output was written only into an independent /tmp output root; pre-existing 202 completed formal v1 RoboCasa Episode directories remain untouched. G2 full production was not restarted. A new CloseFridge H1 review is still pending.
