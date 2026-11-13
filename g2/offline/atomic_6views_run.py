@@ -31,6 +31,7 @@ import time
 import traceback
 
 from g2.io import ContractError, read_json, write_json
+from g2.views.robot_pose_marker import MARKER_RECIPE_VERSION
 from . import atomic_6views_plan as plan
 from .atomic_6views_compact import package
 from .atomic_6views_geometry import build as build_geometry
@@ -99,7 +100,9 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None,
             and (robot_pose_marker is None or
                  data.get("robot_pose_marker") is robot_pose_marker)
             and (robot_pose_marker_style is None or
-                 data.get("robot_pose_marker_style")==robot_pose_marker_style))
+                 data.get("robot_pose_marker_style")==robot_pose_marker_style)
+            and (robot_pose_marker is not True or
+                 data.get("robot_pose_marker_recipe_version")==MARKER_RECIPE_VERSION))
 
 
 def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
@@ -130,6 +133,8 @@ def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
         **({"robot_pose_marker":robot_pose_marker} if robot_pose_marker is not None else {}),
         **({"robot_pose_marker_style":robot_pose_marker_style}
            if robot_pose_marker_style is not None else {}),
+        **({"robot_pose_marker_recipe_version":MARKER_RECIPE_VERSION}
+           if robot_pose_marker is True else {}),
     })
     event("STAGE_DONE",row=row,stage=name,
           seconds=round(time.monotonic()-started,2))

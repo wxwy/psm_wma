@@ -197,6 +197,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views
+    from g2.views.robot_pose_marker import MARKER_RECIPE_VERSION
     from g2.views.alpha_source import compiled_translucent_only_owner_proof, save_source_alpha_sidecars
     started = time.perf_counter()
     config = read_json(inputs)
@@ -386,6 +387,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         renderer_backend=backend, color_leaf_m=.01, view_meters_per_pixel=.01,
         robot_pose_marker_enabled=robot_pose_marker,
         robot_pose_marker_style=robot_pose_marker_style if robot_pose_marker else None,
+        robot_pose_marker_recipe_version=(MARKER_RECIPE_VERSION if robot_pose_marker else None),
         training_ready=False, native_inputs_retained_for_audit=True,
         actual_wall_s=round(time.perf_counter() - started, 6))
     if color_only:

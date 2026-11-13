@@ -15,6 +15,8 @@ from g2.io import ContractError, read_json, write_json
 
 MARKER_STYLES = ("classic", "game_arrow")
 DEFAULT_MARKER_STYLE = "game_arrow"
+# Appearance changes must invalidate existing F27 overlay stage receipts.
+MARKER_RECIPE_VERSION = "g2_game_arrow_gray_70length_80width_v2"
 
 
 def chassis_pose(model, data):
@@ -87,28 +89,31 @@ def _stamp_classic(image, x, y, dx, dy):
 
 
 def _stamp_game_arrow(image, x, y, dx, dy):
-    """Antialiased red chevron with a notched tail, like a game minimap marker.
+    """Antialiased gray chevron with a notched tail, like a game minimap marker.
 
     Draw only a small local patch; the map image itself is never resampled.
     The image-space heading (dx, dy) remains the physical chassis +X axis.
     """
     scale = 4
     radius = 29
-    center = radius * scale
     overlay = Image.new("RGBA", (2 * radius * scale, 2 * radius * scale), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
     # Coordinates are (along heading, perpendicular to heading). A recessed
     # rear notch makes the silhouette a concave game-style chevron, not a kite.
-    shape = ((22, 0), (-16, -11), (-6, 0), (-16, 11))
+    # Shrink only the silhouette: 70% of previous length, 80% width.
+    # Keep the chassis pose anchor and rotation mathematics unchanged.
+    length_scale, width_scale = .70, .80
+    shape = tuple((along * length_scale, across * width_scale)
+                  for along, across in ((22, 0), (-16, -11), (-6, 0), (-16, 11)))
     def points(offset_x=0, offset_y=0):
         return [((radius + along * dx - across * dy + offset_x) * scale,
                  (radius + along * dy + across * dx + offset_y) * scale)
                 for along, across in shape]
-    # Understated drop shadow and dark red outline are visible on white floors.
-    draw.polygon(points(1.0, 1.5), fill=(50, 34, 32, 80))
+    # Neutral light-gray body, graphite border, subtle charcoal shadow.
+    draw.polygon(points(1.0, 1.5), fill=(42, 45, 51, 72))
     polygon = points()
-    draw.polygon(polygon, fill=(232, 52, 39, 255))
-    draw.line(polygon + [polygon[0]], fill=(151, 39, 33, 255),
+    draw.polygon(polygon, fill=(169, 174, 182, 255))
+    draw.line(polygon + [polygon[0]], fill=(89, 96, 106, 255),
               width=scale, joint="curve")
     patch = overlay.resize((2 * radius, 2 * radius), Image.Resampling.LANCZOS)
     image.paste(patch, (round(x) - radius, round(y) - radius), patch)
@@ -164,6 +169,7 @@ def overlay_final_top_views(stage, pose, *, style=DEFAULT_MARKER_STYLE):
         raise ContractError("robot chassis is outside every exported floor_top view")
     marker = {
         "enabled": True, "style": style,
+        "recipe_version": MARKER_RECIPE_VERSION,
         "drawn_views": drawn, "eligible_views": total,
         "pose": pose, "views": details,
         "stage": "AFTER_RAW_PIXEL_EXACT_VALIDATION",

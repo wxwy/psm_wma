@@ -7,7 +7,8 @@ import pytest
 
 from g2.io import ContractError
 from g2.views.robot_pose_marker import (
-    DEFAULT_MARKER_STYLE, _stamp, chassis_pose, overlay_final_top_views, project,
+    DEFAULT_MARKER_STYLE, MARKER_RECIPE_VERSION, _stamp,
+    chassis_pose, overlay_final_top_views, project,
 )
 
 
@@ -80,22 +81,25 @@ def test_final_top_only_stamps_png_and_preserves_inner_raw_geometry_and_sides(tm
         assert image.getpixel((80, 80)) == (255, 255, 255)
 
 
-def test_default_game_arrow_is_red_and_has_notched_tail():
+def test_default_game_arrow_is_gray_and_reduced_70x80():
     assert DEFAULT_MARKER_STYLE == "game_arrow"
+    assert MARKER_RECIPE_VERSION == "g2_game_arrow_gray_70length_80width_v2"
     image = Image.new("RGB", (120, 120), "white")
     _stamp(image, 60, 60, 1, 0)  # tip to image-right
-    assert image.getpixel((76, 60))[0] > 180  # red tip
-    assert image.getpixel((76, 60))[1] < 110
-    assert image.getpixel((60, 60))[0] > 180  # red body
-    assert image.getpixel((45, 60)) == (255, 255, 255)  # concave rear notch
+    rgb = image.getpixel((70, 60))
+    assert 100 < rgb[0] < 200 and max(rgb) - min(rgb) < 22  # neutral gray
+    assert image.getpixel((60, 60)) != (255, 255, 255)
+    assert image.getpixel((45, 60)) == (255, 255, 255)  # tail notch
+    assert image.getpixel((80, 60)) == (255, 255, 255)  # old tip +22, new +15.4
+    assert min(image.getpixel((50, 72))) >= 253  # half width 11 -> 8.8; AA fringe
     assert image.getpixel((22, 22)) == (255, 255, 255)
     classic = Image.new("RGB", image.size, "white")
     _stamp(classic, 60, 60, 1, 0, style="classic")
     assert classic.tobytes() != image.tobytes()
     rotated = Image.new("RGB", image.size, "white")
     _stamp(rotated, 60, 60, 0, -1)
-    assert rotated.getpixel((60, 44))[0] > 180
-    assert rotated.getpixel((60, 44))[1] < 110
+    rotated_gray = rotated.getpixel((60, 51))
+    assert 100 < rotated_gray[0] < 200 and max(rotated_gray) - min(rotated_gray) < 22
     with pytest.raises(ContractError, match="style"):
         _stamp(image, 60, 60, 1, 0, style="unknown")
 
@@ -133,15 +137,25 @@ def test_default_on_cli_and_config_sensitive_f27_reuse(tmp_path):
     stage(work, "f27", row, build, required=("episode_receipt.json",),
           robot_pose_marker=True, robot_pose_marker_style="game_arrow")
     assert len(calls) == 1
+    marker_receipt = work / "f27" / "G2_STAGE_COMPLETE.json"
+    record = json.loads(marker_receipt.read_text())
+    assert record["robot_pose_marker_recipe_version"] == MARKER_RECIPE_VERSION
+    record["robot_pose_marker_recipe_version"] = "stale_red_arrow_v1"
+    marker_receipt.write_text(json.dumps(record))
+    assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=True,
+                           robot_pose_marker_style="game_arrow")
+    stage(work, "f27", row, build, required=("episode_receipt.json",),
+          robot_pose_marker=True, robot_pose_marker_style="game_arrow")
+    assert len(calls) == 2
     assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=True,
                            robot_pose_marker_style="classic")
     stage(work, "f27", row, build, required=("episode_receipt.json",),
           robot_pose_marker=True, robot_pose_marker_style="classic")
-    assert len(calls) == 2
+    assert len(calls) == 3
     assert not _stage_mark(work / "f27", "f27", row, robot_pose_marker=False)
     stage(work, "f27", row, build, required=("episode_receipt.json",),
           robot_pose_marker=False)
-    assert len(calls) == 3
+    assert len(calls) == 4
 
 
 def test_real_mujoco_chassis_frame_not_robot_root_anchor():
