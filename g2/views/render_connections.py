@@ -39,7 +39,7 @@ def wall_directions(s,room):
 
 def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None,
               dense_manifest=None,surface_data=None,renderer_backend="cpu",
-              visual_mesh_by_room=None):
+              visual_mesh_by_room=None, sim_direct_material=False):
     from .render import AXES,CARDINAL,rasterize
     started=time.perf_counter_ns();cpu_started=time.process_time_ns()
     native_observed=(s.get('surface_color_source')=='NATIVE_RGBD_FUSION_ONLY' and
@@ -49,9 +49,13 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     # missing 5cm prescan as color evidence without F27 surface registry.
     direct_gt=(s.get('surface_transport_mode')=='SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN'
                and s.get('surface_color_source')=='MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY'
-               and surface_data is not None and visual_mesh_by_room is not None
+               and (surface_data is not None or sim_direct_material)
+               and visual_mesh_by_room is not None
                and all('surface_registry' in v for v in visual_mesh_by_room.values()))
-    full_asset=((dense_manifest is not None or surface_data is not None) and
+    if sim_direct_material and not (surface_data is None and dense_manifest is None
+                                   and direct_gt and renderer_backend=='gpu'):
+        raise ContractError("direct-mesh F27 accepts only source GT Visual Mesh, no native color voxels")
+    full_asset=((dense_manifest is not None or surface_data is not None or sim_direct_material) and
         s.get('source_mode')=='full_map_mujoco_source' and
         (s.get('surface_color_source')=='MUJOCO_SOURCE_SURFACES_WITH_ORIGINAL_INVALID_MASK'
          or direct_gt))
@@ -60,7 +64,8 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     if visual_mesh_by_room is not None:
         unified_surface_source=(isinstance(visual_mesh_by_room,dict) and
             all(isinstance(v,dict) and "surface_registry" in v for v in visual_mesh_by_room.values()))
-        if (not full_asset or surface_data is None or (renderer_backend != "gpu" and not unified_surface_source)
+        if (not full_asset or (surface_data is None and not sim_direct_material)
+                or (renderer_backend != "gpu" and not unified_surface_source)
                 or type(visual_mesh_by_room) is not dict
                 or not visual_mesh_by_room):
             raise ContractError("visual-mesh source requires MuJoCo full-map 10mm GPU proof")
@@ -75,7 +80,16 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     by_id={e['id']:e for e in s['entities']};numeric={name:i for i,name in enumerate(sorted(by_id))}
     records={r['entity_id']:r for r in s['connections']['objects']}
     dense_evidence=None
-    if surface_data is not None:
+    if sim_direct_material:
+        # The single actual scene source is compiled MuJoCo Visual Mesh +
+        # source material/alpha and current GT. No color voxels or fake
+        # observed RGB-D samples are synthesized.
+        xyz=np.empty((0,3),dtype=np.float64)
+        rgb=np.empty((0,3),dtype=np.uint8)
+        valid=np.empty((0,),dtype=np.bool_)
+        owners=np.empty((0,),dtype=np.int32)
+        n=0
+    elif surface_data is not None:
         from .direct_color import validate_surface_data
         xyz,rgb,valid,owners,dense_evidence=validate_surface_data(surface_data,s)
         n=len(xyz)

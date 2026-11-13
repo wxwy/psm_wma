@@ -190,13 +190,81 @@ def _compare_views(stage, references):
     return len(expected)
 
 
+def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
+                               robot_pose,marker_appearance,marker_style):
+    """Standalone opt-in, no scene rasterization for motion-tolerant states.
+
+    The raw F27 scene and its projection metadata come from the actual previous
+    scene keyframe. Each skipped GT state still has independent SG, source
+    hashes, native receipts, and a new per-state manifest. Side/island PNGs are
+    represented by references, NEVER copied. For robot-only movement, only
+    the unmarked floor_top is reconstructed from keyframe raw evidence and
+    the already verified original chassis marker compositor draws on it.
+    """
+    from PIL import Image
+    from g2.io import write_json
+    from g2.offline.native_transport import sha_file
+    from g2.views.robot_pose_marker import overlay_final_top_views
+    from g2.offline.scene_view_event_index import index_state
+    views=original_report["views"]
+    event_paths=[v["rgb_file"] for v in views]
+    desc=index_state(event,event_paths)
+    if event.mode=="ARROW_ONLY":
+        # Only point to an existing, validated scene background. This local
+        # symlink is diagnostic-only and never enters the final v2 dataset.
+        raw_source=keyframe/"g2_original_gpu"
+        if not raw_source.is_dir() or raw_source.is_symlink():
+            raise ContractError("original unmarked F27 keyframe missing")
+        (stage/"g2_original_gpu").symlink_to(raw_source.resolve(strict=True),target_is_directory=True)
+        for view in views:
+            if Path(view["native_view"]).name!="floor_top":
+                continue
+            name=view["native_view"]
+            raw=raw_source/name
+            with Image.open(raw/"rgb.png") as loaded:
+                image=np.asarray(loaded.convert("RGB")).copy()
+            with Image.open(raw/"geometry_valid.png") as loaded:
+                geom=np.asarray(loaded)>0
+            if image.shape[:2]!=geom.shape:
+                raise ContractError("cached floor geometry mask differs from RGB")
+            image[~geom]=255
+            target=stage/view["rgb_file"]
+            target.parent.mkdir(parents=True,exist_ok=True)
+            Image.fromarray(image).save(target)
+    report=dict(original_report)
+    report.update(frame_id=snapshot["frame_id"],scene_id=snapshot["scene_id"],
+                  source_sha256=snapshot["source_sha256"],
+                  gpu_render_and_export_s=0.,
+                  scene_event_mode=event.mode,
+                  scene_source_state=event.scene_source_state,
+                  scene_view_refs=desc["view_refs"],
+                  scene_materialized_views=desc["view_pngs"],
+                  scene_motion_translation_tol_m=.001,
+                  scene_motion_rotation_tol_deg=1.)
+    report["views"]=[dict(v) for v in views]
+    report.pop("robot_pose_marker",None)
+    if event.mode=="REUSE_ALL":
+        # Never forge a new marker or a per-frame materialization.
+        report["scene_marker_reused_state"]=event.final_floor_source_state
+        report["robot_pose_marker"]={"enabled":True,"reused":True,
+             "from_state":event.final_floor_source_state,"drawn_views":0}
+    write_json(stage/"direct_color_views.json",report)
+    if event.mode=="ARROW_ONLY":
+        marker=overlay_final_top_views(stage,robot_pose,
+            style=marker_style,appearance=marker_appearance)
+        report["robot_pose_marker"]=marker
+    return report
+
+
 def _render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
            color_only=False, robot_pose_marker=True,
-           robot_pose_marker_style="game_arrow", marker_appearance=None):
+           robot_pose_marker_style="game_arrow", marker_appearance=None,
+           scene_event_index=False, lazy_texel_decode=False,
+           sim_direct_material=False):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
-    from g2.views.direct_color import save_direct_color_views
+    from g2.views.direct_color import save_direct_color_views,save_direct_material_views
     from g2.views.robot_pose_marker import (MARKER_RECIPE_VERSION, MarkerAppearance,
                                            marker_cache_key)
     marker_appearance = marker_appearance if marker_appearance is not None else MarkerAppearance()
@@ -206,11 +274,29 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     started = time.perf_counter()
     config = read_json(inputs)
     _, _, _, snapshots = verify_input_config(config)
-    prepared, native_output = Path(prepared), Path(native_output)
-    colors = read_json(prepared / "color_manifest.json")
+    if sim_direct_material and not (color_only and surface_registry_source and
+                                    scene_event_index and backend=="gpu"):
+        raise ContractError("mesh-only requires explicit simulation F27/P1 direct GT mode")
+    if not sim_direct_material:
+        prepared, native_output = Path(prepared), Path(native_output)
+        colors = read_json(prepared / "color_manifest.json")
+    else:
+        if prepared is not None or native_output is not None:
+            raise ContractError("mesh-only mode must NOT consume native 10mm color")
+        for snapshot in snapshots:
+            if (snapshot.get("source_mode")!="full_map_mujoco_source"
+                    or snapshot.get("surface_transport_mode")!="SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN"
+                    or snapshot.get("surface_color_source")!="MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY"
+                    or snapshot.get("completed_rgbd_observations")!=0
+                    or snapshot.get("full_map_source",{}).get("status") is None):
+                raise ContractError("mesh-only source not bound to GT/Visual Mesh")
+        colors={"states":[{"frame":r["frame"],"state_id":i}
+                          for i,r in enumerate(config["states"])],
+                "complete_episode_states":len(config["states"]),
+                "frames":[r["frame"] for r in config["states"]]}
     if type(color_only) is not bool:
         raise ContractError("color-only View mode must be explicit")
-    if color_only:
+    if color_only and not sim_direct_material:
         if not surface_registry_source or any(
                 s["source_mode"]!="full_map_mujoco_source"
                 or s.get("surface_transport_mode")!="SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN"
@@ -226,7 +312,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                 or complete.get("source_sha256")!=snapshots[0]["source_sha256"]
                 or complete.get("scene_id")!=snapshots[0]["scene_id"]):
             raise ContractError("native GT color-only completion/source is invalid")
-    else:
+    elif not sim_direct_material:
         complete = read_json(native_output / "F24_NATIVE_FULL_EPISODE_COMPLETE.json")
         if colors.get("native_color_only_without_10cm_nav"):
             raise ContractError("legacy dual-map cannot consume color-only GT source")
@@ -237,7 +323,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             or [row.get("frame") for row in expected_rows] != configured_frames
             or [row.get("state_id") for row in expected_rows] != list(range(len(configured_frames)))):
         raise ContractError("prepared state coverage/order is incomplete")
-    if (colors.get("complete") is not True or colors["source_inputs_sha256"] != sha_file(inputs)
+    if not sim_direct_material and (colors.get("complete") is not True or colors["source_inputs_sha256"] != sha_file(inputs)
             or complete.get("complete_state_count") != len(snapshots)
             or complete.get("native_color_full_F22_sha_equal_every_state") is not True
             or (not color_only and complete.get("native_dual_map_same_process") is not True)
@@ -256,13 +342,30 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     opaque_ray_owner_indices = certified_opaque_color_owner_indices(model, visual_specs, initial)
     alpha_proof = None if surface_registry_source else compiled_translucent_only_owner_proof(
         model, visual_specs, initial, dense['model_source_sha256'])
+    if scene_event_index and not (surface_registry_source and visual_mesh_source and
+                                  color_only and robot_pose_marker and backend=="gpu"):
+        raise ContractError("scene index experiment requires RGBD-free F27 GPU, color-only, robot marker")
+    if scene_event_index:
+        from g2.offline.scene_view_event_index import SceneViewCursor,robot_pose_xy_yaw
+        from g2.views.robot_pose_marker import chassis_pose
+        # Only explicitly selected non-robot visual Geoms, never the robot.
+        cursor=SceneViewCursor([x["g"] for x in visual_specs],
+                               translation_tol_m=.001,rotation_tol_deg=1.0)
+    else:
+        cursor=None
+    scene_keyframe_stage=None
+    scene_keyframe_report=None
     source_renderer = None
     if surface_registry_source:
         from .direct_source import identify_dynamic_geoms
         from g2.views.surface_renderer import SurfaceRenderer
         _, static_ids, planning_s = identify_dynamic_geoms(model, states, configured_frames, visual_specs)
-        source_renderer = SurfaceRenderer(model, initial['source_sha256'], static_ids, backend=backend)
-    output = new_output(output, _source_paths(config) + [inputs, prepared, native_output])
+        source_renderer = SurfaceRenderer(model, initial['source_sha256'], static_ids,
+                                          backend=backend,lazy_texel_decode=lazy_texel_decode)
+    original_inputs=_source_paths(config)+[inputs]
+    if not sim_direct_material:
+        original_inputs.extend((prepared,native_output))
+    output = new_output(output, original_inputs)
     output.mkdir(parents=True)
     rows = []
     native_fields = ("native_nav_10cm_occupancy_cells_verified", "rooms", "scene_graph_objects",
@@ -273,39 +376,107 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         frame = row["frame"]
         if expected["frame"] != frame:
             raise ContractError("prepared frame order differs")
-        native = native_output / f"frame_{frame}"
-        receipt = read_json(native / "native_receipt.json")
-        if (receipt.get("frame") != frame or receipt.get("F22_F21_direct_10mm_map_RGB_owner_exact") is not True
-                or receipt.get("source_color_map_sha256") != expected["expected_full_color_sha256"]):
-            raise ContractError("native map receipt differs")
-        if color_only:
-            if (receipt.get("schema")!="G2_NATIVE_COLOR_ONLY_FRAME_V1"
-                    or receipt.get("native_color_only_without_10cm_nav") is not True
-                    or receipt.get("native_nav_10cm_occupancy_cells_verified","missing") is not None
-                    or receipt.get("scene_id")!=snapshot["scene_id"]
-                    or receipt.get("source_sha256")!=snapshot["source_sha256"]
-                    or receipt.get("source_state_row_sha256")!=expected["source_state_sha256"]
-                    or receipt.get("native_total_color_voxels")!=expected["expected_full_color_voxels"]
-                    or receipt.get("native_unknown_owner_cells")!=expected["expected_unknown_owner_cells"]
-                    or receipt.get("training_ready") is not False):
-                raise ContractError("native-only 10mm color source is not state-bound")
-        if row.get("reference_native_receipt"):
-            reference = bound_json(row["reference_native_receipt"])
-            compare = (("source_color_map_sha256","native_total_color_voxels")
-                       if color_only else native_fields)
-            if any(receipt.get(k) != reference.get(k) for k in compare):
-                raise ContractError("native reference color/Room evidence differs")
-        surface = read_native_surface(native / "native_view_color_TEMP.g2col10.bin", expected, snapshot)
-        evidence=dict(surface[4], opaque_ray_owner_indices=opaque_ray_owner_indices,
-                      opaque_ray_cert_schema="g2_verified_compiled_gt_opaque_owner_v1")
-        surface = (*surface[:4], evidence)
+        if sim_direct_material:
+            # Direct source state and material are verified by load_source and
+            # verify_input_config. No native RGB/color-only receipt is borrowed
+            # or invented. Store the actual FULLPHYSICS row identity instead.
+            if row.get("reference_native_receipt"):
+                raise ContractError("mesh-only cannot claim native-color reference parity")
+            row_sha=hashlib.sha256(np.asarray(states[frame],dtype="<f8").tobytes()).hexdigest()
+            receipt={"source_color_map_sha256":None,
+                     "source_state_row_sha256":row_sha,
+                     "native_material_only":True}
+        else:
+            native = native_output / f"frame_{frame}"
+            receipt = read_json(native / "native_receipt.json")
+            if (receipt.get("frame") != frame or receipt.get("F22_F21_direct_10mm_map_RGB_owner_exact") is not True
+                    or receipt.get("source_color_map_sha256") != expected["expected_full_color_sha256"]):
+                raise ContractError("native map receipt differs")
+            if color_only:
+                if (receipt.get("schema")!="G2_NATIVE_COLOR_ONLY_FRAME_V1"
+                        or receipt.get("native_color_only_without_10cm_nav") is not True
+                        or receipt.get("native_nav_10cm_occupancy_cells_verified","missing") is not None
+                        or receipt.get("scene_id")!=snapshot["scene_id"]
+                        or receipt.get("source_sha256")!=snapshot["source_sha256"]
+                        or receipt.get("source_state_row_sha256")!=expected["source_state_sha256"]
+                        or receipt.get("native_total_color_voxels")!=expected["expected_full_color_voxels"]
+                        or receipt.get("native_unknown_owner_cells")!=expected["expected_unknown_owner_cells"]
+                        or receipt.get("training_ready") is not False):
+                    raise ContractError("native-only 10mm color source is not state-bound")
+            if row.get("reference_native_receipt"):
+                reference = bound_json(row["reference_native_receipt"])
+                compare = (("source_color_map_sha256","native_total_color_voxels")
+                           if color_only else native_fields)
+                if any(receipt.get(k) != reference.get(k) for k in compare):
+                    raise ContractError("native reference color/Room evidence differs")
         bundle, manifest = _view_manifest(row, snapshot)
         stage = output / f"state_{expected['state_id']:06d}_frame_{frame:06d}"
         visual_by_room=None
         registry = None
+        event=None
+        if cursor is not None:
+            state=get_data(model, states[frame])
+            pose=chassis_pose(model,state)
+            visual_ids=cursor.ids
+            event=cursor.observe(expected["state_id"],frame,
+                np.asarray(state.geom_xpos)[visual_ids],
+                np.asarray(state.geom_xmat)[visual_ids],
+                robot_pose_xy_yaw(pose))
+        # Keyframe-proven SG remains independent for every real GT timestamp,
+        # even when the visual scene and its PNGs can be reused.
+        if event is not None and event.mode!="FULL":
+            if row.get("reference_views"):
+                raise ContractError("motion-tolerant reuse cannot bypass a pinned exact View reference")
+            assert scene_keyframe_stage is not None and scene_keyframe_report is not None
+            stage.mkdir(parents=True,exist_ok=False)
+            result=_reuse_scene_view_keyframe(
+                stage,scene_keyframe_stage,scene_keyframe_report,
+                event, snapshot, pose, marker_appearance,robot_pose_marker_style)
+            marker=result.get("robot_pose_marker")
+            if row.get("scene_graph"):
+                sg=row["scene_graph"]
+                graph=bound_json(sg)
+                if graph["frame_id"]!=frame or graph["scene_id"]!=snapshot["scene_id"]:
+                    raise ContractError("source scene graph belongs to another frame/scene")
+                shutil.copyfile(sg["path"],stage/"scene_graph.json")
+            record=dict(frame=frame,state_id=expected["state_id"],
+                view_count=result["view_count"],
+                reference_pixel_exact_images=0,
+                native_color_sha256=receipt["source_color_map_sha256"],
+                native_reference_exact=bool(row.get("reference_native_receipt")),
+                direct_material_state_sha256=(receipt.get("source_state_row_sha256")
+                                              if sim_direct_material else None),
+                view_render_s=result["gpu_render_and_export_s"],
+                robot_pose_marker_drawn_views=(marker["drawn_views"] if marker else 0),
+                alpha_sidecar_count=0,alpha_layers_have_unknown_background=True,
+                unbound_visible_pixels=scene_keyframe_report.get("unbound_visible_pixels",0),
+                transparent_visible_pixels=scene_keyframe_report.get("transparent_visible_pixels",0),
+                surface_registry_count=0,
+                static_cache_hits=source_renderer.cache_hits,
+                static_cache_misses=source_renderer.cache_misses,
+                view_opaque_visual_geometry_from_source=True,
+                source_surfel_geom_color_training_ready=False,
+                scene_event_mode=event.mode,
+                scene_keyframe_state=event.scene_source_state,
+                final_floor_png_state=event.final_floor_source_state,
+                object_translation_max_m=event.object_translation_max_m,
+                object_rotation_max_deg=event.object_rotation_max_deg)
+            record["state_wall_s"]=round(time.perf_counter()-state_started,6)
+            rows.append(record)
+            print("G2_SCENE_REUSE_STATE_PASS",frame,event.mode,
+                  "scene_keyframe",event.scene_source_state,flush=True)
+            continue
+        if sim_direct_material:
+            surface=None
+        else:
+            surface = read_native_surface(native / "native_view_color_TEMP.g2col10.bin", expected, snapshot)
+            evidence=dict(surface[4], opaque_ray_owner_indices=opaque_ray_owner_indices,
+                          opaque_ray_cert_schema="g2_verified_compiled_gt_opaque_owner_v1")
+            surface = (*surface[:4], evidence)
         if surface_registry_source:
             from g2.views.surface_registry import compile_surface_registry
-            state=get_data(model, states[frame])
+            if event is None:
+                state=get_data(model, states[frame])
             registry=compile_surface_registry(model,state,visual_specs,snapshot)
             visual_by_room={r['uid']:dict(
                 scene_id=snapshot['scene_id'],source_sha256=snapshot['source_sha256'],
@@ -327,10 +498,18 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                     source_sha256=snapshot["source_sha256"],
                     frame_id=frame,
                     source_model_sha256=dense["model_source_sha256"])
-        result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
-                                        meters_per_pixel=.01, renderer_backend=backend,
-                                        visual_mesh_by_room=visual_by_room,
-                                        keep_gpu_context=surface_registry_source)
+        if sim_direct_material:
+            result=save_direct_material_views(bundle,manifest,snapshot,stage,
+                meters_per_pixel=.01,visual_mesh_by_room=visual_by_room,
+                keep_gpu_context=True)
+        else:
+            result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
+                                            meters_per_pixel=.01, renderer_backend=backend,
+                                            visual_mesh_by_room=visual_by_room,
+                                            keep_gpu_context=surface_registry_source)
+        if event is not None:
+            scene_keyframe_stage=stage
+            scene_keyframe_report=dict(result)
         # Native 10mm RGB remains opaque. RGBA alpha evidence is written as a
         # separate, explicitly not-training-ready layer; no fake background.
         if surface_registry_source:
@@ -368,6 +547,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         record = dict(frame=frame, state_id=expected["state_id"], view_count=result["view_count"],
             reference_pixel_exact_images=exact_views, native_color_sha256=receipt["source_color_map_sha256"],
             native_reference_exact=bool(row.get("reference_native_receipt")),
+            direct_material_state_sha256=(receipt.get("source_state_row_sha256")
+                                          if sim_direct_material else None),
             view_render_s=result["gpu_render_and_export_s"],
             robot_pose_marker_drawn_views=marker["drawn_views"] if marker else 0,
             alpha_sidecar_count=sum(x["alpha_pixel_count"] for x in
@@ -383,6 +564,12 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             record.update(
                 view_opaque_visual_geometry_from_source=True,
                 source_surfel_geom_color_training_ready=False)
+        if event is not None:
+            record.update(scene_event_mode="FULL",
+                scene_keyframe_state=event.scene_source_state,
+                final_floor_png_state=event.final_floor_source_state,
+                object_translation_max_m=event.object_translation_max_m,
+                object_rotation_max_deg=event.object_rotation_max_deg)
         rows.append(record)
         print("G2_NATIVE_VIEW_STATE_PASS", frame, "pixel_exact_images", exact_views, flush=True)
     if len(rows) != len(configured_frames):
@@ -396,11 +583,18 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         robot_pose_marker_appearance=(marker_appearance.to_dict() if robot_pose_marker else None),
         robot_pose_marker_appearance_sha256=(marker_cache_key(robot_pose_marker_style,
               marker_appearance) if robot_pose_marker else None),
-        training_ready=False, native_inputs_retained_for_audit=True,
+        training_ready=False, native_inputs_retained_for_audit=not sim_direct_material,
         actual_wall_s=round(time.perf_counter() - started, 6))
-    if color_only:
+    if color_only and not sim_direct_material:
         report["native_color_only_without_10cm_nav"]=True
         report["native_nav_10cm_update_claimed"]=False
+    if sim_direct_material:
+        report.update(sim_direct_material=True,
+            native_color_voxel_stage_removed=True,
+            native_color_transport_claimed=False,
+            source_model_sha256=dense["model_source_sha256"],
+            direct_material_source_state_rows=[r.get("direct_material_state_sha256")
+                                               for r in rows])
     if visual_mesh_source:
         report['view_opaque_geometry_source']='SOURCE_BOUND_VISUAL_MESH'
     if surface_registry_source:
@@ -413,6 +607,14 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             first_state_s=float(durations[0]),warm_state_p50_s=float(np.median(durations[1:])) if len(durations)>1 else None,
             source_alpha_model='FRONT_SURFACE_PER_GEOM_SORTED_ALPHA_NO_REFRACTION',
             source_color_policy='SOURCE_LINEAR_NUMERIC_AND_APPEARANCE_COMPAT_PNG')
+    if scene_event_index:
+        report.update(scene_event_index_enabled=True,
+            scene_motion_translation_tol_m=.001,
+            scene_motion_rotation_tol_deg=1.0,
+            scene_png_index_schema="g2_atomic_compact_6views_v2",
+            scene_full_render_states=sum(r.get("scene_event_mode")=="FULL" for r in rows),
+            scene_arrow_only_states=sum(r.get("scene_event_mode")=="ARROW_ONLY" for r in rows),
+            scene_reuse_all_states=sum(r.get("scene_event_mode")=="REUSE_ALL" for r in rows))
     write_json(output / "episode_receipt.json", report)
     print("G2_REPOSITORY_EPISODE_PASS", output / "episode_receipt.json", flush=True)
     return report
@@ -421,7 +623,9 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
 def render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
            color_only=False, robot_pose_marker=True,
-           robot_pose_marker_style="game_arrow", marker_appearance=None):
+           robot_pose_marker_style="game_arrow", marker_appearance=None,
+           scene_event_index=False, lazy_texel_decode=False,
+           sim_direct_material=False):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
@@ -429,7 +633,10 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
                        surface_registry_source=surface_registry_source,
                        color_only=color_only, robot_pose_marker=robot_pose_marker,
                        robot_pose_marker_style=robot_pose_marker_style,
-                       marker_appearance=marker_appearance)
+                       marker_appearance=marker_appearance,
+                       scene_event_index=scene_event_index,
+                       lazy_texel_decode=lazy_texel_decode,
+                       sim_direct_material=sim_direct_material)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -446,11 +653,17 @@ def main():
     p.add_argument("--output", required=True)
     p = commands.add_parser("render")
     p.add_argument("--inputs", required=True)
-    p.add_argument("--prepared", required=True)
-    p.add_argument("--native-output", required=True)
+    p.add_argument("--prepared")
+    p.add_argument("--native-output")
     p.add_argument("--output", required=True)
     p.add_argument("--backend", choices=("cpu", "gpu"), default="gpu")
     p.add_argument("--color-only",action="store_true")
+    p.add_argument("--sim-direct-material",action="store_true",
+                   help="EXPERIMENT ONLY: F27 from signed MuJoCo GT+Mesh/Material, no color voxels")
+    p.add_argument("--scene-event-index",action="store_true",
+                   help="EXPERIMENT ONLY: 1mm/1degree pose event rendering and direct View refs")
+    p.add_argument("--lazy-texel-decode",action="store_true",
+                   help="EXPERIMENT ONLY: decode only referenced source texels")
     p.add_argument("--robot-pose-marker", action=argparse.BooleanOptionalAction,
                    default=True, help="draw chassis position/heading on exported floor_top (default: on)")
     p.add_argument("--robot-pose-marker-style", choices=("classic", "game_arrow"),
@@ -469,7 +682,10 @@ def main():
                surface_registry_source=args.renderer == "f27",
                color_only=args.color_only, robot_pose_marker=args.robot_pose_marker,
                robot_pose_marker_style=args.robot_pose_marker_style,
-               marker_appearance=appearance_from_args(args))
+               marker_appearance=appearance_from_args(args),
+               scene_event_index=args.scene_event_index,
+               lazy_texel_decode=args.lazy_texel_decode,
+               sim_direct_material=args.sim_direct_material)
 
 
 if __name__ == "__main__":

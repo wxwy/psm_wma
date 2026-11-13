@@ -20,6 +20,57 @@ from g2.sim.texture_projection import (
 )
 
 
+
+def _lazy_decode_texels(raw, srgb):
+    """Exact float64/255 + sRGB decoding on only selected source bytes."""
+    values=np.asarray(raw,dtype=np.float64)/255.0
+    if srgb:
+        values[...,:3]=srgb_to_linear(values[...,:3])
+    return values
+
+
+def _lazy_bilinear(raw, uv, repeat, srgb):
+    """Preserve original four-neighbor order and floating-point arithmetic."""
+    height,width=raw.shape[:2]
+    xy=(uv%1 if repeat else np.clip(uv,0,1))*[width,height]-.5
+    lower=np.floor(xy).astype(np.int64)
+    fraction=xy-lower
+    colors=np.zeros((len(uv),raw.shape[2]),dtype=np.float64)
+    for dx,dy in ((0,0),(1,0),(0,1),(1,1)):
+        x,y=lower[:,0]+dx,lower[:,1]+dy
+        x=x%width if repeat else np.clip(x,0,width-1)
+        y=y%height if repeat else np.clip(y,0,height-1)
+        weight=(fraction[:,0] if dx else 1-fraction[:,0])*(fraction[:,1] if dy else 1-fraction[:,1])
+        colors+=_lazy_decode_texels(raw[y,x],srgb)*weight[:,None]
+    return colors
+
+
+def _lazy_cube(raw, direction, srgb):
+    """Six-face cube with exact same face priority, ambiguity and rounding."""
+    magnitude=np.max(np.abs(direction),axis=1)
+    usable=np.isfinite(direction).all(axis=1)&(magnitude>0)
+    tied=np.isclose(np.abs(direction),magnitude[:,None],rtol=1e-12,atol=0)
+    transforms=((2,-1,1,-1),(2,1,1,-1),(0,1,2,1),
+                (0,1,2,-1),(0,1,1,-1),(0,-1,1,-1))
+    colors=np.zeros((len(direction),3));assigned=np.zeros(len(direction),bool)
+    uncertain=np.zeros(len(direction),bool)
+    for face,(s_axis,s_sign,t_axis,t_sign) in enumerate(transforms):
+        axis=face//2
+        selected=usable&tied[:,axis]&((direction[:,axis]>=0) if face%2==0 else (direction[:,axis]<0))
+        indices=np.flatnonzero(selected)
+        if not len(indices):continue
+        uv=np.column_stack([direction[indices,s_axis]*s_sign,direction[indices,t_axis]*t_sign])
+        uv=.5*(uv/magnitude[indices,None]+1)
+        panel=raw[face] if raw.ndim==4 else raw
+        candidate=_lazy_bilinear(panel,uv,False,srgb)
+        different=np.max(np.abs(colors[indices]-candidate),axis=1)>1e-12
+        uncertain[indices]|=assigned[indices]&different
+        new=~assigned[indices]
+        colors[indices[new]]=candidate[new]
+        assigned[indices]=True
+    return colors,usable&~uncertain,uncertain
+
+
 VALID = 0
 UNSUPPORTED = 1
 OPACITY_UNSUPPORTED = 2
@@ -68,7 +119,14 @@ class MaterialResolver:
     as proof that an arbitrary supplied model matches that digest.
     """
 
-    def __init__(self, model, *, source_sha256=None):
+    def __init__(self, model, *, source_sha256=None, lazy_texel_decode=False):
+        # Experimental opt-in only; original eager path remains the default.
+        if type(lazy_texel_decode) is not bool:
+            raise ContractError("lazy_texel_decode must be boolean")
+        self.lazy_texel_decode=lazy_texel_decode
+        self._raw_textures={}
+        self.raw_texture_load_count=0
+        self.raw_texture_cache_hits=0
         self.model = model
         self.source_sha256 = source_sha256
         self._textures = {}
@@ -78,8 +136,10 @@ class MaterialResolver:
     def invalidate(self, texture_id=None):
         if texture_id is None:
             self._textures.clear()
+            self._raw_textures.clear()
         else:
             self._textures.pop(int(texture_id), None)
+            self._raw_textures.pop(int(texture_id), None)
 
     def _base(self, geom_id):
         from g2.sim.source_geometry import effective_rgba
@@ -138,11 +198,17 @@ class MaterialResolver:
         if mujoco.__version__ != "3.3.7":
             return unknown("UNVERIFIED_MUJOCO_TEXTURE_VERSION")
         try:
-            values, _, _ = self._texture(texture, mujoco)
+            if self.lazy_texel_decode:
+                values, _, _, bounds = self._raw_texture_info(texture,mujoco)
+            else:
+                values, _, _ = self._texture(texture, mujoco)
         except (IndexError, ValueError) as exc:
             return unknown(str(exc))
         if values.shape[2] == 4:
-            low, high = float(values[..., 3].min() * base[3]), float(values[..., 3].max() * base[3])
+            if self.lazy_texel_decode:
+                low,high=float(bounds[0]*base[3]),float(bounds[1]*base[3])
+            else:
+                low,high=float(values[...,3].min()*base[3]),float(values[...,3].max()*base[3])
             description.update(alpha_min=low, alpha_max=high,
                                alpha_valid=bool(low == high),
                                guaranteed_opaque=bool(low == 1.0),
@@ -152,6 +218,47 @@ class MaterialResolver:
 
     def is_guaranteed_opaque(self, geom_id):
         return self.descriptor(geom_id)["guaranteed_opaque"]
+
+    def _raw_texture_info(self, texture, mujoco):
+        """Raw uint8 source snapshot and source-exact opacity statistics.
+
+        No eager float64 allocation or whole-image sRGB transfer. The original
+        expensive _texture method is unchanged and remains the default.
+        """
+        if texture in self._raw_textures:
+            self.raw_texture_cache_hits+=1
+            return self._raw_textures[texture]
+        model=self.model
+        width,height,channels,address=(
+            int(getattr(model,key)[texture])
+            for key in ("tex_width","tex_height","tex_nchannel","tex_adr"))
+        if min(width,height)<=0 or channels not in (3,4) or address<0:
+            raise ValueError("unsupported texture dimensions/channels")
+        raw=np.asarray(model.tex_data)[address:address+width*height*channels]
+        if raw.size != width*height*channels:
+            raise ValueError("truncated compiled texture")
+        if raw.dtype!=np.uint8:
+            raise ValueError("compiled texture bytes must be uint8")
+        if not hasattr(model,"tex_colorspace"):
+            raise ValueError("compiled texture colorspace is unavailable")
+        space_id=int(model.tex_colorspace[texture])
+        srgb=int(mujoco.mjtColorSpace.mjCOLORSPACE_SRGB)
+        linear=int(mujoco.mjtColorSpace.mjCOLORSPACE_LINEAR)
+        auto=int(mujoco.mjtColorSpace.mjCOLORSPACE_AUTO)
+        if space_id not in (srgb,linear,auto):
+            raise ValueError("unsupported texture colorspace")
+        raw=raw.reshape(height,width,channels).copy()
+        raw.setflags(write=False)
+        constant=bool(np.all(raw==raw[0,0]))
+        alpha_bounds=None
+        if channels==4:
+            # Float64 conversion/multiplication follows original order.
+            alpha=raw[...,3]
+            alpha_bounds=(float(alpha.min())/255.0,float(alpha.max())/255.0)
+        info=(raw,"sRGB" if space_id==srgb else "LINEAR",constant,alpha_bounds)
+        self._raw_textures[texture]=info
+        self.raw_texture_load_count+=1
+        return info
 
     def _texture(self, texture, mujoco):
         if texture in self._textures:
@@ -277,13 +384,18 @@ class MaterialResolver:
             return reject("unverified MuJoCo texture projection version",
                           UNVERIFIED_VERSION, opacity_unknown=True)
         try:
-            pixels, space, constant = self._texture(texture, mujoco)
+            if self.lazy_texel_decode:
+                pixels,space,constant,alpha_bounds=self._raw_texture_info(texture,mujoco)
+            else:
+                pixels,space,constant=self._texture(texture,mujoco)
         except (IndexError, ValueError) as exc:
             return reject(str(exc), opacity_unknown=True)
         channels = pixels.shape[2]
-        texture_alpha_known = channels == 3 or bool(np.all(pixels[..., 3] == pixels[0, 0, 3]))
+        texture_alpha_known = channels==3 or (
+            alpha_bounds[0]==alpha_bounds[1] if self.lazy_texel_decode else
+            bool(np.all(pixels[...,3]==pixels[0,0,3])))
         if channels == 4 and texture_alpha_known:
-            alpha[:] = base[3] * pixels[0, 0, 3]
+            alpha[:] = base[3] * (alpha_bounds[0] if self.lazy_texel_decode else pixels[0,0,3])
         texture_type = int(model.tex_type[texture])
         texture2d = int(mujoco.mjtTexture.mjTEXTURE_2D)
         texturecube = int(mujoco.mjtTexture.mjTEXTURE_CUBE)
@@ -301,7 +413,8 @@ class MaterialResolver:
         if constant:
             # A uniform texture is exactly independent of UVs and projection.
             # This includes (but does not special-case) white glass textures.
-            sampled[:] = pixels[0, 0]
+            sampled[:] = (_lazy_decode_texels(pixels[0,0],space=="sRGB")
+                          if self.lazy_texel_decode else pixels[0,0])
             evidence["mode"] = "UNIFORM_TEXTURE_SOURCE_ALBEDO"
         elif kind == "mesh":
             if texture_type != texture2d or bool(model.mat_texuniform[material]):
@@ -325,7 +438,9 @@ class MaterialResolver:
                 uv *= np.asarray(model.mat_texrepeat[material])
                 finite = np.isfinite(uv).all(axis=1)
                 coordinates_valid[ids[~finite]] = False
-                sampled[ids[finite]] = _bilinear(pixels, uv[finite], True)
+                sampled[ids[finite]] = (
+                    _lazy_bilinear(pixels,uv[finite],True,space=="sRGB")
+                    if self.lazy_texel_decode else _bilinear(pixels,uv[finite],True))
             evidence.update(mode="MESH_UV_SOURCE_ALBEDO", filter="repeat_bilinear")
         else:
             if kind not in ("box", "cylinder", "sphere", "ellipsoid"):
@@ -353,16 +468,25 @@ class MaterialResolver:
                 uv = xy * [0.5, -0.5] * np.asarray(model.mat_texrepeat[material]) - 0.5
                 finite = np.isfinite(uv).all(axis=1)
                 coordinates_valid[ids[~finite]] = False
-                sampled[ids[finite]] = _bilinear(pixels, uv[finite], True)
+                sampled[ids[finite]] = (
+                    _lazy_bilinear(pixels,uv[finite],True,space=="sRGB")
+                    if self.lazy_texel_decode else _bilinear(pixels,uv[finite],True))
                 evidence.update(mode="PRIMITIVE_2D_SOURCE_ALBEDO", filter="repeat_bilinear")
             else:
                 height, width = pixels.shape[:2]
                 if channels != 3 or height not in (width, 6 * width):
                     return reject("unsupported cube channel/layout",
                                   opacity_unknown=(channels == 4))
-                cubefaces = (np.repeat(pixels[None], 6, axis=0) if height == width
-                             else pixels.reshape(6, width, width, 3))
-                samples, ok, uncertain = _cube(cubefaces, local if uniform else object_points)
+                if self.lazy_texel_decode:
+                    cubefaces=(pixels if height==width else
+                               pixels.reshape(6,width,width,3))
+                else:
+                    cubefaces=(np.repeat(pixels[None],6,axis=0) if height==width
+                               else pixels.reshape(6,width,width,3))
+                samples,ok,uncertain=(
+                    _lazy_cube(cubefaces,local if uniform else object_points,space=="sRGB")
+                    if self.lazy_texel_decode else
+                    _cube(cubefaces,local if uniform else object_points))
                 sampled[ids] = samples
                 coordinates_valid[ids] = ok
                 reasons[ids[uncertain]] = CUBE_FACE_TIE

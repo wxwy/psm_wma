@@ -68,6 +68,11 @@ class WorkerConfig:
     # Only RoboCasa/MuJoCo offline F27: skip per-frame 10cm nav_states and
     # run the native long-lived 10mm direct-color worker separately.
     sim_color_only: bool=False
+    # MuJoCo GT+VisualMesh/material direct; no native 10mm RGB/voxel stages.
+    sim_direct_material: bool=False
+    # Experiment only. The legacy worker remains the default.
+    scene_event_index: bool=False
+    lazy_texel_decode: bool=False
     robot_pose_marker: bool=True
     robot_pose_marker_style: str="game_arrow"
     marker_appearance: MarkerAppearance=field(default_factory=MarkerAppearance)
@@ -90,7 +95,9 @@ def subprocess_stage(command, *, cwd=None, env=None, row=None, name=None):
 
 
 def _stage_mark(path, name, row, *, robot_pose_marker=None,
-                robot_pose_marker_style=None, marker_appearance=None):
+                robot_pose_marker_style=None, marker_appearance=None,
+                scene_event_index=None, lazy_texel_decode=None,
+                sim_direct_material=None):
     marker=Path(path)/RECEIPT
     if not marker.is_file() or marker.is_symlink():
         return False
@@ -100,6 +107,9 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None,
             and data.get("stage")==name
             and data.get("source_fingerprint")==row["source_fingerprint"]
             and data.get("renderer")=="f27"
+            and (scene_event_index is None or data.get("scene_event_index") is scene_event_index)
+            and (lazy_texel_decode is None or data.get("lazy_texel_decode") is lazy_texel_decode)
+            and (sim_direct_material is None or data.get("sim_direct_material") is sim_direct_material)
             and (robot_pose_marker is None or
                  data.get("robot_pose_marker") is robot_pose_marker)
             and (robot_pose_marker_style is None or
@@ -112,14 +122,19 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None,
 
 
 def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
-          robot_pose_marker_style=None, marker_appearance=None):
+          robot_pose_marker_style=None, marker_appearance=None,
+          scene_event_index=None, lazy_texel_decode=None,
+          sim_direct_material=None):
     target=Path(work)/name
     if target.is_symlink():
         raise ContractError("stage must not be a symlink: "+str(target))
     if target.exists():
         if (_stage_mark(target,name,row,robot_pose_marker=robot_pose_marker,
                         robot_pose_marker_style=robot_pose_marker_style,
-                        marker_appearance=marker_appearance)
+                        marker_appearance=marker_appearance,
+                        scene_event_index=scene_event_index,
+                        lazy_texel_decode=lazy_texel_decode,
+                        sim_direct_material=sim_direct_material)
                 and all((target/p).is_file() for p in required)):
             event("STAGE_REUSE",row=row,stage=name)
             return target
@@ -137,6 +152,9 @@ def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
         "schema":"g2_atomic_production_stage_v1","stage":name,
         "source_fingerprint":row["source_fingerprint"],
         "complete":True,"renderer":"f27","training_ready":False,
+        **({"scene_event_index":scene_event_index} if scene_event_index is not None else {}),
+        **({"lazy_texel_decode":lazy_texel_decode} if lazy_texel_decode is not None else {}),
+        **({"sim_direct_material":sim_direct_material} if sim_direct_material is not None else {}),
         **({"robot_pose_marker":robot_pose_marker} if robot_pose_marker is not None else {}),
         **({"robot_pose_marker_style":robot_pose_marker_style}
            if robot_pose_marker_style is not None else {}),
@@ -353,12 +371,18 @@ def produce_one(row,config):
         bundle_manifest=bundle/"bundle.json",
         layout_id=row["layout_id"],output=p),
         required=("episode_inputs.json","COMPLETE.json"))
-    prepared=stage(work,"color",row,lambda p:prepare_color(
-        snapshots/"episode_inputs.json",
-        None if config.sim_color_only else navstates/"nav_manifest.json",p,
-        color_only=config.sim_color_only),
-        required=("color_manifest.json","native_sequence.txt"))
-    if config.sim_color_only:
+    if config.sim_direct_material:
+        # Simulation-only direct material path: source/GT/Scene Graph are
+        # present, but NO 10mm colored voxelization or native-color stage.
+        prepared=None
+        dualmap=None
+    else:
+        prepared=stage(work,"color",row,lambda p:prepare_color(
+            snapshots/"episode_inputs.json",
+            None if config.sim_color_only else navstates/"nav_manifest.json",p,
+            color_only=config.sim_color_only),
+            required=("color_manifest.json","native_sequence.txt"))
+    if config.sim_color_only and not config.sim_direct_material:
         def native_color_only(p):
             native_bin=config.native_binary.with_name("gt_direct_color_only")
             if not native_bin.is_file():
@@ -373,7 +397,7 @@ def produce_one(row,config):
                              env=env,row=row,name="native_10mm_color_only")
         dualmap=stage(work,"native_color_only",row,native_color_only,
                       required=("G2_NATIVE_COLOR_ONLY_COMPLETE.json",))
-    else:
+    elif not config.sim_direct_material:
         def native_episode(p):
             env=os.environ.copy()
             env.pop("PYTHONPATH",None)  # Restore Noetic-owned packages via catkin setup.
@@ -391,24 +415,37 @@ def produce_one(row,config):
                    MUJOCO_EGL_DEVICE_ID=str(config.gpu),
                    CUDA_VISIBLE_DEVICES=str(config.gpu),
                    PYTHONDONTWRITEBYTECODE="1")
-        subprocess_stage([config.python,"-m","g2.offline.episode","render",
+        command=[config.python,"-m","g2.offline.episode","render",
             "--inputs",snapshots/"episode_inputs.json",
-            "--prepared",prepared,"--native-output",dualmap,
-            "--output",p,"--backend","gpu","--renderer","f27"]+
+            "--output",p,"--backend","gpu","--renderer","f27"]
+        if not config.sim_direct_material:
+            command+=["--prepared",prepared,"--native-output",dualmap]
+        command+=(
             (["--color-only"] if config.sim_color_only else [])+
+            (["--sim-direct-material"] if config.sim_direct_material else [])+
             (["--no-robot-pose-marker"] if not config.robot_pose_marker else [])+
             ["--robot-pose-marker-style",config.robot_pose_marker_style]+
-            appearance_cli_args(config.marker_appearance),
-            cwd=Path(__file__).resolve().parents[2],
-            env=env,row=row,name="f27")
+            (["--scene-event-index"] if config.scene_event_index else [])+
+            (["--lazy-texel-decode"] if config.lazy_texel_decode else [])+
+            appearance_cli_args(config.marker_appearance))
+        subprocess_stage(command,cwd=Path(__file__).resolve().parents[2],
+                         env=env,row=row,name="f27")
     f27=stage(work,"f27",row,render,required=("episode_receipt.json",),
               robot_pose_marker=config.robot_pose_marker,
               robot_pose_marker_style=(config.robot_pose_marker_style
                                        if config.robot_pose_marker else None),
-              marker_appearance=config.marker_appearance)
+              marker_appearance=config.marker_appearance,
+              scene_event_index=True if config.scene_event_index else None,
+              lazy_texel_decode=True if config.lazy_texel_decode else None,
+              sim_direct_material=True if config.sim_direct_material else None)
     final=config.output_root/row["expected_relative_output"]
-    result=package(f27,final,episode_id=row["episode_id"],
-                   task_class=row["task_class"],selection=row)
+    if config.scene_event_index:
+        from .atomic_6views_compact_v2 import package_indexed
+        result=package_indexed(f27,final,episode_id=row["episode_id"],
+                               task_class=row["task_class"],selection=row)
+    else:
+        result=package(f27,final,episode_id=row["episode_id"],
+                       task_class=row["task_class"],selection=row)
     event("EPISODE_DONE",row=row,states=result["state_count"],
           output=final,elapsed_s=round(time.monotonic()-start,2))
     if not config.keep_work:
@@ -500,7 +537,7 @@ def schedule(args):
                          require_depth=args.require_depth)
     selected,counts=plan.select(rows,tasks=args.task,
                                  episodes_per_task=args.episodes_per_task)
-    pending=[r for r in selected if not plan.completed_output(r,args.output_root)]
+    pending=[r for r in selected if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index)]
     event("SELECTION",total=len(selected),pending=len(pending),
           selected_tasks=len(counts),per_task=args.episodes_per_task or "ALL",
           renderer="f27")
@@ -514,7 +551,8 @@ def schedule(args):
         args.plan_root,args.output_root,expected=args.expected,
         tasks=args.task,episodes_per_task=args.episodes_per_task,
         batch_size=args.batch_size,resume=args.resume,
-        require_depth=args.require_depth)
+        require_depth=args.require_depth,
+        allow_index_v2=args.scene_event_index)
     if args.action=="plan":
         event("PLAN",path=args.plan_root,episodes=index["episodes_total"],
               batches=index["batches_total"],production_started=False)
@@ -528,7 +566,7 @@ def schedule(args):
     if any(saved.get(r["episode_id"],{}).get("source_fingerprint")!=r["source_fingerprint"]
            for r in all_rows):
         raise ContractError("pinned plan differs from current original source")
-    jobs=[r for r in all_rows if not plan.completed_output(r,args.output_root)]
+    jobs=[r for r in all_rows if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index)]
     if not jobs:
         event("ALL_DONE",total=len(selected),skipped_completed=len(selected))
         return 0
@@ -548,7 +586,7 @@ def schedule(args):
     slots=_ports(args.gpus,args.workers_per_gpu,args.ros_port_base)
     ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary,
                              sim_direct_geometry_only=args.sim_direct_geometry_only,
-                             sim_color_only=args.sim_color_only)
+                             sim_color_only=args.sim_color_only and not args.sim_direct_material)
     args.output_root.mkdir(parents=True,exist_ok=True)
     root.mkdir(parents=True,exist_ok=True)
     q=queue.Queue()
@@ -557,7 +595,7 @@ def schedule(args):
     finished=[]
     started=time.monotonic()
     for r in all_rows:
-        if plan.completed_output(r,args.output_root):
+        if plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index):
             finished.append(r["episode_id"])
     def worker(slot):
         gpu,subslot,port=slot
@@ -568,6 +606,9 @@ def schedule(args):
             robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
             sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
+            sim_direct_material=args.sim_direct_material,
+            scene_event_index=args.scene_event_index,
+            lazy_texel_decode=args.lazy_texel_decode,
             robot_pose_marker=args.robot_pose_marker,
             robot_pose_marker_style=args.robot_pose_marker_style,
             marker_appearance=appearance_from_args(args))
@@ -594,12 +635,15 @@ def schedule(args):
                 if args.keep_work:cmd.append("--keep-work")
                 if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
                 if args.sim_color_only:cmd.append("--sim-color-only")
+                if args.sim_direct_material:cmd.append("--sim-direct-material")
+                if args.scene_event_index:cmd.append("--scene-event-index")
+                if args.lazy_texel_decode:cmd.append("--lazy-texel-decode")
                 if not args.robot_pose_marker:cmd.append("--no-robot-pose-marker")
                 cmd.extend(["--robot-pose-marker-style",args.robot_pose_marker_style])
                 cmd.extend(appearance_cli_args(appearance_from_args(args)))
                 try:
                     subprocess.run(cmd,check=True)
-                    if not plan.completed_output(row,args.output_root):
+                    if not plan.completed_output(row,args.output_root,allow_index_v2=args.scene_event_index):
                         raise ContractError("worker returned without matching final output")
                     status="DONE"
                     break
@@ -638,7 +682,7 @@ def run_one_cli(args):
         selected=next((x for x in rows if x["episode_id"]==args.episode_id),None)
         if selected is not None:break
     else:raise ContractError("episode is absent from immutable source plan")
-    if plan.completed_output(selected,args.output_root):
+    if plan.completed_output(selected,args.output_root,allow_index_v2=args.scene_event_index):
         event("EPISODE_REUSE",row=selected)
         return 0
     config=WorkerConfig(
@@ -650,6 +694,9 @@ def run_one_cli(args):
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
         sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
+            sim_direct_material=args.sim_direct_material,
+            scene_event_index=args.scene_event_index,
+            lazy_texel_decode=args.lazy_texel_decode,
             robot_pose_marker=args.robot_pose_marker,
             robot_pose_marker_style=args.robot_pose_marker_style,
             marker_appearance=appearance_from_args(args))
@@ -695,6 +742,12 @@ def parser():
     add_appearance_args(p)
     p.add_argument("--sim-color-only",action="store_true",
                    help="experimental RoboCasa GT: F27 direct 10mm color, no nav_states")
+    p.add_argument("--scene-event-index",action="store_true",
+                   help="EXPERIMENT ONLY: 1mm/1deg scene event rendering + compact v2 indexed Views")
+    p.add_argument("--sim-direct-material",action="store_true",
+                   help="EXPERIMENT ONLY: eliminate 10mm color voxel and native_color_only stages")
+    p.add_argument("--lazy-texel-decode",action="store_true",
+                   help="EXPERIMENT ONLY: on-demand source texel decoding in F27")
     p.add_argument("--sim-direct-geometry-only",action="store_true",
                    help="experimental RoboCasa Full Map 10cm GT native Room/SG; never RGB-D")
     p.add_argument("--keep-work",action="store_true",
@@ -715,6 +768,12 @@ def main(argv=None):
                             "--manual-start --allow-experimental")
     if args.sim_color_only and not args.sim_direct_geometry_only:
         raise ContractError("color-only Full Map requires --sim-direct-geometry-only")
+    if args.scene_event_index and not (args.sim_color_only and args.sim_direct_geometry_only
+                                       and args.robot_pose_marker):
+        raise ContractError("P1 View event indexing requires explicit direct GT + color-only + marker")
+    if args.sim_direct_material and not (args.scene_event_index and args.sim_color_only
+                                         and args.sim_direct_geometry_only):
+        raise ContractError("P2 direct material requires approved P1/F27 direct GT mode")
     args.gpus=[int(x) for x in args.gpus.split(",")]
     args.output_root=args.output_root.resolve()
     if args.action=="work":

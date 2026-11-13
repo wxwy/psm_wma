@@ -264,13 +264,16 @@ class SurfaceRenderer:
     crop and resolution. Dynamic geometry is projected against the complete
     cached background each state, so vacated regions cannot leave a ghost.
     """
-    def __init__(self, model, source_sha256, static_geom_ids=(), *, backend="gpu"):
+    def __init__(self, model, source_sha256, static_geom_ids=(), *, backend="gpu",
+                 lazy_texel_decode=False):
         from g2.sim.material_resolver import MaterialResolver
         if backend not in ("gpu", "cpu"):
             raise ContractError("unknown surface renderer backend")
         self.model = model
         self.source_sha256 = source_sha256
-        self.materials = MaterialResolver(model, source_sha256=source_sha256)
+        self.materials = MaterialResolver(
+            model, source_sha256=source_sha256,
+            lazy_texel_decode=lazy_texel_decode)
         self.static_ids = set(static_geom_ids)
         self.backend = backend
         self.cache = {}

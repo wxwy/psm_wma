@@ -32,7 +32,9 @@
     const byId = new Map();
     for (const entry of manifest.states) {
       if (!Array.isArray(entry.view_pngs)) continue;
-      const views = new Set(entry.view_pngs);
+      const refs = entry.view_refs && typeof entry.view_refs === "object" &&
+        !Array.isArray(entry.view_refs) ? Object.keys(entry.view_refs) : [];
+      const views = new Set([...entry.view_pngs, ...refs]);
       for (const id of entry.islands || []) {
         if (typeof id !== "string" || !ISLAND_ID_RE.test(id)) continue;
         for (const direction of ISLAND_DIRECTIONS) {
@@ -235,10 +237,24 @@
     const relative = island
       ? "islands/" + island.island + "/" + island.direction + ".png"
       : "sixview/" + source + ".png";
-    // Only allow exact manifest-backed PNG paths, never construct unchecked data.
-    if (!entry.view_pngs.includes(relative)) return null;
-    const statePath = "state_" + pad(index) +
-      "_frame_" + pad(entry.frame) + "/" + relative;
+    // Both remote and local dataset access must use the SAME direct owner
+    // state for v2 refs. v1 files continue to resolve to the current frame.
+    let owner=index;
+    if (!entry.view_pngs.includes(relative)) {
+      const refs=entry.view_refs;
+      if (!refs || Array.isArray(refs) || typeof refs !== "object") return null;
+      const ref=refs[relative];
+      if (!ref || typeof ref !== "object" || ref.path !== relative ||
+          !Number.isInteger(ref.ref_state) ||
+          ref.ref_state < 0 || ref.ref_state >= index) return null;
+      owner=ref.ref_state;
+      const original=state.manifest.states[owner];
+      if (!original || !Array.isArray(original.view_pngs) ||
+          !original.view_pngs.includes(relative)) return null;
+    }
+    const stateRow=state.manifest.states[owner];
+    const statePath = "state_" + pad(owner) +
+      "_frame_" + pad(stateRow.frame) + "/" + relative;
     return state.mode === "local" ? "g2local:" + statePath :
       episodeDirectory() + statePath;
   }
