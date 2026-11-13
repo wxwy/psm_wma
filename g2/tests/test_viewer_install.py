@@ -65,9 +65,12 @@ def test_installer_writes_static_assets_and_links_original_video(monkeypatch, tm
     assert path == output / "view"
     assert (path / "index.html").is_file()
     assert (path / "viewer.js").is_file()
-    assert (path / "directory_picker.js").is_file()
+    assert not (path / "directory_picker.js").exists()
     assert (path / "viewer.css").is_file()
     assert (path / "catalog.json").is_file()
+    (path / "directory_picker.js").write_text("stale picker", encoding="utf-8")
+    viewer.install(mapping, raw, output)
+    assert not (path / "directory_picker.js").exists()
     assert (path / "source_videos").is_symlink()
     assert (path / "source_videos").resolve() == raw.resolve()
     assert marker.read_bytes() == original
@@ -85,12 +88,7 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
         'id="task-select"', 'id="episode-select"', 'id="refresh-episodes"',
         'id="instruction-text"', 'id="scrub"', 'id="prev-frame"',
         'id="next-frame"', 'id="play"', 'id="speed"', 'id="add-row"',
-        'id="display-rows"', 'id="pick-local-folder"',
-        'id="pick-local-videos"', 'id="local-folder-fallback"',
-        'id="remote-path"', 'id="scan-remote"',
-        'id="restore-server"', 'id="directory-scan-status"',
-        'id="server-directory-select"', 'id="server-parent"',
-        'id="server-refresh"',
+        'id="display-rows"',
     ):
         assert control in html
     for marker in (
@@ -113,17 +111,16 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
     assert 'tile.img.src =' not in js
     assert 'tile.img.hidden' not in js
     assert '.tile-visual canvas' in css
-    assert 'directory_picker.js?' in html
-    assert html.index('directory_picker.js?') < html.index('viewer.js?')
-    assert 'showDirectoryPicker' in js
-    assert 'webkitdirectory' in html
-    assert 'function scanRemoteRoot()' in js
-    assert 'function listServerDirectoryChoices()' in js
-    assert 'function navigateServerParent()' in js
-    assert 'directory-layout' in html
-    assert 'directory-source-card' in html
-    assert 'grid-template-columns:repeat(2,minmax(0,1fr))' in css
+    assert 'showDirectoryPicker' not in js
+    assert 'scanRemoteRoot' not in js
+    assert 'directory_picker.js' not in html
+    assert 'local-folder-fallback' not in html
+    assert 'directory-layout' not in html
+    assert 'fixed-source-grid' in html
+    assert 'robocasa365-target-atomic-6views' in html
+    assert 'robocasa365_official/v1.0/target/atomic' in html
     assert 'font-size:18px' in css
+    assert 'const entries = await listDirectory(taskDirectory());' in js
     assert 'data-count="4"' in css and 'data-count="5"' in css
     assert "minmax(0,1fr)" in css
     assert "[hidden] { display: none !important; }" in css
@@ -153,27 +150,6 @@ def test_island_four_directions_with_multiple_ids_and_no_island_episode():
     assert "VIEWER_ISLAND_FOUR_VIEW_CONTRACT_PASS" in result.stdout
 
 
-def test_recursive_directory_picker_without_browser():
-    node = shutil.which("node")
-    if node is None:
-        pytest.skip("Node.js unavailable in this Python test environment")
-    script = Path(viewer.__file__).parents[1] / "tests/viewer_directory_source_smoke.js"
-    result = subprocess.run([node, str(script)], check=False,
-                            capture_output=True, text=True, timeout=20)
-    assert result.returncode == 0, result.stderr
-    assert "G2_DIRECTORY_NATIVE_RECURSIVE_DISCOVERY_PASS" in result.stdout
-
-def test_hierarchical_server_directory_dropdown_with_simulated_http():
-    node = shutil.which("node")
-    if node is None:
-        pytest.skip("Node.js unavailable in this Python test environment")
-    script = Path(viewer.__file__).parents[1] / "tests/viewer_remote_browse_smoke.js"
-    result = subprocess.run([node, str(script)], check=False,
-                            capture_output=True, text=True, timeout=20)
-    assert result.returncode == 0, result.stderr
-    assert "G2_SERVER_HIERARCHICAL_DROPDOWN_PASS" in result.stdout
-
-
 def test_compact_row_spacing_without_row_number_labels():
     folder = Path(viewer.__file__).parent
     js = (folder / "viewer.js").read_text()
@@ -185,5 +161,19 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "margin:0 0 2.5px" in css
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261113-compact-rows" in html
-    assert "viewer.css?v=20261113-compact-rows" in html
+    assert "viewer.js?v=20261113-fixed-dirs" in html
+    assert "viewer.css?v=20261113-fixed-dirs" in html
+
+
+def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
+    folder = Path(viewer.__file__).parent
+    js = (folder / "viewer.js").read_text()
+    html = (folder / "index.html").read_text()
+    assert "function taskDirectory()" in js
+    assert 'return "../tasks/"' in js
+    assert 'const entries = await listDirectory(taskDirectory());' in js
+    assert "function scanRemoteRoot()" not in js
+    assert "showDirectoryPicker" not in js
+    assert "G2DirectorySource" not in js
+    assert 'source_videos' in (folder / "install.py").read_text()
+    assert 'source_videos' not in html

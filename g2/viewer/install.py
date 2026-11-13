@@ -18,7 +18,7 @@ CAMERAS = {
     "right": "observation.images.robot0_agentview_right",
     "wrist": "observation.images.robot0_eye_in_hand",
 }
-FILES = ("index.html", "viewer.css", "viewer.js", "directory_picker.js")
+FILES = ("index.html", "viewer.css", "viewer.js")
 
 
 def _phrase(value):
@@ -104,6 +104,8 @@ def install(mapping: Path, raw_root: Path, output_root: Path) -> Path:
     view.mkdir(exist_ok=True)
     for name in FILES:
         _write_atomic(view / name, (Path(__file__).parent / name).read_bytes())
+    # Retire the obsolete recursive picker from previous static deployments.
+    (view / "directory_picker.js").unlink(missing_ok=True)
     _write_atomic(view / "catalog.json", json.dumps(
         catalog, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
     link = view / "source_videos"

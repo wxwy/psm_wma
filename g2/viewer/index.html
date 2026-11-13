@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171d25">
   <title>G2 Spatial Replay · RoboCasa365</title>
-  <link rel="stylesheet" href="./viewer.css?v=20261113-compact-rows">
+  <link rel="stylesheet" href="./viewer.css?v=20261113-fixed-dirs">
 </head>
 <body>
   <header class="masthead">
@@ -26,49 +26,18 @@
 
   <main class="container">
     <section class="selection-panel" aria-label="数据选择">
-      <div class="directory-layout">
-        <section class="directory-source-card" aria-label="选择本机数据目录">
-          <div class="directory-source-heading">
-            <span class="directory-kicker">01 / LOCAL FILESYSTEM</span>
-            <h3>本机目录 <span>Local</span></h3>
-            <p>在文件管理器中选择数据文件夹，递归发现 Task / Episode。</p>
-          </div>
-          <div class="directory-local-actions">
-            <button id="pick-local-folder" type="button" class="button add-primary">▣ 选择本机文件夹</button>
-            <button id="pick-local-videos" type="button" class="button outline" title="可选：选择本机 LeRobot 原始视频根目录">选择原始视频目录</button>
-          </div>
-          <div class="directory-context">仅访问浏览器所在电脑及其已挂载的磁盘</div>
-        </section>
-        <section class="directory-source-card" aria-label="选择服务器数据目录">
-          <div class="directory-source-heading">
-            <span class="directory-kicker">02 / SERVER DIRECTORY</span>
-            <h3>服务器目录 <span>Remote</span></h3>
-            <p>从 HTTP 可访问的目录逐级下拉浏览，或手动填写路径。</p>
-          </div>
-          <label class="directory-field-label" for="remote-path">当前 HTTP 路径</label>
-          <input id="remote-path" class="directory-path-input" type="text" spellcheck="false" value="../" placeholder="/data1/.../robocasa365-target-atomic-6views/">
-          <label class="directory-field-label" for="server-directory-select">下级目录</label>
-          <div class="directory-browse-line">
-            <select id="server-directory-select" aria-label="选择服务器子目录" disabled>
-              <option value="">正在读取服务器目录…</option>
-            </select>
-            <button id="server-parent" type="button" class="button outline" title="返回 HTTP 上一级目录">↑ 上一级</button>
-          </div>
-          <div class="directory-remote-actions">
-            <span id="server-browse-status" class="directory-browse-status">仅显示服务端 HTTP 已公开的目录</span>
-            <button id="server-refresh" type="button" class="button text-btn" title="重新读取当前目录下的文件夹">↻ 刷新</button>
-            <button id="scan-remote" type="button" class="button add-primary">扫描并加载</button>
-          </div>
-        </section>
-      </div>
-      <div class="directory-status-bar">
-        <div>
-          <strong id="source-location">服务器 · 当前 G2 数据</strong>
-          <p id="directory-scan-status" class="directory-scan-status" aria-live="polite">两种数据来源互不影响；请选择本机目录，或浏览服务器 HTTP 目录。</p>
+      <div class="fixed-source-grid" aria-label="固定 G2 数据来源">
+        <div class="fixed-source">
+          <span class="fixed-source-kicker">G2 VIEWS · 固定输出目录</span>
+          <strong>robocasa365-target-atomic-6views</strong>
+          <small>/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-6views</small>
         </div>
-        <button id="restore-server" type="button" class="button text-btn">恢复默认数据</button>
+        <div class="fixed-source">
+          <span class="fixed-source-kicker">RGB CAMERAS · 固定视频目录</span>
+          <strong>RoboCasa365 target / atomic</strong>
+          <small>/mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic</small>
+        </div>
       </div>
-      <input id="local-folder-fallback" type="file" webkitdirectory multiple hidden aria-label="选择本地 G2 文件夹">
       <div class="selector-grid">
         <div class="control-group task-picker">
           <label for="task-select">任务 / TASK</label>
@@ -78,7 +47,7 @@
           <label for="episode-select">轨迹 / EPISODE <span id="available-count" class="field-caption"></span></label>
           <select id="episode-select" aria-label="选择已完成 Episode" disabled><option>请选择任务</option></select>
         </div>
-        <button id="refresh-episodes" class="button outline refresh-btn" title="扫描刚完成的 Episode">
+        <button id="refresh-episodes" class="button outline refresh-btn" title="仅刷新当前任务的 Episode 列表，不递归扫描目录">
           <span aria-hidden="true">↻</span> 刷新列表
         </button>
       </div>
@@ -143,7 +112,6 @@
 
   <video id="clock-video" muted playsinline preload="metadata" hidden></video>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="./directory_picker.js?v=20261113-directories" defer></script>
-  <script src="./viewer.js?v=20261113-compact-rows" defer></script>
+  <script src="./viewer.js?v=20261113-fixed-dirs" defer></script>
 </body>
 </html>

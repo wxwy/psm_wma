@@ -91,61 +91,25 @@ that is absent from the current Episode is explicitly marked as unavailable and
 displays a placeholder, never another Island image.
 
 
-## Choosing data folders
 
-The source selector above Task/Episode supports local operating-system folders
-and same-origin server HTTP directories, without modifying the data producer.
+## Fixed G2 and video directories
 
-### Browser filesystem picker
+The Viewer intentionally uses fixed, read-only server paths and offers
+no filesystem picker, server-directory chooser or recursive scan.
 
-Click 选择本机文件夹. On desktop Chromium/Edge (localhost or HTTPS), this calls
-the browser's native operating-system directory chooser in read-only mode.
-Choose an output root, parent folder, or a directory containing nested G2
-outputs. The browser recursively discovers complete G2 Episode directories
-using both COMPLETE.json and episode_manifest.json. It prunes state/frame
-image subdirectories, limits traversal size, and reads PNG frames on demand.
-No chosen files are uploaded or written.
+- Six-view PNGs and Scene Graphs:
+  /mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic-6views
+- Original 20 Hz left/right/wrist camera videos:
+  /mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic
 
-The native file chooser sees the filesystem of the computer RUNNING THE
-BROWSER, including mounted network drives. A browser on a local laptop
-reaching the server over SSH port forwarding cannot open an unmounted
-remote /mnt/data1 path. Use the server HTTP path feature for that.
+The browser loads pinned task and instruction metadata from catalog.json.
+When a Task is selected or Refresh Episode is clicked, only that task's
+tasks/<task>/episodes/ one-level HTTP listing is read to identify already
+generated Episodes. The selected Episode COMPLETE receipt and manifest are
+loaded on demand. Images are fetched and decoded on demand; no scan of frame
+directories is performed.
 
-When the modern directory API is unavailable, a webkitdirectory input lets
-the browser enumerate a folder for compatibility. Beware that it may be
-costly on multi-million-file dataset roots; desktop Chrome/Edge is preferred.
-Task descriptions and episode indices reuse matching pinned V3 metadata;
-unknown tasks display only metadata present in their manifests.
-
-Use 原始视频目录 to optionally select the local LeRobot target/atomic root,
-so left/right/wrist videos are loaded from local MP4s. If not provided, mapped
-Episodes continue using the existing same-origin source video links.
-
-### Server HTTP directory
-
-Enter a URL visible to this HTTP server in 服务器 HTTP 目录 and click
-扫描子目录. The Viewer recursively discovers dataset roots containing a
-tasks folder and lists Episode directories. The COMPLETE.json receipt and
-manifest are validated upon selection, so incomplete outputs are not played.
-The URL must be same-origin. Plain Python http.server cannot browse arbitrary
-filesystem paths: only paths under its configured web root are available.
-The configured old HTTP service has a /data1/ symlink to /mnt/data1/; entering
-/mnt/data1/... also uses that known URL mapping. Click 恢复默认 to return to
-the pinned G2 output.
-
-Both source modes are read-only. The saved layout stays in localStorage;
-selected directory handles are not uploaded or persisted to the server.
-
-## UI layout: local and remote directory panels
-
-The data-source selector uses two balanced columns on desktop (Local left,
-Server right), stacking vertically below 1,000px. The remote panel offers a
-hierarchical directory dropdown populated from the **current same-origin HTTP
-directory listing**. Select a child to enter it, or use the Up button to return
-one level; Refresh rereads the current level. The manually editable HTTP path
-and the existing Scan & Load action remain available. This dropdown **cannot**
-enumerate arbitrary Linux paths outside the server's published HTTP root.
-
-The task's natural-language instruction now uses 18px semibold type on desktop
-(16px on small screens) for clearer review; other playback and layout controls
-are unchanged.
+The renderer supports v1 view_pngs and v2 direct view_refs. The latter
+resolves only an earlier reference state containing the real PNG. This also
+applies to Island directional views. The original 20 Hz video timeline
+remains unchanged.
