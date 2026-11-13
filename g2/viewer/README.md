@@ -54,6 +54,10 @@ access controls and will serve all files readable by its process.
   share a clock. The View image is the most recent **preceding** G2 spatial
   frame (normally 2 Hz). Previous/Next step through available G2 spatial
   frames and seek the cameras to the matching source timestamps.
+- View PNGs are downloaded and fully decoded ahead of time, then synchronously
+  drawn onto a persistent Canvas. The previous frame remains visible during
+  network/decode latency; rapid scrubbing invalidates stale async frames.
+  This prevents floor_top from flashing blank between 2 Hz frame changes.
 - The six view choices are `floor_top`, `upper_up`, `plus_X`, `minus_X`,
   `plus_Y`, `minus_Y`, plus original left/right/wrist cameras. If G2 omitted
   an empty upward view, the card displays a missing-view placeholder.

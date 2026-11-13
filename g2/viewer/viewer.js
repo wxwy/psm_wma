@@ -243,16 +243,43 @@
     state.frameHandle = requestAnimationFrame(clockTick);
   }
 
+  function decodedImage(path) {
+    // Return a shared decoded image. Awaiting a preloaded image alone is not
+    // enough if the visible <img>.src is changed before paint. The final swap
+    // occurs by drawing synchronously into a persistent visible canvas.
+    const known = state.preload.get(path);
+    if (known) return known;
+    const promise = new Promise((resolve, reject) => {
+      const image = new Image();
+      image.decoding = "async";
+      image.onload = () => {
+        const decoding = typeof image.decode === "function" ?
+          image.decode() : Promise.resolve();
+        decoding.then(() => resolve(image), reject);
+      };
+      image.onerror = () => reject(new Error("PNG 图片加载失败"));
+      image.src = path;
+    });
+    state.preload.set(path, promise);
+    // Preloading is opportunistic; a failure should not cause an unhandled rejection.
+    promise.catch(() => {
+      if (state.preload.get(path) === promise) state.preload.delete(path);
+    });
+    while (state.preload.size > 64)
+      state.preload.delete(state.preload.keys().next().value);
+    return promise;
+  }
+
   function preloadNext(index) {
     if (index + 1 >= state.manifest.states.length) return;
     const sources = [...new Set(state.media.filter(x => !x.video).map(x => x.source))];
-    for (const source of sources) {
-      const path = viewPath(source, index + 1);
-      if (!path || state.preload.has(path)) continue;
-      const image = new Image();
-      image.src = path;
-      state.preload.set(path, image);
-      if (state.preload.size > 24) state.preload.delete(state.preload.keys().next().value);
+    // Prime the next two 2 Hz spatial frames, including the large floor_top PNG.
+    for (let next = index + 1; next <= Math.min(index + 2,
+         state.manifest.states.length - 1); next++) {
+      for (const source of sources) {
+        const path = viewPath(source, next);
+        if (path) void decodedImage(path);
+      }
     }
   }
 
@@ -261,20 +288,46 @@
     const frame = state.manifest.states[index].frame;
     for (const tile of state.media) {
       if (tile.video) continue;
+      // Generation tokens cancel stale async results during fast scrubbing.
+      const generation = ++tile.generation;
       const path = viewPath(tile.source, index);
-      tile.status.textContent = "F " + pad(frame);
-      if (path) {
-        tile.fallback.hidden = true;
-        tile.img.hidden = false;
-        if (tile.img.getAttribute("src") !== path) tile.img.src = path;
-      } else {
-        tile.img.hidden = true;
-        tile.img.removeAttribute("src");
+      if (!path) {
+        tile.displayedPath = null;
+        tile.canvas.hidden = true;
         tile.fallback.hidden = false;
         tile.fallbackText.textContent =
           tile.source === "upper_up" ? "该时刻没有仰视图" : "该视角未生成";
         tile.status.textContent = "NOT GENERATED";
+        continue;
       }
+      if (tile.displayedPath === path) {
+        tile.status.textContent = "F " + pad(frame);
+        continue;
+      }
+      // Retain the fully drawn previous frame while fetching / decoding.
+      tile.status.textContent = "加载 F " + pad(frame);
+      void decodedImage(path).then(image => {
+        if (tile.disposed || tile.generation !== generation) return;
+        const canvas = tile.canvas;
+        const context = canvas.getContext("2d", {alpha: false});
+        if (!context) throw Error("浏览器不支持 Canvas 2D");
+        // JS runs to completion before painting: canvas reset + draw are atomic.
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        context.drawImage(image, 0, 0);
+        canvas.hidden = false;
+        tile.fallback.hidden = true;
+        tile.displayedPath = path;
+        tile.status.textContent = "F " + pad(frame);
+      }).catch(() => {
+        if (tile.disposed || tile.generation !== generation) return;
+        // Never flash the placeholder over a previously rendered valid frame.
+        tile.status.textContent = "加载失败 · 保留上一帧";
+        if (tile.canvas.hidden) {
+          tile.fallback.hidden = false;
+          tile.fallbackText.textContent = "图片读取失败";
+        }
+      });
     }
     preloadNext(index);
   }
@@ -466,7 +519,8 @@
     status.textContent = "—";
     foot.append(source, status);
     const tile = {id: block.id, source: block.source, status, fallback,
-                  fallbackText, img: null, video: null};
+                  fallbackText, canvas: null, video: null, generation: 0,
+                  disposed: false, displayedPath: null};
     if (state.manifest && VIDEO.has(block.source)) {
       const video = document.createElement("video");
       video.muted = true; video.playsInline = true;
@@ -487,13 +541,12 @@
       tile.video = video;
       fallback.hidden = true; status.textContent = "20 Hz";
     } else {
-      const img = document.createElement("img");
-      img.alt = meta[1]; img.decoding = "async"; img.hidden = true;
-      img.addEventListener("error", () => {
-        img.hidden = true; fallback.hidden = false;
-        fallbackText.textContent = "图片加载失败";
-      });
-      visual.prepend(img); tile.img = img;
+      const canvas = document.createElement("canvas");
+      canvas.hidden = true;
+      canvas.setAttribute("aria-label", meta[1]);
+      canvas.setAttribute("role", "img");
+      visual.prepend(canvas);
+      tile.canvas = canvas;
     }
     state.media.push(tile);
     card.append(toolbar, visual, foot);
@@ -549,8 +602,10 @@
   }
 
   function renderLayout() {
-    // Stop detached videos when tiles are rebuilt during live playback.
+    // Invalidate detached tiles so late image loads cannot replace a new layout.
     for (const tile of state.media) {
+      tile.disposed = true;
+      tile.generation++;
       if (tile.video) tile.video.pause();
     }
     state.media = [];

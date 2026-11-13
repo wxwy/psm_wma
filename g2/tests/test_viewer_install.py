@@ -1,5 +1,7 @@
 """Static G2 replay UI installer and live-data contract checks."""
 import json
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -92,6 +94,32 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
         "drop", "localStorage", "spatialAt", "requestAnimationFrame",
     ):
         assert marker in js
+    # Previously the visible <img>.src was replaced before the new PNG had
+    # finished downloading/decoding. That produced a visible blank flash,
+    # especially for the larger 2Hz floor_top frames.
+    assert 'function decodedImage(path)' in js
+    assert 'image.decode()' in js
+    assert 'context.drawImage(image, 0, 0)' in js
+    assert 'tile.displayedPath = path' in js
+    assert 'tile.generation !== generation' in js
+    assert 'tile.disposed = true' in js
+    assert 'preloadNext(index)' in js
+    assert 'tile.img.src =' not in js
+    assert 'tile.img.hidden' not in js
+    assert '.tile-visual canvas' in css
     assert 'data-count="4"' in css and 'data-count="5"' in css
     assert "minmax(0,1fr)" in css
     assert "[hidden] { display: none !important; }" in css
+
+
+
+def test_delayed_png_decode_never_blanks_visible_floor_map():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_no_flicker_smoke.js"
+    result = subprocess.run(
+        [node, str(script)], check=False, capture_output=True,
+        text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "VIEWER_NO_BLANK_FRAME_REGRESSION_PASS" in result.stdout
