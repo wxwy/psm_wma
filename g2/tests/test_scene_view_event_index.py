@@ -94,7 +94,7 @@ def test_yaw_wrap_near_plus_minus_pi_is_not_false_motion():
     c = SceneViewCursor([1])
     c.observe(0, 0, p()[:1], m()[:1], [0, 0, np.pi - 1e-9])
     e = c.observe(1, 10, p()[:1], m()[:1], [0, 0, -np.pi + 1e-9])
-    assert e.mode == "ARROW_ONLY"  # 2e-9 > default threshold
+    assert e.mode == "REUSE_ALL"  # 2e-9 rad << the default 1 degree.
     assert e.robot_yaw_delta_rad < 5e-9
     c = SceneViewCursor([1], robot_yaw_tol_rad=1e-8)
     c.observe(0, 0, p()[:1], m()[:1], [0, 0, np.pi - 1e-9])
@@ -235,3 +235,82 @@ def test_multiroom_floor_tops_are_refreshed_together():
     assert len(b["view_refs"]) == 2
     assert d["view_refs"]["sixview/rooms/1/floor_top.png"]["ref_state"] == 1
     assert d["view_refs"]["sixview/rooms/0/plus_X.png"]["ref_state"] == 0
+
+
+def test_chassis_translation_1mm_threshold_and_cumulative_motion():
+    c = SceneViewCursor([7])
+    p0 = p()[:1]
+    mat = m()[:1]
+    modes = []
+    owners = []
+    for i, dx in enumerate((0.0, 0.0004, 0.0008, 0.0012, 0.0016, 0.0021)):
+        event = c.observe(i, i * 10, p0, mat, [dx, 0.0, 0.0])
+        modes.append(event.mode)
+        owners.append(event.final_floor_source_state)
+    assert modes == [
+        "FULL",
+        "REUSE_ALL",
+        "REUSE_ALL",
+        "ARROW_ONLY",
+        "REUSE_ALL",
+        "REUSE_ALL",
+    ]
+    assert owners == [0, 0, 0, 3, 3, 3]
+    # 2.1 mm accumulated from the FIRST marker is irrelevant; the second
+    # marker at 1.2 mm is the anchor, so 0.9 mm is still below threshold.
+    assert c.observe(6, 60, p0, mat, [0.0023, 0.0, 0.0]).mode == "ARROW_ONLY"
+
+
+def test_chassis_heading_1degree_threshold_and_cumulative_turn():
+    c = SceneViewCursor([7])
+    p0 = p()[:1]
+    mat = m()[:1]
+    for i, degree in enumerate((0.0, 0.35, 0.7, 1.1, 1.4, 2.2)):
+        event = c.observe(i, i * 10, p0, mat, [0.0, 0.0, np.deg2rad(degree)])
+        expected = (
+            "FULL",
+            "REUSE_ALL",
+            "REUSE_ALL",
+            "ARROW_ONLY",
+            "REUSE_ALL",
+            "ARROW_ONLY",
+        )[i]
+        assert event.mode == expected, (i, degree, event)
+    assert c.observe(6, 60, p0, mat, [0.0, 0.0, np.deg2rad(2.3)]).mode == "REUSE_ALL"
+
+
+def test_scene_rerender_resets_chassis_marker_reference():
+    c = SceneViewCursor([7])
+    matrix = m()[:1]
+    a = c.observe(0, 0, p()[:1], matrix, [0, 0, 0])
+    b = c.observe(1, 10, p()[:1], matrix, [0.0007, 0, 0])
+    d = c.observe(2, 20, p(0.0013)[:1], matrix, [0.0007, 0, 0])
+    e = c.observe(3, 30, p(0.0013)[:1], matrix, [0.0012, 0, 0])
+    assert [r.mode for r in (a, b, d, e)] == ["FULL", "REUSE_ALL", "FULL", "REUSE_ALL"]
+    assert e.final_floor_source_state == 2
+
+
+def test_chassis_robot_threshold_parameters_are_configurable():
+    c = SceneViewCursor(
+        [7], robot_xy_tol_m=0.005, robot_yaw_tol_rad=float(np.deg2rad(4.0))
+    )
+    c.observe(0, 0, p()[:1], m()[:1], [0, 0, 0])
+    assert (
+        c.observe(1, 10, p()[:1], m()[:1], [0.004, 0, np.deg2rad(3.0)]).mode
+        == "REUSE_ALL"
+    )
+    assert (
+        c.observe(2, 20, p()[:1], m()[:1], [0.005, 0, np.deg2rad(3.0)]).mode
+        == "ARROW_ONLY"
+    )
+
+
+def test_index_rejects_skipped_floor_arrow_above_robot_tolerance():
+    from dataclasses import replace
+
+    e = sample_events()[2]
+    assert e.mode == "REUSE_ALL"
+    with pytest.raises(ValueError, match="robot motion"):
+        index_state(replace(e, robot_xy_delta_m=0.001), VIEWS)
+    with pytest.raises(ValueError, match="robot motion"):
+        index_state(replace(e, robot_yaw_delta_rad=np.deg2rad(1.0)), VIEWS)

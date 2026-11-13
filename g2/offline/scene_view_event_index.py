@@ -42,8 +42,8 @@ class SceneViewCursor:
     """Scene event cursor: <1 mm and <1 degree ignored (experimental only).
 
     Measurements are compared with the LAST ACTUAL SCENE RENDER, not the
-    previous sample. Robot chassis x/y/yaw is tracked independently per
-    sampled state. SG and exact MuJoCo GT are never modified.
+    previous sample. Robot chassis x/y/yaw is measured against the last ACTUALLY DRAWN
+    floor marker, not the preceding sample. SG and exact MuJoCo GT are unchanged.
     """
 
     def __init__(
@@ -52,8 +52,8 @@ class SceneViewCursor:
         *,
         translation_tol_m=0.001,
         rotation_tol_deg=1.0,
-        robot_xy_tol_m=1e-10,
-        robot_yaw_tol_rad=1e-10,
+        robot_xy_tol_m=0.001,
+        robot_yaw_tol_rad=math.radians(1.0),
     ):
         ids = np.asarray(visual_geom_ids)
         if (
@@ -77,7 +77,7 @@ class SceneViewCursor:
         self.trot = float(rotation_tol_deg)
         self.trobot = float(robot_xy_tol_m)
         self.tyaw = float(robot_yaw_tol_rad)
-        self._last_robot = None
+        self._last_rendered_robot = None
         self._last_rendered_scene = None
         self._previous_id = -1
         self._previous_frame = -1
@@ -140,7 +140,7 @@ class SceneViewCursor:
             keypos, keymat = self._last_rendered_scene
             dp = float(np.max(np.linalg.norm(pos - keypos, axis=1)))
             dm = self._max_rotation_degrees(mat, keymat)
-            oldbot = self._last_robot
+            oldbot = self._last_rendered_robot
             dr = float(np.linalg.norm(bot[:2] - oldbot[:2]))
             dy = float(
                 abs(
@@ -153,7 +153,9 @@ class SceneViewCursor:
             # is a scene event, even when other geoms remain stationary.
             if dp >= self.tpos or dm >= self.trot:
                 mode = "FULL"
-            elif dr > self.trobot or dy > self.tyaw:
+            elif (dr > 0.0 and dr >= self.trobot) or (
+                dy > 0.0 and dy >= self.tyaw
+            ):
                 mode = "ARROW_ONLY"
             else:
                 mode = "REUSE_ALL"
@@ -175,7 +177,10 @@ class SceneViewCursor:
             dr,
             dy,
         )
-        self._last_robot = bot.copy()
+        if mode in ("FULL", "ARROW_ONLY"):
+            # Anchor the tolerance to the last PHYSICALLY DRAWN floor marker.
+            # Comparing adjacent sampled states would hide cumulative drift.
+            self._last_rendered_robot = bot.copy()
         self._previous_id = state_id
         self._previous_frame = frame
         return out
@@ -213,6 +218,11 @@ def index_state(event, views, *, top=None):
         event.object_translation_max_m >= 0.001 or event.object_rotation_max_deg >= 1.0
     ):
         raise ValueError("cannot index a state exceeding 1 mm or 1 degree")
+    if event.mode == "REUSE_ALL" and (
+        event.robot_xy_delta_m >= 0.001
+        or event.robot_yaw_delta_rad >= math.radians(1.0)
+    ):
+        raise ValueError("cannot reuse floor marker with >=1mm or >=1degree robot motion")
     paths = [validate_view_path(s) for s in views]
     floors = (
         {top}

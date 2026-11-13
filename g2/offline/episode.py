@@ -459,7 +459,9 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                 scene_keyframe_state=event.scene_source_state,
                 final_floor_png_state=event.final_floor_source_state,
                 object_translation_max_m=event.object_translation_max_m,
-                object_rotation_max_deg=event.object_rotation_max_deg)
+                object_rotation_max_deg=event.object_rotation_max_deg,
+                robot_xy_delta_m=event.robot_xy_delta_m,
+                robot_yaw_delta_rad=event.robot_yaw_delta_rad)
             record["state_wall_s"]=round(time.perf_counter()-state_started,6)
             rows.append(record)
             print("G2_SCENE_REUSE_STATE_PASS",frame,event.mode,
@@ -568,7 +570,9 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                 scene_keyframe_state=event.scene_source_state,
                 final_floor_png_state=event.final_floor_source_state,
                 object_translation_max_m=event.object_translation_max_m,
-                object_rotation_max_deg=event.object_rotation_max_deg)
+                object_rotation_max_deg=event.object_rotation_max_deg,
+                robot_xy_delta_m=event.robot_xy_delta_m,
+                robot_yaw_delta_rad=event.robot_yaw_delta_rad)
         rows.append(record)
         print("G2_NATIVE_VIEW_STATE_PASS", frame, "pixel_exact_images", exact_views, flush=True)
     if len(rows) != len(configured_frames):
@@ -610,6 +614,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         report.update(scene_event_index_enabled=True,
             scene_motion_translation_tol_m=.001,
             scene_motion_rotation_tol_deg=1.0,
+            robot_motion_xy_tol_m=.001,
+            robot_motion_yaw_tol_deg=1.0,
             scene_png_index_schema="g2_atomic_compact_6views_v2",
             scene_full_render_states=sum(r.get("scene_event_mode")=="FULL" for r in rows),
             scene_arrow_only_states=sum(r.get("scene_event_mode")=="ARROW_ONLY" for r in rows),
