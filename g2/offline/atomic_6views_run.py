@@ -72,6 +72,7 @@ class WorkerConfig:
     sim_direct_material: bool=False
     # Experiment only. The legacy worker remains the default.
     scene_event_index: bool=False
+    sg_event_index: bool=False
     lazy_texel_decode: bool=False
     robot_pose_marker: bool=True
     robot_pose_marker_style: str="game_arrow"
@@ -97,7 +98,7 @@ def subprocess_stage(command, *, cwd=None, env=None, row=None, name=None):
 def _stage_mark(path, name, row, *, robot_pose_marker=None,
                 robot_pose_marker_style=None, marker_appearance=None,
                 scene_event_index=None, lazy_texel_decode=None,
-                sim_direct_material=None):
+                sim_direct_material=None, sg_event_index=None):
     marker=Path(path)/RECEIPT
     if not marker.is_file() or marker.is_symlink():
         return False
@@ -110,6 +111,7 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None,
             and (scene_event_index is None or data.get("scene_event_index") is scene_event_index)
             and (lazy_texel_decode is None or data.get("lazy_texel_decode") is lazy_texel_decode)
             and (sim_direct_material is None or data.get("sim_direct_material") is sim_direct_material)
+            and (sg_event_index is None or data.get("sg_event_index") is sg_event_index)
             and (robot_pose_marker is None or
                  data.get("robot_pose_marker") is robot_pose_marker)
             and (robot_pose_marker_style is None or
@@ -124,7 +126,7 @@ def _stage_mark(path, name, row, *, robot_pose_marker=None,
 def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
           robot_pose_marker_style=None, marker_appearance=None,
           scene_event_index=None, lazy_texel_decode=None,
-          sim_direct_material=None):
+          sim_direct_material=None, sg_event_index=None):
     target=Path(work)/name
     if target.is_symlink():
         raise ContractError("stage must not be a symlink: "+str(target))
@@ -134,7 +136,8 @@ def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
                         marker_appearance=marker_appearance,
                         scene_event_index=scene_event_index,
                         lazy_texel_decode=lazy_texel_decode,
-                        sim_direct_material=sim_direct_material)
+                        sim_direct_material=sim_direct_material,
+                        sg_event_index=sg_event_index)
                 and all((target/p).is_file() for p in required)):
             event("STAGE_REUSE",row=row,stage=name)
             return target
@@ -155,6 +158,7 @@ def stage(work, name, row, builder, *, required=(), robot_pose_marker=None,
         **({"scene_event_index":scene_event_index} if scene_event_index is not None else {}),
         **({"lazy_texel_decode":lazy_texel_decode} if lazy_texel_decode is not None else {}),
         **({"sim_direct_material":sim_direct_material} if sim_direct_material is not None else {}),
+        **({"sg_event_index":sg_event_index} if sg_event_index is not None else {}),
         **({"robot_pose_marker":robot_pose_marker} if robot_pose_marker is not None else {}),
         **({"robot_pose_marker_style":robot_pose_marker_style}
            if robot_pose_marker_style is not None else {}),
@@ -437,9 +441,15 @@ def produce_one(row,config):
               marker_appearance=config.marker_appearance,
               scene_event_index=True if config.scene_event_index else None,
               lazy_texel_decode=True if config.lazy_texel_decode else None,
-              sim_direct_material=True if config.sim_direct_material else None)
+              sim_direct_material=True if config.sim_direct_material else None,
+              sg_event_index=True if config.sg_event_index else None)
     final=config.output_root/row["expected_relative_output"]
-    if config.scene_event_index:
+    if config.sg_event_index:
+        from .scene_graph_compact_v3 import package_indexed_sg_v3
+        result=package_indexed_sg_v3(
+            f27, final, episode_id=row["episode_id"],
+            task_class=row["task_class"],selection=row)
+    elif config.scene_event_index:
         from .atomic_6views_compact_v2 import package_indexed
         result=package_indexed(f27,final,episode_id=row["episode_id"],
                                task_class=row["task_class"],selection=row)
@@ -537,7 +547,7 @@ def schedule(args):
                          require_depth=args.require_depth)
     selected,counts=plan.select(rows,tasks=args.task,
                                  episodes_per_task=args.episodes_per_task)
-    pending=[r for r in selected if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index)]
+    pending=[r for r in selected if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index)]
     event("SELECTION",total=len(selected),pending=len(pending),
           selected_tasks=len(counts),per_task=args.episodes_per_task or "ALL",
           renderer="f27")
@@ -552,7 +562,7 @@ def schedule(args):
         tasks=args.task,episodes_per_task=args.episodes_per_task,
         batch_size=args.batch_size,resume=args.resume,
         require_depth=args.require_depth,
-        allow_index_v2=args.scene_event_index)
+        allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index)
     if args.action=="plan":
         event("PLAN",path=args.plan_root,episodes=index["episodes_total"],
               batches=index["batches_total"],production_started=False)
@@ -566,7 +576,7 @@ def schedule(args):
     if any(saved.get(r["episode_id"],{}).get("source_fingerprint")!=r["source_fingerprint"]
            for r in all_rows):
         raise ContractError("pinned plan differs from current original source")
-    jobs=[r for r in all_rows if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index)]
+    jobs=[r for r in all_rows if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index)]
     if not jobs:
         event("ALL_DONE",total=len(selected),skipped_completed=len(selected))
         return 0
@@ -595,7 +605,7 @@ def schedule(args):
     finished=[]
     started=time.monotonic()
     for r in all_rows:
-        if plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index):
+        if plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index):
             finished.append(r["episode_id"])
     def worker(slot):
         gpu,subslot,port=slot
@@ -624,13 +634,14 @@ def schedule(args):
                 if args.sim_color_only:cmd.append("--sim-color-only")
                 if args.sim_direct_material:cmd.append("--sim-direct-material")
                 if args.scene_event_index:cmd.append("--scene-event-index")
+                if args.sg_event_index:cmd.append("--sg-event-index")
                 if args.lazy_texel_decode:cmd.append("--lazy-texel-decode")
                 if not args.robot_pose_marker:cmd.append("--no-robot-pose-marker")
                 cmd.extend(["--robot-pose-marker-style",args.robot_pose_marker_style])
                 cmd.extend(appearance_cli_args(appearance_from_args(args)))
                 try:
                     subprocess.run(cmd,check=True)
-                    if not plan.completed_output(row,args.output_root,allow_index_v2=args.scene_event_index):
+                    if not plan.completed_output(row,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index):
                         raise ContractError("worker returned without matching final output")
                     status="DONE"
                     break
@@ -669,7 +680,7 @@ def run_one_cli(args):
         selected=next((x for x in rows if x["episode_id"]==args.episode_id),None)
         if selected is not None:break
     else:raise ContractError("episode is absent from immutable source plan")
-    if plan.completed_output(selected,args.output_root,allow_index_v2=args.scene_event_index):
+    if plan.completed_output(selected,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index):
         event("EPISODE_REUSE",row=selected)
         return 0
     config=WorkerConfig(
@@ -683,6 +694,7 @@ def run_one_cli(args):
             sim_color_only=args.sim_color_only,
             sim_direct_material=args.sim_direct_material,
             scene_event_index=args.scene_event_index,
+            sg_event_index=args.sg_event_index,
             lazy_texel_decode=args.lazy_texel_decode,
             robot_pose_marker=args.robot_pose_marker,
             robot_pose_marker_style=args.robot_pose_marker_style,
@@ -731,6 +743,8 @@ def parser():
                    help="experimental RoboCasa GT: F27 direct 10mm color, no nav_states")
     p.add_argument("--scene-event-index",action="store_true",
                    help="EXPERIMENT ONLY: 1mm/1deg scene event rendering + compact v2 indexed Views")
+    p.add_argument("--sg-event-index",action="store_true",
+                   help="EXPERIMENT ONLY: 1mm/1degree chassis, lossless SG keyframes/deltas, compact v3")
     p.add_argument("--sim-direct-material",action="store_true",
                    help="EXPERIMENT ONLY: eliminate 10mm color voxel and native_color_only stages")
     p.add_argument("--lazy-texel-decode",action="store_true",
@@ -761,6 +775,9 @@ def main(argv=None):
     if args.sim_direct_material and not (args.scene_event_index and args.sim_color_only
                                          and args.sim_direct_geometry_only):
         raise ContractError("P2 direct material requires approved P1/F27 direct GT mode")
+    if args.sg_event_index and not (args.scene_event_index and args.sim_direct_material
+                                    and args.lazy_texel_decode):
+        raise ContractError("P3 SG indexing requires P0/P1/P2 opt-in and 1mm/1degree chassis")
     args.gpus=[int(x) for x in args.gpus.split(",")]
     args.output_root=args.output_root.resolve()
     if args.action=="work":

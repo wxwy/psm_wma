@@ -106,6 +106,8 @@ def _source(tmp_path, *, bad_reference=False, view_set_change=False):
                 final_floor_png_state=(i if mode in ("FULL", "ARROW_ONLY") else 1),
                 object_translation_max_m=0.0,
                 object_rotation_max_deg=0.0,
+                robot_xy_delta_m=0.2 if mode == "ARROW_ONLY" else 0.0,
+                robot_yaw_delta_rad=0.0,
             )
         )
     _json(
@@ -209,3 +211,75 @@ def test_production_default_remains_v1_and_p2_requires_explicit_optin():
         runner.main(
             ["work", "--sim-direct-material", "--manual-start", "--allow-experimental"]
         )
+
+
+def test_optin_v3_production_packer_with_verified_new_chassis_threshold(tmp_path):
+    from g2.offline.scene_graph_compact_v3 import (
+        package_indexed_sg_v3,
+        validate_sg_indexed_episode,
+        resolve_scene_graph,
+    )
+
+    source = _source(tmp_path)
+    for i, frame in enumerate((0, 10, 20)):
+        folder = source / f"state_{i:06d}_frame_{frame:06d}"
+        graph_path = folder / "scene_graph.json"
+        graph = json.loads(graph_path.read_text())
+        graph.update(
+            timestamp_ns=(frame + 1) * 50000000,
+            original_state_row_sha256=f"{i:064x}",
+            entities=[
+                {
+                    "id": "entity_0",
+                    "kind": "object",
+                    "bbox_min": [1.0 + i * 1e-7, 0.0, 0.0],
+                    "bbox_max": [2.0 + i * 1e-7, 1.0, 1.0],
+                    "centroid": [1.5 + i * 1e-7, 0.5, 0.5],
+                    "label": "kettle",
+                }
+            ],
+            connections=dict(threshold_m=0.3, objects=[]),
+            relations=[dict(type="inside", source="entity_0", target="room_0")],
+        )
+        _json(graph_path, graph)
+    receipt_path = source / "episode_receipt.json"
+    receipt = json.loads(receipt_path.read_text())
+    receipt["robot_motion_xy_tol_m"] = 0.001
+    receipt["robot_motion_yaw_tol_deg"] = 1.0
+    _json(receipt_path, receipt)
+    output_root = tmp_path / "v3_output"
+    target = output_root / _row()["expected_relative_output"]
+    doc = package_indexed_sg_v3(
+        source, target, episode_id=7, task_class="MockTask", selection=_row()
+    )
+    assert doc["schema"] == "g2_atomic_compact_6views_v3"
+    assert doc["robot_motion_reference_policy"] == "LAST_DRAWN_FLOOR_MARKER"
+    assert doc["robot_motion_xy_tol_m"] == 0.001
+    assert validate_sg_indexed_episode(target) == 3
+    assert [r["scene_graph"] for r in doc["states"]] == [
+        "scene_graph.json.gz",
+        None,
+        None,
+    ]
+    assert plan.completed_output(
+        _row(), output_root, allow_index_v2=True, allow_index_v3=True
+    )
+    for i, row in enumerate(doc["states"]):
+        source_graph = json.loads(
+            (
+                source / f"state_{i:06d}_frame_{row['frame']:06d}" / "scene_graph.json"
+            ).read_text()
+        )
+        assert resolve_scene_graph(target, i) == source_graph
+
+
+def test_optin_v3_production_rejects_old_marker_threshold(tmp_path):
+    from g2.offline.scene_graph_compact_v3 import package_indexed_sg_v3
+
+    source = _source(tmp_path)
+    target = tmp_path / "new_v3"
+    with pytest.raises(PackageError, match="1mm/1degree"):
+        package_indexed_sg_v3(
+            source, target, episode_id=7, task_class="MockTask", selection=_row()
+        )
+    assert not target.exists()
