@@ -1,4 +1,8 @@
-- **G2-P3-SG-REFERENCE-NOEMPTY** — IN_PROGRESS（代码/CPU/真实产物验收PASS，正式接续中）；负责人ChatGPT/Codex。953/953 CPU、141源码哈希不变、真实17状态/136逻辑图/17当前帧身份全部通过；EVENT_KEYFRAME 5 SG+12引用，0delta，12帧不建目录，最大误差0.089mm<1mm。机器人1mm/1°累计更新。准备排空旧调度器后同步V3并resume原4卡×8workers；保留原计划和合法旧v1/v2/v3产物，native nav_sg与Cosmos不改。
+- **G2-P3-SG-REFERENCE-NOEMPTY** — DONE（源码/CPU/真实样例/正式V3/实际32-worker首份产物闭环）；负责人ChatGPT/Codex。源码2662bc79、启动f36b78b3；953 CPU PASS；569真实17状态仅5目录、12无目录；正式812的16状态仅7目录、9无目录；SG EVENT_KEYFRAME零delta，当前帧身份保留。报告 g2/experiments/P3_SG_EVENT_KEYFRAME_PRODUCTION_RESUME_20261114.md。此DONE不代表9126全量完成。
+
+- **G2-ATOMIC-9126-PRODUCTION** — IN_PROGRESS；g2_view / dispatcher2177485，GPU4–7×8，正式V3源码、原固定计划resume、新v3workroot、--sg-event-index。截至2026-11-14T01:21:14.933674+08:00：804/9126完成（新EVENT_KEYFRAME 11），32workers继续；旧合法v1/v2/v3保留。588/621既有native_gt失败另列，失败不计完成。源数据与计划不变。
+
+- **G2-COLLISION-MESH-COMPAT** — TODO（已有错误定位和历史同因确认，未修改geometry）；588/621的native_gt报degenerate mesh face，新旧源SHA一致，旧生产各已失败两次。nav_sg validate_mesh拒绝cross norm<=1e-14，其中可能包含非零小面。先隔离定位geom/mesh/face及零面积/正面积分类，再在保留闭合、定向、内腔与10cm占据语义的前提下修正；不能吞错、任意删小面或改凸包。
 
 - **G2-F24-V3-INTEGRATION** — IN_PROGRESS；负责人ChatGPT/Codex；Owner继续构建与逐文件仓库集成授权。前置：正式V3 `3966058af6f2f3e189bdebe9e1099249c80b2e5e`、F24候选 `32f12f8dba44277ad0d3a2f16404267b2044a446`、既有服务器F21/F22/F24验证证据。范围：67个g2文件及非冲突G2文档/证据，补齐direct source、Episode CLI、delta producer、GPU Views；保留正式Cosmos Gitlink `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`、训练评测代码与账本主体。验收：固定源码blob一致、完整相关CPU测试、真实25-state导航/彩色地图/视图端到端复验、记录实测耗时；单独6个merger tests不等于完整生产验收。服务器不commit/push；本步骤不启动9,126-episode全量生产或模型训练。
 

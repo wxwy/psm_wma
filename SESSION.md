@@ -1,12 +1,14 @@
-# 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：验收通过，正在正式接续
+# 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：DONE；正式全量生产继续
 
-任务 `G2-P3-SG-REFERENCE-NOEMPTY`，负责人 ChatGPT/Codex。Owner 要求接续“继续G2架构验收”，SG 与物品变化阈值统一，所有视图与 SG 均复用时不创建帧目录。基线 V3 `664678fd91c23bfd16505380d0d3db6cf9f15ad6`；nav_sg G2 `9734d2e0e261a47efbd00f5de78ec6c1a983557b`；Cosmos Gitlink `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2` 保持不变。
+任务 G2-P3-SG-REFERENCE-NOEMPTY 已完成源码、CPU、独立真实数据、正式 V3 推广与实际 32-worker 接续验收。源码 2662bc7947cad878cf752bd0aba6733cae0346a3；review/启动 HEAD f36b78b39f8ab4f6317e01bd2192c9899ae887d6。nav_sg G2 9734d2e0e261a47efbd00f5de78ec6c1a983557b，Cosmos d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2。服务器只 fetch/ff，没有 commit/push。
 
-新生产 `--sg-event-index` 使用 EVENT_KEYFRAME：物品 FULL 或 SG 语义/结构/几何保护触发时保存 SG；否则 bbox/centroid 欧氏误差与 connection 距离相对最近物理 SG 关键帧严格 <1mm 时直接引用。机器人平移1mm/转角1°相对上次实际绘制累积。当前 frame/time/GT identity 内联 manifest；raw SG hash 与实际解析 SG hash 分开；完全复用帧无需 state 目录。旧 v1/v2/v3 与 lossless converter 保持兼容；现有完成数据按 resume 保留，不能宣称全量均已转成新策略。
+所有视图和 SG 均复用的状态只保留 manifest 行、不创建 state 目录；当前 frame/time/GT identity 保留。新生产 SG EVENT_KEYFRAME 相对最近实体 SG 比较几何误差，严格 <1mm 才可直接引用，无 per-frame delta；语义/结构/未知变化或达到阈值保存新 SG。机器人箭头1mm/1°相对最近实际绘制累计。raw SG hash 与解析 SG hash 分离，不宣称阈值复用数值等于 raw。旧完成v1/v2/v3保留，默认lossless converter兼容。
 
-独立静态复核关闭；最终 **953/953 CPU PASS，零失败/错误/跳过**，141 个源码文件在 Gate 前后哈希一致。真实 CloseFridge/569 已执行原始源 Worker（17 states），渲染源码之后未改变，仅将新SG策略重新打包：5实体SG、0delta、12SG引用；17状态仅5目录、12目录不存在；136个逻辑PNG与真实渲染全部字节一致，40实体PNG/96引用；当前帧身份17/17一致，最大几何误差0.00008890237660085534m；Viewer真实引用检查PASS。
+G2 CPU953 PASS、0失败/错误/跳过，141源码Gate前后相同，正式10变更文件哈希与最终验收一致。真实569：17状态、5目录、12无目录；5SG+12引用、零delta；136逻辑PNG全部字节一致，40实体/96引用；17当前身份精确，独立raw最大几何误差0.088902mm；Viewer Node PASS。正式首份812：16状态仅7目录、9无目录；7SG+9引用、零delta；112逻辑PNG=49实体+63引用；完整v3/计划/metadata/目录验证PASS。812误差是manifest声明与边界检查，独立raw比对仅属于569证据。
 
-原先 lossless SG delta 虽准确，但为<0.1mm抖动仍落盘，不符合Owner阈值意图，已改为显式EVENT_KEYFRAME；不再将12个复用SG冒称raw数值精确相等。完整原始源identity、source SG hash及误差可追溯。报告与推广记录随后写入 g2/experiments/ 和 canonical reviews。服务器旧调度器正排空，尚未宣称新生产启动；服务器不commit/push。
+旧队列01:11:11 CST自然排空，保留793完成；固定9126计划SHA f1dfcc5243a466a1c1a885e407fade7ef860eb72079494f3cc7dc90334283643 全程不变。新dispatcher2177485于01:12:23在g2_view启动，正式cwd/PYTHONPATH，GPU4–7各8workers，--sg-event-index，新work .g2_atomic_6views_v3_9126_work_20261114。截至 2026-11-14T01:21:14.933674+08:00，完成804/9126，其中11份为新EVENT_KEYFRAME；现场32workers继续。当前任务是全量生产IN_PROGRESS，不是9126全量完成。
+
+既有588/621在native_gt的degenerate mesh face各两次失败；独立核对旧日志同样失败且输入SHA一致，与P3无关。保留FAILED，未跳过/计完成/改源资产；另列G2-COLLISION-MESH-COMPAT任务，先定位真正零面积和极小正面积面，不能直接删小面或用凸包破坏内腔。完整当前状态与路径见 g2/experiments/P3_SG_EVENT_KEYFRAME_PRODUCTION_RESUME_20261114.md/.json；前置Gate和canonical APPROVE_CODE已提交。此次账本提交不改变已验收生产源码。
 
 # 2026-11-11 CST — G2 F24 正式 V3 集成：IN_PROGRESS
 
