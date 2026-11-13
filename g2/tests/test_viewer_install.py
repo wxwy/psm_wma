@@ -172,3 +172,18 @@ def test_hierarchical_server_directory_dropdown_with_simulated_http():
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert "G2_SERVER_HIERARCHICAL_DROPDOWN_PASS" in result.stdout
+
+
+def test_compact_row_spacing_without_row_number_labels():
+    folder = Path(viewer.__file__).parent
+    js = (folder / "viewer.js").read_text()
+    css = (folder / "viewer.css").read_text()
+    html = (folder / "index.html").read_text()
+    assert "ROW " not in js
+    assert "row-identity" not in js
+    assert ".display-rows { display:flex; flex-direction:column; gap:10px }" in css
+    assert "margin:0 0 2.5px" in css
+    assert "justify-content:flex-end" in css
+    assert "actions.append(add, remove); head.append(actions);" in js
+    assert "viewer.js?v=20261113-compact-rows" in html
+    assert "viewer.css?v=20261113-compact-rows" in html

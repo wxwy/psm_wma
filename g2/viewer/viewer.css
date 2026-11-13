@@ -85,11 +85,9 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 .text-btn:hover { color:#303e54 }
 .add-primary { color:white; background:#283443; border-radius:9px; height:38px; padding:0 16px; font-size:12px }
 .add-primary:hover { background:#40516a }
-.display-rows { display:flex; flex-direction:column; gap:20px }
+.display-rows { display:flex; flex-direction:column; gap:10px }
 .row-shell { min-width:0 }
-.row-heading { display:flex; justify-content:space-between; align-items:center; margin:0 0 10px; min-height:24px; gap:15px }
-.row-identity { display:flex; align-items:center; gap:10px; color:#96a0ae; font:600 11px var(--mono) }
-.row-line { width:16px; height:1px; background:#c8d0d9 }
+.row-heading { display:flex; justify-content:flex-end; align-items:center; margin:0 0 2.5px; min-height:24px; gap:15px }
 .row-actions { display:flex; gap:14px; align-items:center }
 .row-actions button { border:0; background:transparent; color:#748195; font-size:12px; padding:3px 0; font-weight:600 }
 .row-actions button:hover { color:#4265dd }

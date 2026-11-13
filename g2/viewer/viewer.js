@@ -775,14 +775,9 @@
     state.lastSpatial = -1;
     const container = $("display-rows");
     container.replaceChildren();
-    state.rows.forEach((row, rowIndex) => {
+    state.rows.forEach(row => {
       const shell = document.createElement("section"); shell.className = "row-shell";
       const head = document.createElement("div"); head.className = "row-heading";
-      const label = document.createElement("span"); label.className = "row-identity";
-      label.textContent = "ROW " + pad(rowIndex + 1, 2) +
-        "  /  " + row.blocks.length + " 个视角";
-      const line = document.createElement("span"); line.className = "row-line";
-      label.append(line);
       const actions = document.createElement("div"); actions.className = "row-actions";
       const add = document.createElement("button");
       add.type = "button"; add.textContent = "＋ 添加展示块";
@@ -801,7 +796,7 @@
         if (state.rows.length === 1) { toast("至少保留一行"); return; }
         state.rows.splice(rowIndex, 1); saveLayout(); renderLayout();
       });
-      actions.append(add, remove); head.append(label, actions);
+      actions.append(add, remove); head.append(actions);
       const grid = document.createElement("div");
       grid.className = "display-row";
       grid.dataset.count = String(row.blocks.length);
