@@ -47,3 +47,11 @@ Local server-on-device: http://127.0.0.1:18769/index.html (requires SSH port for
 ## Remaining engineering work
 
 The P1 cursor, v2 indexed offline packager and Viewer support are independently tested, but **not yet integrated into the actual F27 production render loop**. Production resume schema and data loaders are still on v1. Do NOT change the authoritative 9,126 output schema without v2 resume and viewer/loader integration, then additional full-Episode A/B and human quality Gate. Existing 202 completed v1 Episodes remain valid, and resumed production must not recompute them.
+
+## Human visual-acceptance Gate (2026-11-13)
+
+**H1 PASS — user inspected the side-by-side and magnified P1 1 mm/1 degree A/B images and reported no visible difference.** This is a visual acceptability decision for the explicit P1 motion tolerance only, not a bit-exact F27 result, and not approval to skip SG/native provenance for any sampled state.
+
+The accepted comparison was made available at the server-local preview path /tmp/g2_p1_human_gate_1mm_1deg_20261113/index.html. It included four OpenDrawer worst-case pairs: cached scene, original F27 scene, red-highlighted differing pixels and magnified crop. P1's existing 1 mm and 1 degree thresholds and last-rendered-keyframe reference remain unchanged.
+
+**Next gate still OPEN:** integrate runtime FULL/ARROW_ONLY/REUSE_ALL decisions into F27; keep v1/202 completed Episode behavior unchanged, implement complete v2 resume and image-index consumption, and run two-layout end-to-end temporal parity plus runtime benchmarks before production promotion.
