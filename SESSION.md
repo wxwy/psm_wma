@@ -1,3 +1,11 @@
+# 2026-11-14 CST — G2 P3 SG 引用 / 机器人阈值 / 无目录帧：IN_PROGRESS
+
+任务 `G2-P3-SG-REFERENCE-NOEMPTY`，负责人 ChatGPT/Codex。Owner 要求接续“继续G2架构验收”，并明确：所有视图和 SG 都复用时，不应创建对应帧目录。基线 V3 `664678fd91c23bfd16505380d0d3db6cf9f15ad6`、nav_sg G2 `9734d2e0e261a47efbd00f5de78ec6c1a983557b`；Cosmos Gitlink 保持 `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`。
+
+修改范围仅 g2/offline 的 scene_view_event_index、episode、atomic_6views_run/plan、新 scene_graph_compact_v3，以及对应测试和 P3 验证脚本。机器人 1mm/1° 相对上次实际 floor marker 绘制累积；SG body 以关键帧/无损 delta 保存，帧身份内联 manifest；完全复用帧只保留索引，不创建 state 目录。新功能使用显式 --sg-event-index；保留 v1/v2 和原生 nav_sg 路径。
+
+3 路独立静态复核已完成，当前固定阈值和新引用结构没有未解决阻断；937 CPU PASS / 2 optional real-asset skipped（未设置 G2_F27_REAL_SOURCE_MJCF）、3 Node smoke PASS。真实 CloseFridge/569（17 states）在隔离目录 `/tmp/g2_p3_finish_20261114` 运行，结果尚未宣称通过。正式 g2_view 继续旧 v2，未切换。服务器不 commit/push，正式代码通过仓库 API 提交。待真实无损/索引验证后再推广并恢复任务。
+
 # 2026-11-11 CST — G2 F24 正式 V3 集成：IN_PROGRESS
 
 任务 `G2-F24-V3-INTEGRATION`，负责人 ChatGPT/Codex。Owner 已要求继续构建并将服务器跑通的 G2 实现逐文件整合到正式 V3/nav_sg G2；服务器不进行 commit/push。
