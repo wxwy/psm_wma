@@ -90,12 +90,75 @@ def test_yaw_wrap_near_plus_minus_pi_is_not_false_motion():
     assert c.observe(1,10,p()[:1],m()[:1],[0,0,-np.pi+1e-9]).mode=="REUSE_ALL"
 
 
-def test_rotation_displacement_triggers_full():
-    c=SceneViewCursor([0],rotation_matrix_tol=1e-10)
+def _yaw_rotation(degrees):
+    a=np.deg2rad(degrees)
+    return np.asarray([
+        [np.cos(a),-np.sin(a),0.],
+        [np.sin(a), np.cos(a),0.],
+        [0.,0.,1.],
+    ], dtype=np.float64).reshape(1,3,3)
+
+
+def test_rotation_threshold_in_actual_degrees():
+    c=SceneViewCursor([0])
+    a=c.observe(0,0,p()[:1],_yaw_rotation(0),[0,0,0])
+    b=c.observe(1,10,p()[:1],_yaw_rotation(0.9),[0,0,0])
+    assert a.mode=="FULL"
+    assert b.mode=="REUSE_ALL"
+    assert 0.89<b.object_rotation_max_deg<0.91
+    d=c.observe(2,20,p()[:1],_yaw_rotation(1.1),[0,0,0])
+    assert d.mode=="FULL"
+    assert 1.09<d.object_rotation_max_deg<1.11
+
+
+def test_threshold_in_real_millimetres_and_accumulation():
+    c=SceneViewCursor([0])
+    assert c.observe(0,0,p()[:1],m()[:1],[0,0,0]).mode=="FULL"
+    a=c.observe(1,10,p(.0006)[:1],m()[:1],[0,0,0])
+    assert a.mode=="REUSE_ALL"
+    assert a.scene_source_state==0
+    b=c.observe(2,20,p(.0012)[:1],m()[:1],[0,0,0])
+    assert b.mode=="FULL", "0.6+0.6 mm must not be ignored forever"
+    assert b.scene_source_state==2
+    x=c.observe(3,30,p(.0017)[:1],m()[:1],[0,0,0])
+    assert x.mode=="REUSE_ALL" and x.scene_source_state==2
+
+
+def test_translation_uses_3d_euclidean_norm_not_per_axis():
+    c=SceneViewCursor([0])
     c.observe(0,0,p()[:1],m()[:1],[0,0,0])
-    a=m()[:1]
-    a[0,0,0]=0.999
-    assert c.observe(1,10,p()[:1],a,[0,0,0]).mode=="FULL"
+    q=p()[:1].copy()
+    q[0,:2]=[.0008,.0008]
+    b=c.observe(1,10,q,m()[:1],[0,0,0])
+    assert b.mode=="FULL"
+    assert .0011<b.object_translation_max_m<.0012
+
+
+def test_thresholds_are_strict_below_not_at_threshold():
+    c=SceneViewCursor([0])
+    c.observe(0,0,p()[:1],m()[:1],[0,0,0])
+    # Binary floating representation: 0.001 from an exact zero origin
+    # is exactly the same float as the configured threshold.
+    assert c.observe(1,10,p(.001)[:1],m()[:1],[0,0,0]).mode=="FULL"
+    d=SceneViewCursor([0])
+    d.observe(0,0,p()[:1],m()[:1],[0,0,0])
+    assert d.observe(1,10,p()[:1],_yaw_rotation(1.0),[0,0,0]).mode=="FULL"
+
+
+def test_object_motion_does_not_require_robot_motion():
+    c=SceneViewCursor([0])
+    c.observe(0,0,p()[:1],m()[:1],[0,0,0])
+    a=c.observe(1,10,p(.0008)[:1],m()[:1],[0.5,0,0])
+    assert a.mode=="ARROW_ONLY" and a.scene_source_state==0
+    b=c.observe(2,20,p(.0012)[:1],m()[:1],[0.5,0,0])
+    assert b.mode=="FULL" and b.final_floor_source_state==2
+
+
+def test_one_degree_rotation_is_relative_to_last_rendered_scene():
+    c=SceneViewCursor([0])
+    c.observe(0,0,p()[:1],_yaw_rotation(0),[0,0,0])
+    assert c.observe(1,10,p()[:1],_yaw_rotation(.55),[0,0,0]).mode=="REUSE_ALL"
+    assert c.observe(2,20,p()[:1],_yaw_rotation(1.10),[0,0,0]).mode=="FULL"
 
 
 @pytest.mark.parametrize("t",[-1, float("inf"),float("nan"),None, "a"])
@@ -123,3 +186,12 @@ def test_robot_pose_source():
 def test_no_future_or_external_path():
     with pytest.raises(ValueError,match="unsafe"):
         index_state(sample_events()[0],["../../private.png","sixview/floor_top.png"])
+
+def test_index_rejects_skip_event_exceeding_approved_physical_threshold():
+    from dataclasses import replace
+    base=sample_events()[2]
+    assert base.mode=="REUSE_ALL"
+    with pytest.raises(ValueError,match="exceeding"):
+        index_state(replace(base,object_translation_max_m=.001),VIEWS)
+    with pytest.raises(ValueError,match="exceeding"):
+        index_state(replace(base,object_rotation_max_deg=1.0),VIEWS)

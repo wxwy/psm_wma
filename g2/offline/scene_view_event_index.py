@@ -24,7 +24,7 @@ class ViewEvent:
     raw_floor_source_state: int
     final_floor_source_state: int
     object_translation_max_m: float
-    object_rotation_matrix_max: float
+    object_rotation_max_deg: float
     robot_xy_delta_m: float
     robot_yaw_delta_rad: float
 
@@ -38,10 +38,15 @@ class ViewEvent:
 
 
 class SceneViewCursor:
-    """Episode-local GT pose gate. No source/render/SG ownership changes."""
+    """Scene event cursor: <1 mm and <1 degree ignored (experimental only).
 
-    def __init__(self, visual_geom_ids, *, translation_tol_m=1e-10,
-                 rotation_matrix_tol=1e-10, robot_xy_tol_m=1e-10,
+    Measurements are compared with the LAST ACTUAL SCENE RENDER, not the
+    previous sample. Robot chassis x/y/yaw is tracked independently per
+    sampled state. SG and exact MuJoCo GT are never modified.
+    """
+
+    def __init__(self, visual_geom_ids, *, translation_tol_m=0.001,
+                 rotation_tol_deg=1.0, robot_xy_tol_m=1e-10,
                  robot_yaw_tol_rad=1e-10):
         ids=np.asarray(visual_geom_ids)
         if (ids.ndim!=1 or not len(ids) or ids.dtype.kind not in "iu"
@@ -49,7 +54,7 @@ class SceneViewCursor:
             raise ValueError("non-robot GT geom IDs must be unique and non-empty")
         for name,value in (
             ("translation_tol_m",translation_tol_m),
-            ("rotation_matrix_tol",rotation_matrix_tol),
+            ("rotation_tol_deg",rotation_tol_deg),
             ("robot_xy_tol_m",robot_xy_tol_m),
             ("robot_yaw_tol_rad",robot_yaw_tol_rad),
         ):
@@ -58,14 +63,32 @@ class SceneViewCursor:
                 raise ValueError("invalid numeric tolerance "+name)
         self.ids=ids.astype(np.int64,copy=True)
         self.tpos=float(translation_tol_m)
-        self.tmat=float(rotation_matrix_tol)
+        self.trot=float(rotation_tol_deg)
         self.trobot=float(robot_xy_tol_m)
         self.tyaw=float(robot_yaw_tol_rad)
-        self._previous=None
+        self._last_robot=None
+        self._last_rendered_scene=None
         self._previous_id=-1
         self._previous_frame=-1
         self._scene_keyframe=None
         self._last_floor_png_state=None
+
+    @staticmethod
+    def _max_rotation_degrees(current, reference):
+        """SO(3) geodesic rotation angle; no matrix-entry/angular-unit confusion.
+
+        atan2(sin(angle), cos(angle)) is stable near zero and pi, unlike
+        arccos(trace) without a small-angle guard.
+        """
+        relative=np.matmul(current,np.swapaxes(reference,-1,-2))
+        cosine=np.clip((np.trace(relative,axis1=-2,axis2=-1)-1.0)*0.5,-1.0,1.0)
+        skew=np.stack([
+            relative[:,2,1]-relative[:,1,2],
+            relative[:,0,2]-relative[:,2,0],
+            relative[:,1,0]-relative[:,0,1],
+        ],axis=1)
+        sine=0.5*np.linalg.norm(skew,axis=1)
+        return float(np.degrees(np.max(np.arctan2(sine,cosine))))
 
     def observe(self, state_id, frame, positions, rotations, robot_xy_yaw):
         if (type(state_id) is not int or state_id!=self._previous_id+1
@@ -78,19 +101,28 @@ class SceneViewCursor:
             raise ValueError("wrong number of visual-geom positions")
         if mat.shape not in ((len(self.ids),3,3),(len(self.ids),9)):
             raise ValueError("wrong number of visual-geom rotations")
-        if bot.shape!=(3,) or not np.isfinite(pos).all() or not np.isfinite(mat).all() or not np.isfinite(bot).all():
+        mat=mat.reshape(len(self.ids),3,3)
+        if (bot.shape!=(3,) or not np.isfinite(pos).all()
+                or not np.isfinite(mat).all() or not np.isfinite(bot).all()):
             raise ValueError("non-finite or invalid pose")
-        if self._previous is None:
+        if self._last_rendered_scene is None:
             dp=dm=dr=dy=0.0
             mode="FULL"
         else:
-            oldpos,oldmat,oldbot=self._previous
-            dp=float(np.max(np.abs(pos-oldpos)))
-            dm=float(np.max(np.abs(mat-oldmat)))
-            dr=float(np.hypot(*(bot[:2]-oldbot[:2])))
+            # Compare the scene with its ACTUALLY RENDERED keyframe. If the
+            # previous sampled frame was also skipped, measuring only the
+            # adjacent delta would let sub-threshold movement accumulate
+            # indefinitely without triggering any scene refresh.
+            keypos,keymat=self._last_rendered_scene
+            dp=float(np.max(np.linalg.norm(pos-keypos,axis=1)))
+            dm=self._max_rotation_degrees(mat,keymat)
+            oldbot=self._last_robot
+            dr=float(np.linalg.norm(bot[:2]-oldbot[:2]))
             dy=float(abs(math.atan2(math.sin(bot[2]-oldbot[2]),
                                     math.cos(bot[2]-oldbot[2]))))
-            if dp>self.tpos or dm>self.tmat:
+            # Owner-specified strict below threshold rule: >= 1mm or >= 1deg
+            # is a scene event, even when other geoms remain stationary.
+            if dp>=self.tpos or dm>=self.trot:
                 mode="FULL"
             elif dr>self.trobot or dy>self.tyaw:
                 mode="ARROW_ONLY"
@@ -98,13 +130,14 @@ class SceneViewCursor:
                 mode="REUSE_ALL"
         if mode=="FULL":
             self._scene_keyframe=state_id
+            self._last_rendered_scene=(pos.copy(),mat.copy())
             self._last_floor_png_state=state_id
         elif mode=="ARROW_ONLY":
             self._last_floor_png_state=state_id
         out=ViewEvent(
             state_id,frame,mode,self._scene_keyframe,self._scene_keyframe,
             self._last_floor_png_state,dp,dm,dr,dy)
-        self._previous=(pos.copy(),mat.copy(),bot.copy())
+        self._last_robot=bot.copy()
         self._previous_id=state_id
         self._previous_frame=frame
         return out
@@ -128,6 +161,14 @@ def index_state(event, views, *, top="sixview/floor_top.png"):
     """
     if event.mode not in ("FULL","ARROW_ONLY","REUSE_ALL"):
         raise ValueError("bad event mode")
+    # The owner-approved approximate scene-change policy is explicit and
+    # cannot be disabled accidentally when materializing v2 references.
+    values=(event.object_translation_max_m,event.object_rotation_max_deg)
+    if any(not math.isfinite(x) or x<0 for x in values):
+        raise ValueError("invalid scene movement evidence")
+    if (event.mode != "FULL" and
+            (event.object_translation_max_m>=0.001 or event.object_rotation_max_deg>=1.0)):
+        raise ValueError("cannot index a state exceeding 1 mm or 1 degree")
     paths=[validate_view_path(s) for s in views]
     if len(paths)!=len(set(paths)) or top not in paths:
         raise ValueError("duplicate or missing floor-top view")
