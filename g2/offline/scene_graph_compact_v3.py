@@ -1,9 +1,11 @@
 """Opt-in G2 v3 compact SG keyframe/delta and PNG ref packaging.
 
-v1/v2 and active production stay immutable. Frame identity is stored inline;
-unchanged SG bodies and views reference physical earlier artifacts without a
-frame directory. Changed numeric bodies use exact deltas to physical keyframes.
-All references are direct; legacy v3 metadata-in-delta packages remain readable.
+v1/v2 and active production stay immutable. Frame identity is stored inline.
+LOSSLESS conversion preserves every numeric value through direct SG body deltas.
+EVENT_KEYFRAME production shares scene events and reuses a physical SG body only
+while its geometric error stays below 1mm and its semantics are unchanged.
+Raw-source and resolved-SG hashes are separate; reference-only frames need no
+directory. Legacy v3 metadata-in-delta packages remain readable.
 """
 
 from __future__ import annotations
@@ -31,6 +33,9 @@ SG_PHYSICAL = "scene_graph.json.gz"
 SG_DELTA = "scene_graph_delta.json.gz"
 LEGACY_METADATA_POLICY = "EXACT_DELTA_TO_PHYSICAL_SG_KEYFRAME"
 INLINE_METADATA_POLICY = "INLINE_FRAME_METADATA_WITH_DIRECT_SG_BODY_REFS_V1"
+LOSSLESS_GEOMETRY_POLICY = "LOSSLESS"
+EVENT_GEOMETRY_POLICY = "EVENT_KEYFRAME"
+SG_GEOMETRY_BOUND_M = 0.001
 
 
 def _canonical(value):
@@ -215,6 +220,80 @@ def _inline_metadata(row):
     return metadata
 
 
+
+def _bounded_geometry_error(base, current):
+    """Maximum known geometry error, or None when a difference is unrecognized.
+
+    Entity bbox/centroid vectors use 3D Euclidean distance. Connection metrics
+    use scalar absolute error. Every comparison is to the physical SG keyframe,
+    so small per-sample changes accumulate until they trigger a new keyframe.
+    """
+    try:
+        changes = _changes(_graph_body(base), _graph_body(current))
+    except _StructuralDelta:
+        return None
+    maximum = 0.0
+    measured_vectors = set()
+    for path, _ in changes:
+        if (
+            len(path) == 4
+            and path[0] == "entities"
+            and type(path[1]) is int
+            and path[2] in DIFF_ENTITY_FIELDS
+            and type(path[3]) is int
+            and 0 <= path[3] < 3
+        ):
+            vector_key = (path[1], path[2])
+            if vector_key in measured_vectors:
+                continue
+            a = base["entities"][path[1]][path[2]]
+            b = current["entities"][path[1]][path[2]]
+            if (
+                type(a) is not list or type(b) is not list
+                or len(a) != 3 or len(b) != 3
+                or any(type(v) not in (int, float) or not math.isfinite(v) for v in a + b)
+            ):
+                return None
+            maximum = max(maximum, math.dist(a, b))
+            measured_vectors.add(vector_key)
+        elif path and path[0] == "connections":
+            metrics = [
+                i for i, key in enumerate(path)
+                if type(key) is str and key in DIFF_NUMERIC_FIELDS
+            ]
+            if not metrics or any(type(key) is not int for key in path[metrics[0] + 1:]):
+                return None
+            a, b = base, current
+            for key in path:
+                a, b = a[key], b[key]
+            if (
+                type(a) not in (int, float) or type(b) not in (int, float)
+                or not math.isfinite(a) or not math.isfinite(b)
+            ):
+                return None
+            maximum = max(maximum, abs(a - b))
+        else:
+            return None
+    return maximum if math.isfinite(maximum) else None
+
+
+def _event_geometry_policy(manifest):
+    policy = manifest.get("sg_geometry_policy")
+    if policy is None:
+        # Previously published v3 packages were all lossless.
+        return False
+    if policy not in (LOSSLESS_GEOMETRY_POLICY, EVENT_GEOMETRY_POLICY):
+        raise PackageError("unknown SG geometry policy")
+    event = policy == EVENT_GEOMETRY_POLICY
+    if (
+        manifest.get("sg_geometry_error_bound_m") != (SG_GEOMETRY_BOUND_M if event else 0.0)
+        or manifest.get("sg_geometry_reference_policy") != "LAST_PHYSICAL_SG_KEYFRAME"
+        or manifest.get("sg_frame_metadata_policy") != INLINE_METADATA_POLICY
+    ):
+        raise PackageError("invalid SG geometry policy/bound")
+    return event
+
+
 def _state_directory(root, state_id, row, *, required):
     frame = row.get("frame")
     if type(frame) is not int or frame < 0:
@@ -227,7 +306,7 @@ def _state_directory(root, state_id, row, *, required):
     return folder
 
 
-def _sg_rows(staging, source_rows, copy_view):
+def _sg_rows(staging, source_rows, copy_view, *, event_keyframes=False):
     rows = []
     prev_sg_owner = None
     prev_graph = None
@@ -260,18 +339,33 @@ def _sg_rows(staging, source_rows, copy_view):
             or previous.get("update_mode") == "FULL"
             or signature != prev_semantic
         )
+        geometry_error = 0.0
         if not own:
-            try:
-                changes = _changes(_graph_body(prev_graph), body)
-            except _StructuralDelta:
-                own = True
+            if event_keyframes:
+                error = _bounded_geometry_error(prev_graph, graph)
+                if error is None or error >= SG_GEOMETRY_BOUND_M:
+                    own = True
+                else:
+                    geometry_error = error
+            else:
+                try:
+                    changes = _changes(_graph_body(prev_graph), body)
+                except _StructuralDelta:
+                    own = True
         row = dict(previous)
         row.pop("scene_graph", None)
-        row["scene_graph_sha256"] = _sha_graph(graph)
+        row["source_scene_graph_sha256"] = _sha_graph(graph)
         row["scene_graph_frame_metadata"] = {
             name: graph[name] for name in sorted(FRAME_ID_FIELDS)
         }
         _inline_metadata(row)
+        if event_keyframes and not own:
+            represented = _graph_body(prev_graph)
+            represented.update(row["scene_graph_frame_metadata"])
+        else:
+            represented = graph
+        row["scene_graph_sha256"] = _sha_graph(represented)
+        row["scene_graph_max_geometry_error_m"] = geometry_error
         if own:
             state.mkdir()
             shutil.copyfile(item["graph"], state / SG_PHYSICAL)
@@ -282,6 +376,10 @@ def _sg_rows(staging, source_rows, copy_view):
             prev_semantic = signature
             body_owners = {body_sha: None}
             physical_sgs += 1
+        elif event_keyframes:
+            row["scene_graph"] = None
+            row["scene_graph_ref"] = {"ref_state": prev_sg_owner}
+            reused_sgs += 1
         else:
             assert prev_sg_owner is not None and changes is not None
             row["scene_graph"] = None
@@ -355,7 +453,7 @@ def _sg_rows(staging, source_rows, copy_view):
     )
 
 
-def _publish(source, dest, summary, source_rows, *, robot_policy=None):
+def _publish(source, dest, summary, source_rows, *, robot_policy=None, event_keyframes=False):
     source = Path(source).resolve(strict=True)
     dest = Path(dest).absolute()
     if (
@@ -370,7 +468,7 @@ def _publish(source, dest, summary, source_rows, *, robot_policy=None):
     tmp = Path(tempfile.mkdtemp(prefix="._g2_sg_index_", dir=dest.parent))
     good = False
     try:
-        rows, stats = _sg_rows(tmp, source_rows, shutil.copyfile)
+        rows, stats = _sg_rows(tmp, source_rows, shutil.copyfile, event_keyframes=event_keyframes)
         summary = dict(summary)
         # Old published v2 Episodes used a 1e-10m/rad marker threshold
         # relative to the previous sample. A converter must not falsely
@@ -395,6 +493,9 @@ def _publish(source, dest, summary, source_rows, *, robot_policy=None):
             indexed_sg_enabled=True,
             sg_reuse_basis="NONROBOT_GT_VISUAL_POSE_WITH_SG_TOPOLOGY_GUARD",
             sg_frame_metadata_policy=INLINE_METADATA_POLICY,
+            sg_geometry_policy=(EVENT_GEOMETRY_POLICY if event_keyframes else LOSSLESS_GEOMETRY_POLICY),
+            sg_geometry_error_bound_m=(SG_GEOMETRY_BOUND_M if event_keyframes else 0.0),
+            sg_geometry_reference_policy="LAST_PHYSICAL_SG_KEYFRAME",
             sg_delta_schema=PATCH_SCHEMA,
             robot_motion_xy_tol_m=robot_policy["xy"],
             robot_motion_yaw_tol_deg=robot_policy["yaw_deg"],
@@ -423,11 +524,12 @@ def _publish(source, dest, summary, source_rows, *, robot_policy=None):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
-def convert_v2_to_v3(source, dest, *, _verified_robot_policy=None):
-    """Exact offline repackage of published v2, never alters either original.
+def convert_v2_to_v3(source, dest, *, _verified_robot_policy=None, _event_keyframes=False):
+    """Lossless v2 repackage by default; never changes the original package.
 
-    If called by a verified new F27 Worker, preserve its approved robot
-    policy. Existing v2 files have the historical near-zero robot threshold.
+    The verified production caller explicitly selects EVENT_KEYFRAME geometry.
+    Existing v2 files retain their historical robot policy, without pretending
+    their images were rendered under the new chassis threshold.
     """
     source = Path(source).resolve(strict=True)
     count = validate_indexed_episode(source)
@@ -444,7 +546,8 @@ def convert_v2_to_v3(source, dest, *, _verified_robot_policy=None):
         )
     if len(rows) != count:
         raise PackageError("source v2 state count mismatch")
-    return _publish(source, dest, original, rows, robot_policy=_verified_robot_policy)
+    return _publish(source, dest, original, rows, robot_policy=_verified_robot_policy,
+                    event_keyframes=_event_keyframes)
 
 
 def _physical_graph(root, state_id, rows):
@@ -467,7 +570,12 @@ def _physical_graph(root, state_id, rows):
 
 
 def resolve_scene_graph(root, state_id, manifest=None):
-    """Rebuild one exact SG from a physical keyframe and optional physical delta."""
+    """Resolve stored SG geometry plus the current frame identity.
+
+    LOSSLESS and legacy packages reconstruct the exact raw SG. EVENT_KEYFRAME
+    packages intentionally retain bounded keyframe geometry; their manifest
+    records a separate raw-source hash and the actual resolved-SG hash.
+    """
     root = Path(root).resolve(strict=True)
     if manifest is None:
         manifest = _read_json(root / "episode_manifest.json")
@@ -475,6 +583,7 @@ def resolve_scene_graph(root, state_id, manifest=None):
     if policy not in (None, LEGACY_METADATA_POLICY, INLINE_METADATA_POLICY):
         raise PackageError("unknown SG frame metadata policy")
     inline = policy == INLINE_METADATA_POLICY
+    event_geometry = _event_geometry_policy(manifest)
     rows = manifest["states"]
     if type(state_id) is not int or not 0 <= state_id < len(rows):
         raise PackageError("invalid SG state id")
@@ -491,6 +600,8 @@ def resolve_scene_graph(root, state_id, manifest=None):
         if inline and any(graph.get(key) != value for key, value in metadata.items()):
             raise PackageError("physical SG inline metadata mismatch")
     elif physical is None and isinstance(ref, dict):
+        if event_geometry and set(ref) != {"ref_state"}:
+            raise PackageError("event SG must directly reference a physical keyframe")
         owner = ref.get("ref_state")
         if type(owner) is not int or not 0 <= owner < state_id:
             raise PackageError("SG reference must point to prior keyframe")
@@ -556,6 +667,7 @@ def validate_sg_indexed_episode(root):
     if policy not in (None, LEGACY_METADATA_POLICY, INLINE_METADATA_POLICY):
         raise PackageError("unknown SG frame metadata policy")
     inline = policy == INLINE_METADATA_POLICY
+    event_geometry = _event_geometry_policy(doc)
     if (
         doc.get("schema") != SCHEMA
         or complete.get("schema") != SCHEMA
@@ -612,6 +724,21 @@ def validate_sg_indexed_episode(root):
         )
         _state_directory(root, i, row, required=materialized if inline else True)
         graph = resolve_scene_graph(root, i, doc)
+        if doc.get("sg_geometry_policy") is not None:
+            raw_hash = row.get("source_scene_graph_sha256")
+            error = row.get("scene_graph_max_geometry_error_m")
+            if (
+                not isinstance(raw_hash, str) or len(raw_hash) != 64
+                or any(c not in "0123456789abcdef" for c in raw_hash)
+                or type(error) not in (int, float) or not math.isfinite(error)
+                or error < 0
+                or (event_geometry and error >= SG_GEOMETRY_BOUND_M)
+                or (not event_geometry and (error != 0 or raw_hash != row["scene_graph_sha256"]))
+                or (row.get("scene_graph") == SG_PHYSICAL and
+                    (error != 0 or raw_hash != row["scene_graph_sha256"]))
+                or (raw_hash == row["scene_graph_sha256"] and error != 0)
+            ):
+                raise PackageError("invalid SG source hash/geometry error evidence")
         if (
             graph.get("scene_id") is None
             or graph.get("source_sha256") is None
@@ -654,11 +781,12 @@ def completed_output_indexed_v3(plan_row, output_root):
 def package_indexed_sg_v3(
     source, destination, *, episode_id, task_class, selection=None
 ):
-    """Direct opt-in F27 publisher. V2 staging is private and never committed.
+    """Publish event SG keyframes with current frame identity and bounded geometry.
 
-    The additional package pass is intentionally conservative: both the
-    proven P1 v2 packager and the v3 exact-SG converter validate their inputs.
-    It can later be fused after a separate equivalence/performance gate.
+    P1 scene events and semantic changes force keyframes. Between them, known
+    geometric differences below 1mm reuse the last physical SG body; exceeding
+    that cumulative bound also forces a keyframe. Raw SG hashes remain separate.
+    Private v2 staging retains the existing input-validation boundary.
     """
     from g2.offline.atomic_6views_compact_v2 import package_indexed
 
@@ -710,6 +838,7 @@ def package_indexed_sg_v3(
                 "yaw_deg": 1.0,
                 "reference": "LAST_DRAWN_FLOOR_MARKER",
             },
+            _event_keyframes=True,
         )
         print("G2_SG_V3_PACKAGE_PASS", dest, stats, flush=True)
         return summary

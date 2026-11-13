@@ -1,5 +1,6 @@
 """Opt-in P0/P1/P2 functional boundaries. No RoboCasa simulator needed."""
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -255,6 +256,8 @@ def test_optin_v3_production_packer_with_verified_new_chassis_threshold(tmp_path
     assert doc["schema"] == "g2_atomic_compact_6views_v3"
     assert doc["robot_motion_reference_policy"] == "LAST_DRAWN_FLOOR_MARKER"
     assert doc["robot_motion_xy_tol_m"] == 0.001
+    assert doc["sg_geometry_policy"] == "EVENT_KEYFRAME"
+    assert doc["sg_geometry_error_bound_m"] == 0.001
     assert validate_sg_indexed_episode(target) == 3
     assert [r["scene_graph"] for r in doc["states"]] == [
         "scene_graph.json.gz",
@@ -270,7 +273,21 @@ def test_optin_v3_production_packer_with_verified_new_chassis_threshold(tmp_path
                 source / f"state_{i:06d}_frame_{row['frame']:06d}" / "scene_graph.json"
             ).read_text()
         )
-        assert resolve_scene_graph(target, i) == source_graph
+        stored = resolve_scene_graph(target, i)
+        def canonical(graph):
+            return (json.dumps(
+                graph, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False
+            ) + "\n").encode("utf-8")
+        assert row["source_scene_graph_sha256"] == hashlib.sha256(canonical(source_graph)).hexdigest()
+        assert row["scene_graph_sha256"] == hashlib.sha256(canonical(stored)).hexdigest()
+        for key in ("frame_id", "timestamp_ns", "original_state_row_sha256"):
+            assert stored[key] == source_graph[key]
+        if i == 0:
+            assert stored == source_graph
+        else:
+            assert row["scene_graph_ref"] == {"ref_state": 0}
+            assert stored["entities"][0]["bbox_min"] == [1.0, 0.0, 0.0]
+            assert 0 < row["scene_graph_max_geometry_error_m"] < 0.001
 
 
 def test_optin_v3_production_rejects_old_marker_threshold(tmp_path):

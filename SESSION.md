@@ -1,10 +1,12 @@
-# 2026-11-14 CST — G2 P3 SG 引用 / 机器人阈值 / 无目录帧：IN_PROGRESS
+# 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：验收通过，正在正式接续
 
-任务 `G2-P3-SG-REFERENCE-NOEMPTY`，负责人 ChatGPT/Codex。Owner 要求接续“继续G2架构验收”，并明确：所有视图和 SG 都复用时，不应创建对应帧目录。基线 V3 `664678fd91c23bfd16505380d0d3db6cf9f15ad6`、nav_sg G2 `9734d2e0e261a47efbd00f5de78ec6c1a983557b`；Cosmos Gitlink 保持 `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`。
+任务 `G2-P3-SG-REFERENCE-NOEMPTY`，负责人 ChatGPT/Codex。Owner 要求接续“继续G2架构验收”，SG 与物品变化阈值统一，所有视图与 SG 均复用时不创建帧目录。基线 V3 `664678fd91c23bfd16505380d0d3db6cf9f15ad6`；nav_sg G2 `9734d2e0e261a47efbd00f5de78ec6c1a983557b`；Cosmos Gitlink `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2` 保持不变。
 
-修改范围仅 g2/offline 的 scene_view_event_index、episode、atomic_6views_run/plan、新 scene_graph_compact_v3，以及对应测试和 P3 验证脚本。机器人 1mm/1° 相对上次实际 floor marker 绘制累积；SG body 以关键帧/无损 delta 保存，帧身份内联 manifest；完全复用帧只保留索引，不创建 state 目录。新功能使用显式 --sg-event-index；保留 v1/v2 和原生 nav_sg 路径。
+新生产 `--sg-event-index` 使用 EVENT_KEYFRAME：物品 FULL 或 SG 语义/结构/几何保护触发时保存 SG；否则 bbox/centroid 欧氏误差与 connection 距离相对最近物理 SG 关键帧严格 <1mm 时直接引用。机器人平移1mm/转角1°相对上次实际绘制累积。当前 frame/time/GT identity 内联 manifest；raw SG hash 与实际解析 SG hash 分开；完全复用帧无需 state 目录。旧 v1/v2/v3 与 lossless converter 保持兼容；现有完成数据按 resume 保留，不能宣称全量均已转成新策略。
 
-3 路独立静态复核已完成，当前固定阈值和新引用结构没有未解决阻断；937 CPU PASS / 2 optional real-asset skipped（未设置 G2_F27_REAL_SOURCE_MJCF）、3 Node smoke PASS。真实 CloseFridge/569（17 states）在隔离目录 `/tmp/g2_p3_finish_20261114` 运行，结果尚未宣称通过。正式 g2_view 继续旧 v2，未切换。服务器不 commit/push，正式代码通过仓库 API 提交。待真实无损/索引验证后再推广并恢复任务。
+独立静态复核关闭；最终 **953/953 CPU PASS，零失败/错误/跳过**，141 个源码文件在 Gate 前后哈希一致。真实 CloseFridge/569 已执行原始源 Worker（17 states），渲染源码之后未改变，仅将新SG策略重新打包：5实体SG、0delta、12SG引用；17状态仅5目录、12目录不存在；136个逻辑PNG与真实渲染全部字节一致，40实体PNG/96引用；当前帧身份17/17一致，最大几何误差0.00008890237660085534m；Viewer真实引用检查PASS。
+
+原先 lossless SG delta 虽准确，但为<0.1mm抖动仍落盘，不符合Owner阈值意图，已改为显式EVENT_KEYFRAME；不再将12个复用SG冒称raw数值精确相等。完整原始源identity、source SG hash及误差可追溯。报告与推广记录随后写入 g2/experiments/ 和 canonical reviews。服务器旧调度器正排空，尚未宣称新生产启动；服务器不commit/push。
 
 # 2026-11-11 CST — G2 F24 正式 V3 集成：IN_PROGRESS
 

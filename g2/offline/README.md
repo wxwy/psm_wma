@@ -159,3 +159,41 @@ dual-map, F27 and compact receipts are tested and the user personally
 authorizes the run. No assistant-initiated production is allowed. Existing
 build/runtime dependencies are checked before GPU work. Existing state
 manifests are automatically generated and do not need separate manual prep.
+
+
+## P3: SG event keyframes and frames without directories (v3, opt-in)
+
+The production switch `--sg-event-index` requires the existing
+`--scene-event-index --sim-direct-material --lazy-texel-decode` path.
+The original native nav_sg and legacy output paths remain available.
+
+New production packages declare `sg_geometry_policy=EVENT_KEYFRAME`.
+A visual scene FULL event always saves a physical SG. Independently, a semantic,
+structural or unsupported change, or geometry error reaching 1 mm, saves a new
+SG keyframe. Otherwise the frame directly references the most recent physical
+SG. Bbox endpoints and centroids use 3D Euclidean error; known connection
+distances use absolute error. The comparison stays anchored to the last
+physical SG so slow drift accumulates. SG updates do not change the actual
+view `update_mode`.
+
+Each manifest row keeps `scene_graph_frame_metadata` with the current source
+frame, timestamp and GT state hash. `source_scene_graph_sha256` binds the current
+raw SG; `scene_graph_sha256` verifies the actual stored/reused geometry plus
+current identity. `scene_graph_max_geometry_error_m` reports the difference.
+Threshold-reused geometry is not claimed to be numerically identical to the
+current raw graph.
+
+Only actual SG/PNG writes create a `state_...` directory. If all views and SG
+are reused, only the manifest row exists. Consumers must resolve
+`view_refs` / `scene_graph_ref`; absence of that frame's directory is valid.
+Use `resolve_scene_graph(root, state_id)` for SG and the existing
+`resolve_indexed_png` for views. The shipped viewer already resolves physical
+image owners and needs no per-frame placeholder directory.
+
+Robot marker updates use 1 mm translation or 1 degree yaw relative to the last
+drawn floor marker. These are the current fixed policy, not additional CLI
+tuning knobs.
+
+The offline v2 converter keeps its default LOSSLESS behavior and old v3
+keyframe/delta files remain readable. Resume preserves already-completed,
+valid v1/v2/v3 output; enabling this switch does not migrate old Episodes.

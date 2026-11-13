@@ -428,8 +428,144 @@ def test_legacy_v3_metadata_in_delta_stays_readable(tmp_path):
             patch["changes"].extend([[name], value] for name, value in sorted(metadata.items()))
             _write_sg(patch_path, patch)
     doc["sg_frame_metadata_policy"] = "EXACT_DELTA_TO_PHYSICAL_SG_KEYFRAME"
+    for name in ("sg_geometry_policy", "sg_geometry_error_bound_m", "sg_geometry_reference_policy"):
+        doc.pop(name, None)
     _refresh_manifest(finished, doc)
     source = json.loads((original / "episode_manifest.json").read_text())
     assert validate_sg_indexed_episode(finished) == 5
     for i in range(5):
         assert resolve_scene_graph(finished, i) == _source_graph(original, i, source)
+
+
+def _geometry_source(root, offsets):
+    mock_v2(root)
+    _repeat_source_body(root, 0, range(1, 5), reuse_views=True)
+    doc = json.loads((root / "episode_manifest.json").read_text())
+    origins = {
+        "bbox_min": [0.0, 0.0, 0.0],
+        "bbox_max": [0.1, 0.1, 0.5],
+        "centroid": [0.05, 0.05, 0.25],
+    }
+    for i, offset in enumerate(offsets):
+        row = doc["states"][i]
+        graph = _source_graph(root, i, doc)
+        for name, origin in origins.items():
+            graph["entities"][0][name] = [a + b for a, b in zip(origin, offset)]
+        _write_sg(root / f"state_{i:06d}_frame_{row['frame']:06d}/scene_graph.json.gz", graph)
+    return doc
+
+
+def test_event_numeric_noise_reuses_keyframe_without_frame_directory(tmp_path):
+    original = tmp_path / "v2"
+    source = _geometry_source(original, [
+        (0, 0, 0), (0.00004, 0, 0), (0.00008, 0, 0),
+        (0.000085, 0, 0), (0.000085, 0, 0),
+    ])
+    finished = tmp_path / "event"
+    doc, stats = convert_v2_to_v3(original, finished, _event_keyframes=True)
+    assert doc["sg_geometry_policy"] == "EVENT_KEYFRAME"
+    assert doc["sg_geometry_error_bound_m"] == 0.001
+    assert stats["sg_keyframes"] == 1 and stats["sg_deltas"] == 0
+    assert stats["sg_reused"] == 4
+    keyframe = _source_graph(original, 0, source)
+    for i, row in enumerate(doc["states"]):
+        raw = _source_graph(original, i, source)
+        stored = resolve_scene_graph(finished, i)
+        assert row["source_scene_graph_sha256"] == hashlib.sha256(_canonical(raw)).hexdigest()
+        assert row["scene_graph_sha256"] == hashlib.sha256(_canonical(stored)).hexdigest()
+        assert stored["entities"] == keyframe["entities"]
+        for key in ("frame_id", "timestamp_ns", "original_state_row_sha256"):
+            assert stored[key] == raw[key]
+        if i:
+            assert row["source_scene_graph_sha256"] != row["scene_graph_sha256"]
+            assert 0 < row["scene_graph_max_geometry_error_m"] < 0.001
+            assert not (finished / f"state_{i:06d}_frame_{row['frame']:06d}").exists()
+    assert validate_sg_indexed_episode(finished) == 5
+
+
+def test_event_geometry_drift_accumulates_from_last_physical_keyframe(tmp_path):
+    original = tmp_path / "v2"
+    _geometry_source(original, [(i * 0.0004, 0, 0) for i in range(5)])
+    finished = tmp_path / "event"
+    doc, stats = convert_v2_to_v3(original, finished, _event_keyframes=True)
+    assert stats["sg_keyframes"] == 2 and stats["sg_deltas"] == 0
+    assert [i for i, row in enumerate(doc["states"]) if row["scene_graph"]] == [0, 3]
+    assert doc["states"][2]["scene_graph_ref"] == {"ref_state": 0}
+    assert doc["states"][2]["scene_graph_max_geometry_error_m"] == pytest.approx(0.0008)
+    assert doc["states"][4]["scene_graph_ref"] == {"ref_state": 3}
+    assert doc["states"][4]["scene_graph_max_geometry_error_m"] == pytest.approx(0.0004)
+    assert doc["states"][3]["source_scene_graph_sha256"] == doc["states"][3]["scene_graph_sha256"]
+
+
+@pytest.mark.parametrize("offset, new_keyframe", [
+    ((0.0006, 0.0006, 0.0), False),
+    ((0.0008, 0.0008, 0.0), True),
+    ((0.001, 0.0, 0.0), True),
+])
+def test_event_vector_bound_is_euclidean_and_strict(tmp_path, offset, new_keyframe):
+    original = tmp_path / "v2"
+    _geometry_source(original, [(0, 0, 0)] + [offset] * 4)
+    doc, _ = convert_v2_to_v3(original, tmp_path / "event", _event_keyframes=True)
+    assert (doc["states"][1]["scene_graph"] is not None) is new_keyframe
+
+
+def test_event_connection_distances_use_cumulative_absolute_error(tmp_path):
+    original = tmp_path / "v2"
+    source = _geometry_source(original, [(0, 0, 0)] * 5)
+    for i, row in enumerate(source["states"]):
+        graph = _source_graph(original, i, source)
+        graph["connections"]["objects"][0]["paths"][0]["distances_m"] = [0.2 + 0.0006 * i]
+        _write_sg(original / f"state_{i:06d}_frame_{row['frame']:06d}/scene_graph.json.gz", graph)
+    doc, _ = convert_v2_to_v3(original, tmp_path / "event", _event_keyframes=True)
+    assert [i for i, row in enumerate(doc["states"]) if row["scene_graph"]] == [0, 2, 4]
+    assert doc["states"][1]["scene_graph_max_geometry_error_m"] == pytest.approx(0.0006)
+    assert doc["states"][3]["scene_graph_ref"] == {"ref_state": 2}
+
+
+@pytest.mark.parametrize("change", ["semantic", "unknown_numeric", "geometry_shape"])
+def test_event_semantic_or_unrecognized_changes_force_keyframe(tmp_path, change):
+    original = tmp_path / "v2"
+    source = _geometry_source(original, [(0, 0, 0)] * 5)
+    graph = _source_graph(original, 1, source)
+    if change == "semantic":
+        graph["relations"][0]["type"] = "near"
+    elif change == "unknown_numeric":
+        graph["entities"][0]["unclassified_metric"] = 1e-7
+    else:
+        graph["entities"][0]["centroid"] = [0.05, 0.05]
+    _write_sg(original / "state_000001_frame_000010/scene_graph.json.gz", graph)
+    doc, _ = convert_v2_to_v3(original, tmp_path / "event", _event_keyframes=True)
+    assert doc["states"][1]["scene_graph"] == "scene_graph.json.gz"
+    assert doc["states"][1]["source_scene_graph_sha256"] == doc["states"][1]["scene_graph_sha256"]
+
+
+def test_event_nonfinite_geometry_is_rejected_without_publication(tmp_path):
+    original = tmp_path / "v2"
+    source = _geometry_source(original, [(0, 0, 0)] * 5)
+    graph = _source_graph(original, 1, source)
+    graph["entities"][0]["centroid"][0] = float("nan")
+    with gzip.open(original / "state_000001_frame_000010/scene_graph.json.gz", "wt") as fp:
+        json.dump(graph, fp)
+    target = tmp_path / "event"
+    with pytest.raises(ValueError):
+        convert_v2_to_v3(original, target, _event_keyframes=True)
+    assert not target.exists()
+
+
+@pytest.mark.parametrize("tamper", ["negative_error", "bound_error", "raw_hash", "policy_bound"])
+def test_event_geometry_evidence_is_validated(tmp_path, tamper):
+    original = tmp_path / "v2"
+    _geometry_source(original, [(0, 0, 0)] + [(0.00004, 0, 0)] * 4)
+    target = tmp_path / "event"
+    doc, _ = convert_v2_to_v3(original, target, _event_keyframes=True)
+    if tamper == "negative_error":
+        doc["states"][1]["scene_graph_max_geometry_error_m"] = -1
+    elif tamper == "bound_error":
+        doc["states"][1]["scene_graph_max_geometry_error_m"] = 0.001
+    elif tamper == "raw_hash":
+        doc["states"][1]["source_scene_graph_sha256"] = "bad"
+    else:
+        doc["sg_geometry_error_bound_m"] = 0.01
+    _refresh_manifest(target, doc)
+    with pytest.raises(ValueError):
+        validate_sg_indexed_episode(target)

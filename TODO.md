@@ -1,4 +1,4 @@
-- **G2-P3-SG-REFERENCE-NOEMPTY** — IN_PROGRESS；负责人 ChatGPT/Codex；Owner 接续构建与无目录帧要求。范围为 SG keyframe/delta/body 引用、逐帧元数据内联、1mm/1° 上次实际绘制阈值、v3 opt-in/resume。静态复核通过；937 CPU PASS、2 optional real-asset skipped（未设置 G2_F27_REAL_SOURCE_MJCF）、3 Node smoke PASS；真实17-state CloseFridge/569正在独立验收。正式生产仍旧v2，后续推广需验证 exact SG/PNG引用/源码一致，保留既有完成数据、原始plan和native nav_sg。
+- **G2-P3-SG-REFERENCE-NOEMPTY** — IN_PROGRESS（代码/CPU/真实产物验收PASS，正式接续中）；负责人ChatGPT/Codex。953/953 CPU、141源码哈希不变、真实17状态/136逻辑图/17当前帧身份全部通过；EVENT_KEYFRAME 5 SG+12引用，0delta，12帧不建目录，最大误差0.089mm<1mm。机器人1mm/1°累计更新。准备排空旧调度器后同步V3并resume原4卡×8workers；保留原计划和合法旧v1/v2/v3产物，native nav_sg与Cosmos不改。
 
 - **G2-F24-V3-INTEGRATION** — IN_PROGRESS；负责人ChatGPT/Codex；Owner继续构建与逐文件仓库集成授权。前置：正式V3 `3966058af6f2f3e189bdebe9e1099249c80b2e5e`、F24候选 `32f12f8dba44277ad0d3a2f16404267b2044a446`、既有服务器F21/F22/F24验证证据。范围：67个g2文件及非冲突G2文档/证据，补齐direct source、Episode CLI、delta producer、GPU Views；保留正式Cosmos Gitlink `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`、训练评测代码与账本主体。验收：固定源码blob一致、完整相关CPU测试、真实25-state导航/彩色地图/视图端到端复验、记录实测耗时；单独6个merger tests不等于完整生产验收。服务器不commit/push；本步骤不启动9,126-episode全量生产或模型训练。
 
