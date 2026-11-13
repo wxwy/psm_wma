@@ -178,3 +178,68 @@ def save_direct_color_views(bundle, manifest, snapshot, surface_data, output, *,
             report['surface_material_identity_per_pixel']=True
     write_json(output / 'direct_color_views.json', report)
     return report
+
+
+def save_direct_material_views(bundle, manifest, snapshot, output, *,
+                               visual_mesh_by_room, meters_per_pixel=.01,
+                               keep_gpu_context=False):
+    """Opt-in simulation-only F27 from signed MuJoCo mesh/material/GT.
+
+    No native colored point cloud, color voxel cache or g2col10 payload is
+    created or consumed. The caller validates compiled model/source hashes,
+    the exact MuJoCo state and the independent per-frame Scene Graph.
+    Existing native RGB-D and original color-only branches remain untouched.
+    """
+    if (meters_per_pixel!=.01 or snapshot.get("source_mode")!="full_map_mujoco_source"
+            or snapshot.get("surface_color_source")!="MUJOCO_GT_VISUAL_MESH_DIRECT_ONLY"
+            or snapshot.get("surface_transport_mode")!="SOURCE_GT_GEOMETRY_ONLY_NO_PRESCAN"
+            or snapshot.get("completed_rgbd_observations")!=0
+            or not isinstance(visual_mesh_by_room,dict) or not visual_mesh_by_room
+            or not all(isinstance(v,dict) and "surface_registry" in v
+                       for v in visual_mesh_by_room.values())):
+        raise ContractError("direct material render requires independently proven GT+Mesh+Material")
+    bundle=Path(bundle).resolve(strict=True)
+    output=new_output(output,[bundle])
+    started=time.perf_counter()
+    from .render_connections import render_v2
+    try:
+        rendered=render_v2(bundle,manifest,snapshot,output/"g2_original_gpu",
+            meters_per_pixel=meters_per_pixel,renderer_backend="gpu",
+            surface_data=None,visual_mesh_by_room=visual_mesh_by_room,
+            sim_direct_material=True)
+        exported=export_white_views(rendered,output/"g2_original_gpu",output)
+    finally:
+        if not keep_gpu_context:
+            close_gpu_renderers()
+    report={
+        "schema":"g2_direct_material_only_view_export_v1",
+        "scene_id":snapshot["scene_id"],
+        "source_sha256":snapshot["source_sha256"],
+        "frame_id":snapshot["frame_id"],
+        "view_resolution_mpp":meters_per_pixel,
+        "renderer_backend":"gpu",
+        "background_hex":"#FFFFFF",
+        "training_ready":False,
+        "source_scene_graph_unchanged":True,
+        "view_count":len(exported),
+        "gpu_render_and_export_s":round(time.perf_counter()-started,5),
+        "views":exported,
+        "room_six_refs":rendered["room_six_refs"],
+        "islands":rendered["islands"],
+        "visual_geometry_source":"SURFACE_REGISTRY_VISUAL_GEOMETRY",
+        "source_material_identity_per_pixel":True,
+        "surface_material_identity_per_pixel":True,
+        "unknown_visual_color_regions_retained":True,
+        "transparent_visible_pixels":sum(
+            v.get("transparent_visible_pixels",0) for v in rendered["views"].values()),
+        "unbound_visible_pixels":sum(
+            v.get("unbound_visible_pixels",0) for v in rendered["views"].values()
+            if v["image_generated"]),
+        "native_color_voxels_consumed":False,
+        "native_color_voxels_claimed":False,
+        "perception_rgbd_consumed":False,
+        "material_source":"COMPILED_SOURCE_MUJOCO_VISUAL_MESH_MATERIAL_AND_GT",
+        "provenance_mode":"SOURCE_GT_DIRECT_MATERIAL_NO_NATIVE_COLOR_VOXELS",
+    }
+    write_json(output/"direct_color_views.json",report)
+    return report

@@ -164,7 +164,7 @@ def reuse_pinned_plan(plan_root, *, selection, mapping_sha, target_root,
     }
 
 
-def completed_output(row, target_root):
+def completed_output(row, target_root, *, allow_index_v2=False):
     """Check only the small completion marker and manifest, not every PNG.
 
     A visible destination with incomplete or mismatched identity is a conflict;
@@ -182,6 +182,14 @@ def completed_output(row, target_root):
         raise PlanError("incomplete output conflicts with resume: " + str(final))
     marker = read_json(complete)
     data = read_json(manifest)
+    if marker.get("schema")=="g2_atomic_compact_6views_v2":
+        if not allow_index_v2:
+            raise PlanError("indexed v2 output requires explicit v2-capable resume")
+        from .atomic_6views_compact_v2 import completed_output_indexed
+        try:
+            return completed_output_indexed(row,target_root)
+        except (ValueError,KeyError,OSError) as error:
+            raise PlanError("invalid indexed v2 output: "+str(final)) from error
     expected_frames = row["spatial_frames"]
     actual_states = data.get("states")
     if (
@@ -391,7 +399,8 @@ def manifest_for_batch(rows, batch_no, target_root):
 
 def build(mapping, raw_root, depth_root, plan_root, target_root, *,
           expected=EXPECTED, batch_size=100, tasks=None,
-          episodes_per_task=None, resume=False, require_depth=False):
+          episodes_per_task=None, resume=False, require_depth=False,
+          allow_index_v2=False):
     if type(batch_size) is not int or not 1 <= batch_size <= MAX_BATCH:
         raise PlanError("batch_size must be in [1, 100]")
     if type(resume) is not bool:
@@ -403,7 +412,7 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
     skipped = []
     pending = []
     for row in chosen:
-        if completed_output(row, target_root):
+        if completed_output(row, target_root,allow_index_v2=allow_index_v2):
             if not resume:
                 raise PlanError("existing complete episode requires explicit --resume: " +
                                 row["expected_relative_output"])
