@@ -65,6 +65,7 @@ def test_installer_writes_static_assets_and_links_original_video(monkeypatch, tm
     assert path == output / "view"
     assert (path / "index.html").is_file()
     assert (path / "viewer.js").is_file()
+    assert (path / "directory_picker.js").is_file()
     assert (path / "viewer.css").is_file()
     assert (path / "catalog.json").is_file()
     assert (path / "source_videos").is_symlink()
@@ -84,7 +85,10 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
         'id="task-select"', 'id="episode-select"', 'id="refresh-episodes"',
         'id="instruction-text"', 'id="scrub"', 'id="prev-frame"',
         'id="next-frame"', 'id="play"', 'id="speed"', 'id="add-row"',
-        'id="display-rows"',
+        'id="display-rows"', 'id="pick-local-folder"',
+        'id="pick-local-videos"', 'id="local-folder-fallback"',
+        'id="remote-path"', 'id="scan-remote"',
+        'id="restore-server"', 'id="directory-scan-status"',
     ):
         assert control in html
     for marker in (
@@ -107,6 +111,11 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
     assert 'tile.img.src =' not in js
     assert 'tile.img.hidden' not in js
     assert '.tile-visual canvas' in css
+    assert 'directory_picker.js?' in html
+    assert html.index('directory_picker.js?') < html.index('viewer.js?')
+    assert 'showDirectoryPicker' in js
+    assert 'webkitdirectory' in html
+    assert 'function scanRemoteRoot()' in js
     assert 'data-count="4"' in css and 'data-count="5"' in css
     assert "minmax(0,1fr)" in css
     assert "[hidden] { display: none !important; }" in css
@@ -134,3 +143,14 @@ def test_island_four_directions_with_multiple_ids_and_no_island_episode():
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert "VIEWER_ISLAND_FOUR_VIEW_CONTRACT_PASS" in result.stdout
+
+
+def test_recursive_directory_picker_without_browser():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_directory_source_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_DIRECTORY_NATIVE_RECURSIVE_DISCOVERY_PASS" in result.stdout

@@ -18,7 +18,7 @@ CAMERAS = {
     "right": "observation.images.robot0_agentview_right",
     "wrist": "observation.images.robot0_eye_in_hand",
 }
-FILES = ("index.html", "viewer.css", "viewer.js")
+FILES = ("index.html", "viewer.css", "viewer.js", "directory_picker.js")
 
 
 def _phrase(value):

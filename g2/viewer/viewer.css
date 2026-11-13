@@ -161,3 +161,31 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 
 /* Keep hidden camera/view placeholders truly hidden. */
 [hidden] { display: none !important; }
+
+
+/* Dataset source: a compact toolbar above the original task selector. */
+.directory-bar {display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding-bottom:16px}
+.directory-heading {display:flex;flex-direction:column;gap:3px;min-width:190px;flex:1}
+.directory-kicker {font:600 10px var(--mono);color:#8c97a5;letter-spacing:1.1px}
+.directory-heading strong {font-size:14px;font-weight:700;color:#27384e;overflow-wrap:anywhere}
+.directory-heading small {font-size:11px;color:#8792a0}
+.directory-actions {display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.directory-actions .button {height:36px;font-size:12px}
+.directory-actions .outline {padding:0 11px}
+.remote-directory-row {display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:11px;border-top:1px solid #edf0f3;padding:12px 0 7px}
+.remote-directory-row label {font:600 10px var(--mono);color:#8c97a5;white-space:nowrap}
+.remote-directory-row input {height:35px;min-width:0;width:100%;padding:0 11px;border:1px solid #dce2e8;border-radius:8px;font:12px var(--mono);color:#3f5065;background:#f9fafc}
+.remote-directory-row .button {height:35px;padding:0 12px;font-size:12px}
+.directory-scan-status {margin:0 0 17px;color:#8290a0;font-size:11px;min-height:17px;overflow-wrap:anywhere}
+.directory-scan-status.issue {color:#ba6161}
+.directory-scan-status.ready {color:#4a8069}
+@media(max-width:800px) {
+  .directory-bar {align-items:flex-start}
+  .directory-actions {width:100%}
+  .remote-directory-row {grid-template-columns:1fr auto}
+  .remote-directory-row label {grid-column:1 / -1}
+}
+@media(max-width:420px) {
+  .remote-directory-row {grid-template-columns:1fr}
+  .remote-directory-row .button {width:100%}
+}

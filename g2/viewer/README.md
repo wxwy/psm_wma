@@ -89,3 +89,49 @@ for that exact spatial state; it does not substitute a global room side view.
 Saved layouts remain stable when changing Episode. A previously selected Island
 that is absent from the current Episode is explicitly marked as unavailable and
 displays a placeholder, never another Island image.
+
+
+## Choosing data folders
+
+The source selector above Task/Episode supports local operating-system folders
+and same-origin server HTTP directories, without modifying the data producer.
+
+### Browser filesystem picker
+
+Click 选择本机文件夹. On desktop Chromium/Edge (localhost or HTTPS), this calls
+the browser's native operating-system directory chooser in read-only mode.
+Choose an output root, parent folder, or a directory containing nested G2
+outputs. The browser recursively discovers complete G2 Episode directories
+using both COMPLETE.json and episode_manifest.json. It prunes state/frame
+image subdirectories, limits traversal size, and reads PNG frames on demand.
+No chosen files are uploaded or written.
+
+The native file chooser sees the filesystem of the computer RUNNING THE
+BROWSER, including mounted network drives. A browser on a local laptop
+reaching the server over SSH port forwarding cannot open an unmounted
+remote /mnt/data1 path. Use the server HTTP path feature for that.
+
+When the modern directory API is unavailable, a webkitdirectory input lets
+the browser enumerate a folder for compatibility. Beware that it may be
+costly on multi-million-file dataset roots; desktop Chrome/Edge is preferred.
+Task descriptions and episode indices reuse matching pinned V3 metadata;
+unknown tasks display only metadata present in their manifests.
+
+Use 原始视频目录 to optionally select the local LeRobot target/atomic root,
+so left/right/wrist videos are loaded from local MP4s. If not provided, mapped
+Episodes continue using the existing same-origin source video links.
+
+### Server HTTP directory
+
+Enter a URL visible to this HTTP server in 服务器 HTTP 目录 and click
+扫描子目录. The Viewer recursively discovers dataset roots containing a
+tasks folder and lists Episode directories. The COMPLETE.json receipt and
+manifest are validated upon selection, so incomplete outputs are not played.
+The URL must be same-origin. Plain Python http.server cannot browse arbitrary
+filesystem paths: only paths under its configured web root are available.
+The configured old HTTP service has a /data1/ symlink to /mnt/data1/; entering
+/mnt/data1/... also uses that known URL mapping. Click 恢复默认 to return to
+the pinned G2 output.
+
+Both source modes are read-only. The saved layout stays in localStorage;
+selected directory handles are not uploaded or persisted to the server.

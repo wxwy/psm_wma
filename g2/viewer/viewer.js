@@ -140,6 +140,9 @@
     speed: 1, lastSpatial: -1, frameHandle: null, drag: null,
     token: 0, fallbackTime: 0, fallbackStart: 0, clockFailed: false,
     toastTimer: null, preload: new Map(),
+    mode: "server", baseCatalog: null, localSource: null,
+    localVideoRoot: null, localVideoUrls: new Map(),
+    sourceRootUrl: "../",
   };
 
   function saveLayout() {
@@ -179,7 +182,8 @@
   }
 
   function taskDirectory() {
-    return "../tasks/" + encodeURIComponent(state.task.name) + "/episodes/";
+    const base = state.task.rootUrl || "../";
+    return base + "tasks/" + encodeURIComponent(state.task.name) + "/episodes/";
   }
 
   function episodeDirectory() {
@@ -187,7 +191,8 @@
   }
 
   function videoUrl(source) {
-    if (!state.episode || !state.task) return "";
+    if (!state.episode || !state.task || !CAMERA[source] ||
+        !state.task.video_path || !state.task.source_dir) return "";
     const task = state.task, local = state.episode.local_id;
     const chunk = pad(Math.floor(local / task.chunks_size), 3);
     const path = task.video_path
@@ -196,6 +201,30 @@
       .replace("{episode_index:06d}", pad(local));
     const folder = task.source_dir.split("/").map(encodeURIComponent).join("/");
     return "./source_videos/" + folder + "/" + path;
+  }
+
+  async function resolveCameraUrl(source) {
+    if (!state.episode || !state.task) return "";
+    if (state.mode === "local" && state.localVideoRoot) {
+      const ep = state.episode, task = state.task;
+      const key = task.id + "/" + ep.global_id + "/" + source;
+      if (state.localVideoUrls.has(key)) return state.localVideoUrls.get(key);
+      const file = await G2DirectorySource.videoFile(
+        state.localVideoRoot, task, ep, CAMERA[source]);
+      if (file) {
+        const blobUrl = URL.createObjectURL(file);
+        state.localVideoUrls.set(key, blobUrl);
+        return blobUrl;
+      }
+    }
+    // Preserve the existing same-origin LeRobot camera source if available.
+    return videoUrl(source);
+  }
+
+  function clearVideoObjectUrls() {
+    for (const blobUrl of state.localVideoUrls.values())
+      URL.revokeObjectURL(blobUrl);
+    state.localVideoUrls.clear();
   }
 
   function viewPath(source, index) {
@@ -207,8 +236,10 @@
       : "sixview/" + source + ".png";
     // Only allow exact manifest-backed PNG paths, never construct unchecked data.
     if (!entry.view_pngs.includes(relative)) return null;
-    return episodeDirectory() + "state_" + pad(index) +
+    const statePath = "state_" + pad(index) +
       "_frame_" + pad(entry.frame) + "/" + relative;
+    return state.mode === "local" ? "g2local:" + statePath :
+      episodeDirectory() + statePath;
   }
 
   function spatialAt(time) {
@@ -331,7 +362,9 @@
     // occurs by drawing synchronously into a persistent visible canvas.
     const known = state.preload.get(path);
     if (known) return known;
-    const promise = new Promise((resolve, reject) => {
+    const local = path.startsWith("g2local:");
+    const episode = state.episode;
+    const decode = url => new Promise((resolve, reject) => {
       const image = new Image();
       image.decoding = "async";
       image.onload = () => {
@@ -340,8 +373,13 @@
         decoding.then(() => resolve(image), reject);
       };
       image.onerror = () => reject(new Error("PNG 图片加载失败"));
-      image.src = path;
+      image.src = url;
     });
+    // Do not defer existing HTTP image loads by an extra microtask; the local
+    // FileSystem handle has an inherently asynchronous File -> blob URL step.
+    const promise = local ?
+      state.localSource.getUrl(episode, path.slice("g2local:".length)).then(decode) :
+      decode(path);
     state.preload.set(path, promise);
     // Preloading is opportunistic; a failure should not cause an unhandled rejection.
     promise.catch(() => {
@@ -447,6 +485,8 @@
     if (!item) return;
     const token = ++state.token;
     pause();
+    clearVideoObjectUrls();
+    if (state.mode === "local") state.localSource.release();
     state.episode = item;
     state.manifest = null;
     state.time = 0;
@@ -460,11 +500,12 @@
     transportEnabled(false);
     showStatus("校验数据", "");
     try {
-      const base = episodeDirectory();
-      const [complete, manifest] = await Promise.all([
-        fetchJson(base + "COMPLETE.json"),
-        fetchJson(base + "episode_manifest.json"),
-      ]);
+      const base = state.mode === "local" ? "" : episodeDirectory();
+      const [complete, manifest] = state.mode === "local" ?
+        [item.complete, item.manifest] : await Promise.all([
+          fetchJson(base + "COMPLETE.json"),
+          fetchJson(base + "episode_manifest.json"),
+        ]);
       if (token !== state.token) return;
       if (complete.complete !== true ||
           Number(complete.episode_id) !== item.global_id ||
@@ -473,6 +514,12 @@
           !manifest.states.length) {
         throw Error("Episode 尚未完整生成");
       }
+      // A custom HTTP source may contain Episodes outside the original catalog.
+      // Their exact final frame is derived from the selected manifest.
+      item.frames = Math.max(item.frames || 0,
+        manifest.states.at(-1).frame + 1);
+      state.duration = item.frames / state.catalog.source_fps;
+      $("time-total").textContent = fmt(state.duration);
       let previous = -1;
       for (const entry of manifest.states) {
         if (!Number.isInteger(entry.frame) || entry.frame <= previous ||
@@ -482,8 +529,19 @@
       }
       state.manifest = manifest;
       state.clockFailed = false;
-      $("clock-video").src = videoUrl("left");
+      $("clock-video").pause();
+      $("clock-video").removeAttribute("src");
       $("clock-video").load();
+      const cameraToken = token;
+      void resolveCameraUrl("left").then(url => {
+        if (cameraToken !== state.token) return;
+        if (!url) { state.clockFailed = true; return; }
+        $("clock-video").src = url;
+        $("clock-video").load();
+      }).catch(() => {
+        if (cameraToken !== state.token) return;
+        state.clockFailed = true;
+      });
       transportEnabled(true);
       renderLayout();
       seek(0, true);
@@ -508,11 +566,14 @@
     fillSelect(picker, [["", "正在扫描已完成的 Episode…"]], "");
     showStatus("刷新任务目录", "");
     try {
-      const entries = await listDirectory(taskDirectory());
+      const entries = state.mode === "local" ? null :
+        await listDirectory(taskDirectory());
       if (token !== state.token || task !== state.task) return;
-      const globalIds = new Set(entries.filter(n => /^episode_\d{6}$/.test(n))
-        .map(n => Number(n.slice(8))));
-      const completed = task.episodes.filter(ep => globalIds.has(ep.global_id));
+      const globalIds = entries ?
+        new Set(entries.filter(n => /^episode_\d{6}$/.test(n))
+          .map(n => Number(n.slice(8)))) : null;
+      const completed = state.mode === "local" ? task.episodes :
+        task.episodes.filter(ep => globalIds.has(ep.global_id));
       $("available-count").textContent = completed.length + " / " +
         task.count + " 已生成";
       if (!completed.length) {
@@ -543,12 +604,14 @@
   }
 
   async function chooseTask(taskName) {
-    const task = state.catalog?.tasks.find(t => t.name === taskName);
+    const task = state.catalog?.tasks.find(t => (t.id || t.name) === taskName);
     if (!task) return;
     pause();
     state.task = task; state.episode = null; state.manifest = null;
     state.time = 0; state.duration = 0;
-    try { localStorage.setItem("psm-g2-viewer-task", taskName); } catch (_) {}
+    if (state.mode === "server") {
+      try { localStorage.setItem("psm-g2-viewer-task", taskName); } catch (_) {}
+    }
     $("instruction-text").textContent = "正在读取已完成 Episode…";
     $("task-tag").textContent = task.name;
     $("global-tag").textContent = "—";
@@ -608,12 +671,28 @@
       const video = document.createElement("video");
       video.muted = true; video.playsInline = true;
       video.preload = "metadata";
-      video.src = videoUrl(block.source);
       video.setAttribute("aria-label", meta[1]);
+      const mediaToken = state.token;
+      void resolveCameraUrl(block.source).then(url => {
+        if (tile.disposed || mediaToken !== state.token) return;
+        if (!url) {
+          fallback.hidden = false;
+          fallbackText.textContent = "未找到该相机的原始视频";
+          status.textContent = "VIDEO NOT FOUND";
+          return;
+        }
+        video.src = url;
+        video.load();
+      }).catch(() => {
+        if (tile.disposed) return;
+        fallback.hidden = false;
+        fallbackText.textContent = "原始相机视频不可访问";
+      });
       video.addEventListener("loadedmetadata", () => {
         if (state.manifest) {
           try { video.currentTime = state.time; } catch (_) {}
         }
+        fallback.hidden = true;
         if (state.playing) video.play().catch(() => {});
       });
       video.addEventListener("error", () => {
@@ -622,7 +701,7 @@
       });
       visual.prepend(video);
       tile.video = video;
-      fallback.hidden = true; status.textContent = "20 Hz";
+      status.textContent = "20 Hz";
     } else {
       const canvas = document.createElement("canvas");
       canvas.hidden = true;
@@ -754,10 +833,277 @@
     if (state.playing) for (const v of videos()) v.play().catch(() => {});
   }
 
+  function setDirectoryProgress(message, kind = "") {
+    const element = $("directory-scan-status");
+    element.className = "directory-scan-status " + kind;
+    element.textContent = message;
+  }
+
+  function installTaskCatalog(tasks, mode, locationText, preferred) {
+    if (!tasks.length) throw Error("所选目录中没有符合 G2 格式的 Episode");
+    pause();
+    clearVideoObjectUrls();
+    state.preload.clear();
+    state.mode = mode;
+    state.catalog = {...state.baseCatalog, tasks};
+    state.task = null;
+    state.episode = null;
+    state.manifest = null;
+    state.available = [];
+    state.time = 0;
+    state.duration = 0;
+    const picker = $("task-select");
+    fillSelect(picker, tasks.map(task => [
+      task.id || task.name,
+      (task.label || task.name) + " · " + task.episodes.length + " EP",
+    ]), preferred);
+    picker.disabled = false;
+    $("source-location").textContent = locationText;
+    setDirectoryProgress(
+      "已发现 " + tasks.length + " 个任务目录、" +
+      tasks.reduce((n, task) => n + task.episodes.length, 0) +
+      " 个 Episode。所有内容只读，不上传原始数据。",
+      "ready");
+    void chooseTask(picker.value);
+  }
+
+  async function activateLocalSource(provider, label) {
+    $("pick-local-folder").disabled = true;
+    setDirectoryProgress("正在扫描 " + label + "，只检查完整 Episode，不展开逐帧图片…");
+    showStatus("扫描本地目录");
+    try {
+      const tasks = await provider.scan(message => setDirectoryProgress(message));
+      if (!tasks.length) throw Error("未找到 COMPLETE.json + episode_manifest.json 均有效的 Episode");
+      if (state.localSource && state.localSource !== provider)
+        state.localSource.release();
+      state.localSource = provider;
+      installTaskCatalog(tasks, "local", "本机 · " + label);
+    } catch (error) {
+      provider.release();
+      setDirectoryProgress(error.message, "issue");
+      showStatus("目录扫描失败", "issue");
+      toast(error.message);
+    } finally {
+      $("pick-local-folder").disabled = false;
+    }
+  }
+
+  async function chooseLocalDirectory() {
+    if (!state.baseCatalog) {
+      toast("正在加载任务元数据，请稍后选择文件夹"); return;
+    }
+    // Must run from a real user click; the native picker is owned by the browser.
+    if (typeof window.showDirectoryPicker === "function") {
+      try {
+        const handle = await window.showDirectoryPicker({
+          id: "g2-spatial-replay-dataset", mode: "read",
+        });
+        const provider = G2DirectorySource.createHandleProvider(
+          handle, state.baseCatalog);
+        await activateLocalSource(provider, handle.name);
+        return;
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        // Some mobile/embedded browsers expose the API without allowing it.
+        if (!["SecurityError", "NotAllowedError", "TypeError"].includes(error.name)) {
+          setDirectoryProgress(error.message, "issue");
+          toast(error.message);
+          return;
+        }
+      }
+    }
+    setDirectoryProgress(
+      "当前浏览器使用兼容文件夹选择方式；大数据集建议桌面 Chrome/Edge 浏览器。");
+    $("local-folder-fallback").click();
+  }
+
+  async function chooseLocalVideos() {
+    if (typeof window.showDirectoryPicker !== "function") {
+      toast("此浏览器不支持独立选择视频文件夹；可以继续使用服务器原始视频链接");
+      return;
+    }
+    try {
+      const handle = await window.showDirectoryPicker({
+        id: "g2-spatial-replay-original-video", mode: "read",
+      });
+      state.localVideoRoot = handle;
+      clearVideoObjectUrls();
+      if (state.manifest && state.episode)
+        await loadEpisode(state.episode.global_id);
+      setDirectoryProgress("原始视频目录已选择：" + handle.name +
+        "。如未找到 MP4，仍可使用服务器视频。", "ready");
+    } catch (error) {
+      if (error.name !== "AbortError") toast(error.message);
+    }
+  }
+
+  async function remoteDirectoryEntries(url) {
+    const response = await fetch(url, {cache: "no-store"});
+    if (!response.ok) throw Error("HTTP " + response.status + ": " + url);
+    const doc = new DOMParser().parseFromString(await response.text(), "text/html");
+    const root = new URL(url, location.href);
+    return [...doc.querySelectorAll("a[href]")].flatMap(anchor => {
+      const href = anchor.getAttribute("href");
+      if (!href || !href.endsWith("/") || href === "../" ||
+          href.startsWith("/") || href.includes("?") || href.includes("#"))
+        return [];
+      const parts = href.split("/");
+      if (parts.filter(Boolean).length !== 1) return [];
+      let name;
+      try { name = decodeURIComponent(parts[0]); }
+      catch (_) { return []; }
+      if (!/^[A-Za-z0-9_.-]+$/.test(name) || name === ".." || name === ".")
+        return [];
+      const child = new URL(href, root);
+      if (child.origin !== root.origin || !child.href.startsWith(root.href)) return [];
+      return [{name, url: child.href}];
+    });
+  }
+
+  function canonicalServerRoot(raw) {
+    if (!raw) throw Error("请输入 HTTP 数据目录");
+    // Convenience for the existing 18765 server's /mnt/data1 soft link.
+    const path = raw.startsWith("/mnt/data1/") ?
+      "/data1/" + raw.slice("/mnt/data1/".length) : raw;
+    const url = new URL(path, location.href);
+    if (!["http:", "https:"].includes(url.protocol) ||
+        url.origin !== location.origin)
+      throw Error("HTTP 数据目录必须与当前网页同源，请使用该服务器暴露的 URL 路径");
+    if (!url.pathname.endsWith("/")) url.pathname += "/";
+    if (url.search || url.hash) throw Error("HTTP 数据目录不能包含查询参数");
+    return url.href;
+  }
+
+  async function discoverHttpFolders(initialUrl) {
+    let scanned = 0;
+    const roots = [];
+    const queue = [{url: initialUrl, depth: 0}];
+    const skip = new Set(["view", "source_videos", "videos", ".git",
+      "node_modules", "episodes", "__pycache__", "lost+found"]);
+    while (queue.length) {
+      const {url, depth} = queue.shift();
+      if (++scanned > 180)
+        throw Error("目录层级过大，请指定更靠近 G2 输出的 HTTP 父目录");
+      const entries = await remoteDirectoryEntries(url);
+      if (entries.some(child => child.name === "tasks")) {
+        roots.push(url);
+        continue;
+      }
+      if (depth >= 7) continue;
+      for (const child of entries) {
+        if (!skip.has(child.name) && !child.name.startsWith(".") &&
+            !child.name.startsWith("state_") &&
+            !/^episode_\d+$/.test(child.name))
+          queue.push({url: child.url, depth: depth + 1});
+      }
+    }
+    return roots;
+  }
+
+  async function scanRemoteRoot() {
+    if (!state.baseCatalog) {
+      toast("任务索引尚未加载完成"); return;
+    }
+    $("scan-remote").disabled = true;
+    let preferred = null;
+    try {
+      const url = canonicalServerRoot($("remote-path").value.trim());
+      setDirectoryProgress("正在递归发现 HTTP 数据目录：" + url);
+      showStatus("扫描服务器目录");
+      const roots = await discoverHttpFolders(url);
+      if (!roots.length) throw Error("未找到包含 tasks/ 的有效 G2 输出目录");
+      const tasks = [];
+      for (const root of roots) {
+        const taskDirs = await remoteDirectoryEntries(root + "tasks/");
+        for (const dir of taskDirs) {
+          const name = dir.name;
+          if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(name)) continue;
+          let episodeDirs;
+          try { episodeDirs = await remoteDirectoryEntries(
+            root + "tasks/" + encodeURIComponent(name) + "/episodes/");
+          } catch (_) { continue; }
+          const meta = state.baseCatalog.tasks.find(item => item.name === name);
+          const byId = new Map((meta?.episodes || []).map(ep => [ep.global_id, ep]));
+          const episodes = [];
+          for (const entry of episodeDirs) {
+            if (!/^episode_\d{6,}$/.test(entry.name)) continue;
+            const gid = Number(entry.name.slice(8));
+            const original = byId.get(gid);
+            episodes.push(original || {
+              global_id: gid, local_id: gid, frames: 0, instruction: "",
+            });
+          }
+          if (!episodes.length) continue;
+          episodes.sort((a,b) => a.global_id - b.global_id);
+          tasks.push({
+            id: root + "::" + name, name,
+            label: name, rootUrl: root, episodes,
+            count: episodes.length,
+            source_dir: meta?.source_dir || "",
+            chunks_size: meta?.chunks_size || 1000,
+            video_path: meta?.video_path || "",
+          });
+        }
+      }
+      const counts = new Map();
+      for (const task of tasks)
+        counts.set(task.name, (counts.get(task.name) || 0) + 1);
+      for (const task of tasks) {
+        if (counts.get(task.name) > 1)
+          task.label = task.name + " · " + task.rootUrl;
+      }
+      state.sourceRootUrl = url;
+      if (state.localSource) state.localSource.release();
+      state.localSource = null;
+      installTaskCatalog(tasks, "server", "服务器 · " + url, preferred);
+    } catch (error) {
+      showStatus("服务器扫描失败", "issue");
+      setDirectoryProgress(error.message, "issue");
+      toast(error.message);
+    } finally {
+      $("scan-remote").disabled = false;
+    }
+  }
+
+  async function restoreDefaultServer() {
+    if (!state.baseCatalog) throw Error("任务索引尚未加载完成");
+    if (state.localSource) state.localSource.release();
+    state.localSource = null;
+    state.sourceRootUrl = "../";
+    state.localVideoRoot = null;
+    clearVideoObjectUrls();
+    $("remote-path").value = "../";
+    const tasks = state.baseCatalog.tasks;
+    const available = new Set(await listDirectory("../tasks/"));
+    const preferred = tasks.find(task => available.has(task.name))?.name ||
+      tasks[0]?.name;
+    installTaskCatalog(tasks, "server", "服务器 · 默认 G2 数据目录", preferred);
+  }
+
+  $("pick-local-folder").addEventListener("click", chooseLocalDirectory);
+  $("pick-local-videos").addEventListener("click", chooseLocalVideos);
+  $("local-folder-fallback").addEventListener("change", event => {
+    const files = [...event.target.files];
+    event.target.value = "";
+    if (!files.length) return;
+    const provider = G2DirectorySource.createFileListProvider(
+      files, state.baseCatalog);
+    void activateLocalSource(provider, files[0].webkitRelativePath.split("/")[0]);
+  });
+  $("restore-server").addEventListener("click", () =>
+    void restoreDefaultServer().catch(error => toast(error.message)));
+  $("scan-remote").addEventListener("click", scanRemoteRoot);
+  $("remote-path").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      void scanRemoteRoot();
+    }
+  });
   async function initialize() {
     showStatus("连接数据");
     try {
       state.catalog = await fetchJson("./catalog.json");
+      state.baseCatalog = state.catalog;
       if (state.catalog.schema !== "g2_replay_viewer_catalog_v1" ||
           state.catalog.source_fps !== 20 || !state.catalog.tasks?.length)
         throw Error("任务索引格式不兼容");
@@ -783,7 +1129,16 @@
 
   $("task-select").addEventListener("change", () => chooseTask($("task-select").value));
   $("episode-select").addEventListener("change", () => loadEpisode(Number($("episode-select").value)));
-  $("refresh-episodes").addEventListener("click", () => refreshEpisodes(true));
+  $("refresh-episodes").addEventListener("click", () => {
+    if (state.mode === "local" && state.localSource) {
+      void activateLocalSource(state.localSource,
+        state.localSource.root?.name || "本地 G2 数据");
+    } else if (state.sourceRootUrl !== "../") {
+      void scanRemoteRoot();
+    } else {
+      void refreshEpisodes(true);
+    }
+  });
   $("play").addEventListener("click", play);
   $("prev-frame").addEventListener("click", () => step(-1));
   $("next-frame").addEventListener("click", () => step(1));

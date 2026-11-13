@@ -26,6 +26,25 @@
 
   <main class="container">
     <section class="selection-panel" aria-label="数据选择">
+      <div class="directory-bar">
+        <div class="directory-heading">
+          <span class="directory-kicker">DATA LOCATION / 数据目录</span>
+          <strong id="source-location">服务器 · 当前 G2 数据</strong>
+          <small id="source-explanation">也可以选择本机或已挂载的磁盘目录，自动发现符合 G2 格式的子目录</small>
+        </div>
+        <div class="directory-actions">
+          <button id="pick-local-folder" type="button" class="button add-primary">▣ 选择本机文件夹</button>
+          <button id="pick-local-videos" type="button" class="button outline" title="可选：选择本机 LeRobot 原始视频根目录">原始视频目录</button>
+          <button id="restore-server" type="button" class="button text-btn">恢复默认</button>
+        </div>
+      </div>
+      <div class="remote-directory-row">
+        <label for="remote-path">服务器 HTTP 目录</label>
+        <input id="remote-path" type="text" spellcheck="false" value="../" placeholder="/data1/.../robocasa365-target-atomic-6views/">
+        <button id="scan-remote" type="button" class="button outline">扫描子目录</button>
+      </div>
+      <p id="directory-scan-status" class="directory-scan-status" aria-live="polite">本机选择器只能访问浏览器所在电脑；远程服务器目录请使用上方 HTTP 路径。</p>
+      <input id="local-folder-fallback" type="file" webkitdirectory multiple hidden aria-label="选择本地 G2 文件夹">
       <div class="selector-grid">
         <div class="control-group task-picker">
           <label for="task-select">任务 / TASK</label>
@@ -100,6 +119,7 @@
 
   <video id="clock-video" muted playsinline preload="metadata" hidden></video>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="./viewer.js?v=20261113-islandviews" defer></script>
+  <script src="./directory_picker.js?v=20261113-directories" defer></script>
+  <script src="./viewer.js?v=20261113-directories" defer></script>
 </body>
 </html>
