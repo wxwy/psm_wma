@@ -66,7 +66,7 @@ access controls and will serve all files readable by its process.
   row swaps blocks. Rows of 1–3 cards cap each card to one third of the
   workspace; rows of 4–5 cards resize evenly to fit the entire line.
 - Layout settings reside in browser localStorage, never in the dataset.
-  Reset Layout returns to the initial two-row layout.
+  Reset Layout enables the three-row adaptive default.
 
 ## Tests
 
@@ -135,3 +135,26 @@ reachable by a same-origin HEAD request. Missing choices from a saved layout
 are replaced by an available source for the new Episode; no disabled phantom
 choices are shown. The display row limit of five and the no-flicker Canvas
 renderer are unchanged.
+
+## Adaptive three-row default workspace
+
+The workspace opens with **three rows** when no custom saved layout exists:
+
+1. The original left, right and wrist camera videos.
+2. Global floor_top, plus_Y and plus_X views.
+3. The first available Island's plus_X, minus_X, plus_Y, minus_Y views
+   (the actual Island ID comes from the selected Episode manifest).
+
+Only sources available in that Episode are chosen. If an expected camera,
+global direction or Island direction is missing, it is filled in deterministic
+order from floor_top, plus_Y, plus_X, minus_Y, minus_X, upper_up, left, right,
+wrist, then other actual Island directions. Row 1/2 never consume Island views
+if a real global/camera source exists, preserving the four Island directions
+for row 3. When fewer than 10 distinct views exist, real views may be reused
+to retain the 3/3/4 block shape; no missing images are invented.
+
+Automatic defaults follow each new Episode's manifest and accessible cameras.
+An explicit drag, add, remove or source change persists a custom arrangement.
+The Reset Layout button restores the adaptive three-row defaults. Existing
+saved custom layouts from the previous v1 storage key are preserved, while
+the previous untouched two-row default migrates to the new adaptive default.

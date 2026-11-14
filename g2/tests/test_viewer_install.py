@@ -161,7 +161,7 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "margin:0 0 2.5px" in css
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261114-available-results" in html
+    assert "viewer.js?v=20261114-default-3rows" in html
     assert "viewer.css?v=20261113-fixed-dirs" in html
 
 
@@ -202,4 +202,30 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-available-results' in html
+    assert 'viewer.js?v=20261114-default-3rows' in html
+
+
+def test_dynamic_three_row_default_layout_and_v1_layout_migration():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_default_layout_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_DEFAULT_THREE_ROWS_DYNAMIC_ISLAND_AND_LAYOUT_MIGRATION_PASS" in result.stdout
+
+
+def test_automatic_layout_is_regenerated_per_episode_but_custom_layout_persists():
+    script = (Path(viewer.__file__).parent / "viewer.js").read_text()
+    html = (Path(viewer.__file__).parent / "index.html").read_text()
+    assert "psm-g2-viewer-layout-v2" in script
+    assert "psm-g2-viewer-layout-v1" in script
+    assert "state.autoLayout = false;" in script
+    assert "state.autoLayout = true;" in script
+    assert "if (state.autoLayout)" in script
+    assert "state.rows = startingLayout(manifest, cameras);" in script
+    assert 'localStorage.setItem(STORAGE, "auto")' in script
+    assert "resetDefaultLayout();" in script
+    assert "默认三行布局" in script
+    assert "默认三行布局" in html

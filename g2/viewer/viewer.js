@@ -135,7 +135,8 @@
     right: "observation.images.robot0_agentview_right",
     wrist: "observation.images.robot0_eye_in_hand",
   };
-  const STORAGE = "psm-g2-viewer-layout-v1";
+  const STORAGE = "psm-g2-viewer-layout-v2";
+  const LEGACY_STORAGE = "psm-g2-viewer-layout-v1";
   const uuid = () => typeof crypto !== "undefined" && crypto.randomUUID ?
     crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2);
   const pad = (n, w = 6) => String(n).padStart(w, "0");
@@ -146,34 +147,118 @@
       "." + pad(Math.floor((s % 1) * 100), 2);
   };
 
-  function startingLayout() {
-    return [
-      {id: uuid(), blocks: [
-        {id: uuid(), source: "floor_top"}, {id: uuid(), source: "left"},
-        {id: uuid(), source: "wrist"}]},
-      {id: uuid(), blocks: [
-        {id: uuid(), source: "plus_X"}, {id: uuid(), source: "minus_X"},
-        {id: uuid(), source: "plus_Y"}]},
-    ];
+  const FALLBACK_PRIORITY = [
+    "floor_top", "plus_Y", "plus_X", "minus_Y", "minus_X", "upper_up",
+    "left", "right", "wrist",
+  ];
+
+  function startingLayout(manifest = null, cameras = new Set()) {
+    // Provisional sources only establish the three-row structure. As soon
+    // as an Episode is loaded, the auto layout chooses real available views.
+    let rows;
+    if (!manifest) {
+      rows = [
+        ["left", "right", "wrist"],
+        ["floor_top", "plus_Y", "plus_X"],
+        ["minus_Y", "minus_X", "upper_up", "floor_top"],
+      ];
+    } else {
+      const available = [...new Set(availableSources(manifest, cameras)
+        .flatMap(group => group.sources.map(([source]) => source)))];
+      const availableSet = new Set(available);
+      const fallback = [
+        ...FALLBACK_PRIORITY.filter(source => availableSet.has(source)),
+        ...available.filter(source => !FALLBACK_PRIORITY.includes(source)),
+      ];
+      const used = new Set();
+      // Do not consume Island candidates in rows 1/2 if any room/camera
+      // sources exist. Preserve the selected Island's four directions for
+      // the third row, even when the upper rows must reuse another view.
+      const nonIsland = fallback.filter(source => !parseIslandSource(source));
+      const upperFallback = nonIsland.length ? nonIsland : fallback;
+      const choose = (preferred, count, backup) => {
+        const picked = [];
+        for (const pool of [preferred, backup]) {
+          for (const source of pool) {
+            if (picked.length === count) break;
+            if (availableSet.has(source) && !used.has(source) &&
+                !picked.includes(source)) {
+              picked.push(source);
+              used.add(source);
+            }
+          }
+        }
+        // After all unused sources have been consumed, reuse only actual
+        // available views; never invent missing geometry/camera files.
+        for (const source of backup) {
+          if (picked.length === count) break;
+          if (!picked.includes(source)) picked.push(source);
+        }
+        for (let i = 0; backup.length && picked.length < count; i++)
+          picked.push(backup[i % backup.length]);
+        return picked;
+      };
+      const firstIsland = islandGroups(manifest)[0];
+      const preferredIsland = firstIsland ?
+        firstIsland.choices.map(choice => choice.value) : [];
+      rows = [
+        choose(["left", "right", "wrist"], 3, upperFallback),
+        choose(["floor_top", "plus_Y", "plus_X"], 3, upperFallback),
+        choose(preferredIsland, 4, fallback),
+      ];
+    }
+    return rows.map(sources => ({
+      id: uuid(),
+      blocks: sources.map(source => ({id: uuid(), source})),
+    }));
+  }
+
+  function validSavedLayout(rows) {
+    if (!Array.isArray(rows) || !rows.length || rows.length > 30 ||
+        !rows.every(row => typeof row.id === "string" &&
+          Array.isArray(row.blocks) && row.blocks.length <= 5 &&
+          row.blocks.every(block => typeof block.id === "string" &&
+            validSource(block.source)))) return false;
+    const ids = rows.flatMap(row => [row.id, ...row.blocks.map(b => b.id)]);
+    return new Set(ids).size === ids.length;
+  }
+
+  function isLegacyDefault(rows) {
+    return rows.length === 2 &&
+      JSON.stringify(rows.map(row => row.blocks.map(block => block.source))) ===
+      JSON.stringify([
+        ["floor_top", "left", "wrist"],
+        ["plus_X", "minus_X", "plus_Y"],
+      ]);
   }
 
   function readLayout() {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE));
-      if (Array.isArray(saved) && saved.length > 0 && saved.length <= 30 &&
-          saved.every(r => typeof r.id === "string" &&
-            Array.isArray(r.blocks) && r.blocks.length <= 5 &&
-            r.blocks.every(b => typeof b.id === "string" && validSource(b.source)))) {
-        const ids = saved.flatMap(r => [r.id, ...r.blocks.map(b => b.id)]);
-        if (new Set(ids).size === ids.length) return saved;
+      const modern = localStorage.getItem(STORAGE);
+      if (modern === "auto") return {rows: startingLayout(), auto: true};
+      if (modern != null) {
+        const saved = JSON.parse(modern);
+        if (validSavedLayout(saved))
+          return {rows: saved, auto: false};
+      }
+      const legacy = localStorage.getItem(LEGACY_STORAGE);
+      if (legacy != null) {
+        const saved = JSON.parse(legacy);
+        if (validSavedLayout(saved)) {
+          if (isLegacyDefault(saved))
+            return {rows: startingLayout(), auto: true};
+          return {rows: saved, auto: false};
+        }
       }
     } catch (_) {}
-    return startingLayout();
+    return {rows: startingLayout(), auto: true};
   }
 
+  const initialLayout = readLayout();
   const state = {
     catalog: null, task: null, episode: null, manifest: null, available: [],
-    rows: readLayout(), media: [], time: 0, duration: 0, playing: false,
+    rows: initialLayout.rows, autoLayout: initialLayout.auto,
+    media: [], time: 0, duration: 0, playing: false,
     speed: 1, lastSpatial: -1, frameHandle: null, drag: null,
     token: 0, fallbackTime: 0, fallbackStart: 0, clockFailed: false,
     toastTimer: null, preload: new Map(),
@@ -182,8 +267,18 @@
   };
 
   function saveLayout() {
+    // Only explicit user layout edits freeze the automatic per-Episode
+    // three-row arrangement. Customized rows survive Episode changes.
+    state.autoLayout = false;
     try { localStorage.setItem(STORAGE, JSON.stringify(state.rows)); }
     catch (_) {}
+  }
+
+  function resetDefaultLayout() {
+    state.autoLayout = true;
+    state.rows = startingLayout(state.manifest, state.availableCameras);
+    try { localStorage.setItem(STORAGE, "auto"); } catch (_) {}
+    renderLayout();
   }
 
   function toast(message) {
@@ -635,6 +730,8 @@
       if (token !== state.token) return;
       state.manifest = manifest;
       state.availableCameras = cameras;
+      if (state.autoLayout)
+        state.rows = startingLayout(manifest, cameras);
       state.clockFailed = !cameras.has("left");
       if (cameras.has("left")) {
         $("clock-video").src = videoUrl("left");
@@ -948,8 +1045,8 @@
     saveLayout(); renderLayout();
   });
   $("reset-layout").addEventListener("click", () => {
-    state.rows = startingLayout(); saveLayout(); renderLayout();
-    toast("已恢复默认双行布局");
+    resetDefaultLayout();
+    toast("已恢复默认三行布局");
   });
   $("clock-video").addEventListener("error", () => { state.clockFailed = true; });
   $("clock-video").addEventListener("ended", () => {
