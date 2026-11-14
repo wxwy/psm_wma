@@ -161,7 +161,7 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "margin:0 0 2.5px" in css
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261114-default-3rows" in html
+    assert "viewer.js?v=20261114-force-3rows" in html
     assert "viewer.css?v=20261113-fixed-dirs" in html
 
 
@@ -202,7 +202,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-default-3rows' in html
+    assert 'viewer.js?v=20261114-force-3rows' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -227,5 +227,8 @@ def test_automatic_layout_is_regenerated_per_episode_but_custom_layout_persists(
     assert "state.rows = startingLayout(manifest, cameras);" in script
     assert 'localStorage.setItem(STORAGE, "auto")' in script
     assert "resetDefaultLayout();" in script
+    assert "consumeDefaultLayoutRequest()" in script
+    assert 'url.searchParams.get("reset_layout")' in script
+    assert 'url.searchParams.delete("reset_layout")' in script
     assert "默认三行布局" in script
     assert "默认三行布局" in html

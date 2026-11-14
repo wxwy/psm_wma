@@ -110,6 +110,26 @@ assert.equal(h.read().auto,false);
 assert.deepEqual(rowSources(h.read().rows),[["minus_Y","left"]]);
 assert(h.valid(custom));
 
+// One-click reset URL overrides old layout exactly once.
+const resetURL="http://127.0.0.1:18765/view/?reset_layout=1&v=20261114-force-3rows";
+context.URL=URL;
+context.location={href:resetURL};
+let replacedURL=null;
+context.history={replaceState(_state,_title,url){
+  replacedURL=url;
+  context.location.href="http://127.0.0.1:18765"+url;
+}};
+const recovered=h.read();
+assert.equal(recovered.auto,true);
+assert.equal(recovered.rows.length,3);
+assert.equal(store.getItem("psm-g2-viewer-layout-v2"),"auto");
+assert(replacedURL.includes("v=20261114-force-3rows"));
+assert(!replacedURL.includes("reset_layout"));
+store.setItem("psm-g2-viewer-layout-v2",JSON.stringify(custom));
+assert.equal(h.read().auto,false,
+  "manual changes after a one-shot reset must survive future reloads");
+assert.deepEqual(rowSources(h.read().rows),[["minus_Y","left"]]);
+
 assert(js.includes("if (state.autoLayout)"));
 assert(js.includes("state.rows = startingLayout(manifest, cameras);"));
 assert(js.includes("resetDefaultLayout();"));

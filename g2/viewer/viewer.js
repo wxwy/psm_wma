@@ -232,7 +232,31 @@
       ]);
   }
 
+  // Explicit one-shot recovery URL for browsers retaining an old custom
+  // two-row layout. Only our layout key changes, never unrelated user data.
+  function consumeDefaultLayoutRequest() {
+    if (typeof location === "undefined") return false;
+    let url;
+    try {
+      url = new URL(location.href);
+      if (url.searchParams.get("reset_layout") !== "1") return false;
+    } catch (_) {
+      return false;
+    }
+    try { localStorage.setItem(STORAGE, "auto"); } catch (_) {}
+    // Remove the one-shot flag so future manual layout edits can persist
+    // even if the user refreshes the restored Viewer page.
+    try {
+      url.searchParams.delete("reset_layout");
+      if (typeof history !== "undefined" && history.replaceState)
+        history.replaceState(null, "", url.pathname + url.search + url.hash);
+    } catch (_) {}
+    return true;
+  }
+
   function readLayout() {
+    if (consumeDefaultLayoutRequest())
+      return {rows: startingLayout(), auto: true};
     try {
       const modern = localStorage.getItem(STORAGE);
       if (modern === "auto") return {rows: startingLayout(), auto: true};

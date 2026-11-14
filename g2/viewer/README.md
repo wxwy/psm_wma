@@ -158,3 +158,15 @@ An explicit drag, add, remove or source change persists a custom arrangement.
 The Reset Layout button restores the adaptive three-row defaults. Existing
 saved custom layouts from the previous v1 storage key are preserved, while
 the previous untouched two-row default migrates to the new adaptive default.
+
+
+## Recovering the default from browser layout storage
+
+If an old two-row layout remains after updating, click Reset Layout in
+the workspace. Alternatively open the one-time recovery URL:
+  /view/?reset_layout=1&v=20261114-force-3rows
+
+The recovery URL stores auto preference in the current browser layout-only
+localStorage key. history.replaceState consumes the reset_layout flag, so
+later manual layout edits persist normally. The v parameter forces a fresh
+HTML URL. No unrelated browser storage, cookies or data are deleted.
