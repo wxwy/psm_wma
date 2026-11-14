@@ -48,7 +48,7 @@ const manifest = {
   ],
 };
 const scope = {
-  document: doc, state: {manifest}, hooks: {},
+  document: doc, state: {manifest, availableCameras: new Set(["left", "right", "wrist"])}, hooks: {},
   episodeDirectory: () => "../tasks/example/episodes/episode_000134/",
   pad: n => String(n).padStart(6,"0"),
   Map, Set, Error, console,
@@ -56,6 +56,7 @@ const scope = {
 vm.runInNewContext(groups + pathSource +
   "\nhooks.groups=islandGroups;\nhooks.select=fillSourceSelect;" +
   "\nhooks.viewPath=viewPath;\nhooks.parse=parseIslandSource;" +
+  "\nhooks.available=availableSources;" +
   "\nhooks.valid=validSource;\n",scope);
 const h = scope.hooks;
 const result = h.groups(manifest);
@@ -70,7 +71,12 @@ const select = makeElement("select");
 h.select(select, selected);
 assert.equal(select.value, selected);
 assert.equal(select.querySelectorAll("optgroup").length,4);
-assert.equal(select.querySelectorAll("option").length,17);
+assert.equal(select.querySelectorAll("option").length,12);
+assert.deepEqual(Array.from(select.querySelectorAll("option")
+  .filter(o => !o.value.startsWith("island:")), o => o.value),
+  ["floor_top", "left", "right", "wrist"]);
+assert(!select.querySelectorAll("option").some(o => o.value === "plus_X"));
+assert(!select.querySelectorAll("option").some(o => o.value === "upper_up"));
 assert(h.valid(selected));
 assert(!h.valid("island:../../etc:plus_X"));
 assert(!h.valid("island:island_0_entity_11:upper_up"));
@@ -81,17 +87,25 @@ assert.equal(h.viewPath("island:island_0_entity_110:plus_X",1),null);
 assert.equal(h.viewPath("plus_X",0),null);
 assert.equal(h.viewPath("floor_top",0),
   "../tasks/example/episodes/episode_000134/state_000000_frame_000000/sixview/floor_top.png");
-// This Episode has no Islands: choices disappear but the saved tile is marked
-// unavailable and its selection is not silently rewritten.
+// On Episode change, unavailable Island options disappear; the old selected
+// source falls back to one actually present in the new Episode.
 scope.state.manifest = {states:[{frame:0,islands:[],view_pngs:["sixview/floor_top.png"]}]};
 assert.equal(h.groups(scope.state.manifest).length,0);
 const absentSelect=makeElement("select");
 h.select(absentSelect,selected);
-assert.equal(absentSelect.value,selected);
+assert.equal(absentSelect.value,"floor_top");
 assert.equal(absentSelect.querySelectorAll("optgroup").length,2);
-const missing=absentSelect.querySelectorAll("option").find(o=>o.value===selected);
-assert(missing && missing.disabled && missing.textContent.includes("无此视角"));
+assert.equal(absentSelect.querySelectorAll("option").length,4);
+assert(!absentSelect.querySelectorAll("option").some(o => o.value===selected));
 assert.equal(h.viewPath(selected,0),null);
+// All sources must disappear if no view PNGs and no accessible cameras exist.
+scope.state.manifest = {states:[{frame:0,islands:[],view_pngs:[]}]};
+scope.state.availableCameras = new Set();
+const empty = makeElement("select");
+assert.equal(h.select(empty,"floor_top"),null);
+assert.equal(empty.disabled,true);
+assert.equal(empty.querySelectorAll("option").length,1);
+assert.equal(h.available(scope.state.manifest, new Set()).length,0);
 // Malicious forged Island IDs and unreferenced directions must not be offered.
 const corrupted = {states:[{frame:0,islands:["../secret","island_1_entity_9"],
  view_pngs:["islands/../secret/plus_X.png",
