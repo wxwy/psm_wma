@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171d25">
   <title>G2 Spatial Replay · RoboCasa365</title>
-  <link rel="stylesheet" href="./viewer.css?v=20261114-seven-tristate-filters">
+  <link rel="stylesheet" href="./viewer.css?v=20261114-filters-above-task">
 </head>
 <body>
   <header class="masthead">
@@ -37,19 +37,6 @@
           <strong>RoboCasa365 target / atomic</strong>
           <small>/mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic</small>
         </div>
-      </div>
-      <div class="selector-grid">
-        <div class="control-group task-picker">
-          <label for="task-select">任务 / TASK</label>
-          <select id="task-select" aria-label="选择任务" disabled><option>正在读取任务…</option></select>
-        </div>
-        <div class="control-group episode-picker">
-          <label for="episode-select">轨迹 / EPISODE <span id="available-count" class="field-caption"></span></label>
-          <select id="episode-select" aria-label="选择已完成 Episode" disabled><option>请选择任务</option></select>
-        </div>
-        <button id="refresh-episodes" class="button outline refresh-btn" title="仅刷新当前任务的 Episode 列表，不递归扫描目录">
-          <span aria-hidden="true">↻</span> 刷新列表
-        </button>
       </div>
       <section class="episode-filter-panel" aria-label="Episode 视图筛选">
         <div class="episode-filter-heading">
@@ -101,6 +88,19 @@
           未设置筛选 · 视图数量仅统计六个全局方向，不含孤岛
         </div>
       </section>
+      <div class="selector-grid">
+        <div class="control-group task-picker">
+          <label for="task-select">任务 / TASK</label>
+          <select id="task-select" aria-label="选择任务" disabled><option>正在读取任务…</option></select>
+        </div>
+        <div class="control-group episode-picker">
+          <label for="episode-select">轨迹 / EPISODE <span id="available-count" class="field-caption"></span></label>
+          <select id="episode-select" aria-label="选择已完成 Episode" disabled><option>请选择任务</option></select>
+        </div>
+        <button id="refresh-episodes" class="button outline refresh-btn" title="仅刷新当前任务的 Episode 列表，不递归扫描目录">
+          <span aria-hidden="true">↻</span> 刷新列表
+        </button>
+      </div>
       <div class="instruction-line">
         <div class="instruction-mark">INSTRUCTION <span class="instruction-marker"></span></div>
         <p id="instruction-text">选择一个任务和已完成的 Episode 查看任务指令。</p>

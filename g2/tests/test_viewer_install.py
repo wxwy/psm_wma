@@ -162,7 +162,7 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
     assert "viewer.js?v=20261114-sync-right-wrist" in html
-    assert "viewer.css?v=20261114-seven-tristate-filters" in html
+    assert "viewer.css?v=20261114-filters-above-task" in html
 
 
 def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
@@ -248,7 +248,7 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
     assert 'viewer.js?v=20261114-sync-right-wrist' in html
-    assert 'viewer.css?v=20261114-seven-tristate-filters' in html
+    assert 'viewer.css?v=20261114-filters-above-task' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
     assert 'function matchEpisodeFacts(facts, criteria)' in js
@@ -301,3 +301,17 @@ def test_visible_video_events_use_master_timeline_and_ended_guard():
     assert "if (state.playing) video.play().catch" not in js
     assert "for (const v of videos()) v.play()" not in js
     assert "viewer.js?v=20261114-sync-right-wrist" in html
+
+
+
+def test_view_filters_are_above_task_and_episode_controls():
+    folder = Path(viewer.__file__).parent
+    html = (folder / "index.html").read_text()
+    css = (folder / "viewer.css").read_text()
+    assert html.index('class="fixed-source-grid"') < html.index('class="episode-filter-panel"')
+    assert html.index('class="episode-filter-panel"') < html.index('class="selector-grid"')
+    assert html.index('class="selector-grid"') < html.index('class="instruction-line"')
+    assert html.count('data-view-filter="') == 7
+    assert html.count('id="view-count-filter"') == 1
+    assert "margin-bottom:17px;" in css
+    assert "viewer.css?v=20261114-filters-above-task" in html
