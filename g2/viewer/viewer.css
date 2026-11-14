@@ -203,3 +203,69 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 @media(max-width:650px) {
   .instruction-line p {font-size:16px;line-height:1.55}
 }
+
+/* Episode-level manifest filters. Seven independent conditions + one count. */
+.episode-filter-panel {
+  margin-top:17px;
+  padding:14px 16px 12px;
+  border:1px solid #e7ebf0;
+  border-radius:11px;
+  background:#fafbfc;
+}
+.episode-filter-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:13px;
+  margin-bottom:12px;
+}
+.episode-filter-heading > div {display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.episode-filter-heading strong {font-size:13px;font-weight:700;color:#3c4e61}
+.episode-filter-heading span {font-size:11px;color:#8793a2}
+.episode-filter-heading .text-btn {padding:5px 7px;flex-shrink:0}
+.view-filter-grid {
+  display:grid;
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:9px;
+}
+.view-filter-field {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  color:#6a7989;
+  font-size:11px;
+  font-weight:600;
+  min-width:0;
+}
+.view-filter-field select,.view-filter-field input {
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  height:32px;
+  border:1px solid #dce3ec;
+  border-radius:7px;
+  background:white;
+  color:#3c4b5e;
+  padding:0 8px;
+  font:12px var(--sans);
+}
+.view-filter-field select[data-filter-value="yes"] {border-color:#94b3a5;background:#f3faf5;color:#2c6450}
+.view-filter-field select[data-filter-value="no"] {border-color:#d3a7a7;background:#fcf4f4;color:#925555}
+.view-filter-field input[aria-invalid="true"] {border-color:#d96b6b;outline:1px solid #d96b6b}
+.view-filter-status {
+  min-height:15px;
+  margin-top:10px;
+  font-size:11px;
+  color:#758398;
+}
+.view-filter-status.issue {color:#ba6262}
+.view-filter-status.ready {color:#4d826c}
+@media(max-width:1050px) {
+  .view-filter-grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:550px) {
+  .episode-filter-panel {padding:12px 10px}
+  .view-filter-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .episode-filter-heading {align-items:flex-start}
+  .episode-filter-heading > div {flex-direction:column;gap:2px}
+}

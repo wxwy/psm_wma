@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171d25">
   <title>G2 Spatial Replay · RoboCasa365</title>
-  <link rel="stylesheet" href="./viewer.css?v=20261113-fixed-dirs">
+  <link rel="stylesheet" href="./viewer.css?v=20261114-seven-tristate-filters">
 </head>
 <body>
   <header class="masthead">
@@ -51,6 +51,56 @@
           <span aria-hidden="true">↻</span> 刷新列表
         </button>
       </div>
+      <section class="episode-filter-panel" aria-label="Episode 视图筛选">
+        <div class="episode-filter-heading">
+          <div><strong>Episode 视图筛选</strong><span>7 项独立筛选 · 包含 / 不含 / 不限 · 同时满足全部条件</span></div>
+          <button id="clear-view-filters" type="button" class="button text-btn">清除筛选</button>
+        </div>
+        <div class="view-filter-grid">
+          <label class="view-filter-field">俯视
+            <select data-view-filter="floor_top" aria-label="俯视是否存在">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field">仰视
+            <select data-view-filter="upper_up" aria-label="仰视是否存在">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field">+X
+            <select data-view-filter="plus_X" aria-label="全局加X视图是否存在">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field">−X
+            <select data-view-filter="minus_X" aria-label="全局减X视图是否存在">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field">+Y
+            <select data-view-filter="plus_Y" aria-label="全局加Y视图是否存在">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field">−Y
+            <select data-view-filter="minus_Y" aria-label="全局减Y视图是否存在">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field">孤岛
+            <select data-view-filter="island" aria-label="Episode 是否包含孤岛">
+              <option value="any">不限</option><option value="yes">包含</option><option value="no">不含</option>
+            </select>
+          </label>
+          <label class="view-filter-field view-count-field">视图数量
+            <input id="view-count-filter" type="number" min="1" max="6" step="1"
+              inputmode="numeric" placeholder="1–6" aria-label="全局视图数量，不含孤岛；留空不限">
+          </label>
+        </div>
+        <div id="view-filter-status" class="view-filter-status" aria-live="polite">
+          未设置筛选 · 视图数量仅统计六个全局方向，不含孤岛
+        </div>
+      </section>
       <div class="instruction-line">
         <div class="instruction-mark">INSTRUCTION <span class="instruction-marker"></span></div>
         <p id="instruction-text">选择一个任务和已完成的 Episode 查看任务指令。</p>
@@ -112,6 +162,6 @@
 
   <video id="clock-video" muted playsinline preload="metadata" hidden></video>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="./viewer.js?v=20261114-force-3rows" defer></script>
+  <script src="./viewer.js?v=20261114-seven-tristate-filters" defer></script>
 </body>
 </html>

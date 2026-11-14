@@ -48,6 +48,51 @@
     return ref.ref_state;
   }
 
+  const ROOM_DIRECTIONS = [
+    "floor_top", "upper_up", "plus_X", "minus_X", "plus_Y", "minus_Y",
+  ];
+  const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"];
+
+  // Episode-level union: count each valid global direction once over all
+  // spatial states. Island views are deliberately excluded from viewCount.
+  function episodeViewFacts(manifest) {
+    const views = new Set();
+    let hasIsland = false;
+    const states = Array.isArray(manifest?.states) ? manifest.states : [];
+    for (let index = 0; index < states.length; index++) {
+      const stateRow = states[index];
+      for (const direction of ROOM_DIRECTIONS) {
+        if (!views.has(direction) &&
+            ownerState(manifest, index, "sixview/" + direction + ".png") !== null)
+          views.add(direction);
+      }
+      if (Array.isArray(stateRow.islands) &&
+          stateRow.islands.some(id => typeof id === "string" &&
+            ISLAND_ID_RE.test(id)))
+        hasIsland = true;
+    }
+    return {views, count: views.size, island: hasIsland};
+  }
+
+  function parseViewCount(raw) {
+    if (raw === "") return {valid: true, count: null};
+    if (!/^[1-6]$/.test(String(raw))) return {valid: false, count: null};
+    return {valid: true, count: Number(raw)};
+  }
+
+  function matchEpisodeFacts(facts, criteria) {
+    if (!facts || !criteria?.valid) return false;
+    if (criteria.count !== null && facts.count !== criteria.count)
+      return false;
+    for (const key of FILTER_KEYS) {
+      const value = criteria.values[key] || "any";
+      if (value === "any") continue;
+      const present = key === "island" ? facts.island : facts.views.has(key);
+      if ((value === "yes") !== present) return false;
+    }
+    return true;
+  }
+
   function availableSources(manifest, cameras = new Set()) {
     if (!manifest || !Array.isArray(manifest.states)) return [];
     const valid = relative => manifest.states.some((entry, i) =>
@@ -288,6 +333,7 @@
     toastTimer: null, preload: new Map(),
     dataRoot: null, completedByTask: new Map(), taskScanToken: 0,
     availableCameras: new Set(),
+    filterToken: 0, episodeFactsCache: new Map(), filteredEpisodes: [],
   };
 
   function saveLayout() {
@@ -373,6 +419,7 @@
   }
 
   async function discoverCompletedTasks(preserve = true) {
+    ++state.filterToken;
     const token = ++state.taskScanToken;
     const previousTask = preserve ? state.task?.name : null;
     const previousEpisode = preserve ? state.episode?.global_id : null;
@@ -778,20 +825,122 @@
     }
   }
 
+  function setViewFilterStatus(message, kind = "") {
+    const element = $("view-filter-status");
+    element.textContent = message;
+    element.className = "view-filter-status" + (kind ? " " + kind : "");
+  }
+
+  function readViewCriteria() {
+    const fields = [...document.querySelectorAll("[data-view-filter]")];
+    const values = Object.fromEntries(fields.map(select =>
+      [select.dataset.viewFilter, select.value]));
+    for (const select of fields)
+      select.dataset.filterValue = select.value;
+    const input = $("view-count-filter");
+    const count = parseViewCount(input.value.trim());
+    input.setAttribute("aria-invalid", String(!count.valid));
+    const active = count.count !== null ||
+      FILTER_KEYS.some(key => (values[key] || "any") !== "any");
+    return {valid: count.valid, count: count.count, values, active};
+  }
+
+  function cachedEpisodeFacts(task, episode) {
+    const key = task.name + ":" + episode.global_id;
+    let promise = state.episodeFactsCache.get(key);
+    if (promise) return promise;
+    const directory = state.dataRoot + "tasks/" +
+      encodeURIComponent(task.name) + "/episodes/episode_" +
+      pad(episode.global_id) + "/";
+    promise = fetchJson(directory + "episode_manifest.json")
+      .then(episodeViewFacts)
+      .catch(() => {
+        // A transient HTTP error must not poison this Episode's cache forever.
+        state.episodeFactsCache.delete(key);
+        return null;
+      });
+    state.episodeFactsCache.set(key, promise);
+    return promise;
+  }
+
+  async function matchingEpisodes(task, completed, criteria, token) {
+    if (!criteria.active) return {episodes: completed, failed: 0};
+    const matched = new Array(completed.length).fill(false);
+    let cursor = 0, finished = 0, failed = 0;
+    const work = async () => {
+      while (cursor < completed.length && token === state.filterToken) {
+        const index = cursor++;
+        const facts = await cachedEpisodeFacts(task, completed[index]);
+        if (token !== state.filterToken) return;
+        if (!facts) failed++;
+        else matched[index] = matchEpisodeFacts(facts, criteria);
+        finished++;
+        if (finished % 20 === 0 || finished === completed.length)
+          setViewFilterStatus(
+            "正在按 7 个视图条件检查 " + finished + "/" +
+            completed.length + " 个 Episode…");
+      }
+    };
+    await Promise.all(Array.from(
+      {length: Math.min(10, completed.length)}, () => work()));
+    return {
+      episodes: completed.filter((episode, index) => matched[index]),
+      failed,
+    };
+  }
+
   async function refreshEpisodes(preferredEpisode = null) {
     const task = state.task;
     if (!task) return;
-    const completed = state.completedByTask.get(task.name) || [];
+    const token = ++state.filterToken;
+    // Invalidate an in-flight load before waiting for filter metadata.
+    ++state.token;
+    pause();
+    const allCompleted = state.completedByTask.get(task.name) || [];
     const picker = $("episode-select");
-    $("available-count").textContent = completed.length + " 个已完成";
+    const criteria = readViewCriteria();
+    if (!criteria.valid) {
+      picker.disabled = true;
+      setViewFilterStatus("视图数量只能输入 1–6 的整数，留空表示不限", "issue");
+      return;
+    }
+    picker.disabled = true;
+    if (criteria.active) {
+      fillSelect(picker, [["", "正在筛选 Episode…"]], "");
+      setViewFilterStatus(
+        "正在读取当前任务的 " + allCompleted.length +
+        " 个 Episode 的视图索引（只读 Manifest，不扫描 PNG）…");
+    }
+    const result = await matchingEpisodes(task, allCompleted, criteria, token);
+    if (token !== state.filterToken || state.task !== task) return;
+    const completed = result.episodes;
+    state.filteredEpisodes = completed;
+    $("available-count").textContent = criteria.active ?
+      "匹配 " + completed.length + " / 已完成 " + allCompleted.length :
+      completed.length + " 个已完成";
+    if (criteria.active) {
+      setViewFilterStatus(
+        "匹配 " + completed.length + " / " + allCompleted.length +
+        " 个 Episode" +
+        (result.failed ? " · " + result.failed + " 个 Manifest 读取失败" : "") +
+        " · 视图数量不含 Island",
+        result.failed ? "issue" : "ready");
+    } else {
+      setViewFilterStatus("未设置筛选 · 共 " + allCompleted.length +
+        " 个已完成 Episode · 视图数量不含 Island");
+    }
     if (!completed.length) {
       picker.disabled = true;
-      fillSelect(picker, [["", "暂无完成的 Episode"]], "");
+      fillSelect(picker, [["", criteria.active ?
+        "当前筛选条件无匹配 Episode" : "暂无完成的 Episode"]], "");
       state.episode = null;
       state.manifest = null;
       state.availableCameras.clear();
       transportEnabled(false);
       renderLayout();
+      $("instruction-text").textContent = criteria.active ?
+        "当前任务没有同时满足所有视图筛选条件的 Episode。" :
+        "此任务尚无完成的 Episode。";
       return;
     }
     const current = preferredEpisode != null &&
@@ -808,6 +957,8 @@
   async function chooseTask(taskName, preferredEpisode = null) {
     const task = state.catalog?.tasks.find(t => t.name === taskName);
     if (!task || !state.completedByTask.has(taskName)) return;
+    ++state.filterToken;
+    ++state.token;
     pause();
     state.task = task;
     state.episode = null;
@@ -1045,6 +1196,23 @@
       toast(error.message);
     }
   }
+
+  // Seven independent three-way conditions: any / must exist / must not
+  // exist. Count is an exact integer from 1–6, excluding Island directions.
+  for (const select of document.querySelectorAll("[data-view-filter]")) {
+    select.addEventListener("change", () => {
+      void refreshEpisodes(state.episode?.global_id ?? null);
+    });
+  }
+  $("view-count-filter").addEventListener("input", () => {
+    void refreshEpisodes(state.episode?.global_id ?? null);
+  });
+  $("clear-view-filters").addEventListener("click", () => {
+    for (const select of document.querySelectorAll("[data-view-filter]"))
+      select.value = "any";
+    $("view-count-filter").value = "";
+    void refreshEpisodes(state.episode?.global_id ?? null);
+  });
 
   $("task-select").addEventListener("change", () => chooseTask($("task-select").value));
   $("episode-select").addEventListener("change", () => loadEpisode(Number($("episode-select").value)));

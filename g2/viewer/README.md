@@ -170,3 +170,26 @@ The recovery URL stores auto preference in the current browser layout-only
 localStorage key. history.replaceState consumes the reset_layout flag, so
 later manual layout edits persist normally. The v parameter forces a fresh
 HTML URL. No unrelated browser storage, cookies or data are deleted.
+
+
+## Seven independent view filters and exact global view count
+
+Above the Episode instruction, seven **independent three-state dropdowns**
+filter the current Task's completed Episodes: floor_top, upper_up, plus_X,
+minus_X, plus_Y, minus_Y and Island. Each has exactly three choices:
+不限 (no condition), 包含 (must exist), 不含 (must not exist). All selected
+conditions are combined using logical AND.
+
+The separate exact count input accepts integers **1 to 6**, or blank for
+no count condition. Count uses only distinct available **global sixview**
+directions across the Episode (sixview PNGs or valid direct view_refs).
+Island directional views do not affect that count. The Island condition is
+based on Episode state islands metadata.
+
+When filters are inactive, the existing published Episode list loads without
+extra per-Episode I/O. When active, the Viewer reads only the current Task's
+episode_manifest.json files, bounded to 10 concurrent requests, and caches
+the resulting facts. No frame PNGs or original MP4s are scanned to filter
+Episodes. Invalid numeric inputs are flagged; clearing filters restores
+the full published Episode list. Filter results update the Episode dropdown
+and its matched count, without touching production data.

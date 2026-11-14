@@ -161,8 +161,8 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "margin:0 0 2.5px" in css
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261114-force-3rows" in html
-    assert "viewer.css?v=20261113-fixed-dirs" in html
+    assert "viewer.js?v=20261114-seven-tristate-filters" in html
+    assert "viewer.css?v=20261114-seven-tristate-filters" in html
 
 
 def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
@@ -202,7 +202,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-force-3rows' in html
+    assert 'viewer.js?v=20261114-seven-tristate-filters' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -232,3 +232,42 @@ def test_automatic_layout_is_regenerated_per_episode_but_custom_layout_persists(
     assert 'url.searchParams.delete("reset_layout")' in script
     assert "默认三行布局" in script
     assert "默认三行布局" in html
+
+
+def test_seven_tristate_view_filters_match_episode_manifests():
+    folder = Path(viewer.__file__).parent
+    html = (folder / "index.html").read_text()
+    js = (folder / "viewer.js").read_text()
+    css = (folder / "viewer.css").read_text()
+    assert html.count('data-view-filter="') == 7
+    assert html.count('<option value="yes">包含</option>') == 7
+    assert html.count('<option value="no">不含</option>') == 7
+    assert html.count('<option value="any">不限</option>') == 7
+    assert 'id="view-count-filter"' in html
+    assert 'min="1" max="6" step="1"' in html
+    assert 'id="view-filter-status"' in html
+    assert 'id="clear-view-filters"' in html
+    assert 'viewer.js?v=20261114-seven-tristate-filters' in html
+    assert 'viewer.css?v=20261114-seven-tristate-filters' in html
+    assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
+    assert 'function episodeViewFacts(manifest)' in js
+    assert 'function matchEpisodeFacts(facts, criteria)' in js
+    assert 'function matchingEpisodes(task, completed, criteria, token)' in js
+    assert 'Math.min(10, completed.length)' in js
+    assert 'state.episodeFactsCache' in js
+    assert '.view-filter-grid' in css
+
+
+@pytest.mark.parametrize("script", [
+    "viewer_episode_filters_smoke.js",
+    "viewer_episode_filter_integration_smoke.js",
+])
+def test_seven_view_filters_behavioral_js(script):
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    path = Path(viewer.__file__).parents[1] / "tests" / script
+    result = subprocess.run([node, str(path)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "PASS" in result.stdout
