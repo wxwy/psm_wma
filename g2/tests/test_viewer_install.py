@@ -157,7 +157,7 @@ def test_compact_row_spacing_without_row_number_labels():
     html = (folder / "index.html").read_text()
     assert "ROW " not in js
     assert "row-identity" not in js
-    assert ".display-rows { display:flex; flex-direction:column; gap:10px }" in css
+    assert ".display-rows { display:flex; flex-direction:column; gap:5px }" in css
     assert ".row-control-rail" in css
     assert "position:absolute; top:0; bottom:0; right:-36px" in css
     assert "opacity:.22" in css
@@ -166,8 +166,8 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "shell.append(grid, rail);" in js
     assert 'remove.title = "删除整行"' in js
     assert 'add.title = "添加显示块"' in js
-    assert "viewer.js?v=20261114-flat-compact" in html
-    assert "viewer.css?v=20261114-flat-compact" in html
+    assert "viewer.js?v=20261114-dense-workspace" in html
+    assert "viewer.css?v=20261114-dense-workspace" in html
 
 
 def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
@@ -207,7 +207,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-flat-compact' in html
+    assert 'viewer.js?v=20261114-dense-workspace' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -252,8 +252,8 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'min="1" max="6" step="1"' in html
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
-    assert 'viewer.js?v=20261114-flat-compact' in html
-    assert 'viewer.css?v=20261114-flat-compact' in html
+    assert 'viewer.js?v=20261114-dense-workspace' in html
+    assert 'viewer.css?v=20261114-dense-workspace' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
     assert 'function matchEpisodeFacts(facts, criteria)' in js
@@ -305,7 +305,7 @@ def test_visible_video_events_use_master_timeline_and_ended_guard():
     assert "if (state.playing) resumeSlave(video);" in js
     assert "if (state.playing) video.play().catch" not in js
     assert "for (const v of videos()) v.play()" not in js
-    assert "viewer.js?v=20261114-flat-compact" in html
+    assert "viewer.js?v=20261114-dense-workspace" in html
 
 
 
@@ -319,7 +319,7 @@ def test_view_filters_are_above_task_and_episode_controls():
     assert html.count('data-view-filter="') == 7
     assert html.count('id="view-count-filter"') == 1
     assert "margin-bottom:17px;" in css
-    assert "viewer.css?v=20261114-flat-compact" in html
+    assert "viewer.css?v=20261114-dense-workspace" in html
 
 
 
@@ -375,8 +375,8 @@ def test_workspace_control_rail_does_not_change_display_grid_width():
     assert 'grid-template-columns:repeat(var(--count,3)' in css
     assert "right:-36px" in css
     assert "opacity:.22" in css
-    assert "viewer.css?v=20261114-flat-compact" in html
-    assert "viewer.js?v=20261114-flat-compact" in html
+    assert "viewer.css?v=20261114-dense-workspace" in html
+    assert "viewer.js?v=20261114-dense-workspace" in html
 
 
 
@@ -395,18 +395,50 @@ def test_flat_compact_timeline_is_half_height_without_thumb_and_stable_flow():
     assert 'surface.getBoundingClientRect().height' in js
     assert 'px(15, 0)' in js
     assert 'px(6, 3)' in js
-    assert 'px(0, narrow ? 12 : 14)' in js
+    assert 'px(0, narrow ? 21 : 24)' in js
     assert 'px(8, narrow ? 25 : 18)' in js
     assert '$("compact-time-total").textContent = fmt(state.duration)' in js
     assert "pointer-events:none;overflow:visible" in css
     assert ".timeline-surface {" in css
     assert "pointer-events:auto;" in css
-    assert "font-size:9px;font-weight:600" in css
+    assert "font-size:18px;font-weight:600" in css
     assert "height:var(--timeline-track-height,6px)" in css
     assert ".player-panel[data-compact=\"true\"] #scrub::-webkit-slider-thumb" in css
     assert ".player-panel[data-compact=\"true\"] #scrub::-moz-range-thumb" in css
     assert "width:0;height:0;" in css
     assert "background:transparent;border:0;box-shadow:none" in css
     assert 'class="compact-timecode"' in html
-    assert "viewer.js?v=20261114-flat-compact" in html
-    assert "viewer.css?v=20261114-flat-compact" in html
+    assert "viewer.js?v=20261114-dense-workspace" in html
+    assert "viewer.css?v=20261114-dense-workspace" in html
+
+
+
+def test_dense_workspace_view_selector_and_gaps_at_requested_ratios():
+    folder = Path(viewer.__file__).parent
+    css = (folder / "viewer.css").read_text()
+    js = (folder / "viewer.js").read_text()
+    html = (folder / "index.html").read_text()
+
+    assert "--gap: clamp(4px, .55vw, 8.5px)" in css
+    assert ".display-rows { display:flex; flex-direction:column; gap:5px }" in css
+    assert '.display-row[data-count="3"],' in css
+    assert "grid-template-columns:repeat(var(--count), minmax(0,1fr));" in css
+    assert " .display-row { --gap:2px }" in css
+    assert ".workspace { margin-top:7px }" in css
+    assert "margin-top:7.5px;" in css
+
+    assert ".tile-toolbar { min-height:26px;" in css
+    assert ".tile-select { height:17px; padding:0 5px; font-size:8.8px;" in css
+    assert " .tile-toolbar { grid-template-columns:12px minmax(0,1fr) 13px;" in css
+    assert "min-height:21px" in css
+    assert " .tile-select { height:15px; font-size:7.2px;" in css
+
+    assert "font-size:18px;font-weight:600;line-height:1.15;" in css
+    assert "font-size:16px;line-height:1.15" in css
+    assert "font:500 12px/1.15 var(--mono)" in css
+    assert "font:600 12px var(--mono)" in css
+    assert "font-size:10.4px;line-height:1.1" in css
+    assert '"--timeline-instruction-height": px(0, narrow ? 21 : 24)' in js
+    assert '"--timeline-metrics-width": px(0, narrow ? 175 : 310)' in js
+    assert "viewer.css?v=20261114-dense-workspace" in html
+    assert "viewer.js?v=20261114-dense-workspace" in html

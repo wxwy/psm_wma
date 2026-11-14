@@ -1349,7 +1349,7 @@
     return {
       "--timeline-header-height": px(56, 0),
       "--timeline-bottom-height": px(44, 0),
-      "--timeline-instruction-height": px(0, narrow ? 12 : 14),
+      "--timeline-instruction-height": px(0, narrow ? 21 : 24),
       "--timeline-row-height": px(8, narrow ? 25 : 18),
       "--timeline-row-margin-top": px(23, narrow ? 1 : 2),
       "--timeline-row-margin-bottom": px(19, 0),
@@ -1357,7 +1357,7 @@
       "--timeline-padding-bottom": px(18, 3),
       "--timeline-padding-side": px(27, narrow ? 8 : 12),
       "--timeline-controls-width": px(0, narrow ? 52 : 60),
-      "--timeline-metrics-width": px(0, narrow ? 147 : 232),
+      "--timeline-metrics-width": px(0, narrow ? 175 : 310),
       "--timeline-track-height": px(6, 3),
       "--timeline-thumb-size": px(15, 0),
       "--timeline-thumb-border": px(3, 0),

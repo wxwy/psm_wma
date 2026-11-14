@@ -2,7 +2,7 @@
 :root {
   --bg: #f4f5f6; --ink: #202731; --muted: #77808e;
   --line: #e4e8ec; --panel: #fff; --accent: #4265dd;
-  --gap: clamp(8px, 1.1vw, 17px);
+  --gap: clamp(4px, .55vw, 8.5px);
   --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
   --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
@@ -76,16 +76,16 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 .frame-dot { width:7px; height:7px; background:#7f9bd2; border-radius:100%; flex-shrink:0 }
 .summary-separator { color:#b8bfc9 }
 .sync-state { color:#687fa3; background:#f0f4fb; border-radius:5px; padding:4px 7px; margin-left:6px }
-.workspace { margin-top:14px }
+.workspace { margin-top:7px }
 .workspace-actions {
   display:flex; gap:12px; align-items:center; justify-content:flex-end;
-  margin-top:15px;
+  margin-top:7.5px;
 }
 .text-btn { background:transparent; color:#7b8795; font-size:12px; padding:9px }
 .text-btn:hover { color:#303e54 }
 .add-primary { color:white; background:#283443; border-radius:9px; height:38px; padding:0 16px; font-size:12px }
 .add-primary:hover { background:#40516a }
-.display-rows { display:flex; flex-direction:column; gap:10px }
+.display-rows { display:flex; flex-direction:column; gap:5px }
 .row-shell { min-width:0; position:relative; isolation:isolate }
 .row-control-rail {
   position:absolute; top:0; bottom:0; right:-36px; width:27px;
@@ -112,7 +112,10 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
   grid-template-columns:repeat(var(--count,3), minmax(0,min(calc((100% - (2 * var(--gap))) / 3), 32.5%)));
   min-height:100px; border-radius:12px;
 }
+.display-row[data-count="3"],
 .display-row[data-count="4"], .display-row[data-count="5"] {
+  /* Exact gap avoids justify-content:space-between expanding a capped
+     32.5% column and masking the requested horizontal gap reduction. */
   grid-template-columns:repeat(var(--count), minmax(0,1fr));
 }
 .display-row[data-count="0"] { display:block; min-height:100px }
@@ -127,12 +130,12 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 .tile.dragging { opacity:.38 }
 .tile.drop-left::before,.tile.drop-right::before { content:''; display:block; background:#5a78df; width:4px; position:absolute; top:3px; bottom:3px; z-index:5; border-radius:5px }
 .tile.drop-left::before { left:0 } .tile.drop-right::before { right:0 }
-.tile-toolbar { min-height:43px; padding:6px 7px; display:grid; grid-template-columns:24px minmax(0,1fr) 24px; align-items:center; gap:5px; border-bottom:1px solid #eef1f4 }
-.drag-handle { height:27px; width:24px; display:flex; justify-content:center; align-items:center; font-size:17px; color:#9eacba; cursor:grab; border-radius:5px; user-select:none }
+.tile-toolbar { min-height:26px; padding:2px 5px; display:grid; grid-template-columns:19px minmax(0,1fr) 19px; align-items:center; gap:3px; border-bottom:1px solid #eef1f4 }
+.drag-handle { height:18px; width:19px; display:flex; justify-content:center; align-items:center; font-size:12px; color:#9eacba; cursor:grab; border-radius:5px; user-select:none }
 .drag-handle:hover { background:#f0f3f6; color:#6177a5 }
 .drag-handle:active { cursor:grabbing }
-.tile-select { height:29px; padding:0 7px; font-size:11px; border:0; font-weight:600; background:#f4f6f8; border-radius:6px; overflow:hidden }
-.tile-remove { display:grid; place-items:center; border:0; background:transparent; width:24px; height:26px; font-size:19px; border-radius:5px; color:#a7b1be }
+.tile-select { height:17px; padding:0 5px; font-size:8.8px; border:0; font-weight:600; background:#f4f6f8; border-radius:5px; overflow:hidden }
+.tile-remove { display:grid; place-items:center; border:0; background:transparent; width:19px; height:18px; font-size:14px; border-radius:5px; color:#a7b1be }
 .tile-remove:hover { background:#ffeeee; color:#bb6262 }
 .tile-visual { display:grid; place-items:center; position:relative; aspect-ratio:4 / 3; overflow:hidden; background:#e8ecef }
 .tile-visual canvas,.tile-visual img,.tile-visual video { display:block; width:100%; height:100%; max-height:100%; object-fit:contain; background:#e8ecef }
@@ -157,10 +160,11 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
  .selection-panel,.player-panel { padding:16px }
  .selector-grid { grid-template-columns:1fr }
  .refresh-btn { grid-column:auto; justify-self:stretch }
- .display-row { --gap:4px }
- .tile-toolbar { grid-template-columns:15px minmax(0,1fr) 17px; gap:1px; padding:4px 2px; min-height:35px }
- .drag-handle,.tile-remove { width:15px; font-size:14px }
- .tile-select { font-size:9px; padding:0 1px }
+ .display-row { --gap:2px }
+ .tile-toolbar { grid-template-columns:12px minmax(0,1fr) 13px; gap:1px; padding:1px 2px; min-height:21px }
+ .drag-handle { width:12px; height:15px; font-size:11px }
+ .tile-remove { width:13px; height:15px; font-size:12px }
+ .tile-select { height:15px; font-size:7.2px; padding:0 1px }
  .tile-visual { aspect-ratio:1 / 1 }
  .tile-foot { padding:6px 4px; font-size:8px }
  .tile-foot .tile-state { display:none }
@@ -323,7 +327,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
   opacity:var(--timeline-compact-opacity,0);
   overflow:hidden;
   color:#253548;
-  font-size:9px;font-weight:600;line-height:1.5;
+  font-size:18px;font-weight:600;line-height:1.15;
   letter-spacing:0;
 }
 .timeline-compact-instruction span {
@@ -387,11 +391,11 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
   width:var(--timeline-metrics-width,0px);
   opacity:var(--timeline-compact-opacity,0);
   overflow:hidden;white-space:nowrap;min-width:0;
-  font:500 9px/1.25 var(--mono);color:#647081;
+  font:500 12px/1.15 var(--mono);color:#647081;
 }
 .compact-timecode {display:inline-flex;align-items:baseline;gap:3px;white-space:nowrap}
 .timeline-compact-metrics strong {
-  font:600 9px var(--mono);color:#2a384a;
+  font:600 12px var(--mono);color:#2a384a;
 }
 .compact-time-divider {color:#9fa9b7}
 @media(max-width:900px) {
@@ -404,7 +408,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
   .row-control-rail .add-block {font-size:15px}
   .timeline-surface {border-radius:10px}
   .player-panel[data-compact="true"] .timeline-surface {border-radius:0}
-  .timeline-compact-instruction {font-size:8px;line-height:1.5}
+  .timeline-compact-instruction {font-size:16px;line-height:1.15}
   .timeline-scrub-row {gap:4px}
   .timeline-compact-transport {gap:2px}
   .timeline-compact-transport button {
@@ -414,8 +418,8 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
   .timeline-compact-metrics {
     display:grid;grid-template-columns:1fr 1fr;
     align-content:center;justify-items:end;gap:0 3px;
-    font-size:8px;line-height:1.2;
+    font-size:10.4px;line-height:1.1;
   }
-  .compact-timecode {grid-column:1 / -1;font-size:8px}
-  .timeline-compact-metrics strong {font-size:8px}
+  .compact-timecode {grid-column:1 / -1;font-size:10.4px}
+  .timeline-compact-metrics strong {font-size:10.4px}
 }

@@ -99,9 +99,9 @@ assert.equal(state.timelineMorph,1);
 assert.equal(property("--timeline-header-height"),"0px");
 assert.equal(property("--timeline-bottom-height"),"0px");
 assert.equal(property("--timeline-row-height"),"18px");
-assert.equal(property("--timeline-instruction-height"),"14px");
+assert.equal(property("--timeline-instruction-height"),"24px");
 assert.equal(property("--timeline-controls-width"),"60px");
-assert.equal(property("--timeline-metrics-width"),"232px");
+assert.equal(property("--timeline-metrics-width"),"310px");
 assert.equal(property("--timeline-thumb-size"),"0px");
 assert.equal(property("--timeline-thumb-border"),"0px");
 assert.equal(property("--timeline-track-height"),"3px");
@@ -129,8 +129,8 @@ assert.equal(panel.dataset.sticky,"false");
 
 narrow=true;anchor.top=-76;events.resize();frames.shift()();
 assert.equal(property("--timeline-controls-width"),"52px");
-assert.equal(property("--timeline-metrics-width"),"147px");
-assert.equal(property("--timeline-instruction-height"),"12px");
+assert.equal(property("--timeline-metrics-width"),"175px");
+assert.equal(property("--timeline-instruction-height"),"21px");
 
 // DOM: exactly one original scrub, compact actions are not duplicated slider.
 // Order of layout controls is after every row, not above the workspace.
@@ -169,7 +169,7 @@ assert(css.includes('position:sticky;top:0;z-index:30'));
 assert(css.includes('pointer-events:none;overflow:visible'));
 assert(css.includes('.timeline-surface'));
 assert(css.includes('pointer-events:auto'));
-assert(css.includes('font-size:9px;font-weight:600'));
+assert(css.includes('font-size:18px;font-weight:600'));
 assert(css.includes('height:var(--timeline-track-height,6px)'));
 assert(css.includes('width:0;height:0'));
 assert(css.includes('background:transparent;border:0;box-shadow:none'));

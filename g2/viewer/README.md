@@ -274,3 +274,26 @@ only a subtle bottom dividing line.
 The same native time-scrub range input, master-clock camera synchronization
 and View-frame step handlers remain in use. The normal expanded timeline
 is unchanged, and scrolling upward reverses the morph.
+
+
+## Dense workspace controls and more legible compact timeline
+
+2026-11-14 revision: compact instruction font grows from 9px to 18px
+(8px to 16px on mobile); compact spatial frame, raw frame, and current/total
+time fonts grow from 9px to 12px (8px to 10.4px on mobile).
+Instruction row height adjusts to 24px desktop / 21px mobile,
+with a tightened line height to preserve the compact toolbar footprint.
+Frame/time metric slots become wider to prevent truncation.
+
+Each view tile's top select/drag/remove toolbar shrinks from 43px to
+26px (~60%; mobile 35px to 21px); the view select height shrinks
+29px to 17px, and label type 11px to 8.8px (~80%; mobile 9px to 7.2px).
+All top-bar affordances remain accessible and functional.
+
+Adjacent display tile columns now use exactly half the previous gap:
+--gap:clamp(4px,.55vw,8.5px) versus 8px/1.1vw/17px, with mobile
+gap 2px versus 4px. The three-column rule uses explicit equal fractions
+so the prior space-between does not mask the requested reduction.
+Display row-to-row spacing halves from 10px to 5px; workspace-to-timeline
+and bottom actions spacings are halved as well. The absolute floating
+row control rail remains outside the grid and does not consume tile width.
