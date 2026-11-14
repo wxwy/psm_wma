@@ -374,3 +374,19 @@ and overflow:hidden so intrinsic media dimensions cannot expand the grid or
 overflow the tile. Aspect ratio is preserved; differing ratios are cropped
 around the center, not stretched. Desktop 4:3 and narrow mobile square
 tile dimensions, playback logic and source PNG/MP4 remain unchanged.
+
+## Four independent display modes and colored option menus
+
+Each display tile's compact toolbar now has a display-mode selector:
+original/native size (no upscaling, shrink to stay inside), height-aligned
+(fill tile height, crop horizontal excess inside the tile), width-aligned
+(fill tile width, crop vertical excess), and automatic containment (fit
+completely by whichever dimension limits size, with no crop).
+
+All modes preserve intrinsic aspect, center the media and never expand a
+tile. The selected mode persists per display block, with legacy layouts
+defaulting to automatic containment. Changing fit does not reconstruct
+video or canvas elements or interrupt playback. All select options now
+render in an accessible custom popup, keeping the selected item BLUE
+(#4265dd) while hovering unselected options produces light gray-white
+(#f1f3f6). The real select and its change events remain the source of truth.

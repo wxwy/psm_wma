@@ -130,15 +130,39 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 .tile.dragging { opacity:.38 }
 .tile.drop-left::before,.tile.drop-right::before { content:''; display:block; background:#5a78df; width:4px; position:absolute; top:3px; bottom:3px; z-index:5; border-radius:5px }
 .tile.drop-left::before { left:0 } .tile.drop-right::before { right:0 }
-.tile-toolbar { min-height:26px; padding:2px 5px; display:grid; grid-template-columns:19px minmax(0,1fr) 19px; align-items:center; gap:3px; border-bottom:1px solid #eef1f4 }
+.tile-toolbar { min-height:26px; padding:2px 5px; display:grid; grid-template-columns:19px minmax(0,1fr) minmax(0,68px) 19px; align-items:center; gap:3px; border-bottom:1px solid #eef1f4 }
 .drag-handle { height:18px; width:19px; display:flex; justify-content:center; align-items:center; font-size:12px; color:#9eacba; cursor:grab; border-radius:5px; user-select:none }
 .drag-handle:hover { background:#f0f3f6; color:#6177a5 }
 .drag-handle:active { cursor:grabbing }
 .tile-select { height:17px; padding:0 5px; font-size:8.8px; border:0; font-weight:600; background:#f4f6f8; border-radius:5px; overflow:hidden }
+.tile-fit-select {
+  width:100%;min-width:0;height:17px;padding:0 2px;
+  font-size:8.8px;font-weight:600;color:#52677e;
+  border:0;border-radius:5px;background:#eaf0f6;
+  cursor:pointer;text-overflow:ellipsis;
+}
+.tile-fit-select:hover {background:#e0eaf5}
 .tile-remove { display:grid; place-items:center; border:0; background:transparent; width:19px; height:18px; font-size:14px; border-radius:5px; color:#a7b1be }
 .tile-remove:hover { background:#ffeeee; color:#bb6262 }
 .tile-visual { display:grid; place-items:center; grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr); position:relative; aspect-ratio:4 / 3; overflow:hidden; background:#e8ecef }
-.tile-visual canvas,.tile-visual img,.tile-visual video { display:block; width:100%; height:100%; max-width:100%; max-height:100%; min-width:0; min-height:0; object-fit:cover; object-position:center; background:#e8ecef }
+/* Four per-block display modes preserve aspect and clip to the tile. */
+.tile-visual canvas,.tile-visual img,.tile-visual video {
+  display:block;width:100%;height:100%;max-width:100%;max-height:100%;
+  min-width:0;min-height:0;object-fit:contain;object-position:center;
+  justify-self:center;align-self:center;background:#e8ecef;
+}
+.tile-visual[data-display-mode="native"] .tile-media {
+  width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;
+}
+.tile-visual[data-display-mode="height"] .tile-media {
+  width:auto;height:100%;max-width:none;max-height:100%;object-fit:fill;
+}
+.tile-visual[data-display-mode="width"] .tile-media {
+  width:100%;height:auto;max-width:100%;max-height:none;object-fit:fill;
+}
+.tile-visual[data-display-mode="contain"] .tile-media {
+  width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;
+}
 .tile-visual .tile-placeholder { text-align:center; padding:14px; color:#788697; font-size:12px; max-width:100% }
 .tile-placeholder .placeholder-icon { font-size:27px; color:#afb9c5; display:block; margin-bottom:7px }
 .tile-foot { padding:3px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; color:#8d9bab; font:10px var(--mono); white-space:nowrap; min-width:0 }
@@ -161,10 +185,11 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
  .selector-grid { grid-template-columns:1fr }
  .refresh-btn { grid-column:auto; justify-self:stretch }
  .display-row { --gap:2px }
- .tile-toolbar { grid-template-columns:12px minmax(0,1fr) 13px; gap:1px; padding:1px 2px; min-height:21px }
+ .tile-toolbar { grid-template-columns:12px minmax(0,1fr) minmax(0,42px) 13px; gap:1px; padding:1px 2px; min-height:21px }
  .drag-handle { width:12px; height:15px; font-size:11px }
  .tile-remove { width:13px; height:15px; font-size:12px }
  .tile-select { height:15px; font-size:7.2px; padding:0 1px }
+ .tile-fit-select { height:15px; font-size:7.2px; padding:0 1px }
  .tile-visual { aspect-ratio:1 / 1 }
  .tile-foot { padding:2px 4px; font-size:8px }
  .tile-foot .tile-state { display:none }
@@ -423,3 +448,37 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
   .compact-timecode {grid-column:1 / -1;font-size:10.4px}
   .timeline-compact-metrics strong {font-size:10.4px}
 }
+
+/* Custom option menu guarantees blue committed item and gray-white hover,
+   independent of native OS select popup behavior. */
+.g2-select-menu {
+  position:fixed;z-index:9999;
+  box-sizing:border-box;min-width:0;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
+  padding:4px;border:1px solid #d7e0ee;border-radius:8px;
+  background:#fff;box-shadow:0 7px 23px #1c304b22;
+  font:12px/1.45 var(--sans);
+}
+.g2-select-group {
+  padding:6px 8px 3px;color:#8793a5;
+  font-size:10px;font-weight:700;pointer-events:none;user-select:none;
+}
+.g2-select-option {
+  display:block;box-sizing:border-box;width:100%;
+  padding:6px 8px;min-height:27px;
+  border:0;border-radius:5px;text-align:left;
+  background:#fff;color:#314256;
+  font:12px/1.4 var(--sans);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.g2-select-option:not([aria-selected="true"]):hover,
+.g2-select-option:not([aria-selected="true"]):focus-visible {
+  background:#f1f3f6;color:#26394f;
+}
+.g2-select-option[aria-selected="true"],
+.g2-select-option[aria-selected="true"]:hover,
+.g2-select-option[aria-selected="true"]:focus-visible {
+  background:#4265dd;color:#fff;
+}
+.g2-select-option:disabled {opacity:.4;cursor:not-allowed}
+.g2-select-option:focus-visible {outline:1px solid #a7baf7;outline-offset:-1px}

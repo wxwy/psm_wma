@@ -16,6 +16,13 @@
     ["wrist", "Wrist · 腕部相机", "20 Hz · CAMERA"],
   ];
   const VIDEO = new Set(["left", "right", "wrist"]);
+  const DISPLAY_MODES = [
+    ["native", "原尺寸"], ["height", "高对齐"],
+    ["width", "宽对齐"], ["contain", "自适应"],
+  ];
+  const VALID_DISPLAY_MODES = new Set(DISPLAY_MODES.map(([mode]) => mode));
+  const displayMode = block =>
+    VALID_DISPLAY_MODES.has(block.displayMode) ? block.displayMode : "contain";
   const ALL = new Set(SOURCES.map(v => v[0]));
   const ISLAND_DIRECTIONS = ["plus_X", "minus_X", "plus_Y", "minus_Y"];
   // Strict source tokens keep saved layouts and URL paths traversal-safe.
@@ -254,7 +261,7 @@
     }
     return rows.map(sources => ({
       id: uuid(),
-      blocks: sources.map(source => ({id: uuid(), source})),
+      blocks: sources.map(source => ({id: uuid(), source, displayMode: "contain"})),
     }));
   }
 
@@ -263,7 +270,9 @@
         !rows.every(row => typeof row.id === "string" &&
           Array.isArray(row.blocks) && row.blocks.length <= 5 &&
           row.blocks.every(block => typeof block.id === "string" &&
-            validSource(block.source)))) return false;
+            validSource(block.source) &&
+            (block.displayMode === undefined ||
+              VALID_DISPLAY_MODES.has(block.displayMode))))) return false;
     const ids = rows.flatMap(row => [row.id, ...row.blocks.map(b => b.id)]);
     return new Set(ids).size === ids.length;
   }
@@ -1158,6 +1167,142 @@
     await refreshEpisodes(preferredEpisode);
   }
 
+
+  // Browser-native dropdown popup hover styling is OS-dependent. Retain
+  // each real select as the source of truth while rendering predictable
+  // blue-selected vs gray-hovered option rows.
+  let activeStyledMenu = null;
+  const styledSelects = new WeakSet();
+
+  function closeStyledSelectMenu() {
+    if (!activeStyledMenu) return;
+    const {menu, select, outside, keydown, onScroll} = activeStyledMenu;
+    activeStyledMenu = null;
+    select.setAttribute("aria-expanded", "false");
+    document.removeEventListener("pointerdown", outside, true);
+    document.removeEventListener("keydown", keydown, true);
+    window.removeEventListener("scroll", onScroll, true);
+    window.removeEventListener("resize", onScroll);
+    menu.remove();
+  }
+
+  function showStyledSelectMenu(select) {
+    if (activeStyledMenu?.select === select) {
+      closeStyledSelectMenu();
+      return;
+    }
+    closeStyledSelectMenu();
+    if (select.disabled || !select.options?.length) return;
+    const menu = document.createElement("div");
+    menu.className = "g2-select-menu";
+    menu.setAttribute("role", "listbox");
+    menu.setAttribute("aria-label",
+      select.getAttribute("aria-label") || "下拉选项");
+    let lastGroup = null;
+    let current = null;
+    let first = null;
+    for (const option of select.options) {
+      const parent = option.parentElement;
+      const group = parent?.tagName === "OPTGROUP" ? parent : null;
+      if (group && group !== lastGroup) {
+        const heading = document.createElement("div");
+        heading.className = "g2-select-group";
+        heading.textContent = group.label;
+        menu.append(heading);
+      }
+      lastGroup = group;
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "g2-select-option";
+      item.setAttribute("role", "option");
+      item.setAttribute("aria-selected", String(option.value === select.value));
+      item.textContent = option.textContent;
+      item.title = option.textContent;
+      item.disabled = option.disabled || !!group?.disabled;
+      item.addEventListener("click", () => {
+        if (item.disabled) return;
+        const changed = select.value !== option.value;
+        select.value = option.value;
+        closeStyledSelectMenu();
+        select.focus({preventScroll: true});
+        if (changed)
+          select.dispatchEvent(new Event("change", {bubbles: true}));
+      });
+      menu.append(item);
+      if (!first && !item.disabled) first = item;
+      if (option.value === select.value) current = item;
+    }
+    document.body.append(menu);
+    const rect = select.getBoundingClientRect();
+    const width = Math.min(Math.max(rect.width, 156),
+      Math.max(156, window.innerWidth - 16), 420);
+    menu.style.width = width + "px";
+    const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+    menu.style.left = left + "px";
+    const roomBelow = window.innerHeight - rect.bottom - 8;
+    const roomAbove = rect.top - 8;
+    const showAbove = roomBelow < 160 && roomAbove > roomBelow;
+    const maxHeight = Math.min(330, Math.max(90, (showAbove ? roomAbove : roomBelow)));
+    menu.style.maxHeight = maxHeight + "px";
+    const renderedHeight = Math.min(menu.scrollHeight, maxHeight);
+    menu.style.top = (showAbove ?
+      Math.max(8, rect.top - renderedHeight - 4) :
+      Math.max(8, rect.bottom + 4)) + "px";
+    if (current)
+      menu.scrollTop = Math.max(0,
+        current.offsetTop - (menu.clientHeight - current.offsetHeight) / 2);
+    const outside = event => {
+      if (!menu.contains(event.target) && event.target !== select)
+        closeStyledSelectMenu();
+    };
+    const keydown = event => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeStyledSelectMenu();
+        select.focus();
+      } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        const options = [...menu.querySelectorAll(".g2-select-option:not(:disabled)")];
+        const index = options.indexOf(document.activeElement);
+        if (!options.length) return;
+        event.preventDefault();
+        options[Math.max(0, Math.min(options.length - 1,
+          (index < 0 ? options.indexOf(current || first) : index) +
+          (event.key === "ArrowDown" ? 1 : -1)))].focus();
+      }
+    };
+    const onScroll = event => {
+      if (!menu.contains(event.target)) closeStyledSelectMenu();
+    };
+    activeStyledMenu = {menu, select, outside, keydown, onScroll};
+    select.setAttribute("aria-expanded", "true");
+    (current || first)?.focus({preventScroll: true});
+    document.addEventListener("pointerdown", outside, true);
+    document.addEventListener("keydown", keydown, true);
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onScroll);
+  }
+
+  function enableStyledSelect(select) {
+    if (styledSelects.has(select)) return;
+    styledSelects.add(select);
+    select.setAttribute("aria-haspopup", "listbox");
+    select.addEventListener("pointerdown", event => {
+      if (select.disabled || event.button > 0) return;
+      event.preventDefault();
+      select.focus({preventScroll: true});
+      showStyledSelectMenu(select);
+    });
+    select.addEventListener("mousedown", event => event.preventDefault());
+    select.addEventListener("click", event => event.preventDefault());
+    select.addEventListener("keydown", event => {
+      if (select.disabled) return;
+      if (["Enter", " ", "ArrowDown"].includes(event.key) && !event.altKey) {
+        event.preventDefault();
+        showStyledSelectMenu(select);
+      }
+    });
+  }
+
   function newTile(block, row, index) {
     const card = document.createElement("article");
     card.className = "tile"; card.dataset.block = block.id;
@@ -1186,14 +1331,34 @@
     select.addEventListener("change", () => {
       block.source = select.value; saveLayout(); renderLayout();
     });
+    const modeSelect = document.createElement("select");
+    modeSelect.className = "tile-fit-select";
+    modeSelect.title = "展示方式 · 原尺寸 / 高对齐 / 宽对齐 / 自适应";
+    modeSelect.setAttribute("aria-label", "展示块 " + (index + 1) + " 展示方式");
+    modeSelect.replaceChildren(...DISPLAY_MODES.map(([mode, label]) => {
+      const option = document.createElement("option");
+      option.value = mode; option.textContent = label;
+      return option;
+    }));
+    modeSelect.value = displayMode(block);
+    enableStyledSelect(select);
+    enableStyledSelect(modeSelect);
     const remove = document.createElement("button");
     remove.type = "button"; remove.className = "tile-remove";
     remove.title = "移除展示块"; remove.textContent = "×";
     remove.addEventListener("click", () => {
       row.blocks.splice(index, 1); saveLayout(); renderLayout();
     });
-    toolbar.append(handle, select, remove);
+    toolbar.append(handle, select, modeSelect, remove);
     const visual = document.createElement("div"); visual.className = "tile-visual";
+    visual.dataset.displayMode = displayMode(block);
+    modeSelect.addEventListener("change", () => {
+      if (!VALID_DISPLAY_MODES.has(modeSelect.value)) return;
+      block.displayMode = modeSelect.value;
+      visual.dataset.displayMode = block.displayMode;
+      // No rebuild: media playback/scrubbing continues uninterrupted.
+      saveLayout();
+    });
     const fallback = document.createElement("div"); fallback.className = "tile-placeholder";
     const placeholderIcon = document.createElement("span");
     placeholderIcon.className = "placeholder-icon"; placeholderIcon.textContent = "▦";
@@ -1214,6 +1379,7 @@
     if (state.manifest && VIDEO.has(block.source)) {
       const video = document.createElement("video");
       video.muted = true; video.playsInline = true;
+      video.className = "tile-media";
       video.preload = "metadata";
       video.setAttribute("aria-label", meta[1]);
       video.src = videoUrl(block.source);
@@ -1238,6 +1404,7 @@
       status.textContent = "20 Hz";
     } else {
       const canvas = document.createElement("canvas");
+      canvas.className = "tile-media";
       canvas.hidden = true;
       canvas.setAttribute("aria-label", meta[1]);
       canvas.setAttribute("role", "img");
@@ -1341,7 +1508,7 @@
           .flatMap(group => group.sources.map(source => source[0]));
         const next = options.find(source => !used.has(source)) ||
           options[0] || "floor_top";
-        row.blocks.push({id: uuid(), source: next});
+        row.blocks.push({id: uuid(), source: next, displayMode: "contain"});
         saveLayout(); renderLayout();
       });
       rail.append(remove, add);
@@ -1537,6 +1704,8 @@
     if (event.code === "Space") { event.preventDefault(); play(); }
   });
 
+  for (const select of document.querySelectorAll("select"))
+    enableStyledSelect(select);
   renderLayout();
   updateTimelineMorph();
   initialize();
