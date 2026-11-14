@@ -362,3 +362,15 @@ only the media inside it changes size. Portrait video therefore becomes
 narrower and uses side whitespace, while landscape video fills available
 width and leaves vertical whitespace as needed. No crop, stretch, source
 re-encode or tile-grid dimension changes.
+
+
+## Cover the full display tile (2026-11-14 update)
+
+The user changed the previous containment preference. Images and original
+videos now fill both axes of each existing tile. A single shared CSS
+declaration gives canvas/img/video 100% width and height with object-fit:cover
+and object-position:center. The visual container uses minmax(0,1fr) grid tracks
+and overflow:hidden so intrinsic media dimensions cannot expand the grid or
+overflow the tile. Aspect ratio is preserved; differing ratios are cropped
+around the center, not stretched. Desktop 4:3 and narrow mobile square
+tile dimensions, playback logic and source PNG/MP4 remain unchanged.
