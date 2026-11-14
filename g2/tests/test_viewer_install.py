@@ -540,3 +540,15 @@ def test_tile_media_four_modes_keep_aspect_and_clip_to_tile():
     assert "viewer.js?v=20261114-display-mode-menu" in html
 
 
+
+
+
+def test_per_tile_display_mode_switch_keeps_media_and_selection_highlight():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_tile_display_mode_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_PER_TILE_DISPLAY_MODE_CHANGE_PRESERVES_MEDIA_PASS" in result.stdout
