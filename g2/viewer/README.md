@@ -113,3 +113,25 @@ The renderer supports v1 view_pngs and v2 direct view_refs. The latter
 resolves only an earlier reference state containing the real PNG. This also
 applies to Island directional views. The original 20 Hz video timeline
 remains unchanged.
+
+## Published-only task and view filtering
+
+The browser supports both the original long /data1/.../view/ URL and the
+shortcut /view/ symlink. It resolves the actual fixed output root once by
+probing the dataset's tasks directory, so /view/ does not accidentally point
+to the HTTP server's unrelated /tasks/ path.
+
+At page load and on Refresh Episode it reads only the published task and
+Episode directory indexes. The Task dropdown shows **only tasks with output
+Episode directories**, with each task's **published Episode count** rather than
+its total target-data count. In the G2 compact pipeline, output directories
+are published on completion. When an Episode is selected its COMPLETE and
+manifest records are validated before any media is displayed.
+
+A View dropdown lists only sources backed by the selected Episode's manifest:
+real sixview/Island PNGs plus valid direct view_refs that resolve to an earlier
+owner state. The three camera entries appear only when the original MP4 is
+reachable by a same-origin HEAD request. Missing choices from a saved layout
+are replaced by an available source for the new Episode; no disabled phantom
+choices are shown. The display row limit of five and the no-flicker Canvas
+renderer are unchanged.

@@ -120,7 +120,7 @@ def test_viewer_contains_required_controls_and_dynamic_complete_discovery():
     assert 'robocasa365-target-atomic-6views' in html
     assert 'robocasa365_official/v1.0/target/atomic' in html
     assert 'font-size:18px' in css
-    assert 'const entries = await listDirectory(taskDirectory());' in js
+    assert 'const entries = await listDirectory(url);' in js
     assert 'data-count="4"' in css and 'data-count="5"' in css
     assert "minmax(0,1fr)" in css
     assert "[hidden] { display: none !important; }" in css
@@ -161,7 +161,7 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "margin:0 0 2.5px" in css
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261113-fixed-dirs" in html
+    assert "viewer.js?v=20261114-available-results" in html
     assert "viewer.css?v=20261113-fixed-dirs" in html
 
 
@@ -170,10 +170,36 @@ def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
     js = (folder / "viewer.js").read_text()
     html = (folder / "index.html").read_text()
     assert "function taskDirectory()" in js
-    assert 'return "../tasks/"' in js
-    assert 'const entries = await listDirectory(taskDirectory());' in js
+    assert 'return state.dataRoot + "tasks/"' in js
+    assert 'const entries = await listDirectory(url);' in js
     assert "function scanRemoteRoot()" not in js
     assert "showDirectoryPicker" not in js
     assert "G2DirectorySource" not in js
     assert 'source_videos' in (folder / "install.py").read_text()
     assert 'source_videos' not in html
+
+
+def test_published_result_task_counts_and_short_alias():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_published_catalog_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_VIEWER_PUBLISHED_TASK_COUNTS_AND_ALIASES_PASS" in result.stdout
+
+
+def test_only_existing_episode_views_are_dropdown_choices():
+    folder = Path(viewer.__file__).parent
+    js = (folder / "viewer.js").read_text()
+    html = (folder / "index.html").read_text()
+    assert 'function availableSources(manifest, cameras = new Set())' in js
+    assert 'function ownerState(manifest, index, relative)' in js
+    assert 'function detectAvailableCameras()' in js
+    assert 'method: "HEAD"' in js
+    assert 'const groups = availableSources(state.manifest, state.availableCameras)' in js
+    assert 'options.includes(selected) ? selected : options[0]' in js
+    assert 'state.completedByTask' in js
+    assert 'discoverCompletedTasks(true)' in js
+    assert 'viewer.js?v=20261114-available-results' in html

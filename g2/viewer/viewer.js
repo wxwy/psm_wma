@@ -27,18 +27,55 @@
   };
   const validSource = source => ALL.has(source) || parseIslandSource(source) !== null;
 
+  // A view exists only if a state owns its PNG or directly references a
+  // prior state that owns it. This covers compact v1, v2 and v3 manifests.
+  function ownerState(manifest, index, relative) {
+    const states = manifest?.states;
+    if (!Array.isArray(states) || index < 0 || index >= states.length)
+      return null;
+    const current = states[index];
+    if (!Array.isArray(current.view_pngs)) return null;
+    if (current.view_pngs.includes(relative)) return index;
+    const refs = current.view_refs;
+    if (!refs || Array.isArray(refs) || typeof refs !== "object") return null;
+    const ref = refs[relative];
+    if (!ref || typeof ref !== "object" || ref.path !== relative ||
+        !Number.isInteger(ref.ref_state) ||
+        ref.ref_state < 0 || ref.ref_state >= index) return null;
+    const owner = states[ref.ref_state];
+    if (!owner || !Array.isArray(owner.view_pngs) ||
+        !owner.view_pngs.includes(relative)) return null;
+    return ref.ref_state;
+  }
+
+  function availableSources(manifest, cameras = new Set()) {
+    if (!manifest || !Array.isArray(manifest.states)) return [];
+    const valid = relative => manifest.states.some((entry, i) =>
+      ownerState(manifest, i, relative) !== null);
+    const room = SOURCES.filter(([source]) =>
+      !VIDEO.has(source) && valid("sixview/" + source + ".png"));
+    const videos = SOURCES.filter(([source]) =>
+      VIDEO.has(source) && cameras.has(source));
+    const islands = islandGroups(manifest);
+    return [
+      {name: "全局 SixView", sources: room},
+      {name: "机器人相机", sources: videos},
+      ...islands.map(island => ({
+        name: island.label,
+        sources: island.choices.map(c => [c.value, "Island · " + c.label]),
+      })),
+    ].filter(group => group.sources.length);
+  }
+
   function islandGroups(manifest) {
     if (!manifest || !Array.isArray(manifest.states)) return [];
     const byId = new Map();
-    for (const entry of manifest.states) {
-      if (!Array.isArray(entry.view_pngs)) continue;
-      const refs = entry.view_refs && typeof entry.view_refs === "object" &&
-        !Array.isArray(entry.view_refs) ? Object.keys(entry.view_refs) : [];
-      const views = new Set([...entry.view_pngs, ...refs]);
+    for (const [index, entry] of manifest.states.entries()) {
       for (const id of entry.islands || []) {
         if (typeof id !== "string" || !ISLAND_ID_RE.test(id)) continue;
         for (const direction of ISLAND_DIRECTIONS) {
-          if (!views.has("islands/" + id + "/" + direction + ".png")) continue;
+          const relative = "islands/" + id + "/" + direction + ".png";
+          if (ownerState(manifest, index, relative) === null) continue;
           if (!byId.has(id)) byId.set(id, new Set());
           byId.get(id).add(direction);
         }
@@ -66,34 +103,32 @@
 
   function fillSourceSelect(select, selected) {
     select.replaceChildren();
-    const group = (name, values) => {
+    const groups = availableSources(state.manifest, state.availableCameras);
+    const options = [];
+    for (const group of groups) {
       const optgroup = document.createElement("optgroup");
-      optgroup.label = name;
-      for (const [value,label] of values) {
+      optgroup.label = group.name;
+      for (const [value, label] of group.sources) {
         const option = document.createElement("option");
         option.value = value;
         option.textContent = label;
         optgroup.append(option);
+        options.push(value);
       }
       select.append(optgroup);
-    };
-    group("全局 SixView", SOURCES.filter(x => !VIDEO.has(x[0])));
-    group("机器人相机", SOURCES.filter(x => VIDEO.has(x[0])));
-    const islands = islandGroups(state.manifest);
-    for (const island of islands) {
-      group(island.label, island.choices.map(c => [c.value, "Island · " + c.label]));
     }
-    const options = [...select.querySelectorAll("option")];
-    if (!options.some(opt => opt.value === selected)) {
-      // Preserve a saved layout across Episodes with different Island IDs,
-      // but never advertise obsolete Island views as playable choices.
-      const missing = document.createElement("option");
-      missing.value = selected;
-      missing.textContent = sourceMetadata(selected)[1] + "（当前 Episode 无此视角）";
-      missing.disabled = true;
-      select.append(missing);
+    if (!options.length) {
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "当前没有可用的视角";
+      select.append(placeholder);
+      select.disabled = true;
+      return null;
     }
-    select.value = selected;
+    const chosen = options.includes(selected) ? selected : options[0];
+    select.value = chosen;
+    select.disabled = false;
+    return chosen;
   }
   const CAMERA = {
     left: "observation.images.robot0_agentview_left",
@@ -142,6 +177,8 @@
     speed: 1, lastSpatial: -1, frameHandle: null, drag: null,
     token: 0, fallbackTime: 0, fallbackStart: 0, clockFailed: false,
     toastTimer: null, preload: new Map(),
+    dataRoot: null, completedByTask: new Map(), taskScanToken: 0,
+    availableCameras: new Set(),
   };
 
   function saveLayout() {
@@ -181,7 +218,96 @@
   }
 
   function taskDirectory() {
-    return "../tasks/" + encodeURIComponent(state.task.name) + "/episodes/";
+    return state.dataRoot + "tasks/" +
+      encodeURIComponent(state.task.name) + "/episodes/";
+  }
+
+  // A Viewer opened at /view/ may be served through an HTTP symlink; in
+  // that case ../tasks/ incorrectly means /tasks/ rather than the dataset.
+  // Probe the direct deployment and the fixed /data1 mount once, not per frame.
+  async function resolveDataRoot() {
+    const fixed = "/data1/data_v2_0617/robocasa365_v3_flat/" +
+      "robocasa365-target-atomic-6views/";
+    const candidates = [
+      new URL("../", location.href).href,
+      new URL(fixed, location.origin).href,
+    ];
+    for (const root of [...new Set(candidates)]) {
+      try {
+        const response = await fetch(root + "tasks/", {cache: "no-store"});
+        if (!response.ok) continue;
+        const doc = new DOMParser().parseFromString(
+          await response.text(), "text/html");
+        const names = new Set([...doc.querySelectorAll("a[href]")]
+          .map(a => {
+            const name = a.getAttribute("href") || "";
+            try { const clean = decodeURIComponent(name); return clean.endsWith("/") ? clean.slice(0, -1) : clean; }
+            catch (_) { return ""; }
+          }));
+        if (state.catalog.tasks.some(task => names.has(task.name)))
+          return root;
+        // Empty production data may not contain any tasks yet.
+        if (!names.size) return root;
+      } catch (_) { /* Try the next fixed location. */ }
+    }
+    throw Error("无法定位 G2 正式输出目录，请确认 18765 已映射 /data1");
+  }
+
+  async function discoverCompletedTasks(preserve = true) {
+    const token = ++state.taskScanToken;
+    const previousTask = preserve ? state.task?.name : null;
+    const previousEpisode = preserve ? state.episode?.global_id : null;
+    const taskPicker = $("task-select");
+    taskPicker.disabled = true;
+    showStatus("更新已完成任务", "");
+    try {
+      const taskNames = new Set(await listDirectory(state.dataRoot + "tasks/"));
+      const candidates = state.catalog.tasks.filter(t => taskNames.has(t.name));
+      const records = await Promise.all(candidates.map(async task => {
+        const url = state.dataRoot + "tasks/" +
+          encodeURIComponent(task.name) + "/episodes/";
+        const entries = await listDirectory(url);
+        const ids = new Set(entries.filter(name => /^episode_\d{6}$/.test(name))
+          .map(name => Number(name.slice("episode_".length))));
+        // The compact publisher exposes a final episode directory only after
+        // success. A selected Episode still validates COMPLETE and manifest.
+        return {task, episodes: task.episodes.filter(ep => ids.has(ep.global_id))};
+      }));
+      if (token !== state.taskScanToken) return;
+      const available = records.filter(record => record.episodes.length > 0);
+      state.completedByTask = new Map(
+        available.map(record => [record.task.name, record.episodes]));
+      fillSelect(taskPicker, available.map(record => [
+        record.task.name, record.task.name +
+          " · " + record.episodes.length + " EP",
+      ]), previousTask);
+      if (!available.length) {
+        taskPicker.disabled = true;
+        fillSelect(taskPicker, [["", "暂无已完成的任务"]], "");
+        $("episode-select").disabled = true;
+        fillSelect($("episode-select"), [["", "等待生成结果"]], "");
+        $("available-count").textContent = "0 个已完成";
+        $("instruction-text").textContent = "输出目录还没有已完成 Episode。点击刷新 Episode 重试。";
+        state.task = null;
+        state.episode = null;
+        state.manifest = null;
+        state.availableCameras.clear();
+        transportEnabled(false);
+        renderLayout();
+        showStatus("等待生成结果", "");
+        return;
+      }
+      const target = available.some(item => item.task.name === previousTask) ?
+        previousTask : available[0].task.name;
+      taskPicker.value = target;
+      taskPicker.disabled = false;
+      await chooseTask(target, previousEpisode);
+    } catch (error) {
+      if (token !== state.taskScanToken) return;
+      showStatus("获取已完成任务失败", "issue");
+      toast(error.message);
+      taskPicker.disabled = false;
+    }
   }
 
   function episodeDirectory() {
@@ -201,32 +327,33 @@
     return "./source_videos/" + folder + "/" + path;
   }
 
+  async function detectAvailableCameras() {
+    const names = ["left", "right", "wrist"];
+    const results = await Promise.all(names.map(async source => {
+      const url = videoUrl(source);
+      if (!url) return null;
+      try {
+        const response = await fetch(url, {method: "HEAD", cache: "no-store"});
+        return response.ok ? source : null;
+      } catch (_) {
+        return null;
+      }
+    }));
+    return new Set(results.filter(Boolean));
+  }
+
   function viewPath(source, index) {
     const entry = state.manifest.states[index];
     const island = parseIslandSource(source);
-    if (!island && !ALL.has(source)) return null;
+    if (!island && (!ALL.has(source) || VIDEO.has(source))) return null;
     const relative = island
       ? "islands/" + island.island + "/" + island.direction + ".png"
       : "sixview/" + source + ".png";
-    // Both remote and local dataset access must use the SAME direct owner
-    // state for v2 refs. v1 files continue to resolve to the current frame.
-    let owner=index;
-    if (!entry.view_pngs.includes(relative)) {
-      const refs=entry.view_refs;
-      if (!refs || Array.isArray(refs) || typeof refs !== "object") return null;
-      const ref=refs[relative];
-      if (!ref || typeof ref !== "object" || ref.path !== relative ||
-          !Number.isInteger(ref.ref_state) ||
-          ref.ref_state < 0 || ref.ref_state >= index) return null;
-      owner=ref.ref_state;
-      const original=state.manifest.states[owner];
-      if (!original || !Array.isArray(original.view_pngs) ||
-          !original.view_pngs.includes(relative)) return null;
-    }
-    const stateRow=state.manifest.states[owner];
-    const statePath = "state_" + pad(owner) +
-      "_frame_" + pad(stateRow.frame) + "/" + relative;
-    return episodeDirectory() + statePath;
+    const owner = ownerState(state.manifest, index, relative);
+    if (owner === null) return null;
+    const ownerFrame = state.manifest.states[owner];
+    return episodeDirectory() + "state_" + pad(owner) +
+      "_frame_" + pad(ownerFrame.frame) + "/" + relative;
   }
 
   function spatialAt(time) {
@@ -467,6 +594,7 @@
     pause();
     state.episode = item;
     state.manifest = null;
+    state.availableCameras.clear();
     state.time = 0;
     state.duration = item.frames / state.catalog.source_fps;
     state.lastSpatial = -1;
@@ -503,9 +631,16 @@
           throw Error("空间帧索引与原始数据不一致");
         previous = entry.frame;
       }
+      const cameras = await detectAvailableCameras();
+      if (token !== state.token) return;
       state.manifest = manifest;
-      state.clockFailed = false;
-      $("clock-video").src = videoUrl("left");
+      state.availableCameras = cameras;
+      state.clockFailed = !cameras.has("left");
+      if (cameras.has("left")) {
+        $("clock-video").src = videoUrl("left");
+      } else {
+        $("clock-video").removeAttribute("src");
+      }
       $("clock-video").load();
       transportEnabled(true);
       renderLayout();
@@ -514,6 +649,7 @@
     } catch (error) {
       if (token !== state.token) return;
       state.manifest = null;
+      state.availableCameras.clear();
       renderLayout();
       transportEnabled(false);
       showStatus("数据不可用", "issue");
@@ -521,62 +657,47 @@
     }
   }
 
-  async function refreshEpisodes(preserve = true) {
-    if (!state.task) return;
+  async function refreshEpisodes(preferredEpisode = null) {
     const task = state.task;
-    const token = ++state.token;
-    pause();
+    if (!task) return;
+    const completed = state.completedByTask.get(task.name) || [];
     const picker = $("episode-select");
-    picker.disabled = true;
-    fillSelect(picker, [["", "正在扫描已完成的 Episode…"]], "");
-    showStatus("刷新任务目录", "");
-    try {
-      // Exactly one current-task directory listing: no recursive filesystem scan.
-      const entries = await listDirectory(taskDirectory());
-      if (token !== state.token || task !== state.task) return;
-      const globalIds = new Set(entries.filter(n => /^episode_\d{6}$/.test(n))
-        .map(n => Number(n.slice(8))));
-      const completed = task.episodes.filter(ep => globalIds.has(ep.global_id));
-      $("available-count").textContent = completed.length + " / " +
-        task.count + " 已生成";
-      if (!completed.length) {
-        state.episode = null; state.manifest = null;
-        state.time = 0; state.duration = 0;
-        $("instruction-text").textContent = "此任务尚无完成的 Episode，稍后可刷新列表。";
-        fillSelect(picker, [["", "暂无完成的 Episode"]], "");
-        transportEnabled(false);
-        renderLayout();
-        showStatus("等待已完成数据");
-        return;
-      }
-      const old = preserve ? state.episode?.global_id : undefined;
-      const preferred = completed.some(ep => ep.global_id === old) ?
-        old : completed[0].global_id;
-      fillSelect(picker, completed.map(ep =>
-        [ep.global_id, "EP " + pad(ep.local_id, 3) + " · 全局 " +
-          pad(ep.global_id) + " · " + fmt(ep.frames / 20)]), preferred);
-      picker.disabled = false;
-      state.available = completed;
-      await loadEpisode(Number(picker.value));
-    } catch (error) {
-      if (token !== state.token) return;
-      fillSelect(picker, [["", "列表不可用，请重试"]], "");
-      showStatus("读取失败", "issue");
-      toast(error.message);
+    $("available-count").textContent = completed.length + " 个已完成";
+    if (!completed.length) {
+      picker.disabled = true;
+      fillSelect(picker, [["", "暂无完成的 Episode"]], "");
+      state.episode = null;
+      state.manifest = null;
+      state.availableCameras.clear();
+      transportEnabled(false);
+      renderLayout();
+      return;
     }
+    const current = preferredEpisode != null &&
+      completed.some(ep => ep.global_id === preferredEpisode) ?
+      preferredEpisode : completed[0].global_id;
+    fillSelect(picker, completed.map(ep => [
+      ep.global_id, "EP " + pad(ep.local_id, 3) +
+      " · 全局 " + pad(ep.global_id) + " · " + fmt(ep.frames / 20),
+    ]), current);
+    picker.disabled = false;
+    await loadEpisode(Number(picker.value));
   }
 
-  async function chooseTask(taskName) {
+  async function chooseTask(taskName, preferredEpisode = null) {
     const task = state.catalog?.tasks.find(t => t.name === taskName);
-    if (!task) return;
+    if (!task || !state.completedByTask.has(taskName)) return;
     pause();
-    state.task = task; state.episode = null; state.manifest = null;
-    state.time = 0; state.duration = 0;
+    state.task = task;
+    state.episode = null;
+    state.manifest = null;
+    state.time = 0;
+    state.duration = 0;
     try { localStorage.setItem("psm-g2-viewer-task", taskName); } catch (_) {}
-    $("instruction-text").textContent = "正在读取已完成 Episode…";
+    $("instruction-text").textContent = "正在加载已完成 Episode…";
     $("task-tag").textContent = task.name;
     $("global-tag").textContent = "—";
-    await refreshEpisodes(false);
+    await refreshEpisodes(preferredEpisode);
   }
 
   function newTile(block, row, index) {
@@ -599,7 +720,11 @@
     const select = document.createElement("select");
     select.className = "tile-select"; select.title = "切换展示来源";
     select.setAttribute("aria-label", "展示块 " + (index + 1) + " 视角");
-    fillSourceSelect(select, block.source);
+    const selected = fillSourceSelect(select, block.source);
+    if (selected && selected !== block.source) {
+      block.source = selected;
+      saveLayout();
+    }
     select.addEventListener("change", () => {
       block.source = select.value; saveLayout(); renderLayout();
     });
@@ -730,7 +855,10 @@
       add.addEventListener("click", () => {
         if (row.blocks.length >= 5) { toast("每行最多 5 个展示块"); return; }
         const used = new Set(row.blocks.map(b => b.source));
-        const next = SOURCES.find(x => !used.has(x[0]))?.[0] || "floor_top";
+        const options = availableSources(state.manifest, state.availableCameras)
+          .flatMap(group => group.sources.map(source => source[0]));
+        const next = options.find(source => !used.has(source)) ||
+          options[0] || "floor_top";
         row.blocks.push({id: uuid(), source: next});
         saveLayout(); renderLayout();
       });
@@ -739,6 +867,8 @@
       remove.textContent = "×"; remove.title = "移除这一行";
       remove.addEventListener("click", () => {
         if (state.rows.length === 1) { toast("至少保留一行"); return; }
+        const rowIndex = state.rows.indexOf(row);
+        if (rowIndex < 0) return;
         state.rows.splice(rowIndex, 1); saveLayout(); renderLayout();
       });
       actions.append(add, remove); head.append(actions);
@@ -781,19 +911,13 @@
       if (state.catalog.schema !== "g2_replay_viewer_catalog_v1" ||
           state.catalog.source_fps !== 20 || !state.catalog.tasks?.length)
         throw Error("任务索引格式不兼容");
-      const existing = new Set(await listDirectory("../tasks/"));
-      const select = $("task-select");
-      fillSelect(select, state.catalog.tasks.map(t => [
-        t.name, t.name + "  ·  " + t.count + " EP"
-      ]));
-      select.disabled = false;
-      let previous;
-      try { previous = localStorage.getItem("psm-g2-viewer-task"); } catch (_) {}
-      const first = state.catalog.tasks.find(t => existing.has(t.name));
-      const selected = previous && existing.has(previous) ?
-        previous : first?.name || state.catalog.tasks[0].name;
-      select.value = selected;
-      await chooseTask(selected);
+      state.dataRoot = await resolveDataRoot();
+      let preferred;
+      try { preferred = localStorage.getItem("psm-g2-viewer-task"); }
+      catch (_) {}
+      // Remember the previously selected task only if it actually has outputs.
+      if (preferred) state.task = state.catalog.tasks.find(t => t.name === preferred) || null;
+      await discoverCompletedTasks(true);
     } catch (error) {
       showStatus("初始化失败", "issue");
       $("instruction-text").textContent = error.message;
@@ -804,7 +928,7 @@
   $("task-select").addEventListener("change", () => chooseTask($("task-select").value));
   $("episode-select").addEventListener("change", () => loadEpisode(Number($("episode-select").value)));
   $("refresh-episodes").addEventListener("click", () => {
-    void refreshEpisodes(true);
+    void discoverCompletedTasks(true);
   });
   $("play").addEventListener("click", play);
   $("prev-frame").addEventListener("click", () => step(-1));
