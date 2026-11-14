@@ -348,3 +348,17 @@ The server is threaded, serves only trusted local bound paths and
 does not change any producer or training workflows.
 Test with original RoboCasa clips, including repeated EOF/replay, pause
 during asynchronous seeks, nonzero replays, and scrubbing.
+
+
+## Intrinsic-aspect media fitting inside display tiles
+
+Canvas-backed spatial PNGs and source MP4 videos keep their intrinsic
+width/height ratio. The media element itself now uses width:auto,
+height:auto, max-width:100%, and max-height:100% inside the bounded
+.tile-visual box. Both minimum dimensions are zero and object-fit:contain
+is retained. The media element is centered and cannot overflow either axis.
+The visual box remains 4:3 on desktop and square on narrow mobile screens;
+only the media inside it changes size. Portrait video therefore becomes
+narrower and uses side whitespace, while landscape video fills available
+width and leaves vertical whitespace as needed. No crop, stretch, source
+re-encode or tile-grid dimension changes.
