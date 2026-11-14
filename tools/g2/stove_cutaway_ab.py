@@ -88,6 +88,17 @@ def render_episode(row: dict, out: Path, *, gpu: int, margin: float, padding: fl
                      and float(effective_rgba(model, g)[3]) > 0.999]
         if not stove_ids:
             raise RuntimeError(f"Episode {row['episode_id']} has no source visual stovetop mesh")
+        # Compiled source Geom names are numeric (e.g. _g2), not "knob".
+        # Resolve actual mesh names before claiming knob pixel counts.
+        knob_geom_names = set()
+        body_geom_names = set()
+        for g in stove_ids:
+            mid = int(model.geom_dataid[g])
+            mesh_name = (mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_MESH, mid) or "").lower()
+            if "knob" in mesh_name:
+                knob_geom_names.add(names[g])
+            elif "body" in mesh_name:
+                body_geom_names.add(names[g])
         stove_parts = {g: geom_mesh(g) for g in stove_ids}
         stove_parts = {g: value for g, value in stove_parts.items() if value is not None}
         crop_lo = np.min([m[4] for m in stove_parts.values()], axis=0)
@@ -164,7 +175,9 @@ def render_episode(row: dict, out: Path, *, gpu: int, margin: float, padding: fl
                 "pixels_stovetop": sum(v for k, v in visibility.items()
                                        if k.startswith("stovetop_main_group_")),
                 "pixels_knobs": sum(v for k, v in visibility.items()
-                                    if k.startswith("stovetop_main_group_") and "knob" in k),
+                                    if k in knob_geom_names),
+                "pixels_body": sum(v for k, v in visibility.items()
+                                   if k in body_geom_names),
                 "pixels_overhead": sum(v for k, v in visibility.items()
                                        if k.startswith("hood_")),
                 "invalid_color_pixels": invalid_count,
@@ -189,6 +202,9 @@ def render_episode(row: dict, out: Path, *, gpu: int, margin: float, padding: fl
             "stove_top_z_m": worktop_top_z, "vertical_margin_m": margin,
             "cut_height_m": cut_height, "crop_padding_m": padding,
             "removed_visual_geoms": [names[g] for g in removed],
+            "source_knob_visual_geoms": sorted(knob_geom_names),
+            "source_body_visual_geoms": sorted(body_geom_names),
+            "source_knob_classification": "EXACT_SOURCE_MJCF_GEOM_TO_MESH_NAME",
             "total_source_visual_geoms_in_crop": len(selected),
             "original": info["original"], "cutaway": info["cutaway"],
             "scene_graph_modified": False, "original_assets_modified": False,
@@ -210,6 +226,7 @@ def write_index(output: Path, results: list[dict], errors: list[dict]) -> None:
         removed = ", ".join(item["removed_visual_geoms"][:20])
         parts += [f"<section class='panel'><h2>Layout {item['layout_id']} · EP {ep:06d}</h2>",
                   f"<div class='stats'><span>阈值：{item['cut_height_m']:.2f}m</span><span>灶面像素：{a['pixels_stovetop']} → {b['pixels_stovetop']}</span>",
+                  f"<span>旋钮可见像素：{a['pixels_knobs']} → {b['pixels_knobs']}</span>",
                   f"<span>高位遮挡像素：{a['pixels_overhead']} → {b['pixels_overhead']}</span>",
                   f"<span>已排除 Visual Geom 数：{len(item['removed_visual_geoms'])}</span></div>",
                   f"<p>左：原版 &nbsp; &nbsp; 右：几何剖切版</p><img loading='lazy' src='ep_{ep:06d}/comparison.png' alt='Source Visual Geometry A/B'>",
