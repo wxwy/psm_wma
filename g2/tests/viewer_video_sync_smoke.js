@@ -67,7 +67,8 @@ const context={state,hooks,
   clamp:(v,min,max)=>Math.min(max,Math.max(min,v))};
 vm.runInNewContext(source.slice(start,end)+
   "\nhooks.resume=resumeSlave;hooks.sync=syncVideos;" +
-  "\nhooks.mediaAtEnd=mediaAtEnd;hooks.align=alignMedia;\n",context);
+  "\nhooks.mediaAtEnd=mediaAtEnd;hooks.align=alignMedia;"+
+  "\nhooks.release=releaseFollowerHoldsOnRewind;\n",context);
 const {resume,sync}=hooks;
 
 function approx(actual,expected,eps=0.025) {
@@ -111,6 +112,7 @@ function approx(actual,expected,eps=0.025) {
   // If a follower ended early, seeking to the master time must finish
   // before play is permitted, so it never auto-rewinds to zero.
   state.time=4.5;
+  hooks.release(12,4.5); // user explicitly scrubbed backward
   right.ended=true;right.paused=true;right.seeking=false;
   right._currentTime=12;
   resume(right);

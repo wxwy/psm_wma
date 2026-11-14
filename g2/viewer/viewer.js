@@ -580,8 +580,10 @@
 
   // Calling play() on a video with ended=true may rewind that one
   // camera to zero. Every visible camera must follow the hidden Left clock.
-  const MEDIA_TAIL_MARGIN = 0.025; // half one 20 Hz frame
+  const MEDIA_TAIL_MARGIN = 0.025; // midpoint of last 20Hz video frame
+  const FOLLOWER_END_GUARD = 0.10; // park within final two 20Hz frames
   const pendingMediaResumes = new WeakSet();
+  const heldFollowerEnds = new WeakSet();
 
   function mediaTarget(video, time = state.time) {
     if (!Number.isFinite(video.duration) || video.duration <= 0)
@@ -592,6 +594,35 @@
   function mediaAtEnd(video, time = state.time) {
     return Number.isFinite(video.duration) && video.duration > 0 &&
       time >= video.duration - MEDIA_TAIL_MARGIN;
+  }
+
+  function followerNearEnd(video, time = state.time) {
+    return Number.isFinite(video.duration) && video.duration > 0 &&
+      time >= Math.max(0, video.duration - FOLLOWER_END_GUARD);
+  }
+
+  function parkFollowerAtEnd(video) {
+    if (video.readyState < 1 || !Number.isFinite(video.duration) ||
+        video.duration <= 0) return;
+    heldFollowerEnds.add(video);
+    video.pause();
+    // Seek inside the *last decoded frame*, not to duration (which triggers
+    // ended / a platform-dependent rewind to first frame). Do this once;
+    // repeated seeks can produce flashes and restart end notifications.
+    const target = mediaTarget(video, video.duration);
+    if (!video.seeking && (video.ended ||
+        !Number.isFinite(video.currentTime) ||
+        Math.abs(video.currentTime - target) > 0.015)) {
+      try { video.currentTime = target; } catch (_) {}
+    }
+  }
+
+  function syncFollower(video, force = false) {
+    if (heldFollowerEnds.has(video) || followerNearEnd(video)) {
+      parkFollowerAtEnd(video);
+      return;
+    }
+    alignMedia(video, force);
   }
 
   function alignMedia(video, force = false) {
@@ -606,19 +637,20 @@
   }
 
   function syncVideos(force = false) {
-    for (const video of [$("clock-video"), ...videos()])
-      alignMedia(video, force);
+    alignMedia($("clock-video"), force);
+    for (const video of videos())
+      syncFollower(video, force);
   }
 
   function resumeSlave(video) {
-    if (!state.playing || !state.manifest || video.readyState < 1 ||
+    if (!state.manifest || video.readyState < 1 ||
         !state.media.some(tile => tile.video === video && !tile.disposed))
       return;
-    if (mediaAtEnd(video)) {
-      video.pause();
-      alignMedia(video, true);
+    if (heldFollowerEnds.has(video) || followerNearEnd(video)) {
+      parkFollowerAtEnd(video);
       return;
     }
+    if (!state.playing) return;
     const target = mediaTarget(video);
     if (video.ended || Math.abs(video.currentTime - target) > 0.15) {
       video.pause();
@@ -640,9 +672,19 @@
       video.play().catch(() => {});
   }
 
+  function releaseFollowerHoldsOnRewind(previousTime, nextTime) {
+    if (nextTime < previousTime - 0.04)
+      for (const video of videos()) heldFollowerEnds.delete(video);
+  }
+
   function seek(time, force = false) {
     if (!state.manifest) return;
+    const previousTime = state.time;
     state.time = clamp(time, 0, state.duration);
+    // Only an explicit backward timeline jump releases a finished camera.
+    // Never release it simply because the master clock is still a few frames
+    // behind at EOF: doing that caused Right/Wrist to restart repeatedly.
+    releaseFollowerHoldsOnRewind(previousTime, state.time);
     state.fallbackTime = state.time;
     state.fallbackStart = performance.now();
     syncVideos(force);
@@ -671,6 +713,11 @@
     state.time = clamp(useVideo ? clock.currentTime : state.fallbackTime + elapsed,
       0, state.duration);
     updateTimeline();
+    // Stop visible followers just before EOF so their last image remains
+    // decoded and displayed, without entering the browser's ended mode.
+    for (const video of videos()) {
+      if (followerNearEnd(video)) parkFollowerAtEnd(video);
+    }
     if (Math.floor(now / 500) !== Math.floor((now - 16) / 500)) {
       syncVideos(false);
       for (const video of videos()) {
@@ -1116,8 +1163,10 @@
         if (state.playing) resumeSlave(video);
       });
       video.addEventListener("ended", () => {
-        if (!tile.disposed && state.playing)
-          resumeSlave(video); // stays on last frame at master end
+        // Some browsers display frame zero once an ended video is replayed.
+        // Never call play() from ended, even if the master is a few frames
+        // behind. Park the actual MP4's final frame until an earlier seek.
+        if (!tile.disposed) parkFollowerAtEnd(video);
       });
       video.addEventListener("error", () => {
         video.hidden = true; fallback.hidden = false;

@@ -297,3 +297,24 @@ so the prior space-between does not mask the requested reduction.
 Display row-to-row spacing halves from 10px to 5px; workspace-to-timeline
 and bottom actions spacings are halved as well. The absolute floating
 row control rail remains outside the grid and does not consume tile width.
+
+
+## Ending Right/Wrist videos on the actual last frame
+
+The prior ended event callback could call resumeSlave on an already
+finished follower while Left was still short of the nominal Episode duration.
+That could trigger the browser's native replay-from-zero semantics.
+
+The revised end handler never invokes play(). It pauses the follower
+and parks its current frame at duration - 0.025s, within the final decoded
+20 Hz video frame. A bounded 0.10s end guard preemptively parks followers
+before the browser fires ended. A WeakSet latches finished followers across
+normal master-clock polling, sync and pause; only an explicit backward seek
+releases that hold. Terminal seeking is issued once, not repeatedly while
+seeking is true. Left remains the master timeline. No original MP4 bytes
+or production Episodes are changed.
+
+The view tile's bottom metadata/text strip is separately reduced to about
+60% of its previous vertical height using 9px -> 3px top/bottom padding
+on desktop and 6px -> 2px on mobile. The metadata text and fonts are
+unchanged. Source selector toolbar height and tile spacing remain unchanged.

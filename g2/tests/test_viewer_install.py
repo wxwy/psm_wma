@@ -166,8 +166,8 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "shell.append(grid, rail);" in js
     assert 'remove.title = "删除整行"' in js
     assert 'add.title = "添加显示块"' in js
-    assert "viewer.js?v=20261114-dense-workspace" in html
-    assert "viewer.css?v=20261114-dense-workspace" in html
+    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.css?v=20261114-end-hold-footer" in html
 
 
 def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
@@ -207,7 +207,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-dense-workspace' in html
+    assert 'viewer.js?v=20261114-end-hold-footer' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -252,8 +252,8 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'min="1" max="6" step="1"' in html
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
-    assert 'viewer.js?v=20261114-dense-workspace' in html
-    assert 'viewer.css?v=20261114-dense-workspace' in html
+    assert 'viewer.js?v=20261114-end-hold-footer' in html
+    assert 'viewer.css?v=20261114-end-hold-footer' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
     assert 'function matchEpisodeFacts(facts, criteria)' in js
@@ -300,12 +300,14 @@ def test_visible_video_events_use_master_timeline_and_ended_guard():
     assert 'video.addEventListener("seeked", () =>' in js
     assert 'video.addEventListener("ended", () =>' in js
     assert "if (video.paused && !video.ended)" in js
-    assert "mediaAtEnd(video)" in js
+    assert "function parkFollowerAtEnd(video)" in js
+    assert "const heldFollowerEnds = new WeakSet()" in js
+    assert "function releaseFollowerHoldsOnRewind(previousTime, nextTime)" in js
     assert "if (tile.disposed || !state.manifest) return;" in js
     assert "if (state.playing) resumeSlave(video);" in js
     assert "if (state.playing) video.play().catch" not in js
     assert "for (const v of videos()) v.play()" not in js
-    assert "viewer.js?v=20261114-dense-workspace" in html
+    assert "viewer.js?v=20261114-end-hold-footer" in html
 
 
 
@@ -319,7 +321,7 @@ def test_view_filters_are_above_task_and_episode_controls():
     assert html.count('data-view-filter="') == 7
     assert html.count('id="view-count-filter"') == 1
     assert "margin-bottom:17px;" in css
-    assert "viewer.css?v=20261114-dense-workspace" in html
+    assert "viewer.css?v=20261114-end-hold-footer" in html
 
 
 
@@ -375,8 +377,8 @@ def test_workspace_control_rail_does_not_change_display_grid_width():
     assert 'grid-template-columns:repeat(var(--count,3)' in css
     assert "right:-36px" in css
     assert "opacity:.22" in css
-    assert "viewer.css?v=20261114-dense-workspace" in html
-    assert "viewer.js?v=20261114-dense-workspace" in html
+    assert "viewer.css?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-end-hold-footer" in html
 
 
 
@@ -408,8 +410,8 @@ def test_flat_compact_timeline_is_half_height_without_thumb_and_stable_flow():
     assert "width:0;height:0;" in css
     assert "background:transparent;border:0;box-shadow:none" in css
     assert 'class="compact-timecode"' in html
-    assert "viewer.js?v=20261114-dense-workspace" in html
-    assert "viewer.css?v=20261114-dense-workspace" in html
+    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.css?v=20261114-end-hold-footer" in html
 
 
 
@@ -440,5 +442,36 @@ def test_dense_workspace_view_selector_and_gaps_at_requested_ratios():
     assert "font-size:10.4px;line-height:1.1" in css
     assert '"--timeline-instruction-height": px(0, narrow ? 21 : 24)' in js
     assert '"--timeline-metrics-width": px(0, narrow ? 175 : 310)' in js
-    assert "viewer.css?v=20261114-dense-workspace" in html
-    assert "viewer.js?v=20261114-dense-workspace" in html
+    assert "viewer.css?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-end-hold-footer" in html
+
+
+
+def test_real_ended_event_holds_right_wrist_last_frame_and_footer_height():
+    folder = Path(viewer.__file__).parent
+    html = (folder / "index.html").read_text()
+    css = (folder / "viewer.css").read_text()
+    js = (folder / "viewer.js").read_text()
+
+    assert ".tile-foot { padding:3px 12px;" in css
+    assert " .tile-foot { padding:2px 4px; font-size:8px }" in css
+    assert "font:10px var(--mono)" in css
+    assert "viewer.css?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-end-hold-footer" in html
+
+    assert "const FOLLOWER_END_GUARD = 0.10" in js
+    assert "function followerNearEnd(video, time = state.time)" in js
+    assert "function parkFollowerAtEnd(video)" in js
+    assert "function syncFollower(video, force = false)" in js
+    assert "function releaseFollowerHoldsOnRewind(previousTime, nextTime)" in js
+    assert "if (followerNearEnd(video)) parkFollowerAtEnd(video)" in js
+    assert "if (!tile.disposed) parkFollowerAtEnd(video)" in js
+
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_video_end_hold_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_REAL_ENDED_EVENT_LAST_FRAME_HOLD_RIGHT_WRIST_PASS" in result.stdout
