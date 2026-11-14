@@ -318,3 +318,33 @@ The view tile's bottom metadata/text strip is separately reduced to about
 60% of its previous vertical height using 9px -> 3px top/bottom padding
 on desktop and 6px -> 2px on mobile. The metadata text and fonts are
 unchanged. Source selector toolbar height and tile spacing remain unchanged.
+
+
+## Reliable MP4 replay: byte-range HTTP and seek-first playback
+
+The stock Python SimpleHTTPRequestHandler used on port 18765 returned
+HTTP 200 and the full MP4 payload even when browsers requested a Range
+(e.g. Range: bytes=1200-1399). The source-controlled lightweight
+g2.viewer.http_server serves MP4 single-byte ranges with HTTP 206,
+Accept-Ranges: bytes, exact Content-Range, Content-Length, suffix
+and open-ended ranges, HEAD and HTTP 416. Static HTML/JS/CSS, task/
+Episode directory listings and symlinked RoboCasa videos remain unchanged.
+
+From the V3 repository:
+
+    python3 -m g2.viewer.http_server --bind 127.0.0.1 --port 18765       --directory /mnt/data/shenzhen/szrobot/logs/g2_http_18765_root
+
+For video replay, the browser now waits for the Left hidden master
+HTMLVideoElement's completed seeked/metadata state BEFORE invoking play().
+The replay generation invalidates asynchronous results if a user pauses
+or selects another Episode. The old ended event no longer overrides a
+fresh rewind to zero. Redundant forced seeks at pause and during replay
+have been removed; Right/Wrist still receive independent guarded seeked
+callbacks and remain parked at their real final MP4 frames on completion.
+
+These changes address a verified HTTP seek protocol defect plus an
+independent JS race, rather than assuming server CPU shortage.
+The server is threaded, serves only trusted local bound paths and
+does not change any producer or training workflows.
+Test with original RoboCasa clips, including repeated EOF/replay, pause
+during asynchronous seeks, nonzero replays, and scrubbing.

@@ -166,7 +166,7 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "shell.append(grid, rail);" in js
     assert 'remove.title = "删除整行"' in js
     assert 'add.title = "添加显示块"' in js
-    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-range-replay" in html
     assert "viewer.css?v=20261114-end-hold-footer" in html
 
 
@@ -207,7 +207,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-end-hold-footer' in html
+    assert 'viewer.js?v=20261114-range-replay' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -252,7 +252,7 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'min="1" max="6" step="1"' in html
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
-    assert 'viewer.js?v=20261114-end-hold-footer' in html
+    assert 'viewer.js?v=20261114-range-replay' in html
     assert 'viewer.css?v=20261114-end-hold-footer' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
@@ -307,7 +307,7 @@ def test_visible_video_events_use_master_timeline_and_ended_guard():
     assert "if (state.playing) resumeSlave(video);" in js
     assert "if (state.playing) video.play().catch" not in js
     assert "for (const v of videos()) v.play()" not in js
-    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-range-replay" in html
 
 
 
@@ -378,7 +378,7 @@ def test_workspace_control_rail_does_not_change_display_grid_width():
     assert "right:-36px" in css
     assert "opacity:.22" in css
     assert "viewer.css?v=20261114-end-hold-footer" in html
-    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-range-replay" in html
 
 
 
@@ -410,7 +410,7 @@ def test_flat_compact_timeline_is_half_height_without_thumb_and_stable_flow():
     assert "width:0;height:0;" in css
     assert "background:transparent;border:0;box-shadow:none" in css
     assert 'class="compact-timecode"' in html
-    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-range-replay" in html
     assert "viewer.css?v=20261114-end-hold-footer" in html
 
 
@@ -443,7 +443,7 @@ def test_dense_workspace_view_selector_and_gaps_at_requested_ratios():
     assert '"--timeline-instruction-height": px(0, narrow ? 21 : 24)' in js
     assert '"--timeline-metrics-width": px(0, narrow ? 175 : 310)' in js
     assert "viewer.css?v=20261114-end-hold-footer" in html
-    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-range-replay" in html
 
 
 
@@ -457,7 +457,7 @@ def test_real_ended_event_holds_right_wrist_last_frame_and_footer_height():
     assert " .tile-foot { padding:2px 4px; font-size:8px }" in css
     assert "font:10px var(--mono)" in css
     assert "viewer.css?v=20261114-end-hold-footer" in html
-    assert "viewer.js?v=20261114-end-hold-footer" in html
+    assert "viewer.js?v=20261114-range-replay" in html
 
     assert "const FOLLOWER_END_GUARD = 0.10" in js
     assert "function followerNearEnd(video, time = state.time)" in js
@@ -475,3 +475,33 @@ def test_real_ended_event_holds_right_wrist_last_frame_and_footer_height():
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert "G2_REAL_ENDED_EVENT_LAST_FRAME_HOLD_RIGHT_WRIST_PASS" in result.stdout
+
+
+
+def test_replay_awaits_master_seek_and_cancels_stale_eof():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_replay_seek_race_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_REPLAY_MASTER_SEEK_AWAIT_CANCEL_AND_EOF_RACE_PASS" in result.stdout
+
+
+def test_replay_and_http_range_contract_bound_to_source():
+    folder = Path(viewer.__file__).parent
+    js = (folder / "viewer.js").read_text()
+    html = (folder / "index.html").read_text()
+    server = (folder / "http_server.py").read_text()
+    assert "function waitForClockSeek(video)" in js
+    assert "playGeneration: 0" in js
+    assert "const ready = await waitForClockSeek(clock)" in js
+    assert "generation !== state.playGeneration" in js
+    assert "syncVideos(false);" in js
+    assert 'state.time < state.duration - 0.10' in js
+    assert "video.readyState >= 1 && !video.seeking" in js
+    assert "viewer.js?v=20261114-range-replay" in html
+    assert "class VideoRangeHandler(SimpleHTTPRequestHandler)" in server
+    assert 'self.send_header("Content-Range"' in server
+    assert 'self.send_header("Accept-Ranges", "bytes")' in server

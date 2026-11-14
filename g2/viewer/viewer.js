@@ -329,7 +329,8 @@
     rows: initialLayout.rows, autoLayout: initialLayout.auto,
     media: [], time: 0, duration: 0, playing: false,
     speed: 1, lastSpatial: -1, frameHandle: null, drag: null,
-    token: 0, fallbackTime: 0, fallbackStart: 0, clockFailed: false,
+    token: 0, playGeneration: 0, fallbackTime: 0,
+    fallbackStart: 0, clockFailed: false,
     toastTimer: null, preload: new Map(),
     dataRoot: null, completedByTask: new Map(), taskScanToken: 0,
     availableCameras: new Set(),
@@ -567,6 +568,7 @@
   }
 
   function pause() {
+    ++state.playGeneration; // invalidate an in-flight async replay
     state.playing = false;
     if (state.frameHandle !== null) {
       cancelAnimationFrame(state.frameHandle);
@@ -574,7 +576,8 @@
     }
     $("clock-video").pause();
     for (const v of videos()) v.pause();
-    if (state.manifest) syncVideos(true);
+    // A forced seek on every pause used to queue redundant MP4 reads.
+    if (state.manifest) syncVideos(false);
     updatePlayLabel();
   }
 
@@ -629,9 +632,10 @@
     video.playbackRate = state.speed;
     if (video.readyState < 1) return;
     const target = mediaTarget(video);
-    if (force || video.ended ||
-        !Number.isFinite(video.currentTime) ||
-        Math.abs(video.currentTime - target) > 0.12) {
+    const drift = Math.abs(video.currentTime - target);
+    if (video.seeking && drift <= 0.05) return;
+    if (video.ended || !Number.isFinite(video.currentTime) ||
+        drift > (force ? 0.035 : 0.12)) {
       try { video.currentTime = target; } catch (_) {}
     }
   }
@@ -651,11 +655,8 @@
       return;
     }
     if (!state.playing) return;
-    const target = mediaTarget(video);
-    if (video.ended || Math.abs(video.currentTime - target) > 0.15) {
-      video.pause();
-      alignMedia(video, true);
-    }
+    // Let an earlier seek finish before deciding to seek again.
+    // Native HTMLVideoElement.ended can stay true during an async rewind.
     if (video.seeking) {
       if (!pendingMediaResumes.has(video)) {
         pendingMediaResumes.add(video);
@@ -666,6 +667,15 @@
         }, {once: true});
       }
       return;
+    }
+    const target = mediaTarget(video);
+    if (video.ended || Math.abs(video.currentTime - target) > 0.15) {
+      video.pause();
+      alignMedia(video, true);
+      if (video.seeking) {
+        resumeSlave(video); // attach a single seeked listener
+        return;
+      }
     }
     // Only play after seeked; never restart a follower from its end.
     if (video.paused && !video.ended)
@@ -730,19 +740,70 @@
     state.frameHandle = requestAnimationFrame(clockTick);
   }
 
+  // Await the *actual* completed media seek before starting playback.
+  // Starting an ended Left clock while its 0s seek was still pending could
+  // reset the timeline to EOF and interrupt Right/Wrist replay.
+  function waitForClockSeek(video) {
+    return new Promise(resolve => {
+      if (video.readyState >= 1 && !video.seeking) {
+        resolve(true);
+        return;
+      }
+      let settled = false;
+      const cleanup = () => {
+        video.removeEventListener("loadedmetadata", probe);
+        video.removeEventListener("seeked", probe);
+        video.removeEventListener("error", failed);
+        clearTimeout(timeout);
+      };
+      const finish = ok => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        resolve(ok);
+      };
+      const probe = () => {
+        if (video.readyState >= 1 && !video.seeking) finish(true);
+      };
+      const failed = () => finish(false);
+      // On inaccessible video URLs, fall back to the existing JS clock.
+      const timeout = setTimeout(() => finish(false), 4000);
+      video.addEventListener("loadedmetadata", probe);
+      video.addEventListener("seeked", probe);
+      video.addEventListener("error", failed);
+      probe();
+    });
+  }
+
   async function play() {
     if (!state.manifest) return;
     if (state.playing) { pause(); return; }
     if (state.time >= state.duration - 0.03) seek(0, true);
     state.playing = true;
+    const generation = ++state.playGeneration;
     state.fallbackTime = state.time;
     state.fallbackStart = performance.now();
-    syncVideos(true);
+    // No second forced seek: seek(0, true) already did the exact positioning.
+    syncVideos(false);
     updatePlayLabel();
-    try { await $("clock-video").play(); }
-    catch (_) { state.clockFailed = true; }
-    if (!state.playing) return;
-    for (const v of videos()) resumeSlave(v);
+    const clock = $("clock-video");
+    const ready = await waitForClockSeek(clock);
+    if (!state.playing || generation !== state.playGeneration) return;
+    let clockRunning = false;
+    if (ready) {
+      try {
+        await clock.play();
+        clockRunning = true;
+      } catch (_) { /* Keep the existing JS time fallback. */ }
+    }
+    if (!state.playing || generation !== state.playGeneration) {
+      clock.pause();
+      return;
+    }
+    state.clockFailed = !clockRunning;
+    state.fallbackTime = state.time;
+    state.fallbackStart = performance.now();
+    for (const video of videos()) resumeSlave(video);
     state.frameHandle = requestAnimationFrame(clockTick);
   }
 
@@ -1460,7 +1521,10 @@
   });
   $("clock-video").addEventListener("error", () => { state.clockFailed = true; });
   $("clock-video").addEventListener("ended", () => {
-    if (state.manifest) seek(state.duration, true);
+    // Ignore stale EOF notifications dispatched during replay-to-zero seek.
+    if (!state.manifest || $("clock-video").seeking ||
+        state.time < state.duration - 0.10) return;
+    seek(state.duration, true);
     pause();
   });
   window.addEventListener("keydown", event => {
