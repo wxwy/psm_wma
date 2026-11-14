@@ -161,7 +161,7 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "margin:0 0 2.5px" in css
     assert "justify-content:flex-end" in css
     assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261114-seven-tristate-filters" in html
+    assert "viewer.js?v=20261114-sync-right-wrist" in html
     assert "viewer.css?v=20261114-seven-tristate-filters" in html
 
 
@@ -202,7 +202,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-seven-tristate-filters' in html
+    assert 'viewer.js?v=20261114-sync-right-wrist' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -247,7 +247,7 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'min="1" max="6" step="1"' in html
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
-    assert 'viewer.js?v=20261114-seven-tristate-filters' in html
+    assert 'viewer.js?v=20261114-sync-right-wrist' in html
     assert 'viewer.css?v=20261114-seven-tristate-filters' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
@@ -271,3 +271,33 @@ def test_seven_view_filters_behavioral_js(script):
                             capture_output=True, text=True, timeout=20)
     assert result.returncode == 0, result.stderr
     assert "PASS" in result.stdout
+
+
+
+def test_right_wrist_play_resume_seeks_before_play_and_never_loops_to_zero():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_video_sync_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_RIGHT_WRIST_MASTER_TIMELINE_NO_AUTO_REWIND_PASS" in result.stdout
+
+
+def test_visible_video_events_use_master_timeline_and_ended_guard():
+    folder = Path(viewer.__file__).parent
+    js = (folder / "viewer.js").read_text()
+    html = (folder / "index.html").read_text()
+    assert "const pendingMediaResumes = new WeakSet()" in js
+    assert "function mediaTarget(video, time = state.time)" in js
+    assert "function resumeSlave(video)" in js
+    assert 'video.addEventListener("seeked", () =>' in js
+    assert 'video.addEventListener("ended", () =>' in js
+    assert "if (video.paused && !video.ended)" in js
+    assert "mediaAtEnd(video)" in js
+    assert "if (tile.disposed || !state.manifest) return;" in js
+    assert "if (state.playing) resumeSlave(video);" in js
+    assert "if (state.playing) video.play().catch" not in js
+    assert "for (const v of videos()) v.play()" not in js
+    assert "viewer.js?v=20261114-sync-right-wrist" in html

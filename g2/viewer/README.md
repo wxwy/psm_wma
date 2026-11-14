@@ -193,3 +193,22 @@ the resulting facts. No frame PNGs or original MP4s are scanned to filter
 Episodes. Invalid numeric inputs are flagged; clearing filters restores
 the full published Episode list. Filter results update the Episode dropdown
 and its matched count, without touching production data.
+
+
+## Camera playback synchronization
+
+The hidden original left-camera video establishes the 20 Hz master playback
+timeline. Visible Left, Right and Wrist video tiles are followers.
+
+All play/resume operations align the follower media time with the current
+master timestamp before invoking play. If an HTML5 video seek is pending, the
+follower waits for the seeked event rather than starting at zero. Seeked
+callbacks recheck the current master timestamp, discard stale tiles, and never
+start playback if the Viewer is paused. At the end of a follower MP4, the
+final video frame remains visible and its play() is not invoked (which could
+otherwise auto-rewind an ended HTMLVideoElement to zero). On pauses and
+scrubbing, all cameras are aligned to the same time; during playback, drift
+is corrected periodically. The original video files are never rewritten.
+
+This fixes Right/Wrist jumping back to their first frame while the main
+timeline remains at an unrelated nonzero position.

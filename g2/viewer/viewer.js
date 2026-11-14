@@ -568,18 +568,70 @@
     }
     $("clock-video").pause();
     for (const v of videos()) v.pause();
+    if (state.manifest) syncVideos(true);
     updatePlayLabel();
   }
 
-  function syncVideos(force = false) {
-    const videoNodes = [$("clock-video"), ...videos()];
-    for (const v of videoNodes) {
-      v.playbackRate = state.speed;
-      if (v.readyState >= 1 &&
-          (force || Math.abs(v.currentTime - state.time) > 0.2)) {
-        try { v.currentTime = state.time; } catch (_) {}
-      }
+  // Calling play() on a video with ended=true may rewind that one
+  // camera to zero. Every visible camera must follow the hidden Left clock.
+  const MEDIA_TAIL_MARGIN = 0.025; // half one 20 Hz frame
+  const pendingMediaResumes = new WeakSet();
+
+  function mediaTarget(video, time = state.time) {
+    if (!Number.isFinite(video.duration) || video.duration <= 0)
+      return Math.max(0, time);
+    return clamp(time, 0, Math.max(0, video.duration - MEDIA_TAIL_MARGIN));
+  }
+
+  function mediaAtEnd(video, time = state.time) {
+    return Number.isFinite(video.duration) && video.duration > 0 &&
+      time >= video.duration - MEDIA_TAIL_MARGIN;
+  }
+
+  function alignMedia(video, force = false) {
+    video.playbackRate = state.speed;
+    if (video.readyState < 1) return;
+    const target = mediaTarget(video);
+    if (force || video.ended ||
+        !Number.isFinite(video.currentTime) ||
+        Math.abs(video.currentTime - target) > 0.12) {
+      try { video.currentTime = target; } catch (_) {}
     }
+  }
+
+  function syncVideos(force = false) {
+    for (const video of [$("clock-video"), ...videos()])
+      alignMedia(video, force);
+  }
+
+  function resumeSlave(video) {
+    if (!state.playing || !state.manifest || video.readyState < 1 ||
+        !state.media.some(tile => tile.video === video && !tile.disposed))
+      return;
+    if (mediaAtEnd(video)) {
+      video.pause();
+      alignMedia(video, true);
+      return;
+    }
+    const target = mediaTarget(video);
+    if (video.ended || Math.abs(video.currentTime - target) > 0.15) {
+      video.pause();
+      alignMedia(video, true);
+    }
+    if (video.seeking) {
+      if (!pendingMediaResumes.has(video)) {
+        pendingMediaResumes.add(video);
+        video.addEventListener("seeked", () => {
+          pendingMediaResumes.delete(video);
+          // Recheck the CURRENT master timeline after asynchronous seeking.
+          resumeSlave(video);
+        }, {once: true});
+      }
+      return;
+    }
+    // Only play after seeked; never restart a follower from its end.
+    if (video.paused && !video.ended)
+      video.play().catch(() => {});
   }
 
   function seek(time, force = false) {
@@ -607,13 +659,18 @@
   function clockTick(now) {
     if (!state.playing || !state.manifest) return;
     const clock = $("clock-video");
-    const useVideo = !state.clockFailed && clock.readyState >= 1 && !clock.paused;
+    const useVideo = !state.clockFailed && clock.readyState >= 1 &&
+      !clock.paused && !clock.seeking;
     const elapsed = (now - state.fallbackStart) / 1000 * state.speed;
     state.time = clamp(useVideo ? clock.currentTime : state.fallbackTime + elapsed,
       0, state.duration);
     updateTimeline();
-    if (Math.floor(now / 600) !== Math.floor((now - 16) / 600))
+    if (Math.floor(now / 500) !== Math.floor((now - 16) / 500)) {
       syncVideos(false);
+      for (const video of videos()) {
+        if (video.paused || video.ended) resumeSlave(video);
+      }
+    }
     if (state.time >= state.duration - 0.02) {
       seek(state.duration, true); pause(); return;
     }
@@ -632,7 +689,7 @@
     try { await $("clock-video").play(); }
     catch (_) { state.clockFailed = true; }
     if (!state.playing) return;
-    for (const v of videos()) v.play().catch(() => {});
+    for (const v of videos()) resumeSlave(v);
     state.frameHandle = requestAnimationFrame(clockTick);
   }
 
@@ -1032,11 +1089,14 @@
       video.setAttribute("aria-label", meta[1]);
       video.src = videoUrl(block.source);
       video.addEventListener("loadedmetadata", () => {
-        if (state.manifest) {
-          try { video.currentTime = state.time; } catch (_) {}
-        }
+        if (tile.disposed || !state.manifest) return;
+        alignMedia(video, true);
         fallback.hidden = true;
-        if (state.playing) video.play().catch(() => {});
+        if (state.playing) resumeSlave(video);
+      });
+      video.addEventListener("ended", () => {
+        if (!tile.disposed && state.playing)
+          resumeSlave(video); // stays on last frame at master end
       });
       video.addEventListener("error", () => {
         video.hidden = true; fallback.hidden = false;
@@ -1173,7 +1233,7 @@
       shell.append(head, grid); container.append(shell);
     });
     updateTimeline();
-    if (state.playing) for (const v of videos()) v.play().catch(() => {});
+    if (state.playing) for (const video of videos()) resumeSlave(video);
   }
 
   async function initialize() {
@@ -1239,6 +1299,9 @@
   $("reset-layout").addEventListener("click", () => {
     resetDefaultLayout();
     toast("已恢复默认三行布局");
+  });
+  $("clock-video").addEventListener("loadedmetadata", () => {
+    if (state.manifest) alignMedia($("clock-video"), true);
   });
   $("clock-video").addEventListener("error", () => { state.clockFailed = true; });
   $("clock-video").addEventListener("ended", () => {
