@@ -109,6 +109,12 @@ def generate(base_snapshot, source_manifest, frames, *,
     identity=gt["source_identity"]
     if identity["mujoco_version"]!=mujoco.__version__:
         raise ContractError("MuJoCo source build runtime differs")
+    # Reuse the exact opt-in collision topology policy recorded in the native
+    # frame-0 source identity. Otherwise later GT frames diverge or fail on
+    # the original zero-area triangle.
+    repair_policy=identity.get("collision_mesh_repair_policy")
+    if repair_policy not in (None,"exact_collinear_edge_v1"):
+        raise ContractError("unsupported collision mesh repair policy in native source identity")
     oracle=_native_source(nav_repo)
     sources=gt["sources"]
     root=next(x["path"] for x in sources if x["logical_id"]=="root.xml")
@@ -142,7 +148,8 @@ def generate(base_snapshot, source_manifest, frames, *,
         mujoco.mj_forward(model,data)
         _,actual,_,_=oracle.extract(
             model,data,far,identity["metadata"],None,identity["geometry"],
-            include_surfaces=False)
+            include_surfaces=False,
+            repair_exact_collinear_collision=(repair_policy=="exact_collinear_edge_v1"))
         now={(r["instance_id"],r["part_id"]):r for r in actual}
         if set(now)!=set(ref_by_key):
             raise ContractError("current GT entity roster differs from native frame0")

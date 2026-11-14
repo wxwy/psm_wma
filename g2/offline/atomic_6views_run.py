@@ -305,6 +305,9 @@ def produce_one(row,config):
             "--origin",*[str(x) for x in grid_plan["origin"]]]
         for asset in asset_roots:
             cmd.extend(("--asset-root",asset))
+        # G2 Full Map simulation only. The native nav_sg Oracle remains strict.
+        if config.sim_direct_geometry_only:
+            cmd.append("--repair-exact-collinear-collision")
         cmd.extend(("--output",p))
         subprocess_stage(cmd,cwd=config.nav_repo,env=nav_env,row=row,name="native_source_gt")
     native_gt=stage(work,"native_gt",row,nav_gt,required=("manifest.json","grid.txt","objects.txt"))
