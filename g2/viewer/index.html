@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#171d25">
   <title>G2 Spatial Replay · RoboCasa365</title>
-  <link rel="stylesheet" href="./viewer.css?v=20261114-sticky-workspace">
+  <link rel="stylesheet" href="./viewer.css?v=20261114-flat-compact">
 </head>
 <body>
   <header class="masthead">
@@ -113,6 +113,7 @@
 
     <div id="timeline-scroll-anchor" class="timeline-scroll-anchor" aria-hidden="true"></div>
     <section id="timeline-panel" class="player-panel" aria-label="同步播放">
+      <div id="timeline-surface" class="timeline-surface">
       <div class="player-top">
         <div class="player-heading">
           <h1>时间轴 <span>Timeline</span></h1>
@@ -126,17 +127,19 @@
       <div class="timeline-scrub-row">
         <div class="timeline-compact-transport" aria-label="空间视图帧控制">
           <button id="compact-prev" type="button" class="button compact-frame-button"
-            aria-label="上一空间帧" title="上一 View 帧" disabled>◀</button>
+            aria-label="上一空间帧" title="上一 View 帧" disabled>«</button>
           <button id="compact-play" type="button" class="button compact-play-button"
             aria-label="播放" title="播放或暂停" disabled>▶</button>
           <button id="compact-next" type="button" class="button compact-frame-button"
-            aria-label="下一空间帧" title="下一 View 帧" disabled>▶</button>
+            aria-label="下一空间帧" title="下一 View 帧" disabled>»</button>
         </div>
         <input type="range" id="scrub" aria-label="播放进度" min="0" max="1000" step="1" value="0" disabled>
         <div class="timeline-compact-metrics" aria-live="off">
           <span id="compact-frame-label">空间帧 — / —</span>
           <span id="compact-source-frame-label">原始帧 —</span>
-          <strong id="compact-time-current">00:00.00</strong>
+          <span class="compact-timecode">
+            <strong id="compact-time-current">00:00.00</strong><span class="compact-time-divider">/</span><span id="compact-time-total">00:00.00</span>
+          </span>
         </div>
       </div>
       <div id="player-bottom" class="player-bottom">
@@ -161,6 +164,7 @@
           <span id="playback-status" class="sync-state">待选择</span>
         </div>
       </div>
+      </div>
     </section>
 
     <section class="workspace" aria-label="自定义多视角布局">
@@ -174,6 +178,6 @@
 
   <video id="clock-video" muted playsinline preload="metadata" hidden></video>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="./viewer.js?v=20261114-sticky-workspace" defer></script>
+  <script src="./viewer.js?v=20261114-flat-compact" defer></script>
 </body>
 </html>

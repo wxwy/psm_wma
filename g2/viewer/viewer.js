@@ -334,7 +334,7 @@
     dataRoot: null, completedByTask: new Map(), taskScanToken: 0,
     availableCameras: new Set(),
     filterToken: 0, episodeFactsCache: new Map(), filteredEpisodes: [],
-    timelineMorph: 0,
+    timelineMorph: 0, timelineReservedHeight: null,
   };
 
   function saveLayout() {
@@ -803,6 +803,7 @@
       $("compact-frame-label").textContent = "空间帧 —";
       $("compact-source-frame-label").textContent = "原始帧 —";
       $("compact-time-current").textContent = "00:00.00";
+      $("compact-time-total").textContent = fmt(state.duration);
       $("scrub").value = "0";
       $("scrub").style.setProperty("--progress", "0%");
       return;
@@ -822,6 +823,7 @@
     $("compact-source-frame-label").textContent =
       "原始 " + entry.frame + "/" + (state.episode.frames - 1);
     $("compact-time-current").textContent = fmt(state.time);
+    $("compact-time-total").textContent = fmt(state.duration);
     $("playback-status").textContent = state.playing ? "播放中" : "已同步";
     if (idx !== state.lastSpatial) {
       state.lastSpatial = idx;
@@ -1332,10 +1334,11 @@
     resetDefaultLayout();
     toast("已恢复默认三行布局");
   });
-  // The natural timeline position is tracked by a zero-height sentinel
-  // before the sticky panel. Its viewport top keeps changing while the
-  // sticky player stays at top:0, so the effect reverses on upward scroll.
-  const TIMELINE_MORPH_DISTANCE = 152;
+  // Scroll morph never changes the panel's flow height. A transparent,
+  // non-interactive sticky shell reserves the normal timeline footprint;
+  // only its nested surface gets smaller. Workspace rows therefore do not
+  // shift during the transition, eliminating scroll-anchor feedback jitter.
+  const TIMELINE_MORPH_DISTANCE = 76;
   const timelineMorphProgress = top =>
     clamp(-top / TIMELINE_MORPH_DISTANCE, 0, 1);
 
@@ -1346,15 +1349,18 @@
     return {
       "--timeline-header-height": px(56, 0),
       "--timeline-bottom-height": px(44, 0),
-      "--timeline-instruction-height": px(0, narrow ? 27 : 31),
-      "--timeline-row-height": px(8, narrow ? 31 : 35),
-      "--timeline-row-margin-top": px(23, 7),
+      "--timeline-instruction-height": px(0, narrow ? 12 : 14),
+      "--timeline-row-height": px(8, narrow ? 25 : 18),
+      "--timeline-row-margin-top": px(23, narrow ? 1 : 2),
       "--timeline-row-margin-bottom": px(19, 0),
-      "--timeline-padding-top": px(20, 8),
-      "--timeline-padding-bottom": px(18, 8),
-      "--timeline-padding-side": px(27, narrow ? 11 : 16),
-      "--timeline-controls-width": px(0, narrow ? 80 : 104),
-      "--timeline-metrics-width": px(0, narrow ? 128 : 270),
+      "--timeline-padding-top": px(20, 3),
+      "--timeline-padding-bottom": px(18, 3),
+      "--timeline-padding-side": px(27, narrow ? 8 : 12),
+      "--timeline-controls-width": px(0, narrow ? 52 : 60),
+      "--timeline-metrics-width": px(0, narrow ? 147 : 232),
+      "--timeline-track-height": px(6, 3),
+      "--timeline-thumb-size": px(15, 0),
+      "--timeline-thumb-border": px(3, 0),
       "--timeline-original-opacity": String(1 - p),
       "--timeline-compact-opacity": String(p),
     };
@@ -1363,6 +1369,16 @@
   function updateTimelineMorph() {
     const anchor = $("timeline-scroll-anchor");
     const panel = $("timeline-panel");
+    const surface = $("timeline-surface");
+    // Capture the normal player height before applying the first morph.
+    // Keep this outer height fixed so display rows cannot jump or jitter.
+    if (state.timelineReservedHeight === null) {
+      const measured = Math.ceil(surface.getBoundingClientRect().height);
+      if (measured > 0) {
+        state.timelineReservedHeight = measured;
+        panel.style.height = measured + "px";
+      }
+    }
     const progress = timelineMorphProgress(anchor.getBoundingClientRect().top);
     state.timelineMorph = progress;
     const narrow = window.matchMedia("(max-width: 650px)").matches;

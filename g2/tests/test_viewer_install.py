@@ -166,8 +166,8 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "shell.append(grid, rail);" in js
     assert 'remove.title = "删除整行"' in js
     assert 'add.title = "添加显示块"' in js
-    assert "viewer.js?v=20261114-sticky-workspace" in html
-    assert "viewer.css?v=20261114-sticky-workspace" in html
+    assert "viewer.js?v=20261114-flat-compact" in html
+    assert "viewer.css?v=20261114-flat-compact" in html
 
 
 def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
@@ -207,7 +207,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-sticky-workspace' in html
+    assert 'viewer.js?v=20261114-flat-compact' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -252,8 +252,8 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'min="1" max="6" step="1"' in html
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
-    assert 'viewer.js?v=20261114-sticky-workspace' in html
-    assert 'viewer.css?v=20261114-sticky-workspace' in html
+    assert 'viewer.js?v=20261114-flat-compact' in html
+    assert 'viewer.css?v=20261114-flat-compact' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
     assert 'function matchEpisodeFacts(facts, criteria)' in js
@@ -305,7 +305,7 @@ def test_visible_video_events_use_master_timeline_and_ended_guard():
     assert "if (state.playing) resumeSlave(video);" in js
     assert "if (state.playing) video.play().catch" not in js
     assert "for (const v of videos()) v.play()" not in js
-    assert "viewer.js?v=20261114-sticky-workspace" in html
+    assert "viewer.js?v=20261114-flat-compact" in html
 
 
 
@@ -319,7 +319,7 @@ def test_view_filters_are_above_task_and_episode_controls():
     assert html.count('data-view-filter="') == 7
     assert html.count('id="view-count-filter"') == 1
     assert "margin-bottom:17px;" in css
-    assert "viewer.css?v=20261114-sticky-workspace" in html
+    assert "viewer.css?v=20261114-flat-compact" in html
 
 
 
@@ -357,7 +357,7 @@ def test_workspace_control_rail_does_not_change_display_grid_width():
     assert html.index('id="display-rows"') < html.index('id="reset-layout"')
     assert html.index('id="display-rows"') < html.index('id="add-row"')
     assert 'class="workspace-head"' not in html
-    assert "position:sticky; top:0; z-index:30" in css
+    assert "position:sticky;top:0;z-index:30" in css
     assert 'id="timeline-scroll-anchor"' in html
     assert 'id="sticky-instruction"' in html
     assert 'id="compact-frame-label"' in html
@@ -375,5 +375,38 @@ def test_workspace_control_rail_does_not_change_display_grid_width():
     assert 'grid-template-columns:repeat(var(--count,3)' in css
     assert "right:-36px" in css
     assert "opacity:.22" in css
-    assert "viewer.css?v=20261114-sticky-workspace" in html
-    assert "viewer.js?v=20261114-sticky-workspace" in html
+    assert "viewer.css?v=20261114-flat-compact" in html
+    assert "viewer.js?v=20261114-flat-compact" in html
+
+
+
+def test_flat_compact_timeline_is_half_height_without_thumb_and_stable_flow():
+    folder = Path(viewer.__file__).parent
+    html = (folder / "index.html").read_text()
+    css = (folder / "viewer.css").read_text()
+    js = (folder / "viewer.js").read_text()
+    assert 'id="timeline-surface"' in html
+    assert 'id="compact-time-total"' in html
+    assert "disabled>«</button>" in html
+    assert "disabled>»</button>" in html
+    assert "TIMELINE_MORPH_DISTANCE = 76" in js
+    assert "timelineReservedHeight: null" in js
+    assert "panel.style.height = measured + \"px\"" in js
+    assert 'surface.getBoundingClientRect().height' in js
+    assert 'px(15, 0)' in js
+    assert 'px(6, 3)' in js
+    assert 'px(0, narrow ? 12 : 14)' in js
+    assert 'px(8, narrow ? 25 : 18)' in js
+    assert '$("compact-time-total").textContent = fmt(state.duration)' in js
+    assert "pointer-events:none;overflow:visible" in css
+    assert ".timeline-surface {" in css
+    assert "pointer-events:auto;" in css
+    assert "font-size:9px;font-weight:600" in css
+    assert "height:var(--timeline-track-height,6px)" in css
+    assert ".player-panel[data-compact=\"true\"] #scrub::-webkit-slider-thumb" in css
+    assert ".player-panel[data-compact=\"true\"] #scrub::-moz-range-thumb" in css
+    assert "width:0;height:0;" in css
+    assert "background:transparent;border:0;box-shadow:none" in css
+    assert 'class="compact-timecode"' in html
+    assert "viewer.js?v=20261114-flat-compact" in html
+    assert "viewer.css?v=20261114-flat-compact" in html

@@ -228,9 +228,9 @@ column and must never shrink or shift the 1–5 view tile columns.
 
 The original Timeline is maintained at the same natural document position
 until its top reaches the viewport. A zero-height non-sticky anchor before
-the player measures scroll displacement over 152 CSS pixels. The Timeline
+the player measures scroll displacement over 76 CSS pixels. The Timeline
 panel itself uses CSS position:sticky;top:0; and becomes a compact toolbar
-as that displacement rises from zero to 152px. The scroll progress controls
+as that displacement rises from zero to 76px. The scroll progress controls
 simultaneous geometric height/opacity interpolation: original title/time/
 transport fade and compress, current Episode instruction appears in the same
 18px semibold typography as the original language instruction, the existing
@@ -248,3 +248,29 @@ visible below it, not above it.
 The JavaScript smoke test checks scroll 0/50/100%, upscroll reversal,
 resizing, disabled controls, preserved scrub identity, source-instruction
 copy, and the display-row rail's absolute positioning.
+
+
+## Smaller flat compact timeline, stable workspace position
+
+The 2026-11-14 compact refinement halves the compressed instruction font
+from 18px to 9px (16px to 8px on mobile), and the progress bar thickness
+from 6px to 3px. The compressed progress thumb is hidden entirely; only
+the blue filled track remains. Previous/next View frames are now « and »,
+with a small flat play/pause symbol in the middle; all three controls have
+no backgrounds or borders. Compact metrics retain both spatial and raw
+frame numbers and now show current **and total** time.
+
+Morph speed is doubled: 76px of scrolling, down from 152px. The compact
+surface is roughly 40–45px tall on desktop, versus about 89px previously,
+a reduction over 40%. A new timeline-surface child owns the visible
+timeline while the transparent, pointer-pass-through outer sticky panel
+keeps its normal height in document flow. Morphing the inner surface
+never moves the following display grid and never changes the scroll
+anchor's natural document position. This prevents the previous intermediate
+jitter and leaves real views visible below the compact flat toolbar.
+The compact surface has no shadow or floating-card appearance; it keeps
+only a subtle bottom dividing line.
+
+The same native time-scrub range input, master-clock camera synchronization
+and View-frame step handlers remain in use. The normal expanded timeline
+is unchanged, and scrolling upward reverses the morph.
