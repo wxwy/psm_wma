@@ -158,11 +158,16 @@ def test_compact_row_spacing_without_row_number_labels():
     assert "ROW " not in js
     assert "row-identity" not in js
     assert ".display-rows { display:flex; flex-direction:column; gap:10px }" in css
-    assert "margin:0 0 2.5px" in css
+    assert ".row-control-rail" in css
+    assert "position:absolute; top:0; bottom:0; right:-36px" in css
+    assert "opacity:.22" in css
     assert "justify-content:flex-end" in css
-    assert "actions.append(add, remove); head.append(actions);" in js
-    assert "viewer.js?v=20261114-sync-right-wrist" in html
-    assert "viewer.css?v=20261114-filters-above-task" in html
+    assert "rail.append(remove, add);" in js
+    assert "shell.append(grid, rail);" in js
+    assert 'remove.title = "删除整行"' in js
+    assert 'add.title = "添加显示块"' in js
+    assert "viewer.js?v=20261114-sticky-workspace" in html
+    assert "viewer.css?v=20261114-sticky-workspace" in html
 
 
 def test_fixed_directory_mode_has_no_recursive_catalog_discovery():
@@ -202,7 +207,7 @@ def test_only_existing_episode_views_are_dropdown_choices():
     assert 'options.includes(selected) ? selected : options[0]' in js
     assert 'state.completedByTask' in js
     assert 'discoverCompletedTasks(true)' in js
-    assert 'viewer.js?v=20261114-sync-right-wrist' in html
+    assert 'viewer.js?v=20261114-sticky-workspace' in html
 
 
 def test_dynamic_three_row_default_layout_and_v1_layout_migration():
@@ -247,8 +252,8 @@ def test_seven_tristate_view_filters_match_episode_manifests():
     assert 'min="1" max="6" step="1"' in html
     assert 'id="view-filter-status"' in html
     assert 'id="clear-view-filters"' in html
-    assert 'viewer.js?v=20261114-sync-right-wrist' in html
-    assert 'viewer.css?v=20261114-filters-above-task' in html
+    assert 'viewer.js?v=20261114-sticky-workspace' in html
+    assert 'viewer.css?v=20261114-sticky-workspace' in html
     assert 'const FILTER_KEYS = [...ROOM_DIRECTIONS, "island"]' in js
     assert 'function episodeViewFacts(manifest)' in js
     assert 'function matchEpisodeFacts(facts, criteria)' in js
@@ -300,7 +305,7 @@ def test_visible_video_events_use_master_timeline_and_ended_guard():
     assert "if (state.playing) resumeSlave(video);" in js
     assert "if (state.playing) video.play().catch" not in js
     assert "for (const v of videos()) v.play()" not in js
-    assert "viewer.js?v=20261114-sync-right-wrist" in html
+    assert "viewer.js?v=20261114-sticky-workspace" in html
 
 
 
@@ -314,4 +319,61 @@ def test_view_filters_are_above_task_and_episode_controls():
     assert html.count('data-view-filter="') == 7
     assert html.count('id="view-count-filter"') == 1
     assert "margin-bottom:17px;" in css
-    assert "viewer.css?v=20261114-filters-above-task" in html
+    assert "viewer.css?v=20261114-sticky-workspace" in html
+
+
+
+def test_sticky_timeline_morph_and_floating_row_actions():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_sticky_timeline_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_STICKY_TIMELINE_SCROLL_REVERSE_AND_FLOATING_ROW_CONTROLS_PASS" in result.stdout
+
+
+
+
+def test_row_rail_add_remove_clicks_do_not_change_grid_columns():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js unavailable in this Python test environment")
+    script = Path(viewer.__file__).parents[1] / "tests/viewer_row_rail_smoke.js"
+    result = subprocess.run([node, str(script)], check=False,
+                            capture_output=True, text=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+    assert "G2_ABSOLUTE_ROW_CONTROL_RAIL_ADD_REMOVE_AND_MAX_FIVE_PASS" in result.stdout
+
+
+def test_workspace_control_rail_does_not_change_display_grid_width():
+    folder = Path(viewer.__file__).parent
+    html = (folder / "index.html").read_text()
+    css = (folder / "viewer.css").read_text()
+    js = (folder / "viewer.js").read_text()
+    assert "视角工作台" not in html
+    assert "G2 · PERSISTENT SPATIAL STATE" not in html
+    assert html.index('id="display-rows"') < html.index('id="reset-layout"')
+    assert html.index('id="display-rows"') < html.index('id="add-row"')
+    assert 'class="workspace-head"' not in html
+    assert "position:sticky; top:0; z-index:30" in css
+    assert 'id="timeline-scroll-anchor"' in html
+    assert 'id="sticky-instruction"' in html
+    assert 'id="compact-frame-label"' in html
+    assert 'id="compact-source-frame-label"' in html
+    assert 'id="compact-time-current"' in html
+    assert 'id="compact-prev"' in html
+    assert 'id="compact-play"' in html
+    assert 'id="compact-next"' in html
+    assert "function timelineMorphProgress" not in js  # defined as const
+    assert "const timelineMorphProgress = top =>" in js
+    assert "requestAnimationFrame(() => {" in js
+    assert "window.addEventListener(\"scroll\", scheduleTimelineMorph" in js
+    assert 'role", "group"' in js
+    assert "rail.append(remove, add)" in js
+    assert 'grid-template-columns:repeat(var(--count,3)' in css
+    assert "right:-36px" in css
+    assert "opacity:.22" in css
+    assert "viewer.css?v=20261114-sticky-workspace" in html
+    assert "viewer.js?v=20261114-sticky-workspace" in html

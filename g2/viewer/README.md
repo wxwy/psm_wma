@@ -212,3 +212,39 @@ is corrected periodically. The original video files are never rewritten.
 
 This fixes Right/Wrist jumping back to their first frame while the main
 timeline remains at an unrelated nonzero position.
+
+
+## Floating row rails and sticky morphing timeline
+
+The Viewer workspace no longer has a text header, help subtitle or footer
+legend. Reset Layout and Add Row retain their prior look and work **after**
+the complete display-row stack.
+
+Each row has an *absolutely positioned* control rail outside the view grid's
+right boundary. Its top square X button removes the row; the narrow vertical
+plus button below adds a view block (up to five). Both have hover titles,
+keyboard focus styling and low idle opacity. The control rail is not a grid
+column and must never shrink or shift the 1–5 view tile columns.
+
+The original Timeline is maintained at the same natural document position
+until its top reaches the viewport. A zero-height non-sticky anchor before
+the player measures scroll displacement over 152 CSS pixels. The Timeline
+panel itself uses CSS position:sticky;top:0; and becomes a compact toolbar
+as that displacement rises from zero to 152px. The scroll progress controls
+simultaneous geometric height/opacity interpolation: original title/time/
+transport fade and compress, current Episode instruction appears in the same
+18px semibold typography as the original language instruction, the existing
+range input narrows between View-frame prev/play/next controls on the left
+and current spatial frame, raw frame and clock time on the right.
+
+Scroll back up and the exact same interpolation reverses before the timeline
+returns to its original position. All compact actions delegate to the
+original View-frame step and play/pause functions; the shared scrub element
+and three-camera master clock remain unchanged. Passive scroll events are
+requestAnimationFrame-throttled. On smaller screens the control rail and
+compact toolbar shrink responsively. The compact toolbar keeps the media
+visible below it, not above it.
+
+The JavaScript smoke test checks scroll 0/50/100%, upscroll reversal,
+resizing, disabled controls, preserved scrub identity, source-instruction
+copy, and the display-row rail's absolute positioning.

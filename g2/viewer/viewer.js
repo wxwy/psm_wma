@@ -334,6 +334,7 @@
     dataRoot: null, completedByTask: new Map(), taskScanToken: 0,
     availableCameras: new Set(),
     filterToken: 0, episodeFactsCache: new Map(), filteredEpisodes: [],
+    timelineMorph: 0,
   };
 
   function saveLayout() {
@@ -548,6 +549,8 @@
   function transportEnabled(enabled) {
     for (const id of ["scrub", "play", "prev-frame", "next-frame"])
       $(id).disabled = !enabled;
+    for (const id of ["compact-prev", "compact-play", "compact-next"])
+      $(id).disabled = !enabled || state.timelineMorph < 0.8;
     $("playback-status").textContent = enabled ? "已同步" : "待选择";
   }
 
@@ -556,8 +559,11 @@
   }
 
   function updatePlayLabel() {
-    $("play").innerHTML = state.playing ? "Ⅱ <span>暂停</span>" : "▶ <span>播放</span>";
-    $("play").setAttribute("aria-label", state.playing ? "暂停" : "播放");
+    const playing = state.playing;
+    $("play").innerHTML = playing ? "Ⅱ <span>暂停</span>" : "▶ <span>播放</span>";
+    $("play").setAttribute("aria-label", playing ? "暂停" : "播放");
+    $("compact-play").textContent = playing ? "Ⅱ" : "▶";
+    $("compact-play").setAttribute("aria-label", playing ? "暂停" : "播放");
   }
 
   function pause() {
@@ -784,11 +790,19 @@
   }
 
   function updateTimeline() {
+    const instruction = $("instruction-text").textContent;
+    if ($("sticky-instruction").textContent !== instruction) {
+      $("sticky-instruction").textContent = instruction;
+      $("sticky-instruction").title = instruction;
+    }
     if (!state.manifest) {
       $("time-current").textContent = fmt(0);
       $("time-total").textContent = fmt(state.duration);
       $("frame-label").textContent = "空间帧 — / —";
       $("source-frame-label").textContent = "原始帧 —";
+      $("compact-frame-label").textContent = "空间帧 —";
+      $("compact-source-frame-label").textContent = "原始帧 —";
+      $("compact-time-current").textContent = "00:00.00";
       $("scrub").value = "0";
       $("scrub").style.setProperty("--progress", "0%");
       return;
@@ -803,6 +817,11 @@
       " / " + state.manifest.states.length;
     $("source-frame-label").textContent =
       "原始帧 " + entry.frame + " / " + (state.episode.frames - 1);
+    $("compact-frame-label").textContent =
+      "空间 " + (idx + 1) + "/" + state.manifest.states.length;
+    $("compact-source-frame-label").textContent =
+      "原始 " + entry.frame + "/" + (state.episode.frames - 1);
+    $("compact-time-current").textContent = fmt(state.time);
     $("playback-status").textContent = state.playing ? "播放中" : "已同步";
     if (idx !== state.lastSpatial) {
       state.lastSpatial = idx;
@@ -1179,14 +1198,33 @@
     container.replaceChildren();
     state.rows.forEach(row => {
       const shell = document.createElement("section"); shell.className = "row-shell";
-      const head = document.createElement("div"); head.className = "row-heading";
-      const actions = document.createElement("div"); actions.className = "row-actions";
+      const rail = document.createElement("div");
+      rail.className = "row-control-rail";
+      rail.setAttribute("role", "group");
+      rail.setAttribute("aria-label", "当前行操作");
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "remove-row";
+      remove.textContent = "✕";
+      remove.title = "删除整行";
+      remove.setAttribute("aria-label", "删除整行");
+      remove.disabled = state.rows.length === 1;
+      remove.addEventListener("click", () => {
+        if (state.rows.length === 1) { toast("至少保留一行"); return; }
+        const rowIndex = state.rows.indexOf(row);
+        if (rowIndex < 0) return;
+        state.rows.splice(rowIndex, 1); saveLayout(); renderLayout();
+      });
       const add = document.createElement("button");
-      add.type = "button"; add.textContent = "＋ 添加展示块";
+      add.type = "button";
+      add.className = "add-block";
+      add.textContent = "+";
+      add.title = "添加显示块";
+      add.setAttribute("aria-label", "添加显示块");
       add.disabled = row.blocks.length >= 5;
       add.addEventListener("click", () => {
-        if (row.blocks.length >= 5) { toast("每行最多 5 个展示块"); return; }
-        const used = new Set(row.blocks.map(b => b.source));
+        if (row.blocks.length >= 5) { toast("每行最多 5 个显示块"); return; }
+        const used = new Set(row.blocks.map(block => block.source));
         const options = availableSources(state.manifest, state.availableCameras)
           .flatMap(group => group.sources.map(source => source[0]));
         const next = options.find(source => !used.has(source)) ||
@@ -1194,16 +1232,7 @@
         row.blocks.push({id: uuid(), source: next});
         saveLayout(); renderLayout();
       });
-      const remove = document.createElement("button");
-      remove.type = "button"; remove.className = "remove-row";
-      remove.textContent = "×"; remove.title = "移除这一行";
-      remove.addEventListener("click", () => {
-        if (state.rows.length === 1) { toast("至少保留一行"); return; }
-        const rowIndex = state.rows.indexOf(row);
-        if (rowIndex < 0) return;
-        state.rows.splice(rowIndex, 1); saveLayout(); renderLayout();
-      });
-      actions.append(add, remove); head.append(actions);
+      rail.append(remove, add);
       const grid = document.createElement("div");
       grid.className = "display-row";
       grid.dataset.count = String(row.blocks.length);
@@ -1230,7 +1259,7 @@
         empty.append(main, help); grid.append(empty);
       }
       row.blocks.forEach((block, index) => grid.append(newTile(block, row, index)));
-      shell.append(head, grid); container.append(shell);
+      shell.append(grid, rail); container.append(shell);
     });
     updateTimeline();
     if (state.playing) for (const video of videos()) resumeSlave(video);
@@ -1280,8 +1309,11 @@
     void discoverCompletedTasks(true);
   });
   $("play").addEventListener("click", play);
+  $("compact-play").addEventListener("click", play);
   $("prev-frame").addEventListener("click", () => step(-1));
+  $("compact-prev").addEventListener("click", () => step(-1));
   $("next-frame").addEventListener("click", () => step(1));
+  $("compact-next").addEventListener("click", () => step(1));
   $("scrub").addEventListener("input", () => {
     if (state.manifest) seek(state.duration * Number($("scrub").value) / 1000, true);
   });
@@ -1300,6 +1332,64 @@
     resetDefaultLayout();
     toast("已恢复默认三行布局");
   });
+  // The natural timeline position is tracked by a zero-height sentinel
+  // before the sticky panel. Its viewport top keeps changing while the
+  // sticky player stays at top:0, so the effect reverses on upward scroll.
+  const TIMELINE_MORPH_DISTANCE = 152;
+  const timelineMorphProgress = top =>
+    clamp(-top / TIMELINE_MORPH_DISTANCE, 0, 1);
+
+  function timelineMorphGeometry(progress, narrow = false) {
+    const p = clamp(progress, 0, 1);
+    const px = (open, closed) =>
+      Math.round(open + (closed - open) * p) + "px";
+    return {
+      "--timeline-header-height": px(56, 0),
+      "--timeline-bottom-height": px(44, 0),
+      "--timeline-instruction-height": px(0, narrow ? 27 : 31),
+      "--timeline-row-height": px(8, narrow ? 31 : 35),
+      "--timeline-row-margin-top": px(23, 7),
+      "--timeline-row-margin-bottom": px(19, 0),
+      "--timeline-padding-top": px(20, 8),
+      "--timeline-padding-bottom": px(18, 8),
+      "--timeline-padding-side": px(27, narrow ? 11 : 16),
+      "--timeline-controls-width": px(0, narrow ? 80 : 104),
+      "--timeline-metrics-width": px(0, narrow ? 128 : 270),
+      "--timeline-original-opacity": String(1 - p),
+      "--timeline-compact-opacity": String(p),
+    };
+  }
+
+  function updateTimelineMorph() {
+    const anchor = $("timeline-scroll-anchor");
+    const panel = $("timeline-panel");
+    const progress = timelineMorphProgress(anchor.getBoundingClientRect().top);
+    state.timelineMorph = progress;
+    const narrow = window.matchMedia("(max-width: 650px)").matches;
+    const geometry = timelineMorphGeometry(progress, narrow);
+    for (const [property, value] of Object.entries(geometry))
+      panel.style.setProperty(property, value);
+    const compactEnabled = !!state.manifest && progress >= 0.8;
+    for (const id of ["compact-prev", "compact-play", "compact-next"])
+      $(id).disabled = !compactEnabled;
+    $("player-bottom").inert = progress > 0.98;
+    panel.dataset.compact = progress >= 0.98 ? "true" : "false";
+    panel.dataset.sticky = progress > 0 ? "true" : "false";
+  }
+
+  let timelineMorphScheduled = false;
+  function scheduleTimelineMorph() {
+    if (timelineMorphScheduled) return;
+    timelineMorphScheduled = true;
+    requestAnimationFrame(() => {
+      timelineMorphScheduled = false;
+      updateTimelineMorph();
+    });
+  }
+
+  window.addEventListener("scroll", scheduleTimelineMorph, {passive: true});
+  window.addEventListener("resize", scheduleTimelineMorph);
+
   $("clock-video").addEventListener("loadedmetadata", () => {
     if (state.manifest) alignMedia($("clock-video"), true);
   });
@@ -1319,5 +1409,6 @@
   });
 
   renderLayout();
+  updateTimelineMorph();
   initialize();
 })();
