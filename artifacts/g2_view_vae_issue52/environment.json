@@ -1,0 +1,15 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "packages": {
+    "torch": "2.15.0+cpu",
+    "pytest": "9.2.0",
+    "pillow": "13.0.0",
+    "numpy": "2.5.5",
+    "ruff": "0.17.5"
+  },
+  "gpu_used": false,
+  "real_vae_weights_loaded": false,
+  "private_data_accessed": false,
+  "base_root": "55cc5181abf8ca4b1e2a3a6b415699c457cc080b",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2"
+}

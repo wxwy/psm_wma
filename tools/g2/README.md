@@ -36,3 +36,50 @@ Validity is derived in memory. v1 directories fail before new export writes;
 the seven existing production episodes require a separately reviewed transition.
 This change does not perform migration or authorize production resume. Synthetic
 73/74 far-floor regressions do not replace native CloseFridge 736 acceptance.
+
+## Issue #52: independent spatial-View VAE cache
+
+These entry points consume completed G2 spatial packages, not raw simulator
+recordings. Run from the **PSM-WMA Root**, with its fixed Cosmos child present:
+
+```bash
+python -m tools.g2.build_spatial_view_vae_cache --help
+python -m tools.g2.verify_spatial_view_vae_cache --help
+```
+
+The builder requires an explicit action. `--dry-run` (alias `--plan`) reports
+all valid views, unique physical PNG owners, logical references and expected
+cache paths without creating `vae_cache/` or loading a VAE. Supply a local
+weight file to bind the candidate recipe; planning does not encode it.
+`--execute` is the actual encoding action, for a separately authorized real
+sample after this code/CPU candidate is reviewed. It is not a production switch.
+
+```bash
+# Read-only plan; placeholders must identify existing local assets.
+python -m tools.g2.build_spatial_view_vae_cache \
+  --dataset-root /path/to/robocasa365-target-atomic-6views \
+  --task CloseBlenderLid --episode 0 --weights /path/to/local/wan_vae.pth \
+  --height 256 --width 256 --storage-dtype float32 --batch-size 1 --dry-run
+
+# Read-only complete-cache/source audit; no encoder or online services.
+python -m tools.g2.verify_spatial_view_vae_cache \
+  --dataset-root /path/to/robocasa365-target-atomic-6views \
+  --task CloseBlenderLid --episode 0
+```
+
+All valid logical views are encoded, including views not currently selected by
+a task. Each Episode gains one `vae_cache/<logical-view>.pt` per existing view;
+each file holds every physical image version for that view and the reference
+index. No file is created for an absent view. Multiple Room/Island directory
+levels remain distinct. Original PNGs, arrows, SG and completion files stay
+unchanged. Reader calls load only requested view payloads, with bounded lazy
+file caching, rather than the whole Episode.
+
+256×256 white-padded, aspect-preserving preprocessing and FP32 storage are
+initial **candidate** settings. B=1 is supported; larger batches are rejected
+until independently implemented and validated. Low-precision storage, actual
+Wan numerical/decode quality, mixed-batch parity, real GPU throughput and
+full-corpus encoding remain separate gates. Ordinary verification is read-only;
+`--reencode` explicitly requests the separate real-VAE comparison and requires
+the same local weights/device identity. See the [Issue52 runbook](../../docs/build/PSM-WMA_G2_spatial_view_vae_cache_2026-11-16.md)
+for the library ABI, atomic resume contract and precise validation scope.
