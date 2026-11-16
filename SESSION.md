@@ -1,19 +1,33 @@
-# 2026-11-16 CST — Issue52 spatial View Encode1 cache: IN_PROGRESS
+# 2026-11-16 CST — Issue52 spatial View Encode1 cache: REVIEW
 
-Codex code/CPU implementation on codex/g2-view-vae-cache-issue52 from
-origin/V3 55cc5181abf8ca4b1e2a3a6b415699c457cc080b; unchanged Cosmos
-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2. Claimed files:
-tools/g2 build/verify CLIs and README; g2/latent_cache contract, source,
-encoding, storage, builder; test_view_vae_* fixtures; G2 v2.0 explicit
-per-view supplement and runbook. Reuse existing indexed PNG resolver and
-Cosmos normalize_uint8_item/Wan2pt2VAEInterface. All valid Views, physical
-owners encoded once, explicit absence, one file per View, bounded selected
-payload-only reader. B=1 reference, real GPU parity NOT_RUN.
-Issue52 is explicit current authorization; supersedes historical V2/MM/Kimi
-execution/wait steps for this scoped candidate. No servers/private data,
-real VAE/GPU encoding, production, training, simulation, merge, G0/G1/Local/
-model/nav_sg/Child changes. Source/code work is local, not server edits.
-No result claimed yet. CPU evidence then fixed SHA + Draft PR/GPT handoff.
+Code/CPU implementation fixed at Root aa0450b8e36b2cb833beda96256a29c3db95db23, from V3
+55cc5181abf8ca4b1e2a3a6b415699c457cc080b. Unchanged Cosmos Child/Gitlink
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; Child worktree clean. Independent branch
+codex/g2-view-vae-cache-issue52; Draft PR #53:
+https://github.com/wxwy/psm_wma/pull/53 (unmerged).
+
+All valid Views; one numeric file per logical View per Episode; explicit absent,
+physical owner versus current logical identity; original PNG/index references;
+source/recipe-bound atomic publication and resume; bounded selected-file mmap/LRU
+reader. Core g2/latent_cache, thin tools/g2 build/verify CLIs; fixed Wan/normalizer
+reused lazily for independent B=1/T=1 full spatial grids. 256 white fit/pad and
+FP32 storage remain candidate defaults. External unproven preloaded Cosmos
+modules are refused; controlled imports compile verified source bytes without
+reading/writing Child pyc. Future online integration must handle import lifecycle.
+
+Final author CPU: 224/224 PASS, 0 failures/errors/skips (165 new, 59 original
+G2 event/index/compact regressions); selected Ruff E4,E7,E9,F,I, format13,
+diff-check, CLI helps PASS. Original validators compatible with cache namespace;
+source hashes unchanged during checks. Evidence artifacts/g2_view_vae_issue52/
+gate.json, raw pytest log/JUnit, source_sha256.json, environment and CLI help.
+This author/peer CPU evidence is not GPT independent acceptance.
+
+Canonical Inbox append below freezes this exact implementation SHA; following
+ledger commits do not replace it. Next owner: GPT independent code/CPU review,
+then separately authorized real sample Gate. Issue52 is current authorization
+and supersedes historical V2/MM/Kimi execution/wait steps for this candidate.
+No server/private data, real VAE/GPU encoding, full production, simulation,
+training or merge. No G0/G1/Local/model/nav_sg/Child/Gitlink implementation edits.
 
 # 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：DONE；正式全量生产继续
 
