@@ -1,0 +1,26 @@
+{
+  "height": 1024,
+  "width": 1024,
+  "native_resolution_tier": "768",
+  "constructor_tiers": [
+    "256",
+    "480",
+    "720"
+  ],
+  "cli_exit": 0,
+  "cache_created": false,
+  "plan_returned": true,
+  "planned_canvas": {
+    "aspect": "fit",
+    "height": 1024,
+    "interpolation": "lanczos",
+    "layout": "RGB_HWC",
+    "padding_rgb": [
+      255,
+      255,
+      255
+    ],
+    "rounding": "floor_half_up",
+    "width": 1024
+  }
+}
