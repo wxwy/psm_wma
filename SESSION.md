@@ -1,33 +1,37 @@
-# 2026-11-16 CST — Issue52 spatial View Encode1 cache: REVIEW
+# 2026-11-16 CST — Issue52 R1 encoding boundaries: REVIEW
 
-Code/CPU implementation fixed at Root aa0450b8e36b2cb833beda96256a29c3db95db23, from V3
-55cc5181abf8ca4b1e2a3a6b415699c457cc080b. Unchanged Cosmos Child/Gitlink
-d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; Child worktree clean. Independent branch
-codex/g2-view-vae-cache-issue52; Draft PR #53:
-https://github.com/wxwy/psm_wma/pull/53 (unmerged).
+Fixed R1 implementation Root 900c87aa0ae643123477e985b6a051fb7535ee03; parent/review-only Root
+25b49dba85ca12aad2a902786b927019329fa608; original aa0450b8 independent224PASS
+and GPT REQUEST_CHANGES read after fetch/ff. Unchanged Child/Gitlink
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; clean Child. Base V3 55cc5181 unchanged.
+Same independent branch codex/g2-view-vae-cache-issue52 and Draft PR53:
+https://github.com/wxwy/psm_wma/pull/53 (updated, unmerged).
 
-All valid Views; one numeric file per logical View per Episode; explicit absent,
-physical owner versus current logical identity; original PNG/index references;
-source/recipe-bound atomic publication and resume; bounded selected-file mmap/LRU
-reader. Core g2/latent_cache, thin tools/g2 build/verify CLIs; fixed Wan/normalizer
-reused lazily for independent B=1/T=1 full spatial grids. 256 white fit/pad and
-FP32 storage remain candidate defaults. External unproven preloaded Cosmos
-modules are refused; controlled imports compile verified source bytes without
-reading/writing Child pyc. Future online integration must handle import lifecycle.
+F1: all loaded Cosmos modules/packages checked for expected file/spec origin
+and package search paths before and after controlled import; foreign or unknown
+origin rejected without reload. F2: pure validate_wan_canvas shared by CLI,
+plan/build and Encode1; fixed native classifier including special768 shapes;
+unsupported tiers/beyond range rejected before model or image allocation.
+Production changes only encoding.py, builder preflight calls and build CLI.
+Source/contract/schema/index/storage/reader and original assets unchanged.
 
-Final author CPU: 224/224 PASS, 0 failures/errors/skips (165 new, 59 original
-G2 event/index/compact regressions); selected Ruff E4,E7,E9,F,I, format13,
-diff-check, CLI helps PASS. Original validators compatible with cache namespace;
-source hashes unchanged during checks. Evidence artifacts/g2_view_vae_issue52/
-gate.json, raw pytest log/JUnit, source_sha256.json, environment and CLI help.
-This author/peer CPU evidence is not GPT independent acceptance.
+Final author CPU265/265PASS, zero failures/errors/skips; all original224 named
+cases retained, 41 newF1/F2 cases. Exact reviewer assertions RED2 onold->GREEN2
+onnew (separate overlapping replay, not addedto265). Source41 files identical
+before/after finalrun; selected Ruff, format14 product/test/CLI files plus1
+replay adapter and CLI helps PASS. Source/non-transcript diffcheck PASS; four
+whitespace-only traceback lines retained in rawRED log/XML, documented in
+artifacts/g2_view_vae_issue52_r1/post_stage_scope.json. All rawlogs/JUnit,
+exact commands, environment, source fingerprints and observations in same
+R1 evidence folder. Runbook appendedR1; reviewer documents/evidence immutable.
 
-Canonical Inbox append below freezes this exact implementation SHA; following
-ledger commits do not replace it. Next owner: GPT independent code/CPU review,
-then separately authorized real sample Gate. Issue52 is current authorization
-and supersedes historical V2/MM/Kimi execution/wait steps for this candidate.
-No server/private data, real VAE/GPU encoding, full production, simulation,
-training or merge. No G0/G1/Local/model/nav_sg/Child/Gitlink implementation edits.
+Current delivery checked 2026-11-16T19:04:44.507220+08:00.
+Formal sourceSHA above; subsequent ledger commit does not replace it. Next:
+GPT narrow independent incremental review of F1/F2 atnewSHA. Author/peer tests
+are not independentGPT acceptance. Current Owner R1 instruction overrides
+historical V2/MM/Kimi waits for this scope. No real VAE weights/GPU/server or
+private data/full encoding/simulation/training/merge; no Child/Gitlink/V3
+updates or unrelatedG0/G1/Local/nav_sg/model changes.
 
 # 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：DONE；正式全量生产继续
 

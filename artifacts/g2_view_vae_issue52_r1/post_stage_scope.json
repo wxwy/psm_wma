@@ -1,0 +1,33 @@
+{
+  "implementation": "900c87aa0ae643123477e985b6a051fb7535ee03",
+  "source_and_non_raw_evidence_diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "25b49dba85ca12aad2a902786b927019329fa608",
+      "HEAD",
+      "--",
+      ".",
+      ":!artifacts/g2_view_vae_issue52_r1/red.log",
+      ":!artifacts/g2_view_vae_issue52_r1/red.xml"
+    ],
+    "returncode": 0
+  },
+  "raw_transcript_exception": {
+    "reason": "Preserve original pytest RED output/XML byte-for-byte; four whitespace-only traceback lines. No source whitespace finding.",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "25b49dba85ca12aad2a902786b927019329fa608",
+      "HEAD"
+    ],
+    "returncode": 2,
+    "output": "artifacts/g2_view_vae_issue52_r1/red.log:73: trailing whitespace.\n+    \nartifacts/g2_view_vae_issue52_r1/red.log:84: trailing whitespace.\n+    \nartifacts/g2_view_vae_issue52_r1/red.xml:66: trailing whitespace.\n+    \nartifacts/g2_view_vae_issue52_r1/red.xml:77: trailing whitespace.\n+    \n",
+    "sha256": {
+      "artifacts/g2_view_vae_issue52_r1/red.log": "7b326cd2cfb5cf8d39c8c20709fe0800faf8ab47683af7125650b9d8518949c8",
+      "artifacts/g2_view_vae_issue52_r1/red.xml": "74d33335245f89d835ac6b6698ba6f4206ce0599ecd65fbd4b2554f96b10534c"
+    }
+  }
+}
