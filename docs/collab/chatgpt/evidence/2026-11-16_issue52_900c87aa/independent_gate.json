@@ -1,0 +1,144 @@
+{
+  "V3_observed": "55cc5181abf8ca4b1e2a3a6b415699c457cc080b",
+  "bookkeeping_head_observed": "4ad1059195fae264f27b50a680eda5c7abea7b68",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "child_modified": false,
+  "environment": {
+    "GPU_used": false,
+    "executable": "/workspace/scratch/720989c43529/pr53_review/venv/bin/python",
+    "network_during_tests": false,
+    "packages": {
+      "Pillow": "13.0.0",
+      "numpy": "2.5.5",
+      "pytest": "9.2.0",
+      "ruff": "0.17.5",
+      "torch": "2.15.0+cpu"
+    },
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "timestamp_cst": "2026-11-16T19:53:47.230044+08:00"
+  },
+  "evidence_sha256": {
+    "environment.json": "030defd312f5af9b25251a196b556efafba91548e0953020d274c406ee161df4",
+    "foreign_parent_observed.json": "36c060dbd84d04ac9a6ee8bcf6f496f66fa539bd63f750a875e1afe9bdbb107d",
+    "format.log": "2afb1c293434bc55d84b35d54454a0bf9aa84e41cda426817a5c6693d432e37a",
+    "namespace_source_after.json": "8ef12b39af00342092964bec39381a9a37e82a0144c47c9ce1ac42263ba02bf0",
+    "namespace_source_before.json": "8ef12b39af00342092964bec39381a9a37e82a0144c47c9ce1ac42263ba02bf0",
+    "native_namespace.log": "f9e2fc0243c36b92b68d7ef0c045c414ceef8a7bd88ae5f69858fcf4e2407285",
+    "native_namespace.xml": "15af39c851a580f7af13ec59cfba39ff8b90fb23fc4e973a15f40262f571c99c",
+    "native_namespace_observed.json": "2bc51a5253c715c624e778838f115f80a71daf00a0e4f662568de77e51562270",
+    "native_namespace_tree.json": "1aeb6b571e075f36d87dd1f5c92768e6348f1e0af295bc8bfa196c099da06b19",
+    "pytest.log": "de547432a3bf1d97ca6280b8d54975b67b837819d52f8d0574855402e4050ea6",
+    "pytest.xml": "bb261f4a57869ad36ffec5c32a545f3e675ddc5a3f5c8757af1b16444f96e6ba",
+    "remote_scope.json": "23f3a78b212356eb3b769b77ee4e4d3ce24b1a97a5f7aa32fb2f01093ff6ed11",
+    "result_audit.json": "81a073130fe744686bfe3d6153a0b105478bf5c47f3e7c136ce27693066d01f6",
+    "review_edges.log": "e4083fe9e4460d574f7457091b53ead8da9062ae08a9bb4ccda3fb2e698522cc",
+    "review_edges.xml": "bebc2089dbe4bd3eb50ad77a2775759b3b65509423f4d4e35da870f004992403",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "source_after.json": "9a857d416d01c5b7bd29f2187ce13f526a9284eddb888c18cc2bcf520bf5802c",
+    "source_before.json": "9a857d416d01c5b7bd29f2187ce13f526a9284eddb888c18cc2bcf520bf5802c",
+    "test_native_namespace.py": "41c1c4365d78c5e8bdd56356b378af6f2061fea1588e266025f13882d4211405",
+    "test_review_edges.py": "3767287d3f30f365b0c9318fff0796ec180c845448cbae94bf72791b1df2e197",
+    "unsupported_canvas_observed.json": "443863a12f028a025b100ec22ed4ecfadb3dae917240b75ae705ccb44a55b5fd"
+  },
+  "exit_codes": {
+    "format": 0,
+    "full_regression": 0,
+    "native_namespace_acceptance": 1,
+    "original_reviewer_replay": 0,
+    "ruff": 0
+  },
+  "findings": [
+    {
+      "evidence": "foreign_parent_observed.json",
+      "id": "F1",
+      "scope": "original foreign Cosmos parent/helper acceptance",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "unsupported_canvas_observed.json",
+      "id": "F2",
+      "scope": "unsupported canvas accepted by plan",
+      "status": "CLOSED"
+    },
+    {
+      "directly_executed": "real namespace package import plus unmodified origin guard; Torch and Wan not imported",
+      "evidence": "native_namespace_observed.json",
+      "id": "R1-F3",
+      "native_Wan_effect": "source-path inference from fixed unconditional import chain; not actual native Wan execution",
+      "scope": "selected Child native namespace package is rejected by new origin guard",
+      "severity": "P1",
+      "status": "OPEN_REPRODUCED"
+    }
+  ],
+  "formal_root": "900c87aa0ae643123477e985b6a051fb7535ee03",
+  "independent_results": {
+    "added_cases": 41,
+    "current_cases": 265,
+    "full_regression": {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "10a9b1bbd583",
+      "name": "pytest",
+      "skipped": "0",
+      "tests": "265",
+      "time": "11.708",
+      "timestamp": "2026-11-16T03:50:03.066296-08:00"
+    },
+    "group_counts": {
+      "g2.tests.test_scene_graph_compact_v3": 31,
+      "g2.tests.test_scene_view_event_index": 24,
+      "g2.tests.test_scene_view_index_package": 4,
+      "g2.tests.test_view_vae_builder": 21,
+      "g2.tests.test_view_vae_canvas": 32,
+      "g2.tests.test_view_vae_contract": 18,
+      "g2.tests.test_view_vae_encoding": 61,
+      "g2.tests.test_view_vae_source": 31,
+      "g2.tests.test_view_vae_storage": 43
+    },
+    "missing_original_cases": [],
+    "new_namespace_regression": {
+      "errors": "0",
+      "failures": "1",
+      "hostname": "10a9b1bbd583",
+      "name": "pytest",
+      "skipped": "0",
+      "tests": "1",
+      "time": "0.134",
+      "timestamp": "2026-11-16T03:52:37.204643-08:00"
+    },
+    "original_cases": 224,
+    "original_probe_replay": {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "10a9b1bbd583",
+      "name": "pytest",
+      "skipped": "0",
+      "tests": "2",
+      "time": "0.472",
+      "timestamp": "2026-11-16T03:50:48.074228-08:00"
+    },
+    "original_probe_unchanged": true,
+    "source_41_unchanged": true,
+    "supplemental_source_45_unchanged": true,
+    "timestamp_cst": "2026-11-16T19:53:12.584455+08:00"
+  },
+  "not_run": [
+    "real VAE weights",
+    "native Wan encoding or decoding",
+    "GPU",
+    "server/private data access",
+    "full-corpus encoding",
+    "simulation",
+    "training",
+    "merge"
+  ],
+  "previous_implementation": "aa0450b8e36b2cb833beda96256a29c3db95db23",
+  "production_code_modified": false,
+  "review_base": "25b49dba85ca12aad2a902786b927019329fa608",
+  "review_path": "docs/collab/chatgpt/reviews/2026-11-16_Issue52_900c87aa_d5c1ffc7_ViewVAE_R1_REQUEST_CHANGES.md",
+  "review_scope": "narrow CODE/CPU R1 incremental",
+  "review_sha256": "2bcfdee665f305211f4e0dfb233059961e6623465621f0545e58814aee03d91c",
+  "timestamp_cst": "2026-11-16T19:56:20.732835+08:00",
+  "verdict": "REQUEST_CHANGES"
+}

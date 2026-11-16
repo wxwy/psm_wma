@@ -1,0 +1,18 @@
+{
+  "package": "cosmos_framework.utils.env_parsers",
+  "spec_origin": null,
+  "file": null,
+  "loader": "NamespaceLoader",
+  "package_paths": [
+    "/workspace/scratch/720989c43529/pr53_r1_review/source/cosmos-framework/cosmos_framework/utils/env_parsers"
+  ],
+  "spec_search_locations": [
+    "/workspace/scratch/720989c43529/pr53_r1_review/source/cosmos-framework/cosmos_framework/utils/env_parsers"
+  ],
+  "all_paths_in_selected_child": true,
+  "accepted": false,
+  "error": "loaded Cosmos module/package belongs to another checkout or has unverifiable origin: cosmos_framework.utils.env_parsers",
+  "cause": "TypeError",
+  "torch_loaded": false,
+  "wan_loaded": false
+}

@@ -1,0 +1,51 @@
+{
+  "added_cases": 41,
+  "current_cases": 265,
+  "full_regression": {
+    "errors": "0",
+    "failures": "0",
+    "hostname": "10a9b1bbd583",
+    "name": "pytest",
+    "skipped": "0",
+    "tests": "265",
+    "time": "11.708",
+    "timestamp": "2026-11-16T03:50:03.066296-08:00"
+  },
+  "group_counts": {
+    "g2.tests.test_scene_graph_compact_v3": 31,
+    "g2.tests.test_scene_view_event_index": 24,
+    "g2.tests.test_scene_view_index_package": 4,
+    "g2.tests.test_view_vae_builder": 21,
+    "g2.tests.test_view_vae_canvas": 32,
+    "g2.tests.test_view_vae_contract": 18,
+    "g2.tests.test_view_vae_encoding": 61,
+    "g2.tests.test_view_vae_source": 31,
+    "g2.tests.test_view_vae_storage": 43
+  },
+  "missing_original_cases": [],
+  "new_namespace_regression": {
+    "errors": "0",
+    "failures": "1",
+    "hostname": "10a9b1bbd583",
+    "name": "pytest",
+    "skipped": "0",
+    "tests": "1",
+    "time": "0.134",
+    "timestamp": "2026-11-16T03:52:37.204643-08:00"
+  },
+  "original_cases": 224,
+  "original_probe_replay": {
+    "errors": "0",
+    "failures": "0",
+    "hostname": "10a9b1bbd583",
+    "name": "pytest",
+    "skipped": "0",
+    "tests": "2",
+    "time": "0.472",
+    "timestamp": "2026-11-16T03:50:48.074228-08:00"
+  },
+  "original_probe_unchanged": true,
+  "source_41_unchanged": true,
+  "supplemental_source_45_unchanged": true,
+  "timestamp_cst": "2026-11-16T19:53:12.584455+08:00"
+}

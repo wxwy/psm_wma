@@ -1,0 +1,4 @@
+{
+  "rejected": true,
+  "error": "loaded Cosmos module/package belongs to another checkout or has unverifiable origin: cosmos_framework"
+}
