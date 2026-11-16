@@ -286,3 +286,39 @@ implementations, original G2 producers/validators, nav_sg, Child and Gitlink wer
 not modified. Real VAE/GPU samples, production recipe freeze, complete-corpus
 encoding, training and merge remain **NOT_RUN**. The fixed implementation SHA
 is listed in the canonical Inbox handoff and Draft PR.
+
+
+## R1: two encoding-entry fixes after independent REQUEST_CHANGES
+
+The exact `aa0450b8` / Child `d5c1ffc7` review was fetched at review-only Root
+`25b49dba85ca12aad2a902786b927019329fa608`. Its independent 224-case PASS remains
+valid within its stated scope. This increment addresses only its F1/F2 findings:
+
+- Controlled imports check every already loaded Cosmos module/package origin,
+  `__file__`, spec origin and package search locations against the selected
+  Child, before and after import and before publishing binding tokens. Foreign
+  or unverifiable origins are rejected without reloading shared modules.
+- `validate_wan_canvas(height, width)` is a model-free preflight shared by CLI,
+  library plan/build and Encode1. It matches the fixed Child resolution classifier,
+  including the five explicit 768 shapes; rejects unsupported tiers (including
+  1024×1024) and beyond-range inputs before allocating images or loading the VAE.
+  Existing supported tiers, including legitimate long narrow shapes, remain
+  available. The requested canvas is never silently changed; no 768 support is
+  added. The standalone image preprocessor remains independent of this Wan gate.
+
+Final R1 CPU run: **265/265 PASS**, zero failures/errors/skips, 10.62 seconds;
+all original 224 named cases retained, plus 41 R1 cases. The two unchanged
+reviewer assertions separately reproduce RED2 on the pre-fix source and GREEN2
+on this candidate. These are overlapping checks, not extra cases to add to265.
+41 source files have identical before/after hashes. Selected Ruff and format
+checks pass for the 14 product/test/CLI Python files plus the replay adapter.
+The default verify help and model-free planning remain covered.
+
+Raw logs, JUnit, exact commands, source fingerprints and observations are in
+`artifacts/g2_view_vae_issue52_r1/`. The replay adapter changes only the original
+review tests' source/output directory bindings, leaving their assertions and
+the independent review evidence unchanged. Source, schema, per-View file format,
+index, storage/reader and original package assets are unchanged. Real Wan
+weights/GPU/sample/decode/performance, full encoding, training and merge remain
+**NOT_RUN**. New source SHA is handed off on the same Draft PR53 for narrow GPT
+incremental review; author CPU results do not close that independent Gate.

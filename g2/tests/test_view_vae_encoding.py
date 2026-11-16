@@ -596,3 +596,108 @@ def test_bound_finder_and_search_path_are_removed_after_import_failure(tmp_path)
         obj._cosmos_module(name, name + ".py")
     assert sys.meta_path == before_meta and sys.path == before_path
     assert name not in _IMPORTED_SOURCE and name not in sys.modules
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "foreign_root",
+        "foreign_subpackage",
+        "foreign_helper",
+        "package_search_path",
+        "spec_search_path",
+        "unknown_origin",
+        "new_foreign_helper",
+        "selected_parent",
+        "clean",
+    ],
+)
+def test_controlled_import_checks_entire_cosmos_namespace_and_package_paths(
+    tmp_path, case
+):
+    code = r"""
+import importlib, importlib.util, pathlib, sys
+from g2.latent_cache import encoding as e
+base=pathlib.Path(sys.argv[1]);case=sys.argv[2]
+old,selected=base/'old',base/'selected'
+parents=('cosmos_framework','cosmos_framework/model',
+ 'cosmos_framework/model/generator','cosmos_framework/model/generator/mot',
+ 'cosmos_framework/model/generator/tokenizers','cosmos_framework/utils')
+for root,label in ((old,'OLD_CHECKOUT'),(selected,'SELECTED_CHECKOUT')):
+ for relative in parents:
+  directory=root/relative;directory.mkdir(parents=True,exist_ok=True)
+  (directory/'__init__.py').write_text('')
+ (root/'cosmos_framework/utils/helper.py').write_text('SOURCE='+repr(label)+'\n')
+for relative in e._SOURCE_FILES:
+ (selected/relative).write_text('# source identity fixture\n')
+relative=e._SOURCE_FILES[0];name='cosmos_framework.model.generator.vision_encoder'
+(selected/relative).write_text('from cosmos_framework.utils.helper import SOURCE\n')
+weights=selected/'weights';weights.write_bytes(b'identity-only fixture')
+preexisting=None
+if case=='foreign_root':
+ sys.path.insert(0,str(old))
+ preexisting=importlib.import_module('cosmos_framework')
+ sys.path.pop(0)
+elif case not in ('clean','new_foreign_helper'):
+ sys.path.insert(0,str(selected))
+ parent=importlib.import_module('cosmos_framework')
+ preexisting=parent
+ if case in ('foreign_subpackage','foreign_helper'):
+  target='cosmos_framework.utils' if case=='foreign_subpackage' else 'cosmos_framework.utils.helper'
+  file=old/'cosmos_framework/utils'/('__init__.py' if case=='foreign_subpackage' else 'helper.py')
+  spec=importlib.util.spec_from_file_location(target,file)
+  loaded=importlib.util.module_from_spec(spec)
+  sys.modules[target]=loaded;spec.loader.exec_module(loaded)
+  preexisting=loaded
+ elif case=='package_search_path':
+  parent.__path__.append(str(old/'cosmos_framework'))
+ elif case=='spec_search_path':
+  parent.__spec__.submodule_search_locations=[str(old/'cosmos_framework')]
+ elif case=='unknown_origin':
+  loaded=importlib.import_module('cosmos_framework.utils.helper')
+  loaded.__spec__.origin=None
+  preexisting=loaded
+ sys.path.pop(0)
+if case=='new_foreign_helper':
+ source=("import importlib.util,sys\n"
+  "spec=importlib.util.spec_from_file_location('cosmos_framework.utils.helper',"+
+  repr(str(old/'cosmos_framework/utils/helper.py'))+")\n"
+  "helper=importlib.util.module_from_spec(spec)\n"
+  "sys.modules[spec.name]=helper\n"
+  "spec.loader.exec_module(helper)\n"
+  "SOURCE=helper.SOURCE\n")
+ (selected/relative).write_text(source)
+obj=e.WanSingleFrameEncoder(weights,device='cpu',cosmos_root=selected)
+obj.descriptor()
+if case in ('clean','selected_parent'):
+ first=obj._cosmos_module(name,relative)
+ assert first.SOURCE=='SELECTED_CHECKOUT'
+ helper=sys.modules['cosmos_framework.utils.helper']
+ assert pathlib.Path(helper.__file__).is_relative_to(selected)
+ assert obj._cosmos_module(name,relative) is first
+ second=e.WanSingleFrameEncoder(weights,device='cpu',cosmos_root=selected)
+ second.descriptor()
+ assert second._cosmos_module(name,relative) is first
+else:
+ original_id=id(preexisting) if preexisting is not None else None
+ try:obj._cosmos_module(name,relative)
+ except RuntimeError as exc:
+  assert 'Cosmos' in str(exc) and ('origin' in str(exc) or 'path' in str(exc)),str(exc)
+ else:raise AssertionError('foreign or unproven Cosmos context accepted')
+ assert not e._IMPORTED_SOURCE
+ if preexisting is not None:
+  assert sys.modules[preexisting.__name__] is preexisting
+  assert id(preexisting)==original_id
+ if case!='new_foreign_helper':assert name not in sys.modules
+assert 'torch' not in sys.modules
+print('PASS')
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", code, str(tmp_path), case],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "PASS"

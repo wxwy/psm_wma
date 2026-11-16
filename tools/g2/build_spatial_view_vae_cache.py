@@ -110,8 +110,6 @@ def main(argv=None):
         command.error(
             "this candidate supports independent B=1 only; mixed-batch parity is NOT_RUN"
         )
-    if args.height <= 0 or args.width <= 0 or args.height % 16 or args.width % 16:
-        command.error("Wan canvas dimensions must be positive multiples of 16")
     try:
         from g2.latent_cache.builder import (
             build_episode,
@@ -119,8 +117,9 @@ def main(argv=None):
             plan_episode,
         )
         from g2.latent_cache.contract import make_recipe, preprocessing_recipe
-        from g2.latent_cache.encoding import WanSingleFrameEncoder
+        from g2.latent_cache.encoding import WanSingleFrameEncoder, validate_wan_canvas
 
+        validate_wan_canvas(args.height, args.width)
         preprocessing = preprocessing_recipe(
             args.height, args.width, args.interpolation
         )

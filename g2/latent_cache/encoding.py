@@ -50,6 +50,79 @@ _IMPORTED_SOURCE = {}
 _IMPORT_LOCK = threading.RLock()
 
 
+def validate_wan_canvas(height, width):
+    """Return a supported fixed-Wan tier without importing Torch or Cosmos.
+
+    Match the pinned Child's get_vision_data_resolution classification, including
+    its special 768 shapes. The frozen constructor deliberately omits that tier;
+    accepting a canvas never adds a tier or silently changes the requested size.
+    """
+    if any(type(x) is not int or x <= 0 or x % 16 for x in (height, width)):
+        raise ValueError("Wan canvas dimensions must be positive multiples of 16")
+    special_768 = {(1024, 1024), (1184, 880), (880, 1184), (1360, 768), (768, 1360)}
+    minimum = min(height, width)
+    if (height, width) in special_768:
+        tier = "768"
+    elif minimum <= 256:
+        tier = "256"
+    elif minimum <= 640:
+        tier = "480"
+    elif minimum <= 960:
+        tier = "720"
+    elif minimum <= 2048:
+        tier = "768"
+    else:
+        raise ValueError(f"Unsupported resolution: {(height, width)}")
+    if tier not in _CONSTRUCTOR["encode_chunk_frames"]:
+        raise ValueError(
+            f"Wan canvas resolution tier {tier} is not supported by the fixed constructor"
+        )
+    return tier
+
+
+def _check_cosmos_origins(cosmos_root):
+    """Refuse foreign/unverifiable loaded Cosmos modules and search paths.
+
+    Leaf binding alone cannot reset an already imported parent's __path__.
+    Validate the entire loaded namespace both before and after controlled import;
+    this checks origins, not authentication of arbitrary preloaded bytecode.
+    """
+    root = Path(cosmos_root).absolute()
+    for name, module in tuple(sys.modules.items()):
+        if name != "cosmos_framework" and not name.startswith("cosmos_framework."):
+            continue
+        expected = root.joinpath(*name.split("."))
+        spec = getattr(module, "__spec__", None)
+        locations = getattr(spec, "submodule_search_locations", None)
+        is_package = hasattr(module, "__path__")
+        if (
+            spec is None
+            or getattr(spec, "name", None) != name
+            or is_package != (locations is not None)
+        ):
+            raise RuntimeError("loaded Cosmos module origin is unverifiable: " + name)
+        expected_file = (
+            expected / "__init__.py" if is_package else expected.with_suffix(".py")
+        )
+        try:
+            origin = _regular_file(getattr(spec, "origin", None))
+            file = _regular_file(getattr(module, "__file__", None))
+            if origin != expected_file or file != expected_file:
+                raise ValueError("foreign module origin")
+            if is_package:
+                for paths in (module.__path__, locations):
+                    paths = tuple(paths)
+                    if not paths or any(
+                        Path(item).absolute() != expected for item in paths
+                    ):
+                        raise ValueError("foreign package search path")
+        except (OSError, TypeError, ValueError) as error:
+            raise RuntimeError(
+                "loaded Cosmos module/package belongs to another checkout or has unverifiable origin: "
+                + name
+            ) from error
+
+
 def _regular_file(path):
     path = Path(path).absolute()
     if any(p.is_symlink() for p in (path, *path.parents)):
@@ -283,7 +356,11 @@ class WanSingleFrameEncoder:
     def _import_bound_module(self, name, relative):
         # Only the selected Cosmos child is used, never another root g2 package.
         paths = {name: relative}
-        if name.startswith("cosmos_framework."):
+        cosmos_import = name == "cosmos_framework" or name.startswith(
+            "cosmos_framework."
+        )
+        if cosmos_import:
+            _check_cosmos_origins(self.cosmos_root)
             paths.update(
                 {
                     path.removesuffix(".py").replace("/", "."): path
@@ -363,6 +440,9 @@ class WanSingleFrameEncoder:
         finally:
             sys.meta_path.remove(finder)
             sys.path.remove(root)
+
+        if cosmos_import:
+            _check_cosmos_origins(self.cosmos_root)
 
         # Imports may load flags or another bound dependency transitively.
         # Authenticate every newly loaded bound module before publishing any
@@ -488,12 +568,11 @@ class WanSingleFrameEncoder:
 
     def encode(self, rgb, preprocessing):
         """Return an independent CPU FP32 [C,H_z,W_z] tensor and pixel provenance."""
+        preprocessing = _preprocessing(preprocessing)
+        validate_wan_canvas(preprocessing["height"], preprocessing["width"])
         import torch
 
         canvas, metadata = preprocess_rgb(rgb, preprocessing)
-        height, width = canvas.shape[:2]
-        if height % 16 or width % 16:
-            raise ValueError("Wan canvas dimensions must be multiples of 16")
         with self._lock:
             identity = self.descriptor()
             if self._tokenizer is None:

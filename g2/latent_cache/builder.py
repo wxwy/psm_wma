@@ -109,9 +109,13 @@ def _source_binding(plan):
 
 
 def plan_episode(episode_root, recipe):
+    from .encoding import validate_wan_canvas
     from .source import scan_episode
 
     validate_recipe(recipe)
+    validate_wan_canvas(
+        recipe["preprocessing"]["height"], recipe["preprocessing"]["width"]
+    )
     plan = scan_episode(episode_root)
     physical = sum(len(v["records"]) for v in plan["views"].values())
     present = sum(
@@ -221,6 +225,7 @@ def build_episode(
     resume=False,
 ):
     """One locked episode, one atomic numeric file per View, no source writes."""
+    from .encoding import validate_wan_canvas
     from .source import scan_episode, verify_source
     from .storage import (
         atomic_json,
@@ -234,6 +239,9 @@ def build_episode(
         preprocessing,
         storage_dtype=storage_dtype,
         batch_size=batch_size,
+    )
+    validate_wan_canvas(
+        recipe["preprocessing"]["height"], recipe["preprocessing"]["width"]
     )
     plan = scan_episode(episode_root)
     root = Path(plan["episode_root"])
