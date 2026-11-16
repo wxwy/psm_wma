@@ -1,0 +1,16 @@
+{
+  "package": "cosmos_framework.utils.env_parsers",
+  "spec_origin": null,
+  "file": null,
+  "loader": "NamespaceLoader",
+  "package_paths": [
+    "/workspace/scratch/720989c43529/pr53_r2_review/source/cosmos-framework/cosmos_framework/utils/env_parsers"
+  ],
+  "spec_search_locations": [
+    "/workspace/scratch/720989c43529/pr53_r2_review/source/cosmos-framework/cosmos_framework/utils/env_parsers"
+  ],
+  "all_paths_in_selected_child": true,
+  "accepted": true,
+  "torch_loaded": false,
+  "wan_loaded": false
+}
