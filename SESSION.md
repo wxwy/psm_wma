@@ -1,37 +1,42 @@
-# 2026-11-16 CST — Issue52 R1 encoding boundaries: REVIEW
+# 2026-11-16 CST — Issue52 R2 namespace compatibility: REVIEW
 
-Fixed R1 implementation Root 900c87aa0ae643123477e985b6a051fb7535ee03; parent/review-only Root
-25b49dba85ca12aad2a902786b927019329fa608; original aa0450b8 independent224PASS
-and GPT REQUEST_CHANGES read after fetch/ff. Unchanged Child/Gitlink
-d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; clean Child. Base V3 55cc5181 unchanged.
-Same independent branch codex/g2-view-vae-cache-issue52 and Draft PR53:
-https://github.com/wxwy/psm_wma/pull/53 (updated, unmerged).
+Fixed R2 Root 778d1ed8a031429fd857c980fc872d4c85123cd1; previous implementation
+900c87aa0ae643123477e985b6a051fb7535ee03; review-only parent
+49374cb343d02bf2e3ca4d13dc89c5dfe55a8480. Before-head4ad10591, fetched and
+advertised49374cb3, logged review commit and ff before reading exact formal
+900c87aa/d5c1ffc7 review at
+ docs/collab/chatgpt/reviews/2026-11-16_Issue52_900c87aa_d5c1ffc7_ViewVAE_R1_REQUEST_CHANGES.md.
+OriginalF1/F2 closed and independent265PASS; GPT requested native namespace
+false-rejection repair only. V3 remains55cc5181; unchanged Child/Gitlink
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2, clean Child. Same DraftPR53 on
+codex/g2-view-vae-cache-issue52: https://github.com/wxwy/psm_wma/pull/53.
 
-F1: all loaded Cosmos modules/packages checked for expected file/spec origin
-and package search paths before and after controlled import; foreign or unknown
-origin rejected without reload. F2: pure validate_wan_canvas shared by CLI,
-plan/build and Encode1; fixed native classifier including special768 shapes;
-unsupported tiers/beyond range rejected before model or image allocation.
-Production changes only encoding.py, builder preflight calls and build CLI.
-Source/contract/schema/index/storage/reader and original assets unchanged.
+Production change only _check_cosmos_origins inencoding.py: genuine namespace
+packages require coherent NamespaceLoader/spec, absent file/origin, real
+non-symlink directory without __init__.py and both matching nonempty absolute
+search-path inventories confined to the expected selected Child directory.
+Ordinary module/package file-origin checks and foreign/mixed/empty/unknown
+rejections preserved. New namespace tests; existing265 test source unchanged.
+No Child package-layout edit or fabricated __init__.py. Existing F1/F2, canvas,
+cache format/contract/source/index/storage/reader, builder and CLIs unchanged.
 
-Final author CPU265/265PASS, zero failures/errors/skips; all original224 named
-cases retained, 41 newF1/F2 cases. Exact reviewer assertions RED2 onold->GREEN2
-onnew (separate overlapping replay, not addedto265). Source41 files identical
-before/after finalrun; selected Ruff, format14 product/test/CLI files plus1
-replay adapter and CLI helps PASS. Source/non-transcript diffcheck PASS; four
-whitespace-only traceback lines retained in rawRED log/XML, documented in
-artifacts/g2_view_vae_issue52_r1/post_stage_scope.json. All rawlogs/JUnit,
-exact commands, environment, source fingerprints and observations in same
-R1 evidence folder. Runbook appendedR1; reviewer documents/evidence immutable.
+Final author CPU283/283PASS, zero failures/errors/skips; original265 identities
+retained plus18 namespace cases. Reviewer native namespace probe RED1 old ->
+GREEN1 new; all three unchanged reviewer probes separately3/3PASS, not added
+to283. 48source hashes stable before/after; selected Ruff, format15product/test/
+CLI +1replay, R2diff-check and both helps PASS. Raw commands/logs/JUnit,
+observations/source fingerprints in artifacts/g2_view_vae_issue52_r2/.
+Actual fixed Child namespace accepted with Torch/Wan absent; controlled-import
+fixtures cover before/after/reuse. Complete native Wan import/constructor,
+weights/numerics/decode/performance/GPU remain NOT_RUN, no independent approval
+inferred from author results.
 
-Current delivery checked 2026-11-16T19:04:44.507220+08:00.
-Formal sourceSHA above; subsequent ledger commit does not replace it. Next:
-GPT narrow independent incremental review of F1/F2 atnewSHA. Author/peer tests
-are not independentGPT acceptance. Current Owner R1 instruction overrides
-historical V2/MM/Kimi waits for this scope. No real VAE weights/GPU/server or
-private data/full encoding/simulation/training/merge; no Child/Gitlink/V3
-updates or unrelatedG0/G1/Local/nav_sg/model changes.
+Updated 2026-11-16T20:45:38.364699+08:00; fixed sourceSHA above,
+following ledger commit is bookkeeping only. Next: publish on same DraftPR53,
+GPT narrow independent review, then separately authorized real sample Gate.
+Current Owner R2 handoff supersedes historical V2/MM/Kimi waits for this scope.
+No server/private-data access, full encoding, simulation, training, merge,
+V3/Child/Gitlink or unrelated G0/G1/Local/nav_sg/model changes.
 
 # 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：DONE；正式全量生产继续
 
