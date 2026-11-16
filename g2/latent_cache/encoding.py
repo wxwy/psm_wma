@@ -85,7 +85,8 @@ def _check_cosmos_origins(cosmos_root):
 
     Leaf binding alone cannot reset an already imported parent's __path__.
     Validate the entire loaded namespace both before and after controlled import;
-    this checks origins, not authentication of arbitrary preloaded bytecode.
+    genuine namespace packages bind their real directory instead of a source
+    file. This checks origins, not arbitrary preloaded bytecode authenticity.
     """
     root = Path(cosmos_root).absolute()
     for name, module in tuple(sys.modules.items()):
@@ -105,10 +106,32 @@ def _check_cosmos_origins(cosmos_root):
             expected / "__init__.py" if is_package else expected.with_suffix(".py")
         )
         try:
-            origin = _regular_file(getattr(spec, "origin", None))
-            file = _regular_file(getattr(module, "__file__", None))
-            if origin != expected_file or file != expected_file:
-                raise ValueError("foreign module origin")
+            if (
+                is_package
+                and spec.origin is None
+                and getattr(module, "__file__", None) is None
+            ):
+                loader = getattr(module, "__loader__", None)
+                if (
+                    not isinstance(loader, importlib.machinery.NamespaceLoader)
+                    or spec.loader is not loader
+                    or spec.has_location
+                    or not expected.is_dir()
+                    or any(p.is_symlink() for p in (expected, *expected.parents))
+                    or expected_file.exists()
+                    or expected_file.is_symlink()
+                ):
+                    raise ValueError("unverifiable namespace package")
+                paths = tuple(module.__path__)
+                if paths != tuple(locations) or any(
+                    not Path(item).is_absolute() for item in paths
+                ):
+                    raise ValueError("inconsistent namespace search paths")
+            else:
+                origin = _regular_file(getattr(spec, "origin", None))
+                file = _regular_file(getattr(module, "__file__", None))
+                if origin != expected_file or file != expected_file:
+                    raise ValueError("foreign module origin")
             if is_package:
                 for paths in (module.__path__, locations):
                     paths = tuple(paths)

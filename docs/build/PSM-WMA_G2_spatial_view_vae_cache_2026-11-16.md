@@ -322,3 +322,33 @@ index, storage/reader and original package assets are unchanged. Real Wan
 weights/GPU/sample/decode/performance, full encoding, training and merge remain
 **NOT_RUN**. New source SHA is handed off on the same Draft PR53 for narrow GPT
 incremental review; author CPU results do not close that independent Gate.
+
+
+## R2: native namespace-package compatibility
+
+The R1 review at `49374cb3` closed original F1/F2, independently passed265
+cases, and found a P1 false rejection of the pinned Child's real
+`cosmos_framework.utils.env_parsers` namespace (no `__init__.py`). This increment
+changes only `_check_cosmos_origins` and adds namespace regression coverage.
+
+A namespace is accepted through a coherent standard `NamespaceLoader` and spec,
+absent file/origin, matching nonempty absolute package/spec search paths confined
+to its expected real selected-Child directory, and no symlink or `__init__.py`.
+Ordinary module/package file-origin checks remain; foreign/mixed/empty/unknown
+sources stay rejected. No fabricated dependency `__init__.py`, loader reload,
+cache ABI change or import-system redesign is introduced.
+
+Final author CPU **283/283 PASS**, zero failures/errors/skips: previous265 test
+identities preserved plus18 namespace cases. The unchanged reviewer namespace
+assertion is RED1 onold -> GREEN1 onnew; all three reviewer assertions together
+pass3/3 separately. Native-package probes import no Torch/Wan. Controlled-import
+fixtures cover namespace present before/after imports and multi-encoder reuse.
+48source fingerprints stable across tests; selected Ruff, format15 product/test/
+CLI files +1replay adapter, diff-check and helps PASS. Raw evidence and exact
+commands: `artifacts/g2_view_vae_issue52_r2/`.
+
+The actual namespace check is CPU-executed; compatibility of a complete native
+Wan import/model load and numerical/decode/throughput behavior remain untested.
+Real Wan/weights/GPU, server/private data, full encoding, training and merge are
+**NOT_RUN**. Same DraftPR53/new fixed source proceeds to narrow independent
+review. The separate real-sample/configuration Gate remains unchanged.

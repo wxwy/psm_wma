@@ -1,0 +1,10 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_selected_child_native_namespace_must_be_accepted _____________
+docs/collab/chatgpt/evidence/2026-11-16_issue52_900c87aa/test_native_namespace.py:74: in test_selected_child_native_namespace_must_be_accepted
+    assert observed["accepted"], observed
+           ^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: {'package': 'cosmos_framework.utils.env_parsers', 'spec_origin': None, 'file': None, 'loader': 'NamespaceLoader', 'package_paths': ['/workspace/psm_wma_issue52/cosmos-framework/cosmos_framework/utils/env_parsers'], 'spec_search_locations': ['/workspace/psm_wma_issue52/cosmos-framework/cosmos_framework/utils/env_parsers'], 'all_paths_in_selected_child': True, 'accepted': False, 'error': 'loaded Cosmos module/package belongs to another checkout or has unverifiable origin: cosmos_framework.utils.env_parsers', 'cause': 'TypeError', 'torch_loaded': False, 'wan_loaded': False}
+=========================== short test summary info ============================
+FAILED artifacts/g2_view_vae_issue52_r2/replay_review_probes.py::test_selected_child_native_namespace_must_be_accepted
+1 failed, 2 deselected in 0.15s
