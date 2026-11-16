@@ -107,6 +107,40 @@ button:focus-visible, select:focus-visible, input:focus-visible, .drag-handle:fo
 .row-control-rail .remove-row:hover {background:#fff0f0;color:#a75151;border-color:#d9a0a0}
 .row-control-rail .add-block { flex:1 1 auto; min-height:45px; font-size:20px }
 .row-control-rail button:disabled { opacity:.25; cursor:not-allowed }
+/* A subtle bottom-edge grip overlays the existing row rather than adding
+   height or compressing its display columns. Default auto-height untouched. */
+.row-resize-handle {
+  position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);
+  z-index:5;width:96px;height:12px;padding:0;
+  border:0;background:transparent;border-radius:6px;
+  opacity:.23;cursor:ns-resize;touch-action:none;user-select:none;
+  transition:opacity .15s;
+}
+.row-resize-handle::after {
+  content:"";display:block;margin:auto;width:54px;height:3px;
+  border-radius:6px;background:#7e90a5;
+}
+.row-resize-handle:hover,.row-resize-handle:focus-visible,
+.row-resize-handle:active {opacity:1}
+.row-resize-handle:hover::after,.row-resize-handle:active::after {
+  background:#4265dd;
+}
+/* Only an explicitly resized row receives fixed-height rules. For all other
+   rows, the previous intrinsic tile aspect ratio and block-count sizing stay. */
+.row-shell[data-fixed-height="true"] .display-row {
+  height:var(--row-height);grid-auto-rows:minmax(0,1fr);
+}
+.row-shell[data-fixed-height="true"] .tile {
+  display:flex;flex-direction:column;height:100%;min-height:0;
+}
+.row-shell[data-fixed-height="true"] .tile-toolbar,
+.row-shell[data-fixed-height="true"] .tile-foot {flex:0 0 auto}
+.row-shell[data-fixed-height="true"] .tile-visual {
+  flex:1 1 0;height:auto;min-height:0;aspect-ratio:auto;
+}
+.row-shell[data-fixed-height="true"] .row-empty {
+  height:100%;min-height:0;
+}
 .display-row {
   width:100%; display:grid; gap:var(--gap); align-items:stretch; justify-content:space-between;
   grid-template-columns:repeat(var(--count,3), minmax(0,min(calc((100% - (2 * var(--gap))) / 3), 32.5%)));

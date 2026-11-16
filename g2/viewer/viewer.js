@@ -265,9 +265,15 @@
     }));
   }
 
+  const ROW_MIN_HEIGHT = 100;
+  const ROW_MAX_HEIGHT = 2400;
+  const validRowHeight = height => Number.isInteger(height) &&
+    height >= ROW_MIN_HEIGHT && height <= ROW_MAX_HEIGHT;
+
   function validSavedLayout(rows) {
     if (!Array.isArray(rows) || !rows.length || rows.length > 30 ||
         !rows.every(row => typeof row.id === "string" &&
+          (row.heightPx === undefined || validRowHeight(row.heightPx)) &&
           Array.isArray(row.blocks) && row.blocks.length <= 5 &&
           row.blocks.every(block => typeof block.id === "string" &&
             validSource(block.source) &&
@@ -1464,6 +1470,88 @@
     clearDrag(); saveLayout(); renderLayout();
   }
 
+  // Rows without an explicitly dragged height use the original auto-size
+  // rules verbatim; the block count is still free to change their height.
+  // Explicit height is persisted per row but never rebuilt during dragging.
+  function setRowHeight(row, shell, grid, pixels = null) {
+    if (pixels === null) {
+      delete row.heightPx;
+      shell.dataset.fixedHeight = "false";
+      grid.style.removeProperty("--row-height");
+      return;
+    }
+    row.heightPx = clamp(Math.round(pixels), ROW_MIN_HEIGHT, ROW_MAX_HEIGHT);
+    shell.dataset.fixedHeight = "true";
+    grid.style.setProperty("--row-height", row.heightPx + "px");
+  }
+
+  function installRowResize(row, shell, grid) {
+    const handle = document.createElement("button");
+    handle.type = "button";
+    handle.className = "row-resize-handle";
+    handle.title = "上下拖动调整行高 · 双击恢复自动高度";
+    handle.setAttribute("aria-label", "拖动调整展示行高度，双击恢复自动高度");
+    let drag = null;
+    handle.addEventListener("pointerdown", event => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const measured = grid.getBoundingClientRect().height;
+      drag = {id: event.pointerId, startY: event.clientY,
+        startHeight: measured, initial: row.heightPx, changed: false};
+      handle.setPointerCapture?.(event.pointerId);
+    });
+    handle.addEventListener("pointermove", event => {
+      if (!drag || drag.id !== event.pointerId) return;
+      event.preventDefault();
+      const proposed = clamp(Math.round(drag.startHeight +
+        event.clientY - drag.startY), ROW_MIN_HEIGHT, ROW_MAX_HEIGHT);
+      if (Math.abs(proposed - drag.startHeight) < 2 && !drag.changed) return;
+      if (row.heightPx !== proposed) {
+        setRowHeight(row, shell, grid, proposed);
+        drag.changed = true;
+      }
+    });
+    const finish = (event, canceled = false) => {
+      if (!drag || drag.id !== event.pointerId) return;
+      const {initial, changed} = drag;
+      drag = null;
+      if (handle.hasPointerCapture?.(event.pointerId))
+        handle.releasePointerCapture(event.pointerId);
+      if (canceled) {
+        setRowHeight(row, shell, grid, initial ?? null);
+      } else if (changed) {
+        saveLayout();
+      }
+    };
+    handle.addEventListener("pointerup", event => finish(event));
+    handle.addEventListener("pointercancel", event => finish(event, true));
+    handle.addEventListener("dblclick", event => {
+      event.preventDefault();
+      if (row.heightPx !== undefined) {
+        setRowHeight(row, shell, grid, null);
+        saveLayout();
+      }
+    });
+    handle.addEventListener("keydown", event => {
+      if (event.key === "Home") {
+        event.preventDefault();
+        if (row.heightPx !== undefined) {
+          setRowHeight(row, shell, grid, null);
+          saveLayout();
+        }
+      } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        const step = event.shiftKey ? 40 : 10;
+        const height = row.heightPx ?? grid.getBoundingClientRect().height;
+        setRowHeight(row, shell, grid,
+          height + (event.key === "ArrowDown" ? step : -step));
+        saveLayout();
+      }
+    });
+    return handle;
+  }
+
   function renderLayout() {
     // Invalidate detached tiles so late image loads cannot replace a new layout.
     for (const tile of state.media) {
@@ -1516,6 +1604,8 @@
       grid.className = "display-row";
       grid.dataset.count = String(row.blocks.length);
       grid.style.setProperty("--count", row.blocks.length);
+      if (validRowHeight(row.heightPx))
+        setRowHeight(row, shell, grid, row.heightPx);
       grid.addEventListener("dragover", event => {
         if (!state.drag || event.target.closest(".tile")) return;
         event.preventDefault();
@@ -1538,7 +1628,8 @@
         empty.append(main, help); grid.append(empty);
       }
       row.blocks.forEach((block, index) => grid.append(newTile(block, row, index)));
-      shell.append(grid, rail); container.append(shell);
+      const resize = installRowResize(row, shell, grid);
+      shell.append(grid, rail, resize); container.append(shell);
     });
     updateTimeline();
     if (state.playing) for (const video of videos()) resumeSlave(video);

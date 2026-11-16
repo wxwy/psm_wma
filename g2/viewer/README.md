@@ -390,3 +390,25 @@ video or canvas elements or interrupt playback. All select options now
 render in an accessible custom popup, keeping the selected item BLUE
 (#4265dd) while hovering unselected options produces light gray-white
 (#f1f3f6). The real select and its change events remain the source of truth.
+
+
+## Independent drag-resizable display row heights
+
+Each display row has a low-opacity horizontal grip centered on its bottom
+edge. Dragging vertically changes only that row's height, between 100 and
+2400 CSS pixels, while preserving column widths and spacing. CSS is updated
+directly during drag, without rebuilding video/canvas; height is persisted
+once on release. Other rows remain unaffected, and manually chosen heights
+persist in the existing custom layout when the number of blocks changes.
+
+The default is exactly the previous automatic aspect-ratio layout:
+unmodified rows have no stored height, and adding/removing display blocks
+continues to influence the natural row height just as before. Only manually
+resized rows use the fixed-height CSS, with their media region flexing
+inside the chosen row height and retaining each block's image-fit mode.
+
+Double-clicking the row-height grip or pressing Home restores auto height.
+Focused Arrow Up/Down adjust by 10px, or 40px with Shift. Pointer cancel
+rolls back an incomplete resize. Reset Layout still removes all row heights
+and returns to the default dynamic three-row arrangement. Older saved
+layouts without heightPx continue to load unchanged.

@@ -130,6 +130,20 @@ assert.equal(h.read().auto,false,
   "manual changes after a one-shot reset must survive future reloads");
 assert.deepEqual(rowSources(h.read().rows),[["minus_Y","left"]]);
 
+// The same storage key now persists explicit row height without changing
+// legacy defaults or automatic sizing in older saved layouts.
+const withHeight = custom.map(row => ({...row, heightPx: 527}));
+store.setItem("psm-g2-viewer-layout-v2", JSON.stringify(withHeight));
+assert(h.valid(withHeight));
+assert.equal(h.read().auto, false);
+assert.equal(h.read().rows[0].heightPx, 527,
+  "manual row height must survive a browser reload");
+const badHeight = withHeight.map(row => ({...row,heightPx: 2401}));
+assert(!h.valid(badHeight));
+store.setItem("psm-g2-viewer-layout-v2", JSON.stringify(custom));
+assert.equal(h.read().rows[0].heightPx, undefined,
+  "old custom layouts remain auto-height until manually resized");
+
 assert(js.includes("if (state.autoLayout)"));
 assert(js.includes("state.rows = startingLayout(manifest, cameras);"));
 assert(js.includes("resetDefaultLayout();"));

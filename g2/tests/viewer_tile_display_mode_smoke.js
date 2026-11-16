@@ -187,5 +187,5 @@ assert(css.includes('.tile-visual[data-display-mode="native"] .tile-media'));
 assert(css.includes('.tile-visual[data-display-mode="height"] .tile-media'));
 assert(css.includes('.tile-visual[data-display-mode="width"] .tile-media'));
 assert(css.includes('.tile-visual[data-display-mode="contain"] .tile-media'));
-assert(html.includes('viewer.js?v=20261114-display-mode-menu'));
+assert(html.includes('viewer.js?v=20261116-row-height'));
 console.log("G2_PER_TILE_DISPLAY_MODE_CHANGE_PRESERVES_MEDIA_PASS");

@@ -3,14 +3,17 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const vm=require("node:vm");
 const source=fs.readFileSync(__dirname+"/../viewer/viewer.js","utf8");
-const begin=source.indexOf("  function renderLayout() {");
+const begin=source.indexOf("  function setRowHeight(row, shell, grid, pixels = null) {");
 const end=source.indexOf("  async function initialize() {",begin);
 assert(begin>=0&&end>begin);
 const fragment=source.slice(begin,end);
 class El {
   constructor(tag){
     this.tag=tag;this.children=[];this.dataset={};this.attrs={};
-    this.style={properties:new Map(),setProperty:(k,v)=>this.style.properties.set(k,v)};
+    const properties=new Map();
+    this.style={properties,
+      setProperty:(k,v)=>properties.set(k,v),
+      removeProperty:(k)=>properties.delete(k)};
     this.listeners={};this.textContent="";this.className="";this.disabled=false;
   }
   append(...children){this.children.push(...children);}
@@ -45,6 +48,8 @@ const scope={
     {sources:[["floor_top"],["left"],["right"],["wrist"],["plus_X"],["plus_Y"]]}
   ],
   clamp:(v,lo,hi)=>Math.max(lo,Math.min(v,hi)),
+  validRowHeight:v=>Number.isInteger(v)&&v>=100&&v<=2400,
+  ROW_MIN_HEIGHT:100,ROW_MAX_HEIGHT:2400,
   moveTile:()=>{},
   console,
 };
@@ -53,9 +58,11 @@ assert.equal(container.children.length,2);
 function inspectRow(n){
  const shell=container.children[n];
  assert.equal(shell.className,"row-shell");
- assert.equal(shell.children.length,2,
-   "row grid and control rail are the only direct shell children");
- const [grid,rail]=shell.children;
+ assert.equal(shell.children.length,3,
+   "row grid, floating actions and resize grip are the only shell children");
+ const [grid,rail,resize]=shell.children;
+ assert.equal(resize.className,"row-resize-handle");
+ assert.equal(resize.title,"上下拖动调整行高 · 双击恢复自动高度");
  assert.equal(grid.className,"display-row");
  assert.equal(rail.className,"row-control-rail");
  assert.equal(rail.attrs.role,"group");
@@ -70,7 +77,7 @@ function inspectRow(n){
  assert.equal(add.textContent,"+");
  assert.equal(add.title,"添加显示块");
  assert.equal(add.attrs["aria-label"],"添加显示块");
- return {grid,rail,del,add};
+ return {grid,rail,del,add,resize};
 }
 let {add}=inspectRow(0);
 inspectRow(1);

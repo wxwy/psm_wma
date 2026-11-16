@@ -161,7 +161,7 @@ assert(source.includes('$("sticky-instruction").textContent'));
 assert(source.includes('$("compact-frame-label").textContent'));
 assert(source.includes('$("compact-source-frame-label").textContent'));
 assert(source.includes('$("compact-time-current").textContent'));
-assert(source.includes('shell.append(grid, rail);'));
+assert(source.includes('shell.append(grid, rail, resize);'));
 assert(source.includes('remove.title = "删除整行"'));
 assert(source.includes('add.title = "添加显示块"'));
 assert(!source.includes('shell.append(head, grid)'));
