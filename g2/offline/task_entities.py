@@ -5,11 +5,14 @@ from __future__ import annotations
 from g2.io import ContractError
 from g2.latent_cache.contract import fingerprint
 
-RULE_VERSION = "robocasa_atomic_initialization_roles_v1_candidate"
+RULE_VERSION = "robocasa_atomic_initialization_roles_v2_candidate"
 SOURCE_REVISION = "425684d332f135f5b30a40b321f52d15a0fe9250"
 # (role, official fixture_refs key, unique-class fallback). None forbids guessing.
 FIXTURE_RULES = {
-    "CloseBlenderLid": (("target", "blender", ("Blender",)),),
+    "CloseBlenderLid": (
+        ("target", "blender", ("Blender",)),
+        ("manipulated_lid", "blender_lid", ("BlenderLid",)),
+    ),
     "CloseFridge": (
         (
             "target",
@@ -49,7 +52,11 @@ FIXTURE_RULES = {
 OBJECT_RULES = {
     "CoffeeSetupMug": (("target", "obj"),),
     "PickPlaceCounterToCabinet": (("target", "obj"),),
-    "PickPlaceCounterToStove": (("target", "obj"), ("destination_object", "container")),
+    "PickPlaceCounterToStove": (
+        ("target", "obj"),
+        ("source_container", "obj_container"),
+        ("destination_object", "container"),
+    ),
     "PickPlaceDrawerToCounter": (("target", "obj"),),
     "PickPlaceSinkToCounter": (("target", "obj"), ("destination_object", "container")),
     "PickPlaceToasterToCounter": (("target", "obj"), ("destination_object", "plate")),

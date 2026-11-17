@@ -160,18 +160,32 @@ def test_empty_fixture_refs_unique_fallback_and_ambiguity():
     graph = dict(
         entities=[
             dict(
-                id="lid_1", source_instance_id="fixture:blender_0", source_part_id="lid"
+                id="body_1",
+                source_instance_id="fixture:blender_0",
+                source_part_id="body",
             ),
             dict(
-                id="lid_2", source_instance_id="fixture:blender_0", source_part_id="lid"
+                id="body_2",
+                source_instance_id="fixture:blender_0",
+                source_part_id="body",
+            ),
+            dict(
+                id="lid_1",
+                source_instance_id="fixture:loose_lid_0",
+                source_part_id="whole",
             ),
         ]
     )
     meta = dict(
-        fixtures={"blender_0": {"cls": "Blender"}}, fixture_refs={}, object_cfgs=[]
+        fixtures={
+            "blender_0": {"cls": "Blender"},
+            "loose_lid_0": {"cls": "BlenderLid"},
+        },
+        fixture_refs={},
+        object_cfgs=[],
     )
     result = bind_task_entities("CloseBlenderLid", meta, graph)
-    assert result["entity_ids"] == ["lid_1", "lid_2"]
+    assert result["entity_ids"] == ["body_1", "body_2", "lid_1"]
     assert result["roles"][0]["evidence"]["kind"] == "UNIQUE_OFFICIAL_CLASS"
     meta["fixtures"]["blender_1"] = {"cls": "Blender"}
     result = bind_task_entities("CloseBlenderLid", meta, graph)

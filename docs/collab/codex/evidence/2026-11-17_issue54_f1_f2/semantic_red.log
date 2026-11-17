@@ -1,0 +1,18 @@
+F........F........                                                       [100%]
+=================================== FAILURES ===================================
+_ test_independent_initialization_semantics_for_all_18_tasks[CloseBlenderLid] __
+g2/tests/test_stage_a_task_semantics.py:71: in test_independent_initialization_semantics_for_all_18_tasks
+    assert len(result['roles'])==len(expected)
+E   AssertionError: assert 1 == 2
+E    +  where 1 = len([{'role': 'target', 'source_instance_id': 'fixture:blender', 'source_part_ids': ['base', 'handle'], 'entity_ids': ['fixture_blender_base_0', 'fixture_blender_base_1', 'fixture_blender_handle_0', 'fixture_blender_handle_1'], ...}])
+E    +  and   2 = len({'target': 'fixture:blender', 'manipulated_lid': 'fixture:loose_lid'})
+_ test_independent_initialization_semantics_for_all_18_tasks[PickPlaceCounterToStove] _
+g2/tests/test_stage_a_task_semantics.py:71: in test_independent_initialization_semantics_for_all_18_tasks
+    assert len(result['roles'])==len(expected)
+E   AssertionError: assert 3 == 4
+E    +  where 3 = len([{'role': 'destination_reference', 'source_instance_id': 'fixture:stove', 'source_part_ids': ['base', 'handle'], 'enti...['object_container_base_0', 'object_container_base_1', 'object_container_handle_0', 'object_container_handle_1'], ...}])
+E    +  and   4 = len({'destination_reference': 'fixture:stove', 'target': 'object:obj', 'source_container': 'object:obj_container', 'destination_object': 'object:container'})
+=========================== short test summary info ============================
+FAILED g2/tests/test_stage_a_task_semantics.py::test_independent_initialization_semantics_for_all_18_tasks[CloseBlenderLid]
+FAILED g2/tests/test_stage_a_task_semantics.py::test_independent_initialization_semantics_for_all_18_tasks[PickPlaceCounterToStove]
+2 failed, 16 passed, 5 deselected in 0.42s

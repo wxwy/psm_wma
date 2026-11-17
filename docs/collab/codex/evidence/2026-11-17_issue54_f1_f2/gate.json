@@ -1,0 +1,133 @@
+{
+  "all_original_three_green": false,
+  "changed_baseline_source_files": [
+    "g2/offline/language_context.py",
+    "g2/offline/stage_a.py",
+    "g2/offline/task_entities.py",
+    "g2/tests/test_stage_a_contracts.py"
+  ],
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "not_run": [
+    "real RoboCasa captions/roles",
+    "native F27/pixel acceptance",
+    "GPU/Wan/weights",
+    "A2 consumer/ACK/recovery",
+    "full production",
+    "state15",
+    "joint alignment",
+    "training",
+    "merge",
+    "original F1 Parquet assertion",
+    "10 native-Parquet entry regressions"
+  ],
+  "original_parquet_assertion": "NOT_RUN_MISSING_PYARROW",
+  "original_role_assertions": "RED2_TO_GREEN2_UNCHANGED_AST_BODIES",
+  "preserved_test_identities": {
+    "pr53": {
+      "missing": [],
+      "old": 283,
+      "retained": 283
+    },
+    "related": {
+      "missing": [],
+      "old": 45,
+      "retained": 45
+    },
+    "stage_a": {
+      "missing": [],
+      "old": 50,
+      "retained": 50
+    }
+  },
+  "results": {
+    "pr53": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 283
+    },
+    "related": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 3,
+      "skipped_cases": [
+        {
+          "reason": "could not import 'mujoco': No module named 'mujoco'",
+          "test": "g2.tests.test_atomic_6views_run::test_scene_bound_geometry_without_layout_whitelist"
+        },
+        {
+          "reason": "could not import 'mujoco': No module named 'mujoco'",
+          "test": "g2.tests.test_robot_pose_marker::test_real_mujoco_chassis_frame_not_robot_root_anchor"
+        },
+        {
+          "reason": "could not import 'pandas': No module named 'pandas'",
+          "test": "g2.tests.test_viewer_install::test_catalog_preserves_local_global_indices_and_task_instruction"
+        }
+      ],
+      "tests": 45
+    },
+    "role_probes": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 2
+    },
+    "stage_a": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 10,
+      "skipped_cases": [
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns0]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns1]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns2]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns3]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns4]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns0]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns1]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns2]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns3]"
+        },
+        {
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted",
+          "test": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_does_not_use_ep_meta_as_replacement"
+        }
+      ],
+      "tests": 103
+    }
+  },
+  "reviewer_source_untouched": true,
+  "schema": "g2_issue54_f1_f2_author_gate_v1",
+  "scope": "AUTHOR_CPU_NOT_GPT_REAL_SOURCE_ACCEPTANCE",
+  "source_count": 204,
+  "source_hashes_stable": true,
+  "static": "PASS_SELECTED_RUFF_FORMAT_CLI_SYNTHETIC_PACKAGE",
+  "training_ready": false
+}

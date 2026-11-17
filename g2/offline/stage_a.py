@@ -35,7 +35,7 @@ from .spatial_metadata import (
     validate_raw_pose,
     view_catalog,
 )
-from .task_entities import bind_task_entities, source_entity_index
+from .task_entities import RULE_VERSION, bind_task_entities, source_entity_index
 
 RAW_SCHEMA = "g2_stage_a_raw_episode_v1"
 
@@ -121,6 +121,10 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
         else {}
     )
     for tid, task in tasks.items():
+        if task.get("rule_version") != RULE_VERSION:
+            raise ContractError(
+                "GT task rule version differs; refuse stale role metadata on resume"
+            )
         if (
             task.get("task_entity_set_id") != tid
             or task.get("binding_status") != "BOUND"

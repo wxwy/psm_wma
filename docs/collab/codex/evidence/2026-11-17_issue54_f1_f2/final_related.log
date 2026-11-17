@@ -1,0 +1,6 @@
+...s...........ss............................                            [100%]
+=========================== short test summary info ============================
+SKIPPED [1] g2/tests/test_atomic_6views_run.py:59: could not import 'mujoco': No module named 'mujoco'
+SKIPPED [1] g2/tests/test_robot_pose_marker.py:238: could not import 'mujoco': No module named 'mujoco'
+SKIPPED [1] g2/tests/test_viewer_install.py:23: could not import 'pandas': No module named 'pandas'
+42 passed, 3 skipped in 1.54s

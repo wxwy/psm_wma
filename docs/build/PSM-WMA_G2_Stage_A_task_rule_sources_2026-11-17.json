@@ -43,10 +43,15 @@
     "robocasa/environments/kitchen/atomic/kitchen_stove.py": {
       "git_blob_sha1": "d34785e57ae0399f09dd76d0845094c74387e058",
       "sha256": "d790637ec2aeb304afb379d9ec7213dd42fed99460c414062371d77a50e490bf"
+    },
+    "robocasa/environments/kitchen/kitchen.py": {
+      "git_blob_sha1": "f7f50935c8acc421090537e73e276033503031c6",
+      "sha256": "35b1395ce65d51b993296aff1881fd5371542aec4c4e8ffc38c3f775327b5c56"
     }
   },
   "repository": "robocasa/robocasa",
   "revision": "425684d332f135f5b30a40b321f52d15a0fe9250",
+  "role_rule_version": "robocasa_atomic_initialization_roles_v2_candidate",
   "schema": "g2_atomic_task_rule_public_source_evidence_v1",
   "scope": "PUBLIC_INITIALIZATION_SEMANTICS_REFERENCE_NOT_HISTORICAL_EPISODE_GENERATOR_CERTIFICATION",
   "success_checks_used_as_current_facts": false,
@@ -80,8 +85,16 @@
           [
             "Blender"
           ]
+        ],
+        [
+          "manipulated_lid",
+          "blender_lid",
+          [
+            "BlenderLid"
+          ]
         ]
-      ]
+      ],
+      "role_notes": "CloseBlenderLid._BLENDER_PLACEMENT_UPDATE_DICT enables a free auxiliary fixture; official distinct BlenderLid source is mandatory, never a guessed body part."
     },
     "CloseFridge": {
       "definition_chain": [
@@ -448,6 +461,12 @@
       ]
     },
     "PickPlaceCounterToStove": {
+      "additional_source_evidence": {
+        "end_line": 905,
+        "path": "robocasa/environments/kitchen/kitchen.py",
+        "public_revision": "425684d332f135f5b30a40b321f52d15a0fe9250",
+        "start_line": 875
+      },
       "definition_chain": [
         {
           "class": "PickPlaceCounterToStove",
@@ -494,7 +513,22 @@
           "stove",
           null
         ]
-      ]
+      ],
+      "object_roles": [
+        [
+          "target",
+          "obj"
+        ],
+        [
+          "source_container",
+          "obj_container"
+        ],
+        [
+          "destination_object",
+          "container"
+        ]
+      ],
+      "role_notes": "Task init requests obj placement try_to_place_in=container; Kitchen object creation at lines875-905 names actual generated source cfg.name+_container. Bind only an exact official object_cfgs record; missing/ambiguous roles stay unresolved, not invented."
     },
     "PickPlaceDrawerToCounter": {
       "definition_chain": [

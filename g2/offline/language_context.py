@@ -91,6 +91,48 @@ def resolve_caption_rows(frame_rows, task_rows, *, frames, episode_id, ep_meta_l
     return {frame: captions[frame] for frame in frames}
 
 
+def normalize_task_table(rows, column_names):
+    """Normalize explicit authoritative IDs/text, never row-order-derived IDs.
+
+    Support canonical columns, captions stored as a Pandas string index, and
+    the inverse integer-index/task layout. A redundant string index must agree
+    with canonical task text. With explicit task_index, a numeric Pandas index
+    is merely row metadata and must not replace the authoritative task ID.
+    """
+    columns = set(column_names)
+    index_column = "__index_level_0__"
+    if len(columns) != len(column_names):
+        raise ContractError("ambiguous authoritative task-table columns")
+    id_column = "task_index" if "task_index" in columns else index_column
+    text_column = "task" if "task" in columns else index_column
+    if (
+        id_column not in columns
+        or text_column not in columns
+        or id_column == text_column
+    ):
+        raise ContractError("unsupported authoritative task-table ID/text layout")
+    normalized, seen = [], set()
+    for row in rows:
+        key, text = row.get(id_column), row.get(text_column)
+        if (
+            type(key) is not int
+            or key < 0
+            or not isinstance(text, str)
+            or not text
+            or key in seen
+        ):
+            raise ContractError("invalid or duplicate authoritative task table")
+        if (
+            text_column == "task"
+            and isinstance(row.get(index_column), str)
+            and row[index_column] != text
+        ):
+            raise ContractError("ambiguous authoritative task text columns disagree")
+        seen.add(key)
+        normalized.append(dict(task_index=key, task=text))
+    return normalized
+
+
 def load_flat_captions(flat_root, *, episode_id, frames, ep_meta_lang):
     """Use the existing server PyArrow installation only; no environment setup."""
     import pyarrow.dataset as ds
@@ -99,14 +141,7 @@ def load_flat_captions(flat_root, *, episode_id, frames, ep_meta_lang):
     root = Path(flat_root).resolve(strict=True)
     tasks_path = root / "meta/tasks.parquet"
     table = pq.read_table(tasks_path)
-    task_rows = table.to_pylist()
-    if (
-        "task_index" not in table.column_names
-        and "__index_level_0__" in table.column_names
-    ):
-        task_rows = [
-            dict(task_index=r["__index_level_0__"], task=r["task"]) for r in task_rows
-        ]
+    task_rows = normalize_task_table(table.to_pylist(), table.column_names)
     dataset = ds.dataset(root / "data", format="parquet")
     filt = ds.field("episode_index") == episode_id
     # Parquet fragments are often shared by many episodes; a dataset-level

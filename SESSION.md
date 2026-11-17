@@ -1,4 +1,47 @@
-# 2026-11-17 CST — Issue54 Stage A / first batch: REVIEW (author CPU candidate)
+# 2026-11-17 CST — Issue54 A1 F1/F2 remediation: REVIEW candidate
+
+Author final gate: core283 PASS, StageA93PASS/10Arrow skips (original50 identities
+retained plus43 new passing checks), related42PASS/3 original dependency skips,
+originalF2 bodiesRED2->GREEN2 separately. All378 baseline identities preserved.
+204 source fingerprints stable; old201 differ only in3 production modules plus
+one corrected Blender test fixture; #53core/CLI/render/members/selection/A2/Child
+unchanged. New pure table19cases and independent18-task roles, missing/ambiguous
+sources, downstream text/view union and stale-role-version resume verified.
+RealParquet10cases and originalF1 probe NOT_RUN locally: no PyArrow in existing
+interpreters; no install/overlay/newenv attempted. Do not claimGREEN3 or real4samples.
+Evidence docs/collab/codex/evidence/2026-11-17_issue54_f1_f2/; finalgate/static/
+source hashes/logs/JUnit, unchanged-source AST role replay, exactcommands and
+protocol example. Runbook docs/build/PSM-WMA_G2_Stage_A_A1_F1F2_2026-11-17.md.
+Next fixed implementationSHA, local read-only peer narrowcheck, sameDraft55,
+append-only canonicalInbox then STOP for GPT Arrow/native source recheck.
+
+Owner explicitly requests narrow fixes in existing DraftPR55, preserving A1
+architecture/#53core and keeping A2 consumer work out of this candidate.
+Fresh observation: before2624bbc54795e50e3ac238bf0925bcd1b4247b6a;
+fetch/advertised/tracking8a23a91226d717c0fddb4807bf65b4822e26d9b7 agree,
+logged691c5303+8a23a912 docs/evidence commits, ancestor check0 andff succeeded.
+Read exact formal27ccadb051a71adf348ee14206d7ac59e9195d36 / Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2
+REQUEST_CHANGES report docs/collab/chatgpt/reviews/2026-11-17_Issue54_27ccadb0_d5c1ffc7_StageA_A1_REQUEST_CHANGES.md
+in full plus unchanged3 reviewer reproductions and derived summary. GPT reran
+378 PASS/0skip and201 hashes unchanged, then found F1 real string-index task
+table and F2 separate BlenderLid/source obj_container omissions (two P1 classes).
+Current V3 advertised/tracking fe1089fb925d86697bebd9bef18608d9c9eae87b,
+Child/Gitlink unchangedd5c1ffc7. Latest Owner overrides historical MM/Kimi waits.
+Claimed production files: g2/offline/language_context.py and task_entities.py;
+stage_a.py adds only current role-rule version guard so resume cannot retain
+older incomplete task sets. No other producer/render/cache-core modifications.
+Tests: new actual-Parquet/table-layout and independently specified18-task role
+expectations/selection/text tests; adjust old Blender fixture to separate source
+instance while retaining test identities. Runbook/source-role evidence/ledgers
+and own evidence added; original GPT reports/probes untouched. FixednewSHA,
+rawCPU/static results, sameDraftPR55, then STOP for GPT narrow independent gate.
+Both existing local interpreters lackPyArrow (find_spec None); no installation,
+overlay or newenvironment allowed. Real-Parquet test execution must be reported
+NOT_RUN if no existing dependency is available; pure normalization/F2 CPU can run.
+No server/private-data/GPU/nativeF27/fullproduction/train/A2 changes. Fixed source
+commit to be recorded in the subsequent receipt; no independent acceptance claimed.
+
+# Prior publication (historical): Issue54 Stage A / first batch
 
 Published implementation:27ccadb051a71adf348ee14206d7ac59e9195d36 / unchanged
 Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2. DraftPR55

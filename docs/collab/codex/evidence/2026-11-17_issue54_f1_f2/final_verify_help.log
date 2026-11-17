@@ -1,0 +1,12 @@
+usage: verify_spatial_profile.py [-h] --episode-root EPISODE_ROOT
+                                 [--output-profile OUTPUT_PROFILE]
+                                 [--allow-source-ready]
+
+Validate only the new Stage-A producer protocol; never loads a VAE.
+
+options:
+  -h, --help            show this help message and exit
+  --episode-root EPISODE_ROOT
+  --output-profile OUTPUT_PROFILE
+  --allow-source-ready  accept sealed source for inspection; exit 75 if VAE is
+                        pending
