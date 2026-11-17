@@ -1,0 +1,64 @@
+{
+  "schema": "g2_issue54_f1f2_independent_derived_summary_v1",
+  "verdict": "APPROVE_CODE",
+  "scope": "A1 F1/F2 corrective code, CPU and representative real-source contracts; NOT new-profile native/F27/GPU/full-production acceptance",
+  "fixed_root": "8e11f27bb8e6e8d29c353a56acd0e15da1ddb2a8",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "previous_implementation": "27ccadb051a71adf348ee14206d7ac59e9195d36",
+  "observed_prepublication_head": "15713ec7a41bf343d226d4191b27ef76f8f8d5b4",
+  "environment": {
+    "existing_interpreter": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python",
+    "python": "3.13.11", "torch": "2.10.0+cu128", "pyarrow": "21.0.0",
+    "pytest": "9.0.2", "numpy": "2.2.5", "Pillow": "12.2.0",
+    "pandas": "2.2.3", "mujoco": "3.3.1", "ruff": "0.12.7",
+    "new_environment": false, "dependency_installations": false, "GPU_used": false
+  },
+  "independent_tests": {
+    "pr53": {"passed": 283, "failures": 0, "errors": 0, "skipped": 0, "seconds": 9.674},
+    "stage_a": {"passed": 103, "failures": 0, "errors": 0, "skipped": 0, "seconds": 1.755},
+    "related": {"passed": 45, "failures": 0, "errors": 0, "skipped": 0, "seconds": 1.578},
+    "unchanged_original_probes_separately_counted": {"passed": 3, "failures": 0, "errors": 0, "skipped": 0, "seconds": 0.255}
+  },
+  "regression_count": 431,
+  "baseline_case_ids_retained": 378,
+  "new_case_ids": 53,
+  "author_skipped_real_parquet_cases_executed": 10,
+  "author_skipped_related_cases_executed": 3,
+  "source_hashes": {"count": 204, "matched_author": 204, "before_after_identical": true},
+  "original_reviewer_probe_sha256": "860424fa81b6447cb361d7272ff0a365dfef6ef6087b0a3f51ab97f63fd306e0",
+  "production_changes": ["g2/offline/language_context.py", "g2/offline/task_entities.py", "g2/offline/stage_a.py"],
+  "unchanged_function_or_class_AST_count": 6,
+  "pr53_core_and_child_unchanged": true,
+  "real_initial_caption_replay": {"episodes": 4, "passed": 4},
+  "expanded_real_source": {
+    "independently_specified_semantic_task_samples": 18,
+    "full_raw_caption_episodes": [
+      {"task": "CloseBlenderLid", "episode": 0, "frames": 361},
+      {"task": "CloseFridge", "episode": 502, "frames": 429},
+      {"task": "NavigateKitchen", "episode": 2104, "frames": 110},
+      {"task": "PickPlaceCounterToStove", "episode": 4540, "frames": 260},
+      {"task": "PickPlaceDrawerToCounter", "episode": 5077, "frames": 459}
+    ],
+    "raw_frames_checked": 1619,
+    "current_SG_text_state_samples": 15,
+    "source_inputs_unchanged": true,
+    "all_corpus_coverage_claimed": false
+  },
+  "closed_findings": ["F1 caption string-index table", "F2a independent BlenderLid", "F2b source plate obj_container"],
+  "other_checks": ["stale v1 role results rejected", "Ruff PASS", "16-file format PASS", "JS syntax and variants PASS", "actual viewer loadEpisode with synthetic package PASS", "synthetic package and strict validator PASS"],
+  "server_evidence_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue54_a1_r1_review_8e11f27b_20261117/evidence/",
+  "server_evidence_hashes": {
+    "result_audit.json": "ed9fbf72b72c4f85c6093bdd892536922cae9d8bfa8de3da707abe2841affca4",
+    "source_before.json": "2f6b2fcc4ac9b20d2fdc0cc9b63ed33feff0c814c186e851f5cab0620cdec86f",
+    "original_probes.log": "77d92cd56cd64a1a5b65adac4e344cc7fd9699faace17014c0a319c92f46082d",
+    "real_source_contract_probes.json": "b4c905214af4fa2597f7a6963dab7a569a62e5316d5d81855d5dc9773e297a3b",
+    "expanded_real_source_review.json": "089110af7be470752a44ecbb3f8b1c1cfb9e1d96c069ccc56043e876f57e5f1c",
+    "expanded_real_source_review.py": "ed70cb22eb22a1196c051465af9a8f2cfe80fb66394706e6517ccc470cb92b89"
+  },
+  "preview": "http://127.0.0.1:18765/g2_stage_a_f1f2_8e11f27b_20261117/index.html",
+  "preview_http_status": 200,
+  "not_run": ["new-profile F27 replay", "real new clean/marked pixels", "A2 consumer/ACK/recovery/new-source cache adapter", "new GPU/VAE", "full production", "state15", "joint alignment", "training", "merge"],
+  "production_source_modified": false,
+  "private_original_data_exported": false,
+  "note": "Aggregate derived summary. Complete raw logs/JUnit and private real-source outputs remain on the server; this is not a byte-identical copy of server result_audit.json."
+}
