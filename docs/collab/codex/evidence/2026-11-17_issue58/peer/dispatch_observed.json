@@ -1,0 +1,6 @@
+{
+  "prepared_action": "plan",
+  "scope": "CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE",
+  "selected": 1,
+  "worker_calls": 0
+}

@@ -122,7 +122,8 @@ by preflight; full raw/depth/episode identities are checked by the original
 planner when run starts.
 
 Defaults: max_active_jobs32, pending PNGs32/256MiB, numerical chunks4GiB,
-active SQL records100k; free-work reserve64GiB/free-spool reserve8GiB, bounded
+active SQL records100k; free-work reserve64GiB/free-spool reserve8GiB/
+free-output reserve8GiB, bounded
 admission600s and final drain1800s, producer attempts2. These are explicit
 candidate limits, not measured peak promises. New jobs wait behind active
 jobs/reservations and free-space gates; existing interrupted jobs may finish

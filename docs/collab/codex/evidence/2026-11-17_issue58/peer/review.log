@@ -1,0 +1,55 @@
+......................F                                                  [100%]
+=================================== FAILURES ===================================
+____________ test_prepared_production_args_dispatch_original_queue _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_prepared_production_args_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5d6e3653a0>
+
+    def test_prepared_production_args_dispatch_original_queue(tmp_path, monkeypatch):
+        cfg, _ = config_case(tmp_path)
+        cfg.update(sample_mode=True,expected_selected_episodes=1,expected_task_count=1,
+                   tasks=['NavigateKitchen'],episodes_per_task=1,expected_episode_ids=[0])
+        row=dict(episode_id=0,task_class='NavigateKitchen',source_fingerprint='a'*64,
+                 expected_relative_output='tasks/NavigateKitchen/episodes/episode_000000')
+        rows=[row]
+        run=Path(cfg['run_root'])
+        write_json(run/'profile.json',cfg['profile'])
+        index=dict(episodes_total=1,episodes_pending=1,tasks_selected=['NavigateKitchen'],
+                   batches_total=1,resume=False)
+    
+        def build(*args,**kwargs):
+            root=run/'plan'
+            root.mkdir(exist_ok=True)
+            write_json(root/'index.json',index)
+            write_json(root/'batch_000.json',dict(renderer='f27',episodes=rows))
+            return index
+    
+        monkeypatch.setattr(producer.plan,'discover',lambda *a,**k:(rows,{}))
+        monkeypatch.setattr(producer.plan,'build',build)
+        monkeypatch.setattr(producer,'_completed',lambda *a:False)
+        args,selection,_=full.prepare_plan(cfg)  # Actual unmodified plan adapter.
+        calls=[]
+        producer.schedule(args,run_worker=lambda *a,**k:calls.append(a))
+        observation=dict(prepared_action=args.action,worker_calls=len(calls),selected=len(selection),
+            scope='CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE')
+        write_json(Path(__file__).parent/'dispatch_observed.json',observation)
+        # A production handoff must leave plan-only mode; the original schedule
+        # above currently exits at its plan branch, before any worker call.
+>       assert args.action=='run', observation
+E       AssertionError: {'prepared_action': 'plan', 'worker_calls': 0, 'selected': 1, 'scope': 'CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE'}
+E       assert 'plan' == 'run'
+E         
+E         - run
+E         + plan
+
+docs/collab/codex/evidence/2026-11-17_issue58/peer/test_review_dispatch.py:41: AssertionError
+----------------------------- Captured stdout call -----------------------------
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=1 renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_PLAN path=/tmp/pytest-of-agent/pytest-113/test_prepared_production_args_0/run_root/plan episodes=1 batches=1 production_started=False
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=1 renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_PLAN path=/tmp/pytest-of-agent/pytest-113/test_prepared_production_args_0/run_root/plan episodes=1 batches=1 production_started=False
+=========================== short test summary info ============================
+FAILED docs/collab/codex/evidence/2026-11-17_issue58/peer/test_review_dispatch.py::test_prepared_production_args_dispatch_original_queue
+1 failed, 22 passed in 39.37s

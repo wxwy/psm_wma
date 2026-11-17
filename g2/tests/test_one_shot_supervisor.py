@@ -45,9 +45,14 @@ def config_case(tmp_path):
     for key in dirs:
         Path(cfg[key]).mkdir(parents=True)
     for key in ("nav_setup", "native_binary", "mapping", "weights"):
-        path = (
-            Path(cfg["nav_repo"]) if key in ("nav_setup", "native_binary") else tmp_path
-        ) / (key + ".fixture")
+        parent = (
+            Path(cfg["nav_repo"])
+            if key in ("nav_setup", "native_binary")
+            else Path(cfg["flat_root"])
+            if key == "mapping"
+            else tmp_path
+        )
+        path = parent / (key + ".fixture")
         path.write_bytes(b"TEST_ONLY_NEVER_EXECUTED")
         if key == "native_binary":
             path.chmod(0o755)
@@ -184,6 +189,7 @@ def test_low_disk_and_active_job_admission_backpressure_preserve_work(
         admission_timeout_s=5,
         min_work_free_bytes=0,
         min_spool_free_bytes=0,
+        min_output_free_bytes=0,
         max_active_jobs=1,
     )
     supervisor = full.Supervisor(cfg, spool, [])
@@ -201,6 +207,11 @@ def test_low_disk_and_active_job_admission_backpressure_preserve_work(
     ledger_archive.archive(spool, job)
     thread.join(5)
     assert result == [True]
+    cfg.update(admission_timeout_s=0.05, min_output_free_bytes=10**30)
+    supervisor = full.Supervisor(cfg, spool, [])
+    with pytest.raises(CacheError, match="backpressure"):
+        supervisor.admit(dict(task_class="NavigateKitchen", episode_id=2))
+    assert keep.read_text() == "preserve"
 
 
 def test_stop_resume_controls_only_tagged_process_groups(tmp_path):
@@ -291,6 +302,7 @@ def test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit(
         max_active_jobs=1,
         min_work_free_bytes=0,
         min_spool_free_bytes=0,
+        min_output_free_bytes=0,
         admission_timeout_s=10,
         drain_timeout_s=20,
         monitor_interval_s=0.1,
@@ -309,6 +321,8 @@ def test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit(
         source_fingerprint=kwargs["source_fingerprint"],
         spatial_frames=[0, 10, 20],
         expected_relative_output="published",
+        layout_id=0,
+        spatial_state_count=3,
     )
     worker_cfg = SimpleNamespace(
         work_root=Path(cfg["work_root"]),
@@ -320,11 +334,7 @@ def test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit(
     monkeypatch.setattr(
         full, "preflight", lambda cfg: dict(scope="TEST_ONLY_RESOURCE_PREFLIGHT")
     )
-    monkeypatch.setattr(
-        full,
-        "prepare_plan",
-        lambda cfg: (full.producer_args(cfg), [row], dict(batches_total=1)),
-    )
+    monkeypatch.setattr(producer.plan, "discover", lambda *a, **k: ([row], {0: 1}))
     command = full.consumer_command
     allow = Path(cfg["run_root"]) / "ALLOW_TEST_CONSUME"
     child_code = """import sys,time
@@ -353,8 +363,10 @@ raise SystemExit(main(sys.argv[2:]))
     )
     first = [True]
 
-    def simulated_native_queue(args, *, admission, on_result, run_worker):
-        assert admission(row)
+    def simulated_native_worker(self, command, check=False):
+        assert "--manual-start" in command and "--allow-experimental" in command
+        if producer._completed(full.producer_args(cfg), row, kwargs["profile"]):
+            return subprocess.CompletedProcess(command, 0)
         spool = EventSpool.open(cfg["spool_root"])
         job = spool.register(
             target,
@@ -377,10 +389,9 @@ raise SystemExit(main(sys.argv[2:]))
                     dict(config_id=cfg["config_id"]),
                 )
                 first[0] = False
-        on_result(row, "SOURCE_READY_VAE_PENDING")
-        return 75
+        return subprocess.CompletedProcess(command, 75)
 
-    monkeypatch.setattr(producer, "schedule", simulated_native_queue)
+    monkeypatch.setattr(full.Supervisor, "worker", simulated_native_worker)
     assert full.run(cfg) == 75
     spool = EventSpool.open(cfg["spool_root"])
     assert spool.stats()["active_jobs"] == 1 and not (target / "COMPLETE.json").exists()

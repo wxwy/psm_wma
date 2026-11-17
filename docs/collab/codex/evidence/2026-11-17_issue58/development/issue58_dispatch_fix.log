@@ -1,0 +1,195 @@
+..........F......                                                        [100%]
+=================================== FAILURES ===================================
+______ test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-115/test_one_run_stop_resume_real_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff6fd6e3860>
+
+    def test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit(
+        tmp_path, monkeypatch
+    ):
+        """Actual child consumer, source/cache validators and managed GC; TEST_ONLY
+        rendering/encoding and resource preflight, never Wan/F27/GPU acceptance.
+        """
+        from g2.io import read_json
+        from g2.latent_cache.builder import verify_episode
+        from g2.latent_cache.contract import make_recipe, preprocessing_recipe
+        from g2.latent_cache.streaming import EventSpool
+        from g2.offline.stage_a import package_stage_a, validate_profile_episode
+        from g2.offline.work_lifecycle import episode_work_path, producer_work
+    
+        cfg, path = config_case(tmp_path)
+        monkeypatch.setattr(full.shutil, "which", lambda name: None)
+        kwargs, _, encoder, _, _ = setup_case(tmp_path / "source_fixture")
+        raw = json.loads(path.read_text())
+        raw.update(
+            sample_mode=True,
+            expected_selected_episodes=1,
+            expected_task_count=1,
+            renderer_gpus=[4],
+            workers_per_gpu=1,
+            vae_gpu=4,
+            max_active_jobs=1,
+            min_work_free_bytes=0,
+            min_spool_free_bytes=0,
+            min_output_free_bytes=0,
+            admission_timeout_s=10,
+            drain_timeout_s=20,
+            monitor_interval_s=0.1,
+            profile=kwargs["profile"].to_dict(),
+            expected_recipe_id=make_recipe(
+                encoder.descriptor(), preprocessing_recipe(256, 256)
+            )["recipe_id"],
+        )
+        write_json(path, raw)
+        cfg = full.load_config(path)
+        cfg["_config_path"] = str(path)
+        target = Path(cfg["output_root"]) / "published"
+        row = dict(
+            episode_id=0,
+            task_class="NavigateKitchen",
+            source_fingerprint=kwargs["source_fingerprint"],
+            spatial_frames=[0, 10, 20],
+            expected_relative_output="published",
+            layout_id=0,
+            spatial_state_count=3,
+        )
+        worker_cfg = SimpleNamespace(
+            work_root=Path(cfg["work_root"]),
+            output_root=Path(cfg["output_root"]),
+            sim_direct_geometry_only=True,
+            sim_color_only=True,
+            keep_work=False,
+        )
+        monkeypatch.setattr(
+            full, "preflight", lambda cfg: dict(scope="TEST_ONLY_RESOURCE_PREFLIGHT")
+        )
+        monkeypatch.setattr(producer.plan, "discover", lambda *a, **k: ([row], {0: 1}))
+        command = full.consumer_command
+        allow = Path(cfg["run_root"]) / "ALLOW_TEST_CONSUME"
+        child_code = """import sys,time
+    from pathlib import Path
+    if '--execute' in sys.argv:
+        stop=Path(sys.argv[sys.argv.index('--stop-file')+1])
+        while not Path(sys.argv[1]).exists():
+            if stop.exists(): raise SystemExit(75)
+            time.sleep(.01)
+    from g2.tests.test_view_vae_builder import FakeEncoder
+    import g2.latent_cache.encoding as encoding
+    encoding.WanSingleFrameEncoder=lambda *a,**k: FakeEncoder()
+    from tools.g2.consume_spatial_view_vae_events import main
+    raise SystemExit(main(sys.argv[2:]))
+    """
+        monkeypatch.setattr(
+            full,
+            "consumer_command",
+            lambda cfg, action, stop: [
+                sys.executable,
+                "-c",
+                child_code,
+                str(allow),
+                *command(cfg, action, stop)[3:],
+            ],
+        )
+        first = [True]
+    
+        def simulated_native_worker(self, command, check=False):
+            assert "--manual-start" in command and "--allow-experimental" in command
+            if producer._completed(full.producer_args(cfg), row, kwargs["profile"]):
+                return subprocess.CompletedProcess(command, 0)
+            spool = EventSpool.open(cfg["spool_root"])
+            job = spool.register(
+                target,
+                episode_key="NavigateKitchen/episode_000000",
+                source_fingerprint=row["source_fingerprint"],
+                profile_id=kwargs["profile"].to_dict()["profile_id"],
+            )
+            with producer_work(row, worker_cfg, kwargs["profile"], spool, job) as work:
+                (work / "TEST_ONLY_NATIVE.bin").write_bytes(b"x" * 4096)
+                if not target.exists():
+                    package_stage_a(
+                        destination=target,
+                        event_sink=lambda e: spool.enqueue(job, e),
+                        **kwargs,
+                    )
+                spool.offer_source(job)
+                if first[0]:
+                    write_json(
+                        Path(cfg["run_root"]) / "STOP_REQUESTED.json",
+                        dict(config_id=cfg["config_id"]),
+                    )
+                    first[0] = False
+            return subprocess.CompletedProcess(command, 75)
+    
+        monkeypatch.setattr(full.Supervisor, "worker", simulated_native_worker)
+>       assert full.run(cfg) == 75
+               ^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:390: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/offline/full_production.py:875: in run
+    args, rows, index = prepare_plan(cfg)
+                        ^^^^^^^^^^^^^^^^^
+g2/offline/full_production.py:560: in prepare_plan
+    schedule(args)
+g2/offline/atomic_6views_run.py:669: in schedule
+    index=plan.build(args.mapping,args.raw_root,args.depth_root,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+mapping = PosixPath('/tmp/pytest-of-agent/pytest-115/test_one_run_stop_resume_real_0/mapping.fixture')
+raw_root = PosixPath('/tmp/pytest-of-agent/pytest-115/test_one_run_stop_resume_real_0/raw_root')
+depth_root = PosixPath('/tmp/pytest-of-agent/pytest-115/test_one_run_stop_resume_real_0/depth_root')
+plan_root = PosixPath('/tmp/pytest-of-agent/pytest-115/test_one_run_stop_resume_real_0/run_root/plan')
+target_root = PosixPath('/tmp/pytest-of-agent/pytest-115/test_one_run_stop_resume_real_0/output_root')
+expected = 9126, batch_size = 100, tasks = [], episodes_per_task = None
+resume = True, require_depth = True, allow_index_v2 = True
+allow_index_v3 = True
+output_profile = OutputProfile(sixview_png=True, island_png=True, scene_graph=True, spatial_metadata=True, task_entities=True, selection=True, language=True, robot_pose=True, view_vae=True, marker_variants=True, selection_top_variant='clean')
+
+    def build(mapping, raw_root, depth_root, plan_root, target_root, *,
+              expected=EXPECTED, batch_size=100, tasks=None,
+              episodes_per_task=None, resume=False, require_depth=False,
+              allow_index_v2=False, allow_index_v3=False,output_profile=None):
+        if type(batch_size) is not int or not 1 <= batch_size <= MAX_BATCH:
+            raise PlanError("batch_size must be in [1, 100]")
+        if type(resume) is not bool:
+            raise PlanError("resume must be boolean")
+        rows, layouts = discover(mapping, raw_root, depth_root,
+                                  expected=expected, require_depth=require_depth)
+        chosen, counts = select(rows, tasks=tasks, episodes_per_task=episodes_per_task)
+        target_root = Path(target_root).resolve()
+        skipped = []
+        pending = []
+        for row in chosen:
+            if completed_output(row, target_root,allow_index_v2=allow_index_v2,
+                                allow_index_v3=allow_index_v3,output_profile=output_profile):
+                if not resume:
+                    raise PlanError("existing complete episode requires explicit --resume: " +
+                                    row["expected_relative_output"])
+                skipped.append(row["episode_id"])
+            else:
+                pending.append(row)
+    
+        plan_root = Path(plan_root).absolute()
+        if plan_root.exists() and not resume:
+            raise PlanError("plan_root already exists; use --resume to reuse the pinned plan")
+        if (plan_root == target_root or target_root in plan_root.parents
+                or plan_root in target_root.parents):
+            raise PlanError("keep pre-production plan outside the production output tree")
+        protected = [Path(raw_root).resolve()]
+        if Path(depth_root).exists():
+            protected.append(Path(depth_root).resolve())
+        if Path(mapping).is_file():
+            protected.append(Path(mapping).resolve().parent)
+        if any(plan_root == source or source in plan_root.parents
+               for source in protected):
+>           raise PlanError("plan_root may not overlap protected inputs")
+E           g2.offline.atomic_6views_plan.PlanError: plan_root may not overlap protected inputs
+
+g2/offline/atomic_6views_plan.py:455: PlanError
+----------------------------- Captured stdout call -----------------------------
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+=========================== short test summary info ============================
+FAILED g2/tests/test_one_shot_supervisor.py::test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit
+1 failed, 16 passed in 16.85s

@@ -1,4 +1,44 @@
-# 2026-11-17 CST — Issue58 P0 local REVIEW candidate
+# 2026-11-17 CST — Issue58 P0 corrected candidate REVIEW
+
+Narrow1P1 fixed: prepare_plan returnsfreshrunargs w/manual+experimentalflags.
+Existing endtoend now uses realprepare_plan/build/originalschedule rather than
+mockadapter; source/nativecompute/preflight/VAEcompute only are synthetic.
+Outputdiskreserve8GiB + Reader-held-open across actual archive added withinP0.
+No archive/numeric/core/Child changes since3b13. Corrected source only
+full_production.py plus2existing newtestmodules; frozen for newfixedSHA+closure.
+
+revision2 command returned0:487PASS/13 inherited dependencySKIP/0fail/error,
+all478oldIDs +22new,222stable sources, static/format/bash/help/auditPASS.
+Unchanged finalpeerprobe SHA0fcb570fc6b34a2d7ea6a1e019c4be2f99adb91498b6f2ce2966d466b974f788
+copiedbyte-for-byte into own probe_replay/; GREEN actionrun/worker_calls1,
+notaddedto487. Focus firsthad1fixture-protectionfail/16pass (mappingparent);
+fixture nowinflatroot, originalvalidatorunchanged; focused2PASS. Rawlogs saved.
+Previous3b13 andoriginalpeerRED preserved; nottheGPT handofftarget.
+
+Nextnewfixedcommit, samepeer narrowconfirmation, publicationSHA-binding,
+independentDraftPR+canonicalInboxGPTrequest then STOP. No productedit during
+fixedreview. No server/GPU/weights/fullproduction/deletion/install/train/merge.
+
+# Previous correction claim (historical)
+
+Exact local candidate3b13e6a5e511bd2cae448f3c6f40233b88a99413 /
+Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 received final local
+REQUEST_CHANGES, exactly1P1: prepare_plan returns actionplan toexecute, so
+originalscheduler calls0workers. Peer final report/receipt in own peer/,
+22authorcases independentPASS +1 unchangedprobe RED, not addedtoauthor totals.
+ProbeSHA0fcb570fc6b34a2d7ea6a1e019c4be2f99adb91498b6f2ce2966d466b974f788.
+No GPT request/publication yet; source3b13 retained as rejected localbaseline.
+
+Final peer complete; Owner GPT-only authority still overrides old3way loops.
+Claim narrow fix full_production.py returnfresh runargs withmanual/experimental
+flags, actual-prepare_plan endtoend regression. Add within sameP0 free-output
+reserve plus reader-held-across-GC coverage (peer nonblocking suggestions).
+Keep encoding/storage/core/Child unchanged. Preserve peer RED; replay exact
+probe bytes from separate own path so original observation is not overwritten.
+Then fullCPU newevidence, newfixedSHA, same readonlypeer narrowclosure,
+independentDraftPR +Inbox GPT handoff, STOP. No real execution/newenvironment.
+
+# Previous local candidate (historical)
 
 Independent branch codex/g2-one-shot-production-issue58, based29f9993d.
 Ready for fixed source commit then mandatory read-only peer; formal SHA follows

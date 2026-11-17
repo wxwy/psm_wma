@@ -86,6 +86,7 @@ DEFAULTS = dict(
     max_active_jobs=32,
     min_work_free_bytes=64 * 1024**3,
     min_spool_free_bytes=8 * 1024**3,
+    min_output_free_bytes=8 * 1024**3,
     admission_timeout_s=600,
     drain_timeout_s=1800,
     monitor_interval_s=5,
@@ -133,7 +134,7 @@ def load_config(path):
     ):
         if type(cfg[key]) is not int or cfg[key] < 1:
             raise CacheError("positive finite production limit required: " + key)
-    for key in ("min_work_free_bytes", "min_spool_free_bytes"):
+    for key in ("min_work_free_bytes", "min_spool_free_bytes", "min_output_free_bytes"):
         if type(cfg[key]) is not int or cfg[key] < 0:
             raise CacheError("invalid free-space reserve")
     for key in ("admission_timeout_s", "drain_timeout_s", "monitor_interval_s"):
@@ -580,7 +581,7 @@ def prepare_plan(cfg):
         r["episode_id"] for r in rows
     ) != sorted(cfg["expected_episode_ids"]):
         raise CacheError("sample global episode identities differ")
-    return args, rows, index
+    return producer_args(cfg, "run"), rows, index
 
 
 class Supervisor:
@@ -617,6 +618,8 @@ class Supervisor:
                     >= self.cfg["min_work_free_bytes"]
                     and shutil.disk_usage(self.cfg["spool_root"]).free
                     >= self.cfg["min_spool_free_bytes"]
+                    and shutil.disk_usage(self.cfg["output_root"]).free
+                    >= self.cfg["min_output_free_bytes"]
                 )
                 # An interrupted existing job may finish/reclaim its work; new
                 # jobs wait behind the same finite resource admission gate.
@@ -716,6 +719,7 @@ class Supervisor:
             gpu_rows=gpu,
             free_work_bytes=shutil.disk_usage(self.cfg["work_root"]).free,
             free_spool_bytes=shutil.disk_usage(self.cfg["spool_root"]).free,
+            free_output_bytes=shutil.disk_usage(self.cfg["output_root"]).free,
             failed_ids=self.failed_ids,
             training_ready=False,
         )

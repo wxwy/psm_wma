@@ -10,6 +10,7 @@ from types import SimpleNamespace
 import pytest
 
 from g2.latent_cache.contract import CacheError
+from g2.latent_cache.storage import ViewReader, open_episode_index
 from g2.latent_cache.streaming import EventConsumer
 from g2.offline.stage_a import package_stage_a, validate_profile_episode
 from g2.offline.work_lifecycle import LEASE, episode_work_path, init_root, producer_work
@@ -51,7 +52,13 @@ def test_completed_work_waits_for_renderer_lease_then_reclaims(tmp_path):
         assert validate_profile_episode(target)["profile_complete"]
         assert work.exists() and spool.stats()["active_jobs"] == 1
         assert not spool.reap(job)  # Live producer lock cannot be bypassed.
-    assert spool.reap(job)
+        reader = ViewReader(open_episode_index(target), max_views=1)
+        before = reader.read_view("sixview/floor_top", 0)["latent"].clone()
+    try:
+        assert spool.reap(job)
+        assert before.equal(reader.read_view("sixview/floor_top", 0)["latent"])
+    finally:
+        reader.close()
     assert not work.exists() and spool.stats()["active_jobs"] == 0
     receipt = spool.completed_receipt(job)
     assert receipt["work_cleanup"]["status"] == "complete"
