@@ -191,7 +191,7 @@ def _compare_views(stage, references):
 
 
 def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
-                               robot_pose,marker_appearance,marker_style):
+                               robot_pose,marker_appearance,marker_style,output_profile=None):
     """Standalone opt-in, no scene rasterization for motion-tolerant states.
 
     The raw F27 scene and its projection metadata come from the actual previous
@@ -207,7 +207,8 @@ def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
     from g2.offline.scene_view_event_index import index_state
     views=original_report["views"]
     event_paths=[v["rgb_file"] for v in views]
-    desc=index_state(event,event_paths)
+    variants = None if output_profile is None else output_profile.marker_variants
+    desc=index_state(event,event_paths,marker_variants=variants)
     if event.mode=="ARROW_ONLY":
         # Only point to an existing, validated scene background. This local
         # symlink is diagnostic-only and never enters the final v2 dataset.
@@ -215,7 +216,7 @@ def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
         if not raw_source.is_dir() or raw_source.is_symlink():
             raise ContractError("original unmarked F27 keyframe missing")
         (stage/"g2_original_gpu").symlink_to(raw_source.resolve(strict=True),target_is_directory=True)
-        for view in views:
+        for view in ([] if output_profile is not None else views):
             if Path(view["native_view"]).name!="floor_top":
                 continue
             name=view["native_view"]
@@ -241,17 +242,36 @@ def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
                   scene_motion_translation_tol_m=.001,
                   scene_motion_rotation_tol_deg=1.)
     report["views"]=[dict(v) for v in views]
+    if output_profile is not None:
+        # The latest marked owner may be ARROW_ONLY rather than the FULL
+        # scene keyframe. Carry that owner's actual content/marker evidence.
+        for i, view in enumerate(report['views']):
+            ref = desc['view_refs'].get(view['rgb_file'])
+            if ref is None:
+                continue
+            candidates = list(stage.parent.glob(f"state_{ref['ref_state']:06d}_frame_*/direct_color_views.json"))
+            if len(candidates) != 1:
+                raise ContractError('referenced finalized state report is unavailable')
+            owner_report = read_json(candidates[0])
+            matches = [v for v in owner_report['views'] if v['rgb_file'] == ref['path']]
+            if len(matches) != 1:
+                raise ContractError('referenced finalized View identity is ambiguous')
+            report['views'][i] = dict(matches[0])
     report.pop("robot_pose_marker",None)
     if event.mode=="REUSE_ALL":
         # Never forge a new marker or a per-frame materialization.
         report["scene_marker_reused_state"]=event.final_floor_source_state
-        report["robot_pose_marker"]={"enabled":True,"reused":True,
+        report["robot_pose_marker"]={"enabled":variants is not False,"reused":True,
              "from_state":event.final_floor_source_state,"drawn_views":0}
     write_json(stage/"direct_color_views.json",report)
-    if event.mode=="ARROW_ONLY":
+    if event.mode=="ARROW_ONLY" and variants is not False:
         marker=overlay_final_top_views(stage,robot_pose,
-            style=marker_style,appearance=marker_appearance)
+            style=marker_style,appearance=marker_appearance,
+            preserve_clean=output_profile is not None,
+            base_root=keyframe if output_profile is not None else None)
         report["robot_pose_marker"]=marker
+        if output_profile is not None:
+            report=read_json(stage/'direct_color_views.json')
     return report
 
 
@@ -260,7 +280,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
            color_only=False, robot_pose_marker=True,
            robot_pose_marker_style="game_arrow", marker_appearance=None,
            scene_event_index=False, lazy_texel_decode=False,
-           sim_direct_material=False):
+           sim_direct_material=False,output_profile=None):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views,save_direct_material_views
@@ -273,6 +293,10 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     started = time.perf_counter()
     config = read_json(inputs)
     _, _, _, snapshots = verify_input_config(config)
+    if output_profile is not None and not output_profile.render_rgb:
+        raise ContractError('non-RGB Stage-A consumes snapshots directly, without calling renderer')
+    if output_profile is not None and output_profile.marker_variants and not robot_pose_marker:
+        raise ContractError('profile marker variants conflict with disabled robot marker')
     if sim_direct_material and not (color_only and surface_registry_source and
                                     scene_event_index and backend=="gpu"):
         raise ContractError("mesh-only requires explicit simulation F27/P1 direct GT mode")
@@ -342,7 +366,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
     alpha_proof = None if surface_registry_source else compiled_translucent_only_owner_proof(
         model, visual_specs, initial, dense['model_source_sha256'])
     if scene_event_index and not (surface_registry_source and visual_mesh_source and
-                                  color_only and robot_pose_marker and backend=="gpu"):
+                                  color_only and (robot_pose_marker or output_profile is not None) and backend=="gpu"):
         raise ContractError("scene index experiment requires RGBD-free F27 GPU, color-only, robot marker")
     if scene_event_index:
         from g2.offline.scene_view_event_index import SceneViewCursor,robot_pose_xy_yaw
@@ -430,7 +454,11 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             stage.mkdir(parents=True,exist_ok=False)
             result=_reuse_scene_view_keyframe(
                 stage,scene_keyframe_stage,scene_keyframe_report,
-                event, snapshot, pose, marker_appearance,robot_pose_marker_style)
+                event, snapshot, pose, marker_appearance,robot_pose_marker_style,output_profile)
+            if output_profile is not None:
+                result['raw_robot_pose']=dict(pose,frame=frame,source_frame=frame,
+                                              coordinate_frame=snapshot['world_frame'])
+                write_json(stage/'direct_color_views.json',result)
             marker=result.get("robot_pose_marker")
             if row.get("scene_graph"):
                 sg=row["scene_graph"]
@@ -532,13 +560,28 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
         # Overlay the chassis only AFTER raw View pixel-parity verification.
         # This never enters native rendering, view geometry, or scene-graph data.
         marker = None
-        if robot_pose_marker:
+        if robot_pose_marker and (output_profile is None or output_profile.marker_variants):
             from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
             robot_data = (state if visual_mesh_source or surface_registry_source
                           else get_data(model, states[frame]))
             marker = overlay_final_top_views(
                 stage, chassis_pose(model, robot_data), style=robot_pose_marker_style,
-                appearance=marker_appearance)
+                appearance=marker_appearance,preserve_clean=output_profile is not None)
+        if output_profile is not None:
+            from g2.views.robot_pose_marker import chassis_pose
+            result=read_json(stage/'direct_color_views.json')
+            result['raw_robot_pose']=dict(chassis_pose(model,get_data(model,states[frame])),
+                frame=frame,source_frame=frame,coordinate_frame=snapshot['world_frame'])
+            result['output_profile_id']=output_profile.to_dict()['profile_id']
+            result['scene_source_state']=expected['state_id']
+            result['renderer_view_catalog']=read_json(stage/'g2_original_gpu'/'views.json')['views']
+            if not output_profile.marker_variants:
+                result['robot_pose_marker']={'enabled':False,'reason':'OUTPUT_PROFILE_DISABLED'}
+            result['top_variant_semantics']='CLEAN_PLUS_W_RBS' if output_profile.marker_variants else 'CLEAN_ONLY_MARKER_DISABLED'
+            write_json(stage/'direct_color_views.json',result)
+            if event is not None:
+                scene_keyframe_stage=stage
+                scene_keyframe_report=dict(result)
         if row.get("scene_graph"):
             sg = row["scene_graph"]
             graph = bound_json(sg)
@@ -620,6 +663,9 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             scene_full_render_states=sum(r.get("scene_event_mode")=="FULL" for r in rows),
             scene_arrow_only_states=sum(r.get("scene_event_mode")=="ARROW_ONLY" for r in rows),
             scene_reuse_all_states=sum(r.get("scene_event_mode")=="REUSE_ALL" for r in rows))
+    if output_profile is not None:
+        from .stage_a import RAW_SCHEMA
+        report.update(schema=RAW_SCHEMA,output_profile_id=output_profile.to_dict()['profile_id'])
     write_json(output / "episode_receipt.json", report)
     print("G2_REPOSITORY_EPISODE_PASS", output / "episode_receipt.json", flush=True)
     return report
@@ -630,7 +676,7 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
            color_only=False, robot_pose_marker=True,
            robot_pose_marker_style="game_arrow", marker_appearance=None,
            scene_event_index=False, lazy_texel_decode=False,
-           sim_direct_material=False):
+           sim_direct_material=False,output_profile=None):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
@@ -641,7 +687,7 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
                        marker_appearance=marker_appearance,
                        scene_event_index=scene_event_index,
                        lazy_texel_decode=lazy_texel_decode,
-                       sim_direct_material=sim_direct_material)
+                       sim_direct_material=sim_direct_material,output_profile=output_profile)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -677,11 +723,14 @@ def main():
     add_appearance_args(p)
     p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
                    help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
+    p.add_argument('--output-profile',type=Path,help='explicit new Stage-A profile JSON; legacy default unchanged')
     args = parser.parse_args()
     if args.command == "prepare":
         prepare(args.inputs, args.nav_manifest, args.output,
                 color_only=args.color_only)
     else:
+        from .output_profile import OutputProfile
+        output_profile = OutputProfile.from_dict(read_json(args.output_profile)) if args.output_profile else None
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
                visual_mesh_source=args.renderer in ("f27", "legacy"),
                surface_registry_source=args.renderer == "f27",
@@ -690,7 +739,7 @@ def main():
                marker_appearance=appearance_from_args(args),
                scene_event_index=args.scene_event_index,
                lazy_texel_decode=args.lazy_texel_decode,
-               sim_direct_material=args.sim_direct_material)
+               sim_direct_material=args.sim_direct_material,output_profile=output_profile)
 
 
 if __name__ == "__main__":

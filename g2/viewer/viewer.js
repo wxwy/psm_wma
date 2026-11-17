@@ -6,6 +6,7 @@
   const $ = id => document.getElementById(id);
   const SOURCES = [
     ["floor_top", "俯视 · Floor top", "2 Hz · GLOBAL"],
+    ["floor_top_w_rbs", "俯视 · Floor top + chassis", "2 Hz · GLOBAL"],
     ["upper_up", "仰视 · Upper up", "2 Hz · GLOBAL"],
     ["plus_X", "+X · 侧视", "2 Hz · GLOBAL"],
     ["minus_X", "−X · 侧视", "2 Hz · GLOBAL"],
@@ -32,7 +33,23 @@
     const match = typeof source === "string" ? source.match(ISLAND_SOURCE_RE) : null;
     return match ? {island: match[1], direction: match[2]} : null;
   };
-  const validSource = source => ALL.has(source) || parseIslandSource(source) !== null;
+  const ROOM_SOURCE_RE = /^room:([0-9]+):(floor_top|floor_top_w_rbs|upper_up|plus_X|minus_X|plus_Y|minus_Y)$/;
+  const parseRoomSource = source => {
+    const match = typeof source === "string" ? source.match(ROOM_SOURCE_RE) : null;
+    return match ? {room: match[1], direction: match[2]} : null;
+  };
+  const validSource = source => ALL.has(source) || parseIslandSource(source) !== null || parseRoomSource(source) !== null;
+
+  function globalViewPaths(manifest) {
+    const paths = new Set();
+    for (const row of manifest?.states || []) {
+      for (const path of [...(row.view_pngs || []), ...Object.keys(row.view_refs || {})]) {
+        if (/^sixview\/(?:rooms\/[0-9]+\/)?(?:floor_top(?:_w_rbs)?|upper_up|plus_X|minus_X|plus_Y|minus_Y)\.png$/.test(path))
+          paths.add(path);
+      }
+    }
+    return [...paths].sort();
+  }
 
   // A view exists only if a state owns its PNG or directly references a
   // prior state that owns it. This covers compact v1, v2 and v3 manifests.
@@ -66,12 +83,13 @@
     const views = new Set();
     let hasIsland = false;
     const states = Array.isArray(manifest?.states) ? manifest.states : [];
+    const globalPaths = globalViewPaths(manifest);
     for (let index = 0; index < states.length; index++) {
       const stateRow = states[index];
-      for (const direction of ROOM_DIRECTIONS) {
-        if (!views.has(direction) &&
-            ownerState(manifest, index, "sixview/" + direction + ".png") !== null)
-          views.add(direction);
+      for (const path of globalPaths) {
+        if (ownerState(manifest, index, path) === null) continue;
+        const direction = path.split("/").pop().replace(/\.png$/, "").replace(/_w_rbs$/, "");
+        if (ROOM_DIRECTIONS.includes(direction)) views.add(direction);
       }
       if (Array.isArray(stateRow.islands) &&
           stateRow.islands.some(id => typeof id === "string" &&
@@ -106,11 +124,17 @@
       ownerState(manifest, i, relative) !== null);
     const room = SOURCES.filter(([source]) =>
       !VIDEO.has(source) && valid("sixview/" + source + ".png"));
+    const multiRoom = globalViewPaths(manifest).filter(path => path.startsWith("sixview/rooms/") && valid(path))
+      .map(path => {
+        const parts = path.split("/");
+        const direction = parts[3].replace(/\.png$/, "");
+        return ["room:" + parts[2] + ":" + direction, "Room " + parts[2] + " · " + direction];
+      });
     const videos = SOURCES.filter(([source]) =>
       VIDEO.has(source) && cameras.has(source));
     const islands = islandGroups(manifest);
     return [
-      {name: "全局 SixView", sources: room},
+      {name: "全局 SixView", sources: [...room, ...multiRoom]},
       {name: "机器人相机", sources: videos},
       ...islands.map(island => ({
         name: island.label,
@@ -148,6 +172,8 @@
   function sourceMetadata(source) {
     const known = SOURCES.find(x => x[0] === source);
     if (known) return known;
+    const room = parseRoomSource(source);
+    if (room) return [source, "Room " + room.room + " · " + room.direction, "2 Hz · GLOBAL"];
     const island = parseIslandSource(source);
     if (!island) throw Error("不支持的展示视角");
     return [source, island.island + " · " + island.direction, "2 Hz · ISLAND"];
@@ -528,9 +554,11 @@
   function viewPath(source, index) {
     const entry = state.manifest.states[index];
     const island = parseIslandSource(source);
-    if (!island && (!ALL.has(source) || VIDEO.has(source))) return null;
+    const room = parseRoomSource(source);
+    if (!island && !room && (!ALL.has(source) || VIDEO.has(source))) return null;
     const relative = island
       ? "islands/" + island.island + "/" + island.direction + ".png"
+      : room ? "sixview/rooms/" + room.room + "/" + room.direction + ".png"
       : "sixview/" + source + ".png";
     const owner = ownerState(state.manifest, index, relative);
     if (owner === null) return null;

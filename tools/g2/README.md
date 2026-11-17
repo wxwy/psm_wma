@@ -83,3 +83,24 @@ full-corpus encoding remain separate gates. Ordinary verification is read-only;
 `--reencode` explicitly requests the separate real-VAE comparison and requires
 the same local weights/device identity. See the [Issue52 runbook](../../docs/build/PSM-WMA_G2_spatial_view_vae_cache_2026-11-16.md)
 for the library ABI, atomic resume contract and precise validation scope.
+
+## Issue54 Stage A candidate producer profile
+
+The original `python -m g2.offline.atomic_6views_run` accepts an explicit
+`--output-profile` JSON and `--flat-root` caption authority. Candidate examples
+are in `tools/g2/profiles/`; use a new staging output/plan/work root. Omitting
+the profile retains strict legacy publishing. `floor_top` is clean only in the
+new schema; its independently stamped sibling is `floor_top_w_rbs`.
+
+```bash
+python -m tools.g2.verify_spatial_profile --episode-root /path/to/new/episode
+# Inspect a sealed source awaiting the next-batch VAE consumer; exit 75 pending:
+python -m tools.g2.verify_spatial_profile --episode-root /path/to/new/episode \
+  --allow-source-ready
+```
+
+This first batch includes metadata/GT roles/selection/candidate text and A2
+event/seal interfaces. The parallel VAE consumer and new-source post-hoc adapter
+are not implemented yet: VAE-enabled profiles remain SOURCE_READY with no final
+COMPLETE. Do not send them to the legacy completed-package builder or synthesize
+its completion marker. See the [Stage A implementation/runbook](../../docs/build/PSM-WMA_G2_Stage_A_A1_implementation_2026-11-17.md).

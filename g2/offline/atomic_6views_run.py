@@ -77,6 +77,8 @@ class WorkerConfig:
     robot_pose_marker: bool=True
     robot_pose_marker_style: str="game_arrow"
     marker_appearance: MarkerAppearance=field(default_factory=MarkerAppearance)
+    output_profile: Path | None=None
+    flat_root: Path=plan.FLAT
 
 
 def event(kind, *, row=None, **values):
@@ -262,6 +264,20 @@ def produce_one(row,config):
     # Rendering is a separate process with physical EGL pinning, not a shared
     # MuJoCo/GL context inside the CPU orchestrator.
     start=time.monotonic()
+    profile = None
+    if config.output_profile is not None:
+        from .output_profile import OutputProfile
+        from .stage_a import validate_profile_episode
+        profile=(config.output_profile if isinstance(config.output_profile,OutputProfile)
+                 else OutputProfile.from_dict(read_json(config.output_profile)))
+        if config.output_root.absolute()==plan.OUTPUT.absolute():
+            raise ContractError('new Stage-A profile requires explicit independent staging output')
+        existing=config.output_root/row['expected_relative_output']
+        if existing.exists():
+            result=validate_profile_episode(existing,require_complete=False,expected_profile=profile)
+            if result['source_fingerprint']!=row['source_fingerprint']:
+                raise ContractError('Stage-A resume source identity differs')
+            return result
     work=config.work_root/row["task_class"]/f"episode_{row['episode_id']:06d}"
     # Separate source-mode namespace is required: no legacy snapshot/color/F27
     # stage receipt may be silently reused by the new direct GT recipe.
@@ -270,8 +286,14 @@ def produce_one(row,config):
     if config.sim_direct_geometry_only:
         work=work/("direct_gt_geometry_only_color_only_v1" if config.sim_color_only
                    else "direct_gt_geometry_only_v1")
+    if profile is not None:
+        work=work/('stage_a_'+profile.to_dict()['profile_id'])
     work.mkdir(parents=True,exist_ok=True)
+    profile_path = work/'output_profile.json'
+    if profile is not None:
+        write_json(profile_path,profile.to_dict())
     original=row["original"]
+    source_guards={str(p):plan.sha_file(p) for p in original.values()} if profile is not None else None
     scene=f"robocasa365_atomic_{row['episode_id']:06d}"
     nav_env=_nav_env(config)
     asset_roots=(config.robocasa_repo,config.robosuite_repo)
@@ -376,8 +398,28 @@ def produce_one(row,config):
         role_map=metadata/"role_map.json",
         visual_inventory=roster/"dense_manifest.json",
         bundle_manifest=bundle/"bundle.json",
-        layout_id=row["layout_id"],output=p),
+        layout_id=row["layout_id"],output=p,
+        **({'include_robot_pose':profile.robot_pose} if profile is not None else {})),
         required=("episode_inputs.json","COMPLETE.json"))
+    def publish_profile(rendered):
+        from .language_context import load_flat_captions
+        from .stage_a import package_stage_a
+        metadata=read_json(original['ep_meta.json'])
+        captions,authority=(load_flat_captions(config.flat_root,episode_id=row['episode_id'],
+            frames=row['spatial_frames'],ep_meta_lang=metadata.get('lang'))
+            if profile.language else (None,None))
+        result=package_stage_a(snapshots/'episode_inputs.json',rendered,
+            config.output_root/row['expected_relative_output'],profile=profile,
+            episode_id=row['episode_id'],task_class=row['task_class'],ep_meta=metadata,
+            source_fingerprint=row['source_fingerprint'],captions=captions,caption_authority=authority,
+            source_guards=source_guards)
+        event('EPISODE_DONE' if result['profile_complete'] else 'EPISODE_SOURCE_READY',
+              row=row,states=result['state_count'],profile_complete=result['profile_complete'])
+        if not config.keep_work and result['profile_complete']:
+            shutil.rmtree(work)
+        return result
+    if profile is not None and not profile.render_rgb:
+        return publish_profile(None)
     if config.sim_direct_material:
         # Simulation-only direct material path: source/GT/Scene Graph are
         # present, but NO 10mm colored voxelization or native-color stage.
@@ -425,6 +467,8 @@ def produce_one(row,config):
         command=[config.python,"-m","g2.offline.episode","render",
             "--inputs",snapshots/"episode_inputs.json",
             "--output",p,"--backend","gpu","--renderer","f27"]
+        if profile is not None:
+            command += ['--output-profile',profile_path]
         if not config.sim_direct_material:
             command+=["--prepared",prepared,"--native-output",dualmap]
         command+=(
@@ -447,6 +491,8 @@ def produce_one(row,config):
               sim_direct_material=True if config.sim_direct_material else None,
               sg_event_index=True if config.sg_event_index else None)
     final=config.output_root/row["expected_relative_output"]
+    if profile is not None:
+        return publish_profile(f27)
     if config.sg_event_index:
         from .scene_graph_compact_v3 import package_indexed_sg_v3
         result=package_indexed_sg_v3(
@@ -477,6 +523,20 @@ def _load_selection(plan_root):
     if len(ids)!=len(set(ids)):
         raise ContractError("duplicate episode in pinned plan")
     return plans
+
+
+def _output_profile(args):
+    if getattr(args,'output_profile',None) is None:
+        return None
+    from .output_profile import OutputProfile
+    if getattr(args,'output_profile_sha256',None) and plan.sha_file(args.output_profile)!=args.output_profile_sha256:
+        raise ContractError('output profile file changed after dispatch')
+    return OutputProfile.from_dict(read_json(args.output_profile))
+
+
+def _completed(args,row,profile):
+    return plan.completed_output(row,args.output_root,allow_index_v2=args.scene_event_index,
+                                 allow_index_v3=args.sg_event_index,output_profile=profile)
 
 
 def _ports(gpus,workers,base):
@@ -546,11 +606,13 @@ def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *,
 
 
 def schedule(args):
+    profile=_output_profile(args)
+    profile_sha=plan.sha_file(args.output_profile) if profile is not None else None
     rows,_=plan.discover(args.mapping,args.raw_root,args.depth_root,
                          require_depth=args.require_depth)
     selected,counts=plan.select(rows,tasks=args.task,
                                  episodes_per_task=args.episodes_per_task)
-    pending=[r for r in selected if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index)]
+    pending=[r for r in selected if not _completed(args,r,profile)]
     event("SELECTION",total=len(selected),pending=len(pending),
           selected_tasks=len(counts),per_task=args.episodes_per_task or "ALL",
           renderer="f27")
@@ -565,7 +627,7 @@ def schedule(args):
         tasks=args.task,episodes_per_task=args.episodes_per_task,
         batch_size=args.batch_size,resume=args.resume,
         require_depth=args.require_depth,
-        allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index)
+        allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index,output_profile=profile)
     if args.action=="plan":
         event("PLAN",path=args.plan_root,episodes=index["episodes_total"],
               batches=index["batches_total"],production_started=False)
@@ -579,7 +641,7 @@ def schedule(args):
     if any(saved.get(r["episode_id"],{}).get("source_fingerprint")!=r["source_fingerprint"]
            for r in all_rows):
         raise ContractError("pinned plan differs from current original source")
-    jobs=[r for r in all_rows if not plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index)]
+    jobs=[r for r in all_rows if not _completed(args,r,profile)]
     if not jobs:
         event("ALL_DONE",total=len(selected),skipped_completed=len(selected))
         return 0
@@ -605,10 +667,11 @@ def schedule(args):
     q=queue.Queue()
     for row in jobs:q.put(row)
     failures=[]
+    pending_profiles=[]
     finished=[]
     started=time.monotonic()
     for r in all_rows:
-        if plan.completed_output(r,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index):
+        if _completed(args,r,profile):
             finished.append(r["episode_id"])
     def worker(slot):
         gpu,subslot,port=slot
@@ -633,6 +696,10 @@ def schedule(args):
                      "--min-z",str(args.min_z),"--max-z",str(args.max_z),
                      "--manual-start","--allow-experimental"]
                 if args.keep_work:cmd.append("--keep-work")
+                if profile is not None:
+                    cmd.extend(['--output-profile',str(args.output_profile),
+                                '--output-profile-sha256',profile_sha,
+                                '--flat-root',str(args.flat_root)])
                 if args.sim_direct_geometry_only:cmd.append("--sim-direct-geometry-only")
                 if args.sim_color_only:cmd.append("--sim-color-only")
                 if args.sim_direct_material:cmd.append("--sim-direct-material")
@@ -643,8 +710,18 @@ def schedule(args):
                 cmd.extend(["--robot-pose-marker-style",args.robot_pose_marker_style])
                 cmd.extend(appearance_cli_args(appearance_from_args(args)))
                 try:
-                    subprocess.run(cmd,check=True)
-                    if not plan.completed_output(row,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index):
+                    result=subprocess.run(cmd,check=False)
+                    if result.returncode==75 and profile is not None and profile.view_vae:
+                        from .stage_a import validate_profile_episode
+                        pending=validate_profile_episode(args.output_root/row['expected_relative_output'],
+                            require_complete=False,expected_profile=profile)
+                        if (pending['source_fingerprint']!=row['source_fingerprint']
+                                or pending['profile_complete'] or pending['products']['view_vae']!='pending'):
+                            raise ContractError('worker pending output does not match declared profile')
+                        status='SOURCE_READY_VAE_PENDING'
+                        break
+                    result.check_returncode()
+                    if not _completed(args,row,profile):
                         raise ContractError("worker returned without matching final output")
                     status="DONE"
                     break
@@ -654,6 +731,8 @@ def schedule(args):
             with lock:
                 if status=="DONE":
                     finished.append(row["episode_id"])
+                elif status=='SOURCE_READY_VAE_PENDING':
+                    pending_profiles.append(row['episode_id'])
                 else:
                     failures.append(row["episode_id"])
                 n=len(finished)
@@ -671,8 +750,9 @@ def schedule(args):
         list(ex.map(worker,slots))
     event("SUMMARY",selected=len(selected),finished=len(finished),
           failed=len(failures),failed_ids=sorted(failures),
+          pending=len(pending_profiles),pending_ids=sorted(pending_profiles),
           seconds=round(time.monotonic()-started,1))
-    return 0 if not failures else 2
+    return 2 if failures else 75 if pending_profiles else 0
 
 
 def run_one_cli(args):
@@ -683,7 +763,8 @@ def run_one_cli(args):
         selected=next((x for x in rows if x["episode_id"]==args.episode_id),None)
         if selected is not None:break
     else:raise ContractError("episode is absent from immutable source plan")
-    if plan.completed_output(selected,args.output_root,allow_index_v2=args.scene_event_index,allow_index_v3=args.sg_event_index):
+    profile=_output_profile(args)
+    if _completed(args,selected,profile):
         event("EPISODE_REUSE",row=selected)
         return 0
     config=WorkerConfig(
@@ -693,6 +774,7 @@ def run_one_cli(args):
         keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,
         port=args.ros_port,gpu=args.gpu,
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
+        output_profile=profile,flat_root=args.flat_root,
         sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
             sim_direct_material=args.sim_direct_material,
@@ -702,8 +784,8 @@ def run_one_cli(args):
             robot_pose_marker=args.robot_pose_marker,
             robot_pose_marker_style=args.robot_pose_marker_style,
             marker_appearance=appearance_from_args(args))
-    produce_one(selected,config)
-    return 0
+    result=produce_one(selected,config)
+    return 0 if result.get('profile_complete',True) else 75
 
 
 def parser():
@@ -714,6 +796,9 @@ def parser():
     p.add_argument("--depth-root",type=Path,default=plan.DEPTH)
     p.add_argument("--require-depth",action="store_true")
     p.add_argument("--output-root",type=Path,default=plan.OUTPUT)
+    p.add_argument('--output-profile',type=Path,help='explicit Stage-A output profile JSON; requires new staging')
+    p.add_argument('--output-profile-sha256',help='dispatch-time immutable profile file identity')
+    p.add_argument('--flat-root',type=Path,default=plan.FLAT,help='authoritative frame.task_index/tasks.parquet caption source')
     p.add_argument("--plan-root",type=Path)
     p.add_argument("--work-root",type=Path)
     p.add_argument("--task",action="append",default=[])
@@ -772,8 +857,9 @@ def main(argv=None):
                             "--manual-start --allow-experimental")
     if args.sim_color_only and not args.sim_direct_geometry_only:
         raise ContractError("color-only Full Map requires --sim-direct-geometry-only")
+    profile=_output_profile(args)
     if args.scene_event_index and not (args.sim_color_only and args.sim_direct_geometry_only
-                                       and args.robot_pose_marker):
+                                       and (args.robot_pose_marker or profile is not None)):
         raise ContractError("P1 View event indexing requires explicit direct GT + color-only + marker")
     if args.sim_direct_material and not (args.scene_event_index and args.sim_color_only
                                          and args.sim_direct_geometry_only):

@@ -1,3 +1,55 @@
+# 2026-11-17 CST — Issue54 Stage A / first batch: REVIEW (author CPU candidate)
+
+Implementation commit will be recorded by the following bookkeeping receipt;
+tested source hashes are frozen in docs/collab/codex/evidence/2026-11-17_issue54_a1/.
+Final author checks: original283 identities retained/283PASS, StageA45PASS,
+producer/marker/viewer42PASS +3 dependency skips (mujoco2, pandas1), no failures/errors.
+New modules selectedRuff/format, existingF/E9, JS syntax/smoke, CLIhelps and
+synthetic protocol/strict validator PASS; source fingerprints stable. #53 core,
+original283 testfiles, Child/Gitlink unchanged. Existing evidence is immutable.
+First batch implements profile/schema/completion, native projections/members,
+18task source rules, explicit top variant selection, candidate language/text bank,
+clean+marked owner/reference support and viewer. A2 only final-pixel/seal/spool
+interfaces: no worker/ACK/queue recovery/new-source VAE adapter or finalVAE completion.
+VAE profiles remainSOURCE_READY/exit75; no fakeCOMPLETE, training_ready=false.
+Owner supplied full takeover/addendum text in this conversation after the async
+request; original702-line Library bytes remain unavailable, no original-read claim.
+Runbook docs/build/PSM-WMA_G2_Stage_A_A1_implementation_2026-11-17.md.
+Publication precheck: fetch succeeded; advertised/tracking V3fe1089fb and
+PR53d36caf0f agree, HEAD..origin/V3 empty. No V3 or PR53 modification/merge.
+Next: fixedSHA, scoped read-only peer check required byAGENTS, stackedDraft,
+canonicalInbox handoff then STOP for GPT independent server review. No server/GPU/
+Wan/fullproduction/train/state15/jointalignment/newenvironment executed.
+
+Prior #53 status correction: exact778d1ed8/d5c1ffc7 APPROVE_CODE report at
+docs/collab/chatgpt/reviews/2026-11-16_Issue52_778d1ed8_d5c1ffc7_ViewVAE_R2_APPROVE_CODE.md
+and PR53 issuecomment6919489156 original-env202record strictreencode PASS are
+the latest supplied evidence. Historical R2 REVIEW/NOT_RUN below is author-time
+history, not a reversal of that later GPT acceptance; productionconfig/fullStageA
+and PRmerge remain unapproved.
+
+ACK 2026-11-17T09:39:58.058334+08:00. New branch codex/g2-stage-a-offline-issue54 from reviewedPR53
+head d36caf0fc35f3a84b739dc8df58ab992eb9f6917, fixed approved core
+778d1ed8a031429fd857c980fc872d4c85123cd1. Latest V3 fe1089fb925d86697bebd9bef18608d9c9eae87b
+merged losslessly only on this independent branch at66583e16d75f7704bbafe6c429e97c9a0c9df9c2.
+Child/Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav G2 remote
+70eb7b447e65d793b0ebe18b258291ce46f057c1 independently ls-remote verified.
+Read Issue54/body/latestdual-floor comment, v2.1 full, exact R2APPROVE_CODE and
+original-env real202record receipt. Original702-line Library handoff not found
+in workspace/repository; Owner subsequently supplied takeover text (see above),
+continuing explicit v2.1/Issue54 authority. Historical SESSION/TODO sections remain intact.
+Latest Owner supersedes v2.0 object retrieval and historical V2/MM/Kimi waits.
+
+Codex owns new offline output_profile/spatial_metadata/task_entities/
+language_context/stage_a modules, batch2 source-ready/final-pixel interfaces,
+minimal original producer/episode/renderer metadata and marker integration,
+newCPUtests/docs/CLI/own evidence. Preserve #53 core283 identities, no VAEcore
+rewrite, no original review mutation, no Child/nav/Gitlink/training/G1 changes.
+Latest dual-floor requirement included: clean floor_top + marked _w_rbs variants,
+independent owners, canonicaldirection count, explicit selection variant choice.
+No new environment/dependencies or GPU/real data production/training/merge.
+Deliver A1 fixedSHA and batch2 interfaces on stacked Draft, stop for GPT gate.
+
 # 2026-11-16 CST — Issue52 R2 namespace compatibility: REVIEW
 
 Fixed R2 Root 778d1ed8a031429fd857c980fc872d4c85123cd1; previous implementation

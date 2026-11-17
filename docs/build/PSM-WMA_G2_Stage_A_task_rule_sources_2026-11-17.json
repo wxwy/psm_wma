@@ -1,0 +1,860 @@
+{
+  "files": {
+    "robocasa/environments/kitchen/atomic/kitchen_blender.py": {
+      "git_blob_sha1": "d4c6325ec351a9aba77870db032a16d46da6c484",
+      "sha256": "f58623c6a02075883ceebeb8c82ee3f06e69e05156e3606094ac2f5ac8945f25"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_coffee.py": {
+      "git_blob_sha1": "74859485dc6499546d42f06479302dc047c4d8f1",
+      "sha256": "68aa0c583805b6f373eed512e806a0f7e216af967a0460624c9236cd42e11f8a"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_doors.py": {
+      "git_blob_sha1": "c58b3c907ea6479358686ed39c770e2ef626fe96",
+      "sha256": "14f25afdf31f114c67762157eb7c71197bd97c5b2581dafc383808d3a265fb35"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_drawer.py": {
+      "git_blob_sha1": "7b7f6820eafe77b722faa335849d01dbd02596bb",
+      "sha256": "9a71e5f5f669e571961fd36e22ced6a3e5b22fa0b7679b758900a2d63341dc30"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_electric_kettle.py": {
+      "git_blob_sha1": "019850963a37c886b3fc9793f470bbac2dc6c21b",
+      "sha256": "103c5426e2d4d94ab0a2d5e75e68bdbccfc28414ca0b28dc352e679c2fd790ac"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_microwave.py": {
+      "git_blob_sha1": "cef64d4c7306e347d3a6d8a046ddd34505248fe9",
+      "sha256": "41f67ba5d2c28ab9d08eca72fa8452df8af6aa02b4d44f503ee162220ad08b59"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_navigate.py": {
+      "git_blob_sha1": "9f4419bb046d6a64bbacad25cbf0cb5b1504a431",
+      "sha256": "c38c5aeca90a3201962b3b0cceaa6fec15c65627d98f2bae75ae7ea6a830bec6"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_pick_place.py": {
+      "git_blob_sha1": "2ab2220c48f1bedf89e540b9c548da391835577a",
+      "sha256": "b6efe23d168c86f5d81e559b4027b60eb862b4f10be415a66210521eeeee2738"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_sink.py": {
+      "git_blob_sha1": "a3da7c4669ac99ac5970f9d5aa783c51713d7014",
+      "sha256": "7e7023a251292bbc22962698251d93d6d7941625736424a641c871b8e97b03a9"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_stand_mixer.py": {
+      "git_blob_sha1": "1c18b9869b00162867ec0fd6321cb83e936c5faa",
+      "sha256": "1fcd169823750541f470733c377bfa0317162a6688ebc72a3334faa8209f6924"
+    },
+    "robocasa/environments/kitchen/atomic/kitchen_stove.py": {
+      "git_blob_sha1": "d34785e57ae0399f09dd76d0845094c74387e058",
+      "sha256": "d790637ec2aeb304afb379d9ec7213dd42fed99460c414062371d77a50e490bf"
+    }
+  },
+  "repository": "robocasa/robocasa",
+  "revision": "425684d332f135f5b30a40b321f52d15a0fe9250",
+  "schema": "g2_atomic_task_rule_public_source_evidence_v1",
+  "scope": "PUBLIC_INITIALIZATION_SEMANTICS_REFERENCE_NOT_HISTORICAL_EPISODE_GENERATOR_CERTIFICATION",
+  "success_checks_used_as_current_facts": false,
+  "tasks": {
+    "CloseBlenderLid": {
+      "definition_chain": [
+        {
+          "class": "CloseBlenderLid",
+          "class_line": 45,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 72,
+              "start_line": 59
+            },
+            "_setup_kitchen_references": {
+              "end_line": 78,
+              "start_line": 74
+            },
+            "get_ep_meta": {
+              "end_line": 83,
+              "start_line": 80
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_blender.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "blender",
+          [
+            "Blender"
+          ]
+        ]
+      ]
+    },
+    "CloseFridge": {
+      "definition_chain": [
+        {
+          "class": "CloseFridge",
+          "class_line": 251,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 253,
+              "start_line": 252
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        },
+        {
+          "class": "CloseDoor",
+          "class_line": 203,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 205,
+              "start_line": 204
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        },
+        {
+          "class": "ManipulateDoor",
+          "class_line": 5,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 20,
+              "start_line": 16
+            },
+            "_get_obj_cfgs": {
+              "end_line": 116,
+              "start_line": 74
+            },
+            "_setup_kitchen_references": {
+              "end_line": 28,
+              "start_line": 22
+            },
+            "get_ep_meta": {
+              "end_line": 48,
+              "start_line": 30
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "fxtr",
+          [
+            "FridgeFrenchDoor",
+            "FridgeSideBySide",
+            "FridgeBottomFreezer",
+            "Fridge"
+          ]
+        ]
+      ]
+    },
+    "CloseToasterOvenDoor": {
+      "definition_chain": [
+        {
+          "class": "CloseToasterOvenDoor",
+          "class_line": 350,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 362,
+              "start_line": 359
+            },
+            "_setup_kitchen_references": {
+              "end_line": 369,
+              "start_line": 364
+            },
+            "get_ep_meta": {
+              "end_line": 374,
+              "start_line": 371
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "toaster_oven",
+          [
+            "ToasterOven"
+          ]
+        ]
+      ]
+    },
+    "CoffeeSetupMug": {
+      "definition_chain": [
+        {
+          "class": "CoffeeSetupMug",
+          "class_line": 109,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 115,
+              "start_line": 114
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_coffee.py"
+        },
+        {
+          "class": "PickPlaceCoffee",
+          "class_line": 6,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 17,
+              "start_line": 15
+            },
+            "_get_obj_cfgs": {
+              "end_line": 90,
+              "start_line": 48
+            },
+            "_setup_kitchen_references": {
+              "end_line": 26,
+              "start_line": 19
+            },
+            "get_ep_meta": {
+              "end_line": 46,
+              "start_line": 28
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_coffee.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "destination",
+          "coffee_machine",
+          [
+            "CoffeeMachine"
+          ]
+        ]
+      ]
+    },
+    "NavigateKitchen": {
+      "definition_chain": [
+        {
+          "class": "NavigateKitchen",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 19,
+              "start_line": 10
+            },
+            "_setup_kitchen_references": {
+              "end_line": 113,
+              "start_line": 21
+            },
+            "get_ep_meta": {
+              "end_line": 122,
+              "start_line": 115
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_navigate.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "target_fixture",
+          null
+        ]
+      ]
+    },
+    "OpenCabinet": {
+      "definition_chain": [
+        {
+          "class": "OpenCabinet",
+          "class_line": 208,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 210,
+              "start_line": 209
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        },
+        {
+          "class": "OpenDoor",
+          "class_line": 198,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 200,
+              "start_line": 199
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        },
+        {
+          "class": "ManipulateDoor",
+          "class_line": 5,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 20,
+              "start_line": 16
+            },
+            "_get_obj_cfgs": {
+              "end_line": 116,
+              "start_line": 74
+            },
+            "_setup_kitchen_references": {
+              "end_line": 28,
+              "start_line": 22
+            },
+            "get_ep_meta": {
+              "end_line": 48,
+              "start_line": 30
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_doors.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "fxtr",
+          [
+            "SingleCabinet",
+            "HingeCabinet",
+            "DoubleCabinet",
+            "Cabinet"
+          ]
+        ]
+      ]
+    },
+    "OpenDrawer": {
+      "definition_chain": [
+        {
+          "class": "OpenDrawer",
+          "class_line": 195,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 201,
+              "start_line": 200
+            },
+            "_get_obj_cfgs": {
+              "end_line": 246,
+              "start_line": 203
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_drawer.py"
+        },
+        {
+          "class": "ManipulateDrawer",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 32,
+              "start_line": 15
+            },
+            "_setup_kitchen_references": {
+              "end_line": 121,
+              "start_line": 100
+            },
+            "get_ep_meta": {
+              "end_line": 130,
+              "start_line": 123
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_drawer.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "drawer",
+          [
+            "Drawer"
+          ]
+        ]
+      ]
+    },
+    "OpenStandMixerHead": {
+      "definition_chain": [
+        {
+          "class": "OpenStandMixerHead",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 11,
+              "start_line": 9
+            },
+            "_setup_kitchen_references": {
+              "end_line": 16,
+              "start_line": 13
+            },
+            "get_ep_meta": {
+              "end_line": 21,
+              "start_line": 18
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_stand_mixer.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "stand_mixer",
+          [
+            "StandMixer"
+          ]
+        ]
+      ]
+    },
+    "PickPlaceCounterToCabinet": {
+      "definition_chain": [
+        {
+          "class": "PickPlaceCounterToCabinet",
+          "class_line": 24,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 37,
+              "start_line": 34
+            },
+            "_get_obj_cfgs": {
+              "end_line": 125,
+              "start_line": 70
+            },
+            "_setup_kitchen_references": {
+              "end_line": 49,
+              "start_line": 39
+            },
+            "get_ep_meta": {
+              "end_line": 61,
+              "start_line": 51
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        },
+        {
+          "class": "PickPlace",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 18,
+              "start_line": 14
+            },
+            "_get_obj_cfgs": {
+              "end_line": 21,
+              "start_line": 20
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "destination",
+          "cab",
+          null
+        ],
+        [
+          "source_reference",
+          "counter",
+          null
+        ]
+      ]
+    },
+    "PickPlaceCounterToStove": {
+      "definition_chain": [
+        {
+          "class": "PickPlaceCounterToStove",
+          "class_line": 811,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 820,
+              "start_line": 819
+            },
+            "_get_obj_cfgs": {
+              "end_line": 886,
+              "start_line": 847
+            },
+            "_setup_kitchen_references": {
+              "end_line": 832,
+              "start_line": 822
+            },
+            "get_ep_meta": {
+              "end_line": 845,
+              "start_line": 834
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        },
+        {
+          "class": "PickPlace",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 18,
+              "start_line": 14
+            },
+            "_get_obj_cfgs": {
+              "end_line": 21,
+              "start_line": 20
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "destination_reference",
+          "stove",
+          null
+        ]
+      ]
+    },
+    "PickPlaceDrawerToCounter": {
+      "definition_chain": [
+        {
+          "class": "PickPlaceDrawerToCounter",
+          "class_line": 1532,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 1538,
+              "start_line": 1537
+            },
+            "_get_obj_cfgs": {
+              "end_line": 1592,
+              "start_line": 1562
+            },
+            "_setup_kitchen_references": {
+              "end_line": 1548,
+              "start_line": 1540
+            },
+            "get_ep_meta": {
+              "end_line": 1560,
+              "start_line": 1554
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        },
+        {
+          "class": "PickPlace",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 18,
+              "start_line": 14
+            },
+            "_get_obj_cfgs": {
+              "end_line": 21,
+              "start_line": 20
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "source_reference",
+          "drawer",
+          null
+        ],
+        [
+          "related_reference",
+          "counter",
+          null
+        ]
+      ]
+    },
+    "PickPlaceSinkToCounter": {
+      "definition_chain": [
+        {
+          "class": "PickPlaceSinkToCounter",
+          "class_line": 365,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 375,
+              "start_line": 373
+            },
+            "_get_obj_cfgs": {
+              "end_line": 461,
+              "start_line": 406
+            },
+            "_setup_kitchen_references": {
+              "end_line": 391,
+              "start_line": 377
+            },
+            "get_ep_meta": {
+              "end_line": 404,
+              "start_line": 393
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        },
+        {
+          "class": "PickPlace",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 18,
+              "start_line": 14
+            },
+            "_get_obj_cfgs": {
+              "end_line": 21,
+              "start_line": 20
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "source_reference",
+          "sink",
+          null
+        ]
+      ]
+    },
+    "PickPlaceToasterToCounter": {
+      "definition_chain": [
+        {
+          "class": "PickPlaceToasterToCounter",
+          "class_line": 994,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 1000,
+              "start_line": 999
+            },
+            "_get_obj_cfgs": {
+              "end_line": 1057,
+              "start_line": 1025
+            },
+            "_setup_kitchen_references": {
+              "end_line": 1011,
+              "start_line": 1002
+            },
+            "get_ep_meta": {
+              "end_line": 1020,
+              "start_line": 1013
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        },
+        {
+          "class": "PickPlace",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 18,
+              "start_line": 14
+            },
+            "_get_obj_cfgs": {
+              "end_line": 21,
+              "start_line": 20
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_pick_place.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "source_reference",
+          "toaster",
+          [
+            "Toaster"
+          ]
+        ]
+      ]
+    },
+    "SlideDishwasherRack": {
+      "definition_chain": [
+        {
+          "class": "SlideDishwasherRack",
+          "class_line": 303,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 309,
+              "start_line": 308
+            },
+            "_setup_kitchen_references": {
+              "end_line": 321,
+              "start_line": 311
+            },
+            "get_ep_meta": {
+              "end_line": 328,
+              "start_line": 323
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_drawer.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "dishwasher",
+          [
+            "Dishwasher"
+          ]
+        ]
+      ]
+    },
+    "TurnOffStove": {
+      "definition_chain": [
+        {
+          "class": "TurnOffStove",
+          "class_line": 127,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 129,
+              "start_line": 128
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_stove.py"
+        },
+        {
+          "class": "ManipulateStoveKnob",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 19,
+              "start_line": 15
+            },
+            "_get_obj_cfgs": {
+              "end_line": 103,
+              "start_line": 76
+            },
+            "_setup_kitchen_references": {
+              "end_line": 45,
+              "start_line": 21
+            },
+            "get_ep_meta": {
+              "end_line": 60,
+              "start_line": 47
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_stove.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "stove",
+          [
+            "Stove",
+            "Stovetop"
+          ]
+        ]
+      ]
+    },
+    "TurnOnElectricKettle": {
+      "definition_chain": [
+        {
+          "class": "TurnOnElectricKettle",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 14,
+              "start_line": 11
+            },
+            "_setup_kitchen_references": {
+              "end_line": 22,
+              "start_line": 16
+            },
+            "get_ep_meta": {
+              "end_line": 27,
+              "start_line": 24
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_electric_kettle.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "electric_kettle",
+          [
+            "ElectricKettle"
+          ]
+        ]
+      ]
+    },
+    "TurnOnMicrowave": {
+      "definition_chain": [
+        {
+          "class": "TurnOnMicrowave",
+          "class_line": 82,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 84,
+              "start_line": 83
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_microwave.py"
+        },
+        {
+          "class": "MicrowavePressButton",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 16,
+              "start_line": 13
+            },
+            "_get_obj_cfgs": {
+              "end_line": 62,
+              "start_line": 40
+            },
+            "_setup_kitchen_references": {
+              "end_line": 26,
+              "start_line": 18
+            },
+            "get_ep_meta": {
+              "end_line": 38,
+              "start_line": 28
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_microwave.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "microwave",
+          [
+            "Microwave"
+          ]
+        ]
+      ]
+    },
+    "TurnOnSinkFaucet": {
+      "definition_chain": [
+        {
+          "class": "TurnOnSinkFaucet",
+          "class_line": 112,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 114,
+              "start_line": 113
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_sink.py"
+        },
+        {
+          "class": "ManipulateSinkFaucet",
+          "class_line": 4,
+          "initialization_methods": {
+            "__init__": {
+              "end_line": 17,
+              "start_line": 13
+            },
+            "_get_obj_cfgs": {
+              "end_line": 92,
+              "start_line": 50
+            },
+            "_setup_kitchen_references": {
+              "end_line": 25,
+              "start_line": 19
+            },
+            "get_ep_meta": {
+              "end_line": 36,
+              "start_line": 27
+            }
+          },
+          "path": "robocasa/environments/kitchen/atomic/kitchen_sink.py"
+        }
+      ],
+      "fixture_roles": [
+        [
+          "target",
+          "sink",
+          [
+            "Sink"
+          ]
+        ]
+      ]
+    }
+  }
+}

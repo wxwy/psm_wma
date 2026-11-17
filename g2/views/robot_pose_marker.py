@@ -258,8 +258,12 @@ def _stamp(image, x, y, dx, dy, *, style=DEFAULT_MARKER_STYLE,
     image.paste(patch,(round(x)-radius,round(y)-radius),patch)
 
 def overlay_final_top_views(stage, pose, *, style=DEFAULT_MARKER_STYLE,
-                            appearance=MarkerAppearance()):
+                            appearance=MarkerAppearance(), preserve_clean=False,
+                            base_root=None):
     """Stamp only exported top RGBs; do not modify g2_original_gpu or masks."""
+    if preserve_clean:
+        return _overlay_top_variants(stage,pose,style=style,appearance=appearance,
+                                     base_root=base_root)
     from g2.offline.native_transport import sha_file
 
     appearance_key=marker_cache_key(style, appearance)
@@ -307,4 +311,60 @@ def overlay_final_top_views(stage, pose, *, style=DEFAULT_MARKER_STYLE,
     }
     report["robot_pose_marker"] = marker
     write_json(stage / "direct_color_views.json", report)
+    return marker
+
+
+def _overlay_top_variants(stage, pose, *, style, appearance, base_root=None):
+    """New-profile only: derive _w_rbs from final clean pixels, never erase marks."""
+    from g2.offline.native_transport import sha_file
+    from g2.offline.spatial_metadata import asset_identity
+
+    stage = Path(stage)
+    source = stage if base_root is None else Path(base_root)
+    report = read_json(stage/'direct_color_views.json')
+    base_views = [dict(v) for v in report['views']
+                  if Path(v['rgb_file']).stem != 'floor_top_w_rbs']
+    marked_views, details = [], []
+    drawn = 0
+    for view in base_views:
+        view.update(asset_identity(view['rgb_file']))
+        view['marker_drawn'] = False
+        if Path(view['native_view']).name != 'floor_top':
+            continue
+        rel = Path(view['rgb_file'])
+        if rel.is_absolute() or '..' in rel.parts or rel.parts[0] != 'sixview':
+            raise ContractError('unsafe clean top asset')
+        if rel.stem != 'floor_top':
+            raise ContractError('clean top must use original canonical name')
+        meta = read_json(source/'g2_original_gpu'/view['native_view']/'view.json')
+        with Image.open(source/rel) as loaded:
+            image = loaded.convert('RGB').copy()
+        if image.size != (meta['width'],meta['height']):
+            raise ContractError('clean top and native projection dimensions differ')
+        x,y,dx,dy = project(meta,pose)
+        inside = 0 <= x < image.width and 0 <= y < image.height
+        if inside:
+            _stamp(image,x,y,dx,dy,style=style,appearance=appearance)
+            drawn += 1
+        target_rel = rel.with_name('floor_top_w_rbs.png')
+        target = stage/target_rel
+        target.parent.mkdir(parents=True,exist_ok=True)
+        image.save(target)
+        variant = dict(view, rgb_file=str(target_rel),sha256=sha_file(target),
+                       marker_drawn=inside,base_rgb_file=str(rel),
+                       **asset_identity(str(target_rel)))
+        marked_views.append(variant)
+        details.append(dict(native_view=view['native_view'],rgb_file=str(target_rel),
+                            pixel_xy=[round(x,3),round(y,3)],marker_drawn=inside))
+    if not marked_views or not drawn:
+        raise ContractError('robot chassis is outside every exported floor_top view')
+    marker = dict(enabled=True,style=style,recipe_version=MARKER_RECIPE_VERSION,
+                  appearance=appearance.to_dict(),appearance_sha256=marker_cache_key(style,appearance),
+                  drawn_views=drawn,eligible_views=len(marked_views),pose=pose,views=details,
+                  stage='FINAL_CLEAN_PIXELS_THEN_SEPARATE_MARKED_COPY',
+                  affects='FLOOR_TOP_W_RBS_ONLY',clean_base_preserved=True)
+    report.update(views=base_views+marked_views,view_count=len(base_views)+len(marked_views),
+                  canonical_view_count=len(base_views),
+                  robot_pose_marker=marker,top_variant_semantics='CLEAN_PLUS_W_RBS')
+    write_json(stage/'direct_color_views.json',report)
     return marker

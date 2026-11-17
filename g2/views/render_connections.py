@@ -37,6 +37,47 @@ def wall_directions(s,room):
     return result,evidence,uncertain
 
 
+def renderer_member_sets(snapshot):
+    """The renderer's geometry membership plan, independent of pixel visibility.
+
+    Both render_v2 and Stage-A metadata consume this one plan; no RGB detector
+    or second room/Island classifier participates in object--View association.
+    """
+    verify_connection_evidence(snapshot)
+    by_id = {e['id']: e for e in snapshot['entities']}
+    records = {r['entity_id']: r for r in snapshot['connections']['objects']}
+    result = {}
+    for room in snapshot['rooms']:
+        uid = room['uid']
+        objects = {e['id'] for e in snapshot['entities']
+                   if e['kind'] == 'object' and e['room_uid'] == uid}
+        adjacent = {e['id'] for e in snapshot['entities']
+                    if e['kind'] != 'object' and uid in e.get('adjacent_room_uids', [])}
+        directions, _, _ = wall_directions(snapshot, room)
+        prefix = 'rooms/' + str(uid)
+        def add(name, axis, members, island=None):
+            result[name] = dict(axis=axis, room_uid=uid, island_id=island,
+                                native_entity_ids=sorted(members))
+        add(prefix+'/floor_top', 'floor_top',
+            {k for k in objects if records[k]['floor_state'] == 'YES'} |
+            {k for k in adjacent if by_id[k]['kind'] == 'floor'})
+        add(prefix+'/upper_up', 'upper_up',
+            {k for k in objects if records[k]['floor_state'] == 'NO'})
+        for axis in ('+X', '-X', '+Y', '-Y'):
+            walls = set(directions[axis])
+            members = walls | {k for k in objects
+                               if walls.intersection(by_id[k]['root_affiliations'])}
+            add(prefix+'/'+axis.replace('+','plus_').replace('-','minus_'), axis, members)
+        for island in sorted({by_id[k]['island_id'] for k in objects if by_id[k].get('island_id')}):
+            if not re.fullmatch(r'island_[0-9]+_entity_[0-9]+', island):
+                raise ContractError('unsafe native Island ID')
+            members = {k for k in objects if by_id[k].get('island_id') == island}
+            for axis in ('+X', '-X', '+Y', '-Y'):
+                add(prefix+'/islands/'+island+'/'+axis.replace('+','plus_').replace('-','minus_'),
+                    axis, members, island)
+    return result
+
+
 def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None,
               dense_manifest=None,surface_data=None,renderer_backend="cpu",
               visual_mesh_by_room=None, sim_direct_material=False):
@@ -72,6 +113,7 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
     if (surface_data is not None or dense_manifest is not None) and not full_asset:
         raise ContractError('native observed RGB-D never receives privileged MuJoCo direct assets')
     verify_connection_evidence(s)
+    member_plan = renderer_member_sets(s)
     # Legacy/oracle snapshots keep their previous UNKNOWN-color behavior.
     # Only an explicitly source-bound MuJoCo Full Map may use asset albedo.
     if type(meters_per_pixel) not in (int,float) or not math.isfinite(meters_per_pixel) or meters_per_pixel<=0:
@@ -141,6 +183,8 @@ def render_v2(root,manifest,s,output,*,meters_per_pixel=.05,reference_image=None
         corners=np.asarray([[x,y,z] for x in (lo_world[0],hi_world[0]) for y in (lo_world[1],hi_world[1]) for z in (lo_world[2],hi_world[2])])
         bounds=(corners-origin)@axes.T;lo=bounds.min(axis=0);hi=bounds.max(axis=0)
         def emit(name,axis,members,low=lo,high=hi,boundary='not_applicable'):
+            # This same exact set is exported without pixel visibility filtering.
+            members = set(member_plan[name]['native_entity_ids'])
             view_start=time.perf_counter_ns();view_cpu=time.process_time_ns()
             use_visual_mesh=visual_mesh_by_room is not None
             if use_visual_mesh:

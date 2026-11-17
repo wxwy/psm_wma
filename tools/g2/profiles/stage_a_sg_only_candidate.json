@@ -1,0 +1,13 @@
+{
+  "sixview_png": false,
+  "island_png": false,
+  "scene_graph": true,
+  "spatial_metadata": false,
+  "task_entities": true,
+  "selection": false,
+  "selection_top_variant": null,
+  "language": true,
+  "robot_pose": true,
+  "marker_variants": false,
+  "view_vae": false
+}
