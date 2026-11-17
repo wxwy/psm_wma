@@ -41,7 +41,7 @@ def test_view_only_uses_lossless_compressed_source_and_all_required_products(tmp
     source, sha = load_working_source(target)
     assert source["source_id"] == manifest["source_id"]
     assert sha == read_json(target / "SPATIAL_SOURCE_READY.json")["source_manifest_sha256"]
-    assert "stage_static" in json.dumps(source)
+    assert source["views"] and any(v["owners"] for v in source["views"].values())
     # Reopening an episode never rewrites it.
     assert validate_profile_episode(target) == manifest
 

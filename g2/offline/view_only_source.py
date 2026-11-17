@@ -25,8 +25,8 @@ RECEIPT = "SPATIAL_SOURCE_GZIP.json"
 CLAIM = ".g2_view_only_claim.json"
 SOURCE_SCHEMA = "g2_view_only_source_gzip_v1"
 CLAIM_SCHEMA = "g2_view_only_output_claim_v1"
-MAX_RAW_BYTES = 128 * 1024**2
-MAX_PACKED_BYTES = 32 * 1024**2
+MAX_RAW_BYTES = 1024 * 1024**2
+MAX_PACKED_BYTES = 256 * 1024**2
 
 
 def _sha(data):

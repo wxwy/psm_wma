@@ -290,6 +290,7 @@ def _assert_profile_output_namespace(row, config):
     if config.output_root.absolute() != plan.OUTPUT.absolute():
         return
     if config.vae_spool is None:
+        from .output_profile import OutputProfile
         from .view_only_source import verify_view_only_claim
 
         profile = (
