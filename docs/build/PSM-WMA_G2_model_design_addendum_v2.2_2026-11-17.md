@@ -434,7 +434,7 @@ R1对R0反映新语言/state/继续微调的合并效果，不分别归因；R2�
 | R0/R1/R2匹配基线与双预算口径 | 项目因果归因设计 [O/V]；历史G1评测档案 [S16] | 识别Global带来的增量，不把新state/增强语言的贡献错归因 | 无外部论文替代配对实验；相同样本预算≠相同计算预算，需报告两个口径与实际资源 |
 | 双俯视图默认with_robot、静态增强文本、关闭idle字段 | Owner项目决策 [O]；原formatter与G1/服务行为 [S02-S04] | 保留可控定位实验、训练推理同构、避免未来action统计进入静态文本 | **项目特定合同**，不对应外部论文参数；top两版正式配对消融后置 |
 
-特别提醒：Transformer Base论文中的 \`dropout=0.1\` 与本项目的**文本条件整体丢弃概率 0.1**不是同一种操作，二者**不得混作一个引用依据**。同理，Transformer Base的 \`N=6\` 也不是本项目视觉读取2轮的依据。
+特别提醒：Transformer Base论文中的 `dropout=0.1` 与本项目的**文本条件整体丢弃概率 0.1**不是同一种操作，二者**不得混作一个引用依据**。同理，Transformer Base的 `N=6` 也不是本项目视觉读取2轮的依据。
 
 ### 16.3 外部一手来源及其准确适用范围
 
@@ -450,7 +450,7 @@ R1对R0反映新语言/state/继续微调的合并效果，不分别归因；R2�
 
 **[P06] Classifier-Free Diffusion Guidance** — Ho & Salimans, 2022，原文 https://arxiv.org/abs/2207.12598 。支持：联合训练有条件/无条件预测，以及推理时组合这些预测的一般机制。**不支持**直接决定G2的dropout=0.1或guidance=1为最优，也不保证GT任务选图时得到真正无任务信息的unconditional分支。
 
-**[P07] PyTorch Autograd Mechanics** — PyTorch官方文档 https://docs.pytorch.org/docs/stable/notes/autograd ，重点“Locally disabling gradient computation / Setting requires_grad”。支持：冻结叶参数与整个forward进入 \`torch.no_grad()\` 的区别；即便GEN权重不训练，也必须保留动作loss到可训练Global输入的反向路径。另见 https://docs.pytorch.org/docs/stable/generated/torch.no_grad 。
+**[P07] PyTorch Autograd Mechanics** — PyTorch官方文档 https://docs.pytorch.org/docs/stable/notes/autograd ，重点“Locally disabling gradient computation / Setting requires_grad”。支持：冻结叶参数与整个forward进入 `torch.no_grad()` 的区别；即便GEN权重不训练，也必须保留动作loss到可训练Global输入的反向路径。另见 https://docs.pytorch.org/docs/stable/generated/torch.no_grad 。
 
 **[P08] PyTorch FSDP2 fully_shard** — PyTorch官方文档 https://docs.pytorch.org/docs/stable/distributed.fsdp.fully_shard.html ，重点“User contract / FSDP hooks / register_fsdp_forward_method”。支持：parameter shard/DTensor、forward hook、optimizer构建与集体通信的约束。**不支持**不经真实运行就宣称新增UND前置forward和阶段解冻已兼容现有G1 FSDP2。
 
@@ -458,10 +458,10 @@ R1对R0反映新语言/state/继续微调的合并效果，不分别归因；R2�
 
 原第15节的 [S01]–[S12] 继续有效。本节补充直接对应数值和实测范围的来源：
 
-- **[S13] 历史G1基础LR/Local配置**：固定Child的 \`examples/psm_wma_robocasa_local_s1.py\`，\`LR=5e-5\` 与 \`overlay_local_config\`，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/examples/psm_wma_robocasa_local_s1.py#L33-L37 、 https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/examples/psm_wma_robocasa_local_s1.py#L475-L495 ；与正式训练入口[S10]的动作组 \`5.0\` 倍率结合解读，不能直接误写成G1动作峰值也是5e-5。
-- **[S14] G1/RoboCasa文本dropout代码配置**：固定 \`robocasa_exact_window_cached_sft.py\` 中 \`cfg_dropout_rate=0.1\` 默认和transforms的真实传递，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py#L175-L215 ；另见 RoboCasa原配方 https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_robocasa_nano.py#L170-L185 。**正式run的有效展开值仍需读取其冻结config**。
-- **[S15] 在线服务guidance与采样分支**：固定 \`action_policy_server_robocasa.py\` 默认 \`guidance=1.0\`，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/scripts/action_policy_server_robocasa.py#L497-L508 ；采样仅在 \`guidance!=1.0\` 需要文本CFG，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/model/generator/omni_mot_model.py#L4200-L4222 。新项目仍须验证其他后处理路径不会额外生成分支。
-- **[S16] G1历史评测归档（非匹配消融）**：R03 \`iter20000\` 454/900 https://github.com/wxwy/psm_wma/blob/875ad79189a4aaa903849b6a5a4cea0eaf62e523/docs/eval/reports/2026-11-04_R03_900EP/README.md ；R07 \`iter27700\` 580/900 https://github.com/wxwy/psm_wma/blob/875ad79189a4aaa903849b6a5a4cea0eaf62e523/docs/eval/reports/2026-11-05_R07_900EP/audit_summary.json 。报告明确运行环境、采样和源码等存在差异，**不能将历史SR差直接归因Local或当作G2训练结果**。
+- **[S13] 历史G1基础LR/Local配置**：固定Child的 `examples/psm_wma_robocasa_local_s1.py`，`LR=5e-5` 与 `overlay_local_config`，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/examples/psm_wma_robocasa_local_s1.py#L33-L37 、 https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/examples/psm_wma_robocasa_local_s1.py#L475-L495 ；与正式训练入口[S10]的动作组 `5.0` 倍率结合解读，不能直接误写成G1动作峰值也是5e-5。
+- **[S14] G1/RoboCasa文本dropout代码配置**：固定 `robocasa_exact_window_cached_sft.py` 中 `cfg_dropout_rate=0.1` 默认和transforms的真实传递，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py#L175-L215 ；另见 RoboCasa原配方 https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_robocasa_nano.py#L170-L185 。**正式run的有效展开值仍需读取其冻结config**。
+- **[S15] 在线服务guidance与采样分支**：固定 `action_policy_server_robocasa.py` 默认 `guidance=1.0`，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/scripts/action_policy_server_robocasa.py#L497-L508 ；采样仅在 `guidance!=1.0` 需要文本CFG，https://github.com/wxwy/cosmos-framework/blob/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2/cosmos_framework/model/generator/omni_mot_model.py#L4200-L4222 。新项目仍须验证其他后处理路径不会额外生成分支。
+- **[S16] G1历史评测归档（非匹配消融）**：R03 `iter20000` 454/900 https://github.com/wxwy/psm_wma/blob/875ad79189a4aaa903849b6a5a4cea0eaf62e523/docs/eval/reports/2026-11-04_R03_900EP/README.md ；R07 `iter27700` 580/900 https://github.com/wxwy/psm_wma/blob/875ad79189a4aaa903849b6a5a4cea0eaf62e523/docs/eval/reports/2026-11-05_R07_900EP/audit_summary.json 。报告明确运行环境、采样和源码等存在差异，**不能将历史SR差直接归因Local或当作G2训练结果**。
 
 ### 16.5 引用审计与实施作者执行要求
 
