@@ -1,0 +1,31 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_______________ test_string_index_tasks_parquet_is_authoritative _______________
+../evidence/test_review_source_contracts.py:29: in test_string_index_tasks_parquet_is_authoritative
+    captions, authority = load_flat_captions(tmp_path, episode_id=9,
+g2/offline/language_context.py:129: in load_flat_captions
+    captions = resolve_caption_rows(
+g2/offline/language_context.py:61: in resolve_caption_rows
+    raise ContractError("invalid or duplicate authoritative task table")
+E   g2.io.ContractError: invalid or duplicate authoritative task table
+__________ test_close_blender_lid_binds_independent_auxiliary_fixture __________
+../evidence/test_review_source_contracts.py:50: in test_close_blender_lid_binds_independent_auxiliary_fixture
+    assert {'body_A', 'lid_A'} <= set(result['entity_ids']), (
+E   AssertionError: ('The manipulated lid is a distinct source instance, not a blender part', ['body_A'])
+E   assert {'body_A', 'lid_A'} <= {'body_A'}
+E     
+E     Extra items in the left set:
+E     'lid_A'
+______________ test_counter_to_stove_binds_named_source_container ______________
+../evidence/test_review_source_contracts.py:78: in test_counter_to_stove_binds_named_source_container
+    assert {'apple_A', 'pan_A', 'plate_A'} <= set(result['entity_ids']), (
+E   AssertionError: ('A named source-container role is missing but binding is BOUND', ['apple_A', 'pan_A', 'stove_A'])
+E   assert {'apple_A', '...A', 'plate_A'} <= {'apple_A', 'pan_A', 'stove_A'}
+E     
+E     Extra items in the left set:
+E     'plate_A'
+=========================== short test summary info ============================
+FAILED ../evidence/test_review_source_contracts.py::test_string_index_tasks_parquet_is_authoritative
+FAILED ../evidence/test_review_source_contracts.py::test_close_blender_lid_binds_independent_auxiliary_fixture
+FAILED ../evidence/test_review_source_contracts.py::test_counter_to_stove_binds_named_source_container
+3 failed in 0.35s
