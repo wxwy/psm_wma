@@ -15,7 +15,6 @@ import os
 from pathlib import Path
 
 from g2.io import read_json
-
 from g2.latent_cache.contract import CacheError, contained, fingerprint
 from g2.latent_cache.storage import atomic_json
 
@@ -154,14 +153,19 @@ def claim_view_only_root(root, profile, source_selection_sha256):
         raise CacheError("View-only output cannot contain symlinks")
     if profile.view_vae:
         raise CacheError("View-only claim cannot advertise a VAE profile")
-    if not isinstance(source_selection_sha256, str) or len(source_selection_sha256) != 64:
+    if (
+        not isinstance(source_selection_sha256, str)
+        or len(source_selection_sha256) != 64
+    ):
         raise CacheError("source selection fingerprint required")
     root.mkdir(parents=True, exist_ok=True)
     marker = contained(root, CLAIM, allow_missing=True)
     expected = _claim_contents(root, profile, source_selection_sha256)
     if marker.exists():
         if read_json(marker) != expected:
-            raise CacheError("View-only output root belongs to a different source/profile")
+            raise CacheError(
+                "View-only output root belongs to a different source/profile"
+            )
     else:
         if any(root.iterdir()):
             raise CacheError("legacy output path contains unowned data")
@@ -179,8 +183,12 @@ def verify_view_only_claim(root, profile):
         not isinstance(marker, dict)
         or set(marker)
         != {
-            "schema", "output_root", "profile_id",
-            "source_selection_sha256", "source_format", "vae_disabled",
+            "schema",
+            "output_root",
+            "profile_id",
+            "source_selection_sha256",
+            "source_format",
+            "vae_disabled",
         }
         or marker.get("schema") != CLAIM_SCHEMA
         or marker.get("output_root") != str(root)

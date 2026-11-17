@@ -1,7 +1,5 @@
 """View-first source compression and strict canonical output namespace."""
 
-import json
-from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -32,7 +30,9 @@ def test_view_only_uses_lossless_compressed_source_and_all_required_products(tmp
     assert not (target / FULL).exists()
     assert (target / PACKED).is_file() and (target / RECEIPT).is_file()
     manifest = validate_profile_episode(target)
-    assert manifest["profile_complete"] and manifest["products"]["view_vae"] == "disabled"
+    assert (
+        manifest["profile_complete"] and manifest["products"]["view_vae"] == "disabled"
+    )
     for name in ("task_entities.json", "language.json", "episode_manifest.json"):
         assert (target / name).is_file()
     assert list(target.glob("state_*/spatial_metadata.json"))
@@ -40,7 +40,9 @@ def test_view_only_uses_lossless_compressed_source_and_all_required_products(tmp
     assert list(target.glob("state_*/*.png")) or list(target.glob("state_*/*/*.png"))
     source, sha = load_working_source(target)
     assert source["source_id"] == manifest["source_id"]
-    assert sha == read_json(target / "SPATIAL_SOURCE_READY.json")["source_manifest_sha256"]
+    assert (
+        sha == read_json(target / "SPATIAL_SOURCE_READY.json")["source_manifest_sha256"]
+    )
     assert source["views"] and any(v["owners"] for v in source["views"].values())
     # Reopening an episode never rewrites it.
     assert validate_profile_episode(target) == manifest
@@ -63,7 +65,9 @@ def test_compressed_source_bad_bytes_or_receipt_never_validate(tmp_path):
         validate_profile_episode(target)
 
 
-def test_canonical_legacy_path_requires_new_explicit_view_only_claim(tmp_path, monkeypatch):
+def test_canonical_legacy_path_requires_new_explicit_view_only_claim(
+    tmp_path, monkeypatch
+):
     root = tmp_path / "canonical"
     monkeypatch.setattr(producer.plan, "OUTPUT", root)
     profile = OutputProfile(selection_top_variant="clean", view_vae=False)
@@ -73,10 +77,13 @@ def test_canonical_legacy_path_requires_new_explicit_view_only_claim(tmp_path, m
         expected_relative_output="tasks/NavigateKitchen/episodes/episode_000007",
     )
     cfg = SimpleNamespace(output_root=root, vae_spool=None, output_profile=profile)
-    with pytest.raises(Exception, match="claim"):
+    with pytest.raises(CacheError, match="cache root|missing"):
         producer._assert_profile_output_namespace(row, cfg)
     claim_view_only_root(root, profile, "a" * 64)
-    assert verify_view_only_claim(root, profile)["profile_id"] == profile.to_dict()["profile_id"]
+    assert (
+        verify_view_only_claim(root, profile)["profile_id"]
+        == profile.to_dict()["profile_id"]
+    )
     assert producer._assert_profile_output_namespace(row, cfg) is None
     assert claim_view_only_root(root, profile, "a" * 64)
     with pytest.raises(CacheError, match="different source"):
