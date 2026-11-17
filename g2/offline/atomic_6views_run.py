@@ -280,6 +280,37 @@ def produce_one(row,config):
         return _produce_one(row,config)
 
 
+
+def _assert_profile_output_namespace(row, config):
+    """Reusing the legacy *path* is safe only for an explicitly claimed v2 run.
+
+    The old data itself is never accepted: claim_output() refuses nonempty
+    unowned outputs, and the spool policy binds this directory/config/episode.
+    """
+    if config.output_root.absolute() != plan.OUTPUT.absolute():
+        return
+    if config.vae_spool is None:
+        raise ContractError(
+            "legacy View output path requires an owned Stage-A v2 source spool"
+        )
+    from g2.latent_cache.contract import CacheError
+    from g2.latent_cache.retirement_policy import validate_target
+    from g2.latent_cache.streaming import EventSpool
+
+    try:
+        spool = EventSpool.open(config.vae_spool)
+        if spool.source_policy is None:
+            raise CacheError("legacy output path requires capsule_v2 source policy")
+        validate_target(
+            spool.source_policy,
+            config.output_root / row["expected_relative_output"],
+            {"episode_key": f"{row['task_class']}/episode_{row['episode_id']:06d}"},
+        )
+    except (CacheError, OSError, KeyError, ValueError) as exc:
+        raise ContractError(
+            "legacy View output path is not owned by this verified Stage-A v2 run"
+        ) from exc
+
 def _produce_one(row,config):
     from g2.nav_bridge.full_map import capture as capture_native
     from g2.nav_bridge.full_map import prepare as prepare_native
@@ -296,8 +327,7 @@ def _produce_one(row,config):
         from .stage_a import validate_profile_episode
         profile=(config.output_profile if isinstance(config.output_profile,OutputProfile)
                  else OutputProfile.from_dict(read_json(config.output_profile)))
-        if config.output_root.absolute()==plan.OUTPUT.absolute():
-            raise ContractError('new Stage-A profile requires explicit independent staging output')
+        _assert_profile_output_namespace(row, config)
         existing=config.output_root/row['expected_relative_output']
         if config.vae_spool is not None:
             if not profile.view_vae:
