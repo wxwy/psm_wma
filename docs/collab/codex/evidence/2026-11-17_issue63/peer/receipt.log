@@ -1,0 +1,73 @@
+{
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "coordinated_mutation_observations": [
+    {
+      "active_jobs": 0,
+      "completed_jobs": 1,
+      "exact_sql_bound_capsule_unchanged": true,
+      "fixture": "/tmp/g2_issue63_peer_protocol_98172110/test_final_receipt_cannot_disa0",
+      "retired_full_hash_matches_working_source": true,
+      "work_cleanup_matches_attestation": true,
+      "working_proof_matches_attestation": false
+    },
+    {
+      "active_jobs": 0,
+      "completed_jobs": 1,
+      "exact_sql_bound_capsule_unchanged": true,
+      "fixture": "/tmp/g2_issue63_peer_protocol_98172110/test_final_receipt_cannot_disa1",
+      "retired_full_hash_matches_working_source": true,
+      "work_cleanup_matches_attestation": false,
+      "working_proof_matches_attestation": true
+    },
+    {
+      "active_jobs": 0,
+      "completed_jobs": 1,
+      "exact_sql_bound_capsule_unchanged": true,
+      "fixture": "/tmp/g2_issue63_peer_protocol_98172110/test_final_receipt_cannot_disa2",
+      "retired_full_hash_matches_working_source": false,
+      "work_cleanup_matches_attestation": true,
+      "working_proof_matches_attestation": true
+    }
+  ],
+  "evidence_sha256": {
+    "collect_peer_receipt.py": "49a9b1fdc4feef41ed474dad191d223c00a59bcf1f423f40ee77b97503143b90",
+    "focused.log": "22f7bdb120096a75b398b595b7f66ff40af646fa55123afc4f98240d6b518687",
+    "focused.xml": "185ae15e3dd593d527fb2a919b94c587468446a68b47d692c7180270f532d32d",
+    "focused2.log": "c124898dcd9ef4c15bddb4a8f4aad4bc2180272429900be6945a349a0304df37",
+    "focused2.xml": "3046c35c046cd55c9acfad2e70e2a165ee92937115df0dd356e44e8980c515f5",
+    "independent.log": "eb876165d764bf4982a489cf24507322fa796fc1c9b3c0636d30bfc2c9fbd4b8",
+    "independent.xml": "f3c4bff00d6664e09aae6a426e941d6f2dd95e083c31baf53a68aa7804108e03",
+    "test_independent_protocol.py": "cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f"
+  },
+  "findings": [
+    "P2-63-PEER-1"
+  ],
+  "formal_root": "98172110677b7631f5b7974003ffae664bdd0b85",
+  "gpt_server_or_capacity_approval": false,
+  "junit": {
+    "focused": {
+      "errors": 0,
+      "failures": 46,
+      "skipped": 0,
+      "tests": 47
+    },
+    "focused2": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 47
+    },
+    "independent": {
+      "errors": 0,
+      "failures": 3,
+      "skipped": 0,
+      "tests": 5
+    }
+  },
+  "live_sources_match_author_hashes": true,
+  "nav_sha": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "python": "/workspace/.venvs/g2-view-vae-52/bin/python",
+  "source_count": 235,
+  "source_hashes_match_fixed_git_blobs": true,
+  "verdict": "LOCAL_REQUEST_CHANGES"
+}

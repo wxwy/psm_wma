@@ -1,0 +1,10 @@
+usage: resume_spatial_source_retirement.py [-h] --spool-root SPOOL_ROOT
+                                           --job-id JOB_ID [--execute]
+
+Resume an already acknowledged owned source transaction; no render/encode.
+
+options:
+  -h, --help            show this help message and exit
+  --spool-root SPOOL_ROOT
+  --job-id JOB_ID
+  --execute

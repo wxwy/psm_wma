@@ -19,8 +19,21 @@ def published_proof(row, scope):
     root = Path(row["target"])
     manifest = validate_profile_episode(root)
     receipt = cache_receipt(root)
-    source = read_json(contained(root, "spatial_source.json"))
-    actual = digest(root / "spatial_source.json")
+    from . import final_source as final
+
+    source = final.load_source(root)
+    is_final = source["schema"] == final.SOURCE_SCHEMA
+    if is_final:
+        bound = json.loads(row["retirement"]) if row.get("retirement") else None
+        if (
+            bound is None
+            or bound.get("capsule_sha256") != digest(root / final.CAPSULE)
+            or final.load_capsule(root)["attestation"]["scope"] != scope
+        ):
+            raise CacheError(
+                "final capsule differs from durable SQL retirement binding"
+            )
+    actual = final.working_source_sha(root)
     if (
         actual != (row["source_ready"] or row["sealed"])
         or any(source[k] != scope[k] for k in ("source_fingerprint", "profile_id"))
@@ -29,9 +42,18 @@ def published_proof(row, scope):
         or receipt["recipe_id"] != scope["recipe_id"]
     ):
         raise CacheError("published episode differs from active scope")
-    files = {
-        p: digest(contained(root, p))
-        for p in (
+    names = (
+        (
+            final.CAPSULE,
+            final.READY,
+            final.RECEIPT,
+            "episode_manifest.json",
+            "COMPLETE.json",
+            "vae_cache/manifest.json",
+            "vae_cache/COMPLETE.json",
+        )
+        if is_final
+        else (
             "spatial_source.json",
             "SPATIAL_SOURCE_READY.json",
             "episode_manifest.json",
@@ -39,12 +61,23 @@ def published_proof(row, scope):
             "vae_cache/manifest.json",
             "vae_cache/COMPLETE.json",
         )
-    }
+    )
+    files = {p: digest(contained(root, p)) for p in names}
     return dict(
         source_id=source["source_id"],
         verified_cache=receipt,
         identity_files=files,
         profile_complete=manifest["profile_complete"],
+        **(
+            dict(
+                working_verified_cache=final.load_capsule(root)[
+                    "working_cache_receipt"
+                ],
+                source_index_sha256=digest(root / final.CAPSULE),
+            )
+            if is_final
+            else {}
+        ),
     )
 
 
@@ -60,7 +93,11 @@ def lookup(spool, db, *, job=None, target=None):
         raise CacheError("completed tombstone is missing or damaged")
     record = read_json(path)
     if (
-        record.get("schema") != "g2_published_episode_tombstone_v1"
+        record.get("schema")
+        not in (
+            "g2_published_episode_tombstone_v1",
+            "g2_published_episode_tombstone_v2",
+        )
         or record["job"]["id"] != row["id"]
         or record["job"]["target"] != row["target"]
         or record["job"]["scope"] != row["scope"]
@@ -78,7 +115,13 @@ def check_identity(record):
 
 def duplicate(spool, record, event):
     check_identity(record)
-    source = read_json(contained(record["job"]["target"], "spatial_source.json"))
+    from .final_source import load_source
+
+    source = (
+        load_source(record["job"]["target"])
+        if record["schema"] == "g2_published_episode_tombstone_v2"
+        else read_json(contained(record["job"]["target"], "spatial_source.json"))
+    )
     if source["final_pixel_events"].get(event.event_id) != event.descriptor():
         raise CacheError("late event is not a declared archived final owner")
     return "completed_by_cache"
@@ -110,6 +153,15 @@ def archive(spool, job, *, failpoint=None):
             )
             if set(statuses) - {"acked", "completed_by_cache"}:
                 raise CacheError("cannot archive unacknowledged events")
+        if spool.source_policy is not None:
+            from .source_retirement import resume_pending
+
+            if not resume_pending(spool, job):
+                return False
+            with spool._db() as db:
+                row = dict(
+                    db.execute("SELECT * FROM jobs WHERE id=?", (job,)).fetchone()
+                )
         proof = published_proof(row, scope)
         from g2.offline.work_lifecycle import cleanup_registered_work
 
@@ -123,8 +175,29 @@ def archive(spool, job, *, failpoint=None):
                     (time.time() + 0.2, job),
                 )
             return False
+        if spool.source_policy is not None:
+            from .source_retirement import finalize
+
+            if not finalize(
+                spool, job, row, proof, statuses, cleanup, failpoint=failpoint
+            ):
+                import time
+
+                with spool._db() as db:
+                    db.execute(
+                        "UPDATE jobs SET cleanup_after=? WHERE id=?",
+                        (time.time() + 0.2, job),
+                    )
+                return False
+            with spool._db() as db:
+                row = dict(
+                    db.execute("SELECT * FROM jobs WHERE id=?", (job,)).fetchone()
+                )
+            proof = published_proof(row, scope)
         receipt = dict(
-            schema="g2_published_episode_tombstone_v1",
+            schema="g2_published_episode_tombstone_v2"
+            if spool.source_policy is not None
+            else "g2_published_episode_tombstone_v1",
             job=row,
             verification=proof,
             work_cleanup=cleanup,

@@ -1,3 +1,154 @@
+# 2026-11-17 CST — Issue63 fixed source / Draft64 / GPT REVIEW handoff
+
+FormalRoot a169fea07016b80b3639646cc9925ac70b6525a8 / unchanged
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav
+70eb7b447e65d793b0ebe18b258291ce46f057c1. Source pushed and advertisedRoot
+matches; DraftPR64 created/readback open/Draft/unmerged, base latestPR62
+codex/g2-one-shot-production-issue58 d0bb45343a047fdf90d8e376acf4502fdf13fff4.
+ObservedV3 7a357620b4cc1f6817749c8a8275771cfbb4049c unchanged; PR53/55/62
+remain Draft/unmerged. No inherited approval applied to new v2 protocol.
+
+Same independent localpeer exactnewpair LOCAL_CODE_REVIEW_PASS; peer_closure/
+REPORT.md closesP2-63-PEER-1, no new scopedP1/P2. Original unchangedprobe5PASS
+13.93s; SQL actualobservations show3 tampered jobs stayactive1/completed0.
+InitialRoot98172110 REPORT/RED/sourcebind hashes preserved. This localclosure
+is NOT GPT/server/capacity approval. No code changed afterfixedRoot.
+
+Author finalrevision2:542PASS/13 inheritedSKIP/0fail/error,501oldIDs+54new,
+235stable tested sources match formalGitblobs in implementation_scope.json.
+NumericAST/encoding/contract/PTbytes/allproducts/oldtestfiles protected.
+Runbook exactCPU/operatorrecovery/strictv2/capacity commands provided.
+CanonicalInbox append in following bookkeeping records this exact formal pair;
+later ledgerHEAD changes docs/evidence only and never replaces implementation.
+Next push/readback this evidence+Inbox and STOP for GPT fixedserver Gate.
+OwnerIssue63 supersedes oldV2/MM/Kimi polling loops; no further implementation
+or real execution authorized here. trainingfalse; full9126HOLD_CAPACITY_AND_
+32_WORKER_RESOURCE_GATE. GPT must independently check169/419/81states/12Views,
+actual source sizes/latency and18task capacity. No server/privateexport/GPU/
+newenv/install/olddelete/state15/jointalignment/train/merge performed here.
+
+# Historical corrected author gate before closure
+
+revision2 completed exit0:542PASS/13 inherited dependencySKIP/0fail/error.
+All501 original identities+all original test sources retained;54new cases
+allPASS.235 stable tested sources; numeric AST and protected core unchanged.
+Original peerprobe unchanged cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f
+now5PASS in10.92s, separate/overlapping notaddedto542. Ruff22files/static/
+CLIhelp/syntheticallproduct+PTbytes/exact0 checks PASS. All records in
+revision2/ and peer_replay/; initial98 peerREPORT/RED/receipt immutable.
+
+Actual narrow diff from98172110: only production final_source.py (30lines)
+shared receipt fieldset/proof+cleanup fingerprints/both retiredhashes/archive/
+disposition check; test_source_retirement_faults.py adds6negativecases.
+No PT/schema/recipe/queue/math/producer/task/language edits. All old501 still
+byte-identical to d0bb. Next commit newfixedRoot and bind235Gitblobs, then same
+peer narrow exactpair closure. No product edit duringthatreview. Independent
+Draft/GPTcanonicalrequest afterclosure; old98 never currentreviewtarget.
+Owner real169/419/capacity/resource gates remain NOT_RUN/full9126HOLD.
+No server/private/GPU/newenv/install/olddelete/train/merge.
+
+# Historical accepted correction claim
+
+Final local peer exact98172110677b7631f5b7974003ffae664bdd0b85 /
+Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2: LOCAL_REQUEST_CHANGES,
+oneP2-63-PEER-1. peer/REPORT.md and receipt confirm235 stable sources;
+unchanged independentprobe cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f
+has2PASS/3RED. Receipt proof/cleanup/retired-file claims can be changed with
+only COMPLETE receiptSHA updated, then accepted under unchanged SQL capsule.
+Accepted narrow correction: final_source.py shared reader checks authenticate
+all duplicated retirement provenance against immutable capsule; add negative
+cases in existing new test_source_retirement_faults.py. Preserve capsule/PT/
+product format and all source retirement/queue math. Claim these two files;
+no otherAgent editing. Peer final complete, no GPT request yet. Then fresh
+revision2 full CPU + unchanged originalprobe GREEN +newfixedSHA/samepeerclosure.
+Keep98172110 and its evidence as rejected local baseline, never currentapproval.
+No server/GPU/private-data access/fullstart/merge. Original Owner boundary holds.
+
+# Historical initial candidate / author gate
+
+Independent branch codex/g2-source-capsule-issue63 from PR62 d0bb4534.
+revision1 gate completed exit0:536PASS,13 inherited skips (10PyArrow,
+2MuJoCo,1Pandas),0fail/error; all original501 test identities retained,
+all old test source files byte-identical to base,48new tests allPASS.
+235 source hashes stable; protected encoding/contract/producer/task/language/
+spatial/renderer/oldCLI/Child unchanged; numeric encode_record AST unchanged.
+Ruff22files, CLIhelps, synthetic before/after protocol and source audit PASS.
+Synthetic776961-byte full audit becomes16339-byte capsule, all13 products
+and4 PT files byte-identical; FakeEncoder5records exact0 is NOT real Wan.
+
+Final narrow checks require persisted SQL capsule binding after journal
+removal and beforeGC; missing/changed binding refuses GC. Explicitly retained
+renderer work cannot retire the source. New3 failure-mode cases included in48.
+Historical final/ gate533PASS+13skip and all development failures/logs retained
+in own evidence; overlapping test runs not added. No old GPT evidence edited.
+
+Next fixed implementation commit and AGENTS-required other-Agent read-only
+review of that exactRoot/Child; no production edits during frozen review.
+Then independent Draft/GPT canonical Inbox request and STOP as OwnerIssue63
+requires. Later docs-only ledger HEAD is not the implementation SHA.
+Real169/419, source sizes/latency,18-task capacity and32-worker resource gate
+remain GPT-only NOT_RUN; full9126 HOLD. No server/private assets/GPU/newenv/
+dependency installs/olddelete/state15/train/merge. V3 and nav unchanged.
+
+# Historical development checkpoint
+
+Implemented working-v1→explicit final-v2 capsule/index/receipt transaction,
+actual old-source provenance (not a false hash of deleted files), PTbyte-preserving
+header adapter, strict profile/source/cache dispatch, reader leases+stale-index
+refusal, owned-output policy binding, source/work/ledgerGC+pre-plan recovery.
+Default no fullaudit; optional losslessgzip archive separatefilesystem with
+protectedroots+explicitretention; original numeric Encode1/recipe unchanged.
+Official template nowfreshIssue63 namespace/sourceflag, thinstrictverify/resume/
+capacityCLIs, read-only18-taskcapacity model HOLD onmissingstrata. Runbook with
+exactfield audit/hashgraph/operator/gates added. All code remains uncommitted.
+
+CPU sofar (overlap, notsummed): initialcapsule3PASS; oldcache/stream/oneshot
+349PASS+4SQL-onlyfixture fails (newloader demanded episodeManifest); fixed
+v1late-event path backtooriginal directFullfile access, no oldassertionchanged.
+Then capsule/fault/oldledger43PASS (22 hard-exitboundaries plusoriginal>100k
+SQLstress) in112.63s. Newentries11PASS in32.32s: actual supervisor stop,
+consumer hardexit duringretirement, thirdresume repairsbeforeactualplan,
+strictv2/bytes/capacity/reader-only3PT andrealatomic temp-fsync exits; optional
+losslessarchive tested existing /dev/shm distinctFS, no mount/newenv. FakeEncoder
+only, no real169/419 or capacityfacts asserted. Files/logs /tmp/issue63_*.log/xml.
+
+Next freeze no scopeexpansion, wholeold501 +new45 cases, sourcehash+numericAST
+unchanged evidence, fixedcommit/read-onlypeer/newDraft/GPTrequest thenSTOP.
+No server/privateexport/GPU/native/fullproduction/olddelete/install/train/merge.
+Fullcapacity+32workerresource HOLD. No otherAgent writingclaimedfiles.
+
+# Initial claim / authority observation (historical)
+
+OwnerIssue63 read in full plus comment6948361728 (old9126 exact64.02GiB,
+conditional104-126GiB estimate, not capacityapproval). Fresh beforedda6d28f;
+initial fetch lacked tracking ref, repaired with explicit refspec; advertised/
+trackingd0bb45343a047fdf90d8e376acf4502fdf13fff4 match, ancestry0/ffsuccess.
+New commits510e07ae,5e6a2ceb,9b051d22,e36bc946,d0bb4534 read. Exactformal
+5e6a2ceb702acd724076692f42ca4fc60380192b /Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2
+realF27/Wan report read in full:501CPU/0skip,169B1real exact0,419RGBexact,
+2episode officialsupervisorPASS; fullCAPACITY+32WORKER gateHOLD. Prior a3
+report superseded only for its stated real-sample scope. V3advertised/tracking
+7a357620b4cc1f6817749c8a8275771cfbb4049c/nav70eb7b44/Child clean untouched.
+
+Independent branchcodex/g2-source-capsule-issue63 fromlatestPR62/d0bb.
+Issue63 explicitlyauthorizes localCPU/code/independentDraft thenGPTfixedserver
+Gate; overrides oldV2/MM/Kimi waits. No server/privateexport/GPU/newenv/install/
+realproduction/deletion/train/merge. DSnotinvolved. All full-source retirement
+is only for new explicitv2 profile, never mutate old accepted dataset.
+
+File claims beforecode: new latent_cache final-source/capsule+retirement
+module(s); stage_a.py/sealed_source.py/storage.py/production.py/ledger_archive.py/
+streaming.py plus minimalfull_production config/CLI hooks as actualdependency
+audit requires; producerprofile schema, strict v2verify thinCLI, targeted tests,
+ownrunbook/dependencytable/evidence andledgers. Preserve encoding.py +B1recipe
+andPTnumericbytes; reuse currentcore/queue/worklease. No otherAgent editing.
+First audit exact producer/consumer field uses and projectioncoverage, then
+minimal capsule/transaction/reader compatibility/recovery implementation.
+No Issue63 code or tests executed yet. NewfixedSHA/CPU/JUnit/sourcehashes/
+readonlypeer required before Draft/GPT handoff; real169/419/capacityNOT_RUNhere.
+
+# Previous task history
+
 # 2026-11-17 CST — Issue58 P0 published fixed source / GPT REVIEW
 
 FormalRoot a3e0048b40e1392d0ff92d4fce8da4dc278447f6 / unchanged

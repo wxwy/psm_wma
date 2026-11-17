@@ -1,0 +1,14 @@
+{
+  "after_bytes": 94213,
+  "append_bytes": 6005,
+  "append_only_footer_bytes": 105,
+  "before_bytes": 88208,
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "formal_root": "a169fea07016b80b3639646cc9925ac70b6525a8",
+  "limit_bytes": 131072,
+  "new_sha256": "5381278abdbbbe2b0c14d9c6acb5827b2cfea88058baa7bf6f3169a44b3bbe9c",
+  "old_prefix_preserved": true,
+  "old_sha256": "82912e7c485a7eedadcce34f57b69ced77ddd81fe7ad293f1125e4debfea50e7",
+  "pr": "https://github.com/wxwy/psm_wma/pull/64",
+  "schema": "g2_issue63_canonical_inbox_append_v1"
+}

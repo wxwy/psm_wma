@@ -1,0 +1,19 @@
+usage: audit_spatial_capacity.py [-h] --old-root OLD_ROOT
+                                 [--new-root NEW_ROOT]
+                                 [--available-bytes AVAILABLE_BYTES]
+                                 [--reserve-bytes RESERVE_BYTES]
+                                 [--expected-episodes EXPECTED_EPISODES]
+                                 [--expected-tasks EXPECTED_TASKS] --output
+                                 OUTPUT
+
+Read-only corpus bytes/stratification; output must be outside inputs and Git.
+
+options:
+  -h, --help            show this help message and exit
+  --old-root OLD_ROOT
+  --new-root NEW_ROOT
+  --available-bytes AVAILABLE_BYTES
+  --reserve-bytes RESERVE_BYTES
+  --expected-episodes EXPECTED_EPISODES
+  --expected-tasks EXPECTED_TASKS
+  --output OUTPUT

@@ -1,0 +1,51 @@
+{
+  "schema": "issue63_gpt_36ep_32slot_18task_20261117",
+  "verdict": "CONDITIONAL_MANUAL_FULL_STAGE_A_PRODUCTION_GO",
+  "product_root": "ffc18f52976c0dd7b363207788b63537771d59a5",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "nav": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "stress": {
+    "tasks": 18,
+    "episodes": 36,
+    "max_concurrent": 32,
+    "distinct_slots": 32,
+    "seconds": 1186.1598851680756,
+    "peak_work_bytes": 21370436833,
+    "peak_pending_png_bytes": 8107324,
+    "completed_jobs": 36,
+    "failed_jobs": 0,
+    "remaining_active": 0
+  },
+  "parity": {
+    "episodes": 36,
+    "states": 890,
+    "owners_verified": 1695,
+    "legacy_rgb_pixel_pairs_exact": 4137,
+    "max_capsule_bytes": 210935,
+    "new_final_bytes": 478865143,
+    "old_same_episodes_bytes": 268602101
+  },
+  "capacity": {
+    "old_full_episodes": 9126,
+    "measured_task_types": 18,
+    "measured_new_episodes": 36,
+    "lower_bytes": 111044338363,
+    "upper_bytes": 132699262302,
+    "available_only_after_owner_old_deletion_bytes": 211689906176,
+    "reserve_bytes": 8589934592,
+    "candidate_fits": true,
+    "official_verdict": "STRATIFIED_CANDIDATE_REQUIRES_GPT_APPROVAL",
+    "reviewer_conditional_go": true
+  },
+  "strict_render_only_ab": "NOT_RUN_NON_BLOCKING_PERFORMANCE_FOLLOWUP",
+  "old_views_deleted": false,
+  "pr_merged": false,
+  "full_production_started": false,
+  "training_started": false,
+  "evidence_sha256": {
+    "result": "93e53e5160e43276ad84753d631473427ba9384daeeaefbfc8bffbfd14c715aa",
+    "independent_real": "d06b3e21f23e3f2a02dfcbcff366be536594da11c35550373ffd2db34b7abc30",
+    "capacity": "df7056a6fecce0e12163a46843c116ad3b3565e14a62b4ee54515ce20329c116",
+    "full_run_log": "03dc8654ba5bf648a379f5a75e31d4b940f7d08c00e1d9da6c687dbd7eb8da08"
+  }
+}

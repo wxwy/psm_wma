@@ -1,0 +1,24 @@
+{
+  "schema": "g2_issue63_publication_before_bookkeeping_v1",
+  "formal_root": "a169fea07016b80b3639646cc9925ac70b6525a8",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "nav_sha": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "v3_advertised": "7a357620b4cc1f6817749c8a8275771cfbb4049c",
+  "pr": {
+    "url": "https://github.com/wxwy/psm_wma/pull/64",
+    "number": 64,
+    "draft": true,
+    "state": "open",
+    "merged": false,
+    "head_sha": "a169fea07016b80b3639646cc9925ac70b6525a8",
+    "base_sha": "d0bb45343a047fdf90d8e376acf4502fdf13fff4"
+  },
+  "author_gate": "revision2/gate.json",
+  "fixed_source_binding": "revision2/implementation_scope.json",
+  "tested_sources": 235,
+  "local_peer_report": "peer_closure/REPORT.md",
+  "local_peer_verdict": "LOCAL_CODE_REVIEW_PASS",
+  "gpt_approval": false,
+  "training_ready": false,
+  "next_commit_scope": "docs/evidence/Inbox bookkeeping only; not formal implementation"
+}

@@ -1,0 +1,8 @@
+ssssssssss.............................................................. [ 48%]
+........................................................................ [ 96%]
+......                                                                   [100%]
+=========================== short test summary info ============================
+SKIPPED [5] g2/tests/test_stage_a_caption_parquet.py:39: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [4] g2/tests/test_stage_a_caption_parquet.py:63: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_stage_a_caption_parquet.py:82: existing local interpreter has no PyArrow; no install/new environment permitted
+140 passed, 10 skipped in 38.59s

@@ -1,0 +1,10 @@
+usage: verify_spatial_source_index.py [-h] --episode-root EPISODE_ROOT
+                                      [--recipe-id RECIPE_ID] [--file-bytes]
+
+Strict final-source v2 offline inspection; never constructs a VAE.
+
+options:
+  -h, --help            show this help message and exit
+  --episode-root EPISODE_ROOT
+  --recipe-id RECIPE_ID
+  --file-bytes

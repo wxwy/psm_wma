@@ -1,0 +1,18 @@
+..FFF                                                                    [100%]
+=================================== FAILURES ===================================
+___ test_final_receipt_cannot_disagree_with_sql_bound_capsule[working_proof] ___
+docs/collab/codex/evidence/2026-11-17_issue63/peer/test_independent_protocol.py:94: in test_final_receipt_cannot_disagree_with_sql_bound_capsule
+    with pytest.raises(CacheError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE CacheError
+___ test_final_receipt_cannot_disagree_with_sql_bound_capsule[work_cleanup] ____
+docs/collab/codex/evidence/2026-11-17_issue63/peer/test_independent_protocol.py:94: in test_final_receipt_cannot_disagree_with_sql_bound_capsule
+    with pytest.raises(CacheError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE CacheError
+___ test_final_receipt_cannot_disagree_with_sql_bound_capsule[retired_files] ___
+docs/collab/codex/evidence/2026-11-17_issue63/peer/test_independent_protocol.py:94: in test_final_receipt_cannot_disagree_with_sql_bound_capsule
+    with pytest.raises(CacheError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE CacheError
+3 failed, 2 passed in 16.62s

@@ -1,0 +1,246 @@
+........................................................................ [ 20%]
+........................................................................ [ 40%]
+........................................................................ [ 61%]
+........................................................................ [ 81%]
+..........................................FFFF...................        [100%]
+=================================== FAILURES ===================================
+__________ test_over_100k_events_1001_jobs_bounded_active_working_set __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-122/test_over_100k_events_1001_job0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94228112e0>
+
+    def test_over_100k_events_1001_jobs_bounded_active_working_set(tmp_path, monkeypatch):
+        monkeypatch.setattr(ledger_archive, "published_proof", sqlite_only_proof)
+        spool = sql_spool(tmp_path, 128)
+        peak_events = peak_jobs = 0
+        for eid in range(1001):
+            job, target, event = seed_verified_rows(spool, tmp_path / "dataset", eid, 101)
+            stats = spool.stats()
+            peak_events = max(peak_events, stats["active_records"])
+            peak_jobs = max(peak_jobs, stats["active_jobs"])
+            assert ledger_archive.archive(spool, job)
+            assert spool.stats()["active_records"] == spool.stats()["active_jobs"] == 0
+        assert 1001 * 101 > 100000 and peak_events == 101 and peak_jobs == 1
+        assert spool.stats()["completed_jobs"] == 1001
+        # Cumulative records exceed the old100k while the cap remains128.
+        assert spool.max_records == 128
+        record = spool.completed_receipt(job)
+        scope = json.loads(record["job"]["scope"])
+        assert (
+            spool.register(
+                target,
+                **{
+                    k: scope[k] for k in ("episode_key", "source_fingerprint", "profile_id")
+                },
+            )
+            == job
+        )
+>       assert spool.enqueue(job, event, timeout_s=0) == "completed_by_cache"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_ledger.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:370: in enqueue
+    return duplicate(self, lookup(self, db, job=job), event)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/ledger_archive.py:112: in duplicate
+    source = load_source(record["job"]["target"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/final_source.py:244: in load_source
+    manifest = read_json(contained(root, "episode_manifest.json"))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-agent/pytest-122/test_over_100k_events_1001_job0/dataset/episode_001000')
+relative = 'episode_manifest.json', allow_missing = False
+
+    def contained(root, relative, allow_missing=False):
+        """Do not silently follow a symlink anywhere inside a cache namespace."""
+        root = Path(root).absolute()
+        if root.is_symlink() or not root.is_dir():
+            raise CacheError("cache root must be an existing real directory")
+        rel = safe_relative(str(relative))
+        current = root
+        for part in rel.parts:
+            current = current / part
+            if current.is_symlink():
+                raise CacheError("symbolic links are forbidden in cache paths")
+            if not allow_missing and not current.exists():
+>               raise CacheError("cache path is missing: " + str(rel))
+E               g2.latent_cache.contract.CacheError: cache path is missing: episode_manifest.json
+
+g2/latent_cache/contract.py:59: CacheError
+________ test_gc_hard_crash_is_atomic_and_idempotent[receipt_before_gc] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-122/test_gc_hard_crash_is_atomic_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94228486e0>
+phase = 'receipt_before_gc'
+
+    @pytest.mark.parametrize(
+        "phase", ["receipt_before_gc", "gc_before_commit", "gc_after_commit"]
+    )
+    def test_gc_hard_crash_is_atomic_and_idempotent(tmp_path, monkeypatch, phase):
+        monkeypatch.setattr(ledger_archive, "published_proof", sqlite_only_proof)
+        spool = sql_spool(tmp_path)
+        job, target, event = seed_verified_rows(spool, tmp_path / "data", 0, 3)
+        ctx = multiprocessing.get_context("fork")
+        child = ctx.Process(target=_crash_gc, args=(str(spool.root), job, phase))
+        child.start()
+        child.join(15)
+        assert child.exitcode == 77
+        assert EventSpool.open(spool.root).job_status(job) == "complete"
+        assert ledger_archive.archive(spool, job)
+        assert spool.stats()["completed_jobs"] == 1 and spool.stats()["active_records"] == 0
+>       assert spool.enqueue(job, event) == "completed_by_cache"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_ledger.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:370: in enqueue
+    return duplicate(self, lookup(self, db, job=job), event)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/ledger_archive.py:112: in duplicate
+    source = load_source(record["job"]["target"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/final_source.py:244: in load_source
+    manifest = read_json(contained(root, "episode_manifest.json"))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-agent/pytest-122/test_gc_hard_crash_is_atomic_a0/data/episode_000000')
+relative = 'episode_manifest.json', allow_missing = False
+
+    def contained(root, relative, allow_missing=False):
+        """Do not silently follow a symlink anywhere inside a cache namespace."""
+        root = Path(root).absolute()
+        if root.is_symlink() or not root.is_dir():
+            raise CacheError("cache root must be an existing real directory")
+        rel = safe_relative(str(relative))
+        current = root
+        for part in rel.parts:
+            current = current / part
+            if current.is_symlink():
+                raise CacheError("symbolic links are forbidden in cache paths")
+            if not allow_missing and not current.exists():
+>               raise CacheError("cache path is missing: " + str(rel))
+E               g2.latent_cache.contract.CacheError: cache path is missing: episode_manifest.json
+
+g2/latent_cache/contract.py:59: CacheError
+________ test_gc_hard_crash_is_atomic_and_idempotent[gc_before_commit] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-122/test_gc_hard_crash_is_atomic_a1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f9422848c80>
+phase = 'gc_before_commit'
+
+    @pytest.mark.parametrize(
+        "phase", ["receipt_before_gc", "gc_before_commit", "gc_after_commit"]
+    )
+    def test_gc_hard_crash_is_atomic_and_idempotent(tmp_path, monkeypatch, phase):
+        monkeypatch.setattr(ledger_archive, "published_proof", sqlite_only_proof)
+        spool = sql_spool(tmp_path)
+        job, target, event = seed_verified_rows(spool, tmp_path / "data", 0, 3)
+        ctx = multiprocessing.get_context("fork")
+        child = ctx.Process(target=_crash_gc, args=(str(spool.root), job, phase))
+        child.start()
+        child.join(15)
+        assert child.exitcode == 77
+        assert EventSpool.open(spool.root).job_status(job) == "complete"
+        assert ledger_archive.archive(spool, job)
+        assert spool.stats()["completed_jobs"] == 1 and spool.stats()["active_records"] == 0
+>       assert spool.enqueue(job, event) == "completed_by_cache"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_ledger.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:370: in enqueue
+    return duplicate(self, lookup(self, db, job=job), event)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/ledger_archive.py:112: in duplicate
+    source = load_source(record["job"]["target"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/final_source.py:244: in load_source
+    manifest = read_json(contained(root, "episode_manifest.json"))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-agent/pytest-122/test_gc_hard_crash_is_atomic_a1/data/episode_000000')
+relative = 'episode_manifest.json', allow_missing = False
+
+    def contained(root, relative, allow_missing=False):
+        """Do not silently follow a symlink anywhere inside a cache namespace."""
+        root = Path(root).absolute()
+        if root.is_symlink() or not root.is_dir():
+            raise CacheError("cache root must be an existing real directory")
+        rel = safe_relative(str(relative))
+        current = root
+        for part in rel.parts:
+            current = current / part
+            if current.is_symlink():
+                raise CacheError("symbolic links are forbidden in cache paths")
+            if not allow_missing and not current.exists():
+>               raise CacheError("cache path is missing: " + str(rel))
+E               g2.latent_cache.contract.CacheError: cache path is missing: episode_manifest.json
+
+g2/latent_cache/contract.py:59: CacheError
+_________ test_gc_hard_crash_is_atomic_and_idempotent[gc_after_commit] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-122/test_gc_hard_crash_is_atomic_a2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f94230bb5c0>
+phase = 'gc_after_commit'
+
+    @pytest.mark.parametrize(
+        "phase", ["receipt_before_gc", "gc_before_commit", "gc_after_commit"]
+    )
+    def test_gc_hard_crash_is_atomic_and_idempotent(tmp_path, monkeypatch, phase):
+        monkeypatch.setattr(ledger_archive, "published_proof", sqlite_only_proof)
+        spool = sql_spool(tmp_path)
+        job, target, event = seed_verified_rows(spool, tmp_path / "data", 0, 3)
+        ctx = multiprocessing.get_context("fork")
+        child = ctx.Process(target=_crash_gc, args=(str(spool.root), job, phase))
+        child.start()
+        child.join(15)
+        assert child.exitcode == 77
+        assert EventSpool.open(spool.root).job_status(job) == "complete"
+        assert ledger_archive.archive(spool, job)
+        assert spool.stats()["completed_jobs"] == 1 and spool.stats()["active_records"] == 0
+>       assert spool.enqueue(job, event) == "completed_by_cache"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_ledger.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:370: in enqueue
+    return duplicate(self, lookup(self, db, job=job), event)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/ledger_archive.py:112: in duplicate
+    source = load_source(record["job"]["target"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/final_source.py:244: in load_source
+    manifest = read_json(contained(root, "episode_manifest.json"))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-agent/pytest-122/test_gc_hard_crash_is_atomic_a2/data/episode_000000')
+relative = 'episode_manifest.json', allow_missing = False
+
+    def contained(root, relative, allow_missing=False):
+        """Do not silently follow a symlink anywhere inside a cache namespace."""
+        root = Path(root).absolute()
+        if root.is_symlink() or not root.is_dir():
+            raise CacheError("cache root must be an existing real directory")
+        rel = safe_relative(str(relative))
+        current = root
+        for part in rel.parts:
+            current = current / part
+            if current.is_symlink():
+                raise CacheError("symbolic links are forbidden in cache paths")
+            if not allow_missing and not current.exists():
+>               raise CacheError("cache path is missing: " + str(rel))
+E               g2.latent_cache.contract.CacheError: cache path is missing: episode_manifest.json
+
+g2/latent_cache/contract.py:59: CacheError
+=========================== short test summary info ============================
+FAILED g2/tests/test_one_shot_ledger.py::test_over_100k_events_1001_jobs_bounded_active_working_set
+FAILED g2/tests/test_one_shot_ledger.py::test_gc_hard_crash_is_atomic_and_idempotent[receipt_before_gc]
+FAILED g2/tests/test_one_shot_ledger.py::test_gc_hard_crash_is_atomic_and_idempotent[gc_before_commit]
+FAILED g2/tests/test_one_shot_ledger.py::test_gc_hard_crash_is_atomic_and_idempotent[gc_after_commit]
+4 failed, 349 passed in 90.85s (0:01:30)

@@ -1,0 +1,649 @@
+FFFFFFF.FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF                          [100%]
+=================================== FAILURES ===================================
+___ test_capsule_preserves_all_products_pt_bytes_projection_and_lazy_reader ____
+g2/tests/test_source_capsule.py:97: in test_capsule_preserves_all_products_pt_bytes_projection_and_lazy_reader
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path, large_audit=True)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+____ test_pending_source_is_not_retired_and_legacy_full_source_stays_strict ____
+g2/tests/test_source_capsule.py:153: in test_pending_source_is_not_retired_and_legacy_full_source_stays_strict
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_______ test_active_reader_defers_retirement_then_old_index_must_reopen ________
+g2/tests/test_source_capsule.py:169: in test_active_reader_defers_retirement_then_old_index_must_reopen
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_______ test_v2_json_open_is_light_and_reader_only_opens_requested_views _______
+g2/tests/test_source_capsule.py:193: in test_v2_json_open_is_light_and_reader_only_opens_requested_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_supervisor_v2_stops_resumes_original_queue_and_retires_after_work_release _
+g2/tests/test_source_capsule_entrypoints.py:148: in test_supervisor_v2_stops_resumes_original_queue_and_retires_after_work_release
+    assert full.run(cfg) == 75
+           ^^^^^^^^^^^^^
+g2/offline/full_production.py:889: in run
+    roots = validate_paths(cfg)
+            ^^^^^^^^^^^^^^^^^^^
+g2/offline/full_production.py:281: in validate_paths
+    raise CacheError(
+E   g2.latent_cache.contract.CacheError: production namespace overlaps protected data/code: output_root
+___ test_capacity_counts_and_missing_task_coverage_hold_even_if_budget_fits ____
+g2/tests/test_source_capsule_entrypoints.py:171: in test_capacity_counts_and_missing_task_coverage_hold_even_if_budget_fits
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path / "case")
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_retirement_policy_refuses_same_disk_archive_protected_paths_and_legacy __
+g2/tests/test_source_capsule_entrypoints.py:228: in test_retirement_policy_refuses_same_disk_archive_protected_paths_and_legacy
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_intent_bound] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_before_intent_write] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_intent_fsynced] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_before_write:spatial_source_index.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_published:spatial_source_index.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_published:SPATIAL_SOURCE_FINAL_READY.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_published:vae_cache/manifest.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_published:vae_cache/COMPLETE.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_published:episode_manifest.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_published:SOURCE_RETIREMENT.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_verified_before_retire] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_before_source_rename:spatial_source.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_source_renamed:spatial_source.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_before_source_delete:spatial_source.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_source_deleted:spatial_source.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_source_deleted:SPATIAL_SOURCE_READY.json] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_before_final_complete] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_final_complete] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[capsule_journal_removed] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[receipt_before_gc] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[gc_before_commit] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_hard_exit_recovers_every_source_swap_and_ledger_boundary[gc_after_commit] _
+g2/tests/test_source_retirement_faults.py:78: in test_hard_exit_recovers_every_source_swap_and_ledger_boundary
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+__________ test_two_writers_and_reader_during_retirement_fail_closed ___________
+g2/tests/test_source_retirement_faults.py:102: in test_two_writers_and_reader_during_retirement_fail_closed
+    *_, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_unexpected_retirement_files_are_preserved_without_deleting_source[spatial_source_index.json] _
+g2/tests/test_source_retirement_faults.py:144: in test_unexpected_retirement_files_are_preserved_without_deleting_source
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_unexpected_retirement_files_are_preserved_without_deleting_source[.source_retirement/unexpected.keep] _
+g2/tests/test_source_retirement_faults.py:144: in test_unexpected_retirement_files_are_preserved_without_deleting_source
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+______ test_low_disk_before_intent_retains_original_complete_publication _______
+g2/tests/test_source_retirement_faults.py:156: in test_low_disk_before_intent_retains_original_complete_publication
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+___________ test_tampered_sql_bound_journal_refuses_source_deletion ____________
+g2/tests/test_source_retirement_faults.py:184: in test_tampered_sql_bound_journal_refuses_source_deletion
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+___ test_finished_capsule_still_requires_original_sql_intent_before_gc[None] ___
+g2/tests/test_source_retirement_faults.py:205: in test_finished_capsule_still_requires_original_sql_intent_before_gc
+    _, target, _, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_finished_capsule_still_requires_original_sql_intent_before_gc[replacement1] _
+g2/tests/test_source_retirement_faults.py:205: in test_finished_capsule_still_requires_original_sql_intent_before_gc
+    _, target, _, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+___________ test_explicitly_kept_renderer_work_cannot_retire_source ____________
+g2/tests/test_source_retirement_faults.py:232: in test_explicitly_kept_renderer_work_cannot_retire_source
+    _, target, _, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_corrupt_final_hashes_fail_without_loading_all_views[spatial_source_index.json] _
+g2/tests/test_source_retirement_faults.py:257: in test_corrupt_final_hashes_fail_without_loading_all_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_corrupt_final_hashes_fail_without_loading_all_views[SPATIAL_SOURCE_FINAL_READY.json] _
+g2/tests/test_source_retirement_faults.py:257: in test_corrupt_final_hashes_fail_without_loading_all_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_corrupt_final_hashes_fail_without_loading_all_views[SOURCE_RETIREMENT.json] _
+g2/tests/test_source_retirement_faults.py:257: in test_corrupt_final_hashes_fail_without_loading_all_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_corrupt_final_hashes_fail_without_loading_all_views[vae_cache/manifest.json] _
+g2/tests/test_source_retirement_faults.py:257: in test_corrupt_final_hashes_fail_without_loading_all_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_corrupt_final_hashes_fail_without_loading_all_views[vae_cache/COMPLETE.json] _
+g2/tests/test_source_retirement_faults.py:257: in test_corrupt_final_hashes_fail_without_loading_all_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+___ test_corrupt_final_hashes_fail_without_loading_all_views[COMPLETE.json] ____
+g2/tests/test_source_retirement_faults.py:257: in test_corrupt_final_hashes_fail_without_loading_all_views
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+______ test_final_late_events_are_idempotent_and_wrong_scope_is_rejected _______
+g2/tests/test_source_retirement_faults.py:271: in test_final_late_events_are_idempotent_and_wrong_scope_is_rejected
+    kwargs, target, encoder, spool, job = capsule_case(tmp_path)
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_actual_fsynced_atomic_temp_is_recovered_only_under_sql_bound_intent[.source_retirement/transaction.json] _
+g2/tests/test_source_retirement_atomic.py:41: in test_actual_fsynced_atomic_temp_is_recovered_only_under_sql_bound_intent
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+_ test_actual_fsynced_atomic_temp_is_recovered_only_under_sql_bound_intent[vae_cache/manifest.json] _
+g2/tests/test_source_retirement_atomic.py:41: in test_actual_fsynced_atomic_temp_is_recovered_only_under_sql_bound_intent
+    kwargs, target, encoder, spool, job = acknowledged_job(tmp_path, monkeypatch)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_retirement_faults.py:25: in acknowledged_job
+    case = capsule_case(tmp_path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+g2/tests/test_source_capsule.py:65: in capsule_case
+    spool = EventSpool(
+g2/latent_cache/streaming.py:193: in __init__
+    self.source_policy = validate_policy(source_policy, self.root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/retirement_policy.py:82: in validate_policy
+    raise CacheError("retention namespaces overlap protected paths")
+E   g2.latent_cache.contract.CacheError: retention namespaces overlap protected paths
+46 failed, 1 passed, 1 deselected in 8.04s

@@ -53,14 +53,20 @@ def validate_profile_episode(
 ):
     root = Path(root).absolute()
     manifest = read_json(contained(root, "episode_manifest.json"))
-    if manifest.get("schema") != SCHEMA:
+    from g2.latent_cache import final_source as final
+
+    is_final = manifest.get("schema") == final.PROFILE_SCHEMA
+    if manifest.get("schema") not in (SCHEMA, final.PROFILE_SCHEMA):
         raise ContractError("expected new Stage-A profile; no legacy reinterpretation")
     profile = OutputProfile.from_dict(manifest["output_profile"])
     if expected_profile is not None and profile != expected_profile:
         raise ContractError("existing Stage-A profile differs")
-    source = read_json(contained(root, "spatial_source.json"))
-    ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
-    if (
+    if is_final:
+        source, _ = final.validate_profile_header(root, manifest)
+    else:
+        source = read_json(contained(root, "spatial_source.json"))
+        ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
+    if not is_final and (
         source.get("schema") != SOURCE_SCHEMA
         or ready.get("source_manifest_sha256") != digest(root / "spatial_source.json")
         or source.get("source_id")
@@ -363,7 +369,7 @@ def validate_profile_episode(
         complete = read_json(contained(root, "COMPLETE.json"))
         if (
             not manifest["profile_complete"]
-            or complete.get("schema") != SCHEMA
+            or complete.get("schema") != (final.PROFILE_SCHEMA if is_final else SCHEMA)
             or complete.get("episode_manifest_sha256")
             != digest(root / "episode_manifest.json")
             or complete.get("source_id") != source["source_id"]
