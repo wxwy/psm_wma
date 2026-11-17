@@ -1,3 +1,25 @@
+# 2026-11-17 CST — Issue54 A2 published fixed source / GPT REVIEW
+
+Formal Root4ad0fe7394cb62c4b5692fecaf6ce52963b8852c / Child-Gitlink
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2. Source branch pushed; Draft55
+head/base/body readback exactmatch, stacked PR53/d36caf0f still unmerged.
+209 tested blobs match fixed source. Readonly peer exactpair closes bothP2,
+independent unchanged2probes and4 focused PASS; no new blocker. Author465PASS/
+13 inherited dependency skips,431 and474 old testcase IDs retained,47new allPASS.
+
+CanonicalInbox append-only GPT request below128KiB, scope/raw evidence/runbook
+fully specified. Current receipts revision1/implementation_scope.json,
+publication_before_bookkeeping.json and peer_closure/receipt.json. Following
+bookkeeping HEAD does not replace formal4ad0fe73. No source changes after tests
+or peer closure. V3fe1089fb/nav70eb7b44/Child unchanged. Source was based on
+exact d96d8931 A1 approval; old b352 candidate retained for local RED evidence.
+
+STOP after final push/readback; GPT independent code/native/Wan/resource gate
+pending, not self-approved. Real producer4samples, GPU/weights/fullproduction,
+StageB-C/train/merge NOT_RUN. Language/resource candidate settings not frozen.
+
+# Prior observations (historical)
+
 # 2026-11-17 CST — Issue54 A2 corrective REVIEW
 
 Candidate correction ready for fixed commit then readonly peer closure. Initial
