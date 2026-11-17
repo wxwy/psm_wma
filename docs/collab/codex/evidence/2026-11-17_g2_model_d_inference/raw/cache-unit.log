@@ -1,0 +1,5 @@
+ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+__main__.py: error: unrecognized arguments: --suppress-no-test-exit-code
+  inifile: /workspace/work/g2-d-inference/cosmos-framework/.pytest.toml
+  rootdir: /workspace/work/g2-d-inference/cosmos-framework
+

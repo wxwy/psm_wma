@@ -1,0 +1,191 @@
+{
+  "status": "AUTHOR_SCOPED_CPU_PASS_CANDIDATE",
+  "observed_at_cst": "2026-11-17T17:50:08.461809+08:00",
+  "root_baseline": "7a357620b4cc1f6817749c8a8275771cfbb4049c",
+  "root_gitlink_unchanged": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "fixed_child": "6991142cb94256f497347db40f58ad0ee3f482aa",
+  "fixed_child_tree": "0cd9a38a2aadae13f203850cdbd6fc263926f08b",
+  "review_base": "3bdfaa64af45a42eb2b5adde582505d33a5f08f2",
+  "c0": "ec9356fafd1fd18cc0bd552b7eb23428f59df7f6",
+  "dependencies": {
+    "B": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+    "A": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+    "C": "f262d7ff4156d83356e1d7f790adea2a61e85c6d"
+  },
+  "cpu": {
+    "passed": 361,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "modules": {
+      "cosmos_framework.data.generator.action.utils.static_task_text_test": 11,
+      "cosmos_framework.inference.g2_model_hooks_test": 7,
+      "cosmos_framework.inference.g2_policy_conditions_test": 33,
+      "cosmos_framework.inference.g2_session_cache_test": 15,
+      "cosmos_framework.inference.g2_text_kv_cache_test": 6,
+      "cosmos_framework.inference.local_memory_online_test": 6,
+      "cosmos_framework.inference.robocasa_batch_transactions_test": 38,
+      "cosmos_framework.inference.robocasa_session_transactions_test": 26,
+      "cosmos_framework.model.generator.mot.g2_contracts_test": 11,
+      "cosmos_framework.model.generator.mot.g2_core_test": 28,
+      "cosmos_framework.model.generator.mot.global_memory_test": 30,
+      "cosmos_framework.model.generator.mot.global_spatial_test": 15,
+      "cosmos_framework.model.generator.mot.inference_text_kv_memory_test": 2,
+      "cosmos_framework.model.generator.mot.prefix_text_kv_memory_test": 59,
+      "cosmos_framework.scripts.action_policy_server_robocasa_phase6_test": 5,
+      "cosmos_framework.scripts.g2_policy_server_test": 14,
+      "cosmos_framework.scripts.robocasa_transactions_b1_test": 55
+    },
+    "counts_are_not_added_to_prior_runs": true
+  },
+  "source": {
+    "python_fingerprints": 1114,
+    "before_after_equal": true,
+    "clean_fixed_child": true,
+    "fingerprint_file_sha256": "244bc00c776f25e9dbf9a6c8b8954dcfb6a5474c5a6195c69f17b70b477597a9",
+    "owned_files": {
+      "cosmos_framework/inference/g2_model_hooks.py": "7eed456ccd417adee850c717e2c6bee047eeb3a803a71726f05826f7cefe831f",
+      "cosmos_framework/inference/g2_model_hooks_test.py": "9af8c1549879a56eeba87634bb8dae5dbe29b4eceacaad367d7677a39e1d383e",
+      "cosmos_framework/inference/g2_policy_conditions.py": "e4064dcc07d9830bc6f9d2c74063ed9af7334c91721a4d4401d89e874f340d3a",
+      "cosmos_framework/inference/g2_policy_conditions_test.py": "f2af65d1f50f98b89c5862d41be6d102ada5de9dfdb37f9e51a5c407e3a48524",
+      "cosmos_framework/inference/g2_session_cache.py": "17714c07ec95b7f85e78cd1f17f39cc536506f348ab6b4be1b173afde5208c27",
+      "cosmos_framework/inference/g2_session_cache_test.py": "a11177b9c53654c44916cc10f549c80d08d4d64d44b686b1bef519a31173aaa7",
+      "cosmos_framework/inference/g2_text_kv_cache_test.py": "fc527173369e16fd2200a3e051000c0f6c891727890e96c61990e22e7f990dd3",
+      "cosmos_framework/inference/robocasa_batch_transactions.py": "5fa8692fe65ae15bc21970b0e331b72f6f6add4958066ef622ba5412ae50e168",
+      "cosmos_framework/inference/robocasa_session_transactions.py": "f2495d7c29259c92342de6b862234e415dcabfe4d3fefd5b972626c1371d9dbb",
+      "cosmos_framework/model/generator/mot/inference_text_kv_memory.py": "fde956539191f53170ee6e73892921838446d9264d587db949e137280cfcf889",
+      "cosmos_framework/scripts/action_policy_server_robocasa.py": "10d38ce452f5b84bc057f08b491b043f48a8403a1add1553b2fcf878dc9d540d",
+      "cosmos_framework/scripts/g2_policy_server_test.py": "13e922b1def7375b44d94df4e328139a17604e957d7d3baaf2d9f17db589d419"
+    },
+    "protected_route_files": {
+      "cosmos_framework/configs/base/defaults/model_config.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "6f0877a1a76a6bc2cde2b8df77b89567f211d1be"
+      },
+      "cosmos_framework/data/generator/sequence_packing/packers.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "9417105d170e5bcdff028a3533dd6f0fe2dc18c5"
+      },
+      "cosmos_framework/data/generator/sequence_packing/sequence.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "0115b81a1e0a9528ed7de3c27046b35ff4486d1f"
+      },
+      "cosmos_framework/model/generator/mot/attention.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "510466896c2e494ba3e260fcb072ab685c7c8bda"
+      },
+      "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "10791de801e99ed6e5e8daf1d354f5eae853a09d"
+      },
+      "cosmos_framework/model/generator/mot/g2_contracts.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "61b569bb6da187dcc10a0876bce251a40e321c61"
+      },
+      "cosmos_framework/model/generator/mot/g2_core_test.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "4d316183daf7f586d855bb48141aad175d9fb5f6"
+      },
+      "cosmos_framework/model/generator/mot/g2_parameters.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "81e2151ee820a5ea5a4a145967f22d413e9b0595"
+      },
+      "cosmos_framework/model/generator/mot/memory_prefix.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "5b70aff6a7b1624a7d98bc2a777e5b969b91313b"
+      },
+      "cosmos_framework/model/generator/mot/parallelize_unified_mot.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "671fd987ebb58cf4276742cd557af04ecd4e2c67"
+      },
+      "cosmos_framework/model/generator/mot/parallelize_vfm_network.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "b51bac4ad7629668f44b32f18ed02da5725b456e"
+      },
+      "cosmos_framework/model/generator/mot/unified_mot.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "925d64ae3e7ef38fdfbab113365f3a73468fb9b0"
+      },
+      "cosmos_framework/model/generator/omni_mot_model.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "c41b7fa6c6ae069d836a3f1f55129459fa0ed7b2"
+      },
+      "cosmos_framework/model/generator/utils/data_and_condition.py": {
+        "authority": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+        "git_blob": "9236053e24c7ddf64f999cb5579931cb5fda932d"
+      },
+      "cosmos_framework/model/generator/mot/global_memory.py": {
+        "authority": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+        "git_blob": "7fe072ec28ddb699ac7d1818a24a2f054b0dfab1"
+      },
+      "cosmos_framework/model/generator/mot/global_memory_test.py": {
+        "authority": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+        "git_blob": "32d4b6069c45dc2bb104e71de660976e75de6426"
+      },
+      "cosmos_framework/model/generator/mot/global_spatial.py": {
+        "authority": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+        "git_blob": "482351ad7709b2c2a7774d4fccb8480292f399cf"
+      },
+      "cosmos_framework/model/generator/mot/global_spatial_test.py": {
+        "authority": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+        "git_blob": "6168485788cd462e1692f5a5663ccbd5d96ab692"
+      },
+      "cosmos_framework/data/generator/action/datasets/g2_training_adapter.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "04123171ec0c2d7651d20d8754f4050cfa17ad71"
+      },
+      "cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "6de764b45a840805d6487c82e12f3a8060ddcb3d"
+      },
+      "cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "2203f53b54fe01f39d9fe02c4283ca928178fee8"
+      },
+      "cosmos_framework/data/generator/action/utils/static_task_text.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "0a2a86621a9424dab87b9f77d14a2616d2878954"
+      },
+      "cosmos_framework/data/generator/action/utils/static_task_text_test.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "8ab4db903418f9181c5851cf5fd0680539cb6bca"
+      },
+      "cosmos_framework/data/generator/joint_dataloader.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "7a65ae2f28e22dbaa44c09a6bb711fb0b4fb2b5b"
+      },
+      "cosmos_framework/data/generator/action/utils/json_formatter.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "24585d592a1e678c88a506d32ba20c62f1bdadf3"
+      },
+      "cosmos_framework/data/generator/action/utils/transforms.py": {
+        "authority": "f262d7ff4156d83356e1d7f790adea2a61e85c6d",
+        "git_blob": "b19dd935ce7957c1888a568e29e2e20b367ae53f"
+      }
+    }
+  },
+  "static": {
+    "ruff_strict_files": 11,
+    "legacy_I001_exception_files": 1,
+    "legacy_exception_identical_to_base": true,
+    "format_files": 12,
+    "syntax_files": 12
+  },
+  "not_run": [
+    "real checkpoint/Wan/Cosmos",
+    "GPU BF16/compiled cache parity",
+    "GPU latency/memory",
+    "actual rollout provider/GT binding",
+    "DATA_B/C real state15/alignment",
+    "simulation/closed loop/SR",
+    "real FSDP/distributed cache"
+  ],
+  "explicitly_unsupported": [
+    "multi-rank Session condition runtime",
+    "guidance != 1",
+    "expert map playback",
+    "cross-Session/machine sharing",
+    "training cache reuse"
+  ],
+  "child_draft": "https://github.com/wxwy/cosmos-framework/pull/16"
+}
