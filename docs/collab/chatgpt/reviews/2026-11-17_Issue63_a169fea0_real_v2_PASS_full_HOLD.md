@@ -19,7 +19,7 @@ PR #64 后续修正：
 
 ## 二、实际原生F27 + H100 Wan B1 真实数据（非FakeEncoder）
 
-运行官方仓库 `scripts/g2/run_stage_a_full.sh ... preflight/run --manual-start`，仅抽取真实 `CloseBlenderLid/000000` 与 `CloseFridge/000502`（相同raw mapping fingerprint与原录像），F27物理GPU6×1、独立常驻Wan消费者物理GPU7，16,? 不启动9,126全量。
+运行官方仓库 `scripts/g2/run_stage_a_full.sh ... preflight/run --manual-start`，仅抽取真实 `CloseBlenderLid/000000` 与 `CloseFridge/000502`（相同raw mapping fingerprint与原录像），F27物理GPU6×1、独立常驻Wan消费者物理GPU7；样例仅两条，不启动9,126全量。
 
 真实运行前遇到模板资产根问题：`/mnt/data1/data_v2_0617/robocasa_repo/robocasa/models/assets` 是指向 `robocasa_vendor_build_20261023` 的软链接，`g2.sim.source_geometry.load_model` 精确解析后**按设计拒绝** `asset escapes approved roots`（两次producer重试失败；原始失败日志保存）。按相同资产SHA/原始source fingerprint，在**另一个全新隔离配置**中显式把 `robocasa_repo` 改为 canonical `/mnt/data1/data_v2_0617/robocasa_vendor_build_20261023/robocasa`，严格Root/Child/nav/recipe/NumPy/GPU preflight PASS；没有放宽symlink安全边界，也未在服务器修改任何受Git管理源码。随后官方2ep Supervisor **exit0, phase DONE, complete=true, selected2, failed0**。
 
