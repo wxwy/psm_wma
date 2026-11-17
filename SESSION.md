@@ -4442,3 +4442,12 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 - 集成B修正3a5c625的Global-enabled全缺席标量零图依赖（不插token、不调用Reader）；82d73c5合成dropout身份以支持空/正常B1合批，不重抽；6d72d4d恢复legacy QKV/norm staging，C0旧源码四组输出/梯度/RNG逐位PASS。实际FSDP必要前提有CPU证据，运行仍NOT_RUN。
 - D OnlineSpatialSnapshot实际mask_content_ids已进view/global key并miss校核；B重复公共mask字段提议撤回、未发布，继续唯一D快照。D所有Session-cache请求明确拒绝world_size>1。当前singleRoom C adapter恰一top；Reader保证单variant，未来多Room真实语义/数据未验，不扩散承诺。
 - C训练控制器/optimizer/warm-start/阶段/checkpoint与Phase5 overlay后继固定SHA及C最终Root handoff尚未交付，M05/完整M07不关闭。Root已普通保留D3d351fe37af111257543ab814f30222dd7e76da6全部原始证据/交接，明确真实provider与weight/config versions factory尚未冻结。DATA_B/C与真实GPU/FSDP/A-B恢复/服务闭环/M08/M09 NOT_RUN；训练小例GA=1，实际CLI待C交付后引用，不造假命令。现有CPU runner可直接复现；checkpoint/recipe/loader/provider/正式batch预算等待执行侧明确。
+
+## 2026-11-17 CST — G2 最终源码／CPU集成候选
+
+- C最终Child26243dae9be7a2ab7ef5d544f8759b398ce917f9（a911训练/恢复＋显式配对horizon）到达后继续普通合入，不以旧partial结束。Root也保留C343421d6c2fb78d577739e118dbd600021c991d2全部证据/交接；D最终Root0be8fd36b28fca81ce7343c7bd7ab1c673d94783的SERVER_RUNBOOK后继正常merge，A35a原证据未改。
+- 最终Child9370c3858532b4d61630138431145c8360e86eb0正常push/readback，Root本提交唯一绑定此Gitlink。C0与B core固定来源不变；旧partial b7ea01d7/6d72和442证据独立保留。Root Draft60 / Child Draft17更新为最终源码/CPU范围，仍Draft、未自动合并正式V3/v3-local-ttt。
+- 最终统一30模块636 PASS、1 SKIP、0fail/error（37.98s）；skip仅原optional真实exact-window cache/source/Edge/base/VAE preflight，缺真实路径而保留原skip。没有累计作者405/361/56或历史442等重叠数量。最终日志/JUnit/static/source proof/runner在artifacts/g2_model_integration_final。
+- 13项B-owned组合现覆盖actual A/B native vision-action头、C shared v2 text与stage/strict warm-start、D缓存/两Session三轮replan on-off、normal/empty混批、Local core、Qwen/Nemotron FP32/BF16。新增C控制器接实际动作头：无Global G1完整旧state严格载入，TRAIN_A→B后恢复model/optimizer/stage/RNG与连续运行逐项相等、Local权重不变。原grouped/Local/GA/sidecar、CPU DCP、2-rank Gloo、旧Phase5/No-TTT同轮回归。
+- C v2显式spatial_context_scope，dropout_id为consumer_once_v1+rate策略身份，实际决定仍在dropped；B兼容此前opaque IDs的组合hash，无dataclass分叉。C/D生产归属文件未手改；36个A/C/D归属blob和祖先来源证明在最终证据。EffectiveTextBatch用整个实例/完整字段签名，无.identity属性，已通知C修正文档措辞。
+- M05/M06/M07更新REVIEW作者源码/CPU，不代表独立批准。真实DATA_B/C/provider、G1/Edge/Wan权重/版本factory、完整参数清单、GPU BF16/compile物化/FSDP/阶段DCP恢复/服务闭环/正式训练/900EP仍NOT_RUN；M08/M09 TODO。实际训练沿C现有Phase5 --g2-recipe，smoke recipe内GA=1（不能只CLI --ga1），horizon/预算等必须显式。服务沿D原server/runbook，world_size>1缓存拒绝。未执行GPU、未停止其他任务、未升级环境或外传私有数据。

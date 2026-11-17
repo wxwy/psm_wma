@@ -1,0 +1,7 @@
+[
+  {
+    "class": "examples.psm_wma_robocasa_corrected_phase5_test",
+    "name": "test_optional_real_strict_snapshot10_preflight",
+    "reason": "未提供真实 exact-window cache/source/Edge/base/VAE 路径"
+  }
+]
