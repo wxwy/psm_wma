@@ -1,0 +1,697 @@
+{
+  "TRAIN_A": [
+    {
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.action2llm.bias",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.action2llm.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.action_modality_embed",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_projector.bias",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_projector.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.bias",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.llm2action.bias",
+      "numel": 1,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        1
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.llm2action.weight",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        1,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory2llm.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory2llm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.key_proj.bias",
+      "numel": 3,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.key_proj.weight",
+      "numel": 12,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.query_proj.bias",
+      "numel": 3,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.query_proj.weight",
+      "numel": 12,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.slot_queries",
+      "numel": 12,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.value_proj.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.value_proj.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_in_bias",
+      "numel": 5,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        5
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_in_weight",
+      "numel": 15,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        5,
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_out_bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_out_weight",
+      "numel": 20,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        5
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.encoder.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.encoder.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.moe_gen.bias",
+      "numel": 4,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.und.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.und.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.vae.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.vae.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    }
+  ],
+  "TRAIN_B": [
+    {
+      "group": "action_adapter",
+      "lr": 5e-05,
+      "name": "net.action2llm.bias",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 5e-05,
+      "name": "net.action2llm.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 5e-05,
+      "name": "net.action_modality_embed",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_projector.bias",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_projector.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.bias",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 5e-05,
+      "name": "net.llm2action.bias",
+      "numel": 1,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        1
+      ]
+    },
+    {
+      "group": "action_adapter",
+      "lr": 5e-05,
+      "name": "net.llm2action.weight",
+      "numel": 4,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        1,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory2llm.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory2llm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.key_proj.bias",
+      "numel": 3,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.key_proj.weight",
+      "numel": 12,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.query_proj.bias",
+      "numel": 3,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.query_proj.weight",
+      "numel": 12,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        3,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.slot_queries",
+      "numel": 12,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.value_proj.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.value_proj.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_in_bias",
+      "numel": 5,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        5
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_in_weight",
+      "numel": 15,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        5,
+        3
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_out_bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.core.w0_fast_out_weight",
+      "numel": 20,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        5
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.encoder.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.local_memory_runtime.encoder.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "gen",
+      "lr": 5e-06,
+      "name": "net.moe_gen.bias",
+      "numel": 4,
+      "peak_lr": 1e-05,
+      "requires_grad": true,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "gen",
+      "lr": 5e-06,
+      "name": "net.moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": true,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.und.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.und.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.vae.bias",
+      "numel": 4,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4
+      ]
+    },
+    {
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.vae.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        4,
+        4
+      ]
+    }
+  ],
+  "scope": "actual named_parameters of synthetic CPU model; NOT full Edge or FSDP"
+}

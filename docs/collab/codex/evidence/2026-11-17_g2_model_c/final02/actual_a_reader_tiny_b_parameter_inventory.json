@@ -1,0 +1,2020 @@
+{
+  "parameters": [
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.action2llm.bias",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "action_adapter",
+      "lr": 0.0,
+      "name": "net.action2llm.weight",
+      "numel": 64,
+      "peak_lr": 5e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        4
+      ]
+    },
+    {
+      "gradient_norm": 0.5821201801300049,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_projector.modality",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": 12.971929550170898,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_projector.projection.weight",
+      "numel": 8192,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        16,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.8222228288650513,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.final_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.7741925716400146,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.final_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.5710859298706055,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.cross_attention.key.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 9.882018089294434,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.cross_attention.output.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.5330268144607544,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.cross_attention.query.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 10.338160514831543,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.cross_attention.value.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.37592199444770813,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.ffn.0.bias",
+      "numel": 2048,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        2048
+      ]
+    },
+    {
+      "gradient_norm": 7.814166069030762,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.ffn.0.weight",
+      "numel": 1048576,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        2048,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.5511654615402222,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.ffn.2.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 7.836302280426025,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.ffn.2.weight",
+      "numel": 1048576,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        2048
+      ]
+    },
+    {
+      "gradient_norm": 0.24478766322135925,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.ffn_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.21129310131072998,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.ffn_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.16891060769557953,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.query_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.02230033650994301,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.query_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.6521146893501282,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.source_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.41917869448661804,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.language.source_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 1.190898060798645,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.queries",
+      "numel": 32768,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        64,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.3981555104255676,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.direction_embedding.weight",
+      "numel": 3072,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        6,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.20124053955078125,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.geometry_mlp.0.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.37824657559394836,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.geometry_mlp.0.weight",
+      "numel": 7168,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        14
+      ]
+    },
+    {
+      "gradient_norm": 0.3981555104255676,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.geometry_mlp.2.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.5243222713470459,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.geometry_mlp.2.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.3981555104255676,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.image_projection.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 10.500371932983398,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.image_projection.weight",
+      "numel": 2048,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        4
+      ]
+    },
+    {
+      "gradient_norm": 1.2352914810180664,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.position_projection.weight",
+      "numel": 17408,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        34
+      ]
+    },
+    {
+      "gradient_norm": 0.3981555104255676,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.spatial.scope_embedding.weight",
+      "numel": 1536,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        3,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.5440967082977295,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.text_adapter.0.bias",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": 0.43085286021232605,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.text_adapter.0.weight",
+      "numel": 16,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": 7.371640682220459,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.text_adapter.1.weight",
+      "numel": 8192,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        16
+      ]
+    },
+    {
+      "gradient_norm": 0.08510904759168625,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.cross_attention.key.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 12.351567268371582,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.cross_attention.output.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.08550919592380524,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.cross_attention.query.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 12.120322227478027,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.cross_attention.value.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.30262064933776855,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.ffn.0.bias",
+      "numel": 2048,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        2048
+      ]
+    },
+    {
+      "gradient_norm": 6.681947708129883,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.ffn.0.weight",
+      "numel": 1048576,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        2048,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.42853209376335144,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.ffn.2.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 6.650416851043701,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.ffn.2.weight",
+      "numel": 1048576,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        2048
+      ]
+    },
+    {
+      "gradient_norm": 0.18663644790649414,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.ffn_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.19266298413276672,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.ffn_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.44302213191986084,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.memory_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.40202486515045166,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.memory_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.004137412179261446,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.query_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.0037582512013614178,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.query_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.2544090747833252,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.self_attention.key.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 10.051468849182129,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.self_attention.output.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.2517856955528259,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.self_attention.query.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 9.661214828491211,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.self_attention.value.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.573106586933136,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.source_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.5371258854866028,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.0.source_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.059258509427309036,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.cross_attention.key.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 9.254756927490234,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.cross_attention.output.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.060199081897735596,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.cross_attention.query.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 9.251747131347656,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.cross_attention.value.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.27496862411499023,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.ffn.0.bias",
+      "numel": 2048,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        2048
+      ]
+    },
+    {
+      "gradient_norm": 6.127279281616211,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.ffn.0.weight",
+      "numel": 1048576,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        2048,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.3761231005191803,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.ffn.2.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 5.74952507019043,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.ffn.2.weight",
+      "numel": 1048576,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        2048
+      ]
+    },
+    {
+      "gradient_norm": 0.17436742782592773,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.ffn_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.16631996631622314,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.ffn_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.3748089075088501,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.memory_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.3449156880378723,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.memory_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.0028425613418221474,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.query_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.002861891407519579,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.query_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.13022048771381378,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.self_attention.key.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 8.526126861572266,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.self_attention.output.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.1314196139574051,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.self_attention.query.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 8.300536155700684,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.self_attention.value.weight",
+      "numel": 262144,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512,
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.41480255126953125,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.source_norm.bias",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": 0.4024582803249359,
+      "gradient_present": true,
+      "group": "global",
+      "lr": 5e-05,
+      "name": "net.global_memory_reader.visual.1.source_norm.weight",
+      "numel": 512,
+      "peak_lr": 5e-05,
+      "requires_grad": true,
+      "shape": [
+        512
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.embed_tokens.weight",
+      "numel": 1024,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        64,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.input_layernorm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.input_layernorm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.mlp.down_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        32
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.mlp.gate_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.mlp.up_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.mlp_moe_gen.down_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        32
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.mlp_moe_gen.gate_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.mlp_moe_gen.up_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.post_attention_layernorm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.post_attention_layernorm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.k_norm_moe_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.k_norm_und_for_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.k_proj.weight",
+      "numel": 128,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.k_proj_moe_gen.weight",
+      "numel": 128,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.o_proj.weight",
+      "numel": 256,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.o_proj_moe_gen.weight",
+      "numel": 256,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.q_norm_moe_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.q_proj.weight",
+      "numel": 256,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.q_proj_moe_gen.weight",
+      "numel": 256,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.v_proj.weight",
+      "numel": 128,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.0.self_attn.v_proj_moe_gen.weight",
+      "numel": 128,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.input_layernorm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.input_layernorm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.mlp.down_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        32
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.mlp.gate_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.mlp.up_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.mlp_moe_gen.down_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        32
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.mlp_moe_gen.gate_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.mlp_moe_gen.up_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.post_attention_layernorm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.post_attention_layernorm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.k_norm_moe_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.k_norm_und_for_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.k_proj.weight",
+      "numel": 128,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.k_proj_moe_gen.weight",
+      "numel": 128,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.o_proj.weight",
+      "numel": 256,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.o_proj_moe_gen.weight",
+      "numel": 256,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.q_norm_moe_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.q_proj.weight",
+      "numel": 256,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.q_proj_moe_gen.weight",
+      "numel": 256,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.v_proj.weight",
+      "numel": 128,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.1.self_attn.v_proj_moe_gen.weight",
+      "numel": 128,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.input_layernorm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.input_layernorm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.mlp.down_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        32
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.mlp.gate_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.mlp.up_proj.weight",
+      "numel": 512,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.mlp_moe_gen.down_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        32
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.mlp_moe_gen.gate_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.mlp_moe_gen.up_proj.weight",
+      "numel": 512,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        32,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.post_attention_layernorm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.post_attention_layernorm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.k_norm_moe_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.k_norm_und_for_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.k_proj.weight",
+      "numel": 128,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.k_proj_moe_gen.weight",
+      "numel": 128,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.o_proj.weight",
+      "numel": 256,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.o_proj_moe_gen.weight",
+      "numel": 256,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.q_norm_moe_gen.weight",
+      "numel": 8,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.q_proj.weight",
+      "numel": 256,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.q_proj_moe_gen.weight",
+      "numel": 256,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.v_proj.weight",
+      "numel": 128,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.layers.2.self_attn.v_proj_moe_gen.weight",
+      "numel": 128,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        8,
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "frozen",
+      "lr": 0.0,
+      "name": "net.language_model.model.norm.weight",
+      "numel": 16,
+      "peak_lr": 0.0,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    },
+    {
+      "gradient_norm": null,
+      "gradient_present": false,
+      "group": "gen",
+      "lr": 0.0,
+      "name": "net.language_model.model.norm_moe_gen.weight",
+      "numel": 16,
+      "peak_lr": 1e-05,
+      "requires_grad": false,
+      "shape": [
+        16
+      ]
+    }
+  ],
+  "scope": "actual A Reader + B tiny MoT, synthetic CPU/reference attention; NOT full Edge/FSDP/action loss",
+  "stage_after_commit": {
+    "completed_steps": 1,
+    "effective_consumers": 1,
+    "group_consumers": {
+      "action_adapter": 0,
+      "gen": 0,
+      "global": 1
+    },
+    "group_updates": {
+      "action_adapter": 0,
+      "gen": 0,
+      "global": 1
+    },
+    "parameter_roles": {
+      "net.action2llm.bias": "action_adapter",
+      "net.action2llm.weight": "action_adapter",
+      "net.global_memory_projector.modality": "global",
+      "net.global_memory_projector.projection.weight": "global",
+      "net.global_memory_reader.final_norm.bias": "global",
+      "net.global_memory_reader.final_norm.weight": "global",
+      "net.global_memory_reader.language.cross_attention.key.weight": "global",
+      "net.global_memory_reader.language.cross_attention.output.weight": "global",
+      "net.global_memory_reader.language.cross_attention.query.weight": "global",
+      "net.global_memory_reader.language.cross_attention.value.weight": "global",
+      "net.global_memory_reader.language.ffn.0.bias": "global",
+      "net.global_memory_reader.language.ffn.0.weight": "global",
+      "net.global_memory_reader.language.ffn.2.bias": "global",
+      "net.global_memory_reader.language.ffn.2.weight": "global",
+      "net.global_memory_reader.language.ffn_norm.bias": "global",
+      "net.global_memory_reader.language.ffn_norm.weight": "global",
+      "net.global_memory_reader.language.query_norm.bias": "global",
+      "net.global_memory_reader.language.query_norm.weight": "global",
+      "net.global_memory_reader.language.source_norm.bias": "global",
+      "net.global_memory_reader.language.source_norm.weight": "global",
+      "net.global_memory_reader.queries": "global",
+      "net.global_memory_reader.spatial.direction_embedding.weight": "global",
+      "net.global_memory_reader.spatial.geometry_mlp.0.bias": "global",
+      "net.global_memory_reader.spatial.geometry_mlp.0.weight": "global",
+      "net.global_memory_reader.spatial.geometry_mlp.2.bias": "global",
+      "net.global_memory_reader.spatial.geometry_mlp.2.weight": "global",
+      "net.global_memory_reader.spatial.image_projection.bias": "global",
+      "net.global_memory_reader.spatial.image_projection.weight": "global",
+      "net.global_memory_reader.spatial.position_projection.weight": "global",
+      "net.global_memory_reader.spatial.scope_embedding.weight": "global",
+      "net.global_memory_reader.text_adapter.0.bias": "global",
+      "net.global_memory_reader.text_adapter.0.weight": "global",
+      "net.global_memory_reader.text_adapter.1.weight": "global",
+      "net.global_memory_reader.visual.0.cross_attention.key.weight": "global",
+      "net.global_memory_reader.visual.0.cross_attention.output.weight": "global",
+      "net.global_memory_reader.visual.0.cross_attention.query.weight": "global",
+      "net.global_memory_reader.visual.0.cross_attention.value.weight": "global",
+      "net.global_memory_reader.visual.0.ffn.0.bias": "global",
+      "net.global_memory_reader.visual.0.ffn.0.weight": "global",
+      "net.global_memory_reader.visual.0.ffn.2.bias": "global",
+      "net.global_memory_reader.visual.0.ffn.2.weight": "global",
+      "net.global_memory_reader.visual.0.ffn_norm.bias": "global",
+      "net.global_memory_reader.visual.0.ffn_norm.weight": "global",
+      "net.global_memory_reader.visual.0.memory_norm.bias": "global",
+      "net.global_memory_reader.visual.0.memory_norm.weight": "global",
+      "net.global_memory_reader.visual.0.query_norm.bias": "global",
+      "net.global_memory_reader.visual.0.query_norm.weight": "global",
+      "net.global_memory_reader.visual.0.self_attention.key.weight": "global",
+      "net.global_memory_reader.visual.0.self_attention.output.weight": "global",
+      "net.global_memory_reader.visual.0.self_attention.query.weight": "global",
+      "net.global_memory_reader.visual.0.self_attention.value.weight": "global",
+      "net.global_memory_reader.visual.0.source_norm.bias": "global",
+      "net.global_memory_reader.visual.0.source_norm.weight": "global",
+      "net.global_memory_reader.visual.1.cross_attention.key.weight": "global",
+      "net.global_memory_reader.visual.1.cross_attention.output.weight": "global",
+      "net.global_memory_reader.visual.1.cross_attention.query.weight": "global",
+      "net.global_memory_reader.visual.1.cross_attention.value.weight": "global",
+      "net.global_memory_reader.visual.1.ffn.0.bias": "global",
+      "net.global_memory_reader.visual.1.ffn.0.weight": "global",
+      "net.global_memory_reader.visual.1.ffn.2.bias": "global",
+      "net.global_memory_reader.visual.1.ffn.2.weight": "global",
+      "net.global_memory_reader.visual.1.ffn_norm.bias": "global",
+      "net.global_memory_reader.visual.1.ffn_norm.weight": "global",
+      "net.global_memory_reader.visual.1.memory_norm.bias": "global",
+      "net.global_memory_reader.visual.1.memory_norm.weight": "global",
+      "net.global_memory_reader.visual.1.query_norm.bias": "global",
+      "net.global_memory_reader.visual.1.query_norm.weight": "global",
+      "net.global_memory_reader.visual.1.self_attention.key.weight": "global",
+      "net.global_memory_reader.visual.1.self_attention.output.weight": "global",
+      "net.global_memory_reader.visual.1.self_attention.query.weight": "global",
+      "net.global_memory_reader.visual.1.self_attention.value.weight": "global",
+      "net.global_memory_reader.visual.1.source_norm.bias": "global",
+      "net.global_memory_reader.visual.1.source_norm.weight": "global",
+      "net.language_model.model.layers.0.input_layernorm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.mlp_moe_gen.down_proj.weight": "gen",
+      "net.language_model.model.layers.0.mlp_moe_gen.gate_proj.weight": "gen",
+      "net.language_model.model.layers.0.mlp_moe_gen.up_proj.weight": "gen",
+      "net.language_model.model.layers.0.post_attention_layernorm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.k_norm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.k_norm_und_for_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.k_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.o_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.q_norm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.q_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.0.self_attn.v_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.input_layernorm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.mlp_moe_gen.down_proj.weight": "gen",
+      "net.language_model.model.layers.1.mlp_moe_gen.gate_proj.weight": "gen",
+      "net.language_model.model.layers.1.mlp_moe_gen.up_proj.weight": "gen",
+      "net.language_model.model.layers.1.post_attention_layernorm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.k_norm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.k_norm_und_for_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.k_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.o_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.q_norm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.q_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.1.self_attn.v_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.input_layernorm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.mlp_moe_gen.down_proj.weight": "gen",
+      "net.language_model.model.layers.2.mlp_moe_gen.gate_proj.weight": "gen",
+      "net.language_model.model.layers.2.mlp_moe_gen.up_proj.weight": "gen",
+      "net.language_model.model.layers.2.post_attention_layernorm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.k_norm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.k_norm_und_for_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.k_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.o_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.q_norm_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.q_proj_moe_gen.weight": "gen",
+      "net.language_model.model.layers.2.self_attn.v_proj_moe_gen.weight": "gen",
+      "net.language_model.model.norm_moe_gen.weight": "gen"
+    },
+    "plan_identity": "561984afd0d72e4439e3cd865398d4754b5f09745a1267cda712524f7d1f3ef4",
+    "schema": "psm_g2_training_stage_v1",
+    "stage": "TRAIN_A"
+  }
+}

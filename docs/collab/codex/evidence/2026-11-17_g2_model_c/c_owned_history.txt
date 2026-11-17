@@ -1,0 +1,69 @@
+commit 68d84e819d114c6ce817403afacad994b2fb8f35
+Author:     Xin Wang <silencewx@gmail.com>
+AuthorDate: Tue Nov 17 17:09:01 2026 +0800
+Commit:     Xin Wang <silencewx@gmail.com>
+CommitDate: Tue Nov 17 17:09:01 2026 +0800
+
+    feat(g2): share static task text and explicit idle prompt policy
+
+ .../data/generator/action/utils/json_formatter.py  |  11 +-
+ .../generator/action/utils/static_task_text.py     | 179 ++++++++++++++++++
+ .../action/utils/static_task_text_test.py          | 199 +++++++++++++++++++++
+ .../data/generator/action/utils/transforms.py      |  55 +++++-
+ .../data/generator/joint_dataloader.py             |  19 +-
+ 5 files changed, 452 insertions(+), 11 deletions(-)
+
+commit f262d7ff4156d83356e1d7f790adea2a61e85c6d
+Author:     Xin Wang <silencewx@gmail.com>
+AuthorDate: Tue Nov 17 17:25:33 2026 +0800
+Commit:     Xin Wang <silencewx@gmail.com>
+CommitDate: Tue Nov 17 17:25:33 2026 +0800
+
+    feat(g2): bind C0 text spans and adapt aligned exact-window data
+
+ .../action/datasets/g2_training_adapter.py         | 154 +++++++++++++++++++++
+ .../action/datasets/g2_training_adapter_test.py    | 150 ++++++++++++++++++++
+ .../datasets/robocasa_exact_window_cached_sft.py   |  15 +-
+ .../generator/action/utils/static_task_text.py     |  59 +++++++-
+ .../action/utils/static_task_text_test.py          |  18 +++
+ .../data/generator/joint_dataloader.py             |   2 +
+ 6 files changed, 395 insertions(+), 3 deletions(-)
+
+commit a9110f311f082836e9f1a56466bae66aca88e488
+Author:     Xin Wang <silencewx@gmail.com>
+AuthorDate: Tue Nov 17 17:59:10 2026 +0800
+Commit:     Xin Wang <silencewx@gmail.com>
+CommitDate: Tue Nov 17 17:59:10 2026 +0800
+
+    feat(g2): extend G1 warm-start and grouped stage training with strict resume
+
+ cosmos_framework/checkpoint/g2_warm_start.py       | 111 +++++
+ cosmos_framework/checkpoint/g2_warm_start_test.py  |  66 +++
+ .../action/datasets/g2_training_adapter.py         |   7 +-
+ .../action/datasets/g2_training_adapter_test.py    |  10 +-
+ .../generator/action/utils/static_task_text.py     |   7 +-
+ .../action/utils/static_task_text_test.py          |  23 +
+ cosmos_framework/trainer/__init__.py               |   7 +-
+ .../trainer/g2_grouped_integration_test.py         | 134 ++++++
+ cosmos_framework/trainer/g2_training.py            | 528 +++++++++++++++++++++
+ cosmos_framework/trainer/g2_training_test.py       | 500 +++++++++++++++++++
+ cosmos_framework/trainer/local_memory_grouped.py   |  45 +-
+ .../trainer/local_memory_grouped_resume.py         |  15 +-
+ examples/psm_wma_robocasa_corrected_phase5.py      |  96 +++-
+ examples/psm_wma_robocasa_g2_recipe.py             | 346 ++++++++++++++
+ examples/psm_wma_robocasa_g2_recipe.template.json  |  35 ++
+ examples/psm_wma_robocasa_g2_recipe_test.py        | 282 +++++++++++
+ 16 files changed, 2194 insertions(+), 18 deletions(-)
+
+commit 26243dae9be7a2ab7ef5d544f8759b398ce917f9
+Author:     Xin Wang <silencewx@gmail.com>
+AuthorDate: Tue Nov 17 18:04:43 2026 +0800
+Commit:     Xin Wang <silencewx@gmail.com>
+CommitDate: Tue Nov 17 18:04:43 2026 +0800
+
+    fix(g2): make paired GEN decay horizon explicit and profile independent
+
+ cosmos_framework/trainer/g2_training.py           | 16 +++++++++---
+ cosmos_framework/trainer/g2_training_test.py      | 31 ++++++++++++++++++++---
+ examples/psm_wma_robocasa_g2_recipe.template.json |  6 ++---
+ 3 files changed, 43 insertions(+), 10 deletions(-)

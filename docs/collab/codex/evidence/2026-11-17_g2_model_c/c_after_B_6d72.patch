@@ -1,0 +1,2581 @@
+diff --git a/cosmos_framework/checkpoint/g2_warm_start.py b/cosmos_framework/checkpoint/g2_warm_start.py
+new file mode 100644
+index 0000000..8df2060
+--- /dev/null
++++ b/cosmos_framework/checkpoint/g2_warm_start.py
+@@ -0,0 +1,111 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""Strict G1 model-only initialization, including every existing Local tensor.
++
++The only allowed destination-only names are the exact new Global inventory
++provided by the model owner. Same-job G2 resume keeps SafeLocal DCP behavior.
++No G1 optimizer/scheduler/loader/RNG/episode state is imported.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Mapping
++from typing import Any
++
++import torch
++from torch import nn
++from torch.distributed.checkpoint.state_dict import get_model_state_dict
++
++from cosmos_framework.checkpoint.dcp import SafeLocalDistributedCheckpointer
++
++
++def validate_g1_model_inventory(
++    destination_shapes: Mapping[str, tuple[int, ...]],
++    source_shapes: Mapping[str, tuple[int, ...]],
++    *,
++    new_global_names: frozenset[str],
++) -> dict[str, Any]:
++    destination, source = set(destination_shapes), set(source_shapes)
++    global_prefixes = ("net.global_memory_reader.", "net.global_memory_projector.")
++    if not new_global_names.issubset(destination) or any(
++        not name.startswith(global_prefixes) for name in new_global_names
++    ):
++        raise ValueError("new Global inventory must list exact destination net state names")
++    if not any(name.startswith("net.local_memory_runtime.") for name in destination):
++        raise ValueError("G1 warm-start requires the existing Local runtime")
++    required = destination - new_global_names
++    missing = required - source
++    # EMA is explicitly excluded by the inherited Phase5 model-only contract.
++    unexpected = {name for name in source - required if not name.startswith("net_ema.")}
++    mismatches = {
++        name: (tuple(source_shapes[name]), tuple(destination_shapes[name]))
++        for name in required & source
++        if tuple(source_shapes[name]) != tuple(destination_shapes[name])
++    }
++    if missing or unexpected or mismatches:
++        raise ValueError(
++            f"G1 model inventory mismatch: missing={sorted(missing)}, "
++            f"unexpected={sorted(unexpected)}, shape_mismatches={mismatches}"
++        )
++    return {
++        "loaded_names": tuple(sorted(required)),
++        "initialized_global_names": tuple(sorted(new_global_names)),
++        "local_loaded_names": tuple(sorted(name for name in required if name.startswith("net.local_memory"))),
++        "model_only": True,
++    }
++
++
++def load_g1_model_only(
++    model: nn.Module,
++    source_state: Mapping[str, torch.Tensor],
++    *,
++    new_global_names: frozenset[str],
++) -> dict[str, Any]:
++    """CPU/small-model reference; strict load after validating *all* keys/shapes."""
++    destination = model.state_dict()
++    if any(not isinstance(value, torch.Tensor) for value in (*destination.values(), *source_state.values())):
++        raise TypeError("G1 model-only loader expects tensor state dictionaries")
++    report = validate_g1_model_inventory(
++        {name: tuple(value.shape) for name, value in destination.items()},
++        {name: tuple(value.shape) for name, value in source_state.items()},
++        new_global_names=new_global_names,
++    )
++    merged = {name: destination[name] if name in new_global_names else source_state[name] for name in destination}
++    model.load_state_dict(merged, strict=True)
++    return report
++
++
++class G2ModelOnlyCheckpointer(SafeLocalDistributedCheckpointer):
++    def load(self, model, optimizer=None, scheduler=None, grad_scaler=None):
++        _, source = self.keys_to_resume_during_load()
++        if source is not None and source.warm_start:
++            if self.load_training_state:
++                raise ValueError("G1 warm-start must not load training state")
++            names = getattr(model, "_g2_new_global_state_names", None)
++            if not isinstance(names, frozenset):
++                raise ValueError("model owner must declare exact new Global state inventory")
++
++            def validate():
++                reader = self.get_storage_reader(source.path.rstrip("/") + "/model", source)
++                metadata = reader.read_metadata().state_dict_metadata
++                target = get_model_state_dict(model)
++                report = validate_g1_model_inventory(
++                    {name: tuple(value.shape) for name, value in target.items()},
++                    {name: tuple(value.size) for name, value in metadata.items() if hasattr(value, "size")},
++                    new_global_names=names,
++                )
++                # The inherited DCP planner uses substring skips. Prove the
++                # exact list cannot accidentally skip any existing tensor.
++                skips = ["net_ema.", *sorted(names)]
++                skipped = {name for name in target if any(part in name for part in skips)}
++                expected = names | {name for name in target if name.startswith("net_ema.")}
++                if skipped != expected:
++                    raise ValueError("Global skip names overlap existing model state")
++                return report, skips
++
++            report, skips = self._checked("G2 validate G1 model-only inventory", validate)
++            self.config_checkpoint.keys_to_skip_loading = skips
++            self.keys_to_skip_loading = skips
++            self.g2_warm_start_report = report
++        return super().load(model, optimizer, scheduler, grad_scaler)
+diff --git a/cosmos_framework/checkpoint/g2_warm_start_test.py b/cosmos_framework/checkpoint/g2_warm_start_test.py
+new file mode 100644
+index 0000000..6a602d3
+--- /dev/null
++++ b/cosmos_framework/checkpoint/g2_warm_start_test.py
+@@ -0,0 +1,66 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""Real single-process CPU DCP metadata/planner; no FSDP/GPU/real checkpoint."""
++
++from types import SimpleNamespace
++
++import pytest
++import torch.distributed.checkpoint as dcp
++from torch.distributed.checkpoint.state_dict import StateDictOptions, get_model_state_dict, set_model_state_dict
++
++from cosmos_framework.checkpoint.dcp import CustomLoadPlanner, SafeLocalDistributedCheckpointer
++from cosmos_framework.checkpoint.g2_warm_start import G2ModelOnlyCheckpointer
++from cosmos_framework.trainer.g2_training_test import TinyPolicy, equal_tree
++
++
++@pytest.mark.parametrize("damage", [None, "missing_local", "shape"])
++def test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance(tmp_path, monkeypatch, damage):
++    source_model, destination = TinyPolicy(False), TinyPolicy(True)
++    source = dict(source_model.state_dict())
++    if damage == "missing_local":
++        source.pop("net.local_memory_runtime.core.w0_fast_in_weight")
++    if damage == "shape":
++        source["net.moe_gen.weight"] = source["net.moe_gen.weight"][:1]
++    dcp.save(source, checkpoint_id=tmp_path / "model", no_dist=True)
++    destination._g2_new_global_state_names = frozenset(
++        name
++        for name in destination.state_dict()
++        if name.startswith(("net.global_memory_reader.", "net.global_memory_projector."))
++    )
++    checkpointer = object.__new__(G2ModelOnlyCheckpointer)
++    checkpointer.load_training_state = False
++    checkpointer.config_checkpoint = SimpleNamespace(keys_to_skip_loading=["net_ema.", "local_memory"])
++    checkpointer.keys_to_resume_during_load = lambda: ({"model"}, SimpleNamespace(path=str(tmp_path), warm_start=True))
++    checkpointer.get_storage_reader = lambda path, source: dcp.FileSystemReader(path)
++    checkpointer._checked = lambda label, operation: operation()
++    called = []
++
++    def cpu_native_load(self, model, optimizer, scheduler, grad_scaler):
++        called.append(1)
++        assert optimizer is scheduler is grad_scaler is None
++        target = get_model_state_dict(model)
++        dcp.load(
++            target,
++            checkpoint_id=tmp_path / "model",
++            planner=CustomLoadPlanner(
++                allow_partial_load=False, keys_to_skip_loading=self.config_checkpoint.keys_to_skip_loading
++            ),
++            no_dist=True,
++        )
++        set_model_state_dict(model, target, options=StateDictOptions(strict=True))
++        return 0
++
++    # Only the distributed orchestration shell is isolated. Actual CPU DCP
++    # write/read metadata, exact key validation, strict planner and load run.
++    monkeypatch.setattr(SafeLocalDistributedCheckpointer, "load", cpu_native_load)
++    if damage:
++        with pytest.raises(ValueError, match="inventory mismatch"):
++            checkpointer.load(destination)
++        assert not called
++    else:
++        assert checkpointer.load(destination) == 0
++        for name, value in source.items():
++            equal_tree(value, destination.state_dict()[name])
++        assert "local_memory" not in checkpointer.keys_to_skip_loading
++        assert checkpointer.g2_warm_start_report["local_loaded_names"]
+diff --git a/cosmos_framework/data/generator/action/datasets/g2_training_adapter.py b/cosmos_framework/data/generator/action/datasets/g2_training_adapter.py
+index 0412317..0ed4a27 100644
+--- a/cosmos_framework/data/generator/action/datasets/g2_training_adapter.py
++++ b/cosmos_framework/data/generator/action/datasets/g2_training_adapter.py
+@@ -24,6 +24,7 @@ from cosmos_framework.model.generator.mot.g2_contracts import G2SampleIdentity,
+ class AlignedG2Provider(Protocol):
+     identity: str
+     evidence_scope: str  # "fixture" or provider-owned verified DATA_C receipt
++    latent_channels: int  # small recipe metadata; only queried when Global is enabled
+ 
+     def read_common(self, *, task_class: str, episode_index: int, decision_frame: int) -> Mapping[str, Any]: ...
+ 
+@@ -59,7 +60,7 @@ class G2TrainingDataAdapter:
+         if provider.identity != recipe.data_identity or not provider.evidence_scope:
+             raise ValueError("offline provider/data identity mismatch")
+         self.provider, self.recipe = provider, recipe
+-        self._static_ids: OrderedDict[tuple[str, str], str] = OrderedDict()
++        self._static_ids: OrderedDict[str, str] = OrderedDict()
+ 
+     def __call__(self, sample: dict[str, Any]) -> dict[str, Any]:
+         task, episode, frame = (sample[key] for key in ("task_class", "episode_index", "start_frame"))
+@@ -73,6 +74,8 @@ class G2TrainingDataAdapter:
+             or common["task_class"] != task
+             or common["episode_index"] != episode
+             or identity.decision_frame != frame
++            or type(identity.decision_frame) is not int
++            or type(identity.logical_state_frame) is not int
+             or identity.data_version != self.recipe.data_identity
+             or identity.alignment_version != self.recipe.alignment_version
+             or identity.state15_recipe_id != self.recipe.state15_recipe_id
+@@ -93,7 +96,7 @@ class G2TrainingDataAdapter:
+         original_action = sample["action"]
+         if original_action.shape != (17, 15) or not torch.equal(state15[5:], original_action[0, 5:]):
+             raise ValueError("DATA_B must preserve the existing EEF10 handling")
+-        asset_key = (identity.episode_id, identity.subtask_id)
++        asset_key = identity.episode_id  # Atomic training episode is one subtask.
+         previous = self._static_ids.get(asset_key)
+         if previous is not None and previous != text.identity:
+             raise ValueError("static initial instruction changed within one subtask")
+diff --git a/cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py b/cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py
+index 6de764b..b4d384c 100644
+--- a/cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py
++++ b/cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py
+@@ -84,7 +84,7 @@ def test_r1_does_not_even_resolve_global_method_or_payload():
+         read_common = provider.read_common
+ 
+         def __getattribute__(self, name):
+-            if name in {"read_selected_views", "views"}:
++            if name in {"read_selected_views", "views", "latent_channels"}:
+                 raise AssertionError("R1 touched Global provider")
+             return object.__getattribute__(self, name)
+ 
+@@ -148,3 +148,11 @@ def test_common_inputs_r1_r2_are_identical():
+     assert torch.equal(left["action"], right["action"])
+     assert left["static_task_text"] == right["static_task_text"]
+     assert left["g2_sample_identity"] == right["g2_sample_identity"]
++
++
++def test_atomic_episode_cannot_switch_subtask_to_hide_static_text_drift():
++    provider, adapter, sample = setup_fixture(False)
++    adapter(sample)
++    provider.task = replace(provider.task, subtask_id="new-subtask", enhanced_instruction="Changed current facts.")
++    with pytest.raises(ValueError, match="static initial instruction changed"):
++        adapter(sample)
+diff --git a/cosmos_framework/data/generator/action/utils/static_task_text.py b/cosmos_framework/data/generator/action/utils/static_task_text.py
+index 0a2a866..f41edea 100644
+--- a/cosmos_framework/data/generator/action/utils/static_task_text.py
++++ b/cosmos_framework/data/generator/action/utils/static_task_text.py
+@@ -27,7 +27,7 @@ from cosmos_framework.data.generator.sequence_packing.mrope import get_3d_mrope_
+ from cosmos_framework.data.generator.sequence_packing.sequence import PackedSequenceBuilder
+ from cosmos_framework.model.generator.mot.g2_contracts import EffectiveTextBatch
+ 
+-TEXT_PROTOCOL = "psm_g2_static_initial_text_v1"
++TEXT_PROTOCOL = "psm_g2_static_initial_text_v2"
+ 
+ 
+ def _digest(value: Any) -> str:
+@@ -102,6 +102,9 @@ def build_static_task_prompt(task: StaticTaskText, recipe: StaticTaskTextRecipe)
+     """Use the one action JSON formatter on a whitelist of static fields only."""
+     sample = {
+         "ai_caption": task.enhanced_instruction,
++        # Explicit semantic label survives serialization even when the provider
++        # uses a different natural-language template for its initial facts.
++        "relabel_prompt": {"spatial_context_scope": task.context_scope},
+         "viewpoint": recipe.viewpoint,
+         "additional_view_description": recipe.additional_view_description,
+         "conditioning_fps": recipe.fps,
+@@ -227,7 +230,7 @@ def effective_text_batch(
+         dropped=tuple(decisions),
+         formatter_id=recipe.identity,
+         tokenizer_id=recipe.tokenizer_identity,
+-        dropout_id=_digest({"policy": "consumer_once_v1", "decisions": decisions}),
++        dropout_id=_digest({"policy": "consumer_once_v1", "rate": recipe.cfg_dropout_rate}),
+     )
+ 
+ 
+diff --git a/cosmos_framework/data/generator/action/utils/static_task_text_test.py b/cosmos_framework/data/generator/action/utils/static_task_text_test.py
+index 8ab4db9..af5de71 100644
+--- a/cosmos_framework/data/generator/action/utils/static_task_text_test.py
++++ b/cosmos_framework/data/generator/action/utils/static_task_text_test.py
+@@ -3,6 +3,7 @@
+ 
+ """Synthetic CPU contract tests; no real tokenizer/UND/data alignment claim."""
+ 
++import json
+ from dataclasses import asdict, replace
+ from types import SimpleNamespace
+ 
+@@ -134,6 +135,7 @@ def test_static_tokens_ignore_future_action_window_current_state_and_clean_row_c
+         assert torch.equal(left[key], right[key])
+     assert left["text_condition_identity"] == right["text_condition_identity"]
+     assert "idle_frame" not in left["ai_caption"] and "initial" in left["ai_caption"].lower()
++    assert json.loads(left["ai_caption"])["actions"][0]["spatial_context_scope"] == "initial_spatial_context"
+     assert "0:00-0:01" in left["ai_caption"]  # Fixed 17/20, not action rows.
+ 
+ 
+@@ -215,3 +217,24 @@ def test_c0_final_tokens_include_actual_native_specials_and_mrope():
+     assert train.dropped == (False, True)
+     mask = effective_text_mask(train)
+     assert tuple(mask.sum(dim=1).tolist()) == train.lengths
++
++
++def test_final_text_protocol_stacks_mixed_full_empty_b1_service_conditions():
++    from cosmos_framework.model.generator.mot.g2_contracts import UNDTextFeatures, stack_g2_prepared
++
++    samples = [
++        prepare_static_task_text(task_fixture(), recipe_fixture(), ProcessorFixture(), dropout_applied=drop)
++        for drop in (False, True)
++    ]
++    specials = {"bos_token_id": 101, "eos_token_id": 102, "start_of_generation": 103}
++    texts = [effective_text_batch([sample], recipe_fixture(), special_tokens=specials) for sample in samples]
++    features = tuple(
++        UNDTextFeatures(
++            text=text, hidden=torch.zeros(1, text.lengths[0], 8), valid_mask=effective_text_mask(text), layers=()
++        )
++        for text in texts
++    )
++    carrier = stack_g2_prepared(
++        text_features=features, text_kv=(None, None), global_tokens=(None, None), global_kv=(None, None)
++    )
++    assert carrier.text == effective_text_batch(samples, recipe_fixture(), special_tokens=specials)
+diff --git a/cosmos_framework/trainer/__init__.py b/cosmos_framework/trainer/__init__.py
+index 4066f5c..8a2685a 100644
+--- a/cosmos_framework/trainer/__init__.py
++++ b/cosmos_framework/trainer/__init__.py
+@@ -429,7 +429,9 @@ class ImaginaireTrainer:
+                     ):
+                         raise RuntimeError("Missing committed optimizer/Local boundary before checkpoint")
+                     # Save checkpoint.
+-                    if iteration % self.config.checkpoint.save_iter == 0:
++                    if iteration % self.config.checkpoint.save_iter == 0 or iteration in getattr(
++                        self, "_required_checkpoint_iterations", ()
++                    ):
+                         self.checkpointer.save(model, optimizer, scheduler, grad_scaler, iteration=iteration)
+                     self.callbacks.on_training_step_end(model, data_batch, output_batch, loss, iteration=iteration)
+                     # Callback consumers have finished; do not retain GPU outputs through
+@@ -459,7 +461,8 @@ class ImaginaireTrainer:
+         if sm_carveout:
+             torch._C._set_sm_carveout_experimental(None)
+         if iteration % self.config.checkpoint.save_iter != 0:
+-            self.checkpointer.save(model, optimizer, scheduler, grad_scaler, iteration=iteration)
++            if iteration not in getattr(self, "_required_checkpoint_iterations", ()):
++                self.checkpointer.save(model, optimizer, scheduler, grad_scaler, iteration=iteration)
+         self.callbacks.on_train_end(model, iteration=iteration)
+         self.checkpointer.finalize()
+         distributed.barrier()
+diff --git a/cosmos_framework/trainer/g2_grouped_integration_test.py b/cosmos_framework/trainer/g2_grouped_integration_test.py
+new file mode 100644
+index 0000000..59b32b2
+--- /dev/null
++++ b/cosmos_framework/trainer/g2_grouped_integration_test.py
+@@ -0,0 +1,134 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""Real grouped stream/Local/GA callbacks, synthetic host loss and source only."""
++
++from __future__ import annotations
++
++import copy
++from dataclasses import replace
++from types import MethodType
++
++import pytest
++import torch
++from torch import nn
++
++from cosmos_framework.trainer import local_memory_grouped as grouped
++from cosmos_framework.trainer.g2_training import G2StageController, parameter_roles
++from cosmos_framework.trainer.g2_training_test import equal_tree, plan_fixture
++from cosmos_framework.trainer.local_memory_grouped_test import _Model, _trainer
++
++
++def grouped_setup(monkeypatch):
++    trainer = _trainer(active_ga=2, b_stream=3)
++    model = _Model(t=2)
++    model.net.global_memory_reader = nn.Linear(1, 1)
++    model.net.global_memory_projector = nn.Linear(1, 1)
++    model.net.action_modality_embed = nn.Parameter(torch.tensor(1.0))
++
++    def loss(self, batch, iteration, *, _local_memory_prefixes):
++        present = [prefix for prefix in _local_memory_prefixes if prefix is not None]
++        local = torch.stack([prefix.square().mean() for prefix in present]).mean() if present else 0.0
++        global_value = self.net.global_memory_projector(self.net.global_memory_reader(torch.ones(1, 1))).mean()
++        value = self.net.moe_gen * (global_value + 1.0 + local) + self.net.action_modality_embed
++        return {"count": batch["count"]}, value.square()
++
++    model.training_step = MethodType(loss, model)
++    # Existing source fixtures have only raw/latent fields; collate is a
++    # deliberate model boundary stub, Local scan/transactions remain real.
++    monkeypatch.setattr(grouped, "collate_grouped_native_batch", lambda payloads: {"count": len(payloads)})
++    frontier = trainer._grouped_planner.initial_frontier()
++    counts = []
++    for _ in range(4):
++        window = trainer._grouped_planner.plan_window(frontier)
++        counts.append(window.n_window)
++        frontier = window.candidate_frontier
++    plan = replace(plan_fixture(target=sum(counts)), b_stream=3, grad_accum_steps=2)
++    named = dict(model.named_parameters())
++    roles = parameter_roles(
++        model,
++        profile="R2",
++        global_names=frozenset(
++            name for name in named if name.startswith(("net.global_memory_reader.", "net.global_memory_projector."))
++        ),
++        gen_names=frozenset(("net.moe_gen", "net.action_modality_embed")),
++        action_names=frozenset(("net.action_modality_embed",)),
++    )
++    optimizer = torch.optim.AdamW([named[name] for name in roles], lr=1e-5, weight_decay=0.05)
++    controller = G2StageController(model, optimizer, plan, roles)
++    trainer._g2_stage_controller = controller
++    return trainer, model, optimizer, controller, counts
++
++
++def run_grouped(trainer, model, optimizer, controller, iteration):
++    scaler = torch.amp.GradScaler("cpu", enabled=False)
++    accum = 0
++    for _ in range(2):
++        _, _, accum = trainer.training_step(model, optimizer, controller, scaler, {}, iteration, accum)
++    assert accum == 0
++
++
++@pytest.mark.parametrize("checkpoint_after", [1, 2, 3])
++def test_real_grouped_stage_local_sidecar_resume_and_actual_terminal_counts(monkeypatch, checkpoint_after):
++    torch.manual_seed(17)
++    trainer, model, optimizer, controller, counts = grouped_setup(monkeypatch)
++    slow = copy.deepcopy(model.net.local_memory_runtime.state_dict())
++    for iteration in range(checkpoint_after):
++        run_grouped(trainer, model, optimizer, controller, iteration)
++    callback = trainer.callbacks._callbacks[0]
++    saved = copy.deepcopy(
++        dict(
++            model=model.state_dict(),
++            optimizer=optimizer.state_dict(),
++            scheduler=controller.state_dict(),
++            dataloader=callback.state_dict(),
++            rng=torch.get_rng_state(),
++        )
++    )
++    for iteration in range(checkpoint_after, 4):
++        run_grouped(trainer, model, optimizer, controller, iteration)
++    expected = copy.deepcopy(
++        (
++            model.state_dict(),
++            optimizer.state_dict(),
++            controller.state_dict(),
++            callback.state_dict(),
++            torch.get_rng_state(),
++        )
++    )
++    resumed, other, other_optimizer, other_controller, other_counts = grouped_setup(monkeypatch)
++    other.load_state_dict(saved["model"], strict=True)
++    other_optimizer.load_state_dict(saved["optimizer"])
++    other_controller.load_state_dict(saved["scheduler"])
++    resumed.callbacks._callbacks[0].load_state_dict(saved["dataloader"])
++    resumed._resume_required = True
++    torch.set_rng_state(saved["rng"])
++    for iteration in range(checkpoint_after, 4):
++        run_grouped(resumed, other, other_optimizer, other_controller, iteration)
++    equal_tree(
++        expected,
++        (
++            other.state_dict(),
++            other_optimizer.state_dict(),
++            other_controller.state_dict(),
++            resumed.callbacks._callbacks[0].state_dict(),
++            torch.get_rng_state(),
++        ),
++    )
++    equal_tree(slow, other.net.local_memory_runtime.state_dict())
++    assert counts == other_counts and any(count != 3 * 2 * 2 for count in counts)
++    assert other_controller.effective_consumers == sum(counts)
++    assert other.net.scan_calls > 0
++
++
++def test_g2_sidecar_is_required_and_cross_checks_scheduler_stage(monkeypatch):
++    trainer, model, optimizer, controller, _ = grouped_setup(monkeypatch)
++    run_grouped(trainer, model, optimizer, controller, 0)
++    saved = trainer.callbacks._callbacks[0].state_dict()
++    resumed, other, other_optimizer, other_controller, _ = grouped_setup(monkeypatch)
++    with pytest.raises(ValueError, match="explicit stage"):
++        resumed.callbacks._callbacks[0].load_state_dict(saved["local"])
++    resumed.callbacks._callbacks[0].load_state_dict(saved)
++    # Deliberately omit scheduler restoration: do not silently infer stage.
++    with pytest.raises(ValueError, match="stage identities"):
++        run_grouped(resumed, other, other_optimizer, other_controller, 1)
+diff --git a/cosmos_framework/trainer/g2_training.py b/cosmos_framework/trainer/g2_training.py
+new file mode 100644
+index 0000000..90a04fa
+--- /dev/null
++++ b/cosmos_framework/trainer/g2_training.py
+@@ -0,0 +1,536 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""G2 policy for the existing grouped trainer/optimizer, not another train loop.
++
++Pre-register all potential GEN/Global groups using the existing optimizer
++factory. Preserve its optimizer type, decay exclusions, betas, eps and state.
++Only policy (trainability, per-group clocks/LR and transaction boundary) lives
++here. FSDP registration/leaf changes are delegated to B's explicit hook.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import math
++from collections.abc import Callable, Mapping
++from dataclasses import asdict, dataclass
++from typing import Any
++
++import torch
++import torch.distributed as dist
++from torch import nn
++from torch.distributed.tensor import DTensor
++
++from cosmos_framework.model.generator.mot.g2_contracts import ParameterGroup, TrainingStage
++
++PEAK_LR = {ParameterGroup.GLOBAL: 5e-5, ParameterGroup.GEN: 1e-5, ParameterGroup.ACTION: 5e-5}
++STAGE_SCHEMA = "psm_g2_training_stage_v1"
++G2_OPTIMIZER_SELECTION = "g2_registered_inventory_v1"
++
++
++def build_g2_optimizer(model: nn.Module, optimizer_type: str, **kwargs):
++    """Resolve B's exact names, then use the unchanged native optimizer factory."""
++    from cosmos_framework.utils.generator.optimizer import build_optimizer
++
++    if list(kwargs.pop("keys_to_select", ())) != [G2_OPTIMIZER_SELECTION]:
++        raise ValueError("G2 optimizer requires the registered inventory resolver policy")
++    names = getattr(model, "_g2_optimizer_parameter_names", None)
++    if not isinstance(names, frozenset) or not names:
++        raise ValueError("install G2 training and resolve B's inventory before building the optimizer")
++    return build_optimizer(
++        model,
++        optimizer_type=optimizer_type,
++        keys_to_select=[name.removeprefix("net.") for name in sorted(names)],
++        **kwargs,
++    )
++
++
++def _hash(value: Any) -> str:
++    return hashlib.sha256(
++        json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++    ).hexdigest()
++
++
++@dataclass(frozen=True)
++class GroupSchedule:
++    warmup_steps: int
++    decay: str
++    min_factor: float
++    horizon_steps: int
++
++    def __post_init__(self):
++        if type(self.warmup_steps) is not int or self.warmup_steps < 0:
++            raise ValueError("warmup must be explicitly set to a nonnegative integer")
++        if self.decay not in {"constant", "linear", "cosine"} or not math.isfinite(self.min_factor):
++            raise ValueError("explicit supported decay/min_factor is required")
++        if not 0 <= self.min_factor <= 1:
++            raise ValueError("min_factor must be in [0,1]")
++        if type(self.horizon_steps) is not int or self.horizon_steps < max(1, self.warmup_steps):
++            raise ValueError("explicit schedule horizon must be positive and cover warmup")
++
++    def factor(self, completed: int, total: int) -> float:
++        if self.warmup_steps > total:
++            raise ValueError("group warmup exceeds its own active update budget")
++        if completed < self.warmup_steps:
++            return (completed + 1) / self.warmup_steps
++        # R1/R2 have the same LR at the same GEN-update count, although their
++        # active budgets differ. Shorter runs truncate this explicit horizon;
++        # longer runs hold the configured minimum. Do not infer it from S_A/B.
++        progress = min(
++            1.0, max(0.0, (completed - self.warmup_steps) / max(1, self.horizon_steps - self.warmup_steps - 1))
++        )
++        remaining = {"constant": 1.0, "linear": 1 - progress, "cosine": (1 + math.cos(math.pi * progress)) / 2}[
++            self.decay
++        ]
++        return self.min_factor + (1 - self.min_factor) * remaining
++
++
++@dataclass(frozen=True)
++class G2TrainingPlan:
++    # Every run choice below is REQUIRED; no guessed formal checkpoint/budget.
++    profile: str
++    init_checkpoint_identity: str
++    data_identity: str
++    split_identity: str
++    text_recipe_identity: str
++    state15_recipe_identity: str
++    stage_a_steps: int
++    stage_b_steps: int
++    target_effective_consumers: int
++    b_stream: int
++    grad_accum_steps: int
++    world_size: int
++    global_schedule: GroupSchedule | None
++    gen_schedule: GroupSchedule
++    action_schedule: GroupSchedule
++
++    def __post_init__(self):
++        if self.profile not in {"R1", "R2"}:
++            raise ValueError("only R1/R2 are new training configurations; R0 is historical")
++        if any(
++            not isinstance(value, str) or not value
++            for value in (
++                self.init_checkpoint_identity,
++                self.data_identity,
++                self.split_identity,
++                self.text_recipe_identity,
++                self.state15_recipe_identity,
++            )
++        ):
++            raise ValueError("formal initialization/data/split/text/state recipe identities are required")
++        if any(
++            type(value) is not int or value < 1
++            for value in (
++                self.stage_a_steps,
++                self.stage_b_steps,
++                self.target_effective_consumers,
++                self.b_stream,
++                self.grad_accum_steps,
++                self.world_size,
++            )
++        ):
++            raise ValueError("S_A/S_B, effective consumers and batch/GA/world must be explicitly positive")
++        if (self.global_schedule is None) != (self.profile == "R1"):
++            raise ValueError("R1 must have no Global schedule; R2 requires one")
++        for role in self.roles:
++            self.schedule(role).factor(0, self.active_steps(role))
++
++    @classmethod
++    def from_dict(cls, value: Mapping[str, Any]) -> G2TrainingPlan:
++        body = dict(value)
++        try:
++            for key in ("global_schedule", "gen_schedule", "action_schedule"):
++                if isinstance(body.get(key), dict):
++                    body[key] = GroupSchedule(**body[key])
++            return cls(**body)
++        except TypeError as error:
++            raise ValueError(f"incomplete/unknown G2 training plan fields: {error}") from error
++
++    @property
++    def total_steps(self) -> int:
++        return self.stage_a_steps + self.stage_b_steps
++
++    @property
++    def roles(self) -> tuple[ParameterGroup, ...]:
++        return (
++            (ParameterGroup.GLOBAL, ParameterGroup.GEN, ParameterGroup.ACTION)
++            if self.profile == "R2"
++            else (
++                ParameterGroup.GEN,
++                ParameterGroup.ACTION,
++            )
++        )
++
++    @property
++    def identity(self) -> str:
++        return _hash(asdict(self))
++
++    @property
++    def required_checkpoint_iterations(self) -> tuple[int, ...]:
++        # R1 retains equal GEN-update and equal-total-budget comparison points.
++        return (
++            (self.stage_b_steps, self.total_steps)
++            if self.profile == "R1"
++            else (
++                self.stage_a_steps,
++                self.total_steps,
++            )
++        )
++
++    def schedule(self, role: ParameterGroup) -> GroupSchedule:
++        schedule = {
++            ParameterGroup.GLOBAL: self.global_schedule,
++            ParameterGroup.GEN: self.gen_schedule,
++            ParameterGroup.ACTION: self.action_schedule,
++        }[role]
++        if not isinstance(schedule, GroupSchedule):
++            raise ValueError(f"explicit {role} warmup/decay is required")
++        return schedule
++
++    def active_steps(self, role: ParameterGroup) -> int:
++        return self.stage_b_steps if self.profile == "R2" and role != ParameterGroup.GLOBAL else self.total_steps
++
++
++def parameter_roles(
++    model: nn.Module,
++    *,
++    global_names: frozenset[str],
++    gen_names: frozenset[str],
++    action_names: frozenset[str],
++    profile: str,
++) -> dict[str, ParameterGroup]:
++    named = dict(model.named_parameters())
++    if global_names & gen_names or not action_names <= gen_names or not action_names or not gen_names - action_names:
++        raise ValueError("Global/GEN/action ownership is missing or overlapping")
++    if (bool(global_names) != (profile == "R2")) or not (global_names | gen_names) <= named.keys():
++        raise ValueError("Global enabled/inventory or named parameter ownership mismatch")
++    roles = {name: ParameterGroup.GLOBAL for name in global_names}
++    roles.update({name: ParameterGroup.ACTION if name in action_names else ParameterGroup.GEN for name in gen_names})
++    aliases: dict[int, list[str]] = {}
++    for name, parameter in model.named_parameters(remove_duplicate=False):
++        aliases.setdefault(id(parameter), []).append(name)
++    for names in aliases.values():
++        owners = {roles.get(name) for name in names}
++        if len(owners) > 1:
++            raise ValueError(f"parameter aliases have conflicting ownership: {names}")
++    return roles
++
++
++def _inners(optimizer):
++    return optimizer.optimizers if hasattr(optimizer, "optimizers") else (optimizer,)
++
++
++def validate_comparison_plans(r1: G2TrainingPlan, r2: G2TrainingPlan) -> dict[str, Any]:
++    if (r1.profile, r2.profile) != ("R1", "R2"):
++        raise ValueError("comparison requires the R1 and R2 configurations")
++    common = (
++        "init_checkpoint_identity",
++        "data_identity",
++        "split_identity",
++        "text_recipe_identity",
++        "state15_recipe_identity",
++        "stage_a_steps",
++        "stage_b_steps",
++        "target_effective_consumers",
++        "gen_schedule",
++        "action_schedule",
++    )
++    different = [field for field in common if getattr(r1, field) != getattr(r2, field)]
++    if different:
++        raise ValueError(f"R1/R2 shared initialization/input/GEN schedule/budget mismatch: {different}")
++    return {
++        "r1_plan": r1.identity,
++        "r2_plan": r2.identity,
++        "target_effective_consumers": r1.target_effective_consumers,
++        "budget_equality": "requires actual committed consumer counters, not nominal B*T*GA",
++        "r1_checkpoints": r1.required_checkpoint_iterations,
++        "r2_checkpoints": r2.required_checkpoint_iterations,
++    }
++
++
++def validate_actual_comparison_budget(r1_state, r2_state):
++    if (
++        r1_state.get("schema") != STAGE_SCHEMA
++        or r2_state.get("schema") != STAGE_SCHEMA
++        or r1_state.get("stage") != TrainingStage.R1.value
++        or r2_state.get("stage") != TrainingStage.TRAIN_B.value
++        or type(r1_state.get("effective_consumers")) is not int
++        or r1_state["effective_consumers"] <= 0
++        or r1_state["effective_consumers"] != r2_state.get("effective_consumers")
++    ):
++        raise ValueError("R1/R2 actual effective consumer budgets are not equal or unproven")
++    return {
++        "effective_consumers": r1_state["effective_consumers"],
++        "r1_gen_updates": r1_state["group_updates"]["gen"],
++        "r2_gen_updates": r2_state["group_updates"]["gen"],
++        "compute_cost": "report separately; equal consumers does not imply equal compute",
++    }
++
++
++class G2StageController:
++    """Stateful scheduler + policy, committed by GroupedLocalMemoryTrainer.
++
++    scheduler.step() marks the optimizer transaction; commit_boundary() runs
++    only AFTER Local/frontier commit and zero_grad. No stage change can happen
++    in forward/backward or midway through GA. Global optimizer objects/groups
++    are never replaced and their moments/step are never cleared.
++    """
++
++    def __init__(
++        self,
++        model: nn.Module,
++        optimizer: Any,
++        plan: G2TrainingPlan,
++        roles: Mapping[str, ParameterGroup],
++        *,
++        set_trainability: Callable[[frozenset[str]], None] | None = None,
++    ):
++        self.model, self.optimizer, self.plan = model, optimizer, plan
++        self.named = dict(model.named_parameters())
++        self.roles = dict(roles)
++        if set(self.roles.values()) != set(plan.roles) or not self.roles.keys() <= self.named.keys():
++            raise ValueError("parameter groups must exactly cover the configured roles")
++        self._set_trainability = set_trainability
++        if any(isinstance(parameter, DTensor) for parameter in self.named.values()) and set_trainability is None:
++            raise ValueError("FSDP requires B's explicit registered trainability hook")
++        selected = [p for inner in _inners(optimizer) for group in inner.param_groups for p in group["params"]]
++        expected = {id(self.named[name]) for name in self.roles}
++        if len(selected) != len({id(p) for p in selected}) or {id(p) for p in selected} != expected:
++            raise ValueError("optimizer parameter inventory has omissions/duplicates/frozen parameters")
++        by_id = {id(parameter): name for name, parameter in self.named.items()}
++        # Split the existing factory's decay/mesh groups, before any state is
++        # created. Preserve all factory metadata and each actual Parameter.
++        for inner in _inners(optimizer):
++            if inner.state:
++                raise ValueError("attach G2 groups before loading/creating optimizer state")
++            groups = []
++            for old in inner.param_groups:
++                for role in plan.roles:
++                    params = [p for p in old["params"] if self.roles[by_id[id(p)]] == role]
++                    if params:
++                        groups.append(
++                            {
++                                **old,
++                                "params": params,
++                                "g2_role": role.value,
++                                "g2_weight_decay": float(old.get("weight_decay", 0.0)),
++                            }
++                        )
++            inner.param_groups[:] = groups
++        self.completed_steps = 0
++        self.effective_consumers = 0
++        self.group_updates = {role.value: 0 for role in plan.roles}
++        self.group_consumers = {role.value: 0 for role in plan.roles}
++        self._pending_count: int | None = None
++        self._optimizer_stepped = False
++        self._active_trainable_names: frozenset[str] | None = None
++        self._apply_policy()
++
++    @property
++    def stage(self) -> TrainingStage:
++        if self.plan.profile == "R1":
++            return TrainingStage.R1
++        return TrainingStage.TRAIN_A if self.completed_steps < self.plan.stage_a_steps else TrainingStage.TRAIN_B
++
++    @property
++    def active_roles(self) -> frozenset[ParameterGroup]:
++        return (
++            frozenset((ParameterGroup.GLOBAL,)) if self.stage == TrainingStage.TRAIN_A else frozenset(self.plan.roles)
++        )
++
++    def _apply_policy(self):
++        active = frozenset(name for name, role in self.roles.items() if role in self.active_roles)
++        if active != self._active_trainable_names:
++            if self._set_trainability is None:
++                for name, parameter in self.named.items():
++                    parameter.requires_grad_(name in active)
++            else:
++                self._set_trainability(active)
++            self._active_trainable_names = active
++        for name, parameter in self.named.items():
++            if parameter.requires_grad != (name in active):
++                raise ValueError(f"backend failed to apply G2 trainability: {name}")
++            if name not in active:
++                parameter.grad = None
++        for inner in _inners(self.optimizer):
++            for group in inner.param_groups:
++                role = ParameterGroup(group["g2_role"])
++                enabled = role in self.active_roles
++                factor = self.plan.schedule(role).factor(self.group_updates[role.value], self.plan.active_steps(role))
++                group["lr"] = PEAK_LR[role] * factor if enabled else 0.0
++                group["weight_decay"] = group["g2_weight_decay"] if enabled else 0.0
++
++    def _synchronize(self, actual_consumers: int) -> int:
++        signature = (
++            self.plan.identity,
++            self.stage.value,
++            self.completed_steps,
++            self.group_updates,
++            self.group_consumers,
++            self.effective_consumers,
++        )
++        if dist.is_available() and dist.is_initialized():
++            signatures = [None] * dist.get_world_size()
++            dist.all_gather_object(signatures, signature)
++            if any(other != signature for other in signatures):
++                raise ValueError("ranks disagree on G2 stage/optimizer clocks")
++            if dist.get_world_size() != self.plan.world_size:
++                raise ValueError("G2 plan world size differs from actual process group")
++            count = torch.tensor(actual_consumers, dtype=torch.int64, device=next(iter(self.named.values())).device)
++            dist.all_reduce(count, op=dist.ReduceOp.SUM)
++            return int(count.item())
++        if self.plan.world_size != 1:
++            raise ValueError("multi-rank plan requires an initialized process group")
++        return actual_consumers
++
++    def prepare_commit(self, *, actual_consumers: int, iteration: int):
++        """All ranks call after last GA backward, BEFORE optimizer mutation."""
++        if (
++            type(actual_consumers) is not int
++            or actual_consumers <= 0
++            or iteration != self.completed_steps
++            or self._pending_count is not None
++            or self._optimizer_stepped
++            or self.completed_steps >= self.plan.total_steps
++        ):
++            raise RuntimeError("invalid or partial G2 optimizer transaction")
++        count = self._synchronize(actual_consumers)
++        projected = self.effective_consumers + count
++        if projected > self.plan.target_effective_consumers or (
++            self.completed_steps + 1 == self.plan.total_steps and projected != self.plan.target_effective_consumers
++        ):
++            raise ValueError("actual effective consumer budget differs from the frozen plan")
++        active = self.active_roles
++        for name, parameter in self.named.items():
++            if self.roles.get(name) not in active and parameter.grad is not None:
++                raise ValueError(f"frozen parameter has a stale gradient: {name}")
++        self._pending_count = count
++
++    def step(self):
++        """Called by the existing optimizer success path; no premature switch."""
++        if self._pending_count is None or self._optimizer_stepped:
++            raise RuntimeError("G2 scheduler step requires one prepared optimizer transaction")
++        self._optimizer_stepped = True
++
++    def commit_boundary(self, *, iteration: int, ga_complete: bool, local_transaction_complete: bool):
++        if (
++            not ga_complete
++            or not local_transaction_complete
++            or not self._optimizer_stepped
++            or self._pending_count is None
++            or iteration != self.completed_steps + 1
++            or any(parameter.grad is not None for parameter in self.named.values())
++        ):
++            raise RuntimeError("G2 stage switch requires committed optimizer/GA/Local and cleared gradients")
++        old_stage = self.stage
++        count = self._pending_count
++        for role in self.active_roles:
++            self.group_updates[role.value] += 1
++            self.group_consumers[role.value] += count
++        self.completed_steps += 1
++        self.effective_consumers += count
++        self._pending_count = None
++        self._optimizer_stepped = False
++        if old_stage != self.stage and dist.is_available() and dist.is_initialized():
++            # Every rank has now committed Local and cleared its gradients.
++            dist.barrier()
++        self._apply_policy()
++
++    def state_dict(self):
++        if self._pending_count is not None or self._optimizer_stepped:
++            raise RuntimeError("cannot checkpoint a partial G2 optimizer/Local transaction")
++        return {
++            "schema": STAGE_SCHEMA,
++            "plan_identity": self.plan.identity,
++            "stage": self.stage.value,
++            "completed_steps": self.completed_steps,
++            "effective_consumers": self.effective_consumers,
++            "group_updates": self.group_updates.copy(),
++            "group_consumers": self.group_consumers.copy(),
++            "parameter_roles": {name: role.value for name, role in sorted(self.roles.items())},
++        }
++
++    def load_state_dict(self, state):
++        expected_keys = set(self.state_dict())
++        if (
++            not isinstance(state, dict)
++            or set(state) != expected_keys
++            or state["schema"] != STAGE_SCHEMA
++            or state["plan_identity"] != self.plan.identity
++            or state["parameter_roles"] != {name: role.value for name, role in sorted(self.roles.items())}
++        ):
++            raise ValueError("G2 resume stage/config/parameter identity mismatch")
++        steps, consumers = state["completed_steps"], state["effective_consumers"]
++        if (
++            type(steps) is not int
++            or not 0 <= steps <= self.plan.total_steps
++            or type(consumers) is not int
++            or not 0 <= consumers <= self.plan.target_effective_consumers
++        ):
++            raise ValueError("invalid G2 resume counters")
++        expected_updates = {
++            role.value: max(0, steps - self.plan.stage_a_steps)
++            if self.plan.profile == "R2" and role != ParameterGroup.GLOBAL
++            else steps
++            for role in self.plan.roles
++        }
++        expected_stage = (
++            TrainingStage.R1
++            if self.plan.profile == "R1"
++            else (TrainingStage.TRAIN_A if steps < self.plan.stage_a_steps else TrainingStage.TRAIN_B)
++        )
++        group_consumers = state["group_consumers"]
++        updates = state["group_updates"]
++        counts_valid = (
++            isinstance(group_consumers, dict)
++            and set(group_consumers) == set(expected_updates)
++            and all(
++                type(value) is int and expected_updates[role] <= value <= consumers
++                for role, value in group_consumers.items()
++            )
++            and all(value == 0 for role, value in group_consumers.items() if expected_updates[role] == 0)
++        )
++        if counts_valid:
++            if self.plan.profile == "R1":
++                counts_valid = all(value == consumers for value in group_consumers.values())
++            else:
++                counts_valid = (
++                    group_consumers["global"] == consumers
++                    and group_consumers["gen"] == group_consumers["action_adapter"]
++                )
++        if (
++            updates != expected_updates
++            or not isinstance(updates, dict)
++            or any(type(value) is not int for value in updates.values())
++            or state["stage"] != expected_stage.value
++            or not counts_valid
++            or (steps == 0) != (consumers == 0)
++            or (steps == self.plan.total_steps and consumers != self.plan.target_effective_consumers)
++        ):
++            raise ValueError("G2 resume group clocks/stage/actual consumer counts disagree")
++        self.completed_steps, self.effective_consumers = steps, consumers
++        self.group_updates, self.group_consumers = expected_updates, group_consumers.copy()
++        self._active_trainable_names = None
++        self._apply_policy()
++
++    def inventory(self) -> list[dict[str, Any]]:
++        by_id = {
++            id(parameter): group
++            for inner in _inners(self.optimizer)
++            for group in inner.param_groups
++            for parameter in group["params"]
++        }
++        return [
++            {
++                "name": name,
++                "shape": list(parameter.shape),
++                "numel": parameter.numel(),
++                "group": self.roles[name].value if name in self.roles else "frozen",
++                "requires_grad": parameter.requires_grad,
++                "lr": by_id.get(id(parameter), {}).get("lr", 0.0),
++                "peak_lr": PEAK_LR[self.roles[name]] if name in self.roles else 0.0,
++            }
++            for name, parameter in sorted(self.named.items())
++        ]
+diff --git a/cosmos_framework/trainer/g2_training_test.py b/cosmos_framework/trainer/g2_training_test.py
+new file mode 100644
+index 0000000..fbedd69
+--- /dev/null
++++ b/cosmos_framework/trainer/g2_training_test.py
+@@ -0,0 +1,525 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""Small CPU optimizers + real Local inner core; NOT actual Cosmos/FSDP."""
++
++from __future__ import annotations
++
++import copy
++import io
++import json
++import os
++import random
++from dataclasses import asdict, replace
++from pathlib import Path
++
++import numpy as np
++import pytest
++import torch
++import torch.distributed as dist
++import torch.multiprocessing as mp
++from torch import nn
++
++from cosmos_framework.checkpoint.g2_warm_start import load_g1_model_only
++from cosmos_framework.model.generator.mot.g2_contracts import ParameterGroup, TrainingStage
++from cosmos_framework.model.generator.mot.local_evidence import ContinualTTTFastState, ContinualTTTLocalMemoryCore
++from cosmos_framework.trainer.g2_training import (
++    G2StageController,
++    G2TrainingPlan,
++    GroupSchedule,
++    parameter_roles,
++    validate_actual_comparison_budget,
++    validate_comparison_plans,
++)
++
++
++class TinyPolicy(nn.Module):
++    def __init__(self, global_enabled=True):
++        super().__init__()
++        self.net = nn.Module()
++        if global_enabled:
++            self.net.global_memory_reader = nn.Linear(4, 4)
++            self.net.global_memory_projector = nn.Linear(4, 4)
++        self.net.moe_gen = nn.Linear(4, 4)
++        self.net.action2llm = nn.Linear(4, 4)
++        self.net.llm2action = nn.Linear(4, 1)
++        self.net.action_modality_embed = nn.Parameter(torch.ones(4))
++        self.net.local_memory_runtime = nn.Module()
++        self.net.local_memory_runtime.encoder = nn.Linear(4, 4)
++        self.net.local_memory_runtime.core = ContinualTTTLocalMemoryCore(
++            evidence_dim=4,
++            local_dim=4,
++            ttt_dim=3,
++            fast_hidden_dim=5,
++        )
++        self.net.local_memory2llm = nn.Linear(4, 4)
++        self.net.und = nn.Linear(4, 4)
++        self.net.vae = nn.Linear(4, 4)
++
++    def g2_parameter_inventory(self):
++        roles = roles_fixture(self, "R2" if hasattr(self.net, "global_memory_reader") else "R1")
++        groups = {role: [] for role in ("global", "gen", "action_adapter", "frozen")}
++        for name, _ in self.named_parameters():
++            groups[roles[name].value if name in roles else "frozen"].append(name)
++        return {
++            "parameters": {key: tuple(value) for key, value in groups.items()},
++            "new_state_keys": tuple(
++                name
++                for name in self.state_dict()
++                if name.startswith(("net.global_memory_reader.", "net.global_memory_projector."))
++            ),
++        }
++
++    def set_trainable_names(self, names):
++        from cosmos_framework.model.generator.mot.g2_parameters import set_trainable_names
++
++        set_trainable_names(self, names)
++
++    def outer_loss(self, fast):
++        value = torch.randn(2, 4)
++        encoded = self.net.local_memory_runtime.encoder(value)
++        local, fast = self.net.local_memory_runtime.core.step_many(encoded, fast, create_graph=True)
++        global_value = (
++            self.net.global_memory_projector(self.net.global_memory_reader(value))
++            if hasattr(self.net, "global_memory_reader")
++            else value
++        )
++        # Autograd MUST pass through frozen GEN in TRAIN_A.
++        hidden = self.net.moe_gen(global_value + self.net.local_memory2llm(local.mean(dim=1)))
++        hidden = torch.tanh(hidden + self.net.action2llm(value) + self.net.action_modality_embed)
++        return self.net.llm2action(hidden).square().mean(), fast
++
++
++def plan_fixture(profile="R2", *, a=2, b=2, target=7, world=1):
++    return G2TrainingPlan(
++        profile,
++        "fixture-g1-model-sha",
++        "fixture-data-c",
++        "fixture-split",
++        "fixture-text",
++        "fixture-state15",
++        a,
++        b,
++        target,
++        1,
++        1,
++        world,
++        GroupSchedule(1, "constant", 1.0, a + b) if profile == "R2" else None,
++        GroupSchedule(min(2, b), "linear", 0.2, a + b),
++        GroupSchedule(1, "constant", 1.0, a + b),
++    )
++
++
++def roles_fixture(model, profile="R2"):
++    named = dict(model.named_parameters())
++    return parameter_roles(
++        model,
++        profile=profile,
++        global_names=frozenset(
++            name for name in named if name.startswith(("net.global_memory_reader.", "net.global_memory_projector."))
++        ),
++        gen_names=frozenset(
++            name
++            for name in named
++            if any(
++                name.startswith("net." + root)
++                for root in (
++                    "moe_gen.",
++                    "action2llm.",
++                    "llm2action.",
++                    "action_modality_embed",
++                )
++            )
++        ),
++        action_names=frozenset(
++            name
++            for name in named
++            if any(
++                name.startswith("net." + root)
++                for root in (
++                    "action2llm.",
++                    "llm2action.",
++                    "action_modality_embed",
++                )
++            )
++        ),
++    )
++
++
++def setup_fixture(plan=None):
++    plan = plan or plan_fixture()
++    model = TinyPolicy(plan.profile == "R2")
++    roles = roles_fixture(model, plan.profile)
++    # Production uses its existing optimizer factory; this CPU fixture uses
++    # unfused AdamW with nonzero decay to detect accidental frozen updates.
++    optimizer = torch.optim.AdamW(
++        [parameter for name, parameter in model.named_parameters() if name in roles], lr=1e-5, weight_decay=0.3
++    )
++    scheduler = G2StageController(model, optimizer, plan, roles)
++    live = {"cursor": 0, "frontier": ["same-episode"], "fast": model.net.local_memory_runtime.core.initial_state(2)}
++    return model, optimizer, scheduler, live
++
++
++def run_update(model, optimizer, scheduler, live, count):
++    loss, fast = model.outer_loss(live["fast"])
++    loss.backward()
++    scheduler.prepare_commit(actual_consumers=count, iteration=scheduler.completed_steps)
++    optimizer.step()
++    scheduler.step()
++    live["cursor"] += count
++    live["fast"] = ContinualTTTFastState(*(value.detach().clone() for value in fast))
++    optimizer.zero_grad(set_to_none=True)
++    scheduler.commit_boundary(
++        iteration=scheduler.completed_steps + 1, ga_complete=True, local_transaction_complete=True
++    )
++
++
++def equal_tree(left, right):
++    if isinstance(left, torch.Tensor):
++        assert torch.equal(left, right)
++    elif isinstance(left, np.ndarray):
++        assert np.array_equal(left, right)
++    elif isinstance(left, dict):
++        assert left.keys() == right.keys()
++        for key in left:
++            equal_tree(left[key], right[key])
++    elif isinstance(left, (tuple, list)):
++        assert len(left) == len(right)
++        for a, b in zip(left, right, strict=True):
++            equal_tree(a, b)
++    else:
++        assert left == right
++
++
++def test_train_a_global_gradient_through_frozen_gen_and_real_local_inner_update():
++    model, optimizer, scheduler, live = setup_fixture()
++    before = {name: value.clone() for name, value in model.state_dict().items()}
++    fast_before = tuple(value.clone() for value in live["fast"])
++    loss, fast = model.outer_loss(live["fast"])
++    loss.backward()
++    assert (
++        model.net.global_memory_reader.weight.grad is not None
++        and model.net.global_memory_reader.weight.grad.abs().sum() > 0
++    )
++    assert not model.net.moe_gen.weight.requires_grad and model.net.moe_gen.weight.grad is None
++    assert any(not torch.equal(a, b) for a, b in zip(fast_before, fast, strict=True))
++    assert all(parameter.grad is None for parameter in model.net.local_memory_runtime.parameters())
++    scheduler.prepare_commit(actual_consumers=2, iteration=0)
++    optimizer.step()
++    scheduler.step()
++    optimizer.zero_grad(set_to_none=True)
++    scheduler.commit_boundary(iteration=1, ga_complete=True, local_transaction_complete=True)
++    for name, value in model.state_dict().items():
++        if not name.startswith(("net.global_memory_reader.", "net.global_memory_projector.")):
++            assert torch.equal(value, before[name]), name
++    assert not torch.equal(model.net.global_memory_reader.weight, before["net.global_memory_reader.weight"])
++    assert model.net.local_memory_runtime.core.inner_lr == 0.1
++    with torch.no_grad(), pytest.raises(RuntimeError, match="grad mode"):
++        model.outer_loss(live["fast"])
++
++
++def test_switch_preserves_global_moments_and_external_rng_data_local_state():
++    model, optimizer, scheduler, live = setup_fixture()
++    run_update(model, optimizer, scheduler, live, 2)
++    global_parameter = model.net.global_memory_reader.weight
++    moment = optimizer.state[global_parameter]
++    assert moment["step"].item() == 1
++    # Execute the last A transaction explicitly so the switch itself is audited.
++    loss, fast = model.outer_loss(live["fast"])
++    loss.backward()
++    scheduler.prepare_commit(actual_consumers=1, iteration=1)
++    optimizer.step()
++    scheduler.step()
++    optimizer.zero_grad(set_to_none=True)
++    snapshot = copy.deepcopy(live)
++    rng = (torch.get_rng_state().clone(), random.getstate(), np.random.get_state())
++    moment_snapshot = copy.deepcopy(moment)
++    scheduler.commit_boundary(iteration=2, ga_complete=True, local_transaction_complete=True)
++    assert scheduler.stage == TrainingStage.TRAIN_B and optimizer.state[global_parameter] is moment
++    equal_tree(moment_snapshot, moment)
++    equal_tree(snapshot, live)
++    equal_tree(rng, (torch.get_rng_state(), random.getstate(), np.random.get_state()))
++    assert model.net.moe_gen.weight not in optimizer.state
++    assert scheduler.group_updates == {"global": 2, "gen": 0, "action_adapter": 0}
++    rates = {group["g2_role"]: group["lr"] for group in optimizer.param_groups}
++    assert rates == {"global": 5e-5, "gen": 5e-6, "action_adapter": 5e-5}
++    run_update(model, optimizer, scheduler, live, 3)
++    assert optimizer.state[global_parameter]["step"].item() == 3
++    assert optimizer.state[model.net.moe_gen.weight]["step"].item() == 1
++
++
++@pytest.mark.parametrize("checkpoint_after", [1, 2, 3])
++def test_checkpoint_resume_before_at_and_after_stage_boundary_is_exact(checkpoint_after):
++    torch.manual_seed(8)
++    model, optimizer, scheduler, live = setup_fixture()
++    counts = [2, 1, 3, 1]
++    for count in counts[:checkpoint_after]:
++        run_update(model, optimizer, scheduler, live, count)
++    buffer = io.BytesIO()
++    torch.save(
++        dict(
++            model=model.state_dict(),
++            optimizer=optimizer.state_dict(),
++            scheduler=scheduler.state_dict(),
++            live=live,
++            rng=(torch.get_rng_state(), random.getstate(), np.random.get_state()),
++        ),
++        buffer,
++    )
++    for count in counts[checkpoint_after:]:
++        run_update(model, optimizer, scheduler, live, count)
++    expected = copy.deepcopy(
++        (model.state_dict(), optimizer.state_dict(), scheduler.state_dict(), live, torch.get_rng_state())
++    )
++    other_model, other_optimizer, other_scheduler, other_live = setup_fixture()
++    buffer.seek(0)
++    saved = torch.load(buffer, weights_only=False)
++    other_model.load_state_dict(saved["model"], strict=True)
++    other_optimizer.load_state_dict(saved["optimizer"])
++    other_scheduler.load_state_dict(saved["scheduler"])
++    other_live = saved["live"]
++    torch.set_rng_state(saved["rng"][0])
++    random.setstate(saved["rng"][1])
++    np.random.set_state(saved["rng"][2])
++    for count in counts[checkpoint_after:]:
++        run_update(other_model, other_optimizer, other_scheduler, other_live, count)
++    equal_tree(
++        expected,
++        (
++            other_model.state_dict(),
++            other_optimizer.state_dict(),
++            other_scheduler.state_dict(),
++            other_live,
++            torch.get_rng_state(),
++        ),
++    )
++
++
++def test_warm_start_inherits_every_g1_tensor_including_local_and_only_initializes_global():
++    g1, g2 = TinyPolicy(False), TinyPolicy(True)
++    before = copy.deepcopy(g2.net.global_memory_reader.state_dict())
++    names = frozenset(
++        name
++        for name in g2.state_dict()
++        if name.startswith(("net.global_memory_reader.", "net.global_memory_projector."))
++    )
++    report = load_g1_model_only(g2, g1.state_dict(), new_global_names=names)
++    assert report["local_loaded_names"] and report["model_only"]
++    for name, value in g1.state_dict().items():
++        assert torch.equal(value, g2.state_dict()[name]), name
++    equal_tree(before, g2.net.global_memory_reader.state_dict())
++
++
++@pytest.mark.parametrize("kind", ["missing_local", "shape", "unexpected", "global_allowlist"])
++def test_warm_start_refuses_missing_existing_or_wrong_shape_without_mutation(kind):
++    g1, g2 = TinyPolicy(False), TinyPolicy(True)
++    source = dict(g1.state_dict())
++    names = frozenset(
++        name
++        for name in g2.state_dict()
++        if name.startswith(("net.global_memory_reader.", "net.global_memory_projector."))
++    )
++    if kind == "missing_local":
++        source.pop("net.local_memory_runtime.core.w0_fast_in_weight")
++    elif kind == "shape":
++        source["net.moe_gen.weight"] = torch.ones(5, 5)
++    elif kind == "unexpected":
++        source["net.unrecognized.weight"] = torch.ones(1)
++    else:
++        names |= frozenset(("net.nonexistent_global.weight",))
++    before = copy.deepcopy(g2.state_dict())
++    with pytest.raises(ValueError):
++        load_g1_model_only(g2, source, new_global_names=names)
++    equal_tree(before, g2.state_dict())
++
++
++def test_parameter_partition_no_omissions_duplicates_or_frozen_weight_decay():
++    model, optimizer, scheduler, live = setup_fixture()
++    inventory = scheduler.inventory()
++    assert len(inventory) == len(list(model.named_parameters()))
++    selected = [p for group in optimizer.param_groups for p in group["params"]]
++    assert len(selected) == len({id(p) for p in selected}) == len(scheduler.roles)
++    assert all(group["weight_decay"] == 0 for group in optimizer.param_groups if group["g2_role"] != "global")
++    model.net.und.weight.grad = torch.zeros_like(model.net.und.weight)
++    with pytest.raises(ValueError, match="stale gradient"):
++        scheduler.prepare_commit(actual_consumers=1, iteration=0)
++    model.net.und.weight.grad = None
++    bad_optimizer = torch.optim.AdamW(selected[:-1], lr=1e-5)
++    with pytest.raises(ValueError, match="omissions"):
++        G2StageController(model, bad_optimizer, scheduler.plan, scheduler.roles)
++
++
++def test_stage_resume_rejects_missing_or_inconsistent_clocks_and_budget():
++    model, optimizer, scheduler, live = setup_fixture()
++    state = scheduler.state_dict()
++    for key in state:
++        bad = copy.deepcopy(state)
++        bad.pop(key)
++        with pytest.raises(ValueError):
++            scheduler.load_state_dict(bad)
++    bad = copy.deepcopy(state)
++    bad["stage"] = "TRAIN_B"
++    with pytest.raises(ValueError, match="clocks"):
++        scheduler.load_state_dict(bad)
++    with pytest.raises(ValueError, match="budget"):
++        scheduler.prepare_commit(actual_consumers=8, iteration=0)
++    with pytest.raises(RuntimeError, match="committed"):
++        scheduler.commit_boundary(iteration=1, ga_complete=False, local_transaction_complete=True)
++
++
++def test_plan_has_no_guessed_formal_defaults_and_r1_budget_checkpoints():
++    with pytest.raises(ValueError, match="incomplete"):
++        G2TrainingPlan.from_dict({"profile": "R2"})
++    with pytest.raises(ValueError, match="historical"):
++        replace(plan_fixture(), profile="R0")
++    plan = plan_fixture("R1")
++    assert plan.required_checkpoint_iterations == (2, 4)
++    assert G2TrainingPlan.from_dict(asdict(plan)) == plan
++    model, optimizer, scheduler, live = setup_fixture(plan)
++    assert not hasattr(model.net, "global_memory_reader") and scheduler.stage == TrainingStage.R1
++    assert all(role != ParameterGroup.GLOBAL for role in scheduler.roles.values())
++    missing_horizon = asdict(plan)
++    missing_horizon["gen_schedule"].pop("horizon_steps")
++    with pytest.raises(ValueError, match="incomplete"):
++        G2TrainingPlan.from_dict(missing_horizon)
++
++
++def test_existing_optimizer_container_preserves_factory_decay_and_dcp_state_roundtrip():
++    from cosmos_framework.utils.generator.optimizer import build_optimizer
++
++    def build():
++        model = TinyPolicy()
++        roles = roles_fixture(model)
++        optimizer = build_optimizer(
++            model,
++            optimizer_type="adamw",
++            lr=1e-5,
++            fused=True,
++            weight_decay=0.07,
++            keys_to_select=[name.removeprefix("net.") for name in roles],
++            weight_decay_skip_patterns=[r"action2llm", r"llm2action"],
++        )
++        controller = G2StageController(
++            model, optimizer, plan_fixture(), roles, set_trainability=model.set_trainable_names
++        )
++        return model, optimizer, controller, {"cursor": 0, "fast": model.net.local_memory_runtime.core.initial_state(2)}
++
++    model, optimizer, controller, live = build()
++    run_update(model, optimizer, controller, live, 2)
++    frozen = {name: p.detach().clone() for name, p in model.named_parameters() if not p.requires_grad}
++    saved_optimizer = copy.deepcopy(optimizer.state_dict())  # Real Torch DCP state-dict utilities.
++    for name, before in frozen.items():
++        assert torch.equal(before, dict(model.named_parameters())[name])
++    other, other_optimizer, other_controller, _ = build()
++    other.load_state_dict(model.state_dict(), strict=True)
++    other_optimizer.load_state_dict(saved_optimizer)
++    other_controller.load_state_dict(controller.state_dict())
++    equal_tree(optimizer.state_dict(), other_optimizer.state_dict())
++    for inner in other_optimizer.optimizers:
++        for group in inner.param_groups:
++            if group["g2_role"] != "global":
++                assert group["weight_decay"] == 0.0
++
++
++def test_export_actual_cpu_fixture_parameter_inventory(tmp_path):
++    model, optimizer, controller, live = setup_fixture()
++    stage_a = controller.inventory()
++    run_update(model, optimizer, controller, live, 2)
++    run_update(model, optimizer, controller, live, 1)
++    stage_b = controller.inventory()
++    assert {row["name"] for row in stage_a} == {row["name"] for row in stage_b} == set(dict(model.named_parameters()))
++    output = Path(os.environ.get("G2_C_CPU_EVIDENCE_DIR", str(tmp_path)))
++    output.mkdir(parents=True, exist_ok=True)
++    (output / "actual_cpu_fixture_parameter_inventory.json").write_text(
++        json.dumps(
++            {
++                "scope": "actual named_parameters of synthetic CPU model; NOT full Edge or FSDP",
++                "TRAIN_A": stage_a,
++                "TRAIN_B": stage_b,
++            },
++            indent=2,
++            sort_keys=True,
++        )
++    )
++
++
++def test_r1_r2_comparison_rejects_input_drift_and_nominal_budget_claims():
++    r1, r2 = plan_fixture("R1"), plan_fixture("R2")
++    assert validate_comparison_plans(r1, r2)["target_effective_consumers"] == 7
++    with pytest.raises(ValueError, match="mismatch"):
++        validate_comparison_plans(replace(r1, split_identity="other-split"), r2)
++    runs = []
++    for plan in (r1, r2):
++        model, optimizer, controller, live = setup_fixture(plan)
++        for count in (2, 1, 3, 1):
++            run_update(model, optimizer, controller, live, count)
++        runs.append(controller.state_dict())
++    comparison = validate_actual_comparison_budget(*runs)
++    assert comparison == {
++        "effective_consumers": 7,
++        "r1_gen_updates": 4,
++        "r2_gen_updates": 2,
++        "compute_cost": "report separately; equal consumers does not imply equal compute",
++    }
++    wrong = {**runs[0], "effective_consumers": 8}
++    with pytest.raises(ValueError, match="not equal"):
++        validate_actual_comparison_budget(wrong, runs[1])
++    with pytest.raises(ValueError, match="unproven"):
++        validate_actual_comparison_budget({**runs[0], "effective_consumers": 0}, {**runs[1], "effective_consumers": 0})
++
++
++def test_r1_r2_gen_and_action_lr_match_by_actual_update_count_with_different_budgets():
++    """Equal-GEN-update comparison must not silently rescale the decay curve."""
++    traces = []
++    for profile in ("R1", "R2"):
++        plan = replace(
++            plan_fixture(profile, a=2, b=3, target=10),
++            gen_schedule=GroupSchedule(1, "linear", 0.2, 3),
++            action_schedule=GroupSchedule(1, "cosine", 0.3, 3),
++        )
++        model, optimizer, controller, live = setup_fixture(plan)
++        trace = []
++        for _ in range(5):
++            if ParameterGroup.GEN in controller.active_roles:
++                trace.append({g["g2_role"]: g["lr"] for g in optimizer.param_groups if g["g2_role"] != "global"})
++            run_update(model, optimizer, controller, live, 2)
++        traces.append(trace)
++    assert len(traces[0]) == 5 and len(traces[1]) == 3
++    assert traces[0][:3] == traces[1]
++    assert traces[0][3:] == [traces[1][-1], traces[1][-1]]
++
++
++def _rank_boundary_worker(rank, rendezvous, output, disagree):
++    dist.init_process_group("gloo", init_method=rendezvous, rank=rank, world_size=2)
++    try:
++        plan = plan_fixture(a=1, b=1, target=10, world=2)
++        if disagree and rank == 1:
++            plan = replace(plan, data_identity="different-fixture-data")
++        model, optimizer, scheduler, live = setup_fixture(plan)
++        if disagree:
++            with pytest.raises(ValueError, match="ranks disagree"):
++                scheduler.prepare_commit(actual_consumers=rank + 1, iteration=0)
++            Path(output, str(rank)).write_text("REJECTED")
++        else:
++            for count in (rank + 1, rank + 3):
++                run_update(model, optimizer, scheduler, live, count)
++            Path(output, str(rank)).write_text(json.dumps(scheduler.state_dict(), sort_keys=True))
++    finally:
++        dist.destroy_process_group()
++
++
++@pytest.mark.parametrize("disagree", [False, True])
++def test_two_rank_cpu_stage_synchronization_and_actual_count_sum(tmp_path, disagree):
++    # Actual Gloo collectives, tiny unsharded models; explicitly NOT FSDP.
++    mp.start_processes(
++        _rank_boundary_worker,
++        args=(f"file://{tmp_path}/rendezvous", str(tmp_path), disagree),
++        nprocs=2,
++        join=True,
++        start_method="spawn",
++    )
++    assert (tmp_path / "0").read_text() == (tmp_path / "1").read_text()
++    if not disagree:
++        state = json.loads((tmp_path / "0").read_text())
++        assert state["effective_consumers"] == 10
++        assert state["group_consumers"] == {"global": 10, "gen": 7, "action_adapter": 7}
+diff --git a/cosmos_framework/trainer/local_memory_grouped.py b/cosmos_framework/trainer/local_memory_grouped.py
+index 17b2259..8206569 100644
+--- a/cosmos_framework/trainer/local_memory_grouped.py
++++ b/cosmos_framework/trainer/local_memory_grouped.py
+@@ -109,8 +109,7 @@ class GroupedLocalMemoryTrainer(ImaginaireTrainer):
+         if type(num_workers) is not int or not 0 <= num_workers <= 16:
+             raise ValueError("num_workers must be an integer in [0,16]")
+         if type(full_segment_prefetch) is not bool or (
+-            full_segment_prefetch
+-            and (num_workers != 1 or producer.transform_rng_mode != "consumer_keyed_v1")
++            full_segment_prefetch and (num_workers != 1 or producer.transform_rng_mode != "consumer_keyed_v1")
+         ):
+             raise ValueError("full segment prefetch requires num_workers=1 and consumer_keyed_v1 RNG")
+         if (
+@@ -244,6 +243,9 @@ class GroupedLocalMemoryTrainer(ImaginaireTrainer):
+                 raise RuntimeError("同 job DCP 未向 grouped callback 恢复 Local 状态")
+             if pending is not None:
+                 try:
++                    if hasattr(self, "_g2_stage_controller"):
++                        if self._pending_g2_resume_stage != self._g2_stage_controller.state_dict():
++                            raise ValueError("G2 scheduler and Local sidecar stage identities disagree")
+                     restore_grouped_local_state(
+                         self._grouped_window,
+                         pending,
+@@ -260,6 +262,10 @@ class GroupedLocalMemoryTrainer(ImaginaireTrainer):
+         window._telemetry_stage = self._telemetry_stage
+         prefetcher = getattr(self, "_grouped_prefetcher", None)
+         if grad_accum_iter == 0:
++            if hasattr(self, "_g2_stage_controller"):
++                if self._g2_stage_controller.completed_steps != iteration:
++                    raise ValueError("G2 stage counter and grouped optimizer iteration disagree")
++                self._g2_actual_consumers = 0
+             if prefetcher is not None:
+                 prefetcher.reset_iteration()
+             window.begin()
+@@ -285,6 +291,30 @@ class GroupedLocalMemoryTrainer(ImaginaireTrainer):
+                     batch = collate_grouped_native_batch(payloads)
+             with self._telemetry_stage("batch_transfer"):
+                 batch = move_cached_native_batch(batch, device=next(model.parameters()).device, move=misc.to)
++                if "g2_views" in batch:
++                    from cosmos_framework.data.generator.action.datasets.g2_training_adapter import move_g2_views
++
++                    batch = move_g2_views(batch, next(model.parameters()).device)
++            g2_controller = getattr(self, "_g2_stage_controller", None)
++            if g2_controller is not None:
++                self._g2_actual_consumers += len(payloads)
++                if hasattr(self, "_g2_text_recipe"):
++                    from cosmos_framework.data.generator.action.utils.static_task_text import effective_text_batch
++                    from cosmos_framework.model.generator.mot.g2_contracts import G2ConditionBatch
++
++                    batch["g2_condition"] = G2ConditionBatch(
++                        text=effective_text_batch(
++                            payloads,
++                            self._g2_text_recipe,
++                            special_tokens=model.llm_special_tokens,
++                            use_float_positions=getattr(
++                                getattr(model.config, "diffusion_expert_config", model.config),
++                                "enable_fps_modulation",
++                                False,
++                            ),
++                        ),
++                        views=tuple(views if views else None for views in batch["g2_views"]),
++                    )
+             self.callbacks.on_before_forward(iteration=iteration)
+             with self._telemetry_stage("forward"):
+                 with self.training_timer("forward"):
+@@ -366,6 +396,11 @@ class GroupedLocalMemoryTrainer(ImaginaireTrainer):
+             self.callbacks.on_before_optimizer_step(model, optimizer, scheduler, grad_scaler, iteration=iteration)
+             model.on_before_optimizer_step(optimizer, scheduler, iteration=iteration)
+             self._require_finite_gradients(optimizer)
++            g2_controller = getattr(self, "_g2_stage_controller", None)
++            if g2_controller is not None:
++                if scheduler is not g2_controller:
++                    raise RuntimeError("G2 requires its per-group scheduler state")
++                g2_controller.prepare_commit(actual_consumers=self._g2_actual_consumers, iteration=iteration)
+             self._observe_grouped(
+                 "pre_optimizer",
+                 iteration=iteration,
+@@ -384,6 +419,12 @@ class GroupedLocalMemoryTrainer(ImaginaireTrainer):
+             self.callbacks.on_before_zero_grad(model, optimizer, scheduler, iteration=iteration)
+             model.on_before_zero_grad(optimizer, scheduler, iteration=iteration)
+             self._zero_grad(model, optimizer, iteration)
++            if g2_controller is not None:
++                g2_controller.commit_boundary(
++                    iteration=iteration + 1,
++                    ga_complete=True,
++                    local_transaction_complete=window.plan is None and window._candidate is None,
++                )
+             return output, member_loss, 0
+         except Exception:
+             if prefetcher is not None:
+diff --git a/cosmos_framework/trainer/local_memory_grouped_resume.py b/cosmos_framework/trainer/local_memory_grouped_resume.py
+index 2ddf90a..84f9b41 100644
+--- a/cosmos_framework/trainer/local_memory_grouped_resume.py
++++ b/cosmos_framework/trainer/local_memory_grouped_resume.py
+@@ -216,15 +216,28 @@ class GroupedLocalMemoryStateCallback(Callback):
+         window = getattr(self.trainer, "_grouped_window", None)
+         if window is None:
+             raise RuntimeError("Local window 尚未建立；禁止零步 checkpoint")
+-        return snapshot_grouped_local_state(
++        local = snapshot_grouped_local_state(
+             window,
+             iteration=self.trainer._grouped_completed_iteration,
+             config_digest=self.trainer._grouped_config_digest,
+         )
++        controller = getattr(self.trainer, "_g2_stage_controller", None)
++        if controller is None:
++            return local
++        return {"format": "psm_g2_grouped_stage_v1", "local": local, "training_stage": controller.state_dict()}
+ 
+     def load_state_dict(self, state_dict: dict[str, Any]) -> None:
+         if not self.has_checkpoint_state() or getattr(self.trainer, "_grouped_window", None) is not None:
+             raise RuntimeError("Local checkpoint 必须在创建 grouped window 前加载")
++        if hasattr(self.trainer, "_g2_stage_controller"):
++            if (
++                not isinstance(state_dict, dict)
++                or set(state_dict) != {"format", "local", "training_stage"}
++                or (state_dict["format"] != "psm_g2_grouped_stage_v1")
++            ):
++                raise ValueError("G2 same-job resume requires explicit stage/Local sidecar")
++            self.trainer._pending_g2_resume_stage = deepcopy(state_dict["training_stage"])
++            state_dict = state_dict["local"]
+         self.trainer._pending_grouped_resume = deepcopy(state_dict)
+ 
+ 
+diff --git a/examples/psm_wma_robocasa_corrected_phase5.py b/examples/psm_wma_robocasa_corrected_phase5.py
+index 9522373..1ad9f90 100644
+--- a/examples/psm_wma_robocasa_corrected_phase5.py
++++ b/examples/psm_wma_robocasa_corrected_phase5.py
+@@ -136,6 +136,16 @@ LOCAL_KEYS = (
+ )
+ OPTIMIZER_KEYS = (*GENERATION_KEYS, *LOCAL_KEYS)
+ ACTION_KEYS = ("action2llm", "llm2action", "action_modality_embed")
++
++
++def _g2_recipe(args):
++    if getattr(args, "g2_recipe", None) is None:
++        return None
++    from examples.psm_wma_robocasa_g2_recipe import recipe_from_args
++
++    return recipe_from_args(args)
++
++
+ # This changes the gradient accumulation/RNG graph and must not silently
+ # same-job resume the legacy per-index native execution checkpoint.
+ NATIVE_BATCH_LAYOUT = "v2_a2_member_packed_slot_major_v1"
+@@ -183,11 +193,7 @@ NOTTT4_LEGACY_JOB = "no_ttt_packed128_droid_fresh_30k_world4_ga4"
+ 
+ 
+ def _nottt4_resume_without_job_identity(args: argparse.Namespace) -> bool:
+-    return (
+-        _nottt4_source_gate_disabled(args)
+-        and args.phase == "resume"
+-        and args.job_name == NOTTT4_LEGACY_JOB
+-    )
++    return _nottt4_source_gate_disabled(args) and args.phase == "resume" and args.job_name == NOTTT4_LEGACY_JOB
+ 
+ 
+ def _owner_g1_cross_pair_resume(args: argparse.Namespace) -> bool:
+@@ -484,6 +490,14 @@ def training_identity(args: argparse.Namespace, config: Any, report: dict[str, A
+     profile_from_args(args)  # Runtime validation only; count/prefetch/timeout are not training semantics.
+     return {
+         **({"training_profile": "matched_no_ttt_v1"} if getattr(args, "no_ttt", False) else {}),
++        **(
++            {
++                "training_profile": "g2_" + _g2_recipe(args).training.profile,
++                "g2_recipe_identity": _g2_recipe(args).identity,
++            }
++            if _g2_recipe(args) is not None
++            else {}
++        ),
+         "root": report["lock"]["root"] if _owner_g1_cross_pair_resume(args) else expected_root,
+         "child": report["lock"]["child"] if _owner_g1_cross_pair_resume(args) else expected_child,
+         "native_batch_layout": NATIVE_BATCH_LAYOUT,
+@@ -900,6 +914,8 @@ def overlay_config(
+     config.job.name = args.job_name
+     if model.max_action_dim != 64 or model.local_memory_action_dim != 15:
+         raise ValueError("Edge raw15/64 合同不匹配")
++    if _g2_recipe(args) is not None:
++        _g2_recipe(args).overlay(config)
+ 
+ 
+ def _load_config(args: argparse.Namespace):
+@@ -1074,6 +1090,7 @@ def _execution_stop_iteration(args: argparse.Namespace) -> int:
+ 
+ 
+ def preflight(args: argparse.Namespace) -> tuple[dict[str, Any], Any, ExactWindowLocalCatalog, Any]:
++    g2_recipe = _g2_recipe(args)  # Required run fields are checked before CUDA/data access.
+     if getattr(args, "dataset_index_root", None) is None:
+         raise ValueError("训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检")
+     check_job_namespace(args)
+@@ -1109,7 +1126,10 @@ def preflight(args: argparse.Namespace) -> tuple[dict[str, Any], Any, ExactWindo
+     lock = verify_root_child_lock(args)
+     os.environ["HF_HUB_OFFLINE"] = "1"
+     check_edge_checkpoint(str(args.edge))
+-    check_droid_dcp(args.base_checkpoint)
++    if g2_recipe is None:
++        check_droid_dcp(args.base_checkpoint)
++    else:
++        g2_recipe.check_init_checkpoint(args.base_checkpoint)
+     if not args.vae.is_file():
+         raise FileNotFoundError("WAN VAE 文件缺失")
+     resume = _resume_checkpoint(args)
+@@ -1133,13 +1153,30 @@ def preflight(args: argparse.Namespace) -> tuple[dict[str, Any], Any, ExactWindo
+     overlay_config(config, args, contract, resume_checkpoint=resume)
+     tokenizer = config.model.config.vlm_config.tokenizer
+     stage = time.perf_counter()
++    g2_adapter = g2_recipe.data_adapter() if g2_recipe is not None else None
++    if g2_recipe is not None and g2_recipe.global_memory.enabled:
++        channels = getattr(g2_adapter.provider, "latent_channels", None)
++        if type(channels) is not int or channels < 1:
++            raise ValueError("R2 provider must declare actual VAE recipe latent_channels")
++        config.model.config.global_memory_latent_channels = channels
+     dataset = get_action_robocasa_exact_window_cached_sft_dataset(
+         cache_root=args.cache_root,
+         source_root=args.source_root,
+         tokenizer_config=tokenizer,
+         catalog=cache,
+         verified_index=verified_index,
++        **(
++            {"g2_adapter": g2_adapter, "static_task_text_recipe": dataclasses.asdict(g2_recipe.text)}
++            if g2_recipe is not None
++            else {}
++        ),
+     )
++    if g2_recipe is not None and (
++        g2_recipe.text.planned_video_frames != contract.observation_frames
++        or g2_recipe.text.fps != contract.fps
++        or (g2_recipe.text.height, g2_recipe.text.width) != tuple(dataset._dataset._canvas_geometry[:2])
++    ):
++        raise ValueError("G2 fixed text generation recipe differs from actual native input geometry/fps/horizon")
+     dataset_create_ms = (time.perf_counter() - stage) * 1000
+     stage = time.perf_counter()
+     catalog = ExactWindowLocalCatalog(dataset, ttt_tbptt_steps=args.t)
+@@ -1170,6 +1207,8 @@ def preflight(args: argparse.Namespace) -> tuple[dict[str, Any], Any, ExactWindo
+         witnesses=witnesses,
+         transform_rng_mode=getattr(args, "transform_rng_mode", "legacy_global"),
+     )
++    if g2_recipe is not None:
++        digest = _json_digest({"phase5": digest, "g2_recipe_identity": g2_recipe.identity})
+     planner = ExactWindowRankPlanner(catalog, rank=0, world_size=args.world_size, b_stream=args.b, active_ga=args.ga)
+     plan = planner.plan_window(planner.initial_frontier())
+     report = {
+@@ -1189,6 +1228,15 @@ def preflight(args: argparse.Namespace) -> tuple[dict[str, Any], Any, ExactWindo
+         "effective_data_source": describe_effective_data_source(
+             config, catalog.raw.contract, ttt_steps=args.t, local_memory_enabled=not getattr(args, "no_ttt", False)
+         ),
++        **(
++            {
++                "g2_recipe_identity": g2_recipe.identity,
++                "g2_data": dataset._dataset.g2_adapter.summary(),
++                "g2_training_plan": dataclasses.asdict(g2_recipe.training),
++            }
++            if g2_recipe is not None
++            else {}
++        ),
+     }
+     semantic = training_identity(args, config, report)
+     loader_profile = profile_from_args(args)
+@@ -1245,6 +1293,12 @@ def parser() -> argparse.ArgumentParser:
+         "--no-ttt", action="store_true", help="Independent matched Packed128 baseline; never a G1 Resume override"
+     )
+     result.add_argument("--phase", choices=("fresh", "resume"), required=True)
++    result.add_argument(
++        "--g2-recipe",
++        type=Path,
++        default=None,
++        help="Explicit R1/R2 plan + shared text/DATA_C/G1 config witnesses; no formal defaults",
++    )
+     result.add_argument(
+         "--owner-authorized-g1-cross-pair-resume",
+         action="store_true",
+@@ -1321,6 +1375,7 @@ def _telemetry_sample_interval(stop_after_iter: int | None) -> int:
+ 
+ def main(argv: list[str] | None = None) -> None:
+     args = parser().parse_args(argv)
++    g2_recipe = _g2_recipe(args)
+     profile_from_args(args)  # Reject invalid opt-in settings before CUDA/distributed setup.
+     if type(args.num_workers) is not int or not 0 <= args.num_workers <= 16:
+         raise ValueError("--num-workers must be 0..16")
+@@ -1348,7 +1403,13 @@ def main(argv: list[str] | None = None) -> None:
+     trainer._require_committed_execution_boundary = True
+     with model_init():
+         model = instantiate(config.model)
+-    install_optimizer_inventory_check(model, report, no_ttt=args.no_ttt)
++    if g2_recipe is None:
++        install_optimizer_inventory_check(model, report, no_ttt=args.no_ttt)
++    else:
++        from examples.psm_wma_robocasa_g2_recipe import install_g2_training
++
++        trainer.g2_evidence_dir = job_namespace(args)
++        install_g2_training(model, trainer, g2_recipe, report)
+     planner = ExactWindowRankPlanner(catalog, rank=rank, world_size=args.world_size, b_stream=args.b, active_ga=args.ga)
+     producer = ExactWindowSegmentProducer(
+         catalog,
+@@ -1374,9 +1435,14 @@ def main(argv: list[str] | None = None) -> None:
+         from examples.psm_wma_robocasa_matched_no_ttt import NoTTTPlanObserver
+ 
+         observer_type = NoTTTPlanObserver
++    parameter_group = _telemetry_parameter_group
++    if g2_recipe is not None:
++        from examples.psm_wma_robocasa_g2_recipe import telemetry_parameter_group
++
++        parameter_group = functools.partial(telemetry_parameter_group, trainer)
+     observer = observer_type(
+         rank=rank,
+-        parameter_group=_telemetry_parameter_group,
++        parameter_group=parameter_group,
+         cuda_sample_interval=sample_interval,
+         parameter_norm_interval=sample_interval,
+         audit_missing_gradients=args.audit_missing_grads,
+@@ -1403,6 +1469,20 @@ def main(argv: list[str] | None = None) -> None:
+     ):
+         raise RuntimeError("Phase5 完成的 optimizer iteration 不匹配")
+     lifecycle.close()
++    if g2_recipe is not None:
++        controller = trainer._g2_stage_controller
++        (job_namespace(args) / f"g2_training_result_rank_{rank}.json").write_text(
++            json.dumps(
++                {
++                    "stage": controller.state_dict(),
++                    "actual_parameter_inventory": controller.inventory(),
++                    "scope": "actual_runtime",
++                    "comparison_checkpoint_iterations": g2_recipe.training.required_checkpoint_iterations,
++                },
++                indent=2,
++                sort_keys=True,
++            )
++        )
+     if rank == 0 and getattr(args, "stop_after_iter", None) is not None:
+         print(
+             "[CorrectedV3][bounded_stop] "
+diff --git a/examples/psm_wma_robocasa_g2_recipe.py b/examples/psm_wma_robocasa_g2_recipe.py
+new file mode 100644
+index 0000000..ffdb0b0
+--- /dev/null
++++ b/examples/psm_wma_robocasa_g2_recipe.py
+@@ -0,0 +1,346 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""G2 configuration overlay for the existing Phase5 entry/trainer.
++
++No training loop or offline provider lives here. Required run choices have no
++formal defaults; a missing DATA_C provider or B/FSDP interface fails explicitly.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import importlib
++import json
++from dataclasses import asdict, dataclass
++from pathlib import Path
++from typing import Any
++
++import torch
++import yaml
++from torch.distributed.tensor import DTensor
++
++from cosmos_framework.checkpoint.g2_warm_start import G2ModelOnlyCheckpointer
++from cosmos_framework.data.generator.action.datasets.g2_training_adapter import (
++    G2DataRecipe,
++    G2TrainingDataAdapter,
++)
++from cosmos_framework.data.generator.action.utils.static_task_text import StaticTaskTextRecipe
++from cosmos_framework.model.generator.mot.g2_contracts import GlobalMemoryConfig
++from cosmos_framework.trainer.g2_training import (
++    G2_OPTIMIZER_SELECTION,
++    G2StageController,
++    G2TrainingPlan,
++    build_g2_optimizer,
++    parameter_roles,
++)
++
++GLOBAL_PREFIXES = ("net.global_memory_reader.", "net.global_memory_projector.")
++
++
++def _sha(path: Path) -> str:
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++@dataclass(frozen=True)
++class G2RunRecipe:
++    training: G2TrainingPlan
++    text: StaticTaskTextRecipe
++    global_memory: GlobalMemoryConfig
++    alignment_version: str
++    view_recipe_id: str | None
++    provider_factory: str
++    provider_kwargs: dict[str, Any]
++    g1_config_path: str
++    g1_config_sha256: str
++    save_iter: int
++
++    def __post_init__(self):
++        if (self.training.profile == "R2") != self.global_memory.enabled:
++            raise ValueError("R1/R2 and Global enabled must agree")
++        if self.training.text_recipe_identity != self.text.identity or self.text.cfg_dropout_rate != 0.1:
++            raise ValueError("shared text identity/dropout=0.1 must be frozen in the plan")
++        if (
++            type(self.save_iter) is not int
++            or self.save_iter < 1
++            or not self.alignment_version
++            or len(self.g1_config_sha256) != 64
++            or not self.g1_config_path
++        ):
++            raise ValueError("explicit save interval, alignment and G1 config witness are required")
++        if (
++            not isinstance(self.provider_factory, str)
++            or self.provider_factory.count(":") != 1
++            or not isinstance(self.provider_kwargs, dict)
++        ):
++            raise ValueError("DATA_C provider factory must be an explicit module:function")
++        module, factory = self.provider_factory.split(":")
++        if not module or not factory or module.startswith(("tools", "g2.offline", "g2.sim")):
++            raise ValueError("training provider must not import root tools or simulation producer")
++
++    @classmethod
++    def open(cls, path: Path):
++        body = json.loads(path.read_text())
++        if not isinstance(body, dict):
++            raise ValueError("G2 recipe must be an explicit JSON object")
++        try:
++            body["training"] = G2TrainingPlan.from_dict(body["training"])
++            body["text"] = StaticTaskTextRecipe(**body["text"])
++            body["global_memory"] = GlobalMemoryConfig(**body["global_memory"])
++            return cls(**body)
++        except (KeyError, TypeError) as error:
++            raise ValueError(f"incomplete/unknown G2 recipe fields: {error}") from error
++
++    @property
++    def identity(self):
++        # The path itself is operational; actual G1 configuration bytes bind semantics.
++        body = asdict(self)
++        body.pop("g1_config_path")
++        return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
++
++    def g1_snapshot(self):
++        path = Path(self.g1_config_path)
++        if not path.is_file() or _sha(path) != self.g1_config_sha256:
++            raise ValueError("G1 config snapshot is missing or its SHA256 differs")
++        saved = yaml.safe_load(path.read_text())
++        if (
++            not isinstance(saved, dict)
++            or not isinstance(saved.get("model", {}).get("config"), dict)
++            or not isinstance(saved.get("optimizer"), dict)
++        ):
++            raise ValueError("G1 config must contain actual model/optimizer settings")
++        local = saved["model"]["config"]
++        required = {
++            "local_memory_enabled",
++            "local_memory_inner_lr",
++            "local_memory_ttt_tbptt_steps",
++            "local_memory_k_local",
++            "local_memory_dim",
++            "local_memory_evidence_dim",
++            "local_memory_action_dim",
++            "local_memory_ttt_dim",
++            "local_memory_fast_hidden_dim",
++        }
++        if not required <= local.keys() or local["local_memory_enabled"] is not True:
++            raise ValueError("G1 snapshot must include its complete existing Local recipe")
++        return saved
++
++    def configure_args(self, args):
++        if (
++            getattr(args, "no_ttt", False)
++            or getattr(args, "owner_authorized_g1_cross_pair_resume", False)
++            or getattr(args, "stop_after_iter", None) is not None
++            or getattr(args, "formal_execution_until", None) is not None
++        ):
++            raise ValueError("G2 uses its own strict new-job plan, not old G1/No-TTT run overrides")
++        if not args.job_name.startswith(self.training.profile.lower() + "_g2_"):
++            raise ValueError("G2 requires a separate r1_g2_ / r2_g2_ job namespace")
++        saved = self.g1_snapshot()["model"]["config"]
++        args.t, args.k = saved["local_memory_ttt_tbptt_steps"], saved["local_memory_k_local"]
++        args.b, args.ga, args.world_size = (
++            self.training.b_stream,
++            self.training.grad_accum_steps,
++            self.training.world_size,
++        )
++        args.max_iter, args.save_iter = self.training.total_steps, self.save_iter
++        args.warmup = self.training.gen_schedule.warmup_steps  # Native scheduler is replaced before load/steps.
++
++    def check_init_checkpoint(self, checkpoint: Path):
++        from torch.distributed.checkpoint import FileSystemReader
++
++        path = checkpoint / "model/.metadata"
++        if not path.is_file() or _sha(path) != self.training.init_checkpoint_identity:
++            raise ValueError("G1 model-only initialization metadata SHA256 differs from the paired plan")
++        names = FileSystemReader(checkpoint / "model").read_metadata().state_dict_metadata
++        if not any(name.startswith("net.local_memory_runtime.") for name in names):
++            raise ValueError("G1 initialization checkpoint is missing Local weights")
++
++    def overlay(self, config):
++        saved = self.g1_snapshot()
++        model = config.model.config
++        for name, value in saved["model"]["config"].items():
++            if name.startswith("local_memory_"):
++                setattr(model, name, value)
++        if "rectified_flow_training_config" not in saved["model"]["config"]:
++            raise ValueError("G1 loss/sampling recipe must be explicit in the verified config snapshot")
++        model.rectified_flow_training_config = saved["model"]["config"]["rectified_flow_training_config"]
++        # B owns these model configuration fields and must publish them with
++        # its core candidate. No silent insertion into an old model schema.
++        if not hasattr(model, "global_memory_enabled") or not hasattr(model, "global_memory_config"):
++            raise ValueError("B Global model config interface is unavailable; integrate the fixed B candidate")
++        model.global_memory_enabled = self.global_memory.enabled
++        model.g2_text_enabled = True
++        model.global_memory_config = asdict(self.global_memory)
++        model.global_memory_top_variant = self.global_memory.top_view_variant
++        inherited = saved["optimizer"]
++        if not {"optimizer_type", "betas", "eps", "weight_decay", "fused"} <= inherited.keys():
++            raise ValueError("G1 optimizer settings must be explicit; no new low-level defaults")
++        for key, value in inherited.items():
++            if key not in {"_target_", "keys_to_select", "lr", "lr_multipliers"}:
++                setattr(config.optimizer, key, value)
++        # Phase5 callbacks (including any actual clipping) come from the G1
++        # snapshot. No new loss, inner algorithm, clip or optimizer tuning.
++        config.trainer.callbacks = saved.get("trainer", {}).get("callbacks", {})
++        config.optimizer.lr = 1e-5
++        config.optimizer._target_ = build_g2_optimizer
++        config.optimizer.keys_to_select = [G2_OPTIMIZER_SELECTION]
++        config.optimizer.lr_multipliers = {
++            "global_memory_reader.": 5.0,
++            "global_memory_projector.": 5.0,
++            "action2llm": 5.0,
++            "llm2action": 5.0,
++            "action_modality_embed": 5.0,
++        }
++        config.checkpoint.type = {"_target_": G2ModelOnlyCheckpointer}
++        config.checkpoint.keys_to_skip_loading = ["net_ema."]  # Exact Global names added by validated DCP loader.
++
++    def data_adapter(self):
++        module, name = self.provider_factory.split(":")
++        factory = getattr(importlib.import_module(module), name)
++        provider = factory(**self.provider_kwargs, global_memory_enabled=self.global_memory.enabled)
++        if provider.evidence_scope != "verified_data_c" or provider.split_identity != self.training.split_identity:
++            raise ValueError(
++                "formal G2 requires a verified DATA_C provider with the frozen split; fixtures are CPU only"
++            )
++        return G2TrainingDataAdapter(
++            provider,
++            G2DataRecipe(
++                self.training.data_identity,
++                self.alignment_version,
++                self.training.state15_recipe_identity,
++                self.view_recipe_id,
++                self.global_memory,
++            ),
++        )
++
++
++def recipe_from_args(args) -> G2RunRecipe | None:
++    path = getattr(args, "g2_recipe", None)
++    if path is None:
++        return None
++    existing = getattr(args, "_g2_resolved_recipe", None)
++    if existing is None:
++        existing = G2RunRecipe.open(path)
++        existing.configure_args(args)
++        args._g2_resolved_recipe = existing
++    return existing
++
++
++def telemetry_parameter_group(trainer, name):
++    """Use existing observer labels for all ACTUALLY active generation params.
++
++    Its generation aggregate includes Global. The exact three-way split and
++    update/sample clocks are separately emitted by the G2 controller.
++    """
++    controller = getattr(trainer, "_g2_stage_controller", None)
++    if controller is None:
++        return None
++    role = controller.roles.get(name)
++    if role not in controller.active_roles:
++        return None
++    return "action" if role.value == "action_adapter" else "generation"
++
++
++def install_g2_training(model, trainer, recipe: G2RunRecipe, report):
++    """Extend the existing init hook; retain the factory/optimizer and DCP paths."""
++    original = model.init_optimizer_scheduler
++
++    def checked(optimizer_config, scheduler_config):
++        named = dict(model.named_parameters())
++        global_names = frozenset(name for name in named if name.startswith(GLOBAL_PREFIXES))
++        if recipe.global_memory.enabled and any(
++            not any(name.startswith(prefix) for name in global_names) for prefix in GLOBAL_PREFIXES
++        ):
++            raise ValueError("B must register both Global Reader and projector parameters")
++        if not hasattr(model, "g2_parameter_inventory"):
++            raise ValueError("B's g2_parameter_inventory interface is required")
++        inventory = model.g2_parameter_inventory()
++        groups = inventory["parameters"]
++        flattened = [name for values in groups.values() for name in values]
++        if (
++            set(groups) != {"global", "gen", "action_adapter", "frozen"}
++            or len(flattened) != len(set(flattened))
++            or set(flattened) != set(named)
++        ):
++            raise ValueError("B's actual parameter inventory is incomplete or overlapping")
++        if global_names != frozenset(groups["global"]):
++            raise ValueError("B's Global inventory disagrees with registered module names")
++        generation = frozenset((*groups["gen"], *groups["action_adapter"]))
++        actions = frozenset(groups["action_adapter"])
++        roles = parameter_roles(
++            model,
++            global_names=global_names,
++            gen_names=generation,
++            action_names=actions,
++            profile=recipe.training.profile,
++        )
++        # B's hook owns the FSDP leaf/forward registration implementation.
++        hook = getattr(model, "set_trainable_names", None) or getattr(model.net, "set_trainable_names", None)
++        if any(isinstance(parameter, DTensor) for parameter in named.values()) and hook is None:
++            raise ValueError("B registered FSDP set_trainable_names hook is required")
++        if hook is not None:
++            hook(frozenset(roles))
++        else:
++            for name, parameter in named.items():
++                parameter.requires_grad_(name in roles)
++        model._g2_optimizer_parameter_names = frozenset(roles)
++        optimizer, _old_scheduler = original(optimizer_config, scheduler_config)
++        controller = G2StageController(model, optimizer, recipe.training, roles, set_trainability=hook)
++        expected_new = frozenset(name for name in model.state_dict() if name.startswith(GLOBAL_PREFIXES))
++        if expected_new != frozenset(inventory["new_state_keys"]):
++            raise ValueError("B's new Global state inventory disagrees with actual state_dict")
++        model._g2_new_global_state_names = expected_new
++        trainer._g2_stage_controller, trainer._g2_text_recipe = controller, recipe.text
++        trainer._required_checkpoint_iterations = recipe.training.required_checkpoint_iterations
++        report["g2_actual_parameter_inventory"] = controller.inventory()
++        report["g2_stage_schema"] = controller.state_dict()
++        if hasattr(trainer, "g2_evidence_dir"):
++            rank = torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
++            (trainer.g2_evidence_dir / f"g2_parameter_inventory_before_load_rank_{rank}.json").write_text(
++                json.dumps(
++                    {
++                        "scope": "actual_runtime_before_checkpoint_load",
++                        "stage": controller.state_dict(),
++                        "parameters": controller.inventory(),
++                    },
++                    indent=2,
++                    sort_keys=True,
++                )
++            )
++        return optimizer, controller
++
++    model.init_optimizer_scheduler = checked
++
++
++def main(argv=None):
++    """CPU configuration checker; never constructs a model or opens view payloads."""
++    import argparse
++
++    from cosmos_framework.trainer.g2_training import validate_comparison_plans
++
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--check", type=Path, required=True)
++    parser.add_argument("--pair-with", type=Path)
++    args = parser.parse_args(argv)
++    try:
++        recipe = G2RunRecipe.open(args.check)
++        recipe.g1_snapshot()
++        report = {"scope": "CONFIG_ONLY_PROVIDER_AND_MODEL_NOT_RUN", "recipe_identity": recipe.identity}
++        if args.pair_with is not None:
++            other = G2RunRecipe.open(args.pair_with)
++            other.g1_snapshot()
++            r1, r2 = (recipe, other) if recipe.training.profile == "R1" else (other, recipe)
++            if (
++                r1.g1_config_sha256 != r2.g1_config_sha256
++                or r1.text != r2.text
++                or r1.alignment_version != r2.alignment_version
++            ):
++                raise ValueError("R1/R2 must share the G1 snapshot, text and DATA_C alignment")
++            report["comparison"] = validate_comparison_plans(r1.training, r2.training)
++        print(json.dumps(report, indent=2, sort_keys=True))
++    except (ValueError, OSError) as error:
++        parser.error(str(error))
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/examples/psm_wma_robocasa_g2_recipe.template.json b/examples/psm_wma_robocasa_g2_recipe.template.json
+new file mode 100644
+index 0000000..b585996
+--- /dev/null
++++ b/examples/psm_wma_robocasa_g2_recipe.template.json
+@@ -0,0 +1,35 @@
++{
++  "training": {
++    "profile": "R2",
++    "init_checkpoint_identity": null,
++    "data_identity": null,
++    "split_identity": null,
++    "text_recipe_identity": null,
++    "state15_recipe_identity": null,
++    "stage_a_steps": null,
++    "stage_b_steps": null,
++    "target_effective_consumers": null,
++    "b_stream": null,
++    "grad_accum_steps": null,
++    "world_size": null,
++    "global_schedule": {"warmup_steps": null, "decay": null, "min_factor": null, "horizon_steps": null},
++    "gen_schedule": {"warmup_steps": null, "decay": null, "min_factor": null, "horizon_steps": null},
++    "action_schedule": {"warmup_steps": null, "decay": null, "min_factor": null, "horizon_steps": null}
++  },
++  "text": {
++    "planned_video_frames": null,
++    "fps": null,
++    "height": null,
++    "width": null,
++    "tokenizer_identity": null,
++    "cfg_dropout_rate": 0.1
++  },
++  "global_memory": {"enabled": true, "top_view_variant": "with_robot"},
++  "alignment_version": null,
++  "view_recipe_id": null,
++  "provider_factory": null,
++  "provider_kwargs": {},
++  "g1_config_path": null,
++  "g1_config_sha256": null,
++  "save_iter": null
++}
+diff --git a/examples/psm_wma_robocasa_g2_recipe_test.py b/examples/psm_wma_robocasa_g2_recipe_test.py
+new file mode 100644
+index 0000000..a3a2de3
+--- /dev/null
++++ b/examples/psm_wma_robocasa_g2_recipe_test.py
+@@ -0,0 +1,282 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: OpenMDW-1.1
++
++"""CPU configuration/entry/factory checks with explicit synthetic G1 metadata."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import os
++from dataclasses import asdict, replace
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++import torch
++import yaml
++
++from cosmos_framework.data.generator.action.utils.static_task_text_test import recipe_fixture
++from cosmos_framework.model.generator.mot.g2_contracts import GlobalMemoryConfig
++from cosmos_framework.trainer.g2_training_test import TinyPolicy, equal_tree, plan_fixture
++from examples import psm_wma_robocasa_corrected_phase5 as phase5
++from examples.psm_wma_robocasa_g2_recipe import G2RunRecipe, install_g2_training, recipe_from_args
++
++
++def run_recipe_fixture(tmp_path, profile="R2"):
++    local = dict(
++        local_memory_enabled=True,
++        local_memory_inner_lr=0.075,
++        local_memory_ttt_tbptt_steps=16,
++        local_memory_k_local=4,
++        local_memory_dim=32,
++        local_memory_evidence_dim=256,
++        local_memory_action_dim=15,
++        local_memory_ttt_dim=64,
++        local_memory_fast_hidden_dim=256,
++        rectified_flow_training_config={"loss_scale": 10.0, "image_loss_scale": None},
++    )
++    optimizer = dict(optimizer_type="AdamW", betas=[0.91, 0.99], eps=1e-8, fused=True, weight_decay=0.07)
++    snapshot = tmp_path / "synthetic_g1_config.yaml"
++    snapshot.write_text(yaml.safe_dump(dict(model=dict(config=local), optimizer=optimizer, trainer=dict(callbacks={}))))
++    text = recipe_fixture()
++    plan = replace(plan_fixture(profile), text_recipe_identity=text.identity)
++    return G2RunRecipe(
++        plan,
++        text,
++        GlobalMemoryConfig(enabled=profile == "R2"),
++        "fixture-alignment",
++        "fixture-view-recipe",
++        "fixture_provider:open_provider",
++        {},
++        str(snapshot),
++        hashlib.sha256(snapshot.read_bytes()).hexdigest(),
++        5,
++    )
++
++
++def test_required_recipe_roundtrip_and_incomplete_formal_run_refused_before_runtime(tmp_path, monkeypatch):
++    recipe = run_recipe_fixture(tmp_path)
++    path = tmp_path / "g2.json"
++    path.write_text(json.dumps(asdict(recipe)))
++    assert G2RunRecipe.open(path) == recipe
++    path.write_text('{"training": {"profile":"R2"}}')
++    monkeypatch.setattr(phase5, "_load_runtime", lambda: pytest.fail("invalid G2 config reached project runtime"))
++    with pytest.raises(ValueError, match="incomplete"):
++        phase5.main(
++            [
++                "--phase",
++                "fresh",
++                "--g2-recipe",
++                str(path),
++                "--job-name",
++                "r2_g2_fixture",
++                "--output-root",
++                str(tmp_path),
++                "--source-root",
++                str(tmp_path),
++                "--cache-root",
++                str(tmp_path),
++                "--edge",
++                str(tmp_path),
++                "--vae",
++                str(tmp_path),
++                "--base-checkpoint",
++                str(tmp_path),
++                "--root-worktree",
++                str(tmp_path),
++            ]
++        )
++
++
++def test_recipe_derives_run_geometry_only_from_explicit_plan_and_g1_snapshot(tmp_path):
++    recipe = run_recipe_fixture(tmp_path)
++    path = tmp_path / "g2.json"
++    path.write_text(json.dumps(asdict(recipe)))
++    args = SimpleNamespace(g2_recipe=path, job_name="r2_g2_cpu_fixture")
++    assert recipe_from_args(args) == recipe
++    assert (args.max_iter, args.b, args.ga, args.world_size) == (4, 1, 1, 1)
++    assert (args.t, args.k) == (16, 4)
++    assert recipe_from_args(SimpleNamespace()) is None
++    with pytest.raises(ValueError, match="separate"):
++        recipe.configure_args(SimpleNamespace(job_name="old_g1_job"))
++
++
++def test_overlay_preserves_g1_local_loss_and_optimizer_low_level_settings(tmp_path):
++    recipe = run_recipe_fixture(tmp_path)
++    model = SimpleNamespace(global_memory_enabled=False, global_memory_config={})
++    config = SimpleNamespace(
++        model=SimpleNamespace(config=model),
++        optimizer=SimpleNamespace(),
++        trainer=SimpleNamespace(),
++        checkpoint=SimpleNamespace(load_training_state=False),
++    )
++    recipe.overlay(config)
++    assert model.local_memory_inner_lr == 0.075  # Never replace it by the historical 0.1 default.
++    assert model.rectified_flow_training_config == {"loss_scale": 10.0, "image_loss_scale": None}
++    assert config.optimizer.betas == [0.91, 0.99] and config.optimizer.weight_decay == 0.07
++    assert "local_memory" not in config.optimizer.keys_to_select
++    assert config.checkpoint.keys_to_skip_loading == ["net_ema."]
++    assert model.global_memory_enabled is True
++    assert config.optimizer.lr == 1e-5
++
++
++def test_recipe_refuses_missing_b_interface_fixture_provider_or_producer_import(tmp_path, monkeypatch):
++    recipe = run_recipe_fixture(tmp_path)
++    with pytest.raises(ValueError, match="B Global model config"):
++        recipe.overlay(SimpleNamespace(model=SimpleNamespace(config=SimpleNamespace())))
++    with pytest.raises(ValueError, match="producer"):
++        replace(recipe, provider_factory="g2.offline.stage_a:produce")
++    module = SimpleNamespace(open_provider=lambda **kwargs: SimpleNamespace(evidence_scope="fixture"))
++    monkeypatch.setattr("examples.psm_wma_robocasa_g2_recipe.importlib.import_module", lambda _: module)
++    with pytest.raises(ValueError, match="fixtures are CPU only"):
++        recipe.data_adapter()
++
++
++def test_factory_hook_reuses_optimizer_and_reports_actual_mutually_exclusive_inventory(tmp_path):
++    recipe = run_recipe_fixture(tmp_path)
++    model, trainer, report = TinyPolicy(), SimpleNamespace(g2_evidence_dir=tmp_path), {}
++    built = []
++
++    def original(optimizer_config, scheduler_config):
++        selected = [p for p in model.parameters() if p.requires_grad]
++        optimizer = torch.optim.AdamW(selected, lr=1e-5, weight_decay=0.07)
++        built.append(optimizer)
++        return optimizer, torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.0)
++
++    model.init_optimizer_scheduler = original
++    install_g2_training(model, trainer, recipe, report)
++    optimizer, scheduler = model.init_optimizer_scheduler(None, None)
++    assert built == [optimizer] and trainer._g2_stage_controller is scheduler
++    assert not any(name.startswith("net.local_memory") for name in scheduler.roles)
++    inventory = report["g2_actual_parameter_inventory"]
++    assert len(inventory) == len(list(model.named_parameters()))
++    saved = json.loads((tmp_path / "g2_parameter_inventory_before_load_rank_0.json").read_text())
++    equal_tree(saved["parameters"], inventory)
++    assert saved["scope"] == "actual_runtime_before_checkpoint_load"
++    assert set(model._g2_new_global_state_names) == {row["name"] for row in inventory if row["group"] == "global"}
++
++
++def test_b_actual_inventory_covers_gen_text_norm_and_native_factory(tmp_path):
++    from torch import nn
++
++    from cosmos_framework.model.generator.mot.g2_core_test import tiny_network
++    from cosmos_framework.model.generator.mot.g2_parameters import parameter_inventory, set_trainable_names
++    from cosmos_framework.trainer.g2_training import G2_OPTIMIZER_SELECTION, build_g2_optimizer
++
++    owner = nn.Module()
++    owner.net = tiny_network(g2_text=True)
++    owner.net.global_memory_reader = nn.Linear(4, 4)
++    owner.net.global_memory_projector = nn.Linear(4, 16)
++    owner.net.action2llm = nn.Linear(4, 16)
++    owner.g2_parameter_inventory = lambda: parameter_inventory(owner, net_prefix="net.")
++    owner.set_trainable_names = lambda names: set_trainable_names(owner, names)
++
++    def native_factory(config, schedule):
++        optimizer = build_g2_optimizer(
++            owner,
++            optimizer_type="adamw",
++            lr=1e-5,
++            fused=True,
++            keys_to_select=[G2_OPTIMIZER_SELECTION],
++            weight_decay=0.07,
++        )
++        return optimizer, torch.optim.lr_scheduler.LambdaLR(optimizer.optimizers[0], lambda _: 1.0)
++
++    owner.init_optimizer_scheduler = native_factory
++    trainer = SimpleNamespace(g2_evidence_dir=tmp_path)
++    report = {}
++    install_g2_training(owner, trainer, run_recipe_fixture(tmp_path), report)
++    optimizer, scheduler = owner.init_optimizer_scheduler(None, None)
++    names = [name for name in scheduler.roles if "k_norm_und_for_gen" in name]
++    assert names and all(scheduler.roles[name].value == "gen" for name in names)
++    selected = {id(p) for inner in optimizer.optimizers for group in inner.param_groups for p in group["params"]}
++    assert all(id(dict(owner.named_parameters())[name]) in selected for name in names)
++    assert all(not p.requires_grad for name, p in owner.named_parameters() if name in names)
++
++
++def test_actual_a_reader_b_mot_train_a_gradient_and_frozen_parameters(tmp_path, monkeypatch):
++    """Real A Reader/B MoT components, CPU reference kernels; synthetic loss."""
++    from torch import nn
++
++    import cosmos_framework.model.generator.mot.attention as attention_module
++    import cosmos_framework.model.generator.mot.global_memory as reader_module
++    from cosmos_framework.data.generator.sequence_packing.runtime import get_gen_seq
++    from cosmos_framework.model.generator.mot.cosmos3_vfm_network import Cosmos3VFMNetwork, Cosmos3VFMNetworkConfig
++    from cosmos_framework.model.generator.mot.g2_contract_fixtures import synthetic_view
++    from cosmos_framework.model.generator.mot.g2_core_test import TinyLM, cpu_attention, native_pack, tiny_model
++    from cosmos_framework.model.generator.mot.g2_parameters import parameter_inventory, set_trainable_names
++    from cosmos_framework.model.generator.mot.global_memory_test import cpu_reference
++    from cosmos_framework.model.generator.mot.memory_prefix import build_joint_memory_prefix_context
++    from cosmos_framework.trainer.g2_training import G2_OPTIMIZER_SELECTION, build_g2_optimizer
++
++    monkeypatch.setattr(attention_module, "attention", cpu_attention)
++    monkeypatch.setattr(reader_module, "_dispatch_attention", cpu_reference)
++    language_model = tiny_model()
++    config = Cosmos3VFMNetworkConfig(
++        vlm_config=language_model.config, vision_gen=False, global_memory_enabled=True, global_memory_latent_channels=4
++    )
++    owner = nn.Module()
++    owner.net = Cosmos3VFMNetwork(TinyLM(language_model), config)
++    owner.net.action2llm = nn.Linear(4, 16)  # Not used by this component-only synthetic objective.
++    owner.g2_parameter_inventory = lambda: parameter_inventory(owner, net_prefix="net.")
++    owner.set_trainable_names = lambda names: set_trainable_names(owner, names)
++
++    def factory(config, schedule):
++        optimizer = build_g2_optimizer(
++            owner,
++            optimizer_type="adamw",
++            lr=1e-5,
++            fused=True,
++            keys_to_select=[G2_OPTIMIZER_SELECTION],
++            weight_decay=0.07,
++        )
++        return optimizer, torch.optim.lr_scheduler.LambdaLR(optimizer.optimizers[0], lambda _: 1.0)
++
++    owner.init_optimizer_scheduler = factory
++    trainer, report = SimpleNamespace(), {}
++    install_g2_training(owner, trainer, run_recipe_fixture(tmp_path), report)
++    optimizer, controller = owner.init_optimizer_scheduler(None, None)
++    before = {name: value.detach().clone() for name, value in owner.state_dict().items()}
++    pack, mask, positions, text = native_pack(language_model, (3,))
++    features = owner.net.prepare_und_text(text)
++    queries = owner.net.prepare_task_queries(features)
++    reader = owner.net.read_global(queries, ((synthetic_view(),),))
++    projected = owner.net.project_global(reader)
++    prefix = build_joint_memory_prefix_context(tuple(projected.unbind(0)), None, target_dtype=torch.float32)
++    result, _ = language_model(pack, mask, positions, prepared_text=features, memory_prefix_context=prefix)
++    (get_gen_seq(result) * torch.arange(1, 17, dtype=torch.float32)).sum().backward()
++    inventory = controller.inventory()
++    named = dict(owner.named_parameters())
++    for row in inventory:
++        gradient = named[row["name"]].grad
++        row["gradient_present"] = gradient is not None
++        row["gradient_norm"] = None if gradient is None else float(gradient.norm())
++        if gradient is not None:
++            assert torch.isfinite(gradient).all(), row["name"]
++        if row["group"] != "global":
++            assert gradient is None
++    assert any(
++        row["gradient_norm"] is not None and row["gradient_norm"] > 0 for row in inventory if row["group"] == "global"
++    )
++    controller.prepare_commit(actual_consumers=1, iteration=0)
++    optimizer.step()
++    controller.step()
++    optimizer.zero_grad(set_to_none=True)
++    controller.commit_boundary(iteration=1, ga_complete=True, local_transaction_complete=True)
++    for name, value in owner.state_dict().items():
++        if not name.startswith(("net.global_memory_reader.", "net.global_memory_projector.")):
++            assert torch.equal(value, before[name]), name
++    output = Path(os.environ.get("G2_C_CPU_EVIDENCE_DIR", str(tmp_path)))
++    output.mkdir(parents=True, exist_ok=True)
++    (output / "actual_a_reader_tiny_b_parameter_inventory.json").write_text(
++        json.dumps(
++            {
++                "scope": "actual A Reader + B tiny MoT, synthetic CPU/reference attention; NOT full Edge/FSDP/action loss",
++                "parameters": inventory,
++                "stage_after_commit": controller.state_dict(),
++            },
++            indent=2,
++            sort_keys=True,
++        )
++    )

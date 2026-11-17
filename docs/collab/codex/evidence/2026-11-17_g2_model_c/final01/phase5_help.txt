@@ -1,0 +1,94 @@
+usage: psm_wma_robocasa_corrected_phase5.py [-h]
+                                            [--no-ttt-loader-workers NO_TTT_LOADER_WORKERS]
+                                            [--no-ttt-prefetch-factor NO_TTT_PREFETCH_FACTOR]
+                                            [--no-ttt-persistent-workers]
+                                            [--no-ttt-nonpersistent-workers]
+                                            [--no-ttt-loader-timeout-s NO_TTT_LOADER_TIMEOUT_S]
+                                            [--no-ttt] --phase {fresh,resume}
+                                            [--g2-recipe G2_RECIPE]
+                                            [--owner-authorized-g1-cross-pair-resume]
+                                            [--preflight] [--snapshot10]
+                                            --output-root OUTPUT_ROOT
+                                            --source-root SOURCE_ROOT
+                                            --cache-root CACHE_ROOT --edge
+                                            EDGE --vae VAE --base-checkpoint
+                                            BASE_CHECKPOINT --root-worktree
+                                            ROOT_WORKTREE
+                                            [--formal-execution-until FORMAL_EXECUTION_UNTIL]
+                                            [--dataset-index-root DATASET_INDEX_ROOT]
+                                            [--expected-root EXPECTED_ROOT]
+                                            [--expected-child EXPECTED_CHILD]
+                                            [--num-workers NUM_WORKERS]
+                                            [--job-name JOB_NAME]
+                                            [--transform-rng-mode {legacy_global,consumer_keyed_v1}]
+                                            [--full-segment-prefetch] [--t T]
+                                            [--b B] [--ga GA] [--k K]
+                                            [--world-size WORLD_SIZE]
+                                            [--max-iter MAX_ITER]
+                                            [--save-iter SAVE_ITER]
+                                            [--warmup WARMUP]
+                                            [--stop-after-iter STOP_AFTER_ITER]
+                                            [--audit-missing-grads]
+
+Corrected exact-window RoboCasa Phase5 trainer 入口。
+
+options:
+  -h, --help            show this help message and exit
+  --no-ttt-loader-workers NO_TTT_LOADER_WORKERS
+                        No-TTT-only spawned CPU DataLoader processes;
+                        independent of G1 --num-workers threads
+  --no-ttt-prefetch-factor NO_TTT_PREFETCH_FACTOR
+  --no-ttt-persistent-workers
+  --no-ttt-nonpersistent-workers
+  --no-ttt-loader-timeout-s NO_TTT_LOADER_TIMEOUT_S
+  --no-ttt              Independent matched Packed128 baseline; never a G1
+                        Resume override
+  --phase {fresh,resume}
+  --g2-recipe G2_RECIPE
+                        Explicit R1/R2 plan + shared text/DATA_C/G1 config
+                        witnesses; no formal defaults
+  --owner-authorized-g1-cross-pair-resume
+                        Explicit Owner exception for G1 iter8900 only;
+                        preserve old digest and all non-source checks
+  --preflight
+  --snapshot10
+  --output-root OUTPUT_ROOT
+  --source-root SOURCE_ROOT
+  --cache-root CACHE_ROOT
+  --edge EDGE
+  --vae VAE
+  --base-checkpoint BASE_CHECKPOINT
+  --root-worktree ROOT_WORKTREE
+  --formal-execution-until FORMAL_EXECUTION_UNTIL
+                        Stop a formal job at a committed optimizer iteration
+                        without changing its 30000/500/100 schedule
+  --dataset-index-root DATASET_INDEX_ROOT
+                        Prebuilt verified read-only index; missing/stale index
+                        fails closed, never rebuilds during training
+  --expected-root EXPECTED_ROOT
+  --expected-child EXPECTED_CHILD
+  --num-workers NUM_WORKERS
+                        Per-rank bounded background RAW-READ threads; 0
+                        retains synchronous semantics (not DataLoader workers)
+  --job-name JOB_NAME
+  --transform-rng-mode {legacy_global,consumer_keyed_v1}
+                        Opt-in per-consumer keyed CFG augmentation for
+                        deterministic background transforms
+  --full-segment-prefetch
+                        One bounded background CPU member
+                        (Raw+Transform+Segment+Collate), requires num-
+                        workers=1 and keyed RNG
+  --t T
+  --b B
+  --ga GA
+  --k K
+  --world-size WORLD_SIZE
+  --max-iter MAX_ITER
+  --save-iter SAVE_ITER
+  --warmup WARMUP
+  --stop-after-iter STOP_AFTER_ITER
+                        Fresh-only bounded optimizer steps; preserves
+                        max_iter=30000/warmup=500/save_iter=100
+  --audit-missing-grads
+                        Bounded 3-step only: emit rank-local grad=None
+                        parameter names after successful optimizer commits
