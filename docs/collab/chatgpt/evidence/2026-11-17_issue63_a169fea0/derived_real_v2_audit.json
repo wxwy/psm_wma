@@ -1,0 +1,104 @@
+{
+  "schema": "issue63_gpt_independent_real_v2_review_2026_11_17",
+  "verdict": "APPROVE_CODE_TWO_REAL_V2_SAMPLES_HOLD_FULL_CORPUS",
+  "reviewed_product_root": "a169fea07016b80b3639646cc9925ac70b6525a8",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "nav": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "capacity_fix_sha": "ffc18f52976c0dd7b363207788b63537771d59a5",
+  "vendor_template_fix_sha": "83ce555a9bd2e5e064cac24056e64493cf30e25d",
+  "cpu": {
+    "pr53": 283,
+    "stage_a": 150,
+    "related": 45,
+    "one_shot": 23,
+    "capsule": 54,
+    "total": 555,
+    "skipped": 0,
+    "errors": 0,
+    "failed": 0,
+    "peer_separate": 5
+  },
+  "real_run": {
+    "status": "DONE",
+    "exit": 0,
+    "selected": 2,
+    "complete": true,
+    "elapsed_s": 914.4311589002609,
+    "peak_native_work_bytes": 1406680845,
+    "peak_pending_png_bytes": 1036052,
+    "spool_final_bytes": 1640571,
+    "completed_jobs": 2,
+    "active_jobs": 0,
+    "active_records": 0,
+    "failed_jobs": 0
+  },
+  "episodes": [
+    {
+      "task": "CloseBlenderLid",
+      "episode_id": 0,
+      "states": 37,
+      "views": 4,
+      "owner_records": 89,
+      "old_new_pixel_exact": 111,
+      "final_size_bytes": 23211969,
+      "previous_v1_size_bytes": 56915501,
+      "capsule_bytes": 162482,
+      "retirement_overhead_s": 7.21116354689002
+    },
+    {
+      "task": "CloseFridge",
+      "episode_id": 502,
+      "states": 44,
+      "views": 8,
+      "owner_records": 80,
+      "old_new_pixel_exact": 308,
+      "final_size_bytes": 28295447,
+      "previous_v1_size_bytes": 58496883,
+      "capsule_bytes": 157666,
+      "retirement_overhead_s": 7.69347121194005
+    }
+  ],
+  "totals": {
+    "states": 81,
+    "views": 12,
+    "owner_records": 169,
+    "old_new_pixel_exact": 419,
+    "v1_v2_tensors_equal": 169,
+    "new_final_bytes": 51507416,
+    "previous_v1_bytes": 115412384,
+    "real_wan_gpu_reencode_owners": 169,
+    "max_abs_error": 0,
+    "torch_peak_alloc_gib": 5.308
+  },
+  "cross_run_pt_sha_equal_count": 0,
+  "why_pt_bytes_differ": "Asset root/source identity changed; numeric tensors equal. No claim of cross-run file SHA parity.",
+  "capacity": {
+    "old_episodes": 9126,
+    "old_tasks": 18,
+    "old_logical_gib": 64.02,
+    "old_allocated_gib": 65.13,
+    "conditional_after_owner_old_delete_available_gib": 197.15,
+    "reserve_gib": 8,
+    "projection_lower_gib": 106.94,
+    "projection_upper_gib": 126.12,
+    "actually_measured_tasks": 2,
+    "missing_tasks": 16,
+    "candidate_fits": true,
+    "verdict": "HOLD_CAPACITY",
+    "full_production_authorized": false
+  },
+  "remaining_gates": [
+    "16 missing task categories for stratified capacity",
+    "32-renderer simultaneous real resource/throughput",
+    "same-resource render-only A/B",
+    "Owner manually chooses deletion and starts full corpus only after release"
+  ],
+  "evidence_sha256": {
+    "result": "eefaa34388f29b0d09609ca8b09c33a7a5ad974accb519223f9c746a7b93c2a5",
+    "real_final_audit": "e991d980264b12be6066ccf65dc26aa6ab9865f3198fa7fe05ff6e0f0e116b68",
+    "real_wan_reencode": "7736a5708a318b0d014cb68ccce7f1aa2000c8efbdd644b3d6cc98f59b0dc3c1",
+    "run_log": "267509bdc4057ec5972be5d53ed3b0429b1cc7bf8abfd260852bc2facac0c375"
+  },
+  "old_data_untouched": true,
+  "full_9126_not_run": true
+}
