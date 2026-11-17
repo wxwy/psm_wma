@@ -1,5 +1,17 @@
 # 2026-11-17 CST — Issue54 A1 F1/F2 remediation: REVIEW candidate
 
+Published corrective implementation **8e11f27bb8e6e8d29c353a56acd0e15da1ddb2a8**
+/ Child-Gitlink **d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2**. SameDraftPR55
+body/head/base readback matched, source branch push8a23a912->8e11f27b; no V3/
+PR53/native/Gitlink changes. 204 tested source blobs verified at fixedcommit;
+existing caption crosscheck/template and binding function AST unchanged.
+Local read-only peer CODE review no newP1/P2:45PASS/10Arrow SKIP, confirms F2
+GREEN2 and stale-version rejection; originalF1/nativeParquet explicitlyNOT_RUN.
+Scope/peer receipts preserved under own evidence. CanonicalInbox exactpair
+append-only handoff committed in following docs-only receipt. FollowingHEAD
+does not replace fixedsourceSHA. STOP for GPT narrow realArrow/source recheck;
+do not claim F1 server closure/GREEN3/real4samples or advance A2/production.
+
 Author final gate: core283 PASS, StageA93PASS/10Arrow skips (original50 identities
 retained plus43 new passing checks), related42PASS/3 original dependency skips,
 originalF2 bodiesRED2->GREEN2 separately. All378 baseline identities preserved.
@@ -12,8 +24,7 @@ interpreters; no install/overlay/newenv attempted. Do not claimGREEN3 or real4sa
 Evidence docs/collab/codex/evidence/2026-11-17_issue54_f1_f2/; finalgate/static/
 source hashes/logs/JUnit, unchanged-source AST role replay, exactcommands and
 protocol example. Runbook docs/build/PSM-WMA_G2_Stage_A_A1_F1F2_2026-11-17.md.
-Next fixed implementationSHA, local read-only peer narrowcheck, sameDraft55,
-append-only canonicalInbox then STOP for GPT Arrow/native source recheck.
+Next GPT narrow review and actual Arrow/source recheck on fixed8e11f27b.
 
 Owner explicitly requests narrow fixes in existing DraftPR55, preserving A1
 architecture/#53core and keeping A2 consumer work out of this candidate.
