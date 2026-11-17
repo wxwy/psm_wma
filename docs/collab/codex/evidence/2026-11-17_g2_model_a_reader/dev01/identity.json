@@ -1,0 +1,7 @@
+{
+  "root": "7a357620b4cc1f6817749c8a8275771cfbb4049c",
+  "child": "ec9356fafd1fd18cc0bd552b7eb23428f59df7f6",
+  "root_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "root_status": "M cosmos-framework\n?? docs/collab/codex/reviews/2026-11-17_G2_Model_A_Reader_Handoff.md\n?? work/",
+  "child_status": "?? cosmos_framework/model/generator/mot/global_memory.py\n?? cosmos_framework/model/generator/mot/global_memory_test.py\n?? cosmos_framework/model/generator/mot/global_spatial.py\n?? cosmos_framework/model/generator/mot/global_spatial_test.py"
+}

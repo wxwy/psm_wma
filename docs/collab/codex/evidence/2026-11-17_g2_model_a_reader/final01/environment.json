@@ -1,0 +1,16 @@
+{
+  "CUDA_VISIBLE_DEVICES": "",
+  "COSMOS_DEVICE": "cpu",
+  "COSMOS_TRAINING": "0",
+  "COSMOS_INTERNAL": "0",
+  "LD_LIBRARY_PATH": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "HF_HUB_OFFLINE": "1",
+  "TRANSFORMERS_OFFLINE": "1",
+  "PYTHONPATH": "/workspace/work/g2-a-reader/cosmos-framework",
+  "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "RUFF_CACHE_DIR": "/workspace/work/g2-a-cpu/final01/ruff"
+}

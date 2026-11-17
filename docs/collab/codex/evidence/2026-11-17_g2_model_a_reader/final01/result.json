@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "independent_review": "NOT_CLAIMED",
+  "gpu": "NOT_RUN",
+  "integration": "NOT_RUN",
+  "junit": {
+    "tests": 56,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_unchanged": true,
+  "source_files": 1125,
+  "peak_child_rss_mib": 410.90234375,
+  "attention_validation": "test-only CPU reference; actual GPU dispatcher NOT_RUN"
+}
