@@ -1,4 +1,41 @@
-# 2026-11-17 CST — Issue63 final author gate / local read-only REVIEW
+# 2026-11-17 CST — Issue63 corrected author gate / narrow REVIEW
+
+revision2 completed exit0:542PASS/13 inherited dependencySKIP/0fail/error.
+All501 original identities+all original test sources retained;54new cases
+allPASS.235 stable tested sources; numeric AST and protected core unchanged.
+Original peerprobe unchanged cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f
+now5PASS in10.92s, separate/overlapping notaddedto542. Ruff22files/static/
+CLIhelp/syntheticallproduct+PTbytes/exact0 checks PASS. All records in
+revision2/ and peer_replay/; initial98 peerREPORT/RED/receipt immutable.
+
+Actual narrow diff from98172110: only production final_source.py (30lines)
+shared receipt fieldset/proof+cleanup fingerprints/both retiredhashes/archive/
+disposition check; test_source_retirement_faults.py adds6negativecases.
+No PT/schema/recipe/queue/math/producer/task/language edits. All old501 still
+byte-identical to d0bb. Next commit newfixedRoot and bind235Gitblobs, then same
+peer narrow exactpair closure. No product edit duringthatreview. Independent
+Draft/GPTcanonicalrequest afterclosure; old98 never currentreviewtarget.
+Owner real169/419/capacity/resource gates remain NOT_RUN/full9126HOLD.
+No server/private/GPU/newenv/install/olddelete/train/merge.
+
+# Historical accepted correction claim
+
+Final local peer exact98172110677b7631f5b7974003ffae664bdd0b85 /
+Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2: LOCAL_REQUEST_CHANGES,
+oneP2-63-PEER-1. peer/REPORT.md and receipt confirm235 stable sources;
+unchanged independentprobe cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f
+has2PASS/3RED. Receipt proof/cleanup/retired-file claims can be changed with
+only COMPLETE receiptSHA updated, then accepted under unchanged SQL capsule.
+Accepted narrow correction: final_source.py shared reader checks authenticate
+all duplicated retirement provenance against immutable capsule; add negative
+cases in existing new test_source_retirement_faults.py. Preserve capsule/PT/
+product format and all source retirement/queue math. Claim these two files;
+no otherAgent editing. Peer final complete, no GPT request yet. Then fresh
+revision2 full CPU + unchanged originalprobe GREEN +newfixedSHA/samepeerclosure.
+Keep98172110 and its evidence as rejected local baseline, never currentapproval.
+No server/GPU/private-data access/fullstart/merge. Original Owner boundary holds.
+
+# Historical initial candidate / author gate
 
 Independent branch codex/g2-source-capsule-issue63 from PR62 d0bb4534.
 revision1 gate completed exit0:536PASS,13 inherited skips (10PyArrow,

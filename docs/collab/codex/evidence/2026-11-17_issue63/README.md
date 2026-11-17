@@ -32,7 +32,22 @@ stops the command. `gate.json` distinguishes skips and NOT_RUN from PASS.
 
 ## Current and historical runs
 
-- `revision1/` is the final author gate after adding persistent SQL/capsule
+- `revision2/` is the corrected author gate after P2-63-PEER-1: shared lazy
+  verification binds receipt proof/cleanup fingerprints and both retired-file
+  hashes to the immutable capsule, plus archive/disposition consistency.
+  **542 PASS /13 inherited dependency skips /0failures/errors; original501
+  identities retained plus54 new cases,235 stable sources.** Ruff22files,
+  CLI helps/protocol/source audit PASS. The final results are in its `gate.json`;
+  the final fixed-source binding is
+  recorded after committing the correction. No PT/product/recipe was changed.
+- `peer/REPORT.md` records the initial fixed98172110 LOCAL_REQUEST_CHANGES,
+  exactly one P2. Unchanged independent probe SHA256
+  `cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f`
+  produced2 PASS /3 RED. `peer_replay/green.log/xml` replays that original file
+  unchanged:5 PASS after correction. These overlap and are counted separately.
+  `fixed_source_binding.json` binds only the initial rejected98172110; it is
+  historical and does not identify the final corrected review target.
+- `revision1/` is the preceding author gate after adding persistent SQL/capsule
   binding checks at the post-journal boundary and refusing retirement when
   renderer work was explicitly kept. **536 PASS /13 inherited dependency skips,
   zero failures/errors;501 original identities plus48 new cases.235 tested

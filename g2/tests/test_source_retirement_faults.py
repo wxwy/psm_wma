@@ -243,6 +243,55 @@ def test_explicitly_kept_renderer_work_cannot_retire_source(tmp_path, monkeypatc
 
 
 @pytest.mark.parametrize(
+    "component",
+    [
+        "working_proof",
+        "work_cleanup",
+        "retired_source",
+        "retired_ready",
+        "archive",
+        "disposition",
+    ],
+)
+def test_coordinated_receipt_and_complete_changes_cannot_escape_capsule(
+    tmp_path, monkeypatch, component
+):
+    _, target, _, spool, job = acknowledged_job(tmp_path, monkeypatch)
+
+    def interrupt(phase):
+        if phase == "capsule_journal_removed":
+            raise RuntimeError("TEST_ONLY_BEFORE_GC")
+
+    with pytest.raises(RuntimeError):
+        ledger_archive.archive(spool, job, failpoint=interrupt)
+    capsule_sha = digest(target / final.CAPSULE)
+    receipt = read_json(target / final.RECEIPT)
+    if component == "working_proof":
+        receipt[component]["source_id"] = "0" * 64
+    elif component == "work_cleanup":
+        receipt[component] = {"status": "kept_by_explicit_config"}
+    elif component in ("retired_source", "retired_ready"):
+        key = (
+            final.FULL if component == "retired_source" else "SPATIAL_SOURCE_READY.json"
+        )
+        receipt["retired_files"][key] = "0" * 64
+    elif component == "archive":
+        receipt["full_audit_archive"] = {"path": "TEST_ONLY_UNAUTHENTICATED_ARCHIVE"}
+    else:
+        receipt["source_disposition"] = "TEST_ONLY_NOT_RETIRED"
+    write_json(target / final.RECEIPT, receipt)
+    complete = read_json(target / "COMPLETE.json")
+    complete["source_retirement_sha256"] = digest(target / final.RECEIPT)
+    write_json(target / "COMPLETE.json", complete)
+    assert digest(target / final.CAPSULE) == capsule_sha
+    with pytest.raises(CacheError, match="retirement provenance"):
+        open_episode_index(target)
+    with pytest.raises(CacheError, match="retirement provenance"):
+        spool.reap(job)
+    assert spool.stats()["completed_jobs"] == 0
+
+
+@pytest.mark.parametrize(
     "which",
     [
         final.CAPSULE,

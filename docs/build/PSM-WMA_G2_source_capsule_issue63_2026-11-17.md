@@ -112,6 +112,10 @@ Low disk before publication retains the full working source. No partial VAE or
 unacknowledged data can retire. Source recovery never runs a renderer or VAE.
 The final capsule must still match the durable SQL intent even after journal
 removal and before completed-ledger GC; missing or changed bindings reject.
+Both original proof/cleanup fingerprints and both retired-file hashes are
+checked against that capsule in the shared lazy-reader verifier. Archive and
+disposition fields must agree too; changing a receipt together with its
+COMPLETE hash cannot detach its provenance from the original capsule.
 
 Spoolv4 explicitly carries a capsule policy and the durable retirement hash.
 Working-v1 spoolv3 still attaches under its original binding; no v3→v4 implicit

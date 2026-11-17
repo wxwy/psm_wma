@@ -148,6 +148,36 @@ def verify_reader_binding(root, source, cache_manifest, cache_complete):
     ready = read_json(contained(root, READY))
     receipt = read_json(contained(root, RECEIPT))
     complete = read_json(contained(root, "COMPLETE.json"))
+    if not isinstance(receipt, dict) or set(receipt) != {
+        "schema",
+        "source_id",
+        "episode_key",
+        "recipe_id",
+        "attestation_id",
+        "capsule_sha256",
+        "working_proof",
+        "work_cleanup",
+        "final_files",
+        "retired_files",
+        "full_audit_archive",
+        "source_disposition",
+    }:
+        raise CacheError("unknown final retirement receipt fields")
+    if (
+        fingerprint(receipt["working_proof"])
+        != capsule["attestation"]["working_proof_sha256"]
+        or fingerprint(receipt["work_cleanup"])
+        != capsule["attestation"]["work_cleanup_sha256"]
+        or receipt["retired_files"]
+        != {
+            FULL: capsule["working_source"]["manifest_sha256"],
+            "SPATIAL_SOURCE_READY.json": capsule["working_source"]["complete_sha256"],
+        }
+        or receipt["full_audit_archive"] != capsule["full_audit_archive"]
+        or receipt["source_disposition"]
+        != "REMOVED_ONLY_AFTER_VERIFIED_FINAL_SOURCE_PUBLICATION"
+    ):
+        raise CacheError("retirement provenance differs from final capsule")
     if set(complete) != {
         "schema",
         "episode_id",
