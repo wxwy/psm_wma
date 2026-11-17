@@ -412,8 +412,11 @@ def package_stage_a(
     event_sink=None,
     limits=ConsumerLimits(),
     source_guards=None,
+    compress_source=False,
 ):
     """Consume original producer inputs/reports, never repair an old final package."""
+    if compress_source and profile.view_vae:
+        raise ContractError("VAE-enabled publication cannot precompress its working source")
     if not isinstance(profile, OutputProfile):
         raise ContractError("explicit typed output profile required")
     if not isinstance(source_fingerprint, str) or not re.fullmatch(
@@ -859,7 +862,7 @@ def package_stage_a(
                         complete=True,
                     ),
                 )
-            if not profile.view_vae:
+            if compress_source:
                 from .view_only_source import compress_working_source
 
                 compress_working_source(temporary)

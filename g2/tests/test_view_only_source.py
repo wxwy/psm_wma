@@ -25,7 +25,7 @@ def test_view_only_uses_lossless_compressed_source_and_all_required_products(tmp
     profile = OutputProfile(selection_top_variant="clean", view_vae=False)
     kwargs, _ = stage_case(tmp_path, profile)
     target = tmp_path / "published"
-    result = package_stage_a(destination=target, **kwargs)
+    result = package_stage_a(destination=target, compress_source=True, **kwargs)
     assert result["profile_complete"]
     assert not (target / FULL).exists()
     assert (target / PACKED).is_file() and (target / RECEIPT).is_file()
@@ -52,7 +52,7 @@ def test_compressed_source_bad_bytes_or_receipt_never_validate(tmp_path):
     profile = OutputProfile(selection_top_variant="clean", view_vae=False)
     kwargs, _ = stage_case(tmp_path, profile)
     target = tmp_path / "published"
-    package_stage_a(destination=target, **kwargs)
+    package_stage_a(destination=target, compress_source=True, **kwargs)
     archive = target / PACKED
     original = archive.read_bytes()
     archive.write_bytes(original + b"unexpected")

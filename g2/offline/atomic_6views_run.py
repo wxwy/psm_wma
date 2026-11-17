@@ -488,6 +488,7 @@ def _produce_one(row,config):
             episode_id=row['episode_id'],task_class=row['task_class'],ep_meta=metadata,
             source_fingerprint=row['source_fingerprint'],captions=captions,caption_authority=authority,
             source_guards=source_guards,limits=ConsumerLimits(max_spool_bytes=config.vae_source_max_bytes),
+            compress_source=not profile.view_vae,
             event_sink=(lambda pixel: vae_spool.deliver(vae_job,pixel,work/"VAE_DELIVERY_PENDING.json")) if vae_spool is not None else None)
         if vae_spool is not None:
             vae_spool.offer_source(vae_job)
