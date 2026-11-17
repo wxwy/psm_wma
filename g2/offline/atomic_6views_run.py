@@ -290,6 +290,10 @@ def _assert_profile_output_namespace(row, config):
     if config.output_root.absolute() != plan.OUTPUT.absolute():
         return
     if config.vae_spool is None:
+        if getattr(config, "output_profile", None) is None:
+            raise ContractError(
+                "legacy View output path requires an owned Stage-A v2 source spool"
+            )
         from .output_profile import OutputProfile
         from .view_only_source import verify_view_only_claim
 
