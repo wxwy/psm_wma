@@ -1,0 +1,80 @@
+FF.............                                                          [100%]
+=================================== FAILURES ===================================
+_____ test_real_service_calls_C_shared_prompt_and_keeps_state_fast[g2_r1] ______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5b1309ac00>
+profile = 'g2_r1'
+
+    @pytest.mark.parametrize("profile", ["g2_r1", "g2_r2"])
+    def test_real_service_calls_C_shared_prompt_and_keeps_state_fast(monkeypatch, profile):
+        obj, actor, rt, _, _ = setup(monkeypatch, profile=profile)
+        called = []
+        serialize = static_task_text.serialize_static_task_prompt
+    
+        def observe(task, recipe):
+            called.append((task, recipe))
+            return serialize(task, recipe)
+    
+        monkeypatch.setattr(static_task_text, "serialize_static_task_prompt", observe)
+        lease = register(actor)
+        try:
+            req = g2_payload(lease)
+            first = obj._prep_policy_item(req)
+            req["state"][0] = 0.8
+            req["local_memory"]["consumer_step"] = req["g2"]["identity"]["decision_frame"] = 16
+            req["g2"]["identity"]["logical_state_frame"] = 16
+            second = obj._prep_policy_item(req)
+            assert len(called) == 2
+            assert first["augmented_prompt"] == second["augmented_prompt"]
+            assert "idle" not in json.dumps(json.loads(first["augmented_prompt"]))
+            assert first["state_token"][0] == 0 and second["state_token"][0] == pytest.approx(0.8)
+            task = StaticTaskText(**req["g2"]["static_text"])
+>           h, w = second["padded_image_size"].tolist()
+            ^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+cosmos_framework/scripts/g2_policy_server_test.py:112: ValueError
+_____ test_real_service_calls_C_shared_prompt_and_keeps_state_fast[g2_r2] ______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5ac5071100>
+profile = 'g2_r2'
+
+    @pytest.mark.parametrize("profile", ["g2_r1", "g2_r2"])
+    def test_real_service_calls_C_shared_prompt_and_keeps_state_fast(monkeypatch, profile):
+        obj, actor, rt, _, _ = setup(monkeypatch, profile=profile)
+        called = []
+        serialize = static_task_text.serialize_static_task_prompt
+    
+        def observe(task, recipe):
+            called.append((task, recipe))
+            return serialize(task, recipe)
+    
+        monkeypatch.setattr(static_task_text, "serialize_static_task_prompt", observe)
+        lease = register(actor)
+        try:
+            req = g2_payload(lease)
+            first = obj._prep_policy_item(req)
+            req["state"][0] = 0.8
+            req["local_memory"]["consumer_step"] = req["g2"]["identity"]["decision_frame"] = 16
+            req["g2"]["identity"]["logical_state_frame"] = 16
+            second = obj._prep_policy_item(req)
+            assert len(called) == 2
+            assert first["augmented_prompt"] == second["augmented_prompt"]
+            assert "idle" not in json.dumps(json.loads(first["augmented_prompt"]))
+            assert first["state_token"][0] == 0 and second["state_token"][0] == pytest.approx(0.8)
+            task = StaticTaskText(**req["g2"]["static_text"])
+>           h, w = second["padded_image_size"].tolist()
+            ^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+cosmos_framework/scripts/g2_policy_server_test.py:112: ValueError
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../../dev::test_real_service_calls_C_shared_prompt_and_keeps_state_fast[g2_r1]
+FAILED ../../../../dev::test_real_service_calls_C_shared_prompt_and_keeps_state_fast[g2_r2]
+2 failed, 13 passed, 1 warning in 11.80s
