@@ -288,7 +288,7 @@ def produce_one(row,config):
             result=validate_profile_episode(existing,require_complete=False,expected_profile=profile)
             if result['source_fingerprint']!=row['source_fingerprint']:
                 raise ContractError('Stage-A resume source identity differs')
-            if vae_spool is not None and not result['profile_complete']:
+            if vae_spool is not None:
                 vae_spool.offer_source(vae_job)
             return result
     work=config.work_root/row["task_class"]/f"episode_{row['episode_id']:06d}"

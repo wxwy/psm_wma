@@ -1,0 +1,54 @@
+{
+  "root": "/tmp/issue54_a2_peer/posthoc_handoff_zu1l2s3f",
+  "initial_stats": {
+    "pending_inputs": 1,
+    "pending_bytes": 157,
+    "statuses": {
+      "pending": 1
+    },
+    "failed_jobs": 0,
+    "unfinished_jobs": 1
+  },
+  "posthoc": {
+    "episode_key": "NavigateKitchen/episode_000000",
+    "recipe_id": "408eff0a4bf0c14b6d4a323909b23291e3377da09cb57a7cb8d732078fcef669",
+    "cache_root": "/tmp/issue54_a2_peer/posthoc_handoff_zu1l2s3f/published/vae_cache",
+    "view_count": 4,
+    "encoded_records": 5,
+    "reused_views": 0,
+    "already_complete": false,
+    "profile_complete": true
+  },
+  "profile_complete": true,
+  "temporary_pngs": 0,
+  "consumer_outcomes": [
+    {
+      "attempt": 0,
+      "step": true,
+      "stats": {
+        "pending_inputs": 0,
+        "pending_bytes": 0,
+        "statuses": {
+          "completed_by_cache": 1
+        },
+        "failed_jobs": 0,
+        "unfinished_jobs": 0
+      }
+    },
+    {
+      "attempt": 1,
+      "step": false,
+      "stats": {
+        "pending_inputs": 0,
+        "pending_bytes": 0,
+        "statuses": {
+          "completed_by_cache": 1
+        },
+        "failed_jobs": 0,
+        "unfinished_jobs": 0
+      }
+    }
+  ],
+  "consumer_encode_calls": 0,
+  "posthoc_encode_calls": 5
+}

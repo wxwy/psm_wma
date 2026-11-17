@@ -1,0 +1,30 @@
+{
+  "root": "/tmp/issue54_a2_peer/orphan_budget_k6atyoml",
+  "max_result_bytes": 120000,
+  "crashes": [
+    {
+      "exitcode": 77,
+      "tmp_files": 1
+    },
+    {
+      "exitcode": 77,
+      "tmp_files": 2
+    }
+  ],
+  "resumed_step": true,
+  "record_file_bytes": 158331,
+  "files": {
+    ".view-duqnti5a.tmp": 52777,
+    ".view-oz1hm7x3.tmp": 52777,
+    "0ccb4540a7fe23ad37bfaf107b272c6d98d60277964c7051036e061fc1ee492b.pt": 52777
+  },
+  "stats": {
+    "pending_inputs": 0,
+    "pending_bytes": 0,
+    "statuses": {
+      "acked": 1
+    },
+    "failed_jobs": 0,
+    "unfinished_jobs": 1
+  }
+}

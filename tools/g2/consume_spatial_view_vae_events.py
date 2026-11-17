@@ -80,11 +80,13 @@ def main(argv=None):
             max_records=args.max_records,
         )
         steps = 0
+        recovery = None
         if not args.initialize:
             from g2.latent_cache.storage import build_lock
 
             consumer = EventConsumer(spool, encoder)
             with build_lock(spool.root / "consumer"):
+                recovery = consumer.recover_results()
                 for job in args.retry_job:
                     spool.retry(job)
                 deadline = time.monotonic() + args.idle_seconds
@@ -105,6 +107,7 @@ def main(argv=None):
                     schema="g2_vae_consumer_receipt_v1",
                     recipe_id=recipe["recipe_id"],
                     initialized=True,
+                    recovery=recovery,
                     steps=steps,
                     stats=stats,
                     model_loaded=getattr(encoder, "_tokenizer", None) is not None,

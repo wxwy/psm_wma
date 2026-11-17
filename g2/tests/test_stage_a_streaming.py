@@ -653,3 +653,119 @@ def test_producer_attach_does_not_compete_for_schema_initialization_lock(tmp_pat
         attached = EventSpool.open(spool.root)
         assert attached.recipe == spool.recipe
         assert attached.stats()["pending_inputs"] == 0
+
+
+class _LargerCPUEncoder(FakeEncoder):
+    def encode(self, rgb, preprocessing):
+        import torch
+
+        _, prep = super().encode(rgb, preprocessing)
+        return torch.zeros((3, 64, 64), dtype=torch.float32), prep
+
+
+def _hard_exit_numeric_writer(spool_root, phase):
+    import os
+
+    import g2.latent_cache.storage as storage
+
+    original = storage.os.link
+    spool = EventSpool.open(spool_root)
+
+    def interrupt(src, dst, *args, **kwargs):
+        if (
+            Path(src).name.startswith(".view-")
+            and Path(dst).parent == spool.root / "records"
+        ):
+            if phase == "after_link":
+                original(src, dst, *args, **kwargs)
+            os._exit(77)  # Deliberately skips finally, unlike a Python exception.
+        return original(src, dst, *args, **kwargs)
+
+    storage.os.link = interrupt
+    EventConsumer(spool, _LargerCPUEncoder()).step()
+
+
+@pytest.mark.parametrize("phase,crashes", [("before_link", 2), ("after_link", 1)])
+def test_hard_exit_orphans_recovered_under_result_budget(tmp_path, phase, crashes):
+    kwargs, target, encoder, spool, job = setup_case(tmp_path, max_result_bytes=120000)
+    events = []
+    package_stage_a(destination=target, event_sink=events.append, **kwargs)
+    spool.enqueue(job, events[0])
+    ctx = multiprocessing.get_context("fork")
+    for _ in range(crashes):
+        child = ctx.Process(
+            target=_hard_exit_numeric_writer, args=(str(spool.root), phase)
+        )
+        child.start()
+        child.join(15)
+        assert child.exitcode == 77
+        assert len(list((spool.root / "records").glob(".view-*.tmp"))) == 1
+        assert spool.stats()["pending_inputs"] == 1
+    # Recovery must preserve unrelated owned bytes and completed .pt names.
+    sentinel = spool.root / "records" / "operator-note.txt"
+    sentinel.write_bytes(b"do not delete")
+    resumed = _LargerCPUEncoder()
+    assert EventConsumer(spool, resumed).step()
+    assert resumed.calls == (1 if phase == "before_link" else 0)
+    assert not list((spool.root / "records").glob(".view-*.tmp"))
+    assert sentinel.read_bytes() == b"do not delete"
+    total = sum(p.stat().st_size for p in (spool.root / "records").iterdir())
+    assert total <= spool.max_result_bytes
+    assert spool.stats()["statuses"] == {"acked": 1}
+    assert not (target / "COMPLETE.json").exists()
+
+
+def test_posthoc_complete_release_hands_off_pending_stream_without_reencode(tmp_path):
+    kwargs, target, encoder, spool, job = setup_case(
+        tmp_path, png=False, limits=ConsumerLimits(max_events=1)
+    )
+    package_stage_a(
+        destination=target,
+        event_sink=lambda e: spool.deliver(
+            job, e, tmp_path / "delivery.json", timeout_s=0
+        ),
+        **kwargs,
+    )
+    spool.offer_source(job)
+    posthoc = FakeEncoder()
+    build_profile(target, posthoc, preprocessing=PREPROCESS, cleanup=True)
+    assert not list((target / "_spatial_inputs").rglob("*.png"))
+    assert EventConsumer(spool, encoder).step()
+    assert encoder.calls == 0 and posthoc.calls == 5
+    assert spool.job_status(job) == "complete" and spool.stats()["pending_inputs"] == 0
+    assert spool.stats()["failed_jobs"] == spool.stats()["unfinished_jobs"] == 0
+    with spool._db() as db:
+        import json
+
+        row = db.execute(
+            "SELECT completion_receipt FROM jobs WHERE id=?", (job,)
+        ).fetchone()
+        proof = json.loads(row[0])
+        assert proof["verified_cache"]["recipe_id"] == spool.recipe["recipe_id"]
+        assert (
+            db.execute("SELECT status FROM events WHERE job=?", (job,)).fetchone()[0]
+            == "completed_by_cache"
+        )
+    assert not EventConsumer(spool, encoder).step()
+    assert validate_profile_episode(target)["profile_complete"]
+
+
+def test_posthoc_different_recipe_cannot_retire_stream_inputs(tmp_path):
+    kwargs, target, encoder, spool, job = setup_case(
+        tmp_path, png=False, limits=ConsumerLimits(max_events=1)
+    )
+    package_stage_a(
+        destination=target,
+        event_sink=lambda e: spool.deliver(
+            job, e, tmp_path / "delivery.json", timeout_s=0
+        ),
+        **kwargs,
+    )
+    spool.offer_source(job)
+    build_profile(
+        target, FakeEncoder(identity="b"), preprocessing=PREPROCESS, cleanup=True
+    )
+    with pytest.raises(CacheError, match="recipe differs"):
+        EventConsumer(spool, encoder).step()
+    assert spool.stats()["pending_inputs"] == 1 and spool.stats()["failed_jobs"] == 1
+    assert encoder.calls == 0

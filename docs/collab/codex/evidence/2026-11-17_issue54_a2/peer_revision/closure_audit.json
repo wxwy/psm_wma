@@ -1,0 +1,50 @@
+{
+  "P2_orphans": {
+    "actual_bytes": 52777,
+    "budget": 120000,
+    "status": "GREEN"
+  },
+  "P2_posthoc_handoff": {
+    "consumer_encode_calls": 0,
+    "failed_jobs": 0,
+    "status": "GREEN",
+    "unfinished_jobs": 0
+  },
+  "baseline_root": "b352d4f221ce8928fd0d26b72201af89869ee179",
+  "changed_source_files": [
+    "g2/latent_cache/streaming.py",
+    "g2/offline/atomic_6views_run.py",
+    "g2/tests/test_stage_a_streaming.py",
+    "tools/g2/consume_spatial_view_vae_events.py"
+  ],
+  "not_run": [
+    "real native/F27/GPU/Wan",
+    "performance",
+    "fullproduction/training/merge"
+  ],
+  "original_probes_unchanged_sha256": {
+    "original_orphan_probe.py": "ee018559784a8d4c380c26c51699338b3c557f92838f97b2ff70aaea2242e63d",
+    "original_posthoc_probe.py": "65fdceb413b45a5adb7c2d6fb530c81effba5bf6177cee482ed65692af0d52fc"
+  },
+  "preserved_474_test_identities": {
+    "pr53": {
+      "added": 0,
+      "baseline": 283,
+      "missing": [],
+      "retained": 283
+    },
+    "related": {
+      "added": 0,
+      "baseline": 45,
+      "missing": [],
+      "retained": 45
+    },
+    "stage_a": {
+      "added": 4,
+      "baseline": 146,
+      "missing": [],
+      "retained": 146
+    }
+  },
+  "scope": "AUTHOR_CLOSURE_CHECKS_NOT_GPT_OR_PEER_APPROVAL"
+}

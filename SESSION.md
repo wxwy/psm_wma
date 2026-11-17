@@ -1,4 +1,40 @@
-# 2026-11-17 CST — Issue54 A2 REVIEW candidate
+# 2026-11-17 CST — Issue54 A2 corrective REVIEW
+
+Candidate correction ready for fixed commit then readonly peer closure. Initial
+b352d4f221ce8928fd0d26b72201af89869ee179 is retained as rejected local-review
+baseline, not the GPT handoff target. Two local P2 fixed: locked orphan-temp
+recovery/all-file budget; durable same-source/recipe completed-cache handoff
+before refill. Transient spool v2 rejects implicit v1 reuse. No server migration.
+Actual source delta from b352 only streaming.py, consumer CLI, producer offer
+and streaming tests; old core/encoding/legacy scanner/Child remain unchanged.
+
+Author revision1:283PASS +140PASS/10Arrow skip +42PASS/3original skip =465PASS,
+13 inherited dependency skips,0fail/error. All431 approved A1 baseline IDs and
+all474 b352 identities retained,4new actual hard-exit/handoff cases;47 new A2
+cases total allPASS.209 source hashes before/after stable. Ruff/format/CLI/
+identical-source logical/numerical FakeEncoder protocol PASS. Both original
+peer probes replayed unchanged: recordbytes52777<=120000 (no orphan tmp), and
+posthoc handoff no errors/unfinished job or extra Encode1 calls. Own closure
+checks are not independent approval. Current exact commands/raw logs:
+docs/collab/codex/evidence/2026-11-17_issue54_a2/revision1/; peer_revision/
+contains unmodified probes and RED/GREEN,closure audit; final/ remains b352.
+
+Next: commit new fixed SHA, readonly peer narrow confirmation, push sameDraft55
+and append canonicalInbox request, then STOP for GPT. No GPU/weights/native/
+private data/newenv/install/fullproduction/StageB-C/train/V3/Child/nav/merge.
+
+# Earlier session observations (historical)
+
+# 2026-11-17 CST — Issue54 A2 local-peer correction IN_PROGRESS
+
+Fixed local candidate b352d4f221ce8928fd0d26b72201af89869ee179 has two
+confirmed P2 findings from the mandatory readonly peer: hard-exit .view-*.tmp
+orphans bypass result budget; same-recipe completed posthoc cleanup leaves a
+stream job trying to refill already released PNGs. Final peer list received,
+no other blocker; its43 new CPU cases PASS. No source changes during review.
+Now claim narrow correction in streaming.py, consumer CLI, producer offer
+handoff and hard-exit/posthoc tests. Preserve b352 raw evidence; new SHA and
+revision1 CPU evidence/peer closure required before publication.
 
 Codex claimed and implemented separate A2 on codex/g2-stage-a-offline-issue54.
 Current source candidate is ready for a fixed commit and mandatory read-only

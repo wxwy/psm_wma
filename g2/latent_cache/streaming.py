@@ -188,7 +188,7 @@ class EventSpool:
         self.max_result_bytes = max_result_bytes
         self.max_records = max_records
         binding = dict(
-            schema="g2_final_pixel_spool_v1",
+            schema="g2_final_pixel_spool_v2",
             recipe=recipe,
             max_events=limits.max_events,
             max_spool_bytes=limits.max_spool_bytes,
@@ -216,7 +216,7 @@ class EventSpool:
                 db.execute("PRAGMA journal_mode=DELETE")
                 db.execute("PRAGMA synchronous=FULL")
                 db.execute(
-                    "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, scope TEXT NOT NULL, target TEXT NOT NULL UNIQUE, source_ready TEXT, sealed TEXT, done INTEGER NOT NULL DEFAULT 0, error TEXT)"
+                    "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, scope TEXT NOT NULL, target TEXT NOT NULL UNIQUE, source_ready TEXT, sealed TEXT, done INTEGER NOT NULL DEFAULT 0, error TEXT, completion_receipt TEXT)"
                 )
                 db.execute(
                     "CREATE TABLE IF NOT EXISTS events (id TEXT NOT NULL, job TEXT NOT NULL, descriptor TEXT NOT NULL, png BLOB, status TEXT NOT NULL, result TEXT, result_sha TEXT, error TEXT, PRIMARY KEY(job,id))"
@@ -597,13 +597,39 @@ class EventSpool:
                 )
             events = db.execute("SELECT * FROM events WHERE job=?", (job,)).fetchall()
         validate_profile_episode(row["target"])
+        handoff = None
+        if row["completion_receipt"] is not None:
+            import json
+
+            from .production import cache_receipt
+
+            handoff = json.loads(row["completion_receipt"])
+            if handoff["verified_cache"] != cache_receipt(row["target"]):
+                raise CacheError("completed cache changed after durable stream handoff")
         for event in events:
-            if event["status"] != "acked" or not event["result"]:
+            adopted = event["status"] == "completed_by_cache" and handoff is not None
+            if not adopted and (event["status"] != "acked" or not event["result"]):
                 raise CacheError("cannot release an unacknowledged result")
+            import json
+
+            desc = json.loads(event["descriptor"])
+            expected = (
+                "records/"
+                + fingerprint(
+                    dict(
+                        pixel_record_key=desc["pixel_record_key"],
+                        recipe_id=self.recipe["recipe_id"],
+                    )
+                )
+                + ".pt"
+            )
+            result = event["result"] or expected
+            if result != expected:
+                raise CacheError("result cleanup path is not the owned numeric key")
             with self._db() as db:
                 shared = db.execute(
                     "SELECT COUNT(*) FROM events JOIN jobs ON events.job=jobs.id WHERE events.result=? AND events.job!=? AND jobs.done=0",
-                    (event["result"], job),
+                    (result, job),
                 ).fetchone()[0]
                 if not shared:
                     import json
@@ -618,9 +644,12 @@ class EventSpool:
                     )
             if shared:
                 continue
-            path = contained(self.root, event["result"], allow_missing=True)
+            path = contained(self.root, result, allow_missing=True)
             if path.exists():
-                if digest(path) != event["result_sha"]:
+                if (
+                    event["result_sha"] is not None
+                    and digest(path) != event["result_sha"]
+                ):
                     raise CacheError("result changed before release")
                 path.unlink()
                 from .storage import _fsync_directory
@@ -628,6 +657,67 @@ class EventSpool:
                 _fsync_directory(path.parent)
         with self._db() as db:
             db.execute("UPDATE jobs SET done=2 WHERE id=?", (job,))
+
+    def adopt_completed(self, job):
+        """Accept only a fully audited same-scope/recipe final cache handoff.
+
+        Numerical posthoc completion can legally release temporary PNGs before
+        an earlier stream job finishes. Persist this proof and retire its pending
+        BLOBs atomically instead of trying to refill missing, released inputs.
+        """
+        import json
+
+        from g2.io import digest, read_json
+        from g2.offline.stage_a import validate_profile_episode
+
+        from .contract import contained
+        from .production import cache_receipt, target_lock
+
+        with self._db() as db:
+            row, scope = self._scope(db, job, allow_failed=True)
+        expected = row["source_ready"] or row["sealed"]
+        if expected is None:
+            raise CacheError("completion handoff requires a bound offered source")
+        try:
+            with build_lock(target_lock(row["target"])):
+                validate_profile_episode(row["target"])
+                source = read_json(contained(row["target"], "spatial_source.json"))
+                receipt = cache_receipt(row["target"])
+                if (
+                    digest(Path(row["target"]) / "spatial_source.json") != expected
+                    or receipt["recipe_id"] != self.recipe["recipe_id"]
+                    or any(
+                        source[k] != scope[k]
+                        for k in ("source_fingerprint", "profile_id")
+                    )
+                    or f"{source['task_class']}/episode_{source['episode_id']:06d}"
+                    != scope["episode_key"]
+                ):
+                    raise CacheError(
+                        "posthoc completion source or recipe differs from stream job"
+                    )
+                proof = dict(
+                    schema="g2_stream_completed_cache_handoff_v1",
+                    source_sha256=expected,
+                    verified_cache=receipt,
+                    prior_failure=row["error"],
+                )
+                with self._db() as db:
+                    db.execute("BEGIN IMMEDIATE")
+                    db.execute(
+                        "UPDATE events SET png=NULL,status=CASE WHEN status='acked' THEN 'acked' ELSE 'completed_by_cache' END,error=NULL WHERE job=?",
+                        (job,),
+                    )
+                    db.execute(
+                        "UPDATE jobs SET done=1,error=NULL,completion_receipt=? WHERE id=?",
+                        (json.dumps(proof, sort_keys=True), job),
+                    )
+        except CacheError as exc:
+            if isinstance(exc.__cause__, BlockingIOError):
+                return False  # Other endpoint still owns publication/cleanup.
+            raise
+        self.reap(job)
+        return True
 
     def result(self, job, view_id, record, recipe):
         import json
@@ -765,7 +855,38 @@ class EventConsumer:
         from .storage import build_lock
 
         with build_lock(self.spool.root / "consumer"):
+            self.recover_results()
             return self._step()
+
+    def recover_results(self):
+        """Under the consumer lock, discard unpublished atomic-write leftovers.
+
+        Hard process exit skips storage's finally. The private .view-*.tmp
+        names have no ACK; PNG input remains durable. Removing a leftover hard
+        link after publication preserves its .pt name. Count every other real
+        file against the budget, rather than silently ignoring unknown bytes.
+        """
+        from .contract import contained
+        from .storage import _fsync_directory
+
+        directory = contained(self.spool.root, "records", allow_missing=True)
+        removed, total = 0, 0
+        if directory.exists():
+            for entry in directory.iterdir():
+                path = contained(self.spool.root, "records/" + entry.name)
+                if not path.is_file():
+                    raise CacheError("unexpected directory in private numeric staging")
+                if path.name.startswith(".view-") and path.name.endswith(".tmp"):
+                    path.unlink()
+                    removed += 1
+                else:
+                    total += path.stat().st_size
+            if removed:
+                _fsync_directory(directory)
+        self._result_bytes = total
+        if total > self.spool.max_result_bytes:
+            raise CacheError("existing numeric staging exceeds finite result budget")
+        return dict(removed_unpublished_temps=removed, numeric_bytes=total)
 
     def _step(self):
         import json
@@ -782,6 +903,9 @@ class EventConsumer:
         if self.encoder.descriptor() != self.spool.recipe["encoder"]:
             raise CacheError("consumer computational identity changed")
         with self.spool._db() as db:
+            completed_candidates = db.execute(
+                "SELECT id,target FROM jobs WHERE done=0 AND (source_ready IS NOT NULL OR sealed IS NOT NULL) ORDER BY rowid"
+            ).fetchall()
             event = db.execute(
                 "SELECT events.* FROM events JOIN jobs ON events.job=jobs.id WHERE events.status IN ('pending','running') AND jobs.error IS NULL AND jobs.done=0 ORDER BY events.rowid LIMIT 1"
             ).fetchone()
@@ -794,6 +918,19 @@ class EventConsumer:
             offered = db.execute(
                 "SELECT id FROM jobs WHERE source_ready IS NOT NULL AND sealed IS NULL AND done=0 AND error IS NULL ORDER BY rowid LIMIT 1"
             ).fetchone()
+        for candidate in completed_candidates:
+            if (Path(candidate["target"]) / "COMPLETE.json").exists():
+                try:
+                    adopted = self.spool.adopt_completed(candidate["id"])
+                    self._result_bytes = None
+                    return adopted
+                except Exception as exc:
+                    with self.spool._db() as db:
+                        db.execute(
+                            "UPDATE jobs SET error=? WHERE id=?",
+                            (str(exc), candidate["id"]),
+                        )
+                    raise
         if job is None and cleanup is None and offered is not None:
             try:
                 return self.spool.refill_one(offered["id"])
@@ -874,10 +1011,7 @@ class EventConsumer:
                     rgb = np.array(image, copy=True)
                 stored, prep = encode_record(self.encoder, rgb, self.spool.recipe)
                 if self._result_bytes is None:
-                    self._result_bytes = sum(
-                        p.stat().st_size
-                        for p in (self.spool.root / "records").glob("*.pt")
-                    )
+                    self.recover_results()
                 used = self._result_bytes
                 # Conservative file/header reservation; inspect the exact serialized
                 # size too before ACK. Exhaustion is explicit, never silent loss.

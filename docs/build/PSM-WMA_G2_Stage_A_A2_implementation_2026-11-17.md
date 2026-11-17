@@ -81,7 +81,7 @@ bash docs/collab/codex/evidence/2026-11-17_issue54_a2/commands.sh
 
 协议示例脚本 `docs/collab/codex/evidence/2026-11-17_issue54_a2/protocol_probe.py` 复制完全相同的合成封存来源，构建流式/事后两套缓存，比较逻辑 index、metadata 和 tensor，输出 `protocol_example.json`。其中 FakeEncoder 的 shape 和数值不是 Wan 实证。
 
-PASS：零 failure/error；旧测试身份不丢失；所有需执行的故障路径拒绝/恢复正确；源码前后指纹一致；保留的缺依赖项及尚未运行项单列。FAIL：遗漏 owner/View、混源/混 recipe、丢输入、无 ACK 清理、提前 COMPLETE、来源或 tensor 损坏被接受。运行结果见自有 evidence `final/gate.json`；GPT 的真实 Gate 仍 PENDING。
+PASS：零 failure/error；旧测试身份不丢失；所有需执行的故障路径拒绝/恢复正确；源码前后指纹一致；保留的缺依赖项及尚未运行项单列。FAIL：遗漏 owner/View、混源/混 recipe、丢输入、无 ACK 清理、提前 COMPLETE、来源或 tensor 损坏被接受。当前运行结果见自有 evidence `revision1/gate.json`；`final/` 保留初始 b352d4f2 候选的原始结果，不能替代修正版。GPT 的真实 Gate 仍 PENDING。
 
 ## GPT 独立服务器样例入口（本轮 NOT_RUN）
 
@@ -115,3 +115,24 @@ PASS：零 failure/error；旧测试身份不丢失；所有需执行的故障�
 consumer idle 后退出：0=没有未完成/失败 job，75=仍有未完成来源/事件，2=执行/来源错误或失败 job；initialize 的 0 仅代表初始化，不代表数据完成。producer 75=空间来源就绪、全 profile 尚未验毕；dispatcher 允许 consumer 在读取75之前已完整核验完成，但仅有 prepared manifest 不算 DONE。
 
 真实验收需记录相同 renderer 配置下 PNG/尺寸/集合、两变体独立 owner、成员/任务/selection、同输入 bytes/recipe 的实际 latent 对照、终端恢复、队列/磁盘峰值、吞吐/耗时与读取 P50/P95。上述 GPU 数值和性能目前均 NOT_RUN，不由 CPU 的 max_abs_error=0 替代。两 Draft 保持未合并，training_ready=false。
+
+
+## 本地交叉审查后的两个 P2 整改
+
+初始固定候选 b352d4f221ce8928fd0d26b72201af89869ee179 通过作者 CPU，但本地只读审查发现两项 P2。原结果、两个原始探针及 RED 观察保留在 `peer_revision/`，没有改写。
+
+1. 真正硬退出会跳过 writer 的 finally，留下 `.view-*.tmp`。消费者现在持有独占锁后恢复自己的数值 staging，删除未发布的原子临时名、fsync 目录，保留已发布 `.pt` 和原输入，并将其余所有真实文件计入容量。CLI 的整段常驻锁入口同样先执行恢复。link 前硬退出时可从仍持久的 PNG 重算；link 后硬退出时保留合法 `.pt`、不重复编码。测试使用实际子进程 `os._exit(77)`，不以 Python 异常代替硬中断。
+2. 流式积压尚未完成时，事后入口可以先完整编码、核验并合法释放 PNG。消费者现在在 refill 前检查已完成目标，要求匹配已经 offer/seal 的来源文件 SHA、episode/source/profile 与同一 recipe，持目标锁完整审计；把 `completion_receipt` 持久化到 SQLite 的同一事务，再释放旧 BLOB、标记待办为 `completed_by_cache` 并安全清理私有 chunks。这个状态明确表示由已核验最终缓存完成交接，不冒充逐事件 Encode1 ACK。来源/recipe 不匹配拒绝接管；另一 writer 尚未退出时保持待办。已 ACK 的记录和原始失败原因分别保留于记录或完成交接证明。
+
+瞬态 spool 格式为 `g2_final_pixel_spool_v2`。b352 本地候选的 v1 不进行隐式迁移；它从未用于真实服务器生产。空间来源/profile 和正式逐 View payload schema 不因此变化。恢复同版本的进程中断、接管同 recipe 的最终缓存，与跨开发候选静默复用队列是不同操作。
+
+精确修正版 CPU 命令（现有环境、不安装）：
+
+```bash
+ISSUE54_PYTHON=/path/to/existing/python \
+ISSUE54_RUFF=/path/to/existing/ruff \
+ISSUE54_A2_OUT=/path/to/fresh/revision1-evidence \
+bash docs/collab/codex/evidence/2026-11-17_issue54_a2/commands.sh
+```
+
+另外原样执行 `peer_revision/original_orphan_probe.py` 和 `original_posthoc_probe.py`，记录 GREEN 输出；与作者测试存在重叠，不能再加进回归总数。真实 GPU、数值/性能和原生 producer Gate 仍由 GPT 独立执行。
