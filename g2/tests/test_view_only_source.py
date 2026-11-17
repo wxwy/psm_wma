@@ -93,7 +93,8 @@ def test_canonical_legacy_path_requires_new_explicit_view_only_claim(
         producer._assert_profile_output_namespace(row, cfg)
     cfg.output_profile = profile
     (root / CLAIM).unlink()
-    with pytest.raises(CacheError):
+    (root / "unowned_legacy.json").write_text("{}")
+    with pytest.raises(CacheError, match="unowned"):
         claim_view_only_root(root, profile, "a" * 64)
 
 
