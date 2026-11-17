@@ -4451,3 +4451,12 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 - 13项B-owned组合现覆盖actual A/B native vision-action头、C shared v2 text与stage/strict warm-start、D缓存/两Session三轮replan on-off、normal/empty混批、Local core、Qwen/Nemotron FP32/BF16。新增C控制器接实际动作头：无Global G1完整旧state严格载入，TRAIN_A→B后恢复model/optimizer/stage/RNG与连续运行逐项相等、Local权重不变。原grouped/Local/GA/sidecar、CPU DCP、2-rank Gloo、旧Phase5/No-TTT同轮回归。
 - C v2显式spatial_context_scope，dropout_id为consumer_once_v1+rate策略身份，实际决定仍在dropped；B兼容此前opaque IDs的组合hash，无dataclass分叉。C/D生产归属文件未手改；36个A/C/D归属blob和祖先来源证明在最终证据。EffectiveTextBatch用整个实例/完整字段签名，无.identity属性，已通知C修正文档措辞。
 - M05/M06/M07更新REVIEW作者源码/CPU，不代表独立批准。真实DATA_B/C/provider、G1/Edge/Wan权重/版本factory、完整参数清单、GPU BF16/compile物化/FSDP/阶段DCP恢复/服务闭环/正式训练/900EP仍NOT_RUN；M08/M09 TODO。实际训练沿C现有Phase5 --g2-recipe，smoke recipe内GA=1（不能只CLI --ga1），horizon/预算等必须显式。服务沿D原server/runbook，world_size>1缓存拒绝。未执行GPU、未停止其他任务、未升级环境或外传私有数据。
+
+## 2026-11-17 CST — G2 M08 执行交接准备（仅文档）
+
+- Owner转入统一固定版本验收；B冻结模型功能。独立docs分支 `v3-g2-model-m08-handoff-20261117`，工作区 `/workspace/work/g2-m08-handoff`，基于最终Root41464b051ef8e02711dbfa37d379d2b14c7c57f4，Gitlink9370c3858532b4d61630138431145c8360e86eb0。只计划修改本SESSION、TODO及新增 `docs/build/PSM-WMA_G2_M08_Execution_Handoff_v1.0_2026-11-17.md`；不推进集成分支或正式V3。
+- 已读取canonical live Inbox、AGENTS/执行治理技能、C/D真实入口和原M08验收矩阵。GitHub #56 comment6945927554为Owner侧独立来源/CPU证据回读COMMENT，不是APPROVE、独立重跑或GPU结果；本次不生成正式review verdict/推进令牌。
+- 只读来源刷新：Root fetch V3成功、advertised/origin V3均7a357620b4cc1f6817749c8a8275771cfbb4049c，无相对该基线的新commit；Root integration advertised41464b05；Child integration advertised9370c385，v3-local-ttt与正式Gitlink均d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2。隔离候选不合并回正式分支。
+- 当前g2_core/integration测试显式替换CPU attention/FSDP边界；不能将其直接改CUDA_VISIBLE_DEVICES当作GPU验收。将记录受控CUDA独立探针待交付、真实训练资产/provider缺口，复用既有Phase5/server命令，不新增功能或累计测试数量。M08执行未认领、未运行；M08/M09仍TODO。
+- 新增执行交接已完成：分别列明不依赖DATA_B/C的受控CUDA/多rank FSDP、依赖实际资产的完整Local/TRAIN_A-B/DCP、单模型rank的D服务，以及M09前置。给出固定源码断言、真实Phase5/config命令、原D命令链接、GA=1与配对horizon/预算约束、逐case断言/证据回填及FAIL分流；明确GPU驱动缺口、cache-off不能独立证明native UND parity、metadata SHA不等于完整checkpoint receipt。
+- 本地验证仅文档静态：`git diff --check`、从Markdown提取bash块后`bash -n`均exit0；6个相对链接目标均为已跟踪现有文件；命令参数与C实际CLI及configure_args、D原server runbook逐项核对；HEAD Gitlink为9370c385。没有执行项目代码/CPU tests/GPU、访问真实数据、修改Child/模型/测试/config，未发送新的正式审核申请或声称取得推进令牌。文档准备DONE，执行M08/M09仍TODO；本docs提交精确SHA在正常push/readback后的#56回执登记，不替换模型Root41464b05。
