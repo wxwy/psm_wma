@@ -1,0 +1,30 @@
+A ancestor 4209b151ecc11ab2043b9d08037d43b5e3903618: PASS
+A exact blob 7fe072ec28ddb699ac7d1818a24a2f054b0dfab1 cosmos_framework/model/generator/mot/global_memory.py: PASS
+A exact blob 32d4b6069c45dc2bb104e71de660976e75de6426 cosmos_framework/model/generator/mot/global_memory_test.py: PASS
+A exact blob 482351ad7709b2c2a7774d4fccb8480292f399cf cosmos_framework/model/generator/mot/global_spatial.py: PASS
+A exact blob 6168485788cd462e1692f5a5663ccbd5d96ab692 cosmos_framework/model/generator/mot/global_spatial_test.py: PASS
+C ancestor f262d7ff4156d83356e1d7f790adea2a61e85c6d: PASS
+C exact blob 24585d592a1e678c88a506d32ba20c62f1bdadf3 cosmos_framework/data/generator/action/utils/json_formatter.py: PASS
+C exact blob b19dd935ce7957c1888a568e29e2e20b367ae53f cosmos_framework/data/generator/action/utils/transforms.py: PASS
+C exact blob 0a2a86621a9424dab87b9f77d14a2616d2878954 cosmos_framework/data/generator/action/utils/static_task_text.py: PASS
+C exact blob 8ab4db903418f9181c5851cf5fd0680539cb6bca cosmos_framework/data/generator/action/utils/static_task_text_test.py: PASS
+C exact blob 04123171ec0c2d7651d20d8754f4050cfa17ad71 cosmos_framework/data/generator/action/datasets/g2_training_adapter.py: PASS
+C exact blob 6de764b45a840805d6487c82e12f3a8060ddcb3d cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py: PASS
+C exact blob 2203f53b54fe01f39d9fe02c4283ca928178fee8 cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py: PASS
+C exact blob 7a65ae2f28e22dbaa44c09a6bb711fb0b4fb2b5b cosmos_framework/data/generator/joint_dataloader.py: PASS
+D ancestor 6991142cb94256f497347db40f58ad0ee3f482aa: PASS
+D exact blob 78798dcd375239650750057c1b3eb20da0956e19 cosmos_framework/inference/g2_session_cache.py: PASS
+D exact blob 87faf62ce8b3da8753912c7ae1b2ff21db49d0ff cosmos_framework/inference/g2_policy_conditions.py: PASS
+D exact blob 6f338e8d7e5826990bf8892a5b7e6da9d6079e5a cosmos_framework/inference/g2_model_hooks.py: PASS
+D exact blob f78f537dd3c07b093adb5992fc010b38e5a851c7 cosmos_framework/inference/g2_session_cache_test.py: PASS
+D exact blob 908795b7db67d3fea1657a09e3ed3900279ffefa cosmos_framework/inference/g2_policy_conditions_test.py: PASS
+D exact blob b6c8bc2cf39df85cef311332d1dcc42f456eb171 cosmos_framework/inference/g2_model_hooks_test.py: PASS
+D exact blob 171861a621b1719c044430d47608700f021bfdc5 cosmos_framework/inference/g2_text_kv_cache_test.py: PASS
+D exact blob b52ce92db3c1754f5cb3bbc13cfaaf900ab85d9c cosmos_framework/inference/robocasa_session_transactions.py: PASS
+D exact blob cbbe98cd742b30e3065747b94f67be2441aef85d cosmos_framework/inference/robocasa_batch_transactions.py: PASS
+D exact blob c4554dd62ea455428f31b3fd07b5aeac2eb5ba04 cosmos_framework/model/generator/mot/inference_text_kv_memory.py: PASS
+D exact blob 09c5a63ad2a88ff24b6ef8e0ba5173dffe7548d1 cosmos_framework/scripts/action_policy_server_robocasa.py: PASS
+D exact blob 9ea0e55365ab82a93240bb82e6284a558247908b cosmos_framework/scripts/g2_policy_server_test.py: PASS
+tracked production/test working files equal candidate Child HEAD: PASS
+Root A handoff ancestor 35a2580efd296bcf782d7cae38d4cb482a225a70: PASS
+Root D handoff ancestor 3d351fe37af111257543ab814f30222dd7e76da6: PASS

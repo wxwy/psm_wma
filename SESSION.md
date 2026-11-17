@@ -4433,3 +4433,12 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 - 一次冻结UND共享原生embedding/RoPE/causal attention/MLP/postnorm，保留各层UND base KV，GEN key norm在当前可训练图。所有GEN层[G;L;Text;Native]K/V-only，G/L独立长度/presence，Local k_local不扩大。Global配置关闭不创建模块/不消耗新增初始化RNG；公开G2ConditionBatch与Omni prepare/generation、参数inventory/FSDP注册供C/D使用。
 - 最终合成CPU scoped198/198 PASS/0skip，9主要文件strict Ruff check/format PASS；保留baseline I001 debt。C0实际旧源码4组对照输出/梯度/构造及forward RNG逐位一致。日志/JUnit/迭代失败及runbook在artifacts/g2_model_b_core；BF16首轮fixture把必须FP32的rotary buffer错误cast，已修fixture，不改nativeRoPE规则。FSDP注册/切换仅CPU接口，不是实际分布式验证。
 - 接续在独立integration分支普通合入固定A/C/D与必要实际调用测试。DATA_B/C、真实GPU/Local inner/FSDP/A-B恢复/cache-on-off/Session闭环仍需固定候选执行侧验收；GA=1。D按Session缓存miss跳过FSDP hook会导致rank序列不一致，已在#56明确通知，须adapter边界或一致批调用证明。未运行GPU/正式训练/900EP，未服务器commit/push/正式分支推广。
+
+## 2026-11-17 CST — G2 B 当前部分集成候选（不是最终全量集成）
+
+- 独立 `/workspace/work/g2-integration`，两仓分支v3-g2-model-integration-20261117。Child固定6d72d4d252c287fc8060bdc5a8db7f6cf959af1e已正常push/readback；Root本提交绑定该Gitlink，准确Root见#56回执。正式V3仍7a357620/Gitlink d5c1ffc7，未推广、未强推、不覆盖并行来源。
+- 普通合入A4209b151、C68d84e8及f262d7ff、D209749e5及6991142；Root普通保留A35a2580e原始交接/证据。A/C/D生产归属文件与各自fixed blobs相等，B只修自己的核心及新增组合测试；来源/范围/祖先证明见artifacts/g2_model_integration。
+- 最终scoped22文件442 PASS/0fail/error/skip，12项真实模块组合测试经native pack、冻结UND、A Reader/projector、所有GEN层joint prefix到native action头；含实际Local CPU core、双Session三次replan cache-on/off动作输出、正常/空文本混批、Qwen/Nemotron FP32/BF16。生产attention仍走dispatcher，CPU只mock kernel，绝不冒称真实GPU或完整训练。
+- 集成B修正3a5c625的Global-enabled全缺席标量零图依赖（不插token、不调用Reader）；82d73c5合成dropout身份以支持空/正常B1合批，不重抽；6d72d4d恢复legacy QKV/norm staging，C0旧源码四组输出/梯度/RNG逐位PASS。实际FSDP必要前提有CPU证据，运行仍NOT_RUN。
+- D OnlineSpatialSnapshot实际mask_content_ids已进view/global key并miss校核；B重复公共mask字段提议撤回、未发布，继续唯一D快照。D所有Session-cache请求明确拒绝world_size>1。当前singleRoom C adapter恰一top；Reader保证单variant，未来多Room真实语义/数据未验，不扩散承诺。
+- C训练控制器/optimizer/warm-start/阶段/checkpoint与Phase5 overlay后继固定SHA及C最终Root handoff尚未交付，M05/完整M07不关闭。Root已普通保留D3d351fe37af111257543ab814f30222dd7e76da6全部原始证据/交接，明确真实provider与weight/config versions factory尚未冻结。DATA_B/C与真实GPU/FSDP/A-B恢复/服务闭环/M08/M09 NOT_RUN；训练小例GA=1，实际CLI待C交付后引用，不造假命令。现有CPU runner可直接复现；checkpoint/recipe/loader/provider/正式batch预算等待执行侧明确。
