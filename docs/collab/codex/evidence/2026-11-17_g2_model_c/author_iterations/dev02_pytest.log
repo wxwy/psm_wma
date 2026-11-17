@@ -1,0 +1,481 @@
+........................................................................ [ 26%]
+.............F.......................................................... [ 52%]
+....................s........................................................................................... [ 94%]
+................                                                         [100%]
+=================================== FAILURES ===================================
+______ test_actual_a_reader_b_mot_train_a_gradient_and_frozen_parameters _______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-3/test_actual_a_reader_b_mot_tra0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f66346d5700>
+
+    def test_actual_a_reader_b_mot_train_a_gradient_and_frozen_parameters(tmp_path, monkeypatch):
+        """Real A Reader/B MoT components, CPU reference kernels; synthetic loss."""
+        from torch import nn
+    
+        import cosmos_framework.model.generator.mot.attention as attention_module
+        import cosmos_framework.model.generator.mot.global_memory as reader_module
+        from cosmos_framework.data.generator.sequence_packing.runtime import get_gen_seq
+        from cosmos_framework.model.generator.mot.cosmos3_vfm_network import Cosmos3VFMNetwork, Cosmos3VFMNetworkConfig
+        from cosmos_framework.model.generator.mot.g2_contract_fixtures import synthetic_view
+        from cosmos_framework.model.generator.mot.g2_core_test import TinyLM, cpu_attention, native_pack, tiny_model
+        from cosmos_framework.model.generator.mot.g2_parameters import parameter_inventory, set_trainable_names
+        from cosmos_framework.model.generator.mot.global_memory_test import cpu_reference
+        from cosmos_framework.model.generator.mot.memory_prefix import build_joint_memory_prefix_context
+        from cosmos_framework.trainer.g2_training import G2_OPTIMIZER_SELECTION, build_g2_optimizer
+    
+        monkeypatch.setattr(attention_module, "attention", cpu_attention)
+        monkeypatch.setattr(reader_module, "_dispatch_attention", cpu_reference)
+        language_model = tiny_model()
+        config = Cosmos3VFMNetworkConfig(
+            vlm_config=language_model.config, vision_gen=False, global_memory_enabled=True, global_memory_latent_channels=4
+        )
+        owner = nn.Module()
+        owner.net = Cosmos3VFMNetwork(TinyLM(language_model), config)
+        owner.net.action2llm = nn.Linear(4, 16)  # Not used by this component-only synthetic objective.
+        owner.g2_parameter_inventory = lambda: parameter_inventory(owner, net_prefix="net.")
+        owner.set_trainable_names = lambda names: set_trainable_names(owner, names)
+    
+        def factory(config, schedule):
+            optimizer = build_g2_optimizer(
+                owner,
+                optimizer_type="adamw",
+                lr=1e-5,
+                fused=True,
+                keys_to_select=[G2_OPTIMIZER_SELECTION],
+                weight_decay=0.07,
+            )
+            return optimizer, torch.optim.lr_scheduler.LambdaLR(optimizer.optimizers[0], lambda _: 1.0)
+    
+        owner.init_optimizer_scheduler = factory
+        trainer, report = SimpleNamespace(), {}
+        install_g2_training(owner, trainer, run_recipe_fixture(tmp_path), report)
+        optimizer, controller = owner.init_optimizer_scheduler(None, None)
+        before = {name: value.detach().clone() for name, value in owner.state_dict().items()}
+        pack, mask, positions, text = native_pack(language_model, (3,))
+        features = owner.net.prepare_und_text(text)
+        queries = owner.net.prepare_task_queries(features)
+        reader = owner.net.read_global(queries, ((synthetic_view(),),))
+        projected = owner.net.project_global(reader)
+        prefix = build_joint_memory_prefix_context(tuple(projected.unbind(0)), None, target_dtype=torch.float32)
+        result = language_model(pack, mask, positions, prepared_text=features, memory_prefix_context=prefix)
+>       (get_gen_seq(result) * torch.arange(1, 17, dtype=torch.float32)).sum().backward()
+         ^^^^^^^^^^^^^^^^^^^
+
+examples/psm_wma_robocasa_g2_recipe_test.py:248: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pack = ({'_caption_seq_offsets': None, '_causal_indices': tensor([0, 1, 2], dtype=torch.int32), '_causal_sample_ids': tensor([0, 0, 0, 1]), '_causal_seq_offsets': tensor([0, 3, 4], dtype=torch.int32), ...}, {})
+
+    def get_gen_seq(pack: SequencePack) -> torch.Tensor:
+        """
+        Get all generating tokens in a sequence pack in a single tensor.
+        Args:
+            pack (SequencePack): The sequence pack to get the generating sequence from.
+        Returns:
+            torch.Tensor: All generating tokens concatenated over all sequences in the batch.
+        """
+>       return pack["full_only_seq"]
+               ^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: tuple indices must be integers or slices, not str
+
+cosmos_framework/data/generator/sequence_packing/runtime.py:759: TypeError
+----------------------------- Captured stdout call -----------------------------
+[11-17 17:55:11|INFO|cosmos_framework/utils/generator/optimizer.py:364:_build_params_with_metadata] Total tensors: 139, trainable tensors: 110, selected tensors: 110
+[11-17 17:55:11|INFO|cosmos_framework/utils/generator/optimizer.py:569:__init__] Building optimizer for mesh 'default'
+[11-17 17:55:11|INFO|cosmos_framework/utils/generator/optimizer.py:404:_build_optimizer_internal] Param group (lr=1e-05, weight_decay=0.07): 110 tensors, 11,905,592 elements
+[11-17 17:55:11|INFO|cosmos_framework/utils/generator/optimizer.py:583:__init__] Created 1 optimizers
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:22
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:22: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:51
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:51: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:72
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:72: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:118
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:118: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:136
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:136: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:162
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:182
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:204
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:204: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:258
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:296
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:296: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:320
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:320: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:348
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:348: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:371
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:371: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:406
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:406: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:440
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:440: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:463
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:463: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:487
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:487: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:516
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:516: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:549
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:549: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:580
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:580: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:172
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:172: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:214
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:214: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:233
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:233: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:244
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:244: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:265
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:265: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:287
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:287: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:306
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:306: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:319
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:319: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:332
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:332: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:354
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:354: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:367
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:367: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:388
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:388: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:400
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:400: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:411
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:411: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:423
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:423: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:456
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:456: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:465
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:465: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:476
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:476: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:486
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:486: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:494
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:494: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:504
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:504: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:521
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:521: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:548
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:548: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:555
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:555: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:572
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:572: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:580
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:580: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:588
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:588: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:605
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:605: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:622
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:622: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:648
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:648: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:664
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_source_test.py:664: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:74
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:74: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:93
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:93: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:114
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:114: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:124
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:124: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:145
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:145: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:180
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:180: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:202
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:202: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:245
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py:245: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:85
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:85: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:123
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:123: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:139
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:139: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:158
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:158: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:180
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:180: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:192
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:192: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:237
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:237: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:249
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:249: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:301
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:301: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:316
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:316: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:326
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:326: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:354
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:354: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:378
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:378: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:404
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy_test.py:404: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[None]
+::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[missing_local]
+::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[shape]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[None]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[None]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+    return func(*args, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../../dev::test_actual_a_reader_b_mot_train_a_gradient_and_frozen_parameters
+1 failed, 270 passed, 1 skipped, 99 warnings, 32 subtests passed in 23.16s

@@ -1,0 +1,13 @@
+{"child": "a9110f311f082836e9f1a56466bae66aca88e488", "dependency_child": "6d72d4d252c287fc8060bdc5a8db7f6cf959af1e", "scope": "CPU fixtures/reference kernels; NOT real DATA_C/Edge/FSDP/GPU", "source_count": 1149}
+All checks passed!
+19 files already formatted
+........................................................................ [ 17%]
+........................................................................ [ 35%]
+.....................s.......................................................................................... [ 63%]
+........................................................................ [ 80%]
+........................................................................ [ 98%]
+.....                                                                    [100%]
+=========================== short test summary info ============================
+SKIPPED [1] examples/psm_wma_robocasa_corrected_phase5_test.py:324: 未提供真实 exact-window cache/source/Edge/base/VAE 路径
+404 passed, 1 skipped, 12 warnings, 32 subtests passed in 44.82s
+{"errors": 0, "failures": 0, "incomplete_formal_recipe_exit": 2, "junit_testcases_including_subtests": 405, "not_run": ["real DATA_B/C alignment", "validated full G1 checkpoint", "full Edge parameter inventory", "CUDA/BF16/FSDP training/resume", "formal R1/R2", "full evaluation"], "skipped": [{"name": "test_optional_real_strict_snapshot10_preflight", "reason": "未提供真实 exact-window cache/source/Edge/base/VAE 路径"}], "source_before_after_identical": 1149}

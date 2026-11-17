@@ -1,0 +1,21 @@
+{
+  "errors": 0,
+  "failures": 0,
+  "incomplete_formal_recipe_exit": 2,
+  "junit_testcases_including_subtests": 405,
+  "not_run": [
+    "real DATA_B/C alignment",
+    "validated full G1 checkpoint",
+    "full Edge parameter inventory",
+    "CUDA/BF16/FSDP training/resume",
+    "formal R1/R2",
+    "full evaluation"
+  ],
+  "skipped": [
+    {
+      "name": "test_optional_real_strict_snapshot10_preflight",
+      "reason": "\u672a\u63d0\u4f9b\u771f\u5b9e exact-window cache/source/Edge/base/VAE \u8def\u5f84"
+    }
+  ],
+  "source_before_after_identical": 1149
+}
