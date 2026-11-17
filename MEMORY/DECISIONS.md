@@ -1,5 +1,20 @@
 # 长期工程决策
 
+## 2026-11-17 — G2 Stage A：来源封存与数值完成分离
+
+- Owner Issue54 / v2.1 / GPT fixed8e11f27b scoped approval authorizes separate
+  A2 development. Keep original #53 Encode1/preprocessing/storage core; no
+  G1/Child/Gitlink/nav/production data/training changes or automatic merge.
+- New source readiness is immutable spatial_source + SPATIAL_SOURCE_READY,
+  independent of final profile COMPLETE. Explicit schema adapter preserves
+  legacy v1/v2/v3 completion validation. All valid assets/variants encoded;
+  episode/view files and lazy reads remain independent of selected_view_ids.
+- Final pixels precede event publication, numerical fsync/audit precedes ACK,
+  and full cache/source verification precedes final profile marker. Bounded
+  delivery may defer to sealed-source refill; no fake COMPLETE or dropped input.
+- Language/profile/sample parameters remain candidates. Fixed SHA/CPU author
+  evidence is not GPT native/GPU acceptance; Stage B/C and training wait.
+
 ## V3 执行职责最新覆盖（2026-09-27）
 
 - 用户明确调整：cx/Codex 作为构建与技术判断 owner，主动解决实现问题；ds 负责执行验证；ChatGPT 是非在线审核者，由用户不定期激活。旧条目中“等待 ChatGPT 即时设计/审核才可修复”的职责口径不再适用于当前 V3 构建。GPU 验证仍交 ds，正式 8×H100 训练须依次满足 B2-C 与 H3 Gate 的实证条件。

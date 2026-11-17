@@ -1,3 +1,69 @@
+# 2026-11-17 CST — Issue54 A2 REVIEW candidate
+
+Codex claimed and implemented separate A2 on codex/g2-stage-a-offline-issue54.
+Current source candidate is ready for a fixed commit and mandatory read-only
+peer review, then same Draft55 / canonical Inbox GPT handoff. Fixed SHA is
+recorded after commit; no precomputed SHA claim. STOP after scoped handoff for
+GPT independent native/VAE acceptance, no merge or production run.
+
+## Authority observation
+
+Fresh start before15713ec7a41bf343d226d4191b27ef76f8f8d5b4; fetch, advertised,
+tracking d96d89313473bb7e398ac53ee079044b785c760d matched; one docs-only commit,
+ancestry0/ff succeeded. Full exact8e11f27bb8e6e8d29c353a56acd0e15da1ddb2a8 /
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 GPT APPROVE_CODE report read plus
+Issue54 comment6940604152. A1 F1/F2 CODE/CPU/representative source DONE:
+GPT431PASS/0skip +3 original unchanged probes separately. New native F27/pixel
+acceptance and A2 real numerical/performance gates remain separate TODOs.
+Owner explicitly authorizes A2 now and GPT-only independent server review;
+historical V2/MM/Kimi waits do not override this scope.
+
+V3 advertised/tracking fe1089fb925d86697bebd9bef18608d9c9eae87b unchanged.
+Child HEAD/Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 clean.
+nav G2 advertised70eb7b447e65d793b0ebe18b258291ce46f057c1, no edits.
+PR55 readback open/Draft/unmerged; base codex/g2-view-vae-cache-issue52 at
+historical d36caf0fc35f3a84b739dc8df58ab992eb9f6917. No PR53 merge.
+
+## Scope and results
+
+Production files: latent_cache/{streaming,sealed_source,production,builder,
+storage}.py; offline/{stage_a,episode,atomic_6views_run}.py; existing cache
+build CLI and new consumer CLI. New fault/CLI tests, docs/README and own evidence.
+No other agent may edit these files during the readonly peer review.
+encoding.py, old source.py, language_context/task_entities, G1/Child/nav/renderer
+geometry/GT/image algorithms unchanged. Minimal shared numeric validation/cast
+helper, explicit new source dispatch and JSON-only reader header dispatch only.
+
+Bounded final-pixel spool, independent resident B=1 consumer, durable numeric
+ACK, crash/retry, retained-source refill, compact owner reconcile, shared-core
+posthoc, target mutex, transactional profile COMPLETE and safe own-input/chunk
+release implemented. All valid Views and both top variants, one formal file per
+View. Numerical assembly metrics separated from actual encode calls. Consumer
+failure defers delivery without losing legal RGB/SG. Source readiness precedes
+VAE; prepared journal repairs only real interrupted publication, not marker loss.
+
+Final author gate: **461 PASS /13 dependency SKIP /0 failure/error**:
+- #53 283PASS; StageA136PASS/10 native-PyArrow skips; related42PASS/3 original
+  MuJoCo/Pandas skips. All431 approved testcase identities preserved,43 new
+  identities all execute/pass. Skips are inherited missing local dependencies.
+- 209 source fingerprints before/after equal. Selected Ruff/10-file format,
+  legacy F/E9, CLI help and actual CPU synthetic two-entry protocol PASS.
+- Identical sealed source PNG bytes/logical index and FakeEncoder tensor values
+  agree (maxabs0); serialized .pt byte equality is not required or claimed.
+- Full exact commands/raw logs/JUnit/209hashes/gate/protocol:
+  docs/collab/codex/evidence/2026-11-17_issue54_a2/final/.
+- Earlier failing rounds retained in evidence/development; no rewritten GPT
+  reports or probes. Original three-probe file SHA remains860424fa81b6447cb361d7272ff0a365dfef6ef6087b0a3f51ab97f63fd306e0.
+
+Runbook docs/build/PSM-WMA_G2_Stage_A_A2_implementation_2026-11-17.md.
+Local existing /workspace/.venvs/g2-view-vae-52 only; no install/newenv/overlay.
+NOT_RUN: full original Arrow reviewer probe locally, real server/private source,
+new native F27/pixels, Wan/weights/GPU, real two-entry numerical/performance,
+full corpus/state15/joint alignment/train/merge. GPT executes those under fixed
+source and existing server environment. Language/resource templates not frozen.
+
+# Historical session log (superseded by current state above)
+
 # 2026-11-17 CST — Issue54 A1 F1/F2 remediation: REVIEW candidate
 
 Published corrective implementation **8e11f27bb8e6e8d29c353a56acd0e15da1ddb2a8**

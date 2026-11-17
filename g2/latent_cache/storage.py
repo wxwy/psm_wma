@@ -440,7 +440,10 @@ def validate_payload_binding(index, view_id, entry, info):
         expected_png = (
             f"state_{ordinal:06d}_frame_{record['owner_frame']:06d}/{view_id}.png"
         )
-        if record["png_path"] != expected_png:
+        allowed_pngs = {expected_png}
+        if index.manifest["source"].get("schema") == "g2_sealed_spatial_source_v1":
+            allowed_pngs.add(f"_spatial_inputs/{ordinal}/{view_id}.png")
+        if record["png_path"] not in allowed_pngs:
             raise CacheError("physical PNG path differs from canonical View owner")
     return True
 
@@ -482,10 +485,25 @@ def open_episode_index(episode_root, expected_recipe_id=None):
     source = manifest.get("source")
     if not isinstance(source, dict):
         raise CacheError("missing cache source identity")
-    for name, filename in [
-        ("manifest_sha256", "episode_manifest.json"),
-        ("complete_sha256", "COMPLETE.json"),
-    ]:
+    # New profiles bind immutable spatial readiness, before final profile
+    # publication. Keep the legacy file pair strict; this JSON-only dispatch
+    # does not import a renderer, scanner or VAE in training readers.
+    if source.get("schema") == "g2_sealed_spatial_source_v1":
+        if (
+            source.get("identity_manifest") != "spatial_source.json"
+            or source.get("readiness_marker") != "SPATIAL_SOURCE_READY.json"
+        ):
+            raise CacheError("unknown sealed-source identity files")
+        source_files = [
+            ("manifest_sha256", "spatial_source.json"),
+            ("complete_sha256", "SPATIAL_SOURCE_READY.json"),
+        ]
+    else:
+        source_files = [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]
+    for name, filename in source_files:
         expected = _hex(source.get(name))
         try:
             if digest(contained(root, filename)) != expected:

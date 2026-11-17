@@ -1,7 +1,8 @@
 """Native-producer Stage-A packaging, separate from strict legacy compact schemas.
 
-A1 publishes declared non-VAE products and seals spatial input. With VAE enabled
-it stops honestly at SOURCE_READY; the A2 consumer/writer integration is pending.
+Publishes declared spatial products and seals immutable input independently.
+VAE profiles stay SOURCE_READY until the shared A2 consumer/posthoc verifier
+finishes every owner and atomically publishes the final profile marker.
 """
 
 from __future__ import annotations
@@ -47,7 +48,9 @@ def _bound(ref):
     return read_json(path)
 
 
-def validate_profile_episode(root, *, require_complete=True, expected_profile=None):
+def validate_profile_episode(
+    root, *, require_complete=True, expected_profile=None, _check_cache=True
+):
     root = Path(root).absolute()
     manifest = read_json(contained(root, "episode_manifest.json"))
     if manifest.get("schema") != SCHEMA:
@@ -79,8 +82,14 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
         )
     ):
         raise ContractError("sealed spatial source identity differs")
+    from g2.latent_cache.sealed_source import released_inputs
+
+    released = released_inputs(root, source)
     for path, sha in manifest["files"].items():
-        if digest(contained(root, path)) != sha:
+        candidate = contained(root, path, allow_missing=True)
+        if not candidate.exists() and released.get(path) == sha:
+            continue
+        if digest(candidate) != sha:
             raise ContractError("declared Stage-A artifact damaged: " + path)
     states = manifest["states"]
     if (
@@ -102,7 +111,19 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
             v.startswith(prefix) for v in source["views"]
         ):
             expected_status[product] = "absent"
-    decision = completion(profile, expected_status, source_sealed=source["source_id"])
+    vae_receipt = manifest.get("vae_receipt")
+    if vae_receipt is not None:
+        from g2.latent_cache.production import cache_receipt
+
+        if _check_cache and cache_receipt(root) != vae_receipt:
+            raise ContractError("final VAE receipt differs from verified cache")
+        expected_status["view_vae"] = "ready"
+    decision = completion(
+        profile,
+        expected_status,
+        source_sealed=source["source_id"],
+        vae_receipt=vae_receipt,
+    )
     if manifest["products"] != expected_status or any(
         manifest.get(k) != v for k, v in decision.items()
     ):
@@ -166,10 +187,17 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
                     owner["projection"]["height"],
                 )
                 if key not in verified_pngs:
-                    path = artifact(owner["path"])
-                    if digest(path) != owner["sha256"]:
-                        raise ContractError("sealed final pixel source changed")
-                    decode_final_png(path.read_bytes(), expected_size=key[2:])
+                    candidate = contained(root, owner["path"], allow_missing=True)
+                    if (
+                        not candidate.exists()
+                        and released.get(owner["path"]) == owner["sha256"]
+                    ):
+                        pass  # Verified immutable numerical owner and original byte hash.
+                    else:
+                        path = artifact(owner["path"])
+                        if digest(path) != owner["sha256"]:
+                            raise ContractError("sealed final pixel source changed")
+                        decode_final_png(path.read_bytes(), expected_size=key[2:])
                     verified_pngs.add(key)
             elif profile.view_vae or (
                 profile.sixview_png
@@ -334,8 +362,7 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
     if complete_path.exists():
         complete = read_json(contained(root, "COMPLETE.json"))
         if (
-            profile.view_vae
-            or not manifest["profile_complete"]
+            not manifest["profile_complete"]
             or complete.get("schema") != SCHEMA
             or complete.get("episode_manifest_sha256")
             != digest(root / "episode_manifest.json")
@@ -344,11 +371,20 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
             or complete.get("episode_id") != manifest["episode_id"]
             or complete.get("state_count") != len(states)
         ):
-            raise ContractError(
-                "invalid Stage-A completion (A2 VAE verifier not yet integrated)"
+            raise ContractError("invalid Stage-A completion")
+    else:
+        repairing = False
+        journal = root / "VAE_PROFILE_PUBLISH_PENDING.json"
+        if profile.view_vae and manifest["profile_complete"] and journal.exists():
+            prepared = read_json(contained(root, journal.name))
+            repairing = prepared == dict(
+                schema="g2_vae_profile_publish_pending_v1",
+                source_id=source["source_id"],
+                next_manifest_sha256=digest(root / "episode_manifest.json"),
+                cache_receipt=manifest.get("vae_receipt"),
             )
-    elif require_complete or manifest["profile_complete"]:
-        raise ContractError("Stage-A source ready but declared profile incomplete")
+        if require_complete or (manifest["profile_complete"] and not repairing):
+            raise ContractError("Stage-A source ready but declared profile incomplete")
     return manifest
 
 
@@ -773,7 +809,7 @@ def package_stage_a(
                     views=views,
                     files=dict(files),
                     final_pixel_events=events,
-                    vae_adapter_status="A2_SHARED_CORE_ADAPTER_NOT_YET_IMPLEMENTED",
+                    vae_adapter_status="SHARED_ENCODE1_SEALED_SOURCE_V1",
                 ),
             )
             statuses = {

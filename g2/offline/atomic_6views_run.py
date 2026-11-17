@@ -79,6 +79,8 @@ class WorkerConfig:
     marker_appearance: MarkerAppearance=field(default_factory=MarkerAppearance)
     output_profile: Path | None=None
     flat_root: Path=plan.FLAT
+    vae_spool: Path | None=None
+    vae_source_max_bytes: int=256*1024*1024
 
 
 def event(kind, *, row=None, **values):
@@ -265,6 +267,8 @@ def produce_one(row,config):
     # MuJoCo/GL context inside the CPU orchestrator.
     start=time.monotonic()
     profile = None
+    vae_spool = None
+    vae_job = None
     if config.output_profile is not None:
         from .output_profile import OutputProfile
         from .stage_a import validate_profile_episode
@@ -273,10 +277,19 @@ def produce_one(row,config):
         if config.output_root.absolute()==plan.OUTPUT.absolute():
             raise ContractError('new Stage-A profile requires explicit independent staging output')
         existing=config.output_root/row['expected_relative_output']
+        if config.vae_spool is not None:
+            if not profile.view_vae:
+                raise ContractError('VAE spool requires explicit VAE profile')
+            from g2.latent_cache.streaming import EventSpool
+            vae_spool=EventSpool.open(config.vae_spool)
+            vae_job=vae_spool.register(existing,episode_key=f"{row['task_class']}/episode_{row['episode_id']:06d}",
+                source_fingerprint=row['source_fingerprint'],profile_id=profile.to_dict()['profile_id'])
         if existing.exists():
             result=validate_profile_episode(existing,require_complete=False,expected_profile=profile)
             if result['source_fingerprint']!=row['source_fingerprint']:
                 raise ContractError('Stage-A resume source identity differs')
+            if vae_spool is not None and not result['profile_complete']:
+                vae_spool.offer_source(vae_job)
             return result
     work=config.work_root/row["task_class"]/f"episode_{row['episode_id']:06d}"
     # Separate source-mode namespace is required: no legacy snapshot/color/F27
@@ -404,6 +417,7 @@ def produce_one(row,config):
     def publish_profile(rendered):
         from .language_context import load_flat_captions
         from .stage_a import package_stage_a
+        from g2.latent_cache.streaming import ConsumerLimits
         metadata=read_json(original['ep_meta.json'])
         captions,authority=(load_flat_captions(config.flat_root,episode_id=row['episode_id'],
             frames=row['spatial_frames'],ep_meta_lang=metadata.get('lang'))
@@ -412,7 +426,10 @@ def produce_one(row,config):
             config.output_root/row['expected_relative_output'],profile=profile,
             episode_id=row['episode_id'],task_class=row['task_class'],ep_meta=metadata,
             source_fingerprint=row['source_fingerprint'],captions=captions,caption_authority=authority,
-            source_guards=source_guards)
+            source_guards=source_guards,limits=ConsumerLimits(max_spool_bytes=config.vae_source_max_bytes),
+            event_sink=(lambda pixel: vae_spool.deliver(vae_job,pixel,work/"VAE_DELIVERY_PENDING.json")) if vae_spool is not None else None)
+        if vae_spool is not None:
+            vae_spool.offer_source(vae_job)
         event('EPISODE_DONE' if result['profile_complete'] else 'EPISODE_SOURCE_READY',
               row=row,states=result['state_count'],profile_complete=result['profile_complete'])
         if not config.keep_work and result['profile_complete']:
@@ -469,6 +486,8 @@ def produce_one(row,config):
             "--output",p,"--backend","gpu","--renderer","f27"]
         if profile is not None:
             command += ['--output-profile',profile_path]
+            if vae_spool is not None:
+                command += ['--vae-spool',config.vae_spool,'--vae-job',vae_job]
         if not config.sim_direct_material:
             command+=["--prepared",prepared,"--native-output",dualmap]
         command+=(
@@ -696,6 +715,8 @@ def schedule(args):
                      "--min-z",str(args.min_z),"--max-z",str(args.max_z),
                      "--manual-start","--allow-experimental"]
                 if args.keep_work:cmd.append("--keep-work")
+                if args.vae_spool is not None:cmd.extend(['--vae-spool',str(args.vae_spool)])
+                cmd.extend(['--vae-source-max-bytes',str(args.vae_source_max_bytes)])
                 if profile is not None:
                     cmd.extend(['--output-profile',str(args.output_profile),
                                 '--output-profile-sha256',profile_sha,
@@ -715,10 +736,17 @@ def schedule(args):
                         from .stage_a import validate_profile_episode
                         pending=validate_profile_episode(args.output_root/row['expected_relative_output'],
                             require_complete=False,expected_profile=profile)
-                        if (pending['source_fingerprint']!=row['source_fingerprint']
-                                or pending['profile_complete'] or pending['products']['view_vae']!='pending'):
+                        if pending['source_fingerprint']!=row['source_fingerprint']:
                             raise ContractError('worker pending output does not match declared profile')
-                        status='SOURCE_READY_VAE_PENDING'
+                        # The independent consumer can complete between worker
+                        # exit75 and this read. Require the final marker before
+                        # reporting DONE; a prepared manifest alone is pending.
+                        if pending['profile_complete'] and _completed(args,row,profile):
+                            status='DONE'
+                        elif pending['products']['view_vae'] in ('pending','ready'):
+                            status='SOURCE_READY_VAE_PENDING'
+                        else:
+                            raise ContractError('worker returned an invalid pending VAE state')
                         break
                     result.check_returncode()
                     if not _completed(args,row,profile):
@@ -764,6 +792,8 @@ def run_one_cli(args):
         if selected is not None:break
     else:raise ContractError("episode is absent from immutable source plan")
     profile=_output_profile(args)
+    if args.vae_spool is not None and (profile is None or not profile.view_vae):
+        raise ContractError('VAE spool requires an explicit VAE output profile')
     if _completed(args,selected,profile):
         event("EPISODE_REUSE",row=selected)
         return 0
@@ -774,7 +804,8 @@ def run_one_cli(args):
         keep_work=args.keep_work,min_z=args.min_z,max_z=args.max_z,
         port=args.ros_port,gpu=args.gpu,
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
-        output_profile=profile,flat_root=args.flat_root,
+        output_profile=profile,flat_root=args.flat_root,vae_spool=args.vae_spool,
+        vae_source_max_bytes=args.vae_source_max_bytes,
         sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
             sim_direct_material=args.sim_direct_material,
@@ -799,6 +830,8 @@ def parser():
     p.add_argument('--output-profile',type=Path,help='explicit Stage-A output profile JSON; requires new staging')
     p.add_argument('--output-profile-sha256',help='dispatch-time immutable profile file identity')
     p.add_argument('--flat-root',type=Path,default=plan.FLAT,help='authoritative frame.task_index/tasks.parquet caption source')
+    p.add_argument('--vae-spool',type=Path,help='preinitialized shared bounded VAE event spool; independent consumer')
+    p.add_argument('--vae-source-max-bytes',type=int,default=256*1024*1024,help='finite per-episode PNG-disabled input budget; released only after verified final VAE')
     p.add_argument("--plan-root",type=Path)
     p.add_argument("--work-root",type=Path)
     p.add_argument("--task",action="append",default=[])
@@ -858,6 +891,10 @@ def main(argv=None):
     if args.sim_color_only and not args.sim_direct_geometry_only:
         raise ContractError("color-only Full Map requires --sim-direct-geometry-only")
     profile=_output_profile(args)
+    if args.vae_source_max_bytes < 1:
+        raise ContractError('finite positive VAE source input budget required')
+    if args.vae_spool is not None and (profile is None or not profile.view_vae):
+        raise ContractError('VAE spool requires an explicit VAE output profile')
     if args.scene_event_index and not (args.sim_color_only and args.sim_direct_geometry_only
                                        and (args.robot_pose_marker or profile is not None)):
         raise ContractError("P1 View event indexing requires explicit direct GT + color-only + marker")

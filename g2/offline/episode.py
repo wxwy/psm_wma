@@ -280,7 +280,7 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
            color_only=False, robot_pose_marker=True,
            robot_pose_marker_style="game_arrow", marker_appearance=None,
            scene_event_index=False, lazy_texel_decode=False,
-           sim_direct_material=False,output_profile=None):
+           sim_direct_material=False,output_profile=None,final_pixel_sink=None):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
     from g2.views.direct_color import save_direct_color_views,save_direct_material_views
@@ -459,6 +459,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                 result['raw_robot_pose']=dict(pose,frame=frame,source_frame=frame,
                                               coordinate_frame=snapshot['world_frame'])
                 write_json(stage/'direct_color_views.json',result)
+                if final_pixel_sink is not None:
+                    final_pixel_sink(stage, result)
             marker=result.get("robot_pose_marker")
             if row.get("scene_graph"):
                 sg=row["scene_graph"]
@@ -579,6 +581,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
                 result['robot_pose_marker']={'enabled':False,'reason':'OUTPUT_PROFILE_DISABLED'}
             result['top_variant_semantics']='CLEAN_PLUS_W_RBS' if output_profile.marker_variants else 'CLEAN_ONLY_MARKER_DISABLED'
             write_json(stage/'direct_color_views.json',result)
+            if final_pixel_sink is not None:
+                final_pixel_sink(stage, result)
             if event is not None:
                 scene_keyframe_stage=stage
                 scene_keyframe_report=dict(result)
@@ -676,7 +680,7 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
            color_only=False, robot_pose_marker=True,
            robot_pose_marker_style="game_arrow", marker_appearance=None,
            scene_event_index=False, lazy_texel_decode=False,
-           sim_direct_material=False,output_profile=None):
+           sim_direct_material=False,output_profile=None,final_pixel_sink=None):
     """Run a pinned episode with one renderer lifetime, including error cleanup."""
     try:
         return _render(inputs, prepared, native_output, output, backend,
@@ -687,7 +691,7 @@ def render(inputs, prepared, native_output, output, backend="gpu", *,
                        marker_appearance=marker_appearance,
                        scene_event_index=scene_event_index,
                        lazy_texel_decode=lazy_texel_decode,
-                       sim_direct_material=sim_direct_material,output_profile=output_profile)
+                       sim_direct_material=sim_direct_material,output_profile=output_profile,final_pixel_sink=final_pixel_sink)
     finally:
         if surface_registry_source:
             from g2.views.direct_color import close_gpu_renderers
@@ -724,6 +728,8 @@ def main():
     p.add_argument("--renderer", choices=("f27", "legacy", "native"), default="f27",
                    help="F27 material/surface view (default); legacy Visual Mesh; native 10mm map diagnostic")
     p.add_argument('--output-profile',type=Path,help='explicit new Stage-A profile JSON; legacy default unchanged')
+    p.add_argument('--vae-spool', type=Path)
+    p.add_argument('--vae-job')
     args = parser.parse_args()
     if args.command == "prepare":
         prepare(args.inputs, args.nav_manifest, args.output,
@@ -731,6 +737,17 @@ def main():
     else:
         from .output_profile import OutputProfile
         output_profile = OutputProfile.from_dict(read_json(args.output_profile)) if args.output_profile else None
+        final_pixel_sink = None
+        if args.vae_spool is not None or args.vae_job is not None:
+            if not (args.vae_spool and args.vae_job and output_profile and output_profile.view_vae):
+                parser.error('streaming requires explicit VAE profile, spool and registered job')
+            from g2.latent_cache.streaming import producer_sink, publish_final_pixels
+            spool, scope, sink = producer_sink(args.vae_spool, args.vae_job,diagnostic_path=Path(args.output)/"VAE_DELIVERY_PENDING.json")
+            if scope['profile_id'] != output_profile.to_dict()['profile_id']:
+                parser.error('stream job profile differs')
+            final_pixel_sink = lambda stage, report: publish_final_pixels(stage, report, sink,
+                episode_key=scope['episode_key'], source_fingerprint=scope['source_fingerprint'],
+                profile_id=scope['profile_id'])
         render(args.inputs, args.prepared, args.native_output, args.output, args.backend,
                visual_mesh_source=args.renderer in ("f27", "legacy"),
                surface_registry_source=args.renderer == "f27",
@@ -739,7 +756,7 @@ def main():
                marker_appearance=appearance_from_args(args),
                scene_event_index=args.scene_event_index,
                lazy_texel_decode=args.lazy_texel_decode,
-               sim_direct_material=args.sim_direct_material,output_profile=output_profile)
+               sim_direct_material=args.sim_direct_material,output_profile=output_profile,final_pixel_sink=final_pixel_sink)
 
 
 if __name__ == "__main__":

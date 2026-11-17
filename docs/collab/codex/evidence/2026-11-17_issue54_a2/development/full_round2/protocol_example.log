@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/workspace/psm_wma_issue52/docs/collab/codex/evidence/2026-11-17_issue54_a2/protocol_probe.py", line 110, in <module>
+    main()
+  File "/workspace/psm_wma_issue52/docs/collab/codex/evidence/2026-11-17_issue54_a2/protocol_probe.py", line 53, in main
+    a.manifest == b.manifest
+AssertionError

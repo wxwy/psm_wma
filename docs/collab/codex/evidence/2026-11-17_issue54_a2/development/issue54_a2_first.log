@@ -1,0 +1,878 @@
+FFFFFFFF..........FF......................                               [100%]
+=================================== FAILURES ===================================
+__________ test_posthoc_ready_source_no_cycle_and_safe_release[True] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_posthoc_ready_source_no_c0')
+png = True
+
+    @pytest.mark.parametrize('png',[True,False])
+    def test_posthoc_ready_source_no_cycle_and_safe_release(tmp_path,png):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        package_stage_a(destination=target,**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        plan=plan_episode(target,spool.recipe)
+        assert plan['physical_image_count']==5 and plan['logical_view_count']==4
+        assert plan['source']['readiness_marker']=='SPATIAL_SOURCE_READY.json'
+        before=(target/'spatial_source.json').read_bytes()
+>       build_profile(target,encoder,preprocessing=PREPROCESS,cleanup=True)
+
+g2/tests/test_stage_a_streaming.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_posthoc_ready_source_no_c0/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+__________ test_posthoc_ready_source_no_cycle_and_safe_release[False] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_posthoc_ready_source_no_c1')
+png = False
+
+    @pytest.mark.parametrize('png',[True,False])
+    def test_posthoc_ready_source_no_cycle_and_safe_release(tmp_path,png):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        package_stage_a(destination=target,**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        plan=plan_episode(target,spool.recipe)
+        assert plan['physical_image_count']==5 and plan['logical_view_count']==4
+        assert plan['source']['readiness_marker']=='SPATIAL_SOURCE_READY.json'
+        before=(target/'spatial_source.json').read_bytes()
+>       build_profile(target,encoder,preprocessing=PREPROCESS,cleanup=True)
+
+g2/tests/test_stage_a_streaming.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_posthoc_ready_source_no_c1/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+_________ test_streaming_final_pixels_compact_owner_parity[False-True] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co0')
+png = True, reverse = False
+
+    @pytest.mark.parametrize('png',[True,False])
+    @pytest.mark.parametrize('reverse',[False,True])
+    def test_streaming_final_pixels_compact_owner_parity(tmp_path,png,reverse):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        consumer=EventConsumer(spool,encoder)
+        publish_raw(kwargs,spool,job,consumer,reverse)
+        assert encoder.calls==5  # FULL4 + ARROW1, REUSE_ALL0; clean never redrawn.
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        spool.seal(job)
+>       assert consumer.step()
+               ^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:447: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co0/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+________ test_streaming_final_pixels_compact_owner_parity[False-False] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co1')
+png = False, reverse = False
+
+    @pytest.mark.parametrize('png',[True,False])
+    @pytest.mark.parametrize('reverse',[False,True])
+    def test_streaming_final_pixels_compact_owner_parity(tmp_path,png,reverse):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        consumer=EventConsumer(spool,encoder)
+        publish_raw(kwargs,spool,job,consumer,reverse)
+        assert encoder.calls==5  # FULL4 + ARROW1, REUSE_ALL0; clean never redrawn.
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        spool.seal(job)
+>       assert consumer.step()
+               ^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:447: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co1/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+_________ test_streaming_final_pixels_compact_owner_parity[True-True] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co2')
+png = True, reverse = True
+
+    @pytest.mark.parametrize('png',[True,False])
+    @pytest.mark.parametrize('reverse',[False,True])
+    def test_streaming_final_pixels_compact_owner_parity(tmp_path,png,reverse):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        consumer=EventConsumer(spool,encoder)
+        publish_raw(kwargs,spool,job,consumer,reverse)
+        assert encoder.calls==5  # FULL4 + ARROW1, REUSE_ALL0; clean never redrawn.
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        spool.seal(job)
+>       assert consumer.step()
+               ^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:447: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co2/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+_________ test_streaming_final_pixels_compact_owner_parity[True-False] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co3')
+png = False, reverse = True
+
+    @pytest.mark.parametrize('png',[True,False])
+    @pytest.mark.parametrize('reverse',[False,True])
+    def test_streaming_final_pixels_compact_owner_parity(tmp_path,png,reverse):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        consumer=EventConsumer(spool,encoder)
+        publish_raw(kwargs,spool,job,consumer,reverse)
+        assert encoder.calls==5  # FULL4 + ARROW1, REUSE_ALL0; clean never redrawn.
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        spool.seal(job)
+>       assert consumer.step()
+               ^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:447: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_streaming_final_pixels_co3/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+__________ test_crash_after_fsync_before_ack_recovers_without_encode ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_crash_after_fsync_before_0')
+
+    def test_crash_after_fsync_before_ack_recovers_without_encode(tmp_path):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path)
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        def crash(phase):
+            if phase=='numeric_before_ack':
+                raise PowerLoss()
+        with pytest.raises(PowerLoss):
+            EventConsumer(spool,encoder,failpoint=crash).step()
+        assert encoder.calls==1 and spool.stats()['pending_inputs']==5
+        restarted=EventConsumer(EventSpool.open(spool.root),encoder)
+        assert restarted.step()
+        assert encoder.calls==1 and spool.stats()['pending_inputs']==4
+        spool.seal(job)
+>       while restarted.step():
+              ^^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:447: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_crash_after_fsync_before_0/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+_____________ test_failed_encoder_explicit_retry_preserves_rgb_sg ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_failed_encoder_explicit_r0')
+
+    def test_failed_encoder_explicit_retry_preserves_rgb_sg(tmp_path):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path)
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        original={p: p.read_bytes() for p in target.rglob('*') if p.is_file()}
+        encoder.fail_at=1
+        with pytest.raises(RuntimeError,match='interruption'):
+            EventConsumer(spool,encoder).step()
+        assert not (target/'COMPLETE.json').exists()
+        assert all(p.read_bytes()==data for p,data in original.items())
+        with pytest.raises(CacheError,match='failed'):
+            spool.job_status(job)
+        spool.retry(job)
+        encoder.fail_at=None
+        spool.seal(job)
+>       while EventConsumer(spool,encoder).step():
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:447: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_failed_encoder_explicit_r0/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+____________ test_final_marker_crash_can_resume_without_reencoding _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_final_marker_crash_can_re0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff06fa14fe0>
+
+    def test_final_marker_crash_can_resume_without_reencoding(tmp_path,monkeypatch):
+        import g2.latent_cache.production as production
+        kwargs,target,encoder,spool,job=setup_case(tmp_path)
+        package_stage_a(destination=target,**kwargs)
+        original=production.atomic_json
+        def fail(path,*args,**kw):
+            if Path(path)==target/'COMPLETE.json':
+                raise PowerLoss()
+            return original(path,*args,**kw)
+        with monkeypatch.context() as context:
+            context.setattr(production,'atomic_json',fail)
+            with pytest.raises(PowerLoss):
+>               build_profile(target,encoder,preprocessing=PREPROCESS)
+
+g2/tests/test_stage_a_streaming.py:237: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_final_marker_crash_can_re0/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+______ test_cleanup_is_idempotent_after_partial_unlink_and_refuses_damage ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-86/test_cleanup_is_idempotent_aft0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff06f1d0080>
+
+    def test_cleanup_is_idempotent_after_partial_unlink_and_refuses_damage(tmp_path,monkeypatch):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=False)
+        package_stage_a(destination=target,**kwargs)
+>       build_profile(target,encoder,preprocessing=PREPROCESS)
+
+g2/tests/test_stage_a_streaming.py:246: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:441: in verify_episode
+    index = open_episode_index(episode_root, expected_recipe_id=expected_recipe_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+episode_root = PosixPath('/tmp/pytest-of-agent/pytest-86/test_cleanup_is_idempotent_aft0/published')
+expected_recipe_id = None
+
+    def open_episode_index(episode_root, expected_recipe_id=None):
+        """Read only the small source/cache JSON index, not any numeric View file."""
+        root = _absolute(episode_root)
+        cache = Path(contained(root, "vae_cache"))
+        try:
+            manifest_path = Path(contained(cache, "manifest.json"))
+            marker_path = Path(contained(cache, "COMPLETE.json"))
+            manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+            complete = read_json(marker_path, limit=_JSON_LIMIT)
+        except (OSError, ValueError, TypeError) as exc:
+            raise CacheError("complete cache index is missing or invalid") from exc
+        if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+            raise CacheError("wrong cache index schema")
+        if (
+            not isinstance(complete, dict)
+            or complete.get("schema") != COMPLETE_SCHEMA
+            or complete.get("complete") is not True
+            or complete.get("manifest_sha256") != digest(manifest_path)
+        ):
+            raise CacheError("cache completion does not bind its index")
+        key = manifest.get("episode_key")
+        if not isinstance(key, str) or not key or complete.get("episode_key") != key:
+            raise CacheError("cache episode identity differs")
+        recipe = manifest.get("recipe")
+        if not isinstance(recipe, dict):
+            raise CacheError("missing cache recipe")
+        validate_recipe(recipe)
+        recipe_id = _hex(recipe.get("recipe_id"))
+        if (
+            recipe_id != fingerprint({k: v for k, v in recipe.items() if k != "recipe_id"})
+            or complete.get("recipe_id") != recipe_id
+            or (expected_recipe_id is not None and expected_recipe_id != recipe_id)
+        ):
+            raise CacheError("cache recipe identity differs")
+        source = manifest.get("source")
+        if not isinstance(source, dict):
+            raise CacheError("missing cache source identity")
+        for name, filename in [
+            ("manifest_sha256", "episode_manifest.json"),
+            ("complete_sha256", "COMPLETE.json"),
+        ]:
+            expected = _hex(source.get(name))
+            try:
+                if digest(contained(root, filename)) != expected:
+>                   raise CacheError("source identity differs from cache")
+E                   g2.latent_cache.contract.CacheError: source identity differs from cache
+
+g2/latent_cache/storage.py:492: CacheError
+=========================== short test summary info ============================
+FAILED g2/tests/test_stage_a_streaming.py::test_posthoc_ready_source_no_cycle_and_safe_release[True]
+FAILED g2/tests/test_stage_a_streaming.py::test_posthoc_ready_source_no_cycle_and_safe_release[False]
+FAILED g2/tests/test_stage_a_streaming.py::test_streaming_final_pixels_compact_owner_parity[False-True]
+FAILED g2/tests/test_stage_a_streaming.py::test_streaming_final_pixels_compact_owner_parity[False-False]
+FAILED g2/tests/test_stage_a_streaming.py::test_streaming_final_pixels_compact_owner_parity[True-True]
+FAILED g2/tests/test_stage_a_streaming.py::test_streaming_final_pixels_compact_owner_parity[True-False]
+FAILED g2/tests/test_stage_a_streaming.py::test_crash_after_fsync_before_ack_recovers_without_encode
+FAILED g2/tests/test_stage_a_streaming.py::test_failed_encoder_explicit_retry_preserves_rgb_sg
+FAILED g2/tests/test_stage_a_streaming.py::test_final_marker_crash_can_resume_without_reencoding
+FAILED g2/tests/test_stage_a_streaming.py::test_cleanup_is_idempotent_after_partial_unlink_and_refuses_damage
+10 failed, 32 passed in 14.26s

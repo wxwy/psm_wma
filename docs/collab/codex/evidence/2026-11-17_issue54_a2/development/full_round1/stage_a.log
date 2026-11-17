@@ -1,0 +1,13 @@
+ssssssssss.............................................................. [ 52%]
+.....F..........................................................         [100%]
+=================================== FAILURES ===================================
+_____ test_missing_complete_is_corrupt_even_when_allowing_source_readiness _____
+g2/tests/test_stage_a_package.py:306: in test_missing_complete_is_corrupt_even_when_allowing_source_readiness
+    with pytest.raises(ContractError, match="incomplete"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE ContractError
+=========================== short test summary info ============================
+SKIPPED [5] g2/tests/test_stage_a_caption_parquet.py:39: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [4] g2/tests/test_stage_a_caption_parquet.py:63: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_stage_a_caption_parquet.py:82: existing local interpreter has no PyArrow; no install/new environment permitted
+1 failed, 125 passed, 10 skipped in 25.65s

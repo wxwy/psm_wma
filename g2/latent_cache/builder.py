@@ -78,7 +78,14 @@ def discover_episodes(dataset_root, tasks=None, episodes=None):
             continue
         if not isinstance(task, str) or type(eid) is not int or eid < 0:
             raise CacheError("invalid completed episode identity")
-        contained(path, "COMPLETE.json")
+        from g2.offline.output_profile import SCHEMA as PROFILE_SCHEMA
+
+        contained(
+            path,
+            "SPATIAL_SOURCE_READY.json"
+            if manifest.get("schema") == PROFILE_SCHEMA
+            else "COMPLETE.json",
+        )
         if path != root and (
             path.parent.parent.name != task or path.name != f"episode_{eid:06d}"
         ):
@@ -110,7 +117,7 @@ def _source_binding(plan):
 
 def plan_episode(episode_root, recipe):
     from .encoding import validate_wan_canvas
-    from .source import scan_episode
+    from .sealed_source import scan_source as scan_episode
 
     validate_recipe(recipe)
     validate_wan_canvas(
@@ -215,6 +222,51 @@ def _index_entry(info, view):
     }
 
 
+def encode_record(encoder, rgb, recipe):
+    """Shared #53 finite FP32 Encode1 validation and explicit storage conversion."""
+    import torch
+
+    latent, prep = encoder.encode(rgb, recipe["preprocessing"])
+    if (
+        type(latent) is not torch.Tensor
+        or latent.device.type != "cpu"
+        or latent.dtype != torch.float32
+        or latent.ndim != 3
+        or any(n <= 0 for n in latent.shape)
+        or not torch.isfinite(latent).all()
+        or not isinstance(prep, dict)
+        or prep.get("original_hw") != list(rgb.shape[:2])
+        or prep.get("canvas_hw")
+        != [
+            recipe["preprocessing"]["height"],
+            recipe["preprocessing"]["width"],
+        ]
+    ):
+        raise CacheError(
+            "encoder did not return a finite full FP32 CHW grid and provenance"
+        )
+    storage_dtype = recipe["storage_dtype"]
+    stored = (
+        latent.detach().to(dtype=getattr(torch, storage_dtype), copy=True).contiguous()
+    )
+    if not torch.isfinite(stored).all():
+        raise CacheError("storage conversion produced non-finite values")
+    # Quantization error is explicit; BF16 compute does not make
+    # reduced-precision storage lossless.
+    prep = dict(
+        prep,
+        latent_shape=list(latent.shape),
+        latent_mask_basis="CONTENT_RECT_ONLY_RECEPTIVE_FIELD_NOT_CERTIFIED",
+        storage_conversion=dict(
+            from_dtype="float32",
+            to_dtype=storage_dtype,
+            exact=bool(torch.equal(latent, stored.float())),
+            max_abs_error=float((latent - stored.float()).abs().max()),
+        ),
+    )
+    return stored, prep
+
+
 def build_episode(
     episode_root,
     encoder,
@@ -223,10 +275,12 @@ def build_episode(
     storage_dtype="float32",
     batch_size=1,
     resume=False,
+    _record_provider=None,
 ):
     """One locked episode, one atomic numeric file per View, no source writes."""
     from .encoding import validate_wan_canvas
-    from .source import scan_episode, verify_source
+    from .sealed_source import scan_source as scan_episode
+    from .sealed_source import verify_source
     from .storage import (
         atomic_json,
         build_lock,
@@ -249,7 +303,7 @@ def build_episode(
     if cache.exists() and not resume:
         raise CacheError("cache target exists; explicit resume is required")
     index = _base_index(plan, recipe)
-    encoded, reused = 0, 0
+    encoded, reused, assembled = 0, 0, 0
     with build_lock(cache):
         marker = contained(cache, "COMPLETE.json", allow_missing=True)
         manifest = contained(cache, "manifest.json", allow_missing=True)
@@ -310,54 +364,20 @@ def build_episode(
                     raise CacheError("previously completed View payload is missing")
                 values, metadata = [], []
                 for record in view["records"]:
-                    latent, prep = encoder.encode(
-                        _read_rgb(plan, record), recipe["preprocessing"]
-                    )
-                    if (
-                        type(latent) is not torch.Tensor
-                        or latent.device.type != "cpu"
-                        or latent.dtype != torch.float32
-                        or latent.ndim != 3
-                        or any(n <= 0 for n in latent.shape)
-                        or not torch.isfinite(latent).all()
-                        or not isinstance(prep, dict)
-                        or prep.get("original_hw") != record["original_hw"]
-                        or prep.get("canvas_hw")
-                        != [
-                            recipe["preprocessing"]["height"],
-                            recipe["preprocessing"]["width"],
-                        ]
-                    ):
-                        raise CacheError(
-                            "encoder did not return a finite full FP32 CHW grid and provenance"
+                    if _record_provider is None:
+                        stored, prep = encode_record(
+                            encoder, _read_rgb(plan, record), recipe
                         )
-                    if values and latent.shape != values[0].shape:
+                    else:
+                        stored, prep = _record_provider(view_id, record, recipe)
+                    if values and stored.shape != values[0].shape:
                         raise CacheError("View versions have different latent shapes")
-                    stored = (
-                        latent.detach()
-                        .to(dtype=getattr(torch, storage_dtype), copy=True)
-                        .contiguous()
-                    )
-                    if not torch.isfinite(stored).all():
-                        raise CacheError(
-                            "storage conversion produced non-finite values"
-                        )
-                    # Quantization error is explicit; BF16 compute does not make
-                    # reduced-precision storage lossless.
-                    prep = dict(
-                        prep,
-                        latent_shape=list(latent.shape),
-                        latent_mask_basis="CONTENT_RECT_ONLY_RECEPTIVE_FIELD_NOT_CERTIFIED",
-                        storage_conversion=dict(
-                            from_dtype="float32",
-                            to_dtype=storage_dtype,
-                            exact=bool(torch.equal(latent, stored.float())),
-                            max_abs_error=float((latent - stored.float()).abs().max()),
-                        ),
-                    )
                     values.append(stored)
                     metadata.append(prep)
-                    encoded += 1
+                    if _record_provider is None:
+                        encoded += 1
+                    else:
+                        assembled += 1
                 info = write_view_payload(
                     path, dict(base, preprocessing=metadata), torch.stack(values)
                 )
@@ -398,6 +418,7 @@ def build_episode(
         encoded_records=encoded,
         reused_views=reused,
         already_complete=False,
+        **({"assembled_records": assembled} if _record_provider is not None else {}),
     )
 
 
@@ -429,7 +450,7 @@ def verify_episode(
     recipe = validate_recipe(index.manifest["recipe"])
     plan = None
     if check_source or reencoder is not None:
-        from .source import scan_episode
+        from .sealed_source import scan_source as scan_episode
 
         plan = scan_episode(episode_root)
         if (
@@ -492,7 +513,7 @@ def verify_episode(
                             "re-encoded latent differs from cache at explicit tolerance"
                         )
     if plan is not None:
-        from .source import verify_source
+        from .sealed_source import verify_source
 
         verify_source(plan)
     if reencoder is not None and reencoder.descriptor() != recipe["encoder"]:
