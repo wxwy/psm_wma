@@ -113,3 +113,22 @@ semantics remain strict. CPU FakeEncoder checks do not certify native output,
 real VAE parity, performance or production settings. See the
 [A2 implementation/runbook](../../docs/build/PSM-WMA_G2_Stage_A_A2_implementation_2026-11-17.md)
 for commands, ACK/recovery/cleanup contracts and pending independent gates.
+
+## Issue58: one-shot Stage A production candidate
+
+The repository launcher is `scripts/g2/run_stage_a_full.sh`; thin CLI is
+`python -m tools.g2.run_stage_a_production`. Copy/fill
+`tools/g2/production/stage_a_9126.template.json` into an absolute frozen config.
+Its reviewed Root and mapping SHA placeholders deliberately reject execution.
+Use `preflight`, `progress`, `stop`, or explicitly `run/resume --manual-start`.
+One original plan/queue covers9,126 episodes and92 packages; this is not a
+48-episode loop. Full completion waits for VAE plus verified work cleanup.
+
+New spoolv3 archives acknowledged events behind durable episode receipts;
+only active events use the100k budget. A fresh owned work/spool/output namespace
+is required. F27-only EGL dependencies never enter the original-environment
+B1 VAE consumer. No automatic production start, old-data deletion, build,
+installation or merge. P1 microbatch is deferred; approved B1 recipe is intact.
+See [the Issue58 runbook](../../docs/build/PSM-WMA_G2_one_shot_production_issue58_2026-11-17.md)
+for exact manual commands, output/cleanup contracts, CPU evidence and pending
+GPT real-sample/resource gates. Author CPU checks do not authorize full start.

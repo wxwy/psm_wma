@@ -1,3 +1,75 @@
+# 2026-11-17 CST — Issue58 P0 local REVIEW candidate
+
+Independent branch codex/g2-one-shot-production-issue58, based29f9993d.
+Ready for fixed source commit then mandatory read-only peer; formal SHA follows
+commit, not precomputed. No product/test edits during fixed-candidate review.
+Owner Issue58/GPT-only server/Owner manual launch override historical V2/MM/
+Kimi loops. Local Agent review is code quality only, not GPT server acceptance.
+
+Implemented: spoolv3 compact durable completed receipts + active SQL GC;
+lease/source/renderer-lock verified native-work cleanup with intent/trash crash
+recovery; original unified queue supervision, resource admission, one consumer,
+owned process stop/resume, original-environment recipe preflight and F27-only
+overlay; official repository CLI/launcher/template/runbook. P1 deferred, B1
+encoder/recipe/builder/storage and legacy/posthoc CLIs unchanged. No automatic
+production/start/deletion/install/build/merge. Late producer cannot recreate
+completed work. Final DONE requires all strict profiles and cleanup, trainingfalse.
+
+Author evidence revision1:487PASS/13 inherited dependencySKIP/0fail/error,
+all478 oldIDs retained +22new allPASS;222 source hashes before/after stable.
+SQLite101101 simulated ACK events /1001 jobs,128cap,101peak activeevents,
+1peak activejob, DB1159168bytes; not real throughput. Actual CPU child consumer
+stop/resume/ACK/source+cache audit/work cleanup passes, fakecompute maxabs0.
+Static/format/bash/help/source scope pass. Original A1 three-probe hash intact,
+not run locally without nativePyArrow; no stubs/install. One old private SQL-row
+assertion becomes receipt + zeroactive assertion, same testID preserved.
+
+development/ holds overlapping focused runs; final/ is retained first suite
+with one error-message regex failure, corrected without weakening its test.
+revision1 all suites pass. Audit collector initially counted pytest current
+symlink twice; fixed docs-only collector and reran it against same raw evidence,
+no product/test change. README records exact commands/limits. Latest ls-remote
+base29f9993d andV3 7a357620 still match initialobservation; Child/nav untouched.
+
+File claims now include official runbook/README, own evidence and ledgers.
+REVIEW next: another Agent checks exactcommit/archive/workleases/controller
+and tests read-only; then independent Draft PR stacked on unchangedPR55,
+canonicalInbox GPT fixedSHA handoff, STOP. Real F27/Wan/GPU/resource A-B,
+full9126/old-view deletion/P1/state15/jointalignment/train/merge NOT_RUN.
+
+# Issue58 initial claim (historical)
+
+Fresh sync: before21c0a10c820451d3a99eb09f08fe9e8cd422d451 -> fetch/
+advertised/tracking29f9993d2543b8bb638f135aac9dd7172b71baf0; ancestry0,
+ff succeeded, one new docs-only approval. Read exact formal4ad0fe7394cb62c4b5692fecaf6ce52963b8852c /
+Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 APPROVE_CODE +
+REAL_SAMPLE_FUNCTIONAL_PASS report in full (478CPU,169real owners; real overlap
+89ACK, same B1 recipe3ee9c483...). New V3 advertised7a357620b4cc1f6817749c8a8275771cfbb4049c
+adds only two model design docs over fe1089fb; no automatic V3 merge.
+Root source core still4ad0fe73, child clean d5c1ffc7, nav observed70eb7b44.
+
+Owner Issue58 read in full. Independent branch codex/g2-one-shot-production-issue58
+created from29f9993d; separate Draft PR will stack on unchanged PR55. Owner
+supersedes historical MM/Kimi/V2 waits: Codex implements/CPU, GPT fixed-SHA
+server validation, Owner alone manually starts production/deletion. No server
+access/private transfer/GPU/fullproduction/installation/newenv/train/merge here.
+Issue23 reports reread: B4/B8 exact0 BLOCKED, B8 visual PASS only. P1 microbatch
+explicitly deferred so it cannot delay P0; B1 encoder/recipe remains unchanged.
+
+File claims before code: latent_cache/streaming.py + new ledger_archive.py;
+offline/atomic_6views_run.py + new work_lifecycle.py/full_production.py;
+consumer CLI; new tools/g2 full-production CLI/config and scripts/g2 launcher;
+corresponding GC/crash/worklease/controller tests, README/runbook/own evidence
+and ledgers. Preserve existing478 identities and original A1 probes; explain
+any obsolete private SQLite-row assertions replaced by durable receipt checks.
+Implement bounded active rows + durable completed receipts, exact managed-work
+lease/lock cleanup after source/cache/profile verification, one original plan/
+queue with capacity/disk backpressure and final await, isolated renderer/VAE
+environments and explicit preflight/progress/stop/resume. Nothing is implemented
+or run for Issue58 yet. Next inspect APIs then minimal implementation and CPU.
+
+# Previous task history
+
 # 2026-11-17 CST — Issue54 A2 published fixed source / GPT REVIEW
 
 Formal Root4ad0fe7394cb62c4b5692fecaf6ce52963b8852c / Child-Gitlink

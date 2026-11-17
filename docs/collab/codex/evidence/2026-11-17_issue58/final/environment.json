@@ -1,0 +1,22 @@
+{
+  "GPU_used": false,
+  "executable": "/workspace/.venvs/g2-view-vae-52/bin/python",
+  "network_during_tests": false,
+  "new_environment": false,
+  "packages": {
+    "Pillow": "13.0.0",
+    "mujoco": null,
+    "numpy": "2.5.5",
+    "pandas": null,
+    "pyarrow": null,
+    "pytest": "9.2.0",
+    "ruff": "0.17.5",
+    "torch": "2.15.0+cpu"
+  },
+  "packages_installed": false,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "source_kind": "WORKTREE_HASHES_NOT_FORMAL_COMMIT_CLAIM",
+  "test_temp": "/tmp/issue58-cpu-Pt27YUFx",
+  "worktree_parent_head": "29f9993d2543b8bb638f135aac9dd7172b71baf0"
+}

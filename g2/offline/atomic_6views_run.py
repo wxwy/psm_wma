@@ -81,6 +81,8 @@ class WorkerConfig:
     flat_root: Path=plan.FLAT
     vae_spool: Path | None=None
     vae_source_max_bytes: int=256*1024*1024
+    managed_work_cleanup: bool=False
+    renderer_pythonpath: tuple=()
 
 
 def event(kind, *, row=None, **values):
@@ -259,6 +261,26 @@ def shlex_quote(value):
 
 
 def produce_one(row,config):
+    if not config.managed_work_cleanup:
+        return _produce_one(row,config)
+    from .output_profile import OutputProfile
+    from .work_lifecycle import producer_work,episode_work_path
+    from g2.latent_cache.streaming import EventSpool
+    if config.output_profile is None or config.vae_spool is None:
+        raise ContractError('managed work requires an explicit VAE profile and spool')
+    profile=(config.output_profile if isinstance(config.output_profile,OutputProfile)
+             else OutputProfile.from_dict(read_json(config.output_profile)))
+    spool=EventSpool.open(config.vae_spool)
+    target=config.output_root/row['expected_relative_output']
+    job=spool.register(target,episode_key=f"{row['task_class']}/episode_{row['episode_id']:06d}",
+        source_fingerprint=row['source_fingerprint'],profile_id=profile.to_dict()['profile_id'])
+    if target.exists() and not episode_work_path(row,config,profile).exists():
+        return _produce_one(row,config)
+    with producer_work(row,config,profile,spool,job):
+        return _produce_one(row,config)
+
+
+def _produce_one(row,config):
     from g2.nav_bridge.full_map import capture as capture_native
     from g2.nav_bridge.full_map import prepare as prepare_native
     from g2.sim.prescan import export as prescan
@@ -432,7 +454,7 @@ def produce_one(row,config):
             vae_spool.offer_source(vae_job)
         event('EPISODE_DONE' if result['profile_complete'] else 'EPISODE_SOURCE_READY',
               row=row,states=result['state_count'],profile_complete=result['profile_complete'])
-        if not config.keep_work and result['profile_complete']:
+        if not config.keep_work and result['profile_complete'] and not config.managed_work_cleanup:
             shutil.rmtree(work)
         return result
     if profile is not None and not profile.render_rgb:
@@ -481,6 +503,9 @@ def produce_one(row,config):
                    MUJOCO_EGL_DEVICE_ID=str(config.gpu),
                    CUDA_VISIBLE_DEVICES=str(config.gpu),
                    PYTHONDONTWRITEBYTECODE="1")
+        if config.renderer_pythonpath:
+            repo=Path(__file__).resolve().parents[2]
+            env['PYTHONPATH']=os.pathsep.join([str(repo),str(repo/'cosmos-framework'),*map(str,config.renderer_pythonpath)])
         command=[config.python,"-m","g2.offline.episode","render",
             "--inputs",snapshots/"episode_inputs.json",
             "--output",p,"--backend","gpu","--renderer","f27"]
@@ -624,7 +649,7 @@ def ensure_repository_builds(repo, nav_repo, nav_setup, native_binary, *,
             raise ContractError("native 10mm source-color worker missing or stale")
 
 
-def schedule(args):
+def schedule(args, *, admission=None, on_result=None, run_worker=None):
     profile=_output_profile(args)
     profile_sha=plan.sha_file(args.output_profile) if profile is not None else None
     rows,_=plan.discover(args.mapping,args.raw_root,args.depth_root,
@@ -678,11 +703,15 @@ def schedule(args):
             or root==args.output_root or root in args.output_root.parents):
         raise ContractError("work-root overlaps original input/parent or output parent")
     slots=_ports(args.gpus,args.workers_per_gpu,args.ros_port_base)
-    ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary,
-                             sim_direct_geometry_only=args.sim_direct_geometry_only,
-                             sim_color_only=args.sim_color_only and not args.sim_direct_material)
+    if not args.require_prebuilt:
+        ensure_repository_builds(Path(__file__).resolve().parents[2],nav_repo,nav_setup,native_binary,
+                                 sim_direct_geometry_only=args.sim_direct_geometry_only,
+                                 sim_color_only=args.sim_color_only and not args.sim_direct_material)
     args.output_root.mkdir(parents=True,exist_ok=True)
     root.mkdir(parents=True,exist_ok=True)
+    if args.managed_work_cleanup:
+        from .work_lifecycle import init_root
+        init_root(root,args.vae_spool,args.output_root,protected=(args.raw_root,args.flat_root,args.depth_root,nav_repo,Path(__file__).resolve().parents[2]))
     q=queue.Queue()
     for row in jobs:q.put(row)
     failures=[]
@@ -697,6 +726,8 @@ def schedule(args):
         while True:
             try:row=q.get_nowait()
             except queue.Empty:return
+            if admission is not None and not admission(row):
+                return
             status="FAILED"
             for attempt in range(1,args.max_attempts+1):
                 event("START",row=row,gpu=gpu,slot=subslot,
@@ -715,6 +746,8 @@ def schedule(args):
                      "--min-z",str(args.min_z),"--max-z",str(args.max_z),
                      "--manual-start","--allow-experimental"]
                 if args.keep_work:cmd.append("--keep-work")
+                if args.managed_work_cleanup:cmd.append('--managed-work-cleanup')
+                for path in args.renderer_pythonpath:cmd.extend(['--renderer-pythonpath',str(path)])
                 if args.vae_spool is not None:cmd.extend(['--vae-spool',str(args.vae_spool)])
                 cmd.extend(['--vae-source-max-bytes',str(args.vae_source_max_bytes)])
                 if profile is not None:
@@ -731,7 +764,7 @@ def schedule(args):
                 cmd.extend(["--robot-pose-marker-style",args.robot_pose_marker_style])
                 cmd.extend(appearance_cli_args(appearance_from_args(args)))
                 try:
-                    result=subprocess.run(cmd,check=False)
+                    result=(run_worker or subprocess.run)(cmd,check=False)
                     if result.returncode==75 and profile is not None and profile.view_vae:
                         from .stage_a import validate_profile_episode
                         pending=validate_profile_episode(args.output_root/row['expected_relative_output'],
@@ -756,6 +789,8 @@ def schedule(args):
                 except (subprocess.CalledProcessError,ContractError) as error:
                     event("ATTEMPT_FAILED",row=row,gpu=gpu,slot=subslot,
                           attempt=attempt,error=str(error).replace(" ","_")[:180])
+            if on_result is not None:
+                on_result(row,status)
             with lock:
                 if status=="DONE":
                     finished.append(row["episode_id"])
@@ -806,6 +841,7 @@ def run_one_cli(args):
         robocasa_repo=args.robocasa_repo,robosuite_repo=args.robosuite_repo,
         output_profile=profile,flat_root=args.flat_root,vae_spool=args.vae_spool,
         vae_source_max_bytes=args.vae_source_max_bytes,
+        managed_work_cleanup=args.managed_work_cleanup,renderer_pythonpath=tuple(args.renderer_pythonpath),
         sim_direct_geometry_only=args.sim_direct_geometry_only,
             sim_color_only=args.sim_color_only,
             sim_direct_material=args.sim_direct_material,
@@ -832,6 +868,9 @@ def parser():
     p.add_argument('--flat-root',type=Path,default=plan.FLAT,help='authoritative frame.task_index/tasks.parquet caption source')
     p.add_argument('--vae-spool',type=Path,help='preinitialized shared bounded VAE event spool; independent consumer')
     p.add_argument('--vae-source-max-bytes',type=int,default=256*1024*1024,help='finite per-episode PNG-disabled input budget; released only after verified final VAE')
+    p.add_argument('--managed-work-cleanup',action='store_true',help='only an initialized managed work root with durable leases')
+    p.add_argument('--renderer-pythonpath',type=Path,action='append',default=[],help='F27-only approved EGL dependencies; never passed to VAE')
+    p.add_argument('--require-prebuilt',action='store_true',help='do not compile/install during supervised production')
     p.add_argument("--plan-root",type=Path)
     p.add_argument("--work-root",type=Path)
     p.add_argument("--task",action="append",default=[])
