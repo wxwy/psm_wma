@@ -1,0 +1,26 @@
+{
+  "kind": "AUTHOR_PUBLICATION_READBACK_NOT_SERVER_ACCEPTANCE",
+  "implementation_sha": "27ccadb051a71adf348ee14206d7ac59e9195d36",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "url": "https://github.com/wxwy/psm_wma/pull/55",
+  "number": 55,
+  "state": "open",
+  "draft": true,
+  "merged": false,
+  "base": "codex/g2-view-vae-cache-issue52",
+  "base_sha": "d36caf0fc35f3a84b739dc8df58ab992eb9f6917",
+  "observed_head": "codex/g2-stage-a-offline-issue54",
+  "observed_head_sha": "27ccadb051a71adf348ee14206d7ac59e9195d36",
+  "created_at": "2026-11-17T02:40:50Z",
+  "readback_body_matches_created": true,
+  "implementation_scope_files": 90,
+  "implementation_runtime_profile_files": 19,
+  "implementation_test_assets": 7,
+  "implementation_other_files": 64,
+  "following_commit": "BOOKKEEPING_ONLY_NOT_IMPLEMENTATION_AUTHORITY",
+  "unchanged_refs": {
+    "V3": "fe1089fb925d86697bebd9bef18608d9c9eae87b",
+    "PR53": "d36caf0fc35f3a84b739dc8df58ab992eb9f6917",
+    "nav_G2": "70eb7b447e65d793b0ebe18b258291ce46f057c1"
+  }
+}

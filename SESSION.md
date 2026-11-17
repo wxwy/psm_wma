@@ -1,6 +1,18 @@
 # 2026-11-17 CST — Issue54 Stage A / first batch: REVIEW (author CPU candidate)
 
-Implementation commit will be recorded by the following bookkeeping receipt;
+Published implementation:27ccadb051a71adf348ee14206d7ac59e9195d36 / unchanged
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2. DraftPR55
+https://github.com/wxwy/psm_wma/pull/55, stacked base PR53branch/d36caf0f;
+head codex/g2-stage-a-offline-issue54. GitHub readback Draft/open/unmerged,
+mergeable, exact head/base/body verified. Local read-only peer20/20 confirms
+all3P2 CODE closure on exact27ccadb0; no new substantive finding, no serverGate.
+201 committed source blobs match final tested hashes. implementation_scope.json
+and peer closure/rawlogs under revision1. CanonicalInbox append-only request
+records exactpair/PR/evidence/limits; following docs-only HEAD is bookkeeping,
+not a replacement for implementationSHA. V3fe1089fb/PR53d36caf0f/nav70eb7b44
+unchanged by publication. STOP for GPT independent real-source/four-sample gate.
+
+Implementation commit is recorded above and in the bookkeeping receipt;
 tested source hashes are frozen in docs/collab/codex/evidence/2026-11-17_issue54_a1/.
 Latest revision1 author checks: original283 identities retained/283PASS, StageA50PASS,
 producer/marker/viewer42PASS +3 dependency skips (mujoco2, pandas1), no failures/errors.
@@ -12,7 +24,7 @@ header, PNG actual decode/W-H gate, sub-mm Island retirement. Corrected without
 threshold change;5new distinct regressions include actual viewer loadEpisode,
 invalidPNG and realconnection-compute retirement/reappearance. Latest raw data
 and201 stable source hashes: evidence/revision1/gate.json (under path above).
-Old author/peer probes preserved; peer closure requested on correctedfixedSHA.
+Old author/peer probes preserved; local peer closure confirmed correctedfixedSHA.
 First batch implements profile/schema/completion, native projections/members,
 18task source rules, explicit top variant selection, candidate language/text bank,
 clean+marked owner/reference support and viewer. A2 only final-pixel/seal/spool
@@ -23,8 +35,8 @@ request; original702-line Library bytes remain unavailable, no original-read cla
 Runbook docs/build/PSM-WMA_G2_Stage_A_A1_implementation_2026-11-17.md.
 Publication precheck: fetch succeeded; advertised/tracking V3fe1089fb and
 PR53d36caf0f agree, HEAD..origin/V3 empty. No V3 or PR53 modification/merge.
-Next: correctedfixedSHA, scoped read-only peer closure required byAGENTS, stackedDraft,
-canonicalInbox handoff then STOP for GPT independent server review. No server/GPU/
+Next: GPT independent server review of published fixedSHA/Draft/canonicalInbox.
+No server/GPU/
 Wan/fullproduction/train/state15/jointalignment/newenvironment executed.
 
 Prior #53 status correction: exact778d1ed8/d5c1ffc7 APPROVE_CODE report at
