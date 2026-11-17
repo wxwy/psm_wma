@@ -138,6 +138,12 @@ whole native work directory. Archive bytes are additional disk use, reported
 separately. External retention/deletion is operator managed, never automated
 by this task; training v2 reads do not depend on archive availability.
 
+## GPT native asset-root verification (2026-11-17)
+
+The old operator template's `robocasa_repo=/mnt/data1/data_v2_0617/robocasa_repo` contains `robocasa/models/assets` as a symlink to `/mnt/data1/data_v2_0617/robocasa_vendor_build_20261023/robocasa/robocasa/models/assets`. The strict source closure validator correctly rejected a file whose resolved path fell outside the declared root (`asset escapes approved roots`). Actual RoboCasa files at both paths are identical through the symlink; the failure was the authorization boundary, not different model bytes.
+
+The template now uses the **canonical already-existing vendor asset repository** `/mnt/data1/data_v2_0617/robocasa_vendor_build_20261023/robocasa`. This explicit authorized root passed official two-real-episode preflight, F27 native generation and B1 Wan parity (81 states, 169 owners, 419 exact image pairs) on isolated fixed implementation `a169fea0`. It does **not** disable symlink containment, hash checks or raw-episode source identity. Frozen private configs on other hosts must use their independently verified canonical asset roots. Do not alter or delete either installed asset tree during production.
+
 ## Operator commands (NOT RUN on server here)
 
 Freeze Root from the new PR, original Child/nav and original PSM Python. Copy

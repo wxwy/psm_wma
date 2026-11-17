@@ -12,7 +12,7 @@
   "nav_repo": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/nav_sg",
   "nav_setup": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/nav_sg/.g2_catkin_ws/devel/setup.bash",
   "native_binary": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/nav_sg/.g2_catkin_ws/devel/lib/mapping/gt_direct_color_episode",
-  "robocasa_repo": "/mnt/data1/data_v2_0617/robocasa_repo",
+  "robocasa_repo": "/mnt/data1/data_v2_0617/robocasa_vendor_build_20261023/robocasa",
   "robosuite_repo": "/mnt/data1/data_v2_0617/robosuite_repo",
   "raw_root": "/mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic",
   "flat_root": "/mnt/data1/data_v2_0617/robocasa365_v3_flat/robocasa365-target-atomic",
