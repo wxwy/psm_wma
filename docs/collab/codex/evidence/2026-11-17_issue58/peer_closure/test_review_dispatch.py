@@ -41,8 +41,7 @@ def test_prepared_production_args_dispatch_original_queue(tmp_path, monkeypatch)
     producer.schedule(args,run_worker=worker)
     observation=dict(prepared_action=args.action,worker_calls=len(calls),selected=len(selection),
         scope='CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE')
-    write_json(Path(__file__).parent/'dispatch_observed.json',observation)
-    # A production handoff must leave plan-only mode; the original schedule
-    # above currently exits at its plan branch, before any worker call.
+    write_json(tmp_path/'dispatch_observed.json',observation)
+    # Preserve original dispatch regression without rewriting tracked evidence.
     assert args.action=='run' and args.manual_start and args.allow_experimental, observation
     assert len(calls)==1 and completed=={0}
