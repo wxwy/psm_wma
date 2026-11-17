@@ -3,8 +3,23 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 5367,
-      "sha256": "77ce0c9141624fcfd0fbfb1d3f5343c7944c9e1e228e07394c50c60b923aa865"
+      "bytes": 5644,
+      "sha256": "09dda906ee026b65773488da22992121cc5f88f34527ae0019f58e2d3a5a956a"
+    },
+    {
+      "path": "SERVER_RUNBOOK.md",
+      "bytes": 7109,
+      "sha256": "774ab6420b950c3c08a70f032f7f80872d4eaae51abff11cde988a3e1e040847"
+    },
+    {
+      "path": "cli-parser/help.log",
+      "bytes": 14554,
+      "sha256": "68eb21d588d8fcb873bc7856933483ec88aefd344927c04b3baf7059932fbeab"
+    },
+    {
+      "path": "cli-parser/probe.py",
+      "bytes": 362,
+      "sha256": "21de36403265afce51cf44751595ddef3aa9e9d1515f1dfb1801e9308aedb466"
     },
     {
       "path": "finalize_g2_d_evidence.py",
@@ -199,6 +214,6 @@
   ],
   "handoff": {
     "path": "docs/collab/codex/reviews/2026-11-17_G2_Model_D_Inference_Handoff.md",
-    "sha256": "a047d6eb98bc7682254cf4dafe55dd356f658cd272a75f49e76eaa3c8c2c8a4f"
+    "sha256": "46378586635c01012e04cc4f380c82d08362f5a904b1c5f1b53010f488a8b6fd"
   }
 }

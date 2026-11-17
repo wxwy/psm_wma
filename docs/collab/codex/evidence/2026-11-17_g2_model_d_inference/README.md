@@ -53,6 +53,10 @@ PASS requires no failure/error/skip; keep new rerun directories separate.
 step expects a previously captured source-before.sha256 in the target directory.
 The [captured receipt builder](finalize_g2_d_evidence.py) is the author's
 workspace orchestration, not a model or deployment entry point.
+[Existing server command/required inputs](SERVER_RUNBOOK.md) is a NOT_RUN
+execution-side template. Its actual CLI names and cache-off flag were checked
+by a parser-only help probe; no service/model was constructed, and it is not
+another pytest PASS count or GPU authorization.
 
 The managed CPU environment lacks pytest-custom_exit_code/xdist required by the
 root conftest. Final commands explicitly use `-c /dev/null --noconftest`; every
