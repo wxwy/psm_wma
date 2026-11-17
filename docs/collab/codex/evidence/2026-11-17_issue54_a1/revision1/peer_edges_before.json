@@ -1,0 +1,39 @@
+{
+  "root": "/tmp/issue54_a1_peer_edges_ovejc4jb",
+  "dimension_mismatch": {
+    "actual_png_wh": [
+      1,
+      1
+    ],
+    "projection_wh": [
+      64,
+      64
+    ],
+    "profile_complete": true,
+    "validator_accepts": true
+  },
+  "island_transition": {
+    "connection_certificates_valid": true,
+    "initial_plan_has_island": true,
+    "current_plan_has_island": false,
+    "events": [
+      {
+        "mode": "FULL",
+        "translation": 0.0
+      },
+      {
+        "mode": "ARROW_ONLY",
+        "translation": 0.00040000000000001146
+      },
+      {
+        "mode": "REUSE_ALL",
+        "translation": 0.00040000000000001146
+      }
+    ],
+    "package": {
+      "accepted": false,
+      "error_type": "ContractError",
+      "error": "asset no longer has a current native renderer membership plan"
+    }
+  }
+}

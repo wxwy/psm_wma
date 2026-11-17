@@ -133,3 +133,23 @@ def test_viewer_multroom_variants_count_canonical_directions():
     )
     assert result.returncode == 0, result.stderr
     assert "CANONICAL_COUNT_PASS" in result.stdout
+
+
+def test_actual_viewer_loads_new_profile_and_rejects_incomplete_header(tmp_path):
+    kwargs, _ = stage_case(tmp_path, OutputProfile(selection_top_variant="clean"))
+    target = tmp_path / "published"
+    package_stage_a(destination=target, **kwargs)
+    node = shutil.which("node")
+    assert node is not None
+    result = subprocess.run(
+        [
+            node,
+            str(Path(__file__).with_name("viewer_stage_a_load_episode_smoke.js")),
+            str(target),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "LOAD_EPISODE_HEADER_AND_OWNER_PASS" in result.stdout

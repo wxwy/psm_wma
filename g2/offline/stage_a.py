@@ -17,7 +17,12 @@ from pathlib import Path
 from g2.io import ContractError, digest, read_json, write_json
 from g2.latent_cache.contract import contained, fingerprint, safe_relative
 from g2.latent_cache.storage import atomic_json, build_lock
-from g2.latent_cache.streaming import ConsumerLimits, final_pixel_event, seal_source
+from g2.latent_cache.streaming import (
+    ConsumerLimits,
+    decode_final_png,
+    final_pixel_event,
+    seal_source,
+)
 from g2.views.render_connections import renderer_member_sets
 
 from .language_context import LanguageRecipe, TextBank
@@ -127,6 +132,7 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
     language = read_json(artifact("language.json")) if profile.language else None
     if language is not None and len(language["states"]) != len(states):
         raise ContractError("language state coverage differs")
+    verified_pngs = set()
     for vid, view in source["views"].items():
         if asset_identity(vid + ".png")["view_id"] != vid or not view["owners"]:
             raise ContractError("invalid sealed logical View")
@@ -149,8 +155,18 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
             ):
                 raise ContractError("sealed future View owner")
             if owner.get("path") is not None:
-                if digest(artifact(owner["path"])) != owner["sha256"]:
-                    raise ContractError("sealed final pixel source changed")
+                key = (
+                    owner["path"],
+                    owner["sha256"],
+                    owner["projection"]["width"],
+                    owner["projection"]["height"],
+                )
+                if key not in verified_pngs:
+                    path = artifact(owner["path"])
+                    if digest(path) != owner["sha256"]:
+                        raise ContractError("sealed final pixel source changed")
+                    decode_final_png(path.read_bytes(), expected_size=key[2:])
+                    verified_pngs.add(key)
             elif profile.view_vae or (
                 profile.sixview_png
                 if vid.startswith("sixview/")
@@ -231,9 +247,26 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
                 view = source["views"].get(vid)
                 index = view["state_records"][ordinal] if view else None
                 if index is None:
-                    raise ContractError(
-                        "spatial View references an absent source owner"
-                    )
+                    if (
+                        not view
+                        or value.get("current_member_plan_present") is not False
+                        or value["membership"]["native_entity_ids"]
+                        or value["availability"] not in ("absent", "disabled")
+                    ):
+                        raise ContractError(
+                            "spatial View references an absent source owner"
+                        )
+                    matches = [
+                        i
+                        for i, owner in enumerate(view["owners"])
+                        if {k: v for k, v in owner.items() if k != "projection"}
+                        == value["image_owner"]
+                    ]
+                    if len(matches) != 1 or value["image_owner"]["state_id"] >= ordinal:
+                        raise ContractError(
+                            "retired Island has no unique historical image owner"
+                        )
+                    index = matches[0]
                 owner = view["owners"][index]
                 if value["image_owner"] != {
                     k: v for k, v in owner.items() if k != "projection"
@@ -304,6 +337,8 @@ def validate_profile_episode(root, *, require_complete=True, expected_profile=No
             != digest(root / "episode_manifest.json")
             or complete.get("source_id") != source["source_id"]
             or complete.get("complete") is not True
+            or complete.get("episode_id") != manifest["episode_id"]
+            or complete.get("state_count") != len(states)
         ):
             raise ContractError(
                 "invalid Stage-A completion (A2 VAE verifier not yet integrated)"
@@ -543,6 +578,10 @@ def package_stage_a(
                                 variant=identity["variant"],
                                 source_fingerprint=source_fingerprint,
                                 profile_id=profile.to_dict()["profile_id"],
+                                expected_size=(
+                                    projection["width_px"],
+                                    projection["height_px"],
+                                ),
                             )
                             owner = dict(
                                 state_id=ordinal,
@@ -603,6 +642,8 @@ def package_stage_a(
                 )
                 if spatial is not None:
                     for vid, value in spatial["views"].items():
+                        if not value["current_member_plan_present"]:
+                            views[vid]["state_records"][ordinal] = None
                         kind = (
                             profile.sixview_png
                             if vid.startswith("sixview/")
@@ -643,6 +684,8 @@ def package_stage_a(
                 )
                 state_row.update(view_pngs=[], view_refs={}, islands=[])
                 for vid, owner in owners.items():
+                    if views[vid]["state_records"][ordinal] is None:
+                        continue
                     png_enabled = (
                         profile.sixview_png
                         if vid.startswith("sixview/")
@@ -759,6 +802,8 @@ def package_stage_a(
                     temporary / "COMPLETE.json",
                     dict(
                         schema=SCHEMA,
+                        episode_id=episode_id,
+                        state_count=len(rows),
                         source_id=source_id,
                         episode_manifest_sha256=digest(
                             temporary / "episode_manifest.json"

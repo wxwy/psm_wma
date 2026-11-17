@@ -1,0 +1,89 @@
+{
+  "A2": "IMMUTABLE_EVENTS_AND_SOURCE_SEAL_INTERFACE_ONLY_NO_WORKER_OR_ACK",
+  "approved_baseline_cases": 283,
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "missing_approved_test_identities": [],
+  "nav_remote_observed": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "nav_scope": "REMOTE_REF_ONLY_NO_NATIVE_RUNTIME_IN_THIS_WORKSPACE",
+  "not_run": [
+    "real PyArrow caption read",
+    "real RoboCasa/native/F27 samples",
+    "Wan/weights/GPU",
+    "A2 queue/consumer/ACK/recovery",
+    "new-source post-hoc VAE adapter",
+    "stream/post-hoc numerical parity",
+    "full production",
+    "state15",
+    "joint alignment",
+    "training",
+    "merge"
+  ],
+  "protected_pr53_core_and_tests_unchanged": [
+    "g2/latent_cache/__init__.py",
+    "g2/latent_cache/contract.py",
+    "g2/latent_cache/encoding.py",
+    "g2/latent_cache/source.py",
+    "g2/latent_cache/storage.py",
+    "g2/latent_cache/builder.py",
+    "tools/g2/build_spatial_view_vae_cache.py",
+    "tools/g2/verify_spatial_view_vae_cache.py",
+    "g2/tests/test_view_vae_builder.py",
+    "g2/tests/test_view_vae_canvas.py",
+    "g2/tests/test_view_vae_contract.py",
+    "g2/tests/test_view_vae_encoding.py",
+    "g2/tests/test_view_vae_namespace.py",
+    "g2/tests/test_view_vae_source.py",
+    "g2/tests/test_view_vae_storage.py",
+    "g2/tests/test_scene_view_event_index.py",
+    "g2/tests/test_scene_view_index_package.py",
+    "g2/tests/test_scene_graph_compact_v3.py"
+  ],
+  "results": {
+    "pr53": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 283
+    },
+    "producer_viewer": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 3,
+      "skipped_cases": [
+        {
+          "reason": "could not import 'mujoco': No module named 'mujoco'",
+          "test": "g2.tests.test_atomic_6views_run::test_scene_bound_geometry_without_layout_whitelist"
+        },
+        {
+          "reason": "could not import 'mujoco': No module named 'mujoco'",
+          "test": "g2.tests.test_robot_pose_marker::test_real_mujoco_chassis_frame_not_robot_root_anchor"
+        },
+        {
+          "reason": "could not import 'pandas': No module named 'pandas'",
+          "test": "g2.tests.test_viewer_install::test_catalog_preserves_local_global_indices_and_task_instruction"
+        }
+      ],
+      "tests": 45
+    },
+    "stage_a": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 50
+    }
+  },
+  "schema": "g2_issue54_a1_author_cpu_gate_v1",
+  "scope": "AUTHOR_CODE_CPU_NOT_GPT_SERVER_ACCEPTANCE",
+  "source_file_count": 201,
+  "source_fingerprints_stable": true,
+  "source_manifest_sha256": "81bb925fb386f69ace3906ce47086f1f9c0dbdbb0731c5c1e6814adef647f97b",
+  "static": {
+    "JS_syntax": "PASS",
+    "existing_rules": "F,E9",
+    "new_format": "PASS",
+    "new_rules": "E4,E7,E9,F,I"
+  },
+  "training_ready": false
+}

@@ -1,0 +1,125 @@
+usage: atomic_6views_run.py [-h] [--raw-root RAW_ROOT] [--mapping MAPPING]
+                            [--depth-root DEPTH_ROOT] [--require-depth]
+                            [--output-root OUTPUT_ROOT]
+                            [--output-profile OUTPUT_PROFILE]
+                            [--output-profile-sha256 OUTPUT_PROFILE_SHA256]
+                            [--flat-root FLAT_ROOT] [--plan-root PLAN_ROOT]
+                            [--work-root WORK_ROOT] [--task TASK]
+                            [--episodes-per-task EPISODES_PER_TASK]
+                            [--batch-size BATCH_SIZE] [--expected EXPECTED]
+                            [--resume] [--gpus GPUS]
+                            [--workers-per-gpu WORKERS_PER_GPU]
+                            [--max-attempts MAX_ATTEMPTS]
+                            [--ros-port-base ROS_PORT_BASE]
+                            [--nav-repo NAV_REPO]
+                            [--robocasa-repo ROBOCASA_REPO]
+                            [--robosuite-repo ROBOSUITE_REPO]
+                            [--nav-setup NAV_SETUP]
+                            [--native-binary NATIVE_BINARY] [--min-z MIN_Z]
+                            [--max-z MAX_Z] [--manual-start]
+                            [--allow-experimental]
+                            [--robot-pose-marker | --no-robot-pose-marker]
+                            [--robot-pose-marker-style {classic,game_arrow}]
+                            [--robot-pose-marker-outline | --no-robot-pose-marker-outline]
+                            [--robot-pose-marker-outline-width ROBOT_POSE_MARKER_OUTLINE_WIDTH]
+                            [--robot-pose-marker-outline-color ROBOT_POSE_MARKER_OUTLINE_COLOR]
+                            [--robot-pose-marker-fill-color ROBOT_POSE_MARKER_FILL_COLOR]
+                            [--robot-pose-marker-length-px ROBOT_POSE_MARKER_LENGTH_PX]
+                            [--robot-pose-marker-relief {flat,raised}]
+                            [--sim-color-only] [--scene-event-index]
+                            [--sg-event-index] [--sim-direct-material]
+                            [--lazy-texel-decode] [--sim-direct-geometry-only]
+                            [--keep-work] [--episode-id EPISODE_ID]
+                            [--ros-port ROS_PORT] [--gpu GPU]
+                            {scan,plan,run,work}
+
+One-command RoboCasa G2 Full-Map F27 production from ORIGINAL open-source
+data. The entrypoint itself discovers source episode IDs, generates every
+missing intermediate, and reuses completed source-bound artifacts. It NEVER
+depends on acceptance-folder snapshots or prebuilt flat/depth caches. GPU work
+is launched ONLY by explicit 'run --manual-start --allow-experimental' in the
+foreground. Pipeline per episode: source -> factual metadata -> 10cm GT grid
+-> nav_sg GT -> 5cm first-frame preview color -> native Room/SG bootstrap ->
+sealed native bundle -> lean F27 VisualGeom roster -> all 2Hz original GT
+states -> native Room-bound dynamic snapshots/Islands -> native 10mm visual
+deltas -> native 10cm/10mm dualmap -> F27 -> compact PNG/SG in user-selected
+output tree. Official nav_sg is kept in a distinct process from PSM-WMA (both
+use package g2). No guessed semantic on/inside relations or human
+certification is asserted.
+
+positional arguments:
+  {scan,plan,run,work}
+
+options:
+  -h, --help            show this help message and exit
+  --raw-root RAW_ROOT
+  --mapping MAPPING
+  --depth-root DEPTH_ROOT
+  --require-depth
+  --output-root OUTPUT_ROOT
+  --output-profile OUTPUT_PROFILE
+                        explicit Stage-A output profile JSON; requires new
+                        staging
+  --output-profile-sha256 OUTPUT_PROFILE_SHA256
+                        dispatch-time immutable profile file identity
+  --flat-root FLAT_ROOT
+                        authoritative frame.task_index/tasks.parquet caption
+                        source
+  --plan-root PLAN_ROOT
+  --work-root WORK_ROOT
+  --task TASK
+  --episodes-per-task EPISODES_PER_TASK
+                        default ALL episodes per selected task
+  --batch-size BATCH_SIZE
+  --expected EXPECTED
+  --resume
+  --gpus GPUS
+  --workers-per-gpu WORKERS_PER_GPU
+  --max-attempts MAX_ATTEMPTS
+  --ros-port-base ROS_PORT_BASE
+  --nav-repo NAV_REPO
+  --robocasa-repo ROBOCASA_REPO
+  --robosuite-repo ROBOSUITE_REPO
+  --nav-setup NAV_SETUP
+  --native-binary NATIVE_BINARY
+  --min-z MIN_Z
+  --max-z MAX_Z
+  --manual-start
+  --allow-experimental
+  --robot-pose-marker, --no-robot-pose-marker
+                        include chassis marker on final floor-top PNGs
+                        (default: on)
+  --robot-pose-marker-style {classic,game_arrow}
+                        final floor-top marker style (default: game_arrow)
+  --robot-pose-marker-outline, --no-robot-pose-marker-outline
+                        enable gray-white marker outline (default: on)
+  --robot-pose-marker-outline-width ROBOT_POSE_MARKER_OUTLINE_WIDTH
+                        marker outline thickness in final PNG pixels
+  --robot-pose-marker-outline-color ROBOT_POSE_MARKER_OUTLINE_COLOR
+                        marker outline color #RRGGBB
+  --robot-pose-marker-fill-color ROBOT_POSE_MARKER_FILL_COLOR
+                        marker fill color #RRGGBB
+  --robot-pose-marker-length-px ROBOT_POSE_MARKER_LENGTH_PX
+                        marker front-to-rear size in pixels; all other
+                        dimensions scale with it
+  --robot-pose-marker-relief {flat,raised}
+                        2D flat or subtle raised/2.5D shading
+  --sim-color-only      experimental RoboCasa GT: F27 direct 10mm color, no
+                        nav_states
+  --scene-event-index   EXPERIMENT ONLY: 1mm/1deg scene event rendering +
+                        compact v2 indexed Views
+  --sg-event-index      EXPERIMENT ONLY: 1mm/1degree chassis, lossless SG
+                        keyframes/deltas, compact v3
+  --sim-direct-material
+                        EXPERIMENT ONLY: eliminate 10mm color voxel and
+                        native_color_only stages
+  --lazy-texel-decode   EXPERIMENT ONLY: on-demand source texel decoding in
+                        F27
+  --sim-direct-geometry-only
+                        experimental RoboCasa Full Map 10cm GT native Room/SG;
+                        never RGB-D
+  --keep-work           retain large temporary artifacts (default: clean on
+                        success)
+  --episode-id EPISODE_ID
+  --ros-port ROS_PORT
+  --gpu GPU

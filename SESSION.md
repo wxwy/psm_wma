@@ -2,11 +2,17 @@
 
 Implementation commit will be recorded by the following bookkeeping receipt;
 tested source hashes are frozen in docs/collab/codex/evidence/2026-11-17_issue54_a1/.
-Final author checks: original283 identities retained/283PASS, StageA45PASS,
+Latest revision1 author checks: original283 identities retained/283PASS, StageA50PASS,
 producer/marker/viewer42PASS +3 dependency skips (mujoco2, pandas1), no failures/errors.
 New modules selectedRuff/format, existingF/E9, JS syntax/smoke, CLIhelps and
 synthetic protocol/strict validator PASS; source fingerprints stable. #53 core,
 original283 testfiles, Child/Gitlink unchanged. Existing evidence is immutable.
+Initial fixeddab6ebf5 local peer review found3P2 despite45PASS: viewer completion
+header, PNG actual decode/W-H gate, sub-mm Island retirement. Corrected without
+threshold change;5new distinct regressions include actual viewer loadEpisode,
+invalidPNG and realconnection-compute retirement/reappearance. Latest raw data
+and201 stable source hashes: evidence/revision1/gate.json (under path above).
+Old author/peer probes preserved; peer closure requested on correctedfixedSHA.
 First batch implements profile/schema/completion, native projections/members,
 18task source rules, explicit top variant selection, candidate language/text bank,
 clean+marked owner/reference support and viewer. A2 only final-pixel/seal/spool
@@ -17,7 +23,7 @@ request; original702-line Library bytes remain unavailable, no original-read cla
 Runbook docs/build/PSM-WMA_G2_Stage_A_A1_implementation_2026-11-17.md.
 Publication precheck: fetch succeeded; advertised/tracking V3fe1089fb and
 PR53d36caf0f agree, HEAD..origin/V3 empty. No V3 or PR53 modification/merge.
-Next: fixedSHA, scoped read-only peer check required byAGENTS, stackedDraft,
+Next: correctedfixedSHA, scoped read-only peer closure required byAGENTS, stackedDraft,
 canonicalInbox handoff then STOP for GPT independent server review. No server/GPU/
 Wan/fullproduction/train/state15/jointalignment/newenvironment executed.
 

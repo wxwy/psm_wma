@@ -132,3 +132,13 @@ bash "$OUT/commands.sh"
 GPT 按固定实现 SHA 在原有服务器环境独立复验：CloseBlenderLid/000000、CloseFridge/000502、NavigateKitchen/002104、PickPlaceDrawerToCounter/005077。先读原 source/flat mapping 核实身份、磁盘/进程与现有环境，不照搬旧 GPU 编号，不复制私有资产。指定独立 plan/work/staging，使用原 producer `--output-profile tools/g2/profiles/stage_a_candidate_clean.json --flat-root <真实flat>`，保留原 direct-geometry/material/scene-event 参数；不能把所有任务的“第一个 Episode”当作上述固定编号。测试链路和 18 角色、四条真实 caption/绑定/SG事实/增强文本/selection 对照未验收前，不冻结语言或启动全量。
 
 NOT_RUN：真实 PyArrow caption/原始 RoboCasa/native/F27 四样例、真实 Wan/GPU、新协议流式/事后数值一致、性能/磁盘/队列吞吐、全量生产、state15、联合对齐、训练、合并。已接受的 #53 202 记录旧真实样例仅作为既有基础，不覆盖上述新增范围。
+
+## 本地只读复核后的限定修正
+
+首个候选 `dab6ebf5` 的独立本地代码复核发现三项 P2；原始探针和观察原样保存在证据 `revision1/`，不冒充 GPT 服务器结论：
+
+1. COMPLETE 补齐并验证 `episode_id/state_count`，新增调用真实 viewer `loadEpisode` 的 Node 回归，确认读取两个变体各自的历史 owner；损坏完成头仍拒绝。
+2. 最终 PNG 在交付事件和 source 校验时实际 verify/decode，要求 RGB PNG 且实际 W/H 等于 owner 投影；重复引用按内容/投影缓存解码核验，避免逐引用重复解码。只核对 magic/hash 不能代替这一检查。
+3. 连接阈值变化与 scene render 阈值分开：0.4mm 合法移动导致 Island 退役时，当前成员为空、状态索引为 absent/None；历史图片 owner 留作证据，不沿用历史成员。再出现时可引用其合法旧 owner，不改 1mm/1°，不重新发明 Island。新回归使用真实 connection compute/证书验证，覆盖退役与再出现。
+
+最新 CPU/静态数量、完整命令和源码身份以 `docs/collab/codex/evidence/2026-11-17_issue54_a1/revision1/gate.json` 为准；父目录结果保留为首候选历史，不重复相加。

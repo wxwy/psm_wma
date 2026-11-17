@@ -1,0 +1,868 @@
+{
+  "GT_TaskEntitySet": {
+    "binding_status": "BOUND",
+    "current_on_inside_or_success": "NOT_INFERRED",
+    "destination_policy": "TASK_INITIALIZATION_ROLES",
+    "entity_ids": [
+      "entity_2",
+      "entity_3"
+    ],
+    "excluded_initialization_keys": [
+      "src_fixture"
+    ],
+    "failures": [],
+    "grounding": "SIMULATION_INITIALIZATION_GT",
+    "historical_generator_identity": "NOT_CERTIFIED_BY_PUBLIC_REFERENCE",
+    "initialization_metadata_sha256": "7bac0d39cc58d6e35f7b9e3525e3fdb30fc31e6e9dc5bb34ca253af78511d963",
+    "roles": [
+      {
+        "binding_status": "BOUND",
+        "entity_ids": [
+          "entity_2",
+          "entity_3"
+        ],
+        "evidence": {
+          "kind": "OFFICIAL_FIXTURE_REF",
+          "pointer": "/fixture_refs/target_fixture"
+        },
+        "role": "target",
+        "source_instance_id": "fixture:target",
+        "source_part_ids": [
+          "part_2",
+          "part_3"
+        ],
+        "source_part_to_entity_ids": {
+          "part_2": [
+            "entity_2"
+          ],
+          "part_3": [
+            "entity_3"
+          ]
+        }
+      }
+    ],
+    "rule_source_revision": "425684d332f135f5b30a40b321f52d15a0fe9250",
+    "rule_version": "robocasa_atomic_initialization_roles_v1_candidate",
+    "schema": "g2_gt_task_entity_set_v1",
+    "source_instance_part_to_entity_ids": {
+      "fixture:source": {
+        "part_0": [
+          "entity_0"
+        ],
+        "part_1": [
+          "entity_1"
+        ],
+        "part_4": [
+          "entity_4"
+        ],
+        "part_5": [
+          "entity_5"
+        ],
+        "part_6": [
+          "entity_6"
+        ],
+        "part_7": [
+          "entity_7"
+        ]
+      },
+      "fixture:target": {
+        "part_2": [
+          "entity_2"
+        ],
+        "part_3": [
+          "entity_3"
+        ]
+      }
+    },
+    "task_class": "NavigateKitchen",
+    "task_entity_set_id": "a8b66d391170f0e97cc9115cee4c4d424ffa6c22994046e6ed39cf22ac28628f"
+  },
+  "candidate_text": {
+    "enhanced_text": "Navigate to the target counter.\nCurrent spatial facts (candidate; no inferred contact/state): [{\"entity_id\":\"entity_2\",\"island_id\":\"island_0_entity_2\",\"name\":\"object\",\"role\":\"target\",\"room_uid\":0,\"source_instance_id\":\"fixture:target\",\"source_part_id\":\"part_2\"},{\"entity_id\":\"entity_3\",\"island_id\":\"island_0_entity_2\",\"name\":\"object\",\"role\":\"target\",\"room_uid\":0,\"source_instance_id\":\"fixture:target\",\"source_part_id\":\"part_3\"}]",
+    "original_preserved": true,
+    "original_sha256": "f5e9f2ea5df84ac049313f7fd68aab1675abe191a64f1b9531db667ed1d518ad",
+    "original_text": "Navigate to the target counter.",
+    "recipe": {
+      "budget_unit": "UNICODE_CHARACTERS_NOT_TOKENS",
+      "decimal_places": 3,
+      "include_aabb": false,
+      "max_characters": 4096,
+      "production_template_frozen": false,
+      "recipe_id": "7e13b2c0b8b3dfbcb7adea378597bf813eea57c25c62aaee8c1ca804b1790cbf",
+      "units": "m",
+      "version": "g2_current_spatial_facts_candidate_v1"
+    },
+    "text_id": "8e157362653d4b3237b1d71cf1cb085980b0dcfb10bbf457d4eda40dcc617470"
+  },
+  "example_kind": "SYNTHETIC_CPU_PROTOCOL_NOT_ROBOCASA_ACCEPTANCE",
+  "spatial_metadata": {
+    "entity_to_view_ids": {
+      "entity_0": [
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ],
+      "entity_1": [
+        "sixview/minus_Y"
+      ],
+      "entity_2": [
+        "islands/island_0_entity_2/plus_X",
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ],
+      "entity_3": [
+        "islands/island_0_entity_2/plus_X",
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ],
+      "entity_4": [
+        "sixview/minus_Y"
+      ],
+      "entity_5": [
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ]
+    },
+    "frame": 0,
+    "geometry_provenance": {
+      "geometry_source_mode": "ORACLE_GRID",
+      "native_build_source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "object_frontend_status": "ORACLE_DIAGNOSTIC",
+      "source_mode": "oracle_diagnostic",
+      "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "structure_mode": "ORACLE_DIAGNOSTIC"
+    },
+    "geometry_version": "cf39eb114be7c8e79c08a9477a3ee84e5d8af0eb2dd58dc5c2bc4b003d233f57",
+    "object_to_view_ids": {
+      "entity_2": [
+        "islands/island_0_entity_2/plus_X",
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ],
+      "entity_3": [
+        "islands/island_0_entity_2/plus_X",
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ],
+      "entity_4": [
+        "sixview/minus_Y"
+      ],
+      "entity_5": [
+        "sixview/floor_top",
+        "sixview/floor_top_w_rbs"
+      ]
+    },
+    "scene_id": "TEST_ONLY_CONNECTION_V2",
+    "schema": "g2_state_spatial_metadata_v1",
+    "spatial_metadata_id": "8a10c09fe2aa652f0d5903d6fcc87e94d49aa28c392e0b56bd3eb6e3426efec3",
+    "state_id": 0,
+    "unavailable_geometry": "NOT_INFERRED_FROM_RGB",
+    "view_catalog": {
+      "islands/island_0_entity_2/minus_X": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_2",
+        "native_entity_ids": [
+          "entity_2",
+          "entity_3"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_2/minus_X",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_2/minus_Y": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_2",
+        "native_entity_ids": [
+          "entity_2",
+          "entity_3"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_2/minus_Y",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_2/plus_X": {
+        "availability": "ready",
+        "image_owner_state": 0,
+        "island_id": "island_0_entity_2",
+        "native_entity_ids": [
+          "entity_2",
+          "entity_3"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_2/plus_X",
+        "reason": null,
+        "renderer_image_generated": true,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_2/plus_Y": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_2",
+        "native_entity_ids": [
+          "entity_2",
+          "entity_3"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_2/plus_Y",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_5/minus_X": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_5",
+        "native_entity_ids": [
+          "entity_5"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_5/minus_X",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_5/minus_Y": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_5",
+        "native_entity_ids": [
+          "entity_5"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_5/minus_Y",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_5/plus_X": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_5",
+        "native_entity_ids": [
+          "entity_5"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_5/plus_X",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "islands/island_0_entity_5/plus_Y": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": "island_0_entity_5",
+        "native_entity_ids": [
+          "entity_5"
+        ],
+        "native_view": "rooms/0/islands/island_0_entity_5/plus_Y",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "sixview/floor_top": {
+        "availability": "ready",
+        "image_owner_state": 0,
+        "island_id": null,
+        "native_entity_ids": [
+          "entity_0",
+          "entity_2",
+          "entity_3",
+          "entity_5"
+        ],
+        "native_view": "rooms/0/floor_top",
+        "reason": null,
+        "renderer_image_generated": true,
+        "room_uid": 0
+      },
+      "sixview/floor_top_w_rbs": {
+        "availability": "ready",
+        "image_owner_state": 0,
+        "island_id": null,
+        "native_entity_ids": [
+          "entity_0",
+          "entity_2",
+          "entity_3",
+          "entity_5"
+        ],
+        "native_view": "rooms/0/floor_top",
+        "reason": null,
+        "renderer_image_generated": true,
+        "room_uid": 0
+      },
+      "sixview/minus_X": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": null,
+        "native_entity_ids": [],
+        "native_view": "rooms/0/minus_X",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "sixview/minus_Y": {
+        "availability": "ready",
+        "image_owner_state": 0,
+        "island_id": null,
+        "native_entity_ids": [
+          "entity_1",
+          "entity_4"
+        ],
+        "native_view": "rooms/0/minus_Y",
+        "reason": null,
+        "renderer_image_generated": true,
+        "room_uid": 0
+      },
+      "sixview/plus_X": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": null,
+        "native_entity_ids": [],
+        "native_view": "rooms/0/plus_X",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "sixview/plus_Y": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": null,
+        "native_entity_ids": [],
+        "native_view": "rooms/0/plus_Y",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      },
+      "sixview/upper_up": {
+        "availability": "absent",
+        "image_owner_state": null,
+        "island_id": null,
+        "native_entity_ids": [
+          "entity_4",
+          "entity_7"
+        ],
+        "native_view": "rooms/0/upper_up",
+        "reason": "NO_OBJECT_WITH_PROJECTABLE_SURFACE_IN_NATIVE_DIRECTION",
+        "renderer_image_generated": false,
+        "room_uid": 0
+      }
+    },
+    "views": {
+      "islands/island_0_entity_2/plus_X": {
+        "absent_reason": null,
+        "availability": "ready",
+        "canonical_view_id": "islands/island_0_entity_2/plus_X",
+        "current_member_plan_present": true,
+        "geometry_version": "cf39eb114be7c8e79c08a9477a3ee84e5d8af0eb2dd58dc5c2bc4b003d233f57",
+        "image_owner": {
+          "content_projection_key": "95080945f17a252db1d9267a66c258298369214748fb0666ebb56d8112d3b20a",
+          "event_id": "0e571b70ace0168c865ec078577d3e69b8822ba47ac7d25d82a6525434a6cb1d",
+          "frame": 0,
+          "marker_drawn": false,
+          "native_projection_sha256": "431abeb28c10fee6818abf6ee894ed4ae96cc8e7e931c2ce4c2d85c8cf22c689",
+          "path": "state_000000_frame_000000/islands/island_0_entity_2/plus_X.png",
+          "scene_geometry_snapshot_sha256": "5eb97f206d4ed512568e4fafff1058ad79fb8d5b5b23ac57790a96b4d9f197ae",
+          "scene_geometry_source_frame": 0,
+          "scene_geometry_source_state": 0,
+          "sha256": "7d635ed170a9a63bd7c1a5a5fee1ac8e931a9a92835bfb8d2d4735f06031bacd",
+          "state_id": 0
+        },
+        "image_projection": {
+          "axis": "+X",
+          "crop": "EXACT_RENDERER_FRAME_NO_VAE_PADDING",
+          "depth_kind": null,
+          "forward_world": [
+            0,
+            0,
+            -1
+          ],
+          "height_px": 64,
+          "kind": "ORTHOGRAPHIC_RAYS_NOT_UNIQUE_XYZ",
+          "meters_per_pixel": 0.0625,
+          "physical_height_m": 4.0,
+          "physical_width_m": 4.0,
+          "pixel_center_offset": 0.5,
+          "pixel_center_span_m": [
+            3.9375,
+            3.9375
+          ],
+          "pixel_to_uv": "u=uv_min[0]+(col+0.5)*mpp; v=uv_min[1]+(H-row-0.5)*mpp",
+          "projection_id": "03cbf3061ca1b861a06d73f5fc66bb1af792118148b99aef789001f6eae59eba",
+          "reference_frame": {
+            "axes_world": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "geometry_coordinates": "world",
+            "origin_world": [
+              0,
+              0,
+              0
+            ],
+            "provenance": "NATIVE_SOURCE_WALL_GEOMETRY_REFERENCE",
+            "reference_wall_ids": [
+              "entity_1"
+            ],
+            "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "right_world": [
+            1,
+            0,
+            0
+          ],
+          "room_bounds_max": null,
+          "room_bounds_min": null,
+          "rows_flipped": true,
+          "units": "m",
+          "up_world": [
+            0,
+            1,
+            0
+          ],
+          "uv_min_room": [
+            -2,
+            -2
+          ],
+          "width_px": 64
+        },
+        "is_floor_top": false,
+        "island_id": "island_0_entity_2",
+        "marker_drawn": false,
+        "marker_enabled": false,
+        "membership": {
+          "native_entity_ids": [
+            "entity_2",
+            "entity_3"
+          ],
+          "object_entity_ids": [
+            "entity_2",
+            "entity_3"
+          ],
+          "source": "ACTUAL_RENDERER_MEMBER_PLAN_NOT_PIXEL_VISIBILITY"
+        },
+        "membership_version": "9a4f04c9255aab9fd3f30fa5e0a71d7a231fdaf79a151b964200939d394a50b6",
+        "native_view": "rooms/0/islands/island_0_entity_2/plus_X",
+        "room_uid": 0,
+        "variant": "clean",
+        "view_id": "islands/island_0_entity_2/plus_X"
+      },
+      "sixview/floor_top": {
+        "absent_reason": null,
+        "availability": "ready",
+        "canonical_view_id": "sixview/floor_top",
+        "current_member_plan_present": true,
+        "geometry_version": "cf39eb114be7c8e79c08a9477a3ee84e5d8af0eb2dd58dc5c2bc4b003d233f57",
+        "image_owner": {
+          "content_projection_key": "959ae9c10f693420e6f59dd91b923ef47a02d45438d12bff56c493e10182b38b",
+          "event_id": "58dbdcdff838f2b2db640b866bcaa55af39999b2badcb667266f788cca655091",
+          "frame": 0,
+          "marker_drawn": false,
+          "native_projection_sha256": "dbd0ac68c08b15089752be4f470a70780569f096ce936e3df72dff8f3ea05572",
+          "path": "state_000000_frame_000000/sixview/floor_top.png",
+          "scene_geometry_snapshot_sha256": "5eb97f206d4ed512568e4fafff1058ad79fb8d5b5b23ac57790a96b4d9f197ae",
+          "scene_geometry_source_frame": 0,
+          "scene_geometry_source_state": 0,
+          "sha256": "7d635ed170a9a63bd7c1a5a5fee1ac8e931a9a92835bfb8d2d4735f06031bacd",
+          "state_id": 0
+        },
+        "image_projection": {
+          "axis": "floor_top",
+          "crop": "EXACT_RENDERER_FRAME_NO_VAE_PADDING",
+          "depth_kind": null,
+          "forward_world": [
+            0,
+            0,
+            -1
+          ],
+          "height_px": 64,
+          "kind": "ORTHOGRAPHIC_RAYS_NOT_UNIQUE_XYZ",
+          "meters_per_pixel": 0.0625,
+          "physical_height_m": 4.0,
+          "physical_width_m": 4.0,
+          "pixel_center_offset": 0.5,
+          "pixel_center_span_m": [
+            3.9375,
+            3.9375
+          ],
+          "pixel_to_uv": "u=uv_min[0]+(col+0.5)*mpp; v=uv_min[1]+(H-row-0.5)*mpp",
+          "projection_id": "1b1e16cc3fc428fb7e51919fa4995dd534cc5069ef60a53dfdff95bf6f242140",
+          "reference_frame": {
+            "axes_world": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "geometry_coordinates": "world",
+            "origin_world": [
+              0,
+              0,
+              0
+            ],
+            "provenance": "NATIVE_SOURCE_WALL_GEOMETRY_REFERENCE",
+            "reference_wall_ids": [
+              "entity_1"
+            ],
+            "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "right_world": [
+            1,
+            0,
+            0
+          ],
+          "room_bounds_max": null,
+          "room_bounds_min": null,
+          "rows_flipped": true,
+          "units": "m",
+          "up_world": [
+            0,
+            1,
+            0
+          ],
+          "uv_min_room": [
+            -2,
+            -2
+          ],
+          "width_px": 64
+        },
+        "is_floor_top": true,
+        "island_id": null,
+        "marker_drawn": false,
+        "marker_enabled": false,
+        "membership": {
+          "native_entity_ids": [
+            "entity_0",
+            "entity_2",
+            "entity_3",
+            "entity_5"
+          ],
+          "object_entity_ids": [
+            "entity_2",
+            "entity_3",
+            "entity_5"
+          ],
+          "source": "ACTUAL_RENDERER_MEMBER_PLAN_NOT_PIXEL_VISIBILITY"
+        },
+        "membership_version": "8975d03164d6925a1100d49cab1b9f2f5312133527d10afa5e88cda07336c96a",
+        "native_view": "rooms/0/floor_top",
+        "room_uid": 0,
+        "variant": "clean",
+        "view_id": "sixview/floor_top"
+      },
+      "sixview/floor_top_w_rbs": {
+        "absent_reason": null,
+        "availability": "ready",
+        "canonical_view_id": "sixview/floor_top",
+        "current_member_plan_present": true,
+        "geometry_version": "cf39eb114be7c8e79c08a9477a3ee84e5d8af0eb2dd58dc5c2bc4b003d233f57",
+        "image_owner": {
+          "content_projection_key": "caca52128646a8de62ef4d8e661f362ac7de1386b105714d309604b8ff581dfe",
+          "event_id": "98de3072e10efa8d7cdf1b5ac347b362e48ae945d4b77a6f670fd065f6f6d548",
+          "frame": 0,
+          "marker_drawn": true,
+          "native_projection_sha256": "dbd0ac68c08b15089752be4f470a70780569f096ce936e3df72dff8f3ea05572",
+          "path": "state_000000_frame_000000/sixview/floor_top_w_rbs.png",
+          "scene_geometry_snapshot_sha256": "5eb97f206d4ed512568e4fafff1058ad79fb8d5b5b23ac57790a96b4d9f197ae",
+          "scene_geometry_source_frame": 0,
+          "scene_geometry_source_state": 0,
+          "sha256": "2247775ab0baa35dcf30ba1fbbc1a0adb75a6d4b27e6e44cde70f5a71df1bf14",
+          "state_id": 0
+        },
+        "image_projection": {
+          "axis": "floor_top",
+          "crop": "EXACT_RENDERER_FRAME_NO_VAE_PADDING",
+          "depth_kind": null,
+          "forward_world": [
+            0,
+            0,
+            -1
+          ],
+          "height_px": 64,
+          "kind": "ORTHOGRAPHIC_RAYS_NOT_UNIQUE_XYZ",
+          "meters_per_pixel": 0.0625,
+          "physical_height_m": 4.0,
+          "physical_width_m": 4.0,
+          "pixel_center_offset": 0.5,
+          "pixel_center_span_m": [
+            3.9375,
+            3.9375
+          ],
+          "pixel_to_uv": "u=uv_min[0]+(col+0.5)*mpp; v=uv_min[1]+(H-row-0.5)*mpp",
+          "projection_id": "1b1e16cc3fc428fb7e51919fa4995dd534cc5069ef60a53dfdff95bf6f242140",
+          "reference_frame": {
+            "axes_world": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "geometry_coordinates": "world",
+            "origin_world": [
+              0,
+              0,
+              0
+            ],
+            "provenance": "NATIVE_SOURCE_WALL_GEOMETRY_REFERENCE",
+            "reference_wall_ids": [
+              "entity_1"
+            ],
+            "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "right_world": [
+            1,
+            0,
+            0
+          ],
+          "room_bounds_max": null,
+          "room_bounds_min": null,
+          "rows_flipped": true,
+          "units": "m",
+          "up_world": [
+            0,
+            1,
+            0
+          ],
+          "uv_min_room": [
+            -2,
+            -2
+          ],
+          "width_px": 64
+        },
+        "is_floor_top": true,
+        "island_id": null,
+        "marker_drawn": true,
+        "marker_enabled": true,
+        "membership": {
+          "native_entity_ids": [
+            "entity_0",
+            "entity_2",
+            "entity_3",
+            "entity_5"
+          ],
+          "object_entity_ids": [
+            "entity_2",
+            "entity_3",
+            "entity_5"
+          ],
+          "source": "ACTUAL_RENDERER_MEMBER_PLAN_NOT_PIXEL_VISIBILITY"
+        },
+        "membership_version": "8975d03164d6925a1100d49cab1b9f2f5312133527d10afa5e88cda07336c96a",
+        "native_view": "rooms/0/floor_top",
+        "room_uid": 0,
+        "variant": "w_rbs",
+        "view_id": "sixview/floor_top_w_rbs"
+      },
+      "sixview/minus_Y": {
+        "absent_reason": null,
+        "availability": "ready",
+        "canonical_view_id": "sixview/minus_Y",
+        "current_member_plan_present": true,
+        "geometry_version": "cf39eb114be7c8e79c08a9477a3ee84e5d8af0eb2dd58dc5c2bc4b003d233f57",
+        "image_owner": {
+          "content_projection_key": "abfd4914f85b4cf07890a037b6e660ab242ff94972f8033f2bd9c27498520eb7",
+          "event_id": "207e158c07d6e7c02321ad78eaced40d26e93312782857819663fe27eabd575e",
+          "frame": 0,
+          "marker_drawn": false,
+          "native_projection_sha256": "6aa0541b09019f6d21280049ad4e29d445c981fbec7c73feb1a7b64478c60d73",
+          "path": "state_000000_frame_000000/sixview/minus_Y.png",
+          "scene_geometry_snapshot_sha256": "5eb97f206d4ed512568e4fafff1058ad79fb8d5b5b23ac57790a96b4d9f197ae",
+          "scene_geometry_source_frame": 0,
+          "scene_geometry_source_state": 0,
+          "sha256": "7d635ed170a9a63bd7c1a5a5fee1ac8e931a9a92835bfb8d2d4735f06031bacd",
+          "state_id": 0
+        },
+        "image_projection": {
+          "axis": "-Y",
+          "crop": "EXACT_RENDERER_FRAME_NO_VAE_PADDING",
+          "depth_kind": null,
+          "forward_world": [
+            0,
+            0,
+            -1
+          ],
+          "height_px": 64,
+          "kind": "ORTHOGRAPHIC_RAYS_NOT_UNIQUE_XYZ",
+          "meters_per_pixel": 0.0625,
+          "physical_height_m": 4.0,
+          "physical_width_m": 4.0,
+          "pixel_center_offset": 0.5,
+          "pixel_center_span_m": [
+            3.9375,
+            3.9375
+          ],
+          "pixel_to_uv": "u=uv_min[0]+(col+0.5)*mpp; v=uv_min[1]+(H-row-0.5)*mpp",
+          "projection_id": "f17b4604e9cb2ade7e106927485c5b4856af4c1e5f17ba19b743c29dda8ae7df",
+          "reference_frame": {
+            "axes_world": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "geometry_coordinates": "world",
+            "origin_world": [
+              0,
+              0,
+              0
+            ],
+            "provenance": "NATIVE_SOURCE_WALL_GEOMETRY_REFERENCE",
+            "reference_wall_ids": [
+              "entity_1"
+            ],
+            "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "right_world": [
+            1,
+            0,
+            0
+          ],
+          "room_bounds_max": null,
+          "room_bounds_min": null,
+          "rows_flipped": true,
+          "units": "m",
+          "up_world": [
+            0,
+            1,
+            0
+          ],
+          "uv_min_room": [
+            -2,
+            -2
+          ],
+          "width_px": 64
+        },
+        "is_floor_top": false,
+        "island_id": null,
+        "marker_drawn": false,
+        "marker_enabled": false,
+        "membership": {
+          "native_entity_ids": [
+            "entity_1",
+            "entity_4"
+          ],
+          "object_entity_ids": [
+            "entity_4"
+          ],
+          "source": "ACTUAL_RENDERER_MEMBER_PLAN_NOT_PIXEL_VISIBILITY"
+        },
+        "membership_version": "c681fc67f3e579a96c74a30c52d02aa793055a8e6179eabc9b5b2ffb544ba4f7",
+        "native_view": "rooms/0/minus_Y",
+        "room_uid": 0,
+        "variant": "clean",
+        "view_id": "sixview/minus_Y"
+      }
+    },
+    "world_frame": "world"
+  },
+  "state": {
+    "frame": 0,
+    "geometry_version": "cf39eb114be7c8e79c08a9477a3ee84e5d8af0eb2dd58dc5c2bc4b003d233f57",
+    "islands": [
+      "island_0_entity_2"
+    ],
+    "raw_robot_pose": {
+      "coordinate_frame": "world",
+      "forward_axis": "body_local_positive_X",
+      "forward_world": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "frame": 0,
+      "position_world": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "source_body": "TEST_ONLY_CHASSIS",
+      "source_frame": 0
+    },
+    "scene_graph": "state_000000_frame_000000/scene_graph.json.gz",
+    "selection": {
+      "mandatory_view_ids": [
+        "sixview/floor_top"
+      ],
+      "membership_ids": {
+        "islands/island_0_entity_2/plus_X": "9a4f04c9255aab9fd3f30fa5e0a71d7a231fdaf79a151b964200939d394a50b6",
+        "sixview/floor_top": "8975d03164d6925a1100d49cab1b9f2f5312133527d10afa5e88cda07336c96a"
+      },
+      "reasons": {
+        "islands/island_0_entity_2/plus_X": {
+          "mandatory_top": false,
+          "task_entity_ids": [
+            "entity_2",
+            "entity_3"
+          ]
+        },
+        "sixview/floor_top": {
+          "mandatory_top": true,
+          "task_entity_ids": [
+            "entity_2",
+            "entity_3"
+          ]
+        }
+      },
+      "schema": "g2_selected_views_v1",
+      "selected_view_ids": [
+        "islands/island_0_entity_2/plus_X",
+        "sixview/floor_top"
+      ],
+      "selection_is_training_default": false,
+      "top_variant": "clean",
+      "unassociated_task_entity_ids": []
+    },
+    "spatial_metadata": "state_000000_frame_000000/spatial_metadata.json",
+    "state_id": 0,
+    "task_entity_set_id": "a8b66d391170f0e97cc9115cee4c4d424ffa6c22994046e6ed39cf22ac28628f",
+    "view_pngs": [
+      "islands/island_0_entity_2/plus_X.png",
+      "sixview/floor_top.png",
+      "sixview/floor_top_w_rbs.png",
+      "sixview/minus_Y.png"
+    ],
+    "view_refs": {}
+  }
+}

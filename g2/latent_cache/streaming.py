@@ -8,6 +8,7 @@ VAE completion. No legacy COMPLETE marker is synthesized to break that cycle.
 from __future__ import annotations
 
 import hashlib
+import io
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -40,9 +41,35 @@ class FinalPixelEvent:
     source_fingerprint: str
     profile_id: str
     pixel_record_key: str
+    size_wh: tuple[int, int]
 
     def descriptor(self):
-        return {k: v for k, v in self.__dict__.items() if k != "png_bytes"}
+        return {
+            k: (list(v) if k == "size_wh" else v)
+            for k, v in self.__dict__.items()
+            if k != "png_bytes"
+        }
+
+
+def decode_final_png(data, *, expected_size=None):
+    """Verify PNG structure and decode RGB pixels, not just the magic bytes."""
+    from PIL import Image
+
+    try:
+        with Image.open(io.BytesIO(data)) as image:
+            if image.format != "PNG" or image.mode != "RGB":
+                raise CacheError("final spatial input must be an RGB PNG")
+            size = image.size
+            image.verify()
+        with Image.open(io.BytesIO(data)) as image:
+            image.load()
+        if expected_size is not None and tuple(expected_size) != size:
+            raise CacheError("final PNG dimensions differ from owner projection")
+        return size
+    except (OSError, ValueError, SyntaxError) as exc:
+        raise CacheError(
+            "final PNG decoding/projection check failed: " + str(exc)
+        ) from exc
 
 
 def final_pixel_event(
@@ -54,14 +81,14 @@ def final_pixel_event(
     variant,
     source_fingerprint,
     profile_id,
+    expected_size=None,
 ):
     safe_relative(view_id)
     safe_relative(canonical_view_id)
     if variant not in ("clean", "w_rbs"):
         raise CacheError("unknown finalized pixel variant")
     data = Path(path).read_bytes()
-    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
-        raise CacheError("final event must contain a real PNG")
+    size = decode_final_png(data, expected_size=expected_size)
     sha = hashlib.sha256(data).hexdigest()
     identity = dict(
         episode_key=episode_key,
@@ -84,6 +111,7 @@ def final_pixel_event(
         # Numeric reuse is pixel+View+recipe based, separate from publication
         # scope. Language/template changes must not require new VAE math.
         fingerprint(dict(view_id=view_id, rgb_sha256=sha)),
+        size,
     )
 
 

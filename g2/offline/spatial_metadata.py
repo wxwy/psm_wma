@@ -161,14 +161,31 @@ def state_metadata(snapshot, assets, member_plan, *, state_id, owner_rows):
         if vid in views:
             raise ContractError("duplicate logical spatial asset")
         native = asset["native_view"]
-        if native not in member_plan:
-            raise ContractError(
-                "asset no longer has a current native renderer membership plan"
+        owner = owner_rows[vid]
+        plan = member_plan.get(native)
+        retired = plan is None
+        if retired:
+            # The independent connection threshold can be crossed by sub-mm
+            # motion. Keep the raster's history without resurrecting members.
+            parts = native.split("/")
+            if (
+                not vid.startswith("islands/")
+                or owner["state_id"] >= state_id
+                or len(parts) != 5
+                or parts[0] != "rooms"
+                or parts[2] != "islands"
+                or parts[3] != vid.split("/")[1]
+                or not parts[1].isdigit()
+            ):
+                raise ContractError(
+                    "new asset has no current native renderer membership plan"
+                )
+            plan = dict(
+                native_entity_ids=[], room_uid=int(parts[1]), island_id=parts[3]
             )
-        members = sorted(set(member_plan[native]["native_entity_ids"]))
+        members = sorted(set(plan["native_entity_ids"]))
         if set(members) - set(entities):
             raise ContractError("renderer member is not in current SG")
-        owner = owner_rows[vid]
         if owner["state_id"] > state_id or owner["frame"] > snapshot["frame_id"]:
             raise ContractError("future image owner")
         projection = projection_from_renderer(owner["projection"])
@@ -180,9 +197,17 @@ def state_metadata(snapshot, assets, member_plan, *, state_id, owner_rows):
         views[vid] = dict(
             **identity,
             native_view=native,
-            room_uid=member_plan[native]["room_uid"],
-            island_id=member_plan[native]["island_id"],
-            availability="reference" if owner["state_id"] < state_id else "ready",
+            room_uid=plan["room_uid"],
+            island_id=plan["island_id"],
+            availability="absent"
+            if retired
+            else "reference"
+            if owner["state_id"] < state_id
+            else "ready",
+            current_member_plan_present=not retired,
+            absent_reason="NATIVE_ISLAND_RETIRED_IN_CURRENT_MEMBER_PLAN"
+            if retired
+            else None,
             image_owner={k: v for k, v in owner.items() if k != "projection"},
             image_projection=projection,
             geometry_version=geometry_id,
@@ -335,4 +360,18 @@ def view_catalog(snapshot, member_plan, spatial, profile, renderer_catalog):
                 if existing
                 else None,
             )
+    for vid, value in spatial["views"].items():
+        if value["current_member_plan_present"]:
+            continue
+        enabled = profile.island_png or profile.view_vae
+        result[vid] = dict(
+            native_view=value["native_view"],
+            room_uid=value["room_uid"],
+            island_id=value["island_id"],
+            native_entity_ids=[],
+            availability="absent" if enabled else "disabled",
+            reason=value["absent_reason"] if enabled else "PRODUCT_DISABLED",
+            renderer_image_generated=None,
+            image_owner_state=value["image_owner"]["state_id"],
+        )
     return result
