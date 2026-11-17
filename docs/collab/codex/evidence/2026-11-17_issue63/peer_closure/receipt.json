@@ -1,0 +1,58 @@
+{
+  "all_live_sources_match_fixed_git_blobs": true,
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "closure_evidence_sha256": {
+    "collect_closure_receipt.py": "f4a38c5e685f91d308660b4ed67314000bede145fe993e0256e720fecfebc236",
+    "probe.log": "e8b3afaa201d02125a7f6bb55933361b35121800bf62faf593bade5565905e7d",
+    "probe.xml": "9f99d58230efc6ff6e88b2a83f7447bda920eae15695ed434aed1a84c1f65050"
+  },
+  "finding": "P2-63-PEER-1",
+  "finding_status": "CLOSED",
+  "formal_root": "a169fea07016b80b3639646cc9925ac70b6525a8",
+  "gpt_server_or_capacity_approval": false,
+  "junit": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 5
+  },
+  "narrow_product_and_test_paths": [
+    "g2/latent_cache/final_source.py",
+    "g2/tests/test_source_retirement_faults.py"
+  ],
+  "nav_sha": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "new_confirmed_p1_p2": [],
+  "observed_head": "a169fea07016b80b3639646cc9925ac70b6525a8",
+  "preserved_previous_evidence_sha256": {
+    "REPORT.md": "76683dfc686620e2b11aebe3933fb837418af938e53bc1e6acc54812f4589861",
+    "independent.log": "eb876165d764bf4982a489cf24507322fa796fc1c9b3c0636d30bfc2c9fbd4b8",
+    "receipt.json": "1c9ddc7cad0c55a3170c7cc1ddfc3f6f98e077b213b4c1b52018f44e326614ad",
+    "test_independent_protocol.py": "cbc86a7b29e529fd5ace678fe5a10a78303aaefe25d71e470c23df2959883a1f"
+  },
+  "previous_rejected_root": "98172110677b7631f5b7974003ffae664bdd0b85",
+  "python": "/workspace/.venvs/g2-view-vae-52/bin/python",
+  "rejected_mutation_observations": [
+    {
+      "active_jobs": 1,
+      "completed_jobs": 0,
+      "fixture": "/tmp/g2_issue63_peer_closure_a169fea0/test_final_receipt_cannot_disa0",
+      "original_sql_capsule_binding_preserved": true
+    },
+    {
+      "active_jobs": 1,
+      "completed_jobs": 0,
+      "fixture": "/tmp/g2_issue63_peer_closure_a169fea0/test_final_receipt_cannot_disa1",
+      "original_sql_capsule_binding_preserved": true
+    },
+    {
+      "active_jobs": 1,
+      "completed_jobs": 0,
+      "fixture": "/tmp/g2_issue63_peer_closure_a169fea0/test_final_receipt_cannot_disa2",
+      "original_sql_capsule_binding_preserved": true
+    }
+  ],
+  "source_count": 235,
+  "source_hashes_match_author_revision2": true,
+  "training_ready": false,
+  "verdict": "LOCAL_CODE_REVIEW_PASS"
+}

@@ -12,6 +12,15 @@ source `5e6a2ceb702acd724076692f42ca4fc60380192b`). Unchanged Child/Gitlink:
 is recorded by `source_commit_bind.py`, the PR and canonical Inbox, rather
 than inferred from a later documentation-only HEAD.
 
+**Final corrected implementation:** `a169fea07016b80b3639646cc9925ac70b6525a8`.
+[DraftPR64](https://github.com/wxwy/psm_wma/pull/64), stacked on unchanged PR62.
+`revision2/implementation_scope.json` binds all235 tested files to that exact
+Git commit. `peer_closure/REPORT.md` records same-pair LOCAL_CODE_REVIEW_PASS,
+original5 probes independently PASS; P2-63-PEER-1 closed. Both were added in a
+following evidence-only bookkeeping commit, which is not the formal Root.
+Original rejected98172110 evidence remains unchanged. GPT/server/capacity
+acceptance is still pending, not implied by local peer closure.
+
 ## Reproduce
 
 Use an **existing** interpreter. No install/new environment is part of this
