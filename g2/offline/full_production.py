@@ -654,7 +654,10 @@ class Supervisor:
         from .process_control import start_owned, terminate_owned
 
         child = start_owned(
-            command, env=isolated_env(self.cfg), run_id=self.run_id, cwd=ROOT
+            command,
+            env=isolated_env(self.cfg, renderer=True),
+            run_id=self.run_id,
+            cwd=ROOT,
         )
         while child.poll() is None:
             if self.stopping():
