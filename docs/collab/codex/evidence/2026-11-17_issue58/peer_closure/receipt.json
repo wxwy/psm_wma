@@ -1,0 +1,19 @@
+{
+  "schema": "g2_issue58_local_peer_closure_v1",
+  "formal_root": "a3e0048b40e1392d0ff92d4fce8da4dc278447f6",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "previous_root": "3b13e6a5e511bd2cae448f3c6f40233b88a99413",
+  "verdict": "LOCAL_NARROW_REVIEW_PASS",
+  "closed_findings": [{"severity": "P1", "file": "g2/offline/full_production.py", "line": 584,
+    "cause": "plan-only args returned into production dispatch", "status": "CLOSED",
+    "observed_action": "run", "observed_worker_calls": 1}],
+  "new_blocking_findings": [],
+  "probe_sha256": "0fcb570fc6b34a2d7ea6a1e019c4be2f99adb91498b6f2ce2966d466b974f788",
+  "original_red_evidence_preserved": true,
+  "focused_results": {"passed": 4, "failures": 0, "errors": 0, "skipped": 0, "seconds": 14.90},
+  "product_changes": false,
+  "GPU_used": false,
+  "private_server_data": false,
+  "GPT_independent_acceptance": false,
+  "full_production_authorized": false
+}

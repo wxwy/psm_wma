@@ -1,0 +1,90 @@
+{
+  "schema": "issue58_gpt_20261117_true_supervisor_two_sample_v1",
+  "technical_verdict": "APPROVE_CODE_TWO_REAL_SAMPLES_HOLD_FULL_CORPUS_CAPACITY",
+  "implementation_root": "5e6a2ceb702acd724076692f42ca4fc60380192b",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "latest_test_only_head": "e36bc9468eb581685372257b297276cf221232ce",
+  "cpu_fixed": {
+    "pr53": 283,
+    "stageA": 150,
+    "related": 45,
+    "oneShot": 23,
+    "total": 501,
+    "failed": 0,
+    "skipped": 0
+  },
+  "official_supervisor": {
+    "sample_mode": true,
+    "selected": 2,
+    "run_exit": 0,
+    "phase": "DONE",
+    "elapsed_seconds": 914.6711125895381,
+    "peak_native_work_bytes": 1406645096,
+    "peak_pending_png_bytes": 1022125,
+    "final_spool_bytes": 1320435,
+    "spool": {
+      "active_jobs": 0,
+      "active_records": 0,
+      "completed_jobs": 2,
+      "failed_jobs": 0,
+      "pending_inputs": 0
+    }
+  },
+  "real": {
+    "CloseBlenderLid/000000": {
+      "states": 37,
+      "views": 4,
+      "owner_records": 89,
+      "old_new_rgb_exact": 111,
+      "f27_seconds": 184.24,
+      "independent_real_wan_reencode_max_abs": 0
+    },
+    "CloseFridge/000502": {
+      "states": 44,
+      "views": 8,
+      "owner_records": 80,
+      "old_new_rgb_exact": 308,
+      "f27_seconds": 230.67,
+      "independent_real_wan_reencode_max_abs": 0
+    }
+  },
+  "real_wan_gpu7": {
+    "reencoded_owner_records": 169,
+    "max_abs": 0,
+    "wall_seconds": 22.56,
+    "peak_torch_alloc_gib": 5.308,
+    "recipe_id": "3ee9c48399143866b2a0061f3cee01bff35842228f639380d60602d6402e2fc1"
+  },
+  "disk_estimates": {
+    "data1_free_gb": 101,
+    "old_views_gb": 67,
+    "data1_free_after_old_delete_rough_gb": 168,
+    "actual_two_ep_total_mb": 115.4,
+    "per_ep_spatial_source_mib": [
+      32.302,
+      28.958
+    ],
+    "projection_for_9126_rough_gb": 500,
+    "estimated_all_json_gzip1_per_ep_mb": [
+      22.9,
+      26.5
+    ],
+    "gzip_was_only_ram_diagnostic": true,
+    "capacity_gate": "NOT_READY"
+  },
+  "evidence_sha256": {
+    "sample_result": "0b4cea4c4d9bf8eca05bef1d2a2d005866e62bb6b1e38b7532e3407bc74cfb8b",
+    "real_independent_audit": "833467c3650dae7054a5df6020bdd32dc51bd6a4a4320ab19ad9fff93a14f7b7",
+    "wan_reencode": "593898dda2287afa3a79c9836c5d5e3d528fb21d22b3fc73d86702464038d913"
+  },
+  "not_performed": [
+    "multi-renderer32 load",
+    "same-resource render-only A/B",
+    "9126 full run",
+    "training",
+    "old-view deletion",
+    "production changes to metadata compression"
+  ],
+  "old_data_modified": false,
+  "existing_environments_removed": false
+}

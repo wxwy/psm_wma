@@ -1,0 +1,44 @@
+{
+  "schema": "g2_issue58_publication_before_bookkeeping_v1",
+  "observed_utc": "2026-11-17 10:59:45 UTC",
+  "formal_root": "a3e0048b40e1392d0ff92d4fce8da4dc278447f6",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "prs": [
+    {
+      "number": 62,
+      "url": "https://github.com/wxwy/psm_wma/pull/62",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "head": "codex/g2-one-shot-production-issue58",
+      "head_sha": "a3e0048b40e1392d0ff92d4fce8da4dc278447f6",
+      "base": "codex/g2-stage-a-offline-issue54",
+      "base_sha": "29f9993d2543b8bb638f135aac9dd7172b71baf0"
+    },
+    {
+      "number": 55,
+      "url": "https://github.com/wxwy/psm_wma/pull/55",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "head": "codex/g2-stage-a-offline-issue54",
+      "head_sha": "29f9993d2543b8bb638f135aac9dd7172b71baf0",
+      "base": "codex/g2-view-vae-cache-issue52",
+      "base_sha": "d36caf0fc35f3a84b739dc8df58ab992eb9f6917"
+    },
+    {
+      "number": 53,
+      "url": "https://github.com/wxwy/psm_wma/pull/53",
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "head": "codex/g2-view-vae-cache-issue52",
+      "head_sha": "d36caf0fc35f3a84b739dc8df58ab992eb9f6917",
+      "base": "V3",
+      "base_sha": "55cc5181abf8ca4b1e2a3a6b415699c457cc080b"
+    }
+  ],
+  "local_peer": "LOCAL_NARROW_REVIEW_PASS_EXACT_PAIR_NOT_GPT_APPROVAL",
+  "real_gpu_full_production_started": false,
+  "original_data_deleted": false
+}

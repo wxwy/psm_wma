@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="8" skipped="0" tests="20" time="20.779" timestamp="2026-11-17T10:29:55.654521+00:00" hostname="82d6a371db9c"><testcase classname="g2.tests.test_one_shot_ledger" name="test_over_100k_events_1001_jobs_bounded_active_working_set" time="13.090" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_gc_hard_crash_is_atomic_and_idempotent[receipt_before_gc]" time="0.043" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_gc_hard_crash_is_atomic_and_idempotent[gc_before_commit]" time="0.038" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_gc_hard_crash_is_atomic_and_idempotent[gc_after_commit]" time="0.050" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_concurrent_reader_and_two_gc_writers_preserve_identity" time="0.026" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_pending_inputs_and_damaged_tombstones_never_reclaim" time="0.036" /><testcase classname="g2.tests.test_one_shot_work" name="test_completed_work_waits_for_renderer_lease_then_reclaims" time="1.377" /><testcase classname="g2.tests.test_one_shot_work" name="test_producer_crash_before_seal_preserves_and_resumes_work" time="0.886" /><testcase classname="g2.tests.test_one_shot_work" name="test_cleanup_partial_delete_crash_recovers_without_touching_other_work" time="1.178" /><testcase classname="g2.tests.test_one_shot_work" name="test_mismatched_lease_and_protected_or_unowned_roots_refuse_cleanup" time="0.889" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_default_full_config_is_b1_one_corpus_and_no_implicit_batch_or_delete" time="0.002"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_default_full_config_is_b10')
+
+    def test_default_full_config_is_b1_one_corpus_and_no_implicit_batch_or_delete(tmp_path):
+&gt;       cfg, path = config_case(tmp_path)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_default_full_config_is_b10/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change0]" time="0.003"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli0')
+change = {'renderer_gpus': [0, 1]}
+
+    @pytest.mark.parametrize(
+        "change",
+        [
+            dict(renderer_gpus=[0, 1]),
+            dict(workers_per_gpu=4),
+            dict(expected_selected_episodes=48),
+            dict(root_sha="main"),
+        ],
+    )
+    def test_full_configuration_conflicts_reject(tmp_path, change):
+&gt;       cfg, path = config_case(tmp_path)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli0/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change1]" time="0.002"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli1')
+change = {'workers_per_gpu': 4}
+
+    @pytest.mark.parametrize(
+        "change",
+        [
+            dict(renderer_gpus=[0, 1]),
+            dict(workers_per_gpu=4),
+            dict(expected_selected_episodes=48),
+            dict(root_sha="main"),
+        ],
+    )
+    def test_full_configuration_conflicts_reject(tmp_path, change):
+&gt;       cfg, path = config_case(tmp_path)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli1/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change2]" time="0.002"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli2')
+change = {'expected_selected_episodes': 48}
+
+    @pytest.mark.parametrize(
+        "change",
+        [
+            dict(renderer_gpus=[0, 1]),
+            dict(workers_per_gpu=4),
+            dict(expected_selected_episodes=48),
+            dict(root_sha="main"),
+        ],
+    )
+    def test_full_configuration_conflicts_reject(tmp_path, change):
+&gt;       cfg, path = config_case(tmp_path)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli2/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change3]" time="0.002"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli3')
+change = {'root_sha': 'main'}
+
+    @pytest.mark.parametrize(
+        "change",
+        [
+            dict(renderer_gpus=[0, 1]),
+            dict(workers_per_gpu=4),
+            dict(expected_selected_episodes=48),
+            dict(root_sha="main"),
+        ],
+    )
+    def test_full_configuration_conflicts_reject(tmp_path, change):
+&gt;       cfg, path = config_case(tmp_path)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_full_configuration_confli3/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_original_queue_consumes_all_92_plan_packages_once" time="0.003"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_original_queue_consumes_a0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f81bc1a3a70&gt;
+
+    def test_original_queue_consumes_all_92_plan_packages_once(tmp_path, monkeypatch):
+&gt;       cfg, _ = config_case(tmp_path)
+                 ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_original_queue_consumes_a0/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_low_disk_and_active_job_admission_backpressure_preserve_work" time="0.003"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_low_disk_and_active_job_a0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f81bc8d24b0&gt;
+
+    def test_low_disk_and_active_job_admission_backpressure_preserve_work(
+        tmp_path, monkeypatch
+    ):
+&gt;       cfg, _ = config_case(tmp_path)
+                 ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:165: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_low_disk_and_active_job_a0/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_stop_resume_controls_only_tagged_process_groups" time="0.010" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_old_output_paths_mapping_and_stop_configuration_reject" time="0.002"><failure message="g2.latent_cache.contract.CacheError: unknown production config fields">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_old_output_paths_mapping_0')
+
+    def test_old_output_paths_mapping_and_stop_configuration_reject(tmp_path):
+&gt;       cfg, path = config_case(tmp_path)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_one_shot_supervisor.py:230: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/tests/test_one_shot_supervisor.py:60: in config_case
+    value = full.load_config(path)
+            ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-agent/pytest-105/test_old_output_paths_mapping_0/config.json')
+
+    def load_config(path):
+        value = read_json(path)
+        if not isinstance(value, dict) or set(value) - set(DEFAULTS) - set(PATH_FIELDS):
+&gt;           raise CacheError("unknown production config fields")
+E           g2.latent_cache.contract.CacheError: unknown production config fields
+
+g2/offline/full_production.py:98: CacheError</failure></testcase><testcase classname="g2.tests.test_one_shot_supervisor" name="test_repository_launcher_is_inert_for_help_and_requires_manual_start" time="0.115" /></testsuite></testsuites>

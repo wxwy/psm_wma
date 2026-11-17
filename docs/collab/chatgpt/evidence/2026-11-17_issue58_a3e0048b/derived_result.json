@@ -1,0 +1,46 @@
+{
+  "schema": "g2_issue58_gpt_scoped_review_2026_11_17",
+  "verdict": "CPU_CODE_GATE_PASS_REAL_CACHED_GC_PASS_REAL_GPU_GATE_BLOCKED_RESOURCE",
+  "root": "a3e0048b40e1392d0ff92d4fce8da4dc278447f6",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "independent_cpu": {
+    "pr53": 283,
+    "stageA": 150,
+    "related": 45,
+    "oneShot": 22,
+    "total": 500,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "a1AndPeerExtra": 4
+  },
+  "source_fingerprints": 222,
+  "sqlite": {
+    "simulated_ack_events": 101101,
+    "completed_jobs": 1001,
+    "max_active_cap": 128,
+    "peak_active_events": 101,
+    "sqlite_bytes": 1163264
+  },
+  "real_preexisting_cache_gc": {
+    "samples": 2,
+    "actual_f27_wan_owner_records": 169,
+    "source_cache_hashes_preserved": true,
+    "completed_spool_jobs": 2,
+    "active_events": 0,
+    "work_removed": true,
+    "real_GPU_reencode_this_turn": false
+  },
+  "preflight": {
+    "model_recipe_accepted": true,
+    "isolated_native_cpp_binary_built": true,
+    "refusal": "selected GPUs have unowned processes; stop them manually before launch: [3594807,3594808]",
+    "all_candidate_GPU4_7_preoccupied": true
+  },
+  "real_live_oneShot_F27_Wan_AB": "NOT_RUN_BLOCKED_RESOURCE",
+  "approval_for_full_dataset": false,
+  "full_production_not_started": true,
+  "old_views_not_deleted": true,
+  "model_training_not_started": true,
+  "server_raw_evidence_path": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue58_review_a3e0048b_20261117/evidence"
+}

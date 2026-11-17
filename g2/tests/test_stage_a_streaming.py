@@ -734,17 +734,22 @@ def test_posthoc_complete_release_hands_off_pending_stream_without_reencode(tmp_
     assert encoder.calls == 0 and posthoc.calls == 5
     assert spool.job_status(job) == "complete" and spool.stats()["pending_inputs"] == 0
     assert spool.stats()["failed_jobs"] == spool.stats()["unfinished_jobs"] == 0
-    with spool._db() as db:
-        import json
+    # Issue58 archives completed rows; the identical handoff proof now lives
+    # in the durable tombstone, while the active event ledger must be empty.
+    import json
 
-        row = db.execute(
-            "SELECT completion_receipt FROM jobs WHERE id=?", (job,)
-        ).fetchone()
-        proof = json.loads(row[0])
-        assert proof["verified_cache"]["recipe_id"] == spool.recipe["recipe_id"]
+    archived = spool.completed_receipt(job)
+    proof = json.loads(archived["job"]["completion_receipt"])
+    assert proof["verified_cache"]["recipe_id"] == spool.recipe["recipe_id"]
+    assert archived["event_status_counts"] == {"completed_by_cache": 1}
+    with spool._db() as db:
         assert (
-            db.execute("SELECT status FROM events WHERE job=?", (job,)).fetchone()[0]
-            == "completed_by_cache"
+            db.execute("SELECT COUNT(*) FROM events WHERE job=?", (job,)).fetchone()[0]
+            == 0
+        )
+        assert (
+            db.execute("SELECT COUNT(*) FROM jobs WHERE id=?", (job,)).fetchone()[0]
+            == 0
         )
     assert not EventConsumer(spool, encoder).step()
     assert validate_profile_episode(target)["profile_complete"]

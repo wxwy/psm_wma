@@ -1,0 +1,16 @@
+{
+  "schema": "g2_issue58_local_peer_review_v1",
+  "formal_root": "3b13e6a5e511bd2cae448f3c6f40233b88a99413",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "verdict": "REQUEST_CHANGES",
+  "findings": [{"severity": "P1", "file": "g2/offline/full_production.py", "line": 558,
+    "cause": "prepare_plan returns args.action=plan to Supervisor.execute; original scheduler never dispatches workers",
+    "observed_action": "plan", "observed_worker_calls": 0}],
+  "new_author_tests_independent_pass": 22,
+  "independent_probe_expected_fail": 1,
+  "probe_sha256": "0fcb570fc6b34a2d7ea6a1e019c4be2f99adb91498b6f2ce2966d466b974f788",
+  "product_changes": false,
+  "GPU_used": false,
+  "private_server_data": false,
+  "GPT_independent_acceptance": false
+}

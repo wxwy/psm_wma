@@ -1,0 +1,9 @@
+{
+  "database_bytes": 1159168,
+  "jobs": 1001,
+  "logical_events": 101101,
+  "max_records": 128,
+  "peak_active_events": 101,
+  "peak_active_jobs": 1,
+  "scope": "SQLITE_STRESS_NOT_RENDER_THROUGHPUT"
+}

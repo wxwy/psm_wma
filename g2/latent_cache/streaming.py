@@ -188,7 +188,7 @@ class EventSpool:
         self.max_result_bytes = max_result_bytes
         self.max_records = max_records
         binding = dict(
-            schema="g2_final_pixel_spool_v2",
+            schema="g2_final_pixel_spool_v3",
             recipe=recipe,
             max_events=limits.max_events,
             max_spool_bytes=limits.max_spool_bytes,
@@ -216,10 +216,13 @@ class EventSpool:
                 db.execute("PRAGMA journal_mode=DELETE")
                 db.execute("PRAGMA synchronous=FULL")
                 db.execute(
-                    "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, scope TEXT NOT NULL, target TEXT NOT NULL UNIQUE, source_ready TEXT, sealed TEXT, done INTEGER NOT NULL DEFAULT 0, error TEXT, completion_receipt TEXT)"
+                    "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, scope TEXT NOT NULL, target TEXT NOT NULL UNIQUE, source_ready TEXT, sealed TEXT, done INTEGER NOT NULL DEFAULT 0, error TEXT, completion_receipt TEXT, work_lease TEXT, cleanup_after REAL NOT NULL DEFAULT 0)"
                 )
                 db.execute(
                     "CREATE TABLE IF NOT EXISTS events (id TEXT NOT NULL, job TEXT NOT NULL, descriptor TEXT NOT NULL, png BLOB, status TEXT NOT NULL, result TEXT, result_sha TEXT, error TEXT, PRIMARY KEY(job,id))"
+                )
+                db.execute(
+                    "CREATE TABLE IF NOT EXISTS completed (id TEXT PRIMARY KEY,target TEXT NOT NULL UNIQUE,scope TEXT NOT NULL,receipt_path TEXT NOT NULL,receipt_sha TEXT NOT NULL)"
                 )
                 db.execute("CREATE INDEX IF NOT EXISTS event_status ON events(status)")
                 db.execute("CREATE INDEX IF NOT EXISTS event_result ON events(result)")
@@ -290,6 +293,16 @@ class EventSpool:
         job = fingerprint(scope)
         with build_lock(target_lock(target)), self._db() as db:
             db.execute("BEGIN IMMEDIATE")
+            from .ledger_archive import check_identity, lookup
+
+            completed = lookup(self, db, target=target)
+            if completed is not None:
+                if json.loads(completed["job"]["scope"]) != scope:
+                    raise CacheError(
+                        "archived target is bound to another source/recipe"
+                    )
+                check_identity(completed)
+                return completed["job"]["id"]
             row = db.execute(
                 "SELECT * FROM jobs WHERE target=?", (str(target),)
             ).fetchone()
@@ -312,7 +325,13 @@ class EventSpool:
 
         row = db.execute("SELECT * FROM jobs WHERE id=?", (job,)).fetchone()
         if row is None:
-            raise CacheError("unknown producer job")
+            from .ledger_archive import lookup
+
+            completed = lookup(self, db, job=job)
+            if completed is None:
+                raise CacheError("unknown producer job")
+            row = dict(completed["job"], archived=True)
+
         if row["error"] and not allow_failed:
             raise DeliveryDeferred("consumer failed; inputs retained: " + row["error"])
         return row, json.loads(row["scope"])
@@ -336,6 +355,10 @@ class EventSpool:
             with self._db() as db:
                 db.execute("BEGIN IMMEDIATE")
                 row, scope = self._scope(db, job)
+                if isinstance(row, dict) and row.get("archived"):
+                    from .ledger_archive import duplicate, lookup
+
+                    return duplicate(self, lookup(self, db, job=job), event)
                 for key in ("episode_key", "source_fingerprint", "profile_id"):
                     if event.descriptor()[key] != scope[key]:
                         raise CacheError("event belongs to another production scope")
@@ -359,7 +382,7 @@ class EventSpool:
                 total = db.execute("SELECT COUNT(*) FROM events").fetchone()[0]
                 if total >= self.max_records:
                     raise DeliveryDeferred(
-                        "finite record ledger budget reached; rotate spool after verified completion"
+                        "active record ledger budget reached; await verified episode archival"
                     )
                 if (
                     count < self.limits.max_events
@@ -419,6 +442,11 @@ class EventSpool:
 
         with self._db() as db:
             row, scope = self._scope(db, job, allow_failed=True)
+        if isinstance(row, dict) and row.get("archived"):
+            from .ledger_archive import check_identity
+
+            check_identity(self.completed_receipt(job))
+            return
         plan = scan_source(row["target"])
         source = read_json(Path(row["target"]) / "spatial_source.json")
         if plan["episode_key"] != scope["episode_key"] or any(
@@ -444,6 +472,11 @@ class EventSpool:
             }
         if digest(Path(row["target"]) / "spatial_source.json") != row["source_ready"]:
             raise CacheError("offered source changed during recovery")
+        if isinstance(row, dict) and row.get("archived"):
+            from .ledger_archive import check_identity
+
+            check_identity(self.completed_receipt(job))
+            return
         source = read_json(contained(row["target"], "spatial_source.json"))
         for vid, view in sorted(source["views"].items()):
             for owner in view["owners"]:
@@ -476,6 +509,11 @@ class EventSpool:
 
         with self._db() as db:
             row, scope = self._scope(db, job)
+        if isinstance(row, dict) and row.get("archived"):
+            from .ledger_archive import check_identity
+
+            check_identity(self.completed_receipt(job))
+            return
         plan = scan_source(row["target"])
         source = read_json(Path(row["target"]) / "spatial_source.json")
         if (
@@ -485,7 +523,9 @@ class EventSpool:
             raise CacheError("sealed episode differs from registered producer")
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
-            self._scope(db, job)
+            current, _ = self._scope(db, job)
+            if isinstance(current, dict) and current.get("archived"):
+                return
             # All compact owners must refer to actual final byte events. Events
             # eliminated by compaction can remain private chunks, never index rows.
             for eid, desc in source["final_pixel_events"].items():
@@ -557,6 +597,14 @@ class EventSpool:
                 statuses=statuses,
                 failed_jobs=failed,
                 unfinished_jobs=unfinished,
+                active_jobs=db.execute("SELECT COUNT(*) FROM jobs").fetchone()[0],
+                active_records=db.execute("SELECT COUNT(*) FROM events").fetchone()[0],
+                completed_jobs=db.execute("SELECT COUNT(*) FROM completed").fetchone()[
+                    0
+                ],
+                cleanup_pending_jobs=db.execute(
+                    "SELECT COUNT(*) FROM jobs WHERE done>=1"
+                ).fetchone()[0],
             )
 
     def retry(self, job):
@@ -595,6 +643,11 @@ class EventSpool:
                 raise CacheError(
                     "cannot release results before final verified publication"
                 )
+            if isinstance(row, dict) and row.get("archived"):
+                from .ledger_archive import check_identity
+
+                check_identity(self.completed_receipt(job))
+                return True
             events = db.execute("SELECT * FROM events WHERE job=?", (job,)).fetchall()
         validate_profile_episode(row["target"])
         handoff = None
@@ -657,6 +710,18 @@ class EventSpool:
                 _fsync_directory(path.parent)
         with self._db() as db:
             db.execute("UPDATE jobs SET done=2 WHERE id=?", (job,))
+        from .ledger_archive import archive
+
+        return archive(self, job)
+
+    def completed_receipt(self, job):
+        from .ledger_archive import lookup
+
+        with self._db() as db:
+            receipt = lookup(self, db, job=job)
+        if receipt is None:
+            raise CacheError("job has not been archived")
+        return receipt
 
     def adopt_completed(self, job):
         """Accept only a fully audited same-scope/recipe final cache handoff.
@@ -716,8 +781,7 @@ class EventSpool:
             if isinstance(exc.__cause__, BlockingIOError):
                 return False  # Other endpoint still owns publication/cleanup.
             raise
-        self.reap(job)
-        return True
+        return self.reap(job)
 
     def result(self, job, view_id, record, recipe):
         import json
@@ -890,6 +954,7 @@ class EventConsumer:
 
     def _step(self):
         import json
+        import time
         from io import BytesIO
 
         import numpy as np
@@ -913,7 +978,8 @@ class EventConsumer:
                 "SELECT * FROM jobs WHERE sealed IS NOT NULL AND done=0 AND error IS NULL AND NOT EXISTS (SELECT 1 FROM events WHERE events.job=jobs.id AND events.status!='acked') ORDER BY rowid LIMIT 1"
             ).fetchone()
             cleanup = db.execute(
-                "SELECT id FROM jobs WHERE done=1 AND error IS NULL ORDER BY rowid LIMIT 1"
+                "SELECT id FROM jobs WHERE done>=1 AND error IS NULL AND cleanup_after<=? ORDER BY rowid LIMIT 1",
+                (time.time(),),
             ).fetchone()
             offered = db.execute(
                 "SELECT id FROM jobs WHERE source_ready IS NOT NULL AND sealed IS NULL AND done=0 AND error IS NULL ORDER BY rowid LIMIT 1"
@@ -942,13 +1008,15 @@ class EventConsumer:
                         "UPDATE jobs SET error=? WHERE id=?", (str(exc), offered["id"])
                     )
                 raise
+        if cleanup is not None:
+            progress = self.spool.reap(cleanup["id"])
+            self._result_bytes = None
+            cleanup = None
+            if progress:
+                return True
         # Finalize/reap ready episodes while other renderers are still active;
         # requiring global queue idleness would accumulate the entire corpus.
         if event is None or job is not None or cleanup is not None:
-            if cleanup is not None:
-                self.spool.reap(cleanup["id"])
-                self._result_bytes = None
-                return True
             if job is None:
                 return False
             try:

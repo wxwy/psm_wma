@@ -1,0 +1,46 @@
+{
+  "result": {
+    "complete": true,
+    "completed_per_hour": 1456.4341100453994,
+    "config_id": "f39a7f3bf19d0ecab644052261b9938934dd81567f60d419d9e65beaa4d7c251",
+    "controller_cpu_times": [
+      15.4,
+      4.94,
+      4.62,
+      1.25,
+      17214599.01
+    ],
+    "elapsed_s": 2.4717905020006583,
+    "failed_ids": [],
+    "free_output_bytes": 29877227520,
+    "free_spool_bytes": 29877227520,
+    "free_work_bytes": 29877227520,
+    "gpu_rows": [],
+    "loadavg": [
+      1.05029296875,
+      0.47900390625,
+      0.27978515625
+    ],
+    "native_work_bytes": 309,
+    "peak_native_work_bytes": 5275,
+    "peak_pending_png_bytes": 2775,
+    "phase": "DONE",
+    "sample_mode": true,
+    "schema": "g2_full_production_progress_v1",
+    "selected": 1,
+    "spool": {
+      "active_jobs": 0,
+      "active_records": 0,
+      "cleanup_pending_jobs": 0,
+      "completed_jobs": 1,
+      "failed_jobs": 0,
+      "pending_bytes": 0,
+      "pending_inputs": 0,
+      "statuses": {},
+      "unfinished_jobs": 0
+    },
+    "spool_disk_bytes": 61416,
+    "training_ready": false
+  },
+  "scope": "CPU_TEST_ONLY_FAKE_RENDER_AND_ENCODER"
+}

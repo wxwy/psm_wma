@@ -1,3 +1,141 @@
+# 2026-11-17 CST — Issue58 P0 published fixed source / GPT REVIEW
+
+FormalRoot a3e0048b40e1392d0ff92d4fce8da4dc278447f6 / unchanged
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2.
+Source branch pushed, independent DraftPR62 created/readback open/Draft/
+unmerged, base unchangedPR55/29f9993d. PR53/d36caf0f and PR55/29f9993d
+also readback Draft/unmerged. ObservedV3 7a357620/nav70eb7b44 untouched.
+Local exactpair peer_closure finalLOCAL_NARROW_REVIEW_PASS closes1P1,
+4focusedPASS/no newP1/P2; unchangedprobe actionrun/worker_calls1. Productdiff
+empty afterclosure. 222 testedGitblobs matchformal. Source reviews/results
+are local only; no GPT independentapproval asserted for this increment.
+
+CanonicalInbox append88208bytes (<131072) requests exactpair CODE/CPU and
+separate realF27/Wan/sample/resourceA-B. revision2 gate/implementation_scope/
+publication_before_bookkeeping and peer_closure receipts available; following
+docs-onlyHEAD is notformalRoot. Ownrunbook has exact manual tmux/preflight/
+progress/stop/resume andsample/A-B/Owner-onlyold-view deletion commands.
+
+Authority: OwnerIssue58 explicitly Codexcode/CPU/Draft thenSTOP for GPT
+fixedserverGate; Owner alone manualfullstart/deletion. No oldMM/Kimi loops,
+no automaticstart ormerge. P1 deferred/B1unchanged. Author487PASS/13 inherited
+SKIP/0fail/error,478oldIDs +22new,222stable; SQL101101events/1001jobs simulated.
+AllrealGPU/Wan/native/private/server/resourceA-B/fullproduction/olddelete/
+state15/jointalign/train/merge NOT_RUN here; trainingfalse.
+Next finalbookkeeping push/readback thenSTOP, no further implementation.
+
+# Previous corrected candidate (historical)
+
+Narrow1P1 fixed: prepare_plan returnsfreshrunargs w/manual+experimentalflags.
+Existing endtoend now uses realprepare_plan/build/originalschedule rather than
+mockadapter; source/nativecompute/preflight/VAEcompute only are synthetic.
+Outputdiskreserve8GiB + Reader-held-open across actual archive added withinP0.
+No archive/numeric/core/Child changes since3b13. Corrected source only
+full_production.py plus2existing newtestmodules; frozen for newfixedSHA+closure.
+
+revision2 command returned0:487PASS/13 inherited dependencySKIP/0fail/error,
+all478oldIDs +22new,222stable sources, static/format/bash/help/auditPASS.
+Unchanged finalpeerprobe SHA0fcb570fc6b34a2d7ea6a1e019c4be2f99adb91498b6f2ce2966d466b974f788
+copiedbyte-for-byte into own probe_replay/; GREEN actionrun/worker_calls1,
+notaddedto487. Focus firsthad1fixture-protectionfail/16pass (mappingparent);
+fixture nowinflatroot, originalvalidatorunchanged; focused2PASS. Rawlogs saved.
+Previous3b13 andoriginalpeerRED preserved; nottheGPT handofftarget.
+
+Nextnewfixedcommit, samepeer narrowconfirmation, publicationSHA-binding,
+independentDraftPR+canonicalInboxGPTrequest then STOP. No productedit during
+fixedreview. No server/GPU/weights/fullproduction/deletion/install/train/merge.
+
+# Previous correction claim (historical)
+
+Exact local candidate3b13e6a5e511bd2cae448f3c6f40233b88a99413 /
+Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 received final local
+REQUEST_CHANGES, exactly1P1: prepare_plan returns actionplan toexecute, so
+originalscheduler calls0workers. Peer final report/receipt in own peer/,
+22authorcases independentPASS +1 unchangedprobe RED, not addedtoauthor totals.
+ProbeSHA0fcb570fc6b34a2d7ea6a1e019c4be2f99adb91498b6f2ce2966d466b974f788.
+No GPT request/publication yet; source3b13 retained as rejected localbaseline.
+
+Final peer complete; Owner GPT-only authority still overrides old3way loops.
+Claim narrow fix full_production.py returnfresh runargs withmanual/experimental
+flags, actual-prepare_plan endtoend regression. Add within sameP0 free-output
+reserve plus reader-held-across-GC coverage (peer nonblocking suggestions).
+Keep encoding/storage/core/Child unchanged. Preserve peer RED; replay exact
+probe bytes from separate own path so original observation is not overwritten.
+Then fullCPU newevidence, newfixedSHA, same readonlypeer narrowclosure,
+independentDraftPR +Inbox GPT handoff, STOP. No real execution/newenvironment.
+
+# Previous local candidate (historical)
+
+Independent branch codex/g2-one-shot-production-issue58, based29f9993d.
+Ready for fixed source commit then mandatory read-only peer; formal SHA follows
+commit, not precomputed. No product/test edits during fixed-candidate review.
+Owner Issue58/GPT-only server/Owner manual launch override historical V2/MM/
+Kimi loops. Local Agent review is code quality only, not GPT server acceptance.
+
+Implemented: spoolv3 compact durable completed receipts + active SQL GC;
+lease/source/renderer-lock verified native-work cleanup with intent/trash crash
+recovery; original unified queue supervision, resource admission, one consumer,
+owned process stop/resume, original-environment recipe preflight and F27-only
+overlay; official repository CLI/launcher/template/runbook. P1 deferred, B1
+encoder/recipe/builder/storage and legacy/posthoc CLIs unchanged. No automatic
+production/start/deletion/install/build/merge. Late producer cannot recreate
+completed work. Final DONE requires all strict profiles and cleanup, trainingfalse.
+
+Author evidence revision1:487PASS/13 inherited dependencySKIP/0fail/error,
+all478 oldIDs retained +22new allPASS;222 source hashes before/after stable.
+SQLite101101 simulated ACK events /1001 jobs,128cap,101peak activeevents,
+1peak activejob, DB1159168bytes; not real throughput. Actual CPU child consumer
+stop/resume/ACK/source+cache audit/work cleanup passes, fakecompute maxabs0.
+Static/format/bash/help/source scope pass. Original A1 three-probe hash intact,
+not run locally without nativePyArrow; no stubs/install. One old private SQL-row
+assertion becomes receipt + zeroactive assertion, same testID preserved.
+
+development/ holds overlapping focused runs; final/ is retained first suite
+with one error-message regex failure, corrected without weakening its test.
+revision1 all suites pass. Audit collector initially counted pytest current
+symlink twice; fixed docs-only collector and reran it against same raw evidence,
+no product/test change. README records exact commands/limits. Latest ls-remote
+base29f9993d andV3 7a357620 still match initialobservation; Child/nav untouched.
+
+File claims now include official runbook/README, own evidence and ledgers.
+REVIEW next: another Agent checks exactcommit/archive/workleases/controller
+and tests read-only; then independent Draft PR stacked on unchangedPR55,
+canonicalInbox GPT fixedSHA handoff, STOP. Real F27/Wan/GPU/resource A-B,
+full9126/old-view deletion/P1/state15/jointalignment/train/merge NOT_RUN.
+
+# Issue58 initial claim (historical)
+
+Fresh sync: before21c0a10c820451d3a99eb09f08fe9e8cd422d451 -> fetch/
+advertised/tracking29f9993d2543b8bb638f135aac9dd7172b71baf0; ancestry0,
+ff succeeded, one new docs-only approval. Read exact formal4ad0fe7394cb62c4b5692fecaf6ce52963b8852c /
+Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 APPROVE_CODE +
+REAL_SAMPLE_FUNCTIONAL_PASS report in full (478CPU,169real owners; real overlap
+89ACK, same B1 recipe3ee9c483...). New V3 advertised7a357620b4cc1f6817749c8a8275771cfbb4049c
+adds only two model design docs over fe1089fb; no automatic V3 merge.
+Root source core still4ad0fe73, child clean d5c1ffc7, nav observed70eb7b44.
+
+Owner Issue58 read in full. Independent branch codex/g2-one-shot-production-issue58
+created from29f9993d; separate Draft PR will stack on unchanged PR55. Owner
+supersedes historical MM/Kimi/V2 waits: Codex implements/CPU, GPT fixed-SHA
+server validation, Owner alone manually starts production/deletion. No server
+access/private transfer/GPU/fullproduction/installation/newenv/train/merge here.
+Issue23 reports reread: B4/B8 exact0 BLOCKED, B8 visual PASS only. P1 microbatch
+explicitly deferred so it cannot delay P0; B1 encoder/recipe remains unchanged.
+
+File claims before code: latent_cache/streaming.py + new ledger_archive.py;
+offline/atomic_6views_run.py + new work_lifecycle.py/full_production.py;
+consumer CLI; new tools/g2 full-production CLI/config and scripts/g2 launcher;
+corresponding GC/crash/worklease/controller tests, README/runbook/own evidence
+and ledgers. Preserve existing478 identities and original A1 probes; explain
+any obsolete private SQLite-row assertions replaced by durable receipt checks.
+Implement bounded active rows + durable completed receipts, exact managed-work
+lease/lock cleanup after source/cache/profile verification, one original plan/
+queue with capacity/disk backpressure and final await, isolated renderer/VAE
+environments and explicit preflight/progress/stop/resume. Nothing is implemented
+or run for Issue58 yet. Next inspect APIs then minimal implementation and CPU.
+
+# Previous task history
+
 # 2026-11-17 CST — Issue54 A2 published fixed source / GPT REVIEW
 
 Formal Root4ad0fe7394cb62c4b5692fecaf6ce52963b8852c / Child-Gitlink

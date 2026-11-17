@@ -1,0 +1,16 @@
+ssssssssss.............................................................. [ 48%]
+..................................F..................................... [ 96%]
+......                                                                   [100%]
+=================================== FAILURES ===================================
+_________________ test_spool_record_and_job_budgets_are_finite _________________
+g2/tests/test_stage_a_streaming.py:442: in test_spool_record_and_job_budgets_are_finite
+    with pytest.raises(CacheError, match="ledger budget"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'ledger budget'
+E     Actual message: 'active record budget reached; await verified episode archival'
+=========================== short test summary info ============================
+SKIPPED [5] g2/tests/test_stage_a_caption_parquet.py:39: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [4] g2/tests/test_stage_a_caption_parquet.py:63: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_stage_a_caption_parquet.py:82: existing local interpreter has no PyArrow; no install/new environment permitted
+1 failed, 139 passed, 10 skipped in 36.36s

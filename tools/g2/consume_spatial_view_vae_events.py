@@ -17,6 +17,7 @@ def parser():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--spool-root", type=Path, required=True)
     p.add_argument("--weights", type=Path, required=True)
+    p.add_argument("--expected-recipe-id")
     p.add_argument("--cosmos-root", type=Path)
     p.add_argument("--device", default="cuda")
     p.add_argument("--height", type=int, default=256)
@@ -30,13 +31,24 @@ def parser():
     p.add_argument("--max-events", type=int, default=32)
     p.add_argument("--max-spool-bytes", type=int, default=256 * 1024**2)
     p.add_argument("--max-result-bytes", type=int, default=4 * 1024**3)
-    p.add_argument("--max-records", type=int, default=100000)
+    p.add_argument(
+        "--max-records",
+        type=int,
+        default=100000,
+        help="active event/job working-set budget, not a lifetime limit",
+    )
     p.add_argument(
         "--idle-seconds",
         type=float,
         default=60,
         help="finite exit timeout when no work remains",
     )
+    p.add_argument(
+        "--serve",
+        action="store_true",
+        help="stay alive through long GT/render gaps; supervisor stops via stop-file",
+    )
+    p.add_argument("--stop-file", type=Path)
     p.add_argument(
         "--retry-job",
         action="append",
@@ -72,6 +84,11 @@ def main(argv=None):
             preprocessing_recipe(args.height, args.width, args.interpolation),
             storage_dtype=args.storage_dtype,
         )
+        if (
+            args.expected_recipe_id is not None
+            and recipe["recipe_id"] != args.expected_recipe_id
+        ):
+            raise ValueError("consumer environment/recipe differs from approved run")
         spool = EventSpool(
             args.spool_root,
             recipe,
@@ -91,10 +108,12 @@ def main(argv=None):
                     spool.retry(job)
                 deadline = time.monotonic() + args.idle_seconds
                 while True:
+                    if args.stop_file is not None and args.stop_file.exists():
+                        break
                     if consumer._step():
                         steps += 1
                         deadline = time.monotonic() + args.idle_seconds
-                    elif time.monotonic() >= deadline:
+                    elif not args.serve and time.monotonic() >= deadline:
                         break
                     else:
                         time.sleep(0.05)
@@ -122,7 +141,7 @@ def main(argv=None):
             else 2
             if stats["failed_jobs"]
             else 75
-            if stats["unfinished_jobs"]
+            if stats["unfinished_jobs"] or stats["active_jobs"]
             else 0
         )
     except (OSError, ValueError, RuntimeError) as exc:

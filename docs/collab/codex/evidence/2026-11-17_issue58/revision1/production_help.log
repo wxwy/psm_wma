@@ -1,0 +1,14 @@
+usage: run_stage_a_production.py [-h] --config CONFIG [--manual-start]
+                                 {preflight,run,resume,progress,stop,environment}
+
+One immutable plan and the original producer queue, supervised through VAE GC.
+This module is inert on import. Real production requires --manual-start and
+fixed-code/config/environment preflight. It never deletes old datasets.
+
+positional arguments:
+  {preflight,run,resume,progress,stop,environment}
+
+options:
+  -h, --help            show this help message and exit
+  --config CONFIG
+  --manual-start

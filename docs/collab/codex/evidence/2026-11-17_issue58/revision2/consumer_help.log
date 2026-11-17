@@ -1,0 +1,49 @@
+usage: consume_spatial_view_vae_events.py [-h] --spool-root SPOOL_ROOT
+                                          --weights WEIGHTS
+                                          [--expected-recipe-id EXPECTED_RECIPE_ID]
+                                          [--cosmos-root COSMOS_ROOT]
+                                          [--device DEVICE] [--height HEIGHT]
+                                          [--width WIDTH]
+                                          [--interpolation {lanczos,bilinear,nearest}]
+                                          [--storage-dtype {float32,float16,bfloat16}]
+                                          [--max-events MAX_EVENTS]
+                                          [--max-spool-bytes MAX_SPOOL_BYTES]
+                                          [--max-result-bytes MAX_RESULT_BYTES]
+                                          [--max-records MAX_RECORDS]
+                                          [--idle-seconds IDLE_SECONDS]
+                                          [--serve] [--stop-file STOP_FILE]
+                                          [--retry-job RETRY_JOB]
+                                          (--initialize | --execute | --once)
+
+Independent bounded Stage-A event consumer; one resident B=1 Encode1 model.
+--initialize only writes a recipe-bound spool; it does not load model weights.
+--execute is an explicit real-VAE action requiring separate execution
+approval.
+
+options:
+  -h, --help            show this help message and exit
+  --spool-root SPOOL_ROOT
+  --weights WEIGHTS
+  --expected-recipe-id EXPECTED_RECIPE_ID
+  --cosmos-root COSMOS_ROOT
+  --device DEVICE
+  --height HEIGHT
+  --width WIDTH
+  --interpolation {lanczos,bilinear,nearest}
+  --storage-dtype {float32,float16,bfloat16}
+  --max-events MAX_EVENTS
+  --max-spool-bytes MAX_SPOOL_BYTES
+  --max-result-bytes MAX_RESULT_BYTES
+  --max-records MAX_RECORDS
+                        active event/job working-set budget, not a lifetime
+                        limit
+  --idle-seconds IDLE_SECONDS
+                        finite exit timeout when no work remains
+  --serve               stay alive through long GT/render gaps; supervisor
+                        stops via stop-file
+  --stop-file STOP_FILE
+  --retry-job RETRY_JOB
+                        explicitly retry retained failed inputs
+  --initialize
+  --execute
+  --once                execute at most one encode/finalize step

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="23" time="39.240" timestamp="2026-11-17T10:48:03.811990+00:00" hostname="82d6a371db9c"><testcase classname="g2.tests.test_one_shot_ledger" name="test_over_100k_events_1001_jobs_bounded_active_working_set" time="13.310" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_gc_hard_crash_is_atomic_and_idempotent[receipt_before_gc]" time="0.049" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_gc_hard_crash_is_atomic_and_idempotent[gc_before_commit]" time="0.041" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_gc_hard_crash_is_atomic_and_idempotent[gc_after_commit]" time="0.040" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_concurrent_reader_and_two_gc_writers_preserve_identity" time="0.024" /><testcase classname="g2.tests.test_one_shot_ledger" name="test_pending_inputs_and_damaged_tombstones_never_reclaim" time="0.038" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_default_full_config_is_b1_one_corpus_and_no_implicit_batch_or_delete" time="0.006" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change0]" time="0.003" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change1]" time="0.003" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change2]" time="0.005" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_full_configuration_conflicts_reject[change3]" time="0.002" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_original_queue_consumes_all_92_plan_packages_once" time="7.457" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_low_disk_and_active_job_admission_backpressure_preserve_work" time="0.430" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_stop_resume_controls_only_tagged_process_groups" time="0.008" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_old_output_paths_mapping_and_stop_configuration_reject" time="0.004" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_repository_launcher_is_inert_for_help_and_requires_manual_start" time="0.099" /><testcase classname="g2.tests.test_one_shot_supervisor" name="test_one_run_stop_resume_real_consumer_ack_cleanup_and_final_audit" time="9.616" /><testcase classname="g2.tests.test_one_shot_work" name="test_completed_work_waits_for_renderer_lease_then_reclaims" time="1.394" /><testcase classname="g2.tests.test_one_shot_work" name="test_producer_crash_before_seal_preserves_and_resumes_work" time="0.839" /><testcase classname="g2.tests.test_one_shot_work" name="test_cleanup_partial_delete_crash_recovers_without_touching_other_work" time="1.070" /><testcase classname="g2.tests.test_one_shot_work" name="test_mismatched_lease_and_protected_or_unowned_roots_refuse_cleanup" time="1.304" /><testcase classname="g2.tests.test_one_shot_work" name="test_late_producer_cannot_recreate_archived_work" time="0.967" /><testcase classname="docs.collab.codex.evidence.2026-11-17_issue58.peer.test_review_dispatch" name="test_prepared_production_args_dispatch_original_queue" time="0.011"><failure message="AssertionError: {'prepared_action': 'plan', 'worker_calls': 0, 'selected': 1, 'scope': 'CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE'}&#10;assert 'plan' == 'run'&#10;  &#10;  - run&#10;  + plan">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-113/test_prepared_production_args_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5d6e3653a0&gt;
+
+    def test_prepared_production_args_dispatch_original_queue(tmp_path, monkeypatch):
+        cfg, _ = config_case(tmp_path)
+        cfg.update(sample_mode=True,expected_selected_episodes=1,expected_task_count=1,
+                   tasks=['NavigateKitchen'],episodes_per_task=1,expected_episode_ids=[0])
+        row=dict(episode_id=0,task_class='NavigateKitchen',source_fingerprint='a'*64,
+                 expected_relative_output='tasks/NavigateKitchen/episodes/episode_000000')
+        rows=[row]
+        run=Path(cfg['run_root'])
+        write_json(run/'profile.json',cfg['profile'])
+        index=dict(episodes_total=1,episodes_pending=1,tasks_selected=['NavigateKitchen'],
+                   batches_total=1,resume=False)
+    
+        def build(*args,**kwargs):
+            root=run/'plan'
+            root.mkdir(exist_ok=True)
+            write_json(root/'index.json',index)
+            write_json(root/'batch_000.json',dict(renderer='f27',episodes=rows))
+            return index
+    
+        monkeypatch.setattr(producer.plan,'discover',lambda *a,**k:(rows,{}))
+        monkeypatch.setattr(producer.plan,'build',build)
+        monkeypatch.setattr(producer,'_completed',lambda *a:False)
+        args,selection,_=full.prepare_plan(cfg)  # Actual unmodified plan adapter.
+        calls=[]
+        producer.schedule(args,run_worker=lambda *a,**k:calls.append(a))
+        observation=dict(prepared_action=args.action,worker_calls=len(calls),selected=len(selection),
+            scope='CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE')
+        write_json(Path(__file__).parent/'dispatch_observed.json',observation)
+        # A production handoff must leave plan-only mode; the original schedule
+        # above currently exits at its plan branch, before any worker call.
+&gt;       assert args.action=='run', observation
+E       AssertionError: {'prepared_action': 'plan', 'worker_calls': 0, 'selected': 1, 'scope': 'CPU_SYNTHETIC_SOURCE_INDEX_NO_GPU_NATIVE_OR_VAE'}
+E       assert 'plan' == 'run'
+E         
+E         - run
+E         + plan
+
+docs/collab/codex/evidence/2026-11-17_issue58/peer/test_review_dispatch.py:41: AssertionError</failure></testcase></testsuite></testsuites>
