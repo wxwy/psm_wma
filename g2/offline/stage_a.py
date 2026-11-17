@@ -64,11 +64,13 @@ def validate_profile_episode(
     if is_final:
         source, _ = final.validate_profile_header(root, manifest)
     else:
-        source = read_json(contained(root, "spatial_source.json"))
+        from .view_only_source import load_working_source
+
+        source, working_sha = load_working_source(root)
         ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
     if not is_final and (
         source.get("schema") != SOURCE_SCHEMA
-        or ready.get("source_manifest_sha256") != digest(root / "spatial_source.json")
+        or ready.get("source_manifest_sha256") != working_sha
         or source.get("source_id")
         != fingerprint({k: v for k, v in source.items() if k != "source_id"})
         or ready.get("source_id") != source["source_id"]
@@ -410,8 +412,11 @@ def package_stage_a(
     event_sink=None,
     limits=ConsumerLimits(),
     source_guards=None,
+    compress_source=False,
 ):
     """Consume original producer inputs/reports, never repair an old final package."""
+    if compress_source and profile.view_vae:
+        raise ContractError("VAE-enabled publication cannot precompress its working source")
     if not isinstance(profile, OutputProfile):
         raise ContractError("explicit typed output profile required")
     if not isinstance(source_fingerprint, str) or not re.fullmatch(
@@ -857,6 +862,10 @@ def package_stage_a(
                         complete=True,
                     ),
                 )
+            if compress_source:
+                from .view_only_source import compress_working_source
+
+                compress_working_source(temporary)
             validate_profile_episode(
                 temporary, require_complete=False, expected_profile=profile
             )
