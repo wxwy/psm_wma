@@ -1052,3 +1052,40 @@ E2 仍需 SG 候选和对象—视图索引，只是关闭 SG 增强文本，不
 **完整场景持续维护；子任务召回对象；俯视图必选，其余按对象关联读取；几何随图绑定；任务语言指导 Global 压缩；可信 SG 事实补充原始任务；state15 提供底盘与机械臂当前状态；Global 与已有 Local 在 Cosmos GEN K/V 中汇合，raw15 动作接口不变。**
 
 已确认原则已记录，推荐结构与未决项已列出。本文没有将讨论结论升级成“生产代码已完成”或“全部细节已冻结”。
+
+---
+
+## 2026-11-16 补充：Issue52 单帧 VAE 缓存的独立构建合同
+
+本节记录本文归档后 Owner 在 [Issue #52](https://github.com/wxwy/psm_wma/issues/52)
+明确的新决定，仅收口冻结图像特征的数据准备边界。它优先于正文中此前对
+Episode 整包或“只编码当前任务所选图”的建议，不改写历史讨论，也不冻结
+Global Reader、语言增强、state15/Pose5、主干 K/V 或训练接线等未决项。
+
+1. **所有有效空间 View 都离线编码**，即使当前任务暂时不读取。模型的任务驱动
+   稀疏读取和离线资产覆盖是两件事；选图不能裁剪缓存生产范围。
+2. 复用现有 Cosmos Wan VAE 的独立单帧 Encode1 与公共
+   `vision_encoder.normalize_uint8_item`。单样本输入 `[1,3,1,H,W]`，冻结、
+   eval/no-grad、非 streaming，不跨图保留编码状态；保存完整空间 latent
+   `[C,H_z,W_z]`，不套用 G1 17 帧窗口、left+wrist 拼图或 Local Visual96 池化。
+3. **每个 Episode 内，每个逻辑 View 一个独立 `.pt` 数值文件**，内部保存全部实际
+   图片版本及 logical state/frame→physical owner/record 的索引。不是每张 PNG
+   一个文件，也不是整个 Episode 一个数值大包。多个 Room/Island 保持原身份。
+4. 严格消费原有 `view_pngs/view_refs`，中途不存在的 View 显式 absent，不补旧图、
+   不编码、不生成有效 token；声明存在但 PNG 缺失/损坏是错误。当前状态与实体
+   图片 owner 的身份分别保留，不按图像内容重算 1mm/1°/采样规则。
+5. 新缓存只写 `episode/vae_cache/`，有自己的 manifest 和 COMPLETE；原 PNG、
+   箭头、SG、episode_manifest.json 与原 COMPLETE 不改。按 View 原子发布，
+   严格来源/recipe 一致才恢复，同目标写入互斥。读取时只打开选中的 View 文件，
+   使用有界文件级 lazy cache，不在每次训练读取时扫描全 Episode。
+6. 等比白底 256×256 与 FP32 存储是初始真实样例候选，**不是生产最优配置冻结**。
+   实际 latent 空间形状由编码输出确认；pixel valid rectangle 来自 resize/padding
+   几何，不由白色像素猜测。低精度、B>1 混批、数值/图像质量与吞吐须各自实测。
+7. 入口位于 `tools/g2/`，业务位于 `g2/latent_cache/`。builder、encoding、storage
+   分离，训练读取不加载 VAE/Policy/MuJoCo/ROS/在线服务；未来在线 G2 可复用同一
+   预处理与 Encode1 接口。Cosmos 通用核心不反向导入 Root tools。
+
+本轮交付限代码、CPU fixtures、文档与独立 Draft PR。真实 VAE/GPU 样例、原图与
+decode 的人眼检查、生产配置冻结及全量编码属于后续独立授权 Gate，不能从
+fake encoder 测试升级为真实编码验收。实现和复现说明见
+[Issue52 缓存 runbook](PSM-WMA_G2_spatial_view_vae_cache_2026-11-16.md)。

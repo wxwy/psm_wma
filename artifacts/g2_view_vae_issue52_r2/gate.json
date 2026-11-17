@@ -1,0 +1,160 @@
+{
+  "added_cases": 18,
+  "child_clean": true,
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "commands": [
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "pytest",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_canvas.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_namespace.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "g2/tests/test_scene_view_event_index.py",
+        "g2/tests/test_scene_view_index_package.py",
+        "g2/tests/test_scene_graph_compact_v3.py",
+        "--junitxml=artifacts/g2_view_vae_issue52_r2/pytest.xml",
+        "-q"
+      ],
+      "output": "pytest.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "pytest",
+        "artifacts/g2_view_vae_issue52_r2/replay_review_probes.py",
+        "--junitxml=artifacts/g2_view_vae_issue52_r2/review_probes.xml",
+        "-q",
+        "--tb=short"
+      ],
+      "output": "review_probes.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/ruff",
+        "check",
+        "--select",
+        "E4,E7,E9,F,I",
+        "g2/latent_cache/__init__.py",
+        "g2/latent_cache/builder.py",
+        "g2/latent_cache/contract.py",
+        "g2/latent_cache/encoding.py",
+        "g2/latent_cache/source.py",
+        "g2/latent_cache/storage.py",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_canvas.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_namespace.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "tools/g2/build_spatial_view_vae_cache.py",
+        "tools/g2/verify_spatial_view_vae_cache.py",
+        "artifacts/g2_view_vae_issue52_r2/replay_review_probes.py"
+      ],
+      "output": "ruff.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/ruff",
+        "format",
+        "--check",
+        "g2/latent_cache/__init__.py",
+        "g2/latent_cache/builder.py",
+        "g2/latent_cache/contract.py",
+        "g2/latent_cache/encoding.py",
+        "g2/latent_cache/source.py",
+        "g2/latent_cache/storage.py",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_canvas.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_namespace.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "tools/g2/build_spatial_view_vae_cache.py",
+        "tools/g2/verify_spatial_view_vae_cache.py",
+        "artifacts/g2_view_vae_issue52_r2/replay_review_probes.py"
+      ],
+      "output": "format.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "output": "diff_check.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "tools.g2.build_spatial_view_vae_cache",
+        "--help"
+      ],
+      "output": "build_help.txt",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "tools.g2.verify_spatial_view_vae_cache",
+        "--help"
+      ],
+      "output": "verify_help.txt",
+      "returncode": 0
+    }
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/workspace/psm_wma_issue52/cosmos-framework:/workspace/psm_wma_issue52"
+  },
+  "full_encoding": "NOT_RUN",
+  "full_regression": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 283
+  },
+  "gpu": "NOT_RUN",
+  "merge": "NOT_RUN",
+  "original265_retained": true,
+  "other_previous45_source_files_unchanged": true,
+  "previous_implementation": "900c87aa0ae643123477e985b6a051fb7535ee03",
+  "private_server": "NOT_RUN",
+  "real_vae_weights": "NOT_RUN",
+  "replay_counts_separate": true,
+  "review_base": "49374cb343d02bf2e3ca4d13dc89c5dfe55a8480",
+  "reviewer_native_red": {
+    "errors": 0,
+    "failures": 1,
+    "skipped": 0,
+    "tests": 1
+  },
+  "reviewer_probes_green": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 3
+  },
+  "source_file_count": 48,
+  "source_unchanged": true,
+  "status": "PASS_AUTHOR_CPU_R2_ONLY",
+  "timestamp_cst": "2026-11-16T20:42:54.794236+08:00",
+  "training": "NOT_RUN",
+  "wan_import_or_construction": "NOT_RUN"
+}

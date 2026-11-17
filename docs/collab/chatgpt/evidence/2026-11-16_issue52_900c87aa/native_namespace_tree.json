@@ -1,0 +1,65 @@
+{
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "api": "https://api.github.com/repos/wxwy/cosmos-framework/git/trees/d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2?recursive=1",
+  "truncated": false,
+  "entries": [
+    {
+      "path": "cosmos_framework/utils/env_parsers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a466f72bc34349b9abc490171a77618bee26baa9",
+      "url": "https://api.github.com/repos/wxwy/cosmos-framework/git/trees/a466f72bc34349b9abc490171a77618bee26baa9"
+    },
+    {
+      "path": "cosmos_framework/utils/env_parsers/cred_env_parser.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04810d9ce70b6fce5c5968d6fd2c14827fad3bb8",
+      "size": 3288,
+      "url": "https://api.github.com/repos/wxwy/cosmos-framework/git/blobs/04810d9ce70b6fce5c5968d6fd2c14827fad3bb8"
+    },
+    {
+      "path": "cosmos_framework/utils/env_parsers/customization_env_parser.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f8d8bf48facdcb28428a1b531391ed163ff358ff",
+      "size": 727,
+      "url": "https://api.github.com/repos/wxwy/cosmos-framework/git/blobs/f8d8bf48facdcb28428a1b531391ed163ff358ff"
+    },
+    {
+      "path": "cosmos_framework/utils/env_parsers/env_parser.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56b7de2417fc36c72966324177b4f4764b8d68c4",
+      "size": 3780,
+      "url": "https://api.github.com/repos/wxwy/cosmos-framework/git/blobs/56b7de2417fc36c72966324177b4f4764b8d68c4"
+    },
+    {
+      "path": "cosmos_framework/utils/env_parsers/inference_env_parser.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88fbc37c00a15903c70f86ff5a10708b8d07722b",
+      "size": 1048,
+      "url": "https://api.github.com/repos/wxwy/cosmos-framework/git/blobs/88fbc37c00a15903c70f86ff5a10708b8d07722b"
+    }
+  ],
+  "absence_asserted": "cosmos_framework/utils/env_parsers/__init__.py",
+  "additional_files": [
+    {
+      "path": "cosmos-framework/cosmos_framework/utils/env_parsers/cred_env_parser.py",
+      "sha": "04810d9ce70b6fce5c5968d6fd2c14827fad3bb8"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/utils/env_parsers/customization_env_parser.py",
+      "sha": "f8d8bf48facdcb28428a1b531391ed163ff358ff"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/utils/env_parsers/env_parser.py",
+      "sha": "56b7de2417fc36c72966324177b4f4764b8d68c4"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/utils/env_parsers/inference_env_parser.py",
+      "sha": "88fbc37c00a15903c70f86ff5a10708b8d07722b"
+    }
+  ]
+}

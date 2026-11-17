@@ -1,0 +1,176 @@
+{
+  "V3_observed": "55cc5181abf8ca4b1e2a3a6b415699c457cc080b",
+  "approved_scope": "View VAE cache CODE/CPU at exact pair; R1-F3 closed; no native Wan/GPU/full-corpus/merge approval",
+  "bookkeeping_head_observed": "fe6a8b426b1df45aafb5cab07ea3a5a1fa988d8b",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "child_modified": false,
+  "environment": {
+    "GPU_used": false,
+    "executable": "/workspace/scratch/720989c43529/pr53_review/venv/bin/python",
+    "network_during_tests": false,
+    "packages": {
+      "Pillow": "13.0.0",
+      "numpy": "2.5.5",
+      "pytest": "9.2.0",
+      "ruff": "0.17.5",
+      "torch": "2.15.0+cpu"
+    },
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "timestamp_cst": "2026-11-16T21:01:58.250065+08:00"
+  },
+  "evidence_sha256": {
+    "environment.json": "e6353d27dbc6b65654e8a7b037b6519077b87f696a4c4ba0b7d0160eff5b121f",
+    "foreign_parent_observed.json": "36c060dbd84d04ac9a6ee8bcf6f496f66fa539bd63f750a875e1afe9bdbb107d",
+    "format.log": "d41ae50829b47e318b0787bc39d2a2ea2d52b518cfc7900d2efd569e6d26ab88",
+    "native_namespace_observed.json": "e103dfa56c362b99a70b197a570cb397edc1bf77ed7207335880fb6b7649116f",
+    "pytest.log": "29f7683e98f892d84d641bb3d69d4910792e609747bb6019c49dc15ae6ed6cf6",
+    "pytest.xml": "932a0960b49e675c16fac55e20ae4b30441edae56f0b0b9385e1345053fdda28",
+    "remote_scope.json": "747e1b58951323ba3322b834599eb289ad327ca0ec59a813f05e24db554d33a3",
+    "result_audit.json": "dae5b9524a9576653ab8ca33852bec73ac456da5fec39172db16fc2ef91fdb32",
+    "review_probes.log": "13cc0e2242b34abc964aba9555f159a79b4eacb07e52d4e0fd83f844158bb310",
+    "review_probes.xml": "2e3fc69118ee3f34d4f2067de222e442eab08d5d22f417ad8b8d2be7d4b18abc",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "source_after.json": "ad2e6781a997bf9a2b5128a72eddd990b3a50936ab4b993d53807d769fb1e7dd",
+    "source_before.json": "ad2e6781a997bf9a2b5128a72eddd990b3a50936ab4b993d53807d769fb1e7dd",
+    "test_native_namespace.py": "41c1c4365d78c5e8bdd56356b378af6f2061fea1588e266025f13882d4211405",
+    "test_review_edges.py": "3767287d3f30f365b0c9318fff0796ec180c845448cbae94bf72791b1df2e197",
+    "unsupported_canvas_observed.json": "443863a12f028a025b100ec22ed4ecfadb3dae917240b75ae705ccb44a55b5fd"
+  },
+  "exit_codes": {
+    "format": 0,
+    "full_regression": 0,
+    "original_reviewer_probes": 0,
+    "ruff": 0
+  },
+  "findings": [
+    {
+      "evidence": "foreign_parent_observed.json",
+      "id": "F1",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "unsupported_canvas_observed.json",
+      "id": "F2",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "native_namespace_observed.json",
+      "id": "R1-F3",
+      "previous_severity": "P1",
+      "status": "CLOSED"
+    }
+  ],
+  "formal_root": "778d1ed8a031429fd857c980fc872d4c85123cd1",
+  "independent_results": {
+    "added_test_identities": 18,
+    "current_test_identities": 283,
+    "encoding_AST_outside_origin_checker_unchanged": true,
+    "full_regression": {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "10a9b1bbd583",
+      "name": "pytest",
+      "skipped": "0",
+      "tests": "283",
+      "time": "14.140",
+      "timestamp": "2026-11-16T05:01:00.953665-08:00"
+    },
+    "group_counts": {
+      "g2.tests.test_scene_graph_compact_v3": 31,
+      "g2.tests.test_scene_view_event_index": 24,
+      "g2.tests.test_scene_view_index_package": 4,
+      "g2.tests.test_view_vae_builder": 21,
+      "g2.tests.test_view_vae_canvas": 32,
+      "g2.tests.test_view_vae_contract": 18,
+      "g2.tests.test_view_vae_encoding": 61,
+      "g2.tests.test_view_vae_namespace": 18,
+      "g2.tests.test_view_vae_source": 31,
+      "g2.tests.test_view_vae_storage": 43
+    },
+    "missing_previous_cases": [],
+    "original_test_files_unchanged": [
+      "test_scene_graph_compact_v3.py",
+      "test_scene_view_event_index.py",
+      "test_scene_view_index_package.py",
+      "test_view_vae_builder.py",
+      "test_view_vae_canvas.py",
+      "test_view_vae_contract.py",
+      "test_view_vae_encoding.py",
+      "test_view_vae_source.py",
+      "test_view_vae_storage.py"
+    ],
+    "previous_test_identities": 265,
+    "probe_sha256": {
+      "test_native_namespace.py": "41c1c4365d78c5e8bdd56356b378af6f2061fea1588e266025f13882d4211405",
+      "test_review_edges.py": "3767287d3f30f365b0c9318fff0796ec180c845448cbae94bf72791b1df2e197"
+    },
+    "probes_byte_identical": true,
+    "protected_snapshot_files_unchanged": [
+      "g2/latent_cache/builder.py",
+      "g2/latent_cache/contract.py",
+      "g2/latent_cache/__init__.py",
+      "g2/latent_cache/source.py",
+      "g2/latent_cache/storage.py",
+      "g2/offline/atomic_6views_compact.py",
+      "g2/offline/scene_view_index_package.py",
+      "g2/offline/scene_graph_compact_v3.py",
+      "g2/offline/atomic_6views_plan.py",
+      "g2/offline/scene_view_event_index.py",
+      "g2/offline/__init__.py",
+      "g2/offline/atomic_6views_catalog.py",
+      "tools/g2/verify_spatial_view_vae_cache.py",
+      "tools/g2/__init__.py",
+      "tools/g2/build_spatial_view_vae_cache.py",
+      "cosmos-framework/cosmos_framework/__init__.py",
+      "cosmos-framework/cosmos_framework/model/__init__.py",
+      "cosmos-framework/cosmos_framework/utils/flags.py",
+      "cosmos-framework/cosmos_framework/utils/__init__.py",
+      "cosmos-framework/cosmos_framework/model/generator/vision_encoder.py",
+      "cosmos-framework/cosmos_framework/model/generator/__init__.py",
+      "cosmos-framework/cosmos_framework/model/generator/mot/__init__.py",
+      "cosmos-framework/cosmos_framework/model/generator/mot/vae_load_balance.py",
+      "cosmos-framework/cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py",
+      "cosmos-framework/cosmos_framework/model/generator/tokenizers/interface.py",
+      "cosmos-framework/cosmos_framework/model/generator/tokenizers/__init__.py",
+      "cosmos-framework/cosmos_framework/utils/generator/image_resize.py",
+      "cosmos-framework/cosmos_framework/utils/generator/__init__.py",
+      "cosmos-framework/cosmos_framework/utils/env_parsers/env_parser.py",
+      "cosmos-framework/cosmos_framework/utils/env_parsers/customization_env_parser.py",
+      "cosmos-framework/cosmos_framework/utils/env_parsers/cred_env_parser.py",
+      "cosmos-framework/cosmos_framework/utils/env_parsers/inference_env_parser.py"
+    ],
+    "reviewer_probes": {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "10a9b1bbd583",
+      "name": "pytest",
+      "skipped": "0",
+      "tests": "3",
+      "time": "0.522",
+      "timestamp": "2026-11-16T05:01:22.881785-08:00"
+    },
+    "source_file_count": 48,
+    "source_unchanged": true,
+    "timestamp_cst": "2026-11-16T21:01:58.250065+08:00"
+  },
+  "new_blocking_findings": [],
+  "not_run": [
+    "complete native Wan import/construction",
+    "real weights",
+    "GPU",
+    "numerical/decode/performance samples",
+    "server/private data access",
+    "full-corpus encoding",
+    "simulation",
+    "training",
+    "merge"
+  ],
+  "previous_implementation": "900c87aa0ae643123477e985b6a051fb7535ee03",
+  "production_code_modified_by_reviewer": false,
+  "review_base": "49374cb343d02bf2e3ca4d13dc89c5dfe55a8480",
+  "review_path": "docs/collab/chatgpt/reviews/2026-11-16_Issue52_778d1ed8_d5c1ffc7_ViewVAE_R2_APPROVE_CODE.md",
+  "review_sha256": "bca70ceb77f18a4d0e33878fc02c715aca6877dd629883c600e56a4c8f21a5c8",
+  "timestamp_cst": "2026-11-16T21:03:31.098951+08:00",
+  "verdict": "APPROVE_CODE"
+}

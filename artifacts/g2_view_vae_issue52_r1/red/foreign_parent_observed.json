@@ -1,0 +1,8 @@
+{
+  "rejected": false,
+  "bound_leaf": "/tmp/pytest-of-agent/pytest-55/test_foreign_cosmos_parent_mus0/selected/cosmos_framework/model/generator/vision_encoder.py",
+  "parent_package": "/tmp/pytest-of-agent/pytest-55/test_foreign_cosmos_parent_mus0/old/cosmos_framework/__init__.py",
+  "helper_file": "/tmp/pytest-of-agent/pytest-55/test_foreign_cosmos_parent_mus0/old/cosmos_framework/utils/helper.py",
+  "helper_source": "OLD_CHECKOUT",
+  "accepted_source_binding": true
+}

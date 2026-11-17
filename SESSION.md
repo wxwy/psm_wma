@@ -1,3 +1,43 @@
+# 2026-11-16 CST — Issue52 R2 namespace compatibility: REVIEW
+
+Fixed R2 Root 778d1ed8a031429fd857c980fc872d4c85123cd1; previous implementation
+900c87aa0ae643123477e985b6a051fb7535ee03; review-only parent
+49374cb343d02bf2e3ca4d13dc89c5dfe55a8480. Before-head4ad10591, fetched and
+advertised49374cb3, logged review commit and ff before reading exact formal
+900c87aa/d5c1ffc7 review at
+ docs/collab/chatgpt/reviews/2026-11-16_Issue52_900c87aa_d5c1ffc7_ViewVAE_R1_REQUEST_CHANGES.md.
+OriginalF1/F2 closed and independent265PASS; GPT requested native namespace
+false-rejection repair only. V3 remains55cc5181; unchanged Child/Gitlink
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2, clean Child. Same DraftPR53 on
+codex/g2-view-vae-cache-issue52: https://github.com/wxwy/psm_wma/pull/53.
+
+Production change only _check_cosmos_origins inencoding.py: genuine namespace
+packages require coherent NamespaceLoader/spec, absent file/origin, real
+non-symlink directory without __init__.py and both matching nonempty absolute
+search-path inventories confined to the expected selected Child directory.
+Ordinary module/package file-origin checks and foreign/mixed/empty/unknown
+rejections preserved. New namespace tests; existing265 test source unchanged.
+No Child package-layout edit or fabricated __init__.py. Existing F1/F2, canvas,
+cache format/contract/source/index/storage/reader, builder and CLIs unchanged.
+
+Final author CPU283/283PASS, zero failures/errors/skips; original265 identities
+retained plus18 namespace cases. Reviewer native namespace probe RED1 old ->
+GREEN1 new; all three unchanged reviewer probes separately3/3PASS, not added
+to283. 48source hashes stable before/after; selected Ruff, format15product/test/
+CLI +1replay, R2diff-check and both helps PASS. Raw commands/logs/JUnit,
+observations/source fingerprints in artifacts/g2_view_vae_issue52_r2/.
+Actual fixed Child namespace accepted with Torch/Wan absent; controlled-import
+fixtures cover before/after/reuse. Complete native Wan import/constructor,
+weights/numerics/decode/performance/GPU remain NOT_RUN, no independent approval
+inferred from author results.
+
+Updated 2026-11-16T20:45:38.364699+08:00; fixed sourceSHA above,
+following ledger commit is bookkeeping only. Next: publish on same DraftPR53,
+GPT narrow independent review, then separately authorized real sample Gate.
+Current Owner R2 handoff supersedes historical V2/MM/Kimi waits for this scope.
+No server/private-data access, full encoding, simulation, training, merge,
+V3/Child/Gitlink or unrelated G0/G1/Local/nav_sg/model changes.
+
 # 2026-11-14 CST — G2 P3 EVENT_KEYFRAME / 无目录帧：DONE；正式全量生产继续
 
 任务 G2-P3-SG-REFERENCE-NOEMPTY 已完成源码、CPU、独立真实数据、正式 V3 推广与实际 32-worker 接续验收。源码 2662bc7947cad878cf752bd0aba6733cae0346a3；review/启动 HEAD f36b78b39f8ab4f6317e01bd2192c9899ae887d6。nav_sg G2 9734d2e0e261a47efbd00f5de78ec6c1a983557b，Cosmos d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2。服务器只 fetch/ff，没有 commit/push。

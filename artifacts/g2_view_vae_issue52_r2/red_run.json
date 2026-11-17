@@ -1,0 +1,18 @@
+{
+  "implementation": "900c87aa0ae643123477e985b6a051fb7535ee03",
+  "review_head": "49374cb343d02bf2e3ca4d13dc89c5dfe55a8480",
+  "command": [
+    "/workspace/.venvs/g2-view-vae-52/bin/python",
+    "-m",
+    "pytest",
+    "artifacts/g2_view_vae_issue52_r2/replay_review_probes.py",
+    "-k",
+    "native_namespace",
+    "--tb=short",
+    "-q",
+    "--junitxml=artifacts/g2_view_vae_issue52_r2/namespace_red.xml"
+  ],
+  "returncode": 1,
+  "expected": "one failed namespace acceptance assertion",
+  "source_unmodified": true
+}

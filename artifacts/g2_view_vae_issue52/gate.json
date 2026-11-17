@@ -1,0 +1,133 @@
+{
+  "base_root": "55cc5181abf8ca4b1e2a3a6b415699c457cc080b",
+  "child_clean": true,
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "commands": [
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "pytest",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "g2/tests/test_scene_view_event_index.py",
+        "g2/tests/test_scene_view_index_package.py",
+        "g2/tests/test_scene_graph_compact_v3.py",
+        "--junitxml=artifacts/g2_view_vae_issue52/pytest.xml",
+        "-q"
+      ],
+      "output": "pytest.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/ruff",
+        "check",
+        "--select",
+        "E4,E7,E9,F,I",
+        "g2/latent_cache/__init__.py",
+        "g2/latent_cache/builder.py",
+        "g2/latent_cache/contract.py",
+        "g2/latent_cache/encoding.py",
+        "g2/latent_cache/source.py",
+        "g2/latent_cache/storage.py",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "tools/g2/build_spatial_view_vae_cache.py",
+        "tools/g2/verify_spatial_view_vae_cache.py"
+      ],
+      "output": "ruff.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/ruff",
+        "format",
+        "--check",
+        "g2/latent_cache/__init__.py",
+        "g2/latent_cache/builder.py",
+        "g2/latent_cache/contract.py",
+        "g2/latent_cache/encoding.py",
+        "g2/latent_cache/source.py",
+        "g2/latent_cache/storage.py",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "tools/g2/build_spatial_view_vae_cache.py",
+        "tools/g2/verify_spatial_view_vae_cache.py"
+      ],
+      "output": "format.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "output": "diff_check.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "tools.g2.build_spatial_view_vae_cache",
+        "--help"
+      ],
+      "output": "build_help.txt",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "tools.g2.verify_spatial_view_vae_cache",
+        "--help"
+      ],
+      "output": "verify_help.txt",
+      "returncode": 0
+    }
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/workspace/psm_wma_issue52/cosmos-framework:/workspace/psm_wma_issue52"
+  },
+  "full_encoding": "NOT_RUN",
+  "gpu_sample_gate": "NOT_RUN",
+  "merge": "NOT_RUN",
+  "new_python_files": 13,
+  "private_server_access": "NOT_RUN",
+  "real_vae_encoding": "NOT_RUN",
+  "scope": "New Root G2 cache modules/tests/CLIs and append-only usage/design supplement. No existing G0/G1/Local/model/nav_sg/Child/Gitlink implementation changes.",
+  "source_manifest": "source_sha256.json",
+  "source_unchanged_during_checks": true,
+  "status": "PASS_CPU_CANDIDATE_ONLY",
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 224
+  },
+  "tests_by_module": {
+    "g2.tests.test_scene_graph_compact_v3": 31,
+    "g2.tests.test_scene_view_event_index": 24,
+    "g2.tests.test_scene_view_index_package": 4,
+    "g2.tests.test_view_vae_builder": 21,
+    "g2.tests.test_view_vae_contract": 18,
+    "g2.tests.test_view_vae_encoding": 52,
+    "g2.tests.test_view_vae_source": 31,
+    "g2.tests.test_view_vae_storage": 43
+  },
+  "timestamp_utc": "2026-11-16T10:17:02.096810+00:00",
+  "training": "NOT_RUN"
+}

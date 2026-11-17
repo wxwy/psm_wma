@@ -1,0 +1,35 @@
+usage: verify_spatial_view_vae_cache.py [-h] --dataset-root DATASET_ROOT
+                                        [--task TASK] [--episode EPISODE]
+                                        [--recipe-id RECIPE_ID]
+                                        [--skip-source] [--reencode]
+                                        [--weights WEIGHTS]
+                                        [--expected-weights-sha256 EXPECTED_WEIGHTS_SHA256]
+                                        [--cosmos-root COSMOS_ROOT]
+                                        [--device DEVICE] [--atol ATOL]
+                                        [--rtol RTOL]
+
+Read-only verification of completed per-View G2 VAE caches. Ordinary
+verification does not import the VAE adapter or load weights. Optional re-
+encoding is a separately requested real-VAE operation, not a CPU-test claim.
+Run as ``python -m tools.g2.verify_spatial_view_vae_cache`` from the Root
+checkout.
+
+options:
+  -h, --help            show this help message and exit
+  --dataset-root DATASET_ROOT
+  --task TASK
+  --episode EPISODE     global episode ID; repeat for an explicit selection
+  --recipe-id RECIPE_ID
+                        require an exact sealed recipe fingerprint
+  --skip-source         audit cache files only; omit the full source-PNG
+                        rehash
+  --reencode            explicitly load a real VAE and compare each physical
+                        owner again
+  --weights WEIGHTS     required local weights for --reencode only
+  --expected-weights-sha256 EXPECTED_WEIGHTS_SHA256
+  --cosmos-root COSMOS_ROOT
+  --device DEVICE
+  --atol ATOL           explicit re-encode absolute tolerance; default strict
+                        zero
+  --rtol RTOL           explicit re-encode relative tolerance; default strict
+                        zero

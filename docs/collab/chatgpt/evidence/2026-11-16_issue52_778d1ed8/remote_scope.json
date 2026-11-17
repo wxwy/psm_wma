@@ -1,0 +1,187 @@
+{
+  "formal_root": "778d1ed8a031429fd857c980fc872d4c85123cd1",
+  "previous_implementation": "900c87aa0ae643123477e985b6a051fb7535ee03",
+  "review_base": "49374cb343d02bf2e3ca4d13dc89c5dfe55a8480",
+  "bookkeeping_head": "fe6a8b426b1df45aafb5cab07ea3a5a1fa988d8b",
+  "bookkeeping_parent": "778d1ed8a031429fd857c980fc872d4c85123cd1",
+  "bookkeeping_files": [
+    "SESSION.md",
+    "TODO.md",
+    "docs/collab/chatgpt/CODEX_INBOX.md"
+  ],
+  "V3_observed": "55cc5181abf8ca4b1e2a3a6b415699c457cc080b",
+  "child_gitlink": {
+    "path": "cosmos-framework",
+    "mode": "160000",
+    "type": "commit",
+    "sha": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2"
+  },
+  "increment_files": [
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/README.md",
+      "status": "added",
+      "additions": 38,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/build_help.txt",
+      "status": "added",
+      "additions": 51,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/diff_check.log",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/environment.json",
+      "status": "added",
+      "additions": 12,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/format.log",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/gate.json",
+      "status": "added",
+      "additions": 160,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/green/foreign_parent_observed.json",
+      "status": "added",
+      "additions": 4,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/green/native_namespace_observed.json",
+      "status": "added",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/green/unsupported_canvas_observed.json",
+      "status": "added",
+      "additions": 13,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/namespace_red.log",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/namespace_red.xml",
+      "status": "added",
+      "additions": 4,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/pytest.log",
+      "status": "added",
+      "additions": 5,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/pytest.xml",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/red/native_namespace_observed.json",
+      "status": "added",
+      "additions": 18,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/red_run.json",
+      "status": "added",
+      "additions": 18,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/replay_review_probes.py",
+      "status": "added",
+      "additions": 29,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/review_probes.log",
+      "status": "added",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/review_probes.xml",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/ruff.log",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/source_after.json",
+      "status": "added",
+      "additions": 50,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/source_before.json",
+      "status": "added",
+      "additions": 50,
+      "deletions": 0
+    },
+    {
+      "filename": "artifacts/g2_view_vae_issue52_r2/verify_help.txt",
+      "status": "added",
+      "additions": 35,
+      "deletions": 0
+    },
+    {
+      "filename": "docs/build/PSM-WMA_G2_spatial_view_vae_cache_2026-11-16.md",
+      "status": "modified",
+      "additions": 30,
+      "deletions": 0
+    },
+    {
+      "filename": "g2/latent_cache/encoding.py",
+      "status": "modified",
+      "additions": 28,
+      "deletions": 5
+    },
+    {
+      "filename": "g2/tests/test_view_vae_namespace.py",
+      "status": "added",
+      "additions": 196,
+      "deletions": 0
+    }
+  ],
+  "production_changes": [
+    "g2/latent_cache/encoding.py:_check_cosmos_origins"
+  ],
+  "new_tests": [
+    "g2/tests/test_view_vae_namespace.py"
+  ],
+  "unchanged_scope": [
+    "all previous 265 testcase source files",
+    "all other encoding.py AST",
+    "cache contract/source/index/storage/reader",
+    "builder and CLIs",
+    "Child package layout/gitlink",
+    "V3",
+    "prior reviewer reports and evidence"
+  ],
+  "source_retrieval": "GitHub plugin at full fixed commit; fetched blobs independently checked; unchanged paths reused from previously verified snapshot; all 48 author-bound SHA256 values matched"
+}

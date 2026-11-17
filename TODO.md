@@ -1,3 +1,7 @@
+- **G2-SPATIAL-VAE-52-R2** — REVIEW; Codex fixed `778d1ed8a031429fd857c980fc872d4c85123cd1` / unchanged Child `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`; same [DraftPR53](https://github.com/wxwy/psm_wma/pull/53), unmerged. Only native namespace provenance compatibility repair, keeping foreign/mixed/empty/unknown source rejection. Original265 identities/source retained +18 new =283/283CPU PASS, zero failures/errors/skips; native reviewer RED1->GREEN1, all3 review probes PASS separately; source48 stable, lint/format/R2diff/helps PASS. Evidence `artifacts/g2_view_vae_issue52_r2/`; GPT narrow incremental review next. No nativeWan/weights/GPU/server/full encoding/train/merge/V3/Child/Gitlink/package-layout/cachecontract/reader/canvas changes.
+
+
+
 - **G2-P3-SG-REFERENCE-NOEMPTY** — DONE（源码/CPU/真实样例/正式V3/实际32-worker首份产物闭环）；负责人ChatGPT/Codex。源码2662bc79、启动f36b78b3；953 CPU PASS；569真实17状态仅5目录、12无目录；正式812的16状态仅7目录、9无目录；SG EVENT_KEYFRAME零delta，当前帧身份保留。报告 g2/experiments/P3_SG_EVENT_KEYFRAME_PRODUCTION_RESUME_20261114.md。此DONE不代表9126全量完成。
 
 - **G2-ATOMIC-9126-PRODUCTION** — IN_PROGRESS；g2_view / dispatcher2177485，GPU4–7×8，正式V3源码、原固定计划resume、新v3workroot、--sg-event-index。截至2026-11-14T01:21:14.933674+08:00：804/9126完成（新EVENT_KEYFRAME 11），32workers继续；旧合法v1/v2/v3保留。588/621既有native_gt失败另列，失败不计完成。源数据与计划不变。

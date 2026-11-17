@@ -1,0 +1,13 @@
+{
+  "height": 1024,
+  "width": 1024,
+  "native_resolution_tier": "768",
+  "constructor_tiers": [
+    "256",
+    "480",
+    "720"
+  ],
+  "cli_exit": 2,
+  "cache_created": false,
+  "plan_returned": false
+}

@@ -1,0 +1,85 @@
+..................FF.................................................... [ 32%]
+........................................................................ [ 64%]
+........................................................................ [ 96%]
+........                                                                 [100%]
+=================================== FAILURES ===================================
+_______________ test_discovery_uses_completed_package_membership _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_discovery_uses_completed_0')
+
+    def test_discovery_uses_completed_package_membership(tmp_path):
+        root = tmp_path / "dataset"
+        ep = root / "tasks/NavigateKitchen/episodes/episode_000042"
+        ep.parent.mkdir(parents=True)
+        _fixture(ep)
+>       assert discover_episodes(root, tasks=["NavigateKitchen"], episodes=[42]) == [ep]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+g2/tests/test_view_vae_builder.py:306: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+dataset_root = PosixPath('/tmp/pytest-of-agent/pytest-0/test_discovery_uses_completed_0/dataset')
+tasks = ['NavigateKitchen'], episodes = [42]
+
+    def discover_episodes(dataset_root, tasks=None, episodes=None):
+        """Discover completed G2 packages, not a second raw-RoboCasa membership list.
+    
+        Existing catalogue naming and each package's actual manifest identity are
+        authoritative. This never loads original models, states, SG or VAE.
+        """
+>       from g2.offline.atomic_6views_catalog import EPISODE_NAME
+E       ModuleNotFoundError: No module named 'g2.offline.atomic_6views_catalog'
+
+g2/latent_cache/builder.py:37: ModuleNotFoundError
+_________ test_real_cli_plan_is_model_free_and_verify_is_encoder_free __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-0/test_real_cli_plan_is_model_fr0')
+
+    def test_real_cli_plan_is_model_free_and_verify_is_encoder_free(tmp_path):
+        ep = tmp_path / "ep"
+        _fixture(ep)
+        weights = tmp_path / "weights.pt"
+        weights.write_bytes(b"CPU plan identity only; not real model weights")
+        repo = Path(__file__).resolve().parents[2]
+        env = dict(os.environ, CUDA_VISIBLE_DEVICES="", PYTHONPATH=str(repo))
+        script = """
+    import sys
+    from tools.g2.build_spatial_view_vae_cache import main
+    rc=main(sys.argv[1:]);assert rc==0
+    assert not any(k=='torch' or k.startswith(('cosmos_framework','mujoco','rospy')) for k in sys.modules)
+    """
+        cmd = [
+            sys.executable,
+            "-c",
+            script,
+            "--dataset-root",
+            str(ep),
+            "--weights",
+            str(weights),
+            "--device",
+            "cpu",
+            "--dry-run",
+            "--height",
+            "32",
+            "--width",
+            "32",
+        ]
+        result = subprocess.run(cmd, cwd=repo, env=env, capture_output=True, text=True)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 4, in <module>
+E           File "/workspace/scratch/720989c43529/pr53_review/source/tools/g2/build_spatial_view_vae_cache.py", line 142, in main
+E             episodes = discover_episodes(
+E                        ^^^^^^^^^^^^^^^^^^
+E           File "/workspace/scratch/720989c43529/pr53_review/source/g2/latent_cache/builder.py", line 37, in discover_episodes
+E             from g2.offline.atomic_6views_catalog import EPISODE_NAME
+E         ModuleNotFoundError: No module named 'g2.offline.atomic_6views_catalog'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/workspace/scratch/720989c43529/pr53_review/source/../venv/bin/python', '-c', "\nimport sys\nf...tomic_6views_catalog import EPISODE_NAME\nModuleNotFoundError: No module named \'g2.offline.atomic_6views_catalog\'\n').returncode
+
+g2/tests/test_view_vae_builder.py:342: AssertionError
+=========================== short test summary info ============================
+FAILED g2/tests/test_view_vae_builder.py::test_discovery_uses_completed_package_membership
+FAILED g2/tests/test_view_vae_builder.py::test_real_cli_plan_is_model_free_and_verify_is_encoder_free
+2 failed, 222 passed in 6.83s

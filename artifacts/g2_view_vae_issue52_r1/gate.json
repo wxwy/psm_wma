@@ -1,0 +1,155 @@
+{
+  "added_cases": 41,
+  "child_clean": true,
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "commands": [
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "pytest",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_canvas.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "g2/tests/test_scene_view_event_index.py",
+        "g2/tests/test_scene_view_index_package.py",
+        "g2/tests/test_scene_graph_compact_v3.py",
+        "--junitxml=artifacts/g2_view_vae_issue52_r1/pytest.xml",
+        "-q"
+      ],
+      "output": "pytest.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "pytest",
+        "artifacts/g2_view_vae_issue52_r1/replay_review_edges.py",
+        "--junitxml=artifacts/g2_view_vae_issue52_r1/green.xml",
+        "-q"
+      ],
+      "output": "green.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/ruff",
+        "check",
+        "--select",
+        "E4,E7,E9,F,I",
+        "g2/latent_cache/__init__.py",
+        "g2/latent_cache/builder.py",
+        "g2/latent_cache/contract.py",
+        "g2/latent_cache/encoding.py",
+        "g2/latent_cache/source.py",
+        "g2/latent_cache/storage.py",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_canvas.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "tools/g2/build_spatial_view_vae_cache.py",
+        "tools/g2/verify_spatial_view_vae_cache.py",
+        "artifacts/g2_view_vae_issue52_r1/replay_review_edges.py"
+      ],
+      "output": "ruff.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/ruff",
+        "format",
+        "--check",
+        "g2/latent_cache/__init__.py",
+        "g2/latent_cache/builder.py",
+        "g2/latent_cache/contract.py",
+        "g2/latent_cache/encoding.py",
+        "g2/latent_cache/source.py",
+        "g2/latent_cache/storage.py",
+        "g2/tests/test_view_vae_builder.py",
+        "g2/tests/test_view_vae_canvas.py",
+        "g2/tests/test_view_vae_contract.py",
+        "g2/tests/test_view_vae_encoding.py",
+        "g2/tests/test_view_vae_source.py",
+        "g2/tests/test_view_vae_storage.py",
+        "tools/g2/build_spatial_view_vae_cache.py",
+        "tools/g2/verify_spatial_view_vae_cache.py",
+        "artifacts/g2_view_vae_issue52_r1/replay_review_edges.py"
+      ],
+      "output": "format.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "output": "diff_check.log",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "tools.g2.build_spatial_view_vae_cache",
+        "--help"
+      ],
+      "output": "build_help.txt",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/workspace/.venvs/g2-view-vae-52/bin/python",
+        "-m",
+        "tools.g2.verify_spatial_view_vae_cache",
+        "--help"
+      ],
+      "output": "verify_help.txt",
+      "returncode": 0
+    }
+  ],
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/workspace/psm_wma_issue52/cosmos-framework:/workspace/psm_wma_issue52"
+  },
+  "full_encoding": "NOT_RUN",
+  "full_regression": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 265
+  },
+  "gpu": "NOT_RUN",
+  "merge": "NOT_RUN",
+  "original224_retained": true,
+  "previous_implementation": "aa0450b8e36b2cb833beda96256a29c3db95db23",
+  "private_server": "NOT_RUN",
+  "protected_scope_unchanged": true,
+  "real_vae_weights": "NOT_RUN",
+  "replay_counts_are_separate_not_added_to_full_suite": true,
+  "review_base": "25b49dba85ca12aad2a902786b927019329fa608",
+  "reviewer_replay_green": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 2
+  },
+  "reviewer_replay_red": {
+    "errors": 0,
+    "failures": 2,
+    "skipped": 0,
+    "tests": 2
+  },
+  "source_file_count": 41,
+  "source_unchanged": true,
+  "status": "PASS_AUTHOR_CPU_R1_ONLY",
+  "timestamp_cst": "2026-11-16T19:01:54.845986+08:00",
+  "training": "NOT_RUN"
+}
