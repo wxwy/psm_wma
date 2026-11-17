@@ -69,7 +69,9 @@ OnlineSpatialSnapshot 使用 C0 identity/signature、显式 source 和 selected 
 
 原 payload 新增 `g2 = {identity: asdict(C0 G2SampleIdentity), static_text: asdict(C StaticTaskText), top_variant?: with_robot|without_robot}`，省略 variant 默认 with_robot。episode 必须匹配 lease；decision frame 必须等于 Local consumer frontier；静态文本的 episode/subtask/enhanced instruction 必须一致。当前 state 仍是原独立字段。完整 body hash 包含 g2，同请求改条件由原 replay 防线拒绝。
 
-新配置仅显式启用：g2_profile=legacy|g2_r1|g2_r2、g2_hooks_factory/module:function、g2_provider_factory/module:function、g2_cache_enabled 与 g2_cache_{max_sessions,max_entries,cpu_bytes,gpu_bytes,handles}。可信启动 factory 接收 service，不由请求指定 import。R1 不构造 provider；R2 缺真实 provider/共享 hooks 明确拒绝。首版 guidance=1。
+新配置仅显式启用：g2_profile=legacy|g2_r1|g2_r2、g2_hooks_factory=module:function、g2_provider_factory=module:function、g2_cache_enabled 与 g2_cache_{max_sessions,max_entries,cpu_bytes,gpu_bytes,handles}。可信启动 factory 接收 service，不由请求指定 import。R1 不构造 provider；R2 缺真实 provider/共享 hooks 明确拒绝。首版 guidance=1。
+
+[现有 server 的完整命令与必需变量](../evidence/2026-11-17_g2_model_d_inference/SERVER_RUNBOOK.md) 已用真实 CLI 帮助核对参数名和 cache-off 布尔开关；只解析帮助，没有构造服务或加载模型。实际 provider/identity factory 缺失时保持 BLOCKED，不以模板变量冒充可运行资产。该 runbook 也列出 B 后继3a5c6259的 residual-cache 边界；D 的361仍只属于本文固定来源。
 
 **D runtime 构造和每请求均拒绝 world_size>1，包括 cache-off。** 不让各 Session 的 hit/miss/循环次数决定不同 FSDP collective 次序，不把 B 的方法已注册为 FSDP forward 当作 D 分布式缓存支持。
 
