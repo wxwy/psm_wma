@@ -1,0 +1,101 @@
+[
+  {
+    "name": "lint_fix",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "--fix",
+      "cosmos_framework/model/generator/mot/global_memory.py",
+      "cosmos_framework/model/generator/mot/global_spatial.py",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 0.07168455900000481
+  },
+  {
+    "name": "format",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "cosmos_framework/model/generator/mot/global_memory.py",
+      "cosmos_framework/model/generator/mot/global_spatial.py",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 0.04412714299996878
+  },
+  {
+    "name": "versions",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-c",
+      "import sys,torch,pytest,importlib.metadata as m; print(sys.version); print('torch',torch.__version__); print('pytest',pytest.__version__); print('ruff',m.version('ruff')); print('cuda_initialized',torch.cuda.is_initialized()); assert not torch.cuda.is_initialized()"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 1.8576227780001773
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "cosmos_framework/model/generator/mot/global_memory.py",
+      "cosmos_framework/model/generator/mot/global_spatial.py",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 0.0540511389999665
+  },
+  {
+    "name": "format_check",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "cosmos_framework/model/generator/mot/global_memory.py",
+      "cosmos_framework/model/generator/mot/global_spatial.py",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 0.04553895200001534
+  },
+  {
+    "name": "pytest",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=/workspace/work/g2-a-cpu/dev01/pytest_tmp",
+      "--junitxml=/workspace/work/g2-a-cpu/dev01/junit.xml",
+      "-q",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py",
+      "cosmos_framework/model/generator/mot/g2_contracts_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 9.27664553700015
+  }
+]

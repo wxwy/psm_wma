@@ -1,0 +1,541 @@
+{
+  "fixture_only": true,
+  "text_dim": 24,
+  "latent_channels": 4,
+  "model_dim": 80,
+  "parameters": {
+    "reader.queries": {
+      "shape": [
+        64,
+        512
+      ],
+      "numel": 32768,
+      "requires_grad": true
+    },
+    "reader.spatial.image_projection.weight": {
+      "shape": [
+        512,
+        4
+      ],
+      "numel": 2048,
+      "requires_grad": true
+    },
+    "reader.spatial.image_projection.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.spatial.scope_embedding.weight": {
+      "shape": [
+        3,
+        512
+      ],
+      "numel": 1536,
+      "requires_grad": true
+    },
+    "reader.spatial.direction_embedding.weight": {
+      "shape": [
+        6,
+        512
+      ],
+      "numel": 3072,
+      "requires_grad": true
+    },
+    "reader.spatial.geometry_mlp.0.weight": {
+      "shape": [
+        512,
+        14
+      ],
+      "numel": 7168,
+      "requires_grad": true
+    },
+    "reader.spatial.geometry_mlp.0.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.spatial.geometry_mlp.2.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.spatial.geometry_mlp.2.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.spatial.position_projection.weight": {
+      "shape": [
+        512,
+        34
+      ],
+      "numel": 17408,
+      "requires_grad": true
+    },
+    "reader.text_adapter.0.weight": {
+      "shape": [
+        24
+      ],
+      "numel": 24,
+      "requires_grad": true
+    },
+    "reader.text_adapter.0.bias": {
+      "shape": [
+        24
+      ],
+      "numel": 24,
+      "requires_grad": true
+    },
+    "reader.text_adapter.1.weight": {
+      "shape": [
+        512,
+        24
+      ],
+      "numel": 12288,
+      "requires_grad": true
+    },
+    "reader.language.query_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.language.query_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.language.source_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.language.source_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.language.cross_attention.query.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.language.cross_attention.key.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.language.cross_attention.value.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.language.cross_attention.output.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.language.ffn_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.language.ffn_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.language.ffn.0.weight": {
+      "shape": [
+        2048,
+        512
+      ],
+      "numel": 1048576,
+      "requires_grad": true
+    },
+    "reader.language.ffn.0.bias": {
+      "shape": [
+        2048
+      ],
+      "numel": 2048,
+      "requires_grad": true
+    },
+    "reader.language.ffn.2.weight": {
+      "shape": [
+        512,
+        2048
+      ],
+      "numel": 1048576,
+      "requires_grad": true
+    },
+    "reader.language.ffn.2.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.query_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.query_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.source_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.source_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.cross_attention.query.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.cross_attention.key.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.cross_attention.value.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.cross_attention.output.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.memory_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.memory_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.self_attention.query.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.self_attention.key.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.self_attention.value.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.self_attention.output.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.0.ffn_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.ffn_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.0.ffn.0.weight": {
+      "shape": [
+        2048,
+        512
+      ],
+      "numel": 1048576,
+      "requires_grad": true
+    },
+    "reader.visual.0.ffn.0.bias": {
+      "shape": [
+        2048
+      ],
+      "numel": 2048,
+      "requires_grad": true
+    },
+    "reader.visual.0.ffn.2.weight": {
+      "shape": [
+        512,
+        2048
+      ],
+      "numel": 1048576,
+      "requires_grad": true
+    },
+    "reader.visual.0.ffn.2.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.query_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.query_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.source_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.source_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.cross_attention.query.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.cross_attention.key.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.cross_attention.value.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.cross_attention.output.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.memory_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.memory_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.self_attention.query.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.self_attention.key.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.self_attention.value.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.self_attention.output.weight": {
+      "shape": [
+        512,
+        512
+      ],
+      "numel": 262144,
+      "requires_grad": true
+    },
+    "reader.visual.1.ffn_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.ffn_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.visual.1.ffn.0.weight": {
+      "shape": [
+        2048,
+        512
+      ],
+      "numel": 1048576,
+      "requires_grad": true
+    },
+    "reader.visual.1.ffn.0.bias": {
+      "shape": [
+        2048
+      ],
+      "numel": 2048,
+      "requires_grad": true
+    },
+    "reader.visual.1.ffn.2.weight": {
+      "shape": [
+        512,
+        2048
+      ],
+      "numel": 1048576,
+      "requires_grad": true
+    },
+    "reader.visual.1.ffn.2.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.final_norm.weight": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "reader.final_norm.bias": {
+      "shape": [
+        512
+      ],
+      "numel": 512,
+      "requires_grad": true
+    },
+    "projector.modality": {
+      "shape": [
+        80
+      ],
+      "numel": 80,
+      "requires_grad": true
+    },
+    "projector.projection.weight": {
+      "shape": [
+        80,
+        512
+      ],
+      "numel": 40960,
+      "requires_grad": true
+    }
+  },
+  "total_numel": 11935360
+}

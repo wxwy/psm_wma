@@ -1,0 +1,126 @@
+{
+  "dev01/commands.json": {
+    "bytes": 3349,
+    "sha256": "ac2391970f49ac1194bbece01a36dbab34f57da5e138f15053adf9d75ddc7a54"
+  },
+  "dev01/environment.json": {
+    "bytes": 473,
+    "sha256": "1fd093aae4df6c3cc86a8931e6c35ea1b6205dae1a188b7ee23092a30c6e406d"
+  },
+  "dev01/format.log": {
+    "bytes": 43,
+    "sha256": "1dc6a19feae160e87088a6a505f8844ac8bfdaf9001c9c3cc558beceb0f6c9d9"
+  },
+  "dev01/format_check.log": {
+    "bytes": 26,
+    "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+  },
+  "dev01/identity.json": {
+    "bytes": 557,
+    "sha256": "aa8a3fe3b9bb017684b9820eb92f6f1072759d7388e97cb053b5cf4d933d19bd"
+  },
+  "dev01/junit.xml": {
+    "bytes": 6367,
+    "sha256": "2dc4ffff2c689fa7f9862862b6eed3ea6660a24bb0fbc785ce3fe4929273be28"
+  },
+  "dev01/lint.log": {
+    "bytes": 19,
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "dev01/lint_fix.log": {
+    "bytes": 38,
+    "sha256": "aac3a0503d8b95052cc85fb9f1717dc82b74aa55853a5aa9749b41e30275d472"
+  },
+  "dev01/pytest.log": {
+    "bytes": 687,
+    "sha256": "4f10d6b8d02e00d54f41f4c1b312ae7ad548c729b6121484e955e0ada33e515a"
+  },
+  "dev01/result.json": {
+    "bytes": 250,
+    "sha256": "59435f02694223de0743ffa3aa8dd34311b1683bcaab00cac0dff572640b4b7f"
+  },
+  "dev01/source_after.json": {
+    "bytes": 146702,
+    "sha256": "1f8367ddf99cf1de44e8dc38c052ff7c09309ad66024f6a47763f8060a8861ff"
+  },
+  "dev01/source_before.json": {
+    "bytes": 146702,
+    "sha256": "1f8367ddf99cf1de44e8dc38c052ff7c09309ad66024f6a47763f8060a8861ff"
+  },
+  "dev01/versions.log": {
+    "bytes": 455,
+    "sha256": "1626d54e23d459ffb29935b3d164978d3c9aee71dfe32681ad8aa6a51c0dc6ff"
+  },
+  "final01/commands.json": {
+    "bytes": 3497,
+    "sha256": "5594cc18e91551a2f3a1a6b1c1b2438a2d017593e230fe1e72af330751cd9d9f"
+  },
+  "final01/environment.json": {
+    "bytes": 475,
+    "sha256": "35c57b149b08dd4168bc23eb16fa0f678861038777e3bf7bc134211db37dae1e"
+  },
+  "final01/format_check.log": {
+    "bytes": 26,
+    "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de"
+  },
+  "final01/identity.json": {
+    "bytes": 315,
+    "sha256": "b9903ca3b3f36f370abaeb3be0ac4cb275f0679bb95a1da57c8295ef2c90fdee"
+  },
+  "final01/inventory.log": {
+    "bytes": 336,
+    "sha256": "0ffbc0dece80808e221844e39c3b6bfa7548aeabc0b4eb2c12aa80f5fcb38c6c"
+  },
+  "final01/junit.xml": {
+    "bytes": 6367,
+    "sha256": "2133522586d0a3bd434d73af0a05aae37b25fcf55bcd2da97dc690df4bd07ff5"
+  },
+  "final01/lint.log": {
+    "bytes": 19,
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "final01/parameter_inventory.json": {
+    "bytes": 10412,
+    "sha256": "e3a1a7d503ddec14695f210bd8934eb4b97cf73d51628b6cb044d2d5bdfe209e"
+  },
+  "final01/pytest.log": {
+    "bytes": 687,
+    "sha256": "6a72edc4af45bbeb76259752e0c03e5d5dcc2ddac63e4d0be7ed03ec2dd4d906"
+  },
+  "final01/result.json": {
+    "bytes": 372,
+    "sha256": "8d4d9b36a925d3a8461a01e87e7c3f03c6618f602e2e0bec6c05b573c496fe7f"
+  },
+  "final01/source_after.json": {
+    "bytes": 146702,
+    "sha256": "1f8367ddf99cf1de44e8dc38c052ff7c09309ad66024f6a47763f8060a8861ff"
+  },
+  "final01/source_before.json": {
+    "bytes": 146702,
+    "sha256": "1f8367ddf99cf1de44e8dc38c052ff7c09309ad66024f6a47763f8060a8861ff"
+  },
+  "final01/versions.log": {
+    "bytes": 455,
+    "sha256": "1626d54e23d459ffb29935b3d164978d3c9aee71dfe32681ad8aa6a51c0dc6ff"
+  },
+  "preparation/core-preparation.log": {
+    "bytes": 683,
+    "sha256": "f56e62d65538c8822bd6fcacb38b386463e387e084796e5b48611cbfd4ac0a49"
+  },
+  "preparation/core-preparation.xml": {
+    "bytes": 540,
+    "sha256": "e0e408ca0323befa28b23c99576c4ac4533bd326781e90774dde885390256537"
+  },
+  "preparation/cpu-environment.log": {
+    "bytes": 413,
+    "sha256": "ee6eff21c33eaee8b79a5503ede375b77c34e4fa075cdffceda29abcd2b0584e"
+  },
+  "provenance.json": {
+    "bytes": 1744,
+    "sha256": "227493b329fae37e6b24e15593e18022cf0304d0de7c8e96c285ebe1f1a502e1"
+  },
+  "run_reader_cpu.py": {
+    "bytes": 6681,
+    "sha256": "ee77ee18ee7bc08854b241c56f7fd3f21900592bf14836447b0e426279186fa9"
+  }
+}

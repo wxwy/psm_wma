@@ -1,0 +1,33 @@
+{
+  "timestamp_cst": "2026-11-17T17:25:18.397123+08:00",
+  "source_root_base": "7a357620b4cc1f6817749c8a8275771cfbb4049c",
+  "implementation_child": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+  "c0_child": "ec9356fafd1fd18cc0bd552b7eb23428f59df7f6",
+  "root_gitlink_unchanged": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "changed_files": [
+    "cosmos_framework/model/generator/mot/global_memory.py",
+    "cosmos_framework/model/generator/mot/global_memory_test.py",
+    "cosmos_framework/model/generator/mot/global_spatial.py",
+    "cosmos_framework/model/generator/mot/global_spatial_test.py"
+  ],
+  "source_blobs": {
+    "cosmos_framework/model/generator/mot/global_memory.py": "7fe072ec28ddb699ac7d1818a24a2f054b0dfab1",
+    "cosmos_framework/model/generator/mot/global_memory_test.py": "32d4b6069c45dc2bb104e71de660976e75de6426",
+    "cosmos_framework/model/generator/mot/global_spatial.py": "482351ad7709b2c2a7774d4fccb8480292f399cf",
+    "cosmos_framework/model/generator/mot/global_spatial_test.py": "6168485788cd462e1692f5a5663ccbd5d96ab692"
+  },
+  "c0_files_unchanged": true,
+  "code_outside_A_unchanged": true,
+  "junit_cases": {
+    "global_memory_test": 30,
+    "global_spatial_test": 15,
+    "g2_contracts_test": 11
+  },
+  "author_cpu_only": true,
+  "scratch_3_pass_not_bound_to_final_source": true,
+  "junit_file_ownership": "Original classname is empty with -c /dev/null; unique testcase names mapped to fixed-source AST test names. XML unchanged; first packaging classname grouping assertion failed; CPU result unchanged and not rerun.",
+  "actual_attention_backend": "NOT_RUN; CPU test reference boundary only",
+  "independent_review": "NOT_CLAIMED",
+  "integrated_host_model": "NOT_RUN",
+  "gpu_training_sr": "NOT_RUN"
+}
