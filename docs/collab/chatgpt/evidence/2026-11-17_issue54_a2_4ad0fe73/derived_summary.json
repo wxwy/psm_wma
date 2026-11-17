@@ -1,0 +1,49 @@
+{
+  "schema": "g2_issue54_a2_gpt_derived_summary_v1",
+  "status": "APPROVE_CODE_AND_REPRESENTATIVE_REAL_FUNCTIONAL",
+  "formal_root": "4ad0fe7394cb62c4b5692fecaf6ce52963b8852c",
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "cpu": {
+    "pr53": 283,
+    "stage_a": 150,
+    "related": 45,
+    "total": 478,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "original_A1_probes": 3
+  },
+  "source_hash_count": 209,
+  "real_f27": {
+    "close_blender_lid": {
+      "episode": 0,
+      "states": 37,
+      "views": 4,
+      "unique_owners": 89,
+      "legacy_png_refs_exact": 111,
+      "vae_stream_posthoc_max_abs": 0
+    },
+    "close_fridge": {
+      "episode": 502,
+      "states": 44,
+      "views": 8,
+      "unique_owners": 80,
+      "legacy_png_refs_exact": 308,
+      "vae_stream_posthoc_max_abs": 0
+    }
+  },
+  "concurrent_real_F27_wan": {
+    "episode": 0,
+    "render_elapsed_s": 163.405,
+    "acked_before_renderer_end": 89,
+    "total_end_to_end_s": 205.183,
+    "source_pack_s": 17.726,
+    "latent_exact_records": 89,
+    "source_bound_metadata_ids_distinct": true
+  },
+  "sample_recipe": "3ee9c48399143866b2a0061f3cee01bff35842228f639380d60602d6402e2fc1",
+  "original_server_evidence_sha256": "192cf9ef494f879228047412bccb002363eff5b38d22bdd758c182cee4c2b315",
+  "full_corpus_and_training_approved": false,
+  "all_real_images_remain_server": true,
+  "note": "DERIVED SUMMARY, not byte-identical raw server evidence. Source identity is intentionally different between independent F27 renders."
+}
