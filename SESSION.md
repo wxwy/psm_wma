@@ -1,4 +1,30 @@
-# 2026-11-17 CST — Issue58 P0 corrected candidate REVIEW
+# 2026-11-17 CST — Issue58 P0 published fixed source / GPT REVIEW
+
+FormalRoot a3e0048b40e1392d0ff92d4fce8da4dc278447f6 / unchanged
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2.
+Source branch pushed, independent DraftPR62 created/readback open/Draft/
+unmerged, base unchangedPR55/29f9993d. PR53/d36caf0f and PR55/29f9993d
+also readback Draft/unmerged. ObservedV3 7a357620/nav70eb7b44 untouched.
+Local exactpair peer_closure finalLOCAL_NARROW_REVIEW_PASS closes1P1,
+4focusedPASS/no newP1/P2; unchangedprobe actionrun/worker_calls1. Productdiff
+empty afterclosure. 222 testedGitblobs matchformal. Source reviews/results
+are local only; no GPT independentapproval asserted for this increment.
+
+CanonicalInbox append88208bytes (<131072) requests exactpair CODE/CPU and
+separate realF27/Wan/sample/resourceA-B. revision2 gate/implementation_scope/
+publication_before_bookkeeping and peer_closure receipts available; following
+docs-onlyHEAD is notformalRoot. Ownrunbook has exact manual tmux/preflight/
+progress/stop/resume andsample/A-B/Owner-onlyold-view deletion commands.
+
+Authority: OwnerIssue58 explicitly Codexcode/CPU/Draft thenSTOP for GPT
+fixedserverGate; Owner alone manualfullstart/deletion. No oldMM/Kimi loops,
+no automaticstart ormerge. P1 deferred/B1unchanged. Author487PASS/13 inherited
+SKIP/0fail/error,478oldIDs +22new,222stable; SQL101101events/1001jobs simulated.
+AllrealGPU/Wan/native/private/server/resourceA-B/fullproduction/olddelete/
+state15/jointalign/train/merge NOT_RUN here; trainingfalse.
+Next finalbookkeeping push/readback thenSTOP, no further implementation.
+
+# Previous corrected candidate (historical)
 
 Narrow1P1 fixed: prepare_plan returnsfreshrunargs w/manual+experimentalflags.
 Existing endtoend now uses realprepare_plan/build/originalschedule rather than
