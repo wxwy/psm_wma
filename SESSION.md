@@ -4425,3 +4425,11 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 - 独立 `/workspace/work/g2-b-core`，Root/Child branch `v3-g2-model-b-core-20261117`。镜像 ghfast.top 403 后克隆同一 wxwy Child GitHub 源并检出 Gitlink；原 /workspace/psm_wma 工作树未改。#56 B ACK comment6943487277，A ACK6943452748；C/D 未核对 ACK 仍 TODO。
 - C0 首批仅 Child `mot/g2_contracts.py` / `g2_contract_fixtures.py` / `g2_contracts_test.py`；Root 公共合同/归属/依赖/证据与本账本。C0 后 B 才修改 unified_mot.py、omni_mot_model.py、memory_prefix.py、cosmos3_vfm_network.py、必要 attention/config/carrier/FSDP；不修改 A Reader/C formatter-trainer/D inference cache。
 - 已核对 #52/#53 与 #54 最新 A2固定4ad0fe73/d5c1ffc7 的独立限定通过；DATA_B/C 仍 pending；不复做 VAE/producer。公共几何以其 spatial_metadata.py/preprocess_rgb 字段为源，不使用假原点或固定网格。新旧历史测试不是本轮结果；初始认领时尚未运行C0；最终结果与来源见本节首条。
+
+## 2026-11-17 CST — G2 B core 固定来源
+
+- C0 Root739d39cf6498543b59d487d5925ef2a329040ac3/Child ec9356fafd1fd18cc0bd552b7eb23428f59df7f6已在#56/6943610784发布；A/C/D均ACK该唯一ABI。C/D作者ACK6943519070/6943531508，更新公共TODO为IN_PROGRESS，不再保留初始未核对状态。
+- B-core Child7e888f217dfcddc35ed73782f65c6e0890c72c3a已正常push/readback独立B分支。Root本提交绑定该Gitlink，回执登记完整Root。14文件B范围，不改A Reader/C formatter-trainer/D inference cache；A4209b151、C68d84e8、D209749e5已读但尚未合入B-core。
+- 一次冻结UND共享原生embedding/RoPE/causal attention/MLP/postnorm，保留各层UND base KV，GEN key norm在当前可训练图。所有GEN层[G;L;Text;Native]K/V-only，G/L独立长度/presence，Local k_local不扩大。Global配置关闭不创建模块/不消耗新增初始化RNG；公开G2ConditionBatch与Omni prepare/generation、参数inventory/FSDP注册供C/D使用。
+- 最终合成CPU scoped198/198 PASS/0skip，9主要文件strict Ruff check/format PASS；保留baseline I001 debt。C0实际旧源码4组对照输出/梯度/构造及forward RNG逐位一致。日志/JUnit/迭代失败及runbook在artifacts/g2_model_b_core；BF16首轮fixture把必须FP32的rotary buffer错误cast，已修fixture，不改nativeRoPE规则。FSDP注册/切换仅CPU接口，不是实际分布式验证。
+- 接续在独立integration分支普通合入固定A/C/D与必要实际调用测试。DATA_B/C、真实GPU/Local inner/FSDP/A-B恢复/cache-on-off/Session闭环仍需固定候选执行侧验收；GA=1。D按Session缓存miss跳过FSDP hook会导致rank序列不一致，已在#56明确通知，须adapter边界或一致批调用证明。未运行GPU/正式训练/900EP，未服务器commit/push/正式分支推广。

@@ -1,0 +1,116 @@
+F
+=================================== FAILURES ===================================
+__________ test_native_prepared_hidden_and_gen_parity[False-lengths0] __________
+
+lengths = (3,), text_norm = False
+
+    @pytest.mark.parametrize("lengths", [(3,), (0,), (3, 0, 1), (0, 0)])
+    @pytest.mark.parametrize("text_norm", [False, True])
+    def test_native_prepared_hidden_and_gen_parity(lengths, text_norm):
+        torch.manual_seed(31)
+        model = tiny_model(text_norm)
+        pack, mask, pos, text = native_pack(model, lengths)
+        native, _ = model(pack, mask, pos)
+        prepared = prepare_und_text_features(model, pack, pos, text)
+>       actual, _ = model(pack, mask, pos, prepared_text=prepared)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/g2_core_test.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1801: in forward
+    return _impl_forward(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1247: in _impl_forward
+    hidden_states, lbl_metadata_dict, kv_to_store = decoder_layer(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1608: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PackedAttentionMoT(
+  (q_proj): Linear(in_features=16, out_features=16, bias=False)
+  (k_proj): Linear(in_features=16,...r(in_features=16, out_features=8, bias=False)
+  (o_proj_moe_gen): Linear(in_features=16, out_features=16, bias=False)
+)
+pack = {'_caption_seq_offsets': None, '_causal_indices': tensor([0, 1, 2], dtype=torch.int32), '_causal_sample_ids': tensor([0, 0, 0, 1]), '_causal_seq_offsets': tensor([0, 3, 4], dtype=torch.int32), ...}
+attention_mask = <cosmos_framework.model.generator.mot.attention.SplitInfo object at 0x7faf556516a0>
+packed_position_embeddings = ({'_caption_seq_offsets': None, '_causal_indices': tensor([0, 1, 2], dtype=torch.int32), '_causal_sample_ids': tensor(....int32), '_causal_sample_ids': tensor([0, 0, 0, 1]), '_causal_seq_offsets': tensor([0, 3, 4], dtype=torch.int32), ...})
+natten_metadata = None, memory_value = None, memory_prefix_context = None
+prepared_text_kv = UNDLayerKV(key=tensor([[[ 0.0533, -0.0044, -0.0113, -0.0417,  0.0412,  0.0229,  0.0163,
+           0.0475]],
+
+        ...],
+        [9.0930e-01, 4.2282e-02, 8.9443e-04, 1.8915e-05, 9.0930e-01, 4.2282e-02,
+         8.9443e-04, 1.8915e-05]]))
+
+    def forward(
+        self,
+        pack: SequencePack,
+        attention_mask: AttentionMaskType,
+        packed_position_embeddings: tuple[SequencePack, SequencePack],
+        natten_metadata: dict | None = None,
+        memory_value: MemoryValue | None = None,
+        memory_prefix_context: MemoryPrefixContext | None = None,
+        prepared_text_kv: UNDLayerKV | None = None,
+    ) -> tuple[SequencePack, KVToStore | None]:
+        """Forward pass with optional memory-augmented attention.
+    
+        When ``memory_value`` is provided, ``dispatch_attention_fn`` routes to
+        the appropriate attention kernel (e.g. three-way KV-cache attention
+        for training, or AR inference concat + dense attention).
+    
+        ``kv_to_store`` is produced when ``memory_value`` is present:
+        ``(gen_k, gen_v, und_k, und_v)`` for the caller to write back via
+        ``MemoryState.write_for_layer()``.  The tensors are passed with
+        gradients attached; each ``MemoryState`` decides whether to detach
+        (e.g. for truncated BPTT) or keep gradients (e.g. teacher forcing).
+    
+        Args:
+            pack: Packed sequence with und/gen tokens
+            attention_mask: Attention metadata (SplitInfo).
+            packed_position_embeddings: RoPE embeddings (cos, sin)
+            natten_metadata: Optional NATTEN metadata for neighborhood attention.
+            memory_value: Optional read-only tensor container for memory-augmented attention.
+        """
+    
+        if memory_value is not None and bool(getattr(memory_value, "target_only_no_text", False)):
+            if natten_metadata is not None:
+                raise ValueError("Target-only teacher forcing does not support context-parallel NATTEN metadata.")
+            return self._forward_target_only_no_text(
+                pack,
+                attention_mask,
+                packed_position_embeddings,
+                memory_value,
+            )
+    
+        if prepared_text_kv is None:
+            q_und, k_und, v_und = self._project_und(get_und_seq(pack))
+        else:
+            count = get_und_seq(pack).shape[0]
+            pad = count - prepared_text_kv.key.shape[0]
+            if pad < 0:
+>               raise ValueError("Prepared UND contains extra text rows")
+E               ValueError: Prepared UND contains extra text rows
+
+cosmos_framework/model/generator/mot/unified_mot.py:772: ValueError
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/g2_core_test.py::test_native_prepared_hidden_and_gen_parity[False-lengths0]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 5.55s

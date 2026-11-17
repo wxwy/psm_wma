@@ -577,7 +577,8 @@
 - **ISSUE23-STAGE2-HARDWARE** — TODO (not authorized); Owner/GPT; real WanBF16 B1/B4/B8 andEGLcompetition Gate, no inference Feature transport before proof.
 - **ISSUE23-STAGE3-P0-AND-MULTI** — TODO (not authorized); Owner/GPT; strict1x1 A/B/C latency/SR paired design and multi throughput independent, reviewed newSourcePair andFresh identities required;18x2smoke noSRbenefitclaim, largerSRrequiresnewOwnerpermission.
 - **G2-M00 / G2-M01 / G2-B-C0** — REVIEW (author ABI delivered, not independent approval)；Codex B；Root baseline7a357620；固定Child C0 `ec9356fafd1fd18cc0bd552b7eb23428f59df7f6`。公共三文件+归属合同，11 CPU PASS/0skip、Ruff check/format PASS；Child已正常发布独立分支，Root绑定准确Gitlink。A ACK 已核对；C/D未核对作者ACK保持TODO。UND/GEN集成不属于C0结果，无GPU/训练/正式分支推广。
-- **G2-M02 (A)** — IN_PROGRESS (作者 ACK #56/6943452748)；A 独占 global_memory.py/空间编码/tests；等待 B C0，不另建 ABI。
-- **G2-M03 / G2-M04 (B core)** — IN_PROGRESS after C0；B 独占 UND、joint prefix、主模型/FSDP 接线；C 独占 formatter/transforms，D 独占 inference_text_kv_memory.py/服务缓存。尚未实现/测试通过，不据C0宣称完成。
-- **G2-M05 (C), G2-M06 (D)** — TODO；等待各作者 ACK 与固定来源；不由 B 代称已开工。
+- **G2-M02 (A)** — IN_PROGRESS (作者 ACK #56/6943452748，C0 ACK6943646433)；A 独占 global_memory.py/global_spatial.py/tests；远端固定4209b151已读，待作者完整交接及B集成。
+- **G2-M03 / G2-M04 (B core)** — REVIEW 作者CPU，Child固定7e888f217dfcddc35ed73782f65c6e0890c72c3a；UND共享helper、joint G/L、模型/FSDP/public generation接线；scoped198 PASS，旧C0 none/Local-only输出/grad/RNG逐位相同。尚未A/C/D组合或真实GPU/FSDP，不宣称M07完成。
+- **G2-M05 (C)** — IN_PROGRESS；作者ACK6943519070；首批静态文本68d84e819d114c6ce817403afacad994b2fb8f35可读；最终native specials/positions adapter、optimizer/阶段恢复待固定来源。
+- **G2-M06 (D)** — IN_PROGRESS；作者ACK6943531508；首批209749e5287c5030370464625a7e1f44dfb2ab6f可读；B carrier/实际生成薄adapter待后继固定来源，跨rank Session cache hook集体调用一致性须明确边界。
 - **G2-M07 / G2-M08 / G2-M09** — TODO；集成须 A/C/D fixed commits；真实 GPU/FSDP/恢复/cache-on-off/Local inner 由执行侧在 fixed pair 验证，GA=1；正式参数待实测。

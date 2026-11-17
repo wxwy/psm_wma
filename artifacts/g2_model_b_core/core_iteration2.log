@@ -1,0 +1,66 @@
+.F
+=================================== FAILURES ===================================
+__________ test_native_prepared_hidden_and_gen_parity[False-lengths1] __________
+
+lengths = (0,), text_norm = False
+
+    @pytest.mark.parametrize("lengths", [(3,), (0,), (3, 0, 1), (0, 0)])
+    @pytest.mark.parametrize("text_norm", [False, True])
+    def test_native_prepared_hidden_and_gen_parity(lengths, text_norm):
+        torch.manual_seed(31)
+        model = tiny_model(text_norm)
+        pack, mask, pos, text = native_pack(model, lengths)
+>       native, _ = model(pack, mask, pos)
+                    ^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/g2_core_test.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1802: in forward
+    return _impl_forward(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1247: in _impl_forward
+    hidden_states, lbl_metadata_dict, kv_to_store = decoder_layer(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1608: in forward
+    pack_attn_out, kv_to_store = self.self_attn(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:889: in forward
+    packed_attn_output, kv_to_store = self.dispatch_attention_fn(
+cosmos_framework/model/generator/mot/attention.py:942: in dispatch_attention
+    output = two_way_attention(
+cosmos_framework/model/generator/mot/attention.py:384: in two_way_attention
+    causal_out = causal_text_attention(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+packed_query_states = {'_caption_seq_offsets': None, '_causal_indices': tensor([], dtype=torch.int32), '_causal_sample_ids': tensor([1]), '_causal_seq_offsets': tensor([0, 0, 1], dtype=torch.int32), ...}
+packed_key_states = {'_caption_seq_offsets': None, '_causal_indices': tensor([], dtype=torch.int32), '_causal_sample_ids': tensor([1]), '_causal_seq_offsets': tensor([0, 0, 1], dtype=torch.int32), ...}
+packed_value_states = {'_caption_seq_offsets': None, '_causal_indices': tensor([], dtype=torch.int32), '_causal_sample_ids': tensor([1]), '_causal_seq_offsets': tensor([0, 0, 1], dtype=torch.int32), ...}
+
+    def causal_text_attention(packed_query_states, packed_key_states, packed_value_states, *, force_varlen=False):
+        """Native UND attention, shared by two_way and frozen G2 text preparation."""
+        if packed_query_states["_num_causal_tokens"] == 0:
+>           empty = get_und_seq(packed_query_states)
+                    ^^^^^^^^^^^
+E           NameError: name 'get_und_seq' is not defined
+
+cosmos_framework/model/generator/mot/attention.py:232: NameError
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/g2_core_test.py::test_native_prepared_hidden_and_gen_parity[False-lengths1]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 passed in 4.56s
