@@ -208,7 +208,8 @@ def capacity_report(
     strata = {}
     missing = sorted(set(old["by_task"]) - set(deltas))
     for task, baseline in old["by_task"].items():
-        values = deltas.get(task) or all_deltas
+        task_samples = deltas.get(task, ())
+        values = task_samples or all_deltas
         lo = baseline["logical_bytes"] + baseline["episodes"] * min(values)
         hi = baseline["logical_bytes"] + baseline["episodes"] * max(values)
         lower += max(0, lo)
@@ -216,11 +217,11 @@ def capacity_report(
         strata[task] = dict(
             old_episode_count=baseline["episodes"],
             old_bytes=baseline["logical_bytes"],
-            measured_samples=len(deltas[task]),
+            measured_samples=len(task_samples),
             conditional_lower_bytes=max(0, lo),
             conditional_upper_bytes=max(0, hi),
             method="SAME_TASK_SAMPLE_DELTA_RANGE"
-            if deltas[task]
+            if task_samples
             else "UNVALIDATED_OTHER_TASK_DELTA_SENSITIVITY",
         )
     fits = upper + reserve_bytes <= available_bytes
@@ -236,7 +237,7 @@ def capacity_report(
         by_task_projection=strata,
         expected_episode_count=expected_episodes,
         expected_task_count=expected_tasks,
-        measured_task_count=len(deltas),
+        measured_task_count=sum(bool(v) for v in deltas.values()),
         missing_new_task_samples=missing,
         available_bytes=available_bytes,
         required_output_reserve_bytes=reserve_bytes,

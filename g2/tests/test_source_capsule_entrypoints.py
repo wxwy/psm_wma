@@ -193,6 +193,9 @@ def test_capacity_counts_and_missing_task_coverage_hold_even_if_budget_fits(tmp_
         expected_tasks=2,
     )
     assert report["candidate_bound_fits"] and report["verdict"] == "HOLD_CAPACITY"
+    assert report["measured_task_count"] == 1
+    assert report["by_task_projection"]["NavigateKitchen"]["measured_samples"] == 1
+    assert report["by_task_projection"]["CloseFridge"]["measured_samples"] == 0
     assert (
         report["missing_new_task_samples"] == ["CloseFridge"]
         and report["full_production_authorized"] is False
