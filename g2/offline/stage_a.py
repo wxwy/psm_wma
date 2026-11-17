@@ -64,11 +64,13 @@ def validate_profile_episode(
     if is_final:
         source, _ = final.validate_profile_header(root, manifest)
     else:
-        source = read_json(contained(root, "spatial_source.json"))
+        from .view_only_source import load_working_source
+
+        source, working_sha = load_working_source(root)
         ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
     if not is_final and (
         source.get("schema") != SOURCE_SCHEMA
-        or ready.get("source_manifest_sha256") != digest(root / "spatial_source.json")
+        or ready.get("source_manifest_sha256") != working_sha
         or source.get("source_id")
         != fingerprint({k: v for k, v in source.items() if k != "source_id"})
         or ready.get("source_id") != source["source_id"]
@@ -857,6 +859,10 @@ def package_stage_a(
                         complete=True,
                     ),
                 )
+            if not profile.view_vae:
+                from .view_only_source import compress_working_source
+
+                compress_working_source(temporary)
             validate_profile_episode(
                 temporary, require_complete=False, expected_profile=profile
             )

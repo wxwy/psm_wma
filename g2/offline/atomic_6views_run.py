@@ -290,9 +290,17 @@ def _assert_profile_output_namespace(row, config):
     if config.output_root.absolute() != plan.OUTPUT.absolute():
         return
     if config.vae_spool is None:
-        raise ContractError(
-            "legacy View output path requires an owned Stage-A v2 source spool"
+        from .view_only_source import verify_view_only_claim
+
+        profile = (
+            config.output_profile
+            if isinstance(config.output_profile, OutputProfile)
+            else OutputProfile.from_dict(read_json(config.output_profile))
         )
+        if profile.view_vae:
+            raise ContractError("VAE profile requires an owned v2 source spool")
+        verify_view_only_claim(config.output_root, profile)
+        return
     from g2.latent_cache.contract import CacheError
     from g2.latent_cache.retirement_policy import validate_target
     from g2.latent_cache.streaming import EventSpool
@@ -716,6 +724,21 @@ def schedule(args, *, admission=None, on_result=None, run_worker=None):
            for r in all_rows):
         raise ContractError("pinned plan differs from current original source")
     jobs=[r for r in all_rows if not _completed(args,r,profile)]
+    if args.action == "run" and profile is not None and not profile.view_vae:
+        if args.output_root.absolute() == plan.OUTPUT.absolute():
+            from g2.latent_cache.contract import fingerprint
+            from .view_only_source import claim_view_only_root
+
+            claim_view_only_root(
+                args.output_root,
+                profile,
+                fingerprint(
+                    [
+                        (row["episode_id"], row["source_fingerprint"])
+                        for row in all_rows
+                    ]
+                ),
+            )
     if not jobs:
         event("ALL_DONE",total=len(selected),skipped_completed=len(selected))
         return 0
