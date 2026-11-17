@@ -168,11 +168,13 @@ def _base_index(plan, recipe):
 
 
 def _base_metadata(plan, recipe, view_id, view):
+    from .final_source import payload_source
+
     return dict(
         schema=PAYLOAD_SCHEMA,
         episode_key=plan["episode_key"],
         episode=plan["episode"],
-        source=_source_binding(plan),
+        source=payload_source(_source_binding(plan)),
         recipe_id=recipe["recipe_id"],
         view_id=view_id,
         view_plan=view,

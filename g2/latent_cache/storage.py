@@ -345,6 +345,7 @@ class EpisodeIndex:
     cache_root: Path
     manifest: dict
     states_by_id: dict
+    manifest_sha256: str = ""
 
     @property
     def episode_key(self):
@@ -390,7 +391,7 @@ def validate_payload_binding(index, view_id, entry, info):
         or info.get("record_sha256") != entry["record_sha256"]
         or metadata["episode_key"] != index.episode_key
         or metadata["recipe_id"] != index.recipe_id
-        or metadata["source"] != index.manifest["source"]
+        or metadata["source"] != _payload_source(index.manifest["source"])
         or metadata["view_id"] != view_id
         or metadata["view_plan"]["state_records"] != entry["state_records"]
         or metadata["view_plan"]["path"] != entry["path"]
@@ -441,14 +442,39 @@ def validate_payload_binding(index, view_id, entry, info):
             f"state_{ordinal:06d}_frame_{record['owner_frame']:06d}/{view_id}.png"
         )
         allowed_pngs = {expected_png}
-        if index.manifest["source"].get("schema") == "g2_sealed_spatial_source_v1":
+        if (
+            _payload_source(index.manifest["source"]).get("schema")
+            == "g2_sealed_spatial_source_v1"
+        ):
             allowed_pngs.add(f"_spatial_inputs/{ordinal}/{view_id}.png")
         if record["png_path"] not in allowed_pngs:
             raise CacheError("physical PNG path differs from canonical View owner")
     return True
 
 
+def _payload_source(source):
+    from .final_source import payload_source
+
+    return payload_source(source)
+
+
 def open_episode_index(episode_root, expected_recipe_id=None):
+    from .final_source import JOURNAL
+    from .source_locks import reader_lease, release_lease, writer_owned
+
+    root = _absolute(episode_root)
+    lease = reader_lease(root)
+    try:
+        if (root / JOURNAL).exists() and not writer_owned(root):
+            raise CacheError(
+                "source retirement pending; resume the owned producer spool"
+            )
+        return _open_episode_index(root, expected_recipe_id)
+    finally:
+        release_lease(lease)
+
+
+def _open_episode_index(episode_root, expected_recipe_id=None):
     """Read only the small source/cache JSON index, not any numeric View file."""
     root = _absolute(episode_root)
     cache = Path(contained(root, "vae_cache"))
@@ -459,11 +485,22 @@ def open_episode_index(episode_root, expected_recipe_id=None):
         complete = read_json(marker_path, limit=_JSON_LIMIT)
     except (OSError, ValueError, TypeError) as exc:
         raise CacheError("complete cache index is missing or invalid") from exc
-    if not isinstance(manifest, dict) or manifest.get("schema") != INDEX_SCHEMA:
+    from . import final_source as final
+
+    is_final = (
+        manifest.get("schema") == final.INDEX_SCHEMA
+        if isinstance(manifest, dict)
+        else False
+    )
+    if not isinstance(manifest, dict) or manifest.get("schema") not in (
+        INDEX_SCHEMA,
+        final.INDEX_SCHEMA,
+    ):
         raise CacheError("wrong cache index schema")
     if (
         not isinstance(complete, dict)
-        or complete.get("schema") != COMPLETE_SCHEMA
+        or complete.get("schema")
+        != (final.COMPLETE_SCHEMA if is_final else COMPLETE_SCHEMA)
         or complete.get("complete") is not True
         or complete.get("manifest_sha256") != digest(manifest_path)
     ):
@@ -488,7 +525,14 @@ def open_episode_index(episode_root, expected_recipe_id=None):
     # New profiles bind immutable spatial readiness, before final profile
     # publication. Keep the legacy file pair strict; this JSON-only dispatch
     # does not import a renderer, scanner or VAE in training readers.
-    if source.get("schema") == "g2_sealed_spatial_source_v1":
+    if is_final:
+        if source.get("schema") != final.SOURCE_SCHEMA:
+            raise CacheError("v2 index requires explicit final source identity")
+        final.verify_reader_binding(root, source, manifest, complete)
+        source_files = []
+    elif source.get("schema") == final.SOURCE_SCHEMA:
+        raise CacheError("legacy index may not reinterpret a final capsule")
+    elif source.get("schema") == "g2_sealed_spatial_source_v1":
         if (
             source.get("identity_manifest") != "spatial_source.json"
             or source.get("readiness_marker") != "SPATIAL_SOURCE_READY.json"
@@ -567,7 +611,7 @@ def open_episode_index(episode_root, expected_recipe_id=None):
                 raise CacheError("cache record mapping out of bounds")
         if {x for x in mapping if x is not None} != set(range(shape[0])):
             raise CacheError("cache View has uncovered records")
-    return EpisodeIndex(root, cache, manifest, by_id)
+    return EpisodeIndex(root, cache, manifest, by_id, digest(manifest_path))
 
 
 class ViewReader:
@@ -590,6 +634,17 @@ class ViewReader:
         self.mmap = mmap
         self._cache = OrderedDict()
         self.cached_bytes = 0
+        from .source_locks import reader_lease, release_lease
+
+        self._source_lease = reader_lease(index.episode_root)
+        if (
+            index.manifest_sha256
+            and digest(contained(index.cache_root, "manifest.json"))
+            != index.manifest_sha256
+        ):
+            release_lease(self._source_lease)
+            self._source_lease = None
+            raise CacheError("source index changed before reader; reopen episode index")
 
     @property
     def cached_views(self):
@@ -598,6 +653,16 @@ class ViewReader:
     def close(self):
         self._cache.clear()
         self.cached_bytes = 0
+        from .source_locks import release_lease
+
+        release_lease(getattr(self, "_source_lease", None))
+        self._source_lease = None
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
     def __enter__(self):
         return self

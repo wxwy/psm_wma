@@ -17,7 +17,12 @@ from .contract import CacheError, contained
 def is_sealed(root):
     from g2.offline.output_profile import SCHEMA
 
-    return read_json(contained(root, "episode_manifest.json")).get("schema") == SCHEMA
+    from .final_source import PROFILE_SCHEMA
+
+    return read_json(contained(root, "episode_manifest.json")).get("schema") in (
+        SCHEMA,
+        PROFILE_SCHEMA,
+    )
 
 
 def scan_source(root):
@@ -35,10 +40,17 @@ def scan_source(root):
         raise CacheError(
             "new source profile declares VAE disabled; do not change its completed output contract"
         )
-    source_path = contained(root, "spatial_source.json")
-    ready_path = contained(root, "SPATIAL_SOURCE_READY.json")
+    from . import final_source as final
+
+    is_final = manifest["schema"] == final.PROFILE_SCHEMA
+    source_path = contained(root, final.CAPSULE if is_final else "spatial_source.json")
+    ready_path = contained(
+        root, final.READY if is_final else "SPATIAL_SOURCE_READY.json"
+    )
     before = (digest(source_path), digest(ready_path))
-    source = read_json(source_path)
+    source = (
+        final.materialize_source(root, manifest) if is_final else read_json(source_path)
+    )
     states = [
         dict(state_ordinal=i, logical_state_id=r["state_id"], frame=r["frame"])
         for i, r in enumerate(source["states"])
@@ -82,11 +94,10 @@ def scan_source(root):
         )
     if before != (digest(source_path), digest(ready_path)):
         raise CacheError("spatial readiness changed while planning")
-    return dict(
-        episode_root=str(root),
-        episode_key=f"{source['task_class']}/episode_{source['episode_id']:06d}",
-        episode=dict(task_class=source["task_class"], episode_id=source["episode_id"]),
-        source=dict(
+    binding = (
+        final.source_binding(final.load_capsule(root), root)
+        if is_final
+        else dict(
             schema=source["schema"],
             source_id=source["source_id"],
             manifest_sha256=before[0],
@@ -94,7 +105,13 @@ def scan_source(root):
             identity_manifest="spatial_source.json",
             readiness_marker="SPATIAL_SOURCE_READY.json",
             validation_scope="SEALED_SPATIAL_SOURCE_AND_FINAL_PIXELS",
-        ),
+        )
+    )
+    return dict(
+        episode_root=str(root),
+        episode_key=f"{source['task_class']}/episode_{source['episode_id']:06d}",
+        episode=dict(task_class=source["task_class"], episode_id=source["episode_id"]),
+        source=binding,
         states=states,
         views=views,
     )
@@ -121,6 +138,22 @@ def released_inputs(root, source):
     from .storage import open_episode_index
 
     receipt = read_json(contained(root, path.name))
+    from . import final_source as final
+
+    if source.get("schema") == final.SOURCE_SCHEMA:
+        capsule = final.load_capsule(root)
+        if receipt != dict(
+            schema="g2_released_vae_inputs_v1",
+            source_id=source["source_id"],
+            cache_manifest_sha256=capsule["working_cache_receipt"][
+                "cache_manifest_sha256"
+            ],
+            files={},
+        ):
+            raise CacheError(
+                "final retained-PNG source has invalid old input-release provenance"
+            )
+        return {}
     verify_episode(root, check_source=False)
     index = open_episode_index(root)
     allowed = {

@@ -52,6 +52,11 @@ DEFAULTS = dict(
     expected_recipe_id=DEFAULT_RECIPE,
     expected_numpy="2.2.5",
     mapping_sha256="",
+    final_source_format="working_v1",
+    keep_full_audit=False,
+    audit_archive_root=None,
+    audit_retention_policy=None,
+    source_protected_roots=[],
     renderer_pythonpath=[],
     renderer_gpus=[4, 5, 6, 7],
     workers_per_gpu=8,
@@ -107,6 +112,29 @@ def load_config(path):
             raise CacheError("production paths must be canonical (no '..'): " + key)
     if cfg["schema"] != SCHEMA:
         raise CacheError("unknown production schema")
+    if (
+        cfg["final_source_format"] not in ("working_v1", "capsule_v2")
+        or type(cfg["keep_full_audit"]) is not bool
+    ):
+        raise CacheError("unknown explicit final source format/audit policy")
+    if cfg["final_source_format"] == "working_v1" and any(
+        cfg[k] not in (None, False)
+        for k in ("keep_full_audit", "audit_archive_root", "audit_retention_policy")
+    ):
+        raise CacheError(
+            "working-v1 profile may not implicitly retire or archive source"
+        )
+    if not isinstance(cfg["source_protected_roots"], list) or any(
+        not isinstance(p, str) or not Path(p).is_absolute()
+        for p in cfg["source_protected_roots"]
+    ):
+        raise CacheError(
+            "extra source-retention protected roots must be absolute paths"
+        )
+    if cfg["keep_full_audit"] and not cfg["source_protected_roots"]:
+        raise CacheError(
+            "external audit requires explicit existing G1/cache/checkpoint protected roots"
+        )
     from g2.latent_cache.storage import _hex
 
     for key in ("root_sha", "child_sha", "nav_sha"):
@@ -392,6 +420,9 @@ def claim_output(cfg):
 
 def preflight(cfg):
     roots = validate_paths(cfg)
+    from g2.latent_cache.retirement_policy import from_config, validate_policy
+
+    validate_policy(from_config(cfg), cfg["spool_root"])
     if Path(sys.executable).absolute() != Path(cfg["python"]).absolute():
         raise CacheError("controller must use the configured original interpreter")
     git_pin(ROOT, cfg["root_sha"])
@@ -480,6 +511,8 @@ def consumer_command(cfg, action, stop_file):
     ]
     if action == "--execute":
         cmd += ["--serve", "--stop-file", str(stop_file)]
+    if cfg["final_source_format"] == "capsule_v2":
+        cmd += ["--source-policy", str(Path(cfg["run_root"]) / "source_policy.json")]
     return cmd
 
 
@@ -875,13 +908,15 @@ def run(cfg, *, resume=False):
         if not profile.exists():
             atomic_json(profile, cfg["profile"])
         claim_output(cfg)
-        args, rows, index = prepare_plan(cfg)
-        if not resume and index["batches_total"] != math.ceil(
-            cfg["expected_selected_episodes"] / 100
-        ):
-            raise CacheError(
-                "fresh full run must include every selected episode in one immutable plan"
-            )
+        from g2.latent_cache.retirement_policy import from_config
+
+        policy = from_config(cfg)
+        if policy is not None:
+            path = run_root / "source_policy.json"
+            if path.exists() and read_json(path) != policy:
+                raise CacheError("source policy changed on resume")
+            if not path.exists():
+                atomic_json(path, policy)
         env = isolated_env(cfg)
         env["CUDA_VISIBLE_DEVICES"] = str(cfg["vae_gpu"])
         subprocess.run(
@@ -899,10 +934,34 @@ def run(cfg, *, resume=False):
                 ]
             for job in failed:
                 spool.retry(job)
+            if spool.source_policy is not None:
+                from g2.latent_cache.source_retirement import resume_pending
+
+                with spool._db() as db:
+                    retiring = [
+                        r[0]
+                        for r in db.execute(
+                            "SELECT id FROM jobs WHERE retirement IS NOT NULL AND done=2"
+                        )
+                    ]
+                # Repair source transactions before the original planner checks
+                # partially swapped episode markers. No renderer is running.
+                for job in retiring:
+                    if not resume_pending(spool, job):
+                        raise CacheError(
+                            "source retirement still has an active reader/writer"
+                        )
             atomic_json(
                 run_root / "resume_receipt.json",
                 dict(retried_jobs=failed, config_id=cfg["config_id"]),
                 replace=True,
+            )
+        args, rows, index = prepare_plan(cfg)
+        if not resume and index["batches_total"] != math.ceil(
+            cfg["expected_selected_episodes"] / 100
+        ):
+            raise CacheError(
+                "fresh full run must include every selected episode in one immutable plan"
             )
         init_root(
             cfg["work_root"],

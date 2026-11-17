@@ -166,6 +166,7 @@ class EventSpool:
         limits=ConsumerLimits(),
         max_result_bytes=4 * 1024**3,
         max_records=100000,
+        source_policy=None,
         _existing_only=False,
     ):
         import sqlite3
@@ -187,14 +188,23 @@ class EventSpool:
         self.limits = limits
         self.max_result_bytes = max_result_bytes
         self.max_records = max_records
+        from .retirement_policy import claim_policy, validate_policy
+
+        self.source_policy = validate_policy(source_policy, self.root)
+        if self.source_policy is not None:
+            claim_policy(self.source_policy, existing_only=_existing_only)
         binding = dict(
-            schema="g2_final_pixel_spool_v3",
+            schema="g2_final_pixel_spool_v4"
+            if self.source_policy is not None
+            else "g2_final_pixel_spool_v3",
             recipe=recipe,
             max_events=limits.max_events,
             max_spool_bytes=limits.max_spool_bytes,
             max_result_bytes=max_result_bytes,
             max_records=max_records,
         )
+        if self.source_policy is not None:
+            binding["source_policy"] = self.source_policy
         if _existing_only:
             from g2.io import read_json
 
@@ -216,7 +226,7 @@ class EventSpool:
                 db.execute("PRAGMA journal_mode=DELETE")
                 db.execute("PRAGMA synchronous=FULL")
                 db.execute(
-                    "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, scope TEXT NOT NULL, target TEXT NOT NULL UNIQUE, source_ready TEXT, sealed TEXT, done INTEGER NOT NULL DEFAULT 0, error TEXT, completion_receipt TEXT, work_lease TEXT, cleanup_after REAL NOT NULL DEFAULT 0)"
+                    "CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, scope TEXT NOT NULL, target TEXT NOT NULL UNIQUE, source_ready TEXT, sealed TEXT, done INTEGER NOT NULL DEFAULT 0, error TEXT, completion_receipt TEXT, work_lease TEXT, cleanup_after REAL NOT NULL DEFAULT 0, retirement TEXT)"
                 )
                 db.execute(
                     "CREATE TABLE IF NOT EXISTS events (id TEXT NOT NULL, job TEXT NOT NULL, descriptor TEXT NOT NULL, png BLOB, status TEXT NOT NULL, result TEXT, result_sha TEXT, error TEXT, PRIMARY KEY(job,id))"
@@ -241,6 +251,7 @@ class EventSpool:
             limits=ConsumerLimits(cfg["max_events"], cfg["max_spool_bytes"]),
             max_result_bytes=cfg["max_result_bytes"],
             max_records=cfg["max_records"],
+            source_policy=cfg.get("source_policy"),
             _existing_only=True,
         )
 
@@ -286,6 +297,10 @@ class EventSpool:
             target=str(target),
             recipe_id=self.recipe["recipe_id"],
         )
+        if self.source_policy is not None:
+            from .retirement_policy import validate_target
+
+            validate_target(self.source_policy, target, scope)
         from g2.io import canonical
 
         if len(canonical(scope)) > 16384:
@@ -442,6 +457,11 @@ class EventSpool:
 
         with self._db() as db:
             row, scope = self._scope(db, job, allow_failed=True)
+        if row["done"] and not (isinstance(row, dict) and row.get("archived")):
+            from g2.offline.stage_a import validate_profile_episode
+
+            validate_profile_episode(row["target"])
+            return
         if isinstance(row, dict) and row.get("archived"):
             from .ledger_archive import check_identity
 
@@ -470,6 +490,12 @@ class EventSpool:
             ids = {
                 r[0] for r in db.execute("SELECT id FROM events WHERE job=?", (job,))
             }
+        if row["done"]:
+            from .ledger_archive import check_identity
+
+            if isinstance(row, dict) and row.get("archived"):
+                check_identity(self.completed_receipt(job))
+            return False
         if digest(Path(row["target"]) / "spatial_source.json") != row["source_ready"]:
             raise CacheError("offered source changed during recovery")
         if isinstance(row, dict) and row.get("archived"):
@@ -509,6 +535,11 @@ class EventSpool:
 
         with self._db() as db:
             row, scope = self._scope(db, job)
+        if row["done"] and not (isinstance(row, dict) and row.get("archived")):
+            from g2.offline.stage_a import validate_profile_episode
+
+            validate_profile_episode(row["target"])
+            return
         if isinstance(row, dict) and row.get("archived"):
             from .ledger_archive import check_identity
 
@@ -547,6 +578,15 @@ class EventSpool:
 
         with self._db() as db:
             row, scope = self._scope(db, job)
+        if row["done"]:
+            if isinstance(row, dict) and row.get("archived"):
+                from .ledger_archive import check_identity
+
+                check_identity(self.completed_receipt(job))
+            from g2.offline.stage_a import validate_profile_episode
+
+            validate_profile_episode(row["target"])
+            return
         source = read_json(contained(row["target"], "spatial_source.json"))
         for vid, view in sorted(source["views"].items()):
             for owner in view["owners"]:
@@ -649,6 +689,11 @@ class EventSpool:
                 check_identity(self.completed_receipt(job))
                 return True
             events = db.execute("SELECT * FROM events WHERE job=?", (job,)).fetchall()
+        if self.source_policy is not None:
+            from .source_retirement import resume_pending
+
+            if not resume_pending(self, job):
+                return False
         validate_profile_episode(row["target"])
         handoff = None
         if row["completion_receipt"] is not None:
@@ -657,7 +702,14 @@ class EventSpool:
             from .production import cache_receipt
 
             handoff = json.loads(row["completion_receipt"])
-            if handoff["verified_cache"] != cache_receipt(row["target"]):
+            from . import final_source as final
+
+            current_cache = cache_receipt(row["target"])
+            if current_cache["schema"] == "g2_verified_profile_vae_v2":
+                current_cache = final.load_capsule(row["target"])[
+                    "working_cache_receipt"
+                ]
+            if handoff["verified_cache"] != current_cache:
                 raise CacheError("completed cache changed after durable stream handoff")
         for event in events:
             adopted = event["status"] == "completed_by_cache" and handoff is not None

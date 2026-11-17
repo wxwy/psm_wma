@@ -132,3 +132,31 @@ installation or merge. P1 microbatch is deferred; approved B1 recipe is intact.
 See [the Issue58 runbook](../../docs/build/PSM-WMA_G2_one_shot_production_issue58_2026-11-17.md)
 for exact manual commands, output/cleanup contracts, CPU evidence and pending
 GPT real-sample/resource gates. Author CPU checks do not authorize full start.
+
+## Issue63: explicit final source capsule
+
+The new production template declares `final_source_format=capsule_v2`, fresh
+Issue63 paths and `keep_full_audit=false`. Production retains full working v1
+source until all products/cache/ACK are verified. Then spoolv4 publishes a
+small authenticated source index and safely retires only the working source/
+READY; PT/PNG/SG/spatial/task/language bytes remain intact. Legacy v1 stays
+strict; no automatic migration of accepted data or old spools.
+
+```bash
+python -m tools.g2.verify_spatial_source_index --help
+python -m tools.g2.resume_spatial_source_retirement --help
+python -m tools.g2.audit_spatial_capacity --help
+```
+
+The v2 reader loads small JSON indices and requested PT files, without the
+deleted full source or a renderer. Existing build/verify entrypoints remain.
+Resume fixes source transactions before the original planner checks outputs.
+Optional lossless full-audit archive requires a distinct filesystem and an
+explicit protected-root/retention policy. Default production keeps no full
+audit copy in the training dataset.
+
+See [the Issue63 contract/runbook](../../docs/build/PSM-WMA_G2_source_capsule_issue63_2026-11-17.md)
+for actual field dependencies, hash graph, locking/recovery, private server
+commands and capacity/real169+419 Gates. Two sample sizes never certify all
+18 tasks or9,126 production; missing strata yield HOLD_CAPACITY. No automatic
+full run, old-view deletion, environment installation or training is added.

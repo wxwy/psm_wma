@@ -1,0 +1,218 @@
+{
+  "all_original_test_files_unchanged": [
+    "g2/tests/test_atomic_6views_catalog.py",
+    "g2/tests/test_atomic_6views_preparation.py",
+    "g2/tests/test_atomic_6views_run.py",
+    "g2/tests/test_batch_render.py",
+    "g2/tests/test_bridge.py",
+    "g2/tests/test_color_evidence.py",
+    "g2/tests/test_color_only_native_transport.py",
+    "g2/tests/test_connections.py",
+    "g2/tests/test_direct_color_views.py",
+    "g2/tests/test_event_runtime_v2.py",
+    "g2/tests/test_f1b2_r1.py",
+    "g2/tests/test_f1c_positive_faces.py",
+    "g2/tests/test_f27_face_identity.py",
+    "g2/tests/test_full_map_contract.py",
+    "g2/tests/test_full_map_fast_seal.py",
+    "g2/tests/test_fullmap_fast_transport.py",
+    "g2/tests/test_fullmap_geometry_only.py",
+    "g2/tests/test_lazy_material_optin.py",
+    "g2/tests/test_lazy_surface_view.py",
+    "g2/tests/test_material_appearance.py",
+    "g2/tests/test_material_resolver.py",
+    "g2/tests/test_mesh_asset_audit.py",
+    "g2/tests/test_model_rebinding.py",
+    "g2/tests/test_native_map_adapter.py",
+    "g2/tests/test_native_recorded_options.py",
+    "g2/tests/test_native_structure_proof.py",
+    "g2/tests/test_object_category.py",
+    "g2/tests/test_observed_color.py",
+    "g2/tests/test_offline_direct_color_merge.py",
+    "g2/tests/test_offline_direct_source.py",
+    "g2/tests/test_offline_native_transport.py",
+    "g2/tests/test_one_shot_ledger.py",
+    "g2/tests/test_one_shot_renderer_environment.py",
+    "g2/tests/test_one_shot_supervisor.py",
+    "g2/tests/test_one_shot_work.py",
+    "g2/tests/test_opaque_alpha_source.py",
+    "g2/tests/test_prescan.py",
+    "g2/tests/test_recorded.py",
+    "g2/tests/test_robot_pose_marker.py",
+    "g2/tests/test_role_hypotheses.py",
+    "g2/tests/test_role_review.py",
+    "g2/tests/test_scene_graph_compact_v3.py",
+    "g2/tests/test_scene_release.py",
+    "g2/tests/test_scene_view_event_index.py",
+    "g2/tests/test_scene_view_index_package.py",
+    "g2/tests/test_source_identity.py",
+    "g2/tests/test_source_roles.py",
+    "g2/tests/test_source_scope.py",
+    "g2/tests/test_stage_a_caption_parquet.py",
+    "g2/tests/test_stage_a_caption_table.py",
+    "g2/tests/test_stage_a_consumer_cli.py",
+    "g2/tests/test_stage_a_contracts.py",
+    "g2/tests/test_stage_a_entrypoints.py",
+    "g2/tests/test_stage_a_package.py",
+    "g2/tests/test_stage_a_review_edges.py",
+    "g2/tests/test_stage_a_streaming.py",
+    "g2/tests/test_stage_a_task_semantics.py",
+    "g2/tests/test_stage_a_variants_events.py",
+    "g2/tests/test_static_surface_cache.py",
+    "g2/tests/test_surface_composer.py",
+    "g2/tests/test_surface_multilayer.py",
+    "g2/tests/test_surface_ownership.py",
+    "g2/tests/test_surface_registry.py",
+    "g2/tests/test_surface_renderer.py",
+    "g2/tests/test_surface_sampling.py",
+    "g2/tests/test_texture_guards.py",
+    "g2/tests/test_texture_projection.py",
+    "g2/tests/test_view_vae_builder.py",
+    "g2/tests/test_view_vae_canvas.py",
+    "g2/tests/test_view_vae_contract.py",
+    "g2/tests/test_view_vae_encoding.py",
+    "g2/tests/test_view_vae_namespace.py",
+    "g2/tests/test_view_vae_source.py",
+    "g2/tests/test_view_vae_storage.py",
+    "g2/tests/test_viewer_http_range.py",
+    "g2/tests/test_viewer_install.py",
+    "g2/tests/test_views.py",
+    "g2/tests/test_visual_mesh_zbuffer.py"
+  ],
+  "base": "d0bb45343a047fdf90d8e376acf4502fdf13fff4",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "encode_record_ast_sha256": "e57743a0fdebaf77bf80210f0199dba2af6034f26952651d6940976eba37376e",
+  "encode_record_ast_unchanged": true,
+  "not_run": [
+    "real169Wan reencode",
+    "real419pixel comparison",
+    "18task private corpus capacity",
+    "32worker resources",
+    "full9126",
+    "old data deletion",
+    "P1microbatch",
+    "state15",
+    "alignment",
+    "training",
+    "merge",
+    "original A1threeprobes missing native PyArrow locally"
+  ],
+  "original_501_identities_retained": true,
+  "protected_files_unchanged": [
+    "g2/latent_cache/encoding.py",
+    "g2/latent_cache/contract.py",
+    "g2/offline/task_entities.py",
+    "g2/offline/language_context.py",
+    "g2/offline/spatial_metadata.py",
+    "g2/offline/episode.py",
+    "g2/offline/atomic_6views_run.py",
+    "g2/views/render_connections.py",
+    "tools/g2/build_spatial_view_vae_cache.py",
+    "tools/g2/verify_spatial_view_vae_cache.py",
+    "cosmos-framework"
+  ],
+  "results": {
+    "capsule": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 48
+    },
+    "one_shot": {
+      "errors": 0,
+      "failures": 0,
+      "missing_identities": [],
+      "original_identities": 23,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 23
+    },
+    "pr53": {
+      "errors": 0,
+      "failures": 0,
+      "missing_identities": [],
+      "original_identities": 283,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 283
+    },
+    "related": {
+      "errors": 0,
+      "failures": 0,
+      "missing_identities": [],
+      "original_identities": 45,
+      "skipped": 3,
+      "skipped_cases": [
+        {
+          "id": "g2.tests.test_atomic_6views_run::test_scene_bound_geometry_without_layout_whitelist",
+          "reason": "could not import 'mujoco': No module named 'mujoco'"
+        },
+        {
+          "id": "g2.tests.test_robot_pose_marker::test_real_mujoco_chassis_frame_not_robot_root_anchor",
+          "reason": "could not import 'mujoco': No module named 'mujoco'"
+        },
+        {
+          "id": "g2.tests.test_viewer_install::test_catalog_preserves_local_global_indices_and_task_instruction",
+          "reason": "could not import 'pandas': No module named 'pandas'"
+        }
+      ],
+      "tests": 45
+    },
+    "stage_a": {
+      "errors": 0,
+      "failures": 0,
+      "missing_identities": [],
+      "original_identities": 150,
+      "skipped": 10,
+      "skipped_cases": [
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns0]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns1]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns2]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns3]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns4]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns0]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns1]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns2]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns3]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_does_not_use_ep_meta_as_replacement",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        }
+      ],
+      "tests": 150
+    }
+  },
+  "schema": "g2_issue63_author_cpu_gate_v1",
+  "scope": "AUTHOR_CPU_SYNTHETIC_NOT_GPT_REAL_OR_CAPACITY_APPROVAL",
+  "source_count": 235,
+  "source_hashes_stable": true,
+  "training_ready": false
+}

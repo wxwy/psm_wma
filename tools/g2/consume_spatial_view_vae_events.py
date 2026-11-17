@@ -18,6 +18,11 @@ def parser():
     p.add_argument("--spool-root", type=Path, required=True)
     p.add_argument("--weights", type=Path, required=True)
     p.add_argument("--expected-recipe-id")
+    p.add_argument(
+        "--source-policy",
+        type=Path,
+        help="explicit new-output v2 source-retirement policy JSON",
+    )
     p.add_argument("--cosmos-root", type=Path)
     p.add_argument("--device", default="cuda")
     p.add_argument("--height", type=int, default=256)
@@ -69,6 +74,8 @@ def main(argv=None):
     try:
         import math
 
+        from g2.io import read_json
+
         if not math.isfinite(args.idle_seconds) or args.idle_seconds < 0:
             raise ValueError("finite nonnegative idle timeout required")
         from g2.latent_cache.contract import make_recipe, preprocessing_recipe
@@ -95,6 +102,9 @@ def main(argv=None):
             limits=ConsumerLimits(args.max_events, args.max_spool_bytes),
             max_result_bytes=args.max_result_bytes,
             max_records=args.max_records,
+            source_policy=read_json(args.source_policy)
+            if args.source_policy is not None
+            else None,
         )
         steps = 0
         recovery = None

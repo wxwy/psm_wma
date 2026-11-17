@@ -42,9 +42,14 @@ def cache_receipt(root):
             _base_metadata(plan, index.manifest["recipe"], vid, view),
             index.manifest["recipe"],
         )
-    source = read_json(contained(root, "spatial_source.json"))
+    from . import final_source as final
+
+    source = final.load_source(root)
+    is_final = source["schema"] == final.SOURCE_SCHEMA
     return dict(
-        schema="g2_verified_profile_vae_v1",
+        schema="g2_verified_profile_vae_v2"
+        if is_final
+        else "g2_verified_profile_vae_v1",
         verified=True,
         source_id=source["source_id"],
         profile_id=source["profile_id"],
@@ -53,6 +58,11 @@ def cache_receipt(root):
         recipe_id=index.recipe_id,
         views=audit["payloads_checked"],
         records=audit["records_checked"],
+        **(
+            dict(source_index_sha256=digest(contained(root, final.CAPSULE)))
+            if is_final
+            else {}
+        ),
     )
 
 
@@ -63,6 +73,10 @@ def publish_profile(root):
 
     root = Path(root)
     manifest = validate_profile_episode(root, require_complete=False)
+    from .final_source import PROFILE_SCHEMA
+
+    if manifest["schema"] == PROFILE_SCHEMA:
+        return manifest
     profile = OutputProfile.from_dict(manifest["output_profile"])
     if not profile.view_vae:
         raise CacheError("profile does not declare VAE")
@@ -135,6 +149,13 @@ def cleanup_inputs(root):
 
     root = Path(root)
     validate_profile_episode(root)
+    from .final_source import PROFILE_SCHEMA
+
+    if read_json(contained(root, "episode_manifest.json"))["schema"] == PROFILE_SCHEMA:
+        return dict(
+            released_inputs=0,
+            source_id=read_json(contained(root, "episode_manifest.json"))["source_id"],
+        )
     receipt = cache_receipt(root)
     source = read_json(contained(root, "spatial_source.json"))
     files = {

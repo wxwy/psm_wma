@@ -165,7 +165,9 @@ def cleanup_registered_work(spool, job, row, proof):
         status="complete",
         lease=info,
         published_source_id=proof["source_id"],
-        cache_manifest_sha256=proof["verified_cache"]["cache_manifest_sha256"],
+        cache_manifest_sha256=proof.get(
+            "working_verified_cache", proof["verified_cache"]
+        )["cache_manifest_sha256"],
     )
     try:
         with build_lock(root / ".g2-work-locks" / job):
