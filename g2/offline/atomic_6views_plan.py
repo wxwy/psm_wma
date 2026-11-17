@@ -110,12 +110,14 @@ def selection_sha256(rows):
 
 
 def reuse_pinned_plan(plan_root, *, selection, mapping_sha, target_root,
-                      pending, skipped, episodes_per_task, counts):
+                      pending, skipped, episodes_per_task, counts, output_profile=None):
     """Resume the exact existing immutable plan; do not rewrite batch manifests."""
     index_path = plan_root / "index.json"
     if not index_path.is_file() or index_path.is_symlink():
         raise PlanError("existing plan has no immutable index")
     index = read_json(index_path)
+    if index.get('output_profile') != (output_profile.to_dict() if output_profile is not None else None):
+        raise PlanError('pinned plan output profile changed')
     if (
         index.get("schema") != SCHEMA
         or index.get("target_root") != str(target_root)
@@ -164,12 +166,20 @@ def reuse_pinned_plan(plan_root, *, selection, mapping_sha, target_root,
     }
 
 
-def completed_output(row, target_root, *, allow_index_v2=False, allow_index_v3=False):
-    """Check only the small completion marker and manifest, not every PNG.
-
-    A visible destination with incomplete or mismatched identity is a conflict;
-    never silently mark it DONE and never delete user data.
-    """
+def completed_output(row, target_root, *, allow_index_v2=False, allow_index_v3=False, output_profile=None):
+    """Validate explicit new profiles separately; preserve legacy strict checks."""
+    if output_profile is not None:
+        from .stage_a import validate_profile_episode
+        final = Path(target_root)/row['expected_relative_output']
+        if not final.exists():
+            return False
+        data = validate_profile_episode(final,require_complete=False,expected_profile=output_profile)
+        if (data['episode_id']!=row['episode_id'] or data['task_class']!=row['task_class']
+                or data['source_fingerprint']!=row['source_fingerprint']
+                or [s['frame'] for s in data['states']]!=row['spatial_frames']):
+            raise PlanError('Stage-A package source/plan identity differs')
+        return data['profile_complete'] and (final/'COMPLETE.json').is_file()
+    # Legacy checks only the small completion marker and manifest, as before.
     final = Path(target_root) / row["expected_relative_output"]
     if not final.exists() and not final.is_symlink():
         return False
@@ -408,7 +418,7 @@ def manifest_for_batch(rows, batch_no, target_root):
 def build(mapping, raw_root, depth_root, plan_root, target_root, *,
           expected=EXPECTED, batch_size=100, tasks=None,
           episodes_per_task=None, resume=False, require_depth=False,
-          allow_index_v2=False, allow_index_v3=False):
+          allow_index_v2=False, allow_index_v3=False,output_profile=None):
     if type(batch_size) is not int or not 1 <= batch_size <= MAX_BATCH:
         raise PlanError("batch_size must be in [1, 100]")
     if type(resume) is not bool:
@@ -421,7 +431,7 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
     pending = []
     for row in chosen:
         if completed_output(row, target_root,allow_index_v2=allow_index_v2,
-                            allow_index_v3=allow_index_v3):
+                            allow_index_v3=allow_index_v3,output_profile=output_profile):
             if not resume:
                 raise PlanError("existing complete episode requires explicit --resume: " +
                                 row["expected_relative_output"])
@@ -453,7 +463,7 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
         return reuse_pinned_plan(
             plan_root, selection=chosen, mapping_sha=mapping_sha,
             target_root=target_root, pending=pending, skipped=skipped,
-            episodes_per_task=episodes_per_task, counts=counts)
+            episodes_per_task=episodes_per_task, counts=counts,output_profile=output_profile)
     plan_root.mkdir(parents=True)
     batches = []
     for begin in range(0, len(pending), batch_size):
@@ -493,6 +503,8 @@ def build(mapping, raw_root, depth_root, plan_root, target_root, *,
         "production_started": False,
         "batches": batches,
     }
+    if output_profile is not None:
+        summary['output_profile'] = output_profile.to_dict()
     write_json(plan_root / "index.json", summary)
     return summary
 

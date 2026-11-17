@@ -1,0 +1,1 @@
+NOT_RUN: original F1 real-Parquet probe; existing interpreter has no PyArrow. No stubs/installs.

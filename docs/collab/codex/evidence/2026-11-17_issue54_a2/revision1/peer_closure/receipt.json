@@ -1,0 +1,20 @@
+{
+  "child": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "does_not_replace_GPT_independent_review": true,
+  "evidence_kind": "AUTHOR_ARCHIVED_PEER_RAW_OUTPUTS_AND_FINAL_AGENT_RECEIPT",
+  "files": {
+    "focused.log": "0b2c54d2e66351e413488e5e05a43c82fb461098e6d7b6d6b1d5f4cfbb8763ce",
+    "focused.xml": "f5a2bfe8899192a9d7c396ed8145d67066cd459d84310b4c8cacc550cd36a909",
+    "handoff.log": "70ebbd0129c26ea652fcff46b1595f2a940a42c7154c5a415ec9590adc68d58a",
+    "handoff_probe.json": "70ebbd0129c26ea652fcff46b1595f2a940a42c7154c5a415ec9590adc68d58a",
+    "orphan.log": "7cd072856e521a6e463161414472a82b120c1ed6780a3c20b8a2e5f12f72d3e0",
+    "orphan_probe.json": "7cd072856e521a6e463161414472a82b120c1ed6780a3c20b8a2e5f12f72d3e0"
+  },
+  "focused_cases_passed": 4,
+  "formal_root": "4ad0fe7394cb62c4b5692fecaf6ce52963b8852c",
+  "original_probes": "UNCHANGED_REPLAY",
+  "real_native_Wan_GPU_performance": "NOT_RUN",
+  "reviewer": "/root/issue54_a1_review",
+  "schema": "g2_local_peer_closure_receipt_v1",
+  "verdict": "SCOPED_CODE_CPU_TWO_P2_CLOSED_NO_NEW_BLOCKER"
+}

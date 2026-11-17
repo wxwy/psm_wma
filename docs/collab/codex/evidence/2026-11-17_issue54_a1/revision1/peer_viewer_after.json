@@ -1,0 +1,16 @@
+{
+  "root": "/tmp/issue54_a1_peer_probe_yzqdlu38",
+  "python_validator_pass": true,
+  "complete_keys": [
+    "complete",
+    "episode_id",
+    "episode_manifest_sha256",
+    "schema",
+    "source_id",
+    "state_count"
+  ],
+  "viewer_check": "      if (complete.complete !== true ||\n          Number(complete.episode_id) !== item.global_id ||\n          complete.state_count !== manifest.states?.length ||\n          manifest.state_count !== manifest.states.length ||\n          !manifest.states.length) {\n        throw Error(\"Episode 尚未完整生成\");\n      }\n",
+  "viewer_result": {
+    "accepted": true
+  }
+}

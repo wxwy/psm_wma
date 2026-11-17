@@ -1,3 +1,251 @@
+# 2026-11-17 CST — Issue54 A2 published fixed source / GPT REVIEW
+
+Formal Root4ad0fe7394cb62c4b5692fecaf6ce52963b8852c / Child-Gitlink
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2. Source branch pushed; Draft55
+head/base/body readback exactmatch, stacked PR53/d36caf0f still unmerged.
+209 tested blobs match fixed source. Readonly peer exactpair closes bothP2,
+independent unchanged2probes and4 focused PASS; no new blocker. Author465PASS/
+13 inherited dependency skips,431 and474 old testcase IDs retained,47new allPASS.
+
+CanonicalInbox append-only GPT request below128KiB, scope/raw evidence/runbook
+fully specified. Current receipts revision1/implementation_scope.json,
+publication_before_bookkeeping.json and peer_closure/receipt.json. Following
+bookkeeping HEAD does not replace formal4ad0fe73. No source changes after tests
+or peer closure. V3fe1089fb/nav70eb7b44/Child unchanged. Source was based on
+exact d96d8931 A1 approval; old b352 candidate retained for local RED evidence.
+
+STOP after final push/readback; GPT independent code/native/Wan/resource gate
+pending, not self-approved. Real producer4samples, GPU/weights/fullproduction,
+StageB-C/train/merge NOT_RUN. Language/resource candidate settings not frozen.
+
+# Prior observations (historical)
+
+# 2026-11-17 CST — Issue54 A2 corrective REVIEW
+
+Candidate correction ready for fixed commit then readonly peer closure. Initial
+b352d4f221ce8928fd0d26b72201af89869ee179 is retained as rejected local-review
+baseline, not the GPT handoff target. Two local P2 fixed: locked orphan-temp
+recovery/all-file budget; durable same-source/recipe completed-cache handoff
+before refill. Transient spool v2 rejects implicit v1 reuse. No server migration.
+Actual source delta from b352 only streaming.py, consumer CLI, producer offer
+and streaming tests; old core/encoding/legacy scanner/Child remain unchanged.
+
+Author revision1:283PASS +140PASS/10Arrow skip +42PASS/3original skip =465PASS,
+13 inherited dependency skips,0fail/error. All431 approved A1 baseline IDs and
+all474 b352 identities retained,4new actual hard-exit/handoff cases;47 new A2
+cases total allPASS.209 source hashes before/after stable. Ruff/format/CLI/
+identical-source logical/numerical FakeEncoder protocol PASS. Both original
+peer probes replayed unchanged: recordbytes52777<=120000 (no orphan tmp), and
+posthoc handoff no errors/unfinished job or extra Encode1 calls. Own closure
+checks are not independent approval. Current exact commands/raw logs:
+docs/collab/codex/evidence/2026-11-17_issue54_a2/revision1/; peer_revision/
+contains unmodified probes and RED/GREEN,closure audit; final/ remains b352.
+
+Next: commit new fixed SHA, readonly peer narrow confirmation, push sameDraft55
+and append canonicalInbox request, then STOP for GPT. No GPU/weights/native/
+private data/newenv/install/fullproduction/StageB-C/train/V3/Child/nav/merge.
+
+# Earlier session observations (historical)
+
+# 2026-11-17 CST — Issue54 A2 local-peer correction IN_PROGRESS
+
+Fixed local candidate b352d4f221ce8928fd0d26b72201af89869ee179 has two
+confirmed P2 findings from the mandatory readonly peer: hard-exit .view-*.tmp
+orphans bypass result budget; same-recipe completed posthoc cleanup leaves a
+stream job trying to refill already released PNGs. Final peer list received,
+no other blocker; its43 new CPU cases PASS. No source changes during review.
+Now claim narrow correction in streaming.py, consumer CLI, producer offer
+handoff and hard-exit/posthoc tests. Preserve b352 raw evidence; new SHA and
+revision1 CPU evidence/peer closure required before publication.
+
+Codex claimed and implemented separate A2 on codex/g2-stage-a-offline-issue54.
+Current source candidate is ready for a fixed commit and mandatory read-only
+peer review, then same Draft55 / canonical Inbox GPT handoff. Fixed SHA is
+recorded after commit; no precomputed SHA claim. STOP after scoped handoff for
+GPT independent native/VAE acceptance, no merge or production run.
+
+## Authority observation
+
+Fresh start before15713ec7a41bf343d226d4191b27ef76f8f8d5b4; fetch, advertised,
+tracking d96d89313473bb7e398ac53ee079044b785c760d matched; one docs-only commit,
+ancestry0/ff succeeded. Full exact8e11f27bb8e6e8d29c353a56acd0e15da1ddb2a8 /
+d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 GPT APPROVE_CODE report read plus
+Issue54 comment6940604152. A1 F1/F2 CODE/CPU/representative source DONE:
+GPT431PASS/0skip +3 original unchanged probes separately. New native F27/pixel
+acceptance and A2 real numerical/performance gates remain separate TODOs.
+Owner explicitly authorizes A2 now and GPT-only independent server review;
+historical V2/MM/Kimi waits do not override this scope.
+
+V3 advertised/tracking fe1089fb925d86697bebd9bef18608d9c9eae87b unchanged.
+Child HEAD/Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 clean.
+nav G2 advertised70eb7b447e65d793b0ebe18b258291ce46f057c1, no edits.
+PR55 readback open/Draft/unmerged; base codex/g2-view-vae-cache-issue52 at
+historical d36caf0fc35f3a84b739dc8df58ab992eb9f6917. No PR53 merge.
+
+## Scope and results
+
+Production files: latent_cache/{streaming,sealed_source,production,builder,
+storage}.py; offline/{stage_a,episode,atomic_6views_run}.py; existing cache
+build CLI and new consumer CLI. New fault/CLI tests, docs/README and own evidence.
+No other agent may edit these files during the readonly peer review.
+encoding.py, old source.py, language_context/task_entities, G1/Child/nav/renderer
+geometry/GT/image algorithms unchanged. Minimal shared numeric validation/cast
+helper, explicit new source dispatch and JSON-only reader header dispatch only.
+
+Bounded final-pixel spool, independent resident B=1 consumer, durable numeric
+ACK, crash/retry, retained-source refill, compact owner reconcile, shared-core
+posthoc, target mutex, transactional profile COMPLETE and safe own-input/chunk
+release implemented. All valid Views and both top variants, one formal file per
+View. Numerical assembly metrics separated from actual encode calls. Consumer
+failure defers delivery without losing legal RGB/SG. Source readiness precedes
+VAE; prepared journal repairs only real interrupted publication, not marker loss.
+
+Final author gate: **461 PASS /13 dependency SKIP /0 failure/error**:
+- #53 283PASS; StageA136PASS/10 native-PyArrow skips; related42PASS/3 original
+  MuJoCo/Pandas skips. All431 approved testcase identities preserved,43 new
+  identities all execute/pass. Skips are inherited missing local dependencies.
+- 209 source fingerprints before/after equal. Selected Ruff/10-file format,
+  legacy F/E9, CLI help and actual CPU synthetic two-entry protocol PASS.
+- Identical sealed source PNG bytes/logical index and FakeEncoder tensor values
+  agree (maxabs0); serialized .pt byte equality is not required or claimed.
+- Full exact commands/raw logs/JUnit/209hashes/gate/protocol:
+  docs/collab/codex/evidence/2026-11-17_issue54_a2/final/.
+- Earlier failing rounds retained in evidence/development; no rewritten GPT
+  reports or probes. Original three-probe file SHA remains860424fa81b6447cb361d7272ff0a365dfef6ef6087b0a3f51ab97f63fd306e0.
+
+Runbook docs/build/PSM-WMA_G2_Stage_A_A2_implementation_2026-11-17.md.
+Local existing /workspace/.venvs/g2-view-vae-52 only; no install/newenv/overlay.
+NOT_RUN: full original Arrow reviewer probe locally, real server/private source,
+new native F27/pixels, Wan/weights/GPU, real two-entry numerical/performance,
+full corpus/state15/joint alignment/train/merge. GPT executes those under fixed
+source and existing server environment. Language/resource templates not frozen.
+
+# Historical session log (superseded by current state above)
+
+# 2026-11-17 CST — Issue54 A1 F1/F2 remediation: REVIEW candidate
+
+Published corrective implementation **8e11f27bb8e6e8d29c353a56acd0e15da1ddb2a8**
+/ Child-Gitlink **d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2**. SameDraftPR55
+body/head/base readback matched, source branch push8a23a912->8e11f27b; no V3/
+PR53/native/Gitlink changes. 204 tested source blobs verified at fixedcommit;
+existing caption crosscheck/template and binding function AST unchanged.
+Local read-only peer CODE review no newP1/P2:45PASS/10Arrow SKIP, confirms F2
+GREEN2 and stale-version rejection; originalF1/nativeParquet explicitlyNOT_RUN.
+Scope/peer receipts preserved under own evidence. CanonicalInbox exactpair
+append-only handoff committed in following docs-only receipt. FollowingHEAD
+does not replace fixedsourceSHA. STOP for GPT narrow realArrow/source recheck;
+do not claim F1 server closure/GREEN3/real4samples or advance A2/production.
+
+Author final gate: core283 PASS, StageA93PASS/10Arrow skips (original50 identities
+retained plus43 new passing checks), related42PASS/3 original dependency skips,
+originalF2 bodiesRED2->GREEN2 separately. All378 baseline identities preserved.
+204 source fingerprints stable; old201 differ only in3 production modules plus
+one corrected Blender test fixture; #53core/CLI/render/members/selection/A2/Child
+unchanged. New pure table19cases and independent18-task roles, missing/ambiguous
+sources, downstream text/view union and stale-role-version resume verified.
+RealParquet10cases and originalF1 probe NOT_RUN locally: no PyArrow in existing
+interpreters; no install/overlay/newenv attempted. Do not claimGREEN3 or real4samples.
+Evidence docs/collab/codex/evidence/2026-11-17_issue54_f1_f2/; finalgate/static/
+source hashes/logs/JUnit, unchanged-source AST role replay, exactcommands and
+protocol example. Runbook docs/build/PSM-WMA_G2_Stage_A_A1_F1F2_2026-11-17.md.
+Next GPT narrow review and actual Arrow/source recheck on fixed8e11f27b.
+
+Owner explicitly requests narrow fixes in existing DraftPR55, preserving A1
+architecture/#53core and keeping A2 consumer work out of this candidate.
+Fresh observation: before2624bbc54795e50e3ac238bf0925bcd1b4247b6a;
+fetch/advertised/tracking8a23a91226d717c0fddb4807bf65b4822e26d9b7 agree,
+logged691c5303+8a23a912 docs/evidence commits, ancestor check0 andff succeeded.
+Read exact formal27ccadb051a71adf348ee14206d7ac59e9195d36 / Childd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2
+REQUEST_CHANGES report docs/collab/chatgpt/reviews/2026-11-17_Issue54_27ccadb0_d5c1ffc7_StageA_A1_REQUEST_CHANGES.md
+in full plus unchanged3 reviewer reproductions and derived summary. GPT reran
+378 PASS/0skip and201 hashes unchanged, then found F1 real string-index task
+table and F2 separate BlenderLid/source obj_container omissions (two P1 classes).
+Current V3 advertised/tracking fe1089fb925d86697bebd9bef18608d9c9eae87b,
+Child/Gitlink unchangedd5c1ffc7. Latest Owner overrides historical MM/Kimi waits.
+Claimed production files: g2/offline/language_context.py and task_entities.py;
+stage_a.py adds only current role-rule version guard so resume cannot retain
+older incomplete task sets. No other producer/render/cache-core modifications.
+Tests: new actual-Parquet/table-layout and independently specified18-task role
+expectations/selection/text tests; adjust old Blender fixture to separate source
+instance while retaining test identities. Runbook/source-role evidence/ledgers
+and own evidence added; original GPT reports/probes untouched. FixednewSHA,
+rawCPU/static results, sameDraftPR55, then STOP for GPT narrow independent gate.
+Both existing local interpreters lackPyArrow (find_spec None); no installation,
+overlay or newenvironment allowed. Real-Parquet test execution must be reported
+NOT_RUN if no existing dependency is available; pure normalization/F2 CPU can run.
+No server/private-data/GPU/nativeF27/fullproduction/train/A2 changes. Fixed source
+commit to be recorded in the subsequent receipt; no independent acceptance claimed.
+
+# Prior publication (historical): Issue54 Stage A / first batch
+
+Published implementation:27ccadb051a71adf348ee14206d7ac59e9195d36 / unchanged
+Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2. DraftPR55
+https://github.com/wxwy/psm_wma/pull/55, stacked base PR53branch/d36caf0f;
+head codex/g2-stage-a-offline-issue54. GitHub readback Draft/open/unmerged,
+mergeable, exact head/base/body verified. Local read-only peer20/20 confirms
+all3P2 CODE closure on exact27ccadb0; no new substantive finding, no serverGate.
+201 committed source blobs match final tested hashes. implementation_scope.json
+and peer closure/rawlogs under revision1. CanonicalInbox append-only request
+records exactpair/PR/evidence/limits; following docs-only HEAD is bookkeeping,
+not a replacement for implementationSHA. V3fe1089fb/PR53d36caf0f/nav70eb7b44
+unchanged by publication. STOP for GPT independent real-source/four-sample gate.
+
+Implementation commit is recorded above and in the bookkeeping receipt;
+tested source hashes are frozen in docs/collab/codex/evidence/2026-11-17_issue54_a1/.
+Latest revision1 author checks: original283 identities retained/283PASS, StageA50PASS,
+producer/marker/viewer42PASS +3 dependency skips (mujoco2, pandas1), no failures/errors.
+New modules selectedRuff/format, existingF/E9, JS syntax/smoke, CLIhelps and
+synthetic protocol/strict validator PASS; source fingerprints stable. #53 core,
+original283 testfiles, Child/Gitlink unchanged. Existing evidence is immutable.
+Initial fixeddab6ebf5 local peer review found3P2 despite45PASS: viewer completion
+header, PNG actual decode/W-H gate, sub-mm Island retirement. Corrected without
+threshold change;5new distinct regressions include actual viewer loadEpisode,
+invalidPNG and realconnection-compute retirement/reappearance. Latest raw data
+and201 stable source hashes: evidence/revision1/gate.json (under path above).
+Old author/peer probes preserved; local peer closure confirmed correctedfixedSHA.
+First batch implements profile/schema/completion, native projections/members,
+18task source rules, explicit top variant selection, candidate language/text bank,
+clean+marked owner/reference support and viewer. A2 only final-pixel/seal/spool
+interfaces: no worker/ACK/queue recovery/new-source VAE adapter or finalVAE completion.
+VAE profiles remainSOURCE_READY/exit75; no fakeCOMPLETE, training_ready=false.
+Owner supplied full takeover/addendum text in this conversation after the async
+request; original702-line Library bytes remain unavailable, no original-read claim.
+Runbook docs/build/PSM-WMA_G2_Stage_A_A1_implementation_2026-11-17.md.
+Publication precheck: fetch succeeded; advertised/tracking V3fe1089fb and
+PR53d36caf0f agree, HEAD..origin/V3 empty. No V3 or PR53 modification/merge.
+Next: GPT independent server review of published fixedSHA/Draft/canonicalInbox.
+No server/GPU/
+Wan/fullproduction/train/state15/jointalignment/newenvironment executed.
+
+Prior #53 status correction: exact778d1ed8/d5c1ffc7 APPROVE_CODE report at
+docs/collab/chatgpt/reviews/2026-11-16_Issue52_778d1ed8_d5c1ffc7_ViewVAE_R2_APPROVE_CODE.md
+and PR53 issuecomment6919489156 original-env202record strictreencode PASS are
+the latest supplied evidence. Historical R2 REVIEW/NOT_RUN below is author-time
+history, not a reversal of that later GPT acceptance; productionconfig/fullStageA
+and PRmerge remain unapproved.
+
+ACK 2026-11-17T09:39:58.058334+08:00. New branch codex/g2-stage-a-offline-issue54 from reviewedPR53
+head d36caf0fc35f3a84b739dc8df58ab992eb9f6917, fixed approved core
+778d1ed8a031429fd857c980fc872d4c85123cd1. Latest V3 fe1089fb925d86697bebd9bef18608d9c9eae87b
+merged losslessly only on this independent branch at66583e16d75f7704bbafe6c429e97c9a0c9df9c2.
+Child/Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav G2 remote
+70eb7b447e65d793b0ebe18b258291ce46f057c1 independently ls-remote verified.
+Read Issue54/body/latestdual-floor comment, v2.1 full, exact R2APPROVE_CODE and
+original-env real202record receipt. Original702-line Library handoff not found
+in workspace/repository; Owner subsequently supplied takeover text (see above),
+continuing explicit v2.1/Issue54 authority. Historical SESSION/TODO sections remain intact.
+Latest Owner supersedes v2.0 object retrieval and historical V2/MM/Kimi waits.
+
+Codex owns new offline output_profile/spatial_metadata/task_entities/
+language_context/stage_a modules, batch2 source-ready/final-pixel interfaces,
+minimal original producer/episode/renderer metadata and marker integration,
+newCPUtests/docs/CLI/own evidence. Preserve #53 core283 identities, no VAEcore
+rewrite, no original review mutation, no Child/nav/Gitlink/training/G1 changes.
+Latest dual-floor requirement included: clean floor_top + marked _w_rbs variants,
+independent owners, canonicaldirection count, explicit selection variant choice.
+No new environment/dependencies or GPU/real data production/training/merge.
+Deliver A1 fixedSHA and batch2 interfaces on stacked Draft, stop for GPT gate.
+
 # 2026-11-16 CST — Issue52 R2 namespace compatibility: REVIEW
 
 Fixed R2 Root 778d1ed8a031429fd857c980fc872d4c85123cd1; previous implementation

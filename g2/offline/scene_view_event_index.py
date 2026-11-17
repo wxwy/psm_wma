@@ -201,7 +201,7 @@ def validate_view_path(path):
     return str(p)
 
 
-def index_state(event, views, *, top=None):
+def index_state(event, views, *, top=None, marker_variants=None):
     """Simple direct ref_state mapping; NEVER chain or symlink across Episodes.
 
     Every state retains its own SG file. All image paths are optional physical
@@ -224,6 +224,8 @@ def index_state(event, views, *, top=None):
     ):
         raise ValueError("cannot reuse floor marker with >=1mm or >=1degree robot motion")
     paths = [validate_view_path(s) for s in views]
+    if marker_variants is not None and type(marker_variants) is not bool:
+        raise ValueError("marker variant mode must be explicit")
     floors = (
         {top}
         if top is not None
@@ -233,7 +235,17 @@ def index_state(event, views, *, top=None):
             if s.startswith("sixview/") and Path(s).name == "floor_top.png"
         }
     )
-    if len(paths) != len(set(paths)) or not floors or not floors <= set(paths):
+    if marker_variants is not None:
+        if top is not None:
+            raise ValueError("legacy top override cannot change new variant semantics")
+        bases = {p for p in paths if p.startswith('sixview/') and Path(p).name=='floor_top.png'}
+        if not bases:
+            raise ValueError("new profile requires a canonical clean floor top")
+        floors = ({p for p in paths if p.startswith('sixview/') and Path(p).name=='floor_top_w_rbs.png'}
+                  if marker_variants else set())
+        if marker_variants and floors != {str(Path(p).with_name('floor_top_w_rbs.png')) for p in bases}:
+            raise ValueError("incomplete clean/marked floor pairs")
+    if len(paths) != len(set(paths)) or (marker_variants is None and not floors) or not floors <= set(paths):
         raise ValueError("duplicate or missing floor-top view")
     files = {}
     refs = {}

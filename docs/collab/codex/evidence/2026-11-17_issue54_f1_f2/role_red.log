@@ -1,0 +1,16 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+__________ test_close_blender_lid_binds_independent_auxiliary_fixture __________
+docs/collab/chatgpt/evidence/2026-11-17_issue54_27ccadb0/test_review_source_contracts.py:50: in test_close_blender_lid_binds_independent_auxiliary_fixture
+    assert {'body_A', 'lid_A'} <= set(result['entity_ids']), (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: ('The manipulated lid is a distinct source instance, not a blender part', ['body_A'])
+______________ test_counter_to_stove_binds_named_source_container ______________
+docs/collab/chatgpt/evidence/2026-11-17_issue54_27ccadb0/test_review_source_contracts.py:78: in test_counter_to_stove_binds_named_source_container
+    assert {'apple_A', 'pan_A', 'plate_A'} <= set(result['entity_ids']), (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: ('A named source-container role is missing but binding is BOUND', ['apple_A', 'pan_A', 'stove_A'])
+=========================== short test summary info ============================
+FAILED docs/collab/codex/evidence/2026-11-17_issue54_f1_f2/replay_role_assertions.py::test_close_blender_lid_binds_independent_auxiliary_fixture
+FAILED docs/collab/codex/evidence/2026-11-17_issue54_f1_f2/replay_role_assertions.py::test_counter_to_stove_binds_named_source_container
+2 failed in 0.05s

@@ -1,0 +1,56 @@
+{
+  "root": "/tmp/issue54_a2_peer/posthoc_handoff_lfr27ln2",
+  "initial_stats": {
+    "pending_inputs": 1,
+    "pending_bytes": 157,
+    "statuses": {
+      "pending": 1
+    },
+    "failed_jobs": 0,
+    "unfinished_jobs": 1
+  },
+  "posthoc": {
+    "episode_key": "NavigateKitchen/episode_000000",
+    "recipe_id": "408eff0a4bf0c14b6d4a323909b23291e3377da09cb57a7cb8d732078fcef669",
+    "cache_root": "/tmp/issue54_a2_peer/posthoc_handoff_lfr27ln2/published/vae_cache",
+    "view_count": 4,
+    "encoded_records": 5,
+    "reused_views": 0,
+    "already_complete": false,
+    "profile_complete": true
+  },
+  "profile_complete": true,
+  "temporary_pngs": 0,
+  "consumer_outcomes": [
+    {
+      "attempt": 0,
+      "error_type": "CacheError",
+      "error": "cache path is missing: _spatial_inputs/0/islands/island_0_entity_2/plus_X.png",
+      "stats": {
+        "pending_inputs": 1,
+        "pending_bytes": 157,
+        "statuses": {
+          "pending": 1
+        },
+        "failed_jobs": 1,
+        "unfinished_jobs": 1
+      }
+    },
+    {
+      "attempt": 1,
+      "error_type": "CacheError",
+      "error": "cache path is missing: _spatial_inputs/0/islands/island_0_entity_2/plus_X.png",
+      "stats": {
+        "pending_inputs": 1,
+        "pending_bytes": 157,
+        "statuses": {
+          "pending": 1
+        },
+        "failed_jobs": 1,
+        "unfinished_jobs": 1
+      }
+    }
+  ],
+  "consumer_encode_calls": 0,
+  "posthoc_encode_calls": 5
+}

@@ -1,0 +1,106 @@
+{
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "not_run": [
+    "real producer/native F27 pixels",
+    "real VAE/weights/GPU",
+    "streaming real numeric/performance parity",
+    "full production",
+    "state15",
+    "joint alignment",
+    "training",
+    "merge",
+    "original three reviewer probes: native PyArrow missing locally; prior GPT approval preserved"
+  ],
+  "preserved_approved_baseline": 431,
+  "results": {
+    "pr53": {
+      "baseline_identities": 283,
+      "errors": 0,
+      "failures": 0,
+      "missing_baseline_identities": [],
+      "new_identities": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "tests": 283
+    },
+    "related": {
+      "baseline_identities": 45,
+      "errors": 0,
+      "failures": 0,
+      "missing_baseline_identities": [],
+      "new_identities": 0,
+      "skipped": 3,
+      "skipped_cases": [
+        {
+          "id": "g2.tests.test_atomic_6views_run::test_scene_bound_geometry_without_layout_whitelist",
+          "reason": "could not import 'mujoco': No module named 'mujoco'"
+        },
+        {
+          "id": "g2.tests.test_robot_pose_marker::test_real_mujoco_chassis_frame_not_robot_root_anchor",
+          "reason": "could not import 'mujoco': No module named 'mujoco'"
+        },
+        {
+          "id": "g2.tests.test_viewer_install::test_catalog_preserves_local_global_indices_and_task_instruction",
+          "reason": "could not import 'pandas': No module named 'pandas'"
+        }
+      ],
+      "tests": 45
+    },
+    "stage_a": {
+      "baseline_identities": 103,
+      "errors": 0,
+      "failures": 0,
+      "missing_baseline_identities": [],
+      "new_identities": 47,
+      "skipped": 10,
+      "skipped_cases": [
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns0]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns1]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns2]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns3]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns4]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns0]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns1]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns2]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns3]",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        },
+        {
+          "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_does_not_use_ep_meta_as_replacement",
+          "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+        }
+      ],
+      "tests": 150
+    }
+  },
+  "schema": "g2_issue54_a2_author_cpu_gate_v1",
+  "scope": "AUTHOR_CPU_FAKE_ENCODER_NOT_GPT_REAL_VAE_OR_NATIVE_ACCEPTANCE",
+  "source_count": 209,
+  "source_hashes_stable": true,
+  "training_ready": false
+}

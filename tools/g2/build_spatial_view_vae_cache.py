@@ -146,8 +146,12 @@ def main(argv=None):
             if args.dry_run:
                 results.append(plan_episode(episode, recipe))
             else:
+                from g2.latent_cache.production import build_profile
+                from g2.latent_cache.sealed_source import is_sealed
+
+                build = build_profile if is_sealed(episode) else build_episode
                 results.append(
-                    build_episode(
+                    build(
                         episode,
                         encoder,
                         preprocessing=preprocessing,

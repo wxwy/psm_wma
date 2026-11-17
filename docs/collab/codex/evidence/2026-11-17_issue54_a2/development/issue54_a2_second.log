@@ -1,0 +1,516 @@
+.F.F.F.............F......................                               [100%]
+=================================== FAILURES ===================================
+__________ test_posthoc_ready_source_no_cycle_and_safe_release[False] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-87/test_posthoc_ready_source_no_c1')
+png = False
+
+    @pytest.mark.parametrize('png',[True,False])
+    def test_posthoc_ready_source_no_cycle_and_safe_release(tmp_path,png):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        package_stage_a(destination=target,**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        plan=plan_episode(target,spool.recipe)
+        assert plan['physical_image_count']==5 and plan['logical_view_count']==4
+        assert plan['source']['readiness_marker']=='SPATIAL_SOURCE_READY.json'
+        before=(target/'spatial_source.json').read_bytes()
+>       build_profile(target,encoder,preprocessing=PREPROCESS,cleanup=True)
+
+g2/tests/test_stage_a_streaming.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:462: in verify_episode
+    validate_payload_binding(index, view_id, entry, info)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+index = EpisodeIndex(episode_root=PosixPath('/tmp/pytest-of-agent/pytest-87/test_posthoc_ready_source_no_c1/published'), cache...{'frame': 10, 'logical_state_id': 1, 'state_ordinal': 1}, 2: {'frame': 20, 'logical_state_id': 2, 'state_ordinal': 2}})
+view_id = 'islands/island_0_entity_2/plus_X'
+entry = {'bytes': 4585, 'dtype': 'float32', 'metadata_sha256': '46e99af1347c476b0c77ead96a0e09482e5e31b179ffe8a61c1a8547a6eab9e7', 'path': 'islands/island_0_entity_2/plus_X.pt', ...}
+info = {'path': 'plus_X.pt', 'sha256': '3dba95958cfd3426e7d1a91034136fc4a38b0720becf0779863ab86bef85ad3b', 'bytes': 4585, 'shape': [1, 3, 2, 3], ...}
+
+    def validate_payload_binding(index, view_id, entry, info):
+        """Match already-loaded payload headers to the sealed episode index.
+    
+        This is deliberately independent from original-PNG auditing. It neither
+        opens files nor materializes tensor history, and applies equally to lazy
+        selected-View reads and offline verification with source auditing disabled.
+        File checksums/sizes are compared when an offline inspector supplies them;
+        a lazy reader supplies only metadata, shape, dtype and record checksums.
+        """
+        if not isinstance(index, EpisodeIndex):
+            raise CacheError("payload binding requires an opened episode index")
+        view_id = _view_id(view_id)
+        if (
+            not isinstance(entry, dict)
+            or index.manifest["views"].get(view_id) != entry
+            or not isinstance(info, dict)
+        ):
+            raise CacheError("payload binding requires the indexed View entry")
+        metadata, shape = info.get("metadata"), info.get("shape")
+        if (
+            not isinstance(metadata, dict)
+            or not isinstance(shape, list)
+            or len(shape) != 4
+            or shape != entry["shape"]
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        for dimension in shape:
+            _integer(dimension, "latent dimension", positive=True)
+        _metadata(metadata, shape[0])
+        if (
+            info.get("dtype") != entry["dtype"]
+            or fingerprint(metadata) != entry["metadata_sha256"]
+            or info.get("record_sha256") != entry["record_sha256"]
+            or metadata["episode_key"] != index.episode_key
+            or metadata["recipe_id"] != index.recipe_id
+            or metadata["source"] != index.manifest["source"]
+            or metadata["view_id"] != view_id
+            or metadata["view_plan"]["state_records"] != entry["state_records"]
+            or metadata["view_plan"]["path"] != entry["path"]
+            or ("sha256" in info and info["sha256"] != entry["sha256"])
+            or ("bytes" in info and info["bytes"] != entry["bytes"])
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        states = index.manifest["states"]
+        if (
+            "states" in metadata and fingerprint(metadata["states"]) != fingerprint(states)
+        ) or (
+            "episode" in metadata
+            and fingerprint(metadata["episode"])
+            != fingerprint(index.manifest.get("episode"))
+        ):
+            raise CacheError("payload episode/logical-state identity differs from index")
+        recipe_prep = index.manifest["recipe"]["preprocessing"]
+        canvas_hw = [recipe_prep["height"], recipe_prep["width"]]
+        for record, prep in zip(
+            metadata["view_plan"]["records"], metadata["preprocessing"], strict=True
+        ):
+            actual_canvas = prep.get("canvas_hw")
+            original_hw = record.get("original_hw")
+            if (
+                not isinstance(actual_canvas, list)
+                or len(actual_canvas) != 2
+                or any(type(n) is not int or n <= 0 for n in actual_canvas)
+                or actual_canvas != canvas_hw
+            ):
+                raise CacheError("payload preprocessing canvas differs from sealed recipe")
+            if (
+                not isinstance(original_hw, list)
+                or len(original_hw) != 2
+                or any(type(n) is not int or n <= 0 for n in original_hw)
+                or fingerprint(prep.get("original_hw")) != fingerprint(original_hw)
+            ):
+                raise CacheError(
+                    "payload preprocessing original dimensions differ from owner"
+                )
+            ordinal = record["owner_state_ordinal"]
+            if (
+                ordinal >= len(states)
+                or states[ordinal]["logical_state_id"] != record["owner_state_id"]
+                or states[ordinal]["frame"] != record["owner_frame"]
+            ):
+                raise CacheError("physical owner identity differs from source index")
+            expected_png = (
+                f"state_{ordinal:06d}_frame_{record['owner_frame']:06d}/{view_id}.png"
+            )
+            if record["png_path"] != expected_png:
+>               raise CacheError("physical PNG path differs from canonical View owner")
+E               g2.latent_cache.contract.CacheError: physical PNG path differs from canonical View owner
+
+g2/latent_cache/storage.py:444: CacheError
+________ test_streaming_final_pixels_compact_owner_parity[False-False] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-87/test_streaming_final_pixels_co1')
+png = False, reverse = False
+
+    @pytest.mark.parametrize('png',[True,False])
+    @pytest.mark.parametrize('reverse',[False,True])
+    def test_streaming_final_pixels_compact_owner_parity(tmp_path,png,reverse):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        consumer=EventConsumer(spool,encoder)
+        publish_raw(kwargs,spool,job,consumer,reverse)
+        assert encoder.calls==5  # FULL4 + ARROW1, REUSE_ALL0; clean never redrawn.
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        spool.seal(job)
+>       assert consumer.step()
+               ^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:451: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:462: in verify_episode
+    validate_payload_binding(index, view_id, entry, info)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+index = EpisodeIndex(episode_root=PosixPath('/tmp/pytest-of-agent/pytest-87/test_streaming_final_pixels_co1/published'), cache...{'frame': 10, 'logical_state_id': 1, 'state_ordinal': 1}, 2: {'frame': 20, 'logical_state_id': 2, 'state_ordinal': 2}})
+view_id = 'islands/island_0_entity_2/plus_X'
+entry = {'bytes': 4585, 'dtype': 'float32', 'metadata_sha256': '68525d181dc44849edc7128d4f52fcdcaa98ed70db0b06d33efa7b7021090035', 'path': 'islands/island_0_entity_2/plus_X.pt', ...}
+info = {'path': 'plus_X.pt', 'sha256': '565c3857a813ac6e91b352bb579b53e1e22cc56a6563b85ee777d2e260c862aa', 'bytes': 4585, 'shape': [1, 3, 2, 3], ...}
+
+    def validate_payload_binding(index, view_id, entry, info):
+        """Match already-loaded payload headers to the sealed episode index.
+    
+        This is deliberately independent from original-PNG auditing. It neither
+        opens files nor materializes tensor history, and applies equally to lazy
+        selected-View reads and offline verification with source auditing disabled.
+        File checksums/sizes are compared when an offline inspector supplies them;
+        a lazy reader supplies only metadata, shape, dtype and record checksums.
+        """
+        if not isinstance(index, EpisodeIndex):
+            raise CacheError("payload binding requires an opened episode index")
+        view_id = _view_id(view_id)
+        if (
+            not isinstance(entry, dict)
+            or index.manifest["views"].get(view_id) != entry
+            or not isinstance(info, dict)
+        ):
+            raise CacheError("payload binding requires the indexed View entry")
+        metadata, shape = info.get("metadata"), info.get("shape")
+        if (
+            not isinstance(metadata, dict)
+            or not isinstance(shape, list)
+            or len(shape) != 4
+            or shape != entry["shape"]
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        for dimension in shape:
+            _integer(dimension, "latent dimension", positive=True)
+        _metadata(metadata, shape[0])
+        if (
+            info.get("dtype") != entry["dtype"]
+            or fingerprint(metadata) != entry["metadata_sha256"]
+            or info.get("record_sha256") != entry["record_sha256"]
+            or metadata["episode_key"] != index.episode_key
+            or metadata["recipe_id"] != index.recipe_id
+            or metadata["source"] != index.manifest["source"]
+            or metadata["view_id"] != view_id
+            or metadata["view_plan"]["state_records"] != entry["state_records"]
+            or metadata["view_plan"]["path"] != entry["path"]
+            or ("sha256" in info and info["sha256"] != entry["sha256"])
+            or ("bytes" in info and info["bytes"] != entry["bytes"])
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        states = index.manifest["states"]
+        if (
+            "states" in metadata and fingerprint(metadata["states"]) != fingerprint(states)
+        ) or (
+            "episode" in metadata
+            and fingerprint(metadata["episode"])
+            != fingerprint(index.manifest.get("episode"))
+        ):
+            raise CacheError("payload episode/logical-state identity differs from index")
+        recipe_prep = index.manifest["recipe"]["preprocessing"]
+        canvas_hw = [recipe_prep["height"], recipe_prep["width"]]
+        for record, prep in zip(
+            metadata["view_plan"]["records"], metadata["preprocessing"], strict=True
+        ):
+            actual_canvas = prep.get("canvas_hw")
+            original_hw = record.get("original_hw")
+            if (
+                not isinstance(actual_canvas, list)
+                or len(actual_canvas) != 2
+                or any(type(n) is not int or n <= 0 for n in actual_canvas)
+                or actual_canvas != canvas_hw
+            ):
+                raise CacheError("payload preprocessing canvas differs from sealed recipe")
+            if (
+                not isinstance(original_hw, list)
+                or len(original_hw) != 2
+                or any(type(n) is not int or n <= 0 for n in original_hw)
+                or fingerprint(prep.get("original_hw")) != fingerprint(original_hw)
+            ):
+                raise CacheError(
+                    "payload preprocessing original dimensions differ from owner"
+                )
+            ordinal = record["owner_state_ordinal"]
+            if (
+                ordinal >= len(states)
+                or states[ordinal]["logical_state_id"] != record["owner_state_id"]
+                or states[ordinal]["frame"] != record["owner_frame"]
+            ):
+                raise CacheError("physical owner identity differs from source index")
+            expected_png = (
+                f"state_{ordinal:06d}_frame_{record['owner_frame']:06d}/{view_id}.png"
+            )
+            if record["png_path"] != expected_png:
+>               raise CacheError("physical PNG path differs from canonical View owner")
+E               g2.latent_cache.contract.CacheError: physical PNG path differs from canonical View owner
+
+g2/latent_cache/storage.py:444: CacheError
+_________ test_streaming_final_pixels_compact_owner_parity[True-False] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-87/test_streaming_final_pixels_co3')
+png = False, reverse = True
+
+    @pytest.mark.parametrize('png',[True,False])
+    @pytest.mark.parametrize('reverse',[False,True])
+    def test_streaming_final_pixels_compact_owner_parity(tmp_path,png,reverse):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=png)
+        consumer=EventConsumer(spool,encoder)
+        publish_raw(kwargs,spool,job,consumer,reverse)
+        assert encoder.calls==5  # FULL4 + ARROW1, REUSE_ALL0; clean never redrawn.
+        package_stage_a(destination=target,event_sink=lambda e:spool.enqueue(job,e),**kwargs)
+        assert not (target/'COMPLETE.json').exists()
+        spool.seal(job)
+>       assert consumer.step()
+               ^^^^^^^^^^^^^^^
+
+g2/tests/test_stage_a_streaming.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/streaming.py:424: in step
+    return self._step()
+           ^^^^^^^^^^^^
+g2/latent_cache/streaming.py:451: in _step
+    build_profile(job['target'],self.encoder,preprocessing=self.spool.recipe['preprocessing'],
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:462: in verify_episode
+    validate_payload_binding(index, view_id, entry, info)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+index = EpisodeIndex(episode_root=PosixPath('/tmp/pytest-of-agent/pytest-87/test_streaming_final_pixels_co3/published'), cache...{'frame': 10, 'logical_state_id': 1, 'state_ordinal': 1}, 2: {'frame': 20, 'logical_state_id': 2, 'state_ordinal': 2}})
+view_id = 'islands/island_0_entity_2/plus_X'
+entry = {'bytes': 4585, 'dtype': 'float32', 'metadata_sha256': 'a788f8772255fd285914cad0ff930a72c0c3665fcbed5823aeb52ae05a44a834', 'path': 'islands/island_0_entity_2/plus_X.pt', ...}
+info = {'path': 'plus_X.pt', 'sha256': '518bb38b97dc0dea8f992edc756afa5c59e0e018f5e98199f89862f597eb5988', 'bytes': 4585, 'shape': [1, 3, 2, 3], ...}
+
+    def validate_payload_binding(index, view_id, entry, info):
+        """Match already-loaded payload headers to the sealed episode index.
+    
+        This is deliberately independent from original-PNG auditing. It neither
+        opens files nor materializes tensor history, and applies equally to lazy
+        selected-View reads and offline verification with source auditing disabled.
+        File checksums/sizes are compared when an offline inspector supplies them;
+        a lazy reader supplies only metadata, shape, dtype and record checksums.
+        """
+        if not isinstance(index, EpisodeIndex):
+            raise CacheError("payload binding requires an opened episode index")
+        view_id = _view_id(view_id)
+        if (
+            not isinstance(entry, dict)
+            or index.manifest["views"].get(view_id) != entry
+            or not isinstance(info, dict)
+        ):
+            raise CacheError("payload binding requires the indexed View entry")
+        metadata, shape = info.get("metadata"), info.get("shape")
+        if (
+            not isinstance(metadata, dict)
+            or not isinstance(shape, list)
+            or len(shape) != 4
+            or shape != entry["shape"]
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        for dimension in shape:
+            _integer(dimension, "latent dimension", positive=True)
+        _metadata(metadata, shape[0])
+        if (
+            info.get("dtype") != entry["dtype"]
+            or fingerprint(metadata) != entry["metadata_sha256"]
+            or info.get("record_sha256") != entry["record_sha256"]
+            or metadata["episode_key"] != index.episode_key
+            or metadata["recipe_id"] != index.recipe_id
+            or metadata["source"] != index.manifest["source"]
+            or metadata["view_id"] != view_id
+            or metadata["view_plan"]["state_records"] != entry["state_records"]
+            or metadata["view_plan"]["path"] != entry["path"]
+            or ("sha256" in info and info["sha256"] != entry["sha256"])
+            or ("bytes" in info and info["bytes"] != entry["bytes"])
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        states = index.manifest["states"]
+        if (
+            "states" in metadata and fingerprint(metadata["states"]) != fingerprint(states)
+        ) or (
+            "episode" in metadata
+            and fingerprint(metadata["episode"])
+            != fingerprint(index.manifest.get("episode"))
+        ):
+            raise CacheError("payload episode/logical-state identity differs from index")
+        recipe_prep = index.manifest["recipe"]["preprocessing"]
+        canvas_hw = [recipe_prep["height"], recipe_prep["width"]]
+        for record, prep in zip(
+            metadata["view_plan"]["records"], metadata["preprocessing"], strict=True
+        ):
+            actual_canvas = prep.get("canvas_hw")
+            original_hw = record.get("original_hw")
+            if (
+                not isinstance(actual_canvas, list)
+                or len(actual_canvas) != 2
+                or any(type(n) is not int or n <= 0 for n in actual_canvas)
+                or actual_canvas != canvas_hw
+            ):
+                raise CacheError("payload preprocessing canvas differs from sealed recipe")
+            if (
+                not isinstance(original_hw, list)
+                or len(original_hw) != 2
+                or any(type(n) is not int or n <= 0 for n in original_hw)
+                or fingerprint(prep.get("original_hw")) != fingerprint(original_hw)
+            ):
+                raise CacheError(
+                    "payload preprocessing original dimensions differ from owner"
+                )
+            ordinal = record["owner_state_ordinal"]
+            if (
+                ordinal >= len(states)
+                or states[ordinal]["logical_state_id"] != record["owner_state_id"]
+                or states[ordinal]["frame"] != record["owner_frame"]
+            ):
+                raise CacheError("physical owner identity differs from source index")
+            expected_png = (
+                f"state_{ordinal:06d}_frame_{record['owner_frame']:06d}/{view_id}.png"
+            )
+            if record["png_path"] != expected_png:
+>               raise CacheError("physical PNG path differs from canonical View owner")
+E               g2.latent_cache.contract.CacheError: physical PNG path differs from canonical View owner
+
+g2/latent_cache/storage.py:444: CacheError
+______ test_cleanup_is_idempotent_after_partial_unlink_and_refuses_damage ______
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-87/test_cleanup_is_idempotent_aft0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f562238ddf0>
+
+    def test_cleanup_is_idempotent_after_partial_unlink_and_refuses_damage(tmp_path,monkeypatch):
+        kwargs,target,encoder,spool,job=setup_case(tmp_path,png=False)
+        package_stage_a(destination=target,**kwargs)
+>       build_profile(target,encoder,preprocessing=PREPROCESS)
+
+g2/tests/test_stage_a_streaming.py:246: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+g2/latent_cache/production.py:106: in build_profile
+    publish_profile(root)
+g2/latent_cache/production.py:51: in publish_profile
+    receipt = cache_receipt(root)
+              ^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/production.py:21: in cache_receipt
+    audit = verify_episode(root, check_source=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/latent_cache/builder.py:462: in verify_episode
+    validate_payload_binding(index, view_id, entry, info)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+index = EpisodeIndex(episode_root=PosixPath('/tmp/pytest-of-agent/pytest-87/test_cleanup_is_idempotent_aft0/published'), cache...{'frame': 10, 'logical_state_id': 1, 'state_ordinal': 1}, 2: {'frame': 20, 'logical_state_id': 2, 'state_ordinal': 2}})
+view_id = 'islands/island_0_entity_2/plus_X'
+entry = {'bytes': 4585, 'dtype': 'float32', 'metadata_sha256': '023550d011f0e477141a785233c031437012a2546fd2fb8ab592c0d0cb4c4ed9', 'path': 'islands/island_0_entity_2/plus_X.pt', ...}
+info = {'path': 'plus_X.pt', 'sha256': '76f8c5da8558e83068a85a4b7c33279ac044a4d1227f4fa450ff1715bef1871c', 'bytes': 4585, 'shape': [1, 3, 2, 3], ...}
+
+    def validate_payload_binding(index, view_id, entry, info):
+        """Match already-loaded payload headers to the sealed episode index.
+    
+        This is deliberately independent from original-PNG auditing. It neither
+        opens files nor materializes tensor history, and applies equally to lazy
+        selected-View reads and offline verification with source auditing disabled.
+        File checksums/sizes are compared when an offline inspector supplies them;
+        a lazy reader supplies only metadata, shape, dtype and record checksums.
+        """
+        if not isinstance(index, EpisodeIndex):
+            raise CacheError("payload binding requires an opened episode index")
+        view_id = _view_id(view_id)
+        if (
+            not isinstance(entry, dict)
+            or index.manifest["views"].get(view_id) != entry
+            or not isinstance(info, dict)
+        ):
+            raise CacheError("payload binding requires the indexed View entry")
+        metadata, shape = info.get("metadata"), info.get("shape")
+        if (
+            not isinstance(metadata, dict)
+            or not isinstance(shape, list)
+            or len(shape) != 4
+            or shape != entry["shape"]
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        for dimension in shape:
+            _integer(dimension, "latent dimension", positive=True)
+        _metadata(metadata, shape[0])
+        if (
+            info.get("dtype") != entry["dtype"]
+            or fingerprint(metadata) != entry["metadata_sha256"]
+            or info.get("record_sha256") != entry["record_sha256"]
+            or metadata["episode_key"] != index.episode_key
+            or metadata["recipe_id"] != index.recipe_id
+            or metadata["source"] != index.manifest["source"]
+            or metadata["view_id"] != view_id
+            or metadata["view_plan"]["state_records"] != entry["state_records"]
+            or metadata["view_plan"]["path"] != entry["path"]
+            or ("sha256" in info and info["sha256"] != entry["sha256"])
+            or ("bytes" in info and info["bytes"] != entry["bytes"])
+        ):
+            raise CacheError("selected payload identity/header differs from index")
+        states = index.manifest["states"]
+        if (
+            "states" in metadata and fingerprint(metadata["states"]) != fingerprint(states)
+        ) or (
+            "episode" in metadata
+            and fingerprint(metadata["episode"])
+            != fingerprint(index.manifest.get("episode"))
+        ):
+            raise CacheError("payload episode/logical-state identity differs from index")
+        recipe_prep = index.manifest["recipe"]["preprocessing"]
+        canvas_hw = [recipe_prep["height"], recipe_prep["width"]]
+        for record, prep in zip(
+            metadata["view_plan"]["records"], metadata["preprocessing"], strict=True
+        ):
+            actual_canvas = prep.get("canvas_hw")
+            original_hw = record.get("original_hw")
+            if (
+                not isinstance(actual_canvas, list)
+                or len(actual_canvas) != 2
+                or any(type(n) is not int or n <= 0 for n in actual_canvas)
+                or actual_canvas != canvas_hw
+            ):
+                raise CacheError("payload preprocessing canvas differs from sealed recipe")
+            if (
+                not isinstance(original_hw, list)
+                or len(original_hw) != 2
+                or any(type(n) is not int or n <= 0 for n in original_hw)
+                or fingerprint(prep.get("original_hw")) != fingerprint(original_hw)
+            ):
+                raise CacheError(
+                    "payload preprocessing original dimensions differ from owner"
+                )
+            ordinal = record["owner_state_ordinal"]
+            if (
+                ordinal >= len(states)
+                or states[ordinal]["logical_state_id"] != record["owner_state_id"]
+                or states[ordinal]["frame"] != record["owner_frame"]
+            ):
+                raise CacheError("physical owner identity differs from source index")
+            expected_png = (
+                f"state_{ordinal:06d}_frame_{record['owner_frame']:06d}/{view_id}.png"
+            )
+            if record["png_path"] != expected_png:
+>               raise CacheError("physical PNG path differs from canonical View owner")
+E               g2.latent_cache.contract.CacheError: physical PNG path differs from canonical View owner
+
+g2/latent_cache/storage.py:444: CacheError
+=========================== short test summary info ============================
+FAILED g2/tests/test_stage_a_streaming.py::test_posthoc_ready_source_no_cycle_and_safe_release[False]
+FAILED g2/tests/test_stage_a_streaming.py::test_streaming_final_pixels_compact_owner_parity[False-False]
+FAILED g2/tests/test_stage_a_streaming.py::test_streaming_final_pixels_compact_owner_parity[True-False]
+FAILED g2/tests/test_stage_a_streaming.py::test_cleanup_is_idempotent_after_partial_unlink_and_refuses_damage
+4 failed, 38 passed in 15.05s

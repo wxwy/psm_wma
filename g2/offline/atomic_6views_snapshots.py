@@ -92,7 +92,7 @@ def _state_summary(snapshot, row, frame, source_sha, ns):
 
 def generate(base_snapshot, source_manifest, frames, *,
              nav_repo, role_map, visual_inventory, bundle_manifest,
-             layout_id, output):
+             layout_id, output, include_robot_pose=False):
     import mujoco
     if not isinstance(frames,list) or len(frames)<2 or frames[0]!=0 or frames!=sorted(set(frames)):
         raise ContractError("source frames must be distinct increasing and start at zero")
@@ -199,6 +199,10 @@ def generate(base_snapshot, source_manifest, frames, *,
             "scene_graph":reference(graph_path),
             "bundle_manifest":reference(bundle_manifest),
         })
+        if include_robot_pose:
+            from g2.views.robot_pose_marker import chassis_pose
+            sequence[-1]['raw_robot_pose'] = dict(chassis_pose(model,data),
+                frame=frame,source_frame=frame,coordinate_frame=snap['world_frame'])
         print(f"G2_SNAPSHOT state={i+1}/{len(frames)} frame={frame} "
               f"source_gt_entities={len(actual)} changed={changed} "
               f"rooms={len(snap['rooms'])} "

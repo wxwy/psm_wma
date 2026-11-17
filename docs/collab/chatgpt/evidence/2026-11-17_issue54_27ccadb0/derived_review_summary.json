@@ -1,0 +1,50 @@
+{
+  "schema": "g2_issue54_a1_gpt_derived_review_summary_v1",
+  "verdict": "REQUEST_CHANGES",
+  "fixed_root": "27ccadb051a71adf348ee14206d7ac59e9195d36",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "nav_local": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "server_audit_timestamp_utc": "2026-11-17T03:14:39.774362+00:00",
+  "environment": {
+    "existing_interpreter": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python",
+    "python": "3.13.11",
+    "torch": "2.10.0+cu128",
+    "pytest": "9.0.2",
+    "numpy": "2.2.5",
+    "Pillow": "12.2.0",
+    "mujoco": "3.3.1",
+    "pandas": "2.2.3",
+    "pyarrow": "21.0.0",
+    "ruff": "0.12.7",
+    "new_environment": false,
+    "packages_installed": false,
+    "GPU_used": false
+  },
+  "independent_regressions": {
+    "pr53": {"passed": 283, "failed": 0, "errors": 0, "skipped": 0, "seconds": 10.09},
+    "stage_a": {"passed": 50, "failed": 0, "errors": 0, "skipped": 0, "seconds": 1.41},
+    "producer_marker_viewer": {"passed": 45, "failed": 0, "errors": 0, "skipped": 0, "seconds": 1.57}
+  },
+  "independent_correctness_probes": {"passed": 0, "failed": 3, "errors": 0, "skipped": 0, "seconds": 0.35, "expected_red_on_fixed_implementation": true},
+  "real_caption_loader": {"samples": 4, "passed": 0, "failed": 4, "actual_columns": ["task_index", "__index_level_0__"], "error": "ContractError: invalid or duplicate authoritative task table"},
+  "real_GT_role_samples": {"task_classes": 18, "returned_BOUND": 18, "semantic_complete_not_claimed": true, "observed_missing_roles": ["CloseBlenderLid independent lid fixture", "PickPlaceCounterToStove source object:obj_container"]},
+  "original_283_test_identities_retained": true,
+  "tested_source_fingerprints": 201,
+  "matched_author_fingerprints": 201,
+  "source_before_equals_after": true,
+  "reviewed_pr53_core_and_tests_unchanged": true,
+  "root_child_clean": true,
+  "static_and_synthetic_checks": ["Ruff new and existing selected rules PASS", "13 files format PASS", "JS syntax PASS", "JS variants PASS", "actual viewer loadEpisode on synthetic package PASS", "synthetic new-profile package and verify PASS"],
+  "server_evidence_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue54_a1_review_27ccadb0_20261117/evidence/",
+  "server_hashes": {
+    "result_audit.json": "4360398062240d52e086977d5a6a3b51cd3e787153a19784b9b92321ac8eecc2",
+    "real_source_contract_probes.json": "0dc5d386507b03c9c8cbff590a999a96933fd1fe09a06c4672e28388a24cf715",
+    "source_before.json": "0910bb754bd81f8dae588de32852a31707ca3e0b00c0c430769d71904db1d83e",
+    "test_review_source_contracts.py": "860424fa81b6447cb361d7272ff0a365dfef6ef6087b0a3f51ab97f63fd306e0",
+    "reviewer_probes.log": "795bbe0f97da6e5ef0273295198b88a920ef141cb22149a0098cc9ab94bcfa11"
+  },
+  "not_run": ["real native F27 end-to-end new-profile replay", "new-protocol real clean/marked pixel gate", "new Wan/GPU gate", "A2 consumer", "full corpus production", "state15", "joint alignment", "training", "merge"],
+  "private_original_data_exported": false,
+  "production_source_modified": false,
+  "note": "This is an aggregate derived summary, not a byte-identical copy of the server result_audit.json. Original logs/XML and real-source observations remain on the authorized server."
+}

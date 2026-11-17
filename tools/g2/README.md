@@ -83,3 +83,33 @@ full-corpus encoding remain separate gates. Ordinary verification is read-only;
 `--reencode` explicitly requests the separate real-VAE comparison and requires
 the same local weights/device identity. See the [Issue52 runbook](../../docs/build/PSM-WMA_G2_spatial_view_vae_cache_2026-11-16.md)
 for the library ABI, atomic resume contract and precise validation scope.
+
+## Issue54 Stage A candidate producer profile
+
+The original `python -m g2.offline.atomic_6views_run` accepts an explicit
+`--output-profile` JSON and `--flat-root` caption authority. Candidate examples
+are in `tools/g2/profiles/`; use a new staging output/plan/work root. Omitting
+the profile retains strict legacy publishing. `floor_top` is clean only in the
+new schema; its independently stamped sibling is `floor_top_w_rbs`.
+
+```bash
+python -m tools.g2.verify_spatial_profile --episode-root /path/to/new/episode
+# Inspect a sealed source awaiting VAE verification; exit 75 pending:
+python -m tools.g2.verify_spatial_profile --episode-root /path/to/new/episode \
+  --allow-source-ready
+```
+
+A1 metadata/GT roles/selection/candidate text remain in place. A2 adds the
+independent `python -m tools.g2.consume_spatial_view_vae_events` consumer and
+the explicit sealed-source adapter in the existing cache build/verify CLIs.
+Initialize a bounded recipe-bound spool, start one separately authorized
+consumer, then pass `--vae-spool` to the original producer. Every valid View
+and both top variants are encoded; selection does not trim cache coverage.
+
+VAE-enabled new profiles accept spatial readiness without episode COMPLETE;
+final profile publication waits for all owners and numerical verification.
+VAE-disabled new profiles are not silently upgraded. Legacy completed-package
+semantics remain strict. CPU FakeEncoder checks do not certify native output,
+real VAE parity, performance or production settings. See the
+[A2 implementation/runbook](../../docs/build/PSM-WMA_G2_Stage_A_A2_implementation_2026-11-17.md)
+for commands, ACK/recovery/cleanup contracts and pending independent gates.
