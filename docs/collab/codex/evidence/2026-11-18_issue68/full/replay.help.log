@@ -1,0 +1,18 @@
+usage: verify_spatial_vae_batches.py [-h] --dataset-root DATASET_ROOT
+                                     --weights WEIGHTS
+                                     [--cosmos-root COSMOS_ROOT]
+                                     [--device DEVICE] [--task TASK]
+                                     [--episode EPISODE]
+                                     [--max-batch-size MAX_BATCH_SIZE]
+
+Replay actual ordered T1 batch contexts; explicitly loads the real VAE.
+
+options:
+  -h, --help            show this help message and exit
+  --dataset-root DATASET_ROOT
+  --weights WEIGHTS
+  --cosmos-root COSMOS_ROOT
+  --device DEVICE
+  --task TASK
+  --episode EPISODE
+  --max-batch-size MAX_BATCH_SIZE

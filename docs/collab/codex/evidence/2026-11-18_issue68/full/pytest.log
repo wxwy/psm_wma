@@ -1,0 +1,17 @@
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 33%]
+...................................................................sssss [ 44%]
+sssss................................................................... [ 55%]
+........................................................................ [ 66%]
+....s...........ss...................................................... [ 78%]
+........................................................................ [ 89%]
+......................................................................   [100%]
+=========================== short test summary info ============================
+SKIPPED [5] g2/tests/test_stage_a_caption_parquet.py:39: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [4] g2/tests/test_stage_a_caption_parquet.py:63: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_stage_a_caption_parquet.py:82: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_atomic_6views_run.py:59: could not import 'mujoco': No module named 'mujoco'
+SKIPPED [1] g2/tests/test_robot_pose_marker.py:238: could not import 'mujoco': No module named 'mujoco'
+SKIPPED [1] g2/tests/test_viewer_install.py:23: could not import 'pandas': No module named 'pandas'
+633 passed, 13 skipped in 299.72s (0:04:59)

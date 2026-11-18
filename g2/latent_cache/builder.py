@@ -194,6 +194,10 @@ def _check_metadata(metadata, base, recipe):
             "canvas_hw"
         ) != [recipe["preprocessing"]["height"], recipe["preprocessing"]["width"]]:
             raise CacheError("existing View preprocessing differs from source/recipe")
+    if recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+        from .batch_contract import validate_metadata
+
+        validate_metadata(metadata, recipe)
 
 
 def _read_rgb(plan, record):
@@ -279,6 +283,7 @@ def build_episode(
     resume=False,
     _record_provider=None,
     _view_first=False,
+    _recipe=None,
 ):
     """One locked episode, one atomic numeric file per View, no source writes."""
     from .encoding import validate_wan_canvas
@@ -291,12 +296,25 @@ def build_episode(
         write_view_payload,
     )
 
-    recipe = make_recipe(
-        encoder.descriptor(),
-        preprocessing,
-        storage_dtype=storage_dtype,
-        batch_size=batch_size,
-    )
+    if _recipe is None:
+        recipe = make_recipe(
+            encoder.descriptor(),
+            preprocessing,
+            storage_dtype=storage_dtype,
+            batch_size=batch_size,
+        )
+    else:
+        recipe = validate_recipe(_recipe)
+        if (
+            recipe.get("schema") != "g2_spatial_view_vae_batch_recipe_v2"
+            or _record_provider is None
+            or recipe["encoder"] != encoder.descriptor()
+            or recipe["storage_dtype"] != storage_dtype
+            or (preprocessing is not None and recipe["preprocessing"] != preprocessing)
+        ):
+            raise CacheError(
+                "batch assembly requires matching real recipe and acknowledged record provider"
+            )
     validate_wan_canvas(
         recipe["preprocessing"]["height"], recipe["preprocessing"]["width"]
     )
@@ -381,8 +399,10 @@ def build_episode(
                         encoded += 1
                     else:
                         assembled += 1
+                from .batch_contract import pack_metadata
+
                 info = write_view_payload(
-                    path, dict(base, preprocessing=metadata), torch.stack(values)
+                    path, pack_metadata(base, metadata, recipe), torch.stack(values)
                 )
             index["views"][view_id] = _index_entry(info, view)
             atomic_json(manifest, index, replace=True)

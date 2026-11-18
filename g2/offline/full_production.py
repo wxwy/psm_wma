@@ -61,6 +61,8 @@ DEFAULTS = dict(
     renderer_gpus=[4, 5, 6, 7],
     workers_per_gpu=8,
     vae_gpu=7,
+    vae_engine=None,
+    allow_shared_gpu_processes=False,
     expected_dataset_episodes=9126,
     expected_selected_episodes=9126,
     expected_task_count=18,
@@ -174,6 +176,18 @@ def load_config(path):
             raise CacheError("finite timeout required: " + key)
     if type(cfg["sample_mode"]) is not bool:
         raise CacheError("sample_mode must be explicit boolean")
+    if type(cfg["allow_shared_gpu_processes"]) is not bool:
+        raise CacheError("shared GPU authorization must be explicit boolean")
+    if cfg["vae_engine"] is not None:
+        from g2.latent_cache.batch_engine import engine_config
+
+        cfg["vae_engine"] = engine_config(
+            cfg["vae_engine"], allow_test=cfg["sample_mode"]
+        )
+        if not set(cfg["vae_engine"]["gpus"]) <= {4, 5, 6, 7}:
+            raise CacheError("batch engine must stay within approved GPUs4-7")
+        if cfg["max_events"] < cfg["vae_engine"]["max_batch_size_per_gpu"]:
+            raise CacheError("queue must admit at least one full per-GPU batch")
     if not cfg["sample_mode"] and (
         cfg["tasks"]
         or cfg["episodes_per_task"] is not None
@@ -330,11 +344,26 @@ def environment_probe(cfg):
     encoder = WanSingleFrameEncoder(
         cfg["weights"], device="cuda:0", cosmos_root=ROOT / "cosmos-framework"
     )
-    recipe = make_recipe(
-        encoder.descriptor(),
-        preprocessing_recipe(cfg["height"], cfg["width"]),
-        storage_dtype=cfg["storage_dtype"],
-    )
+    if cfg["vae_engine"] is None:
+        recipe = make_recipe(
+            encoder.descriptor(),
+            preprocessing_recipe(cfg["height"], cfg["width"]),
+            storage_dtype=cfg["storage_dtype"],
+        )
+    else:
+        from g2.latent_cache.batch_contract import make_batch_recipe
+        from g2.latent_cache.batch_encoding import WanBatchEncoder
+
+        encoder = WanBatchEncoder(
+            cfg["weights"],
+            device="cuda:0",
+            cosmos_root=ROOT / "cosmos-framework",
+            max_batch_size=cfg["vae_engine"]["max_batch_size_per_gpu"],
+        )
+        recipe = make_batch_recipe(
+            encoder.descriptor(),
+            max_batch_size=cfg["vae_engine"]["max_batch_size_per_gpu"],
+        )
     if (
         np.__version__ != cfg["expected_numpy"]
         or recipe["recipe_id"] != cfg["expected_recipe_id"]
@@ -368,7 +397,9 @@ def gpu_preflight(cfg):
         for line in rows.splitlines()
         if line.strip()
     }
-    selected = set(cfg["renderer_gpus"]) | {cfg["vae_gpu"]}
+    selected = set(cfg["renderer_gpus"]) | set(
+        cfg["vae_engine"]["gpus"] if cfg["vae_engine"] else [cfg["vae_gpu"]]
+    )
     if not selected <= set(available):
         raise CacheError("configured physical GPUs are not present")
     apps = subprocess.check_output(
@@ -391,12 +422,16 @@ def gpu_preflight(cfg):
             and int(fields[1]) not in own
         ):
             foreign.append(int(fields[1]))
-    if foreign:
+    if foreign and not cfg["allow_shared_gpu_processes"]:
         raise CacheError(
             "selected GPUs have unowned processes; stop them manually before launch: "
             + str(sorted(set(foreign)))
         )
-    return dict(selected=sorted(selected), foreign_processes=[])
+    return dict(
+        selected=sorted(selected),
+        foreign_processes=sorted(set(foreign)),
+        sharing_explicitly_authorized=cfg["allow_shared_gpu_processes"],
+    )
 
 
 def claim_output(cfg):
@@ -479,6 +514,42 @@ def preflight(cfg):
 
 
 def consumer_command(cfg, action, stop_file):
+    if cfg["vae_engine"] is not None:
+        cmd = [
+            cfg["python"],
+            "-m",
+            "tools.g2.run_spatial_vae_engine",
+            action,
+            "--mode",
+            "sync",
+            "--spool-root",
+            cfg["spool_root"],
+            "--weights",
+            cfg["weights"],
+            "--cosmos-root",
+            str(ROOT / "cosmos-framework"),
+            "--engine-config",
+            str(Path(cfg["run_root"]) / "vae_engine.json"),
+            "--expected-recipe-id",
+            cfg["expected_recipe_id"],
+        ]
+        for flag, key in (
+            ("--max-events", "max_events"),
+            ("--max-spool-bytes", "max_spool_bytes"),
+            ("--max-result-bytes", "max_result_bytes"),
+            ("--max-records", "max_records"),
+        ):
+            cmd += [flag, str(cfg[key])]
+        if action == "--execute":
+            cmd += ["--serve", "--resume", "--stop-file", str(stop_file)]
+        if cfg["sample_mode"]:
+            cmd += ["--isolated-test"]
+        if cfg["final_source_format"] == "capsule_v2":
+            cmd += [
+                "--source-policy",
+                str(Path(cfg["run_root"]) / "source_policy.json"),
+            ]
+        return cmd
     cmd = [
         cfg["python"],
         "-m",
@@ -769,7 +840,11 @@ class Supervisor:
         from .process_control import start_owned, terminate_owned
 
         env = isolated_env(self.cfg)
-        env["CUDA_VISIBLE_DEVICES"] = str(self.cfg["vae_gpu"])
+        env["CUDA_VISIBLE_DEVICES"] = (
+            ",".join(map(str, self.cfg["vae_engine"]["gpus"]))
+            if self.cfg["vae_engine"]
+            else str(self.cfg["vae_gpu"])
+        )
         consumer_stop = self.run / "CONSUMER_STOP.json"
         consumer_stop.unlink(missing_ok=True)
 
@@ -918,7 +993,17 @@ def run(cfg, *, resume=False):
             if not path.exists():
                 atomic_json(path, policy)
         env = isolated_env(cfg)
-        env["CUDA_VISIBLE_DEVICES"] = str(cfg["vae_gpu"])
+        if cfg["vae_engine"] is not None:
+            path = run_root / "vae_engine.json"
+            if path.exists() and read_json(path) != cfg["vae_engine"]:
+                raise CacheError("batch engine configuration changed on resume")
+            if not path.exists():
+                atomic_json(path, cfg["vae_engine"])
+        env["CUDA_VISIBLE_DEVICES"] = (
+            ",".join(map(str, cfg["vae_engine"]["gpus"]))
+            if cfg["vae_engine"]
+            else str(cfg["vae_gpu"])
+        )
         subprocess.run(
             consumer_command(cfg, "--initialize", run_root / "CONSUMER_STOP.json"),
             cwd=ROOT,

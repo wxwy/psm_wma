@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/psm_wma_issue52/docs/collab/codex/evidence/2026-11-18_issue68/peer/scope_probe.py", line 28, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/workspace/psm_wma_issue52/docs/collab/codex/evidence/2026-11-18_issue68/peer/scope_probe.py", line 23, in main
+    results={key:[p.name for p in scope['discover_published'](root,**selectors)] for key,selectors in [('wrong_task',dict(tasks=['DifferentTask'])),('wrong_episode',dict(episodes=[999]))]}
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<formal29-discover>", line 51, in discover_published
+KeyError: "'__name__' not in globals"

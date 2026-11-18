@@ -1,0 +1,47 @@
+{
+  "complete": true,
+  "no_json_restored": true,
+  "rows": [
+    {
+      "absent_bindings": 0,
+      "actual_pt_hashes_match_historical_index": true,
+      "episode": "tasks/CloseBlenderLid/episodes/episode_000000",
+      "historical_cache_manifest_matches": true,
+      "mode": "independent",
+      "present_bindings": 148,
+      "pt_files": 4,
+      "state_view_bindings": 148
+    },
+    {
+      "absent_bindings": 0,
+      "actual_pt_hashes_match_historical_index": true,
+      "episode": "tasks/CloseFridge/episodes/episode_000502",
+      "historical_cache_manifest_matches": true,
+      "mode": "independent",
+      "present_bindings": 352,
+      "pt_files": 8,
+      "state_view_bindings": 352
+    },
+    {
+      "absent_bindings": 0,
+      "actual_pt_hashes_match_historical_index": true,
+      "episode": "tasks/CloseBlenderLid/episodes/episode_000000",
+      "historical_cache_manifest_matches": true,
+      "mode": "sync",
+      "present_bindings": 148,
+      "pt_files": 4,
+      "state_view_bindings": 148
+    },
+    {
+      "absent_bindings": 0,
+      "actual_pt_hashes_match_historical_index": true,
+      "episode": "tasks/CloseFridge/episodes/episode_000502",
+      "historical_cache_manifest_matches": true,
+      "mode": "sync",
+      "present_bindings": 352,
+      "pt_files": 8,
+      "state_view_bindings": 352
+    }
+  ],
+  "scope": "READ_ONLY_IN_MEMORY_HISTORICAL_CACHE_BINDING_NOT_RECREATED_SOURCE"
+}

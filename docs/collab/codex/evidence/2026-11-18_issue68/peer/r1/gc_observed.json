@@ -1,0 +1,30 @@
+{
+  "error": "completed batch still has unverified numeric staging",
+  "fully_verified_episode_A": true,
+  "genuine_completed_receipts": 1,
+  "leftover_A_chunk_count": 1,
+  "pending_job_B_event": 1,
+  "queue": {
+    "batch_states": {
+      "complete": 1
+    },
+    "gpu": {
+      "4": {
+        "batch_histogram": {
+          "5": 1
+        },
+        "batches": 1,
+        "encode_seconds": 0.023535183994681574,
+        "io_ack_seconds": 0.07451731999753974,
+        "peak_allocated_bytes": 0,
+        "peak_reserved_bytes": 0,
+        "records": 5
+      }
+    },
+    "pending_members": 1,
+    "reserved_numeric_bytes": 365080
+  },
+  "scope": "GENUINE_CPU_FIXTURE_CACHE_ACK_TOMBSTONE_NOT_GPU",
+  "source_code_matches": "87dd1bd8599003e2f6ea4d2b069c249d06d865e8",
+  "status": "REPRODUCED"
+}

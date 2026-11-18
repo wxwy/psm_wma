@@ -1,0 +1,34 @@
+......F..........................                                        [100%]
+=================================== FAILURES ===================================
+__________________ test_budget_backpressure_and_temp_cleanup ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-152/test_budget_backpressure_and_t0')
+
+    def test_budget_backpressure_and_temp_cleanup(tmp_path):
+        spool, enc, job, _ = events_case(tmp_path, 2, budget=1)
+        q = BatchQueue(spool, batch_wait_ms=0)
+        q.register_worker("a", 4)
+        assert q.claim("a") is None and spool.stats()["pending_inputs"] == 2
+        spool.max_result_bytes = 1024**2
+        claim = q.claim("a")
+        directory = spool.root / "records" / claim["context"]["batch_id"]
+>       directory.mkdir()
+
+g2/tests/test_batch_queue.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-agent/pytest-152/test_budget_backpressure_and_t0/spool/records/9ba11d5e291fda989e971e13ae60eb3562c68e05b6aa08474e2d380d5e108f2f')
+mode = 511, parents = False, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-agent/pytest-152/test_budget_backpressure_and_t0/spool/records/9ba11d5e291fda989e971e13ae60eb3562c68e05b6aa08474e2d380d5e108f2f'
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1311: FileNotFoundError
+=========================== short test summary info ============================
+FAILED g2/tests/test_batch_queue.py::test_budget_backpressure_and_temp_cleanup
+1 failed, 32 passed in 30.12s

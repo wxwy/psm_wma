@@ -1,0 +1,17 @@
+{
+  "errors": 0,
+  "failed": 0,
+  "legacy_b1_loader_unchanged": true,
+  "legacy_encode_record_ast_unchanged": true,
+  "new_tests": 34,
+  "old612_identities_preserved": true,
+  "old_test_sources_preserved": true,
+  "passed": 633,
+  "real_gpu_gate": false,
+  "schema": "g2_issue68_author_cpu_v1",
+  "skipped": 13,
+  "source_count": 258,
+  "sources_stable": true,
+  "tests": 646,
+  "training_ready": false
+}

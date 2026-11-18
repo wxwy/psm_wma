@@ -1,3 +1,190 @@
+# 2026-11-18 CST — Issue68 REVIEW, both author real pipelines PASS
+
+Formal implementation778022c8fcf431fa16e83a67256ba58b4b464052;
+Child/Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2;
+nav70eb7b447e65d793b0ebe18b258291ce46f057c1. DraftPR69 stackedonPR67;
+fresh fetch/advertised/tracking V3b6311222c364543787f913215bf584065aa1c275
+still match, no merge. Later HEAD only docs/evidence/ledger, never substitute
+it for formal implementation. Product diff19Python/test files; old612 test
+identities/sources and legacyB1 loader/encodeAST/PR67 source/C core unchanged.
+
+Final actual originalPSM server655/655CPU PASS/0fail/error/skip;19file static+
+formatPASS.258Gitblob hashes match and stable through actual GPU/F27 Gates.
+Final read-only peer exactpair LOCAL_CODE_REVIEW_PASS,29relatedCPU0skip+
+genuine independent OS-crash/public-API probes; all5 established findings
+closed. Old failures/reports retained. This is not GPT independent approval.
+
+INDEPENDENT_VAE_E2E=PASS:2copied realpublications,37+44states/4+8Views/169
+records; actual4/5/6/7 native6callsB32+tail9,1crossEPbatch; durable register
+hardexit77 beforeoffer recovers, laterEpisode discovered; explicitC+postC
+resume+169same-contextreplayexact0. Engine86.79s/CLI94.97s,C63.10s,retired
+resume21.25s, sampleidle5s reportsIDLE_TIMEOUT (default600 testedvirtually).
+
+SYNC_VIEW_VAE_E2E=PASS:actual fresh originalMuJoCo/native/F27 twoepisodes,
+Room/Island/clean+markedtops/changedstates/missingdirections; earlyACK before
+SourceReady; workerhardexit77afterACK0 recovers1restart; actual4/5/6/7native
+39callsB2/3/4/6/8 underconfiguredmax32,4crossEPbatches; fullprofileDONE,
+v2sourceC+ownedworkGC,engineDRAINED,169same-contextreplayexact0.500state/View
+hashbindings andViewsets match originals. Producer603.74s/CLI627.52s includes
+native/F27/load/VAE/publish/GC, notsingle6viewlatency. EncodeAPIoverlap is
+recorded, not claimedCUDAkernel-overlap. NativeCUDAaggregate10.81/12.48s
+acrosscards, notwallclock. Batchrecipeb1c6e1f6... differslegacy3ee9...;
+legacyB1same40refs0, batchmathvslegacymaxabs.07421875/decoded4max6-8bytes,
+no newhumanB32approval/no universal speedup claim.
+
+Bothfinalsources nofullJSON/gzip/oldreceipts/READY/pendingtxn, all24PT hashes
+acrossmodes match historical preCindex binding, noJSONrestored; 0activejobs/
+events/numericalPTstaging. Independentwithcache23.78/28.59MiB→22.32/27.25;
+syncraw-before-observed54.63/56.13→22.49/27.33 (beforemayincludeCstaging,
+notcapacityforecast). Index157632-162962B<1MiB. Syncpeakownedwork2.407GB,
+pendingPNG2.274MB; finalwork333Bmetadata/spool3.107MBaudit/no numeric PT.
+
+Original selectedpublications entirefileinventories unchanged; prodRootb631/
+Childd5/nav70/fixedRoot778022 trackedclean; viewpanealive. Actualouterdual
+commandexit0, capacityobserverexit0. No servercommit/push/privatefileexport,
+currentview/source/configmutation, installs/newenv/modelA/B/C/D/G1/Child/nav/
+training/checkpoint/Gitlink change, full9126B/C or merge. TrueOOM/powerloss/
+heterogeneousGPU/full9126/32rendererresource/full10minidle/humanB32 notrun.
+
+Rawlogs/JUnit/images/models/states/sources/PTs remain server-only under
+`.g2_issue68_dual_20261118/` (source_d/server_cpu_d/independent_d/sync_d).
+Own derived exactcommands/scalars/hashes/scope:
+docs/collab/codex/evidence/2026-11-18_issue68/SERVER_GATES.md andJSONsummaries;
+fullprotocol/productiondraft commands in ownIssue68runbook. Nextcanonical
+Inbox exactpair+PR69/Issue68 handoff for GPT independent review, thenstopat
+reviewhandoff; no autodeploy/fullproduction/approval inference/trainingready.
+Owner latest Issue68 authorizes this one-shot implementation+isolatedGates;
+oldMM/Kimi wait rules are superseded by the specified GPT/Owner handoff.
+
+## Historical implementation records (superseded by final facts above)
+
+# 2026-11-18 CST — Issue68 mandatory shared multi-GPU B32 dual-pipeline claim
+
+Owner Issue68 read in full via GitHub API; no issue comments at initial read.
+Latest Owner directly authorizes repository implementation and isolated real
+GPU/F27 Gates for BOTH sync and independent modes, new Draft; not full9126,
+active view changes, source export, training, Child/nav/model/G1 edits/merge.
+This supersedes historical optionalP1/B1-only and old MM/Kimi waiting scope.
+Task is not DONE unless both SYNC_VIEW_VAE_E2E and INDEPENDENT_VAE_E2E PASS.
+
+Clean startRoot03bb897618c9c6b6d23ecfa36e802747b4b44e79 contains formalPR67
+5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2. Fresh fetched/advertised/trackingV3
+b6311222c364543787f913215bf584065aa1c275 match; base..V3 empty. Unchanged
+Child/Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav advertised
+70eb7b447e65d793b0ebe18b258291ce46f057c1. Created independent branch
+codex/g2-multigpu-b32-dual-issue68 from03bb, no oldbranch/PR67 rewrite.
+Actual PR67 review5949979753 read: COMMENTED/SCOPED PASS, independent153CPU
+and347real retainedfile hashes; author169GPU evidence remains author. This is
+not B32/multigpu/syncE2E/fullproduction approval. New task is separately
+directly authorized; no prior verdict is relabeled for the new math.
+
+Claim: new latent_cache batch_contract.py,batch_encoding.py,batch_queue.py,
+batch_worker.py,batch_engine.py; minimal contract.validate_recipe dispatch, builder/production
+recipe override+batch provenance, streaming record-path/chunk validation
+extension; full_production.py consumer/config integration; build CLI explicit
+batch mode, thin shared engine CLI, official templates/launcher, new batch/
+lease/recovery/discovery/sync tests, own docs/evidence and ledgers.
+Legacy encoding.py stays byte-identical so B1 identity/math remain unchanged.
+PR67 gzip/source/posthoc/retirement implementations remain unchanged. Reuse
+existing EventSpool DB/ACK/writer/profile/work/source collector, no second
+queue or global transaction framework. One batch/lease extension serves both
+modes. No other Agent owns these files; separate read-only peer after REVIEW
+per AGENTS, no implementation delegation. No new environment/install.
+
+Owner async reply explicitly authorizes using ALL GPU4-7 despite current small
+view GPU load. No further resource permission needed; select fresh safe slots
+for isolated tests, never stop/reconfigure current view. GPU0-3 stay excluded.
+Historical RDC pre-authorization preflight: viewalive,3751episode COMPLETE
+markers (not fullverified),0-3training62GiB/100%,4-7viewcontexts,/data1free
+160613101568B. Owner subsequently explicitly allowed GPU4-7 sharing. Latest
+readonly GPU4-7 memory565-799MiB/util0-1%; view alive. No resource block remains.
+Manager exposes CUDA_VISIBLE_DEVICES=4,5,6,7; one bound process/card (cuda:0).
+SYNC_VIEW_VAE_E2E=NOT_RUN;
+INDEPENDENT_VAE_E2E=NOT_RUN; training_ready=false. Next A batch math/recipe,
+B shared claims/leases/fenced ACK, C both actual entrypoints, D failures and
+resource safety, E CPU+real dual Gates/fixed-source peer/Draft.
+
+## Issue68 B/C checkpoint — fixed-code review and real Gates next
+
+R1 narrow fixes before real dual runs: read-only peer formal29e4623e found
+P1 finite-numeric-budget circular wait; P2 task directory beforeepisodesmkdir;
+P2 directepisode selectors ignored. Exact repro/logs retained in ownpeer/.
+Added bounded capacity watchdog (existing worker_timeout, source/results held),
+benign unpublished-directory handling, direct/header/catalogue identity scopes,
+new virtual+actualengine capacity-failure and selector tests. Real-Gate proof
+now uses actual native_called/GPU/CUDA metrics and overlapping encode-API call
+intervals; ACK-only recovery-card counts are not encoding proof. API timing
+includes coldload/preprocess, not claimed as CUDA-kernel-overlap trace.
+Fixed29e4623e originalserverPSM full646/646 PASS/0skip/fail/error201.36s,
+all258sourcehashes stable, old612IDs/oldtests unchanged. This does not approve
+R1 newSHA or either real E2E; next finalfixedCPU+twoactualdualGates mandatory.
+
+R2 pre-final fixes: peer87dd independently closed original3 but found newP1
+register-before-offer coordinator hardexit strands independent job; newP1
+legacyB1 pendingpixel sharing leaves distinct batch chunk and blocks GC.
+Fixed only independent recovery re-offer (existing full/scope verifier),
+startup try/finally lease/process cleanup, and schema2 exclusion from legacy
+pendingpixel heuristic (same-result ownership+allB1 behavior unchanged).
+New actualos._exit77 register recovery, changedscope+lease reject, syncproducing
+guard and genuine twoepisode identicalPNG/cache/ACK/tombstone/GC test added.
+R2 focused29PASS/0skip115.14s; metric native/queuewait newcase separately run.
+No silent numerical replacement/split, no verifier bypass or fake SQL ACK.
+
+Fixed87dd originalserverPSM651/651CPU PASS/0skip and author independent real
+E2E PASS:169records/12Views/81states,actual4/5/6/7native6callsB32+tail9,
+onecrossEPbatch,11overlappingencodeAPIpairs (notkerneltrace); samecontext
+169replayexact0, isolated C+postretiredresume+allretainedproducts/PNG/PTstable,
+0activejobs/events/numericrecords. Rawdata/private logs stayserver
+`.g2_issue68_dual_20261118/independent_c`; finalnewRoot still needs its own
+coordinatorcrash sample and sync truefreshMuJoCo/F27 E2E. No final approval
+is inferred from87dd, peerR1 remains REQUEST_CHANGES until R2 closure.
+
+Shared engine/queue/worker integrated with original sync full_production and
+explicit independent build CLI; same EventSpool authority/new small SQL batch
+lease tables, original writer/fsync/ACK/cache/source/work collectors. Genuine
+batch membership/order pinned, per-batch locks (no global encode lock), partial
+replay compares existing values before writes, all input PNGs retained until
+whole-batch commit; finite queue/numeric reservations/fencing/heartbeat/owned
+dead-worker requeue/watchdog/restart limits. Original legacyB1 interfaces and
+PR67 source/retirement implementations stay unchanged. New reader validation
+is JSON-only; explicit batch replay loads VAE separately. Independent watches
+only COMPLETE and has default600s IDLE_TIMEOUT distinct from ALL_COMPLETE;
+sync stays alive until original supervisor drain/stop. Source C remains an
+explicit separate action for independent mode, original full-profile C forsync.
+
+Author full646cases:633PASS/13 inheritedlocaloptionalSKIP,0fail/error299.72s;
+all612oldIDs/oldtestsourcebytes and encode_recordAST/B1loader preserved.
+New34cases all execute,258 product-source hashes stable;19fileRuff/formatPASS.
+New firstfixture run32PASS/1testsetupmkdirFAIL retained, fixed only newfixture;
+focused51PASS46.63s, extra replay/retired-reader13PASS18.82s. Local missing
+PyArrow/MuJoCo/Pandas will be run in original server environment, no installs.
+
+Real fixedA302885d5 Gate: originalB1 recipe3ee and40realrecords reencode exact0.
+GPU4+6 actualparallel B1/8/16/32 native input BCT1, sameorderedB32 crossGPU0;
+newB32recipeb1c6e1f6... vslegacyB1maxabs.07421875/RMS.00625565/relL2.00755163,
+samecontext/reorder/changed-member other31 exact0, tail7vsB1maxabs.046875.
+Decoded4 RGBmax6-8bytes/PSNR53.81-55.20dB, nothumanapproval; variable sharedGPU
+timings documented, no claimed universal speedup. Raw private artifacts stay
+server `.g2_issue68_dual_20261118`; math alone does not close either E2E.
+
+Next freeze B/C source and original-environment fullCPU, separately real
+independent(dynamic second publication/crossEPbatch/4GPUs/retirement/replay)
+and truefresh MuJoCo/F27sync(earlyACK/4GPUs/hardexit/GC/replay) in isolated
+roots. Implementation code enters read-only peer REVIEW after this commit
+perAGENTS; overallIssue68 remains IN_PROGRESS until both actual E2Es PASS.
+No duplicate permission question for the now-authorized GPU4-7 resource.
+
+## Previous implementation handoff
+
+Issue68 A checkpoint: final93/93 CPU PASS/0skip8.36s (new14+old79), staticPASS;
+original encoding.py/Child bytes unchanged. Actual native-call/shape counters
+and one-model mixed-source B1/8/16/32 numerical probe added; raw firstformat
+diagnostics retained. Commit A includes only batch contract/adapter/dispatch,
+new encoding tests and own probe/CPU evidence; batch_queue.py remains an
+uncommitted B implementation, not part of A GPU source identity. GPU4-7 were
+explicitly authorized by Owner after preflight. Next fixed-A real math probe
+in private Gate while implementing shared queue/dual-mode integration.
+
 # 2026-11-18 CST — View-first -> posthoc VAE -> retirement REVIEW handoff
 
 Formal implementation5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2,

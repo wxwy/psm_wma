@@ -1,0 +1,56 @@
+usage: run_spatial_vae_engine.py [-h] --mode {independent,sync} --spool-root
+                                 SPOOL_ROOT [--dataset-root DATASET_ROOT]
+                                 --weights WEIGHTS [--cosmos-root COSMOS_ROOT]
+                                 [--task TASK] [--episode EPISODE]
+                                 [--engine-config ENGINE_CONFIG] [--gpus GPUS]
+                                 [--max-batch-size MAX_BATCH_SIZE]
+                                 [--max-wait-ms MAX_WAIT_MS]
+                                 [--idle-timeout-s IDLE_TIMEOUT_S]
+                                 [--max-events MAX_EVENTS]
+                                 [--max-spool-bytes MAX_SPOOL_BYTES]
+                                 [--max-result-bytes MAX_RESULT_BYTES]
+                                 [--max-records MAX_RECORDS]
+                                 [--source-policy SOURCE_POLICY]
+                                 [--stop-file STOP_FILE]
+                                 [--expected-episodes EXPECTED_EPISODES]
+                                 [--producer-done PRODUCER_DONE]
+                                 [--expected-recipe-id EXPECTED_RECIPE_ID]
+                                 [--expected-weights-sha256 EXPECTED_WEIGHTS_SHA256]
+                                 [--resume] [--serve] [--isolated-test]
+                                 (--plan | --initialize | --execute)
+
+Shared true B1..32/T1 multi-GPU engine, independent or producer-fed. Planning
+computes source/weight/recipe identity without constructing Wan. Independent
+mode watches published episodes; sync mode serves final-pixel events.
+
+options:
+  -h, --help            show this help message and exit
+  --mode {independent,sync}
+  --spool-root SPOOL_ROOT
+  --dataset-root DATASET_ROOT
+  --weights WEIGHTS
+  --cosmos-root COSMOS_ROOT
+  --task TASK
+  --episode EPISODE
+  --engine-config ENGINE_CONFIG
+  --gpus GPUS           physical indices, default4,5,6,7
+  --max-batch-size MAX_BATCH_SIZE
+  --max-wait-ms MAX_WAIT_MS
+  --idle-timeout-s IDLE_TIMEOUT_S
+  --max-events MAX_EVENTS
+  --max-spool-bytes MAX_SPOOL_BYTES
+  --max-result-bytes MAX_RESULT_BYTES
+  --max-records MAX_RECORDS
+  --source-policy SOURCE_POLICY
+  --stop-file STOP_FILE
+  --expected-episodes EXPECTED_EPISODES
+  --producer-done PRODUCER_DONE
+  --expected-recipe-id EXPECTED_RECIPE_ID
+  --expected-weights-sha256 EXPECTED_WEIGHTS_SHA256
+  --resume
+  --serve               sync lifecycle (no idle exit)
+  --isolated-test       permit explicit one-shot crash injection in a separate
+                        sample
+  --plan, --dry-run
+  --initialize
+  --execute

@@ -136,6 +136,13 @@ def make_recipe(encoder, preprocessing=None, *, storage_dtype="float32", batch_s
 
 
 def validate_recipe(value):
+    if (
+        isinstance(value, dict)
+        and value.get("schema") == "g2_spatial_view_vae_batch_recipe_v2"
+    ):
+        from .batch_contract import validate_batch_recipe
+
+        return validate_batch_recipe(value)
     if not isinstance(value, dict) or value.get("schema") != RECIPE_SCHEMA:
         raise CacheError("unknown spatial VAE recipe")
     try:
