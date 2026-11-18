@@ -48,7 +48,6 @@ def _gzip_receipt(raw, zipped, source_id):
     return dict(fields, receipt_id=fingerprint(fields))
 
 
-
 def _decode_gzip_bounded(z, expected_bytes):
     """Decode one immutable compressed byte string; never trust its filename."""
     try:
