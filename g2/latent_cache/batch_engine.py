@@ -729,6 +729,7 @@ class BatchEngine:
                         max_workers=self.finalize_workers,
                         mp_context=self._mp,
                         initializer=cpu_initializer,
+                        initargs=(self.spec,),
                     )
                 for gpu in self.spec["gpus"]:
                     self._spawn(gpu)
