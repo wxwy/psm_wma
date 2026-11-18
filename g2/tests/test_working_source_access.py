@@ -63,6 +63,7 @@ def test_gzip_exact_original_bytes_and_transport_hashes_no_json_copy(tmp_path):
         "wrong_source",
         "missing_receipt",
         "symlink",
+        "ready_schema",
     ],
 )
 def test_invalid_compressed_sources_fail_without_materializing_json(
@@ -84,6 +85,10 @@ def test_invalid_compressed_sources_fail_without_materializing_json(
         write_json(target / working.RECEIPT, receipt)
     elif mode == "missing_receipt":
         (target / working.RECEIPT).unlink()
+    elif mode == "ready_schema":
+        ready = read_json(target / "SPATIAL_SOURCE_READY.json")
+        ready["schema"] = "TEST_ONLY_WRONG_SCHEMA"
+        write_json(target / "SPATIAL_SOURCE_READY.json", ready)
     else:
         path = target / working.PACKED
         outside = tmp_path / "outside.gz"

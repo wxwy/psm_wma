@@ -160,3 +160,23 @@ for actual field dependencies, hash graph, locking/recovery, private server
 commands and capacity/real169+419 Gates. Two sample sizes never certify all
 18 tasks or9,126 production; missing strata yield HOLD_CAPACITY. No automatic
 full run, old-view deletion, environment installation or training is added.
+
+## View-first: independent VAE and compressed-source retirement
+
+The existing build CLI accepts `--view-first --spool-root <external-spool>`
+to consume published View-only episodes, using the same B1/T1 encoder,
+preprocessing, bounded ledger/ACK and per-View cache. Legacy invocation stays
+strict. It does not rerender or rewrite original spatial products/completion.
+
+After the cache verifies, `python -m tools.g2.retire_view_first_sources --help`
+describes the explicit CPU-only plan/execute/resume adapter to existing v2
+retirement. Its posthoc policy binds the original View-only root claim and
+uses an external spool. Final publication verifies every retained product/PT
+before retiring gzip/receipt/READY. Resume uses the same spool/policy/recipe;
+it never recreates the full JSON or loads a model. Exit75 means pending,
+exit2 rejects a conflict; never delete source files manually.
+
+See [the View-first retirement runbook](../../docs/build/PSM-WMA_G2_view_first_posthoc_retirement_2026-11-18.md)
+for typed source states, exact isolated-sample commands, recovery, physical
+byte accounting and corpus command drafts. Small sample acceptance does not
+authorize retirement of the running9,126-episode View production.

@@ -1,5 +1,35 @@
 # 2026-11-18 CST — View-first -> posthoc VAE -> retirement R1-R5 claim
 
+R5 complete AUTHOR_CPU: final_retry599PASS/13inheritedoptionalSKIP/0fail/error,
+612cases312.55s; original560IDs and all old test source bytes retained, new52
+all executed,246product source SHA stable;21file Ruff/format/help/protocolPASS.
+Initial full final/ run598PASS/1oldsupervisor25sdrainFAIL/13SKIP377.09s retained;
+unchanged focusedcase1PASS74.65s, then unchangedfull599PASS; root cause not
+established, no old timeout/assertion/source changed. Own tiny fixture gzip
+4371B vs index16863B demonstrates why real physical-byte Gate is separate.
+Task enters REVIEW for exact committed R5 source/read-only peer/new V3 Draft.
+No inherited GPT approval, no corpus VAE/retirement/merge or training authorized.
+
+User explicitly corrected Remote Desktop Commander availability: actual data
+connection succeeded. Read-only cleanprodRoot b6311222/Childd5c1ffc7 observed,
+view:0.0 bash dead0; namedBlender0/Fridge502 COMPLETE noVAE gzip source found.
+Original mapping SHA aa884820494a17f50b41a8a8c2bfa6b6fda11babbbef31c449c1c0ce850e09ed
+matches live file. ExistingPSM Py3.13.11/Torch2.10.0+cu128/NumPy2.2.5/PyArrow21/
+MuJoCo3.3.1/Pandas2.2.3 and weights present. No rawassets/images/source copied
+offserver; no production mutation, stop/reconfigure or servercommit/push.
+Next fixedGitHub checkout in freshprivateGate, originalenvCPU, two onserver
+copies/A source audit, then resource-scoped real B/C checks if conditions allow.
+These read-only observations are not real VAE/retirement Gate results.
+
+R5 entry/geometry-update fixtures7PASS/0skip8.09s. Added explicit existingCLI
+--view-first/--spool-root and thin retire CLI plan/execute/resume/recipe/count
+scope; no model in retire/help. Real published image update fixture makes8
+owners/4views withchangedobjectbbox+pixels, not only pose/static reuse.
+Additional tiny claim: offline/source_capacity.py categorize working gzip and
+its receipt separately from SG, required for honest before/after byte tables.
+No renderer/producer/model edit. Next full old560/new52/own protocol/static
+and source/hash identity gate, then fixed-source read-only peer/Draft/GPT.
+
 R4 PASS30/30 (23 actual os._exit77 boundaries +ENOSPC/liveReader +R3five),
 0skip53.42s. Same original collector fsync/journal/SQL GC used; each public
 posthoc resume repairs before manifest validation, leaves PT hashes intact,

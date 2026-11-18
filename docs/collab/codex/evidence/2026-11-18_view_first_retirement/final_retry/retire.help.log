@@ -1,0 +1,24 @@
+usage: retire_view_first_sources.py [-h] --dataset-root DATASET_ROOT
+                                    --spool-root SPOOL_ROOT --source-policy
+                                    SOURCE_POLICY --recipe-id RECIPE_ID
+                                    [--task TASK] [--episode EPISODE]
+                                    [--expected-episodes EXPECTED_EPISODES]
+                                    [--resume] (--plan | --execute)
+
+Plan or explicitly retire independently verified View-first VAE sources. Never
+loads a VAE, renderer, MuJoCo or raw RoboCasa source. Use isolated samples
+until independent Gates A-D pass; this command does not authorize corpus GC.
+
+options:
+  -h, --help            show this help message and exit
+  --dataset-root DATASET_ROOT
+  --spool-root SPOOL_ROOT
+  --source-policy SOURCE_POLICY
+  --recipe-id RECIPE_ID
+  --task TASK
+  --episode EPISODE
+  --expected-episodes EXPECTED_EPISODES
+  --resume              repair prior owned retirement intents before
+                        inspecting source manifests
+  --plan
+  --execute

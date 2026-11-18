@@ -124,6 +124,7 @@ def working_source_info(root, *, include_raw=False):
     ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
     if (
         source.get("schema") != "g2_sealed_spatial_source_v1"
+        or ready.get("schema") != "g2_sealed_spatial_source_v1"
         or source["source_id"]
         != fingerprint({k: v for k, v in source.items() if k != "source_id"})
         or source["source_id"] != manifest["source_id"]
@@ -139,13 +140,16 @@ def working_source_info(root, *, include_raw=False):
         if packed_mode
         else (identity, "SPATIAL_SOURCE_READY.json")
     )
+    files = {name: digest(contained(root, name)) for name in names}
+    if files[identity] != _sha(z if packed_mode else raw):
+        raise CacheError("working source changed during verified reading")
     return dict(
         source=source,
         raw_sha256=_sha(raw),
         raw_bytes=len(raw),
         format_schema=SOURCE_SCHEMA if packed_mode else RAW_SCHEMA,
         identity_manifest=identity,
-        files={name: digest(contained(root, name)) for name in names},
+        files=files,
         **(dict(raw=raw) if include_raw else {}),
     )
 

@@ -1,0 +1,54 @@
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+........................................................................ [ 35%]
+...................................................................sssss [ 47%]
+sssss................................................................... [ 58%]
+........................................................................ [ 70%]
+....s...........ss...................................................... [ 82%]
+...F.................................................................... [ 94%]
+....................................                                     [100%]
+=================================== FAILURES ===================================
+_ test_supervisor_v2_stops_resumes_original_queue_and_retires_after_work_release _
+g2/tests/test_source_capsule_entrypoints.py:161: in test_supervisor_v2_stops_resumes_original_queue_and_retires_after_work_release
+    assert full.run(cfg, resume=True) == 0
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/offline/full_production.py:979: in run
+    return Supervisor(cfg, spool, rows).execute(args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+g2/offline/full_production.py:821: in execute
+    raise CacheError("final VAE/work cleanup drain timed out")
+E   g2.latent_cache.contract.CacheError: final VAE/work cleanup drain timed out
+----------------------------- Captured stdout call -----------------------------
+{"initialized": true, "model_loaded": false, "production_configuration_frozen": false, "recipe_id": "a8390acd8a5fe53b721fd0e9e3dcb4cdf484933e0ae4ca43843c179fda0d8a0f", "recovery": null, "schema": "g2_vae_consumer_receipt_v1", "stats": {"active_jobs": 0, "active_records": 0, "cleanup_pending_jobs": 0, "completed_jobs": 0, "failed_jobs": 0, "pending_bytes": 0, "pending_inputs": 0, "statuses": {}, "unfinished_jobs": 0}, "steps": 0}
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_PLAN path=/tmp/pytest-of-agent/pytest-146/test_supervisor_v2_stops_resum0/run_root/plan episodes=1 batches=1 production_started=False
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_START task=NavigateKitchen episode=0 gpu=4 slot=0 attempt=1 max_attempts=2
+G2_PROGRESS task=NavigateKitchen episode=0 status=SOURCE_READY_VAE_PENDING finished=0 total=1 percent=0.0 task_finished=0 task_total=1 failed=0 elapsed_s=0.1
+G2_SUMMARY selected=1 finished=0 failed=0 failed_ids=[] pending=1 pending_ids=[0] seconds=0.1
+{"initialized": true, "model_loaded": false, "production_configuration_frozen": false, "recipe_id": "a8390acd8a5fe53b721fd0e9e3dcb4cdf484933e0ae4ca43843c179fda0d8a0f", "recovery": null, "schema": "g2_vae_consumer_receipt_v1", "stats": {"active_jobs": 1, "active_records": 5, "cleanup_pending_jobs": 0, "completed_jobs": 0, "failed_jobs": 0, "pending_bytes": 2775, "pending_inputs": 5, "statuses": {"pending": 5}, "unfinished_jobs": 1}, "steps": 0}
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_PLAN path=/tmp/pytest-of-agent/pytest-146/test_supervisor_v2_stops_resum0/run_root/plan episodes=1 batches=1 production_started=False
+G2_SELECTION total=1 pending=1 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_START task=NavigateKitchen episode=0 gpu=4 slot=0 attempt=1 max_attempts=2
+G2_PROGRESS task=NavigateKitchen episode=0 status=SOURCE_READY_VAE_PENDING finished=0 total=1 percent=0.0 task_finished=0 task_total=1 failed=0 elapsed_s=0.1
+G2_SUMMARY selected=1 finished=0 failed=0 failed_ids=[] pending=1 pending_ids=[0] seconds=0.1
+{"initialized": true, "model_loaded": false, "production_configuration_frozen": false, "recipe_id": "a8390acd8a5fe53b721fd0e9e3dcb4cdf484933e0ae4ca43843c179fda0d8a0f", "recovery": null, "schema": "g2_vae_consumer_receipt_v1", "stats": {"active_jobs": 1, "active_records": 5, "cleanup_pending_jobs": 1, "completed_jobs": 0, "failed_jobs": 0, "pending_bytes": 0, "pending_inputs": 0, "statuses": {"acked": 5}, "unfinished_jobs": 0}, "steps": 0}
+G2_SELECTION total=1 pending=0 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_PLAN path=/tmp/pytest-of-agent/pytest-146/test_supervisor_v2_stops_resum0/run_root/plan episodes=1 batches=1 production_started=False
+G2_SELECTION total=1 pending=0 selected_tasks=1 per_task=ALL renderer=f27
+G2_TASK name=NavigateKitchen selected=1
+G2_ALL_DONE total=1 skipped_completed=1
+=========================== short test summary info ============================
+SKIPPED [5] g2/tests/test_stage_a_caption_parquet.py:39: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [4] g2/tests/test_stage_a_caption_parquet.py:63: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_stage_a_caption_parquet.py:82: existing local interpreter has no PyArrow; no install/new environment permitted
+SKIPPED [1] g2/tests/test_atomic_6views_run.py:59: could not import 'mujoco': No module named 'mujoco'
+SKIPPED [1] g2/tests/test_robot_pose_marker.py:238: could not import 'mujoco': No module named 'mujoco'
+SKIPPED [1] g2/tests/test_viewer_install.py:23: could not import 'pandas': No module named 'pandas'
+1 failed, 598 passed, 13 skipped in 377.09s (0:06:17)

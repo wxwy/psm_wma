@@ -15,6 +15,10 @@ EPISODE = re.compile(r"episode_(\d{6})$")
 
 
 def category(path):
+    if path.name == "spatial_source.json.gz":
+        return "working_source_gzip"
+    if path.name == "SPATIAL_SOURCE_GZIP.json":
+        return "working_source_receipt"
     if path.name == "spatial_source.json":
         return "working_source"
     if path.name in (

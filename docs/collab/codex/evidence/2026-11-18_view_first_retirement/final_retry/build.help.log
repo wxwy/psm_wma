@@ -1,0 +1,58 @@
+usage: build_spatial_view_vae_cache.py [-h] --dataset-root DATASET_ROOT
+                                       [--task TASK] [--episode EPISODE]
+                                       --weights WEIGHTS
+                                       [--expected-weights-sha256 EXPECTED_WEIGHTS_SHA256]
+                                       [--cosmos-root COSMOS_ROOT]
+                                       [--device DEVICE] [--height HEIGHT]
+                                       [--width WIDTH]
+                                       [--interpolation {lanczos,bilinear,nearest}]
+                                       [--storage-dtype {float32,float16,bfloat16}]
+                                       [--batch-size BATCH_SIZE] [--resume]
+                                       [--view-first]
+                                       [--spool-root SPOOL_ROOT]
+                                       (--dry-run | --execute)
+
+Plan or explicitly build independent G2 spatial-View Encode1 caches. Run from
+the PSM-WMA root with ``python -m tools.g2.build_spatial_view_vae_cache``.
+Planning hashes local dependencies and PNG owners but never instantiates a
+VAE. Real encoding is a separate, explicitly selected action, not authorized
+by the Issue52 code/CPU implementation itself.
+
+options:
+  -h, --help            show this help message and exit
+  --dataset-root DATASET_ROOT
+                        existing G2 root containing
+                        tasks/<task>/episodes/episode_<id>
+  --task TASK           repeat to select task classes; omitted means all
+  --episode EPISODE     repeat to select global episode IDs
+  --weights WEIGHTS     existing local Wan VAE weight file; never downloaded
+  --expected-weights-sha256 EXPECTED_WEIGHTS_SHA256
+                        optional expected fingerprint, checked before any
+                        encoding
+  --cosmos-root COSMOS_ROOT
+                        local fixed Cosmos checkout; default is Root/cosmos-
+                        framework
+  --device DEVICE       cpu, cuda or cuda:<index>; dry-run does not initialize
+                        it
+  --height HEIGHT       candidate canvas height, not a production
+                        configuration freeze
+  --width WIDTH         candidate canvas width, not a production configuration
+                        freeze
+  --interpolation {lanczos,bilinear,nearest}
+  --storage-dtype {float32,float16,bfloat16}
+                        FP32 is the initial baseline; low precision requires
+                        its own real Gate
+  --batch-size BATCH_SIZE
+                        this candidate supports B=1 only; mixed-batch real
+                        parity is NOT_RUN
+  --resume              reuse only complete per-view files with identical
+                        source and recipe
+  --view-first          explicit posthoc lifecycle; original published View
+                        profile remains unchanged
+  --spool-root SPOOL_ROOT
+                        new external bounded posthoc record spool; required
+                        for View-first execute
+  --dry-run, --plan     report every valid View/owner/ref and output path; do
+                        not create cache
+  --execute             actually encode; use only after separate real-VAE
+                        execution authorization
