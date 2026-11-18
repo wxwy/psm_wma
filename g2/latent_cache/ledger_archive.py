@@ -280,8 +280,7 @@ def verify_archived_payload_bytes(spool, target):
     manifest = read_json(contained(root, "episode_manifest.json"))
     if (
         manifest.get("source_fingerprint") != scope["source_fingerprint"]
-        or manifest.get("output_profile", {}).get("profile_id")
-        != scope["profile_id"]
+        or manifest.get("output_profile", {}).get("profile_id") != scope["profile_id"]
         or not isinstance(manifest.get("files"), dict)
     ):
         raise CacheError("archived profile/source differs from the durable scope")
