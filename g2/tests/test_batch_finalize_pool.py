@@ -97,12 +97,15 @@ def test_cpu_finalization_rejects_other_lifecycle_and_bad_budget(tmp_path):
         BatchEngine(spool, spec, mode="sync", finalize_workers=1)
 
 
-def test_cpu_finalizer_descriptor_is_not_an_encoder():
-    from g2.latent_cache.batch_finalize import DescriptorOnlyEncoder
+def test_cpu_initializer_binds_test_factory_without_any_encoding(monkeypatch):
+    from g2.latent_cache import batch_finalize
+    from g2.tests.batch_helpers import FakeBatchEncoder
 
-    descriptor = {"schema": "test", "mutable": ["one"]}
-    encoder = DescriptorOnlyEncoder(descriptor)
-    encoder.descriptor()["mutable"].append("two")
-    assert encoder.descriptor() == descriptor
-    with pytest.raises(CacheError, match="never encode"):
-        encoder.encode("frame")
+    monkeypatch.setattr(batch_finalize, "_CPU_ENCODER", None)
+    for name in ("CUDA_VISIBLE_DEVICES", "COSMOS_DEVICE", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+        monkeypatch.delenv(name, raising=False)
+    spec = {"_test_encoder_factory": "g2.tests.batch_helpers:FakeBatchEncoder"}
+    batch_finalize.cpu_initializer(spec)
+    assert batch_finalize._CPU_ENCODER.descriptor() == FakeBatchEncoder().descriptor()
+    assert batch_finalize._CPU_ENCODER.calls == 0
+    monkeypatch.setattr(batch_finalize, "_CPU_ENCODER", None)
