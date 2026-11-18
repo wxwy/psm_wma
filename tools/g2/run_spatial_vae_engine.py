@@ -68,9 +68,8 @@ def main(argv=None):
         from g2.latent_cache.contract import CacheError
         from g2.latent_cache.streaming import ConsumerLimits
 
-        if (
-            not 0 <= a.finalize_workers <= 8
-            or (a.mode != "independent" and a.finalize_workers)
+        if not 0 <= a.finalize_workers <= 8 or (
+            a.mode != "independent" and a.finalize_workers
         ):
             raise ValueError("finalize-workers must be 0..8, independent-only")
         cfg = read_json(a.engine_config) if a.engine_config else {}
