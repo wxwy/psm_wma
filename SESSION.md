@@ -1,3 +1,63 @@
+# 2026-11-18 CST — Issue68 REVIEW, both author real pipelines PASS
+
+Formal implementation778022c8fcf431fa16e83a67256ba58b4b464052;
+Child/Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2;
+nav70eb7b447e65d793b0ebe18b258291ce46f057c1. DraftPR69 stackedonPR67;
+fresh fetch/advertised/tracking V3b6311222c364543787f913215bf584065aa1c275
+still match, no merge. Later HEAD only docs/evidence/ledger, never substitute
+it for formal implementation. Product diff19Python/test files; old612 test
+identities/sources and legacyB1 loader/encodeAST/PR67 source/C core unchanged.
+
+Final actual originalPSM server655/655CPU PASS/0fail/error/skip;19file static+
+formatPASS.258Gitblob hashes match and stable through actual GPU/F27 Gates.
+Final read-only peer exactpair LOCAL_CODE_REVIEW_PASS,29relatedCPU0skip+
+genuine independent OS-crash/public-API probes; all5 established findings
+closed. Old failures/reports retained. This is not GPT independent approval.
+
+INDEPENDENT_VAE_E2E=PASS:2copied realpublications,37+44states/4+8Views/169
+records; actual4/5/6/7 native6callsB32+tail9,1crossEPbatch; durable register
+hardexit77 beforeoffer recovers, laterEpisode discovered; explicitC+postC
+resume+169same-contextreplayexact0. Engine86.79s/CLI94.97s,C63.10s,retired
+resume21.25s, sampleidle5s reportsIDLE_TIMEOUT (default600 testedvirtually).
+
+SYNC_VIEW_VAE_E2E=PASS:actual fresh originalMuJoCo/native/F27 twoepisodes,
+Room/Island/clean+markedtops/changedstates/missingdirections; earlyACK before
+SourceReady; workerhardexit77afterACK0 recovers1restart; actual4/5/6/7native
+39callsB2/3/4/6/8 underconfiguredmax32,4crossEPbatches; fullprofileDONE,
+v2sourceC+ownedworkGC,engineDRAINED,169same-contextreplayexact0.500state/View
+hashbindings andViewsets match originals. Producer603.74s/CLI627.52s includes
+native/F27/load/VAE/publish/GC, notsingle6viewlatency. EncodeAPIoverlap is
+recorded, not claimedCUDAkernel-overlap. NativeCUDAaggregate10.81/12.48s
+acrosscards, notwallclock. Batchrecipeb1c6e1f6... differslegacy3ee9...;
+legacyB1same40refs0, batchmathvslegacymaxabs.07421875/decoded4max6-8bytes,
+no newhumanB32approval/no universal speedup claim.
+
+Bothfinalsources nofullJSON/gzip/oldreceipts/READY/pendingtxn, all24PT hashes
+acrossmodes match historical preCindex binding, noJSONrestored; 0activejobs/
+events/numericalPTstaging. Independentwithcache23.78/28.59MiB→22.32/27.25;
+syncraw-before-observed54.63/56.13→22.49/27.33 (beforemayincludeCstaging,
+notcapacityforecast). Index157632-162962B<1MiB. Syncpeakownedwork2.407GB,
+pendingPNG2.274MB; finalwork333Bmetadata/spool3.107MBaudit/no numeric PT.
+
+Original selectedpublications entirefileinventories unchanged; prodRootb631/
+Childd5/nav70/fixedRoot778022 trackedclean; viewpanealive. Actualouterdual
+commandexit0, capacityobserverexit0. No servercommit/push/privatefileexport,
+currentview/source/configmutation, installs/newenv/modelA/B/C/D/G1/Child/nav/
+training/checkpoint/Gitlink change, full9126B/C or merge. TrueOOM/powerloss/
+heterogeneousGPU/full9126/32rendererresource/full10minidle/humanB32 notrun.
+
+Rawlogs/JUnit/images/models/states/sources/PTs remain server-only under
+`.g2_issue68_dual_20261118/` (source_d/server_cpu_d/independent_d/sync_d).
+Own derived exactcommands/scalars/hashes/scope:
+docs/collab/codex/evidence/2026-11-18_issue68/SERVER_GATES.md andJSONsummaries;
+fullprotocol/productiondraft commands in ownIssue68runbook. Nextcanonical
+Inbox exactpair+PR69/Issue68 handoff for GPT independent review, thenstopat
+reviewhandoff; no autodeploy/fullproduction/approval inference/trainingready.
+Owner latest Issue68 authorizes this one-shot implementation+isolatedGates;
+oldMM/Kimi wait rules are superseded by the specified GPT/Owner handoff.
+
+## Historical implementation records (superseded by final facts above)
+
 # 2026-11-18 CST — Issue68 mandatory shared multi-GPU B32 dual-pipeline claim
 
 Owner Issue68 read in full via GitHub API; no issue comments at initial read.

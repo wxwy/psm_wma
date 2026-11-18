@@ -495,3 +495,20 @@ Independent exact-pair incremental review requested; keepDraft/noV3merge.
 <!-- ViewFirstRetirement: formal 5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2; later HEAD is documentation/evidence only. -->
 
 <!-- ViewFirstRetirement handoff boundary: original Inbox bytes preserved; no production release implied. -->
+
+
+## 2026-11-18 — Issue68 双链路共享多GPU B32/T1，作者实测完成，申请固定pair独立复审
+
+- **Formal Root: `778022c8fcf431fa16e83a67256ba58b4b464052`**；**Child/Gitlink: `d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`**；实际nav `70eb7b447e65d793b0ebe18b258291ce46f057c1`。最新fetch/advertised/tracking V3仍为 `b6311222c364543787f913215bf584065aa1c275`。独立[Draft PR69](https://github.com/wxwy/psm_wma/pull/69) stacked on未合并PR67（base03bb8976）。后续HEAD只加账本/文档/证据，不替代此固定实现。
+- Owner Issue68要求的A–E均已实现：真实native `[B,3,1,256,256]`、每卡最大32/完整48×16×16 FP32；同一resident encoder/进程/GPU与原EventSpool SQLite扩展、短claim/lease/heartbeat/fencing、固定有序batch context、逐结果fsync/ACK、partial replay精确比较、有限队列/数值预算/显式容量失败、writer/collector。原同步full_production与独立持续发现入口共用Engine；不是循环B1、T32或复制新数据系统。
+- Owner已明确允许GPU4–7共享。管理进程设置CUDA_VISIBLE_DEVICES=4,5,6,7，每child固定一物理卡/cuda:0；0–3训练不动。原B1 loader字节/encode_record AST、旧612测试源与身份、PR67 gzip/posthoc/compact v2 retirement实现、Child/nav/Gitlink均保持；15产品Python/4新增测试或夹具文件增量，完整scope见fixedRoot。
+- **最终固定Root服务器原PSM环境655/655 PASS，0失败/错误/跳过**；258源码Git blob精确一致，运行前后及双GPU/F27 Gate后稳定；19文件静态/格式通过。本地旧完整633PASS/13继承依赖SKIP单独记录，服务器全部补跑。独立read-only peer最终exactpair LOCAL_CODE_REVIEW_PASS，相关29/29 CPU 0skip及真实os._exit77/公共API探针另计；原29e4623e/87dd1bd8的5项已复现问题全部闭合，旧原始失败/报告未删改。peer不能冒充GPT或服务器独立批准。
+- **INDEPENDENT_VAE_E2E=PASS**：两条真实已发布View-only副本；先真实register→exit77→恢复，再运行中原子发布第二集；实际4/5/6/7原生6次调用（B32＋尾批9），跨EP批1，37+44状态/4+8逻辑View/169记录。保持原false profile/COMPLETE/产品；显式posthoc C退休→已退休resume无重编码→169同序context GPU重放严格max_abs=0。默认idle600虚拟时间覆盖；实测5s退出IDLE_TIMEOUT，绝不假称ALL_COMPLETE。
+- **SYNC_VIEW_VAE_E2E=PASS**：新隔离根真实MuJoCo/native/F27两集，Room/Island/clean+markedtop/变动状态/缺失方向。SourceReady前已有durable ACK；真实worker在ACK0后硬退出77，1次恢复；实际4卡原生39次调用（B2/3/4/6/8，配置max32）与4个跨EP批，同一Engine；profile DONE→原v2 C→owned work/spool GC→DRAINED；169记录原context GPU重放max_abs=0。500状态/View图像hash绑定及View集合与原件一致。小样例sync以尾批为主，不声称其每次都是B32；B32由独立入口与native数学探针实证。
+- 两模式最终共24个per-View PT实际hash匹配退休前历史cache manifest绑定（仅内存校验历史，无恢复大JSON），保留全部SG/投影/任务/语言/图片等；最终无完整JSON/gzip/旧回执/旧READY/pending C，0active jobs/events/数值暂存。原件全文件hash不变，生产Root/Child/nav及固定Root tracked-clean，viewpane存活。无服务器commit/push/私有原始文件外传/生产目录或配置改变/旧数据删除/安装新环境/模型A–D或G1/训练/checkpoint/Gitlink修改。
+- 数学Gate固定A302885d5（batch adapter与legacy loader至final均未变）：原B1 40真实缓存重编码exact0；新配方B1/8/16/32相对legacy maxabs.07421875/RMS.00625565/relL2.00755163；同批/跨GPU/重排/其他31成员变化0，tail7vslegacy.046875，4重建图maxRGB差6–8字节，未冒充新人工批准。新recipe `b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1` 与旧3ee9…严格区分，不声称B32=B1逐位相同。
+- 时间与空间均实测且限域：独立CLI94.97s/Engine86.79s、C63.10s、已退休resume21.25s；同步CLI627.52s/producer603.74s含native/F27/VAE/收尾，非单组六图延迟。两模式各169重编码；native CUDA成功调用aggregate10.81/12.48s为跨卡求和非wallclock；编码API交叠不冒充kernel trace。独立含cache23.78/28.59MiB→22.32/27.25；sync cachecomplete+raw仍在观察54.63/56.13→22.49/27.33（前值可能含C staging，非容量外推）。index157632–162962B<1MiB；sync峰值ownedwork2.407GB、pendingPNG2.274MB，最终work333B元数据。
+- 精确命令、协议/恢复/生产启动草案：`docs/build/PSM-WMA_G2_multigpu_b32_dual_2026-11-18.md`；作者报告/派生summary/命令：`docs/collab/codex/evidence/2026-11-18_issue68/{SERVER_GATES.md,server_math_cpu_summary.json,server_dual_summary.json,historical_payload_audit.json,server_commands.json}`；本地原始log/XML与peer/r2保留。服务器原始日志/JUnit/图片/模型/状态/source/PT留在 `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue68_dual_20261118/` 的source_d/server_cpu_d/independent_d/sync_d等，仓库只发派生统计/hash/命令。
+- **请求GPT对上述exact Root/Child作 APPROVE_CODE / REQUEST_CHANGES，并按原环境独立验证双链路、数字配方/原始shape/GT来源、完整性/因果/恢复/退休与保留文件。** 本次作者PASS不是GPT批准；真实OOM/断电/异构卡/完整10min idle/9126全量及32renderer资源/新B32人工质量未跑，保持Draft与training_ready=false。禁止自动合并、量产、全量B/C或清理原运行view；Owner控制最终发布。本轮按最新指定GPT/Owner流程在此review交接点停止。
+
+<!-- Issue68 formal778022c8fcf431fa16e83a67256ba58b4b464052; later HEAD documentation/evidence only. -->

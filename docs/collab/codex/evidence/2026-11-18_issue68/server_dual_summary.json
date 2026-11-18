@@ -1,0 +1,504 @@
+{
+  "INDEPENDENT_VAE_E2E": "PASS",
+  "SYNC_VIEW_VAE_E2E": "PASS",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "formal_root": "778022c8fcf431fa16e83a67256ba58b4b464052",
+  "gpt_independent_approval": false,
+  "nav": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "original_all_file_hashes_unchanged": true,
+  "pipelines": {
+    "independent": {
+      "after_retirement": {
+        "actual_batch_sizes": [
+          9,
+          32
+        ],
+        "contexts": 6,
+        "cross_episode_batches": 1,
+        "rows": [
+          {
+            "bytes": 23405850,
+            "episode": "tasks/CloseBlenderLid/episodes/episode_000000",
+            "index_bytes": 162962,
+            "records": 89,
+            "source_id": "cb8a95f580bc30ad0ce361496866fad717aeb98050ccaab73b4180ffcffa1c84",
+            "states": 37,
+            "views": 4
+          },
+          {
+            "bytes": 28573180,
+            "episode": "tasks/CloseFridge/episodes/episode_000502",
+            "index_bytes": 158146,
+            "records": 80,
+            "source_id": "bd0f83bf1b65bc10fd60145f729235c695c27590dbd524904620ba083d111754",
+            "states": 44,
+            "views": 8
+          }
+        ],
+        "spool": {
+          "active_jobs": 0,
+          "active_records": 0,
+          "cleanup_pending_jobs": 0,
+          "completed_jobs": 2,
+          "failed_jobs": 0,
+          "pending_bytes": 0,
+          "pending_inputs": 0,
+          "statuses": {},
+          "unfinished_jobs": 0
+        }
+      },
+      "before_retirement": {
+        "actual_batch_sizes": [
+          9,
+          32
+        ],
+        "contexts": 6,
+        "cross_episode_batches": 1,
+        "rows": [
+          {
+            "bytes": 24936977,
+            "episode": "tasks/CloseBlenderLid/episodes/episode_000000",
+            "index_bytes": null,
+            "records": 89,
+            "source_id": "cb8a95f580bc30ad0ce361496866fad717aeb98050ccaab73b4180ffcffa1c84",
+            "states": 37,
+            "views": 4
+          },
+          {
+            "bytes": 29982362,
+            "episode": "tasks/CloseFridge/episodes/episode_000502",
+            "index_bytes": null,
+            "records": 80,
+            "source_id": "bd0f83bf1b65bc10fd60145f729235c695c27590dbd524904620ba083d111754",
+            "states": 44,
+            "views": 8
+          }
+        ],
+        "spool": {
+          "active_jobs": 0,
+          "active_records": 0,
+          "cleanup_pending_jobs": 0,
+          "completed_jobs": 2,
+          "failed_jobs": 0,
+          "pending_bytes": 0,
+          "pending_inputs": 0,
+          "statuses": {},
+          "unfinished_jobs": 0
+        }
+      },
+      "discovery_after_start": true,
+      "engine": {
+        "actual_max_batch_size_per_gpu": 32,
+        "batch": {
+          "batch_states": {},
+          "gpu": {
+            "4": {
+              "batch_histogram": {
+                "9": 1,
+                "32": 1
+              },
+              "batches": 2,
+              "encode_seconds": 16.610569454729557,
+              "io_ack_seconds": 0.9490428417921066,
+              "max_queue_wait_seconds": 10.969457387924194,
+              "native_batches": 2,
+              "native_cuda_ms": 2517.5131225585938,
+              "native_records": 41,
+              "peak_allocated_bytes": 4093929472,
+              "peak_reserved_bytes": 8352956416,
+              "records": 41
+            },
+            "5": {
+              "batch_histogram": {
+                "32": 1
+              },
+              "batches": 1,
+              "encode_seconds": 15.38416101410985,
+              "io_ack_seconds": 0.8061410672962666,
+              "max_queue_wait_seconds": 0.6270618438720703,
+              "native_batches": 1,
+              "native_cuda_ms": 2160.38134765625,
+              "native_records": 32,
+              "peak_allocated_bytes": 4093929472,
+              "peak_reserved_bytes": 8352956416,
+              "records": 32
+            },
+            "6": {
+              "batch_histogram": {
+                "32": 1
+              },
+              "batches": 1,
+              "encode_seconds": 16.326245844364166,
+              "io_ack_seconds": 0.9348940700292587,
+              "max_queue_wait_seconds": 8.820420026779175,
+              "native_batches": 1,
+              "native_cuda_ms": 2561.68212890625,
+              "native_records": 32,
+              "peak_allocated_bytes": 4093929472,
+              "peak_reserved_bytes": 8352956416,
+              "records": 32
+            },
+            "7": {
+              "batch_histogram": {
+                "32": 2
+              },
+              "batches": 2,
+              "encode_seconds": 17.282952696084976,
+              "io_ack_seconds": 1.6937900334596634,
+              "max_queue_wait_seconds": 11.334639549255371,
+              "native_batches": 2,
+              "native_cuda_ms": 3567.240478515625,
+              "native_records": 64,
+              "peak_allocated_bytes": 4093929472,
+              "peak_reserved_bytes": 8352956416,
+              "records": 64
+            }
+          },
+          "pending_members": 0,
+          "reserved_numeric_bytes": 0
+        },
+        "elapsed_s": 86.7927428856492,
+        "mode": "independent",
+        "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+        "schema": "g2_multigpu_batch_engine_v1",
+        "spool": {
+          "active_jobs": 0,
+          "active_records": 0,
+          "cleanup_pending_jobs": 0,
+          "completed_jobs": 2,
+          "failed_jobs": 0,
+          "pending_bytes": 0,
+          "pending_inputs": 0,
+          "statuses": {},
+          "unfinished_jobs": 0
+        },
+        "status": "IDLE_TIMEOUT",
+        "training_ready": false,
+        "worker_restarts": {
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0
+        }
+      },
+      "final_receipt_sha256": {
+        "tasks/CloseBlenderLid/episodes/episode_000000": {
+          "COMPLETE.json": "fdd1358b136dad10c9ad474103560f0ec8828684389d0478363a17c63fa50f6e",
+          "SOURCE_RETIREMENT.json": "9857ab46cfd0dec960f4d1d7abb7b29f0d0213dfdde4b6c9327cbe2df663c908",
+          "spatial_source_index.json": "4b94ce8e69e8aa80bd1a72063ccaf95798469de0892cd7248e671d276bc25d33",
+          "vae_cache/COMPLETE.json": "663a70a8a2a26a71c0e3205a39a2e9dcacd7c3a20873366ffe8f726816525b55",
+          "vae_cache/manifest.json": "59918a3b71b8edf7343d9f3205c8e72ab18429988f95c87cf3fb8f5a9e77044f"
+        },
+        "tasks/CloseFridge/episodes/episode_000502": {
+          "COMPLETE.json": "11647dc7ea15f00fdf0e2e5de778b866218abb920e551a80a2209b0c35cf28d1",
+          "SOURCE_RETIREMENT.json": "3739dd1b8dfddae3c364cefffb34bc0822dbd5b3ec37dac8705a8d3e29ccdc00",
+          "spatial_source_index.json": "516a25f91c0fad7c28ce910db97c47877980e8c4f7bc60de8af1b966a1de3641",
+          "vae_cache/COMPLETE.json": "cc712d7188fc2b674f1585ed4d5dfceef6e8d1977681ae47a867b9519c9f6074",
+          "vae_cache/manifest.json": "02e605fe7ac120ce0a28fac5fe5e19cfbe3b9cf6d7b27768ce3c1199ad192aa5"
+        }
+      },
+      "fixed_root": "778022c8fcf431fa16e83a67256ba58b4b464052",
+      "gate": "INDEPENDENT_VAE_E2E",
+      "manager_register_crash_resumed": true,
+      "native_execution": {
+        "encode_api_s_sum_includes_cold_load": 65.60392900928855,
+        "native_calls": 6,
+        "native_cuda_ms_sum_successful_calls": 10806.817077636719,
+        "native_gpu_ids": [
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "overlap_scope": "ENCODE_API_INCLUDES_COLD_LOAD_PREPROCESS_NOT_CUDA_KERNEL_TRACE",
+        "overlapping_encode_api_pairs": 11,
+        "queue_wait_max_range_s": [
+          0.5003759860992432,
+          11.334639549255371
+        ],
+        "queue_wait_p50_p95_s": [
+          4.723740935325623,
+          11.334639549255371
+        ],
+        "batch_overhead_s_including_validation_write_ack": 16.665452778339386
+      },
+      "numeric_replay_is_same_ordered_context_not_legacy_b1_equivalence": true,
+      "original_unchanged": true,
+      "phase_timings_s": {
+        "independent.resources.json": 94.97268652915955,
+        "independent_resume.resources.json": 21.25468897819519,
+        "initialize.resources.json": 6.158441066741943,
+        "register_crash.resources.json": 0.8307018280029297,
+        "retirement.resources.json": 63.100297927856445
+      },
+      "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+      "replay": {
+        "atol": 0,
+        "batch_contexts_checked": 6,
+        "complete": true,
+        "episodes_checked": 2,
+        "max_abs_error": 0,
+        "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+        "records_checked": 169,
+        "rtol": 0,
+        "training_ready": false
+      },
+      "status": "PASS",
+      "training_ready": false
+    },
+    "sync": {
+      "all_state_pixels_and_view_sets_match_original": true,
+      "audit": {
+        "actual_batch_sizes": [
+          2,
+          3,
+          4,
+          6,
+          8
+        ],
+        "contexts": 39,
+        "cross_episode_batches": 4,
+        "rows": [
+          {
+            "bytes": 23580402,
+            "episode": "tasks/CloseBlenderLid/episodes/episode_000000",
+            "index_bytes": 162448,
+            "records": 89,
+            "source_id": "671ea9d4e234748ced8e70d4aa1722eea73b54713a81eaa2f3c74621f6649363",
+            "states": 37,
+            "views": 4
+          },
+          {
+            "bytes": 28659532,
+            "episode": "tasks/CloseFridge/episodes/episode_000502",
+            "index_bytes": 157632,
+            "records": 80,
+            "source_id": "cf33f6b503ecbadefaf63666ee9d168e48610b7971ed381379df9e552f4ac99a",
+            "states": 44,
+            "views": 8
+          }
+        ],
+        "spool": {
+          "active_jobs": 0,
+          "active_records": 0,
+          "cleanup_pending_jobs": 0,
+          "completed_jobs": 2,
+          "failed_jobs": 0,
+          "pending_bytes": 0,
+          "pending_inputs": 0,
+          "statuses": {},
+          "unfinished_jobs": 0
+        }
+      },
+      "capacity_observed_before": {
+        "episode_000000_CloseBlenderLid": {
+          "observed_file_bytes": 57283932,
+          "raw_source_bytes": 33871474,
+          "semantics": "OBSERVED_CACHE_COMPLETE_WITH_RAW_SOURCE_PRESENT_MAY_INCLUDE_RETIREMENT_STAGING",
+          "time": 1794977917.895325
+        },
+        "episode_000502_CloseFridge": {
+          "observed_file_bytes": 58861011,
+          "raw_source_bytes": 30364595,
+          "semantics": "OBSERVED_CACHE_COMPLETE_WITH_RAW_SOURCE_PRESENT_MAY_INCLUDE_RETIREMENT_STAGING",
+          "time": 1794978023.113532
+        }
+      },
+      "early_durable_ack": true,
+      "engine": {
+        "actual_max_batch_size_per_gpu": 32,
+        "batch": {
+          "batch_states": {},
+          "gpu": {
+            "4": {
+              "batch_histogram": {
+                "3": 1,
+                "4": 9
+              },
+              "batches": 10,
+              "encode_seconds": 15.617618713527918,
+              "io_ack_seconds": 0.39205343276262283,
+              "max_queue_wait_seconds": 1.0995783805847168,
+              "native_batches": 10,
+              "native_cuda_ms": 2652.988571166992,
+              "native_records": 39,
+              "peak_allocated_bytes": 1908523008,
+              "peak_reserved_bytes": 5966397440,
+              "records": 39
+            },
+            "5": {
+              "batch_histogram": {
+                "2": 1,
+                "4": 7,
+                "6": 1,
+                "8": 1
+              },
+              "batches": 10,
+              "encode_seconds": 17.019579112529755,
+              "io_ack_seconds": 0.46311190351843834,
+              "max_queue_wait_seconds": 1.091418743133545,
+              "native_batches": 10,
+              "native_cuda_ms": 3861.8809814453125,
+              "native_records": 44,
+              "peak_allocated_bytes": 2220433408,
+              "peak_reserved_bytes": 6236930048,
+              "records": 44
+            },
+            "6": {
+              "batch_histogram": {
+                "2": 1,
+                "4": 9
+              },
+              "batches": 10,
+              "encode_seconds": 16.0712844543159,
+              "io_ack_seconds": 0.44407282397150993,
+              "max_queue_wait_seconds": 1.1017751693725586,
+              "native_batches": 10,
+              "native_cuda_ms": 2810.9906463623047,
+              "native_records": 38,
+              "peak_allocated_bytes": 1908523008,
+              "peak_reserved_bytes": 5964300288,
+              "records": 38
+            },
+            "7": {
+              "batch_histogram": {
+                "4": 6,
+                "8": 3
+              },
+              "batches": 9,
+              "encode_seconds": 17.198500379920006,
+              "io_ack_seconds": 0.6350841373205185,
+              "max_queue_wait_seconds": 18.392963409423828,
+              "native_batches": 9,
+              "native_cuda_ms": 3158.137725830078,
+              "native_records": 48,
+              "peak_allocated_bytes": 2220433408,
+              "peak_reserved_bytes": 6226444288,
+              "records": 48
+            }
+          },
+          "pending_members": 0,
+          "reserved_numeric_bytes": 0
+        },
+        "elapsed_s": 598.1175724454224,
+        "mode": "sync",
+        "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+        "schema": "g2_multigpu_batch_engine_v1",
+        "spool": {
+          "active_jobs": 0,
+          "active_records": 0,
+          "cleanup_pending_jobs": 0,
+          "completed_jobs": 2,
+          "failed_jobs": 0,
+          "pending_bytes": 0,
+          "pending_inputs": 0,
+          "statuses": {},
+          "unfinished_jobs": 0
+        },
+        "status": "DRAINED",
+        "training_ready": false,
+        "worker_restarts": {
+          "4": 0,
+          "5": 0,
+          "6": 1,
+          "7": 0
+        }
+      },
+      "final_receipt_sha256": {
+        "tasks/CloseBlenderLid/episodes/episode_000000": {
+          "COMPLETE.json": "e39933d09c3556c94f7446c27b814e3f3041c57774da719cae45f6d23508284c",
+          "SOURCE_RETIREMENT.json": "fa6f9fdd48d7aad6345726f5777559c38dbf08af04b74d50b0aecc7d2d2f37f7",
+          "spatial_source_index.json": "57ceb79b4691381a8a37b761191188c68d7ec439c2ce9593769c4f0451f86675",
+          "vae_cache/COMPLETE.json": "30fdd267140b3443c617df2de66d6b9ad13cc184e047691158f747c99840b717",
+          "vae_cache/manifest.json": "079b864495a3941a214b62c6528d7ac08af4c44e3065d1b63ab7e491fe5028f5"
+        },
+        "tasks/CloseFridge/episodes/episode_000502": {
+          "COMPLETE.json": "ae398ae790af79397473b8dc4918749d948b86492a9f27ef510e436a588ae404",
+          "SOURCE_RETIREMENT.json": "447c17d5b5a4ad5bf34738396a5667589a911d429ee1c2f90f4d68ff4110db6c",
+          "spatial_source_index.json": "0c39a45a9e14d75aafb823dad17b20a45815b10b9e673ea614125fecd18a0cad",
+          "vae_cache/COMPLETE.json": "263506f2dd2c4867e42a3dcd33d88790146c5429fd36c456f27ea64b3e367ba7",
+          "vae_cache/manifest.json": "ad1b4fee8e37104514d934d7cf15046d43e5a37be5371f093cf1a7f327cbc52b"
+        }
+      },
+      "fixed_root": "778022c8fcf431fa16e83a67256ba58b4b464052",
+      "fresh_original_f27": true,
+      "gate": "SYNC_VIEW_VAE_E2E",
+      "native_execution": {
+        "encode_api_s_sum_includes_cold_load": 65.90698266029358,
+        "native_calls": 39,
+        "native_cuda_ms_sum_successful_calls": 12483.997924804688,
+        "native_gpu_ids": [
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "overlap_scope": "ENCODE_API_INCLUDES_COLD_LOAD_PREPROCESS_NOT_CUDA_KERNEL_TRACE",
+        "overlapping_encode_api_pairs": 9,
+        "queue_wait_max_range_s": [
+          1.0051183700561523,
+          18.392963409423828
+        ],
+        "queue_wait_p50_p95_s": [
+          1.0578951835632324,
+          1.572716236114502
+        ],
+        "batch_overhead_s_including_validation_write_ack": 15.1939668469131
+      },
+      "numeric_replay_is_same_ordered_context_not_legacy_b1_equivalence": true,
+      "phase_timings_s": {
+        "sync.resources.json": 627.5207710266113
+      },
+      "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+      "replay": {
+        "atol": 0,
+        "batch_contexts_checked": 39,
+        "complete": true,
+        "episodes_checked": 2,
+        "max_abs_error": 0,
+        "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+        "records_checked": 169,
+        "rtol": 0,
+        "training_ready": false
+      },
+      "run": {
+        "complete": true,
+        "phase": "DONE",
+        "elapsed_s": 603.7357152104378,
+        "selected": 2,
+        "peak_native_work_bytes": 2406803093,
+        "peak_pending_png_bytes": 2273902,
+        "native_work_bytes_after_gc": 333,
+        "spool_disk_bytes_after_gc": 3107452,
+        "failed_ids": []
+      },
+      "status": "PASS",
+      "training_ready": false,
+      "worker_crash_resumed_same_batch": true
+    }
+  },
+  "raw_artifacts_stay_server": true,
+  "repos": {
+    "child": {
+      "head": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+      "tracked_clean": true
+    },
+    "fixed_source": {
+      "head": "778022c8fcf431fa16e83a67256ba58b4b464052",
+      "tracked_clean": true
+    },
+    "nav": {
+      "head": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+      "tracked_clean": true
+    },
+    "production": {
+      "head": "b6311222c364543787f913215bf584065aa1c275",
+      "tracked_clean": true
+    }
+  },
+  "schema": "g2_issue68_author_dual_real_e2e_v1",
+  "source_count": 258,
+  "source_stable_after_both_real_gates": true,
+  "training_ready": false,
+  "view_pane": "view:0.0 0 bash"
+}

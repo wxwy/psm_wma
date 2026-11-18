@@ -1,0 +1,537 @@
+{
+  "b1_baseline": {
+    "cached_reference": {
+      "max_abs": 0,
+      "relative_l2": 0,
+      "rms": 0
+    },
+    "input_id": "2188cb6984860912271785a1ce6c744feba325bdfeefcac9bbd32a4a49c0db9e",
+    "mode": "real_legacy_B1",
+    "recipe_id": "3ee9c48399143866b2a0061f3cee01bff35842228f639380d60602d6402e2fc1",
+    "records": 40,
+    "records_per_second": 27.49809217488048,
+    "seconds": 1.4546463713049889
+  },
+  "batch_adapter_and_legacy_loader_unchanged": true,
+  "batch_recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "cpu": {
+    "errors": 0,
+    "failed": 0,
+    "legacy_b1_loader_unchanged": true,
+    "legacy_encode_record_ast_unchanged": true,
+    "new_tests": 43,
+    "old612_identities_preserved": true,
+    "old_test_sources_preserved": true,
+    "passed": 655,
+    "real_gpu_gate": false,
+    "schema": "g2_issue68_author_cpu_v1",
+    "skipped": 0,
+    "source_count": 258,
+    "sources_stable": true,
+    "tests": 655,
+    "training_ready": false
+  },
+  "formal_root": "778022c8fcf431fa16e83a67256ba58b4b464052",
+  "math": {
+    "4": {
+      "changed_member_other31": {
+        "max_abs": 0,
+        "relative_l2": 0,
+        "rms": 0
+      },
+      "comparisons": {
+        "1": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        },
+        "8": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        },
+        "16": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        },
+        "32": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        }
+      },
+      "decoded_B32_vsB1": [
+        {
+          "input_index": 0,
+          "max_rgb_byte_difference": 8,
+          "mse": 0.2701822817325592,
+          "pixel_exact": false,
+          "psnr_db": 53.81423495819523
+        },
+        {
+          "input_index": 3,
+          "max_rgb_byte_difference": 8,
+          "mse": 0.1961619108915329,
+          "pixel_exact": false,
+          "psnr_db": 55.20465677372951
+        },
+        {
+          "input_index": 9,
+          "max_rgb_byte_difference": 6,
+          "mse": 0.2454986572265625,
+          "pixel_exact": false,
+          "psnr_db": 54.23031239808879
+        },
+        {
+          "input_index": 17,
+          "max_rgb_byte_difference": 6,
+          "mse": 0.2409617155790329,
+          "pixel_exact": false,
+          "psnr_db": 54.31132314282833
+        }
+      ],
+      "reverse_order_then_unpermute": {
+        "max_abs": 0,
+        "relative_l2": 0,
+        "rms": 0
+      },
+      "same_context_replay": {
+        "max_abs": 0,
+        "relative_l2": 0,
+        "rms": 0
+      },
+      "tail7_vsB1": {
+        "max_abs": 0.046875,
+        "relative_l2": 0.006902031598016364,
+        "rms": 0.005761105315902698
+      },
+      "warmed_timing": {
+        "1": {
+          "median_adapter_seconds": 2.5386280938982964,
+          "records_per_second": 12.605233542051078,
+          "trials": [
+            {
+              "native_cuda_ms": 2080.07022857666,
+              "wall_seconds": 2.6721387654542923
+            },
+            {
+              "native_cuda_ms": 2163.477752685547,
+              "wall_seconds": 2.5386280938982964
+            },
+            {
+              "native_cuda_ms": 2052.6569061279297,
+              "wall_seconds": 2.499594133347273
+            }
+          ]
+        },
+        "8": {
+          "median_adapter_seconds": 2.0844510085880756,
+          "records_per_second": 15.351764022353075,
+          "trials": [
+            {
+              "native_cuda_ms": 1903.3525390625,
+              "wall_seconds": 2.0844510085880756
+            },
+            {
+              "native_cuda_ms": 2065.5152893066406,
+              "wall_seconds": 2.264580838382244
+            },
+            {
+              "native_cuda_ms": 1663.0906066894531,
+              "wall_seconds": 1.8418035693466663
+            }
+          ]
+        },
+        "16": {
+          "median_adapter_seconds": 2.3709536902606487,
+          "records_per_second": 13.496678628287382,
+          "trials": [
+            {
+              "native_cuda_ms": 1651.03466796875,
+              "wall_seconds": 1.808504968881607
+            },
+            {
+              "native_cuda_ms": 2026.4769287109375,
+              "wall_seconds": 2.3709536902606487
+            },
+            {
+              "native_cuda_ms": 2173.5028076171875,
+              "wall_seconds": 2.3883571922779083
+            }
+          ]
+        },
+        "32": {
+          "median_adapter_seconds": 2.488129522651434,
+          "records_per_second": 12.861066800855179,
+          "trials": [
+            {
+              "native_cuda_ms": 2273.234130859375,
+              "wall_seconds": 2.488129522651434
+            },
+            {
+              "native_cuda_ms": 2389.632568359375,
+              "wall_seconds": 2.6095619425177574
+            },
+            {
+              "native_cuda_ms": 2180.235107421875,
+              "wall_seconds": 2.4819370321929455
+            }
+          ]
+        }
+      }
+    },
+    "6": {
+      "changed_member_other31": {
+        "max_abs": 0,
+        "relative_l2": 0,
+        "rms": 0
+      },
+      "comparisons": {
+        "1": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        },
+        "8": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        },
+        "16": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        },
+        "32": {
+          "max_abs": 0.07421875,
+          "relative_l2": 0.007551630649394044,
+          "rms": 0.006255645741747115
+        }
+      },
+      "decoded_B32_vsB1": [
+        {
+          "input_index": 0,
+          "max_rgb_byte_difference": 8,
+          "mse": 0.2701822817325592,
+          "pixel_exact": false,
+          "psnr_db": 53.81423495819523
+        },
+        {
+          "input_index": 3,
+          "max_rgb_byte_difference": 8,
+          "mse": 0.1961619108915329,
+          "pixel_exact": false,
+          "psnr_db": 55.20465677372951
+        },
+        {
+          "input_index": 9,
+          "max_rgb_byte_difference": 6,
+          "mse": 0.2454986572265625,
+          "pixel_exact": false,
+          "psnr_db": 54.23031239808879
+        },
+        {
+          "input_index": 17,
+          "max_rgb_byte_difference": 6,
+          "mse": 0.2409617155790329,
+          "pixel_exact": false,
+          "psnr_db": 54.31132314282833
+        }
+      ],
+      "reverse_order_then_unpermute": {
+        "max_abs": 0,
+        "relative_l2": 0,
+        "rms": 0
+      },
+      "same_context_replay": {
+        "max_abs": 0,
+        "relative_l2": 0,
+        "rms": 0
+      },
+      "tail7_vsB1": {
+        "max_abs": 0.046875,
+        "relative_l2": 0.006902031598016364,
+        "rms": 0.005761105315902698
+      },
+      "warmed_timing": {
+        "1": {
+          "median_adapter_seconds": 3.0244448222219944,
+          "records_per_second": 10.580454225807395,
+          "trials": [
+            {
+              "native_cuda_ms": 2307.33406829834,
+              "wall_seconds": 3.0244448222219944
+            },
+            {
+              "native_cuda_ms": 1990.0887756347656,
+              "wall_seconds": 2.6315372698009014
+            },
+            {
+              "native_cuda_ms": 2554.358055114746,
+              "wall_seconds": 3.0660001039505005
+            }
+          ]
+        },
+        "8": {
+          "median_adapter_seconds": 2.605600416660309,
+          "records_per_second": 12.28123844139369,
+          "trials": [
+            {
+              "native_cuda_ms": 2382.8264770507812,
+              "wall_seconds": 2.605600416660309
+            },
+            {
+              "native_cuda_ms": 2359.0983276367188,
+              "wall_seconds": 2.591690320521593
+            },
+            {
+              "native_cuda_ms": 2579.6710205078125,
+              "wall_seconds": 2.8061627820134163
+            }
+          ]
+        },
+        "16": {
+          "median_adapter_seconds": 2.47390553727746,
+          "records_per_second": 12.935012884613245,
+          "trials": [
+            {
+              "native_cuda_ms": 2256.87890625,
+              "wall_seconds": 2.5264590829610825
+            },
+            {
+              "native_cuda_ms": 2270.374755859375,
+              "wall_seconds": 2.47390553727746
+            },
+            {
+              "native_cuda_ms": 1856.1981811523438,
+              "wall_seconds": 2.0241365507245064
+            }
+          ]
+        },
+        "32": {
+          "median_adapter_seconds": 1.851727794855833,
+          "records_per_second": 17.281157678195015,
+          "trials": [
+            {
+              "native_cuda_ms": 2054.76513671875,
+              "wall_seconds": 2.1952234730124474
+            },
+            {
+              "native_cuda_ms": 1626.110595703125,
+              "wall_seconds": 1.7877062559127808
+            },
+            {
+              "native_cuda_ms": 1691.250244140625,
+              "wall_seconds": 1.851727794855833
+            }
+          ]
+        }
+      }
+    }
+  },
+  "math_fixed_root": "302885d538d59755e36d6a1189af8885699740b3",
+  "nav": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "schema": "g2_issue68_final_source_math_cpu_v1",
+  "source_git_blobs_match": true,
+  "training_ready": false,
+  "scope": "AUTHOR_FIXED_SOURCE_REAL_MATH_AND_CPU_NOT_GPT_INDEPENDENT",
+  "source_count": 258,
+  "raw_evidence_location": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue68_dual_20261118",
+  "native_shape_and_memory": {
+    "4": {
+      "1": {
+        "native_encoder_shapes": [
+          [
+            1,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            1,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 1672865792,
+        "peak_reserved_bytes": 8359247872
+      },
+      "8": {
+        "native_encoder_shapes": [
+          [
+            8,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            8,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 2219153408,
+        "peak_reserved_bytes": 8359247872
+      },
+      "16": {
+        "native_encoder_shapes": [
+          [
+            16,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            16,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 2844026880,
+        "peak_reserved_bytes": 8359247872
+      },
+      "32": {
+        "native_encoder_shapes": [
+          [
+            32,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            32,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 4093929472,
+        "peak_reserved_bytes": 8359247872
+      }
+    },
+    "6": {
+      "1": {
+        "native_encoder_shapes": [
+          [
+            1,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            1,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 1672865792,
+        "peak_reserved_bytes": 8359247872
+      },
+      "8": {
+        "native_encoder_shapes": [
+          [
+            8,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            8,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 2219153408,
+        "peak_reserved_bytes": 8359247872
+      },
+      "16": {
+        "native_encoder_shapes": [
+          [
+            16,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            16,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 2844026880,
+        "peak_reserved_bytes": 8359247872
+      },
+      "32": {
+        "native_encoder_shapes": [
+          [
+            32,
+            12,
+            1,
+            128,
+            128
+          ]
+        ],
+        "native_input_shapes": [
+          [
+            32,
+            3,
+            1,
+            256,
+            256
+          ]
+        ],
+        "peak_allocated_bytes": 4093929472,
+        "peak_reserved_bytes": 8359247872
+      }
+    }
+  },
+  "parallel_math_result": {
+    "exit_codes": {
+      "4": 0,
+      "6": 0
+    },
+    "recipe_id": "b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1",
+    "root_a": "302885d538d59755e36d6a1189af8885699740b3",
+    "same_context_cross_gpu_max_abs": 0,
+    "status": "PASS",
+    "wall_s": 70.76279973983765
+  },
+  "math_scope_note": "Native module sees patchified channels12, spatial128x128; actual B is retained and T=1. Old B1 and new numerical-policy B1 are distinct.",
+  "privacy": "Derived scalar counts, timings, hashes and public source identity only. No server file, private image/model/state/source or raw log is copied."
+}
