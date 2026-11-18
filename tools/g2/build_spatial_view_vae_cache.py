@@ -79,9 +79,16 @@ def parser():
     result.add_argument(
         "--batch-size",
         type=int,
-        default=1,
-        help="this candidate supports B=1 only; mixed-batch real parity is NOT_RUN",
+        default=None,
+        help="legacy defaults B=1; explicit batch engine defaults maximum B=32 per GPU",
     )
+    result.add_argument("--engine", choices=("legacy", "batch"), default="legacy")
+    result.add_argument("--engine-config", type=Path)
+    result.add_argument("--gpus", default=None)
+    result.add_argument("--max-wait-ms", type=float)
+    result.add_argument("--idle-timeout-s", type=float)
+    result.add_argument("--expected-episodes", type=Path)
+    result.add_argument("--producer-done", type=Path)
     result.add_argument(
         "--resume",
         action="store_true",
@@ -116,6 +123,53 @@ def parser():
 def main(argv=None):
     command = parser()
     args = command.parse_args(argv)
+    if args.batch_size is None:
+        args.batch_size = 32 if args.engine == "batch" else 1
+    if args.engine == "batch":
+        if (
+            not args.view_first
+            or args.spool_root is None
+            or args.height != 256
+            or args.width != 256
+            or args.storage_dtype != "float32"
+            or args.interpolation != "lanczos"
+        ):
+            command.error(
+                "batch mode requires explicit View-first/spool and256/FP32/lanczos"
+            )
+        from tools.g2.run_spatial_vae_engine import main as batch_main
+
+        forward = [
+            "--mode",
+            "independent",
+            "--spool-root",
+            str(args.spool_root),
+            "--dataset-root",
+            str(args.dataset_root),
+            "--weights",
+            str(args.weights),
+            "--max-batch-size",
+            str(args.batch_size),
+            "--plan" if args.dry_run else "--execute",
+        ]
+        for flag, val in (
+            ("--cosmos-root", args.cosmos_root),
+            ("--engine-config", args.engine_config),
+            ("--gpus", args.gpus),
+            ("--max-wait-ms", args.max_wait_ms),
+            ("--idle-timeout-s", args.idle_timeout_s),
+            ("--expected-episodes", args.expected_episodes),
+            ("--producer-done", args.producer_done),
+            ("--expected-weights-sha256", args.expected_weights_sha256),
+        ):
+            if val is not None:
+                forward += [flag, str(val)]
+        for flag, items in (("--task", args.task), ("--episode", args.episode)):
+            for val in items or []:
+                forward += [flag, str(val)]
+        if args.resume:
+            forward.append("--resume")
+        return batch_main(forward)
     if args.batch_size != 1:
         command.error(
             "this candidate supports independent B=1 only; mixed-batch parity is NOT_RUN"

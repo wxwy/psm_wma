@@ -409,6 +409,12 @@ def validate_payload_binding(index, view_id, entry, info):
     ):
         raise CacheError("payload episode/logical-state identity differs from index")
     recipe_prep = index.manifest["recipe"]["preprocessing"]
+    if index.manifest["recipe"].get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+        from .batch_contract import validate_metadata
+
+        if shape[1:] != [48, 16, 16] or info.get("dtype") != "float32":
+            raise CacheError("batch cache must preserve the full48x16x16 FP32 grid")
+        validate_metadata(metadata, index.manifest["recipe"])
     canvas_hw = [recipe_prep["height"], recipe_prep["width"]]
     for record, prep in zip(
         metadata["view_plan"]["records"], metadata["preprocessing"], strict=True

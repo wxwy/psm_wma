@@ -8,6 +8,7 @@ from .contract import (
     CacheError,
     fingerprint,
     preprocessing_recipe,
+    safe_relative,
     validate_preprocessing,
 )
 
@@ -84,18 +85,14 @@ def make_context(recipe, members):
     validate_batch_recipe(recipe)
     if not isinstance(members, list) or not 1 <= len(members) <= recipe["batch_size"]:
         raise CacheError("batch membership exceeds the declared numerical recipe")
-    from .streaming import validate_descriptor
-
     seen = set()
     for member in members:
         if not isinstance(member, dict) or set(member) != {"job", "event"}:
             raise CacheError(
                 "batch member must preserve its actual job and final event"
             )
-        from .storage import _hex
-
-        _hex(member["job"])
-        validate_descriptor(member["event"])
+        _hash(member["job"])
+        event_identity(member["event"])
         key = (member["job"], member["event"]["event_id"])
         if key in seen:
             raise CacheError("duplicate batch member")
@@ -108,6 +105,76 @@ def make_context(recipe, members):
     )
     value["batch_id"] = fingerprint(value)
     return value
+
+
+def _hash(value):
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(c not in "0123456789abcdef" for c in value)
+    ):
+        raise CacheError("batch source identity must be SHA256")
+
+
+def event_identity(event):
+    """JSON-only replay identity. Admission still uses the original pixel validator.
+
+    Selected-View readers must not import a producer, queue, renderer or VAE.
+    Here they verify the recorded event hash/phase/path and ordered pixel hashes.
+    """
+    fields = {
+        "event_id",
+        "episode_key",
+        "view_id",
+        "canonical_view_id",
+        "variant",
+        "rgb_sha256",
+        "final_pixel_phase",
+        "source_fingerprint",
+        "profile_id",
+        "pixel_record_key",
+        "size_wh",
+    }
+    if not isinstance(event, dict) or set(event) != fields:
+        raise CacheError("unknown batch event identity fields")
+    for key in (
+        "event_id",
+        "rgb_sha256",
+        "source_fingerprint",
+        "profile_id",
+        "pixel_record_key",
+    ):
+        _hash(event[key])
+    for key in ("episode_key", "view_id", "canonical_view_id"):
+        safe_relative(event[key])
+    identity = {
+        k: event[k]
+        for k in (
+            "episode_key",
+            "view_id",
+            "rgb_sha256",
+            "source_fingerprint",
+            "profile_id",
+        )
+    }
+    marked = event["view_id"].endswith("_w_rbs")
+    if (
+        event["event_id"] != fingerprint(identity)
+        or event["pixel_record_key"]
+        != fingerprint(dict(view_id=event["view_id"], rgb_sha256=event["rgb_sha256"]))
+        or event["canonical_view_id"]
+        != (event["view_id"][:-6] if marked else event["view_id"])
+        or event["variant"] != ("w_rbs" if marked else "clean")
+        or event["final_pixel_phase"]
+        != ("FINAL_MARKER_PIXELS" if marked else "FINAL_CLEAN_PIXELS")
+    ):
+        raise CacheError("batch event source/variant/final-pixel hash differs")
+    if (
+        not isinstance(event["size_wh"], list)
+        or len(event["size_wh"]) != 2
+        or any(type(v) is not int or v < 1 for v in event["size_wh"])
+    ):
+        raise CacheError("invalid batch pixel dimensions")
 
 
 def validate_context(context, recipe):
@@ -177,6 +244,19 @@ def validate_metadata(metadata, recipe):
         ):
             raise CacheError("record has no valid numerical batch position")
         event = context["members"][position]["event"]
+        origin = execution.get("origin", {})
+        if (
+            not isinstance(origin, dict)
+            or not origin.get("worker")
+            or not origin.get("attempt")
+            or not origin.get("physical_gpu")
+            or not isinstance(origin.get("device"), dict)
+            or origin.get("encoder_descriptor_sha256") != fingerprint(recipe["encoder"])
+        ):
+            raise CacheError("batch record is missing its actual numerical origin")
+        kind = origin["device"].get("kind")
+        if kind != ("TEST_ONLY_CPU" if recipe["encoder"].get("test_only") else "cuda"):
+            raise CacheError("numerical origin cannot relabel CPU fixture as real GPU")
         if (
             event["view_id"] != metadata["view_id"]
             or event["rgb_sha256"] != record["png_sha256"]

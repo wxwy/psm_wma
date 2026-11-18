@@ -1,0 +1,103 @@
+F401 [*] `.contract.fingerprint` imported but unused
+  --> g2/latent_cache/batch_engine.py:24:35
+   |
+22 | from .batch_queue import BatchQueue
+23 | from .batch_worker import encoder_factory, worker_main
+24 | from .contract import CacheError, fingerprint
+   |                                   ^^^^^^^^^^^
+25 | from .storage import atomic_json, build_lock
+26 | from .streaming import ConsumerLimits, EventSpool, QueueBackpressure
+   |
+help: Remove unused import: `.contract.fingerprint`
+   |
+23 | from .batch_worker import encoder_factory, worker_main
+   - from .contract import CacheError, fingerprint
+24 + from .contract import CacheError
+25 | from .storage import atomic_json, build_lock
+   |
+
+F401 [*] `pathlib.Path` imported but unused
+  --> g2/latent_cache/batch_queue.py:13:21
+   |
+11 | import time
+12 | import uuid
+13 | from pathlib import Path
+   |                     ^^^^
+14 |
+15 | from g2.io import canonical
+   |
+help: Remove unused import: `pathlib.Path`
+   |
+12 | import uuid
+   - from pathlib import Path
+13 |
+   |
+
+F401 [*] `pathlib.Path` imported but unused
+  --> g2/latent_cache/batch_worker.py:12:21
+   |
+10 | import time
+11 | import uuid
+12 | from pathlib import Path
+   |                     ^^^^
+13 |
+14 | from g2.io import digest
+   |
+help: Remove unused import: `pathlib.Path`
+   |
+11 | import uuid
+   - from pathlib import Path
+12 |
+   |
+
+F401 [*] `pathlib.Path` imported but unused
+ --> g2/tests/test_batch_engine.py:4:21
+  |
+3 | import json
+4 | from pathlib import Path
+  |                     ^^^^
+5 |
+6 | import pytest
+  |
+help: Remove unused import: `pathlib.Path`
+  |
+3 | import json
+  - from pathlib import Path
+4 |
+  |
+
+F401 [*] `g2.latent_cache.streaming.FinalPixelEvent` imported but unused
+  --> g2/tests/test_batch_queue.py:13:67
+   |
+11 | from g2.latent_cache.batch_worker import execute_claim
+12 | from g2.latent_cache.contract import CacheError
+13 | from g2.latent_cache.streaming import ConsumerLimits, EventSpool, FinalPixelEvent
+   |                                                                   ^^^^^^^^^^^^^^^
+14 | from g2.tests.batch_helpers import FakeBatchEncoder
+   |
+help: Remove unused import: `g2.latent_cache.streaming.FinalPixelEvent`
+   |
+12 | from g2.latent_cache.contract import CacheError
+   - from g2.latent_cache.streaming import ConsumerLimits, EventSpool, FinalPixelEvent
+13 + from g2.latent_cache.streaming import ConsumerLimits, EventSpool
+14 | from g2.tests.batch_helpers import FakeBatchEncoder
+   |
+
+F401 [*] `io` imported but unused
+  --> g2/tests/test_batch_queue.py:18:12
+   |
+17 | def events_case(tmp_path, n=35, *, limit=128, budget=64 * 1024**2):
+18 |     import io
+   |            ^^
+19 |     from PIL import Image
+20 |     from g2.latent_cache.streaming import final_pixel_event
+   |
+help: Remove unused import: `io`
+   |
+17 | def events_case(tmp_path, n=35, *, limit=128, budget=64 * 1024**2):
+   -     import io
+18 |     from PIL import Image
+   |
+
+Found 6 errors.
+[*] 6 fixable with `--fix`.

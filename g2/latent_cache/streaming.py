@@ -260,6 +260,10 @@ class EventSpool:
                 db.execute("CREATE INDEX IF NOT EXISTS event_status ON events(status)")
                 db.execute("CREATE INDEX IF NOT EXISTS event_result ON events(result)")
         self.database = database
+        if self.recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+            from .batch_queue import initialize_schema
+
+            initialize_schema(self)
 
     @classmethod
     def open(cls, root):
@@ -437,6 +441,13 @@ class EventSpool:
                             "pending",
                         ),
                     )
+                    if (
+                        self.recipe.get("schema")
+                        == "g2_spatial_view_vae_batch_recipe_v2"
+                    ):
+                        from .batch_queue import admitted
+
+                        admitted(db, job, event.event_id, time.time())
                     return "pending"
             if time.monotonic() >= deadline:
                 raise QueueBackpressure(
@@ -745,16 +756,9 @@ class EventSpool:
             import json
 
             desc = json.loads(event["descriptor"])
-            expected = (
-                "records/"
-                + fingerprint(
-                    dict(
-                        pixel_record_key=desc["pixel_record_key"],
-                        recipe_id=self.recipe["recipe_id"],
-                    )
-                )
-                + ".pt"
-            )
+            from .batch_queue import expected_result
+
+            expected = expected_result(self, job, event["id"], desc)
             result = event["result"] or expected
             if result != expected:
                 raise CacheError("result cleanup path is not the owned numeric key")
@@ -886,10 +890,29 @@ class EventSpool:
         ):
             raise CacheError("compact owner/event reconciliation differs")
         path = contained(self.root, event["result"])
+        if self.recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+            from .batch_queue import BatchQueue
+
+            context, position, expected = BatchQueue(self, _initialize=False).expected(
+                job, event["id"]
+            )
+            if event["result"] != expected:
+                raise CacheError("ACK file differs from its immutable batch position")
         info = inspect_view_payload(path)
         if info["sha256"] != event["result_sha"]:
             raise CacheError("ACK numeric chunk changed")
         validate_chunk(info, desc, recipe)
+        if self.recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+            from .batch_contract import unpack_prep
+
+            prep = unpack_prep(info["metadata"], 0)
+            if (
+                prep["_batch_context"] != context
+                or prep["numerical_execution"]["position"] != position
+            ):
+                raise CacheError("ACK numerical membership differs from the queue")
+            value, _, _ = _load(path)
+            return value["latents"][0].clone(), prep
         value, _, _ = _load(path)
         return value["latents"][0].clone(), value["metadata"]["preprocessing"][0]
 
@@ -953,7 +976,7 @@ def _chunk_metadata(desc, recipe, prep):
         original_hw=list(reversed(desc["size_wh"])),
         color_mode="RGB",
     )
-    return dict(
+    result = dict(
         schema=PAYLOAD_SCHEMA,
         episode_key="pixel/" + desc["pixel_record_key"],
         recipe_id=recipe["recipe_id"],
@@ -971,12 +994,23 @@ def _chunk_metadata(desc, recipe, prep):
         record_layout="CHW",
         view_layout="UCHW",
     )
+    if recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+        from .batch_contract import pack_metadata
+
+        return pack_metadata(
+            {k: v for k, v in result.items() if k != "preprocessing"}, [prep], recipe
+        )
+    return result
 
 
 def validate_chunk(info, desc, recipe):
     from .builder import _check_metadata
 
     prep = info["metadata"]["preprocessing"][0]
+    if recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+        from .batch_contract import unpack_prep
+
+        prep = unpack_prep(info["metadata"], 0)
     _check_metadata(info["metadata"], _chunk_metadata(desc, recipe, prep), recipe)
     if (
         info["dtype"] != recipe["storage_dtype"]
@@ -990,6 +1024,10 @@ class EventConsumer:
     """One independent process reuses one encoder across producer episodes."""
 
     def __init__(self, spool, encoder, *, failpoint=None):
+        if spool.recipe.get("schema") == "g2_spatial_view_vae_batch_recipe_v2":
+            raise CacheError(
+                "batch recipe requires the shared batch engine, not the scalar consumer"
+            )
         self.spool, self.encoder, self.failpoint = spool, encoder, failpoint
         self._result_bytes = None
         if encoder.descriptor() != spool.recipe["encoder"]:

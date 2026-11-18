@@ -19,7 +19,7 @@ not B32/multigpu/syncE2E/fullproduction approval. New task is separately
 directly authorized; no prior verdict is relabeled for the new math.
 
 Claim: new latent_cache batch_contract.py,batch_encoding.py,batch_queue.py,
-batch_engine.py; minimal contract.validate_recipe dispatch, builder/production
+batch_worker.py,batch_engine.py; minimal contract.validate_recipe dispatch, builder/production
 recipe override+batch provenance, streaming record-path/chunk validation
 extension; full_production.py consumer/config integration; build CLI explicit
 batch mode, thin shared engine CLI, official templates/launcher, new batch/
@@ -34,13 +34,52 @@ per AGENTS, no implementation delegation. No new environment/install.
 Owner async reply explicitly authorizes using ALL GPU4-7 despite current small
 view GPU load. No further resource permission needed; select fresh safe slots
 for isolated tests, never stop/reconfigure current view. GPU0-3 stay excluded.
-RDC readonly preflight: viewalive,3751episode COMPLETE markers (not fullverified),
-0-3training62GiB/100%,4-7viewcontexts,/data1free160613101568B. Owner prohibits
-taking occupied GPUs; asynchronously requested two cards/window while code/
-CPU work continues. No GPU Gate launched. SYNC_VIEW_VAE_E2E=NOT_RUN;
+Historical RDC pre-authorization preflight: viewalive,3751episode COMPLETE
+markers (not fullverified),0-3training62GiB/100%,4-7viewcontexts,/data1free
+160613101568B. Owner subsequently explicitly allowed GPU4-7 sharing. Latest
+readonly GPU4-7 memory565-799MiB/util0-1%; view alive. No resource block remains.
+Manager exposes CUDA_VISIBLE_DEVICES=4,5,6,7; one bound process/card (cuda:0).
+SYNC_VIEW_VAE_E2E=NOT_RUN;
 INDEPENDENT_VAE_E2E=NOT_RUN; training_ready=false. Next A batch math/recipe,
 B shared claims/leases/fenced ACK, C both actual entrypoints, D failures and
 resource safety, E CPU+real dual Gates/fixed-source peer/Draft.
+
+## Issue68 B/C checkpoint — fixed-code review and real Gates next
+
+Shared engine/queue/worker integrated with original sync full_production and
+explicit independent build CLI; same EventSpool authority/new small SQL batch
+lease tables, original writer/fsync/ACK/cache/source/work collectors. Genuine
+batch membership/order pinned, per-batch locks (no global encode lock), partial
+replay compares existing values before writes, all input PNGs retained until
+whole-batch commit; finite queue/numeric reservations/fencing/heartbeat/owned
+dead-worker requeue/watchdog/restart limits. Original legacyB1 interfaces and
+PR67 source/retirement implementations stay unchanged. New reader validation
+is JSON-only; explicit batch replay loads VAE separately. Independent watches
+only COMPLETE and has default600s IDLE_TIMEOUT distinct from ALL_COMPLETE;
+sync stays alive until original supervisor drain/stop. Source C remains an
+explicit separate action for independent mode, original full-profile C forsync.
+
+Author full646cases:633PASS/13 inheritedlocaloptionalSKIP,0fail/error299.72s;
+all612oldIDs/oldtestsourcebytes and encode_recordAST/B1loader preserved.
+New34cases all execute,258 product-source hashes stable;19fileRuff/formatPASS.
+New firstfixture run32PASS/1testsetupmkdirFAIL retained, fixed only newfixture;
+focused51PASS46.63s, extra replay/retired-reader13PASS18.82s. Local missing
+PyArrow/MuJoCo/Pandas will be run in original server environment, no installs.
+
+Real fixedA302885d5 Gate: originalB1 recipe3ee and40realrecords reencode exact0.
+GPU4+6 actualparallel B1/8/16/32 native input BCT1, sameorderedB32 crossGPU0;
+newB32recipeb1c6e1f6... vslegacyB1maxabs.07421875/RMS.00625565/relL2.00755163,
+samecontext/reorder/changed-member other31 exact0, tail7vsB1maxabs.046875.
+Decoded4 RGBmax6-8bytes/PSNR53.81-55.20dB, nothumanapproval; variable sharedGPU
+timings documented, no claimed universal speedup. Raw private artifacts stay
+server `.g2_issue68_dual_20261118`; math alone does not close either E2E.
+
+Next freeze B/C source and original-environment fullCPU, separately real
+independent(dynamic second publication/crossEPbatch/4GPUs/retirement/replay)
+and truefresh MuJoCo/F27sync(earlyACK/4GPUs/hardexit/GC/replay) in isolated
+roots. Implementation code enters read-only peer REVIEW after this commit
+perAGENTS; overallIssue68 remains IN_PROGRESS until both actual E2Es PASS.
+No duplicate permission question for the now-authorized GPU4-7 resource.
 
 ## Previous implementation handoff
 

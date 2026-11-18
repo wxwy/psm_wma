@@ -207,6 +207,7 @@ def build_profile(
     record_provider=None,
     cleanup=False,
     posthoc=False,
+    _recipe=None,
 ):
     from .builder import build_episode
 
@@ -229,6 +230,7 @@ def build_profile(
             resume=resume,
             _record_provider=record_provider,
             _view_first=posthoc,
+            **({"_recipe": _recipe} if _recipe is not None else {}),
         )
         if posthoc:
             # Original View-first publication is immutable during Stage B.
