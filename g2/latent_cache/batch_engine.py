@@ -391,7 +391,6 @@ class BatchEngine:
             return
         from .builder import verify_episode
         from .final_source import PROFILE_SCHEMA
-        from .sealed_source import scan_source
 
         self._last_discovery = self.clock()
         with self.spool._db() as db:
@@ -466,7 +465,10 @@ class BatchEngine:
                 continue
             if manifest["schema"] == PROFILE_SCHEMA:
                 raise CacheError("retired publication has no valid batch cache")
-            scan_source(root, view_first=True)
+            # The durable offer is the authoritative full scan/provenance
+            # validation. Its scan_source() executes once, after registration.
+            # A crash between register and offer is already recovered by
+            # _recover() for independent published Episode sources.
             job = self.spool.register(
                 root,
                 episode_key=key,
