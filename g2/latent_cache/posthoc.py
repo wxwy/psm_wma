@@ -31,6 +31,29 @@ def _register(spool, root, manifest):
     return job
 
 
+def resume_retirement(root, spool_root, source_policy, *, expected_recipe_id=None):
+    """Repair an owned pending transaction before inspecting swapped manifests."""
+    if not (Path(spool_root) / "config.json").exists():
+        return True
+    from .source_retirement import resume_pending
+
+    spool = EventSpool.open(spool_root)
+    if spool.lifecycle != LIFECYCLE or spool.source_policy != source_policy:
+        raise CacheError("posthoc retirement scope/policy differs")
+    if (
+        expected_recipe_id is not None
+        and spool.recipe["recipe_id"] != expected_recipe_id
+    ):
+        raise CacheError("posthoc recovery recipe differs")
+    with spool._db() as db:
+        row = db.execute(
+            "SELECT id,done FROM jobs WHERE target=?", (str(Path(root).absolute()),)
+        ).fetchone()
+    if row and row["done"]:
+        return resume_pending(spool, row["id"]) and spool.reap(row["id"])
+    return True
+
+
 def build_view_first_cache(
     root,
     encoder,
@@ -53,6 +76,10 @@ def build_view_first_cache(
         encoder.descriptor(), preprocessing, storage_dtype=storage_dtype, batch_size=1
     )
     with build_lock(coordinator(root)):
+        if source_policy is not None and not resume_retirement(
+            root, spool_root, source_policy, expected_recipe_id=recipe["recipe_id"]
+        ):
+            return dict(complete=False, pending=True)
         manifest = validate_profile_episode(root)
         if manifest["output_profile"]["view_vae"]:
             raise CacheError(
@@ -94,29 +121,25 @@ def build_view_first_cache(
                 return dict(job=job, complete=False, pending=True, source_retained=True)
 
 
-def retire_view_first_cache(root, *, spool_root, source_policy):
+def retire_view_first_cache(
+    root, *, spool_root, source_policy, expected_recipe_id=None
+):
     """Explicit Stage C: genuine verified-cache handoff, never invented ACKs."""
     from g2.offline.stage_a import validate_profile_episode
 
     from . import final_source as final
     from .builder import verify_episode
-    from .source_retirement import resume_pending
+    from .retirement_policy import POSTHOC_SCHEMA
+
+    if source_policy is None or source_policy.get("schema") != POSTHOC_SCHEMA:
+        raise CacheError("explicit posthoc retention policy required")
 
     root = Path(root).absolute()
     with build_lock(coordinator(root)):
-        # Open/resume the original journal before validating partially swapped indices.
-        if (Path(spool_root) / "config.json").exists():
-            spool = EventSpool.open(spool_root)
-            if spool.lifecycle != LIFECYCLE or spool.source_policy != source_policy:
-                raise CacheError("posthoc retirement scope/policy differs")
-            with spool._db() as db:
-                row = db.execute(
-                    "SELECT id,done FROM jobs WHERE target=?", (str(root),)
-                ).fetchone()
-            if row and row["done"]:
-                if not resume_pending(spool, row["id"]):
-                    return dict(complete=False, pending=True)
-                return dict(complete=spool.reap(row["id"]))
+        if not resume_retirement(
+            root, spool_root, source_policy, expected_recipe_id=expected_recipe_id
+        ):
+            return dict(complete=False, pending=True)
         manifest = validate_profile_episode(root)
         if manifest["output_profile"]["view_vae"]:
             raise CacheError("posthoc retirement requires original View-first profile")
@@ -125,9 +148,11 @@ def retire_view_first_cache(root, *, spool_root, source_policy):
                 complete=True,
                 already_complete=True,
                 retired=True,
-                audit=verify_episode(root),
+                audit=verify_episode(root, expected_recipe_id=expected_recipe_id),
             )
         recipe = read_json(contained(root, "vae_cache/manifest.json"))["recipe"]
+        if expected_recipe_id is not None and recipe["recipe_id"] != expected_recipe_id:
+            raise CacheError("posthoc retirement recipe differs")
         spool = EventSpool(
             spool_root, recipe, source_policy=source_policy, lifecycle=LIFECYCLE
         )

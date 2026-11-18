@@ -1,5 +1,14 @@
 # 2026-11-18 CST — View-first -> posthoc VAE -> retirement R1-R5 claim
 
+R4 PASS30/30 (23 actual os._exit77 boundaries +ENOSPC/liveReader +R3five),
+0skip53.42s. Same original collector fsync/journal/SQL GC used; each public
+posthoc resume repairs before manifest validation, leaves PT hashes intact,
+removes gzip/receipt only after strict final-v2 completion. Recovery pins
+same posthoc policy/lifecycle and requestedrecipe; rejects streaming policy.
+No fake ACK rows; C-only genuine verified-cache handoff has0events, records
+actual durable cache receipt. Raw r4log/XML. Next R5 thin CLI/ownrunbook/new
+entry/variation tests/fullold560 identity+static gate/fixedSHA/readonlypeer/Draft.
+
 R3 implemented existing-v2 retirement for explicit posthoc policy and both
 raw/gzip working transports. Policy binds original View-only claim in external
 spool only, writes no root-owner/policy marker into View production. Actual

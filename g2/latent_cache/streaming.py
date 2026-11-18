@@ -198,6 +198,14 @@ class EventSpool:
         self.source_policy = validate_policy(source_policy, self.root)
         if (
             self.source_policy is not None
+            and self.view_first
+            and self.source_policy["schema"] != "g2_view_first_retention_policy_v1"
+        ):
+            raise CacheError(
+                "posthoc lifecycle cannot use a streaming retirement policy"
+            )
+        if (
+            self.source_policy is not None
             and self.source_policy["schema"] == "g2_view_first_retention_policy_v1"
             and not self.view_first
         ):
