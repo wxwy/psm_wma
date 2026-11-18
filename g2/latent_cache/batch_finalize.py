@@ -14,28 +14,27 @@ from pathlib import Path
 
 from .contract import CacheError
 
-
-class DescriptorOnlyEncoder:
-    """A build-only descriptor, never a substitute for numerical encoding."""
-
-    def __init__(self, descriptor):
-        self._descriptor = descriptor
-
-    def descriptor(self):
-        import copy
-
-        return copy.deepcopy(self._descriptor)
-
-    def encode(self, *_args, **_kwargs):
-        raise CacheError("CPU finalizer must never encode a pixel")
+_CPU_ENCODER = None
 
 
-def cpu_initializer():
-    """Exclude CUDA from spawned cache assembly/verification processes."""
+def cpu_initializer(spec):
+    """Bind the real immutable encoder source/weight identity without loading GPU.
+
+    The existing encoder factory creates a descriptor-only model shell.
+    Computing and checking its descriptor here preserves the original
+    per-Episode weight/source mtime audit on all future finalize calls.
+    This process never runs encode_batch or loads the Wan tokenizer.
+    """
+    global _CPU_ENCODER
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ["COSMOS_DEVICE"] = "cpu"
     os.environ["OMP_NUM_THREADS"] = "1"
     os.environ["MKL_NUM_THREADS"] = "1"
+    from .batch_worker import encoder_factory
+
+    encoder = encoder_factory(spec)
+    encoder.descriptor()
+    _CPU_ENCODER = encoder
 
 
 def finalize_job(spool_root, job_id, expected_recipe_id):
@@ -45,9 +44,12 @@ def finalize_job(spool_root, job_id, expected_recipe_id):
     from .production import build_profile, cache_receipt
     from .streaming import EventSpool
 
+    if _CPU_ENCODER is None:
+        raise CacheError("CPU finalizer is missing its pinned encoder identity")
     spool = EventSpool.open(Path(spool_root))
     if (
-        not spool.view_first
+        _CPU_ENCODER.descriptor() != spool.recipe["encoder"]
+        or not spool.view_first
         or spool.source_policy is not None
         or spool.recipe["recipe_id"] != expected_recipe_id
     ):
@@ -71,10 +73,9 @@ def finalize_job(spool_root, job_id, expected_recipe_id):
         queue = BatchQueue(spool, _initialize=False)
         if not queue.finalizable(job_id):
             raise CacheError("finalizer requires every numerical batch complete")
-        encoder = DescriptorOnlyEncoder(spool.recipe["encoder"])
         build_profile(
             row["target"],
-            encoder,
+            _CPU_ENCODER,
             preprocessing=spool.recipe["preprocessing"],
             storage_dtype="float32",
             resume=True,
