@@ -3,11 +3,9 @@
 CPU fixture only. No production source, Wan CUDA or live Spool is touched.
 """
 
-import json
-
 import pytest
 
-from g2.io import digest, read_json
+from g2.io import read_json
 from g2.latent_cache import batch_engine
 from g2.latent_cache.batch_engine import BatchEngine
 from g2.latent_cache.ledger_archive import verify_archived_payload_bytes
@@ -31,12 +29,9 @@ def test_completed_archive_fast_recheck_detects_pixel_pt_and_source_mutations(
     def forbidden_full_audit(*_args, **_kwargs):
         raise AssertionError("archived identity used the slow full numerical audit")
 
-    monkeypatch.setattr(
-        "g2.latent_cache.builder.verify_episode", forbidden_full_audit
-    )
+    monkeypatch.setattr("g2.latent_cache.builder.verify_episode", forbidden_full_audit)
     resumed = BatchEngine(
-        spool, spec, mode="independent", dataset_root=tmp_path / "dataset",
-        resume=True
+        spool, spec, mode="independent", dataset_root=tmp_path / "dataset", resume=True
     )
     resumed._discover()
     assert str(target) in resumed._seen
@@ -80,7 +75,9 @@ def test_full_active_ledger_prevents_useless_full_catalogue_discovery(
     spec["max_active_jobs"] = 1
 
     def forbidden_catalogue(*_args, **_kwargs):
-        raise AssertionError("full active job ledger still scanned thousands of episodes")
+        raise AssertionError(
+            "full active job ledger still scanned thousands of episodes"
+        )
 
     monkeypatch.setattr(batch_engine, "discover_published", forbidden_catalogue)
     engine = BatchEngine(
