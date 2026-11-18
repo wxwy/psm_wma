@@ -22,7 +22,9 @@ def _dataset(tmp_path, n):
         kwargs["episode_id"] = eid
         for caption in kwargs["captions"].values():
             caption["episode_index"] = eid
-        root = tmp_path / "dataset/tasks/NavigateKitchen/episodes" / f"episode_{eid:06d}"
+        root = (
+            tmp_path / "dataset/tasks/NavigateKitchen/episodes" / f"episode_{eid:06d}"
+        )
         package_stage_a(
             destination=root,
             compress_source=True,
