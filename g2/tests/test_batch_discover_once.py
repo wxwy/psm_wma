@@ -64,8 +64,6 @@ def test_interrupted_authoritative_offer_remains_durably_recoverable(
         monkeypatch.setattr(sealed_source, "scan_source", real)
         engine._recover()
         with spool._db() as db:
-            assert db.execute(
-                "SELECT source_ready FROM jobs"
-            ).fetchone()[0] is not None
+            assert db.execute("SELECT source_ready FROM jobs").fetchone()[0] is not None
     finally:
         engine._shutdown()
