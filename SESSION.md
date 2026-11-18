@@ -1,5 +1,17 @@
 # 2026-11-18 CST — View-first -> posthoc VAE -> retirement R1-R5 claim
 
+R3 implemented existing-v2 retirement for explicit posthoc policy and both
+raw/gzip working transports. Policy binds original View-only claim in external
+spool only, writes no root-owner/policy marker into View production. Actual
+file inventory/raw identity drives existing SQL intent/journal/rename/fsync/
+delete; capsule/old proof/PT history honest, independent posthoc_vae_receipt
+retains original false profile/statuses. New5 lifecycle cases +R1/R2 and old54
+capsule/fault regressions =73PASS/0skip109.20s. Original products+PT bytes,
+reader/reencode Fake exact0 and idempotent retired checks PASS. Raw r3 logs.
+Next R4 gzip hard-exit/deletion/fsync/recovery/concurrency tests and early
+same-policy spool recovery, then R5 thin CLI/runbook/full related regressions.
+No real/GPU/server facts inferred; active view untouched.
+
 R2 shared-core posthoc mode now works on raw and compressed View-first data:
 explicit cache source header, actual bounded EventSpool/Consumer record ACKs,
 all5 owners/4 views, no original profile/COMPLETE/product changes, fsynced

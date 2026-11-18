@@ -27,6 +27,13 @@ MOVED = {
     final.FULL: ".source_retirement/spatial_source.retiring",
     OLD_READY: ".source_retirement/readiness.retiring",
 }
+POSTHOC_MOVED = dict(
+    MOVED,
+    **{
+        "spatial_source.json.gz": ".source_retirement/spatial_source_gzip.retiring",
+        "SPATIAL_SOURCE_GZIP.json": ".source_retirement/gzip_receipt.retiring",
+    },
+)
 
 
 def json_bytes(value):
@@ -58,8 +65,10 @@ def _audit_archive(root, source, scope, policy, job):
                 raise CacheError("refuse unowned nonempty archive root")
             atomic_json(guard, identity)
     path = contained(base, job + ".json.gz", allow_missing=True)
-    raw = contained(root, final.FULL)
-    sha = digest(raw)
+    from g2.offline.view_only_source import working_source_info
+
+    raw = working_source_info(root, include_raw=True)["raw"]
+    sha = hashlib.sha256(raw).hexdigest()
     if not path.exists():
         temporary = contained(base, job + ".tmp", allow_missing=True)
         if temporary.exists():
@@ -71,9 +80,7 @@ def _audit_archive(root, source, scope, policy, job):
             with gzip.GzipFile(
                 filename="", fileobj=stream, mode="wb", compresslevel=1, mtime=0
             ) as zipped:
-                with raw.open("rb") as inp:
-                    for block in iter(lambda: inp.read(1024 * 1024), b""):
-                        zipped.write(block)
+                zipped.write(raw)
             stream.flush()
             os.fsync(stream.fileno())
         os.link(temporary, path)
@@ -126,8 +133,17 @@ def _prepare(spool, job, row, proof, statuses, cleanup):
         raise CacheError(
             "finalized source requires its original retirement journal/SQL binding"
         )
-    source = read_json(contained(root, final.FULL))
-    for rel in (final.CAPSULE, final.READY, final.RECEIPT, "spatial_source.json.gz"):
+    from g2.offline.view_only_source import working_source_info
+
+    info = working_source_info(root)
+    source = info["source"]
+    posthoc = spool.view_first
+    if posthoc != (not manifest["output_profile"]["view_vae"]):
+        raise CacheError("source retirement lifecycle differs from declared profile")
+    unexpected = (final.CAPSULE, final.READY, final.RECEIPT) + (
+        () if posthoc else ("spatial_source.json.gz",)
+    )
+    for rel in unexpected:
         if contained(root, rel, allow_missing=True).exists():
             raise CacheError(
                 "unexpected final-source/audit file before retirement; retain it: "
@@ -145,8 +161,8 @@ def _prepare(spool, job, row, proof, statuses, cleanup):
                 "selection",
                 "language",
                 "robot_pose",
-                "view_vae",
             )
+            + (() if posthoc else ("view_vae",))
         )
         or any(
             o["path"].startswith("_spatial_inputs/")
@@ -154,7 +170,7 @@ def _prepare(spool, job, row, proof, statuses, cleanup):
             for o in v["owners"]
         )
         or any(source[k] != scope[k] for k in ("source_fingerprint", "profile_id"))
-        or digest(root / final.FULL) != (row["source_ready"] or row["sealed"])
+        or info["raw_sha256"] != (row["source_ready"] or row["sealed"])
         or source["source_id"] != proof["source_id"]
         or cache_receipt(root) != proof["verified_cache"]
     ):
@@ -251,8 +267,8 @@ def _prepare(spool, job, row, proof, statuses, cleanup):
         schema=final.PROFILE_SCHEMA,
         source_format=final.SOURCE_SCHEMA,
         source_index_sha256=csha,
-        vae_receipt=new_receipt,
     )
+    updated["posthoc_vae_receipt" if posthoc else "vae_receipt"] = new_receipt
     files = {
         final.CAPSULE: capsule,
         final.READY: ready,
@@ -270,10 +286,7 @@ def _prepare(spool, job, row, proof, statuses, cleanup):
         working_proof=proof,
         work_cleanup=cleanup,
         final_files={p: json_sha(v) for p, v in files.items()},
-        retired_files={
-            final.FULL: digest(root / final.FULL),
-            OLD_READY: digest(root / OLD_READY),
-        },
+        retired_files=info["files"],
         full_audit_archive=archive,
         source_disposition="REMOVED_ONLY_AFTER_VERIFIED_FINAL_SOURCE_PUBLICATION",
     )
@@ -295,7 +308,9 @@ def _prepare(spool, job, row, proof, statuses, cleanup):
         old_proof=proof,
         cleanup=cleanup,
         retired_files=retirement["retired_files"],
-        old_source_bytes=(root / final.FULL).stat().st_size,
+        old_source_bytes=(root / info["identity_manifest"]).stat().st_size,
+        raw_source_sha256=info["raw_sha256"],
+        moved_files={rel: POSTHOC_MOVED[rel] for rel in info["files"]},
         product_files=manifest["files"],
         numeric_files={
             v["path"]: v["sha256"] for v in index.manifest["views"].values()
@@ -325,8 +340,14 @@ def _pending(spool, job, root):
         capsule_sha256=json_sha(txn["files"][final.CAPSULE]),
     ):
         raise CacheError("retirement journal changed after durable SQL binding")
-    if txn["retired_files"][final.FULL] != (row["source_ready"] or row["sealed"]):
+    if txn.get("raw_source_sha256", txn["retired_files"].get(final.FULL)) != (
+        row["source_ready"] or row["sealed"]
+    ):
         raise CacheError("retired working source differs from acknowledged job")
+    if txn["retired_files"] != final.retired_working_files(
+        txn["files"][final.CAPSULE]["working_source"]
+    ):
+        raise CacheError("retirement inventory differs from verified transport")
     return txn
 
 
@@ -383,8 +404,7 @@ def finalize(
             if journal.parent.exists():
                 allowed = {
                     "transaction.json",
-                    "spatial_source.retiring",
-                    "readiness.retiring",
+                    *(Path(p).name for p in POSTHOC_MOVED.values()),
                 }
                 if any(
                     p.name not in allowed or p.is_symlink()
@@ -468,7 +488,7 @@ def finalize(
                         "new final indices failed pre-retirement hash verification"
                     )
             point("capsule_verified_before_retire")
-            for rel, moved_rel in MOVED.items():
+            for rel, moved_rel in txn.get("moved_files", MOVED).items():
                 original = contained(root, rel, allow_missing=True)
                 moved = contained(root, moved_rel, allow_missing=True)
                 expected = txn["retired_files"][rel]

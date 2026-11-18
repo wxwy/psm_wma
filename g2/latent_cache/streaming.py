@@ -196,6 +196,14 @@ class EventSpool:
         from .retirement_policy import claim_policy, validate_policy
 
         self.source_policy = validate_policy(source_policy, self.root)
+        if (
+            self.source_policy is not None
+            and self.source_policy["schema"] == "g2_view_first_retention_policy_v1"
+            and not self.view_first
+        ):
+            raise CacheError(
+                "posthoc retirement policy requires explicit posthoc lifecycle"
+            )
         if self.source_policy is not None:
             claim_policy(self.source_policy, existing_only=_existing_only)
         binding = dict(
