@@ -86,3 +86,35 @@ def test_full_active_ledger_prevents_useless_full_catalogue_discovery(
     engine._discover()
     assert spool.stats()["active_jobs"] == 1
     assert spool.stats()["completed_jobs"] == 0
+
+
+def test_gzip_cache_is_exact_byte_bound_and_returns_defensive_trees(tmp_path):
+    from g2.offline.view_only_source import (
+        _cached_decode_gzip,
+        working_source_info,
+    )
+
+    target, _ = sample(tmp_path)
+    _cached_decode_gzip.cache_clear()
+    original = (target / "spatial_source.json.gz").read_bytes()
+
+    first = working_source_info(target)
+    assert first["source"]["task_class"] == "NavigateKitchen"
+    first["source"]["task_class"] = "MUTATED_ONLY_IN_CALLER"
+    second = working_source_info(target)
+    assert second["source"]["task_class"] == "NavigateKitchen"
+    assert second["raw_sha256"] == first["raw_sha256"]
+    assert _cached_decode_gzip.cache_info().hits >= 1
+
+    # A same-length changed gzip must never reuse the cached source,
+    # even if the file is restored later within one coordinator session.
+    path = target / "spatial_source.json.gz"
+    try:
+        changed = bytearray(original)
+        changed[len(changed) // 2] ^= 1
+        path.write_bytes(changed)
+        with pytest.raises((OSError, ValueError, RuntimeError)):
+            working_source_info(target)
+    finally:
+        path.write_bytes(original)
+    assert working_source_info(target)["source"]["task_class"] == "NavigateKitchen"
