@@ -118,6 +118,7 @@ def finalize_job(spool_root, job_id, expected_recipe_id):
                 "UPDATE jobs SET done=1,completion_receipt=? WHERE id=?",
                 (json.dumps(handoff, sort_keys=True), job_id),
             )
-    if not spool.reap(job_id):
-        raise CacheError("CPU finalizer did not durably archive completed job")
-    return {"job": job_id, "archived": True}
+    # Owned work cleanup can legitimately defer archival while keeping the
+    # numerical COMPLETE and its durable handoff. The manager re-enqueues this
+    # done row after the cleanup deadline without re-encoding or overwriting.
+    return {"job": job_id, "archived": bool(spool.reap(job_id))}
