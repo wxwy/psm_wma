@@ -8,6 +8,7 @@ train/val split and initial-text production approval elevate its evidence.
 from __future__ import annotations
 
 import hashlib
+from collections import OrderedDict
 from pathlib import Path
 
 import torch
@@ -152,6 +153,7 @@ class CandidateAlignedG2Provider:
         global_memory_enabled=True,
         initial_language_root=None,
         initial_language_recipe_id=None,
+        corpus_manifest_override=None,
     ):
         if (initial_language_root is None) != (initial_language_recipe_id is None):
             raise DataCError(
@@ -165,7 +167,14 @@ class CandidateAlignedG2Provider:
             Path(initial_language_root) if initial_language_root is not None else None
         )
         self.initial_language_recipe_id = initial_language_recipe_id
-        self.corpus = open_corpus_manifest(data_c_root)
+        # Formal training uses an independently attested, immutable episode
+        # snapshot; the live producer corpus manifest may keep growing.
+        # Candidate callers retain the original live-corpus semantics.
+        self.corpus = (
+            open_corpus_manifest(data_c_root)
+            if corpus_manifest_override is None
+            else corpus_manifest_override
+        )
         self.identity = (
             self.corpus["data_identity"]
             if self.initial_language_root is None
@@ -178,7 +187,9 @@ class CandidateAlignedG2Provider:
             )
         )
         self.data = {}
-        self._views = {}
+        # Keep only a bounded set of native VAE readers per rank; a complete
+        # 9,126-episode run must never accumulate thousands of open files.
+        self._views = OrderedDict()
         self._language = {}
         self._manifest_stat = {}
         expected_joint_id = canonical(
@@ -394,6 +405,11 @@ class CandidateAlignedG2Provider:
                 source,
                 ViewReader(source, max_views=12, max_bytes=256 * 1024 * 1024),
             )
+        # Entries are ordered by last access, not sorted task identity.
+        self._views.move_to_end((task, ep))
+        while len(self._views) > 8:
+            _, (_, old_reader) = self._views.popitem(last=False)
+            old_reader.close()
         reader_index, reader = self._views[task, ep]
         views = tuple(
             _native_view(reader_index, reader, epdir, state, ref)
