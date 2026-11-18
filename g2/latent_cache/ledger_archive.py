@@ -248,3 +248,62 @@ def archive(spool, job, *, failpoint=None):
         if failpoint:
             failpoint("gc_after_commit")
         return True
+
+
+def verify_archived_payload_bytes(spool, target):
+    """Fast *byte-exact* recheck of a previously fully verified tombstone.
+
+    The receipt was produced only after a full profile/source/numeric audit.
+    Recheck its original signed identity files plus every published product and
+    every PT byte hash. An unchanged byte set cannot acquire new semantic errors,
+    so repeating the expensive JSON/MuJoCo/torch parsing is unnecessary.
+    Unarchived or foreign caches still take the original full verification path.
+    """
+    root = Path(target).absolute()
+    with spool._db() as db:
+        record = lookup(spool, db, target=root)
+    if record is None:
+        return False
+    scope = json.loads(record["job"]["scope"])
+    if (
+        record["job"]["target"] != str(root)
+        or scope.get("target") != str(root)
+        or scope.get("recipe_id") != spool.recipe["recipe_id"]
+        or record["verification"]["verified_cache"]["recipe_id"]
+        != spool.recipe["recipe_id"]
+    ):
+        raise CacheError("archived source/recipe is not the current batch scope")
+
+    # The complete/index/manifests and compressed/raw source are all bound
+    # by the archived, SHA256-protected receipt.
+    check_identity(record)
+    manifest = read_json(contained(root, "episode_manifest.json"))
+    if (
+        manifest.get("source_fingerprint") != scope["source_fingerprint"]
+        or manifest.get("output_profile", {}).get("profile_id")
+        != scope["profile_id"]
+        or not isinstance(manifest.get("files"), dict)
+    ):
+        raise CacheError("archived profile/source differs from the durable scope")
+    for relative, expected_sha in manifest["files"].items():
+        if digest(contained(root, relative)) != expected_sha:
+            raise CacheError("archived Stage-A product bytes changed: " + relative)
+
+    index = read_json(contained(root, "vae_cache/manifest.json"))
+    if (
+        index.get("recipe", {}).get("recipe_id") != scope["recipe_id"]
+        or not isinstance(index.get("views"), dict)
+        or not index["views"]
+    ):
+        raise CacheError("archived numeric manifest is not the verified recipe")
+    for view_id, entry in index["views"].items():
+        if (
+            not isinstance(entry, dict)
+            or not isinstance(entry.get("path"), str)
+            or not isinstance(entry.get("sha256"), str)
+            or digest(contained(root / "vae_cache", entry["path"])) != entry["sha256"]
+        ):
+            raise CacheError("archived PT bytes changed: " + view_id)
+    # Check the identity again to reject mutation while scanning its products.
+    check_identity(record)
+    return True
