@@ -10,6 +10,13 @@ This is author evidence, not an independent GPT approval. No old GPT report,
 test assertion, encoder recipe/core, producer/renderer, model A/B/C/D or
 Gitlink is edited. Current production is not a test target for deletion.
 
+Fixed-source follow-up: actual existing-server-environment612/612 PASS with
+zero skips, real169 B1 reencode strict0 and isolated author Gates A–D PASS.
+See [SERVER_GATES.md](SERVER_GATES.md), [derived summary](server_summary.json)
+and [exact issued commands](server_commands.json). The local peer independently
+reported4probePASS/noP1/P2 in [peer/REPORT.md](peer/REPORT.md). These results
+are separate; they do not constitute independent GPT/corpus release approval.
+
 ## Reproducible local CPU command
 
 ```bash

@@ -219,3 +219,17 @@ images/models/states stay on the server; only derived summaries/hashes leave.
 Independent code approval, actual small sample acceptance and corpus release
 are separate facts. No automatic production stop, merge,9,126 VAE/retirement,
 data/environment deletion or training follows this implementation.
+
+## Author fixed-source follow-up (2026-11-18 CST)
+
+Implementation `5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2` is published in
+[Draft PR67](https://github.com/wxwy/psm_wma/pull/67). Existing-server-environment
+CPU612/612, zero skips; independent local peer4probes/noP1/P2; real two-copy
+169record strict-zero reencode and source retirement/recovery passed author
+Gates A–D. All retained product/PT bytes and production originals stayed
+unchanged. No production full-corpus cleanup or merge occurred.
+
+[Actual commands, bytes/times, limits and private evidence bindings](../collab/codex/evidence/2026-11-18_view_first_retirement/SERVER_GATES.md)
+remain separate from this protocol. Source-code review authority stays at the
+fixed implementation SHA; later documentation commits are bookkeeping.
+Independent GPT approval and any full9,126 release remain pending owner gates.

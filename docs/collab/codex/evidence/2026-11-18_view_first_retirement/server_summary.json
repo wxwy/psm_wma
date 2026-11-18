@@ -1,0 +1,347 @@
+{
+  "build": {
+    "gpu_shared_with_existing_view_contexts": true,
+    "not_pure_encode_or_render_latency": true,
+    "physical_gpu": 6,
+    "records": 169,
+    "records_per_second_end_to_end": 0.6307230103398332,
+    "sampled_total_gpu_peak_used_mib": 7569,
+    "seconds_end_to_end": 267.9464633911848
+  },
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "cpu": {
+    "errors": 0,
+    "failed": 0,
+    "new_cases": 52,
+    "original_560_identities_retained": true,
+    "original_test_source_files_unchanged": true,
+    "passed": 612,
+    "skipped": 0,
+    "tests": 612
+  },
+  "episodes": [
+    {
+      "episode": "tasks/CloseBlenderLid/episodes/episode_000000",
+      "file_bytes_saved": 1531113,
+      "final_allocated_bytes": 23490560,
+      "final_file_bytes": 23213009,
+      "final_receipt_hashes": {
+        "COMPLETE.json": "37a58e86d2777f1830f08c9e91fb0c793cab53dae383da509e248469d163ceaf",
+        "SOURCE_RETIREMENT.json": "f9dbd59db65a0284f30854a99e89ebd4534210d69b3357566ed5223eafcdb84a",
+        "SPATIAL_SOURCE_FINAL_READY.json": "de758886690b66fc56ce7e4b10c8f5b3bcce9359c2bf08aa18150786232a2157",
+        "episode_manifest.json": "dab2a4abfb9055d4fba1f7c98dd662f93c507342721887097cc06ffa9a7189f5",
+        "spatial_source_index.json": "13b9dd3df3bf57cf8ab5de1cc70e547d8b1e9be881b5a2a52b4bc68d75a87b70",
+        "vae_cache/COMPLETE.json": "acd300e63c7c6ca11bc42ff0084d9c45c497c0e20e9f4dd92c6ee682fc557fea",
+        "vae_cache/manifest.json": "f8528771bdfd7b6ef50f8a929206617625c04ba0c86dd9d8a5d50d6f492a654d"
+      },
+      "gzip_bytes_before": 1698701,
+      "logical_views": 4,
+      "owners": 89,
+      "png_file_count": 89,
+      "pre_retirement_allocated_bytes": 25026560,
+      "pre_retirement_file_bytes": 24744122,
+      "raw_bytes_decoded_only": 33871612,
+      "raw_sha256": "2ea53052f1823d2fae9e8c87408bdb8539a87cc914c58b5da3425a6a8461f82b",
+      "source_id": "cb8a95f580bc30ad0ce361496866fad717aeb98050ccaab73b4180ffcffa1c84",
+      "source_index_bytes": 162976,
+      "states": 37,
+      "view_first_file_bytes": 20165857
+    },
+    {
+      "episode": "tasks/CloseFridge/episodes/episode_000502",
+      "file_bytes_saved": 1409168,
+      "final_allocated_bytes": 28602368,
+      "final_file_bytes": 28297711,
+      "final_receipt_hashes": {
+        "COMPLETE.json": "b85c9fdde5a20cf46ce6cc28ec03106f018eb815075faf1edaaaf3641a5b1a3e",
+        "SOURCE_RETIREMENT.json": "d7184072965c01a71942518b1a59d0b1304162c3a21e1cbca51af7c61f9bbc50",
+        "SPATIAL_SOURCE_FINAL_READY.json": "0f98737a5cc8c4d50a6b0c43c8a7a0aa1fa2f64b65d9b152410fabea6d772c0a",
+        "episode_manifest.json": "f514dfe22b328a29a9b7b71e7ad3b78ed6ce12643d5770ba8c27b768d7cd17e1",
+        "spatial_source_index.json": "cf9cfd0d6e18313b3519dbb253dce523950e14db1eed28ff081cd18f659bd578",
+        "vae_cache/COMPLETE.json": "d6cdac2ac8b306b830582d30b1d1671bda8e2a6672830578e58dfbeaf6dc6078",
+        "vae_cache/manifest.json": "8d5319c0b7af54beec6e06ad1a2ca5a33690d5f4582e9615046a2cdaab0c2f5a"
+      },
+      "gzip_bytes_before": 1571936,
+      "logical_views": 8,
+      "owners": 80,
+      "png_file_count": 80,
+      "pre_retirement_allocated_bytes": 30015488,
+      "pre_retirement_file_bytes": 29706879,
+      "raw_bytes_decoded_only": 30364617,
+      "raw_sha256": "38e759229aac1cd093043ad948b3ffe133ee9feb678946a2ca6cd5c8cfecb1a9",
+      "source_id": "bd0f83bf1b65bc10fd60145f729235c695c27590dbd524904620ba083d111754",
+      "source_index_bytes": 158160,
+      "states": 44,
+      "view_first_file_bytes": 25567834
+    }
+  ],
+  "evidence_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_view_first_posthoc_gate_5c7ea400_20261118",
+  "existing_environment": {
+    "executable": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python",
+    "packages": {
+      "Pillow": "12.2.0",
+      "mujoco": "3.3.1",
+      "numpy": "2.2.5",
+      "pandas": "2.2.3",
+      "pyarrow": "21.0.0",
+      "pytest": "9.0.2",
+      "ruff": "0.12.7",
+      "torch": "2.10.0+cu128"
+    },
+    "python": "3.13.11 (main, Jan 14 2026, 19:38:04) [Clang 21.1.4 ]"
+  },
+  "formal_root": "5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2",
+  "gates": {
+    "A": "PASS",
+    "B": "PASS_STRICT_ZERO_REENCODE",
+    "C": "PASS",
+    "D": "PASS"
+  },
+  "nav": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+  "not_run": [
+    "real F27 rerender or native regeneration",
+    "new 9126 View production start",
+    "full VAE or source retirement",
+    "training",
+    "independent GPT approval"
+  ],
+  "original_selected_episodes_all_file_hashes_unchanged": true,
+  "private_evidence": {
+    "checkout.json": {
+      "bytes": 309,
+      "sha256": "9eeea4c6cd6bdd80ac802168330c811ba026fb366c05e961f2510e98d1b562bb"
+    },
+    "checkout.log": {
+      "bytes": 1244,
+      "sha256": "5b23fd16c07b6ef9ffcdf412747cc749172b93727410358b2687d3b3944421f3"
+    },
+    "cpu/environment.json": {
+      "bytes": 632,
+      "sha256": "b37a8b1c15c22b260ba554c14f458ea67013eb8b83b8d275cfabc3fc13947d90"
+    },
+    "cpu/format.log": {
+      "bytes": 27,
+      "sha256": "ba72d5ff990b6755459efa6266bf58b9f38733d193f2c3339b32245e476e5994"
+    },
+    "cpu/gate.json": {
+      "bytes": 924,
+      "sha256": "096b145fb6b717b5428017c3136c320ad3c8baf90e1bd0721de6df824145a5a8"
+    },
+    "cpu/implementation_scope.json": {
+      "bytes": 31362,
+      "sha256": "532524a18fa44b1cdd4a69d617200ec2ea0283d7dedc58a1ab8e7855450d96f1"
+    },
+    "cpu/pytest.log": {
+      "bytes": 1480,
+      "sha256": "84ea2f97771490b727673e93631df816f8b0b1562bd4838483a01afd9281e99b"
+    },
+    "cpu/pytest.xml": {
+      "bytes": 89995,
+      "sha256": "52ef4ee5632ed054f7bca6783d0fdae000960417f72928e5408351c5f801fe7a"
+    },
+    "cpu/ruff.log": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "cpu/source_after.json": {
+      "bytes": 26289,
+      "sha256": "953f85e4adb5989c188f754552d8ec65bacc4e66c4d16716c3656080c17451f5"
+    },
+    "cpu/source_before.json": {
+      "bytes": 26289,
+      "sha256": "953f85e4adb5989c188f754552d8ec65bacc4e66c4d16716c3656080c17451f5"
+    },
+    "gate_b.json": {
+      "bytes": 2719,
+      "sha256": "f297ab42563afbe5539ca9e7d8e5363e16d3b50a0747b98d9806f4f6ae95a394"
+    },
+    "recovery/concurrent_resume_0.log": {
+      "bytes": 686,
+      "sha256": "e205e6448e65d805bf4f030244244d624523434571749f8e896e019fd339f0db"
+    },
+    "recovery/concurrent_resume_1.log": {
+      "bytes": 75,
+      "sha256": "37a43aa6e5811d096a6b04496507d9593a790111f2b26f4a3fbd29acaa5b79bb"
+    },
+    "recovery/crash.log": {
+      "bytes": 32,
+      "sha256": "5d385a6339076b485588d202f3a50e6f408e412a2cebf4efae54c6d73e6d11d8"
+    },
+    "recovery/gate_d.json": {
+      "bytes": 979,
+      "sha256": "80dd08b0da8d0c243548ac254993e54d94283238385e2304e54477628219f763"
+    },
+    "recovery/no_resume.log": {
+      "bytes": 227,
+      "sha256": "b90e5dc527035b64b67df8fb33852794798770cceabccc40d94ceab68d8e85d8"
+    },
+    "reencode.log": {
+      "bytes": 923,
+      "sha256": "92c9c10a9b6d01a5909664df98a43d262f8b24d2f48be21d644743528ae2a7ae"
+    },
+    "reencode.time.log": {
+      "bytes": 1302,
+      "sha256": "45a7bbb27c36923decfdb325a59b9d8422516f8e742890179991401bac056dde"
+    },
+    "retire_execute.log": {
+      "bytes": 673,
+      "sha256": "950633777612b9cadbb4896e4ca7dab0efd1e30cafe3ccb5cd99a9ef5a4903b6"
+    },
+    "retire_plan.log": {
+      "bytes": 1159,
+      "sha256": "2fa3030112e50fc8fde277f7ad5c0a72e7ba00ee0020086f42e4c8f75f9496b8"
+    },
+    "retire_repeat.log": {
+      "bytes": 1233,
+      "sha256": "7dd8a759b37c3a7b1931d9be2550b7a1e0503f3afd32dd5b501bc99c3912fc6a"
+    },
+    "retired_build_retry.json": {
+      "bytes": 1020,
+      "sha256": "8381df27446082d764555f726c5e84f05475913fa6a1302d9a977060987dbba0"
+    },
+    "retirement_commands.json": {
+      "bytes": 2796,
+      "sha256": "d771ca8ff36b327f9789cd5c8707e348e8993604e732fbdc0c9a263361252515"
+    },
+    "samples/before_retire.json": {
+      "bytes": 118802,
+      "sha256": "443d97bf42a16203721ae970572088e4fa50e8b28bd47ab70a657c2d5088ddb3"
+    },
+    "samples/gate_a.json": {
+      "bytes": 71808,
+      "sha256": "8b4930f5f7550ffce3262bffc5ee0da6698910dafeaf3027759e4da2a1d7f87e"
+    },
+    "samples/gate_c.json": {
+      "bytes": 75249,
+      "sha256": "fcc48445fa9e5d0580068df4d8c40e1ffd229ec275de300a7c1a0dd2da3fb4e8"
+    },
+    "vae_build.log": {
+      "bytes": 1196,
+      "sha256": "8caeb4aa771e959fedd70b0774f05848449557e34fa33475eec1eb416145b716"
+    },
+    "vae_build.time.log": {
+      "bytes": 1400,
+      "sha256": "8eeda6d71e7dcb4f1b16b408050f86a25911fd268193338081c151b1f9245234"
+    },
+    "vae_build_resources.json": {
+      "bytes": 225657,
+      "sha256": "f927a4ad57aa21f0e442d83b4ccde9b7eff222198669d57b9f24dfe97e1a083e"
+    }
+  },
+  "private_models_images_states_sources_exported": false,
+  "recipe_id": "3ee9c48399143866b2a0061f3cee01bff35842228f639380d60602d6402e2fc1",
+  "recovery": {
+    "all_products_pt_unchanged": true,
+    "audit": {
+      "atol": 0,
+      "episode_key": "CloseFridge/episode_000502",
+      "max_abs_error": null,
+      "payloads_checked": 8,
+      "recipe_id": "3ee9c48399143866b2a0061f3cee01bff35842228f639380d60602d6402e2fc1",
+      "records_checked": 80,
+      "reencoding_checked": false,
+      "rtol": 0,
+      "source_checked": true,
+      "training_ready": false
+    },
+    "corpus_cleanup": false,
+    "elapsed_s": 62.31841253489256,
+    "gpu": false,
+    "hard_exit": 77,
+    "interrupted_state": {
+      "complete_absent": true,
+      "gzip_absent": true,
+      "journal_present": true
+    },
+    "parallel_resume_exit_codes": [
+      0,
+      2
+    ],
+    "phase": "capsule_source_deleted:spatial_source.json.gz",
+    "public_retries": [
+      0,
+      0
+    ],
+    "real_records": 80,
+    "scope": "AUTHOR_REAL_FRIDGE_COPIED_CACHE_ONE_DELETE_CRASH_BOUNDARY_NOT_ALL_CPU_FAULTS",
+    "status": "PASS",
+    "training_ready": false,
+    "without_resume_exit": 75,
+    "zero_fabricated_events": true
+  },
+  "reencode": {
+    "atol": 0,
+    "max_abs_error": 0,
+    "payloads": 12,
+    "physical_gpu": 4,
+    "records": 169,
+    "rtol": 0,
+    "seconds": 30.57490250095725
+  },
+  "repositories": {
+    "fixed_child": {
+      "head": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+      "tracked_clean": true
+    },
+    "fixed_root": {
+      "head": "5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2",
+      "tracked_clean": true
+    },
+    "nav": {
+      "head": "70eb7b447e65d793b0ebe18b258291ce46f057c1",
+      "tracked_clean": true
+    },
+    "production_child": {
+      "head": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+      "tracked_clean": true
+    },
+    "production_root": {
+      "head": "b6311222c364543787f913215bf584065aa1c275",
+      "tracked_clean": true
+    }
+  },
+  "retired_build_retry": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "all_final_files_byte_identical": true,
+    "elapsed_s": 10.665861777961254,
+    "episode_count": 2,
+    "full_source_restored": false,
+    "reencoding_checked": false,
+    "status": "PASS",
+    "training_ready": false
+  },
+  "retirement_attempt_metrics": [
+    {
+      "archive": null,
+      "attempt_wall_s": 7.423040997236967,
+      "capsule_bytes": 162976,
+      "job_id": "887e56d77849148b9c674ae77a7f4714a55d6ffff7e188f750d00c3dedac5081",
+      "old_source_bytes": 1698701,
+      "real_vae_numeric_gate": "NOT_INFERRED_FROM_RETIREMENT",
+      "schema": "g2_source_retirement_metrics_v1"
+    },
+    {
+      "archive": null,
+      "attempt_wall_s": 8.081279195845127,
+      "capsule_bytes": 158160,
+      "job_id": "d03adfe2e343748e3f977bf722b78cc9af9602d053c084b249c6d87d0a6b4d36",
+      "old_source_bytes": 1571936,
+      "real_vae_numeric_gate": "NOT_INFERRED_FROM_RETIREMENT",
+      "schema": "g2_source_retirement_metrics_v1"
+    }
+  ],
+  "retirement_cli_seconds": {
+    "retire_execute": 58.921606458723545,
+    "retire_plan": 11.3872826769948,
+    "retire_repeat": 11.33801693469286
+  },
+  "schema": "g2_view_first_retirement_author_server_summary_v1",
+  "scope": "AUTHOR_FIXED_SOURCE_REAL_TWO_SAMPLES_NOT_INDEPENDENT_GPT_APPROVAL",
+  "server_code_commits_or_pushes": false,
+  "server_source_git_blobs_match": true,
+  "source_count": 246,
+  "source_hashes_stable_through_real_gates": true,
+  "timestamp_cst": "2026-11-18T10:08:27.994650+08:00",
+  "training_ready": false,
+  "view_tmux_alive": true
+}

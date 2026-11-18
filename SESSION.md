@@ -1,4 +1,40 @@
-# 2026-11-18 CST — View-first -> posthoc VAE -> retirement R1-R5 claim
+# 2026-11-18 CST — View-first -> posthoc VAE -> retirement REVIEW handoff
+
+Formal implementation5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2,
+Child/Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2,
+nav70eb7b447e65d793b0ebe18b258291ce46f057c1. Independent DraftPR67 targetsV3
+b6311222c364543787f913215bf584065aa1c275; fresh fetched/advertised V3 still
+matches. R1-R5 are five separate commits, no code changed after formalRoot.
+Current later docs/evidence SHA is bookkeeping, not a replacement code pair.
+
+Actual RDC/data execution in newfixed checkout and private samples:
+server existingPSM originalenv612/612CPU PASS/0skip/fail/error,246source Gitblobs
+match+stable through realGates, all560oldIDs/105oldtestsourcefiles retained.
+Localpeer sameexactRoot LOCAL_CODE_REVIEW_PASS/4separateprobesPASS, noP1/P2.
+Author realA sourcePASS2copies/81states/12views/169owners; B actualH100 B1/T1
+and independent169reencode maxabs0 at0/0, recipe3ee9c483...e2fc1. B267.95s
+endtoend (notpureencode/render), reencode30.57s. Cactualretirement58.92sCLI,
+all products/PT unchanged, no fullJSON/gzip/oldreceipt/READY in finalcopies;
+indices162976/158160B, final22.14/26.99MiB, physicalnetfile savings1.46/1.34MiB.
+D actualFridge80recordcache crash77 aftergzipunlink/beforeCOMPLETE; journal
+recovery/noresume75/parallel0+busy2/retries0/0 PASS, nofakeevents. Retired
+Bentry again withCUDAempty returnscomplete withoutencoding/JSONrestore or
+anyfinalfilebytechange. B/C/D spools have0activejobs/events/numericrecords.
+
+Originalnamedepisodes allfilehashes unchanged; prodRootb631/Childd5/nav70
+trackedclean; tmuxviewalive. No producer/task/config/Rootbranch changes,
+servercommit/push, rawasset/image/model/state export, full9126 VAE/retirement,
+native/F27 regeneration, train/install/merge. Some orchestration/claim-copy
+useshoststdlibPython; project numerical/cache/retirement run originalPSM
+3.13.11/Torch2.10.0+cu128, no alternate environment or dependency changes.
+Raw serverlogs/JUnit/private artifacts remain under
+/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_view_first_posthoc_gate_5c7ea400_20261118/.
+Own SERVER_GATES.md/server_summary.json/server_commands.json contain derived
+facts/hashes/exactcommands only. AUTHOR_SAMPLE_PASS is not GPT independent
+approval or fullcorpus release; training_ready=false. Publish canonicalInbox
+exactpair request and stop at Draft/review handoff; no automaticmerge/cleanup.
+
+## Earlier implementation and preflight record (superseded by results above)
 
 R5 complete AUTHOR_CPU: final_retry599PASS/13inheritedoptionalSKIP/0fail/error,
 612cases312.55s; original560IDs and all old test source bytes retained, new52

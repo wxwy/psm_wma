@@ -476,3 +476,22 @@ Independent exact-pair incremental review requested; keepDraft/noV3merge.
 - **NOT_RUN here:** server/private access or transfer, native/F27/Wan/weights/GPU/real169+419, actual corpus capacity/resource measurements, full9126, old-data deletion, new environment/install, P1microbatch, state15/joint alignment, training or merge. B1 preserved; training_ready=false. **STOP after publishing this fixed-source handoff for GPT; no automatic production or self-merge.**
 
 <!-- Issue63: formal a169fea07016b80b3639646cc9925ac70b6525a8; later HEAD contains only bookkeeping. -->
+
+## 2026-11-18 — G2 View-first → 独立 VAE → Source Retirement R1–R5，申请独立复审
+
+- Formal Root: **`5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2`**.
+- Child/Gitlink: **`d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2`**；nav实际HEAD **`70eb7b447e65d793b0ebe18b258291ce46f057c1`**。
+- Base/fresh advertised V3: `b6311222c364543787f913215bf584065aa1c275`。独立分支 `codex/g2-view-first-vae-retirement`，[Draft PR67](https://github.com/wxwy/psm_wma/pull/67)，未合并。R1–R5五次增量提交，后续提交仅文档/证据，不替代正式实现SHA。旧PR64/65/66已合并到此base，旧Inbox历史状态不代表当前状态。
+- 新模式显式支持 PR66 gzip+认证回执与Legacy raw，有限解压并核验压缩/原始哈希/字节数/sourceID，无完整JSON磁盘副本。后置入口复用现有B1/T1 Encode1、EventSpool/Consumer真实数值ACK、per-View writer和索引；原View-only profile/COMPLETE及产品不改。C-only使用真实完整缓存handoff和新posthoc policy，复用原v2 SQL-bound intent/journal/锁/leases/fsync/rename/GC，绝不伪造旧ACK。动态认证实际退休文件；独立posthoc_vae_receipt；只有完整验证才退休gzip/旧回执/旧READY。
+- CLI：原build增加 `--view-first --spool-root`；薄 `tools.g2.retire_view_first_sources` 提供显式plan/execute/resume/recipe/count，恢复先于旧manifest读取；已退休再入B/C不编码/不恢复大JSON。所有有效View/双俯视/Room/Island/缺失方向和真实owner/state/recipe继续保持。
+- **作者本地599PASS/13继承依赖SKIP；实际服务器原PSM环境612/612 PASS，0 FAIL/ERROR/SKIP**。旧560测试身份/105份旧测试源码保持；新增52项均执行；246份产品源码与fixedGitblobs精确匹配且整个真实Gate前后不变；21文件静态/格式PASS。初次本地旧supervisor25秒drain超时保留，未改源码/断言/超时的focused/full/server复跑PASS，原因未确证。原失败日志不改写、不当成首次全绿。
+- 独立本地peer exactpair **LOCAL_CODE_REVIEW_PASS**，4/4另计探针，含损坏来源/数值拒绝、重算外层hash仍拒绝假历史证据、实际双进程互斥。报告在 `docs/collab/codex/evidence/2026-11-18_view_first_retirement/peer/REPORT.md`。不冒充GPT独立审核。
+- **作者真实隔离Gates A–D PASS**：Blender000000/Fridge000502共81states/12Views/169owners，实际H100/Wan B1/T1/256×256及169条独立重编码严格max_abs_error=0、atol=rtol=0，recipe `3ee9c48399143866b2a0061f3cee01bff35842228f639380d60602d6402e2fc1`。保留产品/PT字节不变，退休后无完整JSON/gzip/旧回执/READY，紧凑索引162976/158160B，读器/重入B/C均通过；额外真实Fridge80条缓存副本在gzip删除后硬退出77，无resume返回75，同policy/spool/recipe并行恢复0+busy2，随后重试0/0，零伪造events。23种其他hard-exit/ENOSPC/live-reader等为CPU测试，未伪称全部真实Wan故障。
+- 实测含cache文件总量退休前23.60/28.33MiB→22.14/26.99MiB；净减少1.46/1.34MiB，按已存在gzip计算，不把解压raw32MiB当作释放空间。B端到端267.95秒（含来源/队列/编码/发布，非纯VAE或六图渲染），reencode30.57秒；C CLI执行58.92秒，collector attempt7.42/8.08秒另计；不据两集外推全库吞吐/容量。
+- 服务器私有原始日志/JUnit/来源/图片/状态/模型留在 `/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_view_first_posthoc_gate_5c7ea400_20261118/`。仓库仅派生摘要、哈希和精确命令：`docs/collab/codex/evidence/2026-11-18_view_first_retirement/{SERVER_GATES.md,server_summary.json,server_commands.json,final_retry/implementation_scope.json}`。完整协议/新旧接口/恢复/目录/全9126命令草案：`docs/build/PSM-WMA_G2_view_first_posthoc_retirement_2026-11-18.md`。
+- 原生产Rootb631/Childd5/nav70 trackedclean，选定原件全文件哈希未变，tmux `view` 存活；B/C/D测试spools均0activejobs/events/numericrecords。无服务器commit/push，无私有原始资产外传，无生产配置/在建输出/原始数据/nav/model A/B/C/D/G1/训练/checkpoint/Gitlink变更，无全9126 VAE/退休、真实F27重渲染、训练或合并。
+- **请求GPT对固定pair作 APPROVE_CODE / REQUEST_CHANGES，并独立复核服务器小样例闭环及恢复/保留文件/时空来源。** 作者实测不是独立批准；新退休数据需posthoc-aware读器；旧数据继续严格兼容。全9126命令只是草案，等View任务完成、独立验收及Owner明确发布，不能因这份回执自动执行。保持Draft与 `training_ready=false`，在此具体交接点停止，不自行合并或清理全库。
+
+<!-- ViewFirstRetirement: formal 5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2; later HEAD is documentation/evidence only. -->
+
+<!-- ViewFirstRetirement handoff boundary: original Inbox bytes preserved; no production release implied. -->
