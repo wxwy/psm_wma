@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: Apache-2.0
 """G2 DATA_B state15: one source-base/world recipe for offline and online.
 
 The source base anchor is observation.state[0:3], in MuJoCo world metres.
