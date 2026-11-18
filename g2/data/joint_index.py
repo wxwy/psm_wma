@@ -118,6 +118,25 @@ def _owner_view(index, reader, episode_root, s, ordinal, view_id, *, recipe_id):
     }
 
 
+def make_joint_recipe(*, state_recipe_id: str, view_recipe_id: str, top_variant: str):
+    """Single source of truth for the original immutable G2 joint recipe."""
+    if top_variant not in ("with_robot", "without_robot"):
+        raise DataCError("unknown top variant")
+    if not view_recipe_id or not state_recipe_id:
+        raise DataCError("missing state/View recipe identity")
+    return {
+        "schema": "g2_data_c_joint_recipe_v1",
+        "state15_recipe_id": state_recipe_id,
+        "view_recipe_id": view_recipe_id,
+        "top_variant": top_variant,
+        "alignment": "source_20hz_decision_to_most_recent_eligible_spatial_state",
+        "horizon": 16,
+        "spatial_update_policy": "no_future_owner",
+        "state15_source": "source_base_world",
+        "static_text_policy": "candidate_episode_static_initial_text",
+    }
+
+
 def build_episode_joint(
     *,
     task_class: str,
@@ -249,17 +268,11 @@ def build_episode_joint(
                 "text_id": text_id,
             }
         )
-    recipe = {
-        "schema": "g2_data_c_joint_recipe_v1",
-        "state15_recipe_id": state_recipe_id,
-        "view_recipe_id": view_recipe_id,
-        "top_variant": top_variant,
-        "alignment": "source_20hz_decision_to_most_recent_eligible_spatial_state",
-        "horizon": 16,
-        "spatial_update_policy": "no_future_owner",
-        "state15_source": "source_base_world",
-        "static_text_policy": "candidate_episode_static_initial_text",
-    }
+    recipe = make_joint_recipe(
+        state_recipe_id=state_recipe_id,
+        view_recipe_id=view_recipe_id,
+        top_variant=top_variant,
+    )
     payload = {
         "schema": "g2_data_c_joint_episode_v1",
         "task_class": task_class,
