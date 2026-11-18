@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: Apache-2.0
 """Optional real RoboCasa gate. Skips when private assets are not mounted."""
 
 import json
