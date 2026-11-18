@@ -19,7 +19,7 @@ from g2.data.episode_state import (
     json_load,
     require_regular,
 )
-from g2.data.joint_index import DataCError
+from g2.data.joint_index import DataCError, make_joint_recipe
 from g2.latent_cache.storage import ViewReader, open_episode_index
 
 
@@ -144,17 +144,52 @@ class CandidateAlignedG2Provider:
     split_identity = "SCOPED_EPISODES_SPLIT_NOT_FROZEN"
 
     def __init__(
-        self, *, data_c_root, state15_root, view_root, global_memory_enabled=True
+        self,
+        *,
+        data_c_root,
+        state15_root,
+        view_root,
+        global_memory_enabled=True,
+        initial_language_root=None,
+        initial_language_recipe_id=None,
     ):
+        if (initial_language_root is None) != (initial_language_recipe_id is None):
+            raise DataCError(
+                "external language requires both explicit root and recipe ID"
+            )
         self.data_c_root = Path(data_c_root)
         self.state15_root = Path(state15_root)
         self.view_root = Path(view_root)
         self.global_memory_enabled = global_memory_enabled
+        self.initial_language_root = (
+            Path(initial_language_root) if initial_language_root is not None else None
+        )
+        self.initial_language_recipe_id = initial_language_recipe_id
         self.corpus = open_corpus_manifest(data_c_root)
-        self.identity = self.corpus["data_identity"]
+        self.identity = (
+            self.corpus["data_identity"]
+            if self.initial_language_root is None
+            else canonical(
+                {
+                    "data_c_identity": self.corpus["data_identity"],
+                    "initial_language_recipe_id": self.initial_language_recipe_id,
+                    "language_scope": "review_episode_static_frame0_external",
+                }
+            )
+        )
         self.data = {}
         self._views = {}
+        self._language = {}
         self._manifest_stat = {}
+        expected_joint_id = canonical(
+            make_joint_recipe(
+                state_recipe_id=self.corpus["state15_recipe_id"],
+                view_recipe_id=self.corpus["view_recipe_id"],
+                top_variant=self.corpus["top_view_variant"],
+            )
+        )
+        if self.corpus.get("recipe_id", expected_joint_id) != expected_joint_id:
+            raise DataCError("DATA_C corpus joint recipe differs from source fields")
         for row in self.corpus["episodes"]:
             task, ep = row["task_class"], row["episode_index"]
             c_path = episode_path(self.data_c_root, task, ep)
@@ -165,7 +200,8 @@ class CandidateAlignedG2Provider:
             if (
                 marker["joint_sha256"] != digest(c_path / "joint_index.json")
                 or marker["joint_sha256"] != row["joint_sha256"]
-                or value["recipe_id"] != self.corpus["recipe_id"]
+                or value["recipe_id"] != expected_joint_id
+                or value["recipe_id"] != canonical(value["recipe"])
                 or b_marker["state15_sha256"] != value["data_b_sha256"]
                 or digest(b_path / "state15.pt") != value["data_b_sha256"]
                 or value["source_binding_digest"]
@@ -186,6 +222,65 @@ class CandidateAlignedG2Provider:
                 raise DataCError("nonfinite persisted DATA_B")
             self.data[(task, ep)] = (value, obj["state15"])
         self.view_read_count = 0
+
+    def _versioned_text(self, task_class, episode_index, idx):
+        from g2.language.initial_context import read_versioned_initial_language
+
+        key = (task_class, episode_index)
+        if key not in self._language:
+            record = read_versioned_initial_language(
+                self.initial_language_root,
+                recipe_id=self.initial_language_recipe_id,
+                task_class=task_class,
+                episode_index=episode_index,
+                source_binding_digest=idx["source_binding_digest"],
+                original_instruction=idx["original_instruction"],
+                view_root=self.view_root,
+            )
+            version = self.initial_language_recipe_id
+            lang_ep = (
+                self.initial_language_root
+                / "recipes"
+                / version
+                / "tasks"
+                / task_class
+                / "episodes"
+                / f"episode_{episode_index:06d}"
+            )
+            view_ep = episode_path(self.view_root, task_class, episode_index)
+            paths = (
+                self.initial_language_root / "OUTPUT_IDENTITY.json",
+                self.initial_language_root / "recipes" / version / "RECIPE.json",
+                lang_ep / "initial_context.json",
+                lang_ep / "COMPLETE.json",
+                view_ep / "episode_manifest.json",
+                view_ep / "task_entities.json",
+                view_ep / "language.json",
+                view_ep / record["provenance"]["initial_scene_graph_relative_path"],
+            )
+            watches = []
+            for path in paths:
+                require_regular(path)
+                st = path.stat()
+                watches.append(
+                    (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
+                )
+            self._language[key] = (record, paths, tuple(watches))
+        record, paths, watches = self._language[key]
+        for path, previous in zip(paths, watches, strict=True):
+            require_regular(path)
+            st = path.stat()
+            token = (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
+            if token != previous:
+                raise DataCError(
+                    "independent language or source changed during Provider lifetime"
+                )
+        return {
+            "original_instruction": record["original_instruction"],
+            "enhanced_instruction": record["augmented_instruction"],
+            "text_template_recipe_id": record["recipe"]["recipe_id"],
+            "text_id": record["text_id"],
+        }
 
     def _item(self, task_class, episode_index, decision_frame):
         key = (task_class, episode_index)
@@ -211,7 +306,11 @@ class CandidateAlignedG2Provider:
         )
 
         idx, states, window = self._item(task_class, episode_index, decision_frame)
-        text = idx["static_text"]
+        text = (
+            idx["static_text"]
+            if self.initial_language_root is None
+            else self._versioned_text(task_class, episode_index, idx)
+        )
         episode_id = f"{task_class}/episode_{episode_index:06d}"
         identity = G2SampleIdentity(
             episode_id=episode_id,
