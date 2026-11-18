@@ -49,7 +49,6 @@ def _gzip_receipt(raw, zipped, source_id):
 
 
 
-
 def _decode_gzip_bounded(z, expected_bytes):
     """Decode one immutable compressed byte string; never trust its filename."""
     try:
@@ -87,6 +86,7 @@ def _cached_decode_gzip(z, expected_bytes):
 
 MAX_CACHED_RAW_BYTES = 64 * 1024**2
 MAX_CACHED_GZIP_BYTES = 16 * 1024**2
+
 
 def working_source_info(root, *, include_raw=False):
     """Verified working bytes/transport identity; never materialize a JSON copy.
@@ -143,8 +143,7 @@ def working_source_info(root, *, include_raw=False):
         ):
             raise CacheError("declared compressed source sizes exceed finite bounds")
         cached = (
-            doc["raw_bytes"] <= MAX_CACHED_RAW_BYTES
-            and len(z) <= MAX_CACHED_GZIP_BYTES
+            doc["raw_bytes"] <= MAX_CACHED_RAW_BYTES and len(z) <= MAX_CACHED_GZIP_BYTES
         )
         raw, decoded_source, decoded_sha, source_fingerprint = (
             _cached_decode_gzip(z, doc["raw_bytes"])
