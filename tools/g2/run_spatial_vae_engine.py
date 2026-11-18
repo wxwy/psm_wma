@@ -25,6 +25,12 @@ def parser():
     p.add_argument("--engine-config", type=Path)
     p.add_argument("--gpus", default=None, help="physical indices, default4,5,6,7")
     p.add_argument("--max-batch-size", type=int)
+    p.add_argument(
+        "--finalize-workers",
+        type=int,
+        default=0,
+        help="CPU-only independent posthoc Episode finalizers (0=original serial)",
+    )
     p.add_argument("--max-wait-ms", type=float)
     p.add_argument("--idle-timeout-s", type=float)
     p.add_argument("--max-events", type=int, default=512)
@@ -62,6 +68,10 @@ def main(argv=None):
         from g2.latent_cache.contract import CacheError
         from g2.latent_cache.streaming import ConsumerLimits
 
+        if not 0 <= a.finalize_workers <= 8 or (
+            a.mode != "independent" and a.finalize_workers
+        ):
+            raise ValueError("finalize-workers must be 0..8, independent-only")
         cfg = read_json(a.engine_config) if a.engine_config else {}
         for key, value in (
             (
@@ -114,6 +124,7 @@ def main(argv=None):
                     dict(
                         schema="g2_multigpu_batch_engine_plan_v1",
                         mode=a.mode,
+                        finalize_workers=a.finalize_workers,
                         config=cfg,
                         recipe=recipe,
                         model_loaded=False,
@@ -162,6 +173,7 @@ def main(argv=None):
             expected=a.expected_episodes,
             producer_done=a.producer_done,
             resume=a.resume,
+            finalize_workers=a.finalize_workers,
         )
         result = engine.run()
         print(json.dumps(result, sort_keys=True))
