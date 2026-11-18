@@ -18,7 +18,7 @@ from g2.data.episode_state import (
     digest,
     json_load,
 )
-from g2.data.joint_index import build_episode_joint
+from g2.data.joint_index import build_episode_joint, make_joint_recipe
 from g2.data.pose5 import Pose5Recipe
 
 
@@ -58,6 +58,13 @@ def main(argv=None):
         source_binding_digest=raw.source_binding,
         state15_recipe_id=pose.recipe_id,
         view_recipe_id=args.view_vae_recipe_id,
+        recipe_id=canonical(
+            make_joint_recipe(
+                state_recipe_id=pose.recipe_id,
+                view_recipe_id=args.view_vae_recipe_id,
+                top_variant=args.top_view_variant,
+            )
+        ),
         top_view_variant=args.top_view_variant,
         alignment_version="g2_causal_latest_spatial_v1",
         split_identity="SCOPED_EPISODES_SPLIT_NOT_FROZEN",
@@ -68,9 +75,25 @@ def main(argv=None):
     if current.exists():
         old = json_load(current)
         for k, v in expected.items():
+            if k == "recipe_id" and k not in old:
+                continue  # legacy corpus omission: verify *all* episode recipes below
             if old.get(k) != v:
                 raise ValueError(f"existing DATA_C corpus incompatible {k}")
         for e in old["episodes"]:
+            if "recipe_id" not in old:
+                from g2.data.episode_state import episode_path
+
+                episode = episode_path(
+                    args.data_c_root, e["task_class"], e["episode_index"]
+                )
+                current_joint = json_load(episode / "joint_index.json")
+                if (
+                    current_joint.get("recipe_id") != expected["recipe_id"]
+                    or current_joint.get("recipe_id")
+                    != canonical(current_joint["recipe"])
+                    or digest(episode / "joint_index.json") != e["joint_sha256"]
+                ):
+                    raise ValueError("legacy DATA_C episode recipe/source disagrees")
             completed[(e["task_class"], e["episode_index"])] = e
     ready = []
     for marker in sorted(
