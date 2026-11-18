@@ -1,3 +1,58 @@
+# 2026-11-18 CST — Issue68 mandatory shared multi-GPU B32 dual-pipeline claim
+
+Owner Issue68 read in full via GitHub API; no issue comments at initial read.
+Latest Owner directly authorizes repository implementation and isolated real
+GPU/F27 Gates for BOTH sync and independent modes, new Draft; not full9126,
+active view changes, source export, training, Child/nav/model/G1 edits/merge.
+This supersedes historical optionalP1/B1-only and old MM/Kimi waiting scope.
+Task is not DONE unless both SYNC_VIEW_VAE_E2E and INDEPENDENT_VAE_E2E PASS.
+
+Clean startRoot03bb897618c9c6b6d23ecfa36e802747b4b44e79 contains formalPR67
+5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2. Fresh fetched/advertised/trackingV3
+b6311222c364543787f913215bf584065aa1c275 match; base..V3 empty. Unchanged
+Child/Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav advertised
+70eb7b447e65d793b0ebe18b258291ce46f057c1. Created independent branch
+codex/g2-multigpu-b32-dual-issue68 from03bb, no oldbranch/PR67 rewrite.
+Actual PR67 review5949979753 read: COMMENTED/SCOPED PASS, independent153CPU
+and347real retainedfile hashes; author169GPU evidence remains author. This is
+not B32/multigpu/syncE2E/fullproduction approval. New task is separately
+directly authorized; no prior verdict is relabeled for the new math.
+
+Claim: new latent_cache batch_contract.py,batch_encoding.py,batch_queue.py,
+batch_engine.py; minimal contract.validate_recipe dispatch, builder/production
+recipe override+batch provenance, streaming record-path/chunk validation
+extension; full_production.py consumer/config integration; build CLI explicit
+batch mode, thin shared engine CLI, official templates/launcher, new batch/
+lease/recovery/discovery/sync tests, own docs/evidence and ledgers.
+Legacy encoding.py stays byte-identical so B1 identity/math remain unchanged.
+PR67 gzip/source/posthoc/retirement implementations remain unchanged. Reuse
+existing EventSpool DB/ACK/writer/profile/work/source collector, no second
+queue or global transaction framework. One batch/lease extension serves both
+modes. No other Agent owns these files; separate read-only peer after REVIEW
+per AGENTS, no implementation delegation. No new environment/install.
+
+Owner async reply explicitly authorizes using ALL GPU4-7 despite current small
+view GPU load. No further resource permission needed; select fresh safe slots
+for isolated tests, never stop/reconfigure current view. GPU0-3 stay excluded.
+RDC readonly preflight: viewalive,3751episode COMPLETE markers (not fullverified),
+0-3training62GiB/100%,4-7viewcontexts,/data1free160613101568B. Owner prohibits
+taking occupied GPUs; asynchronously requested two cards/window while code/
+CPU work continues. No GPU Gate launched. SYNC_VIEW_VAE_E2E=NOT_RUN;
+INDEPENDENT_VAE_E2E=NOT_RUN; training_ready=false. Next A batch math/recipe,
+B shared claims/leases/fenced ACK, C both actual entrypoints, D failures and
+resource safety, E CPU+real dual Gates/fixed-source peer/Draft.
+
+## Previous implementation handoff
+
+Issue68 A checkpoint: final93/93 CPU PASS/0skip8.36s (new14+old79), staticPASS;
+original encoding.py/Child bytes unchanged. Actual native-call/shape counters
+and one-model mixed-source B1/8/16/32 numerical probe added; raw firstformat
+diagnostics retained. Commit A includes only batch contract/adapter/dispatch,
+new encoding tests and own probe/CPU evidence; batch_queue.py remains an
+uncommitted B implementation, not part of A GPU source identity. GPU4-7 were
+explicitly authorized by Owner after preflight. Next fixed-A real math probe
+in private Gate while implementing shared queue/dual-mode integration.
+
 # 2026-11-18 CST — View-first -> posthoc VAE -> retirement REVIEW handoff
 
 Formal implementation5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2,
