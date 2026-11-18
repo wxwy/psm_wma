@@ -25,7 +25,7 @@ def is_sealed(root):
     )
 
 
-def scan_source(root):
+def scan_source(root, *, view_first=False):
     if not is_sealed(root):
         from .source import scan_episode
 
@@ -36,21 +36,22 @@ def scan_source(root):
     manifest = validate_profile_episode(
         root, require_complete=False, _check_cache=False
     )
-    if not manifest["output_profile"]["view_vae"]:
-        raise CacheError(
-            "new source profile declares VAE disabled; do not change its completed output contract"
-        )
     from . import final_source as final
 
     is_final = manifest["schema"] == final.PROFILE_SCHEMA
-    source_path = contained(root, final.CAPSULE if is_final else "spatial_source.json")
-    ready_path = contained(
-        root, final.READY if is_final else "SPATIAL_SOURCE_READY.json"
-    )
-    before = (digest(source_path), digest(ready_path))
-    source = (
-        final.materialize_source(root, manifest) if is_final else read_json(source_path)
-    )
+    posthoc = not manifest["output_profile"]["view_vae"]
+    if posthoc and not (view_first or is_final):
+        raise CacheError(
+            "new source profile declares VAE disabled; do not change its completed output contract"
+        )
+    from g2.offline.view_only_source import view_first_binding, working_source_info
+
+    if is_final:
+        source = final.materialize_source(root, manifest)
+        before = {p: digest(contained(root, p)) for p in (final.CAPSULE, final.READY)}
+    else:
+        info = working_source_info(root)
+        source, before = info["source"], info["files"]
     states = [
         dict(state_ordinal=i, logical_state_id=r["state_id"], frame=r["frame"])
         for i, r in enumerate(source["states"])
@@ -92,16 +93,18 @@ def scan_source(root):
                 status="SEALED_NATIVE_RENDERER", source_id=source["source_id"]
             ),
         )
-    if before != (digest(source_path), digest(ready_path)):
+    if before != {p: digest(contained(root, p)) for p in before}:
         raise CacheError("spatial readiness changed while planning")
     binding = (
         final.source_binding(final.load_capsule(root), root)
         if is_final
+        else view_first_binding(root, info)
+        if posthoc
         else dict(
             schema=source["schema"],
             source_id=source["source_id"],
-            manifest_sha256=before[0],
-            complete_sha256=before[1],
+            manifest_sha256=before["spatial_source.json"],
+            complete_sha256=before["SPATIAL_SOURCE_READY.json"],
             identity_manifest="spatial_source.json",
             readiness_marker="SPATIAL_SOURCE_READY.json",
             validation_scope="SEALED_SPATIAL_SOURCE_AND_FINAL_PIXELS",
@@ -118,7 +121,14 @@ def scan_source(root):
 
 
 def verify_source(plan):
-    current = scan_source(plan["episode_root"])
+    from g2.offline.view_only_source import VAE_SOURCE_SCHEMA
+
+    from .final_source import payload_source
+
+    current = scan_source(
+        plan["episode_root"],
+        view_first=payload_source(plan["source"]).get("schema") == VAE_SOURCE_SCHEMA,
+    )
     if current != {k: plan[k] for k in current}:
         raise CacheError("sealed or legacy source changed during encoding")
     return True

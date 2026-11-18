@@ -42,6 +42,8 @@ def published_proof(row, scope):
         or receipt["recipe_id"] != scope["recipe_id"]
     ):
         raise CacheError("published episode differs from active scope")
+    from g2.offline.view_only_source import working_source_info
+
     names = (
         (
             final.CAPSULE,
@@ -54,8 +56,7 @@ def published_proof(row, scope):
         )
         if is_final
         else (
-            "spatial_source.json",
-            "SPATIAL_SOURCE_READY.json",
+            *working_source_info(root)["files"],
             "episode_manifest.json",
             "COMPLETE.json",
             "vae_cache/manifest.json",
@@ -68,6 +69,11 @@ def published_proof(row, scope):
         verified_cache=receipt,
         identity_files=files,
         profile_complete=manifest["profile_complete"],
+        **(
+            dict(source_lifecycle="view_first_posthoc_v1")
+            if not manifest["output_profile"]["view_vae"]
+            else {}
+        ),
         **(
             dict(
                 working_verified_cache=final.load_capsule(root)[
@@ -120,6 +126,7 @@ def duplicate(spool, record, event):
     source = (
         load_source(record["job"]["target"])
         if record["schema"] == "g2_published_episode_tombstone_v2"
+        or record["verification"].get("source_lifecycle") == "view_first_posthoc_v1"
         else read_json(contained(record["job"]["target"], "spatial_source.json"))
     )
     if source["final_pixel_events"].get(event.event_id) != event.descriptor():

@@ -1,5 +1,17 @@
 # 2026-11-18 CST — View-first -> posthoc VAE -> retirement R1-R5 claim
 
+R2 shared-core posthoc mode now works on raw and compressed View-first data:
+explicit cache source header, actual bounded EventSpool/Consumer record ACKs,
+all5 owners/4 views, no original profile/COMPLETE/product changes, fsynced
+record retry avoids repeat Encode1, same-target exclusion and recipe refusal.
+R2 first67case run65PASS/2new-fixture-expectationFAIL: Island plus_X still
+exists in stage_case, corrected new assertion to actual absent plus_Y; old
+tests/assertions untouched. New5cases then5PASS5.47s, old62 in first runPASS.
+Raw r2 logs/XML and staticPASS retained. No realVAE fact inferred. Posthoc
+retire adapter is an interface only until R3 extends policy/transaction paths.
+Next commit R2 then extend existing v2 retirement dynamic source inventory
+and explicit verified-cache handoff, no new ledger/encoder/data system.
+
 R1 implemented: working_source_info supplies verified raw/transport hashes,
 finite declared gzip bounds and original readiness/source-ID validation;
 old load_working_source tuple preserved, final_source.load_source/sha dispatch
