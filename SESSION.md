@@ -46,6 +46,19 @@ resource safety, E CPU+real dual Gates/fixed-source peer/Draft.
 
 ## Issue68 B/C checkpoint — fixed-code review and real Gates next
 
+R1 narrow fixes before real dual runs: read-only peer formal29e4623e found
+P1 finite-numeric-budget circular wait; P2 task directory beforeepisodesmkdir;
+P2 directepisode selectors ignored. Exact repro/logs retained in ownpeer/.
+Added bounded capacity watchdog (existing worker_timeout, source/results held),
+benign unpublished-directory handling, direct/header/catalogue identity scopes,
+new virtual+actualengine capacity-failure and selector tests. Real-Gate proof
+now uses actual native_called/GPU/CUDA metrics and overlapping encode-API call
+intervals; ACK-only recovery-card counts are not encoding proof. API timing
+includes coldload/preprocess, not claimed as CUDA-kernel-overlap trace.
+Fixed29e4623e originalserverPSM full646/646 PASS/0skip/fail/error201.36s,
+all258sourcehashes stable, old612IDs/oldtests unchanged. This does not approve
+R1 newSHA or either real E2E; next finalfixedCPU+twoactualdualGates mandatory.
+
 Shared engine/queue/worker integrated with original sync full_production and
 explicit independent build CLI; same EventSpool authority/new small SQL batch
 lease tables, original writer/fsync/ACK/cache/source/work collectors. Genuine

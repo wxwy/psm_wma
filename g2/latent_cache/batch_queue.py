@@ -43,6 +43,12 @@ def admitted(db, job, event, now):
     )
 
 
+def reservation(context):
+    return len(context["members"]) * (
+        48 * 16 * 16 * 4 + 16384 + 2 * len(canonical(context))
+    )
+
+
 class BatchQueue:
     def __init__(
         self, spool, *, lease_s=60, batch_wait_ms=500, clock=time.time, _initialize=True
@@ -129,9 +135,7 @@ class BatchQueue:
                         for r in rows
                     ],
                 )
-                reserve = len(rows) * (
-                    48 * 16 * 16 * 4 + 16384 + 2 * len(canonical(context))
-                )
+                reserve = reservation(context)
                 used = db.execute(
                     "SELECT COALESCE(SUM(reserved_bytes),0) FROM engine_batches"
                 ).fetchone()[0]
@@ -420,6 +424,36 @@ class BatchQueue:
                     "SELECT COUNT(*) FROM engine_members WHERE batch IS NULL"
                 ).fetchone()[0],
             )
+
+    def capacity_pressure(self):
+        """Report admission pressure without changing an immutable batch/budget."""
+        with self.spool._db() as db:
+            rows = db.execute(
+                "SELECT e.job,e.descriptor FROM engine_members m JOIN events e ON e.job=m.job AND e.id=m.event JOIN jobs j ON j.id=e.job WHERE m.batch IS NULL AND e.status='pending' AND j.done=0 AND j.error IS NULL ORDER BY m.ready_at,e.rowid LIMIT ?",
+                (self.spool.recipe["batch_size"],),
+            ).fetchall()
+            used = db.execute(
+                "SELECT COALESCE(SUM(reserved_bytes),0) FROM engine_batches"
+            ).fetchone()[0]
+        required = (
+            reservation(
+                make_context(
+                    self.spool.recipe,
+                    [
+                        dict(job=r["job"], event=json.loads(r["descriptor"]))
+                        for r in rows
+                    ],
+                )
+            )
+            if rows
+            else 0
+        )
+        return dict(
+            blocked=bool(rows) and used + required > self.spool.max_result_bytes,
+            required_bytes=required,
+            reserved_bytes=used,
+            limit_bytes=self.spool.max_result_bytes,
+        )
 
     def collect(self):
         """Only batches whose every job has a verified existing tombstone may go."""

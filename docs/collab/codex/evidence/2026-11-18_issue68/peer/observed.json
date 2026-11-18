@@ -1,0 +1,50 @@
+{
+  "completed_batch_capacity_cycle": {
+    "claim_returns_none": [
+      true,
+      true,
+      true
+    ],
+    "configured_max_result_bytes": 3505536,
+    "job_finalizable": false,
+    "queue": {
+      "batch_states": {
+        "complete": 1
+      },
+      "gpu": {
+        "4": {
+          "batch_histogram": {
+            "32": 1
+          },
+          "batches": 1,
+          "encode_seconds": 0.073040035989834,
+          "io_ack_seconds": 1.052484343003016,
+          "peak_allocated_bytes": 0,
+          "peak_reserved_bytes": 0,
+          "records": 32
+        }
+      },
+      "pending_members": 3,
+      "reserved_numeric_bytes": 3505536
+    },
+    "spool": {
+      "active_jobs": 1,
+      "active_records": 35,
+      "cleanup_pending_jobs": 0,
+      "completed_jobs": 0,
+      "failed_jobs": 0,
+      "pending_bytes": 246,
+      "pending_inputs": 3,
+      "statuses": {
+        "acked": 32,
+        "pending": 3
+      },
+      "unfinished_jobs": 1
+    }
+  },
+  "incomplete_task_directory": {
+    "accepted": false,
+    "error": "cache path is missing: NewTask/episodes",
+    "error_type": "CacheError"
+  }
+}

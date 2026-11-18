@@ -36,6 +36,11 @@ OOM or a replay difference fails with source retained; no implicit split or
 batch resizing. The owned-process supervisor reclaims a dead worker's lease;
 tokens reject stale writes. Numerical reservations, pending BLOB/event limits,
 active-job bounds, disk watermark and restart limits are finite.
+If completed staging consumes the numeric budget and no batch can be admitted,
+the coordinator gives source-ready/finalization/GC a bounded chance to progress
+(existing worker timeout, default300s), then explicitly fails with source and
+fixed-batch results retained. Busy state cannot suppress this capacity failure
+forever. Budgets are never enlarged or batch membership changed implicitly.
 
 Completed numeric staging and active SQL batch/member rows are collected only
 after all member jobs have genuine existing completed-job tombstones. Small
@@ -48,6 +53,8 @@ The watcher reads only episodes with their own COMPLETE. Partial/staging
 directories and task directories not yet published do not become errors or
 sources. It verifies the original View-only profile, gzip/raw receipt, actual
 owners and immutable PNG bytes, then offers those events to the shared engine.
+Explicit task/episode selectors apply even to a directly supplied episode root;
+dataset catalogue locations must match the manifest identity.
 It never reruns F27, MuJoCo, ROS or SG. Reference states are indexed without
 being re-encoded. Compact owner/state identity still comes from sealed source.
 

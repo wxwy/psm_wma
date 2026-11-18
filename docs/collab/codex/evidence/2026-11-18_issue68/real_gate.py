@@ -203,6 +203,41 @@ def audits(args, data, spool):
     )
 
 
+def native_trace(spool):
+    """ACK-only recovery is not evidence that a card actually encoded."""
+    calls = []
+    for path in (spool / "worker_logs").glob("*.jsonl"):
+        for line in path.read_text().splitlines():
+            value = json.loads(line)
+            if not value.get("native_called"):
+                continue
+            assert not value.get("test_only")
+            assert (
+                value["metrics"]["native_calls"] == 1
+                and value["metrics"]["native_cuda_ms"] > 0
+            )
+            assert value["native_input_shape"][1:] == [3, 1, 256, 256]
+            calls.append(value)
+    gpus = sorted({v["physical_gpu"] for v in calls})
+    overlap = sum(
+        a["physical_gpu"] != b["physical_gpu"]
+        and max(a["encode_api_started_unix"], b["encode_api_started_unix"])
+        < min(a["encode_api_completed_unix"], b["encode_api_completed_unix"])
+        for i, a in enumerate(calls)
+        for b in calls[i + 1 :]
+    )
+    assert len(gpus) >= 2 and overlap > 0, (
+        "two GPU native encoding/overlapping API calls not established"
+    )
+    return dict(
+        native_gpu_ids=gpus,
+        native_calls=len(calls),
+        overlapping_encode_api_pairs=overlap,
+        overlap_scope="ENCODE_API_INCLUDES_COLD_LOAD_PREPROCESS_NOT_CUDA_KERNEL_TRACE",
+        calls=calls,
+    )
+
+
 def independent(args):
     args.gate.mkdir(exist_ok=False)
     data = args.gate / "dataset"
@@ -268,6 +303,7 @@ def independent(args):
         )
         == 32
     )
+    trace = native_trace(spool)
     before = audits(args, data, spool)
     assert before["cross_episode_batches"] >= 1
     policy = dict(
@@ -345,6 +381,7 @@ def independent(args):
         recipe_id=result["recipe_id"],
         discovery_after_start=True,
         engine=result,
+        native_execution=trace,
         before_retirement=before,
         after_retirement=audits(args, data, spool),
         replay=replay,
@@ -403,6 +440,7 @@ def sync(args):
     engine = read_json(Path(cfg["spool_root"]) / "engine_result.json")
     assert engine["status"] == "DRAINED" and len(engine["batch"]["gpu"]) >= 2
     assert sum(engine["worker_restarts"].values()) == 1
+    trace = native_trace(Path(cfg["spool_root"]))
     data = Path(cfg["output_root"])
     for r in SAMPLES:
         root = data / r
@@ -430,6 +468,7 @@ def sync(args):
         early_durable_ack=True,
         worker_crash_resumed_same_batch=True,
         engine=engine,
+        native_execution=trace,
         audit=audits(args, data, Path(cfg["spool_root"])),
         replay=replay,
         run=run,

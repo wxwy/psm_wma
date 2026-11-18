@@ -54,6 +54,12 @@ def discover_published(dataset_root, *, tasks=None, episodes=None):
     if root.is_symlink() or not root.is_dir():
         raise CacheError("published dataset must be a real existing directory")
     if (root / "COMPLETE.json").is_file():
+        manifest = read_json(contained(root, "episode_manifest.json"))
+        task, eid = manifest.get("task_class"), manifest.get("episode_id")
+        if not isinstance(task, str) or type(eid) is not int or eid < 0:
+            raise CacheError("invalid published episode identity")
+        if (tasks and task not in tasks) or (episodes and eid not in episodes):
+            return []
         return [root]
     if not (root / "tasks").exists():
         return []
@@ -63,7 +69,11 @@ def discover_published(dataset_root, *, tasks=None, episodes=None):
         if tasks and task.name not in tasks:
             continue
         safe_relative(task.name)
-        directory = contained(available, task.name + "/episodes")
+        directory = contained(available, task.name + "/episodes", allow_missing=True)
+        if not directory.exists():
+            continue  # mkdir task precedes mkdir episodes and episode publication.
+        if not directory.is_dir():
+            raise CacheError("published task episodes namespace must be a directory")
         for ep in sorted(directory.iterdir()):
             match = EPISODE_NAME.fullmatch(ep.name)
             if not match or (episodes and int(match.group(1)) not in episodes):
@@ -145,6 +155,23 @@ class IdleClock:
         if self.since is None:
             self.since = now
         return now - self.since >= self.timeout
+
+
+class CapacityWatchdog:
+    """Bound a circular numeric-budget wait, while allowing source-ready/GC."""
+
+    def __init__(self, timeout):
+        self.timeout, self.since, self.signature = timeout, None, None
+
+    def observe(self, now, *, blocked, signature):
+        if not blocked:
+            self.since, self.signature = None, None
+        elif self.since is None or self.signature != signature:
+            self.since, self.signature = now, signature
+        elif now - self.since >= self.timeout:
+            raise CacheError(
+                "numeric capacity cannot progress within the configured worker timeout; full source and fixed-batch results retained; explicit capacity review required"
+            )
 
 
 def initialize(
@@ -240,6 +267,9 @@ class BatchEngine:
         self._stop = self._mp.Event()
         self._last_discovery, self._last_progress = float("-inf"), float("-inf")
         self._idle = IdleClock(spec["idle_timeout_s"])
+        self._capacity = CapacityWatchdog(
+            max(spec["worker_timeout_s"], spec["batch_wait_ms"] / 1000 + 1)
+        )
         self._new_work = False
         self._paused = False
         self._started = self.clock()
@@ -365,6 +395,13 @@ class BatchEngine:
             from g2.offline.stage_a import validate_profile_episode
 
             manifest = validate_profile_episode(root)
+            if root != self.data and (
+                root.parent.parent.name != manifest["task_class"]
+                or root.name != f"episode_{manifest['episode_id']:06d}"
+            ):
+                raise CacheError(
+                    "published manifest differs from its catalogue location"
+                )
             if manifest["output_profile"]["view_vae"]:
                 raise CacheError(
                     "independent watcher requires original View-only publications"
@@ -608,6 +645,23 @@ class BatchEngine:
                     self._finish_jobs()
                     self.queue.collect()
                     stats, batches = self.spool.stats(), self.queue.stats()
+                    no_inflight = not (
+                        batches["batch_states"].get("running", 0)
+                        or batches["batch_states"].get("ready", 0)
+                    )
+                    pressure = (
+                        self.queue.capacity_pressure()
+                        if no_inflight and batches["pending_members"]
+                        else dict(blocked=False)
+                    )
+                    self._capacity.observe(
+                        self.clock(),
+                        blocked=pressure["blocked"],
+                        signature=(
+                            json.dumps([stats, batches], sort_keys=True),
+                            self._new_work,
+                        ),
+                    )
                     if stats["failed_jobs"] or batches["batch_states"].get("failed", 0):
                         raise CacheError(
                             "failed batches retained; explicit resume required"

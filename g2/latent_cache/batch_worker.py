@@ -129,6 +129,7 @@ def execute_claim(queue, encoder, claim, *, physical_gpu, crash_once=None):
                 existing[position] = info
         produced = None
         encode_s = 0.0
+        encode_call_started, encode_call_completed = None, None
         if len(existing) != len(paths):
             images = []
             for member, raw in zip(
@@ -144,7 +145,9 @@ def execute_claim(queue, encoder, claim, *, physical_gpu, crash_once=None):
                     images.append(np.array(image, copy=True))
             queue.native_attempt(claim)
             tick = time.perf_counter()
+            encode_call_started = time.time()
             produced = encoder.encode_batch(images, spool.recipe["preprocessing"])
+            encode_call_completed = time.time()
             encode_s = time.perf_counter() - tick
             queue.native_attempt(claim, getattr(encoder, "last_metrics", {}))
             if len(produced) != len(paths):
@@ -235,6 +238,8 @@ def execute_claim(queue, encoder, claim, *, physical_gpu, crash_once=None):
             native_input_shape=context["input_shape"],
             reused_files=len(existing),
             native_called=produced is not None,
+            encode_api_started_unix=encode_call_started,
+            encode_api_completed_unix=encode_call_completed,
             encode_seconds=encode_s,
             wall_seconds=time.perf_counter() - started,
             metrics=metric,

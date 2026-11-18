@@ -8,6 +8,7 @@ import pytest
 from g2.io import digest, read_json, write_json
 from g2.latent_cache.batch_engine import (
     BatchEngine,
+    CapacityWatchdog,
     IdleClock,
     discover_published,
     engine_config,
@@ -23,7 +24,7 @@ from g2.tests.test_stage_a_package import stage_case
 FACTORY = "g2.tests.batch_helpers:FakeBatchEncoder"
 
 
-def init(tmp_path, *, mode="independent", fault=None):
+def init(tmp_path, *, mode="independent", fault=None, budget=4 * 1024**3):
     config = dict(
         gpus=[4, 5],
         batch_wait_ms=5,
@@ -41,6 +42,7 @@ def init(tmp_path, *, mode="independent", fault=None):
         lifecycle="view_first_posthoc_v1" if mode == "independent" else "streaming_v1",
         _test_factory=FACTORY,
         allow_test=True,
+        max_result_bytes=budget,
     )
 
 
@@ -85,6 +87,10 @@ def test_config_rejects_ambiguous_unbounded_or_unscoped_fault(bad):
 def test_continuous_discovery_ignores_inprogress_then_published(tmp_path):
     data = tmp_path / "dataset"
     data.mkdir()
+    assert discover_published(data) == []
+    (data / "tasks/NewTask").mkdir(parents=True)
+    assert discover_published(data) == []
+    (data / "tasks/NewTask/episodes").mkdir()
     assert discover_published(data) == []
     partial = data / "tasks/NavigateKitchen/episodes/episode_000000"
     partial.mkdir(parents=True)
@@ -281,3 +287,51 @@ def test_batch_cache_source_retirement_and_reentry_need_no_original_json(tmp_pat
         ).run()["status"]
         == "IDLE_TIMEOUT"
     )
+
+
+def test_capacity_wait_is_bounded_and_progress_or_gc_resets_it():
+    clock = CapacityWatchdog(300)
+    clock.observe(0, blocked=True, signature="completed32_pending3")
+    clock.observe(299.9, blocked=True, signature="completed32_pending3")
+    with pytest.raises(CacheError, match="numeric capacity.*source.*retained"):
+        clock.observe(300, blocked=True, signature="completed32_pending3")
+    clock.observe(301, blocked=True, signature="another_job_completed")
+    clock.observe(599, blocked=True, signature="another_job_completed")
+    clock.observe(600, blocked=False, signature=None)
+    clock.observe(1000, blocked=True, signature="next_episode")
+
+
+@pytest.mark.parametrize(
+    "scope,accepted",
+    [
+        (dict(tasks=["DifferentTask"]), False),
+        (dict(episodes=[999]), False),
+        (dict(tasks=["NavigateKitchen"], episodes=[0]), True),
+    ],
+)
+def test_direct_published_episode_honors_explicit_identity_scope(
+    tmp_path, scope, accepted
+):
+    target, _ = sample(tmp_path)
+    assert discover_published(target, **scope) == ([target] if accepted else [])
+
+
+def test_engine_capacity_deadlock_fails_with_source_retained(tmp_path):
+    import time
+
+    target, _ = sample(tmp_path)
+    before = {p: digest(p) for p in target.rglob("*") if p.is_file()}
+    spool, spec = init(tmp_path, budget=1)
+    engine = BatchEngine(
+        spool,
+        spec,
+        mode="independent",
+        dataset_root=tmp_path / "dataset",
+        clock=lambda: time.monotonic() * 200,
+    )
+    with pytest.raises(CacheError, match="numeric capacity"):
+        engine.run()
+    assert all(digest(p) == sha for p, sha in before.items())
+    assert spool.stats()["pending_inputs"] == 5
+    assert read_json(spool.root / "engine_progress.json")["status"] == "FAILED"
+    assert not (target / "vae_cache/COMPLETE.json").exists()

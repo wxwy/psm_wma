@@ -150,6 +150,7 @@ def test_budget_backpressure_and_temp_cleanup(tmp_path):
     q = BatchQueue(spool, batch_wait_ms=0)
     q.register_worker("a", 4)
     assert q.claim("a") is None and spool.stats()["pending_inputs"] == 2
+    assert q.capacity_pressure()["blocked"] is True
     spool.max_result_bytes = 1024**2
     claim = q.claim("a")
     directory = spool.root / "records" / claim["context"]["batch_id"]
@@ -157,3 +158,4 @@ def test_budget_backpressure_and_temp_cleanup(tmp_path):
     (directory / ".view-owned.tmp").write_bytes(b"interrupted")
     execute_claim(q, enc, claim, physical_gpu=4)
     assert not list(directory.glob(".view-*"))
+    assert q.capacity_pressure()["blocked"] is False
