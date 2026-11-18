@@ -327,6 +327,11 @@ class BatchEngine:
                     continue
                 if self.spool.reap(row["id"]):
                     self._release(row["target"])
+            elif self.mode == "independent" and row["source_ready"] is None:
+                # A manager can die between durable register and offer. Unlike
+                # sync's legitimately producing row, this input was published.
+                # The original offer revalidates full source and pinned scope.
+                self.spool.offer_source(row["id"])
         if self.resume:
             self.queue.retry_failed()
 
@@ -621,13 +626,13 @@ class BatchEngine:
             self._paused = True
 
         with build_lock(self.spool.root / "engine_coordinator"):
-            self._recover()
-            for gpu in self.spec["gpus"]:
-                self._spawn(gpu)
-            if threading.current_thread() is threading.main_thread():
-                for sig in (signal.SIGTERM, signal.SIGINT):
-                    old[sig] = signal.signal(sig, request_stop)
             try:
+                self._recover()
+                for gpu in self.spec["gpus"]:
+                    self._spawn(gpu)
+                if threading.current_thread() is threading.main_thread():
+                    for sig in (signal.SIGTERM, signal.SIGINT):
+                        old[sig] = signal.signal(sig, request_stop)
                 while True:
                     self._new_work = False
                     self._supervise()

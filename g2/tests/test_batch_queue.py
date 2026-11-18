@@ -62,6 +62,7 @@ def test_maximum_wait_tail_and_durable_ack_inputs(tmp_path):
     assert len(claim["context"]["members"]) == 32
     result = execute_claim(q, enc, claim, physical_gpu=4)
     assert result["native_called"] and enc.calls == 1
+    assert result["queue_wait"] == dict(min_seconds=0, max_seconds=0)
     assert spool.stats()["pending_inputs"] == 3
     assert q.claim("a") is None
     now[0] += 0.5
@@ -69,6 +70,8 @@ def test_maximum_wait_tail_and_durable_ack_inputs(tmp_path):
     assert tail["context"]["input_shape"] == [3, 3, 1, 256, 256]
     execute_claim(q, enc, tail, physical_gpu=4)
     assert enc.calls == 2 and spool.stats()["pending_inputs"] == 0
+    assert q.stats()["gpu"]["4"]["native_batches"] == 2
+    assert q.stats()["gpu"]["4"]["native_records"] == 35
 
 
 def _crash(root, claim, phase):

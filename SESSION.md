@@ -59,6 +59,26 @@ Fixed29e4623e originalserverPSM full646/646 PASS/0skip/fail/error201.36s,
 all258sourcehashes stable, old612IDs/oldtests unchanged. This does not approve
 R1 newSHA or either real E2E; next finalfixedCPU+twoactualdualGates mandatory.
 
+R2 pre-final fixes: peer87dd independently closed original3 but found newP1
+register-before-offer coordinator hardexit strands independent job; newP1
+legacyB1 pendingpixel sharing leaves distinct batch chunk and blocks GC.
+Fixed only independent recovery re-offer (existing full/scope verifier),
+startup try/finally lease/process cleanup, and schema2 exclusion from legacy
+pendingpixel heuristic (same-result ownership+allB1 behavior unchanged).
+New actualos._exit77 register recovery, changedscope+lease reject, syncproducing
+guard and genuine twoepisode identicalPNG/cache/ACK/tombstone/GC test added.
+R2 focused29PASS/0skip115.14s; metric native/queuewait newcase separately run.
+No silent numerical replacement/split, no verifier bypass or fake SQL ACK.
+
+Fixed87dd originalserverPSM651/651CPU PASS/0skip and author independent real
+E2E PASS:169records/12Views/81states,actual4/5/6/7native6callsB32+tail9,
+onecrossEPbatch,11overlappingencodeAPIpairs (notkerneltrace); samecontext
+169replayexact0, isolated C+postretiredresume+allretainedproducts/PNG/PTstable,
+0activejobs/events/numericrecords. Rawdata/private logs stayserver
+`.g2_issue68_dual_20261118/independent_c`; finalnewRoot still needs its own
+coordinatorcrash sample and sync truefreshMuJoCo/F27 E2E. No final approval
+is inferred from87dd, peerR1 remains REQUEST_CHANGES until R2 closure.
+
 Shared engine/queue/worker integrated with original sync full_production and
 explicit independent build CLI; same EventSpool authority/new small SQL batch
 lease tables, original writer/fsync/ACK/cache/source/work collectors. Genuine

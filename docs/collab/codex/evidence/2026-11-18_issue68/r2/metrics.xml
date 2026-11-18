@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="3.357" timestamp="2026-11-18T04:39:05.210983+00:00" hostname="82d6a371db9c"><testcase classname="g2.tests.test_batch_queue" name="test_maximum_wait_tail_and_durable_ack_inputs" time="3.266" /></testsuite></testsuites>

@@ -335,3 +335,134 @@ def test_engine_capacity_deadlock_fails_with_source_retained(tmp_path):
     assert spool.stats()["pending_inputs"] == 5
     assert read_json(spool.root / "engine_progress.json")["status"] == "FAILED"
     assert not (target / "vae_cache/COMPLETE.json").exists()
+
+
+def _register_then_crash(spool_root, target):
+    import os
+
+    from g2.latent_cache.streaming import EventSpool
+
+    spool = EventSpool.open(spool_root)
+    manifest = read_json(Path(target) / "episode_manifest.json")
+    spool.register(
+        target,
+        episode_key="NavigateKitchen/episode_000000",
+        source_fingerprint=manifest["source_fingerprint"],
+        profile_id=manifest["output_profile"]["profile_id"],
+    )
+    os._exit(77)
+
+
+def test_manager_hard_exit_between_register_and_offer_resumes_published_input(tmp_path):
+    import multiprocessing
+
+    target, _ = sample(tmp_path)
+    spool, spec = init(tmp_path)
+    p = multiprocessing.get_context("spawn").Process(
+        target=_register_then_crash, args=(str(spool.root), str(target))
+    )
+    p.start()
+    p.join(20)
+    assert p.exitcode == 77
+    with spool._db() as db:
+        assert db.execute("SELECT source_ready FROM jobs").fetchone()[0] is None
+    assert (
+        BatchEngine(
+            spool,
+            spec,
+            mode="independent",
+            dataset_root=tmp_path / "dataset",
+            resume=True,
+        ).run()["status"]
+        == "IDLE_TIMEOUT"
+    )
+    assert verify_episode(target)["records_checked"] == 5
+    assert spool.stats()["active_jobs"] == 0
+
+
+def test_recovered_register_rejects_changed_source_and_releases_target_lease(tmp_path):
+    from g2.latent_cache.posthoc import coordinator
+    from g2.latent_cache.storage import build_lock
+
+    target, _ = sample(tmp_path)
+    spool, spec = init(tmp_path)
+    manifest = read_json(target / "episode_manifest.json")
+    spool.register(
+        target,
+        episode_key="NavigateKitchen/episode_000000",
+        source_fingerprint="0" * 64,
+        profile_id=manifest["output_profile"]["profile_id"],
+    )
+    engine = BatchEngine(
+        spool, spec, mode="independent", dataset_root=tmp_path / "dataset", resume=True
+    )
+    with pytest.raises(CacheError, match="offered source differs"):
+        engine.run()
+    with build_lock(coordinator(target)):
+        pass
+    assert not (target / "vae_cache/COMPLETE.json").exists()
+    assert (target / "spatial_source.json.gz").is_file()
+
+
+def test_sync_recovery_leaves_genuinely_producing_unoffered_source_pending(tmp_path):
+    spool, spec = init(tmp_path, mode="sync")
+    target = tmp_path / "not_published"
+    spool.register(
+        target,
+        episode_key="NavigateKitchen/episode_000000",
+        source_fingerprint="a" * 64,
+        profile_id="b" * 64,
+    )
+    engine = BatchEngine(spool, spec, mode="sync", resume=True)
+    try:
+        engine._recover()
+        with spool._db() as db:
+            assert db.execute("SELECT source_ready FROM jobs").fetchone()[0] is None
+    finally:
+        engine._shutdown()
+
+
+def test_equal_pixels_in_pending_episode_do_not_pin_another_batchs_chunks(tmp_path):
+    from g2.latent_cache.batch_worker import execute_claim
+    from g2.tests.batch_helpers import FakeBatchEncoder
+
+    profile = OutputProfile(selection_top_variant="clean", view_vae=False)
+    roots = []
+    for eid in (0, 1):
+        kwargs, _ = stage_case(tmp_path / f"fixture{eid}", profile)
+        kwargs["episode_id"] = eid
+        for caption in kwargs["captions"].values():
+            caption["episode_index"] = eid
+        target = tmp_path / f"dataset/tasks/NavigateKitchen/episodes/episode_{eid:06d}"
+        package_stage_a(destination=target, compress_source=True, **kwargs)
+        roots.append(target)
+    spool, spec = init(tmp_path)
+    engine = BatchEngine(
+        spool, spec, mode="independent", dataset_root=tmp_path / "dataset"
+    )
+    try:
+        engine._discover()
+        with spool._db() as db:
+            rows = [dict(r) for r in db.execute("SELECT * FROM jobs ORDER BY target")]
+        engine._refill(rows[0])
+        q = engine.queue
+        q.register_worker("cpu_only", 4)
+        first = q.claim("cpu_only", flush=True)
+        engine._refill(rows[1])
+        # Full legitimate cache + per-record fsync/ACK, while identical PNGs
+        # from another episode remain pending with distinct future batch paths.
+        execute_claim(q, FakeBatchEncoder(), first, physical_gpu=4)
+        engine._finish_jobs()
+        q.collect()
+        assert verify_episode(roots[0])["records_checked"] == 5
+        assert not (spool.root / "records" / first["context"]["batch_id"]).exists()
+        second = q.claim("cpu_only", flush=True)
+        assert second["context"]["batch_id"] != first["context"]["batch_id"]
+        execute_claim(q, FakeBatchEncoder(), second, physical_gpu=4)
+        engine._finish_jobs()
+        q.collect()
+        assert verify_episode(roots[1])["records_checked"] == 5
+        assert spool.stats()["active_jobs"] == spool.stats()["active_records"] == 0
+        assert not list((spool.root / "records").rglob("*.pt"))
+    finally:
+        engine._shutdown()

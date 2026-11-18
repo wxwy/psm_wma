@@ -226,6 +226,8 @@ def execute_claim(queue, encoder, claim, *, physical_gpu, crash_once=None):
         queue.complete(
             claim,
             dict(
+                native_called=produced is not None,
+                native_cuda_ms=metric.get("native_cuda_ms"),
                 encode_seconds=encode_s,
                 io_ack_seconds=time.perf_counter() - io_started,
                 peak_allocated_bytes=metric.get("peak_allocated_bytes", 0),
@@ -238,6 +240,7 @@ def execute_claim(queue, encoder, claim, *, physical_gpu, crash_once=None):
             native_input_shape=context["input_shape"],
             reused_files=len(existing),
             native_called=produced is not None,
+            queue_wait=claim["queue_wait"],
             encode_api_started_unix=encode_call_started,
             encode_api_completed_unix=encode_call_completed,
             encode_seconds=encode_s,

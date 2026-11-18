@@ -78,11 +78,14 @@ def env(args):
     return value
 
 
-def call(args, name, command, *, during=None, spool=None, timeout=1200):
+def call(
+    args, name, command, *, during=None, spool=None, timeout=1200, expected_exit=0
+):
     write_json(
         args.gate / (name + ".command.json"),
         dict(
             argv=command,
+            expected_exit=expected_exit,
             cwd=str(args.code),
             environment={
                 k: v
@@ -142,7 +145,7 @@ def call(args, name, command, *, during=None, spool=None, timeout=1200):
                     p.wait(60)
                     raise RuntimeError("owned sample timed out; source retained")
                 time.sleep(0.2)
-            assert p.returncode == 0, (name, p.returncode)
+            assert p.returncode == expected_exit, (name, p.returncode)
         finally:
             if p.poll() is None:
                 p.send_signal(signal.SIGTERM)
@@ -289,6 +292,21 @@ def independent(args):
         "--engine-config",
         str(config),
     ]
+    call(
+        args,
+        "initialize",
+        [("--initialize" if v == "--execute" else v) for v in command],
+    )
+    # Real coordinator loss after durable registration and before source offer;
+    # the final engine must recover it, not skip its known target forever.
+    probe = "import os,sys;from pathlib import Path;from g2.io import read_json;from g2.latent_cache.streaming import EventSpool;s=EventSpool.open(sys.argv[1]);r=Path(sys.argv[2]);m=read_json(r/'episode_manifest.json');s.register(r,episode_key=f\"{m['task_class']}/episode_{m['episode_id']:06d}\",source_fingerprint=m['source_fingerprint'],profile_id=m['output_profile']['profile_id']);os._exit(77)"
+    call(
+        args,
+        "register_crash",
+        [sys.executable, "-c", probe, str(spool), str(data / SAMPLES[0])],
+        expected_exit=77,
+    )
+    command.append("--resume")
     samples = call(
         args, "independent", command, during=lambda: publish(SAMPLES[1]), spool=spool
     )
@@ -370,7 +388,7 @@ def independent(args):
             )
         )
     # No image rerender/model reload is necessary for ordinary resume after C.
-    call(args, "independent_resume", command + ["--resume"], spool=spool)
+    call(args, "independent_resume", command, spool=spool)
     os.environ["CUDA_VISIBLE_DEVICES"] = "4"
     replay = verify_replay(data, model(args))
     assert original == {r: inventory(args.original / r) for r in SAMPLES}
@@ -380,6 +398,7 @@ def independent(args):
         fixed_root=args.formal_root,
         recipe_id=result["recipe_id"],
         discovery_after_start=True,
+        manager_register_crash_resumed=True,
         engine=result,
         native_execution=trace,
         before_retirement=before,

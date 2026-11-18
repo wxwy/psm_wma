@@ -767,7 +767,13 @@ class EventSpool:
                     "SELECT COUNT(*) FROM events JOIN jobs ON events.job=jobs.id WHERE events.result=? AND events.job!=? AND jobs.done=0",
                     (result, job),
                 ).fetchone()[0]
-                if not shared:
+                if (
+                    not shared
+                    and self.recipe.get("schema")
+                    != "g2_spatial_view_vae_batch_recipe_v2"
+                ):
+                    # Legacy B1 shares storage by pixel key. Batch paths are
+                    # unique to ordered membership/position, even for equal RGB.
                     import json
 
                     pending = db.execute(

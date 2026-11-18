@@ -161,8 +161,25 @@ class BatchQueue:
             if len(attempts) >= 64:
                 raise CacheError("batch retry audit budget exhausted; retain source")
             token = uuid.uuid4().hex
+            ready = [
+                r[0]
+                for r in db.execute(
+                    "SELECT ready_at FROM engine_members WHERE batch=? ORDER BY position",
+                    (context["batch_id"],),
+                )
+            ]
+            wait = dict(
+                min_seconds=max(0, now - max(ready)),
+                max_seconds=max(0, now - min(ready)),
+            )
             attempts.append(
-                dict(token=token, worker=worker, gpu=active["gpu"], started=now)
+                dict(
+                    token=token,
+                    worker=worker,
+                    gpu=active["gpu"],
+                    started=now,
+                    queue_wait=wait,
+                )
             )
             db.execute(
                 "UPDATE engine_batches SET state='running',worker=?,token=?,lease_until=?,started=?,attempts=?,error=NULL WHERE id=?",
@@ -189,6 +206,7 @@ class BatchQueue:
                 worker=worker,
                 gpu=active["gpu"],
                 reserved_bytes=previous["reserved_bytes"],
+                queue_wait=wait,
             )
 
     def _fence(self, db, batch, token):
@@ -345,6 +363,18 @@ class BatchQueue:
             count = len(context["members"])
             value["batches"] += 1
             value["records"] += count
+            native = bool(metrics.get("native_called"))
+            value["native_batches"] = value.get("native_batches", 0) + int(native)
+            value["native_records"] = value.get("native_records", 0) + (
+                count if native else 0
+            )
+            value["native_cuda_ms"] = value.get("native_cuda_ms", 0) + (
+                metrics.get("native_cuda_ms") or 0
+            )
+            value["max_queue_wait_seconds"] = max(
+                value.get("max_queue_wait_seconds", 0),
+                claim["queue_wait"]["max_seconds"],
+            )
             value["batch_histogram"][str(count)] = (
                 value["batch_histogram"].get(str(count), 0) + 1
             )

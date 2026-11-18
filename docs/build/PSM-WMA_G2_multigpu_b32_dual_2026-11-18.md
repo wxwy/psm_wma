@@ -46,6 +46,10 @@ Completed numeric staging and active SQL batch/member rows are collected only
 after all member jobs have genuine existing completed-job tombstones. Small
 worker logs, completion receipts and empty lock directories are audit/control
 metadata; they are not extra source JSON copies or latent records.
+The old B1 pending-pixel sharing optimization applies only to B1 storage keys;
+equal RGB from another episode cannot pin a distinct batch/position chunk.
+Native-call counts and queue-wait ranges are separate from ACK-only recovery
+counts; logs retain the actual CUDA duration and encode-API intervals.
 
 ## Independent View-first lifecycle
 
@@ -57,6 +61,9 @@ Explicit task/episode selectors apply even to a directly supplied episode root;
 dataset catalogue locations must match the manifest identity.
 It never reruns F27, MuJoCo, ROS or SG. Reference states are indexed without
 being re-encoded. Compact owner/state identity still comes from sealed source.
+Recovery revalidates and re-offers a published independent job left between
+durable registration and source offer. It never treats sync's still-producing
+job as a published source. Startup failures release target leases and children.
 
 VAE has its own manifest/COMPLETE. Original episode/profile COMPLETE and
 Views/SG/tasks/language/metadata do not change during B. Stage C is the existing
