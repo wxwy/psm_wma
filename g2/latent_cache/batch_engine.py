@@ -380,12 +380,18 @@ class BatchEngine:
         from .sealed_source import scan_source
 
         self._last_discovery = self.clock()
+        with self.spool._db() as db:
+            count = db.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+            # While the bounded active ledger is full, scanning every completed
+            # Episode cannot admit a single new job. Defer work until a tombstone
+            # frees capacity; never delay draining existing GPU inputs.
+            if count >= self.spec["max_active_jobs"]:
+                return
+            known = {r[0] for r in db.execute("SELECT target FROM jobs")}
+            archived = {r[0] for r in db.execute("SELECT target FROM completed")}
         roots = discover_published(
             self.data, tasks=self.tasks or None, episodes=self.episodes or None
         )
-        with self.spool._db() as db:
-            count = db.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
-            known = {r[0] for r in db.execute("SELECT target FROM jobs")}
         for root in roots:
             root = Path(root).absolute()
             marker = root / "COMPLETE.json"
@@ -396,6 +402,33 @@ class BatchEngine:
                 continue
             if count >= self.spec["max_active_jobs"]:
                 break
+            if str(root) in archived:
+                # Archives already passed full numerical/source verification.
+                # Recheck their signed scope, all declared product bytes and
+                # per-View PT hashes without decompressing/parsing every prior
+                # Episode's giant source JSON or loading every tensor.
+                from .contract import contained
+                from .ledger_archive import verify_archived_payload_bytes
+
+                # Stage C is a separately audited transaction that legitimately
+                # replaces the *working* source/receipt identities recorded in
+                # an earlier Stage-B tombstone. Its new capsule must take the
+                # original posthoc-aware full verifier, not a false "tamper"
+                # verdict against the pre-retirement identity set.
+                if (
+                    read_json(contained(root, "episode_manifest.json")).get("schema")
+                    == PROFILE_SCHEMA
+                ):
+                    from g2.offline.stage_a import validate_profile_episode
+
+                    validate_profile_episode(root)
+                    verify_episode(
+                        root, expected_recipe_id=self.spool.recipe["recipe_id"]
+                    )
+                else:
+                    verify_archived_payload_bytes(self.spool, root)
+                self._seen[str(root)] = tag
+                continue
             self._target_lease(root)
             from g2.offline.stage_a import validate_profile_episode
 

@@ -7,11 +7,13 @@ VAE ingestion stage without accumulating 30 MiB JSON per episode.
 
 from __future__ import annotations
 
+import copy
 import gzip
 import hashlib
 import io
 import json
 import os
+from functools import lru_cache
 from pathlib import Path
 
 from g2.io import digest, read_json
@@ -44,6 +46,45 @@ def _gzip_receipt(raw, zipped, source_id):
         source_id=source_id,
     )
     return dict(fields, receipt_id=fingerprint(fields))
+
+
+def _decode_gzip_bounded(z, expected_bytes):
+    """Decode one immutable compressed byte string; never trust its filename."""
+    try:
+        with gzip.GzipFile(fileobj=io.BytesIO(z)) as reader:
+            raw = reader.read(expected_bytes + 1)
+            if len(raw) > expected_bytes:
+                raise CacheError("unbounded compressed source")
+    except (OSError, EOFError) as exc:
+        raise CacheError("working source gzip corrupted") from exc
+    try:
+        source = json.loads(raw)
+    except (ValueError, UnicodeError) as exc:
+        raise CacheError("working source is not valid JSON") from exc
+    if not isinstance(source, dict) or source.get("source_id") is None:
+        raise CacheError("working source identity missing")
+    return (
+        raw,
+        source,
+        _sha(raw),
+        fingerprint({k: v for k, v in source.items() if k != "source_id"}),
+    )
+
+
+@lru_cache(maxsize=1)
+def _cached_decode_gzip(z, expected_bytes):
+    """Only exact compressed *bytes* are cached, not paths, stat or mtimes.
+
+    Source bytes are always re-read and SHA-verified against the signed gzip
+    receipt; a changed byte string never hits this cache. A defensive copy of
+    the cached JSON tree is returned to callers, preventing cross-call mutation.
+    Limit eligible raw and compressed sizes and hold at most one Episode.
+    """
+    return _decode_gzip_bounded(z, expected_bytes)
+
+
+MAX_CACHED_RAW_BYTES = 64 * 1024**2
+MAX_CACHED_GZIP_BYTES = 16 * 1024**2
 
 
 def working_source_info(root, *, include_raw=False):
@@ -100,36 +141,42 @@ def working_source_info(root, *, include_raw=False):
             or not 0 < doc["gzip_bytes"] <= MAX_PACKED_BYTES
         ):
             raise CacheError("declared compressed source sizes exceed finite bounds")
-        try:
-            with gzip.GzipFile(fileobj=io.BytesIO(z)) as reader:
-                raw = reader.read(doc["raw_bytes"] + 1)
-                if len(raw) > doc["raw_bytes"]:
-                    raise CacheError("unbounded compressed source")
-        except (OSError, EOFError) as exc:
-            raise CacheError("working source gzip corrupted") from exc
+        cached = (
+            doc["raw_bytes"] <= MAX_CACHED_RAW_BYTES and len(z) <= MAX_CACHED_GZIP_BYTES
+        )
+        raw, decoded_source, decoded_sha, source_fingerprint = (
+            _cached_decode_gzip(z, doc["raw_bytes"])
+            if cached
+            else _decode_gzip_bounded(z, doc["raw_bytes"])
+        )
         if (
             len(raw) > MAX_RAW_BYTES
-            or doc["raw_sha256"] != _sha(raw)
+            or doc["raw_sha256"] != decoded_sha
             or doc["raw_bytes"] != len(raw)
         ):
             raise CacheError("decompressed working source identity differs")
-    try:
-        source = json.loads(raw)
-    except (ValueError, UnicodeError) as exc:
-        raise CacheError("working source is not valid JSON") from exc
-    if not isinstance(source, dict) or source.get("source_id") is None:
-        raise CacheError("working source identity missing")
+        source = copy.deepcopy(decoded_source) if cached else decoded_source
+    if not packed_mode:
+        try:
+            source = json.loads(raw)
+        except (ValueError, UnicodeError) as exc:
+            raise CacheError("working source is not valid JSON") from exc
+        if not isinstance(source, dict) or source.get("source_id") is None:
+            raise CacheError("working source identity missing")
+        source_fingerprint = fingerprint(
+            {k: v for k, v in source.items() if k != "source_id"}
+        )
+        decoded_sha = _sha(raw)
     if packed_mode and doc["source_id"] != source["source_id"]:
         raise CacheError("View-only compression source ID differs")
     ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
     if (
         source.get("schema") != "g2_sealed_spatial_source_v1"
         or ready.get("schema") != "g2_sealed_spatial_source_v1"
-        or source["source_id"]
-        != fingerprint({k: v for k, v in source.items() if k != "source_id"})
+        or source["source_id"] != source_fingerprint
         or source["source_id"] != manifest["source_id"]
         or ready.get("source_id") != source["source_id"]
-        or ready.get("source_manifest_sha256") != _sha(raw)
+        or ready.get("source_manifest_sha256") != decoded_sha
         or ready.get("complete_spatial_source") is not True
         or ready.get("profile_complete") is not False
     ):
@@ -145,7 +192,7 @@ def working_source_info(root, *, include_raw=False):
         raise CacheError("working source changed during verified reading")
     return dict(
         source=source,
-        raw_sha256=_sha(raw),
+        raw_sha256=decoded_sha,
         raw_bytes=len(raw),
         format_schema=SOURCE_SCHEMA if packed_mode else RAW_SCHEMA,
         identity_manifest=identity,
