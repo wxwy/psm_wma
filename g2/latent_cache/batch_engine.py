@@ -407,6 +407,7 @@ class BatchEngine:
                 # Recheck their signed scope, all declared product bytes and
                 # per-View PT hashes without decompressing/parsing every prior
                 # Episode's giant source JSON or loading every tensor.
+                from .contract import contained
                 from .ledger_archive import verify_archived_payload_bytes
 
                 # Stage C is a separately audited transaction that legitimately
@@ -414,14 +415,16 @@ class BatchEngine:
                 # an earlier Stage-B tombstone. Its new capsule must take the
                 # original posthoc-aware full verifier, not a false "tamper"
                 # verdict against the pre-retirement identity set.
-                from g2.io import read_json
-                from .contract import contained
-
-                if read_json(contained(root, "episode_manifest.json")).get("schema") == PROFILE_SCHEMA:
+                if (
+                    read_json(contained(root, "episode_manifest.json")).get("schema")
+                    == PROFILE_SCHEMA
+                ):
                     from g2.offline.stage_a import validate_profile_episode
 
                     validate_profile_episode(root)
-                    verify_episode(root, expected_recipe_id=self.spool.recipe["recipe_id"])
+                    verify_episode(
+                        root, expected_recipe_id=self.spool.recipe["recipe_id"]
+                    )
                 else:
                     verify_archived_payload_bytes(self.spool, root)
                 self._seen[str(root)] = tag
