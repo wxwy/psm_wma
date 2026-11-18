@@ -1,17 +1,15 @@
 """Parallel CPU-only completion of real fixture batches and original ACK protocol."""
 
-import json
-
 import pytest
 
 from g2.io import digest
 from g2.latent_cache.batch_engine import BatchEngine
 from g2.latent_cache.builder import verify_episode
 from g2.latent_cache.contract import CacheError
-from g2.tests.test_batch_engine import init, sample
-from g2.tests.test_stage_a_package import stage_case
 from g2.offline.output_profile import OutputProfile
 from g2.offline.stage_a import package_stage_a
+from g2.tests.test_batch_engine import init
+from g2.tests.test_stage_a_package import stage_case
 
 
 def _dataset(tmp_path, n):
@@ -24,10 +22,7 @@ def _dataset(tmp_path, n):
         kwargs["episode_id"] = eid
         for caption in kwargs["captions"].values():
             caption["episode_index"] = eid
-        root = (
-            tmp_path / "dataset/tasks/NavigateKitchen/episodes"
-            / f"episode_{eid:06d}"
-        )
+        root = tmp_path / "dataset/tasks/NavigateKitchen/episodes" / f"episode_{eid:06d}"
         package_stage_a(
             destination=root,
             compress_source=True,
@@ -58,18 +53,19 @@ def test_independent_cpu_finalizers_keep_exact_original_acks_and_resume(tmp_path
     assert result["spool"]["active_jobs"] == 0
     assert result["cpu_finalizing_jobs"] == 0
     for root, files in zip(roots, before):
-        assert verify_episode(root, expected_recipe_id=spool.recipe["recipe_id"])[
-            "records_checked"
-        ] == 5
+        assert (
+            verify_episode(root, expected_recipe_id=spool.recipe["recipe_id"])[
+                "records_checked"
+            ]
+            == 5
+        )
         assert all(digest(root / name) == sha for name, sha in files.items())
     # All completed rows are archived and their original contexts replayable.
     with spool._db() as db:
         assert db.execute("SELECT COUNT(*) FROM jobs").fetchone()[0] == 0
         assert db.execute("SELECT COUNT(*) FROM completed").fetchone()[0] == 4
 
-    complete_hashes = [
-        digest(root / "vae_cache/COMPLETE.json") for root in roots
-    ]
+    complete_hashes = [digest(root / "vae_cache/COMPLETE.json") for root in roots]
     resumed = BatchEngine(
         spool,
         spec,
@@ -80,7 +76,9 @@ def test_independent_cpu_finalizers_keep_exact_original_acks_and_resume(tmp_path
     ).run()
     assert resumed["status"] == "IDLE_TIMEOUT"
     assert resumed["spool"]["completed_jobs"] == 4
-    assert [digest(root / "vae_cache/COMPLETE.json") for root in roots] == complete_hashes
+    assert [
+        digest(root / "vae_cache/COMPLETE.json") for root in roots
+    ] == complete_hashes
 
 
 def test_cpu_finalization_rejects_other_lifecycle_and_bad_budget(tmp_path):
