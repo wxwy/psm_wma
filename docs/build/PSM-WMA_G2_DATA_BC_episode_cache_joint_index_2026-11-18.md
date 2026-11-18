@@ -86,3 +86,36 @@ manifests carry training_ready=false. The fixed Phase5 G2RunRecipe MUST reject
 this candidate; do not rename evidence_scope or flip completion markers.
 Next gates are static text/split approval, trusted DATA_C provider+receipt,
 real full Edge Phase5 R1/R2/Local action loss and DCP smoke, then online ABI.
+
+## Incremental production operation (bounded CPU)
+
+The separate real-data gate has been expanded beyond three episodes. The
+approved user request explicitly initiated the following low-priority, single
+CPU producer jobs in isolated non-GPU sessions:
+
+* tools/g2/build_full_data_b.py --all: enumerates the original G1 verified
+  9126 episode binding records, reads native LeRobot 20Hz values, and writes
+  immutable episode state15.pt files. It re-verifies already-complete episodes
+  on Resume, periodically updates DATA_B manifest and PROGRESS.json, continues
+  after a failed episode while reporting failure, and emits
+  CORPUS_COMPLETE.json only when all 9126 verified/none failed.
+* tools/g2/build_ready_data_c.py: scans **only already complete** ViewVAE
+  and DATA_B episode markers; publishes compact joint_index.json per eligible
+  episode. It never writes DATA_B and therefore can run concurrently with
+  the full DATA_B producer, with both jobs at nice=15 / ionice idle.
+  Updates DATA_C manifest and CORPUS_COMPLETE.json in small batches and writes
+  PROGRESS.json. Newly finished VAE episodes require another explicit run;
+  the tool does not poll indefinitely or start a background watcher.
+
+Both jobs have an optional explicit --stop-file (checked per episode).
+The server paths for the current manual runs are:
+
+  /mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_data_bc_20261118/
+  data_b_full.log, data_c_ready.log
+  STOP_DATA_B, STOP_DATA_C
+
+These DATA_B/C run modes do **not** start the similarly named VAE Source
+Retirement Stage C. They preserve all original Views, RGB and raw source data.
+The corpus/root receipt remains training_ready=false even when the index
+coverage is large; the future trusted dataset split, initial text recipe,
+and model-side Phase5 authorization are separate mandatory gates.
