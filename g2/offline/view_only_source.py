@@ -14,7 +14,7 @@ import json
 import os
 from pathlib import Path
 
-from g2.io import read_json
+from g2.io import digest, read_json
 from g2.latent_cache.contract import CacheError, contained, fingerprint
 from g2.latent_cache.storage import atomic_json
 
@@ -26,6 +26,8 @@ SOURCE_SCHEMA = "g2_view_only_source_gzip_v1"
 CLAIM_SCHEMA = "g2_view_only_output_claim_v1"
 MAX_RAW_BYTES = 1024 * 1024**2
 MAX_PACKED_BYTES = 256 * 1024**2
+VAE_SOURCE_SCHEMA = "g2_view_first_working_source_v1"
+RAW_SCHEMA = "g2_working_source_json_v1"
 
 
 def _sha(data):
@@ -44,19 +46,30 @@ def _gzip_receipt(raw, zipped, source_id):
     return dict(fields, receipt_id=fingerprint(fields))
 
 
-def load_working_source(root):
-    """Read a full working source or a verified lossless gzip, never both."""
+def working_source_info(root, *, include_raw=False):
+    """Verified working bytes/transport identity; never materialize a JSON copy.
+
+    A typed gzip receipt is the explicit declaration used by existing PR66
+    outputs. The profile and original readiness bind its logical raw identity.
+    A final capsule is deliberately not a full working source.
+    """
     root = Path(root).absolute()
+    manifest = read_json(contained(root, "episode_manifest.json"))
+    if manifest.get("schema") != "g2_spatial_profile_episode_v1":
+        raise CacheError("working source requires an explicit working profile schema")
     full = contained(root, FULL, allow_missing=True)
     zipped = contained(root, PACKED, allow_missing=True)
     receipt = contained(root, RECEIPT, allow_missing=True)
-    if full.exists():
+    packed_mode = receipt.exists()
+    if not packed_mode:
         if zipped.exists() or receipt.exists() or not full.is_file():
             raise CacheError("ambiguous working-source compression state")
         if full.stat().st_size > MAX_RAW_BYTES:
             raise CacheError("working source exceeds finite bound")
         raw = full.read_bytes()
     else:
+        if full.exists() or manifest["output_profile"]["view_vae"]:
+            raise CacheError("gzip source requires an unambiguous View-first profile")
         if not zipped.is_file() or not receipt.is_file():
             raise CacheError("working source or signed gzip receipt missing")
         if zipped.stat().st_size > MAX_PACKED_BYTES:
@@ -80,10 +93,17 @@ def load_working_source(root):
             raise CacheError("View-only compression receipt identity differs")
         if doc["gzip_sha256"] != _sha(z) or doc["gzip_bytes"] != len(z):
             raise CacheError("compressed source bytes changed")
+        if (
+            type(doc["raw_bytes"]) is not int
+            or not 0 < doc["raw_bytes"] <= MAX_RAW_BYTES
+            or type(doc["gzip_bytes"]) is not int
+            or not 0 < doc["gzip_bytes"] <= MAX_PACKED_BYTES
+        ):
+            raise CacheError("declared compressed source sizes exceed finite bounds")
         try:
             with gzip.GzipFile(fileobj=io.BytesIO(z)) as reader:
-                raw = reader.read(MAX_RAW_BYTES + 1)
-                if reader.read(1):
+                raw = reader.read(doc["raw_bytes"] + 1)
+                if len(raw) > doc["raw_bytes"]:
                     raise CacheError("unbounded compressed source")
         except (OSError, EOFError) as exc:
             raise CacheError("working source gzip corrupted") from exc
@@ -99,9 +119,56 @@ def load_working_source(root):
         raise CacheError("working source is not valid JSON") from exc
     if not isinstance(source, dict) or source.get("source_id") is None:
         raise CacheError("working source identity missing")
-    if not full.exists() and doc["source_id"] != source["source_id"]:
+    if packed_mode and doc["source_id"] != source["source_id"]:
         raise CacheError("View-only compression source ID differs")
-    return source, _sha(raw)
+    ready = read_json(contained(root, "SPATIAL_SOURCE_READY.json"))
+    if (
+        source.get("schema") != "g2_sealed_spatial_source_v1"
+        or source["source_id"]
+        != fingerprint({k: v for k, v in source.items() if k != "source_id"})
+        or source["source_id"] != manifest["source_id"]
+        or ready.get("source_id") != source["source_id"]
+        or ready.get("source_manifest_sha256") != _sha(raw)
+        or ready.get("complete_spatial_source") is not True
+        or ready.get("profile_complete") is not False
+    ):
+        raise CacheError("working bytes differ from original source readiness")
+    identity = PACKED if packed_mode else FULL
+    names = (
+        (identity, "SPATIAL_SOURCE_READY.json", RECEIPT)
+        if packed_mode
+        else (identity, "SPATIAL_SOURCE_READY.json")
+    )
+    return dict(
+        source=source,
+        raw_sha256=_sha(raw),
+        raw_bytes=len(raw),
+        format_schema=SOURCE_SCHEMA if packed_mode else RAW_SCHEMA,
+        identity_manifest=identity,
+        files={name: digest(contained(root, name)) for name in names},
+        **(dict(raw=raw) if include_raw else {}),
+    )
+
+
+def load_working_source(root):
+    """Backward-compatible tuple API for verified full working data only."""
+    info = working_source_info(root)
+    return info["source"], info["raw_sha256"]
+
+
+def view_first_binding(root, info=None):
+    info = working_source_info(root) if info is None else info
+    return dict(
+        schema=VAE_SOURCE_SCHEMA,
+        source_id=info["source"]["source_id"],
+        manifest_sha256=info["files"][info["identity_manifest"]],
+        complete_sha256=info["files"]["SPATIAL_SOURCE_READY.json"],
+        identity_manifest=info["identity_manifest"],
+        readiness_marker="SPATIAL_SOURCE_READY.json",
+        raw_source_sha256=info["raw_sha256"],
+        working_storage=dict(schema=info["format_schema"], files=info["files"]),
+        validation_scope="VERIFIED_PUBLISHED_VIEW_FIRST_AND_EXACT_WORKING_BYTES",
+    )
 
 
 def compress_working_source(root):

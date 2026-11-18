@@ -310,11 +310,16 @@ def load_source(root):
     manifest = read_json(contained(root, "episode_manifest.json"))
     if manifest.get("schema") == PROFILE_SCHEMA:
         return materialize_source(root, manifest)
-    return read_json(contained(root, FULL))
+    from g2.offline.view_only_source import load_working_source
+
+    return load_working_source(root)[0]
 
 
 def working_source_sha(root):
     manifest = read_json(contained(root, "episode_manifest.json"))
     if manifest.get("schema") == PROFILE_SCHEMA:
-        return load_capsule(root)["working_source"]["manifest_sha256"]
-    return digest(contained(root, FULL))
+        working = load_capsule(root)["working_source"]
+        return working.get("raw_source_sha256", working["manifest_sha256"])
+    from g2.offline.view_only_source import load_working_source
+
+    return load_working_source(root)[1]

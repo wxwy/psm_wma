@@ -1,4 +1,47 @@
-# 2026-11-17 CST — Issue63 fixed source / Draft64 / GPT REVIEW handoff
+# 2026-11-18 CST — View-first -> posthoc VAE -> retirement R1-R5 claim
+
+R1 implemented: working_source_info supplies verified raw/transport hashes,
+finite declared gzip bounds and original readiness/source-ID validation;
+old load_working_source tuple preserved, final_source.load_source/sha dispatch
+working gzip vs explicit final schema. No full JSON materialization to disk.
+New9cases +existing4ViewOnly/8StagePackage/5Capsule =26PASS/0skip13.70s,
+Ruff selectedrules PASS. Raw r1/pytest.log/xml/ruff.log in own Nov18 evidence.
+Next commit R1 then R2 explicit source adapter/real EventConsumer ACK lifecycle.
+No native/weights/GPU/private/server/data writes or new environment occurred.
+
+Owner directly authorizes incremental R1-R5 code/CPU/independent V3 Draft.
+Before745c1d0d; fresh fetched/advertised/tracking V3 b6311222c364543787f913215bf584065aa1c275
+match, full21 new commit subjects read, ancestor0; created independent
+codex/g2-view-first-vae-retirement at exact V3 without altering old PR branch.
+Child/Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; advertised nav G2
+70eb7b447e65d793b0ebe18b258291ce46f057c1 unchanged. PR64/65/66 actualAPI
+merged/closed, unlike stale historical ledgers below. Formal Issue63 realv2
+and subsequent36ep/18task/32slot GO reports read; preserve scoped facts,
+not claim old capacity HOLD remains current. New posthoc gzip lifecycle has
+separate code/real Gate, no approval inherited. User says tmux view actively
+produces9126; no server accessed and no independent live status claimed.
+
+Claim: offline/view_only_source.py (bounded verified source API, legacy
+compress_source=False retained), latent_cache/{sealed_source,builder,storage,
+production,streaming,final_source,source_retirement,ledger_archive,
+retirement_policy}.py; small posthoc adapter/CLI, targeted new tests, runbook/
+own evidence+ledgers. stage_a.py only final posthoc receipt verification; do not
+edit renderer/atomic_6views_run behavior or model A/B/C/D files. No otherAgent
+editing these files here. Reuse existing EventSpool/Consumer actual per-record
+ACK and builder; explicitly tagged posthoc lifecycle and verified-cache handoff
+for later retirement, never fabricate stream ACK or materialize fake fullJSON.
+StageB keeps original View manifest/COMPLETE/profile unchanged; StageC uses
+existing final-v2 transaction, preserving original profile_id and all data/PT.
+
+Commands not yet executed except read-only Git/connector discovery. Source
+claim uncommitted. Next R1 unified full/gzip/final dispatch+bounded negative
+tests, then R2-R5 implementation/CPU/readonly peer/fixedSHA/Draft/GPT Gate.
+No server/production tmux/config/data writes, GPU/weights/native/full VAE/
+retirement/train/install/Child/nav changes. Real Gate NOT_RUN here. No old-data
+deletion or self merge. Latest user scope overrides historical V2/MM/Kimi
+polling rules; stop at concrete review handoff.
+
+# Historical Issue63 handoff (subsequently merged/reviewed)
 
 FormalRoot a169fea07016b80b3639646cc9925ac70b6525a8 / unchanged
 Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav
