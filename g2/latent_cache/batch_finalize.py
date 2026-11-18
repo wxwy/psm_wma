@@ -14,7 +14,6 @@ from pathlib import Path
 
 from .contract import CacheError
 
-
 _CPU_ENCODER = None
 
 
