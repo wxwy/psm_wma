@@ -251,7 +251,9 @@ class BatchEngine:
             or not 0 <= finalize_workers <= 8
             or (mode != "independent" and finalize_workers)
         ):
-            raise CacheError("CPU finalizers require an explicit independent B count in 0..8")
+            raise CacheError(
+                "CPU finalizers require an explicit independent B count in 0..8"
+            )
         self.spool, self.spec, self.mode, self.resume, self.clock = (
             spool,
             spec,
@@ -554,9 +556,7 @@ class BatchEngine:
                 raise CacheError("retained failed episode: " + row["error"])
             if row["id"] in self._finalizers:
                 continue
-            if row["done"] or (
-                row["sealed"] and self.queue.finalizable(row["id"])
-            ):
+            if row["done"] or (row["sealed"] and self.queue.finalizable(row["id"])):
                 if len(self._finalizers) < self.finalize_workers:
                     future = self._finalize_pool.submit(
                         finalize_job,
