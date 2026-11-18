@@ -1,0 +1,80 @@
+[
+  {
+    "name": "versions",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-c",
+      "import sys,torch,pytest,importlib.metadata as m; print(sys.version); print('torch',torch.__version__); print('pytest',pytest.__version__); print('ruff',m.version('ruff')); print('cuda_initialized',torch.cuda.is_initialized()); assert not torch.cuda.is_initialized()"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 1.8264500779998798
+  },
+  {
+    "name": "inventory",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-c",
+      "\nimport json, pathlib, sys, torch\nfrom cosmos_framework.model.generator.mot.global_memory import GlobalMemoryReader, GlobalMemoryProjector\nfrom cosmos_framework.model.generator.mot.g2_contracts import GlobalMemoryConfig\nconfig = GlobalMemoryConfig(enabled=True)\nmodules = {'reader': GlobalMemoryReader(24, config, latent_channels=4), 'projector': GlobalMemoryProjector(80, config)}\nresult = {'fixture_only': True, 'text_dim': 24, 'latent_channels': 4, 'model_dim': 80,\n          'parameters': {owner + '.' + name: {'shape': list(p.shape), 'numel': p.numel(), 'requires_grad': p.requires_grad}\n                         for owner, module in modules.items() for name, p in module.named_parameters()}}\nresult['total_numel'] = sum(p['numel'] for p in result['parameters'].values())\npathlib.Path(sys.argv[1]).write_text(json.dumps(result, indent=2) + '\\n')\nassert not torch.cuda.is_initialized()\n",
+      "/workspace/work/g2-a-cpu/final01/parameter_inventory.json"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 1.4844543169999724
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "cosmos_framework/model/generator/mot/global_memory.py",
+      "cosmos_framework/model/generator/mot/global_spatial.py",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 0.04443564200005312
+  },
+  {
+    "name": "format_check",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "cosmos_framework/model/generator/mot/global_memory.py",
+      "cosmos_framework/model/generator/mot/global_spatial.py",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 0.04221687600011137
+  },
+  {
+    "name": "pytest",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=/workspace/work/g2-a-cpu/final01/pytest_tmp",
+      "--junitxml=/workspace/work/g2-a-cpu/final01/junit.xml",
+      "-q",
+      "cosmos_framework/model/generator/mot/global_memory_test.py",
+      "cosmos_framework/model/generator/mot/global_spatial_test.py",
+      "cosmos_framework/model/generator/mot/g2_contracts_test.py"
+    ],
+    "cwd": "/workspace/work/g2-a-reader/cosmos-framework",
+    "exit_code": 0,
+    "duration_seconds": 8.645644446000006
+  }
+]

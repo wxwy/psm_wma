@@ -1,0 +1,18 @@
+................................                                         [100%]
+=============================== warnings summary ===============================
+cosmos_framework/checkpoint/g2_warm_start_test.py::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[None]
+cosmos_framework/checkpoint/g2_warm_start_test.py::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[missing_local]
+cosmos_framework/checkpoint/g2_warm_start_test.py::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[shape]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to save in a single process.
+    return func(*args, **kwargs)
+
+cosmos_framework/checkpoint/g2_warm_start_test.py::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[None]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+cosmos_framework/checkpoint/g2_warm_start_test.py::test_actual_cpu_dcp_model_only_global_allowlist_and_local_inheritance[None]
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+    return func(*args, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+32 passed, 5 warnings in 16.21s

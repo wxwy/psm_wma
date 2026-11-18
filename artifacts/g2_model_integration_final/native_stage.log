@@ -1,0 +1,167 @@
+F
+=================================== FAILURES ===================================
+__ test_c_warm_start_stage_switch_and_resume_with_actual_native_action_heads ___
+
+    def test_c_warm_start_stage_switch_and_resume_with_actual_native_action_heads():
+        """Direct C controller/native-head composition; grouped Local/DCP tested separately."""
+        import copy
+        from types import SimpleNamespace
+    
+        from torch import nn
+    
+        from cosmos_framework.checkpoint.g2_warm_start import load_g1_model_only
+        from cosmos_framework.trainer.g2_training import G2_OPTIMIZER_SELECTION, build_g2_optimizer
+        from cosmos_framework.trainer.g2_training_test import equal_tree, plan_fixture
+        from examples.psm_wma_robocasa_g2_recipe import install_g2_training
+    
+        text_recipe = StaticTaskTextRecipe(17, 24.0, 16, 16, "synthetic-tokenizer")
+        plan = replace(plan_fixture(a=1, b=1, target=2), text_recipe_identity=text_recipe.identity)
+        recipe = SimpleNamespace(training=plan, text=text_recipe, global_memory=GlobalMemoryConfig(enabled=True))
+    
+        def owner():
+            model = nn.Module()
+            model.net = network()
+            model.g2_parameter_inventory = lambda: parameter_inventory(model, net_prefix="net.")
+            model.set_trainable_names = lambda names: set_trainable_names(model, names)
+    
+            def factory(_optimizer_config, _scheduler_config):
+                return build_g2_optimizer(
+                    model,
+                    optimizer_type="adamw",
+                    lr=1e-5,
+                    fused=False,
+                    keys_to_select=[G2_OPTIMIZER_SELECTION],
+                    weight_decay=0.03,
+                ), None
+    
+            model.init_optimizer_scheduler = factory
+            trainer = SimpleNamespace()
+            install_g2_training(model, trainer, recipe, {})
+            optimizer, controller = model.init_optimizer_scheduler(None, None)
+            return model, optimizer, controller
+    
+        torch.manual_seed(613)
+        g1 = nn.Module()
+        g1.net = network(global_enabled=False)
+>       model, optimizer, controller = owner()
+                                       ^^^^^^^
+
+cosmos_framework/model/generator/mot/g2_integration_test.py:319: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/model/generator/mot/g2_integration_test.py:313: in owner
+    optimizer, controller = model.init_optimizer_scheduler(None, None)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+examples/psm_wma_robocasa_g2_recipe.py:287: in checked
+    optimizer, _old_scheduler = original(optimizer_config, scheduler_config)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/g2_integration_test.py:301: in factory
+    return build_g2_optimizer(
+cosmos_framework/trainer/g2_training.py:42: in build_g2_optimizer
+    return build_optimizer(
+cosmos_framework/utils/generator/optimizer.py:690: in build_optimizer
+    return OptimizersContainer(model, optimizer_type, **optimizer_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.utils.generator.optimizer.OptimizersContainer object at 0x7fd987016ae0>
+model = Module(
+  (net): Cosmos3VFMNetwork(
+    (language_model): TinyLM(
+      (model): Qwen3VLTextModel(
+        (embed_toke... out_features=4, bias=True)
+    (action2llm): SharedWeightBiasLinear()
+    (llm2action): SharedWeightBiasLinear()
+  )
+)
+optimizer_type = 'adamw'
+optimizer_kwargs = {'fused': False, 'lr': 1e-05, 'weight_decay': 0.03}
+keys_to_select = ['action2llm.bias', 'action2llm.weight', 'action_modality_embed', 'global_memory_projector.modality', 'global_memory_projector.projection.weight', 'global_memory_reader.final_norm.bias', ...]
+lr_multipliers = {}, disable_weight_decay_for_1d_params = False
+weight_decay_multipliers_for_1d_params = {}, weight_decay_skip_patterns = ()
+orthogonalize_skip_patterns = ()
+
+    def __init__(
+        self,
+        model: nn.Module,
+        optimizer_type: str,
+        **optimizer_kwargs: Any,
+    ) -> None:
+        """Build per-device-mesh optimizers and expose them as a single Stateful container.
+    
+        Parameters are first filtered + tagged with metadata via
+        :func:`_build_params_with_metadata` and then sub-grouped by
+        ``param.device_mesh.mesh_dim_names`` (or ``"default"`` when no mesh is
+        attached).  One ``torch.optim`` instance is created per resulting mesh
+        bucket so fused kernels see only same-mesh DTensors — required for
+        FSDP2-aware optimizer state-dict resharding.
+    
+        Args:
+            model: Model to build the optimizer(s) for.  ``model.parameters()``
+                provides the parameter universe and is also passed through to
+                ``get_optimizer_state_dict`` / ``set_optimizer_state_dict`` for
+                checkpointing.
+            optimizer_type: Optimizer kind string accepted by
+                :func:`_optimizer_cls` (``"adam"``, ``"adamw"``, ``"fusedadam"``).
+            **optimizer_kwargs: Forwarded to the optimizer constructor, with the
+                following container-level kwargs intercepted first:
+    
+                - ``fused`` (required): Must be truthy. Forwarded to
+                  ``torch.optim.AdamW`` / ``Adam`` so they use the fused CUDA
+                  kernel; ignored for ``"fusedadam"`` which is fused by
+                  construction.  Eager optimizers are not supported.
+                - ``lr`` (required): Base learning rate.  Each param group's
+                  effective LR is ``lr * matched_multiplier``; ``lr`` is still
+                  required because PyTorch optimizers expect a default.
+                - ``keys_to_select`` (optional, default ``[]``): List of
+                  substrings; only params whose names contain at least one are
+                  trained.  Empty list = train every parameter.
+                - ``lr_multipliers`` (optional, default ``{}``): Ordered dict
+                  mapping param-name substrings to LR multipliers.  First match
+                  wins; unmatched selected params use multiplier ``1.0``.
+                - ``disable_weight_decay_for_1d_params`` (optional, default
+                  ``False``): When true, parameters with ``dim() < 2`` (norm
+                  weights, biases, etc.) get ``weight_decay=0.0`` in their
+                  param group regardless of the optimizer-wide ``weight_decay``.
+                - ``weight_decay_skip_patterns`` (optional, default ``[]``): List of
+                  regexes matched against parameter names; matching params get
+                  ``weight_decay=0.0`` in their param group (honored by AdamW and
+                  Muon/Dion2 alike). General, name-based way to exclude specific
+                  weights from weight decay -- e.g. ``r"\\.gate\\.weight$"`` for MoE
+                  router/gate weights. Independent of the router-to-AdamW routing.
+                - ``weight_decay_multipliers_for_1d_params`` (optional, default
+                  ``{}``): Regex-to-multiplier mapping applied to the base weight
+                  decay for matching 1-D parameters only.
+        """
+        self.model = model
+        self.optimizers: list[torch.optim.Optimizer] = []
+    
+        # Pop only the container-level kwargs.  ``fused`` and ``lr`` are
+        # intentionally NOT popped: ``fused`` must flow through to
+        # ``torch.optim.AdamW`` / ``Adam`` so the fused CUDA kernel is actually
+        # selected, and ``lr`` is needed both here (as the base for per-group
+        # multipliers) and by the underlying optimizer (as the group-level
+        # default).
+        keys_to_select = optimizer_kwargs.pop("keys_to_select", [])
+        lr_multipliers: dict[str, float] = optimizer_kwargs.pop("lr_multipliers", {})
+        disable_weight_decay_for_1d_params = optimizer_kwargs.pop("disable_weight_decay_for_1d_params", False)
+        weight_decay_multipliers_for_1d_params: dict[str, float] = optimizer_kwargs.pop(
+            "weight_decay_multipliers_for_1d_params", {}
+        )
+        # General, name-based weight-decay exclusion (regexes matched against param
+        # names). Factory-only, so a plain pop. Normalize to a tuple of str.
+        weight_decay_skip_patterns = tuple(optimizer_kwargs.pop("weight_decay_skip_patterns", None) or ())
+        # Orthogonalization-skip regexes (force matching 2D Linear weights to AdamW).
+        # POP (not read) so it never leaks into a plain Adam/AdamW/FusedAdam constructor
+        # (fixed signatures -> TypeError); re-inserted below only for the Muon/Dion2
+        # (aux) optimizers, which accept it as a named arg. Normalize to a tuple of str.
+        orthogonalize_skip_patterns = tuple(optimizer_kwargs.pop("orthogonalize_skip_patterns", None) or ())
+    
+        if not optimizer_kwargs.get("fused", False):
+>           raise ValueError("Optimizers with fused=False are not supported; pass fused=True in optimizer_kwargs.")
+E           ValueError: Optimizers with fused=False are not supported; pass fused=True in optimizer_kwargs.
+
+cosmos_framework/utils/generator/optimizer.py:502: ValueError
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/g2_integration_test.py::test_c_warm_start_stage_switch_and_resume_with_actual_native_action_heads
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed in 5.66s

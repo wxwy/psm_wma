@@ -1,0 +1,38 @@
+............F
+=================================== FAILURES ===================================
+__ test_c_warm_start_stage_switch_and_resume_with_actual_native_action_heads ___
+
+    def test_c_warm_start_stage_switch_and_resume_with_actual_native_action_heads():
+        """Direct C controller/native-head composition; grouped Local/DCP tested separately."""
+        import copy
+        from types import SimpleNamespace
+    
+        from torch import nn
+    
+        from cosmos_framework.checkpoint.g2_warm_start import load_g1_model_only
+        from cosmos_framework.trainer.g2_training import G2_OPTIMIZER_SELECTION, build_g2_optimizer
+        from cosmos_framework.trainer.g2_training_test import equal_tree, plan_fixture
+        from examples.psm_wma_robocasa_g2_recipe import install_g2_training
+    
+        text_recipe = StaticTaskTextRecipe(17, 24.0, 16, 16, "synthetic-tokenizer")
+        plan = replace(plan_fixture(a=1, b=1, target=2), text_recipe_identity=text_recipe.identity)
+>       recipe = SimpleNamespace(training=plan, text=text_recipe, global_memory=GlobalMemoryConfig(enabled=True))
+                                                                                ^^^^^^^^^^^^^^^^^^
+E       NameError: name 'GlobalMemoryConfig' is not defined
+
+cosmos_framework/model/generator/mot/g2_integration_test.py:292: NameError
+=============================== warnings summary ===============================
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_actual_reader_native_action_loss_reaches_registered_global_only
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_actual_reader_mixed_native_batch_equals_separate_and_cached
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_train_a_all_global_absent_has_zero_grad_without_prefix_or_reader
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_c_shared_native_text_normal_and_dropout_use_same_actual_und_input
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_d_actual_cache_sessions_to_native_action_head[False]
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_d_actual_cache_sessions_to_native_action_head[True]
+  /workspace/work/g2-integration/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1088: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+    with torch.autocast("cuda", enabled=True, dtype=torch.float32):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/g2_integration_test.py::test_c_warm_start_stage_switch_and_resume_with_actual_native_action_heads
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 12 passed, 6 warnings in 10.07s

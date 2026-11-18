@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="15" time="11.805" timestamp="2026-11-17T17:17:50.108788+08:00" hostname="b28e4c46872b"><testcase classname="" name="test_real_service_calls_C_shared_prompt_and_keeps_state_fast[g2_r1]" time="0.035"><failure message="ValueError: too many values to unpack (expected 2)">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5b1309ac00&gt;
+profile = 'g2_r1'
+
+    @pytest.mark.parametrize("profile", ["g2_r1", "g2_r2"])
+    def test_real_service_calls_C_shared_prompt_and_keeps_state_fast(monkeypatch, profile):
+        obj, actor, rt, _, _ = setup(monkeypatch, profile=profile)
+        called = []
+        serialize = static_task_text.serialize_static_task_prompt
+    
+        def observe(task, recipe):
+            called.append((task, recipe))
+            return serialize(task, recipe)
+    
+        monkeypatch.setattr(static_task_text, "serialize_static_task_prompt", observe)
+        lease = register(actor)
+        try:
+            req = g2_payload(lease)
+            first = obj._prep_policy_item(req)
+            req["state"][0] = 0.8
+            req["local_memory"]["consumer_step"] = req["g2"]["identity"]["decision_frame"] = 16
+            req["g2"]["identity"]["logical_state_frame"] = 16
+            second = obj._prep_policy_item(req)
+            assert len(called) == 2
+            assert first["augmented_prompt"] == second["augmented_prompt"]
+            assert "idle" not in json.dumps(json.loads(first["augmented_prompt"]))
+            assert first["state_token"][0] == 0 and second["state_token"][0] == pytest.approx(0.8)
+            task = StaticTaskText(**req["g2"]["static_text"])
+&gt;           h, w = second["padded_image_size"].tolist()
+            ^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+cosmos_framework/scripts/g2_policy_server_test.py:112: ValueError</failure></testcase><testcase classname="" name="test_real_service_calls_C_shared_prompt_and_keeps_state_fast[g2_r2]" time="0.023"><failure message="ValueError: too many values to unpack (expected 2)">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f5ac5071100&gt;
+profile = 'g2_r2'
+
+    @pytest.mark.parametrize("profile", ["g2_r1", "g2_r2"])
+    def test_real_service_calls_C_shared_prompt_and_keeps_state_fast(monkeypatch, profile):
+        obj, actor, rt, _, _ = setup(monkeypatch, profile=profile)
+        called = []
+        serialize = static_task_text.serialize_static_task_prompt
+    
+        def observe(task, recipe):
+            called.append((task, recipe))
+            return serialize(task, recipe)
+    
+        monkeypatch.setattr(static_task_text, "serialize_static_task_prompt", observe)
+        lease = register(actor)
+        try:
+            req = g2_payload(lease)
+            first = obj._prep_policy_item(req)
+            req["state"][0] = 0.8
+            req["local_memory"]["consumer_step"] = req["g2"]["identity"]["decision_frame"] = 16
+            req["g2"]["identity"]["logical_state_frame"] = 16
+            second = obj._prep_policy_item(req)
+            assert len(called) == 2
+            assert first["augmented_prompt"] == second["augmented_prompt"]
+            assert "idle" not in json.dumps(json.loads(first["augmented_prompt"]))
+            assert first["state_token"][0] == 0 and second["state_token"][0] == pytest.approx(0.8)
+            task = StaticTaskText(**req["g2"]["static_text"])
+&gt;           h, w = second["padded_image_size"].tolist()
+            ^^^^
+E           ValueError: too many values to unpack (expected 2)
+
+cosmos_framework/scripts/g2_policy_server_test.py:112: ValueError</failure></testcase><testcase classname="" name="test_b1_retry_inflight_and_post_ack_does_not_duplicate_Local_or_extend_deadline" time="0.089" /><testcase classname="" name="test_abort_expired_and_End_preserve_Local_and_release_conditions[exception]" time="0.061" /><testcase classname="" name="test_abort_expired_and_End_preserve_Local_and_release_conditions[expired]" time="0.069" /><testcase classname="" name="test_abort_expired_and_End_preserve_Local_and_release_conditions[end-during-sampling]" time="0.037" /><testcase classname="" name="test_subtask_switch_rebuilds_Global_without_resetting_Local_and_End_clears_both" time="0.077" /><testcase classname="" name="test_native_mixed_Session_batch_routes_conditions_and_Local_by_original_index" time="0.132" /><testcase classname="" name="test_service_cache_on_off_exact_actions_and_real_Local_state_parity" time="0.191" /><testcase classname="" name="test_new_request_seeds_only_text_KV_and_owns_storage_without_Local_references" time="0.001" /><testcase classname="" name="test_bad_prepared_KV_rejected[shape]" time="0.001" /><testcase classname="" name="test_bad_prepared_KV_rejected[dtype]" time="0.001" /><testcase classname="" name="test_bad_prepared_KV_rejected[batch]" time="0.001" /><testcase classname="" name="test_bad_prepared_KV_rejected[gradient]" time="0.000" /><testcase classname="" name="test_no_implicit_training_cache_or_raw_reasoner_conversion" time="0.001" /></testsuite></testsuites>

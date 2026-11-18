@@ -1,0 +1,196 @@
+.F......F.......................                                         [100%]
+=================================== FAILURES ===================================
+_________ test_explicit_idle_switch_reaches_both_pipeline_paths[False] _________
+
+json_prompt = False
+
+    @pytest.mark.parametrize("json_prompt", [False, True])
+    def test_explicit_idle_switch_reaches_both_pipeline_paths(json_prompt):
+        pipeline = ActionTransformPipeline(
+            format_prompt_as_json=json_prompt, append_idle_frames=True, append_idle_frame_text=False,
+        )
+>       result = pipeline(sample_fixture(), None)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/data/generator/action/utils/static_task_text_test.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/data/generator/action/utils/transforms.py:812: in __call__
+    data_dict = self._apply_plain_caption_postfixes(data_dict, mode)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/data/generator/action/utils/transforms.py:702: in _apply_plain_caption_postfixes
+    result = self.viewpoint_augmentor(data_dict)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <cosmos_framework.data.generator.action.utils.viewpoint_utils.ViewpointTextInfo object at 0x7ff4f3f49d90>
+data_dict = {'action': tensor([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., ...'ai_caption': 'transient caption must not be used', 'conditioning_fps': tensor(20), 'current_sg': 'moving object', ...}
+
+    def __call__(self, data_dict: dict) -> dict | None:
+        """Append viewpoint description to the caption.
+    
+        If the sample provides an ``"additional_view_description"`` key (a
+        free-form string describing the concatenated camera layout), it is
+        appended after the generic ``concat_view`` template. This allows each
+        dataset to supply its own description of which cameras are tiled and
+        how.
+    
+        Args:
+            data_dict: Sample dictionary containing caption and viewpoint.
+    
+        Returns:
+            The mutated *data_dict*, or the original unchanged if the
+            viewpoint key is missing or unrecognized.
+        """
+        if not self.enabled:
+            return data_dict
+    
+        viewpoint = data_dict.get(self.viewpoint_key)
+        if viewpoint is None:
+>           raise ValueError(
+                f"ViewpointTextInfo: missing key {self.viewpoint_key!r} in data_dict. "
+                f"All action datasets must provide a viewpoint label."
+            )
+E           ValueError: ViewpointTextInfo: missing key 'viewpoint' in data_dict. All action datasets must provide a viewpoint label.
+
+cosmos_framework/data/generator/action/utils/viewpoint_utils.py:104: ValueError
+___________ test_ragged_prepared_text_uses_existing_native_collator ____________
+
+    def test_ragged_prepared_text_uses_existing_native_collator():
+        from cosmos_framework.trainer.local_memory_grouped import collate_grouped_native_batch
+    
+        values = [
+            prepare_static_task_text(task_fixture(), recipe_fixture(), ProcessorFixture(), dropout_applied=drop)
+            for drop in (False, True)
+        ]
+        for value in values:
+            value["sequence_plan"] = "fixture-plan"
+>       batch = collate_grouped_native_batch(tuple(values))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/data/generator/action/utils/static_task_text_test.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cosmos_framework/trainer/local_memory_grouped.py:49: in collate_grouped_native_batch
+    loader._update_output_batch(batch, loader._get_next_sample(0))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/data/generator/joint_dataloader.py:1133: in _get_next_sample
+    batch_size = _batch_size_from_collated_batch(batch)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+batch = {'_worker_id': 0, 'ai_caption': ['{"cinematography": {"framing": "This video contains concatenated views from multiple...ue, True, True, True, True,
+        True, True, True, True, True, True, True, True, True]), tensor([True, True])], ...}
+
+    def _batch_size_from_collated_batch(batch: dict) -> int:
+        """Count the samples in a collated batch.
+    
+        Camera batches are sized by their vision stream. The LiDAR-only AV recipe decodes no
+        camera at all, so it carries neither ``images`` nor ``video`` and the sweeps are the
+        only per-sample list left to count.
+        """
+        for key in ("images", "video", "lidar"):
+            value = batch.get(key)
+            if value is not None:
+                return len(value)
+>       raise KeyError("A collated batch needs one of 'images', 'video' or 'lidar' to be split into samples.")
+E       KeyError: "A collated batch needs one of 'images', 'video' or 'lidar' to be split into samples."
+
+cosmos_framework/data/generator/joint_dataloader.py:150: KeyError
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:22
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:22: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:51
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:51: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:72
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:72: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:118
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:118: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:136
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:136: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:162
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:182
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:204
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:204: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:258
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:296
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:296: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:320
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:320: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:348
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:348: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:371
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:371: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:406
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:406: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:440
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:440: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:463
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:463: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:487
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:487: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:516
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:516: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:549
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:549: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:580
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:580: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /dev/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/dev/pytest-cache-files-kn4jodjo'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /dev/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/dev/pytest-cache-files-9ytpd9p1'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../../dev::test_explicit_idle_switch_reaches_both_pipeline_paths[False]
+FAILED ../../../../dev::test_ragged_prepared_text_uses_existing_native_collator
+2 failed, 30 passed, 23 warnings in 7.83s

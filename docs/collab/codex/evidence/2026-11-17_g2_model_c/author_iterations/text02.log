@@ -1,0 +1,113 @@
+........F.......................                                         [100%]
+=================================== FAILURES ===================================
+___________ test_ragged_prepared_text_uses_existing_native_collator ____________
+
+    def test_ragged_prepared_text_uses_existing_native_collator():
+        from cosmos_framework.trainer.local_memory_grouped import collate_grouped_native_batch
+    
+        values = [
+            prepare_static_task_text(task_fixture(), recipe_fixture(), ProcessorFixture(), dropout_applied=drop)
+            for drop in (False, True)
+        ]
+        for value in values:
+            value["sequence_plan"] = "fixture-plan"
+            value["video"] = torch.zeros(3, 17, 2, 4)
+        batch = collate_grouped_native_batch(tuple(values))
+        assert len(batch["text_token_ids"]) == len(batch["text_attention_mask"]) == 2
+        for index, value in enumerate(values):
+            for key in ("text_token_ids", "text_attention_mask", "text_position_ids"):
+>               assert torch.equal(batch[key][index][0], value[key])
+E               assert False
+E                +  where False = <built-in method equal of type object at 0x7fc859982820>(tensor(True), tensor([True, True, True, True, True, True, True, True, True, True, True, True,\n        True, True, True, True, True, ...e, True, True, True, True, True, True, True, True, True,\n        True, True, True, True, True, True, True, True, True]))
+E                +    where <built-in method equal of type object at 0x7fc859982820> = torch.equal
+
+cosmos_framework/data/generator/action/utils/static_task_text_test.py:190: AssertionError
+=============================== warnings summary ===============================
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+    import pynvml  # type: ignore[import]
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:22
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:22: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:51
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:51: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:72
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:72: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:118
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:118: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:136
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:136: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:162
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:182
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:182: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:204
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:204: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:258
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:296
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:296: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:320
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:320: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:348
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:348: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:371
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:371: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:406
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:406: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:440
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:440: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:463
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:463: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:487
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:487: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:516
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:516: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:549
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:549: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/data/generator/action/utils/transforms_test.py:580
+  /workspace/work/g2-c-training/cosmos-framework/cosmos_framework/data/generator/action/utils/transforms_test.py:580: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../../dev::test_ragged_prepared_text_uses_existing_native_collator
+1 failed, 31 passed, 21 warnings in 7.01s

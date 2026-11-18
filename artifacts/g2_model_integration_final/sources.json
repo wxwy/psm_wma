@@ -1,0 +1,193 @@
+{
+  "root_v3_baseline": "7a357620b4cc1f6817749c8a8275771cfbb4049c",
+  "formal_child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "c0_root": "739d39cf6498543b59d487d5925ef2a329040ac3",
+  "c0_child": "ec9356fafd1fd18cc0bd552b7eb23428f59df7f6",
+  "b_core_root": "4f90c875eda0ca53d997f64111b41ed531ac2900",
+  "b_core_child": "7e888f217dfcddc35ed73782f65c6e0890c72c3a",
+  "historical_partial_root": "b7ea01d71131189dd9c5b38f2857f9f4009e3b9c",
+  "historical_partial_child": "6d72d4d252c287fc8060bdc5a8db7f6cf959af1e",
+  "final_candidate_child_gitlink": "9370c3858532b4d61630138431145c8360e86eb0",
+  "root_handoff_sources": {
+    "A": "35a2580efd296bcf782d7cae38d4cb482a225a70",
+    "C": "343421d6c2fb78d577739e118dbd600021c991d2",
+    "D": "0be8fd36b28fca81ce7343c7bd7ab1c673d94783"
+  },
+  "status": "source/CPU integration candidate; independent review and actual GPU/FSDP/data execution pending",
+  "owned_blobs": {
+    "A": {
+      "source": "4209b151ecc11ab2043b9d08037d43b5e3903618",
+      "files": [
+        {
+          "path": "cosmos_framework/model/generator/mot/global_memory.py",
+          "blob": "7fe072ec28ddb699ac7d1818a24a2f054b0dfab1"
+        },
+        {
+          "path": "cosmos_framework/model/generator/mot/global_memory_test.py",
+          "blob": "32d4b6069c45dc2bb104e71de660976e75de6426"
+        },
+        {
+          "path": "cosmos_framework/model/generator/mot/global_spatial.py",
+          "blob": "482351ad7709b2c2a7774d4fccb8480292f399cf"
+        },
+        {
+          "path": "cosmos_framework/model/generator/mot/global_spatial_test.py",
+          "blob": "6168485788cd462e1692f5a5663ccbd5d96ab692"
+        }
+      ]
+    },
+    "C": {
+      "source": "26243dae9be7a2ab7ef5d544f8759b398ce917f9",
+      "files": [
+        {
+          "path": "cosmos_framework/data/generator/action/utils/json_formatter.py",
+          "blob": "24585d592a1e678c88a506d32ba20c62f1bdadf3"
+        },
+        {
+          "path": "cosmos_framework/data/generator/action/utils/transforms.py",
+          "blob": "b19dd935ce7957c1888a568e29e2e20b367ae53f"
+        },
+        {
+          "path": "cosmos_framework/data/generator/action/utils/static_task_text.py",
+          "blob": "f41edea4fd8bd17bfd4d69f4ca73ecd8ec82fd21"
+        },
+        {
+          "path": "cosmos_framework/data/generator/action/utils/static_task_text_test.py",
+          "blob": "af5de71749f62f7b655ec8a396ccf96a03f8d845"
+        },
+        {
+          "path": "cosmos_framework/data/generator/action/datasets/g2_training_adapter.py",
+          "blob": "0ed4a272d76588c4faf115cb17f084bd4fbaa69c"
+        },
+        {
+          "path": "cosmos_framework/data/generator/action/datasets/g2_training_adapter_test.py",
+          "blob": "b4d384c1c5fb54d206a409cd7d50fdc9ca4a301f"
+        },
+        {
+          "path": "cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py",
+          "blob": "2203f53b54fe01f39d9fe02c4283ca928178fee8"
+        },
+        {
+          "path": "cosmos_framework/data/generator/joint_dataloader.py",
+          "blob": "7a65ae2f28e22dbaa44c09a6bb711fb0b4fb2b5b"
+        },
+        {
+          "path": "cosmos_framework/checkpoint/g2_warm_start.py",
+          "blob": "8df2060b0b1cd15cfc8edfa2ee625dff495551e4"
+        },
+        {
+          "path": "cosmos_framework/checkpoint/g2_warm_start_test.py",
+          "blob": "6a602d3ea91112de0db89065284309767f278698"
+        },
+        {
+          "path": "cosmos_framework/trainer/__init__.py",
+          "blob": "8a2685add5c97b35a25b137e5e30c756a5c1ad89"
+        },
+        {
+          "path": "cosmos_framework/trainer/g2_grouped_integration_test.py",
+          "blob": "59b32b22a7bb6512dea8dfb0be9c5872e746d6db"
+        },
+        {
+          "path": "cosmos_framework/trainer/g2_training.py",
+          "blob": "90a04fa69db1bab85e3dc58b4e42459498a1b75c"
+        },
+        {
+          "path": "cosmos_framework/trainer/g2_training_test.py",
+          "blob": "fbedd69dc1c4139a2267a15ff6191076c8ec5a9d"
+        },
+        {
+          "path": "cosmos_framework/trainer/local_memory_grouped.py",
+          "blob": "8206569a2fd7d3d19ddceb51b78126a2ed63405b"
+        },
+        {
+          "path": "cosmos_framework/trainer/local_memory_grouped_resume.py",
+          "blob": "84f9b4187132063a7f9bffef1ab8155b0486aaf1"
+        },
+        {
+          "path": "examples/psm_wma_robocasa_corrected_phase5.py",
+          "blob": "1ad9f90eba326ca1d4e9b1e828d756a52034716d"
+        },
+        {
+          "path": "examples/psm_wma_robocasa_g2_recipe.py",
+          "blob": "ffdb0b01a176e3cd7d20ef3c583a7f83ed3c2beb"
+        },
+        {
+          "path": "examples/psm_wma_robocasa_g2_recipe.template.json",
+          "blob": "b5859965feb7c7a6a1d0313037cd6f2df45e4a82"
+        },
+        {
+          "path": "examples/psm_wma_robocasa_g2_recipe_test.py",
+          "blob": "a3a2de32cbe49303362ad5e9bc6a11bc4d8cea2f"
+        }
+      ]
+    },
+    "D": {
+      "source": "6991142cb94256f497347db40f58ad0ee3f482aa",
+      "files": [
+        {
+          "path": "cosmos_framework/inference/g2_session_cache.py",
+          "blob": "78798dcd375239650750057c1b3eb20da0956e19"
+        },
+        {
+          "path": "cosmos_framework/inference/g2_policy_conditions.py",
+          "blob": "87faf62ce8b3da8753912c7ae1b2ff21db49d0ff"
+        },
+        {
+          "path": "cosmos_framework/inference/g2_model_hooks.py",
+          "blob": "6f338e8d7e5826990bf8892a5b7e6da9d6079e5a"
+        },
+        {
+          "path": "cosmos_framework/inference/g2_session_cache_test.py",
+          "blob": "f78f537dd3c07b093adb5992fc010b38e5a851c7"
+        },
+        {
+          "path": "cosmos_framework/inference/g2_policy_conditions_test.py",
+          "blob": "908795b7db67d3fea1657a09e3ed3900279ffefa"
+        },
+        {
+          "path": "cosmos_framework/inference/g2_model_hooks_test.py",
+          "blob": "b6c8bc2cf39df85cef311332d1dcc42f456eb171"
+        },
+        {
+          "path": "cosmos_framework/inference/g2_text_kv_cache_test.py",
+          "blob": "171861a621b1719c044430d47608700f021bfdc5"
+        },
+        {
+          "path": "cosmos_framework/inference/robocasa_session_transactions.py",
+          "blob": "b52ce92db3c1754f5cb3bbc13cfaaf900ab85d9c"
+        },
+        {
+          "path": "cosmos_framework/inference/robocasa_batch_transactions.py",
+          "blob": "cbbe98cd742b30e3065747b94f67be2441aef85d"
+        },
+        {
+          "path": "cosmos_framework/model/generator/mot/inference_text_kv_memory.py",
+          "blob": "c4554dd62ea455428f31b3fd07b5aeac2eb5ba04"
+        },
+        {
+          "path": "cosmos_framework/scripts/action_policy_server_robocasa.py",
+          "blob": "09c5a63ad2a88ff24b6ef8e0ba5173dffe7548d1"
+        },
+        {
+          "path": "cosmos_framework/scripts/g2_policy_server_test.py",
+          "blob": "9ea0e55365ab82a93240bb82e6284a558247908b"
+        }
+      ]
+    }
+  },
+  "cpu": {
+    "passed": 636,
+    "skipped": 1,
+    "failures": 0,
+    "errors": 0,
+    "modules": 30,
+    "skips": [
+      {
+        "class": "examples.psm_wma_robocasa_corrected_phase5_test",
+        "name": "test_optional_real_strict_snapshot10_preflight",
+        "reason": "\u672a\u63d0\u4f9b\u771f\u5b9e exact-window cache/source/Edge/base/VAE \u8def\u5f84"
+      }
+    ],
+    "scope": "synthetic native model + actual CPU Local/Session/grouped/DCP/Gloo; not GPU/FSDP/real-data approval"
+  }
+}

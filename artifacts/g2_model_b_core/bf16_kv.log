@@ -1,0 +1,73 @@
+........F
+=================================== FAILURES ===================================
+______ test_native_prepared_hidden_and_gen_parity[dtype1-False-lengths0] _______
+
+lengths = (3,), text_norm = False, dtype = torch.bfloat16
+
+    @pytest.mark.parametrize("lengths", [(3,), (0,), (3, 0, 1), (0, 0)])
+    @pytest.mark.parametrize("text_norm", [False, True])
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    def test_native_prepared_hidden_and_gen_parity(lengths, text_norm, dtype):
+        torch.manual_seed(31)
+        model = tiny_model(text_norm).to(dtype)
+        pack, mask, pos, text = native_pack(model, lengths)
+        captured_k, captured_v, handles = [], [], []
+        for block in model.layers:
+            handles.append(block.self_attn.k_norm.register_forward_hook(lambda m, inp, out: captured_k.append(out)))
+            handles.append(block.self_attn.v_proj.register_forward_hook(lambda m, inp, out: captured_v.append(out)))
+>       native, _ = model(pack, mask, pos)
+                    ^^^^^^^^^^^^^^^^^^^^^^
+
+cosmos_framework/model/generator/mot/g2_core_test.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1814: in forward
+    return _impl_forward(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1224: in _impl_forward
+    position_embeddings = _packed_position_embeddings(self, pack, position_ids)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cosmos_framework/model/generator/mot/unified_mot.py:1172: in _packed_position_embeddings
+    cos, sin = self.rotary_emb(
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1776: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/nn/modules/module.py:1787: in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/utils/_contextlib.py:124: in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+../../../.venvs/psm-wma-cpu/lib/python3.12/site-packages/transformers/modeling_rope_utils.py:87: in wrapper
+    return rope_forward(self, x, position_ids)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Qwen3VLTextRotaryEmbedding()
+x = tensor([[-0.9727,  0.5625,  0.2041,  0.6680, -0.1523, -0.6016, -0.1172, -0.6641,
+          1.9297, -0.5430, -0.1582, -...0.0000,
+          0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]],
+       dtype=torch.bfloat16)
+position_ids = tensor([[[0, 1, 2, 3, 4]],
+
+        [[0, 1, 2, 3, 4]],
+
+        [[0, 1, 2, 3, 4]]])
+
+    @torch.no_grad()
+    @dynamic_rope_update  # power user: used with advanced RoPE types (e.g. dynamic rope)
+    def forward(self, x, position_ids):
+>       assert self.inv_freq.dtype == torch.float32, f"inv_freq must be float32, but got {self.inv_freq.dtype}"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: inv_freq must be float32, but got torch.bfloat16
+
+cosmos_framework/model/generator/reasoner/qwen3_vl/qwen3_vl.py:357: AssertionError
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/g2_core_test.py::test_native_prepared_hidden_and_gen_parity[dtype1-False-lengths0]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 8 passed in 4.76s

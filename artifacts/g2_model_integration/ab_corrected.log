@@ -1,0 +1,9 @@
+..                                                                       [100%]
+=============================== warnings summary ===============================
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_actual_reader_native_action_loss_reaches_registered_global_only
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_actual_reader_mixed_native_batch_equals_separate_and_cached
+  /workspace/work/g2-integration/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1086: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+    with torch.autocast("cuda", enabled=True, dtype=torch.float32):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2 passed, 2 warnings in 4.84s

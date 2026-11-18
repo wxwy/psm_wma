@@ -1,0 +1,39 @@
+F
+=================================== FAILURES ===================================
+_____ test_actual_reader_native_action_loss_reaches_registered_global_only _____
+
+    def test_actual_reader_native_action_loss_reaches_registered_global_only():
+        torch.manual_seed(611)
+        net = network()
+        inventory = parameter_inventory(net)
+        set_trainable_names(net, inventory["parameters"]["global"])
+        # Existing Local inner core executes with frozen slow weights, outside no_grad.
+        local_rows, state = net.local_memory_runtime.core.step_many(torch.randn(4, 256),
+                                                                   net.local_memory_runtime.core.initial_state(4))
+        assert all(torch.isfinite(s).all() for s in state)
+        views = (None, None, (synthetic_view(view_id="global-only"),), (synthetic_view(view_id="both"),))
+        packed, _, _ = packed_batch(net, [[1, 2], [], [3], [4, 5, 6]], views,
+                                   (None, local_rows[1], None, local_rows[3]))
+        output = net(packed)
+        assert output["last_hidden_state"].shape == (packed.sequence_length, 16)
+        assert [tuple(p.shape) for p in output["preds_action"]] == [(2, 15)] * 4
+        loss = sum((p - 0.25).square().mean() for p in output["preds_action"])
+        loss.backward()
+        params = dict(net.named_parameters())
+        for name in ("global_memory_reader.queries", "global_memory_reader.spatial.image_projection.weight",
+                     "global_memory_projector.projection.1.weight"):
+>           grad = params[name].grad
+                   ^^^^^^^^^^^^
+E           KeyError: 'global_memory_projector.projection.1.weight'
+
+cosmos_framework/model/generator/mot/g2_integration_test.py:85: KeyError
+=============================== warnings summary ===============================
+cosmos_framework/model/generator/mot/g2_integration_test.py::test_actual_reader_native_action_loss_reaches_registered_global_only
+  /workspace/work/g2-integration/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1086: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+    with torch.autocast("cuda", enabled=True, dtype=torch.float32):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/g2_integration_test.py::test_actual_reader_native_action_loss_reaches_registered_global_only
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 1 warning in 4.27s

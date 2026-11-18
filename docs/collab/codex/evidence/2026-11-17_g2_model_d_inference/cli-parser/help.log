@@ -1,0 +1,162 @@
+/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/cuda/__init__.py:65: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+usage: ../work/g2_d_cli_help.py [-h] [OPTIONS]
+
+╭─ options ────────────────────────────────────────────────────────────────────╮
+│ -h, --help                                                                   │
+│       show this help message and exit                                        │
+│ --output-dir {None}|PATH                                                     │
+│       Output directory for ``OmniInference`` (saved config.yaml,             │
+│       benchmarks).                                                           │
+│       Defaults to ``--dump-dir`` if set, else                                │
+│       ``/tmp/cosmos3_action_server``. (default: None)                        │
+│ --guardrails, --no-guardrails                                                │
+│       是否初始化 common inference 的生成内容 guardrails。 (default: True)               │
+│ --sampler {unipc,edm}                                                        │
+│       Diffusion sampler used by ``OmniInference``. (default: unipc)          │
+│ --seed INT                                                                   │
+│       Random seed for ``model.generate_samples_from_batch``. (default: 0)    │
+│ --guidance FLOAT                                                             │
+│       Guidance scale for denoising. (default: 1.0)                           │
+│ --num-steps INT                                                              │
+│       Number of denoising steps. (default: 30)                               │
+│ --fps INT                                                                    │
+│       Frames per second used for both prompt augmentation and rollout        │
+│       encoding. (default: 20)                                                │
+│ --action-chunk-size {None}|INT                                               │
+│       Number of action steps to predict. Defaults to ``chunk_length`` /      │
+│       ``num_action_per_chunk`` from the experiment config (or 32). (default: │
+│       None)                                                                  │
+│ --max-action-dim {None}|INT                                                  │
+│       Maximum action dimension. Defaults to ``model.config.max_action_dim``  │
+│       from the experiment config (or 64). (default: None)                    │
+│ --raw-action-dim {None}|INT                                                  │
+│       Unpadded action dimension used for action-channel masking, and the     │
+│       width                                                                  │
+│       the ``state`` token in a /predict request must have. Optional          │
+│       override:                                                              │
+│       when omitted it is taken from the action stats, else derived from the  │
+│       experiment config's ``use_base_action`` / ``base_encoding`` (10        │
+│       arm-only,                                                              │
+│       15 ``raw``, 20 ``ego``). Startup fails if none of the three resolves.  │
+│       (default: None)                                                        │
+│ --action-stats-path {None}|PATH                                              │
+│       Path to action stats JSON for denormalizing predicted actions.         │
+│       (default: None)                                                        │
+│ --action-normalization {auto,meanstd,minmax,quantile,quantile_rot}           │
+│       Action normalization to invert. ``auto`` reads                         │
+│       ``action_normalization``                                               │
+│       from the experiment config (default ``minmax`` if unspecified).        │
+│       (default: auto)                                                        │
+│ --local-memory-mode {off,required}                                           │
+│       Online V3 Local-TTT mode. Formal Local-TTT evaluation must use         │
+│       ``required``. (default: off)                                           │
+│ --local-memory-max-sessions INT                                              │
+│       Maximum concurrent online Local-TTT episode sessions. (default: 64)    │
+│ --transaction-profile {legacy,b1,batch}                                      │
+│       Opt-in Phase B transaction/B1 API. Does not enable multi-Sim or B>1.   │
+│       (default: legacy)                                                      │
+│ --transaction-owner-token-file {None}|PATH                                   │
+│       (default: None)                                                        │
+│ --history-source {server_vae,sim_shared_vae}                                 │
+│       (default: server_vae)                                                  │
+│ --local-ttt-history-k {None}|INT                                             │
+│       (default: None)                                                        │
+│ --single-latency-arm {None,A,B,C}                                            │
+│       Stage3A explicit B1 signed-history path; defaults preserve native A/B. │
+│       (default: None)                                                        │
+│ --transaction-run-lease {None}|STR                                           │
+│       (default: None)                                                        │
+│ --transaction-manifest-digest {None}|STR                                     │
+│       (default: None)                                                        │
+│ --transaction-slot-id {None}|STR                                             │
+│       (default: None)                                                        │
+│ --transaction-timeout-s FLOAT                                                │
+│       (default: 600.0)                                                       │
+│ --transaction-slot-ids {None}|STR                                            │
+│       (default: None)                                                        │
+│ --transaction-max-batch-size INT                                             │
+│       (default: 1)                                                           │
+│ --transaction-capacity-profile {legacy8,streaming32}                         │
+│       (default: legacy8)                                                     │
+│ --transaction-batch-wait-ms FLOAT                                            │
+│       (default: 20.0)                                                        │
+│ --g2-profile {legacy,g2_r1,g2_r2}                                            │
+│       New condition fields are enabled only by an explicit G2 profile.       │
+│       (default: legacy)                                                      │
+│ --g2-hooks-factory {None}|STR                                                │
+│       B-owned module:function creating fixed-model preparation hooks from    │
+│       this service. (default: None)                                          │
+│ --g2-provider-factory {None}|STR                                             │
+│       module:function creating a current-rollout spatial provider; no expert │
+│       replay fallback. (default: None)                                       │
+│ --g2-cache-enabled, --no-g2-cache-enabled                                    │
+│       (default: True)                                                        │
+│ --g2-cache-max-sessions INT                                                  │
+│       (default: 32)                                                          │
+│ --g2-cache-max-entries INT                                                   │
+│       (default: 256)                                                         │
+│ --g2-cache-cpu-bytes INT                                                     │
+│       (default: 268435456)                                                   │
+│ --g2-cache-gpu-bytes INT                                                     │
+│       (default: 268435456)                                                   │
+│ --g2-cache-handles INT                                                       │
+│       (default: 4096)                                                        │
+│ --media-spool-max-jobs INT                                                   │
+│       (default: 4)                                                           │
+│ --media-spool-max-bytes INT                                                  │
+│       (default: 536870912)                                                   │
+│ --media-drain-timeout-s FLOAT                                                │
+│       (default: 300.0)                                                       │
+│ --format-prompt-as-json {None,True,False}                                    │
+│       Serve prompts as structured JSON (matching training                    │
+│       ``format_prompt_as_json``).                                            │
+│       ``None`` reads the flag from the experiment config; set explicitly to  │
+│       override when                                                          │
+│       the eval experiment differs from the checkpoint's training prompt      │
+│       format. (default: None)                                                │
+│ --dump-dir {None}|PATH                                                       │
+│       If set, dump observations, predicted actions, and rollout videos under │
+│       this directory for offline debugging. (default: None)                  │
+│ --dump-every INT                                                             │
+│       Dump every N-th request (only used when ``--dump-dir`` is set).        │
+│       (default: 1)                                                           │
+│ --host STR                                                                   │
+│       HTTP host to bind. (default: 0.0.0.0)                                  │
+│ --port INT                                                                   │
+│       HTTP port to bind. (default: 8000)                                     │
+│ --http-400-on-error, --no-http-400-on-error                                  │
+│       If set, return HTTP 400 on inference errors. Default is HTTP 200 with  │
+│       an                                                                     │
+│       empty action list, matching the legacy simulator client expectations.  │
+│       (default: False)                                                       │
+│ --run-validation, --no-run-validation                                        │
+│       If set, run a one-shot validation/training batch through the model on  │
+│       startup (developer debugging only). (default: False)                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ checkpoint options ─────────────────────────────────────────────────────────╮
+│ Checkpoint and config loading configuration. ``use_ema_weights`` lives here  │
+│ and defaults True at inference (suppressed from CLI) -> evals load net_ema   │
+│ by default.                                                                  │
+│ ──────────────────────────────────────────────────────────────────────────── │
+│ --config-file STR                                                            │
+│       Hydra config store module, Hydra config yaml file, or Hugging Face     │
+│       model json file. (default: cosmos_framework/configs/base/config.py)    │
+│ --experiment STR                                                             │
+│       Hydra experiment name. (default: '')                                   │
+│ --experiment-overrides [STR [STR ...]]                                       │
+│       Hydra experiment overrides. (default: )                                │
+│ --checkpoint-path STR                                                        │
+│       Model name or path.                                                    │
+│                                                                              │
+│       * Model name: Cosmos3-Nano                                             │
+│       * Local path: /path/to/checkpoint (required)                           │
+│ --credential-path STR                                                        │
+│       Path to S3 credentials file for remote checkpoint loading. (default:   │
+│       credentials/gcp_checkpoint.secret)                                     │
+│ --use-ema-weights, --no-use-ema-weights                                      │
+│       If True, use EMA weights. Otherwise, use regular weights. (default:    │
+│       True)                                                                  │
+│ --checkpoint-cache-dir {None}|PATH                                           │
+│       Directory for caching S3 checkpoints. (default: None)                  │
+╰──────────────────────────────────────────────────────────────────────────────╯

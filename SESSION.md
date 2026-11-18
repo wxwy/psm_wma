@@ -5323,3 +5323,37 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 - V3-EVALV2-PROMOTION IN_PROGRESS / canonical publication pending exact-target resolution, not completedV3 merge. SourceRoot4139ad245b73cc1c16c9d4954241cecb81478992/Child6c83596d6a259e89c4cd3e79424024983426ac3d; Root/Child clean before/after lightCPU84PASS/0fail,error,skip/1deselected/shell0, fixedsourcehashes. Static24/sourceGuard/import/CLI helpPASS. Preserveswholecanonical369+baf and approvedd18+2f objectunion; no production edits.
 - Independent read-only source audit confirmsChild1270 objects exactunion, 13vs13pathsdisjoint; Rootonly3ledgers/Gitlink overlap. Evidence docs/collab/codex/evidence/2026-10-31_eval_v2_current_v3_composition/README.md includesrawsmall/commands/conflict originals/object proof. Twoexternalstatic scope-preflight assumptions failed beforeproject; correctedonlyexternalchecker, noformalcode/testassertion changes.
 - No canonical V3/v3-local-ttt publication, DS dispatch/execution, OS/GPU/Canary/18task/900/train/realcheckpoint/data access. Willpublishisolatedrefs only forreview; needOwner resolve originalpin2f which woulddropnewbaftraining. Currentrecommendedcandidate preservesbothusingnew6c Child. OldOSMesaCanaryOWNER_ACCEPTED honored withoutrequestingraw/repeatingrun.
+# 2026-11-17 CST — G2 B 公共接口 C0 认领
+
+- C0固定Child `ec9356fafd1fd18cc0bd552b7eb23428f59df7f6`已正常push/readback独立B分支；3新增文件589行，不改旧core。最终ABI CPU11/11 PASS/0fail/error/skip (1.21s)、Ruff check/format三文件PASS，证据 `artifacts/g2_model_b_c0/`。此Root commit绑定该Child/Gitlink，代码身份在后续发布回执登记，不用docs后继替换C0。M00/M01为REVIEW作者接口，不代表独立审核；接续B UND/prefix实现，不等待额外架构审批。
+
+- 当前授权为源码/CPU/独立候选发布，不运行 GPU/训练/900EP、不自动推广 V3/v3-local-ttt。Root 最初 advertised/fetched 190ea2e2；再次刷新已 ff-only 到 7a357620b4cc1f6817749c8a8275771cfbb4049c（仅模型 v2.2 引用补充），Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2 不变。
+- 独立 `/workspace/work/g2-b-core`，Root/Child branch `v3-g2-model-b-core-20261117`。镜像 ghfast.top 403 后克隆同一 wxwy Child GitHub 源并检出 Gitlink；原 /workspace/psm_wma 工作树未改。#56 B ACK comment6943487277，A ACK6943452748；C/D 未核对 ACK 仍 TODO。
+- C0 首批仅 Child `mot/g2_contracts.py` / `g2_contract_fixtures.py` / `g2_contracts_test.py`；Root 公共合同/归属/依赖/证据与本账本。C0 后 B 才修改 unified_mot.py、omni_mot_model.py、memory_prefix.py、cosmos3_vfm_network.py、必要 attention/config/carrier/FSDP；不修改 A Reader/C formatter-trainer/D inference cache。
+- 已核对 #52/#53 与 #54 最新 A2固定4ad0fe73/d5c1ffc7 的独立限定通过；DATA_B/C 仍 pending；不复做 VAE/producer。公共几何以其 spatial_metadata.py/preprocess_rgb 字段为源，不使用假原点或固定网格。新旧历史测试不是本轮结果；初始认领时尚未运行C0；最终结果与来源见本节首条。
+
+## 2026-11-17 CST — G2 B core 固定来源
+
+- C0 Root739d39cf6498543b59d487d5925ef2a329040ac3/Child ec9356fafd1fd18cc0bd552b7eb23428f59df7f6已在#56/6943610784发布；A/C/D均ACK该唯一ABI。C/D作者ACK6943519070/6943531508，更新公共TODO为IN_PROGRESS，不再保留初始未核对状态。
+- B-core Child7e888f217dfcddc35ed73782f65c6e0890c72c3a已正常push/readback独立B分支。Root本提交绑定该Gitlink，回执登记完整Root。14文件B范围，不改A Reader/C formatter-trainer/D inference cache；A4209b151、C68d84e8、D209749e5已读但尚未合入B-core。
+- 一次冻结UND共享原生embedding/RoPE/causal attention/MLP/postnorm，保留各层UND base KV，GEN key norm在当前可训练图。所有GEN层[G;L;Text;Native]K/V-only，G/L独立长度/presence，Local k_local不扩大。Global配置关闭不创建模块/不消耗新增初始化RNG；公开G2ConditionBatch与Omni prepare/generation、参数inventory/FSDP注册供C/D使用。
+- 最终合成CPU scoped198/198 PASS/0skip，9主要文件strict Ruff check/format PASS；保留baseline I001 debt。C0实际旧源码4组对照输出/梯度/构造及forward RNG逐位一致。日志/JUnit/迭代失败及runbook在artifacts/g2_model_b_core；BF16首轮fixture把必须FP32的rotary buffer错误cast，已修fixture，不改nativeRoPE规则。FSDP注册/切换仅CPU接口，不是实际分布式验证。
+- 接续在独立integration分支普通合入固定A/C/D与必要实际调用测试。DATA_B/C、真实GPU/Local inner/FSDP/A-B恢复/cache-on-off/Session闭环仍需固定候选执行侧验收；GA=1。D按Session缓存miss跳过FSDP hook会导致rank序列不一致，已在#56明确通知，须adapter边界或一致批调用证明。未运行GPU/正式训练/900EP，未服务器commit/push/正式分支推广。
+
+## 2026-11-17 CST — G2 B 当前部分集成候选（不是最终全量集成）
+
+- 独立 `/workspace/work/g2-integration`，两仓分支v3-g2-model-integration-20261117。Child固定6d72d4d252c287fc8060bdc5a8db7f6cf959af1e已正常push/readback；Root本提交绑定该Gitlink，准确Root见#56回执。正式V3仍7a357620/Gitlink d5c1ffc7，未推广、未强推、不覆盖并行来源。
+- 普通合入A4209b151、C68d84e8及f262d7ff、D209749e5及6991142；Root普通保留A35a2580e原始交接/证据。A/C/D生产归属文件与各自fixed blobs相等，B只修自己的核心及新增组合测试；来源/范围/祖先证明见artifacts/g2_model_integration。
+- 最终scoped22文件442 PASS/0fail/error/skip，12项真实模块组合测试经native pack、冻结UND、A Reader/projector、所有GEN层joint prefix到native action头；含实际Local CPU core、双Session三次replan cache-on/off动作输出、正常/空文本混批、Qwen/Nemotron FP32/BF16。生产attention仍走dispatcher，CPU只mock kernel，绝不冒称真实GPU或完整训练。
+- 集成B修正3a5c625的Global-enabled全缺席标量零图依赖（不插token、不调用Reader）；82d73c5合成dropout身份以支持空/正常B1合批，不重抽；6d72d4d恢复legacy QKV/norm staging，C0旧源码四组输出/梯度/RNG逐位PASS。实际FSDP必要前提有CPU证据，运行仍NOT_RUN。
+- D OnlineSpatialSnapshot实际mask_content_ids已进view/global key并miss校核；B重复公共mask字段提议撤回、未发布，继续唯一D快照。D所有Session-cache请求明确拒绝world_size>1。当前singleRoom C adapter恰一top；Reader保证单variant，未来多Room真实语义/数据未验，不扩散承诺。
+- C训练控制器/optimizer/warm-start/阶段/checkpoint与Phase5 overlay后继固定SHA及C最终Root handoff尚未交付，M05/完整M07不关闭。Root已普通保留D3d351fe37af111257543ab814f30222dd7e76da6全部原始证据/交接，明确真实provider与weight/config versions factory尚未冻结。DATA_B/C与真实GPU/FSDP/A-B恢复/服务闭环/M08/M09 NOT_RUN；训练小例GA=1，实际CLI待C交付后引用，不造假命令。现有CPU runner可直接复现；checkpoint/recipe/loader/provider/正式batch预算等待执行侧明确。
+
+## 2026-11-17 CST — G2 最终源码／CPU集成候选
+
+- C最终Child26243dae9be7a2ab7ef5d544f8759b398ce917f9（a911训练/恢复＋显式配对horizon）到达后继续普通合入，不以旧partial结束。Root也保留C343421d6c2fb78d577739e118dbd600021c991d2全部证据/交接；D最终Root0be8fd36b28fca81ce7343c7bd7ab1c673d94783的SERVER_RUNBOOK后继正常merge，A35a原证据未改。
+- 最终Child9370c3858532b4d61630138431145c8360e86eb0正常push/readback，Root本提交唯一绑定此Gitlink。C0与B core固定来源不变；旧partial b7ea01d7/6d72和442证据独立保留。Root Draft60 / Child Draft17更新为最终源码/CPU范围，仍Draft、未自动合并正式V3/v3-local-ttt。
+- 最终统一30模块636 PASS、1 SKIP、0fail/error（37.98s）；skip仅原optional真实exact-window cache/source/Edge/base/VAE preflight，缺真实路径而保留原skip。没有累计作者405/361/56或历史442等重叠数量。最终日志/JUnit/static/source proof/runner在artifacts/g2_model_integration_final。
+- 13项B-owned组合现覆盖actual A/B native vision-action头、C shared v2 text与stage/strict warm-start、D缓存/两Session三轮replan on-off、normal/empty混批、Local core、Qwen/Nemotron FP32/BF16。新增C控制器接实际动作头：无Global G1完整旧state严格载入，TRAIN_A→B后恢复model/optimizer/stage/RNG与连续运行逐项相等、Local权重不变。原grouped/Local/GA/sidecar、CPU DCP、2-rank Gloo、旧Phase5/No-TTT同轮回归。
+- C v2显式spatial_context_scope，dropout_id为consumer_once_v1+rate策略身份，实际决定仍在dropped；B兼容此前opaque IDs的组合hash，无dataclass分叉。C/D生产归属文件未手改；36个A/C/D归属blob和祖先来源证明在最终证据。EffectiveTextBatch用整个实例/完整字段签名，无.identity属性，已通知C修正文档措辞。
+- M05/M06/M07更新REVIEW作者源码/CPU，不代表独立批准。真实DATA_B/C/provider、G1/Edge/Wan权重/版本factory、完整参数清单、GPU BF16/compile物化/FSDP/阶段DCP恢复/服务闭环/正式训练/900EP仍NOT_RUN；M08/M09 TODO。实际训练沿C现有Phase5 --g2-recipe，smoke recipe内GA=1（不能只CLI --ga1），horizon/预算等必须显式。服务沿D原server/runbook，world_size>1缓存拒绝。未执行GPU、未停止其他任务、未升级环境或外传私有数据。
