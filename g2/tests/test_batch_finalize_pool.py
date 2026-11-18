@@ -102,7 +102,12 @@ def test_cpu_initializer_binds_test_factory_without_any_encoding(monkeypatch):
     from g2.tests.batch_helpers import FakeBatchEncoder
 
     monkeypatch.setattr(batch_finalize, "_CPU_ENCODER", None)
-    for name in ("CUDA_VISIBLE_DEVICES", "COSMOS_DEVICE", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    for name in (
+        "CUDA_VISIBLE_DEVICES",
+        "COSMOS_DEVICE",
+        "OMP_NUM_THREADS",
+        "MKL_NUM_THREADS",
+    ):
         monkeypatch.delenv(name, raising=False)
     spec = {"_test_encoder_factory": "g2.tests.batch_helpers:FakeBatchEncoder"}
     batch_finalize.cpu_initializer(spec)
