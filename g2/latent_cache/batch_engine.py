@@ -6,6 +6,7 @@ Workers own models; the coordinator owns discovery and existing finalization.
 
 from __future__ import annotations
 
+import concurrent.futures
 import copy
 import json
 import math
@@ -19,6 +20,7 @@ from pathlib import Path
 from g2.io import digest, read_json
 
 from .batch_contract import make_batch_recipe
+from .batch_finalize import cpu_initializer, finalize_job
 from .batch_queue import BatchQueue
 from .batch_worker import encoder_factory, worker_main
 from .contract import CacheError
@@ -228,6 +230,7 @@ class BatchEngine:
         expected=None,
         producer_done=None,
         resume=False,
+        finalize_workers=0,
         clock=time.monotonic,
     ):
         if (
@@ -243,6 +246,12 @@ class BatchEngine:
             )
         if mode == "independent" and dataset_root is None:
             raise CacheError("continuous discovery requires a published dataset root")
+        if (
+            type(finalize_workers) is not int
+            or not 0 <= finalize_workers <= 8
+            or (mode != "independent" and finalize_workers)
+        ):
+            raise CacheError("CPU finalizers require an explicit independent B count in 0..8")
         self.spool, self.spec, self.mode, self.resume, self.clock = (
             spool,
             spec,
@@ -272,6 +281,9 @@ class BatchEngine:
         )
         self._new_work = False
         self._paused = False
+        self.finalize_workers = finalize_workers
+        self._finalize_pool = None
+        self._finalizers = {}
         self._started = self.clock()
         self._publish_binding()
 
@@ -516,7 +528,50 @@ class BatchEngine:
         self.spool.seal(job)
         self._sources.pop(job, None)
 
+    def _finish_jobs_parallel(self):
+        """Keep admission and GPU batch work progressing while CPU verifies cache.
+
+        One spawned CPU process per sealed Episode performs the original
+        build/receipt/reap transaction.  The parent retains the per-Episode
+        lease, owns all scheduling, and propagates worker failures fail-closed.
+        """
+        for job_id, (target, future) in list(self._finalizers.items()):
+            if not future.done():
+                continue
+            try:
+                result = future.result()
+            except BaseException as exc:
+                raise CacheError("CPU finalization failed for " + job_id) from exc
+            del self._finalizers[job_id]
+            if result["archived"]:
+                self._release(target)
+                self._new_work = True
+        with self.spool._db() as db:
+            rows = [dict(r) for r in db.execute("SELECT * FROM jobs ORDER BY rowid")]
+        for row in rows:
+            self._target_lease(row["target"])
+            if row["error"]:
+                raise CacheError("retained failed episode: " + row["error"])
+            if row["id"] in self._finalizers:
+                continue
+            if row["done"] or (
+                row["sealed"] and self.queue.finalizable(row["id"])
+            ):
+                if len(self._finalizers) < self.finalize_workers:
+                    future = self._finalize_pool.submit(
+                        finalize_job,
+                        str(self.spool.root),
+                        row["id"],
+                        self.spool.recipe["recipe_id"],
+                    )
+                    self._finalizers[row["id"]] = (row["target"], future)
+                continue
+            if row["source_ready"] and not row["sealed"]:
+                self._refill(row)
+
     def _finish_jobs(self):
+        if self._finalize_pool is not None:
+            return self._finish_jobs_parallel()
         from .production import build_profile, cache_receipt
 
         with self.spool._db() as db:
@@ -629,6 +684,8 @@ class BatchEngine:
             spool=self.spool.stats(),
             batch=self.queue.stats(),
             worker_restarts=self._restarts,
+            cpu_finalize_workers=self.finalize_workers,
+            cpu_finalizing_jobs=len(self._finalizers),
             training_ready=False,
             actual_max_batch_size_per_gpu=self.spec["max_batch_size_per_gpu"],
         )
@@ -636,6 +693,12 @@ class BatchEngine:
         return result
 
     def _shutdown(self):
+        if self._finalize_pool is not None:
+            # Let durable archive transactions finish before releasing source
+            # leases. Never force-kill an in-flight published cache writer.
+            self._finalize_pool.shutdown(wait=True, cancel_futures=True)
+            self._finalize_pool = None
+            self._finalizers.clear()
         self._stop.set()
         for process in self._processes.values():
             process.join(timeout=self.spec["worker_timeout_s"] + 5)
@@ -661,6 +724,12 @@ class BatchEngine:
         with build_lock(self.spool.root / "engine_coordinator"):
             try:
                 self._recover()
+                if self.finalize_workers:
+                    self._finalize_pool = concurrent.futures.ProcessPoolExecutor(
+                        max_workers=self.finalize_workers,
+                        mp_context=self._mp,
+                        initializer=cpu_initializer,
+                    )
                 for gpu in self.spec["gpus"]:
                     self._spawn(gpu)
                 if threading.current_thread() is threading.main_thread():
