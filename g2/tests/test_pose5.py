@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: Apache-2.0
 """Shared DATA_B source-base world Pose5 contract / G1 official EEF parity."""
 
 import math
