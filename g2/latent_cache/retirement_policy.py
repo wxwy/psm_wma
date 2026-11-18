@@ -11,6 +11,7 @@ from .contract import CacheError, contained
 from .storage import _hex, atomic_json, build_lock
 
 SCHEMA = "g2_source_retention_policy_v1"
+POSTHOC_SCHEMA = "g2_view_first_retention_policy_v1"
 
 
 def real_path(value):
@@ -51,15 +52,19 @@ def validate_policy(policy, spool_root):
         "audit_archive_root",
         "audit_retention_policy",
     }
+    if isinstance(policy, dict) and policy.get("schema") == POSTHOC_SCHEMA:
+        fields.add("view_first_claim_sha256")
     if (
         not isinstance(policy, dict)
         or set(policy) != fields
-        or policy["schema"] != SCHEMA
+        or policy["schema"] not in (SCHEMA, POSTHOC_SCHEMA)
         or policy["format"] != "capsule_v2"
     ):
         raise CacheError("unknown explicit source retirement policy")
     _hex(policy["config_id"])
     _hex(policy["mapping_sha256"])
+    if policy["schema"] == POSTHOC_SCHEMA:
+        _hex(policy["view_first_claim_sha256"])
     if set(policy["source_versions"]) != {"root", "child", "nav"} or any(
         not isinstance(s, str)
         or len(s) != 40
@@ -111,6 +116,11 @@ def validate_target(policy, target, scope):
     expected = output / "tasks" / task / "episodes" / episode
     if target != expected:
         raise CacheError("retirement target differs from canonical episode scope")
+    if policy["schema"] == POSTHOC_SCHEMA:
+        marker = _view_first_claim(policy)
+        if marker["profile_id"] != scope["profile_id"]:
+            raise CacheError("posthoc target profile differs from original View claim")
+        return target
     marker = read_json(contained(output, ".g2_stage_a_dataset_root.json"))
     if marker != dict(
         schema="g2_owned_production_output_v1",
@@ -128,6 +138,9 @@ def validate_target(policy, target, scope):
 def claim_policy(policy, *, existing_only=False):
     """One output namespace cannot silently switch spool/archive policies."""
     output = real_path(policy["output_root"])
+    if policy["schema"] == POSTHOC_SCHEMA:
+        _view_first_claim(policy)
+        return  # Frozen policy belongs to the external spool, never mutate View production root.
     marker = read_json(contained(output, ".g2_stage_a_dataset_root.json"))
     if marker != dict(
         schema="g2_owned_production_output_v1",
@@ -146,6 +159,35 @@ def claim_policy(policy, *, existing_only=False):
                 raise CacheError("output source retention policy differs")
         else:
             atomic_json(path, policy)
+
+
+def _view_first_claim(policy):
+    from g2.io import digest
+    from g2.offline.view_only_source import CLAIM, SOURCE_SCHEMA
+
+    output = real_path(policy["output_root"])
+    if digest(contained(output, CLAIM)) != policy["view_first_claim_sha256"]:
+        raise CacheError("original View-first output claim changed")
+    claim = read_json(output / CLAIM)
+    if (
+        set(claim)
+        != {
+            "schema",
+            "output_root",
+            "profile_id",
+            "source_selection_sha256",
+            "source_format",
+            "vae_disabled",
+        }
+        or claim.get("schema") != "g2_view_only_output_claim_v1"
+        or claim.get("output_root") != str(output)
+        or claim.get("vae_disabled") is not True
+        or claim.get("source_format") != SOURCE_SCHEMA
+    ):
+        raise CacheError("posthoc retention requires the original View-first claim")
+    _hex(claim["profile_id"])
+    _hex(claim["source_selection_sha256"])
+    return claim
 
 
 def from_config(cfg):

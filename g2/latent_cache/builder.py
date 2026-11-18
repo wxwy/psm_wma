@@ -115,7 +115,7 @@ def _source_binding(plan):
     )
 
 
-def plan_episode(episode_root, recipe):
+def plan_episode(episode_root, recipe, *, view_first=False):
     from .encoding import validate_wan_canvas
     from .sealed_source import scan_source as scan_episode
 
@@ -123,7 +123,7 @@ def plan_episode(episode_root, recipe):
     validate_wan_canvas(
         recipe["preprocessing"]["height"], recipe["preprocessing"]["width"]
     )
-    plan = scan_episode(episode_root)
+    plan = scan_episode(episode_root, view_first=view_first)
     physical = sum(len(v["records"]) for v in plan["views"].values())
     present = sum(
         sum(i is not None for i in v["state_records"]) for v in plan["views"].values()
@@ -278,6 +278,7 @@ def build_episode(
     batch_size=1,
     resume=False,
     _record_provider=None,
+    _view_first=False,
 ):
     """One locked episode, one atomic numeric file per View, no source writes."""
     from .encoding import validate_wan_canvas
@@ -299,7 +300,7 @@ def build_episode(
     validate_wan_canvas(
         recipe["preprocessing"]["height"], recipe["preprocessing"]["width"]
     )
-    plan = scan_episode(episode_root)
+    plan = scan_episode(episode_root, view_first=_view_first)
     root = Path(plan["episode_root"])
     cache = contained(root, "vae_cache", allow_missing=True)
     if cache.exists() and not resume:
@@ -452,9 +453,16 @@ def verify_episode(
     recipe = validate_recipe(index.manifest["recipe"])
     plan = None
     if check_source or reencoder is not None:
+        from g2.offline.view_only_source import VAE_SOURCE_SCHEMA
+
+        from .final_source import payload_source
         from .sealed_source import scan_source as scan_episode
 
-        plan = scan_episode(episode_root)
+        plan = scan_episode(
+            episode_root,
+            view_first=payload_source(index.manifest["source"]).get("schema")
+            == VAE_SOURCE_SCHEMA,
+        )
         if (
             index.episode_key != plan["episode_key"]
             or index.manifest["source"] != _source_binding(plan)

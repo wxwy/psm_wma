@@ -1,0 +1,83 @@
+{
+  "base": "b6311222c364543787f913215bf584065aa1c275",
+  "child_gitlink": "d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2",
+  "encode_record_ast_unchanged": true,
+  "errors": 0,
+  "failed": 0,
+  "new_cases": 52,
+  "original_560_identities_retained": true,
+  "original_test_source_files_unchanged": true,
+  "passed": 599,
+  "protected_files_unchanged": [
+    "g2/latent_cache/encoding.py",
+    "g2/latent_cache/contract.py",
+    "g2/offline/atomic_6views_run.py",
+    "g2/offline/full_production.py",
+    "g2/offline/episode.py",
+    "g2/offline/output_profile.py",
+    "g2/offline/task_entities.py",
+    "g2/offline/language_context.py",
+    "g2/offline/spatial_metadata.py"
+  ],
+  "schema": "g2_view_first_retirement_author_cpu_v1",
+  "scope": "AUTHOR_CPU_SYNTHETIC_NOT_REAL_F27_WAN_GATE",
+  "skipped": 13,
+  "skipped_cases": [
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns0]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns1]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns2]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns3]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_preserves_original_and_id[columns4]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns0]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns1]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns2]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_rejects_ambiguous_or_invalid_table[columns3]",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_stage_a_caption_parquet::test_actual_parquet_loader_does_not_use_ep_meta_as_replacement",
+      "reason": "existing local interpreter has no PyArrow; no install/new environment permitted"
+    },
+    {
+      "id": "g2.tests.test_atomic_6views_run::test_scene_bound_geometry_without_layout_whitelist",
+      "reason": "could not import 'mujoco': No module named 'mujoco'"
+    },
+    {
+      "id": "g2.tests.test_robot_pose_marker::test_real_mujoco_chassis_frame_not_robot_root_anchor",
+      "reason": "could not import 'mujoco': No module named 'mujoco'"
+    },
+    {
+      "id": "g2.tests.test_viewer_install::test_catalog_preserves_local_global_indices_and_task_instruction",
+      "reason": "could not import 'pandas': No module named 'pandas'"
+    }
+  ],
+  "source_count": 246,
+  "source_hashes_stable": true,
+  "tests": 612,
+  "training_ready": false
+}

@@ -1,4 +1,146 @@
-# 2026-11-17 CST — Issue63 fixed source / Draft64 / GPT REVIEW handoff
+# 2026-11-18 CST — View-first -> posthoc VAE -> retirement REVIEW handoff
+
+Formal implementation5c7ea400035e2727a2dae1d63dfe7d21b14b9ff2,
+Child/Gitlinkd5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2,
+nav70eb7b447e65d793b0ebe18b258291ce46f057c1. Independent DraftPR67 targetsV3
+b6311222c364543787f913215bf584065aa1c275; fresh fetched/advertised V3 still
+matches. R1-R5 are five separate commits, no code changed after formalRoot.
+Current later docs/evidence SHA is bookkeeping, not a replacement code pair.
+
+Actual RDC/data execution in newfixed checkout and private samples:
+server existingPSM originalenv612/612CPU PASS/0skip/fail/error,246source Gitblobs
+match+stable through realGates, all560oldIDs/105oldtestsourcefiles retained.
+Localpeer sameexactRoot LOCAL_CODE_REVIEW_PASS/4separateprobesPASS, noP1/P2.
+Author realA sourcePASS2copies/81states/12views/169owners; B actualH100 B1/T1
+and independent169reencode maxabs0 at0/0, recipe3ee9c483...e2fc1. B267.95s
+endtoend (notpureencode/render), reencode30.57s. Cactualretirement58.92sCLI,
+all products/PT unchanged, no fullJSON/gzip/oldreceipt/READY in finalcopies;
+indices162976/158160B, final22.14/26.99MiB, physicalnetfile savings1.46/1.34MiB.
+D actualFridge80recordcache crash77 aftergzipunlink/beforeCOMPLETE; journal
+recovery/noresume75/parallel0+busy2/retries0/0 PASS, nofakeevents. Retired
+Bentry again withCUDAempty returnscomplete withoutencoding/JSONrestore or
+anyfinalfilebytechange. B/C/D spools have0activejobs/events/numericrecords.
+
+Originalnamedepisodes allfilehashes unchanged; prodRootb631/Childd5/nav70
+trackedclean; tmuxviewalive. No producer/task/config/Rootbranch changes,
+servercommit/push, rawasset/image/model/state export, full9126 VAE/retirement,
+native/F27 regeneration, train/install/merge. Some orchestration/claim-copy
+useshoststdlibPython; project numerical/cache/retirement run originalPSM
+3.13.11/Torch2.10.0+cu128, no alternate environment or dependency changes.
+Raw serverlogs/JUnit/private artifacts remain under
+/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_view_first_posthoc_gate_5c7ea400_20261118/.
+Own SERVER_GATES.md/server_summary.json/server_commands.json contain derived
+facts/hashes/exactcommands only. AUTHOR_SAMPLE_PASS is not GPT independent
+approval or fullcorpus release; training_ready=false. Publish canonicalInbox
+exactpair request and stop at Draft/review handoff; no automaticmerge/cleanup.
+
+## Earlier implementation and preflight record (superseded by results above)
+
+R5 complete AUTHOR_CPU: final_retry599PASS/13inheritedoptionalSKIP/0fail/error,
+612cases312.55s; original560IDs and all old test source bytes retained, new52
+all executed,246product source SHA stable;21file Ruff/format/help/protocolPASS.
+Initial full final/ run598PASS/1oldsupervisor25sdrainFAIL/13SKIP377.09s retained;
+unchanged focusedcase1PASS74.65s, then unchangedfull599PASS; root cause not
+established, no old timeout/assertion/source changed. Own tiny fixture gzip
+4371B vs index16863B demonstrates why real physical-byte Gate is separate.
+Task enters REVIEW for exact committed R5 source/read-only peer/new V3 Draft.
+No inherited GPT approval, no corpus VAE/retirement/merge or training authorized.
+
+User explicitly corrected Remote Desktop Commander availability: actual data
+connection succeeded. Read-only cleanprodRoot b6311222/Childd5c1ffc7 observed,
+view:0.0 bash dead0; namedBlender0/Fridge502 COMPLETE noVAE gzip source found.
+Original mapping SHA aa884820494a17f50b41a8a8c2bfa6b6fda11babbbef31c449c1c0ce850e09ed
+matches live file. ExistingPSM Py3.13.11/Torch2.10.0+cu128/NumPy2.2.5/PyArrow21/
+MuJoCo3.3.1/Pandas2.2.3 and weights present. No rawassets/images/source copied
+offserver; no production mutation, stop/reconfigure or servercommit/push.
+Next fixedGitHub checkout in freshprivateGate, originalenvCPU, two onserver
+copies/A source audit, then resource-scoped real B/C checks if conditions allow.
+These read-only observations are not real VAE/retirement Gate results.
+
+R5 entry/geometry-update fixtures7PASS/0skip8.09s. Added explicit existingCLI
+--view-first/--spool-root and thin retire CLI plan/execute/resume/recipe/count
+scope; no model in retire/help. Real published image update fixture makes8
+owners/4views withchangedobjectbbox+pixels, not only pose/static reuse.
+Additional tiny claim: offline/source_capacity.py categorize working gzip and
+its receipt separately from SG, required for honest before/after byte tables.
+No renderer/producer/model edit. Next full old560/new52/own protocol/static
+and source/hash identity gate, then fixed-source read-only peer/Draft/GPT.
+
+R4 PASS30/30 (23 actual os._exit77 boundaries +ENOSPC/liveReader +R3five),
+0skip53.42s. Same original collector fsync/journal/SQL GC used; each public
+posthoc resume repairs before manifest validation, leaves PT hashes intact,
+removes gzip/receipt only after strict final-v2 completion. Recovery pins
+same posthoc policy/lifecycle and requestedrecipe; rejects streaming policy.
+No fake ACK rows; C-only genuine verified-cache handoff has0events, records
+actual durable cache receipt. Raw r4log/XML. Next R5 thin CLI/ownrunbook/new
+entry/variation tests/fullold560 identity+static gate/fixedSHA/readonlypeer/Draft.
+
+R3 implemented existing-v2 retirement for explicit posthoc policy and both
+raw/gzip working transports. Policy binds original View-only claim in external
+spool only, writes no root-owner/policy marker into View production. Actual
+file inventory/raw identity drives existing SQL intent/journal/rename/fsync/
+delete; capsule/old proof/PT history honest, independent posthoc_vae_receipt
+retains original false profile/statuses. New5 lifecycle cases +R1/R2 and old54
+capsule/fault regressions =73PASS/0skip109.20s. Original products+PT bytes,
+reader/reencode Fake exact0 and idempotent retired checks PASS. Raw r3 logs.
+Next R4 gzip hard-exit/deletion/fsync/recovery/concurrency tests and early
+same-policy spool recovery, then R5 thin CLI/runbook/full related regressions.
+No real/GPU/server facts inferred; active view untouched.
+
+R2 shared-core posthoc mode now works on raw and compressed View-first data:
+explicit cache source header, actual bounded EventSpool/Consumer record ACKs,
+all5 owners/4 views, no original profile/COMPLETE/product changes, fsynced
+record retry avoids repeat Encode1, same-target exclusion and recipe refusal.
+R2 first67case run65PASS/2new-fixture-expectationFAIL: Island plus_X still
+exists in stage_case, corrected new assertion to actual absent plus_Y; old
+tests/assertions untouched. New5cases then5PASS5.47s, old62 in first runPASS.
+Raw r2 logs/XML and staticPASS retained. No realVAE fact inferred. Posthoc
+retire adapter is an interface only until R3 extends policy/transaction paths.
+Next commit R2 then extend existing v2 retirement dynamic source inventory
+and explicit verified-cache handoff, no new ledger/encoder/data system.
+
+R1 implemented: working_source_info supplies verified raw/transport hashes,
+finite declared gzip bounds and original readiness/source-ID validation;
+old load_working_source tuple preserved, final_source.load_source/sha dispatch
+working gzip vs explicit final schema. No full JSON materialization to disk.
+New9cases +existing4ViewOnly/8StagePackage/5Capsule =26PASS/0skip13.70s,
+Ruff selectedrules PASS. Raw r1/pytest.log/xml/ruff.log in own Nov18 evidence.
+Next commit R1 then R2 explicit source adapter/real EventConsumer ACK lifecycle.
+No native/weights/GPU/private/server/data writes or new environment occurred.
+
+Owner directly authorizes incremental R1-R5 code/CPU/independent V3 Draft.
+Before745c1d0d; fresh fetched/advertised/tracking V3 b6311222c364543787f913215bf584065aa1c275
+match, full21 new commit subjects read, ancestor0; created independent
+codex/g2-view-first-vae-retirement at exact V3 without altering old PR branch.
+Child/Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; advertised nav G2
+70eb7b447e65d793b0ebe18b258291ce46f057c1 unchanged. PR64/65/66 actualAPI
+merged/closed, unlike stale historical ledgers below. Formal Issue63 realv2
+and subsequent36ep/18task/32slot GO reports read; preserve scoped facts,
+not claim old capacity HOLD remains current. New posthoc gzip lifecycle has
+separate code/real Gate, no approval inherited. User says tmux view actively
+produces9126; no server accessed and no independent live status claimed.
+
+Claim: offline/view_only_source.py (bounded verified source API, legacy
+compress_source=False retained), latent_cache/{sealed_source,builder,storage,
+production,streaming,final_source,source_retirement,ledger_archive,
+retirement_policy}.py; small posthoc adapter/CLI, targeted new tests, runbook/
+own evidence+ledgers. stage_a.py only final posthoc receipt verification; do not
+edit renderer/atomic_6views_run behavior or model A/B/C/D files. No otherAgent
+editing these files here. Reuse existing EventSpool/Consumer actual per-record
+ACK and builder; explicitly tagged posthoc lifecycle and verified-cache handoff
+for later retirement, never fabricate stream ACK or materialize fake fullJSON.
+StageB keeps original View manifest/COMPLETE/profile unchanged; StageC uses
+existing final-v2 transaction, preserving original profile_id and all data/PT.
+
+Commands not yet executed except read-only Git/connector discovery. Source
+claim uncommitted. Next R1 unified full/gzip/final dispatch+bounded negative
+tests, then R2-R5 implementation/CPU/readonly peer/fixedSHA/Draft/GPT Gate.
+No server/production tmux/config/data writes, GPU/weights/native/full VAE/
+retirement/train/install/Child/nav changes. Real Gate NOT_RUN here. No old-data
+deletion or self merge. Latest user scope overrides historical V2/MM/Kimi
+polling rules; stop at concrete review handoff.
+
+# Historical Issue63 handoff (subsequently merged/reviewed)
 
 FormalRoot a169fea07016b80b3639646cc9925ac70b6525a8 / unchanged
 Child-Gitlink d5c1ffc71ba8f501d4c00a8698e9b91d9175b9c2; nav

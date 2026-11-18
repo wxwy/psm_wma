@@ -24,6 +24,28 @@ READY = "SPATIAL_SOURCE_FINAL_READY.json"
 RECEIPT = "SOURCE_RETIREMENT.json"
 JOURNAL = ".source_retirement/transaction.json"
 FULL = "spatial_source.json"
+VIEW_FIRST_SCHEMA = "g2_view_first_working_source_v1"
+
+
+def retired_working_files(working):
+    if working.get("schema") == VIEW_FIRST_SCHEMA:
+        files = working["working_storage"]["files"]
+        expected = {working["identity_manifest"], "SPATIAL_SOURCE_READY.json"}
+        if working["identity_manifest"] == "spatial_source.json.gz":
+            expected.add("SPATIAL_SOURCE_GZIP.json")
+        elif working["identity_manifest"] != FULL:
+            raise CacheError("unknown retired View-first transport")
+        if (
+            set(files) != expected
+            or files[working["identity_manifest"]] != working["manifest_sha256"]
+            or files["SPATIAL_SOURCE_READY.json"] != working["complete_sha256"]
+        ):
+            raise CacheError("retired View-first transport inventory differs")
+        return files
+    return {
+        FULL: working["manifest_sha256"],
+        "SPATIAL_SOURCE_READY.json": working["complete_sha256"],
+    }
 
 
 def payload_source(source):
@@ -110,7 +132,7 @@ def load_capsule(root):
     working = capsule.get("working_source", {})
     scope = capsule.get("attestation", {}).get("scope", {})
     if (
-        working.get("schema") != "g2_sealed_spatial_source_v1"
+        working.get("schema") not in ("g2_sealed_spatial_source_v1", VIEW_FIRST_SCHEMA)
         or working.get("source_id") != capsule.get("source_id")
         or capsule.get("episode_key")
         != f"{capsule.get('task_class')}/episode_{capsule.get('episode_id', -1):06d}"
@@ -122,7 +144,7 @@ def load_capsule(root):
         or capsule.get("working_readiness", {}).get("source_id")
         != capsule.get("source_id")
         or capsule.get("working_readiness", {}).get("source_manifest_sha256")
-        != working.get("manifest_sha256")
+        != working.get("raw_source_sha256", working.get("manifest_sha256"))
     ):
         raise CacheError("final capsule working provenance/scope differs")
     return capsule
@@ -168,11 +190,7 @@ def verify_reader_binding(root, source, cache_manifest, cache_complete):
         != capsule["attestation"]["working_proof_sha256"]
         or fingerprint(receipt["work_cleanup"])
         != capsule["attestation"]["work_cleanup_sha256"]
-        or receipt["retired_files"]
-        != {
-            FULL: capsule["working_source"]["manifest_sha256"],
-            "SPATIAL_SOURCE_READY.json": capsule["working_source"]["complete_sha256"],
-        }
+        or receipt["retired_files"] != retired_working_files(capsule["working_source"])
         or receipt["full_audit_archive"] != capsule["full_audit_archive"]
         or receipt["source_disposition"]
         != "REMOVED_ONLY_AFTER_VERIFIED_FINAL_SOURCE_PUBLICATION"
@@ -234,8 +252,14 @@ def verify_reader_binding(root, source, cache_manifest, cache_complete):
         or capsule["episode_key"] != cache_manifest["episode_key"]
     ):
         raise CacheError("final source numeric inventory/scope differs")
-    if (Path(root) / FULL).exists() or (Path(root) / FULL).is_symlink():
-        raise CacheError("final capsule still has an unretired full source")
+    for name in {
+        *retired_working_files(capsule["working_source"]),
+        FULL,
+        "spatial_source.json.gz",
+        "SPATIAL_SOURCE_GZIP.json",
+    }:
+        if (Path(root) / name).exists() or (Path(root) / name).is_symlink():
+            raise CacheError("final capsule still has an unretired full source")
     return capsule
 
 
@@ -310,11 +334,16 @@ def load_source(root):
     manifest = read_json(contained(root, "episode_manifest.json"))
     if manifest.get("schema") == PROFILE_SCHEMA:
         return materialize_source(root, manifest)
-    return read_json(contained(root, FULL))
+    from g2.offline.view_only_source import load_working_source
+
+    return load_working_source(root)[0]
 
 
 def working_source_sha(root):
     manifest = read_json(contained(root, "episode_manifest.json"))
     if manifest.get("schema") == PROFILE_SCHEMA:
-        return load_capsule(root)["working_source"]["manifest_sha256"]
-    return digest(contained(root, FULL))
+        working = load_capsule(root)["working_source"]
+        return working.get("raw_source_sha256", working["manifest_sha256"])
+    from g2.offline.view_only_source import load_working_source
+
+    return load_working_source(root)[1]

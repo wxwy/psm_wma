@@ -532,6 +532,15 @@ def _open_episode_index(episode_root, expected_recipe_id=None):
         source_files = []
     elif source.get("schema") == final.SOURCE_SCHEMA:
         raise CacheError("legacy index may not reinterpret a final capsule")
+    elif source.get("schema") == "g2_view_first_working_source_v1":
+        from g2.offline.view_only_source import view_first_binding
+
+        expected_source = view_first_binding(root)
+        if {
+            k: v for k, v in source.items() if k != "view_index_sha256"
+        } != expected_source:
+            raise CacheError("View-first cache differs from verified working bytes")
+        source_files = []
     elif source.get("schema") == "g2_sealed_spatial_source_v1":
         if (
             source.get("identity_manifest") != "spatial_source.json"

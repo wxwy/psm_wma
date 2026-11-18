@@ -1,0 +1,555 @@
+{
+  "after_retirement": {
+    "allocated_bytes": 204800,
+    "bytes_by_category": {
+      "indices": 17014,
+      "language": 3400,
+      "latent": 20900,
+      "other": 0,
+      "png": 2775,
+      "scene_graph_gz": 6865,
+      "source_index": 20265,
+      "spatial_metadata": 63321,
+      "task_entities": 2255
+    },
+    "complete_marker_present": true,
+    "episode_id": 0,
+    "episode_root": "/tmp/g2-posthoc-protocol-xy1j1g70/dataset/tasks/NavigateKitchen/episodes/episode_000000",
+    "file_count": 26,
+    "files": [
+      {
+        "allocated_bytes": 4096,
+        "bytes": 478,
+        "category": "indices",
+        "path": "COMPLETE.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2973,
+        "category": "source_index",
+        "path": "SOURCE_RETIREMENT.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 429,
+        "category": "source_index",
+        "path": "SPATIAL_SOURCE_FINAL_READY.json"
+      },
+      {
+        "allocated_bytes": 12288,
+        "bytes": 10487,
+        "category": "indices",
+        "path": "episode_manifest.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 3400,
+        "category": "language",
+        "path": "language.json"
+      },
+      {
+        "allocated_bytes": 20480,
+        "bytes": 16863,
+        "category": "source_index",
+        "path": "spatial_source_index.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2255,
+        "category": "task_entities",
+        "path": "task_entities.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2287,
+        "category": "scene_graph_gz",
+        "path": "state_000000_frame_000000/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21087,
+        "category": "spatial_metadata",
+        "path": "state_000000_frame_000000/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/floor_top.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 1150,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/floor_top_w_rbs.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/minus_Y.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/islands/island_0_entity_2/plus_X.png"
+      },
+      {
+        "allocated_bytes": 0,
+        "bytes": 0,
+        "category": "other",
+        "path": "vae_cache/.build.lock"
+      },
+      {
+        "allocated_bytes": 0,
+        "bytes": 0,
+        "category": "other",
+        "path": "vae_cache/.source.lock"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 501,
+        "category": "indices",
+        "path": "vae_cache/COMPLETE.json"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 5548,
+        "category": "indices",
+        "path": "vae_cache/manifest.json"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4841,
+        "category": "latent",
+        "path": "vae_cache/sixview/floor_top.pt"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 6313,
+        "category": "latent",
+        "path": "vae_cache/sixview/floor_top_w_rbs.pt"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4841,
+        "category": "latent",
+        "path": "vae_cache/sixview/minus_Y.pt"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4905,
+        "category": "latent",
+        "path": "vae_cache/islands/island_0_entity_2/plus_X.pt"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2289,
+        "category": "scene_graph_gz",
+        "path": "state_000002_frame_000020/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21121,
+        "category": "spatial_metadata",
+        "path": "state_000002_frame_000020/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2289,
+        "category": "scene_graph_gz",
+        "path": "state_000001_frame_000010/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21113,
+        "category": "spatial_metadata",
+        "path": "state_000001_frame_000010/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 1154,
+        "category": "png",
+        "path": "state_000001_frame_000010/sixview/floor_top_w_rbs.png"
+      }
+    ],
+    "files_by_category": {
+      "indices": 4,
+      "language": 1,
+      "latent": 4,
+      "other": 2,
+      "png": 5,
+      "scene_graph_gz": 3,
+      "source_index": 3,
+      "spatial_metadata": 3,
+      "task_entities": 1
+    },
+    "logical_bytes": 136795,
+    "logical_states": 3,
+    "physical_png_owners": 5,
+    "source_transaction_pending": false,
+    "task_class": "NavigateKitchen"
+  },
+  "after_vae": {
+    "allocated_bytes": 192512,
+    "bytes_by_category": {
+      "indices": 15085,
+      "language": 3400,
+      "latent": 20900,
+      "other": 289,
+      "png": 2775,
+      "scene_graph_gz": 6865,
+      "spatial_metadata": 63321,
+      "task_entities": 2255,
+      "working_source_gzip": 4371,
+      "working_source_receipt": 426
+    },
+    "complete_marker_present": true,
+    "episode_id": 0,
+    "episode_root": "/tmp/g2-posthoc-protocol-xy1j1g70/dataset/tasks/NavigateKitchen/episodes/episode_000000",
+    "file_count": 25,
+    "files": [
+      {
+        "allocated_bytes": 4096,
+        "bytes": 287,
+        "category": "indices",
+        "path": "COMPLETE.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 426,
+        "category": "working_source_receipt",
+        "path": "SPATIAL_SOURCE_GZIP.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 289,
+        "category": "other",
+        "path": "SPATIAL_SOURCE_READY.json"
+      },
+      {
+        "allocated_bytes": 12288,
+        "bytes": 9669,
+        "category": "indices",
+        "path": "episode_manifest.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 3400,
+        "category": "language",
+        "path": "language.json"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4371,
+        "category": "working_source_gzip",
+        "path": "spatial_source.json.gz"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2255,
+        "category": "task_entities",
+        "path": "task_entities.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2287,
+        "category": "scene_graph_gz",
+        "path": "state_000000_frame_000000/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21087,
+        "category": "spatial_metadata",
+        "path": "state_000000_frame_000000/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/floor_top.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 1150,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/floor_top_w_rbs.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/minus_Y.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/islands/island_0_entity_2/plus_X.png"
+      },
+      {
+        "allocated_bytes": 0,
+        "bytes": 0,
+        "category": "other",
+        "path": "vae_cache/.build.lock"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 320,
+        "category": "indices",
+        "path": "vae_cache/COMPLETE.json"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4809,
+        "category": "indices",
+        "path": "vae_cache/manifest.json"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4841,
+        "category": "latent",
+        "path": "vae_cache/sixview/floor_top.pt"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 6313,
+        "category": "latent",
+        "path": "vae_cache/sixview/floor_top_w_rbs.pt"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4841,
+        "category": "latent",
+        "path": "vae_cache/sixview/minus_Y.pt"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4905,
+        "category": "latent",
+        "path": "vae_cache/islands/island_0_entity_2/plus_X.pt"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2289,
+        "category": "scene_graph_gz",
+        "path": "state_000002_frame_000020/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21121,
+        "category": "spatial_metadata",
+        "path": "state_000002_frame_000020/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2289,
+        "category": "scene_graph_gz",
+        "path": "state_000001_frame_000010/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21113,
+        "category": "spatial_metadata",
+        "path": "state_000001_frame_000010/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 1154,
+        "category": "png",
+        "path": "state_000001_frame_000010/sixview/floor_top_w_rbs.png"
+      }
+    ],
+    "files_by_category": {
+      "indices": 4,
+      "language": 1,
+      "latent": 4,
+      "other": 2,
+      "png": 5,
+      "scene_graph_gz": 3,
+      "spatial_metadata": 3,
+      "task_entities": 1,
+      "working_source_gzip": 1,
+      "working_source_receipt": 1
+    },
+    "logical_bytes": 119687,
+    "logical_states": 3,
+    "physical_png_owners": 5,
+    "source_transaction_pending": false,
+    "task_class": "NavigateKitchen"
+  },
+  "all_products_and_pt_preserved": true,
+  "before_view_first": {
+    "allocated_bytes": 147456,
+    "bytes_by_category": {
+      "indices": 9956,
+      "language": 3400,
+      "other": 289,
+      "png": 2775,
+      "scene_graph_gz": 6865,
+      "spatial_metadata": 63321,
+      "task_entities": 2255,
+      "working_source_gzip": 4371,
+      "working_source_receipt": 426
+    },
+    "complete_marker_present": true,
+    "episode_id": 0,
+    "episode_root": "/tmp/g2-posthoc-protocol-xy1j1g70/dataset/tasks/NavigateKitchen/episodes/episode_000000",
+    "file_count": 18,
+    "files": [
+      {
+        "allocated_bytes": 4096,
+        "bytes": 287,
+        "category": "indices",
+        "path": "COMPLETE.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 426,
+        "category": "working_source_receipt",
+        "path": "SPATIAL_SOURCE_GZIP.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 289,
+        "category": "other",
+        "path": "SPATIAL_SOURCE_READY.json"
+      },
+      {
+        "allocated_bytes": 12288,
+        "bytes": 9669,
+        "category": "indices",
+        "path": "episode_manifest.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 3400,
+        "category": "language",
+        "path": "language.json"
+      },
+      {
+        "allocated_bytes": 8192,
+        "bytes": 4371,
+        "category": "working_source_gzip",
+        "path": "spatial_source.json.gz"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2255,
+        "category": "task_entities",
+        "path": "task_entities.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2287,
+        "category": "scene_graph_gz",
+        "path": "state_000000_frame_000000/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21087,
+        "category": "spatial_metadata",
+        "path": "state_000000_frame_000000/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/floor_top.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 1150,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/floor_top_w_rbs.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/sixview/minus_Y.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 157,
+        "category": "png",
+        "path": "state_000000_frame_000000/islands/island_0_entity_2/plus_X.png"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2289,
+        "category": "scene_graph_gz",
+        "path": "state_000002_frame_000020/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21121,
+        "category": "spatial_metadata",
+        "path": "state_000002_frame_000020/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 2289,
+        "category": "scene_graph_gz",
+        "path": "state_000001_frame_000010/scene_graph.json.gz"
+      },
+      {
+        "allocated_bytes": 24576,
+        "bytes": 21113,
+        "category": "spatial_metadata",
+        "path": "state_000001_frame_000010/spatial_metadata.json"
+      },
+      {
+        "allocated_bytes": 4096,
+        "bytes": 1154,
+        "category": "png",
+        "path": "state_000001_frame_000010/sixview/floor_top_w_rbs.png"
+      }
+    ],
+    "files_by_category": {
+      "indices": 2,
+      "language": 1,
+      "other": 1,
+      "png": 5,
+      "scene_graph_gz": 3,
+      "spatial_metadata": 3,
+      "task_entities": 1,
+      "working_source_gzip": 1,
+      "working_source_receipt": 1
+    },
+    "logical_bytes": 93658,
+    "logical_states": 3,
+    "physical_png_owners": 5,
+    "source_transaction_pending": false,
+    "task_class": "NavigateKitchen"
+  },
+  "build_complete": true,
+  "caveat": "Small synthetic audit can gzip below index size; no real storage/speed benefit inferred.",
+  "decoded_source_bytes": 25301,
+  "decoded_to_gzip_ratio": 5.788377945550217,
+  "fake_encode_seconds": 0.5664670230034972,
+  "fake_encoded_records": 5,
+  "final_index_bytes": 16863,
+  "not_run": [
+    "real Wan/GPU",
+    "native F27",
+    "real Gate A-D",
+    "9126 production or cleanup",
+    "training"
+  ],
+  "physical_gzip_bytes": 4371,
+  "pt_sha256": {
+    "vae_cache/islands/island_0_entity_2/plus_X.pt": "b50b54a024ead0aa4984e8e1a39a1042752c7f01ef91d555a2718c3e68eeb5e0",
+    "vae_cache/sixview/floor_top.pt": "cd66f350c44558a01cb8d236e3e6d3db5a4cddde02cb8f471da5b1d2aa237c80",
+    "vae_cache/sixview/floor_top_w_rbs.pt": "21693b9dc70d8016f141edabd976857c86b2943d598fbcbfd244bdd2001a357a",
+    "vae_cache/sixview/minus_Y.pt": "71d5bdcda61cdacfe4b310fff185e16cdbd1fd038487fda73de9a8f7f6fd0499"
+  },
+  "raw_source_sha256": "70153e271759d1693ba22ba115b984b90d174756b1fbe7c3d6429fcb2cbafcdc",
+  "retirement_complete": true,
+  "retirement_cpu_seconds": 0.5811717540054815,
+  "schema": "g2_view_first_posthoc_synthetic_protocol_v1",
+  "scope": "AUTHOR_CPU_FAKE_ENCODER_NOT_REAL_WAN_F27_OR_CAPACITY_APPROVAL",
+  "source_id": "5a282e365c732a2c8cde34db30aa9ec569d6d5f337e8532601eaff7cccb9c7c3",
+  "training_ready": false
+}

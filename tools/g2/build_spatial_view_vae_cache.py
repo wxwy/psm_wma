@@ -87,6 +87,16 @@ def parser():
         action="store_true",
         help="reuse only complete per-view files with identical source and recipe",
     )
+    result.add_argument(
+        "--view-first",
+        action="store_true",
+        help="explicit posthoc lifecycle; original published View profile remains unchanged",
+    )
+    result.add_argument(
+        "--spool-root",
+        type=Path,
+        help="new external bounded posthoc record spool; required for View-first execute",
+    )
     action = result.add_mutually_exclusive_group(required=True)
     action.add_argument(
         "--dry-run",
@@ -110,6 +120,10 @@ def main(argv=None):
         command.error(
             "this candidate supports independent B=1 only; mixed-batch parity is NOT_RUN"
         )
+    if args.view_first and args.execute and args.spool_root is None:
+        command.error("--view-first --execute requires a separate --spool-root")
+    if args.spool_root is not None and not args.view_first:
+        command.error("--spool-root here requires explicit --view-first")
     try:
         from g2.latent_cache.builder import (
             build_episode,
@@ -144,7 +158,24 @@ def main(argv=None):
         results = []
         for episode in episodes:
             if args.dry_run:
-                results.append(plan_episode(episode, recipe))
+                results.append(
+                    plan_episode(episode, recipe, view_first=True)
+                    if args.view_first
+                    else plan_episode(episode, recipe)
+                )
+            elif args.view_first:
+                from g2.latent_cache.posthoc import build_view_first_cache
+
+                results.append(
+                    build_view_first_cache(
+                        episode,
+                        encoder,
+                        spool_root=args.spool_root,
+                        preprocessing=preprocessing,
+                        storage_dtype=args.storage_dtype,
+                        resume=args.resume,
+                    )
+                )
             else:
                 from g2.latent_cache.production import build_profile
                 from g2.latent_cache.sealed_source import is_sealed
@@ -170,7 +201,7 @@ def main(argv=None):
         if args.dry_run:
             report.update(vae_loaded=False, gpu_accessed=False, cache_written=False)
         print(json.dumps(report, sort_keys=True, ensure_ascii=False, allow_nan=False))
-        return 0
+        return 75 if any(row.get("pending") for row in results) else 0
     except (OSError, ValueError, RuntimeError) as error:
         print(
             json.dumps({"status": "ERROR", "error": str(error)}, ensure_ascii=False),

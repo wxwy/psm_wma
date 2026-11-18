@@ -1,0 +1,14 @@
+FF.................................................................      [100%]
+=================================== FAILURES ===================================
+__ test_posthoc_all_views_real_ack_without_modifying_published_profile[True] ___
+g2/tests/test_view_first_posthoc.py:61: in test_posthoc_all_views_real_ack_without_modifying_published_profile
+    assert not reader.read_view("islands/island_0_entity_2/plus_X", 2)["present"]
+E   assert not True
+__ test_posthoc_all_views_real_ack_without_modifying_published_profile[False] __
+g2/tests/test_view_first_posthoc.py:61: in test_posthoc_all_views_real_ack_without_modifying_published_profile
+    assert not reader.read_view("islands/island_0_entity_2/plus_X", 2)["present"]
+E   assert not True
+=========================== short test summary info ============================
+FAILED g2/tests/test_view_first_posthoc.py::test_posthoc_all_views_real_ack_without_modifying_published_profile[True]
+FAILED g2/tests/test_view_first_posthoc.py::test_posthoc_all_views_real_ack_without_modifying_published_profile[False]
+2 failed, 65 passed in 42.35s

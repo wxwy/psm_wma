@@ -167,6 +167,7 @@ class EventSpool:
         max_result_bytes=4 * 1024**3,
         max_records=100000,
         source_policy=None,
+        lifecycle="streaming_v1",
         _existing_only=False,
     ):
         import sqlite3
@@ -188,9 +189,29 @@ class EventSpool:
         self.limits = limits
         self.max_result_bytes = max_result_bytes
         self.max_records = max_records
+        if lifecycle not in ("streaming_v1", "view_first_posthoc_v1"):
+            raise CacheError("unknown explicit consumer lifecycle")
+        self.lifecycle = lifecycle
+        self.view_first = lifecycle == "view_first_posthoc_v1"
         from .retirement_policy import claim_policy, validate_policy
 
         self.source_policy = validate_policy(source_policy, self.root)
+        if (
+            self.source_policy is not None
+            and self.view_first
+            and self.source_policy["schema"] != "g2_view_first_retention_policy_v1"
+        ):
+            raise CacheError(
+                "posthoc lifecycle cannot use a streaming retirement policy"
+            )
+        if (
+            self.source_policy is not None
+            and self.source_policy["schema"] == "g2_view_first_retention_policy_v1"
+            and not self.view_first
+        ):
+            raise CacheError(
+                "posthoc retirement policy requires explicit posthoc lifecycle"
+            )
         if self.source_policy is not None:
             claim_policy(self.source_policy, existing_only=_existing_only)
         binding = dict(
@@ -203,6 +224,8 @@ class EventSpool:
             max_result_bytes=max_result_bytes,
             max_records=max_records,
         )
+        if self.view_first:
+            binding.update(schema="g2_view_first_pixel_spool_v1", lifecycle=lifecycle)
         if self.source_policy is not None:
             binding["source_policy"] = self.source_policy
         if _existing_only:
@@ -252,6 +275,7 @@ class EventSpool:
             max_result_bytes=cfg["max_result_bytes"],
             max_records=cfg["max_records"],
             source_policy=cfg.get("source_policy"),
+            lifecycle=cfg.get("lifecycle", "streaming_v1"),
             _existing_only=True,
         )
 
@@ -451,7 +475,6 @@ class EventSpool:
 
     def offer_source(self, job):
         """Persist a fully validated input inventory, even after encode failure."""
-        from g2.io import digest, read_json
 
         from .sealed_source import scan_source
 
@@ -467,13 +490,15 @@ class EventSpool:
 
             check_identity(self.completed_receipt(job))
             return
-        plan = scan_source(row["target"])
-        source = read_json(Path(row["target"]) / "spatial_source.json")
+        plan = scan_source(row["target"], view_first=self.view_first)
+        from .final_source import load_source, working_source_sha
+
+        source = load_source(row["target"])
         if plan["episode_key"] != scope["episode_key"] or any(
             source[k] != scope[k] for k in ("source_fingerprint", "profile_id")
         ):
             raise CacheError("offered source differs from producer scope")
-        identity = digest(Path(row["target"]) / "spatial_source.json")
+        identity = working_source_sha(row["target"])
         if row["source_ready"] is not None and row["source_ready"] != identity:
             raise CacheError("offered source changed")
         with self._db() as db:
@@ -481,7 +506,6 @@ class EventSpool:
 
     def refill_one(self, job):
         """Bounded refill from sealed bytes after a producer/consumer interruption."""
-        from g2.io import digest, read_json
 
         from .contract import contained
 
@@ -496,14 +520,16 @@ class EventSpool:
             if isinstance(row, dict) and row.get("archived"):
                 check_identity(self.completed_receipt(job))
             return False
-        if digest(Path(row["target"]) / "spatial_source.json") != row["source_ready"]:
+        from .final_source import load_source, working_source_sha
+
+        if working_source_sha(row["target"]) != row["source_ready"]:
             raise CacheError("offered source changed during recovery")
         if isinstance(row, dict) and row.get("archived"):
             from .ledger_archive import check_identity
 
             check_identity(self.completed_receipt(job))
             return
-        source = read_json(contained(row["target"], "spatial_source.json"))
+        source = load_source(row["target"])
         for vid, view in sorted(source["views"].items()):
             for owner in view["owners"]:
                 if owner["event_id"] in ids:
@@ -529,8 +555,6 @@ class EventSpool:
     def seal(self, job):
         import json
 
-        from g2.io import digest, read_json
-
         from .sealed_source import scan_source
 
         with self._db() as db:
@@ -545,8 +569,10 @@ class EventSpool:
 
             check_identity(self.completed_receipt(job))
             return
-        plan = scan_source(row["target"])
-        source = read_json(Path(row["target"]) / "spatial_source.json")
+        plan = scan_source(row["target"], view_first=self.view_first)
+        from .final_source import load_source, working_source_sha
+
+        source = load_source(row["target"])
         if (
             any(source[k] != scope[k] for k in ("source_fingerprint", "profile_id"))
             or plan["episode_key"] != scope["episode_key"]
@@ -565,14 +591,13 @@ class EventSpool:
                 ).fetchone()
                 if event is None or json.loads(event["descriptor"]) != desc:
                     raise CacheError("sealed owner lacks matching production event")
-            seal = digest(Path(row["target"]) / "spatial_source.json")
+            seal = working_source_sha(row["target"])
             if row["sealed"] is not None and row["sealed"] != seal:
                 raise CacheError("sealed job source changed")
             db.execute("UPDATE jobs SET sealed=? WHERE id=?", (seal, job))
 
     def enqueue_source(self, job, *, timeout_s=60):
         """Resume a ready source, without replaying renderer or fake COMPLETE."""
-        from g2.io import read_json
 
         from .contract import contained
 
@@ -587,7 +612,9 @@ class EventSpool:
 
             validate_profile_episode(row["target"])
             return
-        source = read_json(contained(row["target"], "spatial_source.json"))
+        from .final_source import load_source
+
+        source = load_source(row["target"])
         for vid, view in sorted(source["views"].items()):
             for owner in view["owners"]:
                 with self._db() as db:
@@ -784,10 +811,8 @@ class EventSpool:
         """
         import json
 
-        from g2.io import digest, read_json
         from g2.offline.stage_a import validate_profile_episode
 
-        from .contract import contained
         from .production import cache_receipt, target_lock
 
         with self._db() as db:
@@ -798,10 +823,12 @@ class EventSpool:
         try:
             with build_lock(target_lock(row["target"])):
                 validate_profile_episode(row["target"])
-                source = read_json(contained(row["target"], "spatial_source.json"))
+                from .final_source import load_source, working_source_sha
+
+                source = load_source(row["target"])
                 receipt = cache_receipt(row["target"])
                 if (
-                    digest(Path(row["target"]) / "spatial_source.json") != expected
+                    working_source_sha(row["target"]) != expected
                     or receipt["recipe_id"] != self.recipe["recipe_id"]
                     or any(
                         source[k] != scope[k]
@@ -814,7 +841,9 @@ class EventSpool:
                         "posthoc completion source or recipe differs from stream job"
                     )
                 proof = dict(
-                    schema="g2_stream_completed_cache_handoff_v1",
+                    schema="g2_posthoc_completed_cache_handoff_v1"
+                    if self.view_first
+                    else "g2_stream_completed_cache_handoff_v1",
                     source_sha256=expected,
                     verified_cache=receipt,
                     prior_failure=row["error"],
@@ -1037,7 +1066,14 @@ class EventConsumer:
                 "SELECT id FROM jobs WHERE source_ready IS NOT NULL AND sealed IS NULL AND done=0 AND error IS NULL ORDER BY rowid LIMIT 1"
             ).fetchone()
         for candidate in completed_candidates:
-            if (Path(candidate["target"]) / "COMPLETE.json").exists():
+            if (
+                Path(candidate["target"])
+                / (
+                    "vae_cache/COMPLETE.json"
+                    if self.spool.view_first
+                    else "COMPLETE.json"
+                )
+            ).exists():
                 try:
                     adopted = self.spool.adopt_completed(candidate["id"])
                     self._result_bytes = None
@@ -1072,9 +1108,9 @@ class EventConsumer:
             if job is None:
                 return False
             try:
-                from g2.io import digest
+                from .final_source import working_source_sha
 
-                if digest(Path(job["target"]) / "spatial_source.json") != job["sealed"]:
+                if working_source_sha(job["target"]) != job["sealed"]:
                     raise CacheError("source changed after production seal")
                 build_profile(
                     job["target"],
@@ -1086,6 +1122,7 @@ class EventConsumer:
                         job["id"], vid, record, recipe
                     ),
                     cleanup=True,
+                    posthoc=self.spool.view_first,
                 )
                 if self.failpoint:
                     self.failpoint("profile_before_ack")

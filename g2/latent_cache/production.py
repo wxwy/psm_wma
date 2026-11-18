@@ -22,8 +22,16 @@ def cache_receipt(root):
 
     # Full tensor audit and sealed-source/owner check, without loading VAE.
     audit = verify_episode(root, check_source=False)
-    plan = scan_source(root)
     index = open_episode_index(root)
+    from g2.offline.view_only_source import VAE_SOURCE_SCHEMA
+
+    from .final_source import payload_source
+
+    plan = scan_source(
+        root,
+        view_first=payload_source(index.manifest["source"]).get("schema")
+        == VAE_SOURCE_SCHEMA,
+    )
     from .builder import _source_binding
 
     if (
@@ -198,6 +206,7 @@ def build_profile(
     resume=False,
     record_provider=None,
     cleanup=False,
+    posthoc=False,
 ):
     from .builder import build_episode
 
@@ -207,7 +216,7 @@ def build_profile(
         profile = OutputProfile.from_dict(
             read_json(contained(root, "episode_manifest.json"))["output_profile"]
         )
-        if not profile.view_vae:
+        if not profile.view_vae and not posthoc:
             raise CacheError(
                 "profile does not declare VAE; never rewrite its output configuration"
             )
@@ -219,8 +228,13 @@ def build_profile(
             batch_size=batch_size,
             resume=resume,
             _record_provider=record_provider,
+            _view_first=posthoc,
         )
-        publish_profile(root)
-        if cleanup:
+        if posthoc:
+            # Original View-first publication is immutable during Stage B.
+            cache_receipt(root)
+        else:
+            publish_profile(root)
+        if cleanup and not posthoc:
             cleanup_inputs(root)
         return dict(result, profile_complete=True)

@@ -1,0 +1,9 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- /workspace/.venvs/g2-view-vae-52/bin/python
+rootdir: /workspace/psm_wma_issue52
+collecting ... collected 1 item
+
+g2/tests/test_source_capsule_entrypoints.py::test_supervisor_v2_stops_resumes_original_queue_and_retires_after_work_release PASSED [100%]
+
+- generated xml file: /workspace/psm_wma_issue52/docs/collab/codex/evidence/2026-11-18_view_first_retirement/r5_supervisor_probe/pytest.xml -
+========================= 1 passed in 74.65s (0:01:14) =========================

@@ -120,6 +120,25 @@ def validate_profile_episode(
         ):
             expected_status[product] = "absent"
     vae_receipt = manifest.get("vae_receipt")
+    posthoc_receipt = manifest.get("posthoc_vae_receipt")
+    if is_final and not profile.view_vae:
+        if (
+            not isinstance(posthoc_receipt, dict)
+            or posthoc_receipt.get("verified") is not True
+            or posthoc_receipt.get("profile_id") != profile.to_dict()["profile_id"]
+        ):
+            raise ContractError(
+                "retired View-first profile requires its separate posthoc cache proof"
+            )
+        if _check_cache:
+            from g2.latent_cache.production import cache_receipt
+
+            if cache_receipt(root) != posthoc_receipt:
+                raise ContractError("posthoc VAE receipt differs from verified cache")
+    elif posthoc_receipt is not None:
+        raise ContractError(
+            "posthoc proof cannot change a working or VAE-enabled profile"
+        )
     if vae_receipt is not None:
         from g2.latent_cache.production import cache_receipt
 
@@ -416,7 +435,9 @@ def package_stage_a(
 ):
     """Consume original producer inputs/reports, never repair an old final package."""
     if compress_source and profile.view_vae:
-        raise ContractError("VAE-enabled publication cannot precompress its working source")
+        raise ContractError(
+            "VAE-enabled publication cannot precompress its working source"
+        )
     if not isinstance(profile, OutputProfile):
         raise ContractError("explicit typed output profile required")
     if not isinstance(source_fingerprint, str) or not re.fullmatch(
