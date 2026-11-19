@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from collections import OrderedDict
 from copy import deepcopy
+from types import SimpleNamespace
 
 import pytest
 
 from g2.data import verified_provider as provider
-from g2.data.aligned_provider import _EpisodeData
+from g2.data.aligned_provider import CandidateAlignedG2Provider, _EpisodeData
 from g2.data.episode_state import (
     DataBError,
     atomic_write_json,
@@ -282,6 +284,53 @@ def test_episode_payload_cache_loads_on_access_and_eviction():
     ]
     assert seen == [0, 1, 2, 1]
     assert list(data.cache) == [2, 1]
+
+
+def test_selected_view_read_checks_projection_against_manifest(tmp_path, monkeypatch):
+    joint = _joint()
+    state = joint["spatial_states"][0]
+    state["geometry_version"] = "geometry"
+    view_ep = episode_path(tmp_path, "Example", 3)
+    path = view_ep / state["spatial_metadata_file"]
+    metadata = dict(
+        frame=0,
+        state_id=0,
+        geometry_version="geometry",
+        views={
+            "sixview/floor_top": {"projection_id": "fixed", "meters_per_pixel": 0.01}
+        },
+    )
+    atomic_write_json(path, metadata)
+    manifest = {"files": {state["spatial_metadata_file"]: digest(path)}}
+    reader = object()
+    p = object.__new__(CandidateAlignedG2Provider)
+    p.data = {("Example", 3): (joint, None)}
+    p.identity = "data"
+    p.global_memory_enabled = True
+    p.view_read_count = 0
+    p.view_root = tmp_path
+    p._views = OrderedDict({("Example", 3): (manifest, None, reader, {})})
+    identity = SimpleNamespace(
+        data_version="data",
+        episode_id="Example/episode_000003",
+        decision_frame=0,
+        logical_state_frame=0,
+    )
+
+    def native_view(_index, actual_reader, actual_metadata, _state, ref):
+        assert actual_reader is reader and actual_metadata == metadata
+        return SimpleNamespace(
+            top_variant=ref["top_variant"],
+            identity=SimpleNamespace(image_owner_frame=0),
+        )
+
+    monkeypatch.setattr("g2.data.aligned_provider._native_view", native_view)
+    views = p.read_selected_views(identity, top_view_variant="without_robot")
+    assert [v.top_variant for v in views] == ["without_robot"]
+    metadata["views"]["sixview/floor_top"]["meters_per_pixel"] = 0.02
+    atomic_write_json(path, metadata)
+    with pytest.raises(DataBError, match="SHA256 differs"):
+        p.read_selected_views(identity, top_view_variant="without_robot")
 
 
 @pytest.fixture

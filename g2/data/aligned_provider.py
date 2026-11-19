@@ -565,7 +565,9 @@ class CandidateAlignedG2Provider:
             win["spatial_state_ordinal"],
             top_view_variant=top_view_variant,
         )
-        relative = safe_relative(state["spatial_metadata_file"], suffix=".json")
+        relative = safe_relative(
+            state["spatial_metadata_file"], suffix=".json"
+        ).as_posix()
         metadata, _, _ = read_bound_json(
             epdir / relative, expected_sha256=manifest["files"][relative]
         )
