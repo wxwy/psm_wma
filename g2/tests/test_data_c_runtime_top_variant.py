@@ -76,7 +76,11 @@ def test_both_top_variants_resolve_from_same_state(monkeypatch, saved, requested
 
     monkeypatch.setattr("g2.data.aligned_provider._owner_view", resolve)
     refs = _select_runtime_view_refs(
-        SimpleNamespace(), SimpleNamespace(), "/episode", state, 5,
+        SimpleNamespace(),
+        SimpleNamespace(),
+        "/episode",
+        state,
+        5,
         top_view_variant=requested,
     )
     assert refs[0]["view_id"] == IDS[requested]
@@ -124,9 +128,7 @@ def test_variant_change_fails_closed_on_invalid_source(monkeypatch, kind):
 def test_unknown_or_ambiguous_top_is_rejected():
     state, base, _ = sample()
     with pytest.raises(DataCError, match="unknown"):
-        _select_runtime_view_refs(
-            None, None, None, state, 5, top_view_variant="both"
-        )
+        _select_runtime_view_refs(None, None, None, state, 5, top_view_variant="both")
     state["selected_views"].append({**base})
     with pytest.raises(DataCError, match="exactly one"):
         _select_runtime_view_refs(
