@@ -247,4 +247,4 @@ def verify_connection_evidence(s):
                 item['distance_m'],bbox_gap(roots[edge[0]],roots[edge[1]]),abs_tol=1e-9,rel_tol=1e-9):
             raise ContractError('native forbidden structural relay evidence differs')
         seen.add(edge)
-    return {'protocol':PROTOCOL,'objects':len(objects),'components':len(components),'paths':sum(len(r['paths']) for r in records)}
+    return {'protocol':s['connection_protocol'],'objects':len(objects),'components':len(components),'paths':sum(len(r['paths']) for r in records)}
