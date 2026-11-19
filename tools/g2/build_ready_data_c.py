@@ -35,7 +35,7 @@ def main(argv=None):
         p.add_argument(f"--{name}", type=Path, required=True)
     p.add_argument("--view-vae-recipe-id", required=True)
     p.add_argument(
-        "--top-view-variant", choices=("with_robot", "without_robot"), required=True
+        "--top-view-variant", choices=("with_robot", "without_robot", "both"), required=True
     )
     p.add_argument("--max-episodes", type=int, default=None)
     p.add_argument("--flush-every", type=int, default=20)
@@ -54,7 +54,11 @@ def main(argv=None):
     root.mkdir(parents=True, exist_ok=True)
     current = root / "manifest.json"
     expected = dict(
-        schema="g2_data_c_corpus_v1",
+        schema=(
+            "g2_data_c_corpus_v2"
+            if args.top_view_variant == "both"
+            else "g2_data_c_corpus_v1"
+        ),
         source_binding_digest=raw.source_binding,
         state15_recipe_id=pose.recipe_id,
         view_recipe_id=args.view_vae_recipe_id,
