@@ -17,7 +17,7 @@ if [[ $(git -C "$REPO_ROOT/cosmos-framework" rev-parse HEAD) != "$CHILD_SHA" ]];
   echo "Root Gitlink / Child mismatch" >&2; exit 3
 fi
 # Nested under repository, ignored by Git. Never execute external scratch code.
-SRC="$REPO_ROOT/.g2_run_source"
+SRC="$REPO_ROOT/.g2_run_source_$ROOT_SHA"
 if [[ ! -d "$SRC" ]]; then git -C "$REPO_ROOT" worktree add --detach "$SRC" "$ROOT_SHA"; fi
 if [[ ! -e "$SRC/cosmos-framework/.git" ]]; then
   if [[ -n $(ls -A "$SRC/cosmos-framework" 2>/dev/null) ]]; then
@@ -32,7 +32,7 @@ if [[ $(git -C "$SRC" rev-parse HEAD) != "$ROOT_SHA" ||
       -n $(git -C "$SRC/cosmos-framework" status --porcelain) ]]; then
   echo "Runtime repository source dirty or mismatched" >&2; exit 4
 fi
-JOB_NAME="$PROFILE"_g2_formal_30000_20261119
+JOB_NAME="$PROFILE"_g2_formal_async8_30000_20261119
 RECIPE="$G2_OUTPUT_ROOT/recipes/$PROFILE"_g2_formal_30000.json
 JOB="$G2_OUTPUT_ROOT/psm_wma_v3/corrected_phase5/$JOB_NAME"
 mkdir -p "$G2_OUTPUT_ROOT/logs"
@@ -50,6 +50,7 @@ cd "$SRC/cosmos-framework"
 "$G2_PYTHON" -m examples.psm_wma_robocasa_g2_recipe --check "$RECIPE"
 export CUDA_VISIBLE_DEVICES="$G2_GPUS"
 echo "G2 start $PROFILE $PHASE (source Root $ROOT_SHA Child $CHILD_SHA; GPU $G2_GPUS)"
+# Bounded 8 CPU raw prefetch threads; G2 provider LRUs are isolated per worker.
 # No GPU mutex, GPU-idle check or checkpoint retention/pruning.
 "$G2_PYTHON" -m torch.distributed.run --standalone --nproc_per_node=4 --max_restarts=0 \
   examples/psm_wma_robocasa_corrected_phase5.py --phase "$PHASE" \
@@ -59,4 +60,4 @@ echo "G2 start $PROFILE $PHASE (source Root $ROOT_SHA Child $CHILD_SHA; GPU $G2_
   --dataset-index-root "$G2_INDEX_ROOT" --edge "$G2_EDGE_MODEL" \
   --vae "$G2_WAN_VAE" --base-checkpoint "$G2_G1_JOB_ROOT/checkpoints/iter_000027700" \
   --expected-root "$ROOT_SHA" --expected-child "$CHILD_SHA" \
-  --num-workers 0 --world-size 4 >>"$LOG" 2>&1
+  --num-workers 8 --world-size 4 >>"$LOG" 2>&1
