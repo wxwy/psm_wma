@@ -158,3 +158,38 @@ def source_part_silhouettes(rgb,parts,*,axis,frame_origin_world,
         "display_only":True,
         "source_depth_and_occupancy_unchanged":True,
     }
+
+
+
+def source_structural_view_surface_filter(registry,axis):
+    """Shared G2 F27 source-structure occluder policy, presentation only.
+
+    Floor Top: omit genuine Ceilings, otherwise they hide all furniture.
+    Upper Up: omit the Floor itself, otherwise the ceiling and overhead
+    fixtures are hidden. Four Wall directions keep native G2-selected
+    wall-associated VisualMesh as-is. Original full G2 registry is untouched.
+    This does not add any connection or change nav_sg Room / Island IDs.
+    """
+    if axis not in ("floor_top","upper_up","+X","-X","+Y","-Y"):
+        raise SourceVisibilityError("unsupported G2 F27 view axis")
+    if not isinstance(registry,dict) or not isinstance(registry.get("surfaces"),dict):
+        raise SourceVisibilityError("invalid shared source surface registry")
+    excluded_role=(
+        "ceiling" if axis=="floor_top" else
+        "floor" if axis=="upper_up" else None
+    )
+    if excluded_role is None:
+        return registry,{"source_structural_visuals_hidden":0,
+                         "hidden_role":None,"shared_view_policy":True}
+    selected={
+        k:v for k,v in registry["surfaces"].items()
+        if v.get("structural_role")!=excluded_role
+    }
+    out=dict(registry)
+    out["surfaces"]=selected
+    return out,{
+        "source_structural_visuals_hidden":len(registry["surfaces"])-len(selected),
+        "hidden_role":excluded_role,
+        "shared_view_policy":True,
+        "native_entities_and_connections_unchanged":True,
+    }
