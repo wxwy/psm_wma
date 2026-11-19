@@ -18,7 +18,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
-from g2.io import digest, read_json
+from g2.io import digest, parse_json, read_json
 
 from .contract import (
     COMPLETE_SCHEMA,
@@ -470,7 +470,10 @@ def _payload_source(source):
     return payload_source(source)
 
 
-def open_episode_index(episode_root, expected_recipe_id=None):
+def open_episode_index(
+    episode_root, expected_recipe_id=None, *, expected_manifest_sha256=None
+):
+    """When a caller pins the published index, verify its unchanged source files."""
     from .final_source import JOURNAL
     from .source_locks import reader_lease, release_lease, writer_owned
 
@@ -481,19 +484,26 @@ def open_episode_index(episode_root, expected_recipe_id=None):
             raise CacheError(
                 "source retirement pending; resume the owned producer spool"
             )
-        return _open_episode_index(root, expected_recipe_id)
+        return _open_episode_index(root, expected_recipe_id, expected_manifest_sha256)
     finally:
         release_lease(lease)
 
 
-def _open_episode_index(episode_root, expected_recipe_id=None):
+def _open_episode_index(
+    episode_root, expected_recipe_id=None, expected_manifest_sha256=None
+):
     """Read only the small source/cache JSON index, not any numeric View file."""
     root = _absolute(episode_root)
     cache = Path(contained(root, "vae_cache"))
     try:
         manifest_path = Path(contained(cache, "manifest.json"))
         marker_path = Path(contained(cache, "COMPLETE.json"))
-        manifest = read_json(manifest_path, limit=_JSON_LIMIT)
+        with manifest_path.open("rb") as stream:
+            raw = stream.read(_JSON_LIMIT + 1)
+        if len(raw) > _JSON_LIMIT:
+            raise CacheError("cache index exceeds JSON byte limit")
+        manifest_sha = hashlib.sha256(raw).hexdigest()
+        manifest = parse_json(raw)
         complete = read_json(marker_path, limit=_JSON_LIMIT)
     except (OSError, ValueError, TypeError) as exc:
         raise CacheError("complete cache index is missing or invalid") from exc
@@ -514,7 +524,11 @@ def _open_episode_index(episode_root, expected_recipe_id=None):
         or complete.get("schema")
         != (final.COMPLETE_SCHEMA if is_final else COMPLETE_SCHEMA)
         or complete.get("complete") is not True
-        or complete.get("manifest_sha256") != digest(manifest_path)
+        or complete.get("manifest_sha256") != manifest_sha
+        or (
+            expected_manifest_sha256 is not None
+            and expected_manifest_sha256 != manifest_sha
+        )
     ):
         raise CacheError("cache completion does not bind its index")
     key = manifest.get("episode_key")
@@ -545,9 +559,16 @@ def _open_episode_index(episode_root, expected_recipe_id=None):
     elif source.get("schema") == final.SOURCE_SCHEMA:
         raise CacheError("legacy index may not reinterpret a final capsule")
     elif source.get("schema") == "g2_view_first_working_source_v1":
-        from g2.offline.view_only_source import view_first_binding
+        from g2.offline.view_only_source import (
+            verify_published_working_binding,
+            view_first_binding,
+        )
 
-        expected_source = view_first_binding(root)
+        expected_source = (
+            view_first_binding(root)
+            if expected_manifest_sha256 is None
+            else verify_published_working_binding(root, source)
+        )
         if {
             k: v for k, v in source.items() if k != "view_index_sha256"
         } != expected_source:
@@ -632,7 +653,7 @@ def _open_episode_index(episode_root, expected_recipe_id=None):
                 raise CacheError("cache record mapping out of bounds")
         if {x for x in mapping if x is not None} != set(range(shape[0])):
             raise CacheError("cache View has uncovered records")
-    return EpisodeIndex(root, cache, manifest, by_id, digest(manifest_path))
+    return EpisodeIndex(root, cache, manifest, by_id, manifest_sha)
 
 
 class ViewReader:

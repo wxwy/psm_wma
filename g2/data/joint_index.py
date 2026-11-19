@@ -351,7 +351,11 @@ def open_joint_view_source(root, joint):
         raise DataCError("DATA_C spatial profile completion/source differs")
     witnesses = {path: token, marker_path: marker_token}
     witnesses.update((path, file_identity(path)) for path in cache_files)
-    index = open_episode_index(root, expected_recipe_id=joint["view_vae_recipe_id"])
+    index = open_episode_index(
+        root,
+        expected_recipe_id=joint["view_vae_recipe_id"],
+        expected_manifest_sha256=joint["view_vae_manifest_sha256"],
+    )
     if (
         index.manifest_sha256 != joint["view_vae_manifest_sha256"]
         or index.episode_key

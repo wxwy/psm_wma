@@ -16,7 +16,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from g2.io import digest, read_json
+from g2.io import digest, parse_json, read_json
 from g2.latent_cache.contract import CacheError, contained, fingerprint
 from g2.latent_cache.storage import atomic_json
 
@@ -219,6 +219,79 @@ def view_first_binding(root, info=None):
         raw_source_sha256=info["raw_sha256"],
         working_storage=dict(schema=info["format_schema"], files=info["files"]),
         validation_scope="VERIFIED_PUBLISHED_VIEW_FIRST_AND_EXACT_WORKING_BYTES",
+    )
+
+
+def verify_published_working_binding(root, source):
+    """Recheck the exact files of a previously verified, SHA-pinned cache source."""
+    root = Path(root).absolute()
+    manifest = read_json(contained(root, "episode_manifest.json"))
+    identity = source.get("identity_manifest")
+    if identity not in {FULL, PACKED}:
+        raise CacheError("unknown pinned working source format")
+    packed = identity == PACKED
+    file_path = contained(root, identity)
+    ready_name = "SPATIAL_SOURCE_READY.json"
+    storage = source.get("working_storage", {})
+    names = {identity, ready_name, RECEIPT} if packed else {identity, ready_name}
+    if (
+        manifest.get("schema") != "g2_spatial_profile_episode_v1"
+        or manifest.get("source_id") != source.get("source_id")
+        or storage.get("schema") != (SOURCE_SCHEMA if packed else RAW_SCHEMA)
+        or set(storage.get("files", {})) != names
+        or file_path.stat().st_size > (MAX_PACKED_BYTES if packed else MAX_RAW_BYTES)
+        or contained(root, FULL if packed else PACKED, allow_missing=True).exists()
+        or (packed and manifest["output_profile"]["view_vae"])
+        or (not packed and contained(root, RECEIPT, allow_missing=True).exists())
+    ):
+        raise CacheError("pinned View-first working-source profile differs")
+    files = {identity: digest(file_path)}
+    if files[identity] != storage["files"][identity]:
+        raise CacheError("pinned working source bytes changed")
+
+    def read_proof(name):
+        with contained(root, name).open("rb") as stream:
+            data = stream.read(1024 * 1024 + 1)
+        files[name] = _sha(data)
+        if len(data) > 1024 * 1024 or files[name] != storage["files"][name]:
+            raise CacheError("pinned working source receipt changed")
+        return parse_json(data)
+
+    ready = read_proof(ready_name)
+    raw_sha = ready.get("source_manifest_sha256")
+    if (
+        ready.get("schema") != "g2_sealed_spatial_source_v1"
+        or ready.get("source_id") != source["source_id"]
+        or ready.get("complete_spatial_source") is not True
+        or ready.get("profile_complete") is not False
+        or raw_sha != source.get("raw_source_sha256")
+    ):
+        raise CacheError("pinned working source readiness differs")
+    if packed:
+        proof = read_proof(RECEIPT)
+        if (
+            proof.get("schema") != SOURCE_SCHEMA
+            or proof.get("source_id") != source["source_id"]
+            or proof.get("raw_sha256") != raw_sha
+            or proof.get("gzip_sha256") != files[identity]
+            or proof.get("gzip_bytes") != file_path.stat().st_size
+            or type(proof.get("raw_bytes")) is not int
+            or not 0 < proof["raw_bytes"] <= MAX_RAW_BYTES
+            or proof.get("receipt_id")
+            != fingerprint({k: v for k, v in proof.items() if k != "receipt_id"})
+        ):
+            raise CacheError("pinned gzip source receipt differs")
+    elif raw_sha != files[identity]:
+        raise CacheError("pinned raw source bytes differ from readiness")
+    return view_first_binding(
+        root,
+        dict(
+            source={"source_id": ready["source_id"]},
+            files=files,
+            identity_manifest=identity,
+            format_schema=storage["schema"],
+            raw_sha256=raw_sha,
+        ),
     )
 
 

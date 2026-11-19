@@ -16,7 +16,9 @@ from g2.offline.view_only_source import (
     RECEIPT,
     claim_view_only_root,
     load_working_source,
+    verify_published_working_binding,
     verify_view_only_claim,
+    view_first_binding,
 )
 from g2.tests.test_stage_a_package import stage_case
 
@@ -63,6 +65,30 @@ def test_compressed_source_bad_bytes_or_receipt_never_validate(tmp_path):
     write_json(target / RECEIPT, dict(receipt, raw_sha256="0" * 64))
     with pytest.raises(CacheError, match="receipt identity"):
         validate_profile_episode(target)
+
+
+@pytest.mark.parametrize("corrupted", (PACKED, RECEIPT, "SPATIAL_SOURCE_READY.json"))
+def test_pinned_cache_source_checks_exact_bytes_without_decoding(
+    tmp_path, monkeypatch, corrupted
+):
+    profile = OutputProfile(selection_top_variant="clean", view_vae=False)
+    kwargs, _ = stage_case(tmp_path, profile)
+    target = tmp_path / "published"
+    package_stage_a(destination=target, compress_source=True, **kwargs)
+    binding = view_first_binding(target)
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError(
+            "pinned cache validation need not decode the working source"
+        )
+
+    monkeypatch.setattr("g2.offline.view_only_source._decode_gzip_bounded", forbidden)
+    monkeypatch.setattr("g2.offline.view_only_source._cached_decode_gzip", forbidden)
+    assert verify_published_working_binding(target, binding) == binding
+    path = target / corrupted
+    path.write_bytes(path.read_bytes() + b"changed")
+    with pytest.raises(CacheError, match="pinned.*changed"):
+        verify_published_working_binding(target, binding)
 
 
 def test_canonical_legacy_path_requires_new_explicit_view_only_claim(
