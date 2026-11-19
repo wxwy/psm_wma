@@ -42,8 +42,7 @@ def open_corpus_manifest(root):
     content = json_load(source)
     receipt = json_load(marker)
     if (
-        content.get("schema")
-        not in {"g2_data_c_corpus_v1", "g2_data_c_corpus_v2"}
+        content.get("schema") not in {"g2_data_c_corpus_v1", "g2_data_c_corpus_v2"}
         or (
             content.get("schema") == "g2_data_c_corpus_v2"
             and content.get("top_view_variant") != "both"
