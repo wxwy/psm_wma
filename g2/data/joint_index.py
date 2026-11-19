@@ -118,17 +118,64 @@ def _owner_view(index, reader, episode_root, s, ordinal, view_id, *, recipe_id):
     }
 
 
+
+def _assert_dual_top(state):
+    """Verify both published tops share geometry but not assumed content/owner."""
+    tops = state.get("top_views")
+    if not isinstance(tops, dict) or set(tops) != {"with_robot", "without_robot"}:
+        raise DataCError("dual top state requires both physical references")
+    if any(
+        v.get("top_variant") != name
+        or v.get("view_id") != (
+            "sixview/floor_top_w_rbs" if name == "with_robot" else "sixview/floor_top"
+        )
+        or v.get("view_scope") != "floor"
+        or v["physical_owner_frame"] > state["frame"]
+        for name, v in tops.items()
+    ):
+        raise DataCError("dual top reference identity/owner invalid")
+    a, b = tops["with_robot"], tops["without_robot"]
+    if any(
+        a[k] != b[k]
+        for k in ("projection_id", "geometry_version", "membership_version", "vae_recipe_id")
+    ):
+        raise DataCError("dual top views do not share spatial geometry/recipe")
+    if any(v.get("top_variant") is not None for v in state["selected_views"]):
+        raise DataCError("dual top state cannot contain duplicate top in side views")
+
+
+def _state_views(state):
+    """All selected physical references, exactly once per variant."""
+    if "top_views" in state:
+        _assert_dual_top(state)
+        return (
+            *state["selected_views"],
+            state["top_views"]["with_robot"],
+            state["top_views"]["without_robot"],
+        )
+    return tuple(state["selected_views"])
+
+
 def make_joint_recipe(*, state_recipe_id: str, view_recipe_id: str, top_variant: str):
     """Single source of truth for the original immutable G2 joint recipe."""
-    if top_variant not in ("with_robot", "without_robot"):
+    if top_variant not in ("with_robot", "without_robot", "both"):
         raise DataCError("unknown top variant")
     if not view_recipe_id or not state_recipe_id:
         raise DataCError("missing state/View recipe identity")
     return {
-        "schema": "g2_data_c_joint_recipe_v1",
+        "schema": (
+            "g2_data_c_joint_recipe_v2"
+            if top_variant == "both"
+            else "g2_data_c_joint_recipe_v1"
+        ),
         "state15_recipe_id": state_recipe_id,
         "view_recipe_id": view_recipe_id,
         "top_variant": top_variant,
+        **(
+            {"top_variants": ["with_robot", "without_robot"]}
+            if top_variant == "both"
+            else {}
+        ),
         "alignment": "source_20hz_decision_to_most_recent_eligible_spatial_state",
         "horizon": 16,
         "spatial_update_policy": "no_future_owner",
@@ -151,7 +198,7 @@ def build_episode_joint(
     resume: bool = True,
 ):
     """Create a complete *candidate* joint index for every legal 20Hz window."""
-    if top_variant not in {"with_robot", "without_robot"}:
+    if top_variant not in {"with_robot", "without_robot", "both"}:
         raise DataCError("top variant must be explicit")
     if not view_recipe_id:
         raise DataCError("R2 joint index requires actual per-view Wan VAE recipe")
@@ -208,20 +255,26 @@ def build_episode_joint(
             canonical_ids = list(selection["selected_view_ids"])
             if not canonical_ids or "sixview/floor_top" not in canonical_ids:
                 raise DataCError("missing canonical mandatory top")
+            if (
+                canonical_ids.count("sixview/floor_top") != 1
+                or len(canonical_ids) != len(set(canonical_ids))
+            ):
+                raise DataCError("selected canonical top must be unique")
             ids = [
                 "sixview/floor_top_w_rbs"
                 if v == "sixview/floor_top" and top_variant == "with_robot"
                 else v
                 for v in canonical_ids
+                if top_variant != "both" or v != "sixview/floor_top"
             ]
             if (
                 len(ids) != len(set(ids))
                 or sum(
                     v in {"sixview/floor_top", "sixview/floor_top_w_rbs"} for v in ids
                 )
-                != 1
+                != (0 if top_variant == "both" else 1)
             ):
-                raise DataCError("selected top view must occur exactly once")
+                raise DataCError("selected top view variant count invalid")
             for required in (s["scene_graph"], s["spatial_metadata"]):
                 require_regular(epdir / required)
             with gzip.open(epdir / s["scene_graph"], "rt") as input:
@@ -232,17 +285,38 @@ def build_episode_joint(
                 _owner_view(idx, reader, epdir, s, ordinal, v, recipe_id=view_recipe_id)
                 for v in ids
             ]
-            states.append(
-                {
-                    "logical_state_id": s["state_id"],
-                    "frame": s["frame"],
-                    "scene_graph_file": s["scene_graph"],
-                    "spatial_metadata_file": s["spatial_metadata"],
-                    "geometry_version": s["geometry_version"],
-                    "selected_views": views,
-                    "text_id": text_id,
+            state_record = {
+                "logical_state_id": s["state_id"],
+                "frame": s["frame"],
+                "scene_graph_file": s["scene_graph"],
+                "spatial_metadata_file": s["spatial_metadata"],
+                "geometry_version": s["geometry_version"],
+                "selected_views": views,
+                "text_id": text_id,
+            }
+            if top_variant == "both":
+                state_record["top_views"] = {
+                    "with_robot": _owner_view(
+                        idx,
+                        reader,
+                        epdir,
+                        s,
+                        ordinal,
+                        "sixview/floor_top_w_rbs",
+                        recipe_id=view_recipe_id,
+                    ),
+                    "without_robot": _owner_view(
+                        idx,
+                        reader,
+                        epdir,
+                        s,
+                        ordinal,
+                        "sixview/floor_top",
+                        recipe_id=view_recipe_id,
+                    ),
                 }
-            )
+                _assert_dual_top(state_record)
+            states.append(state_record)
     length = raw_source["source_frame_count"]
     if raw_source["exact_window_count"] != length - 16:
         raise DataCError("G1 verified exact-window count differs from original frames")
@@ -254,7 +328,7 @@ def build_episode_joint(
         record = states[ordinal]
         if record["frame"] > frame:
             raise DataCError("spatial state future leak")
-        if any(v["physical_owner_frame"] > frame for v in record["selected_views"]):
+        if any(v["physical_owner_frame"] > frame for v in _state_views(record)):
             raise DataCError("VAE future physical owner leak")
         windows.append(
             {
@@ -274,7 +348,11 @@ def build_episode_joint(
         top_variant=top_variant,
     )
     payload = {
-        "schema": "g2_data_c_joint_episode_v1",
+        "schema": (
+            "g2_data_c_joint_episode_v2"
+            if top_variant == "both"
+            else "g2_data_c_joint_episode_v1"
+        ),
         "task_class": task_class,
         "episode_index": episode_index,
         "recipe": recipe,
@@ -325,7 +403,11 @@ def build_episode_joint(
     target_dir.mkdir(parents=True, exist_ok=True)
     atomic_write_json(target, payload)
     marker = {
-        "schema": "g2_data_c_complete_v1",
+        "schema": (
+            "g2_data_c_complete_v2"
+            if top_variant == "both"
+            else "g2_data_c_complete_v1"
+        ),
         "complete": True,
         "joint_sha256": digest(target),
         "task_class": task_class,
@@ -358,7 +440,8 @@ def verify_joint_episode(
     marker = json_load(marker_path)
     value = json_load(target)
     if (
-        marker.get("schema") != "g2_data_c_complete_v1"
+        marker.get("schema")
+        not in {"g2_data_c_complete_v1", "g2_data_c_complete_v2"}
         or marker.get("complete") is not True
     ):
         raise DataCError("DATA_C completion marker invalid")
@@ -371,7 +454,16 @@ def verify_joint_episode(
     ):
         raise DataCError("DATA_C recipe/source/immutable file checksum mismatch")
     if (
-        value["episode_index"] != ep
+        value.get("schema")
+        not in {"g2_data_c_joint_episode_v1", "g2_data_c_joint_episode_v2"}
+        or (
+            value.get("schema") == "g2_data_c_joint_episode_v2"
+            and (
+                marker.get("schema") != "g2_data_c_complete_v2"
+                or value["recipe"].get("top_variant") != "both"
+            )
+        )
+        or value["episode_index"] != ep
         or value["task_class"] != task
         or value["source_frame_count"] != raw_source["source_frame_count"]
         or value["original_instruction"] != raw_source["instruction"]
@@ -402,7 +494,7 @@ def verify_joint_episode(
         st = value["spatial_states"][window["spatial_state_ordinal"]]
         if st["frame"] != window["spatial_state_frame"] or any(
             v["physical_owner_frame"] > window["spatial_state_frame"]
-            for v in st["selected_views"]
+            for v in _state_views(st)
         ):
             raise DataCError("DATA_C future view owner or spatial index mismatch")
     return {
