@@ -97,7 +97,9 @@ def test_initial_semantics_uses_real_bbox_and_retains_original(fixture):
 
 
 def test_multi_candidate_order_geometric_not_gt_target_leak(fixture):
-    x = build(fixture)
+    # Exercise the complete geometric ordering independently of the default
+    # two-candidate display limit; the old order is not redefined.
+    x = build(fixture, recipe=InitialLanguageRecipe(max_candidates_per_group=4))
     msg = x["augmented_instruction"]
     assert (
         "Ambiguity: role=source_reference; label=Drawer; room=R0; 3 same-label" in msg
@@ -111,6 +113,19 @@ def test_multi_candidate_order_geometric_not_gt_target_leak(fixture):
     assert x["scene_context"]["ambiguity"][0]["gt_bound_entity_ids_for_audit_only"] == [
         "entity_9"
     ]
+
+
+def test_default_two_candidates_per_role_group(fixture):
+    x = build(fixture)
+    text = x["augmented_instruction"]
+    assert InitialLanguageRecipe().max_candidates_per_group == 2
+    assert "Drawer [entity_9]" in text
+    assert "Drawer [entity_8]" in text
+    assert "Drawer [entity_7]" not in text
+    ambiguity = x["scene_context"]["ambiguity"][0]
+    assert ambiguity["candidate_count"] == 3
+    assert ambiguity["shown_count"] == 2
+    assert ambiguity["omitted_count"] == 1
 
 
 def test_budget_cap_explicit_omission_with_no_truncated_fact(fixture):

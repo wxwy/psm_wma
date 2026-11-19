@@ -33,7 +33,7 @@ class InitialLanguageRecipe:
     version: str = "g2_initial_spatial_context_review_v1"
     decimal_places: int = 3
     max_characters: int = 4096
-    max_candidates_per_group: int = 4
+    max_candidates_per_group: int = 2
     ambiguity_policy: str = "same_label_and_category_in_same_room"
     freeze_frame: int = 0
     production_template_frozen: bool = False
