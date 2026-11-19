@@ -122,7 +122,8 @@ def build_receipt(
     require_regular(lang_root / "RECIPE.json")
     language_declaration = json_load(lang_root / "RECIPE.json")
     if (
-        language_declaration.get("schema") != "g2_initial_language_recipe_declaration_v1"
+        language_declaration.get("schema")
+        != "g2_initial_language_recipe_declaration_v1"
         or language_declaration["recipe"].get("recipe_id") != LANGUAGE_RECIPE
         or language_declaration["recipe"].get("max_candidates_per_group") != 2
         or language_declaration["recipe"].get("freeze_frame") != 0
@@ -177,8 +178,7 @@ def build_receipt(
             or text["recipe"]["production_template_frozen"] is not False
             or text["recipe"]["max_candidates_per_group"] != 2
             or any(
-                group["shown_count"] > 2
-                for group in text["scene_context"]["ambiguity"]
+                group["shown_count"] > 2 for group in text["scene_context"]["ambiguity"]
             )
         ):
             raise DataCError(f"initial language content/version mismatch {key}")
@@ -231,9 +231,8 @@ def build_receipt(
         len(snapshots) != 9126
         or len(train_selected) != 9036
         or len(val_selected) != 90
-        or len(snapshots) != len(
-            set((x["task_class"], x["episode_index"]) for x in snapshots)
-        )
+        or len(snapshots)
+        != len(set((x["task_class"], x["episode_index"]) for x in snapshots))
     ):
         raise DataCError("full G2 9126 / G1 9036-90 train/val scope incomplete")
     if (
