@@ -20,7 +20,12 @@ from g2.data.episode_state import (
     json_load,
     require_regular,
 )
-from g2.data.joint_index import DataCError, _owner_view, make_joint_recipe
+from g2.data.joint_index import (
+    DataCError,
+    _assert_dual_top,
+    _owner_view,
+    make_joint_recipe,
+)
 from g2.latent_cache.storage import ViewReader, open_episode_index
 
 
@@ -37,7 +42,11 @@ def open_corpus_manifest(root):
     content = json_load(source)
     receipt = json_load(marker)
     if (
-        content.get("schema") != "g2_data_c_corpus_v1"
+        content.get("schema") not in {"g2_data_c_corpus_v1", "g2_data_c_corpus_v2"}
+        or (
+            content.get("schema") == "g2_data_c_corpus_v2"
+            and content.get("top_view_variant") != "both"
+        )
         or receipt.get("schema") != "g2_data_c_corpus_complete_v1"
         or receipt.get("manifest_sha256") != digest(source)
         or receipt.get("complete") is not True
@@ -155,6 +164,15 @@ def _select_runtime_view_refs(
     """
     if top_view_variant not in _TOP_VIEW_IDS:
         raise DataCError("unknown requested top variant")
+    if "top_views" in state:
+        _assert_dual_top(state)
+        # V2 materializes both true VAE references in DATA_C once. The
+        # requested variant is resolved without recomputing its provenance.
+        # _native_view still verifies actual cache/owner/geometry on read.
+        return (
+            state["top_views"][top_view_variant],
+            *state["selected_views"],
+        )
     refs = tuple(state["selected_views"])
     top = [
         (i, ref)
