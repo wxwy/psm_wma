@@ -52,3 +52,6 @@ artifacts/g0/sync_a2_final_verification_2a9df880_v2.json
 
 # G2 strict provenance: in-repository clean runtime worktree.
 .g2_run_source/
+
+# New runs pinned independently to source commit, without changing a running job.
+.g2_run_source_*/

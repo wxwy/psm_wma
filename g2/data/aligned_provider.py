@@ -8,6 +8,7 @@ train/val split and initial-text production approval elevate its evidence.
 from __future__ import annotations
 
 import hashlib
+from copy import copy
 from collections import OrderedDict
 from collections.abc import Mapping
 from pathlib import Path
@@ -302,7 +303,9 @@ class CandidateAlignedG2Provider:
     evidence_scope = "g2_real_aligned_candidate_not_formal_training"
     latent_channels = 48
     split_identity = "SCOPED_EPISODES_SPLIT_NOT_FROZEN"
-    _episode_cache_size = 4
+    # G2 formal B_stream=8. Keep both currently bound and next-window episodes
+    # resident: a four-entry LRU thrashes on every slot-major T16 sweep.
+    _episode_cache_size = 16
 
     def __init__(
         self,
@@ -390,6 +393,20 @@ class CandidateAlignedG2Provider:
         if self.corpus.get("recipe_id", self._joint_id) != self._joint_id:
             raise DataCError("DATA_C corpus joint recipe differs from source fields")
         self.view_read_count = 0
+
+    def fork_for_worker(self):
+        """Clone mutable runtime state for one Raw Prefetch worker.
+
+        Immutable certified index/recipe/bindings are shared read-only.
+        Episode tensors, language LRUs and ViewReader handles must *never*
+        be shared with the trainer thread or another worker.
+        """
+        worker = copy(self)
+        worker.data = _EpisodeData(self.data.rows, worker._load_episode, self._episode_cache_size)
+        worker._views = OrderedDict()
+        worker._language = OrderedDict()
+        worker.view_read_count = 0
+        return worker
 
     def _load_episode(self, row):
         task, ep = row["task_class"], row["episode_index"]
