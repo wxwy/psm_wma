@@ -755,7 +755,7 @@ class ViewReader:
         self.cached_bytes += entry["bytes"]
         return item
 
-    def read_view(self, view_id, logical_state_id):
+    def read_view(self, view_id, logical_state_id, *, file_witnesses=None):
         view_id = _view_id(view_id)
         if (
             type(logical_state_id) is not int
@@ -804,6 +804,11 @@ class ViewReader:
                 value["metadata"]["preprocessing"][record_index]
             ),
         )
+        if file_witnesses is not None:
+            path = Path(contained(self.index.cache_root, entry["path"]))
+            old = file_witnesses.setdefault(path, item["stat"])
+            if _stat(path) != item["stat"] or old != item["stat"]:
+                raise CacheError("selected View changed during speculative preparation")
         return result
 
     def read_many(self, logical_state_id, selected_view_ids):

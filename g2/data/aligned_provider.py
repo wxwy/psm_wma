@@ -8,8 +8,11 @@ train/val split and initial-text production approval elevate its evidence.
 from __future__ import annotations
 
 import hashlib
+import os
 from collections import OrderedDict
 from collections.abc import Mapping
+from contextlib import contextmanager
+from copy import copy
 from pathlib import Path
 
 from g2.data.episode_state import (
@@ -85,7 +88,7 @@ def corpus_rows(corpus, root):
     return rows
 
 
-def _native_view(index, reader, metadata, state, ref):
+def _native_view(index, reader, metadata, state, ref, *, file_witnesses=None):
     """Only selected ViewReader rows, exact owner/content/projection and mask."""
     from cosmos_framework.model.generator.mot.g2_contracts import (
         RasterMapping,
@@ -98,7 +101,11 @@ def _native_view(index, reader, metadata, state, ref):
         projection_vector,
     )
 
-    result = reader.read_view(ref["view_id"], state["logical_state_id"])
+    result = reader.read_view(
+        ref["view_id"],
+        state["logical_state_id"],
+        **({"file_witnesses": file_witnesses} if file_witnesses is not None else {}),
+    )
     if not result["present"]:
         raise DataCError("DATA_C selected view absent at inference")
     owner = result["owner"]
@@ -276,6 +283,7 @@ class _EpisodeData(Mapping):
     def __init__(self, rows, load, max_episodes):
         self.rows, self.load, self.max_episodes = rows, load, max_episodes
         self.cache = OrderedDict()
+        self.witnesses = {}
 
     def __contains__(self, key):
         return key in self.rows
@@ -290,7 +298,8 @@ class _EpisodeData(Mapping):
         if key not in self.cache:
             value = self.load(self.rows[key])
             if len(self.cache) == self.max_episodes:
-                self.cache.popitem(last=False)
+                evicted, _ = self.cache.popitem(last=False)
+                self.witnesses.pop(evicted, None)
             self.cache[key] = value
         self.cache.move_to_end(key)
         return self.cache[key]
@@ -319,6 +328,10 @@ class CandidateAlignedG2Provider:
             raise DataCError(
                 "external language requires both explicit root and recipe ID"
             )
+        cache_size = os.environ.get("PSM_G2_EPISODE_CACHE_SIZE", "4")
+        if cache_size not in {"4", "16"}:
+            raise DataCError("PSM_G2_EPISODE_CACHE_SIZE must be 4 or 16")
+        self._episode_cache_size = int(cache_size)
         self.data_c_root = Path(data_c_root)
         self.state15_root = Path(state15_root)
         self.view_root = Path(view_root)
@@ -389,10 +402,50 @@ class CandidateAlignedG2Provider:
         )
         if self.corpus.get("recipe_id", self._joint_id) != self._joint_id:
             raise DataCError("DATA_C corpus joint recipe differs from source fields")
+        self._prefetch_witnesses = None
         self.view_read_count = 0
+
+    def fork_for_worker(self):
+        """Clone mutable runtime state for one Raw Prefetch worker.
+
+        Immutable certified index/recipe/bindings are shared read-only.
+        Episode tensors, language LRUs and ViewReader handles must *never*
+        be shared with the trainer thread or another worker.
+        """
+        worker = copy(self)
+        worker.data = _EpisodeData(
+            self.data.rows, worker._load_episode, self._episode_cache_size
+        )
+        worker._views = OrderedDict()
+        worker._language = OrderedDict()
+        worker._prefetch_witnesses = None
+        worker.view_read_count = 0
+        return worker
+
+    @contextmanager
+    def capture_prefetch_witnesses(self):
+        """Capture verified file versions for one speculative CPU segment."""
+        if getattr(self, "_prefetch_witnesses", None) is not None:
+            raise DataCError("nested speculative witness capture")
+        witnesses = {}
+        self._prefetch_witnesses = witnesses
+        try:
+            yield witnesses
+        finally:
+            self._prefetch_witnesses = None
+
+    def _record_prefetch_witnesses(self, witnesses):
+        packet = getattr(self, "_prefetch_witnesses", None)
+        if packet is not None:
+            for path, token in witnesses.items():
+                if packet.setdefault(path.absolute(), token) != token:
+                    raise DataCError(
+                        "source version changed within speculative segment"
+                    )
 
     def _load_episode(self, row):
         task, ep = row["task_class"], row["episode_index"]
+        witnesses = {}
         c_path = episode_path(self.data_c_root, task, ep)
         value, _ = read_joint_episode(
             c_path,
@@ -402,6 +455,7 @@ class CandidateAlignedG2Provider:
             source_binding_digest=self.corpus["source_binding_digest"],
             expected_sha256=row["joint_sha256"],
             window_count=row["window_count"],
+            file_witnesses=witnesses,
         )
         state15, meta, _ = read_episode_state(
             episode_path(self.state15_root, task, ep),
@@ -411,9 +465,11 @@ class CandidateAlignedG2Provider:
             recipe_id=value["recipe"]["state15_recipe_id"],
             source_binding_digest=value["source_binding_digest"],
             expected_sha256=value["data_b_sha256"],
+            file_witnesses=witnesses,
         )
         if meta["original_instruction"] != value["original_instruction"]:
             raise DataCError("DATA_B and DATA_C original instructions differ")
+        self.data.witnesses[task, ep] = witnesses
         return value, state15
 
     def _versioned_text(self, task_class, episode_index, idx):
@@ -448,6 +504,10 @@ class CandidateAlignedG2Provider:
                 raise DataCError(
                     "independent language or source changed during Provider lifetime"
                 )
+        if getattr(self, "_prefetch_witnesses", None) is not None:
+            self._record_prefetch_witnesses(
+                {path: token for path, (_, token) in witnesses.items()}
+            )
         return {
             "original_instruction": record["original_instruction"],
             "enhanced_instruction": record["augmented_instruction"],
@@ -460,6 +520,8 @@ class CandidateAlignedG2Provider:
         if key not in self.data:
             raise DataCError("episode absent from DATA_C index/split")
         idx, states = self.data[key]
+        if getattr(self, "_prefetch_witnesses", None) is not None:
+            self._record_prefetch_witnesses(self.data.witnesses[key])
         if type(decision_frame) is not int or not 0 <= decision_frame < len(
             idx["windows"]
         ):
@@ -568,8 +630,9 @@ class CandidateAlignedG2Provider:
         relative = safe_relative(
             state["spatial_metadata_file"], suffix=".json"
         ).as_posix()
-        metadata, _, _ = read_bound_json(
-            epdir / relative, expected_sha256=manifest["files"][relative]
+        metadata_path = epdir / relative
+        metadata, _, metadata_token = read_bound_json(
+            metadata_path, expected_sha256=manifest["files"][relative]
         )
         if (
             metadata["frame"] != state["frame"]
@@ -577,9 +640,28 @@ class CandidateAlignedG2Provider:
             or metadata["geometry_version"] != state["geometry_version"]
         ):
             raise DataCError("DATA_C spatial metadata belongs to a different state")
-        views = tuple(
-            _native_view(reader_index, reader, metadata, state, ref) for ref in refs
-        )
+        packet = getattr(self, "_prefetch_witnesses", None)
+        if packet is None:
+            views = tuple(
+                _native_view(reader_index, reader, metadata, state, ref) for ref in refs
+            )
+        else:
+            self._record_prefetch_witnesses(witnesses)
+            self._record_prefetch_witnesses({metadata_path: metadata_token})
+            selected_files = {}
+            views = tuple(
+                _native_view(
+                    reader_index,
+                    reader,
+                    metadata,
+                    state,
+                    ref,
+                    file_witnesses=selected_files,
+                )
+                for ref in refs
+            )
+            self._record_prefetch_witnesses(selected_files)
+
         tops = [v for v in views if v.top_variant is not None]
         if len(tops) != 1 or tops[0].top_variant != top_view_variant:
             raise DataCError("expected exactly one top view matching G2 configuration")
@@ -596,3 +678,4 @@ class CandidateAlignedG2Provider:
         self._views.clear()
         self._language.clear()
         self.data.cache.clear()
+        self.data.witnesses.clear()

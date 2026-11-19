@@ -346,6 +346,7 @@ def read_episode_state(
     source_binding_digest,
     recipe_id,
     expected_sha256=None,
+    file_witnesses=None,
 ):
     """Read a sealed DATA_B tensor with its embedded source metadata."""
     expected = dict(
@@ -356,7 +357,8 @@ def read_episode_state(
         recipe_id=recipe_id,
         training_ready=False,
     )
-    marker, _, _ = read_bound_json(dest / "COMPLETE.json")
+    marker_path = dest / "COMPLETE.json"
+    marker, _, marker_token = read_bound_json(marker_path)
     if (
         marker.get("schema") != "g2_data_b_complete_v1"
         or marker.get("complete") is not True
@@ -365,8 +367,9 @@ def read_episode_state(
         or (expected_sha256 is not None and marker["state15_sha256"] != expected_sha256)
     ):
         raise DataBError("DATA_B completion/source/recipe or SHA mismatch")
-    raw, sha, _ = read_bound_bytes(
-        dest / "state15.pt",
+    tensor_path = dest / "state15.pt"
+    raw, sha, tensor_token = read_bound_bytes(
+        tensor_path,
         limit=64 * 1024**2,
         expected_sha256=marker["state15_sha256"],
     )
@@ -390,6 +393,8 @@ def read_episode_state(
         or not bool(torch.isfinite(states).all())
     ):
         raise DataBError("DATA_B tensor failed shape/dtype/finite checks")
+    if file_witnesses is not None:
+        file_witnesses.update({marker_path: marker_token, tensor_path: tensor_token})
     return states, meta, sha
 
 
