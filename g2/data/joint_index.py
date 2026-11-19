@@ -291,10 +291,14 @@ def read_joint_episode(
     source_binding_digest,
     expected_sha256=None,
     window_count=None,
+    file_witnesses=None,
 ):
     path = folder / "joint_index.json"
-    value, joint_sha, _ = read_bound_json(path, expected_sha256=expected_sha256)
-    marker, _, _ = read_bound_json(folder / "COMPLETE.json")
+    value, joint_sha, joint_token = read_bound_json(
+        path, expected_sha256=expected_sha256
+    )
+    marker_path = folder / "COMPLETE.json"
+    marker, _, marker_token = read_bound_json(marker_path)
     recipe = value["recipe"]
     version = 2 if recipe["top_variant"] == "both" else 1
     length = value["source_frame_count"]
@@ -321,6 +325,8 @@ def read_joint_episode(
     ):
         raise DataCError("DATA_C episode completion/source/recipe binding differs")
     validate_joint_timeline(value)
+    if file_witnesses is not None:
+        file_witnesses.update({path: joint_token, marker_path: marker_token})
     return value, joint_sha
 
 

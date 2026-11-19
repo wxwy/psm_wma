@@ -1,0 +1,161 @@
+{
+  "original": {
+    "root": "77fe8fe475350bbbbfce8e18cced0e7339558544",
+    "child": "3d2eba6996fef459dbc8f4b48eca97aedad43608"
+  },
+  "candidate": {
+    "root": "3ac7cb3fbb33545c7ca755b8e866542a147990cc",
+    "child": "4cca4e977f3b5609dd3892825404faf83aeed8f9",
+    "root_draft": 91,
+    "child_draft": 25
+  },
+  "historical_rank0": {
+    "steps": 10,
+    "match_consumer_sha": 10,
+    "sync_wall_s": 35.71896,
+    "raw8_wall_s": 74.61709,
+    "none_ttt_reference_s": 9.529,
+    "raw8_minus_sync_host_stage_s": 34.683,
+    "raw8_minus_sync_main_data_prepare_s": 1.264,
+    "numeric_gpu_parity": false
+  },
+  "actual_provider": {
+    "episodes": 8,
+    "frames_per_episode": 16,
+    "consumers": 128,
+    "exact_content_all_cases": true,
+    "columns": [
+      "lru",
+      "workers",
+      "r1_ms",
+      "r2_ms"
+    ],
+    "median_rows": [
+      [
+        4,
+        0,
+        782.86,
+        8981.06
+      ],
+      [
+        4,
+        1,
+        927.81,
+        10341.92
+      ],
+      [
+        4,
+        2,
+        559,
+        5343.74
+      ],
+      [
+        4,
+        4,
+        1257.54,
+        14567.92
+      ],
+      [
+        4,
+        8,
+        1529.3,
+        15235.5
+      ],
+      [
+        16,
+        0,
+        82.05,
+        1004.94
+      ],
+      [
+        16,
+        1,
+        85.71,
+        1021.11
+      ],
+      [
+        16,
+        2,
+        159.43,
+        2689.37
+      ],
+      [
+        16,
+        4,
+        617.33,
+        6465.51
+      ],
+      [
+        16,
+        8,
+        1136.47,
+        13139.15
+      ]
+    ]
+  },
+  "cap2": {
+    "source": "local Edge processor",
+    "consumers": 128,
+    "uncached_calls": 128,
+    "memo_calls": 15,
+    "uncached_ms": 126.544,
+    "memo_ms": 15.141,
+    "exact_fields_and_rng": true
+  },
+  "compact": {
+    "synthetic_source_pixels_native_resize": true,
+    "samples": 128,
+    "dense_ms": 4770.709,
+    "compact_ms": 2.452,
+    "geometry_exact": true
+  },
+  "true_native_cpu": {
+    "root": "b252a09b173cc54396eee84d3fff567619c5ecea",
+    "child": "0e9b25ad2f740f9e84674895c24df3b2c19f9e7c",
+    "world_size": 4,
+    "rank": 0,
+    "spawn_workers": 2,
+    "windows": 1,
+    "r1": {
+      "consumers": 512,
+      "dropped": 51,
+      "views": 0,
+      "exact_sig": "6f43a70550c1fd12e6bde34bba7655f8dfc53d5752eb022f601f0dea35e1d685"
+    },
+    "r2": {
+      "consumers": 512,
+      "dropped": 51,
+      "views": 1856,
+      "exact_sig": "3cdb4c97f68f01f07065095e6b066736b8e627458cde03da637ad7efc30eec42"
+    }
+  },
+  "root_cpu_final": {
+    "passed": 247,
+    "failed": 0,
+    "skipped": 0
+  },
+  "child_cpu_final": {
+    "passed": 107,
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 17
+  },
+  "child_broad_pre_final_fixture": {
+    "root": "9bcd25105c1ed73e6eae00a81eb0eb6cbb6a9af1",
+    "child": "efc99b9bc1288043f5900eed8ba9648d15a9a535",
+    "passed": 248,
+    "failed": 1,
+    "skipped": 1,
+    "failure": "same-size in-place overwrite on the test filesystem left inode and stat timestamp token unchanged; final tests exercise atomic replacement"
+  },
+  "not_run": [
+    "matched GPU 2/10-step numeric and throughput",
+    "GPU CUDA traces and flame graph",
+    "real R2 GPU reader forward",
+    "4-Rank strict DCP resume",
+    "R2 Iter1000/1001",
+    "two concurrent world4 jobs",
+    "formal 30000-step training"
+  ],
+  "isolated_evidence_directory": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue90_cpu_20261119.Lp0Al9"
+}
