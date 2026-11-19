@@ -84,7 +84,9 @@ def test_speculative_witnesses_preserve_cached_identity_and_detect_conflict(tmp_
     with p.capture_prefetch_witnesses() as packet:
         p._record_prefetch_witnesses({source: original})
         assert packet == {source: original}
-        source.write_bytes(b"replaced")
+        replacement = tmp_path / "replacement.pt"
+        replacement.write_bytes(b"replaced")
+        replacement.replace(source)
         with pytest.raises(DataCError, match="version changed"):
             p._record_prefetch_witnesses({source: file_identity(source)})
     assert p._prefetch_witnesses is None
