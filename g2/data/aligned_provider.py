@@ -288,19 +288,20 @@ class CandidateAlignedG2Provider:
                     )
                 )
             ):
-                raise DataCError("certified DATA_C manifest override differs in source/recipe")
+                raise DataCError(
+                    "certified DATA_C manifest override differs in source/recipe"
+                )
             live_episodes = {
                 (row["task_class"], row["episode_index"]): row
                 for row in live_corpus["episodes"]
             }
-            if (
-                not override.get("episodes")
-                or any(
-                    live_episodes.get((row["task_class"], row["episode_index"])) != row
-                    for row in override["episodes"]
-                )
+            if not override.get("episodes") or any(
+                live_episodes.get((row["task_class"], row["episode_index"])) != row
+                for row in override["episodes"]
             ):
-                raise DataCError("certified DATA_C override contains missing/modified episode")
+                raise DataCError(
+                    "certified DATA_C override contains missing/modified episode"
+                )
             self.corpus = override
         self.identity = (
             self.corpus["data_identity"]
