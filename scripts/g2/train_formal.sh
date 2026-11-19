@@ -48,7 +48,7 @@ fi
 RECIPE="$G2_OUTPUT_ROOT/recipes/$PROFILE"_g2_formal_30000.json
 JOB="$G2_OUTPUT_ROOT/psm_wma_v3/corrected_phase5/$JOB_NAME"
 mkdir -p "$G2_OUTPUT_ROOT/logs"
-LOG="$G2_OUTPUT_ROOT/logs/$PROFILE"_"$PHASE".log
+LOG="$G2_OUTPUT_ROOT/logs/$PROFILE"_"$PHASE"_"$BENCH_MODE".log
 if [[ "$PHASE" == fresh && -e "$JOB" ]]; then echo "Fresh Job already exists: $JOB" >&2; exit 4; fi
 if [[ "$PHASE" == resume && ! -f "$JOB/checkpoints/latest_checkpoint.txt" ]]; then
   echo "Resume requires latest same-job checkpoint" >&2; exit 4
@@ -61,12 +61,13 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd "$SRC/cosmos-framework"
 "$G2_PYTHON" -m examples.psm_wma_robocasa_g2_recipe --check "$RECIPE"
 export CUDA_VISIBLE_DEVICES="$G2_GPUS"
-echo "G2 start $PROFILE $PHASE (source Root $ROOT_SHA Child $CHILD_SHA; GPU $G2_GPUS)"
+echo "G2 start $PROFILE $PHASE $BENCH_MODE (source Root $ROOT_SHA Child $CHILD_SHA; GPU $G2_GPUS)"
+echo "G2_BENCH_START_UTC=$(date -u -Is) PROFILE=$PROFILE BENCH_MODE=$BENCH_MODE" >>"$LOG"
 # Bounded 8 CPU raw prefetch threads; G2 provider LRUs are isolated per worker.
 # No GPU mutex, GPU-idle check or checkpoint retention/pruning.
 "$G2_PYTHON" -m torch.distributed.run --standalone --nproc_per_node=4 --max_restarts=0 \
   examples/psm_wma_robocasa_corrected_phase5.py --phase "$PHASE" \
-  --g2-recipe "$RECIPE" --job-name "$JOB_NAME" \
+  --g2-recipe "$RECIPE" --job-name "$JOB_NAME" "${BENCH_ARGS[@]}" \
   --root-worktree "$SRC" --output-root "$G2_OUTPUT_ROOT" \
   --source-root "$G2_RAW_ROOT" --cache-root "$G2_CACHE_ROOT" \
   --dataset-index-root "$G2_INDEX_ROOT" --edge "$G2_EDGE_MODEL" \
