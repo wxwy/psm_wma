@@ -1,3 +1,5 @@
+- **G2-DATA-C-AUDIT-82** — REVIEW, Draft PR #83. Original `ab3d466e` / `9370c385` requires changes. Candidate `3aff85a7` / `765a06b7` passes related CPU tests and isolated full source certification. GPT reviews fixed pair, phase5 Train filtering, CAP2 v3 seal and bounded R1/R2 reads.
+
 - **G2-SOURCE-CAPSULE-63** — REVIEW (GPT independent Gate); Formal a169fea07016b80b3639646cc9925ac70b6525a8/d5c1ffc7; Draft64 open/unmerged onPR62/d0bb. Author542PASS/13 inheritedSKIP/0fail/error,501oldIDs+54new/235stable Git-bound sources. Samepeer LOCAL_CODE_REVIEW_PASS closes1P2; original5probePASS. CanonicalInbox/evidence publication thenSTOP. GPT real169/419/81states/12Views, actualbytes/latency/18taskcapacity/32workerresources NOT_RUN; fullHOLD. No server/private/GPU/olddelete/install/Gitlink/train/merge.
 
 - **G2-ONESHOT-58-P0** — DONE (scoped CODE+TWO_REAL_SAMPLE); GPTformal5e6a2ceb/d5c1ffc7 reportd0bb:501CPU/0skip,169B1maxabs0,419RGBexact,real official2epDONE+GC. PR62Draft/unmerged. Full9126 HOLD_CAPACITY_AND_32_WORKER_RESOURCE_GATE; Issue63 handles source size, not approvaltofullstart.

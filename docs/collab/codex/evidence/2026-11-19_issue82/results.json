@@ -1,0 +1,106 @@
+{
+  "issue": 82,
+  "draft_pr": 83,
+  "original": {
+    "root": "ab3d466eea259795c539bdee50f714f48dc7c91b",
+    "child": "9370c3858532b4d61630138431145c8360e86eb0",
+    "verdict": "REQUEST_CHANGES"
+  },
+  "candidate": {
+    "root": "3aff85a702f5e3b05bc5cd94c4c86ad4685c1b9d",
+    "gitlink": "765a06b73c10c7fb4ccd30c38c96ceadec88385d",
+    "author_gate": "PASS_SCOPED"
+  },
+  "cpu": {
+    "environment": {
+      "python": "3.13.11",
+      "torch": "2.10.0+cu128",
+      "cuda_visible_devices": ""
+    },
+    "original": {
+      "passed": 35,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 12.584
+    },
+    "candidate_root": {
+      "passed": 384,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 116.462,
+      "warnings": 27
+    },
+    "candidate_child": {
+      "passed": 48,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 20.02,
+      "skip_reason": "optional Phase4A debug paths"
+    },
+    "static": "PASS"
+  },
+  "source_preservation": {
+    "data_c_manifest_sha256": "4283e518d5f8b75dd76cc4275a4463c1624f13a32972088f2fbf7965c0c5ed66",
+    "previous_snapshot_receipt_sha256": "4252e4b5e9dd6fab99b162fb571182ca309e8c8469445b6b5b43a5e37c717339"
+  },
+  "certification": {
+    "isolated_directory": "snapshot-v3-3aff85a7",
+    "episodes": 9126,
+    "train_episodes": 9036,
+    "val_episodes": 90,
+    "train_windows": 2063614,
+    "val_windows": 21717,
+    "cap2_bindings": 9126,
+    "language_recipe_id": "fc08163abc675abfde0e885e5a4c66c7c47d8d49d7226bae6b38c076659efd2e",
+    "snapshot_id": "8eaa187687feb91be56e9e2044797a3258a3d7c86b10f522a9071e056b1d869c",
+    "data_id": "64e737a2bab7d3a053d0549cbe7981c2944a64ac08fd039aab03fbf151cc683e",
+    "split_id": "2949df28790d9254bb018ee0018c8a49aab5f718c9eb9f0e3ba7091ffb57105a",
+    "receipt_sha256": "d464b41db8051a222d1864f5d6f6eea7123ab9e6b15e8f9ddb865653620570ed",
+    "complete_sha256": "6e792db9ce9f4ef8cbcf7fe74a698f883f5cd0ec868ea66a0d27a52c25b1d61c",
+    "two_builds_byte_identical": true,
+    "wall_seconds": 120.46,
+    "peak_rss_kib": 976020
+  },
+  "provider": {
+    "real_episodes": 6,
+    "decision_windows": 18,
+    "r1_view_reads": 0,
+    "r2_view_reads": 36,
+    "top_pairs_with_distinct_images": 18,
+    "retained_readers": 4,
+    "fd_delta_during_reads": 4,
+    "fd_delta_after_close": 0,
+    "full_reopen_seconds": 22.801,
+    "warm_init_seconds": 0.62,
+    "rss_before_provider_kib": 890076,
+    "process_peak_rss_kib": 904400
+  },
+  "g1_phase5_cpu_plan": {
+    "recorded_root": "f882122fe041c345b82a795f644cbff677ac3783",
+    "child": "765a06b73c10c7fb4ccd30c38c96ceadec88385d",
+    "full_catalog_val": 90,
+    "phase5_catalog_val": 0,
+    "phase5_train": 9036,
+    "unchanged_flat_offsets": 9036,
+    "train_windows": 2063614,
+    "eight_rank_planned_segments": 64
+  },
+  "view_index_cpu_ab": {
+    "recorded_root": "b2635db752c25b4492f4cccd0c4266914cfb4856",
+    "cases": 18,
+    "full_decode_total_s": 7.428,
+    "pinned_total_s": 0.066,
+    "full_decode_median_ms": 399.385,
+    "pinned_median_ms": 3.575,
+    "index_equality": true
+  },
+  "not_run": [
+    "real_Phase5_R1_R2_training",
+    "GPU",
+    "FSDP2",
+    "DCP",
+    "training_resume",
+    "online_Full_Map_GT_parity"
+  ],
+  "private_logs_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_issue82_codex_20261119.VtZJAQ"
+}

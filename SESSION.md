@@ -1,3 +1,24 @@
+# 2026-11-19 CST — Issue #82 REVIEW in Draft PR #83
+
+Independent original verdict REQUEST_CHANGES for `ab3d466eea259795c539bdee50f714f48dc7c91b` /
+`9370c3858532b4d61630138431145c8360e86eb0`. Candidate Root `3aff85a702f5e3b05bc5cd94c4c86ad4685c1b9d`, Child/Gitlink
+`765a06b73c10c7fb4ccd30c38c96ceadec88385d`. Scope is G2 split admission, DATA_C/B and
+View identity, CAP2 sealing, bounded Provider and exercised regressions. The
+candidate uses the already merged Child PR #19 for native Train filtering.
+
+Read-only CPU baseline 35/35. Candidate server Root 384/384, Child 48 PASS and
+one optional Phase4A debug skip. Isolated v3 certification covers 9,126 EP and
+2,085,331 windows. 9,036 train keys are native-planner eligible, 90 Val are
+excluded, and all raw offsets match. Real Provider verified 18 common windows,
+36 R2 View reads and 0 R1 View reads. Two scratch receipts are byte-identical.
+GPU, actual Phase5 R1/R2 training, DCP/FSDP2 and online parity are NOT_RUN.
+
+[Draft PR #83](https://github.com/wxwy/psm_wma/pull/83) ·
+[Review](docs/collab/codex/reviews/2026-11-19_Issue82_DATA_C_native_training_audit.md) ·
+[Evidence](docs/collab/codex/evidence/2026-11-19_issue82).
+GPT is the independent reviewer requested by the user. The canonical Inbox
+records the fixed pair and the scope of the requested review.
+
 # 2026-11-18 CST — Issue68 REVIEW, both author real pipelines PASS
 
 Formal implementation778022c8fcf431fa16e83a67256ba58b4b464052;
