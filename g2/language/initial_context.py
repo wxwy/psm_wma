@@ -12,6 +12,7 @@ import gzip
 import json
 import math
 from dataclasses import asdict, dataclass
+from io import BytesIO
 from pathlib import Path
 
 from g2.data.episode_state import (
@@ -20,8 +21,11 @@ from g2.data.episode_state import (
     digest,
     episode_path,
     json_load,
+    read_bound_bytes,
+    read_bound_json,
     require_regular,
 )
+from g2.io import parse_json
 
 
 class InitialLanguageError(ValueError):
@@ -402,6 +406,7 @@ def load_initial_episode_language(
     view_root,
     raw_source: dict,
     recipe: InitialLanguageRecipe = InitialLanguageRecipe(),
+    expected_view_manifest_sha256=None,
 ):
     """Read only the producer's sealed state 0; bind text to original G1 caption."""
     task, ep = raw_source["task_class"], raw_source["episode_index"]
@@ -410,11 +415,13 @@ def load_initial_episode_language(
     complete_path = _safe_episode_asset(epdir, "COMPLETE.json")
     task_path = _safe_episode_asset(epdir, "task_entities.json")
     legacy_path = _safe_episode_asset(epdir, "language.json")
-    manifest = json_load(manifest_path)
-    complete = json_load(complete_path)
+    manifest, manifest_sha, _ = read_bound_json(
+        manifest_path, expected_sha256=expected_view_manifest_sha256
+    )
+    complete, _, _ = read_bound_json(complete_path)
     if (
-        not complete.get("complete")
-        or complete.get("episode_manifest_sha256") != digest(manifest_path)
+        complete.get("complete") is not True
+        or complete.get("episode_manifest_sha256") != manifest_sha
         or manifest.get("episode_id") != ep
         or manifest.get("task_class") != task
         or not manifest.get("states")
@@ -430,16 +437,28 @@ def load_initial_episode_language(
             "RoboCasa original episode too short for G1 exact window"
         )
     sg_path = _safe_episode_asset(epdir, state["scene_graph"])
-    with gzip.open(sg_path, "rt") as file:
-        sg = json.load(file)
-    binding = json_load(task_path)
+    files = manifest["files"]
+    limit = 16 * 1024**2
+    src, src_sha, _ = read_bound_bytes(
+        sg_path, limit=limit, expected_sha256=files[state["scene_graph"]]
+    )
+    with gzip.GzipFile(fileobj=BytesIO(src)) as zipped:
+        raw = zipped.read(limit + 1)
+    if len(raw) > limit:
+        raise InitialLanguageError("initial scene graph exceeds JSON byte limit")
+    sg = parse_json(raw)
+    binding, task_sha, _ = read_bound_json(
+        task_path, expected_sha256=files["task_entities.json"]
+    )
+    legacy, legacy_sha, _ = read_bound_json(
+        legacy_path, expected_sha256=files["language.json"]
+    )
     if binding.get("schema") != "g2_episode_task_entities_v1":
         raise InitialLanguageError("unexpected task-binding envelope")
     set_id = state.get("task_entity_set_id")
     bound_set = binding.get("sets", {}).get(set_id)
     if not bound_set:
         raise InitialLanguageError("initial task entity set not found")
-    legacy = json_load(legacy_path)
     if legacy.get("schema") != "g2_episode_text_bank_v1":
         raise InitialLanguageError("original caption bank unavailable")
     if len(legacy.get("texts", {})) != 1:
@@ -470,11 +489,11 @@ def load_initial_episode_language(
         "g1_original_range": raw_source["source_range"],
         "source_view_episode_id": manifest["source_id"],
         "initial_scene_graph_relative_path": state["scene_graph"],
-        "initial_scene_graph_sha256": digest(sg_path),
+        "initial_scene_graph_sha256": src_sha,
         "task_entity_set_id": set_id,
-        "task_entities_sha256": digest(task_path),
-        "view_manifest_sha256": digest(manifest_path),
-        "legacy_language_sha256": digest(legacy_path),
+        "task_entities_sha256": task_sha,
+        "view_manifest_sha256": manifest_sha,
+        "legacy_language_sha256": legacy_sha,
         "geometry_version": state.get("geometry_version"),
     }
     return entry
@@ -563,6 +582,8 @@ def read_versioned_initial_language(
     source_binding_digest: str,
     original_instruction: str,
     view_root=None,
+    expected_files=None,
+    file_witnesses=None,
 ) -> dict:
     """Read an explicitly chosen immutable language version without rebuilding it.
 
@@ -570,6 +591,13 @@ def read_versioned_initial_language(
     selects a different text recipe. This is a *candidate* sidecar: it does not
     itself certify the training split, online GT equivalence or final template.
     """
+
+    def read(path, expected=None):
+        value, sha, token = read_bound_json(path, expected_sha256=expected)
+        if file_witnesses is not None:
+            file_witnesses[path] = (sha, token)
+        return value, sha
+
     if (
         type(recipe_id) is not str
         or len(recipe_id) != 64
@@ -585,8 +613,7 @@ def read_versioned_initial_language(
         raise InitialLanguageError("unsafe language episode key")
     root = Path(root)
     root_info = root / "OUTPUT_IDENTITY.json"
-    require_regular(root_info)
-    info = json_load(root_info)
+    info, _ = read(root_info)
     if (
         info.get("schema") != "g2_independent_language_root_v2"
         or info.get("source_binding_digest") != source_binding_digest
@@ -595,8 +622,7 @@ def read_versioned_initial_language(
         raise InitialLanguageError("standalone language root source binding differs")
     recipe_dir = root / "recipes" / recipe_id
     rec_path = recipe_dir / "RECIPE.json"
-    require_regular(rec_path)
-    rec = json_load(rec_path)
+    rec, _ = read(rec_path)
     if (
         rec.get("schema") != "g2_initial_language_recipe_declaration_v1"
         or rec.get("source_binding_digest") != source_binding_digest
@@ -612,21 +638,20 @@ def read_versioned_initial_language(
         recipe_dir / "tasks" / task_class / "episodes" / f"episode_{episode_index:06d}"
     )
     data_path, marker_path = dest / "initial_context.json", dest / "COMPLETE.json"
-    require_regular(data_path)
-    require_regular(marker_path)
-    receipt = json_load(marker_path)
+    pins = expected_files or {}
+    receipt, _ = read(marker_path, pins.get("complete_sha256"))
+    record, record_sha = read(data_path, pins.get("content_sha256"))
     if (
         receipt.get("schema") != "g2_initial_language_complete_review_v1"
         or receipt.get("complete") is not True
         or receipt.get("recipe_id") != recipe_id
-        or receipt.get("content_sha256") != digest(data_path)
+        or receipt.get("content_sha256") != record_sha
         or receipt.get("training_ready") is not False
     ):
         raise InitialLanguageError("standalone language content receipt drift")
-    record = json_load(data_path)
     if (
         record.get("schema") != "g2_initial_language_record_review_v1"
-        or record.get("recipe", {}).get("recipe_id") != recipe_id
+        or record.get("recipe") != rec.get("recipe")
         or record.get("text_id") != receipt.get("text_id")
         or record.get("episode_index") != episode_index
         or record.get("task_class") != task_class
@@ -654,13 +679,29 @@ def read_versioned_initial_language(
         sg = _safe_episode_asset(epdir, provenance["initial_scene_graph_relative_path"])
         task = _safe_episode_asset(epdir, "task_entities.json")
         old = _safe_episode_asset(epdir, "language.json")
+        published, _ = read(manifest, provenance["view_manifest_sha256"])
+        initial = published["states"][0]
         if (
-            provenance["view_manifest_sha256"] != digest(manifest)
-            or provenance["initial_scene_graph_sha256"] != digest(sg)
-            or provenance["task_entities_sha256"] != digest(task)
-            or provenance["legacy_language_sha256"] != digest(old)
+            initial["frame"] != 0
+            or initial["state_id"] != 0
+            or initial["scene_graph"] != provenance["initial_scene_graph_relative_path"]
         ):
             raise InitialLanguageError(
-                "standalone language initial View/SG/caption source drift"
+                "standalone language must use the published frame-0 Scene Graph"
             )
+        for path, field in (
+            (sg, "initial_scene_graph_sha256"),
+            (task, "task_entities_sha256"),
+            (old, "legacy_language_sha256"),
+        ):
+            rel = path.relative_to(epdir).as_posix()
+            if published["files"].get(rel) != provenance[field]:
+                raise InitialLanguageError(
+                    "standalone language initial View/SG/caption source drift"
+                )
+            _, sha, token = read_bound_bytes(
+                path, limit=16 * 1024**2, expected_sha256=provenance[field]
+            )
+            if file_witnesses is not None:
+                file_witnesses[path] = (sha, token)
     return record

@@ -1,180 +1,238 @@
-"""Explicitly certified, immutable G2 train-snapshot provider for native Phase5.
-
-Certification is separate from the append-only DATA_C writer and review-only
-language files. A certified snapshot records an exact G1 episode selection
-and strong per-episode content digests; it never changes the producer's flags.
-"""
+"""Open a sealed G2 training snapshot and verify its native G1 partition."""
 
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 
-from g2.data.aligned_provider import CandidateAlignedG2Provider
-from g2.data.episode_state import canonical, digest, json_load, require_regular
-from g2.data.joint_index import DataCError
+from g2.data.aligned_provider import CandidateAlignedG2Provider, corpus_rows
+from g2.data.episode_state import (
+    DataBError,
+    canonical,
+    digest,
+    episode_path,
+    read_bound_json,
+)
+from g2.data.joint_index import DataCError, make_joint_recipe, read_joint_episode
 
-SCHEMA = "g2_verified_training_snapshot_v2"
-COMPLETE_SCHEMA = "g2_verified_training_snapshot_complete_v2"
+SCHEMA = "g2_verified_training_snapshot_v3"
+COMPLETE_SCHEMA = "g2_verified_training_snapshot_complete_v3"
+_LEGACY_SCHEMA = "g2_verified_training_snapshot_v2"
+_LEGACY_COMPLETE = "g2_verified_training_snapshot_complete_v2"
 LANGUAGE_RECIPE = "fc08163abc675abfde0e885e5a4c66c7c47d8d49d7226bae6b38c076659efd2e"
 APPROVAL = "owner_requested_full_dualtop_cap2_certification_20261119"
+CERTIFICATION_SCOPE = "full_9126_complete_review_recipe_not_online_full_map"
+SPLIT_SEED = 42
+VAL_RATIO = 0.01
 
 
-def open_verified_snapshot(snapshot_root, *, g1_index_root, data_c_root):
-    """Fail closed on missing certification, source drift or spoofed split."""
-    from cosmos_framework.data.generator.action.datasets.cosmos3_action_lerobot import (
-        split_episode_ids,
+def g1_partition(root, *, expected_sha256=None):
+    """Use the same per-task split implementation as the pinned G1 dataset."""
+    from cosmos_framework.data.generator.action.datasets import cosmos3_action_lerobot
+
+    root = Path(root)
+    g1, receipt_sha, _ = read_bound_json(
+        root / "receipt.json", expected_sha256=expected_sha256
     )
-
-    folder = Path(snapshot_root)
-    receipt_path = folder / "receipt.json"
-    marker_path = folder / "COMPLETE.json"
-    require_regular(receipt_path)
-    require_regular(marker_path)
-    receipt = json_load(receipt_path)
-    marker = json_load(marker_path)
+    if g1.get("schema") != "psm_v3_robocasa_verified_index_v1":
+        raise DataCError("G1 original receipt schema differs")
+    groups = {}
+    bindings = {}
+    global_ids = set()
+    for row in g1["bindings"]:
+        task, ep = row["task_class"], row["episode_index"]
+        episode_path(root, task, ep)
+        if ep in global_ids:
+            raise DataCError("duplicate G1 source episode index")
+        global_ids.add(ep)
+        bindings[task, ep] = row
+        groups.setdefault(task, []).append(ep)
+    train, val = set(), set()
+    for task, episodes in groups.items():
+        ids = sorted(episodes)
+        train.update(
+            (task, ids[i])
+            for i in cosmos3_action_lerobot.split_episode_ids(
+                len(ids), SPLIT_SEED, VAL_RATIO, "train"
+            )
+        )
+        val.update(
+            (task, ids[i])
+            for i in cosmos3_action_lerobot.split_episode_ids(
+                len(ids), SPLIT_SEED, VAL_RATIO, "val"
+            )
+        )
     if (
-        receipt.get("schema") != SCHEMA
-        or marker.get("schema") != COMPLETE_SCHEMA
+        len(train) != 9036
+        or len(val) != 90
+        or train & val
+        or train | val != bindings.keys()
+    ):
+        raise DataCError(
+            "G1 original Train/Val partition is not the complete 9036/90 split"
+        )
+    split = {
+        "g1_verified_receipt_sha256": receipt_sha,
+        "g1_split_source_sha256": digest(Path(inspect.getfile(cosmos3_action_lerobot))),
+        "seed": SPLIT_SEED,
+        "val_ratio": VAL_RATIO,
+    }
+    return g1, split, bindings, train, val
+
+
+def language_bindings(receipt, rows):
+    """Validate the exact CAP2 content and completion-file pins for every episode."""
+    bindings = {}
+    values = receipt.get("language_bindings")
+    if not isinstance(values, list):
+        raise DataCError("certified language file identities missing")
+    for row in values:
+        key = (row["task_class"], row["episode_index"])
+        if (
+            key in bindings
+            or key not in rows
+            or type(key[1]) is not int
+            or any(
+                not isinstance(row.get(name), str)
+                or len(row[name]) != 64
+                or any(ch not in "0123456789abcdef" for ch in row[name])
+                for name in ("content_sha256", "complete_sha256")
+            )
+        ):
+            raise DataCError("invalid or duplicate certified language file identity")
+        bindings[key] = row
+    if bindings.keys() != rows.keys():
+        raise DataCError("certified language bindings do not cover the snapshot")
+    return bindings
+
+
+def data_identity(receipt):
+    fields = {
+        "snapshot_identity": canonical(receipt["snapshot"]),
+        "split_identity": receipt["split_identity"],
+        "language_recipe_id": receipt["language_recipe_id"],
+    }
+    if receipt["schema"] == SCHEMA:
+        fields["language_bindings"] = receipt["language_bindings"]
+    return canonical(fields)
+
+
+def open_verified_snapshot(
+    snapshot_root,
+    *,
+    g1_index_root,
+    data_c_root,
+    verify_episodes=True,
+    inspect_legacy_v2=False,
+):
+    """Verify a snapshot seal. Historical v2 is available for explicit inspection."""
+    folder = Path(snapshot_root)
+    try:
+        marker, _, _ = read_bound_json(folder / "COMPLETE.json")
+        expected_sha = marker.get("receipt_sha256")
+        if not expected_sha:
+            raise DataCError("unapproved or unsealed G2 training snapshot")
+        receipt, _, _ = read_bound_json(
+            folder / "receipt.json", expected_sha256=expected_sha
+        )
+    except (DataBError, OSError) as exc:
+        raise DataCError("unapproved or unsealed G2 training snapshot") from exc
+    version = receipt.get("schema")
+    if version == _LEGACY_SCHEMA and not inspect_legacy_v2:
+        raise DataCError(
+            "legacy snapshot lacks per-episode CAP2 hashes; recertification required"
+        )
+    if (
+        (version, marker.get("schema"))
+        not in {
+            (SCHEMA, COMPLETE_SCHEMA),
+            (_LEGACY_SCHEMA, _LEGACY_COMPLETE),
+        }
         or marker.get("complete") is not True
-        or marker.get("receipt_sha256") != digest(receipt_path)
         or receipt.get("approval") != APPROVAL
         or receipt.get("evidence_scope") != "verified_data_c"
         or receipt.get("training_ready") is not True
-        or not isinstance(receipt.get("snapshot"), dict)
-        or not isinstance(receipt.get("train_episode_keys"), list)
-        or not isinstance(receipt.get("val_episode_keys"), list)
+        or receipt.get("online_full_map_gt_parity_certified") is not False
+        or receipt.get("language_review_source_unchanged") is not True
+        or receipt.get("top_view_variants") != ["with_robot", "without_robot"]
+        or receipt.get("certification_scope") != CERTIFICATION_SCOPE
+        or receipt.get("language_recipe_id") != LANGUAGE_RECIPE
     ):
         raise DataCError("unapproved or unsealed G2 training snapshot")
-
-    body = dict(receipt)
-    identity = body.pop("snapshot_identity", None)
-    if identity != canonical(body) or marker.get("snapshot_identity") != identity:
+    identity = receipt.get("snapshot_identity")
+    if (
+        identity
+        != canonical({k: v for k, v in receipt.items() if k != "snapshot_identity"})
+        or marker.get("snapshot_identity") != identity
+    ):
         raise DataCError("G2 snapshot identity mismatch")
 
-    g1_path = Path(g1_index_root) / "receipt.json"
-    require_regular(g1_path)
-    g1 = json_load(g1_path)
-    if (
-        digest(g1_path) != receipt["g1_verified_receipt_sha256"]
-        or g1["source_binding_digest"] != receipt["source_binding_digest"]
-        or len(g1["bindings"]) != 9126
-    ):
-        raise DataCError("G1 verified-index source drift")
-    import inspect
-    from cosmos_framework.data.generator.action.datasets import (
-        cosmos3_action_lerobot as g1_splits,
+    g1, split, source_rows, train, val = g1_partition(
+        g1_index_root, expected_sha256=receipt["g1_verified_receipt_sha256"]
     )
-
-    split_code = Path(inspect.getfile(g1_splits))
-    if digest(split_code) != receipt["g1_split_source_sha256"]:
-        raise DataCError("G1 original split implementation drift")
-    if receipt["split_seed"] != 42 or receipt["val_ratio"] != 0.01:
-        raise DataCError("G2 must exactly reuse original G1 Train/Val rules")
-    groups = {}
-    for row in g1["bindings"]:
-        groups.setdefault(row["task_class"], []).append(row["episode_index"])
-    train, val = set(), set()
-    for task, ids in groups.items():
-        ids.sort()
-        train.update(
-            (task, ids[i]) for i in split_episode_ids(len(ids), 42, 0.01, "train")
-        )
-        val.update((task, ids[i]) for i in split_episode_ids(len(ids), 42, 0.01, "val"))
-    if len(train) != 9036 or len(val) != 90 or train & val:
-        raise DataCError("original G1 split is not the expected 9036/90")
-    selected_train = {(task, ep) for task, ep in receipt["train_episode_keys"]}
-    selected_val = {(task, ep) for task, ep in receipt["val_episode_keys"]}
-    rows = receipt["snapshot"]["episodes"]
-    selected_all = {(x["task_class"], x["episode_index"]) for x in rows}
-    if (
-        not selected_train
-        or selected_train - train
-        or selected_val - val
-        or selected_train & selected_val
-        or selected_train | selected_val != selected_all
-        or len(rows) != len(selected_all)
-        or len(rows) != 9126
-        or selected_train != train
-        or selected_val != val
-        or receipt["language_recipe_id"] != LANGUAGE_RECIPE
-    ):
-        raise DataCError("snapshot contains unauthorized G1 episode selection")
-    if receipt["split_identity"] != canonical(
-        {
-            "g1_verified_receipt_sha256": receipt["g1_verified_receipt_sha256"],
-            "g1_split_source_sha256": receipt["g1_split_source_sha256"],
-            "seed": 42,
-            "val_ratio": 0.01,
-        }
-    ):
-        raise DataCError("G1 exact split identity invalid")
     snapshot = receipt["snapshot"]
+    rows = corpus_rows(snapshot, data_c_root)
     if (
         snapshot.get("schema") != "g2_data_c_corpus_v2"
         or snapshot.get("top_view_variant") != "both"
         or snapshot.get("source_binding_digest") != g1["source_binding_digest"]
+        or receipt.get("source_binding_digest") != g1["source_binding_digest"]
         or snapshot.get("recipe_id") != receipt["joint_recipe_id"]
+        or snapshot["recipe_id"]
+        != canonical(
+            make_joint_recipe(
+                state_recipe_id=snapshot["state15_recipe_id"],
+                view_recipe_id=snapshot["view_recipe_id"],
+                top_variant="both",
+            )
+        )
         or snapshot.get("training_ready") is not False
         or snapshot.get("data_identity")
         != canonical({k: v for k, v in snapshot.items() if k != "data_identity"})
+        or rows.keys() != source_rows.keys()
     ):
         raise DataCError("snapshot DATA_C corpus or recipe identity mismatch")
-    if receipt["data_identity"] != canonical(
-        {
-            "snapshot_identity": canonical(snapshot),
-            "split_identity": receipt["split_identity"],
-            "language_recipe_id": receipt["language_recipe_id"],
-        }
+    if (
+        receipt["train_episode_keys"] != [list(k) for k in sorted(train)]
+        or receipt["val_episode_keys"] != [list(k) for k in sorted(val)]
+        or receipt["split_seed"] != SPLIT_SEED
+        or receipt["val_ratio"] != VAL_RATIO
+        or receipt["split_identity"] != canonical(split)
+        or receipt["g1_split_source_sha256"] != split["g1_split_source_sha256"]
+        or receipt["train_windows"] != sum(rows[key]["window_count"] for key in train)
+        or receipt["val_windows"] != sum(rows[key]["window_count"] for key in val)
+        or any(
+            row["window_count"] != source_rows[key]["window_count"]
+            for key, row in rows.items()
+        )
     ):
+        raise DataCError("snapshot contains an invalid G1 split or window budget")
+    if version == SCHEMA:
+        language_bindings(receipt, rows)
+    if receipt["data_identity"] != data_identity(receipt):
         raise DataCError("formal data identity mismatch")
-    # Growth of the live DATA_C manifest is intentional. The sealed individual
-    # episode records, not its changing manifest, form the training authority.
-    for row in rows:
-        task, ep = row["task_class"], row["episode_index"]
-        ep_path = Path(data_c_root) / "tasks" / task / "episodes" / f"episode_{ep:06d}"
-        source = ep_path / "joint_index.json"
-        marker_source = ep_path / "COMPLETE.json"
-        require_regular(source)
-        require_regular(marker_source)
-        if (
-            digest(source) != row["joint_sha256"]
-            or json_load(marker_source).get("joint_sha256") != row["joint_sha256"]
-        ):
-            raise DataCError("sealed DATA_C episode changed after certification")
-        content = json_load(source)
-        if (
-            content.get("schema") != "g2_data_c_joint_episode_v2"
-            or content.get("recipe_id") != snapshot["recipe_id"]
-            or content.get("source_binding_digest") != g1["source_binding_digest"]
-            or len(content.get("windows", [])) != row["window_count"]
-        ):
-            raise DataCError("certified DATA_C joint identity differs")
-        for state in content["spatial_states"]:
-            tops = state.get("top_views")
+    if verify_episodes:
+        for (task, ep), row in rows.items():
+            content, _ = read_joint_episode(
+                episode_path(data_c_root, task, ep),
+                task=task,
+                episode=ep,
+                recipe_id=snapshot["recipe_id"],
+                source_binding_digest=g1["source_binding_digest"],
+                expected_sha256=row["joint_sha256"],
+                window_count=row["window_count"],
+            )
             if (
-                not isinstance(tops, dict)
-                or set(tops) != {"with_robot", "without_robot"}
-                or any(
-                    tops[variant]["physical_owner_frame"] > state["frame"]
-                    for variant in tops
-                )
+                content["source_frame_count"] != source_rows[task, ep]["length"]
+                or content["g1_video_cache_manifest_sha256"]
+                != g1["cache_manifest_sha256"]
             ):
-                raise DataCError("certified dual-top spatial state invalid")
-    if receipt["train_windows"] != sum(
-        row["window_count"]
-        for row in rows
-        if (row["task_class"], row["episode_index"]) in train
-    ) or receipt["val_windows"] != sum(
-        row["window_count"]
-        for row in rows
-        if (row["task_class"], row["episode_index"]) in val
-    ):
-        raise DataCError("certified train/val window budgets differ")
+                raise DataCError("certified DATA_C window or G1 cache identity differs")
     return receipt
 
 
 class VerifiedAlignedG2Provider(CandidateAlignedG2Provider):
-    """Formal, fail-closed source-bound provider on a frozen subset of G1."""
+    """Formal provider on a sealed dataset with lazy, bounded payload reads."""
 
     evidence_scope = "verified_data_c"
 
@@ -194,6 +252,7 @@ class VerifiedAlignedG2Provider(CandidateAlignedG2Provider):
             snapshot_root,
             g1_index_root=g1_verified_index_root,
             data_c_root=data_c_root,
+            verify_episodes=False,
         )
         if receipt["language_recipe_id"] != initial_language_recipe_id:
             raise DataCError("formal G2 language version differs from certification")
@@ -206,22 +265,12 @@ class VerifiedAlignedG2Provider(CandidateAlignedG2Provider):
             initial_language_recipe_id=initial_language_recipe_id,
             corpus_manifest_override=receipt["snapshot"],
         )
-        # Explicit source snapshots replace candidate-derived identities.
         self.identity = receipt["data_identity"]
         self.split_identity = receipt["split_identity"]
-        self.train_episode_keys = frozenset(
-            (task, ep) for task, ep in receipt["train_episode_keys"]
-        )
-        self.val_episode_keys = frozenset(
-            (task, ep) for task, ep in receipt["val_episode_keys"]
-        )
         self.snapshot_identity = receipt["snapshot_identity"]
-        if (
-            len(self.data) != len(receipt["snapshot"]["episodes"])
-            or len(self.train_episode_keys) < 8
-        ):
-            self.close()
-            raise DataCError("verified provider missing required episode payloads")
+        self.train_episode_keys = frozenset(map(tuple, receipt["train_episode_keys"]))
+        self.val_episode_keys = frozenset(map(tuple, receipt["val_episode_keys"]))
+        self._language_bindings = language_bindings(receipt, self.data)
 
 
 def open_verified_provider(**kwargs):

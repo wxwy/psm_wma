@@ -9,24 +9,30 @@ from __future__ import annotations
 
 import hashlib
 from collections import OrderedDict
+from collections.abc import Mapping
 from pathlib import Path
-
-import torch
 
 from g2.data.episode_state import (
     canonical,
-    digest,
     episode_path,
-    json_load,
-    require_regular,
+    file_identity,
+    read_bound_json,
+    read_episode_state,
+)
+from g2.data.joint_index import (
+    TOP_VIEW_IDS as _TOP_VIEW_IDS,
 )
 from g2.data.joint_index import (
     DataCError,
     _assert_dual_top,
     _owner_view,
     make_joint_recipe,
+    open_joint_view_source,
+    read_joint_episode,
+    verify_joint_view_refs,
 )
-from g2.latent_cache.storage import ViewReader, open_episode_index
+from g2.latent_cache.contract import safe_relative
+from g2.latent_cache.storage import ViewReader
 
 
 def _sha(text: str):
@@ -37,10 +43,10 @@ def open_corpus_manifest(root):
     root = Path(root)
     source = root / "manifest.json"
     marker = root / "CORPUS_COMPLETE.json"
-    require_regular(source)
-    require_regular(marker)
-    content = json_load(source)
-    receipt = json_load(marker)
+    receipt, _, _ = read_bound_json(marker)
+    if not receipt.get("manifest_sha256"):
+        raise DataCError("candidate DATA_C corpus has no sealed digest")
+    content, _, _ = read_bound_json(source, expected_sha256=receipt["manifest_sha256"])
     if (
         content.get("schema") not in {"g2_data_c_corpus_v1", "g2_data_c_corpus_v2"}
         or (
@@ -48,16 +54,38 @@ def open_corpus_manifest(root):
             and content.get("top_view_variant") != "both"
         )
         or receipt.get("schema") != "g2_data_c_corpus_complete_v1"
-        or receipt.get("manifest_sha256") != digest(source)
         or receipt.get("complete") is not True
         or content.get("training_ready") is not False
         or receipt.get("training_ready") is not False
+        or content.get("data_identity")
+        != canonical({k: v for k, v in content.items() if k != "data_identity"})
     ):
         raise DataCError("candidate DATA_C corpus manifest invalid")
     return content
 
 
-def _native_view(index, reader, episode_dir, state, ref):
+def corpus_rows(corpus, root):
+    rows = {}
+    for row in corpus["episodes"]:
+        task, ep = row["task_class"], row["episode_index"]
+        episode_path(root, task, ep)
+        sha = row["joint_sha256"]
+        if (
+            (task, ep) in rows
+            or type(row["window_count"]) is not int
+            or row["window_count"] <= 0
+            or not isinstance(sha, str)
+            or len(sha) != 64
+            or any(ch not in "0123456789abcdef" for ch in sha)
+        ):
+            raise DataCError("invalid or duplicate DATA_C corpus episode row")
+        rows[task, ep] = dict(row)
+    if not rows:
+        raise DataCError("empty DATA_C corpus")
+    return rows
+
+
+def _native_view(index, reader, metadata, state, ref):
     """Only selected ViewReader rows, exact owner/content/projection and mask."""
     from cosmos_framework.model.generator.mot.g2_contracts import (
         RasterMapping,
@@ -74,28 +102,45 @@ def _native_view(index, reader, episode_dir, state, ref):
     if not result["present"]:
         raise DataCError("DATA_C selected view absent at inference")
     owner = result["owner"]
+    entry = index.manifest["views"][ref["view_id"]]
     if (
         result["record_index"] != ref["record_index"]
+        or result["logical_frame"] != state["frame"]
         or owner["owner_frame"] != ref["physical_owner_frame"]
+        or owner["owner_state_id"] != ref["physical_owner_state"]
+        or owner["owner_state_ordinal"] != ref["physical_owner_ordinal"]
         or owner["png_sha256"] != ref["physical_png_sha256"]
-        or index.manifest["views"][ref["view_id"]]["sha256"] != ref["cache_file_sha256"]
+        or entry["path"] != ref["cache_file"]
+        or entry["sha256"] != ref["cache_file_sha256"]
+        or entry["record_sha256"][result["record_index"]] != ref["record_sha256"]
         or index.manifest["recipe"]["recipe_id"] != ref["vae_recipe_id"]
     ):
         raise DataCError("DATA_C selected view owner/source/recipe differs")
-    source = json_load(episode_dir / state["spatial_metadata_file"])
-    view = source["views"][ref["view_id"]]
+    view = metadata["views"][ref["view_id"]]
     proj = view["image_projection"]
     basis = proj["reference_frame"]
     if (
         proj["projection_id"] != ref["projection_id"]
         or view["membership_version"] != ref["membership_version"]
         or view["geometry_version"] != ref["geometry_version"]
+        or view["image_owner"]["frame"] != owner["owner_frame"]
         or view["image_owner"]["sha256"] != owner["png_sha256"]
+        or str(view.get("room_uid")) != ref["room_id"]
+        or view.get("island_id") != ref["island_id"]
+        or ref["view_scope"]
+        != (
+            "floor"
+            if view.get("is_floor_top")
+            else "island"
+            if view.get("island_id") is not None
+            else "room"
+        )
+        or ref["direction"] != ref["view_id"].rsplit("/", 1)[-1].removesuffix("_w_rbs")
     ):
         raise DataCError("DATA_C projection/membership/image provenance changed")
     projection = SpatialProjection(
         projection_id=proj["projection_id"],
-        world_frame=source["world_frame"],
+        world_frame=metadata["world_frame"],
         origin_world=tuple(map(float, basis["origin_world"])),
         axes_world=tuple(tuple(map(float, x)) for x in basis["axes_world"]),
         right_world=tuple(map(float, proj["right_world"])),
@@ -144,12 +189,6 @@ def _native_view(index, reader, episode_dir, state, ref):
         island_id=ref["island_id"] if ref["view_scope"] == "island" else None,
         top_variant=ref["top_variant"],
     )
-
-
-_TOP_VIEW_IDS = {
-    "with_robot": "sixview/floor_top_w_rbs",
-    "without_robot": "sixview/floor_top",
-}
 
 
 def _select_runtime_view_refs(
@@ -231,12 +270,39 @@ def _select_runtime_view_refs(
     return tuple(resolved)
 
 
+class _EpisodeData(Mapping):
+    """Public episode lookup with a small cache of decoded episode payloads."""
+
+    def __init__(self, rows, load, max_episodes):
+        self.rows, self.load, self.max_episodes = rows, load, max_episodes
+        self.cache = OrderedDict()
+
+    def __contains__(self, key):
+        return key in self.rows
+
+    def __iter__(self):
+        return iter(self.rows)
+
+    def __len__(self):
+        return len(self.rows)
+
+    def __getitem__(self, key):
+        if key not in self.cache:
+            value = self.load(self.rows[key])
+            if len(self.cache) == self.max_episodes:
+                self.cache.popitem(last=False)
+            self.cache[key] = value
+        self.cache.move_to_end(key)
+        return self.cache[key]
+
+
 class CandidateAlignedG2Provider:
-    """Read-only 3ep DATA_C provider, deliberately not yet 'verified_data_c'."""
+    """Read-only DATA_C provider for immutable source and selected View reads."""
 
     evidence_scope = "g2_real_aligned_candidate_not_formal_training"
     latent_channels = 48
     split_identity = "SCOPED_EPISODES_SPLIT_NOT_FROZEN"
+    _episode_cache_size = 4
 
     def __init__(
         self,
@@ -262,8 +328,10 @@ class CandidateAlignedG2Provider:
         )
         self.initial_language_recipe_id = initial_language_recipe_id
         live_corpus = open_corpus_manifest(data_c_root)
+        live_episodes = corpus_rows(live_corpus, data_c_root)
         if corpus_manifest_override is None:
             self.corpus = live_corpus
+            rows = live_episodes
         else:
             override = corpus_manifest_override
             if (
@@ -291,14 +359,8 @@ class CandidateAlignedG2Provider:
                 raise DataCError(
                     "certified DATA_C manifest override differs in source/recipe"
                 )
-            live_episodes = {
-                (row["task_class"], row["episode_index"]): row
-                for row in live_corpus["episodes"]
-            }
-            if not override.get("episodes") or any(
-                live_episodes.get((row["task_class"], row["episode_index"])) != row
-                for row in override["episodes"]
-            ):
+            rows = corpus_rows(override, data_c_root)
+            if any(live_episodes.get(key) != row for key, row in rows.items()):
                 raise DataCError(
                     "certified DATA_C override contains missing/modified episode"
                 )
@@ -314,58 +376,57 @@ class CandidateAlignedG2Provider:
                 }
             )
         )
-        self.data = {}
-        self._views = {}
-        self._top_variant_refs = OrderedDict()
-        self._language = {}
-        self._manifest_stat = {}
-        expected_joint_id = canonical(
+        self.data = _EpisodeData(rows, self._load_episode, self._episode_cache_size)
+        self._views = OrderedDict()
+        self._language = OrderedDict()
+        self._language_bindings = None
+        self._joint_id = canonical(
             make_joint_recipe(
                 state_recipe_id=self.corpus["state15_recipe_id"],
                 view_recipe_id=self.corpus["view_recipe_id"],
                 top_variant=self.corpus["top_view_variant"],
             )
         )
-        if self.corpus.get("recipe_id", expected_joint_id) != expected_joint_id:
+        if self.corpus.get("recipe_id", self._joint_id) != self._joint_id:
             raise DataCError("DATA_C corpus joint recipe differs from source fields")
-        for row in self.corpus["episodes"]:
-            task, ep = row["task_class"], row["episode_index"]
-            c_path = episode_path(self.data_c_root, task, ep)
-            value = json_load(c_path / "joint_index.json")
-            marker = json_load(c_path / "COMPLETE.json")
-            b_path = episode_path(self.state15_root, task, ep)
-            b_marker = json_load(b_path / "COMPLETE.json")
-            if (
-                marker["joint_sha256"] != digest(c_path / "joint_index.json")
-                or marker["joint_sha256"] != row["joint_sha256"]
-                or value["recipe_id"] != expected_joint_id
-                or value["recipe_id"] != canonical(value["recipe"])
-                or b_marker["state15_sha256"] != value["data_b_sha256"]
-                or digest(b_path / "state15.pt") != value["data_b_sha256"]
-                or value["source_binding_digest"]
-                != self.corpus["source_binding_digest"]
-            ):
-                raise DataCError("DATA_C Provider source/episode/data_b bind mismatch")
-            obj = torch.load(
-                b_path / "state15.pt", map_location="cpu", weights_only=True, mmap=True
-            )
-            if (
-                obj["metadata"]["recipe_id"] != value["recipe"]["state15_recipe_id"]
-                or obj["metadata"]["source_binding_digest"]
-                != value["source_binding_digest"]
-                or obj["state15"].shape != (value["source_frame_count"], 15)
-            ):
-                raise DataCError("DATA_B Provider state15 shape/recipe mismatch")
-            if not bool(torch.isfinite(obj["state15"]).all()):
-                raise DataCError("nonfinite persisted DATA_B")
-            self.data[(task, ep)] = (value, obj["state15"])
         self.view_read_count = 0
+
+    def _load_episode(self, row):
+        task, ep = row["task_class"], row["episode_index"]
+        c_path = episode_path(self.data_c_root, task, ep)
+        value, _ = read_joint_episode(
+            c_path,
+            task=task,
+            episode=ep,
+            recipe_id=self._joint_id,
+            source_binding_digest=self.corpus["source_binding_digest"],
+            expected_sha256=row["joint_sha256"],
+            window_count=row["window_count"],
+        )
+        state15, meta, _ = read_episode_state(
+            episode_path(self.state15_root, task, ep),
+            task=task,
+            episode=ep,
+            frame_count=value["source_frame_count"],
+            recipe_id=value["recipe"]["state15_recipe_id"],
+            source_binding_digest=value["source_binding_digest"],
+            expected_sha256=value["data_b_sha256"],
+        )
+        if meta["original_instruction"] != value["original_instruction"]:
+            raise DataCError("DATA_B and DATA_C original instructions differ")
+        return value, state15
 
     def _versioned_text(self, task_class, episode_index, idx):
         from g2.language.initial_context import read_versioned_initial_language
 
         key = (task_class, episode_index)
         if key not in self._language:
+            witnesses = {}
+            binding = (
+                self._language_bindings[key]
+                if self._language_bindings is not None
+                else None
+            )
             record = read_versioned_initial_language(
                 self.initial_language_root,
                 recipe_id=self.initial_language_recipe_id,
@@ -373,43 +434,17 @@ class CandidateAlignedG2Provider:
                 episode_index=episode_index,
                 source_binding_digest=idx["source_binding_digest"],
                 original_instruction=idx["original_instruction"],
-                view_root=self.view_root,
+                view_root=self.view_root if binding is None else None,
+                expected_files=binding,
+                file_witnesses=witnesses,
             )
-            version = self.initial_language_recipe_id
-            lang_ep = (
-                self.initial_language_root
-                / "recipes"
-                / version
-                / "tasks"
-                / task_class
-                / "episodes"
-                / f"episode_{episode_index:06d}"
-            )
-            view_ep = episode_path(self.view_root, task_class, episode_index)
-            paths = (
-                self.initial_language_root / "OUTPUT_IDENTITY.json",
-                self.initial_language_root / "recipes" / version / "RECIPE.json",
-                lang_ep / "initial_context.json",
-                lang_ep / "COMPLETE.json",
-                view_ep / "episode_manifest.json",
-                view_ep / "task_entities.json",
-                view_ep / "language.json",
-                view_ep / record["provenance"]["initial_scene_graph_relative_path"],
-            )
-            watches = []
-            for path in paths:
-                require_regular(path)
-                st = path.stat()
-                watches.append(
-                    (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
-                )
-            self._language[key] = (record, paths, tuple(watches))
-        record, paths, watches = self._language[key]
-        for path, previous in zip(paths, watches, strict=True):
-            require_regular(path)
-            st = path.stat()
-            token = (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
-            if token != previous:
+            if len(self._language) == self._episode_cache_size:
+                self._language.popitem(last=False)
+            self._language[key] = (record, witnesses)
+        self._language.move_to_end(key)
+        record, witnesses = self._language[key]
+        for path, (_, previous) in witnesses.items():
+            if file_identity(path) != previous:
                 raise DataCError(
                     "independent language or source changed during Provider lifetime"
                 )
@@ -430,18 +465,22 @@ class CandidateAlignedG2Provider:
         ):
             raise DataCError("decision frame outside indexed G1 horizon")
         item = idx["windows"][decision_frame]
+        ordinal = item["spatial_state_ordinal"]
         if (
             item["decision_frame"] != decision_frame
+            or type(ordinal) is not int
+            or not 0 <= ordinal < len(idx["spatial_states"])
+            or idx["spatial_states"][ordinal]["frame"] != item["spatial_state_frame"]
             or item["spatial_state_frame"] > decision_frame
         ):
             raise DataCError("DATA_C no-future index invariant violated")
         return idx, states, item
 
     def read_common(self, *, task_class, episode_index, decision_frame):
-        from cosmos_framework.model.generator.mot.g2_contracts import G2SampleIdentity
         from cosmos_framework.data.generator.action.utils.static_task_text import (
             StaticTaskText,
         )
+        from cosmos_framework.model.generator.mot.g2_contracts import G2SampleIdentity
 
         idx, states, window = self._item(task_class, episode_index, decision_frame)
         text = (
@@ -495,62 +534,49 @@ class CandidateAlignedG2Provider:
         ep = int(tail)
         idx, _, win = self._item(task, ep, identity.decision_frame)
         state = idx["spatial_states"][win["spatial_state_ordinal"]]
-        if state["frame"] != identity.logical_state_frame:
+        if (
+            identity.data_version != self.identity
+            or state["frame"] != identity.logical_state_frame
+        ):
             raise DataCError("provider logical state differs from model identity")
         epdir = episode_path(self.view_root, task, ep)
-        snapshots = (
-            (epdir / "vae_cache/manifest.json", idx["view_vae_manifest_sha256"]),
-            (epdir / "episode_manifest.json", idx["view_episode_manifest_sha256"]),
-        )
-        # First use hashes the small immutable manifests; subsequent per-window
-        # reads compare file-stat identities in O(1), not rehash 150KB each
-        # time. Unexpected rotation or replacement fails closed.
-        for path, sha in snapshots:
-            require_regular(path)
-            stat = path.stat()
-            token = (
-                stat.st_dev,
-                stat.st_ino,
-                stat.st_size,
-                stat.st_mtime_ns,
-                stat.st_ctime_ns,
-            )
-            old = self._manifest_stat.get(path)
-            if old is None:
-                if sha != digest(path):
-                    raise DataCError(
-                        "source view manifest modified after DATA_C publication"
-                    )
-                self._manifest_stat[path] = token
-            elif old != token:
-                raise DataCError("source view manifest changed during reader lifetime")
-        if (task, ep) not in self._views:
-            source = open_episode_index(
-                epdir, expected_recipe_id=idx["view_vae_recipe_id"]
-            )
-            self._views[task, ep] = (
+        view_key = (task, ep)
+        if view_key not in self._views:
+            manifest, source, witnesses = open_joint_view_source(epdir, idx)
+            verify_joint_view_refs(idx, manifest, source)
+            if len(self._views) == self._episode_cache_size:
+                _, (_, _, reader, _) = self._views.popitem(last=False)
+                reader.close()
+            self._views[view_key] = (
+                manifest,
                 source,
-                ViewReader(source, max_views=12, max_bytes=256 * 1024 * 1024),
+                ViewReader(source, max_views=12),
+                witnesses,
             )
-        reader_index, reader = self._views[task, ep]
-        key = (task, ep, win["spatial_state_ordinal"], top_view_variant)
-        refs = self._top_variant_refs.get(key)
-        if refs is None:
-            refs = _select_runtime_view_refs(
-                reader_index,
-                reader,
-                epdir,
-                state,
-                win["spatial_state_ordinal"],
-                top_view_variant=top_view_variant,
-            )
-            self._top_variant_refs[key] = refs
-            if len(self._top_variant_refs) > 4096:
-                self._top_variant_refs.popitem(last=False)
-        else:
-            self._top_variant_refs.move_to_end(key)
+        self._views.move_to_end(view_key)
+        manifest, reader_index, reader, witnesses = self._views[view_key]
+        if any(file_identity(path) != token for path, token in witnesses.items()):
+            raise DataCError("source View index changed during reader lifetime")
+        refs = _select_runtime_view_refs(
+            reader_index,
+            reader,
+            epdir,
+            state,
+            win["spatial_state_ordinal"],
+            top_view_variant=top_view_variant,
+        )
+        relative = safe_relative(state["spatial_metadata_file"], suffix=".json")
+        metadata, _, _ = read_bound_json(
+            epdir / relative, expected_sha256=manifest["files"][relative]
+        )
+        if (
+            metadata["frame"] != state["frame"]
+            or metadata["state_id"] != state["logical_state_id"]
+            or metadata["geometry_version"] != state["geometry_version"]
+        ):
+            raise DataCError("DATA_C spatial metadata belongs to a different state")
         views = tuple(
-            _native_view(reader_index, reader, epdir, state, ref) for ref in refs
+            _native_view(reader_index, reader, metadata, state, ref) for ref in refs
         )
         tops = [v for v in views if v.top_variant is not None]
         if len(tops) != 1 or tops[0].top_variant != top_view_variant:
@@ -563,7 +589,8 @@ class CandidateAlignedG2Provider:
         return views
 
     def close(self):
-        for _, reader in self._views.values():
+        for _, _, reader, _ in self._views.values():
             reader.close()
         self._views.clear()
-        self._top_variant_refs.clear()
+        self._language.clear()
+        self.data.cache.clear()

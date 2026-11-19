@@ -17,14 +17,23 @@ from g2.data.episode_state import (
     canonical,
     digest,
     episode_path,
+    file_identity,
     json_load,
+    read_bound_json,
     require_regular,
     verify_episode_state,
 )
+from g2.latent_cache.contract import safe_relative
 
 
 class DataCError(ValueError):
     pass
+
+
+TOP_VIEW_IDS = {
+    "with_robot": "sixview/floor_top_w_rbs",
+    "without_robot": "sixview/floor_top",
+}
 
 
 def join_episode_path(root, task_class, ep):
@@ -52,7 +61,9 @@ def _one_text(lang: dict, *, expected_text: str, ep: int):
     return text_id, text
 
 
-def _owner_view(index, reader, episode_root, s, ordinal, view_id, *, recipe_id):
+def _owner_view(
+    index, reader, episode_root, s, ordinal, view_id, *, recipe_id, metadata=None
+):
     """Validate native ViewReader logical-to-physical owner, geometry and content."""
     v = reader.read_view(view_id, s["state_id"])
     if not v["present"]:
@@ -60,7 +71,8 @@ def _owner_view(index, reader, episode_root, s, ordinal, view_id, *, recipe_id):
     owner = v["owner"]
     if owner["owner_frame"] > s["frame"] or owner["owner_state_ordinal"] > ordinal:
         raise DataCError("future View physical owner")
-    meta = json_load(episode_root / s["spatial_metadata"])
+    rel = safe_relative(s["spatial_metadata"], suffix=".json")
+    meta = metadata if metadata is not None else read_bound_json(episode_root / rel)[0]
     desc = meta["views"].get(view_id)
     if not desc:
         raise DataCError("selected view unavailable in spatial metadata")
@@ -125,8 +137,7 @@ def _assert_dual_top(state):
         raise DataCError("dual top state requires both physical references")
     if any(
         v.get("top_variant") != name
-        or v.get("view_id")
-        != ("sixview/floor_top_w_rbs" if name == "with_robot" else "sixview/floor_top")
+        or v.get("view_id") != TOP_VIEW_IDS[name]
         or v.get("view_scope") != "floor"
         or v["physical_owner_frame"] > state["frame"]
         for name, v in tops.items()
@@ -143,7 +154,12 @@ def _assert_dual_top(state):
         )
     ):
         raise DataCError("dual top views do not share spatial geometry/recipe")
-    if any(v.get("top_variant") is not None for v in state["selected_views"]):
+    if any(
+        v.get("top_variant") is not None
+        or v.get("view_scope") == "floor"
+        or v.get("view_id") in TOP_VIEW_IDS.values()
+        for v in state["selected_views"]
+    ):
         raise DataCError("dual top state cannot contain duplicate top in side views")
 
 
@@ -187,6 +203,215 @@ def make_joint_recipe(*, state_recipe_id: str, view_recipe_id: str, top_variant:
     }
 
 
+def validate_joint_timeline(value):
+    """One window/owner check for producer resume, certification and consumption."""
+    length = value["source_frame_count"]
+    windows, states = value["windows"], value["spatial_states"]
+    text = value["static_text"]["text_id"]
+    if (
+        type(length) is not int
+        or length < 17
+        or not isinstance(windows, list)
+        or len(windows) != length - 16
+        or not isinstance(states, list)
+        or not states
+    ):
+        raise DataCError("DATA_C F-16 window count or spatial timeline is invalid")
+    frames = [s["frame"] for s in states]
+    ids = [s["logical_state_id"] for s in states]
+    if (
+        any(type(f) is not int for f in frames)
+        or any(type(i) is not int or i < 0 for i in ids)
+        or len(set(ids)) != len(ids)
+        or frames != sorted(set(frames))
+        or frames[0] != 0
+        or frames[-1] != length - 1
+    ):
+        raise DataCError(
+            "DATA_C spatial states must span frame 0 to the original terminal frame"
+        )
+    variant = value["recipe"]["top_variant"]
+    for ordinal, state in enumerate(states):
+        safe_relative(state["scene_graph_file"], suffix=".gz")
+        safe_relative(state["spatial_metadata_file"], suffix=".json")
+        if state["text_id"] != text or ("top_views" in state) != (variant == "both"):
+            raise DataCError("DATA_C state text or top schema differs from the episode")
+        refs = _state_views(state)
+        view_ids = [ref["view_id"] for ref in refs]
+        if len(view_ids) != len(set(view_ids)):
+            raise DataCError("DATA_C selected View is duplicated")
+        if variant != "both" and [
+            v for v in view_ids if v in TOP_VIEW_IDS.values()
+        ] != [TOP_VIEW_IDS[variant]]:
+            raise DataCError("DATA_C stored top does not match the selected variant")
+        for ref in refs:
+            owner = ref["physical_owner_ordinal"]
+            if (
+                type(owner) is not int
+                or not 0 <= owner <= ordinal
+                or ref["physical_owner_frame"] != frames[owner]
+                or ref["physical_owner_state"] != ids[owner]
+                or ref["spatial_metadata_relpath"] != state["spatial_metadata_file"]
+                or ref["top_variant"]
+                != next(
+                    (k for k, v in TOP_VIEW_IDS.items() if v == ref["view_id"]), None
+                )
+                or ref["vae_recipe_id"] != value["view_vae_recipe_id"]
+            ):
+                raise DataCError("DATA_C future or mismatched View owner/state/recipe")
+    ordinal = 0
+    for frame, window in enumerate(windows):
+        while ordinal + 1 < len(frames) and frames[ordinal + 1] <= frame:
+            ordinal += 1
+        expected = dict(
+            decision_frame=frame,
+            state15_frame=frame,
+            action_start_frame=frame,
+            action_last_frame=frame + 15,
+            observation_last_frame=frame + 16,
+            spatial_state_ordinal=ordinal,
+            spatial_state_frame=frames[ordinal],
+            text_id=text,
+        )
+        if any(
+            type(window.get(k)) is not type(v) or window[k] != v
+            for k, v in expected.items()
+        ):
+            raise DataCError(
+                "DATA_C exact window does not reference its latest causal spatial state"
+            )
+
+
+def read_joint_episode(
+    folder,
+    *,
+    task,
+    episode,
+    recipe_id,
+    source_binding_digest,
+    expected_sha256=None,
+    window_count=None,
+):
+    path = folder / "joint_index.json"
+    value, joint_sha, _ = read_bound_json(path, expected_sha256=expected_sha256)
+    marker, _, _ = read_bound_json(folder / "COMPLETE.json")
+    recipe = value["recipe"]
+    version = 2 if recipe["top_variant"] == "both" else 1
+    length = value["source_frame_count"]
+    if (
+        value.get("schema") != f"g2_data_c_joint_episode_v{version}"
+        or value.get("episode_index") != episode
+        or value.get("task_class") != task
+        or value.get("training_ready") is not False
+        or value.get("recipe_id") != recipe_id
+        or recipe_id != canonical(recipe)
+        or value.get("view_vae_recipe_id") != recipe.get("view_recipe_id")
+        or value.get("source_binding_digest") != source_binding_digest
+        or marker.get("schema") != f"g2_data_c_complete_v{version}"
+        or marker.get("complete") is not True
+        or marker.get("training_ready") is not False
+        or marker.get("joint_sha256") != joint_sha
+        or marker.get("recipe_id") != recipe_id
+        or marker.get("source_binding_digest") != source_binding_digest
+        or marker.get("task_class") != task
+        or marker.get("episode_index") != episode
+        or marker.get("frame_count") != length
+        or marker.get("decision_window_count") != len(value["windows"])
+        or (window_count is not None and len(value["windows"]) != window_count)
+    ):
+        raise DataCError("DATA_C episode completion/source/recipe binding differs")
+    validate_joint_timeline(value)
+    return value, joint_sha
+
+
+def open_joint_view_source(root, joint):
+    """Bind the two published indexes to DATA_C without opening any latent file."""
+    from g2.latent_cache.storage import open_episode_index
+
+    path = root / "episode_manifest.json"
+    marker_path = root / "COMPLETE.json"
+    cache_files = (root / "vae_cache/manifest.json", root / "vae_cache/COMPLETE.json")
+    manifest, sha, token = read_bound_json(
+        path, expected_sha256=joint["view_episode_manifest_sha256"]
+    )
+    marker, _, marker_token = read_bound_json(marker_path)
+    states = manifest["states"]
+    if (
+        marker.get("schema") != manifest.get("schema")
+        or marker.get("complete") is not True
+        or marker.get("episode_manifest_sha256") != sha
+        or marker.get("source_id") != manifest.get("source_id")
+        or marker.get("episode_id") != joint["episode_index"]
+        or manifest.get("episode_id") != joint["episode_index"]
+        or manifest.get("task_class") != joint["task_class"]
+        or marker.get("state_count") != len(states)
+        or manifest.get("state_count") != len(states)
+        or len(states) != len(joint["spatial_states"])
+    ):
+        raise DataCError("DATA_C spatial profile completion/source differs")
+    witnesses = {path: token, marker_path: marker_token}
+    witnesses.update((path, file_identity(path)) for path in cache_files)
+    index = open_episode_index(root, expected_recipe_id=joint["view_vae_recipe_id"])
+    if (
+        index.manifest_sha256 != joint["view_vae_manifest_sha256"]
+        or index.episode_key
+        != f"{joint['task_class']}/episode_{joint['episode_index']:06d}"
+        or len(index.manifest["states"]) != len(states)
+        or any(file_identity(path) != token for path, token in witnesses.items())
+    ):
+        raise DataCError("DATA_C View or latent index changed")
+    return manifest, index, witnesses
+
+
+def verify_joint_view_refs(joint, manifest, index):
+    """Compare all DATA_C state and selected View references with published indexes."""
+    for ordinal, (state, original, cached) in enumerate(
+        zip(
+            joint["spatial_states"],
+            manifest["states"],
+            index.manifest["states"],
+            strict=True,
+        )
+    ):
+        if (
+            state["frame"] != original["frame"]
+            or state["frame"] != cached["frame"]
+            or state["logical_state_id"] != original["state_id"]
+            or state["logical_state_id"] != cached["logical_state_id"]
+            or state["scene_graph_file"] != original["scene_graph"]
+            or state["spatial_metadata_file"] != original["spatial_metadata"]
+            or state["geometry_version"] != original["geometry_version"]
+            or not {original["scene_graph"], original["spatial_metadata"]}
+            <= manifest["files"].keys()
+        ):
+            raise DataCError("DATA_C state differs from its Scene Graph/View source")
+        refs = _state_views(state)
+        if joint["recipe"]["top_variant"] == "both" and (
+            {ref["view_id"] for ref in refs} - {TOP_VIEW_IDS["with_robot"]}
+            != set(original["selection"]["selected_view_ids"])
+        ):
+            raise DataCError(
+                "DATA_C View selection differs from the published selection"
+            )
+        for ref in refs:
+            entry = index.manifest["views"].get(ref["view_id"])
+            record = entry["state_records"][ordinal] if entry else None
+            if (
+                record is None
+                or ref["record_index"] != record
+                or ref["record_sha256"] != entry["record_sha256"][record]
+                or ref["cache_file"] != entry["path"]
+                or ref["cache_file_sha256"] != entry["sha256"]
+                or ref["membership_version"]
+                != original["selection"]["membership_ids"].get(
+                    TOP_VIEW_IDS["without_robot"]
+                    if ref["top_variant"]
+                    else ref["view_id"]
+                )
+            ):
+                raise DataCError("DATA_C View cache record or membership differs")
+
+
 def build_episode_joint(
     *,
     task_class: str,
@@ -209,14 +434,15 @@ def build_episode_joint(
 
     b = verify_episode_state(state15_root, raw_source, expected_recipe=state_recipe_id)
     epdir = episode_path(view_root, task_class, episode_index)
-    complete = json_load(epdir / "COMPLETE.json")
+    complete, _, _ = read_bound_json(epdir / "COMPLETE.json")
     manifest_path = epdir / "episode_manifest.json"
-    require_regular(manifest_path)
-    if complete.get("complete") is not True or complete.get(
+    if complete.get("complete") is not True or not complete.get(
         "episode_manifest_sha256"
-    ) != digest(manifest_path):
+    ):
         raise DataCError("G2 view-first episode was not fully published")
-    spatial = json_load(manifest_path)
+    spatial, spatial_sha, _ = read_bound_json(
+        manifest_path, expected_sha256=complete["episode_manifest_sha256"]
+    )
     if spatial["episode_id"] != episode_index or spatial["state_count"] != len(
         spatial["states"]
     ):
@@ -274,13 +500,27 @@ def build_episode_joint(
             ) != (0 if top_variant == "both" else 1):
                 raise DataCError("selected top view variant count invalid")
             for required in (s["scene_graph"], s["spatial_metadata"]):
+                safe_relative(required)
                 require_regular(epdir / required)
+            metadata, _, _ = read_bound_json(
+                epdir / s["spatial_metadata"],
+                expected_sha256=spatial["files"][s["spatial_metadata"]],
+            )
             with gzip.open(epdir / s["scene_graph"], "rt") as input:
                 sg = json.load(input)
             if sg.get("frame_id") != s["frame"] or sg.get("world_frame") != "world":
                 raise DataCError("Scene Graph identity/world frame mismatch")
             views = [
-                _owner_view(idx, reader, epdir, s, ordinal, v, recipe_id=view_recipe_id)
+                _owner_view(
+                    idx,
+                    reader,
+                    epdir,
+                    s,
+                    ordinal,
+                    v,
+                    recipe_id=view_recipe_id,
+                    metadata=metadata,
+                )
                 for v in ids
             ]
             state_record = {
@@ -302,6 +542,7 @@ def build_episode_joint(
                         ordinal,
                         "sixview/floor_top_w_rbs",
                         recipe_id=view_recipe_id,
+                        metadata=metadata,
                     ),
                     "without_robot": _owner_view(
                         idx,
@@ -311,6 +552,7 @@ def build_episode_joint(
                         ordinal,
                         "sixview/floor_top",
                         recipe_id=view_recipe_id,
+                        metadata=metadata,
                     ),
                 }
                 _assert_dual_top(state_record)
@@ -361,8 +603,8 @@ def build_episode_joint(
         "g1_video_cache_manifest_sha256": raw_source["cache_manifest_sha256"],
         "data_b_sha256": b["state15_sha256"],
         "data_b_relpath": f"tasks/{task_class}/episodes/episode_{episode_index:06d}/state15.pt",
-        "view_episode_manifest_sha256": digest(manifest_path),
-        "view_vae_manifest_sha256": digest(epdir / "vae_cache/manifest.json"),
+        "view_episode_manifest_sha256": spatial_sha,
+        "view_vae_manifest_sha256": idx.manifest_sha256,
         "view_vae_recipe_id": view_recipe_id,
         "static_text": {
             "text_id": text_id,
@@ -432,39 +674,20 @@ def verify_joint_episode(
     """Read-only critical receipt/identity checks; no render, VAE or backfill."""
     task, ep = raw_source["task_class"], raw_source["episode_index"]
     root = join_episode_path(data_c_root, task, ep)
-    target, marker_path = root / "joint_index.json", root / "COMPLETE.json"
-    require_regular(target)
-    require_regular(marker_path)
-    marker = json_load(marker_path)
-    value = json_load(target)
+    target = root / "joint_index.json"
+    value, joint_sha = read_joint_episode(
+        root,
+        task=task,
+        episode=ep,
+        recipe_id=expected_recipe_id,
+        source_binding_digest=raw_source["source_binding_digest"],
+        window_count=raw_source["exact_window_count"],
+    )
     if (
-        marker.get("schema") not in {"g2_data_c_complete_v1", "g2_data_c_complete_v2"}
-        or marker.get("complete") is not True
-    ):
-        raise DataCError("DATA_C completion marker invalid")
-    if (
-        marker["joint_sha256"] != digest(target)
-        or marker["source_binding_digest"] != raw_source["source_binding_digest"]
-        or marker["recipe_id"] != expected_recipe_id
-        or value["recipe_id"] != expected_recipe_id
-        or value["recipe_id"] != canonical(value["recipe"])
-    ):
-        raise DataCError("DATA_C recipe/source/immutable file checksum mismatch")
-    if (
-        value.get("schema")
-        not in {"g2_data_c_joint_episode_v1", "g2_data_c_joint_episode_v2"}
-        or (
-            value.get("schema") == "g2_data_c_joint_episode_v2"
-            and (
-                marker.get("schema") != "g2_data_c_complete_v2"
-                or value["recipe"].get("top_variant") != "both"
-            )
-        )
-        or value["episode_index"] != ep
-        or value["task_class"] != task
-        or value["source_frame_count"] != raw_source["source_frame_count"]
+        value["source_frame_count"] != raw_source["source_frame_count"]
         or value["original_instruction"] != raw_source["instruction"]
-        or len(value["windows"]) != raw_source["exact_window_count"]
+        or value["g1_video_cache_manifest_sha256"]
+        != raw_source["cache_manifest_sha256"]
     ):
         raise DataCError("DATA_C original source contract mismatch")
     if value["view_episode_manifest_sha256"] != digest(
@@ -478,26 +701,10 @@ def verify_joint_episode(
     )
     if b["state15_sha256"] != value["data_b_sha256"]:
         raise DataCError("DATA_C DATA_B state15 payload changed")
-    for expected_frame, window in enumerate(value["windows"]):
-        if (
-            window["decision_frame"] != expected_frame
-            or window["state15_frame"] != expected_frame
-            or window["action_start_frame"] != expected_frame
-            or window["observation_last_frame"] != expected_frame + 16
-            or window["action_last_frame"] != expected_frame + 15
-            or window["spatial_state_frame"] > expected_frame
-        ):
-            raise DataCError("DATA_C future leak, gap or G1 exact-window mismatch")
-        st = value["spatial_states"][window["spatial_state_ordinal"]]
-        if st["frame"] != window["spatial_state_frame"] or any(
-            v["physical_owner_frame"] > window["spatial_state_frame"]
-            for v in _state_views(st)
-        ):
-            raise DataCError("DATA_C future view owner or spatial index mismatch")
     return {
         "episode_root": str(root),
         "joint_index": str(target),
-        "joint_sha256": marker["joint_sha256"],
+        "joint_sha256": joint_sha,
         "state15_sha256": value["data_b_sha256"],
         "recipe_id": value["recipe_id"],
         "frame_count": value["source_frame_count"],

@@ -336,7 +336,13 @@ def _stat(path):
         status = path.stat()
     except OSError as exc:
         raise CacheError("cache payload is unavailable") from exc
-    return status.st_dev, status.st_ino, status.st_size, status.st_mtime_ns
+    return (
+        status.st_dev,
+        status.st_ino,
+        status.st_size,
+        status.st_mtime_ns,
+        status.st_ctime_ns,
+    )
 
 
 @dataclass(frozen=True)
