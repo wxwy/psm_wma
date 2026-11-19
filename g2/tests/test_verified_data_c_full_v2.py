@@ -40,9 +40,7 @@ def test_fixed_recipe_and_approval_are_not_legacy_variants():
     reason="formal full G2 v2 snapshot has not yet been sealed",
 )
 def test_real_full_snapshot_preserves_exact_g1_split():
-    receipt = open_verified_snapshot(
-        SNAPSHOT, g1_index_root=INDEX, data_c_root=DATA_C
-    )
+    receipt = open_verified_snapshot(SNAPSHOT, g1_index_root=INDEX, data_c_root=DATA_C)
     train = {tuple(x) for x in receipt["train_episode_keys"]}
     val = {tuple(x) for x in receipt["val_episode_keys"]}
     assert len(train) == 9036
