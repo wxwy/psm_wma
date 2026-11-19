@@ -49,3 +49,6 @@ artifacts/**/*.distcp
 # Superseded verifier snapshots; keep only the final v3 verifier in Git.
 artifacts/g0/sync_a2_final_verification_2a9df880.json
 artifacts/g0/sync_a2_final_verification_2a9df880_v2.json
+
+# G2 strict provenance: in-repository clean runtime worktree.
+.g2_run_source/

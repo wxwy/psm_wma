@@ -1,0 +1,67 @@
+{
+  "alignment_version": "g2_causal_latest_spatial_v1",
+  "g1_config_path": "__G2_G1_CONFIG_PATH__",
+  "g1_config_sha256": "f87e2e49c6931ce7dc32b467aa3f8026269f5ad255216e1cdd8fafb1d7e7374e",
+  "global_memory": {
+    "enabled": false,
+    "ffn_hidden_dim": 2048,
+    "hidden_dim": 512,
+    "k_global": 64,
+    "num_attention_heads": 8,
+    "num_language_blocks": 1,
+    "num_visual_blocks": 2,
+    "top_view_variant": "with_robot"
+  },
+  "provider_factory": "g2.data.verified_provider:open_verified_provider",
+  "provider_kwargs": {
+    "data_c_root": "__G2_DATA_C_ROOT__",
+    "g1_verified_index_root": "__G2_INDEX_ROOT__",
+    "initial_language_recipe_id": "fc08163abc675abfde0e885e5a4c66c7c47d8d49d7226bae6b38c076659efd2e",
+    "initial_language_root": "__G2_LANGUAGE_ROOT__",
+    "snapshot_root": "__G2_SNAPSHOT_ROOT__",
+    "state15_root": "__G2_STATE15_ROOT__",
+    "view_root": "__G2_SIXVIEWS_ROOT__"
+  },
+  "save_iter": 100,
+  "text": {
+    "additional_view_description": "The left half is a third-person view of the scene. The right half is from the wrist-mounted camera.",
+    "cfg_dropout_rate": 0.1,
+    "float_seconds": false,
+    "fps": 20,
+    "height": 192,
+    "max_tokens": 4096,
+    "planned_video_frames": 17,
+    "tokenizer_identity": "4dc692a99dca6d92a44e9529ffb53541eb79bb260eec7281bc51268c05d7311c",
+    "use_system_prompt": false,
+    "viewpoint": "concat_view",
+    "width": 320
+  },
+  "training": {
+    "action_schedule": {
+      "decay": "constant",
+      "horizon_steps": 30000,
+      "min_factor": 1,
+      "warmup_steps": 0
+    },
+    "b_stream": 8,
+    "data_identity": "64e737a2bab7d3a053d0549cbe7981c2944a64ac08fd039aab03fbf151cc683e",
+    "gen_schedule": {
+      "decay": "constant",
+      "horizon_steps": 30000,
+      "min_factor": 1,
+      "warmup_steps": 0
+    },
+    "global_schedule": null,
+    "grad_accum_steps": 4,
+    "init_checkpoint_identity": "8e2a59fc3db785c9aa095af4f6c1253532a64d2624ab056b1ee486af4cfd11da",
+    "profile": "R1",
+    "split_identity": "2949df28790d9254bb018ee0018c8a49aab5f718c9eb9f0e3ba7091ffb57105a",
+    "stage_a_steps": 1000,
+    "stage_b_steps": 29000,
+    "state15_recipe_identity": "9f0dc5c922e90a71177308298e2f4d85d6769fce40c4f9f72e8ee77640df9fdf",
+    "target_effective_consumers": 59489136,
+    "text_recipe_identity": "e7b25ba4502252368a35d4d25764b422c36525fe1df0f2a3fbdadf84873f13b7",
+    "world_size": 4
+  },
+  "view_recipe_id": null
+}
