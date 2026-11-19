@@ -1,3 +1,5 @@
+- **G2-PERF-90** — REVIEW. Root Draft #91, Child Draft #25, fixed 3ac7cb3f/4cca4e9. Code/CPU/real read parity pass. GPT reviews and Owner/Execute supplies isolated GPU 2/10step, strict resume, R2 boundary and throughput evidence.
+
 - **G2-DATA-C-AUDIT-82** — REVIEW, Draft PR #83. Original `ab3d466e` / `9370c385` requires changes. Candidate `3aff85a7` / `765a06b7` passes related CPU tests and isolated full source certification. GPT reviews fixed pair, phase5 Train filtering, CAP2 v3 seal and bounded R1/R2 reads.
 
 - **G2-SOURCE-CAPSULE-63** — REVIEW (GPT independent Gate); Formal a169fea07016b80b3639646cc9925ac70b6525a8/d5c1ffc7; Draft64 open/unmerged onPR62/d0bb. Author542PASS/13 inheritedSKIP/0fail/error,501oldIDs+54new/235stable Git-bound sources. Samepeer LOCAL_CODE_REVIEW_PASS closes1P2; original5probePASS. CanonicalInbox/evidence publication thenSTOP. GPT real169/419/81states/12Views, actualbytes/latency/18taskcapacity/32workerresources NOT_RUN; fullHOLD. No server/private/GPU/olddelete/install/Gitlink/train/merge.

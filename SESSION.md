@@ -1,3 +1,18 @@
+# 2026-11-19 CST — Issue #90 REVIEW
+
+Formal V3 Root 77fe8fe475350bbbbfce8e18cced0e7339558544 / Child
+3d2eba6996fef459dbc8f4b48eca97aedad43608. Candidate Root
+3ac7cb3fbb33545c7ca755b8e866542a147990cc / Child and Gitlink
+4cca4e977f3b5609dd3892825404faf83aeed8f9. Root Draft #91 and Child Draft #25.
+CPU code and synchronous/Spawn parity verified. Owner/Execute GPU gates NOT_RUN.
+
+Rank0 matched R1 historical 35.719 to 74.617s with identical Consumer identity
+on ten steps. CPU real LRU/threads, CAP2 and compact evidence retained. Real
+native CPU Sync/Spawn rank0 R1 and R2 each 512 consumers; exact hashes; R2
+1,856 View references. Final 247 Root and 107 targeted Child passes.
+Review [report](docs/g2/phase5_performance_issue90.md) and
+[evidence](docs/collab/codex/evidence/2026-11-19_issue90).
+
 # 2026-11-19 CST — Issue #82 REVIEW in Draft PR #83
 
 Independent original verdict REQUEST_CHANGES for `ab3d466eea259795c539bdee50f714f48dc7c91b` /

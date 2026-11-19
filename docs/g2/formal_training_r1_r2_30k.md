@@ -27,7 +27,9 @@ G2_OUTPUT_ROOT is the ignored repository outputs/g2_formal_20261119 directory.
 Training and recipe outputs are artifacts, never executable source.
 
 The launcher automatically prepares a clean ignored Git worktree INSIDE the
-checkout at .g2_run_source (with a local clone of the exact Child Gitlink).
+checkout at `.g2_run_source_<Root SHA>_<profile>` (with a local clone of the exact Child Gitlink).
 This avoids strict Phase5 source-identity failures caused by historical
 untracked server evidence. No code is loaded from a scratch folder outside the
 repository. This script does not manage GPUs or prune checkpoints.
+
+Issue #90 runtime controls, isolated benchmark commands and candidate launch tags are documented in [Phase5 performance verification](phase5_performance_issue90.md).
