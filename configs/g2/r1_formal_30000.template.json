@@ -27,7 +27,7 @@
     "additional_view_description": "The left half is a third-person view of the scene. The right half is from the wrist-mounted camera.",
     "cfg_dropout_rate": 0.1,
     "float_seconds": false,
-    "fps": 20,
+    "fps": 20.0,
     "height": 192,
     "max_tokens": 4096,
     "planned_video_frames": 17,
@@ -40,7 +40,7 @@
     "action_schedule": {
       "decay": "constant",
       "horizon_steps": 30000,
-      "min_factor": 1,
+      "min_factor": 1.0,
       "warmup_steps": 0
     },
     "b_stream": 8,
@@ -48,7 +48,7 @@
     "gen_schedule": {
       "decay": "constant",
       "horizon_steps": 30000,
-      "min_factor": 1,
+      "min_factor": 1.0,
       "warmup_steps": 0
     },
     "global_schedule": null,
