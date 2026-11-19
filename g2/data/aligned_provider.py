@@ -143,7 +143,9 @@ _TOP_VIEW_IDS = {
 }
 
 
-def _select_runtime_view_refs(index, reader, episode_dir, state, ordinal, *, top_view_variant):
+def _select_runtime_view_refs(
+    index, reader, episode_dir, state, ordinal, *, top_view_variant
+):
     """Resolve either published top image from one immutable DATA_C joint index.
 
     DATA_C stores a source-bound reference to its original selected top.
@@ -154,7 +156,11 @@ def _select_runtime_view_refs(index, reader, episode_dir, state, ordinal, *, top
     if top_view_variant not in _TOP_VIEW_IDS:
         raise DataCError("unknown requested top variant")
     refs = tuple(state["selected_views"])
-    top = [(i, ref) for i, ref in enumerate(refs) if ref["view_id"] in _TOP_VIEW_IDS.values()]
+    top = [
+        (i, ref)
+        for i, ref in enumerate(refs)
+        if ref["view_id"] in _TOP_VIEW_IDS.values()
+    ]
     if len(top) != 1:
         raise DataCError("DATA_C requires exactly one stored top view")
     pos, base = top[0]
