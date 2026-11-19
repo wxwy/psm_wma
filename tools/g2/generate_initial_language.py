@@ -35,7 +35,7 @@ def parser():
     p.add_argument("--episodes", type=int, nargs="+")
     p.add_argument("--max-episodes", type=int, default=None)
     p.add_argument("--max-characters", type=int, default=4096)
-    p.add_argument("--max-candidates-per-group", type=int, default=4)
+    p.add_argument("--max-candidates-per-group", type=int, default=2)
     p.add_argument("--fail-on-existing", action="store_true")
     return p
 
