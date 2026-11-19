@@ -8,6 +8,7 @@ train/val split and initial-text production approval elevate its evidence.
 from __future__ import annotations
 
 import hashlib
+from collections import OrderedDict
 from pathlib import Path
 
 import torch
@@ -19,7 +20,7 @@ from g2.data.episode_state import (
     json_load,
     require_regular,
 )
-from g2.data.joint_index import DataCError, make_joint_recipe
+from g2.data.joint_index import DataCError, _owner_view, make_joint_recipe
 from g2.latent_cache.storage import ViewReader, open_episode_index
 
 
@@ -136,6 +137,82 @@ def _native_view(index, reader, episode_dir, state, ref):
     )
 
 
+_TOP_VIEW_IDS = {
+    "with_robot": "sixview/floor_top_w_rbs",
+    "without_robot": "sixview/floor_top",
+}
+
+
+def _select_runtime_view_refs(
+    index, reader, episode_dir, state, ordinal, *, top_view_variant
+):
+    """Resolve either published top image from one immutable DATA_C joint index.
+
+    DATA_C stores a source-bound reference to its original selected top.
+    The other already-encoded top is resolved against the *same* logical
+    spatial state, real spatial metadata and View VAE physical owner. No
+    DATA_C rewrite, VAE encode or zero-token substitute is permitted.
+    """
+    if top_view_variant not in _TOP_VIEW_IDS:
+        raise DataCError("unknown requested top variant")
+    refs = tuple(state["selected_views"])
+    top = [
+        (i, ref)
+        for i, ref in enumerate(refs)
+        if ref["view_id"] in _TOP_VIEW_IDS.values()
+    ]
+    if len(top) != 1:
+        raise DataCError("DATA_C requires exactly one stored top view")
+    pos, base = top[0]
+    if (
+        base["view_id"] != _TOP_VIEW_IDS.get(base.get("top_variant"))
+        or base.get("view_scope") != "floor"
+        or sum(ref.get("view_scope") == "floor" for ref in refs) != 1
+    ):
+        raise DataCError("stored top View ID/variant/scope inconsistent")
+    if base["top_variant"] == top_view_variant:
+        return refs
+
+    # The selected clean top's membership is the shared selection policy.
+    # Both images must have identical projection, geometry and membership,
+    # but content hash, owner frame, VAE record and cache file may differ.
+    raw_state = {
+        "state_id": state["logical_state_id"],
+        "frame": state["frame"],
+        "spatial_metadata": state["spatial_metadata_file"],
+        "selection": {
+            "membership_ids": {"sixview/floor_top": base["membership_version"]}
+        },
+    }
+    try:
+        alternate = _owner_view(
+            index,
+            reader,
+            episode_dir,
+            raw_state,
+            ordinal,
+            _TOP_VIEW_IDS[top_view_variant],
+            recipe_id=base["vae_recipe_id"],
+        )
+    except (KeyError, ValueError, OSError) as exc:
+        raise DataCError("requested top variant absent or source-invalid") from exc
+    if any(
+        alternate[field] != base[field]
+        for field in (
+            "projection_id",
+            "geometry_version",
+            "membership_version",
+            "vae_recipe_id",
+        )
+    ):
+        raise DataCError("top variants disagree in spatial source geometry/recipe")
+    if alternate["physical_owner_frame"] > state["frame"]:
+        raise DataCError("requested top would leak future physical owner")
+    resolved = list(refs)
+    resolved[pos] = alternate
+    return tuple(resolved)
+
+
 class CandidateAlignedG2Provider:
     """Read-only 3ep DATA_C provider, deliberately not yet 'verified_data_c'."""
 
@@ -179,6 +256,7 @@ class CandidateAlignedG2Provider:
         )
         self.data = {}
         self._views = {}
+        self._top_variant_refs = OrderedDict()
         self._language = {}
         self._manifest_stat = {}
         expected_joint_id = canonical(
@@ -351,8 +429,8 @@ class CandidateAlignedG2Provider:
     def read_selected_views(self, identity, *, top_view_variant):
         if not self.global_memory_enabled:
             raise DataCError("R1 must not read spatial views")
-        if top_view_variant != self.corpus["top_view_variant"]:
-            raise DataCError("requested top variant differs from DATA_C index")
+        if top_view_variant not in _TOP_VIEW_IDS:
+            raise DataCError("unknown requested top variant")
         task, tail = identity.episode_id.rsplit("/episode_", 1)
         ep = int(tail)
         idx, _, win = self._item(task, ep, identity.decision_frame)
@@ -395,12 +473,28 @@ class CandidateAlignedG2Provider:
                 ViewReader(source, max_views=12, max_bytes=256 * 1024 * 1024),
             )
         reader_index, reader = self._views[task, ep]
+        key = (task, ep, win["spatial_state_ordinal"], top_view_variant)
+        refs = self._top_variant_refs.get(key)
+        if refs is None:
+            refs = _select_runtime_view_refs(
+                reader_index,
+                reader,
+                epdir,
+                state,
+                win["spatial_state_ordinal"],
+                top_view_variant=top_view_variant,
+            )
+            self._top_variant_refs[key] = refs
+            if len(self._top_variant_refs) > 4096:
+                self._top_variant_refs.popitem(last=False)
+        else:
+            self._top_variant_refs.move_to_end(key)
         views = tuple(
-            _native_view(reader_index, reader, epdir, state, ref)
-            for ref in state["selected_views"]
+            _native_view(reader_index, reader, epdir, state, ref) for ref in refs
         )
-        if sum(v.top_variant is not None for v in views) != 1:
-            raise DataCError("expected exactly one selected top view")
+        tops = [v for v in views if v.top_variant is not None]
+        if len(tops) != 1 or tops[0].top_variant != top_view_variant:
+            raise DataCError("expected exactly one top view matching G2 configuration")
         if any(
             v.identity.image_owner_frame > identity.logical_state_frame for v in views
         ):
@@ -412,3 +506,4 @@ class CandidateAlignedG2Provider:
         for _, reader in self._views.values():
             reader.close()
         self._views.clear()
+        self._top_variant_refs.clear()
