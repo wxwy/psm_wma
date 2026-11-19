@@ -40,7 +40,11 @@ def test_fixed_recipe_and_approval_are_not_legacy_variants():
     reason="formal full G2 v2 snapshot has not yet been sealed",
 )
 def test_real_full_snapshot_preserves_exact_g1_split():
-    receipt = open_verified_snapshot(SNAPSHOT, g1_index_root=INDEX, data_c_root=DATA_C)
+    with pytest.raises(DataCError, match="recertification required"):
+        open_verified_snapshot(SNAPSHOT, g1_index_root=INDEX, data_c_root=DATA_C)
+    receipt = open_verified_snapshot(
+        SNAPSHOT, g1_index_root=INDEX, data_c_root=DATA_C, inspect_legacy_v2=True
+    )
     train = {tuple(x) for x in receipt["train_episode_keys"]}
     val = {tuple(x) for x in receipt["val_episode_keys"]}
     assert len(train) == 9036
@@ -66,11 +70,15 @@ def test_unauthorized_marker_or_language_identity_rejected(tmp_path):
     marker["receipt_sha256"] = "0" * 64
     (tmp_path / "COMPLETE.json").write_text(json.dumps(marker))
     with pytest.raises(DataCError, match="unapproved or unsealed"):
-        open_verified_snapshot(tmp_path, g1_index_root=INDEX, data_c_root=DATA_C)
+        open_verified_snapshot(
+            tmp_path, g1_index_root=INDEX, data_c_root=DATA_C, inspect_legacy_v2=True
+        )
     receipt = json.loads(original)
     receipt["language_recipe_id"] = "0" * 64
     (tmp_path / "receipt.json").write_text(json.dumps(receipt))
     marker["receipt_sha256"] = digest(tmp_path / "receipt.json")
     (tmp_path / "COMPLETE.json").write_text(json.dumps(marker))
     with pytest.raises(DataCError, match="snapshot identity|unapproved"):
-        open_verified_snapshot(tmp_path, g1_index_root=INDEX, data_c_root=DATA_C)
+        open_verified_snapshot(
+            tmp_path, g1_index_root=INDEX, data_c_root=DATA_C, inspect_legacy_v2=True
+        )

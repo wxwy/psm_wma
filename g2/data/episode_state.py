@@ -10,12 +10,15 @@ import hashlib
 import json
 import math
 import os
+import stat
 import tempfile
+from io import BytesIO
 from pathlib import Path
 
 import torch
 
 from g2.data.pose5 import Pose5Recipe, build_state15_from_current
+from g2.io import parse_json
 
 
 class DataBError(ValueError):
@@ -66,6 +69,51 @@ def atomic_write_json(path: Path, obj: dict):
 def require_regular(path: Path):
     if path.is_symlink() or not path.is_file():
         raise DataBError(f"not an owned regular file: {path}")
+
+
+def _stat_identity(info):
+    if not stat.S_ISREG(info.st_mode):
+        raise DataBError("expected an immutable regular file")
+    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
+
+
+def file_identity(path):
+    path = Path(path).absolute()
+    if path.resolve(strict=True) != path:
+        raise DataBError(
+            "artifact path traverses a symlink or a noncanonical component"
+        )
+    return _stat_identity(path.lstat())
+
+
+def read_bound_bytes(path, *, limit, expected_sha256=None):
+    """Hash the same bytes the consumer parses, and detect a racing replacement."""
+    path = Path(path)
+    token = file_identity(path)
+    with os.fdopen(
+        os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), "rb"
+    ) as file:
+        if _stat_identity(os.fstat(file.fileno())) != token or token[2] > limit:
+            raise DataBError("artifact changed or exceeds its byte limit")
+        raw = file.read(token[2] + 1)
+        if len(raw) != token[2] or _stat_identity(os.fstat(file.fileno())) != token:
+            raise DataBError("artifact changed while reading")
+    if file_identity(path) != token:
+        raise DataBError("artifact replaced while reading")
+    sha = hashlib.sha256(raw).hexdigest()
+    if expected_sha256 is not None and sha != expected_sha256:
+        raise DataBError(f"artifact SHA256 differs: {path.name}")
+    return raw, sha, token
+
+
+def read_bound_json(path, *, expected_sha256=None, limit=16 * 1024 * 1024):
+    raw, sha, token = read_bound_bytes(
+        path, limit=limit, expected_sha256=expected_sha256
+    )
+    value = parse_json(raw)
+    if not isinstance(value, dict):
+        raise DataBError("expected a JSON object")
+    return value, sha, token
 
 
 class VerifiedRawEpisodes:
@@ -202,8 +250,9 @@ class VerifiedRawEpisodes:
 
 def episode_path(root, task_class: str, episode_index: int):
     if (
-        not task_class
+        not isinstance(task_class, str)
         or not task_class.isalnum()
+        or type(episode_index) is not int
         or not 0 <= episode_index < 10_000_000
     ):
         raise DataBError("unsafe DATA_B task/episode path")
@@ -288,57 +337,84 @@ def write_episode_state(
     return verify_episode_state(root, source, expected_recipe=recipe.recipe_id)
 
 
-def verify_episode_state(root, source: dict, *, expected_recipe: str) -> dict:
-    """Strict source-bonded offline check. Never silently recompute missing state."""
-    dest = episode_path(root, source["task_class"], source["episode_index"])
-    complete = dest / "COMPLETE.json"
-    cache = dest / "state15.pt"
-    require_regular(complete)
-    require_regular(cache)
-    marker = json_load(complete)
+def read_episode_state(
+    dest,
+    *,
+    task,
+    episode,
+    frame_count,
+    source_binding_digest,
+    recipe_id,
+    expected_sha256=None,
+):
+    """Read a sealed DATA_B tensor with its embedded source metadata."""
+    expected = dict(
+        task_class=task,
+        episode_index=episode,
+        frame_count=frame_count,
+        source_binding_digest=source_binding_digest,
+        recipe_id=recipe_id,
+        training_ready=False,
+    )
+    marker, _, _ = read_bound_json(dest / "COMPLETE.json")
     if (
         marker.get("schema") != "g2_data_b_complete_v1"
         or marker.get("complete") is not True
+        or any(marker.get(k) != v for k, v in expected.items())
+        or not isinstance(marker.get("state15_sha256"), str)
+        or (expected_sha256 is not None and marker["state15_sha256"] != expected_sha256)
     ):
-        raise DataBError("DATA_B episode marker incomplete")
-    if marker.get("state15_sha256") != digest(cache):
-        raise DataBError("DATA_B cached state15 file SHA mismatch")
-    if (
-        marker.get("source_binding_digest") != source["source_binding_digest"]
-        or marker.get("recipe_id") != expected_recipe
-        or marker.get("episode_index") != source["episode_index"]
-        or marker.get("task_class") != source["task_class"]
-        or marker.get("frame_count") != source["source_frame_count"]
-    ):
-        raise DataBError("DATA_B marker source/recipe/episode mismatch")
-    obj = torch.load(cache, map_location="cpu", weights_only=True, mmap=True)
+        raise DataBError("DATA_B completion/source/recipe or SHA mismatch")
+    raw, sha, _ = read_bound_bytes(
+        dest / "state15.pt",
+        limit=64 * 1024**2,
+        expected_sha256=marker["state15_sha256"],
+    )
+    obj = torch.load(BytesIO(raw), map_location="cpu", weights_only=True)
     if not isinstance(obj, dict) or set(obj) != {"metadata", "state15"}:
         raise DataBError("DATA_B file envelope invalid")
     meta, states = obj["metadata"], obj["state15"]
     if (
-        meta["recipe_id"] != expected_recipe
-        or meta["source_binding_digest"] != source["source_binding_digest"]
-        or meta["source_range"] != source["source_range"]
-        or meta["original_instruction"] != source["instruction"]
-        or meta["raw_source_file_stat"] != source["raw_source_file_stat"]
-        or meta["fps"] != 20
-        or meta["source_frame_reference"] != "source_base_world_not_wheeled_base"
+        any(meta.get(k) != v for k, v in expected.items())
+        or meta.get("schema") != "g2_data_b_state15_episode_v1"
+        or meta.get("fps") != 20
+        or meta.get("start_frame") != 0
+        or meta.get("state15_space") != "data_b_model_input"
+        or meta.get("source_frame_reference") != "source_base_world_not_wheeled_base"
     ):
         raise DataBError("DATA_B embedded provenance differs")
     if (
-        states.shape != (source["source_frame_count"], 15)
+        not isinstance(states, torch.Tensor)
+        or states.shape != (frame_count, 15)
         or states.dtype != torch.float32
-        or states.device.type != "cpu"
         or not bool(torch.isfinite(states).all())
     ):
         raise DataBError("DATA_B tensor failed shape/dtype/finite checks")
-    # A real full-episode numeric re-check is optional for this read-only loader:
-    # the immutable SHA manifest binds the full written output.
+    return states, meta, sha
+
+
+def verify_episode_state(root, source: dict, *, expected_recipe: str) -> dict:
+    """Strict source-bound offline check."""
+    dest = episode_path(root, source["task_class"], source["episode_index"])
+    _, meta, sha = read_episode_state(
+        dest,
+        task=source["task_class"],
+        episode=source["episode_index"],
+        frame_count=source["source_frame_count"],
+        source_binding_digest=source["source_binding_digest"],
+        recipe_id=expected_recipe,
+    )
+    if (
+        meta["source_range"] != source["source_range"]
+        or meta["original_instruction"] != source["instruction"]
+        or meta["raw_source_file_stat"] != source["raw_source_file_stat"]
+    ):
+        raise DataBError("DATA_B embedded provenance differs")
     return {
         "episode_root": str(dest),
-        "state15_path": str(cache),
-        "state15_sha256": marker["state15_sha256"],
-        "recipe_id": expected_recipe,
-        "source_binding_digest": marker["source_binding_digest"],
-        "frame_count": marker["frame_count"],
+        "state15_path": str(dest / "state15.pt"),
+        "state15_sha256": sha,
+        "recipe_id": meta["recipe_id"],
+        "source_binding_digest": meta["source_binding_digest"],
+        "frame_count": meta["frame_count"],
     }
