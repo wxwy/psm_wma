@@ -44,6 +44,29 @@ class SharedSourceVisibilityTests(unittest.TestCase):
             axis="+Y",frame_origin_world=[0,0,0],frame_axes_world=np.eye(3),
             low_room=[0,0,0],high_room=[1,1,1],mpp=.1)
         self.assertEqual(e["source_part_silhouettes_drawn"]["window"],1)
+    def test_top_excludes_only_ceiling_visual_occluder(self):
+        registry={"schema":"g2_surface_registry_v1","surfaces":{
+          0:{"structural_role":"ceiling"},
+          1:{"structural_role":"floor"},
+          2:{"structural_role":None},
+          3:{"structural_role":"wall"}}}
+        out,e=source.source_structural_view_surface_filter(registry,"floor_top")
+        self.assertEqual(set(out["surfaces"]),{1,2,3})
+        self.assertEqual(set(registry["surfaces"]),{0,1,2,3})
+        self.assertEqual(e["source_structural_visuals_hidden"],1)
+
+    def test_up_excludes_floor_keeps_ceiling_and_other_source_objects(self):
+        registry={"surfaces":{
+          0:{"structural_role":"ceiling"},
+          1:{"structural_role":"floor"},
+          2:{"structural_role":None}}}
+        out,e=source.source_structural_view_surface_filter(registry,"upper_up")
+        self.assertEqual(set(out["surfaces"]),{0,2})
+        self.assertEqual(e["hidden_role"],"floor")
+        wall,e=source.source_structural_view_surface_filter(registry,"+X")
+        self.assertIs(wall,registry)
+        self.assertEqual(e["source_structural_visuals_hidden"],0)
+
     def test_geometry_nonfinite_fail_closed(self):
         d=self.depth.copy();d[2,2]=np.nan
         with self.assertRaises(source.SourceVisibilityError):
