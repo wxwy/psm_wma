@@ -118,7 +118,6 @@ def _owner_view(index, reader, episode_root, s, ordinal, view_id, *, recipe_id):
     }
 
 
-
 def _assert_dual_top(state):
     """Verify both published tops share geometry but not assumed content/owner."""
     tops = state.get("top_views")
@@ -126,9 +125,8 @@ def _assert_dual_top(state):
         raise DataCError("dual top state requires both physical references")
     if any(
         v.get("top_variant") != name
-        or v.get("view_id") != (
-            "sixview/floor_top_w_rbs" if name == "with_robot" else "sixview/floor_top"
-        )
+        or v.get("view_id")
+        != ("sixview/floor_top_w_rbs" if name == "with_robot" else "sixview/floor_top")
         or v.get("view_scope") != "floor"
         or v["physical_owner_frame"] > state["frame"]
         for name, v in tops.items()
@@ -137,7 +135,12 @@ def _assert_dual_top(state):
     a, b = tops["with_robot"], tops["without_robot"]
     if any(
         a[k] != b[k]
-        for k in ("projection_id", "geometry_version", "membership_version", "vae_recipe_id")
+        for k in (
+            "projection_id",
+            "geometry_version",
+            "membership_version",
+            "vae_recipe_id",
+        )
     ):
         raise DataCError("dual top views do not share spatial geometry/recipe")
     if any(v.get("top_variant") is not None for v in state["selected_views"]):
@@ -255,10 +258,9 @@ def build_episode_joint(
             canonical_ids = list(selection["selected_view_ids"])
             if not canonical_ids or "sixview/floor_top" not in canonical_ids:
                 raise DataCError("missing canonical mandatory top")
-            if (
-                canonical_ids.count("sixview/floor_top") != 1
-                or len(canonical_ids) != len(set(canonical_ids))
-            ):
+            if canonical_ids.count("sixview/floor_top") != 1 or len(
+                canonical_ids
+            ) != len(set(canonical_ids)):
                 raise DataCError("selected canonical top must be unique")
             ids = [
                 "sixview/floor_top_w_rbs"
@@ -267,13 +269,9 @@ def build_episode_joint(
                 for v in canonical_ids
                 if top_variant != "both" or v != "sixview/floor_top"
             ]
-            if (
-                len(ids) != len(set(ids))
-                or sum(
-                    v in {"sixview/floor_top", "sixview/floor_top_w_rbs"} for v in ids
-                )
-                != (0 if top_variant == "both" else 1)
-            ):
+            if len(ids) != len(set(ids)) or sum(
+                v in {"sixview/floor_top", "sixview/floor_top_w_rbs"} for v in ids
+            ) != (0 if top_variant == "both" else 1):
                 raise DataCError("selected top view variant count invalid")
             for required in (s["scene_graph"], s["spatial_metadata"]):
                 require_regular(epdir / required)
@@ -440,8 +438,7 @@ def verify_joint_episode(
     marker = json_load(marker_path)
     value = json_load(target)
     if (
-        marker.get("schema")
-        not in {"g2_data_c_complete_v1", "g2_data_c_complete_v2"}
+        marker.get("schema") not in {"g2_data_c_complete_v1", "g2_data_c_complete_v2"}
         or marker.get("complete") is not True
     ):
         raise DataCError("DATA_C completion marker invalid")
