@@ -247,6 +247,7 @@ class CandidateAlignedG2Provider:
         global_memory_enabled=True,
         initial_language_root=None,
         initial_language_recipe_id=None,
+        corpus_manifest_override=None,
     ):
         if (initial_language_root is None) != (initial_language_recipe_id is None):
             raise DataCError(
@@ -260,7 +261,48 @@ class CandidateAlignedG2Provider:
             Path(initial_language_root) if initial_language_root is not None else None
         )
         self.initial_language_recipe_id = initial_language_recipe_id
-        self.corpus = open_corpus_manifest(data_c_root)
+        live_corpus = open_corpus_manifest(data_c_root)
+        if corpus_manifest_override is None:
+            self.corpus = live_corpus
+        else:
+            override = corpus_manifest_override
+            if (
+                not isinstance(override, dict)
+                or override.get("data_identity")
+                != canonical(
+                    {k: v for k, v in override.items() if k != "data_identity"}
+                )
+                or any(
+                    override.get(k) != live_corpus.get(k)
+                    for k in (
+                        "schema",
+                        "source_binding_digest",
+                        "state15_recipe_id",
+                        "view_recipe_id",
+                        "recipe_id",
+                        "top_view_variant",
+                        "alignment_version",
+                        "split_identity",
+                        "evidence_scope",
+                        "training_ready",
+                    )
+                )
+            ):
+                raise DataCError(
+                    "certified DATA_C manifest override differs in source/recipe"
+                )
+            live_episodes = {
+                (row["task_class"], row["episode_index"]): row
+                for row in live_corpus["episodes"]
+            }
+            if not override.get("episodes") or any(
+                live_episodes.get((row["task_class"], row["episode_index"])) != row
+                for row in override["episodes"]
+            ):
+                raise DataCError(
+                    "certified DATA_C override contains missing/modified episode"
+                )
+            self.corpus = override
         self.identity = (
             self.corpus["data_identity"]
             if self.initial_language_root is None
