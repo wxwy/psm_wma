@@ -35,7 +35,9 @@ def main(argv=None):
         p.add_argument(f"--{name}", type=Path, required=True)
     p.add_argument("--view-vae-recipe-id", required=True)
     p.add_argument(
-        "--top-view-variant", choices=("with_robot", "without_robot", "both"), required=True
+        "--top-view-variant",
+        choices=("with_robot", "without_robot", "both"),
+        required=True,
     )
     p.add_argument("--max-episodes", type=int, default=None)
     p.add_argument("--flush-every", type=int, default=20)
