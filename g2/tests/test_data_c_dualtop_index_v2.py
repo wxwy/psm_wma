@@ -48,9 +48,7 @@ def test_dual_top_recipe_is_versioned_and_variant_independent():
     old = make_joint_recipe(
         state_recipe_id="s", view_recipe_id="v", top_variant="with_robot"
     )
-    new = make_joint_recipe(
-        state_recipe_id="s", view_recipe_id="v", top_variant="both"
-    )
+    new = make_joint_recipe(state_recipe_id="s", view_recipe_id="v", top_variant="both")
     assert old["schema"] == "g2_data_c_joint_recipe_v1"
     assert new["schema"] == "g2_data_c_joint_recipe_v2"
     assert new["top_variants"] == ["with_robot", "without_robot"]
@@ -77,7 +75,9 @@ def test_one_index_selects_both_and_keeps_nontop_unchanged():
     assert with_robot[0]["physical_png_sha256"] != clean[0]["physical_png_sha256"]
 
 
-@pytest.mark.parametrize("fault", ("missing", "future", "projection", "membership", "duplicate"))
+@pytest.mark.parametrize(
+    "fault", ("missing", "future", "projection", "membership", "duplicate")
+)
 def test_corrupt_dual_top_is_rejected(fault):
     state = _state()
     if fault == "missing":
