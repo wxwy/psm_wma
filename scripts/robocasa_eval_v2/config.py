@@ -113,6 +113,8 @@ def validate_g2_profile(cfg):
         raise ValueError(
             "G2 requires an existing run recipe, checkpoint metadata SHA, and isolated native settings"
         )
+    if options.get("render_f27") and cfg["render_backend"] != "egl":
+        raise ValueError("G2 F27 diagnostics require the attested EGL Actor backend")
     for key in G2_ACTOR_PATHS:
         if not isinstance(options[key], str) or not options[key].strip():
             raise ValueError(f"missing G2 actor path {key}")

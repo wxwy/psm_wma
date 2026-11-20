@@ -7,9 +7,12 @@ from types import SimpleNamespace
 
 import pytest
 import yaml
+from cosmos_framework.evaluation.robocasa_v2.contract import build_manifest
+from cosmos_framework.evaluation.robocasa_v2.store import Store
 from cosmos_framework.inference import robocasa_session_transactions as session
 from robocasa_eval_v2 import identity, runtime
-from robocasa_eval_v2.config import DEFAULTS, resolve
+from robocasa_eval_v2.cli import main
+from robocasa_eval_v2.config import DEFAULTS, execution, resolve
 
 from tools.v3.eval_v2_production_tests.entry_test import config
 from tools.v3.eval_v2_replan_tests.support import (
@@ -88,6 +91,7 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
     cfg.update(
         execution_profile="phase_b",
         gpu_ids=[4],
+        render_backend="egl",
         g2_profile="g2_r1",
         g2_run_recipe=str(recipe),
         g2_checkpoint_metadata_sha256="a" * 64,
@@ -109,7 +113,27 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
         == "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     )
     assert identity.g2_experiment({}) is None
+    manifest = build_manifest(
+        tasks=["CloseFridge"],
+        episodes=cfg["episodes_per_task"],
+        seed=resolved["seed"],
+        horizons={"CloseFridge": 2},
+        execution=execution(resolved),
+        experiment={
+            "model_digest": "1" * 64,
+            "config_sha256": "2" * 64,
+            "runtime_digest": "3" * 64,
+            "root_sha": "a" * 40,
+            "child_sha": "b" * 40,
+            "task_metadata": {"CloseFridge": "4" * 64},
+            "g2": bound,
+        },
+    )
+    Store(Path(cfg["output_dir"]), manifest).create()
+    assert main(["dry-run", "--config", str(path)]) == 0
     recipe.write_text('{"changed":true}')
+    with pytest.raises(ValueError, match="differs from frozen Run"):
+        main(["dry-run", "--config", str(path)])
     assert (
         identity.g2_experiment(resolved)["run_recipe_sha256"]
         != bound["run_recipe_sha256"]
@@ -125,6 +149,8 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
         identity.g2_experiment(diagnostics)["actor_options_sha256"]
         != bound["actor_options_sha256"]
     )
+    with pytest.raises(ValueError, match="G2 F27"):
+        resolve(["dry-run", "--config", str(path), "--render-backend", "osmesa"])
     for invalid in (
         {"g2_profile": "legacy"},
         {"local_memory_mode": "off"},
