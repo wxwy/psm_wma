@@ -106,12 +106,16 @@ class SceneViewCursor:
         sine = 0.5 * np.linalg.norm(skew, axis=1)
         return float(np.degrees(np.max(np.arctan2(sine, cosine))))
 
-    def observe(self, state_id, frame, positions, rotations, robot_xy_yaw):
+    def observe(
+        self, state_id, frame, positions, rotations, robot_xy_yaw, *,
+        force_scene_update=False,
+    ):
         if (
             type(state_id) is not int
             or state_id != self._previous_id + 1
             or type(frame) is not int
             or frame <= self._previous_frame
+            or type(force_scene_update) is not bool
         ):
             raise ValueError("scene frame order must be strictly increasing")
         pos = np.asarray(positions, dtype=np.float64)
@@ -151,7 +155,7 @@ class SceneViewCursor:
             )
             # Owner-specified strict below threshold rule: >= 1mm or >= 1deg
             # is a scene event, even when other geoms remain stationary.
-            if dp >= self.tpos or dm >= self.trot:
+            if force_scene_update or dp >= self.tpos or dm >= self.trot:
                 mode = "FULL"
             elif (dr > 0.0 and dr >= self.trobot) or (
                 dy > 0.0 and dy >= self.tyaw

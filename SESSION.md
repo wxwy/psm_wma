@@ -1,3 +1,12 @@
+# 2026-11-20 CST — G2 Online RoboCasa integration
+
+Codex owns the isolated R1 candidate from Root `4d89a0f7`, Cosmos Gitlink
+`1971fc33`, and nav_sg `70eb7b44`. Files claimed: Root `g2/online/`,
+focused tests and the EvalV2 launcher/config; Child EvalV2 Actor, transaction
+and native G2 server paths; nav_sg live oracle import and snapshot entry.
+Reuse official state, CAP2, GT geometry, and post-step Session frontier.
+Scope is independent code/CPU work and read-only server inventory.
+
 # 2026-11-19 CST — Issue #90 REVIEW
 
 Formal V3 Root 77fe8fe475350bbbbfce8e18cced0e7339558544 / Child

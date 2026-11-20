@@ -1,3 +1,5 @@
+- **G2-ONLINE-ROBOCASA-R1** — IN_PROGRESS; Codex. Isolated live MuJoCo → native nav_sg → causal R1 Actor/Policy integration with CPU replay, explicit GPU/F27 gates and GPT handoff. R2 online execution follows R1 acceptance.
+
 - **G2-PERF-90** — REVIEW. Root Draft #91, Child Draft #25, fixed 3ac7cb3f/4cca4e9. Code/CPU/real read parity pass. GPT reviews and Owner/Execute supplies isolated GPU 2/10step, strict resume, R2 boundary and throughput evidence.
 
 - **G2-DATA-C-AUDIT-82** — REVIEW, Draft PR #83. Original `ab3d466e` / `9370c385` requires changes. Candidate `3aff85a7` / `765a06b7` passes related CPU tests and isolated full source certification. GPT reviews fixed pair, phase5 Train filtering, CAP2 v3 seal and bounded R1/R2 reads.

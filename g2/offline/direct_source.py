@@ -245,6 +245,30 @@ def load_source(input_config):
 
 def prepare_visual_specs(model, snap, dense, role):
     """Preserve the original visual geom roster and native owner index mapping."""
+    return _prepare_visual_specs(model, snap, dense["sampled_geoms"], role, dense=True)
+
+
+def prepare_live_visual_specs(model, snap, role):
+    """Use reset-bound compiled visual geometry without inventing dense samples."""
+    import mujoco
+
+    from g2.sim.source_geometry import effective_rgba
+
+    rows = []
+    for g in range(model.ngeom):
+        name = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, g)
+        spec = role["geoms"].get(name or ("geom_%d" % g))
+        if spec is None:
+            raise ContractError("live source role is absent for compiled geom")
+        if spec["role"] == "visual" and effective_rgba(model, g)[3] > 0:
+            rows.append(dict(
+                geom_id=g, geom_name=name,
+                source_instance=(spec["source_kind"], spec.get("source_instance_name")),
+            ))
+    return _prepare_visual_specs(model, snap, rows, role, dense=False)
+
+
+def _prepare_visual_specs(model, snap, rows, role, *, dense):
     import mujoco
 
     from g2.sim.prescan import geom_surface_mesh, geometry_type_names
@@ -254,7 +278,7 @@ def prepare_visual_specs(model, snap, dense, role):
     types = geometry_type_names()
     specs = []
     seen = set()
-    for visual in dense["sampled_geoms"]:
+    for visual in rows:
         g = visual.get("geom_id")
         if type(g) is not int or g < 0 or g >= model.ngeom or g in seen:
             raise ContractError("visual geom ID is invalid or duplicated")
@@ -265,7 +289,9 @@ def prepare_visual_specs(model, snap, dense, role):
         original_role = role["geoms"].get(name, {}).get("role")
         if original_role != "visual":
             raise ContractError("selected geom is not an explicitly classified visual")
-        kind = types[int(model.geom_type[g])]
+        kind = types.get(int(model.geom_type[g]))
+        if kind not in ("box", "sphere", "ellipsoid", "capsule", "cylinder", "mesh"):
+            raise ContractError("unsupported selected visual geometry: " + name)
         source_instance = visual.get("source_instance")
         if not isinstance(source_instance, (list, tuple)) or len(source_instance) < 2:
             raise ContractError("visual geom needs its original source_instance binding")
@@ -280,15 +306,19 @@ def prepare_visual_specs(model, snap, dense, role):
         if structure is None and name.startswith(("floor_", "wall_", "ceiling_")):
             structure = name.split("_g")[0]
         mesh_vertices, mesh_faces = geom_surface_mesh(model, g, kind)
-        specs.append(dict(
+        spec = dict(
             g=g, name=name, kind=kind, instance=group, owner=owner,
             role=original_role, structure=structure,
             source_kind=source_instance[0], source_instance=list(source_instance),
             source_category=role["geoms"].get(name, {}).get("source_category"),
             vertices=mesh_vertices, faces=mesh_faces,
-            original_dense_samples=int(visual["points"]),
-            original_valid_samples=int(visual["valid_color_points"]),
-        ))
+        )
+        if dense:
+            spec.update(
+                original_dense_samples=int(visual["points"]),
+                original_valid_samples=int(visual["valid_color_points"]),
+            )
+        specs.append(spec)
     return specs
 
 
