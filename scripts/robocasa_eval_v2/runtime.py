@@ -667,8 +667,6 @@ class Runtime:
                 MUJOCO_GL=self.render_policy["backend"],
                 PYOPENGL_PLATFORM=self.render_policy["backend"],
             )
-            if self.g2 is not None:
-                env["PYTHONPATH"] = os.pathsep.join((str(ROOT), env["PYTHONPATH"]))
             env.pop(
                 "MUJOCO_EGL_DEVICE_ID", None
             )  # Worker resolves the physical PCI -> EGL index before imports.

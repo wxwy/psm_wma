@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -105,17 +106,28 @@ def interpreter_libraries(executable, environment, names):
     return values[0]
 
 
-def runtime_environment(cache):
-    """Keep vendor/model import caches outside source and training directories."""
+def with_runtime_caches(environment, cache):
+    """Relocate writable caches while keeping the attested interpreter inputs."""
     cache = Path(cache)
-    environment = launch_environment(cache)
-    environment.update(
+    return dict(
+        environment,
         NUMBA_CACHE_DIR=str(cache / "numba"),
         MPLCONFIGDIR=str(cache / "matplotlib"),
         XDG_CACHE_HOME=str(cache / "xdg"),
         HF_HOME=str(cache / "huggingface"),
     )
-    return environment
+
+
+def runtime_environment(cache, *, g2=False):
+    """Build the interpreter environment before measuring the vendor digest."""
+    environment = launch_environment(Path(cache))
+    if g2:
+        project = (str(ROOT), str(CHILD))
+        inherited = environment["PYTHONPATH"].split(os.pathsep)
+        environment["PYTHONPATH"] = os.pathsep.join(
+            (*project, *(path for path in inherited if path not in project))
+        )
+    return with_runtime_caches(environment, cache)
 
 
 def g2_experiment(cfg):
@@ -171,7 +183,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         != g2["checkpoint_metadata_sha256"]
     ):
         raise ValueError("G2 checkpoint metadata SHA differs from the attested model")
-    environment = runtime_environment(cache)
+    environment = runtime_environment(cache, g2=g2 is not None)
     attestation = collect_runtime(
         sim_python=Path(cfg["sim_python"]),
         lock_path=Path(cfg["vendor_lock"]),

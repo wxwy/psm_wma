@@ -27,6 +27,7 @@ from robocasa_eval_v2.identity import (
     g2_experiment,
     prepare,
     runtime_environment,
+    with_runtime_caches,
 )
 from robocasa_eval_v2.resources import physical_slots, render_slots
 from robocasa_eval_v2.runtime import Runtime
@@ -144,7 +145,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             manifest, inputs, environment = prepare_inputs(cfg, cache=Path(temporary))
         store = Store(root, manifest)
         store.create()
-        environment = runtime_environment(cache)
+        if manifest["experiment"].get("g2") is None:
+            environment = runtime_environment(cache)
+        else:
+            environment = with_runtime_caches(environment, cache)
     else:
         manifest = read(root / "manifest.json")
         store = Store(root, manifest)
