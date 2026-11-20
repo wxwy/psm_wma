@@ -168,6 +168,76 @@ or policy success rates.
 Server logs stay in the isolated verification workspace. The main files
 are `candidate-root-shared.log`, `candidate-root-shared.xml`,
 `native-build-unused-include.log`, `live-native-real-shared.log` and
-the per-episode `source_frames.jsonl`. Actual EGL pixel parity, trained
-R1 weights and inference, and task success or failure remain execution
-gates.
+the per-episode `source_frames.jsonl`. The initial candidate handed off
+EGL parity, trained R1 inference and task success or failure to the
+execution Gate.
+
+## MuJoCo 3.3.1 and masked EGL follow-up
+
+Fixed Root `98beed4a6ecb9134d4925427a5129615d509b744`, Child/Gitlink
+`3ef4f6c79aeba3d825ae247c1e884b6199eaf85d`, and nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. The patches address the real
+OpenDrawer findings on the existing Drafts. [Root #93](https://github.com/wxwy/psm_wma/pull/93) · [Child #26](https://github.com/wxwy/cosmos-framework/pull/26)
+
+The shared material resolver now reads the compiled 3.3.1 RGB/RGBA upload
+without an sRGB transfer. The verified native explicit mesh UV path uses the
+compiled coordinates. The archived 3.3.7 recipe keeps its existing mesh UV
+and color-space behavior. Unknown versions retain invalid color and opacity
+masks. Online F27 rejects zero-valid-color clean Views before drawing the
+robot marker or publishing an owner. [3.3.1 texture upload](https://github.com/google-deepmind/mujoco/blob/a209134315dda126a714529bfa80f7478902644d/src/render/render_context.c) · [3.3.1 explicit UV binding](https://github.com/google-deepmind/mujoco/blob/a209134315dda126a714529bfa80f7478902644d/src/render/render_gl3.c)
+
+EvalV2 keeps CUDA masked in the Actor. An isolated driver probe maps NVIDIA
+EGL persistent UUIDs to PCI. The Actor selects its own enumerated EGL device
+and requires the actual current context's process-local device handle and,
+when supplied, its UUID. Ambiguous PCI evidence or a missing context handle
+fails admission.
+
+| Check | Author result |
+| --- | --- |
+| F27/material CPU regressions | 71 passed, 1 existing opt-in real-asset test skipped |
+| EvalV2 rendering device and Actor CPU regressions | 38 passed |
+| Stock software EGL fixtures on MuJoCo 3.3.1 and 3.3.7 | 10 fixtures and 1,732 pixels per version, maximum RGB delta 1 byte. The 3.3.7 receipt matches the archived candidate byte for byte. |
+| `data` masked CUDA driver selection | All 8 physical GPUs matched by UUID and PCI in both default GLVND and NVIDIA-only modes. The probe opened no GPU render context. |
+| Real OpenDrawer F27 on MuJoCo 3.3.1, Mesa llvmpipe | 49 entities and 1 Room. Clean floor top has 171,864 valid color pixels. The two side Views have 99,792 and 193,752. All four PNGs match the same snapshot rendered with the offline eager decoder byte for byte. The arrow changes 363 pixels on the separate marked top. |
+| Real 20 Hz causal index | Decision frames 0/16/20 consume spatial frames 0/0/20. The second snapshot reports `REUSE_ALL` and its images keep their frame 0 owners. |
+| R1 Iter 1000, OpenDrawer config preview | `CPU_PREVIEW_ONLY`, 0 models loaded, 0 environments created |
+| Real NVIDIA camera context, R1 action, Local ACK and task outcomes | Await the independent GPU run for this exact candidate. |
+
+The stock texture probe compares base-level texels against MuJoCo's actual
+EGL pixels. Run it from the fixed Root with each existing MuJoCo interpreter.
+
+```bash
+CUDA_VISIBLE_DEVICES='' MUJOCO_GL=egl PYOPENGL_PLATFORM=egl \
+  LIBGL_ALWAYS_SOFTWARE=1 LP_NUM_THREADS=2 PYTHONPATH="$PWD" \
+  "$G2_MUJOCO_PYTHON" g2/tests/mujoco_material_compat_smoke.py
+```
+
+The real OpenDrawer run used the existing simulator with Layout 1, Style 1,
+seed 42 and 20 neutral steps. The scratch runner selects the Mesa software
+device and verifies `llvmpipe`. Its per-process GL/GLSL version overrides
+enable the existing F27 compute shaders in software. The comparison uses the
+same native snapshot and renderer with live lazy and offline eager decoding.
+The first verifier log is preserved. It compared report lengths before
+rereading the on-disk marker receipt. The corrected run rereads both receipts.
+
+```bash
+G2_FOLLOWUP=/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_online_compat_98beed4a_20261120.DWqLLm
+G2_REPLAY=$(mktemp -d "${G2_FOLLOWUP%/*}/.g2_online_compat_replay.XXXXXX")
+for item in root nav ws; do
+  ln -s "$G2_FOLLOWUP/$item" "$G2_REPLAY/$item"
+done
+cp "$G2_FOLLOWUP"/{data_egl_pci_probe.py,data_f27_software_probe.py,run-egl-pci.sh,run-f27-software.sh} "$G2_REPLAY/"
+mkdir "$G2_REPLAY/spatial"
+cd "$G2_REPLAY"
+bash run-egl-pci.sh
+bash run-f27-software.sh
+```
+
+The original scene data, images and raw logs stay on `data`.
+`f27-software-gate.json` in the first completed directory
+has SHA256 `6b9ac7f8def6c5cce5bc1c1a80a8799f37dd7fcb707f3fad8b735732e77d78dc`.
+The preview `r1-review-OpenDrawer.yaml` uses the prior Iter 1000 model-only
+publication, an independent output directory and `render_f27: true`.
+For the next GPU execution, apply the independently assigned GPU with the
+existing `fresh` command above. Verify the Actor's current EGL context,
+the first `16×15D` action and its persisted Local ACK.

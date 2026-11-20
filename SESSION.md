@@ -1,3 +1,26 @@
+# 2026-11-20 CST — Online EGL and F27 material follow-up
+
+Root `98beed4a6ecb9134d4925427a5129615d509b744`, Child/Gitlink
+`3ef4f6c79aeba3d825ae247c1e884b6199eaf85d`, native nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Existing Drafts Root #93
+and Child #26 carry the follow-up for the real OpenDrawer findings.
+
+The existing F27 texture resolver gained a verified 3.3.1 upload path and
+the live publisher refuses zero-valid-color Views before marking or setting
+owners. EvalV2 now joins the masked Actor's persistent EGL UUID to driver
+PCI using a separate probe and checks the actual context handle.
+
+Author results include 109 focused CPU cases passed with one existing
+opt-in asset case skipped. Stock EGL comparison covered 1,732 pixels per
+MuJoCo version with maximum RGB delta of one byte. On data, both EGL
+vendor modes matched all 8 devices under the Actor CUDA mask. Real
+OpenDrawer through software EGL yielded 171,864 valid floor-top pixels
+and four PNGs byte-identical to the eager decoder on the same snapshot.
+Decision frames 0/16/20 used spatial frames 0/0/20. The R1 Iter 1000
+candidate configuration passed CPU preview. The independent NVIDIA
+context, real action, Local ACK and outcomes remain execution Gates.
+See `docs/g2/online_robocasa.md` for commands and evidence location.
+
 # 2026-11-20 CST — G2 Online RoboCasa CPU handoff
 
 Fixed implementation Root `b6b5fd2a3b70507c78f44dfe995e34223e8b526e`.
