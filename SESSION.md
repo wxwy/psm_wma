@@ -1,3 +1,9 @@
+# 2026-11-20 CST — G2 F27 R1 900-episode recovery
+
+Draft PR #94 binds implementation `7d78aa0df6b1154473273b1f653134a896f892e3`, V3 base `5659b3898b94b302288669d03092fb9b5a5d4023`, and Child/Gitlink `5a6585a1308782f52d4601be03771c977a15bf9c`. The archived TurnOffStove EP6 Frame 0 failed in the `+Y` static translucent hit pass. The repair validates GPU hit completion and submitted Geom/face identity, then reprojects rejected readbacks from registered source geometry. A fresh real TurnOffStove CPU/Mesa scene recovered the injected fault with identical RGB. The archived EP6 model and state could not be reproduced. 17 focused tests passed. The expanded suite had 375 passes, six V3-baseline failures and one optional skip.
+
+Native Store inspection of original Run `511698256f81267abb4fcf6748b9166ab9ca1b6f` verifies 93 retained Core and 807 executable slots. A separately saved config resolves exactly to the original invocation. The scoped F27 Resume approval verifies a reviewed exact pair and records the retained Core list in the native invocation. The original manifest, Core and server source checkouts remain in place. GPT reviews the exact candidate, with the NVIDIA canary and Owner-authorized Resume pending. See `docs/g2/r1_f27_recovery.md`.
+
 # 2026-11-20 CST — G2 R1 Condition Cache and the fixed 120 ms window
 
 Review Root `511698256f81267abb4fcf6748b9166ab9ca1b6f`, Child/Gitlink

@@ -362,9 +362,14 @@ class SurfaceRenderer:
         forward=np.asarray(AXES[room.get("_current_view_axis")],float)[2] if "_current_view_axis" in room else None
         for gid in np.unique(gids[geometry]):
             gid=int(gid)
+            if gid not in registry["surfaces"] or gid not in source_faces:
+                raise ContractError(f"surface hit Geom {gid} was not submitted for this view")
             record=registry["surfaces"][gid]
             select=geometry & (gids==gid)
-            source_face=source_faces[gid][face_ids[select]]
+            indices=face_ids[select]
+            if np.any((indices<0) | (indices>=len(source_faces[gid]))):
+                raise ContractError(f"surface hit face outside submitted Geom {gid}")
+            source_face=source_faces[gid][indices]
             weight=bary[select]
             tris=np.asarray(record["local_vertices"],float)[np.asarray(record["faces"],int)[source_face]]
             local=np.einsum("bi,bij->bj",weight,tris)
@@ -413,6 +418,25 @@ class SurfaceRenderer:
         # same-depth material candidate. Do not invalidate RGB prematurely.
         return layer,receipts
 
+    def _draw_source_hits(self, meshes, selected, low, high, axis, mpp, *, max_hits=0):
+        args = (meshes, selected, low, high, axis, mpp)
+        options = {"max_hits": max_hits} if max_hits else {}
+        cpu_draw = cpu_mesh_layers if max_hits else cpu_mesh_hits
+        if self.backend == "cpu":
+            return cpu_draw(*args, **options)
+
+        from g2.views.exact_compute import RasterHitReadbackError, get_engine
+
+        engine = get_engine()
+        draw = engine.draw_layers if max_hits else engine.draw_hits
+        try:
+            return draw(*args, **options)
+        except RasterHitReadbackError as exc:
+            # Recompute from the same registered mesh and projection. Treating
+            # an unread raster row as background would drop real occlusion.
+            valid, depth, gids, size, info, faces, bary, flags = cpu_draw(*args, **options)
+            return valid, depth, gids, size, dict(info, gpu_readback_error=str(exc)), faces, bary, flags
+
     def _resolve_equivalent_depth_ties(self, registry, room, meshes, source_faces,
                                        selected, low, high, axis, mpp,
                                        layer, tie):
@@ -425,13 +449,8 @@ class SurfaceRenderer:
         """
         if not tie.any():
             return np.zeros(tie.shape,bool), {"tie_input_pixels":0}
-        if self.backend == "gpu":
-            from g2.views.exact_compute import get_engine
-            draw=get_engine().draw_layers
-        else:
-            draw=cpu_mesh_layers
-        hit, depth, gids, _, info, face, bary, overflow = draw(
-            meshes, selected, low, high, axis, mpp,max_hits=32)
+        hit, depth, gids, _, info, face, bary, overflow = self._draw_source_hits(
+            meshes, selected, low, high, axis, mpp, max_hits=32)
         # An alternate GL compute route may round a source coordinate to
         # float32 even when the nearest-hit route retains FP64 intermediates.
         # This tolerance only reconciles two hits on the *same pixel* that
@@ -470,6 +489,8 @@ class SurfaceRenderer:
             same_depth_distinct_source_pixels=int((tie&distinct).sum()),
             equivalent_color_pixels=int(approved.sum()),
             unresolvable_pixels=int((tie&~approved).sum()))
+        if 'gpu_readback_error' in info:
+            summary.update(backend=info['backend'],gpu_readback_error=info['gpu_readback_error'])
         return approved,summary
 
     def _layer(self,registry,room,ids,low,high,axis,mpp,*,cacheable,multiple=False):
@@ -486,14 +507,9 @@ class SurfaceRenderer:
         meshes,source_faces,shell=self._mesh_records(registry,room,ids)
         if not meshes:
             return ([] if multiple else _empty_layer(shape)), {"empty":True,"shell":shell}
-        if self.backend=="gpu":
-            from g2.views.exact_compute import get_engine
-            draw=get_engine().draw_layers if multiple else get_engine().draw_hits
-        else:
-            draw=cpu_mesh_layers if multiple else cpu_mesh_hits
         try:
-            geometry,depth,gids,size,info,face_ids,bary,ambiguity=draw(
-                meshes,ids,low,high,axis,mpp)
+            geometry,depth,gids,size,info,face_ids,bary,ambiguity=self._draw_source_hits(
+                meshes,ids,low,high,axis,mpp,max_hits=8 if multiple else 0)
         except ValueError as exc:
             if str(exc)!="no G2 selected projectable geometry":
                 raise

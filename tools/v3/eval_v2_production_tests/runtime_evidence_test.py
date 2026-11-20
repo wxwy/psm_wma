@@ -285,6 +285,154 @@ def invocations(root):
     return store_module.records(root / "_internal/invocations")
 
 
+@pytest.fixture
+def stopped_f27_run(real_prepare, tmp_path, monkeypatch):
+    case = real_prepare
+    recipe = tmp_path / "r1_recipe.json"
+    recipe.write_text("{}")
+    case.cfg.update(
+        execution_profile="phase_b",
+        render_backend="egl",
+        g2_profile="g2_r1",
+        g2_run_recipe=str(recipe),
+        batch_wait_ms=120,
+        g2_checkpoint_metadata_sha256=identity.sha256_file(
+            Path(case.cfg["checkpoint"]) / "model/.metadata"
+        ),
+        g2_actor_options={
+            "nav_checkout": str(tmp_path / "nav"),
+            "nav_revision": "b" * 40,
+            "ros_setup": str(tmp_path / "setup.bash"),
+            "scratch_root": str(tmp_path / "spatial"),
+            "render_f27": True,
+        },
+    )
+    case.path.write_text(json.dumps(case.cfg))
+    monkeypatch.setattr(identity, "clock_environment", lambda *args: {"domain": "cpu"})
+    complete_run = case.Runtime
+
+    class StopAfterFirstCore(complete_run):
+        def run(self):
+            from tools.v3.eval_v2_production_tests.store_test import (
+                close_streams,
+                complete,
+            )
+
+            self.store.begin_task("CloseFridge")
+            complete(self.store, "CloseFridge", 0, success=False)
+            close_streams(self.store, "CloseFridge")
+            return self.store.publish_views(), None
+
+    case.Runtime = StopAfterFirstCore
+    assert public(case, "fresh") == 1
+    case.Runtime = complete_run
+    case.manifest = store_module.read(case.root / "manifest.json")
+    for relative in sorted(identity.F27_RASTER_PATHS):
+        path = case.source / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# synthetic F27 repair\n")
+    git(case.source, "add", "g2")
+    git(case.source, "commit", "-qm", "reviewable F27 repair")
+    case.approval = {
+        "schema": "psm_eval_v2_f27_resume_approval_v1",
+        "approved_by": "Owner",
+        "owner_decision_ref": "CPU fixture only",
+        "review_ref": "CPU fixture only",
+        "manifest_digest": case.manifest["digest"],
+        "from_root": case.manifest["experiment"]["root_sha"],
+        "to_root": git(case.source, "rev-parse", "HEAD"),
+        "child_sha": case.manifest["experiment"]["child_sha"],
+    }
+    case.approval_path = tmp_path / "f27_approval.json"
+    case.approval_path.write_text(json.dumps(case.approval))
+    return case
+
+
+def approved_f27(case, mode):
+    return cli.main(
+        [
+            mode,
+            "--config",
+            str(case.path),
+            "--f27-resume-approval",
+            str(case.approval_path),
+        ],
+        prepare_inputs=identity.prepare,
+        runtime_type=case.Runtime,
+    )
+
+
+def test_f27_resume_approval_preserves_committed_failure_and_executes_missing(
+    stopped_f27_run, capsys
+):
+    case = stopped_f27_run
+    capsys.readouterr()
+    old_cores = core_bytes(case.root)
+    manifest = (case.root / "manifest.json").read_bytes()
+    anchor = (case.root / "_internal/run_inputs.json").read_bytes()
+    assert len(old_cores) == 1
+
+    with pytest.raises(ValueError, match="production source"):
+        public(case, "resume")
+    assert approved_f27(case, "dry-run") == 0
+    preview = json.loads(capsys.readouterr().out)
+    assert [item["action"] for item in preview["resume_dispositions"]] == [
+        "skip_valid",
+        "execute_missing",
+    ]
+    assert len(invocations(case.root)) == 1
+
+    assert approved_f27(case, "resume") == 0
+    assert (case.root / "manifest.json").read_bytes() == manifest
+    assert (case.root / "_internal/run_inputs.json").read_bytes() == anchor
+    final_cores = core_bytes(case.root)
+    assert len(final_cores) == 2 and all(
+        final_cores[key] == val for key, val in old_cores.items()
+    )
+    _, resume = invocations(case.root)
+    assert resume["f27_resume_approval"] == case.approval
+    assert resume["actual_root"] == case.approval["to_root"]
+    assert resume["retained_valid_cores"] == [
+        {
+            "task": "CloseFridge",
+            "episode": 0,
+            "core_digest": json.loads(next(iter(old_cores.values())))["sha256"],
+        }
+    ]
+    assert CpuRuntime.starts == 1
+
+
+@pytest.mark.parametrize(
+    "drift", ["manifest", "child", "scope", "head", "dirty", "model_config", "null"]
+)
+def test_f27_resume_approval_does_not_accept_other_identity_drift(
+    stopped_f27_run, drift
+):
+    case = stopped_f27_run
+    old_cores = core_bytes(case.root)
+    if drift == "manifest":
+        case.approval["manifest_digest"] = "0" * 64
+    elif drift == "child":
+        case.approval["child_sha"] = "0" * 40
+    elif drift == "scope":
+        (case.source / "scripts/source.py").write_text("# unrelated change\n")
+        git(case.source, "commit", "-qam", "unreviewed script change")
+        case.approval["to_root"] = git(case.source, "rev-parse", "HEAD")
+    elif drift == "head":
+        git(case.source, "commit", "--allow-empty", "-qm", "another revision")
+    elif drift == "dirty":
+        (case.source / "g2" / "untracked.py").write_text("# unreviewed source\n")
+    elif drift == "model_config":
+        Path(case.cfg["config_file"]).write_text("raw_action_dim: 15\n# other config\n")
+    case.approval_path.write_text(
+        json.dumps(None if drift == "null" else case.approval)
+    )
+    with pytest.raises(ValueError):
+        approved_f27(case, "resume")
+    assert core_bytes(case.root) == old_cores
+    assert len(invocations(case.root)) == 1
+
+
 def probe_records(root):
     result = []
     for invocation in invocations(root):
