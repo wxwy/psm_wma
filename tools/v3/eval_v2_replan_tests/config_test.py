@@ -168,6 +168,9 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path, ca
         identity.g2_experiment(diagnostics)["actor_options_sha256"]
         != bound["actor_options_sha256"]
     )
+    osmesa = yaml.safe_load(path.read_text())
+    osmesa["render_gpu_ids"] = None
+    path.write_text(yaml.safe_dump(osmesa))
     with pytest.raises(ValueError, match="G2 F27"):
         resolve(["dry-run", "--config", str(path), "--render-backend", "osmesa"])
     for invalid in (
