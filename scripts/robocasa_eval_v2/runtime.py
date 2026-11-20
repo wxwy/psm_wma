@@ -23,6 +23,7 @@ from cosmos_framework.evaluation.robocasa_v2.scheduler import (
     slot_disposition,
 )
 from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
+from cosmos_framework.inference.g2_cache_budget import CACHE_OPTIONS, CacheBudget
 from cosmos_framework.simulation.robocasa.render_devices import validate_proof
 from eval_robocasa_18task_queue import (
     CHILD,
@@ -348,6 +349,13 @@ class Runtime:
                 "--g2-checkpoint-metadata-sha256",
                 self.g2["checkpoint_metadata_sha256"],
             ]
+            for field, option in CACHE_OPTIONS.items():
+                command.extend(
+                    (
+                        "--" + option.replace("_", "-"),
+                        str(self.g2["cache_budget"][field]),
+                    )
+                )
             if self.g2["profile"] == "g2_r2":
                 command += [
                     "--g2-spatial-root",
@@ -444,20 +452,11 @@ class Runtime:
                 stop=self.stop,
                 local_memory_mode=self.store.manifest["protocol"]["local_memory"],
             )
+            if self.g2 is not None:
+                self._g2_cache_report(info)
         except BaseException:
             self.stop.set()
             raise
-        if self.g2 is not None:
-            conditions = info.get("g2_conditions", {})
-            authority = conditions.get("authority", {})
-            keys = ("run_recipe_sha256", "checkpoint_metadata_sha256")
-            if self.g2["profile"] == "g2_r2":
-                keys += ("view_recipe_id",)
-            if conditions.get("profile") != self.g2["profile"] or any(
-                authority.get(key) != self.g2[key] for key in keys
-            ):
-                self.stop.set()
-                raise ValueError("effective Policy Server G2 source identity mismatch")
         if self.batch_profile:
             tx = info.get("session_transactions", {})
             if any(
@@ -498,6 +497,32 @@ class Runtime:
                 self.servers[key] = (owned, rec, port)
                 self.server_info[key] = info
         return self.servers[key]
+
+    def _g2_cache_report(self, info):
+        conditions = info.get("g2_conditions", {})
+        authority = conditions.get("authority", {})
+        keys = ("run_recipe_sha256", "checkpoint_metadata_sha256")
+        if self.g2["profile"] == "g2_r2":
+            keys += ("view_recipe_id",)
+        if conditions.get("profile") != self.g2["profile"] or any(
+            authority.get(key) != self.g2[key] for key in keys
+        ):
+            raise ValueError("effective Policy Server G2 source identity mismatch")
+        try:
+            cache = conditions["cache"]
+            actual = CacheBudget.from_record(cache["budget"])
+        except (KeyError, TypeError, ValueError) as error:
+            raise ValueError(
+                "effective Policy Server G2 Condition Cache budget mismatch"
+            ) from error
+        if (
+            vars(actual) != self.g2["cache_budget"]
+            or conditions.get("cache_enabled") is not True
+        ):
+            raise ValueError(
+                "effective Policy Server G2 Condition Cache budget mismatch"
+            )
+        return cache
 
     def _actor(self, claim):
         if not self.streaming and not self.shared_vae_profile:
@@ -1094,6 +1119,8 @@ class Runtime:
                                 ),
                             )
                         )
+        if self.g2 is not None and self._snapshot("servers"):
+            self._batch_telemetry(final=True)
         for worker, (owned, record, port) in self._snapshot("servers").items():
             try:
                 was = owned.proc.poll()
@@ -1152,7 +1179,7 @@ class Runtime:
             log.close()
         self.closed = True
 
-    def _batch_telemetry(self):
+    def _batch_telemetry(self, *, final=False):
         import requests
 
         values = {}
@@ -1160,9 +1187,10 @@ class Runtime:
             try:
                 with requests.Session() as transport:
                     transport.trust_env = False
-                    info = transport.get(
-                        f"http://127.0.0.1:{port}/info", timeout=0.2
-                    ).json()["session_transactions"]
+                    response = transport.get(
+                        f"http://127.0.0.1:{port}/info", timeout=1 if final else 0.2
+                    ).json()
+                info = response["session_transactions"]
                 values[key] = {
                     k: info.get(k)
                     for k in (
@@ -1184,11 +1212,44 @@ class Runtime:
                         "requests_finished",
                     )
                 }
+                if self.g2 is not None:
+                    if (
+                        info["manifest_digest"] != self.store.manifest["digest"]
+                        or info["run_lease"] != self.store.lease_id
+                    ):
+                        raise ValueError(
+                            "Condition Cache telemetry belongs to another Run"
+                        )
+                    cache = self._g2_cache_report(response)
+                    values[key]["g2_condition_cache"] = {
+                        k: cache[k]
+                        for k in (
+                            "budget",
+                            "usage",
+                            "pinned",
+                            "high_water",
+                            "rejections",
+                        )
+                    }
             except Exception as error:
                 values[key] = {"diagnostic_error": type(error).__name__}
         try:
-            write(self.store.root / "_internal/batch_status.json", values, replace=True)
-        except OSError:
+            if final:
+                self._proof(
+                    "g2_cache_final",
+                    {
+                        "run_lease": self.store.lease_id,
+                        "manifest_digest": self.store.manifest["digest"],
+                        "servers": values,
+                    },
+                )
+            else:
+                write(
+                    self.store.root / "_internal/batch_status.json",
+                    values,
+                    replace=True,
+                )
+        except (ValueError, OSError):
             pass
         return values
 

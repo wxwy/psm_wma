@@ -156,6 +156,8 @@ def test_g2_actor_launch_uses_the_attested_pythonpath(
         render_backend="egl",
         g2_profile="g2_r1",
         g2_run_recipe=str(recipe),
+        batch_wait_ms=120,
+        g2_cache_gpu_bytes=1 << 30,
         g2_checkpoint_metadata_sha256=identity.sha256_file(
             Path(case.cfg["checkpoint"]) / "model/.metadata"
         ),
@@ -211,6 +213,11 @@ def test_g2_actor_launch_uses_the_attested_pythonpath(
     class RuntimeProbe(CpuRuntime):
         def __init__(self, store, resolved, inputs, environment):
             super().__init__(store, resolved, inputs, environment)
+            assert (
+                store.manifest["experiment"]["g2"]["cache_budget"]["gpu_bytes"]
+                == 1 << 30
+            )
+            assert store.manifest["execution"]["batch_wait_ms"] == 120
             runner = Runtime(store, resolved, inputs, environment)
             monkeypatch.setattr(runner, "_server", lambda worker: (None, {}, 8912))
 
@@ -261,6 +268,10 @@ def test_g2_actor_launch_uses_the_attested_pythonpath(
             monkeypatch.delenv("PYTHONPATH", raising=False)
         assert public(case, mode) == 0
     assert preflight == launches == [expected_path, expected_path]
+    case.cfg["g2_cache_gpu_bytes"] = 2 << 30
+    case.path.write_text(json.dumps(case.cfg))
+    with pytest.raises(ValueError, match="immutable scientific protocol"):
+        public(case, "resume")
 
 
 def core_bytes(root):

@@ -10,10 +10,12 @@ from pathlib import Path
 
 from cosmos_framework.evaluation.robocasa_v2.contract import (
     ACTION_CHUNK_SIZE,
+    G2_R1_FORMAL_BATCH_WAIT_MS,
     ROUND_SCHEDULE,
     STREAMING_SCHEDULE,
     validate_streaming_resources,
 )
+from cosmos_framework.inference.g2_cache_budget import CACHE_OPTIONS, CacheBudget
 
 DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
@@ -82,6 +84,14 @@ G2_ACTOR_PATHS = {"nav_checkout", "ros_setup", "scratch_root"}
 G2_ACTOR_REQUIRED = G2_ACTOR_PATHS | {"nav_revision"}
 
 
+def formal_r1(cfg):
+    return (
+        cfg["g2_profile"] == "g2_r1"
+        and cfg["episodes_per_task"] == 50
+        and (cfg["tasks"] == "all" or len(cfg["tasks"]) == 18)
+    )
+
+
 def validate_g2_profile(cfg):
     profile = cfg["g2_profile"]
     recipe = cfg.get("g2_run_recipe")
@@ -92,7 +102,9 @@ def validate_g2_profile(cfg):
     if profile != "g2_r2" and (view_recipe is not None or view_weights is not None):
         raise ValueError("G2 View VAE settings require the R2 profile")
     if profile == "legacy":
-        if any(value is not None for value in (recipe, metadata, options)):
+        if any(value is not None for value in (recipe, metadata, options)) or any(
+            key in cfg for key in CACHE_OPTIONS.values()
+        ):
             raise ValueError("G2 settings require an explicit G2 profile")
         return
     if (
@@ -107,6 +119,16 @@ def validate_g2_profile(cfg):
         raise ValueError(
             "G2 requires Phase B, assigned Local-TTT, server VAE and guidance 1"
         )
+    if formal_r1(cfg) and cfg["batch_wait_ms"] != G2_R1_FORMAL_BATCH_WAIT_MS:
+        raise ValueError("formal G2 R1 evaluation requires batch_wait_ms=120")
+    budget = CacheBudget.from_options(cfg)
+    budget.validate_placement(
+        slots=cfg["sims_per_gpu"],
+        servers=len(cfg["gpu_ids"]),
+        rss_limit=cfg["max_rss_bytes"],
+        gpu_limit=(cfg["streaming_resources"] or {}).get("max_owned_gpu_bytes"),
+    )
+    cfg.update({key: getattr(budget, name) for name, key in CACHE_OPTIONS.items()})
     if (
         not recipe
         or not Path(recipe).is_file()
@@ -202,7 +224,9 @@ def resolve(argv=None):
 
     Unique.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, mapping)
     data = yaml.load(a.config.read_text(), Loader=Unique)
-    if not isinstance(data, dict) or set(data) - set(DEFAULTS) - PATHS:
+    if not isinstance(data, dict) or set(data) - set(DEFAULTS) - PATHS - set(
+        CACHE_OPTIONS.values()
+    ):
         raise ValueError("unknown V2 config fields")
     cfg = {**DEFAULTS, **data}
     if cfg["schema"] != DEFAULTS["schema"]:
@@ -270,6 +294,8 @@ def resolve(argv=None):
         or cfg["base_port"] + len(cfg["gpu_ids"]) - 1 > 65535
     ):
         raise ValueError("plan/port range")
+    if formal_r1(cfg) and "batch_wait_ms" not in data and a.batch_wait_ms is None:
+        cfg["batch_wait_ms"] = G2_R1_FORMAL_BATCH_WAIT_MS
     stage_cap = cfg["stage_episode_limit_per_task"]
     if stage_cap is not None and (
         type(stage_cap) is not int
