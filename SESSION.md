@@ -1,3 +1,21 @@
+# 2026-11-20 CST — G2 R1 Condition Cache and the fixed 120 ms window
+
+Review Root `511698256f81267abb4fcf6748b9166ab9ca1b6f`, Child/Gitlink
+`5a6585a1308782f52d4601be03771c977a15bf9c`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Use Drafts Root #93 and Child #26.
+
+Condition Cache reports the failed stage and blocking dimensions with
+current usage, pinned usage, requested allocation and high-water marks.
+YAML budgets are frozen in the manifest and checked against the Policy's
+effective `/info`. EvalV2 persists per-Policy telemetry during and at the
+end of each invocation. The native transaction still aborts on exhaustion.
+
+The actual Iter 5000 metadata SHA matched. M8/B4 (16 episodes) and formal
+M16/B8 (900 episodes) dry-runs used 120 ms and an explicit 1 GiB GPU cache
+candidate. Fixed-pair CPU passed 509/509 with zero failures, errors or
+skips. GPT owns M8/B4 then M16/B8 hardware verification and R1
+budget selection. See `docs/g2/online_robocasa.md` for commands and output.
+
 # 2026-11-20 CST — G2 R2 and R1 on G1 R07 EvalV2
 
 Review Root `edca863a84c2997047ad68afa645b9d36541de3a`, Child/Gitlink

@@ -105,6 +105,8 @@ Batch transactions. The G1 R07 manifest assigns 16 Sim slots to each
 Policy Server and a maximum native Batch of 8. The supervisor applies the
 same initialization and resource limits. G2 private native subprocesses
 count toward their enclosing Sim slot's owned process budget.
+The window below applies to formal G2 R1 and its concurrency gates.
+G1 R07 used 20 ms. R2 measures its own window and cache budget.
 
 ```yaml
 scheduling_protocol: streaming_task_affinity_v2
@@ -113,7 +115,7 @@ render_gpu_ids: [4, 5]
 render_backend: egl
 sims_per_gpu: 16
 max_infer_batch_size: 8
-batch_wait_ms: 20
+batch_wait_ms: 120
 tasks: all
 episodes_per_task: 50
 max_rss_bytes: 412316860416
@@ -482,3 +484,117 @@ A published R2 checkpoint was
 not present in the checked formal job directory. Actual R2 Wan encode,
 DCP action generation and real M16/B8 throughput remain independent
 execution checks.
+
+## R1 Condition Cache diagnostics and the 120 ms window
+
+GPT measured 8/8 valid at M4/B2, then 16/16 INVALID at M8/B4 on
+Root `edca863a` and Child `60c3cb1`. The latter rejected reservations
+while preparing `text_kv`. Its error did not identify which condition
+cache limit was reached. [Root review](https://github.com/wxwy/psm_wma/pull/93#issuecomment-7035392629) · [Child review](https://github.com/wxwy/cosmos-framework/pull/26#issuecomment-7035393970)
+
+These top-level G2 YAML fields configure one Policy Server's cache.
+The five values are stored in `experiment.g2.cache_budget`, passed to Child
+at startup, and checked against its effective `/info`. Resume requires the
+same immutable experiment and execution identity. Use a fresh namespace for
+a different budget. Previously published manifests remain readable with
+their original identity.
+
+```yaml
+g2_cache_max_sessions: 32
+g2_cache_max_entries: 256
+g2_cache_cpu_bytes: 268435456
+g2_cache_gpu_bytes: 268435456
+g2_cache_handles: 4096
+```
+
+The values shown are the existing defaults. The total configured cache
+CPU budget must fit the owned RSS limit. A streaming Policy's GPU cache
+budget must fit the per-device owned-memory limit. Both physical limits
+continue to cover the running processes. The candidate preview set only
+`g2_cache_gpu_bytes` to `1073741824` (1 GiB). Choose a fixed R1 deployment
+budget using hardware evidence. Keep R2 budget measurements separate.
+
+On rejection the Policy logs the stage, exceeded dimensions, current
+resident usage, pinned usage, pending allocation, effective limits and
+high-water marks. The request aborts through the existing native batch
+transaction. Unpinned entries remain eligible for LRU eviction when an
+allocation can fit. Active request pins stay in effect until lease release.
+
+Each Policy exposes current and peak cache usage under
+`/info → g2_conditions.cache`. High-water marks track accounted resident
+and request-owned entries, tensor handles, CPU and GPU bytes, Sessions
+and concurrent leases over that process's lifetime. Model working
+tensors and CUDA allocator overhead are covered by the existing physical
+resource monitoring. EvalV2 records cache telemetry in
+`_internal/batch_status.json` during the run and writes a final snapshot
+to `_internal/runtime/g2_cache_final_*.json` before stopping the Policy
+Servers. The final telemetry is in the sealed record's `body`. A collection
+failure is recorded per server.
+
+Use 120 ms for the real M8/B4 gate and the subsequent M16/B8 gate. Compare
+the two Policy Servers' actual native batch sizes, allocation failures,
+high water, physical resource peaks, Session/ACK routing and cleanup.
+Run the formal 900-episode plan after both gates pass. Iter 5000 is an
+intermediate checkpoint for these diagnostics. Report the final R1 score
+with the completed training checkpoint.
+
+### Fixed candidate and evidence
+
+Review Root `511698256f81267abb4fcf6748b9166ab9ca1b6f` and Child/Gitlink
+`5a6585a1308782f52d4601be03771c977a15bf9c` with nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`.
+[Root Draft #93](https://github.com/wxwy/psm_wma/pull/93) · [Child Draft #26](https://github.com/wxwy/cosmos-framework/pull/26)
+
+The existing Iter 5000 model metadata matched its frozen SHA256.
+The real M8/B4 16-episode plan and formal M16/B8 900-episode plan both passed
+the CPU preview with 120 ms and the 1 GiB candidate override. Both previews
+reported zero models and zero environments created. The input configs
+and first preview results are in `.g2_condition_cache_88d8f7ed_20261120.dQ3gJJ`
+on data. The fixed candidate's replay and CPU evidence use
+`.g2_condition_cache_51169825_20261120.BcDz1n` under the same log backup
+directory. Read `m8b4-120ms-plan-only.json` and `formal900-120ms-plan-only.json`
+there. Real GPU capacity and the formal R1 budget remain pending
+independent verification.
+
+The fixed candidate passed 497 CPU cases in 64.97 s plus the separate 12
+No-TTT OS cases in 22.19 s, for **509 passed with zero failures, errors or
+skips**. Native B1/B2/B3/B4/B8 is covered for both G2 profiles. The R1 B3
+test injects an entry limit and confirms that `text_kv` reports pressure
+and aborts all staged Local updates. Separate tests exercise each budget
+dimension, pinned and transient accounting, no stale Session, YAML through
+effective Policy `/info`, and Fresh/Resume drift rejection. Ruff and
+whitespace checks pass for the changed Python files.
+
+The earlier logs retain the CPU environment mismatches. The combined
+inference-only invocation hid Policy CLI options, and running every
+fixture under OSMesa tripped the explicitly EGL fixtures. The final replay
+uses the environments below. The final receipt assertion reads the
+sealed Store record with its normal integrity check.
+
+The final logs and JUnit are `r1-condition-cache-final-cpu.{log,xml}` and
+`r1-g1-nott-cpu.{log,xml}`. The JUnit SHA256 values are
+`70697bc0445f8531fc8b599d3b40449c72d065044268c36d62837358d795c279`
+and `8759da11a8bdaa8962810013412023aed74f8cd1076272d2c3f9b9871e08bf23`.
+
+For the CPU test replay, use the fixed checkout and the mask in the
+preceding author-verification command. Use `COSMOS_TRAINING=1` to expose
+the normal Policy CLI checkpoint/config flags and `MUJOCO_GL=egl` for the
+existing EGL config fixtures. Extend the preceding list of test files with:
+
+```text
+cosmos-framework/cosmos_framework/inference/g2_session_cache_test.py
+cosmos-framework/cosmos_framework/inference/robocasa_dual_mode_test.py
+tools/v3/eval_v2_production_tests/runtime_evidence_test.py
+tools/v3/eval_v2_production_tests/contract_test.py
+```
+
+The No-TTT OS fixture runs separately with software rendering and the
+same CPU mask so its synthetic simulation process has no EGL context
+requirement.
+
+```bash
+MUJOCO_GL=osmesa "$EVAL_SERVER_PYTHON" -m pytest -o addopts='' -q \
+  --noconftest --import-mode=importlib \
+  tools/v3/eval_v2_batch_tests/dual_mode_test.py \
+  --junitxml="$EVAL_EVIDENCE/r1-g1-nott-cpu.xml"
+```

@@ -300,3 +300,10 @@
 - 决策：G2 R1 和 R2 共用 G1 的 EvalV2 Streaming Scheduler、Policy Server、Sim Actor、Native Batch、Session、Local-TTT、ACK、Resume 和 SR 统计。R07 的正式拓扑为 GPU 6/7 运行 Policy、GPU 4/5 运行 Sim、M16/B8，共 32 个 Sim 槽。实际启动继续使用已有资源与授权检查。
 - 实现：当前直接适配 R2，并回归同一链路上的 R1。CAP2、State15、选图、投影和单帧 View VAE 复用离线合同。R2 使用当前 Episode 的 F27 与已冻结的 Global 配方。R1 按自身训练配方运行，Global 关闭。
 - 验收：R1 与 R2 的真实模型验收各自绑定正式 DCP。单槽闭环、CPU 多 Session 回归和 R07 dry-run 分别记录。真实并发吞吐、显存和 SR 由对应硬件运行确认。
+
+## D030 G2 R1 正式评测等待窗口
+
+- 日期：2026-11-20
+- 决策：G2 R1 正式评测和 M8/B4、M16/B8 并发复验使用 `batch_wait_ms=120`。评测通过现有 G1 EvalV2 运行，沿用原有任务判定和 SR 统计。
+- 容量：Condition Cache 五项预算进入 Run 的冻结身份。记录各维度实际占用、高水位和拒绝原因，由两级 GPU 验收确定 R1 正式预算。R2 独立测量。
+- 顺序：M8/B4 和 M16/B8 均通过并证明资源清理后，再开始正式 900 Episode 评测。中途 Iter 5000 用于诊断。最终成绩使用训练完成的检查点。
