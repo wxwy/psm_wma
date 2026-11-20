@@ -17,6 +17,7 @@ from g2.io import ContractError, digest, write_json
 from g2.latent_cache.batch_contract import ENCODER_SCHEMA, NUMERICS, make_batch_recipe
 from g2.latent_cache.contract import fingerprint
 from g2.offline.spatial_metadata import state_metadata
+from g2.online import view_encoder
 from g2.online.spatial_provider import LiveSpatialProvider
 from g2.online.spatial_source import LIVE_VIEWS, task_binding_identity
 from g2.online.view_encoder import decode_rgb, read_view_recipe
@@ -281,3 +282,48 @@ def test_r2_exact_recipe_and_final_png_contract(tmp_path):
     Image.new("RGBA", (2, 4)).save(buffer, format="PNG")
     with pytest.raises(ContractError, match="final RGB PNG"):
         decode_rgb(buffer.getvalue())
+
+
+@pytest.mark.parametrize("bad_latent", [False, True])
+def test_r2_view_encoder_pipe_and_owned_process_cleanup(monkeypatch, bad_latent):
+    # Exercise the real parent channel and process lifecycle with a CPU peer.
+    # The peer returns fixture floats and never loads Wan.
+    script = """
+import socket
+import struct
+import sys
+from g2.online.view_encoder import MAX_PNG_BYTES, LATENT_BYTES, _receive, _send
+with socket.socket(fileno=int(sys.argv[1])) as channel:
+    _send(channel, sys.argv[2].encode())
+    assert _receive(channel, MAX_PNG_BYTES) == b"fixture"
+    if sys.argv[3] == "True":
+        _send(channel, b"wrong length")
+    else:
+        _send(channel, struct.pack("=f", 2.5) * (LATENT_BYTES // 4))
+    assert not channel.recv(1)
+"""
+    popen = view_encoder.subprocess.Popen
+
+    def open_fixture(command, **settings):
+        return popen(
+            [command[0], "-c", script, command[3], command[-1], str(bad_latent)],
+            **settings,
+        )
+
+    monkeypatch.setattr(view_encoder.subprocess, "Popen", open_fixture)
+    encoder = view_encoder.OnlineViewEncoder(
+        weights="fixture", recipe_path="fixture", recipe_id="a" * 64, timeout_s=10
+    )
+    process = encoder.process
+    try:
+        if bad_latent:
+            with pytest.raises(ContractError, match="wrong latent size"):
+                encoder.encode(b"fixture")
+            assert encoder.process is None
+        else:
+            latent = encoder.encode(b"fixture")
+            assert latent.shape == (48, 16, 16)
+            assert latent.unique().tolist() == [2.5]
+    finally:
+        encoder.close()
+    assert process.poll() == 0
