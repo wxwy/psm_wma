@@ -1,11 +1,23 @@
-# 2026-11-20 CST — G2 Online RoboCasa integration
+# 2026-11-20 CST — G2 Online RoboCasa CPU handoff
 
-Codex owns the isolated R1 candidate from Root `4d89a0f7`, Cosmos Gitlink
-`1971fc33`, and nav_sg `70eb7b44`. Files claimed: Root `g2/online/`,
-focused tests and the EvalV2 launcher/config; Child EvalV2 Actor, transaction
-and native G2 server paths; nav_sg live oracle import and snapshot entry.
-Reuse official state, CAP2, GT geometry, and post-step Session frontier.
-Scope is independent code/CPU work and read-only server inventory.
+Fixed implementation Root `b6b5fd2a3b70507c78f44dfe995e34223e8b526e`.
+Cosmos Child/Gitlink `50f0caaa2f3911ebafdf00d5ad4fd53241f64eb9`.
+nav_sg `c7997241b2b0f1e6f7d44f851f8cea62de2144ad`.
+Drafts psm_wma #93, Cosmos #26 and nav_sg #16.
+
+The offline producer and live actor share RoboCasa scene classification,
+grid planning, native snapshot/SG projection, task entities, CAP2,
+State15 and F27 material keyframes. The original offline CLI stays
+available and the native source worker is owned by each episode.
+
+Author checks: fixed server 187 CPU PASS, server Noetic native link PASS,
+three actual no-camera RoboCasa episodes with frame 0/20 snapshots and
+nine exact decision-frontier State15 checks. Native local fixture accepted
+three snapshots and refused four altered requests. Existing real R1
+model publication metadata passed CPU admission. Actual EGL pixels,
+trained-model forward, task scores and sustained performance are pending
+Owner/Execute validation. R2 follows the R1 gate. Exact test commands
+and evidence names are in docs/g2/online_robocasa.md.
 
 # 2026-11-19 CST — Issue #90 REVIEW
 

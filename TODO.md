@@ -1,4 +1,4 @@
-- **G2-ONLINE-ROBOCASA-R1** — IN_PROGRESS; Codex. Isolated live MuJoCo → native nav_sg → causal R1 Actor/Policy integration with CPU replay, explicit GPU/F27 gates and GPT handoff. R2 online execution follows R1 acceptance.
+- **G2-ONLINE-ROBOCASA-R1** — REVIEW. Draft #93 (Root `b6b5fd2a`), Child #26 (`50f0caaa`), nav_sg #16 (`c7997241`). Shared offline/live geometry, F27 and conditioning. CPU 187/187 and real no-camera native snapshots at 0/20 for three tasks. Await independent code review and the real EGL/R1 inference, outcomes and performance gates. R2 follows R1 acceptance.
 
 - **G2-PERF-90** — REVIEW. Root Draft #91, Child Draft #25, fixed 3ac7cb3f/4cca4e9. Code/CPU/real read parity pass. GPT reviews and Owner/Execute supplies isolated GPU 2/10step, strict resume, R2 boundary and throughput evidence.
 

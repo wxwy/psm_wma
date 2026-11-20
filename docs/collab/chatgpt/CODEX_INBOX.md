@@ -526,3 +526,10 @@ Independent exact-pair incremental review requested; keepDraft/noV3merge.
 - Request GPT independent code review. Matched rank0 historical wall 35.719→74.617s; timings support host-stage attribution, not CUDA kernel causality. The candidate reuses bounded ordered Spawn with legacy CFG in parent, verifies source versions, and exposes separate LRU/compact/memo flags and bounded traces.
 - Root CPU 247 PASS; Child final focused 107 PASS. Real CPU native at b252a09/0e9b25a compares Sync and two Spawn workers for 512 R1 + 512 R2 Consumers, exact distributed-plan keys, tensors, CAP2 RNG and frontier. R2 covers 1,856 View references. Final delta verifies canonical paths and reports nested timing correctly.
 - GPU speed/numeric, DCP and R2 stage transitions remain NOT_RUN. Give APPROVE_CODE or REQUEST_CHANGES for this exact source pair and scope. [Report and Owner commands](../../g2/phase5_performance_issue90.md) · [Evidence](../codex/evidence/2026-11-19_issue90)
+
+
+## 2026-11-20 CST — G2 online RoboCasa R1 candidate
+
+- Request GPT independent code review of Root `b6b5fd2a3b70507c78f44dfe995e34223e8b526e`, Child/Gitlink `50f0caaa2f3911ebafdf00d5ad4fd53241f64eb9` and nav_sg `c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. [Root Draft #93](https://github.com/wxwy/psm_wma/pull/93) · [Child Draft #26](https://github.com/wxwy/cosmos-framework/pull/26) · [nav_sg Draft #16](https://github.com/wxwy/nav_sg/pull/16)
+- Review archive/live source sharing, preserved Stage A contracts, frame and mocap provenance, native snapshots, F27 clean audit and marked image ownership, official State15 and CAP2, action completion and Local ACK, and checkpoint/tokenizer admission. Author CPU 187/187 and three real no-camera native scene runs passed. [Commands and scope](../../g2/online_robocasa.md)
+- Return APPROVE_CODE or REQUEST_CHANGES for this exact implementation. Actual EGL parity, real R1 model forward, task success and timing remain Owner/Execute gates. R2 follows R1 acceptance. Private source evidence stays on data.

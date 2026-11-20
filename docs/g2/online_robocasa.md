@@ -111,3 +111,63 @@ or failure in its existing run directory.
 The CPU DCP reshard check exercises real serialized four-rank tensors
 with the native loader. The formal R1 model, real EGL pixels, closed-loop
 success and latency remain separate execution results.
+
+## CPU author evidence
+
+The implementation pair passed 187 cases in the existing server Python
+environment. This covers the old archived source preparation, Stage A,
+task roles, CAP2 and F27 event behavior as well as the live actor,
+mocap capture and shared keyframe audit order. The exact command was run
+from the fixed Root checkout with its fixed Child:
+
+```bash
+env CUDA_VISIBLE_DEVICES='' COSMOS_DEVICE=cpu PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+  PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  PYTHONPATH="$PWD:$PWD/cosmos-framework:$PWD/scripts" \
+  "$EVAL_SERVER_PYTHON" -m pytest --noconftest -o addopts='' -p no:cacheprovider -q \
+  g2/tests/test_online_runtime.py g2/tests/test_online_live_views.py \
+  g2/tests/test_shared_f27.py g2/tests/test_pose5.py g2/tests/test_initial_language.py \
+  g2/tests/test_atomic_6views_run.py g2/tests/test_atomic_6views_preparation.py \
+  g2/tests/test_stage_a_task_semantics.py g2/tests/test_stage_a_contracts.py \
+  g2/tests/test_scene_view_event_index.py g2/tests/test_robot_pose_marker.py \
+  cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_phase6_test.py \
+  cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py \
+  tools/v3/eval_v2_replan_tests/config_test.py tools/v3/eval_v2_production_tests/entry_test.py \
+  --junitxml="$ONLINE_EVIDENCE/candidate-root-shared.xml"
+```
+
+The native Noetic build also passed in the local reference environment.
+The real native transport fixture accepted three snapshots and rejected
+four malformed packets. Real server RoboCasa samples contributed 63
+source-observation comparisons against the official exporter and 15
+exact State15 comparisons against training-window conversion. The
+NavigateKitchen probe included a measured 0.018606 m base displacement.
+An R1 run recipe, checkpoint manifest, canonical config and all four DCP
+shard witnesses passed the native authority check on CPU.
+
+The fixed server build linked `gt_oracle_native` with the existing
+Noetic/PCL 1.15 runtime. A CPU preview admitted all three tasks with zero
+models loaded and zero environments created. In a separate real
+no-camera smoke run, each task executed 20 simulation actions and received
+native frame 0 and 20 snapshots. Frame 16 consumed the frame 0 snapshot.
+The later frame consumed frame 20. All nine requested State15 values
+matched the official source and training-window builders exactly.
+
+| Task | Native frames | Rooms | Native entities |
+| --- | --- | ---: | ---: |
+| OpenDrawer | 0 and 20 | 1 | 49 |
+| CloseFridge | 0 and 20 | 1 | 51 |
+| NavigateKitchen | 0 and 20 | 1 | 43 |
+
+OpenDrawer and CloseFridge used official evaluation metadata with
+a fixed target layout/style and neutral actions. NavigateKitchen used
+the vendor's default PandaOmron controller and a small base command.
+The probes kept cameras and CUDA off. They do not produce image parity
+or policy success rates.
+
+Server logs stay in the isolated verification workspace. The main files
+are `candidate-root-shared.log`, `candidate-root-shared.xml`,
+`native-build-unused-include.log`, `live-native-real-shared.log` and
+the per-episode `source_frames.jsonl`. Actual EGL pixel parity, trained
+R1 weights and inference, and task success or failure remain execution
+gates.
