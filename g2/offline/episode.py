@@ -275,6 +275,17 @@ def _reuse_scene_view_keyframe(stage,keyframe,original_report,event,snapshot,
     return report
 
 
+def _write_registry_audit(stage, snapshot, registry):
+    write_json(stage/'surface_registry.json',dict(
+        schema=registry['schema'],scene_id=snapshot['scene_id'],source_sha256=snapshot['source_sha256'],
+        frame_id=snapshot['frame_id'],native_scene_graph_modified=False,
+        uncertain_surface_ids=registry.get('uncertain_surface_ids',[]),
+        surfaces=[{k:v for k,v in record.items() if k in (
+            'surface_id','geom_id','spec_index','kind','semantic_owner_index','semantic_owner_id',
+            'material_id','structural_role','structural_role_evidence','source_evidence',
+            'room_affiliations','affiliation_status')} for record in registry['surfaces'].values()]))
+
+
 def _render(inputs, prepared, native_output, output, backend="gpu", *,
            visual_mesh_source=False, surface_registry_source=False,
            color_only=False, robot_pose_marker=True,
@@ -283,7 +294,8 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
            sim_direct_material=False,output_profile=None,final_pixel_sink=None):
     from .direct_source import (verify_input_config, load_source, get_data,
                                 prepare_visual_specs, certified_opaque_color_owner_indices)
-    from g2.views.direct_color import save_direct_color_views,save_direct_material_views
+    from g2.views.direct_color import save_direct_color_views
+    from g2.views.f27 import prepare_surface_rooms, render_material_keyframe
     from g2.views.robot_pose_marker import (MARKER_RECIPE_VERSION, MarkerAppearance,
                                            marker_cache_key)
     marker_appearance = marker_appearance if marker_appearance is not None else MarkerAppearance()
@@ -497,78 +509,72 @@ def _render(inputs, prepared, native_output, output, backend="gpu", *,
             print("G2_SCENE_REUSE_STATE_PASS",frame,event.mode,
                   "scene_keyframe",event.scene_source_state,flush=True)
             continue
+        stamp_robot = robot_pose_marker and (output_profile is None or output_profile.marker_variants)
+        references = row.get("reference_views")
         if sim_direct_material:
-            surface=None
+            def audit_clean(_report, current_registry):
+                _write_registry_audit(stage, snapshot, current_registry)
+                return _compare_views(stage, references) if references else 0
+
+            result, registry, marker, exact_views = render_material_keyframe(
+                bundle, manifest, snapshot, stage,
+                model=model, data=state, specs=visual_specs,
+                model_source_sha256=dense['model_source_sha256'],
+                renderer=source_renderer, robot_pose=pose if stamp_robot else None,
+                marker_style=robot_pose_marker_style, marker_appearance=marker_appearance,
+                preserve_clean=output_profile is not None, audit_clean=audit_clean)
+            alpha_sidecar={'view_alpha_layers':[{'alpha_pixel_count':result['transparent_visible_pixels']}]}
         else:
             surface = read_native_surface(native / "native_view_color_TEMP.g2col10.bin", expected, snapshot)
             evidence=dict(surface[4], opaque_ray_owner_indices=opaque_ray_owner_indices,
                           opaque_ray_cert_schema="g2_verified_compiled_gt_opaque_owner_v1")
             surface = (*surface[:4], evidence)
-        if surface_registry_source:
-            from g2.views.surface_registry import compile_surface_registry
-            if event is None:
+            if surface_registry_source:
+                if event is None:
+                    state=get_data(model, states[frame])
+                registry, visual_by_room = prepare_surface_rooms(
+                    model,state,visual_specs,snapshot,
+                    model_source_sha256=dense['model_source_sha256'],renderer=source_renderer)
+            elif visual_mesh_source:
+                from g2.views.visual_mesh_zbuffer import compile_visual_geom_frame
                 state=get_data(model, states[frame])
-            registry=compile_surface_registry(model,state,visual_specs,snapshot)
-            visual_by_room={r['uid']:dict(
-                scene_id=snapshot['scene_id'],source_sha256=snapshot['source_sha256'],
-                frame_id=frame,room_uid=r['uid'],source_model_sha256=dense['model_source_sha256'],
-                surface_registry=registry,surface_renderer=source_renderer)
-                for r in snapshot['rooms']}
-        elif visual_mesh_source:
-            from g2.views.visual_mesh_zbuffer import compile_visual_geom_frame
-            state=get_data(model, states[frame])
-            ids=sorted(e['id'] for e in snapshot['entities'])
-            visual_by_room={
-                r['uid']:compile_visual_geom_frame(
-                    model,state,visual_specs,r,ids)
-                for r in snapshot['rooms']
-            }
-            for source_geometry in visual_by_room.values():
-                source_geometry.update(
-                    scene_id=snapshot["scene_id"],
-                    source_sha256=snapshot["source_sha256"],
-                    frame_id=frame,
-                    source_model_sha256=dense["model_source_sha256"])
-        if sim_direct_material:
-            result=save_direct_material_views(bundle,manifest,snapshot,stage,
-                meters_per_pixel=.01,visual_mesh_by_room=visual_by_room,
-                keep_gpu_context=True)
-        else:
+                ids=sorted(e['id'] for e in snapshot['entities'])
+                visual_by_room={
+                    r['uid']:compile_visual_geom_frame(
+                        model,state,visual_specs,r,ids)
+                    for r in snapshot['rooms']
+                }
+                for source_geometry in visual_by_room.values():
+                    source_geometry.update(
+                        scene_id=snapshot["scene_id"],
+                        source_sha256=snapshot["source_sha256"],
+                        frame_id=frame,
+                        source_model_sha256=dense["model_source_sha256"])
             result = save_direct_color_views(bundle, manifest, snapshot, surface, stage,
                                             meters_per_pixel=.01, renderer_backend=backend,
                                             visual_mesh_by_room=visual_by_room,
                                             keep_gpu_context=surface_registry_source)
+            if surface_registry_source:
+                alpha_sidecar={'view_alpha_layers':[{'alpha_pixel_count':result['transparent_visible_pixels']}]}
+                _write_registry_audit(stage, snapshot, registry)
+            else:
+                alpha_sidecar = save_source_alpha_sidecars(
+                    stage / "g2_original_gpu",
+                    read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
+                    stage / "alpha_source_layer", visual_mesh_by_room=visual_by_room)
+            exact_views = _compare_views(stage, references) if references else 0
+            # Keep the native-color branch's existing clean audit and overlay.
+            marker = None
+            if stamp_robot:
+                from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
+                robot_data = (state if visual_mesh_source or surface_registry_source
+                              else get_data(model, states[frame]))
+                marker = overlay_final_top_views(
+                    stage, chassis_pose(model, robot_data), style=robot_pose_marker_style,
+                    appearance=marker_appearance,preserve_clean=output_profile is not None)
         if event is not None:
             scene_keyframe_stage=stage
             scene_keyframe_report=dict(result)
-        # Native 10mm RGB remains opaque. RGBA alpha evidence is written as a
-        # separate, explicitly not-training-ready layer; no fake background.
-        if surface_registry_source:
-            alpha_sidecar={'view_alpha_layers':[{'alpha_pixel_count':result['transparent_visible_pixels']}]}
-            write_json(stage/'surface_registry.json',dict(
-                schema=registry['schema'],scene_id=snapshot['scene_id'],source_sha256=snapshot['source_sha256'],
-                frame_id=frame,native_scene_graph_modified=False,
-                uncertain_surface_ids=registry.get('uncertain_surface_ids',[]),
-                surfaces=[{k:v for k,v in record.items() if k in (
-                    'surface_id','geom_id','spec_index','kind','semantic_owner_index','semantic_owner_id',
-                    'material_id','structural_role','structural_role_evidence','source_evidence',
-                    'room_affiliations','affiliation_status')} for record in registry['surfaces'].values()]))
-        else:
-            alpha_sidecar = save_source_alpha_sidecars(
-                stage / "g2_original_gpu",
-                read_json(stage / "g2_original_gpu/views.json"), snapshot, alpha_proof,
-                stage / "alpha_source_layer", visual_mesh_by_room=visual_by_room)
-        exact_views = _compare_views(stage, row["reference_views"]) if row.get("reference_views") else 0
-        # Overlay the chassis only AFTER raw View pixel-parity verification.
-        # This never enters native rendering, view geometry, or scene-graph data.
-        marker = None
-        if robot_pose_marker and (output_profile is None or output_profile.marker_variants):
-            from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
-            robot_data = (state if visual_mesh_source or surface_registry_source
-                          else get_data(model, states[frame]))
-            marker = overlay_final_top_views(
-                stage, chassis_pose(model, robot_data), style=robot_pose_marker_style,
-                appearance=marker_appearance,preserve_clean=output_profile is not None)
         if output_profile is not None:
             from g2.views.robot_pose_marker import chassis_pose
             result=read_json(stage/'direct_color_views.json')

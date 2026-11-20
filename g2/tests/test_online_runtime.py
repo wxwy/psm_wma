@@ -239,7 +239,7 @@ def test_current_mocap_geometry_is_bound_to_the_native_state(tmp_path, monkeypat
         np.testing.assert_array_equal(state_data.geom_xpos[0], [1, 2, 3])
         raise ReachedNativeClassification
 
-    monkeypatch.setattr(nav_session, "derive", inspect_private_data)
+    monkeypatch.setattr(nav_session, "derive_scene_metadata", inspect_private_data)
     with pytest.raises(ReachedNativeClassification):
         session.start(env, episode_id="mocap-regression", ep_meta={})
 

@@ -20,10 +20,10 @@ from g2.offline.spatial_metadata import (
     state_metadata,
     validate_raw_pose,
 )
-from g2.views.direct_color import close_gpu_renderers, save_direct_material_views
+from g2.views.direct_color import close_gpu_renderers
+from g2.views.f27 import render_material_keyframe
 from g2.views.render_connections import renderer_member_sets
 from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
-from g2.views.surface_registry import compile_surface_registry
 from g2.views.surface_renderer import SurfaceRenderer
 
 
@@ -113,19 +113,6 @@ class LiveF27:
         snapshot_hash = digest(snapshot_path)
         stage = self.root / f"frame_{frame}"
         if event.scene_rerender:
-            registry = compile_surface_registry(self.model, data, self.specs, snapshot)
-            by_room = {
-                uid: {
-                    "scene_id": snapshot["scene_id"],
-                    "source_sha256": source,
-                    "frame_id": frame,
-                    "room_uid": uid,
-                    "source_model_sha256": self.model_sha256,
-                    "surface_registry": registry,
-                    "surface_renderer": self.renderer,
-                }
-                for uid in room_refs
-            }
             manifest = {
                 "version_sha256": snapshot_hash,
                 "source_scope": {
@@ -134,20 +121,19 @@ class LiveF27:
                     "live_frame": True,
                 },
             }
-            try:
-                save_direct_material_views(
-                    Path(snapshot_path).parent,
-                    manifest,
-                    snapshot,
-                    stage,
-                    visual_mesh_by_room=by_room,
-                    keep_gpu_context=True,
-                )
-            finally:
-                # Robosuite creates the camera context once and its render/read
-                # methods assume it stays current. F27 binds its own EGL context.
-                self.restore_camera()
-            overlay_final_top_views(stage, pose, preserve_clean=True)
+            render_material_keyframe(
+                Path(snapshot_path).parent,
+                manifest,
+                snapshot,
+                stage,
+                model=self.model,
+                data=data,
+                specs=self.specs,
+                model_source_sha256=self.model_sha256,
+                renderer=self.renderer,
+                robot_pose=pose,
+                restore_camera=self.restore_camera,
+            )
             self.keyframe = stage
         elif event.redraw_robot_arrow:
             report = read_json(self.keyframe / "direct_color_views.json")

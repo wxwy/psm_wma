@@ -9,10 +9,10 @@ from pathlib import Path
 import numpy as np
 
 from g2.data.pose5 import Pose5Recipe, build_state15_from_current
+from g2.data.task_entities import bind_task_entities
 from g2.io import ContractError, canonical, read_json, sha
 from g2.language.initial_context import InitialLanguageRecipe, build_initial_language
-from g2.offline.atomic_6views_snapshots import _state_summary
-from g2.offline.task_entities import bind_task_entities
+from g2.nav_bridge.snapshot import summarize_source_graph
 
 from .nav_session import PERIOD_FRAMES, STATE_ENCODING, NativeSession
 
@@ -98,10 +98,11 @@ class OnlineG2DataAdapter:
                 json.dumps(ep_meta, allow_nan=False, default=_metadata_value)
             )
             snapshot = self.native.start(env, episode_id=episode_id, ep_meta=ep_meta)
-            graph = _state_summary(
+            graph = summarize_source_graph(
                 snapshot, self.native.observe(env, 0), 0, snapshot["source_sha256"], 0
             )
             graph.update(
+                schema="g2_robocasa_live_spatial_scene_graph_v1",
                 live_state_sha256=graph.pop("original_state_row_sha256"),
                 state_encoding=STATE_ENCODING,
                 world_frame=snapshot["world_frame"],

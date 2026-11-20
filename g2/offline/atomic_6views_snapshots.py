@@ -11,17 +11,16 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
-import sys
 import time
 
 import numpy as np
 
 from g2.io import ContractError, read_json, write_json
 from g2.nav_bridge.connections import verify_connection_evidence
-from g2.nav_bridge.snapshot import validate_snapshot
+from g2.nav_bridge.mujoco_source import load_oracle_source
+from g2.nav_bridge.snapshot import summarize_source_graph, validate_snapshot
 from .atomic_6views_connections import compute
 
 
@@ -38,56 +37,6 @@ def reference(path):
     if not p.is_file():
         raise ContractError("required source reference is not a regular file")
     return {"path":str(p), "sha256":source_sha(p)}
-
-
-def _native_source(nav_repo):
-    source=Path(nav_repo).resolve(strict=True)/"g2/gt/mujoco_scene.py"
-    if not source.is_file():
-        raise ContractError("nav_sg native GT source unavailable")
-    name="_g2_atomic_native_oracle_source"
-    spec=importlib.util.spec_from_file_location(name,source)
-    module=importlib.util.module_from_spec(spec)
-    sys.modules[name]=module
-    spec.loader.exec_module(module)
-    return module
-
-
-def _state_summary(snapshot, row, frame, source_sha, ns):
-    """Summarize geometry-bound entity/room relationships; no inferred contact."""
-    entities=[]
-    for e in snapshot["entities"]:
-        entities.append({
-            "id":e["id"], "source_instance_id":e["source_instance_id"],
-            "source_category_id":e["source_category_id"],
-            "source_part_id":e["source_part_id"],
-            "kind":e["kind"], "label":e["label"],
-            "room_uid":e["room_uid"], "bbox_min":e["bbox_min"],
-            "bbox_max":e["bbox_max"],
-            "centroid":[(a+b)*.5 for a,b in zip(e["bbox_min"],e["bbox_max"])],
-            "root_affiliations":e["root_affiliations"],
-            "floor_member":e["floor_member"], "upper_member":e["upper_member"],
-            "island_id":e["island_id"],
-        })
-    return {
-        "schema":"g2_robocasa_original_source_spatial_scene_graph_v1",
-        "scene_id":snapshot["scene_id"],
-        "source_sha256":source_sha,
-        "frame_id":frame,
-        "timestamp_ns":ns,
-        "original_state_row_sha256":hashlib.sha256(
-            np.asarray(row,dtype="<f8").tobytes()).hexdigest(),
-        "room_source":"CURRENT_EPISODE_NATIVE_NAV_SG_FRAME0_ROOM",
-        "room_footprint_update_policy":"STATIC_KITCHEN_GEOMETRY_ROOM_REFERENCE",
-        "semantic_on_inside":"NOT_OBSERVABLE_FROM_SOURCE_BBOX",
-        "rooms":[{
-            "uid":r["uid"],"center":r["center"],"label":r["label"],
-            "footprint_cell_count":len(r["footprint"]),
-        } for r in snapshot["rooms"]],
-        "entities":entities,
-        "connections":snapshot["connections"],
-        "relations":snapshot["relations"],
-        "training_ready":False,
-    }
 
 
 def generate(base_snapshot, source_manifest, frames, *,
@@ -115,7 +64,7 @@ def generate(base_snapshot, source_manifest, frames, *,
     repair_policy=identity.get("collision_mesh_repair_policy")
     if repair_policy not in (None,"exact_collinear_edge_v1"):
         raise ContractError("unsupported collision mesh repair policy in native source identity")
-    oracle=_native_source(nav_repo)
+    oracle=load_oracle_source(nav_repo)
     sources=gt["sources"]
     root=next(x["path"] for x in sources if x["logical_id"]=="root.xml")
     model,loaded=oracle.load_model(root,[Path(s["path"]).parent for s in sources])
@@ -192,7 +141,7 @@ def generate(base_snapshot, source_manifest, frames, *,
             write_json(snapshot_path,snap)
             snapshot_ref=reference(snapshot_path)
         graph_path=graphs_dir/f"frame_{frame:06d}.json"
-        write_json(graph_path,_state_summary(
+        write_json(graph_path,summarize_source_graph(
             snap,row,frame,gt["source_sha256"],snap["timestamp_ns"]))
         sequence.append({
             "frame":frame,"snapshot":snapshot_ref,

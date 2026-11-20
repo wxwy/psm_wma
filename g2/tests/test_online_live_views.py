@@ -8,6 +8,7 @@ from PIL import Image
 
 from g2.io import ContractError, digest, read_json, write_json
 from g2.online import live_views
+from g2.views import f27
 
 
 @pytest.fixture
@@ -62,11 +63,11 @@ def native(tmp_path, monkeypatch):
             },
         )
 
-    monkeypatch.setattr(live_views, "save_direct_material_views", save)
+    monkeypatch.setattr(f27, "save_direct_material_views", save)
     monkeypatch.setattr(
         live_views, "prepare_live_visual_specs", lambda *args: [{"g": 0}]
     )
-    monkeypatch.setattr(live_views, "compile_surface_registry", lambda *args: {})
+    monkeypatch.setattr(f27, "compile_surface_registry", lambda *args: {})
     monkeypatch.setattr(
         live_views,
         "renderer_member_sets",

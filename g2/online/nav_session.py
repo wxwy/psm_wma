@@ -17,10 +17,9 @@ from pathlib import Path
 import numpy as np
 
 from g2.io import ContractError, canonical, digest, read_json, sha
+from g2.nav_bridge.mujoco_source import load_oracle_source, native_build_source_sha256
 from g2.nav_bridge.snapshot import validate_snapshot
-from g2.offline.atomic_6views_geometry import grid_from_source
-from g2.offline.atomic_6views_metadata import derive
-from g2.offline.atomic_6views_snapshots import _native_source
+from g2.sim.robocasa_geometry import derive_scene_metadata, grid_from_source
 
 FRAME_NS = 50_000_000
 STATE_ENCODING = "mujoco_fullphysics_with_mocap_f64le_v1"
@@ -52,18 +51,7 @@ class NativeSession:
             raise ContractError(
                 "nav_sg checkout must match its clean candidate revision"
             )
-        # Use the same source inventory as nav_sg's Catkin fingerprint.
-        mapping = self.nav_checkout / "mapping_8_3" / "mapping"
-        sources = sorted(
-            (*mapping.glob("include/**/*.h"), *mapping.glob("src/**/*.cpp")), key=str
-        )
-        if not sources:
-            raise ContractError("selected nav_sg native source files are unavailable")
-        self.native_build_sha256 = hashlib.sha256(
-            "".join(
-                f"{file.relative_to(mapping)}:{digest(file)}\n" for file in sources
-            ).encode()
-        ).hexdigest()
+        self.native_build_sha256 = native_build_source_sha256(self.nav_checkout)
         self.work = None
         self.process = None
         self.render_f27 = render_f27
@@ -122,7 +110,7 @@ class NativeSession:
             ).hexdigest()
         )
         self._forward(row)
-        role_map, self.geo_meta, _ = derive(
+        role_map, self.geo_meta, _ = derive_scene_metadata(
             self.model,
             ep_meta,
             scene_id=self.scene_id,
@@ -166,7 +154,7 @@ class NativeSession:
                 model_sha256=model_sha,
                 restore_camera=restore_camera,
             )
-        self.oracle = _native_source(self.nav_checkout)
+        self.oracle = load_oracle_source(self.nav_checkout)
         grid = grid_plan["grid"]
         self.grid = self.oracle.Grid(
             tuple(grid["dims"]), tuple(grid["origin"]), grid["resolution"]

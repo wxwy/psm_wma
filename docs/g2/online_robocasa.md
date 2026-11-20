@@ -18,6 +18,25 @@ default profile. The new server profile requires the published model shards,
 canonical config, run recipe, metadata SHA256 and matching tokenizer. It
 uses existing Model-D transactions and Omni forward with the R1 conditions.
 
+## Shared offline and online paths
+
+The archived and live sources call the same RoboCasa geometry classifier
+and grid planner in `g2/sim/robocasa_geometry.py`. Both import the pinned
+nav_sg serializer and use the existing snapshot contract and SG projection
+in `g2/nav_bridge`. The original offline metadata and grid commands retain
+their entry points and output fields.
+
+F27 material keyframes use `g2/views/f27.py` in both the production episode
+renderer and live diagnostics. The offline caller supplies its clean RGB
+audit. The live caller supplies its camera EGL restoration. Projection,
+member sets, white-background composition and robot marker use the same
+View implementations. The offline producer seals archived packages and
+the live runtime retains the active image owners.
+
+`g2/data/task_entities.py` holds the shared task initialization semantics.
+The same CAP2 and State15 builders consume that binding and the appropriate
+source observation. EvalV2 owns the live lifecycle and causal frontier.
+
 ## Configuration
 
 Start from `configs/eval/robocasa_eval_v2_phase_b.example.yaml` in a new
