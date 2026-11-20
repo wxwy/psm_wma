@@ -2,6 +2,7 @@
 # ruff: noqa: F811 -- pytest resolves imported fixture names in parameters.
 
 import ast
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,7 +13,7 @@ from cosmos_framework.evaluation.robocasa_v2.store import Store
 from cosmos_framework.inference import robocasa_session_transactions as session
 from robocasa_eval_v2 import identity, runtime
 from robocasa_eval_v2.cli import main
-from robocasa_eval_v2.config import DEFAULTS, execution, resolve
+from robocasa_eval_v2.config import DEFAULTS, execution, rendering, resolve
 
 from tools.v3.eval_v2_production_tests.entry_test import config
 from tools.v3.eval_v2_replan_tests.support import (
@@ -24,6 +25,7 @@ from tools.v3.eval_v2_replan_tests.support import (
 from tools.v3.eval_v2_replan_tests.support import (
     systems as systems,
 )
+from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_config
 
 
 @pytest.mark.parametrize(
@@ -84,7 +86,8 @@ def test_defaults_and_CLI_override_record_effective_values(tmp_path):
     ) == (3, 1048576, 30.0)
 
 
-def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
+@pytest.mark.parametrize("r07", [False, True])
+def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path, capsys, r07):
     path, cfg = config(tmp_path)
     recipe = tmp_path / "recipe.json"
     recipe.write_text("{}")
@@ -102,6 +105,8 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
             "scratch_root": str(tmp_path / "scratch"),
         },
     )
+    if r07:
+        cfg.update(streaming_config(sims_per_gpu=16, render_gpu_ids=[4, 5]))
     path.write_text(yaml.safe_dump(cfg))
     _, resolved = resolve(["dry-run", "--config", str(path)])
     bound = identity.g2_experiment(resolved)
@@ -119,6 +124,7 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
         seed=resolved["seed"],
         horizons={"CloseFridge": 2},
         execution=execution(resolved),
+        rendering=rendering(resolved),
         experiment={
             "model_digest": "1" * 64,
             "config_sha256": "2" * 64,
@@ -131,6 +137,19 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
     )
     Store(Path(cfg["output_dir"]), manifest).create()
     assert main(["dry-run", "--config", str(path)]) == 0
+    preview = json.loads(capsys.readouterr().out)
+    assert preview["models_loaded"] == preview["environments_created"] == 0
+    if r07:
+        assert len(preview["physical_slots"]) == 32
+        assert preview["used_gpus"] == [6, 7]
+        assert manifest["execution"]["max_infer_batch_size"] == 8
+        assert preview["render_slots"] == {
+            slot: {6: 4, 7: 5}[gpu] for slot, gpu in preview["physical_slots"].items()
+        }
+        assert list(preview["render_slots"].values()).count(4) == 16
+        assert list(preview["render_slots"].values()).count(5) == 16
+        with pytest.raises(ValueError, match="differs from frozen Run"):
+            main(["dry-run", "--config", str(path), "--max-infer-batch-size", "4"])
     recipe.write_text('{"changed":true}')
     with pytest.raises(ValueError, match="differs from frozen Run"):
         main(["dry-run", "--config", str(path)])
@@ -154,7 +173,7 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
     for invalid in (
         {"g2_profile": "legacy"},
         {"local_memory_mode": "off"},
-        {"max_infer_batch_size": 2},
+        {"guidance": 1.5},
         {"g2_actor_options": {**cfg["g2_actor_options"], "render_f27": "true"}},
     ):
         path.write_text(yaml.safe_dump({**cfg, **invalid}))

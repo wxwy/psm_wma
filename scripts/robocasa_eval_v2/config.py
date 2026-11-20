@@ -91,12 +91,9 @@ def validate_g2_profile(cfg):
         or cfg["single_latency_arm"] is not None
         or cfg["local_ttt_history_k"] != ACTION_CHUNK_SIZE
         or cfg["guidance"] != 1.0
-        or len(cfg["gpu_ids"]) != 1
-        or cfg["sims_per_gpu"] != 1
-        or cfg["max_infer_batch_size"] != 1
     ):
         raise ValueError(
-            "G2 R1 requires Phase B, assigned Local, server VAE, guidance 1 and one B1/M1 slot"
+            "G2 R1 requires Phase B, assigned Local-TTT, server VAE and guidance 1"
         )
     if (
         not recipe
