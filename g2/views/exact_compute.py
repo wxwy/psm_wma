@@ -5,11 +5,11 @@ pixel checks only triangles crossing its 16x16 tile. Depth/owner semantics
 mirror G2 rasterize() instead of approximate hardware interpolated Z.
 """
 import time
-import math
-from pathlib import Path
+
 import numpy as np
 from mujoco import egl
 from OpenGL import GL as gl
+from g2.io import ContractError
 from g2.views.render import AXES
 
 GLSL = """#version 460 core
@@ -98,21 +98,49 @@ void main(){
     int slot=pix+j*stride;
     owner_out[slot]=hit_id[j];
     depth_out[slot]=hit_z[j];
-    triangle_out[slot]=hit_tri[j];
+    triangle_out[slot]=hit_tri[j]<0 ? -1 : hit_tri[j]+1;
     bary_out[slot*2]=hit_wa[j];bary_out[slot*2+1]=hit_wb[j];
   }
-  ambiguity_out[pix]=truncated ? 1 : 0;
+  ambiguity_out[pix]=truncated ? 3 : 2;
   return;
  }
  owner_out[pix]=winner;
  depth_out[pix]=best;
  if(uReturnHits!=0){
-   triangle_out[pix]=winner_tri;
+   triangle_out[pix]=winner_tri<0 ? -1 : winner_tri+1;
    bary_out[pix*2]=winner_a;bary_out[pix*2+1]=winner_b;
-   ambiguity_out[pix]=ambiguous;
+   ambiguity_out[pix]=ambiguous+2;
  }
 }
 """
+
+
+class RasterHitReadbackError(ContractError):
+    """A GPU hit pass returned incomplete or inconsistent geometry evidence."""
+
+
+def _decode_surface_hits(gids, depth, triangle_codes, weights, status, owners, faces):
+    # Zero is reserved for an unwritten slot. Geom 0 and triangle 0 are legal
+    # source identities, so a cleared buffer must never decode as either.
+    if np.any((status != 2) & (status != 3)):
+        raise RasterHitReadbackError("incomplete F27 raster hit pass")
+    occupied = triangle_codes > 0
+    if np.any(occupied != (gids >= 0)) or np.any(
+        ~occupied & ((triangle_codes != -1) | (gids != -2))
+    ):
+        raise RasterHitReadbackError("F27 raster hit/miss evidence disagrees")
+    triangles = triangle_codes[occupied] - 1
+    if np.any(triangles >= len(owners)) or np.any(gids[occupied] != owners[triangles]):
+        raise RasterHitReadbackError("F27 raster hit is outside the submitted Geom/face table")
+    if not np.isfinite(depth[occupied]).all() or not np.isfinite(weights[occupied]).all():
+        raise RasterHitReadbackError("non-finite F27 raster hit evidence")
+
+    hit_faces = np.full(gids.shape, -1, np.int32)
+    hit_faces[occupied] = faces[triangles]
+    hit_weights = np.concatenate((weights, 1 - weights.sum(axis=-1, keepdims=True)), axis=-1)
+    hit_weights[~occupied] = np.nan
+    return hit_faces, hit_weights, status == 3
+
 
 def glbuf(arr):
     arr=np.ascontiguousarray(arr)
@@ -222,9 +250,9 @@ class ExactGPURaster:
         start=time.perf_counter()
         try:
             for x in (coords,owners,offsets,triids,np.empty(slots,np.int32),np.empty(slots,np.float64),
-                      np.empty(slots if return_hits else 1,np.int32),
+                      np.zeros(slots if return_hits else 1,np.int32),
                       np.empty(slots*2 if return_hits else 1,np.float64),
-                      np.empty(n if return_hits else 1,np.int32)):
+                      np.zeros(n if return_hits else 1,np.int32)):
                 buffers.append(glbuf(x))
             for i,b in enumerate(buffers):gl.glBindBufferBase(gl.GL_SHADER_STORAGE_BUFFER,i,b)
             gl.glUseProgram(self.program)
@@ -261,16 +289,13 @@ class ExactGPURaster:
                 bary_bytes=gl.glGetBufferSubData(gl.GL_SHADER_STORAGE_BUFFER,0,slots*16)
                 gl.glBindBuffer(gl.GL_SHADER_STORAGE_BUFFER,buffers[8])
                 ambiguity_bytes=gl.glGetBufferSubData(gl.GL_SHADER_STORAGE_BUFFER,0,n*4)
-                hit_tri=np.frombuffer(triangle_bytes,dtype="<i4").reshape((-1,h,w) if return_layers else (h,w))
-                hit_tri=hit_tri[:,::-1].copy() if return_layers else hit_tri[::-1].copy()
-                hit_faces=np.full(hit_tri.shape,-1,np.int32)
-                occupied=hit_tri>=0
-                hit_faces[occupied]=np.asarray(allface,dtype=np.int32)[hit_tri[occupied]]
+                codes=np.frombuffer(triangle_bytes,dtype="<i4").reshape(owners_img.shape)
+                codes=codes[:,::-1] if return_layers else codes[::-1]
                 weights=np.frombuffer(bary_bytes,dtype="<f8").reshape((-1,h,w,2) if return_layers else (h,w,2))
-                weights=weights[:,::-1].copy() if return_layers else weights[::-1].copy()
-                hit_weights=np.concatenate((weights,1-weights.sum(axis=-1,keepdims=True)),axis=-1)
-                hit_weights[~occupied]=np.nan
-                hit_ambiguity=np.frombuffer(ambiguity_bytes,dtype='<i4').reshape(h,w)[::-1].astype(bool)
+                weights=weights[:,::-1] if return_layers else weights[::-1]
+                status=np.frombuffer(ambiguity_bytes,dtype='<i4').reshape(h,w)[::-1]
+                hit_faces,hit_weights,hit_ambiguity=_decode_surface_hits(
+                    owners_img,depth_img,codes,weights,status,owners,np.asarray(allface,dtype=np.int32))
             total_gpu_s=time.perf_counter()-start
         finally:
             for i in range(9):gl.glBindBufferBase(gl.GL_SHADER_STORAGE_BUFFER,i,0)

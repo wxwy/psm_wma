@@ -1,3 +1,7 @@
+# 2026-11-20 CST — G2 F27 R1 900-episode recovery
+
+Codex claims `g2/views/exact_compute.py`, `g2/views/surface_renderer.py`, focused F27 tests and the Root EvalV2 source check/CLI and recovery tests on `codex/g2-f27-hit-identity-v3`. Official V3 is `5659b3898b94b302288669d03092fb9b5a5d4023`; Child/Gitlink is `5a6585a1308782f52d4601be03771c977a15bf9c`. Original Run is anchored at `511698256f81267abb4fcf6748b9166ab9ca1b6f`. The archived TurnOffStove EP6 Frame 0 completed floor and -X views before failing in the static translucent hit pass. Author scope is CPU/static and read-only incident inspection. The original Run has 93 valid, 32 invalid and 775 pending episodes.
+
 # 2026-11-20 CST — G2 R1 Condition Cache and the fixed 120 ms window
 
 Review Root `511698256f81267abb4fcf6748b9166ab9ca1b6f`, Child/Gitlink

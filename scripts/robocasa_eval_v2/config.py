@@ -187,6 +187,7 @@ def resolve(argv=None):
     p.add_argument("mode", choices=("fresh", "resume", "dry-run", "authorize"))
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--owner-decision", type=Path)
+    p.add_argument("--f27-resume-approval", type=Path)
     p.add_argument("--gpus")
     p.add_argument("--render-gpus")
     p.add_argument("--render-backend", choices=("egl", "osmesa"))
@@ -208,6 +209,8 @@ def resolve(argv=None):
     p.add_argument("--episodes", type=int)
     p.add_argument("--output-dir", type=Path)
     a = p.parse_args(argv)
+    if a.f27_resume_approval is not None and a.mode not in ("resume", "dry-run"):
+        p.error("--f27-resume-approval requires resume or dry-run of an existing Run")
     import yaml
 
     class Unique(yaml.SafeLoader):

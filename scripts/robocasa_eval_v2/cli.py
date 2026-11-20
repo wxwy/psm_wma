@@ -27,6 +27,7 @@ from robocasa_eval_v2.identity import (
     g2_experiment,
     prepare,
     runtime_environment,
+    verify_f27_resume_source,
     with_runtime_caches,
 )
 from robocasa_eval_v2.resources import physical_slots, render_slots
@@ -36,12 +37,17 @@ from robocasa_eval_v2.runtime import Runtime
 def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
     args, cfg = resolve(argv)
     root = Path(cfg["output_dir"])
+    approval = read(args.f27_resume_approval) if args.f27_resume_approval else None
+    if args.f27_resume_approval is not None and not isinstance(approval, dict):
+        raise ValueError("invalid Run-bound F27 Resume approval")
     if args.mode == "dry-run":
         tasks = discover(cfg)
         dispositions = []
         if (root / "manifest.json").exists():
             manifest = read(root / "manifest.json")
             store = Store(root, manifest)
+            if args.f27_resume_approval is not None:
+                verify_f27_resume_source(manifest, approval)
             if (
                 manifest["task_order"] != [t for t, _ in tasks]
                 or manifest["episodes_per_task"] != cfg["episodes_per_task"]
@@ -61,6 +67,8 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                         "execute": "execute_missing",
                     }[slot_disposition(store, task, ep)]
                     dispositions.append({"task": task, "episode": ep, "action": action})
+        elif args.f27_resume_approval is not None:
+            raise ValueError("F27 Resume approval requires an existing Run manifest")
         print(
             json.dumps(
                 {
@@ -156,8 +164,13 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
     with store.locked():
         if args.mode == "resume":
             anchor = read(root / "_internal/run_inputs.json")
+            options = (
+                {"f27_resume_approval": approval}
+                if args.f27_resume_approval is not None
+                else {}
+            )
             _, inputs, environment = prepare_inputs(
-                cfg, cache=cache, anchor=anchor, manifest=manifest
+                cfg, cache=cache, anchor=anchor, manifest=manifest, **options
             )
         probe = {
             "manifest_digest": manifest["digest"],
@@ -179,6 +192,20 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             inputs["model"], run_root=root, anchor_sha256=digest(anchor)
         )
         write(root / "_internal/verification_cache.json", record, replace=True)
+        # Keep the original manifest and Core files. The sealed invocation
+        # records which results predate this invocation, even if it
+        # invocation is interrupted before it publishes any replacements.
+        transition = {}
+        if args.f27_resume_approval is not None:
+            retained = [
+                {"task": task, "episode": row["episode"], "core_digest": digest(row)}
+                for task in manifest["task_order"]
+                for row in store.rows(task)
+            ]
+            transition = {
+                "f27_resume_approval": approval,
+                "retained_valid_cores": retained,
+            }
         save(
             root / "_internal/invocations" / f"{time.time_ns()}.json",
             {
@@ -186,6 +213,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                 "resolved": cfg,
                 "actual_root": inputs["actual_root"],
                 "clock_preflight": inputs.get("clock_preflight"),
+                **transition,
                 "runtime_probe": {
                     "path": str(probe_path.relative_to(root)),
                     "canonical_sha256": digest(probe),

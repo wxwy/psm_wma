@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -25,6 +26,13 @@ from robocasa_eval_v2.config import execution, rendering
 ROOT = Path(__file__).resolve().parents[2]
 CHILD = ROOT / "cosmos-framework"
 SOURCE_PATHS = ["scripts", "configs", "third_party", "cosmos-framework"]
+F27_RASTER_PATHS = {"g2/views/exact_compute.py", "g2/views/surface_renderer.py"}
+F27_RESUME_PATHS = F27_RASTER_PATHS | {
+    "g2/tests/test_f27_raster_readback.py",
+    "scripts/robocasa_eval_v2/cli.py",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/identity.py",
+}
 
 
 # robocasa1.0.1 /6f90063c TARGET_TASKS["atomic_seen"], read without importing a simulator.
@@ -68,6 +76,67 @@ def verify_source(frozen=None, *, g2=False):
     ):
         raise ValueError("unreviewed/dirty production source or Child identity drift")
     return root, child, actual
+
+
+def verify_f27_resume_source(manifest, approval):
+    """Authorize only this renderer repair for an existing R1 Run."""
+    if manifest is None:
+        raise ValueError("F27 Resume approval requires an existing Run manifest")
+    experiment = manifest["experiment"]
+    frozen, frozen_child = experiment["root_sha"], experiment["child_sha"]
+    fields = {
+        "schema",
+        "approved_by",
+        "owner_decision_ref",
+        "review_ref",
+        "manifest_digest",
+        "from_root",
+        "to_root",
+        "child_sha",
+    }
+    if (
+        experiment.get("g2", {}).get("profile") != "g2_r1"
+        or not isinstance(approval, dict)
+        or set(approval) != fields
+        or not all(
+            isinstance(value, str) and value.strip() for value in approval.values()
+        )
+        or approval["schema"] != "psm_eval_v2_f27_resume_approval_v1"
+        or approval["approved_by"] != "Owner"
+        or approval["manifest_digest"] != manifest["digest"]
+        or approval["from_root"] != frozen
+        or approval["child_sha"] != frozen_child
+        or not re.fullmatch(r"[0-9a-f]{40}", approval["to_root"])
+    ):
+        raise ValueError("invalid Run-bound F27 Resume approval")
+
+    target = approval["to_root"]
+    _, child, actual = verify_source(target, g2=True)
+    if (
+        actual != target
+        or child != frozen_child
+        or git(ROOT, "rev-parse", f"{frozen}:cosmos-framework") != child
+        or git(ROOT, "merge-base", frozen, target) != frozen
+    ):
+        raise ValueError("F27 Resume Root/Child pair differs from the approved source")
+    changed = set(
+        git(
+            ROOT,
+            "diff",
+            "--no-renames",
+            "--name-only",
+            frozen,
+            target,
+            "--",
+            *SOURCE_PATHS,
+            "g2",
+        ).splitlines()
+    )
+    if not F27_RASTER_PATHS <= changed <= F27_RESUME_PATHS:
+        raise ValueError(
+            "F27 Resume includes changes outside the reviewed renderer repair"
+        )
+    return frozen, child, actual
 
 
 def discover(cfg):
@@ -147,7 +216,7 @@ def g2_experiment(cfg):
     return bound
 
 
-def prepare(cfg, *, cache, anchor=None, manifest=None):
+def prepare(cfg, *, cache, anchor=None, manifest=None, f27_resume_approval=None):
     from robocasa_eval_v2.shared_vae import input_files
 
     for path, expected in input_files(cfg):
@@ -156,7 +225,10 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
     tasks = discover(cfg)
     frozen = manifest["experiment"]["root_sha"] if manifest else None
     g2 = g2_experiment(cfg)
-    root, child, actual = verify_source(frozen, g2=g2 is not None)
+    if f27_resume_approval is None:
+        root, child, actual = verify_source(frozen, g2=g2 is not None)
+    else:
+        root, child, actual = verify_f27_resume_source(manifest, f27_resume_approval)
     if sha256_file(Path(cfg["vendor_lock"])) != sha256_file(
         ROOT / "third_party/robosuite_patches/vendor.lock.json"
     ):
@@ -261,6 +333,8 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         "child": child,
         "runtime_probe_evidence": attestation["runtime_probe_evidence"],
     }
+    if f27_resume_approval is not None:
+        inputs["f27_resume_approval"] = f27_resume_approval
     return result, inputs, environment
 
 
@@ -278,7 +352,10 @@ def guard(cfg, manifest, inputs, *, source=True):
             "single-latency/Worker configuration differs from frozen execution identity"
         )
     if source:
-        verify_source(manifest["experiment"]["root_sha"], g2=g2 is not None)
+        if "f27_resume_approval" in inputs:
+            verify_f27_resume_source(manifest, inputs["f27_resume_approval"])
+        else:
+            verify_source(manifest["experiment"]["root_sha"], g2=g2 is not None)
     verify_model_observation(inputs["model"])
     checks = [(Path(cfg["config_file"]), manifest["experiment"]["config_sha256"])]
     from robocasa_eval_v2.shared_vae import input_files
