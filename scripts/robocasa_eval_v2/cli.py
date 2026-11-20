@@ -193,8 +193,8 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
         )
         write(root / "_internal/verification_cache.json", record, replace=True)
         # Keep the original manifest and Core files. The sealed invocation
-        # records which results predate this invocation, even if it
-        # invocation is interrupted before it publishes any replacements.
+        # records which results predate this invocation, including when
+        # execution is interrupted before it publishes any replacements.
         transition = {}
         if args.f27_resume_approval is not None:
             retained = [

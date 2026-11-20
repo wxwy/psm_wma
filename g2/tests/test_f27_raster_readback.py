@@ -76,7 +76,14 @@ def test_missing_geom_zero_recovers_registered_translucent_layer(monkeypatch):
     registry = compile_surface_registry(
         model,
         data,
-        [{"g": 1, "vertices": vertices, "faces": [[0, 1, 2], [3, 4, 5]]}],
+        [
+            {
+                "g": 1,
+                "kind": "box",
+                "vertices": vertices,
+                "faces": [[0, 1, 2], [3, 4, 5]],
+            }
+        ],
         {"entities": [], "rooms": []},
     )
     args = (registry, room, {1}, [0, 0, 0], [1, 1, 1], "floor_top", 0.1)
