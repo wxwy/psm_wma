@@ -52,6 +52,18 @@ class NativeSession:
             raise ContractError(
                 "nav_sg checkout must match its clean candidate revision"
             )
+        # Use the same source inventory as nav_sg's Catkin fingerprint.
+        mapping = self.nav_checkout / "mapping_8_3" / "mapping"
+        sources = sorted(
+            (*mapping.glob("include/**/*.h"), *mapping.glob("src/**/*.cpp")), key=str
+        )
+        if not sources:
+            raise ContractError("selected nav_sg native source files are unavailable")
+        self.native_build_sha256 = hashlib.sha256(
+            "".join(
+                f"{file.relative_to(mapping)}:{digest(file)}\n" for file in sources
+            ).encode()
+        ).hexdigest()
         self.work = None
         self.process = None
         self.render_f27 = render_f27

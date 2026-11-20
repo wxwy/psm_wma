@@ -224,6 +224,12 @@ def test_current_mocap_geometry_is_bound_to_the_native_state(tmp_path, monkeypat
         scratch_root=tmp_path,
     )
 
+    from hashlib import sha256
+
+    empty_file_sha = sha256(b"").hexdigest()
+    expected = sha256(f"src/fixture.cpp:{empty_file_sha}\n".encode()).hexdigest()
+    assert session.native_build_sha256 == expected
+
     class ReachedNativeClassification(Exception):
         pass
 
