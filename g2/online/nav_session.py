@@ -21,9 +21,10 @@ from g2.nav_bridge.mujoco_source import load_oracle_source, native_build_source_
 from g2.nav_bridge.snapshot import validate_snapshot
 from g2.sim.robocasa_geometry import derive_scene_metadata, grid_from_source
 
+from .spatial_source import PERIOD_FRAMES
+
 FRAME_NS = 50_000_000
 STATE_ENCODING = "mujoco_fullphysics_with_mocap_f64le_v1"
-PERIOD_FRAMES = 20
 
 
 class NativeSession:

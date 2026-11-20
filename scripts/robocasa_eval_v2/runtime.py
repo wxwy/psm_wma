@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import hashlib
 import contextlib
+import hashlib
 import json
 import os
 import secrets
@@ -36,11 +36,13 @@ from robocasa_processes import group_members
 
 from robocasa_eval_v2 import identity, resources
 from robocasa_eval_v2.config import execution, rendering
-from robocasa_eval_v2.startup import StartupBudget
 from robocasa_eval_v2.shared_vae import (
     SharedVAESupervisor,
+)
+from robocasa_eval_v2.shared_vae import (
     enabled as shared_vae_enabled,
 )
+from robocasa_eval_v2.startup import StartupBudget
 
 
 def limit_streaming_scheduler_to_prefix(scheduler, max_episode_index_exclusive):
@@ -346,6 +348,15 @@ class Runtime:
                 "--g2-checkpoint-metadata-sha256",
                 self.g2["checkpoint_metadata_sha256"],
             ]
+            if self.g2["profile"] == "g2_r2":
+                command += [
+                    "--g2-spatial-root",
+                    self.cfg["g2_actor_options"]["scratch_root"],
+                    "--g2-view-vae-recipe",
+                    self.cfg["g2_view_vae_recipe"],
+                    "--g2-view-vae-weights",
+                    self.cfg["g2_view_vae_weights"],
+                ]
         if self.shared_vae_profile:
             command += ["--history-source", "sim_shared_vae"]
             from cosmos_framework.inference.robocasa_vae_protocol import (
@@ -439,9 +450,11 @@ class Runtime:
         if self.g2 is not None:
             conditions = info.get("g2_conditions", {})
             authority = conditions.get("authority", {})
+            keys = ("run_recipe_sha256", "checkpoint_metadata_sha256")
+            if self.g2["profile"] == "g2_r2":
+                keys += ("view_recipe_id",)
             if conditions.get("profile") != self.g2["profile"] or any(
-                authority.get(key) != self.g2[key]
-                for key in ("run_recipe_sha256", "checkpoint_metadata_sha256")
+                authority.get(key) != self.g2[key] for key in keys
             ):
                 self.stop.set()
                 raise ValueError("effective Policy Server G2 source identity mismatch")

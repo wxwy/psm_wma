@@ -133,12 +133,15 @@ def runtime_environment(cache, *, g2=False):
 def g2_experiment(cfg):
     if cfg.get("g2_profile", "legacy") == "legacy":
         return None
-    return {
+    bound = {
         "profile": cfg["g2_profile"],
         "run_recipe_sha256": sha256_file(Path(cfg["g2_run_recipe"])),
         "checkpoint_metadata_sha256": cfg["g2_checkpoint_metadata_sha256"],
         "actor_options_sha256": digest(cfg["g2_actor_options"]),
     }
+    if bound["profile"] == "g2_r2":
+        bound["view_recipe_id"] = cfg["g2_view_recipe_id"]
+    return bound
 
 
 def prepare(cfg, *, cache, anchor=None, manifest=None):

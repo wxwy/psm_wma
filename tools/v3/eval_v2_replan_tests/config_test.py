@@ -15,6 +15,7 @@ from robocasa_eval_v2 import identity, runtime
 from robocasa_eval_v2.cli import main
 from robocasa_eval_v2.config import DEFAULTS, execution, rendering, resolve
 
+from g2.latent_cache.batch_contract import ENCODER_SCHEMA, NUMERICS, make_batch_recipe
 from tools.v3.eval_v2_production_tests.entry_test import config
 from tools.v3.eval_v2_replan_tests.support import (
     clock_kernel as clock_kernel,
@@ -87,7 +88,9 @@ def test_defaults_and_CLI_override_record_effective_values(tmp_path):
 
 
 @pytest.mark.parametrize("r07", [False, True])
-def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path, capsys, r07):
+def test_g2_r1_configuration_binds_profile_recipe_and_native_source(
+    tmp_path, capsys, r07
+):
     path, cfg = config(tmp_path)
     recipe = tmp_path / "recipe.json"
     recipe.write_text("{}")
@@ -182,6 +185,65 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path, ca
         path.write_text(yaml.safe_dump({**cfg, **invalid}))
         with pytest.raises(ValueError, match="G2"):
             resolve(["dry-run", "--config", str(path)])
+
+
+def test_r2_uses_the_same_r07_capacity_and_binds_the_trained_view_recipe(
+    tmp_path, capsys
+):
+    path, cfg = config(tmp_path)
+    view_recipe = make_batch_recipe(
+        dict(
+            schema=ENCODER_SCHEMA,
+            numerics=NUMERICS,
+            max_batch_size=32,
+            test_only=False,
+            legacy_loader={"device": "cuda:0"},
+        )
+    )
+    view_path = tmp_path / "view_recipe.json"
+    view_path.write_text(json.dumps(view_recipe))
+    weights = tmp_path / "view_weights.pth"
+    weights.touch()
+    run = tmp_path / "r2_recipe.json"
+    record = dict(
+        training={"profile": "R2"},
+        global_memory={"enabled": True, "top_view_variant": "with_robot"},
+        view_recipe_id=view_recipe["recipe_id"],
+    )
+    run.write_text(json.dumps(record))
+    cfg.update(streaming_config(sims_per_gpu=16, render_gpu_ids=[4, 5]))
+    cfg.update(
+        g2_profile="g2_r2",
+        g2_run_recipe=str(run),
+        g2_checkpoint_metadata_sha256="a" * 64,
+        g2_view_vae_recipe=str(view_path),
+        g2_view_vae_weights=str(weights),
+        g2_actor_options={
+            "nav_checkout": str(tmp_path / "nav"),
+            "nav_revision": "b" * 40,
+            "ros_setup": str(tmp_path / "devel/setup.bash"),
+            "scratch_root": str(tmp_path / "scratch"),
+            "render_f27": True,
+        },
+    )
+    path.write_text(yaml.safe_dump(cfg))
+    assert main(["dry-run", "--config", str(path)]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["used_gpus"] == [6, 7]
+    assert len(result["physical_slots"]) == 32
+    assert result["models_loaded"] == result["environments_created"] == 0
+    assert (
+        identity.g2_experiment(result["resolved"])["view_recipe_id"]
+        == view_recipe["recipe_id"]
+    )
+
+    with pytest.raises(ValueError, match="R2 profile"):
+        path.write_text(yaml.safe_dump({**cfg, "g2_profile": "g2_r1"}))
+        resolve(["dry-run", "--config", str(path)])
+    path.write_text(yaml.safe_dump(cfg))
+    run.write_text(json.dumps({**record, "view_recipe_id": "c" * 64}))
+    with pytest.raises(ValueError, match="training job's"):
+        resolve(["dry-run", "--config", str(path)])
 
 
 def test_real_server_option_parser_passes_spool_to_actor_and_info(tmp_path, systems):

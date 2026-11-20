@@ -1,8 +1,7 @@
-"""Causal R1 conditions for the existing RoboCasa EvalV2 Actor."""
+"""Causal G2 conditions for the existing RoboCasa EvalV2 Actor."""
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
@@ -10,11 +9,12 @@ import numpy as np
 
 from g2.data.pose5 import Pose5Recipe, build_state15_from_current
 from g2.data.task_entities import bind_task_entities
-from g2.io import ContractError, canonical, read_json, sha
+from g2.io import ContractError, canonical, digest, read_json, sha
 from g2.language.initial_context import InitialLanguageRecipe, build_initial_language
 from g2.nav_bridge.snapshot import summarize_source_graph
 
-from .nav_session import PERIOD_FRAMES, STATE_ENCODING, NativeSession
+from .nav_session import STATE_ENCODING, NativeSession
+from .spatial_source import LIVE_VIEWS, PERIOD_FRAMES, task_binding_identity
 
 # PandaOmron_modality.json, through RoboCasa's official LeRobot exporter.
 PANDA_OMRON_STATE = (
@@ -53,10 +53,11 @@ def _metadata_value(value):
 
 
 class OnlineG2DataAdapter:
-    def __init__(self, native, *, data_version, alignment_version):
+    def __init__(self, native, *, data_version, alignment_version, top_variant=None):
         self.native = native
         self.data_version = data_version
         self.alignment_version = alignment_version
+        self.top_variant = top_variant
         self.pose_recipe = Pose5Recipe()
         self.language_recipe = InitialLanguageRecipe()
         self.frame = None
@@ -128,16 +129,9 @@ class OnlineG2DataAdapter:
             self.episode_id = episode_id
             self.scene_id = snapshot["scene_id"]
             self.subtask_id = f"atomic_{episode_index:06d}"
-            self.task_binding_id = hashlib.sha256(
-                canonical(
-                    {
-                        "episode_id": episode_id,
-                        "source_sha256": snapshot["source_sha256"],
-                        "task_set": task_set,
-                        "text_id": text["text_id"],
-                    }
-                )
-            ).hexdigest()
+            self.task_binding_id = task_binding_identity(
+                episode_id, snapshot["source_sha256"], task_set, text["text_id"]
+            )
             self.static_text = {
                 "original_instruction": instruction,
                 "enhanced_instruction": text["augmented_instruction"],
@@ -164,6 +158,7 @@ class OnlineG2DataAdapter:
                     }
                 )
             )
+            self._capture_spatial_source()
         except Exception:
             self.close()
             raise
@@ -180,6 +175,15 @@ class OnlineG2DataAdapter:
             )
         return result
 
+    def _capture_spatial_source(self):
+        if self.top_variant is None:
+            return
+        source = self.native.work / LIVE_VIEWS
+        self.spatial_source = dict(
+            path=source.relative_to(self.native.scratch_root).as_posix(),
+            sha256=digest(source),
+        )
+
     def decision(self, observation, *, frame, composite, local_memory):
         if (
             self.closed
@@ -193,9 +197,7 @@ class OnlineG2DataAdapter:
             raise ContractError(
                 "G2 decision does not match the completed observation frontier"
             )
-        # The Actor owns the actual left+wrist composite and native Local
-        # transaction. R1 uses their existing request/evidence path.
-        return {
+        request = {
             "state": build_state15_from_current(
                 self.state, recipe=self.pose_recipe
             ).tolist(),
@@ -215,6 +217,11 @@ class OnlineG2DataAdapter:
                 "static_text": dict(self.static_text),
             },
         }
+        if self.top_variant is not None:
+            request["g2"].update(
+                top_variant=self.top_variant, spatial_source=dict(self.spatial_source)
+            )
+        return request
 
     def record_completed(
         self, env, observation, *, source_frame, canonical_raw15, submitted_env12
@@ -243,6 +250,7 @@ class OnlineG2DataAdapter:
                         "native entity IDs changed within the live Episode"
                     )
                 self.snapshot, self.spatial_frame = snapshot, frame
+                self._capture_spatial_source()
             self.state, self.frame = state, frame
         except Exception:
             self.close()
@@ -255,10 +263,9 @@ class OnlineG2DataAdapter:
 
 
 def create_episode_runtime(*, profile, settings):
-    if profile != "g2_r1":
-        raise ContractError(
-            "live runtime presently supports the R1 spatial/condition path"
-        )
+    if profile not in ("g2_r1", "g2_r2"):
+        raise ContractError("live runtime requires an explicit G2 profile")
+    global_enabled = profile == "g2_r2"
     required = {
         "run_recipe",
         "nav_checkout",
@@ -273,19 +280,30 @@ def create_episode_runtime(*, profile, settings):
     ):
         raise ContractError("exact G2 online settings are required")
     recipe = read_json(Path(settings["run_recipe"]), limit=1 << 20)
+    top_variant = (
+        recipe["global_memory"]["top_view_variant"] if global_enabled else None
+    )
     if (
-        recipe["training"]["profile"] != "R1"
-        or recipe["global_memory"]["enabled"] is not False
+        recipe["training"]["profile"] != ("R2" if global_enabled else "R1")
+        or recipe["global_memory"]["enabled"] is not global_enabled
+        or (
+            global_enabled
+            and (
+                settings.get("render_f27") is not True
+                or top_variant not in ("with_robot", "without_robot")
+            )
+        )
         or recipe["training"]["state15_recipe_identity"] != Pose5Recipe().recipe_id
         or recipe["provider_kwargs"]["initial_language_recipe_id"]
         != InitialLanguageRecipe().recipe_id
         or recipe["alignment_version"] != "g2_causal_latest_spatial_v1"
     ):
         raise ContractError(
-            "materialized R1 training recipe differs from the online ABI"
+            "materialized G2 training recipe differs from the online ABI"
         )
     return OnlineG2DataAdapter(
         NativeSession(**{k: v for k, v in settings.items() if k != "run_recipe"}),
         data_version=sha(recipe["training"]["data_identity"], "training data identity"),
         alignment_version=recipe["alignment_version"],
+        top_variant=top_variant,
     )

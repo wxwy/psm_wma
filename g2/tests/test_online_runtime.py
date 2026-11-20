@@ -8,8 +8,9 @@ import pytest
 import torch
 
 from g2.data.pose5 import Pose5Recipe, build_pose5
-from g2.io import ContractError, read_json
+from g2.io import ContractError, digest, read_json
 from g2.online import runtime
+from g2.online.spatial_source import LIVE_VIEWS
 
 
 def _observation(frame):
@@ -180,6 +181,51 @@ def test_stale_future_and_duplicate_frames_fail(online):
         _step(env, adapter, before=0, after=1)
     assert native.published == [0]
     assert _decide(adapter, 1)["g2"]["identity"]["decision_frame"] == 1
+
+
+def test_r2_decision_seals_the_latest_completed_f27_publication(
+    online, tmp_path, monkeypatch
+):
+    env, native, _ = online
+    native.scratch_root = tmp_path
+    native.work = tmp_path / "g2-online-actor"
+    publication = native.work / LIVE_VIEWS
+    publication.parent.mkdir(parents=True)
+    publish = native.publish
+
+    def publish_view(frame, row):
+        publication.write_text(f"snapshot for {frame}")
+        return publish(frame, row)
+
+    monkeypatch.setattr(native, "publish", publish_view)
+    adapter = runtime.OnlineG2DataAdapter(
+        native,
+        data_version="0" * 64,
+        alignment_version="g2_causal_latest_spatial_v1",
+        top_variant="with_robot",
+    )
+    adapter.reset(
+        env,
+        _observation(0),
+        episode_id="episode_0/attempt_0",
+        task="OpenDrawer",
+        instruction="Open the drawer.",
+        frame=0,
+        episode_index=0,
+        ep_meta=env.get_ep_meta(),
+    )
+    initial = _decide(adapter, 0)["g2"]
+    assert initial["top_variant"] == "with_robot"
+    assert initial["spatial_source"] == dict(
+        path=f"g2-online-actor/{LIVE_VIEWS}", sha256=digest(publication)
+    )
+    for frame in range(1, 21):
+        _step(env, adapter, before=frame - 1, after=frame)
+        decision = _decide(adapter, frame)["g2"]
+        assert decision["static_text"] == initial["static_text"]
+        assert decision["spatial_source"]["sha256"] == digest(publication)
+        assert (decision["spatial_source"] == initial["spatial_source"]) == (frame < 20)
+    assert decision["identity"]["logical_state_frame"] == 20
 
 
 def test_invalid_simulation_time_never_publishes_or_continues(online):

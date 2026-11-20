@@ -6,8 +6,8 @@ import subprocess
 from collections import defaultdict
 from pathlib import Path
 
-from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
 from cosmos_framework.evaluation.robocasa_v2.contract import STREAMING_SCHEDULE
+from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
 from robocasa_processes import group_members
 
 from robocasa_eval_v2.config import rendering
@@ -34,7 +34,7 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
         devices[index] = uid
     allowed = set()
     shared = cfg.get("local_evidence_profile") == "sim_shared_vae"
-    if cfg.get("g2_profile") == "g2_r1":
+    if cfg.get("g2_profile") in ("g2_r1", "g2_r2"):
         # Each native nav_sg worker has its own process group so the Actor can
         # close one episode independently. Count its RSS under the Actor's lease.
         allowed = owned_group_pids(processes, include_descendants=True)

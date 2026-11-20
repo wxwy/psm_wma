@@ -68,6 +68,14 @@ PATHS = {
     "vendor_lock",
     "asset_manifest",
     "g2_run_recipe",
+    "g2_view_vae_recipe",
+    "g2_view_vae_weights",
+}
+OPTIONAL_PATHS = {
+    "asset_manifest",
+    "g2_run_recipe",
+    "g2_view_vae_recipe",
+    "g2_view_vae_weights",
 }
 
 G2_ACTOR_PATHS = {"nav_checkout", "ros_setup", "scratch_root"}
@@ -79,12 +87,16 @@ def validate_g2_profile(cfg):
     recipe = cfg.get("g2_run_recipe")
     metadata = cfg["g2_checkpoint_metadata_sha256"]
     options = cfg["g2_actor_options"]
+    view_recipe = cfg.get("g2_view_vae_recipe")
+    view_weights = cfg.get("g2_view_vae_weights")
+    if profile != "g2_r2" and (view_recipe is not None or view_weights is not None):
+        raise ValueError("G2 View VAE settings require the R2 profile")
     if profile == "legacy":
         if any(value is not None for value in (recipe, metadata, options)):
             raise ValueError("G2 settings require an explicit G2 profile")
         return
     if (
-        profile != "g2_r1"
+        profile not in ("g2_r1", "g2_r2")
         or cfg["execution_profile"] != "phase_b"
         or cfg["local_memory_mode"] != "required"
         or cfg["local_evidence_profile"] != "server_vae"
@@ -93,7 +105,7 @@ def validate_g2_profile(cfg):
         or cfg["guidance"] != 1.0
     ):
         raise ValueError(
-            "G2 R1 requires Phase B, assigned Local-TTT, server VAE and guidance 1"
+            "G2 requires Phase B, assigned Local-TTT, server VAE and guidance 1"
         )
     if (
         not recipe
@@ -111,7 +123,28 @@ def validate_g2_profile(cfg):
             "G2 requires an existing run recipe, checkpoint metadata SHA, and isolated native settings"
         )
     if options.get("render_f27") and cfg["render_backend"] != "egl":
-        raise ValueError("G2 F27 diagnostics require the attested EGL Actor backend")
+        raise ValueError("G2 F27 requires the attested EGL Actor backend")
+    if profile == "g2_r2":
+        if (
+            options.get("render_f27") is not True
+            or not view_recipe
+            or not view_weights
+            or not Path(view_weights).is_file()
+        ):
+            raise ValueError(
+                "G2 R2 requires live F27 and the pinned View VAE recipe and weights"
+            )
+        from g2.io import read_json, sha
+        from g2.online.view_encoder import read_view_recipe
+
+        run = read_json(recipe, limit=1 << 20)
+        if (
+            run.get("training", {}).get("profile") != "R2"
+            or run.get("global_memory", {}).get("enabled") is not True
+        ):
+            raise ValueError("G2 R2 requires a materialized R2 Global training recipe")
+        view_id = sha(run.get("view_recipe_id"), "training View VAE recipe")
+        cfg["g2_view_recipe_id"] = read_view_recipe(view_recipe, view_id)["recipe_id"]
     for key in G2_ACTOR_PATHS:
         if not isinstance(options[key], str) or not options[key].strip():
             raise ValueError(f"missing G2 actor path {key}")
@@ -341,7 +374,7 @@ def resolve(argv=None):
         or not cfg["save_rollout_mp4"]
     ):
         raise ValueError("invalid rollout_mp4_first_n_per_task")
-    for key in PATHS - {"asset_manifest", "g2_run_recipe"}:
+    for key in PATHS - OPTIONAL_PATHS:
         if not cfg.get(key):
             raise ValueError(f"missing {key}")
     for key in PATHS:
@@ -355,6 +388,8 @@ def resolve(argv=None):
         "dataset_root",
         "vendor_lock",
         "g2_run_recipe",
+        "g2_view_vae_recipe",
+        "g2_view_vae_weights",
     ):
         if not cfg.get(key):
             continue
