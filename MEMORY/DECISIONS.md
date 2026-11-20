@@ -293,3 +293,17 @@
 - 唯一技术前置：用当前 production `GroupedActiveLocalMemoryWindowDriver + GroupedSegmentRuntimeOwner` 在真实 LIBERO4IN1 full catalog 上做 metadata-only stable-slot A2 规划，连续服务至少 5000 optimizer windows，并跨多次 slot-local catalog reuse；必须验证每 window `16 groups × 8 slots`、每 slot chronology/terminal/rebind 正确、`_slot_epoch` 单调、production `queue_permutation` 可独立 replay、无 capacity exhaustion / scheduler admission failure。
 - 治理 override：用户明确“不要管 MM”；因此本轮 long-run readiness 不以 MM exact-pair verdict 为 gating prerequisite。DS/DS_PRO 继续作为只读技术复核，但不拥有阻止 owner 已授权技术范围推进的否决权。
 - 授权翻转：只有上述 5000-window capacity + multi-rollover reuse 证据及其 exact-pair verifier 均 PASS 后，才允许新 readiness 产物写 `long_run_authorization=true` / `READY_FOR_LONG_RUN`。这只表示可启动长训，不表示已启动、不表示 LIBERO SR 提升或真实机器人结论。
+
+## D029 G2 在线评测沿用 G1 R07
+
+- 日期：2026-11-20
+- 决策：G2 R1 和 R2 共用 G1 的 EvalV2 Streaming Scheduler、Policy Server、Sim Actor、Native Batch、Session、Local-TTT、ACK、Resume 和 SR 统计。R07 的正式拓扑为 GPU 6/7 运行 Policy、GPU 4/5 运行 Sim、M16/B8，共 32 个 Sim 槽。实际启动继续使用已有资源与授权检查。
+- 实现：当前直接适配 R2，并回归同一链路上的 R1。CAP2、State15、选图、投影和单帧 View VAE 复用离线合同。R2 使用当前 Episode 的 F27 与已冻结的 Global 配方。R1 按自身训练配方运行，Global 关闭。
+- 验收：R1 与 R2 的真实模型验收各自绑定正式 DCP。单槽闭环、CPU 多 Session 回归和 R07 dry-run 分别记录。真实并发吞吐、显存和 SR 由对应硬件运行确认。
+
+## D030 G2 R1 正式评测等待窗口
+
+- 日期：2026-11-20
+- 决策：G2 R1 正式评测和 M8/B4、M16/B8 并发复验使用 `batch_wait_ms=120`。评测通过现有 G1 EvalV2 运行，沿用原有任务判定和 SR 统计。
+- 容量：Condition Cache 五项预算进入 Run 的冻结身份。记录各维度实际占用、高水位和拒绝原因，由两级 GPU 验收确定 R1 正式预算。R2 独立测量。
+- 顺序：M8/B4 和 M16/B8 均通过并证明资源清理后，再开始正式 900 Episode 评测。中途 Iter 5000 用于诊断。最终成绩使用训练完成的检查点。

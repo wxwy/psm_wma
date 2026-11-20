@@ -6,7 +6,9 @@ source verification uses two tiny real Git repositories, never a disabled guard.
 """
 
 import errno
+import hashlib
 import json
+import os
 import subprocess
 from pathlib import Path
 from types import SimpleNamespace
@@ -14,7 +16,9 @@ from types import SimpleNamespace
 import pytest
 from cosmos_framework.evaluation.robocasa_v2 import store as store_module
 from cosmos_framework.evaluation.robocasa_v2.contract import canonical, digest
-from robocasa_eval_v2 import cli, identity
+from cosmos_framework.simulation.robocasa.closed_loop_eval import verify_runtime
+from robocasa_eval_v2 import cli, identity, resources
+from robocasa_eval_v2.runtime import Runtime
 
 from tools.v3.eval_v2_production_tests.entry_test import CpuRuntime, config
 
@@ -138,6 +142,136 @@ def public(case, mode, *, output=None):
     if output is not None:
         argv += ["--output-dir", str(output)]
     return cli.main(argv, prepare_inputs=identity.prepare, runtime_type=case.Runtime)
+
+
+@pytest.mark.parametrize("inherited_project_paths", [False, True])
+def test_g2_actor_launch_uses_the_attested_pythonpath(
+    real_prepare, tmp_path, monkeypatch, inherited_project_paths
+):
+    case = real_prepare
+    recipe = tmp_path / "recipe.json"
+    recipe.write_text("{}")
+    case.cfg.update(
+        execution_profile="phase_b",
+        render_backend="egl",
+        g2_profile="g2_r1",
+        g2_run_recipe=str(recipe),
+        batch_wait_ms=120,
+        g2_cache_gpu_bytes=1 << 30,
+        g2_checkpoint_metadata_sha256=identity.sha256_file(
+            Path(case.cfg["checkpoint"]) / "model/.metadata"
+        ),
+        g2_actor_options={
+            "nav_checkout": str(tmp_path / "nav"),
+            "nav_revision": "b" * 40,
+            "ros_setup": str(tmp_path / "setup.bash"),
+            "scratch_root": str(tmp_path / "spatial"),
+        },
+    )
+    case.path.write_text(json.dumps(case.cfg))
+    monkeypatch.setattr("eval_robocasa_18task_queue.CHILD", case.child)
+    monkeypatch.setattr(identity, "clock_environment", lambda *args: {"domain": "cpu"})
+    monkeypatch.setattr(
+        resources,
+        "gpu_identity",
+        lambda gpu: {"gpu_id": gpu, "uuid": "GPU-cpu", "pci_bus_id": "0000:04:00.0"},
+    )
+    inherited = str(tmp_path / "other-imports")
+    project = [str(case.source), str(case.child)]
+    parent_paths = [project[1], inherited, *project] if inherited_project_paths else []
+    expected_path = os.pathsep.join(project + ([inherited] if parent_paths else []))
+    probe = tmp_path / "cpu_vendor_probe.py"
+    probe.write_text(
+        "import hashlib, os\n"
+        "def probe_runtime(*, lock_path, asset_manifest, tasks):\n"
+        "    path = os.environ.get('PYTHONPATH', '')\n"
+        "    return {'digest': hashlib.sha256(path.encode()).hexdigest(),\n"
+        "            'interpreter': {'pythonpath_env': path},\n"
+        "            'protocol': {'official_horizons': {t: 2 for t in tasks}}}\n"
+    )
+    preflight = []
+
+    def collect(*, simulation_env, tasks, **kwargs):
+        path = simulation_env["PYTHONPATH"]
+        preflight.append(path)
+        # Fresh must move caches without rereading the parent's search path.
+        monkeypatch.setenv("PYTHONPATH", "/unattested-parent-path")
+        return {
+            "evaluation_runtime": {
+                "digest": hashlib.sha256(path.encode()).hexdigest(),
+                "protocol": {"official_horizons": {task: 2 for task in tasks}},
+            },
+            "runtime_probe_evidence": {},
+        }
+
+    monkeypatch.setattr(identity, "collect_runtime", collect)
+    launches = []
+
+    class CapturedLaunch(Exception):
+        pass
+
+    class RuntimeProbe(CpuRuntime):
+        def __init__(self, store, resolved, inputs, environment):
+            super().__init__(store, resolved, inputs, environment)
+            assert (
+                store.manifest["experiment"]["g2"]["cache_budget"]["gpu_bytes"]
+                == 1 << 30
+            )
+            assert store.manifest["execution"]["batch_wait_ms"] == 120
+            runner = Runtime(store, resolved, inputs, environment)
+            monkeypatch.setattr(runner, "_server", lambda worker: (None, {}, 8912))
+
+            def start(command, *, env, **kwargs):
+                actor = json.loads(
+                    Path(command[command.index("--config") + 1]).read_text()
+                )
+                assert actor["settings"]["g2_profile"] == "g2_r1"
+                assert env["NUMBA_CACHE_DIR"] == str(
+                    case.root / "_internal/cache/numba"
+                )
+                args = SimpleNamespace(
+                    **dict(actor["runtime_args"], runtime_probe_script=str(probe))
+                )
+                with monkeypatch.context() as actor_process:
+                    actor_process.setenv("PYTHONPATH", env["PYTHONPATH"])
+                    attested = verify_runtime(args, "CloseFridge")
+                    assert (
+                        attested["interpreter"]["pythonpath_env"]
+                        == preflight[-1]
+                        == expected_path
+                    )
+                    actor_process.setenv(
+                        "PYTHONPATH", expected_path + os.pathsep + "/unexpected"
+                    )
+                    with pytest.raises(
+                        ValueError, match="runtime changed after preflight"
+                    ):
+                        verify_runtime(args, "CloseFridge")
+                launches.append(env["PYTHONPATH"])
+                raise CapturedLaunch
+
+            monkeypatch.setattr(runner, "_spawn", start)
+            try:
+                with pytest.raises(CapturedLaunch):
+                    runner._setup_actor(
+                        {"task": "CloseFridge", "physical_worker": runner.workers[0]}
+                    )
+            finally:
+                for log in runner.logs:
+                    log.close()
+
+    case.Runtime = RuntimeProbe
+    for mode in ("fresh", "resume"):
+        if parent_paths:
+            monkeypatch.setenv("PYTHONPATH", os.pathsep.join(parent_paths))
+        else:
+            monkeypatch.delenv("PYTHONPATH", raising=False)
+        assert public(case, mode) == 0
+    assert preflight == launches == [expected_path, expected_path]
+    case.cfg["g2_cache_gpu_bytes"] = 2 << 30
+    case.path.write_text(json.dumps(case.cfg))
+    with pytest.raises(ValueError, match="immutable scientific protocol"):
+        public(case, "resume")
 
 
 def core_bytes(root):

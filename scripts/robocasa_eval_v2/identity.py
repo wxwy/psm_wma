@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -53,14 +54,15 @@ def git(repo, *args):
     return subprocess.check_output(["git", "-C", str(repo), *args], text=True).strip()
 
 
-def verify_source(frozen=None):
+def verify_source(frozen=None, *, g2=False):
     actual = git(ROOT, "rev-parse", "HEAD")
     child = git(CHILD, "rev-parse", "HEAD")
     root = frozen or actual
+    paths = [*SOURCE_PATHS, "g2"] if g2 else SOURCE_PATHS
     if (
-        git(ROOT, "ls-files", "--others", "--exclude-standard", "--", *SOURCE_PATHS)
-        or git(ROOT, "diff", "--name-only", root, "HEAD", "--", *SOURCE_PATHS)
-        or git(ROOT, "diff", "--name-only", "HEAD", "--", *SOURCE_PATHS)
+        git(ROOT, "ls-files", "--others", "--exclude-standard", "--", *paths)
+        or git(ROOT, "diff", "--name-only", root, "HEAD", "--", *paths)
+        or git(ROOT, "diff", "--name-only", "HEAD", "--", *paths)
         or git(CHILD, "status", "--porcelain")
         or git(ROOT, "rev-parse", f"{root}:cosmos-framework") != child
     ):
@@ -104,17 +106,45 @@ def interpreter_libraries(executable, environment, names):
     return values[0]
 
 
-def runtime_environment(cache):
-    """Keep vendor/model import caches outside source and training directories."""
+def with_runtime_caches(environment, cache):
+    """Relocate writable caches while keeping the attested interpreter inputs."""
     cache = Path(cache)
-    environment = launch_environment(cache)
-    environment.update(
+    return dict(
+        environment,
         NUMBA_CACHE_DIR=str(cache / "numba"),
         MPLCONFIGDIR=str(cache / "matplotlib"),
         XDG_CACHE_HOME=str(cache / "xdg"),
         HF_HOME=str(cache / "huggingface"),
     )
-    return environment
+
+
+def runtime_environment(cache, *, g2=False):
+    """Build the interpreter environment before measuring the vendor digest."""
+    environment = launch_environment(Path(cache))
+    if g2:
+        project = (str(ROOT), str(CHILD))
+        inherited = environment["PYTHONPATH"].split(os.pathsep)
+        environment["PYTHONPATH"] = os.pathsep.join(
+            (*project, *(path for path in inherited if path not in project))
+        )
+    return with_runtime_caches(environment, cache)
+
+
+def g2_experiment(cfg):
+    if cfg.get("g2_profile", "legacy") == "legacy":
+        return None
+    from cosmos_framework.inference.g2_cache_budget import CacheBudget
+
+    bound = {
+        "profile": cfg["g2_profile"],
+        "run_recipe_sha256": sha256_file(Path(cfg["g2_run_recipe"])),
+        "checkpoint_metadata_sha256": cfg["g2_checkpoint_metadata_sha256"],
+        "actor_options_sha256": digest(cfg["g2_actor_options"]),
+        "cache_budget": vars(CacheBudget.from_options(cfg)),
+    }
+    if bound["profile"] == "g2_r2":
+        bound["view_recipe_id"] = cfg["g2_view_recipe_id"]
+    return bound
 
 
 def prepare(cfg, *, cache, anchor=None, manifest=None):
@@ -125,7 +155,8 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
             raise ValueError("frozen shared Worker input changed")
     tasks = discover(cfg)
     frozen = manifest["experiment"]["root_sha"] if manifest else None
-    root, child, actual = verify_source(frozen)
+    g2 = g2_experiment(cfg)
+    root, child, actual = verify_source(frozen, g2=g2 is not None)
     if sha256_file(Path(cfg["vendor_lock"])) != sha256_file(
         ROOT / "third_party/robosuite_patches/vendor.lock.json"
     ):
@@ -153,7 +184,12 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         model = build_model_identity(**requested)
     if anchor and model["digest"] != anchor["model"]["digest"]:
         raise ValueError("Checkpoint/model sampling identity changed")
-    environment = runtime_environment(cache)
+    if g2 is not None and (
+        model["parameters"]["checkpoint"]["metadata_sha256"]
+        != g2["checkpoint_metadata_sha256"]
+    ):
+        raise ValueError("G2 checkpoint metadata SHA differs from the attested model")
+    environment = runtime_environment(cache, g2=g2 is not None)
     attestation = collect_runtime(
         sim_python=Path(cfg["sim_python"]),
         lock_path=Path(cfg["vendor_lock"]),
@@ -195,6 +231,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
             "root_sha": root,
             "child_sha": child,
             "task_metadata": metadata,
+            **({"g2": g2} if g2 is not None else {}),
         },
     )
     if manifest is not None and result != manifest:
@@ -231,6 +268,9 @@ _INPUT_WITNESSES = {}
 
 
 def guard(cfg, manifest, inputs, *, source=True):
+    g2 = manifest["experiment"].get("g2")
+    if g2_experiment(cfg) != g2:
+        raise ValueError("runtime G2 profile differs from frozen experiment identity")
     if cfg.get("single_latency_arm") is not None and execution(cfg) != manifest.get(
         "execution"
     ):
@@ -238,7 +278,7 @@ def guard(cfg, manifest, inputs, *, source=True):
             "single-latency/Worker configuration differs from frozen execution identity"
         )
     if source:
-        verify_source(manifest["experiment"]["root_sha"])
+        verify_source(manifest["experiment"]["root_sha"], g2=g2 is not None)
     verify_model_observation(inputs["model"])
     checks = [(Path(cfg["config_file"]), manifest["experiment"]["config_sha256"])]
     from robocasa_eval_v2.shared_vae import input_files

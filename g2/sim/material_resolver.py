@@ -13,12 +13,13 @@ import numpy as np
 
 from g2.io import ContractError
 from g2.sim.texture_projection import (
+    TEXTURE_UPLOAD_REFERENCES,
     _bilinear,
     _cube,
+    compiled_texture,
     linear_to_srgb,
     srgb_to_linear,
 )
-
 
 
 def _lazy_decode_texels(raw, srgb):
@@ -195,13 +196,13 @@ class MaterialResolver:
             if int(slots[rgba_role]) >= 0:
                 return unknown("RGBA_TEXTURE_ROLE_UNVERIFIED")
             return description
-        if mujoco.__version__ != "3.3.7":
+        if mujoco.__version__ not in TEXTURE_UPLOAD_REFERENCES:
             return unknown("UNVERIFIED_MUJOCO_TEXTURE_VERSION")
         try:
             if self.lazy_texel_decode:
-                values, _, _, bounds = self._raw_texture_info(texture,mujoco)
+                values, _, _, bounds, _ = self._raw_texture_info(texture,mujoco)
             else:
-                values, _, _ = self._texture(texture, mujoco)
+                values, _, _, _ = self._texture(texture, mujoco)
         except (IndexError, ValueError) as exc:
             return unknown(str(exc))
         if values.shape[2] == 4:
@@ -228,34 +229,16 @@ class MaterialResolver:
         if texture in self._raw_textures:
             self.raw_texture_cache_hits+=1
             return self._raw_textures[texture]
-        model=self.model
-        width,height,channels,address=(
-            int(getattr(model,key)[texture])
-            for key in ("tex_width","tex_height","tex_nchannel","tex_adr"))
-        if min(width,height)<=0 or channels not in (3,4) or address<0:
-            raise ValueError("unsupported texture dimensions/channels")
-        raw=np.asarray(model.tex_data)[address:address+width*height*channels]
-        if raw.size != width*height*channels:
-            raise ValueError("truncated compiled texture")
-        if raw.dtype!=np.uint8:
-            raise ValueError("compiled texture bytes must be uint8")
-        if not hasattr(model,"tex_colorspace"):
-            raise ValueError("compiled texture colorspace is unavailable")
-        space_id=int(model.tex_colorspace[texture])
-        srgb=int(mujoco.mjtColorSpace.mjCOLORSPACE_SRGB)
-        linear=int(mujoco.mjtColorSpace.mjCOLORSPACE_LINEAR)
-        auto=int(mujoco.mjtColorSpace.mjCOLORSPACE_AUTO)
-        if space_id not in (srgb,linear,auto):
-            raise ValueError("unsupported texture colorspace")
-        raw=raw.reshape(height,width,channels).copy()
+        pixels, space, space_id = compiled_texture(self.model, texture, mujoco)
+        raw = pixels.copy()
         raw.setflags(write=False)
         constant=bool(np.all(raw==raw[0,0]))
         alpha_bounds=None
-        if channels==4:
+        if raw.shape[2] == 4:
             # Float64 conversion/multiplication follows original order.
             alpha=raw[...,3]
             alpha_bounds=(float(alpha.min())/255.0,float(alpha.max())/255.0)
-        info=(raw,"sRGB" if space_id==srgb else "LINEAR",constant,alpha_bounds)
+        info = (raw, space, constant, alpha_bounds, space_id)
         self._raw_textures[texture]=info
         self.raw_texture_load_count+=1
         return info
@@ -264,35 +247,13 @@ class MaterialResolver:
         if texture in self._textures:
             self.texture_cache_hits += 1
             return self._textures[texture]
-        model = self.model
-        width, height, channels, address = (
-            int(getattr(model, key)[texture])
-            for key in ("tex_width", "tex_height", "tex_nchannel", "tex_adr")
-        )
-        if min(width, height) <= 0 or channels not in (3, 4) or address < 0:
-            raise ValueError("unsupported texture dimensions/channels")
-        raw = np.asarray(model.tex_data)[address:address + width * height * channels]
-        if raw.size != width * height * channels:
-            raise ValueError("truncated compiled texture")
-        values = raw.reshape(height, width, channels).astype(np.float64) / 255.0
-        if not np.isfinite(values).all() or np.any((values < 0) | (values > 1)):
-            raise ValueError("invalid compiled texture values")
-        if not hasattr(model, "tex_colorspace"):
-            raise ValueError("compiled texture colorspace is unavailable")
-        space = int(model.tex_colorspace[texture])
-        srgb = int(mujoco.mjtColorSpace.mjCOLORSPACE_SRGB)
-        linear = int(mujoco.mjtColorSpace.mjCOLORSPACE_LINEAR)
-        auto = int(mujoco.mjtColorSpace.mjCOLORSPACE_AUTO)
-        # The pinned 3.3.7 GL upload applies sRGB decoding only for SRGB.
-        # AUTO is the compiled non-sRGB/default-linear mode, not permission
-        # to guess a texture's encoding from its file name or color values.
-        if space not in (srgb, linear, auto):
-            raise ValueError("unsupported texture colorspace")
-        if space == srgb:
+        raw, space, space_id = compiled_texture(self.model, texture, mujoco)
+        values = raw.astype(np.float64) / 255.0
+        if space == "sRGB":
             values[..., :3] = srgb_to_linear(values[..., :3])
         values.setflags(write=False)
         constant = bool(np.all(values == values[0, 0]))
-        result = (values, "sRGB" if space == srgb else "LINEAR", constant)
+        result = (values, space, constant, space_id)
         self._textures[texture] = result
         self.texture_decode_count += 1
         return result
@@ -380,14 +341,15 @@ class MaterialResolver:
                               opacity_unknown=True)
             return result()
         evidence["texture_id"] = texture
-        if mujoco.__version__ != "3.3.7":
+        reference = TEXTURE_UPLOAD_REFERENCES.get(mujoco.__version__)
+        if reference is None:
             return reject("unverified MuJoCo texture projection version",
                           UNVERIFIED_VERSION, opacity_unknown=True)
         try:
             if self.lazy_texel_decode:
-                pixels,space,constant,alpha_bounds=self._raw_texture_info(texture,mujoco)
+                pixels, space, constant, alpha_bounds, space_id = self._raw_texture_info(texture,mujoco)
             else:
-                pixels,space,constant=self._texture(texture,mujoco)
+                pixels, space, constant, space_id = self._texture(texture,mujoco)
         except (IndexError, ValueError) as exc:
             return reject(str(exc), opacity_unknown=True)
         channels = pixels.shape[2]
@@ -402,8 +364,8 @@ class MaterialResolver:
         evidence.update(texture_colorspace=space, texture_sampled=True,
                         texture_decode_before_filter=True, texture_mip_level=0,
                         alpha_channel_is_linear=True,
-                        compiled_colorspace_id=int(model.tex_colorspace[texture]),
-                        colorspace_reference="MUJOCO_3_3_7_TEXTURE_UPLOAD",
+                        compiled_colorspace_id=space_id,
+                        colorspace_reference=reference,
                         rgba_role_ignored_by_pinned_rgb_binding=bool(int(texids[rgba_role]) >= 0))
         if texture_type not in (texture2d, texturecube):
             return reject("unsupported surface texture type",
@@ -417,7 +379,8 @@ class MaterialResolver:
                           if self.lazy_texel_decode else pixels[0,0])
             evidence["mode"] = "UNIFORM_TEXTURE_SOURCE_ALBEDO"
         elif kind == "mesh":
-            if texture_type != texture2d or bool(model.mat_texuniform[material]):
+            legacy_mesh_uv = mujoco.__version__ == "3.3.7"
+            if texture_type != texture2d or (legacy_mesh_uv and bool(model.mat_texuniform[material])):
                 return reject("unsupported mesh texture projection",
                               opacity_unknown=(channels == 4))
             mid = int(model.geom_dataid[g])
@@ -435,7 +398,11 @@ class MaterialResolver:
             ids = np.flatnonzero(coordinates_valid)
             if len(ids):
                 uv = np.einsum("bi,bij->bj", weights[ids], values[uvfaces[ids]])
-                uv *= np.asarray(model.mat_texrepeat[material])
+                # The established 3.3.7 F27 recipe scales explicit mesh UVs.
+                # The new 3.3.1 contract follows settexture's explicit-coordinate
+                # branch, which applies texrepeat only to generated coordinates.
+                if legacy_mesh_uv:
+                    uv *= np.asarray(model.mat_texrepeat[material])
                 finite = np.isfinite(uv).all(axis=1)
                 coordinates_valid[ids[~finite]] = False
                 sampled[ids[finite]] = (

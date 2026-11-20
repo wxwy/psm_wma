@@ -22,7 +22,13 @@ from cosmos_framework.evaluation.robocasa_v2.store import (
 from robocasa_episode_resume.model_identity import verification_record
 
 from robocasa_eval_v2.config import execution, rendering, resolve
-from robocasa_eval_v2.identity import discover, prepare, runtime_environment
+from robocasa_eval_v2.identity import (
+    discover,
+    g2_experiment,
+    prepare,
+    runtime_environment,
+    with_runtime_caches,
+)
 from robocasa_eval_v2.resources import physical_slots, render_slots
 from robocasa_eval_v2.runtime import Runtime
 
@@ -40,6 +46,7 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                 manifest["task_order"] != [t for t, _ in tasks]
                 or manifest["episodes_per_task"] != cfg["episodes_per_task"]
                 or manifest.get("execution") != execution(cfg)
+                or manifest["experiment"].get("g2") != g2_experiment(cfg)
                 or (
                     manifest.get("rendering") is not None
                     and manifest["rendering"] != rendering(cfg)
@@ -138,7 +145,10 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             manifest, inputs, environment = prepare_inputs(cfg, cache=Path(temporary))
         store = Store(root, manifest)
         store.create()
-        environment = runtime_environment(cache)
+        if manifest["experiment"].get("g2") is None:
+            environment = runtime_environment(cache)
+        else:
+            environment = with_runtime_caches(environment, cache)
     else:
         manifest = read(root / "manifest.json")
         store = Store(root, manifest)

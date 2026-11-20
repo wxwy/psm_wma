@@ -91,15 +91,11 @@ def corpus_rows(corpus, root):
 def _native_view(index, reader, metadata, state, ref, *, file_witnesses=None):
     """Only selected ViewReader rows, exact owner/content/projection and mask."""
     from cosmos_framework.model.generator.mot.g2_contracts import (
-        RasterMapping,
-        SpatialProjection,
         SpatialView,
         ViewIdentity,
     )
-    from cosmos_framework.model.generator.mot.global_spatial import (
-        patch_layout,
-        projection_vector,
-    )
+
+    from .spatial_view import reader_projection, reader_raster
 
     result = reader.read_view(
         ref["view_id"],
@@ -125,7 +121,6 @@ def _native_view(index, reader, metadata, state, ref, *, file_witnesses=None):
         raise DataCError("DATA_C selected view owner/source/recipe differs")
     view = metadata["views"][ref["view_id"]]
     proj = view["image_projection"]
-    basis = proj["reference_frame"]
     if (
         proj["projection_id"] != ref["projection_id"]
         or view["membership_version"] != ref["membership_version"]
@@ -145,33 +140,9 @@ def _native_view(index, reader, metadata, state, ref, *, file_witnesses=None):
         or ref["direction"] != ref["view_id"].rsplit("/", 1)[-1].removesuffix("_w_rbs")
     ):
         raise DataCError("DATA_C projection/membership/image provenance changed")
-    projection = SpatialProjection(
-        projection_id=proj["projection_id"],
-        world_frame=metadata["world_frame"],
-        origin_world=tuple(map(float, basis["origin_world"])),
-        axes_world=tuple(tuple(map(float, x)) for x in basis["axes_world"]),
-        right_world=tuple(map(float, proj["right_world"])),
-        up_world=tuple(map(float, proj["up_world"])),
-        forward_world=tuple(map(float, proj["forward_world"])),
-        uv_min_room=tuple(map(float, proj["uv_min_room"])),
-        width_px=proj["width_px"],
-        height_px=proj["height_px"],
-        meters_per_pixel=proj["meters_per_pixel"],
-        physical_width_m=proj["physical_width_m"],
-        physical_height_m=proj["physical_height_m"],
-        rows_flipped=proj["rows_flipped"],
-        pixel_center_offset=proj["pixel_center_offset"],
-    )
-    projection_vector(projection)  # native metrical/orthonormal acceptance gate
-    pp = result["preprocessing"]
-    raster = RasterMapping(
-        original_hw=tuple(pp["original_hw"]),
-        resized_hw=tuple(pp["resized_hw"]),
-        canvas_hw=tuple(pp["canvas_hw"]),
-        content_box=tuple(pp["content_box"]),
-    )
-    _, mask = patch_layout(
-        raster, tuple(result["latent"].shape[1:]), rows_flipped=projection.rows_flipped
+    projection = reader_projection(metadata["world_frame"], proj)
+    raster, mask = reader_raster(
+        result["preprocessing"], projection, tuple(result["latent"].shape[1:])
     )
     if not bool(mask.any()) or result["latent"].shape[0] != 48:
         raise DataCError("invalid geometry or latent channels")

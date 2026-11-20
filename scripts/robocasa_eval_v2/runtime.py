@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import hashlib
 import contextlib
+import hashlib
 import json
 import os
 import secrets
@@ -23,6 +23,7 @@ from cosmos_framework.evaluation.robocasa_v2.scheduler import (
     slot_disposition,
 )
 from cosmos_framework.evaluation.robocasa_v2.store import records, save, write
+from cosmos_framework.inference.g2_cache_budget import CACHE_OPTIONS, CacheBudget
 from cosmos_framework.simulation.robocasa.render_devices import validate_proof
 from eval_robocasa_18task_queue import (
     CHILD,
@@ -36,11 +37,13 @@ from robocasa_processes import group_members
 
 from robocasa_eval_v2 import identity, resources
 from robocasa_eval_v2.config import execution, rendering
-from robocasa_eval_v2.startup import StartupBudget
 from robocasa_eval_v2.shared_vae import (
     SharedVAESupervisor,
+)
+from robocasa_eval_v2.shared_vae import (
     enabled as shared_vae_enabled,
 )
+from robocasa_eval_v2.startup import StartupBudget
 
 
 def limit_streaming_scheduler_to_prefix(scheduler, max_episode_index_exclusive):
@@ -89,6 +92,9 @@ class Runtime:
         )
         if store.manifest.get("execution") != execution(cfg):
             raise ValueError("runtime execution profile differs from frozen manifest")
+        self.g2 = store.manifest["experiment"].get("g2")
+        if identity.g2_experiment(cfg) != self.g2:
+            raise ValueError("runtime G2 profile differs from frozen manifest")
         if store.manifest["protocol"]["local_memory"] != cfg.get(
             "local_memory_mode", "required"
         ):
@@ -334,6 +340,31 @@ class Runtime:
         )
         if self.cfg.get("single_latency_arm") is not None:
             command += ["--single-latency-arm", self.cfg["single_latency_arm"]]
+        if self.g2 is not None:
+            command += [
+                "--g2-profile",
+                self.g2["profile"],
+                "--g2-run-recipe",
+                self.cfg["g2_run_recipe"],
+                "--g2-checkpoint-metadata-sha256",
+                self.g2["checkpoint_metadata_sha256"],
+            ]
+            for field, option in CACHE_OPTIONS.items():
+                command.extend(
+                    (
+                        "--" + option.replace("_", "-"),
+                        str(self.g2["cache_budget"][field]),
+                    )
+                )
+            if self.g2["profile"] == "g2_r2":
+                command += [
+                    "--g2-spatial-root",
+                    self.cfg["g2_actor_options"]["scratch_root"],
+                    "--g2-view-vae-recipe",
+                    self.cfg["g2_view_vae_recipe"],
+                    "--g2-view-vae-weights",
+                    self.cfg["g2_view_vae_weights"],
+                ]
         if self.shared_vae_profile:
             command += ["--history-source", "sim_shared_vae"]
             from cosmos_framework.inference.robocasa_vae_protocol import (
@@ -350,7 +381,7 @@ class Runtime:
         # The eval Client/Actors always use 127.0.0.1. Do not expose the
         # transaction-owning Policy Server on all network interfaces.
         # Both concurrent evaluation runs must bind distinct local TCP ports.
-        if self.streaming or self.shared_vae_profile:
+        if self.streaming or self.shared_vae_profile or self.g2 is not None:
             if "--host" in command:
                 raise ValueError("ambiguous Policy Server listen host")
             command.extend(("--host", "127.0.0.1"))
@@ -421,6 +452,8 @@ class Runtime:
                 stop=self.stop,
                 local_memory_mode=self.store.manifest["protocol"]["local_memory"],
             )
+            if self.g2 is not None:
+                self._g2_cache_report(info)
         except BaseException:
             self.stop.set()
             raise
@@ -464,6 +497,32 @@ class Runtime:
                 self.servers[key] = (owned, rec, port)
                 self.server_info[key] = info
         return self.servers[key]
+
+    def _g2_cache_report(self, info):
+        conditions = info.get("g2_conditions", {})
+        authority = conditions.get("authority", {})
+        keys = ("run_recipe_sha256", "checkpoint_metadata_sha256")
+        if self.g2["profile"] == "g2_r2":
+            keys += ("view_recipe_id",)
+        if conditions.get("profile") != self.g2["profile"] or any(
+            authority.get(key) != self.g2[key] for key in keys
+        ):
+            raise ValueError("effective Policy Server G2 source identity mismatch")
+        try:
+            cache = conditions["cache"]
+            actual = CacheBudget.from_record(cache["budget"])
+        except (KeyError, TypeError, ValueError) as error:
+            raise ValueError(
+                "effective Policy Server G2 Condition Cache budget mismatch"
+            ) from error
+        if (
+            vars(actual) != self.g2["cache_budget"]
+            or conditions.get("cache_enabled") is not True
+        ):
+            raise ValueError(
+                "effective Policy Server G2 Condition Cache budget mismatch"
+            )
+        return cache
 
     def _actor(self, claim):
         if not self.streaming and not self.shared_vae_profile:
@@ -606,6 +665,19 @@ class Runtime:
                     "path": str(file),
                     "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
                 }
+            if self.g2 is not None:
+                cfg["settings"].update(
+                    g2_profile=self.g2["profile"],
+                    g2_actor_options={
+                        **self.cfg["g2_actor_options"],
+                        "run_recipe": self.cfg["g2_run_recipe"],
+                    },
+                )
+                file = ROOT / "g2/online/runtime.py"
+                cfg["source_files"]["g2_runtime"] = {
+                    "path": str(file.resolve()),
+                    "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
+                }
             if self.shared_vae_profile:
                 for name, relative in {
                     "shared_client": "simulation/robocasa/sim_shared_vae_client.py",
@@ -703,6 +775,10 @@ class Runtime:
                 or ready.get("runtime_digest") != self.inputs["runtime"]["digest"]
                 or ready.get("local_memory_mode")
                 != self.store.manifest["protocol"]["local_memory"]
+                or (
+                    self.g2 is not None
+                    and ready.get("g2_profile") != self.g2["profile"]
+                )
             ):
                 raise RuntimeError("native Worker handshake mismatch")
             self.actor_rendering[worker] = validate_proof(
@@ -1043,6 +1119,8 @@ class Runtime:
                                 ),
                             )
                         )
+        if self.g2 is not None and self._snapshot("servers"):
+            self._batch_telemetry(final=True)
         for worker, (owned, record, port) in self._snapshot("servers").items():
             try:
                 was = owned.proc.poll()
@@ -1101,7 +1179,7 @@ class Runtime:
             log.close()
         self.closed = True
 
-    def _batch_telemetry(self):
+    def _batch_telemetry(self, *, final=False):
         import requests
 
         values = {}
@@ -1109,9 +1187,10 @@ class Runtime:
             try:
                 with requests.Session() as transport:
                     transport.trust_env = False
-                    info = transport.get(
-                        f"http://127.0.0.1:{port}/info", timeout=0.2
-                    ).json()["session_transactions"]
+                    response = transport.get(
+                        f"http://127.0.0.1:{port}/info", timeout=1 if final else 0.2
+                    ).json()
+                info = response["session_transactions"]
                 values[key] = {
                     k: info.get(k)
                     for k in (
@@ -1133,11 +1212,44 @@ class Runtime:
                         "requests_finished",
                     )
                 }
+                if self.g2 is not None:
+                    if (
+                        info["manifest_digest"] != self.store.manifest["digest"]
+                        or info["run_lease"] != self.store.lease_id
+                    ):
+                        raise ValueError(
+                            "Condition Cache telemetry belongs to another Run"
+                        )
+                    cache = self._g2_cache_report(response)
+                    values[key]["g2_condition_cache"] = {
+                        k: cache[k]
+                        for k in (
+                            "budget",
+                            "usage",
+                            "pinned",
+                            "high_water",
+                            "rejections",
+                        )
+                    }
             except Exception as error:
                 values[key] = {"diagnostic_error": type(error).__name__}
         try:
-            write(self.store.root / "_internal/batch_status.json", values, replace=True)
-        except OSError:
+            if final:
+                self._proof(
+                    "g2_cache_final",
+                    {
+                        "run_lease": self.store.lease_id,
+                        "manifest_digest": self.store.manifest["digest"],
+                        "servers": values,
+                    },
+                )
+            else:
+                write(
+                    self.store.root / "_internal/batch_status.json",
+                    values,
+                    replace=True,
+                )
+        except (ValueError, OSError):
             pass
         return values
 

@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import subprocess
+from collections import defaultdict
 from pathlib import Path
 
-from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
 from cosmos_framework.evaluation.robocasa_v2.contract import STREAMING_SCHEDULE
+from cosmos_framework.simulation.robocasa.render_devices import normalize_pci
 from robocasa_processes import group_members
 
 from robocasa_eval_v2.config import rendering
@@ -33,7 +34,11 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
         devices[index] = uid
     allowed = set()
     shared = cfg.get("local_evidence_profile") == "sim_shared_vae"
-    if cfg.get("scheduling_protocol") == STREAMING_SCHEDULE or shared:
+    if cfg.get("g2_profile") in ("g2_r1", "g2_r2"):
+        # Each native nav_sg worker has its own process group so the Actor can
+        # close one episode independently. Count its RSS under the Actor's lease.
+        allowed = owned_group_pids(processes, include_descendants=True)
+    elif cfg.get("scheduling_protocol") == STREAMING_SCHEDULE or shared:
         allowed = owned_group_pids(processes)
     else:
         for p in processes:
@@ -68,19 +73,30 @@ def check(cfg, processes=(), *, before_models=False, run=subprocess.run):
     return result
 
 
-def owned_group_pids(processes, *, proc=Path("/proc")):
+def owned_group_pids(processes, *, proc=Path("/proc"), include_descendants=False):
     """One /proc scan for all owned groups, rather than one scan per Sim."""
     groups = {p.pgid for p in processes}
     result = set()
+    children = defaultdict(list)
     for entry in proc.iterdir() if groups else ():
         if not entry.name.isdigit():
             continue
         try:
             fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
+            pid = int(entry.name)
             if int(fields[2]) in groups:
-                result.add(int(entry.name))
+                result.add(pid)
+            if include_descendants:
+                children[int(fields[1])].append(pid)
         except (FileNotFoundError, ProcessLookupError):
             continue
+    pending = list(result) if include_descendants else []
+    while pending:
+        parent = pending.pop()
+        for pid in children.pop(parent, ()):
+            if pid not in result:
+                result.add(pid)
+                pending.append(pid)
     return result
 
 

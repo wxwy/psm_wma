@@ -1,3 +1,5 @@
+- **G2-ONLINE-ROBOCASA** — REVIEW. Root Draft #93 `51169825`, Child Draft #26 `5a6585a1`, nav_sg Draft #16 `c7997241`. R1's formal window is 120 ms. Condition Cache exposes blocking dimensions and high-water marks and binds all five budgets to the Run. CPU 509/509 and Iter 5000-backed M8/B4 and formal900 previews pass. GPT/Execute owns the real M8/B4 then M16/B8 capacity gates and formal R1 selection. R2 uses current F27, the exact View recipe and Global Reader, with separate checkpoint and budget verification. The NVIDIA stock material comparison remains open.
+
 - **G2-PERF-90** — REVIEW. Root Draft #91, Child Draft #25, fixed 3ac7cb3f/4cca4e9. Code/CPU/real read parity pass. GPT reviews and Owner/Execute supplies isolated GPU 2/10step, strict resume, R2 boundary and throughput evidence.
 
 - **G2-DATA-C-AUDIT-82** — REVIEW, Draft PR #83. Original `ab3d466e` / `9370c385` requires changes. Candidate `3aff85a7` / `765a06b7` passes related CPU tests and isolated full source certification. GPT reviews fixed pair, phase5 Train filtering, CAP2 v3 seal and bounded R1/R2 reads.

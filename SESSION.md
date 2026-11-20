@@ -1,3 +1,108 @@
+# 2026-11-20 CST — G2 R1 Condition Cache and the fixed 120 ms window
+
+Review Root `511698256f81267abb4fcf6748b9166ab9ca1b6f`, Child/Gitlink
+`5a6585a1308782f52d4601be03771c977a15bf9c`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Use Drafts Root #93 and Child #26.
+
+Condition Cache reports the failed stage and blocking dimensions with
+current usage, pinned usage, requested allocation and high-water marks.
+YAML budgets are frozen in the manifest and checked against the Policy's
+effective `/info`. EvalV2 persists per-Policy telemetry during and at the
+end of each invocation. The native transaction still aborts on exhaustion.
+
+The actual Iter 5000 metadata SHA matched. M8/B4 (16 episodes) and formal
+M16/B8 (900 episodes) dry-runs used 120 ms and an explicit 1 GiB GPU cache
+candidate. Fixed-pair CPU passed 509/509 with zero failures, errors or
+skips. GPT owns M8/B4 then M16/B8 hardware verification and R1
+budget selection. See `docs/g2/online_robocasa.md` for commands and output.
+
+# 2026-11-20 CST — G2 R2 and R1 on G1 R07 EvalV2
+
+Review Root `edca863a84c2997047ad68afa645b9d36541de3a`, Child/Gitlink
+`60c3cb1b32e4001d8d71a6b5fbd15d7233449a5f`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Drafts Root #93 and Child #26.
+
+The owner's latest instruction advances R2 on the shared EvalV2 path.
+Both profiles use native R07 Streaming and Batch, the same Local lifecycle,
+and owned resource accounting. R2 adds the sealed current F27 publication,
+offline selection and projection, pinned View Encode1 and native Global
+Reader/KV. R1 uses its formal text and Local recipe.
+
+The 900-episode R07 dry-run plans 32 physical slots, Policy 6/7, Sim 4/5
+and B8. Fixed-pair strict CPU tests passed 376/376. The formal R2 View
+descriptor and both top variants from retained real OpenDrawer Frame 740
+passed the source check. The earlier R1 real single-slot run remains a
+valid engineering trial with an unsuccessful task outcome. GPT owns the
+independent R2 review and subsequent real checkpoint/GPU checks. The
+checked formal R2 output has recipes and preflight logs. An R2 DCP was
+not present there. See `docs/g2/online_robocasa.md` for exact commands.
+
+# 2026-11-20 CST — G2 Actor runtime identity follow-up
+
+Implementation Root `b5ac5f7af3d3b28d7b2bfcbde63360f39ecd8470`,
+Child/Gitlink `3ef4f6c79aeba3d825ae247c1e884b6199eaf85d`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Drafts #93 and #26.
+
+Independent H100 EGL context and four same-source F27 PNGs passed on
+Root `98beed4a`. The real R1 server loaded Iter 1000, then the Actor
+rejected the changed runtime digest. The fix constructs G2 Python paths
+before preflight and carries them through Fresh cache relocation and
+Resume. 205 tests pass in the existing data environment. The real Worker
+passed the actual vendor runtime check, returned READY and kept the exact
+preflight PYTHONPATH. This startup probe stops before Action Forward.
+
+The independent NVIDIA stock-material comparison remains open at 208
+maximum byte difference on the first box fixture. The diagnostic separates
+texture upload, framebuffer readback, mip selection and shading. The
+same checks on Mesa match the compiled bytes and have at most one byte
+of stock projection error. Read `docs/g2/online_robocasa.md` for the
+fixed launch commands and the independent R1 action, Local ACK and
+stock-material checks.
+
+# 2026-11-20 CST — Online EGL and F27 material follow-up
+
+Root `98beed4a6ecb9134d4925427a5129615d509b744`, Child/Gitlink
+`3ef4f6c79aeba3d825ae247c1e884b6199eaf85d`, native nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Existing Drafts Root #93
+and Child #26 carry the follow-up for the real OpenDrawer findings.
+
+The existing F27 texture resolver gained a verified 3.3.1 upload path and
+the live publisher refuses zero-valid-color Views before marking or setting
+owners. EvalV2 now joins the masked Actor's persistent EGL UUID to driver
+PCI using a separate probe and checks the actual context handle.
+
+Author results include 109 focused CPU cases passed with one existing
+opt-in asset case skipped. Stock EGL comparison covered 1,732 pixels per
+MuJoCo version with maximum RGB delta of one byte. On data, both EGL
+vendor modes matched all 8 devices under the Actor CUDA mask. Real
+OpenDrawer through software EGL yielded 171,864 valid floor-top pixels
+and four PNGs byte-identical to the eager decoder on the same snapshot.
+Decision frames 0/16/20 used spatial frames 0/0/20. The R1 Iter 1000
+candidate configuration passed CPU preview. The independent NVIDIA
+context, real action, Local ACK and outcomes remain execution Gates.
+See `docs/g2/online_robocasa.md` for commands and evidence location.
+
+# 2026-11-20 CST — G2 Online RoboCasa CPU handoff
+
+Fixed implementation Root `b6b5fd2a3b70507c78f44dfe995e34223e8b526e`.
+Cosmos Child/Gitlink `50f0caaa2f3911ebafdf00d5ad4fd53241f64eb9`.
+nav_sg `c7997241b2b0f1e6f7d44f851f8cea62de2144ad`.
+Drafts psm_wma #93, Cosmos #26 and nav_sg #16.
+
+The offline producer and live actor share RoboCasa scene classification,
+grid planning, native snapshot/SG projection, task entities, CAP2,
+State15 and F27 material keyframes. The original offline CLI stays
+available and the native source worker is owned by each episode.
+
+Author checks: fixed server 187 CPU PASS, server Noetic native link PASS,
+three actual no-camera RoboCasa episodes with frame 0/20 snapshots and
+nine exact decision-frontier State15 checks. Native local fixture accepted
+three snapshots and refused four altered requests. Existing real R1
+model publication metadata passed CPU admission. Actual EGL pixels,
+trained-model forward, task scores and sustained performance are pending
+Owner/Execute validation. R2 follows the R1 gate. Exact test commands
+and evidence names are in docs/g2/online_robocasa.md.
+
 # 2026-11-19 CST — Issue #90 REVIEW
 
 Formal V3 Root 77fe8fe475350bbbbfce8e18cced0e7339558544 / Child

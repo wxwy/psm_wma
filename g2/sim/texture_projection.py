@@ -1,7 +1,7 @@
-"""MuJoCo3.3.7 object-linear primitives and OpenGL cube base-level lookup.
+"""Verified MuJoCo object-linear primitives and OpenGL cube base-level lookup.
 
-Reference: google-deepmind/mujoco 3.3.7, render_gl3.c:settexture/renderGeom,
-render_context.c:mjr_uploadTexture; cube orientation is the OpenGL cube table.
+References: google-deepmind/mujoco 3.3.1 and 3.3.7, render_gl3.c:settexture,
+render_context.c:makeTexture. Cube orientation is the OpenGL cube table.
 Asset albedo bytes only: no lighting, camera, mipmap LOD or house certification.
 """
 import numpy as np
@@ -9,6 +9,43 @@ import numpy as np
 REASONS = {0: "VALID", 1: "UNSUPPORTED_APPEARANCE", 2: "SEPARATE_OPACITY_TEXTURE",
            3: "TRANSLUCENT_SAMPLE", 4: "CUBE_FACE_TIE_DIFFERENT_COLOR",
            5: "INVALID_LOCAL_TEXTURE_COORDINATES", 6: "UNVERIFIED_MUJOCO_PROJECTION_VERSION"}
+
+TEXTURE_UPLOAD_REFERENCES = {
+    "3.3.1": "MUJOCO_3_3_1_TEXTURE_UPLOAD",
+    "3.3.7": "MUJOCO_3_3_7_TEXTURE_UPLOAD",
+}
+
+
+def compiled_texture(model, texture, mujoco):
+    """Read the exact compiled base-level bytes under a verified upload ABI."""
+    version = mujoco.__version__
+    if version not in TEXTURE_UPLOAD_REFERENCES:
+        raise ValueError("unverified MuJoCo texture projection version")
+    width, height, channels, address = (
+        int(getattr(model, field)[texture])
+        for field in ("tex_width", "tex_height", "tex_nchannel", "tex_adr")
+    )
+    if min(width, height) <= 0 or channels not in (3, 4) or address < 0:
+        raise ValueError("unsupported texture dimensions/channels")
+    count = width * height * channels
+    raw = np.asarray(model.tex_data)[address:address + count]
+    if raw.size != count or raw.dtype != np.uint8:
+        raise ValueError("invalid compiled texture bytes")
+    pixels = raw.reshape(height, width, channels)
+    if version == "3.3.1":
+        # The tagged renderer uploads GL_RGB or GL_RGBA without sRGB decode.
+        # This ABI has no tex_colorspace or mjtColorSpace to consult.
+        return pixels, "LINEAR", None
+    if not hasattr(model, "tex_colorspace"):
+        raise ValueError("compiled texture colorspace is unavailable")
+    space_id = int(model.tex_colorspace[texture])
+    srgb = int(mujoco.mjtColorSpace.mjCOLORSPACE_SRGB)
+    linear = int(mujoco.mjtColorSpace.mjCOLORSPACE_LINEAR)
+    auto = int(mujoco.mjtColorSpace.mjCOLORSPACE_AUTO)
+    if space_id not in (srgb, linear, auto):
+        raise ValueError("unsupported texture colorspace")
+    # Preserve the accepted 3.3.7 AUTO/non-sRGB and sRGB paths exactly.
+    return pixels, "sRGB" if space_id == srgb else "LINEAR", space_id
 
 
 def srgb_to_linear(color):
@@ -118,8 +155,9 @@ def primitive_colors(model, g, kind, local_points, count, rgba, *, enable_srgb=F
         appearance["reason"] = reason; reasons[:] = code
         return rgba, valid, appearance, reasons
 
-    if mujoco.__version__ != "3.3.7":
+    if mujoco.__version__ not in TEXTURE_UPLOAD_REFERENCES:
         return reject("unverified MuJoCo primitive projection version", 6)
+    appearance["projection_reference"] = f"MuJoCo{mujoco.__version__}_render_gl3_settexture"
     if kind not in ("box", "cylinder", "sphere", "ellipsoid"):
         return reject("unsupported primitive object-coordinate transform")
     if (not isinstance(local_points, np.ndarray) or local_points.shape != (count, 3)
@@ -135,11 +173,12 @@ def primitive_colors(model, g, kind, local_points, count, rgba, *, enable_srgb=F
         return reject("no RGB texture role bound by the pinned renderer")
     if int(texids[int(mujoco.mjtTextureRole.mjTEXROLE_OPACITY)]) >= 0:
         return reject("separate opacity texture", 2)
-    width, height, channels, address = [int(getattr(model, key)[texture])
-        for key in ("tex_width", "tex_height", "tex_nchannel", "tex_adr")]
-    if channels not in (3, 4) or min(width, height) <= 0:
-        return reject("unsupported texture dimensions/channel count")
-    pixels = model.tex_data[address:address + width * height * channels].reshape(height, width, channels).astype(float) / 255
+    try:
+        raw, space, space_id = compiled_texture(model, texture, mujoco)
+    except (IndexError, ValueError) as exc:
+        return reject(str(exc))
+    height, width, channels = raw.shape
+    pixels = raw.astype(float) / 255
     size = model.geom_size[g].astype(float).copy()
     if kind == "sphere": size[:] = size[0]
     elif kind == "cylinder": size = np.asarray([size[0], size[0], size[1]])
@@ -148,9 +187,9 @@ def primitive_colors(model, g, kind, local_points, count, rgba, *, enable_srgb=F
     object_points = local_points / size
     uniform = bool(model.mat_texuniform[mat])
     texture_type = int(model.tex_type[texture])
-    appearance["colorspace_id"]=int(model.tex_colorspace[texture])
+    appearance["colorspace_id"] = space_id
     if texture_type == int(mujoco.mjtTexture.mjTEXTURE_2D):
-        if int(model.tex_colorspace[texture])==int(mujoco.mjtColorSpace.mjCOLORSPACE_SRGB):
+        if space == "sRGB":
             return reject("sRGB decode/filter/output encoding is outside the verified base-byte projection path")
         xy = local_points[:, :2] if uniform else object_points[:, :2]
         uv = xy * [.5, -.5] * model.mat_texrepeat[mat] - .5

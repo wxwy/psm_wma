@@ -5,19 +5,25 @@ from __future__ import annotations
 import argparse
 import math
 import os
+import re
 from pathlib import Path
 
 from cosmos_framework.evaluation.robocasa_v2.contract import (
     ACTION_CHUNK_SIZE,
+    G2_R1_FORMAL_BATCH_WAIT_MS,
     ROUND_SCHEDULE,
     STREAMING_SCHEDULE,
     validate_streaming_resources,
 )
+from cosmos_framework.inference.g2_cache_budget import CACHE_OPTIONS, CacheBudget
 
 DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
     "local_memory_mode": "required",
+    "g2_profile": "legacy",
+    "g2_checkpoint_metadata_sha256": None,
+    "g2_actor_options": None,
     "local_ttt_history_k": None,
     "single_latency_arm": None,
     "local_evidence_profile": "server_vae",
@@ -63,7 +69,115 @@ PATHS = {
     "sim_python",
     "vendor_lock",
     "asset_manifest",
+    "g2_run_recipe",
+    "g2_view_vae_recipe",
+    "g2_view_vae_weights",
 }
+OPTIONAL_PATHS = {
+    "asset_manifest",
+    "g2_run_recipe",
+    "g2_view_vae_recipe",
+    "g2_view_vae_weights",
+}
+
+G2_ACTOR_PATHS = {"nav_checkout", "ros_setup", "scratch_root"}
+G2_ACTOR_REQUIRED = G2_ACTOR_PATHS | {"nav_revision"}
+
+
+def formal_r1(cfg):
+    return (
+        cfg["g2_profile"] == "g2_r1"
+        and cfg["episodes_per_task"] == 50
+        and (cfg["tasks"] == "all" or len(cfg["tasks"]) == 18)
+    )
+
+
+def validate_g2_profile(cfg):
+    profile = cfg["g2_profile"]
+    recipe = cfg.get("g2_run_recipe")
+    metadata = cfg["g2_checkpoint_metadata_sha256"]
+    options = cfg["g2_actor_options"]
+    view_recipe = cfg.get("g2_view_vae_recipe")
+    view_weights = cfg.get("g2_view_vae_weights")
+    if profile != "g2_r2" and (view_recipe is not None or view_weights is not None):
+        raise ValueError("G2 View VAE settings require the R2 profile")
+    if profile == "legacy":
+        if any(value is not None for value in (recipe, metadata, options)) or any(
+            key in cfg for key in CACHE_OPTIONS.values()
+        ):
+            raise ValueError("G2 settings require an explicit G2 profile")
+        return
+    if (
+        profile not in ("g2_r1", "g2_r2")
+        or cfg["execution_profile"] != "phase_b"
+        or cfg["local_memory_mode"] != "required"
+        or cfg["local_evidence_profile"] != "server_vae"
+        or cfg["single_latency_arm"] is not None
+        or cfg["local_ttt_history_k"] != ACTION_CHUNK_SIZE
+        or cfg["guidance"] != 1.0
+    ):
+        raise ValueError(
+            "G2 requires Phase B, assigned Local-TTT, server VAE and guidance 1"
+        )
+    if formal_r1(cfg) and cfg["batch_wait_ms"] != G2_R1_FORMAL_BATCH_WAIT_MS:
+        raise ValueError("formal G2 R1 evaluation requires batch_wait_ms=120")
+    budget = CacheBudget.from_options(cfg)
+    budget.validate_placement(
+        slots=cfg["sims_per_gpu"],
+        servers=len(cfg["gpu_ids"]),
+        rss_limit=cfg["max_rss_bytes"],
+        gpu_limit=(cfg["streaming_resources"] or {}).get("max_owned_gpu_bytes"),
+    )
+    cfg.update({key: getattr(budget, name) for name, key in CACHE_OPTIONS.items()})
+    if (
+        not recipe
+        or not Path(recipe).is_file()
+        or not isinstance(metadata, str)
+        or re.fullmatch(r"[0-9a-f]{64}", metadata) is None
+        or not isinstance(options, dict)
+        or G2_ACTOR_REQUIRED - set(options)
+        or set(options) - G2_ACTOR_REQUIRED - {"render_f27"}
+        or not isinstance(options["nav_revision"], str)
+        or re.fullmatch(r"[0-9a-f]{40}", options["nav_revision"]) is None
+        or type(options.get("render_f27", False)) is not bool
+    ):
+        raise ValueError(
+            "G2 requires an existing run recipe, checkpoint metadata SHA, and isolated native settings"
+        )
+    if options.get("render_f27") and cfg["render_backend"] != "egl":
+        raise ValueError("G2 F27 requires the attested EGL Actor backend")
+    if profile == "g2_r2":
+        if (
+            options.get("render_f27") is not True
+            or not view_recipe
+            or not view_weights
+            or not Path(view_weights).is_file()
+        ):
+            raise ValueError(
+                "G2 R2 requires live F27 and the pinned View VAE recipe and weights"
+            )
+        from g2.io import read_json, sha
+        from g2.online.view_encoder import read_view_recipe
+
+        run = read_json(recipe, limit=1 << 20)
+        if (
+            run.get("training", {}).get("profile") != "R2"
+            or run.get("global_memory", {}).get("enabled") is not True
+        ):
+            raise ValueError("G2 R2 requires a materialized R2 Global training recipe")
+        view_id = sha(run.get("view_recipe_id"), "training View VAE recipe")
+        cfg["g2_view_recipe_id"] = read_view_recipe(view_recipe, view_id)["recipe_id"]
+    for key in G2_ACTOR_PATHS:
+        if not isinstance(options[key], str) or not options[key].strip():
+            raise ValueError(f"missing G2 actor path {key}")
+    cfg["g2_actor_options"] = {
+        "render_f27": False,
+        **options,
+        **{
+            key: str(Path(os.path.expandvars(options[key])).resolve())
+            for key in G2_ACTOR_PATHS
+        },
+    }
 
 
 def resolve(argv=None):
@@ -110,7 +224,9 @@ def resolve(argv=None):
 
     Unique.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, mapping)
     data = yaml.load(a.config.read_text(), Loader=Unique)
-    if not isinstance(data, dict) or set(data) - set(DEFAULTS) - PATHS:
+    if not isinstance(data, dict) or set(data) - set(DEFAULTS) - PATHS - set(
+        CACHE_OPTIONS.values()
+    ):
         raise ValueError("unknown V2 config fields")
     cfg = {**DEFAULTS, **data}
     if cfg["schema"] != DEFAULTS["schema"]:
@@ -178,6 +294,8 @@ def resolve(argv=None):
         or cfg["base_port"] + len(cfg["gpu_ids"]) - 1 > 65535
     ):
         raise ValueError("plan/port range")
+    if formal_r1(cfg) and "batch_wait_ms" not in data and a.batch_wait_ms is None:
+        cfg["batch_wait_ms"] = G2_R1_FORMAL_BATCH_WAIT_MS
     stage_cap = cfg["stage_episode_limit_per_task"]
     if stage_cap is not None and (
         type(stage_cap) is not int
@@ -282,14 +400,25 @@ def resolve(argv=None):
         or not cfg["save_rollout_mp4"]
     ):
         raise ValueError("invalid rollout_mp4_first_n_per_task")
-    for key in PATHS - {"asset_manifest"}:
+    for key in PATHS - OPTIONAL_PATHS:
         if not cfg.get(key):
             raise ValueError(f"missing {key}")
     for key in PATHS:
         if cfg.get(key):
             cfg[key] = str(Path(os.path.expandvars(cfg[key])).absolute())
+    validate_g2_profile(cfg)
     output = Path(cfg["output_dir"])
-    for key in ("checkpoint", "config_file", "dataset_root", "vendor_lock"):
+    for key in (
+        "checkpoint",
+        "config_file",
+        "dataset_root",
+        "vendor_lock",
+        "g2_run_recipe",
+        "g2_view_vae_recipe",
+        "g2_view_vae_weights",
+    ):
+        if not cfg.get(key):
+            continue
         source = Path(cfg[key]).resolve()
         if key == "config_file":
             source = source.parent

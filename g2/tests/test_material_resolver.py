@@ -61,6 +61,18 @@ def test_known_black_and_unknown_texture_have_distinct_validity():
     assert unknown.alpha_mode.tolist() == ["OPAQUE"]
 
 
+@pytest.mark.parametrize("lazy", [False, True])
+def test_unverified_texture_version_keeps_color_and_opacity_unknown(monkeypatch, lazy):
+    model = _model()
+    monkeypatch.setattr(mujoco, "__version__", "3.3.2")
+    resolver = MaterialResolver(model, lazy_texel_decode=lazy)
+    samples = _sample(resolver)
+    assert samples.color_valid.tolist() == samples.alpha_valid.tolist() == [False]
+    assert samples.evidence["mode"] == "UNKNOWN_SOURCE_ALBEDO"
+    assert samples.reason_code.tolist() == [6]
+    assert not resolver.descriptor(0, "box")["guaranteed_opaque"]
+
+
 def test_transparency_is_independent_of_color_and_legacy_adapter_is_explicit():
     model = _model(colorspace="sRGB", alpha=0.25)
     result = _sample(MaterialResolver(model))

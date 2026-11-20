@@ -19,12 +19,13 @@ from cosmos_framework.evaluation.robocasa_v2.wire import receive, send
 from cosmos_framework.simulation.robocasa import closed_loop_eval as native
 from cosmos_framework.simulation.robocasa import eval_v2_worker as actor
 from cosmos_framework.simulation.robocasa import render_devices
-from robocasa_eval_v2 import resources
+from robocasa_eval_v2 import identity, resources
 from robocasa_eval_v2.config import execution
 from robocasa_eval_v2.runtime import Runtime
 
 from tools.v3.eval_v2_batch_tests.shared_vae_test import profile_config
 from tools.v3.eval_v2_production_tests.contract_test import manifest
+from tools.v3.eval_v2_streaming_tests.capacity_test import streaming_config
 
 
 BASE = {
@@ -52,16 +53,34 @@ C_MODULES = {
 ALL = sorted(BASE | C_MODULES.keys())
 
 
-def root_actor_config(tmp_path, monkeypatch, arm="C"):
+def root_actor_config(tmp_path, monkeypatch, arm="C", *, g2=False):
     cfg = profile_config(tmp_path, arm)
     cfg.update(sim_python=sys.executable, vendor_lock="/cpu/unread-vendor.lock")
     original = manifest(episodes=1)
+    experiment = original["experiment"]
+    if g2:
+        recipe = tmp_path / "recipe.json"
+        recipe.write_text("{}")
+        cfg.update(streaming_config(sims_per_gpu=16, render_gpu_ids=[4, 5]))
+        cfg.update(
+            single_latency_arm=None,
+            g2_profile="g2_r1",
+            g2_run_recipe=str(recipe),
+            g2_checkpoint_metadata_sha256="a" * 64,
+            g2_actor_options={
+                "nav_checkout": str(tmp_path / "nav"),
+                "nav_revision": "b" * 40,
+                "ros_setup": str(tmp_path / "setup.bash"),
+                "scratch_root": str(tmp_path / "spatial"),
+            },
+        )
+        experiment = {**experiment, "g2": identity.g2_experiment(cfg)}
     m = build_manifest(
         tasks=original["tasks"],
         episodes=1,
         seed=original["seed"],
         horizons=original["horizons"],
-        experiment=original["experiment"],
+        experiment=experiment,
         execution=execution(cfg),
         local_memory=cfg["local_memory_mode"],
     )
@@ -189,6 +208,16 @@ def assert_rejected(record, monkeypatch):
     assert calls == []  # Before renderer, vendor/env initialization, reset or step.
     assert record.sealed_path.read_bytes() == record.sealed_bytes
     return str(errors[0])
+
+
+def test_r07_root_sealed_g2_worker_reaches_ready_with_batch_eight(tmp_path, monkeypatch):
+    record = root_actor_config(tmp_path, monkeypatch, arm="B", g2=True)
+    assert record.value["settings"]["max_infer_batch_size"] == 8
+    assert record.value["settings"]["capacity_profile"] == "streaming32"
+    assert set(record.value["source_files"]) == BASE | {"g2_runtime"}
+    first, errors, calls = run_actor(record.value, monkeypatch)
+    assert first["kind"] == "READY" and first["g2_profile"] == "g2_r1"
+    assert not errors and calls == ["render", "vendor"]
 
 
 @pytest.mark.parametrize("arm", ["C", "A", "B"])

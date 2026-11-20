@@ -110,6 +110,7 @@ def test_actual_current_context_on_the_server_gpu_is_rejected():
         ("physical_identity_verified", "true"),
         ("egl_device_index", True),
         ("context_verified", False),
+        ("context_device_handle_verified", False),
     ],
 )
 def test_root_handshake_rejects_unproven_or_malformed_device_flags(field, value):
@@ -200,6 +201,7 @@ def test_real_ctypes_inventory_and_current_display_parser_with_fake_functions(
         b"eglQueryDevicesEXT": query_devices,
         b"eglQueryDeviceStringEXT": query_string,
         b"eglQueryDeviceAttribEXT": lambda *args: 0,
+        b"eglQueryDeviceBinaryEXT": lambda *args: 0,
         b"eglQueryDisplayAttribEXT": query_display,
     }
     monkeypatch.setattr(module.ctypes, "CDLL", lambda name: Library())
@@ -218,6 +220,7 @@ def test_real_ctypes_inventory_and_current_display_parser_with_fake_functions(
         return original(path, *a, **kw)
 
     monkeypatch.setattr(module.Path, "resolve", resolve)
+    monkeypatch.setattr(module.os, "access", lambda *args: True)
     driver = module.EGLDevices()
     inventory = driver.inventory()
     assert inventory[0]["pci_bus_id"] == "0000:66:00.0"
@@ -272,8 +275,13 @@ def test_production_worker_attests_device_then_context_before_policy(
     assert bool(errors) is wrong_context
 
 
+_UUID4 = "14" * 16
+_UUID6 = "16" * 16
+_UUID_TO_PCI = {_UUID6: "0000:66:00.0", _UUID4: "0000:44:00.0"}
+
+
 class NvidiaDriver(Driver):
-    """Mock NVIDIA EGL enumeration independent of CUDA/nvidia-smi ordering."""
+    """NVIDIA EGL with CUDA masked in the Simulator."""
 
     def __init__(self):
         super().__init__()
@@ -283,32 +291,36 @@ class NvidiaDriver(Driver):
                 "handle": 4004,
                 "pci_bus_id": None,
                 "device_node": None,
-                "cuda_device": 4,
+                "cuda_device": None,
+                "egl_device_uuid": _UUID4,
             },
             {
                 "egl_device_index": 1,
                 "handle": 6006,
                 "pci_bus_id": None,
                 "device_node": None,
-                "cuda_device": 6,
+                "cuda_device": None,
+                "egl_device_uuid": _UUID6,
             },
         ]
         self.current_handle = 6006
 
 
-def test_nvidia_cuda_attribute_maps_permuted_egl_index_to_real_pci(monkeypatch):
+def test_masked_nvidia_egl_uuid_maps_permuted_index_to_real_pci(monkeypatch):
     driver = NvidiaDriver()
     count = []
 
-    def cuda_map():
-        count.append("cuda_to_pci")
-        return {4: "0000:44:00.0", 6: "0000:66:00.0"}
+    def uuid_map():
+        assert module.os.environ["CUDA_VISIBLE_DEVICES"] == ""
+        count.append("egl_uuid_to_pci")
+        return _UUID_TO_PCI
 
-    monkeypatch.setattr(module, "cuda_pci_map", cuda_map)
+    monkeypatch.setattr(module, "egl_cuda_pci_map", uuid_map)
     proof = module.configure(plan(), api=driver)
     assert proof["protocol"] == "egl_physical_pci_v1"
     assert proof["egl_device_index"] == 1  # Not GPU6 and not CUDA ordinal6.
-    assert proof["egl_device_handle"] == 6006 and proof["cuda_device"] == 6
+    assert proof["egl_device_handle"] == 6006 and proof["cuda_device"] is None
+    assert proof["egl_device_uuid"] == _UUID6
     assert proof["physical_identity_verified"] is True
     assert module.os.environ["MUJOCO_EGL_DEVICE_ID"] == "1"
     assert (
@@ -316,10 +328,10 @@ def test_nvidia_cuda_attribute_maps_permuted_egl_index_to_real_pci(monkeypatch):
         is True
     )
     assert driver.queries == ["inventory", "current_context"]
-    assert count == ["cuda_to_pci"]  # Not once again on each Reset.
+    assert count == ["egl_uuid_to_pci"]  # Not once again on each Reset.
 
 
-@pytest.mark.parametrize("problem", ["missing", "duplicate", "conflict"])
+@pytest.mark.parametrize("problem", ["missing", "duplicate", "conflict", "no_uuid"])
 def test_nvidia_mapping_rejects_missing_ambiguous_or_conflicting_pci(
     monkeypatch, problem
 ):
@@ -328,45 +340,61 @@ def test_nvidia_mapping_rejects_missing_ambiguous_or_conflicting_pci(
         driver.rows.append({**driver.rows[1], "egl_device_index": 2, "handle": 6007})
     if problem == "conflict":
         driver.rows[1]["pci_bus_id"] = "0000:55:00.0"
-    mapping = (
-        {4: "0000:44:00.0"}
-        if problem == "missing"
-        else {4: "0000:44:00.0", 6: "0000:66:00.0"}
-    )
-    monkeypatch.setattr(module, "cuda_pci_map", lambda: mapping)
+    if problem == "no_uuid":
+        driver.rows[1].update(egl_device_uuid=None, cuda_device=6)
+    mapping = {_UUID4: "0000:44:00.0"} if problem == "missing" else _UUID_TO_PCI
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: mapping)
     with pytest.raises(RuntimeError):
         module.configure(plan(), api=driver)
     assert "MUJOCO_EGL_DEVICE_ID" not in module.os.environ
 
 
-def test_nvidia_current_cuda_handle_mismatch_is_rejected(monkeypatch):
+@pytest.mark.parametrize("accessible", [False, True])
+def test_only_accessible_mixed_backend_device_can_be_selected(monkeypatch, accessible):
     driver = NvidiaDriver()
-    monkeypatch.setattr(
-        module, "cuda_pci_map", lambda: {4: "0000:44:00.0", 6: "0000:66:00.0"}
+    driver.rows.append(
+        dict(Driver().rows[0], egl_device_index=2, handle=8080, drm_accessible=accessible)
     )
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: _UUID_TO_PCI)
+    if accessible:
+        with pytest.raises(RuntimeError, match="one provable EGL device"):
+            module.configure(plan(), api=driver)
+    else:
+        proof = module.configure(plan(), api=driver)
+        assert proof["egl_device_handle"] == 6006
+
+
+def test_wrong_current_nvidia_egl_handle_is_rejected(monkeypatch):
+    driver = NvidiaDriver()
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: _UUID_TO_PCI)
     proof = module.configure(plan(), api=driver)
     driver.current_handle = 4004
     with pytest.raises(RuntimeError, match="different physical GPU"):
         module.verify_current(proof, api=driver)
 
 
-def test_nvidia_current_context_without_device_handle_is_not_falsely_attested(
+def test_nvidia_current_context_without_device_handle_is_rejected(
     monkeypatch,
 ):
     driver = NvidiaDriver()
-    monkeypatch.setattr(
-        module, "cuda_pci_map", lambda: {4: "0000:44:00.0", 6: "0000:66:00.0"}
-    )
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: _UUID_TO_PCI)
     proof = module.configure(plan(), api=driver)
     driver.current = lambda: {
         "handle": None,
         "pci_bus_id": None,
         "cuda_device": None,
     }
-    after = module.verify_current(proof, api=driver)
-    assert after["context_verified"] is True
-    assert after["context_device_handle_verified"] is False
-    assert after["physical_identity_verified"] is True
+    with pytest.raises(RuntimeError, match="context device handle unavailable"):
+        module.verify_current(proof, api=driver)
+
+
+def test_nvidia_current_context_uuid_mismatch_is_rejected(monkeypatch):
+    driver = NvidiaDriver()
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: _UUID_TO_PCI)
+    proof = module.configure(plan(), api=driver)
+    driver.rows[1]["egl_device_uuid"] = _UUID4
+    with pytest.raises(RuntimeError, match="different persistent device UUID"):
+        module.verify_current(proof, api=driver)
 
 
 def test_cuda_driver_pci_mapping_is_not_inferred_from_nvidia_smi_ordinal(
@@ -442,10 +470,23 @@ def test_nvidia_real_ctypes_attribute_query_uses_egl_device_attrib_not_string(
         ctypes.cast(result, ctypes.POINTER(ctypes.c_ssize_t))[0] = 6006
         return 1
 
+    def egl_string(device, attribute):
+        if attribute == 0x3055:
+            return b"EGL_NV_device_cuda EGL_EXT_device_persistent_id"
+        return None
+
+    def egl_binary(device, attribute, maximum, result, size):
+        assert attribute == 0x335C and maximum == 16
+        ctypes.memmove(result, bytes.fromhex({4004: _UUID4, 6006: _UUID6}[device]), 16)
+        ctypes.cast(size, ctypes.POINTER(ctypes.c_int))[0] = 16
+        return 1
+
     functions = {
         b"eglQueryDevicesEXT": enum_devices,
         b"eglQueryDeviceAttribEXT": egl_cuda,
         b"eglQueryDisplayAttribEXT": egl_display,
+        b"eglQueryDeviceStringEXT": egl_string,
+        b"eglQueryDeviceBinaryEXT": egl_binary,
     }
     monkeypatch.setattr(module.ctypes, "CDLL", lambda *a: Library())
     monkeypatch.setattr(
@@ -457,9 +498,9 @@ def test_nvidia_real_ctypes_attribute_query_uses_egl_device_attrib_not_string(
             else (_ for _ in ()).throw(RuntimeError("unsupported EGL DRM extension"))
         ),
     )
-    monkeypatch.setattr(
-        module, "cuda_pci_map", lambda: {4: "0000:44:00.0", 6: "0000:66:00.0"}
-    )
+    monkeypatch.setattr(module, "_cuda_driver_pci", lambda: {4: "0000:44:00.0", 6: "0000:66:00.0"})
+    assert module._egl_driver_pci() == _UUID_TO_PCI
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: _UUID_TO_PCI)
     driver = module.EGLDevices()
     inventory = driver.inventory()
     assert [v["cuda_device"] for v in inventory] == [4, 6]
@@ -477,9 +518,7 @@ def test_nvidia_worker_reaches_environment_ready_without_drm_strings(
     configuration["rendering"] = plan()
     driver = NvidiaDriver()
     monkeypatch.setattr(module, "EGLDevices", lambda: driver)
-    monkeypatch.setattr(
-        module, "cuda_pci_map", lambda: {4: "0000:44:00.0", 6: "0000:66:00.0"}
-    )
+    monkeypatch.setattr(module, "egl_cuda_pci_map", lambda: _UUID_TO_PCI)
     channel, thread, errors, env = worker_test.run_worker(configuration, monkeypatch)
     try:
         ready = receive(channel)

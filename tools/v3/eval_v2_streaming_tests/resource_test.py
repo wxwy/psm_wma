@@ -40,13 +40,16 @@ def test_owned_compute_and_graphics_are_counted_once_and_foreign_occupancy_ignor
 
 
 def test_all_owned_groups_one_proc_snapshot_includes_descendants_not_foreign(tmp_path):
-    for pid, group in ((5, 5), (6, 6), (20, 6), (21, 12)):
+    for pid, parent, group in (
+        (5, 1, 5), (6, 1, 6), (20, 6, 6), (21, 12, 12),
+        (22, 5, 22), (23, 22, 23), (24, 21, 24),
+    ):
         directory = tmp_path / str(pid)
         directory.mkdir()
-        (directory / "stat").write_text(f"{pid} (name with spaces) S 0 {group} 0 0")
-    assert owned_group_pids(
-        [SimpleNamespace(pgid=5), SimpleNamespace(pgid=6)], proc=tmp_path
-    ) == {5, 6, 20}
+        (directory / "stat").write_text(f"{pid} (name with spaces) S {parent} {group} 0 0")
+    owners = [SimpleNamespace(pgid=5), SimpleNamespace(pgid=6)]
+    assert owned_group_pids(owners, proc=tmp_path) == {5, 6, 20}
+    assert owned_group_pids(owners, proc=tmp_path, include_descendants=True) == {5, 6, 20, 22, 23}
 
 
 @pytest.mark.parametrize("failure", ["init", "unknown", "unsupported"])
