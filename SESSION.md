@@ -1,3 +1,25 @@
+# 2026-11-20 CST — G2 Actor runtime identity follow-up
+
+Implementation Root `b5ac5f7af3d3b28d7b2bfcbde63360f39ecd8470`,
+Child/Gitlink `3ef4f6c79aeba3d825ae247c1e884b6199eaf85d`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Drafts #93 and #26.
+
+Independent H100 EGL context and four same-source F27 PNGs passed on
+Root `98beed4a`. The real R1 server loaded Iter 1000, then the Actor
+rejected the changed runtime digest. The fix constructs G2 Python paths
+before preflight and carries them through Fresh cache relocation and
+Resume. 205 tests pass in the existing data environment. The real Worker
+passed the actual vendor runtime check, returned READY and kept the exact
+preflight PYTHONPATH. This startup probe stops before Action Forward.
+
+The independent NVIDIA stock-material comparison remains open at 208
+maximum byte difference on the first box fixture. The diagnostic separates
+texture upload, framebuffer readback, mip selection and shading. The
+same checks on Mesa match the compiled bytes and have at most one byte
+of stock projection error. Read `docs/g2/online_robocasa.md` for the
+fixed launch commands and the independent R1 action, Local ACK and
+stock-material checks.
+
 # 2026-11-20 CST — Online EGL and F27 material follow-up
 
 Root `98beed4a6ecb9134d4925427a5129615d509b744`, Child/Gitlink

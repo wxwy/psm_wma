@@ -241,3 +241,80 @@ publication, an independent output directory and `render_f27: true`.
 For the next GPU execution, apply the independently assigned GPU with the
 existing `fresh` command above. Verify the Actor's current EGL context,
 the first `16×15D` action and its persisted Local ACK.
+
+## G2 Actor runtime identity after independent NVIDIA verification
+
+On Root `98beed4a6`, independent validation on `data` passed the real
+NVIDIA EGL context handle check and proved pixel-for-pixel equality for
+all four F27 PNGs from live lazy and offline eager decoding. The R1 Iter
+1000 service loaded the four-rank DCP on one GPU. The Actor then rejected
+its runtime digest. [Independent F27 and R1 evidence](https://github.com/wxwy/psm_wma/pull/93#issuecomment-7029673676) · [Independent EGL device/context evidence](https://github.com/wxwy/cosmos-framework/pull/26#issuecomment-7029775485)
+
+Fixed Root `b5ac5f7af3d3b28d7b2bfcbde63360f39ecd8470`, Child/Gitlink
+`3ef4f6c79aeba3d825ae247c1e884b6199eaf85d`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Preflight constructs the
+G2 `PYTHONPATH` with the candidate Root and Child once, followed by the
+inherited entries. Fresh moves only the writable caches into the Run.
+Fresh and Resume both supply the measured search path directly to the
+Actor. The source and digest checks remain strict.
+
+The focused regression exercises Fresh and Resume with and without the
+project paths inherited. Both cases originally raised `Simulator runtime
+changed after preflight` at the native verifier. With the fix, both pass and
+an altered path still fails. The exact candidate passed all 205 targeted CPU
+tests in the existing `data` environment. The log and JUnit are
+`actor-env-regressions.log` and `actor-env-regressions.xml` in:
+
+```text
+/mnt/data/shenzhen/szrobot/logs/.tmp_backup/.g2_online_actor_b5ac5f7a_20261120.HIFjS6/
+```
+
+The real Worker startup probe uses that release's actual simulator and
+vendor manifest. It reuses the stat-checked model identity from the
+earlier GPU run. The Worker passes `verify_runtime` and returns `READY`.
+The launcher compares the actual process environment with the preflight
+record and confirms an orderly close with exit code 0. This probe stops
+before any environment, GPU context or policy server is created.
+`ready-replay.VhIrt5/actual-actor-ready.json` has SHA256
+`f1cc31e139b9ac478449e779afd5129e032050dbcc09d4068e771ea605f20ea8`.
+The first raw log is preserved. Its harness expected a natural process
+exit after supervisor cleanup. The completed replay waits for the Worker
+close reply before checking the exit code. Replay with
+`bash run-actor-ready.sh` from the isolated evidence directory. The
+focused CPU suite uses `bash run-actor-env-regressions.sh`.
+
+The isolated `r1-gpu-retest.yaml` uses OpenDrawer, Iter 1000 and
+`render_f27: true`. Its CPU preview reports zero models loaded and zero
+environments created. For independent GPU execution, set
+`G2_ACTOR_EVIDENCE` to the directory above and use the existing server
+Python from the isolated YAML with the assigned GPU.
+
+```bash
+cd "$G2_ACTOR_EVIDENCE/root"
+export PYTHONPATH="$PWD:$PWD/cosmos-framework:$PWD/scripts"
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+"$EVAL_SERVER_PYTHON" scripts/robocasa_eval_v2_cli.py fresh \
+  --config "$G2_ACTOR_EVIDENCE/r1-gpu-retest.yaml" \
+  --gpus "$APPROVED_GPU" --render-gpus "$APPROVED_GPU"
+```
+
+Check the actual EGL context, one finite `16×15D` action, the corresponding
+persisted Local ACK and the recorded outcome.
+
+### NVIDIA stock-render reference investigation
+
+The native stock-render material probe and the shared F27 comparison test
+different paths. The independent H100 probe failed on the first stock 2D
+fixture with a maximum 208-byte RGB delta. The shared F27 decoder's live
+and offline PNGs on that hardware were identical. [Independent stock-render diagnosis](https://github.com/wxwy/psm_wma/pull/93#issuecomment-7029758645)
+
+The scratch `stock_material_diagnose.py` runs the same 400-pixel fixture
+and records compiled texture bytes versus GL upload, stock RGB versus
+direct RGBA framebuffer readback, forced base-level sampling, white
+emission and a constant RGB texture. On the `data` Mesa software driver
+the upload, readback and constant controls are exact, and the base-level
+projection differs by at most one byte. From the evidence directory,
+`bash run-stock-material-nvidia.sh "$APPROVED_GPU"` uses the physical
+EGL selection and records the per-stage deltas alongside the original
+two-byte acceptance limit. The existing 3.3.7 archive recipe and version
+guards continue to define the F27 output.
