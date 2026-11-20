@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 import yaml
 from cosmos_framework.inference import robocasa_session_transactions as session
-from robocasa_eval_v2 import runtime
+from robocasa_eval_v2 import identity, runtime
 from robocasa_eval_v2.config import DEFAULTS, resolve
 
 from tools.v3.eval_v2_production_tests.entry_test import config
@@ -79,6 +79,48 @@ def test_defaults_and_CLI_override_record_effective_values(tmp_path):
             "media_drain_timeout_s",
         )
     ) == (3, 1048576, 30.0)
+
+
+def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
+    path, cfg = config(tmp_path)
+    recipe = tmp_path / "recipe.json"
+    recipe.write_text("{}")
+    cfg.update(
+        execution_profile="phase_b",
+        gpu_ids=[4],
+        g2_profile="g2_r1",
+        g2_run_recipe=str(recipe),
+        g2_checkpoint_metadata_sha256="a" * 64,
+        g2_actor_options={
+            "nav_checkout": str(tmp_path / "nav"),
+            "nav_revision": "b" * 40,
+            "ros_setup": str(tmp_path / "devel/setup.bash"),
+            "scratch_root": str(tmp_path / "scratch"),
+        },
+    )
+    path.write_text(yaml.safe_dump(cfg))
+    _, resolved = resolve(["dry-run", "--config", str(path)])
+    bound = identity.g2_experiment(resolved)
+    assert bound["profile"] == "g2_r1"
+    assert bound["checkpoint_metadata_sha256"] == "a" * 64
+    assert (
+        bound["run_recipe_sha256"]
+        == "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    )
+    assert identity.g2_experiment({}) is None
+    recipe.write_text('{"changed":true}')
+    assert (
+        identity.g2_experiment(resolved)["run_recipe_sha256"]
+        != bound["run_recipe_sha256"]
+    )
+    for invalid in (
+        {"g2_profile": "legacy"},
+        {"local_memory_mode": "off"},
+        {"max_infer_batch_size": 2},
+    ):
+        path.write_text(yaml.safe_dump({**cfg, **invalid}))
+        with pytest.raises(ValueError, match="G2"):
+            resolve(["dry-run", "--config", str(path)])
 
 
 def test_real_server_option_parser_passes_spool_to_actor_and_info(tmp_path, systems):

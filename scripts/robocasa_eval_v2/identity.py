@@ -53,14 +53,15 @@ def git(repo, *args):
     return subprocess.check_output(["git", "-C", str(repo), *args], text=True).strip()
 
 
-def verify_source(frozen=None):
+def verify_source(frozen=None, *, g2=False):
     actual = git(ROOT, "rev-parse", "HEAD")
     child = git(CHILD, "rev-parse", "HEAD")
     root = frozen or actual
+    paths = [*SOURCE_PATHS, "g2"] if g2 else SOURCE_PATHS
     if (
-        git(ROOT, "ls-files", "--others", "--exclude-standard", "--", *SOURCE_PATHS)
-        or git(ROOT, "diff", "--name-only", root, "HEAD", "--", *SOURCE_PATHS)
-        or git(ROOT, "diff", "--name-only", "HEAD", "--", *SOURCE_PATHS)
+        git(ROOT, "ls-files", "--others", "--exclude-standard", "--", *paths)
+        or git(ROOT, "diff", "--name-only", root, "HEAD", "--", *paths)
+        or git(ROOT, "diff", "--name-only", "HEAD", "--", *paths)
         or git(CHILD, "status", "--porcelain")
         or git(ROOT, "rev-parse", f"{root}:cosmos-framework") != child
     ):
@@ -117,6 +118,17 @@ def runtime_environment(cache):
     return environment
 
 
+def g2_experiment(cfg):
+    if cfg.get("g2_profile", "legacy") == "legacy":
+        return None
+    return {
+        "profile": cfg["g2_profile"],
+        "run_recipe_sha256": sha256_file(Path(cfg["g2_run_recipe"])),
+        "checkpoint_metadata_sha256": cfg["g2_checkpoint_metadata_sha256"],
+        "actor_options_sha256": digest(cfg["g2_actor_options"]),
+    }
+
+
 def prepare(cfg, *, cache, anchor=None, manifest=None):
     from robocasa_eval_v2.shared_vae import input_files
 
@@ -125,7 +137,8 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
             raise ValueError("frozen shared Worker input changed")
     tasks = discover(cfg)
     frozen = manifest["experiment"]["root_sha"] if manifest else None
-    root, child, actual = verify_source(frozen)
+    g2 = g2_experiment(cfg)
+    root, child, actual = verify_source(frozen, g2=g2 is not None)
     if sha256_file(Path(cfg["vendor_lock"])) != sha256_file(
         ROOT / "third_party/robosuite_patches/vendor.lock.json"
     ):
@@ -195,6 +208,7 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
             "root_sha": root,
             "child_sha": child,
             "task_metadata": metadata,
+            **({"g2": g2} if g2 is not None else {}),
         },
     )
     if manifest is not None and result != manifest:
@@ -231,6 +245,9 @@ _INPUT_WITNESSES = {}
 
 
 def guard(cfg, manifest, inputs, *, source=True):
+    g2 = manifest["experiment"].get("g2")
+    if g2_experiment(cfg) != g2:
+        raise ValueError("runtime G2 profile differs from frozen experiment identity")
     if cfg.get("single_latency_arm") is not None and execution(cfg) != manifest.get(
         "execution"
     ):
@@ -238,7 +255,7 @@ def guard(cfg, manifest, inputs, *, source=True):
             "single-latency/Worker configuration differs from frozen execution identity"
         )
     if source:
-        verify_source(manifest["experiment"]["root_sha"])
+        verify_source(manifest["experiment"]["root_sha"], g2=g2 is not None)
     verify_model_observation(inputs["model"])
     checks = [(Path(cfg["config_file"]), manifest["experiment"]["config_sha256"])]
     from robocasa_eval_v2.shared_vae import input_files

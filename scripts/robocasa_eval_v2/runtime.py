@@ -89,6 +89,9 @@ class Runtime:
         )
         if store.manifest.get("execution") != execution(cfg):
             raise ValueError("runtime execution profile differs from frozen manifest")
+        self.g2 = store.manifest["experiment"].get("g2")
+        if identity.g2_experiment(cfg) != self.g2:
+            raise ValueError("runtime G2 profile differs from frozen manifest")
         if store.manifest["protocol"]["local_memory"] != cfg.get(
             "local_memory_mode", "required"
         ):
@@ -334,6 +337,15 @@ class Runtime:
         )
         if self.cfg.get("single_latency_arm") is not None:
             command += ["--single-latency-arm", self.cfg["single_latency_arm"]]
+        if self.g2 is not None:
+            command += [
+                "--g2-profile",
+                self.g2["profile"],
+                "--g2-run-recipe",
+                self.cfg["g2_run_recipe"],
+                "--g2-checkpoint-metadata-sha256",
+                self.g2["checkpoint_metadata_sha256"],
+            ]
         if self.shared_vae_profile:
             command += ["--history-source", "sim_shared_vae"]
             from cosmos_framework.inference.robocasa_vae_protocol import (
@@ -350,7 +362,7 @@ class Runtime:
         # The eval Client/Actors always use 127.0.0.1. Do not expose the
         # transaction-owning Policy Server on all network interfaces.
         # Both concurrent evaluation runs must bind distinct local TCP ports.
-        if self.streaming or self.shared_vae_profile:
+        if self.streaming or self.shared_vae_profile or self.g2 is not None:
             if "--host" in command:
                 raise ValueError("ambiguous Policy Server listen host")
             command.extend(("--host", "127.0.0.1"))
@@ -424,6 +436,15 @@ class Runtime:
         except BaseException:
             self.stop.set()
             raise
+        if self.g2 is not None:
+            conditions = info.get("g2_conditions", {})
+            authority = conditions.get("authority", {})
+            if conditions.get("profile") != self.g2["profile"] or any(
+                authority.get(key) != self.g2[key]
+                for key in ("run_recipe_sha256", "checkpoint_metadata_sha256")
+            ):
+                self.stop.set()
+                raise ValueError("effective Policy Server G2 source identity mismatch")
         if self.batch_profile:
             tx = info.get("session_transactions", {})
             if any(
@@ -606,6 +627,17 @@ class Runtime:
                     "path": str(file),
                     "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
                 }
+            if self.g2 is not None:
+                cfg["settings"].update(
+                    self.cfg["g2_actor_options"],
+                    g2_profile=self.g2["profile"],
+                    run_recipe=self.cfg["g2_run_recipe"],
+                )
+                file = ROOT / "g2/online/runtime.py"
+                cfg["source_files"]["g2_runtime"] = {
+                    "path": str(file.resolve()),
+                    "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
+                }
             if self.shared_vae_profile:
                 for name, relative in {
                     "shared_client": "simulation/robocasa/sim_shared_vae_client.py",
@@ -633,6 +665,8 @@ class Runtime:
                 MUJOCO_GL=self.render_policy["backend"],
                 PYOPENGL_PLATFORM=self.render_policy["backend"],
             )
+            if self.g2 is not None:
+                env["PYTHONPATH"] = os.pathsep.join((str(ROOT), env["PYTHONPATH"]))
             env.pop(
                 "MUJOCO_EGL_DEVICE_ID", None
             )  # Worker resolves the physical PCI -> EGL index before imports.
@@ -703,6 +737,10 @@ class Runtime:
                 or ready.get("runtime_digest") != self.inputs["runtime"]["digest"]
                 or ready.get("local_memory_mode")
                 != self.store.manifest["protocol"]["local_memory"]
+                or (
+                    self.g2 is not None
+                    and ready.get("g2_profile") != self.g2["profile"]
+                )
             ):
                 raise RuntimeError("native Worker handshake mismatch")
             self.actor_rendering[worker] = validate_proof(

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import math
 import os
+import re
 from pathlib import Path
 
 from cosmos_framework.evaluation.robocasa_v2.contract import (
@@ -18,6 +19,9 @@ DEFAULTS = {
     "schema": "psm_robocasa_eval_v2",
     "execution_profile": "phase_a",
     "local_memory_mode": "required",
+    "g2_profile": "legacy",
+    "g2_checkpoint_metadata_sha256": None,
+    "g2_actor_options": None,
     "local_ttt_history_k": None,
     "single_latency_arm": None,
     "local_evidence_profile": "server_vae",
@@ -63,7 +67,59 @@ PATHS = {
     "sim_python",
     "vendor_lock",
     "asset_manifest",
+    "g2_run_recipe",
 }
+
+G2_ACTOR_PATHS = {"nav_checkout", "ros_setup", "scratch_root"}
+
+
+def validate_g2_profile(cfg):
+    profile = cfg["g2_profile"]
+    recipe = cfg.get("g2_run_recipe")
+    metadata = cfg["g2_checkpoint_metadata_sha256"]
+    options = cfg["g2_actor_options"]
+    if profile == "legacy":
+        if any(value is not None for value in (recipe, metadata, options)):
+            raise ValueError("G2 settings require an explicit G2 profile")
+        return
+    if (
+        profile != "g2_r1"
+        or cfg["execution_profile"] != "phase_b"
+        or cfg["local_memory_mode"] != "required"
+        or cfg["local_evidence_profile"] != "server_vae"
+        or cfg["single_latency_arm"] is not None
+        or cfg["local_ttt_history_k"] != ACTION_CHUNK_SIZE
+        or cfg["guidance"] != 1.0
+        or len(cfg["gpu_ids"]) != 1
+        or cfg["sims_per_gpu"] != 1
+        or cfg["max_infer_batch_size"] != 1
+    ):
+        raise ValueError(
+            "G2 R1 requires Phase B, assigned Local, server VAE, guidance 1 and one B1/M1 slot"
+        )
+    if (
+        not recipe
+        or not Path(recipe).is_file()
+        or not isinstance(metadata, str)
+        or re.fullmatch(r"[0-9a-f]{64}", metadata) is None
+        or not isinstance(options, dict)
+        or set(options) != G2_ACTOR_PATHS | {"nav_revision"}
+        or not isinstance(options["nav_revision"], str)
+        or re.fullmatch(r"[0-9a-f]{40}", options["nav_revision"]) is None
+    ):
+        raise ValueError(
+            "G2 requires an existing run recipe, checkpoint metadata SHA, and isolated native settings"
+        )
+    for key in G2_ACTOR_PATHS:
+        if not isinstance(options[key], str) or not options[key].strip():
+            raise ValueError(f"missing G2 actor path {key}")
+    cfg["g2_actor_options"] = {
+        **options,
+        **{
+            key: str(Path(os.path.expandvars(options[key])).resolve())
+            for key in G2_ACTOR_PATHS
+        },
+    }
 
 
 def resolve(argv=None):
@@ -282,14 +338,23 @@ def resolve(argv=None):
         or not cfg["save_rollout_mp4"]
     ):
         raise ValueError("invalid rollout_mp4_first_n_per_task")
-    for key in PATHS - {"asset_manifest"}:
+    for key in PATHS - {"asset_manifest", "g2_run_recipe"}:
         if not cfg.get(key):
             raise ValueError(f"missing {key}")
     for key in PATHS:
         if cfg.get(key):
             cfg[key] = str(Path(os.path.expandvars(cfg[key])).absolute())
+    validate_g2_profile(cfg)
     output = Path(cfg["output_dir"])
-    for key in ("checkpoint", "config_file", "dataset_root", "vendor_lock"):
+    for key in (
+        "checkpoint",
+        "config_file",
+        "dataset_root",
+        "vendor_lock",
+        "g2_run_recipe",
+    ):
+        if not cfg.get(key):
+            continue
         source = Path(cfg[key]).resolve()
         if key == "config_file":
             source = source.parent
