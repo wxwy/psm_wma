@@ -12,7 +12,7 @@ from cosmos_framework.evaluation.robocasa_v2.contract import (
     build_manifest,
     validate_manifest,
 )
-from cosmos_framework.evaluation.robocasa_v2.store import Store
+from cosmos_framework.evaluation.robocasa_v2.store import Store, load
 from cosmos_framework.inference import robocasa_session_transactions as session
 from cosmos_framework.inference.g2_cache_budget import CacheBudget
 from robocasa_eval_v2 import identity, runtime
@@ -409,7 +409,7 @@ def test_g2_budget_yaml_manifest_policy_argv_and_info_round_trip(tmp_path, monke
             receipt = next(
                 (store.root / "_internal/runtime").glob("g2_cache_final_*.json")
             )
-            record = json.loads(receipt.read_text())
+            record = load(receipt)
             assert record["manifest_digest"] == bound["digest"]
             assert (
                 record["servers"]["GPU6"]["g2_condition_cache"]["high_water"][
