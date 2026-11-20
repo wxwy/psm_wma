@@ -1,3 +1,24 @@
+# 2026-11-20 CST — G2 R2 and R1 on G1 R07 EvalV2
+
+Review Root `edca863a84c2997047ad68afa645b9d36541de3a`, Child/Gitlink
+`60c3cb1b32e4001d8d71a6b5fbd15d7233449a5f`, nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. Drafts Root #93 and Child #26.
+
+The owner's latest instruction advances R2 on the shared EvalV2 path.
+Both profiles use native R07 Streaming and Batch, the same Local lifecycle,
+and owned resource accounting. R2 adds the sealed current F27 publication,
+offline selection and projection, pinned View Encode1 and native Global
+Reader/KV. R1 uses its formal text and Local recipe.
+
+The 900-episode R07 dry-run plans 32 physical slots, Policy 6/7, Sim 4/5
+and B8. Fixed-pair strict CPU tests passed 376/376. The formal R2 View
+descriptor and both top variants from retained real OpenDrawer Frame 740
+passed the source check. The earlier R1 real single-slot run remains a
+valid engineering trial with an unsuccessful task outcome. GPT owns the
+independent R2 review and subsequent real checkpoint/GPU checks. The
+checked formal R2 output has recipes and preflight logs. An R2 DCP was
+not present there. See `docs/g2/online_robocasa.md` for exact commands.
+
 # 2026-11-20 CST — G2 Actor runtime identity follow-up
 
 Implementation Root `b5ac5f7af3d3b28d7b2bfcbde63360f39ecd8470`,

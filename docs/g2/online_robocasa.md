@@ -1,4 +1,4 @@
-# G2 R1 Online RoboCasa candidate
+# G2 R1 and R2 online RoboCasa
 
 The opt-in EvalV2 Phase B profile uses the current episode's MuJoCo model and
 FULLPHYSICS data with mocap pose components. A private MjData copy goes through the pinned nav_sg geometry
@@ -16,7 +16,9 @@ The Actor uses existing canonical Raw15→Env12 execution and persists Local
 evidence following a successful step. Legacy EvalV2 continues to use the
 default profile. The new server profile requires the published model shards,
 canonical config, run recipe, metadata SHA256 and matching tokenizer. It
-uses existing Model-D transactions and Omni forward with the R1 conditions.
+uses existing Model-D transactions and Omni forward with the selected G2
+profile. R1 uses text and Local conditioning. R2 also reads current spatial
+Views under the checkpoint's frozen Global recipe.
 
 ## Shared offline and online paths
 
@@ -96,17 +98,99 @@ native frame 0 plus the newest validated full snapshot. F27 retains its
 current physical image owners. EvalV2 persists request/ACK and success
 or failure in its existing run directory.
 
+### R07 streaming topology
+
+Both G2 profiles run on the existing EvalV2 Streaming Scheduler and native
+Batch transactions. The G1 R07 manifest assigns 16 Sim slots to each
+Policy Server and a maximum native Batch of 8. The supervisor applies the
+same initialization and resource limits. G2 private native subprocesses
+count toward their enclosing Sim slot's owned process budget.
+
+```yaml
+scheduling_protocol: streaming_task_affinity_v2
+gpu_ids: [6, 7]
+render_gpu_ids: [4, 5]
+render_backend: egl
+sims_per_gpu: 16
+max_infer_batch_size: 8
+batch_wait_ms: 20
+tasks: all
+episodes_per_task: 50
+max_rss_bytes: 412316860416
+streaming_resources:
+  max_owned_gpu_bytes: 42949672960
+  sim_startup_rss_bytes: 4294967296
+  sim_startup_gpu_bytes: 1073741824
+  server_startup_rss_bytes: 8589934592
+  server_startup_gpu_bytes: 12884901888
+  initialization_concurrency: 8
+```
+
+Add these fields to the same Run config. For an R2 Run set `checkpoint`
+and `config_file` to its canonical SafeLocal publication and job config,
+and supply the R2 recipe, matching metadata SHA256, and pinned View
+VAE inputs. Set `g2_actor_options.render_f27: true`.
+
+```yaml
+g2_profile: g2_r2
+g2_run_recipe: /reviewed-r2-job/r2_g2_formal_30000.json
+g2_checkpoint_metadata_sha256: REPLACE_WITH_EXACT_R2_MODEL_METADATA_SHA256
+g2_view_vae_recipe: /isolated-eval/r2_view_recipe.json
+g2_view_vae_weights: /fixed-model-assets/Wan2.2_VAE.pth
+```
+
+Extract the recipe object from a verified DATA_C View Cache manifest on the
+same server into a new evaluation file. Its `recipe_id` must equal the
+materialized R2 training recipe's `view_recipe_id`. This configuration step
+uses only the numeric recipe metadata.
+
+```bash
+"$EVAL_SERVER_PYTHON" - "$VIEW_CACHE_MANIFEST" "$VIEW_VAE_RECIPE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+manifest, output = map(Path, sys.argv[1:])
+recipe = json.loads(manifest.read_text())["recipe"]
+with output.open("x", encoding="utf-8") as stream:
+    json.dump(recipe, stream, sort_keys=True)
+PY
+
+cd "$EVAL_ROOT"
+"$EVAL_SERVER_PYTHON" scripts/robocasa_eval_v2_cli.py dry-run \
+  --config "$ONLINE_G2_CONFIG" --gpus 6,7 --render-gpus 4,5
+```
+
+At each replan R2 checks the Actor's sealed current F27 publication and
+applies the offline task-entity selection. The formal DATA_C ABI uses one
+canonical top of the checkpoint's requested variant plus all valid
+associated views. Each latent uses the actual PNG owner and that owner's
+projection. Current membership stays separately bound to the current
+logical spatial frame. The server gives the existing Wan batch encoder an
+independent T=1, B=1 call on each cache miss for image content. Its training
+recipe admits B=1 through B=32. The EvalV2 action batch can contain up to
+eight different Session requests in the R07 topology.
+
+The resident View encoder inherits its Policy Server's assigned GPU and
+process group. It authenticates the encoder sources, runtime libraries and
+weights against the training recipe before the server is ready. Its Wan
+imports and deterministic encode settings are isolated from the Policy
+and Local-TTT. Selected latents enter the existing Session cache and move
+to the Reader device through the shared spatial tensor contract.
+
 ## Acceptance sequence
 
 1. Compare real online MuJoCo/native snapshot and F27 outputs to matching
    source frames, including Door/Drawer geometry, arrow, empty directions,
    owner frames and native memberships.
 2. Compare State15 and CAP2 bytes/tokens to the training-side recipe.
-3. Load the actual reviewed four-rank R1 DCP on one authorized GPU.
-   Verify Raw15/H16 output, native Session ACK and execution history.
+3. Load the reviewed profile's four-rank DCP on an authorized Policy GPU.
+   Verify Raw15/H16 output, native Session ACK and execution history. For
+   R2, also verify the exact View recipe and the selected owners, masks,
+   Global KV and action on the current rollout.
 4. Record actual final success/failure for each named task and measure
-   stage latencies. R2, selected-view Wan encoding and Global Reader are
-   gated on this result.
+   stage latencies. Verify independent Episodes in the same native Batch
+   and inspect the R07 topology's resource limits before a formal run.
 
 The CPU DCP reshard check exercises real serialized four-rank tensors
 with the native loader. The formal R1 model, real EGL pixels, closed-loop
@@ -318,3 +402,83 @@ projection differs by at most one byte. From the evidence directory,
 EGL selection and records the per-stage deltas alongside the original
 two-byte acceptance limit. The existing 3.3.7 archive recipe and version
 guards continue to define the F27 output.
+
+## R07 R1/R2 author verification
+
+Review Root `edca863a84c2997047ad68afa645b9d36541de3a` and Child/Gitlink
+`60c3cb1b32e4001d8d71a6b5fbd15d7233449a5f` with nav_sg
+`c7997241b2b0f1e6f7d44f851f8cea62de2144ad`. [Root Draft #93](https://github.com/wxwy/psm_wma/pull/93) · [Child Draft #26](https://github.com/wxwy/cosmos-framework/pull/26)
+
+- The R07 plan with the actual task metadata contains 900 episodes and 32
+  physical slots. GPU 6/7 owns the Policy slots. GPU 4/5 gets 16 render
+  slots each. The R2 plan uses the published View recipe and an unused
+  model path for planning. Its model and environment counts are zero.
+- The fixed encoder descriptor matches the actual training View recipe
+  `b1c6e1f6b2a6b69ae1ffdc5afa47d3454f4d3289d22854a5ed2645ebc130fad1`
+  including the weights, all bound sources and package versions. This
+  descriptor check ran without Torch imports.
+- A CPU read of the retained real OpenDrawer F27 publication at frame 740
+  confirms four selected Views for each top variant. With the robot marker,
+  the top owner is frame 660. The clean top and three side Views use frame
+  520. The source, task binding, PNG hash, physical projection and
+  preprocessing mask pass. This check uses the retained artifacts from the
+  earlier live rollout. No latents are computed in it.
+- The targeted suite compares B1, B2, B4 and B8 against a serial reference
+  for R1 and R2. It exercises real small CPU UND/GEN, R2 Reader and
+  projector, and Local updates. The diffusion sampler and camera/VAE
+  data use fixtures. It checks separate Sessions, order permutations,
+  text and Global K/V, State15, H16 Local prefixes and ACKs, and End isolation.
+- The strict CPU run on this pair passed 376 tests in 50.76 seconds with
+  zero failures, errors or skips. It includes the four-rank DCP readback
+  on one CPU rank and the View encoder's process and channel tests.
+- Ruff E9/F passed across the touched Python files. Ruff import sorting
+  and format passed for the R2 increment. The two R07 test files with
+  import-order findings have the same findings on the preceding branch.
+
+Use the existing server interpreter and fixed checkout. The strict CPU
+command below bypasses the generic Child pytest fixture, which assigns
+GPU 0 to unmarked tests. It keeps the GPU mask empty throughout collection
+and execution. The test cases and assertions are unchanged. The earlier
+standard invocation recorded one failure in the existing four-rank CPU DCP
+fixture. The direct same-case CPU invocation passed and the logs from
+both invocations are retained.
+
+```bash
+cd "$EVAL_ROOT"
+export PYTHONPATH="$PWD:$PWD/cosmos-framework:$PWD/scripts"
+export CUDA_VISIBLE_DEVICES='' COSMOS_TRAINING=0 COSMOS_INTERNAL=0 COSMOS_DEVICE=cpu
+export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+"$EVAL_SERVER_PYTHON" -c 'import torch; assert torch.cuda.device_count() == 0'
+child=cosmos-framework/cosmos_framework
+"$EVAL_SERVER_PYTHON" -m pytest -o addopts='' -q --noconftest --import-mode=importlib \
+  "$child/scripts/g2_policy_server_test.py" \
+  "$child/scripts/robocasa_transactions_b1_test.py" \
+  "$child/inference/g2_model_hooks_test.py" \
+  "$child/inference/g2_policy_conditions_test.py" \
+  "$child/inference/g2_native_policy_test.py" \
+  "$child/inference/robocasa_batch_transactions_test.py" \
+  "$child/inference/robocasa_session_transactions_test.py" \
+  "$child/simulation/robocasa/closed_loop_eval_phase6_test.py" \
+  tools/v3/eval_v2_replan_tests/config_test.py \
+  tools/v3/eval_v2_batch_tests/actor_source_witness_test.py \
+  tools/v3/eval_v2_streaming_tests/capacity_test.py \
+  tools/v3/eval_v2_streaming_tests/resource_test.py \
+  g2/tests/test_online_runtime.py \
+  g2/tests/test_online_live_views.py \
+  g2/tests/test_online_spatial_provider.py \
+  g2/tests/test_data_c_runtime_top_variant.py \
+  g2/tests/test_data_c_dualtop_index_v2.py \
+  g2/tests/test_verified_data_c_full_v2.py \
+  --junitxml="$EVAL_EVIDENCE/r1-r2-strict-cpu.xml"
+```
+
+The data server retains the real artifact and planning evidence under
+`.g2_online_r2_ccacc1f9_20261120.FE4A6O` in the existing log backup directory.
+The fixed-pair CPU log and JUnit are under
+`.g2_online_r2_edca863a_20261120.SqqfU9`. Their SHA256 values are
+`63e50e06f3911acf11057a0e7eab758638aad3c96ffc5e39981586e4b731b358`
+and `0493901a8056dbbf637287d3e6ade4bc74c4f7adab2ec4252562be06bdee20a5`.
+A published R2 checkpoint was
+not present in the checked formal job directory. Actual R2 Wan encode,
+DCP action generation and real M16/B8 throughput remain independent
+execution checks.

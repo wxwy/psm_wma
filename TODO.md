@@ -1,4 +1,4 @@
-- **G2-ONLINE-ROBOCASA-R1** — REVIEW. Draft #93 Root `b5ac5f7a`, Child #26 `3ef4f6c`, nav_sg #16 `c7997241`. Independent NVIDIA EGL and shared F27 PNG parity passed. The G2 Actor path fix passed 205 CPU tests and the real vendor READY check. GPT/Execute owns Iter 1000 action, Local ACK and closed-loop acceptance. The NVIDIA stock material comparison remains a separate open check. R2 follows R1 acceptance.
+- **G2-ONLINE-ROBOCASA** — REVIEW. Root Draft #93 `edca863a`, Child Draft #26 `60c3cb1`, nav_sg Draft #16 `c7997241`. R1 and R2 share R07 M16/B8. R2 uses current F27, the exact View recipe and Global Reader. Strict CPU 376/376, 900-episode dry-run, View encoder identity and retained F27 source checks pass. GPT/Execute owns real R2 DCP/action and concurrent GPU verification when the checkpoint is available. The separate NVIDIA stock material comparison remains open.
 
 - **G2-PERF-90** — REVIEW. Root Draft #91, Child Draft #25, fixed 3ac7cb3f/4cca4e9. Code/CPU/real read parity pass. GPT reviews and Owner/Execute supplies isolated GPU 2/10step, strict resume, R2 boundary and throughput evidence.
 
