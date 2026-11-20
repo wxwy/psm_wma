@@ -316,7 +316,7 @@ def test_real_preflight_cache_warm_zero_model_reads_and_config_drift_refused(
     path, cfg = config(tmp_path)
     _, cfg = resolve(["fresh", "--config", str(path)])
     monkeypatch.setattr(
-        identity, "verify_source", lambda *a: ("a" * 40, "b" * 40, "a" * 40)
+        identity, "verify_source", lambda *a, **kw: ("a" * 40, "b" * 40, "a" * 40)
     )
     monkeypatch.setattr(
         identity,

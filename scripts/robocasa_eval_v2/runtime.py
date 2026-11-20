@@ -629,9 +629,11 @@ class Runtime:
                 }
             if self.g2 is not None:
                 cfg["settings"].update(
-                    self.cfg["g2_actor_options"],
                     g2_profile=self.g2["profile"],
-                    run_recipe=self.cfg["g2_run_recipe"],
+                    g2_actor_options={
+                        **self.cfg["g2_actor_options"],
+                        "run_recipe": self.cfg["g2_run_recipe"],
+                    },
                 )
                 file = ROOT / "g2/online/runtime.py"
                 cfg["source_files"]["g2_runtime"] = {

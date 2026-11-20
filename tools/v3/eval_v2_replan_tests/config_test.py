@@ -102,6 +102,7 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
     _, resolved = resolve(["dry-run", "--config", str(path)])
     bound = identity.g2_experiment(resolved)
     assert bound["profile"] == "g2_r1"
+    assert resolved["g2_actor_options"]["render_f27"] is False
     assert bound["checkpoint_metadata_sha256"] == "a" * 64
     assert (
         bound["run_recipe_sha256"]
@@ -113,10 +114,22 @@ def test_g2_r1_configuration_binds_profile_recipe_and_native_source(tmp_path):
         identity.g2_experiment(resolved)["run_recipe_sha256"]
         != bound["run_recipe_sha256"]
     )
+    path.write_text(
+        yaml.safe_dump(
+            {**cfg, "g2_actor_options": {**cfg["g2_actor_options"], "render_f27": True}}
+        )
+    )
+    _, diagnostics = resolve(["dry-run", "--config", str(path)])
+    assert diagnostics["g2_actor_options"]["render_f27"] is True
+    assert (
+        identity.g2_experiment(diagnostics)["actor_options_sha256"]
+        != bound["actor_options_sha256"]
+    )
     for invalid in (
         {"g2_profile": "legacy"},
         {"local_memory_mode": "off"},
         {"max_infer_batch_size": 2},
+        {"g2_actor_options": {**cfg["g2_actor_options"], "render_f27": "true"}},
     ):
         path.write_text(yaml.safe_dump({**cfg, **invalid}))
         with pytest.raises(ValueError, match="G2"):

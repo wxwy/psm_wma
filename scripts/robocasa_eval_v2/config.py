@@ -71,6 +71,7 @@ PATHS = {
 }
 
 G2_ACTOR_PATHS = {"nav_checkout", "ros_setup", "scratch_root"}
+G2_ACTOR_REQUIRED = G2_ACTOR_PATHS | {"nav_revision"}
 
 
 def validate_g2_profile(cfg):
@@ -103,9 +104,11 @@ def validate_g2_profile(cfg):
         or not isinstance(metadata, str)
         or re.fullmatch(r"[0-9a-f]{64}", metadata) is None
         or not isinstance(options, dict)
-        or set(options) != G2_ACTOR_PATHS | {"nav_revision"}
+        or G2_ACTOR_REQUIRED - set(options)
+        or set(options) - G2_ACTOR_REQUIRED - {"render_f27"}
         or not isinstance(options["nav_revision"], str)
         or re.fullmatch(r"[0-9a-f]{40}", options["nav_revision"]) is None
+        or type(options.get("render_f27", False)) is not bool
     ):
         raise ValueError(
             "G2 requires an existing run recipe, checkpoint metadata SHA, and isolated native settings"
@@ -114,6 +117,7 @@ def validate_g2_profile(cfg):
         if not isinstance(options[key], str) or not options[key].strip():
             raise ValueError(f"missing G2 actor path {key}")
     cfg["g2_actor_options"] = {
+        "render_f27": False,
         **options,
         **{
             key: str(Path(os.path.expandvars(options[key])).resolve())

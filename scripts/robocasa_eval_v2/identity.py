@@ -166,6 +166,11 @@ def prepare(cfg, *, cache, anchor=None, manifest=None):
         model = build_model_identity(**requested)
     if anchor and model["digest"] != anchor["model"]["digest"]:
         raise ValueError("Checkpoint/model sampling identity changed")
+    if g2 is not None and (
+        model["parameters"]["checkpoint"]["metadata_sha256"]
+        != g2["checkpoint_metadata_sha256"]
+    ):
+        raise ValueError("G2 checkpoint metadata SHA differs from the attested model")
     environment = runtime_environment(cache)
     attestation = collect_runtime(
         sim_python=Path(cfg["sim_python"]),
