@@ -27,6 +27,17 @@ from g2.views.robot_pose_marker import chassis_pose, overlay_final_top_views
 from g2.views.surface_renderer import SurfaceRenderer
 
 
+def _require_valid_clean_colors(report, _registry):
+    invalid = [
+        view["rgb_file"]
+        for view in report["views"]
+        if type(view.get("valid_color_pixels")) is not int
+        or view["valid_color_pixels"] <= 0
+    ]
+    if invalid:
+        raise ContractError(f"live F27 clean Views have no valid source color: {invalid}")
+
+
 def _fixed_geoms(model, specs):
     """Only cache Geoms whose complete body ancestry is fixed."""
     fixed = []
@@ -132,6 +143,7 @@ class LiveF27:
                 model_source_sha256=self.model_sha256,
                 renderer=self.renderer,
                 robot_pose=pose,
+                audit_clean=_require_valid_clean_colors,
                 restore_camera=self.restore_camera,
             )
             self.keyframe = stage

@@ -19,6 +19,7 @@ def native(tmp_path, monkeypatch):
         geom_xpos=np.zeros((1, 3)),
         geom_xmat=np.eye(3).reshape(1, 9),
         robot_position=[0.3, 0.3, 0.1],
+        valid_color_pixels=128 * 128,
     )
     model = SimpleNamespace(geom_bodyid=[0])
     draws = []
@@ -54,14 +55,18 @@ def native(tmp_path, monkeypatch):
         png = output / rel
         png.parent.mkdir()
         Image.new("RGB", (128, 128), "white").save(png)
-        write_json(
-            output / "direct_color_views.json",
-            {
-                "views": [
-                    {"rgb_file": rel, "native_view": native, "sha256": digest(png)}
-                ]
-            },
-        )
+        report = {
+            "views": [
+                {
+                    "rgb_file": rel,
+                    "native_view": native,
+                    "sha256": digest(png),
+                    "valid_color_pixels": data.valid_color_pixels,
+                }
+            ]
+        }
+        write_json(output / "direct_color_views.json", report)
+        return report
 
     monkeypatch.setattr(f27, "save_direct_material_views", save)
     monkeypatch.setattr(
@@ -166,6 +171,16 @@ def test_nonlive_snapshot_rejected_before_renderer(native):
     with pytest.raises(ContractError, match="verified native snapshot"):
         publish(0, live=False)
     assert draws == []
+
+
+def test_live_f27_does_not_publish_a_white_fallback_as_valid(native):
+    runtime, data, draws, restores, publish = native
+    data.valid_color_pixels = 0
+    with pytest.raises(ContractError, match="no valid source color"):
+        publish(0)
+    assert draws == [0] and restores == [1]
+    assert not (runtime.root / "frame_0/sixview/floor_top_w_rbs.png").exists()
+    assert not (runtime.root / "latest_spatial_views.json").exists()
 
 
 def test_changed_native_room_reference_gets_fresh_projection(native):
