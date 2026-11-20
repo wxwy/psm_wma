@@ -190,3 +190,58 @@ def test_invalid_simulation_time_never_publishes_or_continues(online):
     assert native.published == [0]
     with pytest.raises(ContractError, match="frontier"):
         _decide(adapter, 0)
+
+
+def test_current_mocap_geometry_is_bound_to_the_native_state(tmp_path, monkeypatch):
+    mujoco = pytest.importorskip("mujoco")
+    from g2.online import nav_session
+
+    model = mujoco.MjModel.from_xml_string(
+        '<mujoco><worldbody><body name="marker" mocap="true">'
+        '<geom name="source" type="box" size=".1 .1 .1"/>'
+        "</body></worldbody></mujoco>"
+    )
+    data = mujoco.MjData(model)
+    data.mocap_pos[0] = [1, 2, 3]
+    env = SimpleNamespace(
+        control_freq=20,
+        sim=SimpleNamespace(
+            model=SimpleNamespace(_model=model), data=SimpleNamespace(_data=data)
+        ),
+    )
+    monkeypatch.setattr(
+        nav_session.subprocess,
+        "check_output",
+        lambda argv, **_: "a" * 40 if "rev-parse" in argv else "",
+    )
+    native_tree = tmp_path / "mapping_8_3" / "mapping" / "src"
+    native_tree.mkdir(parents=True)
+    (native_tree / "fixture.cpp").write_text("")
+    session = nav_session.NativeSession(
+        nav_checkout=tmp_path,
+        nav_revision="a" * 40,
+        ros_setup=tmp_path,
+        scratch_root=tmp_path,
+    )
+
+    class ReachedNativeClassification(Exception):
+        pass
+
+    def inspect_private_data(selected_model, metadata, *, state_data, **_):
+        assert selected_model is model
+        assert state_data is not data
+        np.testing.assert_array_equal(state_data.geom_xpos[0], [1, 2, 3])
+        raise ReachedNativeClassification
+
+    monkeypatch.setattr(nav_session, "derive", inspect_private_data)
+    with pytest.raises(ReachedNativeClassification):
+        session.start(env, episode_id="mocap-regression", ep_meta={})
+
+    first = session.observe(env, 0)
+    data.mocap_pos[0, 0] = 2
+    second = session.observe(env, 0)
+    assert not np.array_equal(first, second)
+    session._forward(second)
+    np.testing.assert_array_equal(session.data.geom_xpos[0], [2, 2, 3])
+    assert first[0] == second[0] == 0
+    session.close()

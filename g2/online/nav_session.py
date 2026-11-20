@@ -23,6 +23,7 @@ from g2.offline.atomic_6views_metadata import derive
 from g2.offline.atomic_6views_snapshots import _native_source
 
 FRAME_NS = 50_000_000
+STATE_ENCODING = "mujoco_fullphysics_with_mocap_f64le_v1"
 PERIOD_FRAMES = 20
 
 
@@ -70,9 +71,7 @@ class NativeSession:
             rel_tol=0,
             abs_tol=1e-6,
         ):
-            raise ContractError(
-                "MuJoCo FULLPHYSICS time does not match the 20 Hz frontier"
-            )
+            raise ContractError("MuJoCo state time does not match the 20 Hz frontier")
         return row
 
     def start(self, env, *, episode_id, ep_meta):
@@ -83,11 +82,15 @@ class NativeSession:
         self.env = env
         self.episode_id = episode_id
         self.model = env.sim.model._model
-        if self.model.nmocap:
-            raise ContractError("live GT FULLPHYSICS does not attest mocap-driven geometry")
         self.mujoco = mujoco
         self.data = mujoco.MjData(self.model)
-        self.state_spec = mujoco.mjtState.mjSTATE_FULLPHYSICS
+        # FULLPHYSICS (the training archive format) omits positions and
+        # orientations of externally moved mocap bodies in the live model.
+        self.state_spec = (
+            mujoco.mjtState.mjSTATE_FULLPHYSICS
+            | mujoco.mjtState.mjSTATE_MOCAP_POS
+            | mujoco.mjtState.mjSTATE_MOCAP_QUAT
+        )
         self.state_size = mujoco.mj_stateSize(self.model, self.state_spec)
         self.start_time = float(env.sim.data._data.time)
         row = self.observe(env, 0)
@@ -123,6 +126,7 @@ class NativeSession:
                     "episode_id": episode_id,
                     "scene_id": self.scene_id,
                     "mujoco_version": mujoco.__version__,
+                    "state_encoding": STATE_ENCODING,
                     "native_revision": self.nav_revision,
                     "native_build_source_sha256": self.native_build_sha256,
                     "compiled_model_sha256": model_sha,
@@ -265,10 +269,12 @@ class NativeSession:
                 "frame_id": frame,
                 "timestamp_ns": stamp,
                 "state_sha256": state_hash,
+                "state_encoding": STATE_ENCODING,
                 "grid_sha256": grid_hash,
                 "objects_sha256": objects_hash,
             }
-            (packet / "manifest.json").write_bytes(canonical(manifest))
+            manifest_bytes = canonical(manifest)
+            (packet / "manifest.json").write_bytes(manifest_bytes)
             if any(ord(char) < 32 for char in name):
                 raise ContractError("native packet path contains a control character")
             self.process.stdin.write(
@@ -301,6 +307,8 @@ class NativeSession:
             or binding.get("live_frame") is not True
             or binding.get("online_episode_id") != self.episode_id
             or binding.get("live_state_sha256") != state_hash
+            or binding.get("native_manifest_sha256")
+            != hashlib.sha256(manifest_bytes).hexdigest()
         ):
             raise ContractError(
                 "native snapshot does not attest the current live state"

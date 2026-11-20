@@ -14,7 +14,7 @@ from g2.language.initial_context import InitialLanguageRecipe, build_initial_lan
 from g2.offline.atomic_6views_snapshots import _state_summary
 from g2.offline.task_entities import bind_task_entities
 
-from .nav_session import PERIOD_FRAMES, NativeSession
+from .nav_session import PERIOD_FRAMES, STATE_ENCODING, NativeSession
 
 # PandaOmron_modality.json, through RoboCasa's official LeRobot exporter.
 PANDA_OMRON_STATE = (
@@ -102,6 +102,8 @@ class OnlineG2DataAdapter:
                 snapshot, self.native.observe(env, 0), 0, snapshot["source_sha256"], 0
             )
             graph.update(
+                live_state_sha256=graph.pop("original_state_row_sha256"),
+                state_encoding=STATE_ENCODING,
                 world_frame=snapshot["world_frame"],
                 room_source="CURRENT_EPISODE_LIVE_NATIVE_NAV_SG",
                 room_footprint_update_policy="NATIVE_NAV_SG_ONLINE",

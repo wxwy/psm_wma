@@ -1,7 +1,7 @@
 # G2 R1 Online RoboCasa candidate
 
 The opt-in EvalV2 Phase B profile uses the current episode's MuJoCo model and
-FULLPHYSICS data. A private MjData copy goes through the pinned nav_sg geometry
+FULLPHYSICS data with mocap pose components. A private MjData copy goes through the pinned nav_sg geometry
 extractor and a private ROS1 worker. Room, Wall, Floor, Object, Island and
 association rules come from the native snapshot. At frame zero the Actor
 binds official task roles and builds CAP2 from that snapshot. Subsequent
@@ -68,8 +68,7 @@ cd /fixed/psm_wma
 "$EVAL_SERVER_PYTHON" scripts/robocasa_eval_v2_cli.py dry-run \
   --config "$ONLINE_R1_CONFIG" --gpus "$APPROVED_GPU"
 "$EVAL_SERVER_PYTHON" scripts/robocasa_eval_v2_cli.py fresh \
-  --config "$ONLINE_R1_CONFIG" --gpus "$APPROVED_GPU" \
-  --owner-decision "$OWNER_DECISION"
+  --config "$ONLINE_R1_CONFIG" --gpus "$APPROVED_GPU"
 ```
 
 Each private episode scratch directory contains `source_frames.jsonl`,
