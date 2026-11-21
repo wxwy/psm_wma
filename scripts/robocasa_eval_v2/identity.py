@@ -12,7 +12,7 @@ from cosmos_framework.evaluation.robocasa_v2.contract import (
     build_manifest,
     digest,
 )
-from cosmos_framework.evaluation.robocasa_v2.store import read
+from cosmos_framework.evaluation.robocasa_v2.store import read, records
 from eval_robocasa_18task_queue import discover_task_datasets, launch_environment
 from robocasa_episode_resume.model_identity import (
     build_model_identity,
@@ -32,6 +32,27 @@ F27_RESUME_PATHS = F27_RASTER_PATHS | {
     "scripts/robocasa_eval_v2/cli.py",
     "scripts/robocasa_eval_v2/config.py",
     "scripts/robocasa_eval_v2/identity.py",
+}
+END_FAIRNESS_ROOT = "901e80cc9a5aa436eb53b9954f4fb4f3d55c0946"
+END_FAIRNESS_CHILD_PAIR = (
+    "5a6585a1308782f52d4601be03771c977a15bf9c",
+    "4cbb7d4db74f298a9f15778cd7b558e96df9db89",
+)
+END_FAIRNESS_CHILD_PATHS = {
+    "cosmos_framework/inference/robocasa_batch_transactions.py",
+    "cosmos_framework/inference/robocasa_batch_transactions_test.py",
+    "cosmos_framework/inference/robocasa_session_transactions.py",
+    "cosmos_framework/inference/robocasa_session_transactions_test.py",
+}
+END_FAIRNESS_ROOT_PATHS = {
+    "cosmos-framework",
+    "SESSION.md",
+    "TODO.md",
+    "docs/collab/chatgpt/CODEX_INBOX.md",
+    "scripts/robocasa_eval_v2/cli.py",
+    "scripts/robocasa_eval_v2/config.py",
+    "scripts/robocasa_eval_v2/identity.py",
+    "tools/v3/eval_v2_production_tests/runtime_evidence_test.py",
 }
 
 
@@ -139,6 +160,128 @@ def verify_f27_resume_source(manifest, approval):
     return frozen, child, actual
 
 
+def verify_end_fairness_resume_source(manifest, approval, run_root):
+    """Authorize only the reviewed End fairness transition for this R1 Run."""
+    if manifest is None:
+        raise ValueError(
+            "End fairness Resume approval requires an existing Run manifest"
+        )
+    experiment = manifest["experiment"]
+    frozen, old_child = experiment["root_sha"], experiment["child_sha"]
+    fields = {
+        "schema",
+        "approved_by",
+        "owner_decision_ref",
+        "review_ref",
+        "run_root",
+        "manifest_digest",
+        "from_root",
+        "to_root",
+        "from_child",
+        "to_child",
+    }
+    if (
+        experiment.get("g2", {}).get("profile") != "g2_r1"
+        or not isinstance(approval, dict)
+        or set(approval) != fields
+        or not all(
+            isinstance(value, str) and value.strip() for value in approval.values()
+        )
+        or approval["schema"] != "psm_eval_v2_end_fairness_resume_approval_v1"
+        or approval["approved_by"] != "Owner"
+        or approval["run_root"] != str(Path(run_root).resolve())
+        or approval["manifest_digest"] != manifest["digest"]
+        or approval["from_root"] != frozen
+        or approval["from_child"] != old_child
+        or (old_child, approval["to_child"]) != END_FAIRNESS_CHILD_PAIR
+        or not re.fullmatch(r"[0-9a-f]{40}", approval["to_root"])
+    ):
+        raise ValueError("invalid Run-bound End fairness Resume approval")
+
+    target = approval["to_root"]
+    _, child, actual = verify_source(target, g2=True)
+    if (
+        actual != target
+        or child != approval["to_child"]
+        or git(ROOT, "rev-parse", f"{frozen}:cosmos-framework") != old_child
+        or git(ROOT, "merge-base", frozen, END_FAIRNESS_ROOT) != frozen
+        or git(ROOT, "merge-base", END_FAIRNESS_ROOT, target) != END_FAIRNESS_ROOT
+        or git(CHILD, "merge-base", old_child, child) != old_child
+    ):
+        raise ValueError(
+            "End fairness Resume Root/Child pair differs from approved history"
+        )
+
+    if git(ROOT, "diff", "--ignore-submodules=none", "--name-only", "HEAD", "--"):
+        raise ValueError("dirty Root worktree during End fairness Resume")
+    # Include locally ignored source. The Raster library belongs to the offline
+    # surface-cell builder, outside the live F27 adapter used by this Run.
+    for repo, paths in (
+        (
+            ROOT,
+            (
+                *SOURCE_PATHS,
+                "g2",
+                "tools",
+                ":(top,glob)*.py",
+                ":(top,glob)*.so",
+                ":(exclude)g2/bin/libfast_surface_cells.so",
+            ),
+        ),
+        (CHILD, ("cosmos_framework",)),
+    ):
+        if git(
+            repo,
+            "ls-files",
+            "--others",
+            "--",
+            *paths,
+            ":(exclude,glob)**/__pycache__/**",
+            ":(exclude,glob)**/*.pyc",
+            ":(exclude,glob)**/.pytest_cache/**",
+        ):
+            raise ValueError("untracked production source during End fairness Resume")
+
+    root_paths = _changed_paths(ROOT, frozen, actual)
+    child_paths = _changed_paths(CHILD, old_child, child)
+    if not {"cosmos-framework"} <= root_paths <= END_FAIRNESS_ROOT_PATHS:
+        raise ValueError("Root changes outside the reviewed End fairness Resume scope")
+    if child_paths != END_FAIRNESS_CHILD_PATHS:
+        raise ValueError("Child changes outside the reviewed End fairness repair")
+    return {
+        "actual_root": actual,
+        "actual_child": child,
+        "source_changes": {"root": sorted(root_paths), "child": sorted(child_paths)},
+    }
+
+
+def _changed_paths(repo, before, after):
+    # In --name-status -z each path starts after a status and ends with NUL.
+    # This preserves spaces and other characters in names for the allowlist.
+    diff = git(repo, "diff", "--no-renames", "--name-status", "-z", before, after, "--")
+    return set(diff.split("\0")[1::2])
+
+
+def _verify_end_fairness_original_config(cfg, manifest, anchor):
+    experiment = manifest["experiment"]
+    fresh = [
+        entry
+        for entry in records(Path(cfg["output_dir"]) / "_internal/invocations")
+        if entry.get("mode") == "fresh"
+    ]
+    if (
+        not isinstance(anchor, dict)
+        or anchor.get("formal_root") != experiment["root_sha"]
+        or anchor.get("child") != experiment["child_sha"]
+        or len(fresh) != 1
+        or fresh[0].get("actual_root") != anchor.get("actual_root")
+        or fresh[0].get("resolved") != cfg
+    ):
+        raise ValueError(
+            "End fairness Resume differs from the original Run inputs/configuration"
+        )
+
+
 def discover(cfg):
     mapping = dict(discover_task_datasets(Path(cfg["dataset_root"]), None))
     order = sorted(mapping) if cfg["tasks"] == "all" else list(cfg["tasks"])
@@ -216,7 +359,15 @@ def g2_experiment(cfg):
     return bound
 
 
-def prepare(cfg, *, cache, anchor=None, manifest=None, f27_resume_approval=None):
+def prepare(
+    cfg,
+    *,
+    cache,
+    anchor=None,
+    manifest=None,
+    f27_resume_approval=None,
+    end_fairness_resume_approval=None,
+):
     from robocasa_eval_v2.shared_vae import input_files
 
     for path, expected in input_files(cfg):
@@ -225,10 +376,23 @@ def prepare(cfg, *, cache, anchor=None, manifest=None, f27_resume_approval=None)
     tasks = discover(cfg)
     frozen = manifest["experiment"]["root_sha"] if manifest else None
     g2 = g2_experiment(cfg)
-    if f27_resume_approval is None:
-        root, child, actual = verify_source(frozen, g2=g2 is not None)
-    else:
+    end_source = None
+    if end_fairness_resume_approval is not None:
+        if f27_resume_approval is not None:
+            raise ValueError("Resume source approvals are mutually exclusive")
+        end_source = verify_end_fairness_resume_source(
+            manifest, end_fairness_resume_approval, cfg["output_dir"]
+        )
+        _verify_end_fairness_original_config(cfg, manifest, anchor)
+        root, child, actual = (
+            frozen,
+            manifest["experiment"]["child_sha"],
+            end_source["actual_root"],
+        )
+    elif f27_resume_approval is not None:
         root, child, actual = verify_f27_resume_source(manifest, f27_resume_approval)
+    else:
+        root, child, actual = verify_source(frozen, g2=g2 is not None)
     if sha256_file(Path(cfg["vendor_lock"])) != sha256_file(
         ROOT / "third_party/robosuite_patches/vendor.lock.json"
     ):
@@ -335,6 +499,10 @@ def prepare(cfg, *, cache, anchor=None, manifest=None, f27_resume_approval=None)
     }
     if f27_resume_approval is not None:
         inputs["f27_resume_approval"] = f27_resume_approval
+    if end_source is not None:
+        inputs["end_fairness_resume_approval"] = end_fairness_resume_approval
+        inputs["end_fairness_execution"] = end_source
+        inputs["end_fairness_config_digest"] = digest(cfg)
     return result, inputs, environment
 
 
@@ -351,7 +519,18 @@ def guard(cfg, manifest, inputs, *, source=True):
         raise ValueError(
             "single-latency/Worker configuration differs from frozen execution identity"
         )
-    if source:
+    if "end_fairness_resume_approval" in inputs:
+        if digest(cfg) != inputs["end_fairness_config_digest"]:
+            raise ValueError("End fairness Resume runtime configuration changed")
+        if (
+            source
+            and verify_end_fairness_resume_source(
+                manifest, inputs["end_fairness_resume_approval"], cfg["output_dir"]
+            )
+            != inputs["end_fairness_execution"]
+        ):
+            raise ValueError("End fairness Resume runtime source changed")
+    elif source:
         if "f27_resume_approval" in inputs:
             verify_f27_resume_source(manifest, inputs["f27_resume_approval"])
         else:

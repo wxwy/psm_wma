@@ -1,3 +1,7 @@
+# 2026-11-21 CST — Run-bound End fairness Resume approval
+
+Codex claims `scripts/robocasa_eval_v2/{identity,config,cli}.py` and the scoped CPU regression in `tools/v3/eval_v2_production_tests/runtime_evidence_test.py`. Root base is `901e80cc9a5aa436eb53b9954f4fb4f3d55c0946` with Child `4cbb7d4db74f298a9f15778cd7b558e96df9db89`. The stopped Run retains its frozen Root `57078ab98b5b9879e3f3ea6b706d6b8c77749976`, Child `5a6585a1308782f52d4601be03771c977a15bf9c` and 843 valid Core records. Author scope is the approval, CPU and read-only checks and independent review handoff. [Scope in #95](https://github.com/wxwy/psm_wma/pull/95#issuecomment-7055400586)
+
 # 2026-11-21 CST — EvalV2 Session End fairness
 
 The V3 candidate is Root `c83d26bf0c58ccc5b1d1c967bce016b67abbc46a` with Child/Gitlink `4cbb7d4db74f298a9f15778cd7b558e96df9db89`. The Child base `56770438d722a5ba6f2b2f063f50cb01a8dccbcb` has the same tree as the incident Child `5a6585a1308782f52d4601be03771c977a15bf9c`.

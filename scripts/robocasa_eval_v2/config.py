@@ -187,7 +187,9 @@ def resolve(argv=None):
     p.add_argument("mode", choices=("fresh", "resume", "dry-run", "authorize"))
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--owner-decision", type=Path)
-    p.add_argument("--f27-resume-approval", type=Path)
+    approvals = p.add_mutually_exclusive_group()
+    approvals.add_argument("--f27-resume-approval", type=Path)
+    approvals.add_argument("--end-fairness-resume-approval", type=Path)
     p.add_argument("--gpus")
     p.add_argument("--render-gpus")
     p.add_argument("--render-backend", choices=("egl", "osmesa"))
@@ -211,6 +213,13 @@ def resolve(argv=None):
     a = p.parse_args(argv)
     if a.f27_resume_approval is not None and a.mode not in ("resume", "dry-run"):
         p.error("--f27-resume-approval requires resume or dry-run of an existing Run")
+    if a.end_fairness_resume_approval is not None and a.mode not in (
+        "resume",
+        "dry-run",
+    ):
+        p.error(
+            "--end-fairness-resume-approval requires resume or dry-run of an existing Run"
+        )
     import yaml
 
     class Unique(yaml.SafeLoader):
