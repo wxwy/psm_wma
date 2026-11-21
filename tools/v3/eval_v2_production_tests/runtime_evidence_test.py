@@ -285,13 +285,12 @@ def invocations(root):
     return store_module.records(root / "_internal/invocations")
 
 
-@pytest.fixture
-def stopped_f27_run(real_prepare, tmp_path, monkeypatch):
-    case = real_prepare
+def configure_resume_r1(case, tmp_path, monkeypatch, *, episodes=2):
     recipe = tmp_path / "r1_recipe.json"
     recipe.write_text("{}")
     case.cfg.update(
         execution_profile="phase_b",
+        episodes_per_task=episodes,
         render_backend="egl",
         g2_profile="g2_r1",
         g2_run_recipe=str(recipe),
@@ -309,6 +308,12 @@ def stopped_f27_run(real_prepare, tmp_path, monkeypatch):
     )
     case.path.write_text(json.dumps(case.cfg))
     monkeypatch.setattr(identity, "clock_environment", lambda *args: {"domain": "cpu"})
+
+
+@pytest.fixture
+def stopped_f27_run(real_prepare, tmp_path, monkeypatch):
+    case = real_prepare
+    configure_resume_r1(case, tmp_path, monkeypatch)
     complete_run = case.Runtime
 
     class StopAfterFirstCore(complete_run):
@@ -431,6 +436,329 @@ def test_f27_resume_approval_does_not_accept_other_identity_drift(
         approved_f27(case, "resume")
     assert core_bytes(case.root) == old_cores
     assert len(invocations(case.root)) == 1
+
+
+def set_gitlink(case, message):
+    child = git(case.child, "rev-parse", "HEAD")
+    git(case.source, "update-index", "--cacheinfo", "160000", child, "cosmos-framework")
+    git(case.source, "commit", "-qm", message)
+    return git(case.source, "rev-parse", "HEAD")
+
+
+@pytest.fixture
+def stopped_end_fairness_run(real_prepare, tmp_path, monkeypatch):
+    from cosmos_framework.evaluation.robocasa_v2.scheduler import slot_disposition
+
+    from tools.v3.eval_v2_production_tests.store_test import (
+        admitted,
+        close_streams,
+        complete,
+        healthy,
+    )
+
+    case = real_prepare
+    configure_resume_r1(case, tmp_path, monkeypatch, episodes=4)
+    cpu_runtime = case.Runtime
+    task = "CloseFridge"
+
+    class StopBeforeEndFairnessFix(cpu_runtime):
+        def run(self):
+            self.store.begin_task(task)
+            complete(self.store, task, 0)
+            complete(self.store, task, 1, success=False)
+            failed = admitted(self.store, self.store.begin_episode(task, 2))
+            self.store.finish_invalid(failed, "CPU fixture End timeout")
+            close_streams(self.store, task)
+            return self.store.publish_views(), None
+
+    case.Runtime = StopBeforeEndFairnessFix
+    assert public(case, "fresh") == 1
+    case.manifest = store_module.read(case.root / "manifest.json")
+    case.original_child = git(case.child, "rev-parse", "HEAD")
+    for name in identity.END_FAIRNESS_CHILD_PATHS:
+        path = case.child / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# synthetic End fairness delta\n")
+    git(case.child, "add", "cosmos_framework")
+    git(case.child, "commit", "-qm", "reviewed End fairness Child fixture")
+    fixed_child = git(case.child, "rev-parse", "HEAD")
+    pinned = set_gitlink(case, "synthetic merged #95 pin")
+    approval_module = case.source / "scripts/robocasa_eval_v2/identity.py"
+    approval_module.parent.mkdir()
+    approval_module.write_text("# synthetic approval implementation\n")
+    git(case.source, "add", "scripts")
+    git(case.source, "commit", "-qm", "scoped approval implementation")
+    monkeypatch.setattr(identity, "END_FAIRNESS_ROOT", pinned)
+    monkeypatch.setattr(
+        identity, "END_FAIRNESS_CHILD_PAIR", (case.original_child, fixed_child)
+    )
+    case.approval = {
+        "schema": "psm_eval_v2_end_fairness_resume_approval_v1",
+        "approved_by": "Owner",
+        "owner_decision_ref": "CPU fixture only",
+        "review_ref": "CPU fixture only",
+        "run_root": str(case.root),
+        "manifest_digest": case.manifest["digest"],
+        "from_root": case.manifest["experiment"]["root_sha"],
+        "to_root": git(case.source, "rev-parse", "HEAD"),
+        "from_child": case.original_child,
+        "to_child": fixed_child,
+    }
+    case.approval_path = tmp_path / "end_fairness_approval.json"
+    case.approval_path.write_text(json.dumps(case.approval))
+    case.executed = []
+
+    class ContinueOneThenStop(cpu_runtime):
+        def __init__(self, store, cfg, inputs, environment):
+            super().__init__(store, cfg, inputs, environment)
+            identity.guard(cfg, store.manifest, inputs)
+
+        def run(self):
+            next_episode = next(
+                (
+                    ep
+                    for ep in range(4)
+                    if slot_disposition(self.store, task, ep) == "execute"
+                ),
+                None,
+            )
+            if next_episode is None:
+                return self.store.publish_views(), None
+            self.store.begin_task(task)
+            fault = next(
+                (
+                    e
+                    for e in self.store.errors(task)
+                    if e["attempt"]["episode"] == next_episode
+                ),
+                None,
+            )
+            cert = (
+                self.store.certify_recovery(task, fault["stream_id"], healthy)
+                if fault
+                else None
+            )
+            result = complete(self.store, task, next_episode)
+            if cert:
+                self.store.resolve_error(task, fault["id"], cert, replacement=result)
+            case.executed.append((next_episode, result["generation"]))
+            close_streams(self.store, task)
+            return self.store.publish_views(), None
+
+    case.Runtime = ContinueOneThenStop
+    return case
+
+
+def approved_end_fairness(case, mode, *extra):
+    return cli.main(
+        [
+            mode,
+            "--config",
+            str(case.path),
+            "--end-fairness-resume-approval",
+            str(case.approval_path),
+            *extra,
+        ],
+        prepare_inputs=identity.prepare,
+        runtime_type=case.Runtime,
+    )
+
+
+def retained_core_files(root):
+    return {
+        p.relative_to(root): p.read_bytes()
+        for p in root.glob("tasks/*/episodes/*/*")
+        if p.is_file()
+    }
+
+
+def test_end_fairness_resume_preserves_core_bytes_across_another_interruption(
+    stopped_end_fairness_run, capsys
+):
+    case = stopped_end_fairness_run
+    capsys.readouterr()
+    old_cores = retained_core_files(case.root)
+    originals = {
+        p: (case.root / p).read_bytes()
+        for p in ("manifest.json", "_internal/run_inputs.json")
+    }
+    with pytest.raises(ValueError, match="production source"):
+        public(case, "resume")
+    assert approved_end_fairness(case, "dry-run") == 0
+    preview = json.loads(capsys.readouterr().out)
+    assert [row["action"] for row in preview["resume_dispositions"]] == [
+        "skip_valid",
+        "skip_valid",
+        "execute_missing",
+        "execute_missing",
+    ]
+    assert (
+        preview["runtime_attested"]
+        and preview["end_fairness_execution"]["actual_child"]
+        == case.approval["to_child"]
+    )
+    assert len(invocations(case.root)) == len(probe_records(case.root)) == 1
+    assert approved_end_fairness(case, "resume") == 1
+    assert case.executed == [
+        (2, 1)
+    ]  # Native Store issues an independent retry generation.
+    interrupted = retained_core_files(case.root)
+    assert all(interrupted[path] == payload for path, payload in old_cores.items())
+    assert approved_end_fairness(case, "resume") == 0
+    assert approved_end_fairness(case, "resume") == 0
+    assert [episode for episode, _ in case.executed] == [2, 3]
+    assert all(
+        (case.root / p).read_bytes() == payload
+        for p, payload in {**originals, **interrupted}.items()
+    )
+    for record, count in zip(invocations(case.root)[1:], (2, 3, 4), strict=True):
+        assert record["end_fairness_resume_approval"] == case.approval
+        assert (
+            record["actual_root"] == case.approval["to_root"]
+            and record["actual_child"] == case.approval["to_child"]
+        )
+        assert record["source_changes"] == {
+            "root": ["cosmos-framework", "scripts/robocasa_eval_v2/identity.py"],
+            "child": sorted(identity.END_FAIRNESS_CHILD_PATHS),
+        }
+        assert len(record["retained_valid_cores"]) == count
+        for row in record["retained_valid_cores"]:
+            p = (
+                case.root
+                / "tasks"
+                / row["task"]
+                / "episodes"
+                / f"ep_{row['episode']:03d}"
+                / "result.json"
+            )
+            assert row["core_digest"] == store_module.read(p)["sha256"]
+        assert record["frozen_run"] == {
+            "manifest_sha256": hashlib.sha256(originals["manifest.json"]).hexdigest(),
+            "run_inputs_sha256": hashlib.sha256(
+                originals["_internal/run_inputs.json"]
+            ).hexdigest(),
+        }
+    assert len(probe_records(case.root)) == 4
+
+
+@pytest.mark.parametrize(
+    "drift,match",
+    [
+        ("manifest", "invalid Run-bound"),
+        ("run_root", "invalid Run-bound"),
+        ("child", "invalid Run-bound"),
+        ("root_scope", "outside the reviewed End fairness Resume scope"),
+        ("child_scope", "outside the reviewed End fairness repair"),
+        ("dirty", "dirty Root worktree"),
+        ("untracked_ignored", "untracked production source"),
+        ("child_dirty", "production source"),
+        ("wrong_head", "differs from approved history"),
+        ("weights", "Checkpoint/model sampling identity changed"),
+        ("model_config", "immutable scientific"),
+        ("run_config", "original Run inputs/configuration"),
+        ("runtime", "immutable scientific"),
+        ("recipe", "immutable scientific"),
+        ("task_metadata", "immutable scientific"),
+        ("vendor_lock", "vendor lock differs"),
+    ],
+)
+def test_end_fairness_resume_refuses_drift_before_new_evidence(
+    stopped_end_fairness_run, monkeypatch, drift, match
+):
+    case = stopped_end_fairness_run
+    before = retained_core_files(case.root)
+    if drift in ("manifest", "run_root", "child"):
+        key = {
+            "manifest": "manifest_digest",
+            "run_root": "run_root",
+            "child": "to_child",
+        }[drift]
+        case.approval[key] = "0" * 64
+    elif drift == "root_scope":
+        (case.source / "scripts/source.py").write_text("# unrelated change\n")
+        git(case.source, "commit", "-qam", "unrelated Root source")
+        case.approval["to_root"] = git(case.source, "rev-parse", "HEAD")
+    elif drift == "child_scope":
+        (case.child / "source.py").write_text("# unrelated change\n")
+        git(case.child, "commit", "-qam", "unrelated Child source")
+        case.approval["to_child"] = git(case.child, "rev-parse", "HEAD")
+        monkeypatch.setattr(
+            identity,
+            "END_FAIRNESS_CHILD_PAIR",
+            (case.original_child, case.approval["to_child"]),
+        )
+        case.approval["to_root"] = set_gitlink(case, "pin unrelated Child")
+    elif drift == "dirty":
+        (case.source / "SESSION.md").write_text("original notes\n")
+        git(case.source, "add", "SESSION.md")
+        git(case.source, "commit", "-qm", "allowed notes")
+        case.approval["to_root"] = git(case.source, "rev-parse", "HEAD")
+        (case.source / "SESSION.md").write_text("dirty notes\n")
+    elif drift == "untracked_ignored":
+        (case.source / ".git/info/exclude").write_text("scripts/ignored.py\n")
+        (case.source / "scripts/ignored.py").write_text("# ignored code\n")
+    elif drift == "child_dirty":
+        (case.child / "source.py").write_text("# dirty Child\n")
+    elif drift == "wrong_head":
+        git(case.source, "commit", "--allow-empty", "-qm", "wrong Root target")
+    elif drift == "weights":
+        from zipfile import ZipFile
+
+        with ZipFile(
+            Path(case.cfg["checkpoint"]) / "model/rank0.distcp", "w"
+        ) as archive:
+            archive.writestr("fake", b"changed synthetic weight shard")
+    elif drift == "model_config":
+        Path(case.cfg["config_file"]).write_text(
+            "raw_action_dim: 15\n# other model config\n"
+        )
+    elif drift == "run_config":
+        case.cfg["request_timeout_s"] = 70
+        case.path.write_text(json.dumps(case.cfg))
+    elif drift == "runtime":
+        case.revision += 1
+    elif drift == "recipe":
+        Path(case.cfg["g2_run_recipe"]).write_text('{"new_recipe": true}')
+    elif drift == "task_metadata":
+        path = next(Path(case.cfg["dataset_root"]).rglob("dataset_meta.json"))
+        path.write_text(path.read_text() + "\n")
+    elif drift == "vendor_lock":
+        path = Path(case.cfg["vendor_lock"])
+        path.write_bytes(path.read_bytes() + b"\n")
+    case.approval_path.write_text(json.dumps(case.approval))
+    with pytest.raises(ValueError, match=match):
+        approved_end_fairness(case, "resume")
+    assert retained_core_files(case.root) == before
+    assert len(invocations(case.root)) == len(probe_records(case.root)) == 1
+    assert not case.constructed[1:]
+
+
+def test_end_fairness_approval_is_exclusive_and_runtime_guard_rechecks_source(
+    stopped_end_fairness_run, tmp_path
+):
+    case = stopped_end_fairness_run
+    with pytest.raises(SystemExit):
+        approved_end_fairness(
+            case, "dry-run", "--f27-resume-approval", str(case.approval_path)
+        )
+    with pytest.raises(SystemExit):
+        approved_end_fairness(case, "fresh")
+    _, cfg = cli.resolve(["resume", "--config", str(case.path)])
+    _, inputs, _ = identity.prepare(
+        cfg,
+        cache=tmp_path / "cache",
+        anchor=store_module.read(case.root / "_internal/run_inputs.json"),
+        manifest=case.manifest,
+        end_fairness_resume_approval=case.approval,
+    )
+    identity.guard(cfg, case.manifest, inputs)
+    with pytest.raises(ValueError, match="runtime configuration changed"):
+        identity.guard(
+            dict(cfg, batch_wait_ms=121), case.manifest, inputs, source=False
+        )
+    (case.child / "source.py").write_text("# dirty after preflight\n")
+    with pytest.raises(ValueError, match="production source"):
+        identity.guard(cfg, case.manifest, inputs)
 
 
 def probe_records(root):

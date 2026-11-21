@@ -1,3 +1,11 @@
+# 2026-11-21 CST — Run-bound End fairness Resume approval
+
+Codex claims `scripts/robocasa_eval_v2/{identity,config,cli}.py` and the scoped CPU regression in `tools/v3/eval_v2_production_tests/runtime_evidence_test.py`. Root base is `901e80cc9a5aa436eb53b9954f4fb4f3d55c0946` with Child `4cbb7d4db74f298a9f15778cd7b558e96df9db89`. The stopped Run retains its frozen Root `57078ab98b5b9879e3f3ea6b706d6b8c77749976`, Child `5a6585a1308782f52d4601be03771c977a15bf9c` and 843 valid Core records. Author scope is the approval, CPU and read-only checks and independent review handoff. [Scope in #95](https://github.com/wxwy/psm_wma/pull/95#issuecomment-7055400586)
+
+Ready for GPT review at implementation Root `306aa644d72a867179def16b05404c6ab4f31ab2` and Child/Gitlink `4cbb7d4db74f298a9f15778cd7b558e96df9db89`. The new dry-run and Resume verify the Owner approval against the original Run path and manifest digest, re-attest the frozen scientific inputs, and record the actual approved pair in the sealed invocation ledger.
+
+The author gate on data passed 127/127 related CPU tests, including the 26 focused F27 and End fairness cases, with zero failures, errors or skips. On the original Run, the native read-only plan yields 843 skipped valid Core and 57 executable slots. All 7,587 original Core file hashes, the Manifest, the run inputs and the invocation ledger match the pre-Resume evidence. The default source check rejects the cross-Child transition. Raw logs and JUnit stay in `.evalv2_end_resume_306aa644_20261121.1nmatu` on data. The exact deployment approval and real 57-episode Resume remain pending independent review and the Canary Gate. [Fixed implementation](https://github.com/wxwy/psm_wma/commit/306aa644d72a867179def16b05404c6ab4f31ab2)
+
 # 2026-11-21 CST — EvalV2 Session End fairness
 
 The V3 candidate is Root `c83d26bf0c58ccc5b1d1c967bce016b67abbc46a` with Child/Gitlink `4cbb7d4db74f298a9f15778cd7b558e96df9db89`. The Child base `56770438d722a5ba6f2b2f063f50cb01a8dccbcb` has the same tree as the incident Child `5a6585a1308782f52d4601be03771c977a15bf9c`.

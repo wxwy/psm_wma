@@ -37,12 +37,19 @@ from robocasa_eval_v2.runtime import Runtime
 def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
     args, cfg = resolve(argv)
     root = Path(cfg["output_dir"])
-    approval = read(args.f27_resume_approval) if args.f27_resume_approval else None
-    if args.f27_resume_approval is not None and not isinstance(approval, dict):
-        raise ValueError("invalid Run-bound F27 Resume approval")
+    approval_key = None
+    if args.f27_resume_approval is not None:
+        approval_key = "f27_resume_approval"
+    elif args.end_fairness_resume_approval is not None:
+        approval_key = "end_fairness_resume_approval"
+    approval = read(getattr(args, approval_key)) if approval_key else None
+    if approval_key is not None and not isinstance(approval, dict):
+        raise ValueError("invalid Run-bound Resume source approval")
+    options = {approval_key: approval} if approval_key else {}
     if args.mode == "dry-run":
         tasks = discover(cfg)
         dispositions = []
+        end_execution = None
         if (root / "manifest.json").exists():
             manifest = read(root / "manifest.json")
             store = Store(root, manifest)
@@ -59,6 +66,19 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                 )
             ):
                 raise ValueError("dry-run scientific plan differs from frozen Run")
+            if args.end_fairness_resume_approval is not None:
+                anchor = read(root / "_internal/run_inputs.json")
+                with tempfile.TemporaryDirectory(
+                    prefix="psm-eval-v2-resume-preview-"
+                ) as temporary:
+                    _, inputs, _ = prepare_inputs(
+                        cfg,
+                        cache=Path(temporary),
+                        anchor=anchor,
+                        manifest=manifest,
+                        **options,
+                    )
+                end_execution = inputs["end_fairness_execution"]
             for ep in range(cfg["episodes_per_task"]):
                 for task, _ in tasks:
                     action = {
@@ -67,8 +87,8 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                         "execute": "execute_missing",
                     }[slot_disposition(store, task, ep)]
                     dispositions.append({"task": task, "episode": ep, "action": action})
-        elif args.f27_resume_approval is not None:
-            raise ValueError("F27 Resume approval requires an existing Run manifest")
+        elif approval_key is not None:
+            raise ValueError("Resume source approval requires an existing Run manifest")
         print(
             json.dumps(
                 {
@@ -91,7 +111,12 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
                         for t, _ in tasks
                     ],
                     "resume_dispositions": dispositions,
-                    "runtime_attested": False,
+                    "runtime_attested": end_execution is not None,
+                    **(
+                        {"end_fairness_execution": end_execution}
+                        if end_execution is not None
+                        else {}
+                    ),
                     "models_loaded": 0,
                     "environments_created": 0,
                 },
@@ -164,13 +189,36 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
     with store.locked():
         if args.mode == "resume":
             anchor = read(root / "_internal/run_inputs.json")
-            options = (
-                {"f27_resume_approval": approval}
-                if args.f27_resume_approval is not None
-                else {}
-            )
             _, inputs, environment = prepare_inputs(
                 cfg, cache=cache, anchor=anchor, manifest=manifest, **options
+            )
+        # Verify every retained Core before publishing the invocation or
+        # launching work under a different approved source identity.
+        transition = {}
+        if approval_key is not None:
+            transition = {
+                **options,
+                "retained_valid_cores": [
+                    {
+                        "task": task,
+                        "episode": row["episode"],
+                        "core_digest": digest(row),
+                    }
+                    for task in manifest["task_order"]
+                    for row in store.rows(task)
+                ],
+            }
+        if args.end_fairness_resume_approval is not None:
+            transition.update(
+                inputs["end_fairness_execution"],
+                frozen_run={
+                    "manifest_sha256": hashlib.sha256(
+                        (root / "manifest.json").read_bytes()
+                    ).hexdigest(),
+                    "run_inputs_sha256": hashlib.sha256(
+                        (root / "_internal/run_inputs.json").read_bytes()
+                    ).hexdigest(),
+                },
             )
         probe = {
             "manifest_digest": manifest["digest"],
@@ -192,20 +240,6 @@ def main(argv=None, *, prepare_inputs=prepare, runtime_type=Runtime):
             inputs["model"], run_root=root, anchor_sha256=digest(anchor)
         )
         write(root / "_internal/verification_cache.json", record, replace=True)
-        # Keep the original manifest and Core files. The sealed invocation
-        # records which results predate this invocation, including when
-        # execution is interrupted before it publishes any replacements.
-        transition = {}
-        if args.f27_resume_approval is not None:
-            retained = [
-                {"task": task, "episode": row["episode"], "core_digest": digest(row)}
-                for task in manifest["task_order"]
-                for row in store.rows(task)
-            ]
-            transition = {
-                "f27_resume_approval": approval,
-                "retained_valid_cores": retained,
-            }
         save(
             root / "_internal/invocations" / f"{time.time_ns()}.json",
             {
