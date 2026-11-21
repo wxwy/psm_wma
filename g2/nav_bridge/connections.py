@@ -10,6 +10,7 @@ import numpy as np
 from g2.io import ContractError
 
 PROTOCOL='NATIVE_BBOX_OBJECT_ROOT_CONNECTIONS_V2'
+BOUNDED_PROTOCOL='NATIVE_BBOX_OBJECT_ROOT_CONNECTIONS_V3_BOUNDED'
 
 
 def bbox_gap(a,b):
@@ -72,8 +73,18 @@ def verify_room_reference(s,room,by_id):
 
 def verify_connection_evidence(s):
     if 'connection_protocol' not in s:return None
-    if s['connection_protocol']!=PROTOCOL:raise ContractError('unknown native object connection protocol')
+    bounded=s['connection_protocol']==BOUNDED_PROTOCOL
+    if s['connection_protocol'] not in (PROTOCOL,BOUNDED_PROTOCOL):
+        raise ContractError('unknown native object connection protocol')
     packet=s.get('connections',{});threshold=packet.get('threshold_m')
+    max_hops=packet.get('max_object_hops',None)
+    if bounded:
+        if (type(max_hops) is not int or not 0<=max_hops<=8 or
+            s.get('source_mode')!='oracle_diagnostic' or
+            s.get('surface_transport_mode')!='ORACLE_DIAGNOSTIC_GEOMETRY_ONLY_NO_PRESCAN'):
+            raise ContractError('bounded original-G2 connection source requires explicit Oracle-only hop limit')
+    elif max_hops is not None:
+        raise ContractError('legacy G2 connection cannot silently change its relay closure')
     if (not _number(threshold) or threshold<=0 or threshold!=s['connection_distance'] or
             packet.get('metric')!='WORLD_AABB_3D_EUCLIDEAN' or packet.get('comparison')!='STRICT_LESS_THAN' or
             packet.get('roots_are_endpoints_only') is not True or
@@ -121,6 +132,7 @@ def verify_connection_evidence(s):
     # Check the supplied partition against actual bbox edges. This does not
     # assign a component or Island: inconsistent producer IDs are rejected.
     keys=sorted(eligible);parent=list(range(len(keys)))
+    source_adjacency={key:set() for key in keys} if bounded else {}
     def find(i):
         while parent[i]!=i:parent[i]=parent[parent[i]];i=parent[i]
         return i
@@ -133,10 +145,32 @@ def verify_connection_evidence(s):
                 i=start+int(offset);j=int(other)
                 if j<=i or eligible[keys[i]]['room_uid']!=eligible[keys[j]]['room_uid']:continue
                 if membership[keys[i]]!=membership[keys[j]]:raise ContractError('native component omits an actual object bbox edge')
+                if bounded:
+                    source_adjacency[keys[i]].add(keys[j])
+                    source_adjacency[keys[j]].add(keys[i])
                 parent[find(j)]=find(i)
         indices={key:i for i,key in enumerate(keys)}
         for members in component_rows.values():
             if len({find(indices[k]) for k in members})!=1:raise ContractError('native component would relay through a structural root')
+    bounded_roots={}
+    if bounded:
+        # Validate exact source-native one-hop / N-hop root propagation
+        # without assigning an alternative Room, component, or Island.
+        # G2 original unbounded BFS/closure remains the default path above.
+        for root,r in roots.items():
+            observed=(packet['closed_world_within_declared_snapshot'] or
+                     'native_structure_evidence' in r) and (
+                         r['kind']=='floor' or bool(r['triangles']))
+            seeds={k for k in keys if observed and bbox_gap(eligible[k],r)<threshold}
+            reached=set(seeds)
+            frontier=seeds
+            for _ in range(max_hops):
+                nxt=set().union(*(source_adjacency[k] for k in frontier)) if frontier else set()
+                nxt-=reached
+                reached|=nxt
+                frontier=nxt
+                if not frontier:break
+            bounded_roots[root]=reached
     indexed={}
     for record in records:
         key=record.get('entity_id')
@@ -162,6 +196,8 @@ def verify_connection_evidence(s):
                     not 2<=len(nodes)<=len(eligible)+1 or len(set(nodes))!=len(nodes) or nodes[0]!=key or nodes[-1]!=root or
                     not isinstance(distances,list) or len(distances)!=len(nodes)-1 or any(n not in eligible for n in nodes[:-1])):
                 raise ContractError('native path uses invalid or structural intermediate relay')
+            if bounded and len(nodes)-2>max_hops:
+                raise ContractError('bounded native path relays beyond source hop cap')
             nodes_count+=len(nodes)
             if nodes_count>1000000:raise ContractError('native path node budget exceeded')
             if any(membership[n]!=membership[key] for n in nodes[:-1]):raise ContractError('native path crosses object components')
@@ -173,9 +209,12 @@ def verify_connection_evidence(s):
             reached.add(root)
         expected_roots=set()
         if key in eligible:
-            for root,r in roots.items():
-                observed=(known or 'native_structure_evidence' in r) and (r['kind']=='floor' or bool(r['triangles']))
-                if observed and any(bbox_gap(eligible[k],r)<threshold for k in component_rows[membership[key]]):expected_roots.add(root)
+            if bounded:
+                expected_roots={root for root,ids in bounded_roots.items() if key in ids}
+            else:
+                for root,r in roots.items():
+                    observed=(known or 'native_structure_evidence' in r) and (r['kind']=='floor' or bool(r['triangles']))
+                    if observed and any(bbox_gap(eligible[k],r)<threshold for k in component_rows[membership[key]]):expected_roots.add(root)
         if reached!=expected_roots or set(e['root_affiliations'])!=reached:raise ContractError('native root closure/affiliation certificate differs')
         floor='YES' if any(roots[r]['kind']=='floor' for r in reached) else 'NO' if complete and key in eligible else 'UNKNOWN'
         wall='YES' if any(roots[r]['kind']=='wall' for r in reached) else 'NO' if known and walls_known and key in eligible else 'UNKNOWN'
@@ -208,4 +247,4 @@ def verify_connection_evidence(s):
                 item['distance_m'],bbox_gap(roots[edge[0]],roots[edge[1]]),abs_tol=1e-9,rel_tol=1e-9):
             raise ContractError('native forbidden structural relay evidence differs')
         seen.add(edge)
-    return {'protocol':PROTOCOL,'objects':len(objects),'components':len(components),'paths':sum(len(r['paths']) for r in records)}
+    return {'protocol':s['connection_protocol'],'objects':len(objects),'components':len(components),'paths':sum(len(r['paths']) for r in records)}
