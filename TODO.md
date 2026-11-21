@@ -1,4 +1,4 @@
-- **EVALV2-END-FAIRNESS-RESUME** — IN_PROGRESS with Codex. Add the narrow Owner approval for the frozen G2 R1 Run crossing the reviewed End fairness Child change. Verify scopes, immutable identity, retained Core and repeat Resume. Independent review and hardware execution follow separately.
+- **EVALV2-END-FAIRNESS-RESUME** — REVIEW at Root `306aa644` / Child `4cbb7d4d`. Fixed-source CPU 127/127 and real read-only 843 skip / 57 execute verified with 7,587 matching Core file hashes. GPT owns independent review. Deployment and real Resume wait for the exact-pair approval and Canary Gate. [Fixed implementation](https://github.com/wxwy/psm_wma/commit/306aa644d72a867179def16b05404c6ab4f31ab2)
 
 - **EVALV2-SESSION-END-FAIRNESS** — REVIEW. Root `c83d26bf` pins Child `4cbb7d4d`. CPU regression 254/254. The B2/B8 case returns End ACK with the next peer batch active, and failed drain retains ownership. GPT independent review for the interruption fix. [Child Draft #27](https://github.com/wxwy/cosmos-framework/pull/27)
 
