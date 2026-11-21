@@ -1,3 +1,11 @@
+# 2026-11-21 CST — EvalV2 Session End fairness
+
+The V3 candidate is Root `c83d26bf0c58ccc5b1d1c967bce016b67abbc46a` with Child/Gitlink `4cbb7d4db74f298a9f15778cd7b558e96df9db89`. The Child base `56770438d722a5ba6f2b2f063f50cb01a8dccbcb` has the same tree as the incident Child `5a6585a1308782f52d4601be03771c977a15bf9c`.
+
+The serial and batched executors complete eligible End cleanup at safe model boundaries. The Slot remains registered until End issues the ACK. Device drain or cleanup failure prevents ACK for the affected lease and retains ownership. The original client deadline and HTTP protocol remain in use.
+
+The fixed-head CPU run passed 254 tests with zero failures, errors or skips. The five focused cases passed. Against the original code four of those cases failed and the existing failed-drain safeguard passed. Raw pytest output and JUnit are in `.evalv2_end_fairness_4cbb7d4_20261121.2PReoO` on data. The candidate uses the existing PSM environment with GPU masked. The interrupted evaluation and production deployment are untouched. [Child Draft #27](https://github.com/wxwy/cosmos-framework/pull/27)
+
 # 2026-11-20 CST — G2 F27 R1 900-episode recovery
 
 Draft PR #94 binds implementation `7d78aa0df6b1154473273b1f653134a896f892e3`, V3 base `5659b3898b94b302288669d03092fb9b5a5d4023`, and Child/Gitlink `5a6585a1308782f52d4601be03771c977a15bf9c`. The archived TurnOffStove EP6 Frame 0 failed in the `+Y` static translucent hit pass. The repair validates GPU hit completion and submitted Geom/face identity, then reprojects rejected readbacks from registered source geometry. A fresh real TurnOffStove CPU/Mesa scene recovered the injected fault with identical RGB. The archived EP6 model and state could not be reproduced. 17 focused tests passed. The expanded suite had 375 passes, six V3-baseline failures and one optional skip.
